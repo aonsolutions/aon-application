@@ -34,7 +34,7 @@
 		-->
 			<!--  
 		<aon:outputLabel value="PayPal" /> 
-		<h:outputLink
+		<aon:outputLink
 			value="https://www.sandbox.paypal.com/cgi-bin/webscr" target="paypal">
 			<f:param name="cmd" value="_ExpressCheckout" />
 			<f:param name="business" value="me@mybusiness.com" />
@@ -49,7 +49,7 @@
 			<f:param name="amount" value="#{shoppingCart.cart.total}" />
 	
 			<aon:outputText style="color:#000;" value="Add To Cart" />
-		</h:outputLink> 
+		</aon:outputLink> 
 			-->
 		
 		
@@ -57,7 +57,7 @@
 		
 		
 			<!--  
-		<h:outputLink
+		<aon:outputLink
 			value="https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=xpt/Marketing_CommandDriven/general/OnlineLogoCenter-outside" target="paypal">
 			<f:param name="cmd" value="_ExpressCheckout" />
 			
@@ -75,7 +75,7 @@
 	
 			<img src="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" 
 				align="left" style="margin-right:7px;" />
-		</h:outputLink> 
+		</aon:outputLink> 
 			-->
 		
 		
@@ -94,15 +94,7 @@
 	-->
 		
 		
-		<!--  
-		<aon:outputText value="" />
-		
-		<h:commandButton value="&#160;" >
-			<h:graphicImage value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" />
-			<aon:actionListener method="#{paypal.initialize}" />
-		</h:commandButton>
-		-->
-		
+			
 		
 		
 		<aon:commandLink>
@@ -110,13 +102,6 @@
 			<aon:actionListener method="#{paypal.initialize}" />
 		</aon:commandLink>
 		
-		<!--  
-		<h:outputLink value="aonPaypal">
-			<img src="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif" 
-				align="left" style="margin-right:7px;" />
-			<h:graphicImage value="https://www.paypal.com/es_XC/i/btn/btn_xpressCheckout.gif"  />
-		</h:outputLink> 
-		-->
 			</aon:form>
 		</aon:div>
 		

@@ -182,14 +182,16 @@
 						</f:facet>
 
 						<c:if test="#{commercialStat.controlType==0}">
-							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onSellerActivities}"
-								action="commercial_activity_view" value="#{to.numVisits}" />
+								action="commercial_activity_view" value="#{to.numVisits}"
+								reRender="aonContent" />
 						</c:if>
 						<c:if test="#{commercialStat.controlType==1}">
-							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onTargetActivities}"
-								action="commercial_activity_view" value="#{to.numVisits}" />
+								action="commercial_activity_view" value="#{to.numVisits}"
+								reRender="aonContent" />
 						</c:if>
 
 						<f:facet name="footer">
@@ -202,14 +204,16 @@
 							<aon:outputText value="#{statBundle.seller_stat_control_pending}" />
 						</f:facet>
 						<c:if test="#{commercialStat.controlType==0}">
-							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onPendingSellerActivities}"
-								action="commercial_activity_view" value="#{to.numPendingVisits}" />
+								action="commercial_activity_view" value="#{to.numPendingVisits}"
+								reRender="aonContent" />
 						</c:if>
 						<c:if test="#{commercialStat.controlType==1}">
-							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onPendingTargetActivities}"
-								action="commercial_activity_view" value="#{to.numPendingVisits}" />
+								action="commercial_activity_view" value="#{to.numPendingVisits}"
+								reRender="aonContent" />
 						</c:if>
 
 						<f:facet name="footer">
@@ -263,28 +267,32 @@
 						</f:facet>
 
 						<c:if test="#{commercialStat.controlType==0}">
-							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onSellerDetail}"
 								action="commercial_seller_stat"
-								value="#{statBundle.stat_show_detail}"></aon:htmlCommandLink>
+								value="#{statBundle.stat_show_detail}"
+								reRender="aonContent" />
 						</c:if>
 						<c:if test="#{commercialStat.controlType==1}">
-							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onTargetDetail}"
 								action="commercial_seller_stat"
-								value="#{statBundle.stat_show_detail}"></aon:htmlCommandLink>
+								value="#{statBundle.stat_show_detail}"
+								reRender="aonContent" />
 						</c:if>
 						<c:if test="#{commercialStat.controlType==2}">
-							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onProductDetail}"
 								action="commercial_seller_stat"
-								value="#{statBundle.stat_show_detail}"></aon:htmlCommandLink>
+								value="#{statBundle.stat_show_detail}"
+								reRender="aonContent" />
 						</c:if>
 						<c:if test="#{commercialStat.controlType==3}">
-							<aon:htmlCommandLink styleClass="aon-dataTable-link"
+							<aon:commandLink styleClass="aon-dataTable-link"
 								actionListener="#{commercialStat.onCategoryDetail}"
 								action="commercial_seller_stat"
-								value="#{statBundle.stat_show_detail}"></aon:htmlCommandLink>
+								value="#{statBundle.stat_show_detail}"
+								reRender="aonContent" />
 						</c:if>
 					</aon:column>
 				</aon:editDataTable>

@@ -16,15 +16,15 @@
 				<ui:param name="controller" value="#{annualReport}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
-					<h:commandLink id="annualReportDetail-report"
+					<aon:htmlCommandLink id="annualReportDetail-report"
 						value="#{bundle.aon_listing}" target="_blank" 
 						actionListener="#{annualReportDetail.onExecutePDF}"
 						rendered="#{!annualReport.new}"
 						title="#{bundle.aon_listing}"
 						styleClass="aon-finding-toolbar-item aon-icon-pdf"
 						accesskey="#{bundle.aon_key_print}">
-					</h:commandLink>
-					<h:commandLink id="annualReportDetail-report-html"
+					</aon:htmlCommandLink>
+					<aon:htmlCommandLink id="annualReportDetail-report-html"
 						value="#{bundle.aon_listing}" target="_blank" 
 						actionListener="#{annualReportDetail.onExecute}"
 						rendered="#{!annualReport.new}"
@@ -32,7 +32,7 @@
 						title="#{bundle.aon_listing}"
 						styleClass="aon-finding-toolbar-item aon-icon-report"
 						accesskey="#{bundle.aon_key_print}">
-					</h:commandLink>
+					</aon:htmlCommandLink>
 				</ui:define>
 			</ui:decorate>
 

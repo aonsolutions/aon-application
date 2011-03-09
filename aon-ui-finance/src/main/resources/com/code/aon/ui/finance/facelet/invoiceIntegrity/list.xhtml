@@ -41,13 +41,13 @@
 					<aon:column styleClass="aon-editDataTable-iconColumn">
 						<f:facet name="header">
 							<aon:div>
-								<h:commandButton id="selectButton"
+								<aon:commandButton id="selectButton"
 									value="&#160;" 
 									actionListener="#{invoiceIntegrity.onCheckAll}"
 									styleClass="aon-icon-checkAll aon-vertical-align-top" 
 									onclick="Richfaces.showModalPanel('waitProccess')"
 									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-								<h:commandButton id="deselectButton"
+								<aon:commandButton id="deselectButton"
 									actionListener="#{invoiceIntegrity.onUnCheckAll}"
 									value="&#160;" 
 									styleClass="aon-icon-checkNone aon-vertical-align-top"

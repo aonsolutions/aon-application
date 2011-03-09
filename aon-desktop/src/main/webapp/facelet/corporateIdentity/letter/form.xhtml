@@ -27,11 +27,12 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<h:commandLink id="export2pdf_letter" value="PDF" title="PDF"
+						<aon:htmlCommandLink id="export2pdf_letter" value="PDF" title="PDF"
+							action="#{report.onExecute}" target="_blank"
 							styleClass="aon-finding-toolbar-item aon-icon-pdf"
-								action="#{report.onExecute}" target="_blank">
+							accesskey="#{bundle.aon_key_print}">							
 							<f:param name="reportKey" value="letter_to" />
-						</h:commandLink>
+						</aon:htmlCommandLink>						
 						<aon:commandButton id="remove" value="#{bundle.aon_clear}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							actionListener="#{corporateIdentity.onClear}" 

@@ -59,7 +59,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{accountBundle.account_account}" />
 						</f:facet>
-						<h:commandLink immediate="#{true}" 
+						<aon:commandLink immediate="#{true}" 
 							style="margin-left: #{(to.level-1)/2}em;" 
 							styleClass="aon-dataTable-link"
 							actionListener="#{trialBalance.onStatement}"
@@ -69,7 +69,7 @@
 							<f:setPropertyActionListener 
 								value="trialBalance_list" 
 								target="#{statement.backAction}" />
-						</h:commandLink>
+						</aon:commandLink>
 					</aon:column>
 
 					<aon:column styleClass="aon-width-auto #{to.lastLevel?'':'aon-row-auxiliary'}">

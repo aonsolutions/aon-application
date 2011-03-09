@@ -193,14 +193,14 @@
 				reRender="amortizationForm"
 				onclick="if (!confirm('#{accountingBundle.accounting_record}?')) return false;"
 				styleClass="aon-editDataTable-button aon-icon-task-assume" />
-			<h:commandLink immediate="true" styleClass="aon-dataTable-link"
+			<aon:commandLink immediate="true" styleClass="aon-dataTable-link"
 				rendered="#{amortizationDetail.to != to and to.scored}"
 				title="#{accountingBundle.accounting_lookup_account_entry}"
 				actionListener="#{amortizationDetail.onAccountEntry}"
-				action="accountEntry_form">
-				<aon:outputText 
-					value="#{to.accountEntry.accountPeriod}/#{to.accountEntry.id}" />
-			</h:commandLink>
+				action="accountEntry_form"
+				reRender="aonContent">
+				<aon:outputText value="#{to.accountEntry.accountPeriod}/#{to.accountEntry.id}" />
+			</aon:commandLink>
 		</aon:column>
 
 		<aon:column

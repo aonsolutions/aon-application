@@ -14,12 +14,13 @@
 						<f:facet name="header">
 							<aon:outputText value="#{assetBundle.asset_stat_name}" />
 						</f:facet>
-						<h:commandLink styleClass="aon-dataTable-link-noicon" value="#{to.name}"  
+						<aon:commandLink styleClass="aon-dataTable-link-noicon" value="#{to.name}"  
+							reRender="aonContent"
 							action="month_stat_form" actionListener="#{assetStat.refreshStats}" >
 							<f:param name="name" value="#{to.name}" />
 							<f:param name="year" value="#{assetStat.year}" />
 							<f:param name="type" value="MONTH" />
-						</h:commandLink>
+						</aon:commandLink>
 					</aon:column>
 					
 					<aon:column>

@@ -109,14 +109,14 @@
 							<aon:outputText value="#{accountingBundle.accounting_recorded}" />
 						</f:facet>
 						<aon:outputText value="#{to.status}" rendered="#{!to.scored}" />
-						<h:commandLink immediate="true" styleClass="aon-dataTable-link"
+						<aon:commandLink immediate="true" styleClass="aon-dataTable-link"
 							rendered="#{to.scored}"
 							title="#{accountingBundle.accounting_lookup_account_entry}"
 							actionListener="#{periodAmortization.onAccountEntry}"
 							action="accountEntry_form">
 							<aon:outputText
 								value="#{to.accountEntry.accountPeriod}/#{to.accountEntry.id}" />
-						</h:commandLink>
+						</aon:commandLink>
 
 					</aon:column>
 

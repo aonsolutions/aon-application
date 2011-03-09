@@ -51,14 +51,4 @@
 		</params>
 	</report>
 	
-	<!--  *********  ABONARE  ********* -->
-	<report id="abonare_to" description="Abonare report">
-		<template path="/com/code/aon/ui/desktop/report/abonare_to.jasper" />
-		<collection provider="#{corporateIdentity}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.desktop.i18n.messages" />
-			<param id="logoImageFile" value="#{corporateIdentity.getAttachAsInputStream}" />
-		</params>
-	</report>
-	
 </report-config>

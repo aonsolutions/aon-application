@@ -120,17 +120,6 @@
 								createContent="#{ecconfig.paintHeader}" />
 
 							<aon:div id="header">
-								<!--<h:commandLink id="download" target="_blank"
-									onmouseover="disableRowSelector();"
-									onmouseout="enableRowSelector();"
-									rendered="#{to==ecconfig.to}"
-									actionListener="#{ecconfig.downloadImage}"
-									styleClass="aon-icon aon-icon-mail-save"
-									style="line-height:16px;margin-right:0;"
-									title="#{bundle.aon_fileupload_download}">
-									<f:param name="index" value="#{to.catalogueImg}" />
-									<aon:outputText value="&#160;" />
-								</h:commandLink>-->
 								<a4j:region>
 									<aon:fileUpload rendered="#{formEdit}"
 										addControlLabel="#{bundle.aon_fileUpload_add}"
@@ -176,17 +165,6 @@
 								createContent="#{ecconfig.paintFooter}" />
 
 							<aon:div id="footerFile">
-								<!--<h:commandLink id="download" target="_blank"
-									onmouseover="disableRowSelector();"
-									onmouseout="enableRowSelector();"
-									rendered="#{to==ecconfig.to}"
-									actionListener="#{ecconfig.downloadImage}"
-									styleClass="aon-icon aon-icon-mail-save"
-									style="line-height:16px;margin-right:0;"
-									title="#{bundle.aon_fileupload_download}">
-									<f:param name="index" value="#{to.catalogueImg}" />
-									<aon:outputText value="&#160;" />
-								</h:commandLink>-->
 								<a4j:region>
 									<aon:fileUpload rendered="#{formEdit}"
 										addControlLabel="#{bundle.aon_fileUpload_add}"

@@ -65,21 +65,18 @@
 						aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-auto">
 
-					<aon:outputLabel for="reportDate"
-						value="#{accountingBundle.accounting_report_date}" />
+					<aon:outputText value="#{accountingBundle.accounting_report_date}" />
 					<aon:outputText
 						value="#{ledgerReport.date}"
 						timeZone="#{timeZoneController.timeZone}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
 					</aon:outputText>
 					
-					<aon:outputLabel 
-						value="#{accountingBundle.accounting_period}" />
+					<aon:outputText value="#{accountingBundle.accounting_period}" />
 					<aon:outputText styleClass="aon-bold"
 						value="#{ledgerReport.period.id}" />
 					
-					<aon:outputLabel
-						value="#{bundle.aon_date_from}" />
+					<aon:outputText value="#{bundle.aon_date_from}" />
 					<aon:outputText 
 						value="#{ledgerReport.fromDate}"
 						timeZone="#{timeZoneController.timeZone}">
@@ -130,14 +127,14 @@
 						
 						<aon:column breakBefore="#{ledgerReport.firstEntry}" styleClass="aon-editDataTable-textColumn aon-width-100"
 							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-									<h:commandLink immediate="true" 
+									<aon:commandLink immediate="#{true}" 
 										styleClass="aon-dataTable-link"
 										title="#{accountingBundle.accounting_lookup_account_entry}"
 										actionListener="#{ledgerReport.onAccountEntry}"
 										action="accountEntry_form">
 										<aon:outputText value="#{to.accountEntry.id}" rendered="#{!ledgerReport.journalOrdered}"/>
 										<aon:outputText value="#{to.accountEntry.journal}" rendered="#{ledgerReport.journalOrdered}"/>
-									</h:commandLink>
+									</aon:commandLink>
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"

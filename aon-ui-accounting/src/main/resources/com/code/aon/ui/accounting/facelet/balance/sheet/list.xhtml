@@ -56,7 +56,7 @@
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:editDataTable id="balanceDetailData"
+				<aon:dataTable id="balanceDetailData"
 					value="#{balanceSheet.balanceModel}" var="to" rows="150"
 					columnClasses="aon-editDataTable-textColumn,
 								   aon-editDataTable-numberColumn,
@@ -81,22 +81,16 @@
 					</rich:columnGroup>
 
 					<aon:column rendered="#{!to.title}">
-						<f:facet name="header">
-						</f:facet>
-						
-						<h:commandLink immediate="#{true}"
+						<aon:commandLink immediate="#{true}"
 							styleClass="aon-dataTable-link"
 							rendered="#{!to.detail.internalCalculation and to.detail.accounts != null and to.detail.accounts != '' and to.amount != 0}"
 							actionListener="#{balanceSheet.onAccountStatement}"
 							style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
 							title="#{accountingBundle.accounting_statement_module}"
 							action="account_statement_account_list">
-<!-- 
-							action="account_statement_list">
- -->
 							<aon:outputText 
 								value="#{to.detail.description}&#160;" />
-						</h:commandLink>
+						</aon:commandLink>
 						<aon:outputText 
 							rendered="#{to.detail.internalCalculation or to.detail.accounts == null or to.detail.accounts == '' or to.amount == 0}"
 							style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
@@ -128,7 +122,7 @@
 							<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
 						</aon:outputText>
 					</aon:column>
-				</aon:editDataTable>
+				</aon:dataTable>
 			</aon:div>
 		</aon:form>
 	</ui:define>

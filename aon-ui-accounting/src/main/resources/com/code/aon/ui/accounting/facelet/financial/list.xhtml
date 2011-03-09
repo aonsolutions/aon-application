@@ -46,7 +46,7 @@
 
 					<rich:subTable value="#{manager.model}" var="to">
 						<aon:column>
-							<h:commandLink ajaxSingle="true" rendered="#{to.code != null}"
+							<aon:commandLink ajaxSingle="true" rendered="#{to.code != null}"
 								styleClass="aon-dataTable-link"
 								actionListener="#{manager.onAccountStatement}"
 								title="#{accountingBundle.accounting_statement_module}"
@@ -54,7 +54,7 @@
 								<aon:outputText value="#{to.code}"
 									style="#{to.disabled?'text-decoration: line-through; color: #BBB;':''}"
 								 />
-							</h:commandLink>
+							</aon:commandLink>
 						</aon:column>
 
 						<aon:column>

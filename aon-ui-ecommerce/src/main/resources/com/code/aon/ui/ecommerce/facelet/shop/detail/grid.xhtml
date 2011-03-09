@@ -149,7 +149,7 @@
 					value="#{shopItem.documentModel}" var="to" columns="3" elements="9"
 					style="width:600px">
 					<aon:div id="attachFile">
-						<h:commandLink id="attachDownload" target="_blank"
+						<aon:commandLink id="attachDownload" target="_blank"
 							onmouseover="disableRowSelector();"
 							onmouseout="enableRowSelector();"
 							actionListener="#{shopItem.downloadAttachment}"
@@ -160,7 +160,7 @@
 								value="/css/icons/#{to.mimeType.extension}.png" />
 							<aon:outputText styleClass="attachText"
 								value="#{to.description}" />
-						</h:commandLink>
+						</aon:commandLink>
 					</aon:div>
 				
 				</rich:dataGrid>

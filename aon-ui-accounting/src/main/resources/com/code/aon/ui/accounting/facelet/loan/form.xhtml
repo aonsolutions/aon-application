@@ -123,13 +123,13 @@
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
 				
 					<aon:outputText value="#{accountBundle.account_account}" />
-					<h:commandLink immediate="#{true}" 
+					<aon:commandLink immediate="#{true}" 
 						styleClass="aon-dataTable-link"
 						actionListener="#{loan.onAccountStatement}"
 						title="#{accountingBundle.accounting_statement_module}"
 						action="account_statement_list">
 							<aon:outputText value="#{loan.relatedAccount.fullDescription}" />
-					</h:commandLink>
+					</aon:commandLink>
 
 					<aon:outputText value="#{accountingBundle.accounting_outstanding_balance}" />
 					<aon:outputText value="#{loan.outstandingBalance}">
