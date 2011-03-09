@@ -19,12 +19,14 @@
 				<ui:include src="bankLookup.xhtml">
 					<ui:param name="bankTo" value="#{controller.to.bank}" />
 					<ui:param name="renderBankLookup" value="#{formEdit}" />
+					<ui:param name="lookupDivName" value="RegistryBankLookupDivEdit" />
 				</ui:include>
 				<f:facet name="footer">
 					<ui:include src="bankLookup.xhtml">
 						<ui:param name="bankTo" value="#{controller.to.bank}" />
 						<ui:param name="renderBankLookup" value="#{formNew}" />
 						<ui:param name="bankSuffix" value="-New" />
+						<ui:param name="lookupDivName" value="RegistryBankLookupDivNew" />
 					</ui:include>
 				</f:facet>
 			</aon:column>
