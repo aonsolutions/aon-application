@@ -9,20 +9,20 @@
 
 	<aon:valueParam name="renderBankLookup" default="#{true}"/>
 
-	<aon:div id="#{lookupDivName}" styleClass="aon-lookup" rendered="#{renderBankLookup}" >
+	<aon:div styleClass="aon-lookup" rendered="#{renderBankLookup}" >
 		<a4j:region>
 			<aon:lookupInputText id="RegistryBank_code#{bankSuffix}"
 				value="#{bankTo.code}" size="5" 
 				property="#{bankTo}" lookup="#{bankLookup}"
-				reRender="#{lookupDivName}" 
-				ajaxSingle="true" required="true">
+				reRender="RegistryBank_name#{bankSuffix}" 
+				required="true">
 				<aon:joinProperty alias="Bank_code" value="#{bankTo.code}" />
 			</aon:lookupInputText>
 			<aon:lookupButton 
 				windowTitle="#{configBundle.config_bank_selection}"
 				minHeight="460" minWidth="650"
 				property="#{bankTo}" lookup="#{bankLookup}"
-				selectReRender="#{lookupDivName}"
+				selectReRender="RegistryBank_code#{bankSuffix},RegistryBank_name#{bankSuffix}"
 				actionType="search">
 			</aon:lookupButton>
 			<aon:inputText id="RegistryBank_name#{bankSuffix}"
