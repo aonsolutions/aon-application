@@ -41,7 +41,7 @@
 				</f:facet>
 				<aon:outputText value="#{to.value}"
 					rendered="#{formList}" />
-				<aon:inputText id="RegistryMedia_value" value="#{to.value}"
+				<aon:inputText id="RegistryMedia_value" value="#{controller.to.value}"
 					rendered="#{formEdit}" required="true" size="25"
 					onblur="toLowerCase(this);" />
 				<f:facet name="footer">
@@ -75,7 +75,7 @@
 				<aon:outputText value="#{to.comment}"
 					rendered="#{formList}" />
 				<aon:inputText id="RegistryMedia_comment"
-					value="#{to.comment}" rendered="#{formEdit}" size="30" />
+					value="#{controller.to.comment}" rendered="#{formEdit}" size="30" />
 				<f:facet name="footer">
 					<aon:inputText id="RegistryMedia_comment-New"
 						value="#{controller.to.comment}" rendered="#{formNew}" size="30" />
@@ -90,7 +90,7 @@
 					<aon:outputText value="&#160;" />
 				</aon:div>
 				<aon:selectBooleanCheckbox id="RegistryMedia_administrative" styleClass="aon-margin-left"
-					value="#{to.administrative}" rendered="#{formEdit}" />
+					value="#{controller.to.administrative}" rendered="#{formEdit}" />
 				<f:facet name="footer">
 					<aon:selectBooleanCheckbox id="RegistryMedia_administrative-New" styleClass="aon-margin-left"
 						value="#{controller.to.administrative}" rendered="#{formNew}" />
@@ -105,7 +105,7 @@
 					<aon:outputText value="&#160;" />
 				</aon:div>
 				<aon:selectBooleanCheckbox id="RegistryMedia_commercial" styleClass="aon-margin-left"
-					value="#{to.commercial}" rendered="#{formEdit}" />
+					value="#{controller.to.commercial}" rendered="#{formEdit}" />
 				<f:facet name="footer">
 					<aon:selectBooleanCheckbox id="RegistryMedia_commercial-New" styleClass="aon-margin-left"
 						value="#{controller.to.commercial}" rendered="#{formNew}" />
@@ -120,7 +120,7 @@
 					<aon:outputText value="&#160;" />
 				</aon:div>
 				<aon:selectBooleanCheckbox id="RegistryMedia_technical" styleClass="aon-margin-left"
-					value="#{to.technical}" rendered="#{formEdit}" />
+					value="#{controller.to.technical}" rendered="#{formEdit}" />
 				<f:facet name="footer">
 					<aon:selectBooleanCheckbox id="RegistryMedia_technical-New" styleClass="aon-margin-left"
 						value="#{controller.to.technical}" rendered="#{formNew}" />
