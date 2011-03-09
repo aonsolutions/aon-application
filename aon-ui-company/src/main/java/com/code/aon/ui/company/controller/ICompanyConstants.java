@@ -5,7 +5,9 @@ public interface ICompanyConstants {
 	int LOGO_MAX_SIZE = 256 * 1024;
 	
 	int IMAGE_MAX_SIZE = 1024 * 1024;
-	
+
+	String PRINCIPAL = "PRINCIPAL";
+
 	// ************************************************************
 	// MESSAGES
 	// ************************************************************
@@ -38,8 +40,6 @@ public interface ICompanyConstants {
 
 	String WORK_ACTIVITY_CONTROLLER_NAME = "workActivity";
 
-	String WORK_PLACE_CONTROLLER_NAME = "workplace";
-	
 	String COMPANY_RECORD_DATA_CONTROLLER_NAME = "companyRecordData";
 	
 	String COMPANY_ADDRESS_CONTROLLER_NAME = "companyAddress";
@@ -56,7 +56,7 @@ public interface ICompanyConstants {
 	
 	String ENTERPRISE_TREE_CONTROLLER_NAME = "enterpriseTree";
 	
-	String ENTERPRISE_WORK_PLACE_CONTROLLER_NAME = "enterpriseWorkplace";
+	String ENTERPRISE_WORK_PLACE_CONTROLLER_NAME = "enterpriseWorkPlace";
 	
 	String ENTERPRISE_ACTIVITY_CONTROLLER_NAME = "enterpriseActivity";
 	

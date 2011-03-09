@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:define name="columns">
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="WorkPlace_description" value="#{bundle.aon_description}" />
+				</f:facet>
+				<aon:outputText value="#{to.description}" 
+					rendered="#{formList}" />
+				<aon:inputText id="WorkPlace_description"  
+					value="#{controller.to.description}" rendered="#{formEdit}"
+					required="true" size="40" maxlength="64" />
+				<f:facet name="footer">
+					<aon:inputText id="WorkPlace_description-New" 
+						value="#{controller.to.description}" rendered="#{formNew}"
+						required="true" size="40" maxlength="64" />
+				</f:facet>								
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="WorkPlace_address_id" value="#{companyBundle.company_workplace_address}" />
+				</f:facet>
+				<aon:outputText value="#{to.address.shortAddress}"
+					rendered="#{formList}" />
+				<aon:selectOneMenu id="WorkPlace_address_id" 
+					value="#{controller.to.address}" rendered="#{formEdit}"
+					required="true">
+					<c:if test="#{showEnterpriseData}">
+						<f:selectItems value="#{enterprise.addresses}" />
+					</c:if>
+					<c:if test="#{!showEnterpriseData}">
+						<f:selectItems value="#{companyCollections.companyAddresses}" />
+					</c:if>
+				</aon:selectOneMenu>
+				<f:facet name="footer">
+					<aon:selectOneMenu id="WorkPlace_address_id-New"
+						value="#{controller.to.address}" rendered="#{formNew}"
+						required="true">
+						<c:if test="#{showEnterpriseData}">
+							<f:selectItems value="#{enterprise.addresses}" />
+						</c:if>
+						<c:if test="#{!showEnterpriseData}">
+							<f:selectItems value="#{companyCollections.companyAddresses}" />
+						</c:if>
+					</aon:selectOneMenu>
+				</f:facet>								
+			</aon:column>			
+			
+			<c:if test="#{showEnterpriseData}">
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText for="WorkPlace_economicAgreement" value="#{companyBundle.company_workplace_economic_agreement}" />
+					</f:facet>
+					<aon:outputText value="#{to.economicAgreement}"
+						rendered="#{formList}" />
+					<aon:selectOneMenu id="WorkPlace_economicAgreement"
+						value="#{controller.to.economicAgreement}" rendered="#{formEdit}">
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{companyCollections.economicAgreements}" />
+					</aon:selectOneMenu>	
+					<f:facet name="footer">
+						<aon:selectOneMenu id="WorkPlace_economicAgreement-New"
+							value="#{controller.to.economicAgreement}" rendered="#{formNew}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{companyCollections.economicAgreements}" />
+						</aon:selectOneMenu>	
+					</f:facet>
+				</aon:column>		
+			
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText for="WorkPlace_calendar_id" value="#{calendarBundle.aon_calendar_calendar}" />
+					</f:facet>
+					<aon:outputText value="#{to.calendar.description}"
+						rendered="#{formList}" />
+					<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
+						<aon:lookupInputText id="WorkPlace_calendar_id"
+							lookup="#{calendarLookup}"
+							reRender="WorkPlace_calendar_description"
+							value="#{controller.to.calendar.id}" size="5" />
+						<aon:lookupButton 
+							windowTitle="#{calendarBundle.aon_calendar_selection}"
+							selectReRender="WorkPlace_calendar_id, WorkPlace_calendar_description"
+							lookup="#{calendarLookup}" minHeight="460" minWidth="650"
+							actionType="search"
+							property="#{controller.to.calendar}">
+						</aon:lookupButton>	
+						<aon:inputText id="WorkPlace_calendar_description"
+							value="#{controller.to.calendar.description}"
+							size="50" disabled="true" />	
+					</aon:div>	
+					<f:facet name="footer">
+						<aon:div styleClass="aon-lookup" rendered="#{formNew}">
+							<aon:lookupInputText id="WorkPlace_calendar_id-New"
+								lookup="#{calendarLookup}"
+								reRender="WorkPlace_calendar_description-New"
+								value="#{workplace.to.calendar.id}" size="5" />
+							<aon:lookupButton 
+								windowTitle="#{calendarBundle.aon_calendar_selection}"
+								selectReRender="WorkPlace_calendar_id-New, WorkPlace_calendar_description-New"
+								lookup="#{calendarLookup}" minHeight="460" minWidth="650"
+								actionType="search"
+								property="#{workplace.to.calendar}">
+							</aon:lookupButton>	
+							<aon:inputText id="WorkPlace_calendar_description-New"
+								value="#{workplace.to.calendar.description}"
+								size="50" disabled="true" />	
+						</aon:div>
+					</f:facet>
+				</aon:column>
+			</c:if>
+			
+			<aon:column styleClass="aon-width-100">
+				<f:facet name="header">
+					<aon:outputLabel for="WorkPlace_active" value="#{bundle.aon_active}" />
+				</f:facet>
+				<aon:div rendered="#{formList}" styleClass="#{to.active?'aon-icon-checked':'aon-icon-check'}">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:selectBooleanCheckbox id="WorkPlace_active" styleClass="aon-margin-left"
+					value="#{controller.to.active}" rendered="#{formEdit}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="WorkPlace_active-New" styleClass="aon-margin-left"
+						value="#{controller.to.active}" rendered="#{formNew}" />
+				</f:facet>
+			</aon:column>
+
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

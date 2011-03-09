@@ -141,11 +141,16 @@
 	 		<c:if test="#{aonConfiguration.bean.company.showPanelTabSet}">
 				<aon:div styleClass="aon-scroll-area">
 					<aon:panelTabSet>
-	
 						<aon:panelTab label="#{registryBundle.registry_addresses}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="skipTypeColumn" value="true" />
 								<ui:param name="controller" value="#{companyAddress}" />
+							</ui:include>
+						</aon:panelTab>
+						<aon:panelTab label="#{companyBundle.company_workplace}">
+							<ui:include	src="/com/code/aon/ui/company/facelet/workplace/tab_grid.xhtml" >
+								<ui:param name="controller" value="#{companyWorkPlace}" />
+								<ui:param name="showEnterpriseData" value="#{false}" />
 							</ui:include>
 						</aon:panelTab>
 						<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">

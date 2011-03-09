@@ -53,11 +53,10 @@ public class CompanyCollectionsController {
 		return enterpriseActivityTypes;
 	}	
 	
-	@SuppressWarnings("unchecked")
     public List<SelectItem> getCompanyAddresses() throws ManagerBeanException {
     	LinkedList<SelectItem> addresses = new LinkedList<SelectItem>();
     	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-    	Iterator iterator = companyBean.getList(null).iterator();
+    	Iterator<?> iterator = companyBean.getList(null).iterator();
     	if(iterator.hasNext()) {
     		Company company = (Company)iterator.next();
     		IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
@@ -73,11 +72,10 @@ public class CompanyCollectionsController {
     	return addresses;
     }
 
-	@SuppressWarnings("unchecked")
     public List<SelectItem> getCompanyBanks() throws ManagerBeanException {
     	LinkedList<SelectItem> banks = new LinkedList<SelectItem>();
     	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-    	Iterator iterator = companyBean.getList(null).iterator();
+    	Iterator<?> iterator = companyBean.getList(null).iterator();
     	if(iterator.hasNext()) {
     		Company company = (Company)iterator.next();
     		IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
@@ -102,13 +100,20 @@ public class CompanyCollectionsController {
 
 	public List<SelectItem> getWorkPlaces() throws ManagerBeanException {
 		List<SelectItem> workPlaces = new LinkedList<SelectItem>();
-		IManagerBean workplaceBean = BeanManager.getManagerBean(WorkPlace.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(workplaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ID));
-		List<ITransferObject> list = workplaceBean.getList(criteria);
-		for (ITransferObject to : list) {
-			WorkPlace workPlace = (WorkPlace)to;
-			workPlaces.add(new SelectItem(workPlace, workPlace.getDescription()));
+    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+    	Iterator<?> iterator = companyBean.getList(null).iterator();
+    	if(iterator.hasNext()) {
+    		Company company = (Company)iterator.next();
+    		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
+    		Criteria criteria = new Criteria();
+    		criteria.addEqualExpression(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), company.getId());
+    		criteria.addEqualExpression(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ACTIVE), true);
+    		criteria.addOrder(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ID));
+    		List<ITransferObject> list = workPlaceBean.getList(criteria);
+    		for (ITransferObject to : list) {
+    			WorkPlace workPlace = (WorkPlace)to;
+    			workPlaces.add(new SelectItem(workPlace, workPlace.getDescription()));
+    		}
 		}
 		return workPlaces;
 	}	
