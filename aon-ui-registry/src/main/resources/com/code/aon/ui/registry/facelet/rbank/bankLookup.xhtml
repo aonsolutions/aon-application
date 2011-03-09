@@ -12,17 +12,18 @@
 	<aon:div styleClass="aon-lookup" rendered="#{renderBankLookup}" >
 		<a4j:region>
 			<aon:lookupInputText id="RegistryBank_code#{bankSuffix}"
-				label="#{configBundle.config_bank}"
+				value="#{bankTo.code}" size="5" 
 				property="#{bankTo}" lookup="#{bankLookup}"
 				reRender="RegistryBank_name#{bankSuffix}" 
-				value="#{bankTo.code}" size="5" required="true">
+				ajaxSingle="true" required="true">
 				<aon:joinProperty alias="Bank_code" value="#{bankTo.code}" />
 			</aon:lookupInputText>
 			<aon:lookupButton 
 				windowTitle="#{configBundle.config_bank_selection}"
+				minHeight="460" minWidth="650"
+				property="#{bankTo}" lookup="#{bankLookup}"
 				selectReRender="RegistryBank_code#{bankSuffix},RegistryBank_name#{bankSuffix}"
-				actionType="search" lookup="#{bankLookup}" minHeight="460" minWidth="650"
-				property="#{bankTo}">
+				actionType="search">
 			</aon:lookupButton>
 			<aon:inputText id="RegistryBank_name#{bankSuffix}"
 				value="#{bankTo.name}"
