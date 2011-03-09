@@ -1,11 +1,13 @@
 package com.code.aon.config;
 
 import java.io.Serializable;
+import java.text.MessageFormat;
 
 public class BankAccount implements Serializable {
 
 	private static final long serialVersionUID = -3424507856145743377L;
 	private static final int[] DIGITS = new int[] { 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 };
+	private static final String BANK_ACCOUNT_MASK = "{0}.****.{1}*.******{2}";
 	private String entity;
 	private String office;
 	private String control;
@@ -48,6 +50,10 @@ public class BankAccount implements Serializable {
 			return getEntity() + '.' + getOffice() + '.' + getControl() + '.' + getAccount();			
 		}
 		return "";
+	}
+	
+	public String getMaskedBankAccount(){
+		return MessageFormat.format(BANK_ACCOUNT_MASK, getEntity(), getControl().substring(0,1), getAccount().substring(6,getAccount().length()));
 	}
 
 	public String getValue() {
