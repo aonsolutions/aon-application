@@ -8,7 +8,7 @@ public interface IWebMailConstants {
 	// NAVIGATION
 	// ************************************************************
 	String NAVIGATION_LOGIN = "login"; 
-	String NAVIGATION_FOLDER = "folder"; 
+	String NAVIGATION_FOLDER = "home"; 
 	String NAVIGATION_MESSAGE = "message";
 	String NAVIGATION_MESSAGE_NEW = "messageNew";
 	String NAVIGATION_SEARCH = "messageSearch"; 

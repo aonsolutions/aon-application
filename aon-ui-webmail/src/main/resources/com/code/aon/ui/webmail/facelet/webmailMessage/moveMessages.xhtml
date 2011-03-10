@@ -31,7 +31,7 @@
 				var="item" nodeFace="#{item.folderTypeName}">
 				<ui:decorate template="/com/code/aon/ui/webmail/facelet/webmailTree/treeNodes.xhtml" >
 					<ui:define name="nodeContent">
-						<aon:commandLink value="#{item.name}" action="folder">
+						<aon:commandLink value="#{item.name}" action="home">
 							<rich:componentControl for="msgMoveModalPanel" operation="hide"
 								event="onclick" />
 						</aon:commandLink>
