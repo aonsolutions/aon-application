@@ -13,7 +13,7 @@
 	<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
 	<field name="dueDate" class="java.util.Date"/>
 	<field name="amount" class="java.lang.Double"/>
-	<field name="maskedBankAccount" class="java.lang.String"/>
+	<field name="negotiableDocument" class="java.lang.Boolean"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -131,7 +131,9 @@
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{maskedBankAccount}
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{bankAccount}!=null && !$F{bankAccount}.toString().isEmpty())?
+($F{negotiableDocument}?$F{bankAccount}.getMaskedBankAccount():$F{bankAccount}.toString()):
+("")
 ]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">

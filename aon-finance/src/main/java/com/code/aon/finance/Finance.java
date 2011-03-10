@@ -283,14 +283,8 @@ public class Finance implements ITransferObject, IBankAccountContainer, IConfide
 	}
 
 	@Transient
-	public String getMaskedBankAccount(){
-		if(getBankAccount()!=null && !getBankAccount().toString().isEmpty()){
-			if(getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT){
-				return getBankAccount().getMaskedBankAccount();
-			}
-			return getBankAccount().toString();
-		} 
-		return "";
+	public boolean isNegotiableDocument(){
+		return getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT;
 	}
 
 	public boolean equals(Object obj) {
