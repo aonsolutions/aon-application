@@ -12,6 +12,7 @@ public enum ContractVariables implements IResourceable{
 	HOLIDAYS("DIAS_VACACIONES"),
 	WORKED_DAYS("DIAS_TRABAJADOS"),
 	ACTUAL_DAYS("DIAS_EFECTIVOS"),
+	LEAVE_DAYS("DIAS_DE_BAJA"),
 	SPECIAL_DAYS("DIAS_ESPECIALES"),
 	SENIOR_BASE("BASE_ANTIGUEDAD"),
 	
@@ -36,7 +37,9 @@ public enum ContractVariables implements IResourceable{
 	IRPF_PERCENT("PORCENTAJE_IRPF"),
 	QUOTE_GROUP("GRUPO_COTIZACION"),
 	TC2("TC2"),
-	CATEGORY("CATEGORIA");
+	CATEGORY("CATEGORIA"),
+	
+	INDEFINITE("INDEFINIDO");
 	
 	private final String name;
 	

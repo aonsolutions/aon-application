@@ -23,6 +23,7 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
@@ -97,6 +98,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			ctx.getExpressionContext();
 		try {
 			
+			double itBase = 0 ;
+
 			double irpfBase = 0 ;
 
 			double cgcBase = 0 ;
@@ -108,10 +111,12 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			double renumeration = 0;
 
 			double totalPayment = 0;
+			double proExtBase = 0;
 			
 			Date start  = ctx.getStartDate();
 			Date end  = ctx.getEndDate();
-			Month issueMonth = getMonth(ctx.getIssueDate());
+			Month issueMonth = getMonth(ctx.getStartDate());
+			
 			
 			SSRegimeType ssRegimen = ctx.getSSRegime();
 			
@@ -126,15 +131,15 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 					expressionContext.addExpression(contractPayment, paymentStart, paymentEnd, Double.class ) ;
 				
 				Double amount = sum(amounts);
-				// TODO: ¿ Deberiamos crear un contexto nuevo ?
-				expressionContext.addVariable(AMOUNT, amount, paymentStart, paymentEnd );
+
 				
 				PaymentType type = contractPayment.getType();
 				
+				Double quote = 0.00;
 				if ( ssRegimen != SSRegimeType.SELF_EMPLOYED ) {
 					String quoteExpr = contractPayment.getQuoteExpression();
 					List<ITimedObject<Double>> quotes = expressionContext.eval(quoteExpr, paymentStart, paymentEnd, Double.class) ;
-					Double quote = sum(quotes);
+					quote = sum(quotes);
 					if ( type == PaymentType.STRUCTURAL_HOURS ){
 						structuralBase += quote;
 					}else if ( type == PaymentType.NON_STRUCTURAL_HOURS){
@@ -146,7 +151,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				} // TODO : Esto es muy primitivo, demasiado if 
 				
 				Month month = contractPayment.getMonth();
-				if ( month != null && month != issueMonth ) {
+				if ( contractPayment.getSalaryType() != SalaryType.SALARY
+						|| (  month != null && month != issueMonth ) ) {
+					proExtBase += quote;
 					continue;
 				}
 					
@@ -154,12 +161,18 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				if ( type != PaymentType.SALARY_IN_KIND ) {
 					totalPayment += amount;
 				}
+				else {
+					
+				}
 				
 				String irpfExpr = contractPayment.getIrpfExpression();
 				List<ITimedObject<Double>> irpfs = 
 					expressionContext.eval(irpfExpr, paymentStart, paymentEnd, Double.class);
 				double irpf = sum(irpfs);
 				irpfBase += irpf;
+				
+				if ( amount == 0 ) 
+					continue;
 
 				String concept = contractPayment.getName(); 
 				String description  = null;
@@ -177,10 +190,13 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			salaryBuilder.setRemuneration(renumeration);
 			salaryBuilder.setTotalPayment(totalPayment);
 
+			salaryBuilder.setItBase(itBase); 
+
 			salaryBuilder.setIrpfBase(irpfBase); 
 			expressionContext.addVariable(IRPF_BASE, irpfBase, start, end );
 
 			salaryBuilder.setRawCgcBase(cgcBase); 
+			salaryBuilder.setCgcBase(cgcBase); 
 			
 			expressionContext.addVariable(CGC_BASE, cgcBase, start, end );
 			
@@ -190,8 +206,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			salaryBuilder.setNonHExtraBase(nonStructuralBase); 
 			expressionContext.addVariable(NON_STRUCTURAL_OVERTIME_BASE, nonStructuralBase, start, end );
 			
+			salaryBuilder.setHExtraBase(structuralBase); 
 			expressionContext.addVariable(STRUCTURAL_OVERTIME_BASE, structuralBase, start, end );
-
+			
+			salaryBuilder.setProExtBase(proExtBase);
 
 			return totalPayment ;
 		}catch ( ExpressionException e ) {
@@ -205,15 +223,19 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	throws SalaryException {
 		try {
 			double totalDeduction = 0; 
-			
+			double ssContributions = 0;
 			
 			Collection<IContractDeduction> contractDeductions = 
 				ctx.getContractDeductions();
 			ExpressionContext expressionContext = ctx.getExpressionContext();
 			for (IContractDeduction contractDeduction : contractDeductions) {
 					totalDeduction += resolveDeduction(expressionContext, contractDeduction);
+					if ( contractDeduction.getType().isSsDeduction() ) {
+						ssContributions += totalDeduction;
+					}
 			}
-			//salaryBuilder.setSocialSecurityContributions(ssContributions);
+			
+			salaryBuilder.setSocialSecurityContributions(ssContributions);
 		
 			salaryBuilder.setTotalDeduction( totalDeduction );
 			return totalDeduction;
@@ -227,7 +249,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	private Month getMonth(Date date ) {
 		if ( date == null )
 			return null;
-		int monthValue = CommonUtil.getMonth(date); 
+		int monthValue = CommonUtil.getMonth(date);
 		return Month.getMonthByValue(monthValue);
 	}
 	
@@ -241,18 +263,27 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		Date end = d.getEndDate();
 		List<ITimedObject<Double>> amounts =  
 			ctx.addExpression(d, start, end, Double.class);
-		Double amount = sum(amounts);
-		String description  = null;
-		try  {
-			Object result = ctx.eval(d.getDescription(), start, end);
-			description = result != null ? result.toString() : null;
-		} catch (ExpressionException e ) {
-			description = d.getDescription();
+		
+		Double total = 0.00;
+		
+		for (ITimedObject<Double> amount : amounts) {
+			Double value = amount.getValue();
+			if ( value == 0 ) 
+				continue;
+			String description  = null;
+			
+			try  {
+				Period period = amount.getPeriod();
+				List<ITimedObject<String>> result = ctx.eval(d.getDescription(), period.getStart(), period.getEnd(), String.class);
+				description = result.isEmpty() ? null : result.get(0).getValue();
+			} catch (ExpressionException e ) {
+				description = d.getDescription();
+			}
+			salaryBuilder.addDeduction(type, concept, value, description, expression);
+			total += value;
 		}
 		
-		salaryBuilder.addDeduction(type, concept, amount, description, expression);
-		
-		return amount ;
+		return total ;
 	}
 	
 	private static Double sum(List<ITimedObject<Double>> list) {
@@ -262,4 +293,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		}
 		return sum;
 	}
+	
+	
 }

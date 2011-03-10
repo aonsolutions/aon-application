@@ -10,34 +10,26 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
+import com.esferalia.aon.master.sql.SQLConstants;
+import com.esferalia.aon.master.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
-import com.esferalia.aon.payroll.calculator.test.ContractSalaryCalculatorTestCase;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
-public class SalaryBuilderTester implements ISalaryBuilder {
 
-	private static final String CGC_BASE 		= "cgc_base";
-	private static final String CGP_BASE 		= "cgp_base";
-	private static final String IRPF_BASE 		= "irpf_base";
-	private static final String RAW_CGC_BASE 	= "raw_cgc_base";
-	private static final String TOTAL_LIQUID 	= "total_liquid";
-	private static final String TOTAL_PAYMENT 	= "total_payment";
-	private static final String TOTAL_DEDUCTION = "total_deduction";
-	
+
+public class SQLSalaryBuilderTester implements ISalaryBuilder {
+
 	private static final String SALARY_SQL = "SELECT *"
-									+ " FROM salary"
-									+ " WHERE contract = ? "
-									+ " AND start_date = ? "
-									+ " AND end_date = ? ";
+									+ " FROM " + SQLConstants.SALARY
+									+ " WHERE " + SalaryColumns.CONTRACT + " = ? "
+									+ " AND " + SalaryColumns.START_DATE + "  = ? "
+									+ " AND " + SalaryColumns.END_DATE + " = ? ";
 	
 	
 	private Connection connection;
@@ -54,7 +46,7 @@ public class SalaryBuilderTester implements ISalaryBuilder {
 	
 	private String employeeDocument;
 	
-	public SalaryBuilderTester(Connection connection) 
+	public SQLSalaryBuilderTester(Connection connection) 
 	throws SQLException{
 		this.connection = connection;
 		this.salaryStmt = 
@@ -174,18 +166,18 @@ public class SalaryBuilderTester implements ISalaryBuilder {
 
 	@Override
 	public void setCgcBase(Double cgcBase) {
-		addField(CGC_BASE, cgcBase);
+		addField(SalaryColumns.CGC_BASE, cgcBase);
 	}
 
 	@Override
 	public void setRawCgcBase(Double rawCgcBase) {
-		addField(RAW_CGC_BASE, rawCgcBase);
+		addField(SalaryColumns.RAW_CGC_BASE, rawCgcBase);
 	}
 
 
 	@Override
 	public void setCgpBase(Double professionalBase) {
-		addField(CGP_BASE, professionalBase);
+		addField(SalaryColumns.CGP_BASE, professionalBase);
 	}
 
 	@Override
@@ -201,7 +193,7 @@ public class SalaryBuilderTester implements ISalaryBuilder {
 
 	@Override
 	public void setIrpfBase(Double irpfBase) {
-		addField(IRPF_BASE, irpfBase);
+		addField(SalaryColumns.IRPF_BASE, irpfBase);
 	}
 
 	@Override
@@ -224,12 +216,12 @@ public class SalaryBuilderTester implements ISalaryBuilder {
 
 	@Override
 	public void setTotalLiquid(Double totalLiquid) {
-		addField(TOTAL_LIQUID, totalLiquid);
+		addField(SalaryColumns.TOTAL_LIQUID, totalLiquid);
 	}
 
 	@Override
 	public void setTotalPayment(Double totalPayment) {
-		addField(TOTAL_PAYMENT, totalPayment);
+		addField(SalaryColumns.TOTAL_PAYMENT, totalPayment);
 	}
 
 	@Override
@@ -272,32 +264,16 @@ public class SalaryBuilderTester implements ISalaryBuilder {
 				return;
 			}
 			
-			assertDoubleField(TOTAL_PAYMENT, rs);
-			assertDoubleField(IRPF_BASE, rs);
-			assertDoubleField(RAW_CGC_BASE, rs); 
+			assertDoubleField(SalaryColumns.TOTAL_PAYMENT, rs);
+			assertDoubleField(SalaryColumns.IRPF_BASE, rs);
+			assertDoubleField(SalaryColumns.RAW_CGC_BASE, rs); 
 
-			//double sqlTotalLiquid = rs.getDouble("total_liquid");
-			//assertEquals(sqlTotalLiquid, this.totalLiquid, 0.00);
-		}
-		catch ( AssertionError e ) {
-			ContractSalaryCalculatorTestCase.error(e.getMessage() );			
 		}
 		finally {
 			if ( rs != null ){
 				rs.close();
 			}
 		}
-	}
-	
-	private void assertField(String field, ResultSet rs  ) 
-	throws SQLException {
-		
-		Object expected = rs.getObject(field);
-		Object  actual = fields.get(field);
-		String msg = 
-			String.format("[%s]:%s", 
-					employeeDocument, field );
-		assertEquals(msg, expected, actual);
 	}
 
 	private void assertDoubleField(String field, ResultSet rs  ) 

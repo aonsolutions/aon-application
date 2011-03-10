@@ -6,8 +6,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
+import com.esferalia.aon.payroll.calculator.AbstractIterator;
 
-public abstract class SQLCollection <E>  implements Collection<E>, Iterator<E> {
+
+public abstract class SQLCollection <E>  extends AbstractIterator<E> 
+{
 	
 	protected SQLCollection() {
 	}
@@ -16,70 +19,6 @@ public abstract class SQLCollection <E>  implements Collection<E>, Iterator<E> {
 		this.resultSet = resultSet;
 	}
 	
-	@Override
-	public boolean add(E e) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean addAll(Collection<? extends E> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void clear() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean contains(Object o) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean containsAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean isEmpty() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Iterator<E> iterator() {
-		return this;
-	}
-
-	@Override
-	public boolean remove(Object o) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean removeAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean retainAll(Collection<?> c) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public int size() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Object[] toArray() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public <T> T[] toArray(T[] a) {
-		throw new UnsupportedOperationException();
-	}
 
 	//-------------------------------------------
 	// Iterator<IContractPayment>
@@ -97,11 +36,6 @@ public abstract class SQLCollection <E>  implements Collection<E>, Iterator<E> {
 	}
 
 
-	@Override
-	public void remove() {
-		throw new UnsupportedOperationException();
-	}
-	
 	public ResultSet getResultSet() {
 		return resultSet;
 	}

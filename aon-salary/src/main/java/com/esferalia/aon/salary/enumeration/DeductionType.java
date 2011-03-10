@@ -8,27 +8,34 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum DeductionType implements IResourceable {
 
 	
-	COMMON_CONTINGENCY,
-	PROFESSIONAL_CONTINGENCY,
-	UNEMPLOYMENT,
-	JOB_TRAINING,
-	STRUCTURAL_OVERTIME,
-	NON_STRUCTURAL_OVERTIME,
-	IRPF,
-	ADVANCE_PAYMENT,
-	IN_KIND,
-	OTHER
+	COMMON_CONTINGENCY(true),
+	PROFESSIONAL_CONTINGENCY(true),
+	UNEMPLOYMENT(true),
+	JOB_TRAINING(true),
+	STRUCTURAL_OVERTIME(true),
+	NON_STRUCTURAL_OVERTIME(true),
+	IRPF(false),
+	ADVANCE_PAYMENT(false),
+	IN_KIND(false),
+	OTHER(false)
 	;
 	
 	
+	private boolean ssDeduction = false;
 	
+	
+	private DeductionType(boolean ssDeduction) {
+		this.ssDeduction = ssDeduction;
+	}
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.salary.i18n.messages";
     
     /** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_deduction_type_";
-
+    
+    
+    
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
      * for the locale.
@@ -41,5 +48,11 @@ public enum DeductionType implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+
+
+
+	public boolean isSsDeduction() {
+		return ssDeduction;
+	}
 	
 }

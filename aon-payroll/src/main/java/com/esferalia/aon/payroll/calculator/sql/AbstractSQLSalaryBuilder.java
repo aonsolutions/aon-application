@@ -1,0 +1,220 @@
+package com.esferalia.aon.payroll.calculator.sql;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.esferalia.aon.master.sql.AbstractSQL;
+import com.esferalia.aon.master.sql.BufferedSQLWriter;
+import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.ISalaryBuilder;
+import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.SalaryType;
+
+public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
+
+	protected AbstractSQL.Salary salary;
+	protected List<AbstractSQL.SalaryPayment> salaryPayments;
+	protected List<AbstractSQL.SalaryDeduction> salaryDeductions;
+	
+	public AbstractSQLSalaryBuilder() {
+		salaryPayments = 
+			new LinkedList<AbstractSQL.SalaryPayment>();
+		salaryDeductions = 
+			new LinkedList<AbstractSQL.SalaryDeduction>();
+	}
+	
+	@Override
+	public void createNewSalary() {
+		salary = null;
+		salaryPayments.clear();
+		salaryDeductions.clear();
+		
+		salary = new AbstractSQL.Salary();
+	}
+
+	@Override
+	public void setContract(Object contract) {
+		SQLSalaryProxy salaryProxy = 
+			( SQLSalaryProxy) contract;
+		salary.setContract(salaryProxy.getId());
+	}
+
+	@Override
+	public void setCcc(String ccc) {
+		salary.setCcc(ccc);
+	}
+
+	@Override
+	public void setEnterpriseName(String enterpriseName) {
+		salary.setEnterpriseName(enterpriseName);
+	}
+
+	@Override
+	public void setEnterpriseAddress(String enterpriseAddress) {
+		salary.setEnterpriseAddress(enterpriseAddress);
+	}
+
+	@Override
+	public void setEnterpriseDocument(String enterpriseDocument) {
+		salary.setEnterpriseDocument(enterpriseDocument);
+	}
+
+	@Override
+	public void setRegistration(Integer registration) {
+		salary.setRegistration(registration);
+	}
+
+	@Override
+	public void setEmployeeName(String employeeName) {
+		salary.setEmployeeName(employeeName);
+	}
+
+	@Override
+	public void setEmployeeDocument(String employeeDocument) {
+		salary.setEmployeeDocument(employeeDocument);
+	}
+
+	@Override
+	public void setSocialSecurityNumber(String socialSecurityNumber) {
+		salary.setSocialSecurityNumber(socialSecurityNumber);
+	}
+
+	@Override
+	public void setCategory(String category) {
+		salary.setCategory(category);
+	}
+
+	@Override
+	public void setQuoteGroup(String quoteGroup) {
+		salary.setQuoteGroup(quoteGroup);
+	}
+
+	@Override
+	public void setSeniorityDate(Date seniorityDate) {
+		salary.setSeniorityDate(seniorityDate);
+		
+	}
+
+	@Override
+	public void setType(SalaryType type) {
+		salary.setType(type);
+	}
+
+	@Override
+	public void setIssueDate(Date issueDate) {
+		salary.setIssueDate(issueDate);
+	}
+
+	@Override
+	public void setStartDate(Date startDate) {
+		salary.setStartDate(startDate);
+	}
+
+	@Override
+	public void setEndDate(Date endDate) {
+		salary.setEndDate(endDate);
+	}
+
+	@Override
+	public void setTimeUnits(Integer timeUnits) {
+		salary.setTimeUnits(timeUnits);
+	}
+
+	@Override
+	public void setItBase(Double itBase) {
+		salary.setItBase(itBase);
+	}
+
+	@Override
+	public void setRawCgcBase(Double rawCgcBase) {
+		salary.setRawCgcBase(rawCgcBase);
+	}
+
+	@Override
+	public void setCgcBase(Double cgcBase) {
+		salary.setCgcBase(cgcBase);
+	}
+
+	@Override
+	public void setCgpBase(Double cgpBase) {
+		salary.setCgpBase(cgpBase);
+	}
+
+	@Override
+	public void setRemuneration(Double remuneration) {
+		salary.setRemuneration(remuneration);
+	}
+
+	@Override
+	public void setProExtBase(Double proExtBase) {
+		salary.setProExtBase(proExtBase);
+	}
+
+	@Override
+	public void setIrpfBase(Double irpfBase) {
+		salary.setIrpfBase(irpfBase);
+	}
+
+	@Override
+	public void setHExtraBase(Double hExtraBase) {
+		salary.setHextraBase(hExtraBase);
+	}
+
+	@Override
+	public void setNonHExtraBase(Double nonHExtraBase) {
+		salary.setNonHextraBase(nonHExtraBase);
+	}
+
+	@Override
+	public void setTotalLiquid(Double totalLiquid) {
+		salary.setTotalLiquid(totalLiquid);
+	}
+
+	@Override
+	public void setTotalPayment(Double totalPayment) {
+		salary.setTotalPayment(totalPayment);
+	}
+
+	@Override
+	public void setTotalDeduction(Double totalDeduction) {
+		salary.setTotalDeduction(totalDeduction);
+	}
+
+	@Override
+	public void setSocialSecurityContributions(
+			Double socialSecurityContributions) {
+		salary.setSocialSecurityContributions(socialSecurityContributions);
+	}
+
+	@Override
+	public void addPayment(PaymentType type, String concept, Double amount,
+			String description, String expression) {
+		AbstractSQL.SalaryPayment salaryPayment= 
+			new AbstractSQL.SalaryPayment();
+		salaryPayment.setType(type);
+		salaryPayment.setAmount(amount);
+		salaryPayment.setExpression(expression);
+		salaryPayment.setDescription(description);
+
+		salaryPayments.add(salaryPayment);
+	}
+
+	@Override
+	public void addDeduction(DeductionType type, String concept, Double amount,
+			String description, String expression) {
+		AbstractSQL.SalaryDeduction salaryDeduction = 
+			new AbstractSQL.SalaryDeduction();
+		salaryDeduction.setType(type);
+		salaryDeduction.setAmount(amount);
+		salaryDeduction.setExpression(expression);
+		salaryDeduction.setDescription(description);
+		
+		salaryDeductions.add(salaryDeduction);
+	}
+	
+
+}

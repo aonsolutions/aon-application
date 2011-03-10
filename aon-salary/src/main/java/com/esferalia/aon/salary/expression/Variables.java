@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.mvel2.UnresolveablePropertyException;
+
 
 public class Variables implements Comparator<ITimedObject<?>> {
 
@@ -175,10 +177,10 @@ public class Variables implements Comparator<ITimedObject<?>> {
 
 		for (String var : vars) {
 			List<Period> varPeriods = getPeriods(var);
-			if ( varPeriods != null ) {
-				//throw new UnresolveablePropertyException(var);
-				periods = Period.intersect(periods, varPeriods);
+			if ( varPeriods == null ) {
+				continue;
 			}
+			periods = Period.intersect(periods, varPeriods);
 		}
 		
 		for (Period period : periods) {

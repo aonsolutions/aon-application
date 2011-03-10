@@ -74,6 +74,7 @@ public class DBMojo extends AbstractMojo implements FilenameFilter{
     	Writer out = null;
     	Reader in = null;
     	Connection connection = null;
+    	
 		// first of all load JDBC driver
         try {
 			Class.forName("org.gjt.mm.mysql.Driver");
@@ -92,8 +93,6 @@ public class DBMojo extends AbstractMojo implements FilenameFilter{
 	        DatabaseMetaData dbMetaData = connection.getMetaData(); 
 			DBContext dbContext = new DBContext(dbMetaData);
 			
-	System.out.println(vmDir.getAbsolutePath());
-
 			File vms [] = vmDir.listFiles(this);
 			
 	        for (File  vm : vms) {

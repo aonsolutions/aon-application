@@ -35,15 +35,16 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorConte
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.Period;
 
 /**
  * @author rtrepiana
  *
  */
-public class ContractSalaryCalculatorTestCase {
+public class ContractSalaryCalculatorTest {
 	
 	final static Logger LOGGER = 
-		LoggerFactory.getLogger(ContractSalaryCalculatorTestCase.class);
+		LoggerFactory.getLogger(ContractSalaryCalculatorTest.class);
 	
 	/**
 	 * @throws java.lang.Exception
@@ -76,7 +77,7 @@ public class ContractSalaryCalculatorTestCase {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		String url = "jdbc:mysql://volga:3306/payroll-esferalia-org?autoReconnect=true";
+		String url = "jdbc:mysql://localhost:3306/payroll-esferalia-org?autoReconnect=true";
 		String usr = "dbuser"; 
 		String psw = "serubd2000";
 		Class.forName("com.mysql.jdbc.Driver");
@@ -97,30 +98,24 @@ public class ContractSalaryCalculatorTestCase {
 	@Test
 	public void testCalculate() throws SQLException, ExpressionException, SalaryException, ParseException {
 		
-		SalaryBuilderTester salaryBuilderTester = 
-			new SalaryBuilderTester(connection);
+		SQLSalaryBuilderTester salaryBuilderTester = 
+			new SQLSalaryBuilderTester(connection);
 		
 		ContractSalaryCalculator calculator = 
 			new ContractSalaryCalculator();
 		calculator.setSalaryBuilder(salaryBuilderTester);
 		
-		//Date startAndEndDate [] = getStartAndEndDate();
+		Period period = getStartAndEndDate();
 		
-		SimpleDateFormat dateFormat = 
-			new SimpleDateFormat("dd/MM/yyyy");
-		
-		Date startDate =  dateFormat.parse("01/10/2010");// startAndEndDate[0];
-		Date endDate = dateFormat.parse("31/10/2010"); //startAndEndDate[1];
-		
-		info("testCalculate {}:{}",startDate, endDate);
+		info("testCalculate {}:{}",period.getStart(), period.getEnd());
 		
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression("person_registry.document", "50931576P");
+		criteria.addEqualExpression("person_registry.document", "76227745H");
 		
 		SQLContractSalaryCalculatorContext sqlCtx = 
 			new SQLContractSalaryCalculatorContext(connection, 
-					startDate, 
-					endDate,
+					period.getStart(), 
+					period.getEnd(),
 					Calendar.getInstance().getTime(),
 					criteria );
 		
@@ -134,13 +129,13 @@ public class ContractSalaryCalculatorTestCase {
 						sqlCtx.getEnterpriseName(),
 						sqlCtx.getEmployeeName());
 				salaryBuilderTester.test();
-			}catch ( SalaryException e ) {
+			}catch ( Throwable t ) {
 				error("{} [{}] {}, {} : {}",
 						count,
 						sqlCtx.getEmployeeDocument(),
 						sqlCtx.getEnterpriseName(),
 						sqlCtx.getEmployeeName(),
-						e.getLocalizedMessage());
+						t.getLocalizedMessage());
 			}
 	
 		}
@@ -149,7 +144,7 @@ public class ContractSalaryCalculatorTestCase {
 	}
 	
 	
-	private Date [] getStartAndEndDate() 
+	private Period getStartAndEndDate() 
 	throws SQLException {
 		
 		ResultSet rs = null;
@@ -171,11 +166,7 @@ public class ContractSalaryCalculatorTestCase {
 				rs.next();
 			} while ( start++ < end );
 			
-			Date startAndEndDates[]={
-				rs.getDate("start_date"),	
-				rs.getDate("end_date")	
-			};
-			return startAndEndDates;	
+			return new Period(rs.getDate("start_date"), rs.getDate("end_date"));	
 		} finally {
 			if ( rs != null )
 				rs.close();

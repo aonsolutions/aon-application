@@ -83,7 +83,7 @@ public class Period implements Comparable<Period>{
 		List<Period> periods = new LinkedList<Period>();
 		
 		Iterator<Period> aIterator = a.iterator();
-		Iterator<Period> bIterator = a.iterator();
+		Iterator<Period> bIterator = b.iterator();
 		
 		Period aPeriod = null;
 		Period bPeriod = null;

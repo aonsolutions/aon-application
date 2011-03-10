@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,11 +19,13 @@ import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.mvel2.UnresolveablePropertyException;
 
+import com.code.aon.common.util.CommonUtil;
+
 public class ExpressionContext {
 	
 	
 	Variables variables;
-	
+
 	public ExpressionContext() {
 		variables = new Variables();
 	}
@@ -102,8 +105,8 @@ public class ExpressionContext {
 	//
 	// ------------------------------------------
 	
-	public double extra (Double a, Double b) {
-		return a > b ? a -b : 0 ;
+	public Double ROUND(Double value) {
+		return CommonUtil.round(value);
 	}
 	
 	
@@ -111,7 +114,6 @@ public class ExpressionContext {
 	//
 	// ------------------------------------------
 	
-
 	
 	
 }
