@@ -67,11 +67,12 @@ public class SalaryLauncher {
 
 	private int execute(SalaryLauncherParams parameters) throws SalaryException {
 		try {
-			SQLSalaryBuilder salaryBuilder = new SQLSalaryBuilder();
 
 			String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
 			Connection connection = HibernateUtil.getSQLConnection(sessionFactory);
 //			SalaryBuilderTester salaryBuilder = new SalaryBuilderTester(connection);
+
+			SQLSalaryBuilder salaryBuilder = new SQLSalaryBuilder(connection);
 			
 			ContractSalaryCalculator calculator = new ContractSalaryCalculator();
 			calculator.setSalaryBuilder(salaryBuilder);
@@ -115,7 +116,7 @@ public class SalaryLauncher {
 								sqlCtx.getEnterpriseName(),
 								sqlCtx.getEmployeeName()});
 					}
-//					salaryBuilder.test();
+					salaryBuilder.insertSalary();
 				}catch ( SalaryException e ) {
 					LOGGER.error("{} [{}] {}, {} : {}",
 							new Object[]{
@@ -126,6 +127,7 @@ public class SalaryLauncher {
 							e.getLocalizedMessage()});
 				}
 			}
+			salaryBuilder.commit();
 			LOGGER.info("salarys {} ",count);
 			return count;
 		} catch (ExpressionException e) {
