@@ -17,15 +17,9 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import java.util.List;
-import java.util.LinkedList;
-
-import java.io.Reader;
 import java.io.InputStream;
 
 import org.slf4j.Logger;
@@ -48,7 +42,6 @@ public abstract class AbstractSQL  {
 #foreach ($column in $table.columns)
 		/**
 		* @returns $column.remarks 
-	 	* @throws SQLException
 		*/
 		public ${column.javaClass} get${column}() throws SQLException;
 		
