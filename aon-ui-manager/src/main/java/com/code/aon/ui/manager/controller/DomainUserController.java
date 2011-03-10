@@ -355,7 +355,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		ManagerController manager = getManager();
 		String command = null; 
 		for( int i = 1; (command = manager.getProperties().getProperty(MAIL_ACCOUNT_CREATE_SCRIPT+"."+i)) != null ;i++) {
-			manager.execute( new String[] {command, user.getName(), user.getDomain()} );
+			manager.execute( new String[] {command, user.getUid(), user.getDomain()} );
 		}
 	}	
 
@@ -363,7 +363,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		ManagerController manager = getManager();
 		String command = null; 
 		for( int i = 1; (command = manager.getProperties().getProperty(MAIL_ACCOUNT_DELETE_SCRIPT+"."+i)) != null ;i++) {
-			manager.execute( new String[] {command, user.getName(), user.getDomain()} );
+			manager.execute( new String[] {command, user.getUid(), user.getDomain()} );
 		}
 	}		
 
