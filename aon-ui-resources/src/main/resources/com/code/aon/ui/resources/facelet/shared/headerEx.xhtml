@@ -3,6 +3,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div id="aonHeader" styleClass="aon-header">
@@ -29,11 +30,15 @@
 			<c:if test="#{!aonConfiguration.properties.hideHeaderLinks}">
 				<aon:div styleClass="aon-float-right">
 					<aon:div styleClass="aon-header-menu-item">
-						<aon:form prependId="false">					
-							<aon:commandLink id="logout" styleClass="aon-logout" action="logout"
-								actionListener="#{aonConfiguration.logout}">
+						<aon:form prependId="false">			
+							<h:outputLink id="logout" styleClass="aon-logout"
+								value="http://login.aonsolutions.es/">
 								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
-							</aon:commandLink>
+								<a4j:support event="onclick"
+									onsubmit="disableRFAjax()"
+									ajaxSingle="true" immediate="true" bypassUpdates="true"
+									actionListener="#{aonConfiguration.logout}" />
+							</h:outputLink> 
 						</aon:form>
 					</aon:div>
 				</aon:div>

@@ -257,6 +257,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
     	FacesContext context = FacesContext.getCurrentInstance();
     	HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
     	session.invalidate();    	
+    	context.responseComplete();
     }
     
 	/**
