@@ -32,7 +32,7 @@ public class DomainApplicationController extends LdapBasicController implements 
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(DomainApplicationController.class);
 	
-	private String[] APPLICATIONS_WITHOUT_DB = new String[] {AON_CMS, AON_PUBLISHER, AON_WEBMAIL};
+	private String[] APPLICATIONS_WITHOUT_DB = new String[] {AON_CMS, AON_MANAGER, AON_PUBLISHER, AON_WEBMAIL};
 	
 	private String selectedTab;
 	
@@ -151,8 +151,26 @@ public class DomainApplicationController extends LdapBasicController implements 
 		return workgroups;
 	}    
     
+	private ManagerController getManager() {
+		return (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+	}	
+	
 	public boolean isWithoutDB() {
 		return ArrayUtils.contains(APPLICATIONS_WITHOUT_DB, getDomainApplication().getCommonName());	
+	}
+	
+	public boolean isShowDBConnection() {
+		if ( isWithoutDB() ) {
+			return false;	
+		}
+		if ( getManager().isAdministrator() || (! isNew()) ) {
+			return true;
+		}
+		DomainController dc =(DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		if ( dc.isChildDomain() ) {
+			return false;
+		}
+		return true;
 	}
 	
 }

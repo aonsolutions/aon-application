@@ -71,6 +71,18 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		}
 	}	
 	
+	public DBConnnection getMasterConnection() throws ManagerBeanException {
+		Properties properties = getManager().getProperties();
+		String masterDataSource = properties.getProperty(IManagerAlias.DB_CONNECTION_COMMON_NAME);
+		List<DBConnnection> list = getDBConnnections();
+		for (DBConnnection dbc : list ) {
+			if ( dbc.getCommonName().equals(masterDataSource) ) {
+				return dbc;
+			}
+		}
+		return ( list.isEmpty() ) ? null : list.get(0);
+	}
+	
 	public boolean isCreateDB() {
 		return createDB;
 	}
@@ -104,8 +116,7 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	}
 	
 	public void init( DBConnnection dbc, String name ) {
-		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
-		Properties properties = manager.getProperties();
+		Properties properties = getManager().getProperties();
 		dbc.setCommonName( properties.getProperty(IManagerAlias.DB_CONNECTION_COMMON_NAME) );
 		dbc.setDriverClassName( properties.getProperty(IManagerAlias.DB_CONNECTION_DRIVER_CLASS_NAME) );
 		dbc.setUid( properties.getProperty(IManagerAlias.DB_CONNECTION_UID) );
@@ -114,6 +125,10 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		String dbName = formatDBName(name);
 		String url = MessageFormat.format( text, dbName );
 		dbc.setLabeledURI(url);			
+	}
+
+	private ManagerController getManager() {
+		return (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 	}
 	
 }

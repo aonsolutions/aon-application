@@ -377,4 +377,9 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		return null;
 	}
 	
+	public boolean isChildDomain() {
+		Domain parent = getDomain().getParentDomain();
+		return (parent != null) && (parent.getId() != null);
+	}
+	
 }

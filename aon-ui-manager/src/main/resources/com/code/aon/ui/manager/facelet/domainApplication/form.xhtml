@@ -37,7 +37,7 @@
 						size="80" disabled="true" rendered="#{!domainApplication.new}"
 						value="#{domainApplication.to.commonName}" />
 					
-					<c:if test="#{!domainApplication.withoutDB}" >
+					<c:if test="#{domainApplication.showDBConnection}" >
 						<aon:outputLabel for="DomainApplication_dataSource"
 							value="#{managerBundle.manager_db_connection}" />
 						<aon:selectOneMenu id="DomainApplication_dataSource" required="true"

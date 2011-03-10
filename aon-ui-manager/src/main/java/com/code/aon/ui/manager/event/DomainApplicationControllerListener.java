@@ -36,7 +36,7 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 		getManager().resetTermsOfServiceAccepted();
-		updateDataSources();
+		updateDataSources();		
 	}
 
 	@Override
@@ -44,6 +44,7 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 			throws ControllerListenerException {
 		DomainApplicationController dac = (DomainApplicationController) event.getController();
 		DomainApplication application = dac.getDomainApplication();
+		setDBConnection(dac, application);
 		updateApplication(dac);
 		insertApplicationDBDefaults(application);
 		getManager().getLogger().domainApplicationAddded(application);
@@ -83,6 +84,22 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 	private void updateDataSources() {
 		DomainDBConnectionController ddbcc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		ddbcc.updateDataSources();		
+	}
+	
+	private void setDBConnection( DomainApplicationController dac, DomainApplication application ) throws ControllerListenerException {
+		if ( ! dac.isWithoutDB() ) {
+			DBConnnection dbc = application.getDataSource();
+			if ( (dbc == null) || (dbc.getId() == null) ) {
+				DomainDBConnectionController ddbcc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+				try {
+					application.setDataSource( ddbcc.getMasterConnection() );
+					dac.getManagerBean().update(application);
+				} catch (Throwable e) {
+					LOGGER.error(e.getMessage(), e);
+					throw new ControllerListenerException( e.getMessage(), e );
+				}						
+			}
+		}		
 	}
 	
 	private void updateDBConnection( DomainApplicationController dac ) {
