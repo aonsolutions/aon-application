@@ -284,7 +284,7 @@ public class Finance implements ITransferObject, IBankAccountContainer, IConfide
 
 	@Transient
 	public boolean isNegotiableDocument(){
-		return getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT;
+		return (getPayMethod() != null && getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT);
 	}
 
 	public boolean equals(Object obj) {
