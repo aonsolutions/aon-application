@@ -9,7 +9,7 @@
 			<default-locale>es</default-locale>
 			<supported-locale>en</supported-locale>
 		</locale-config>
-		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
+		<navigation-handler>com.code.aon.ui.common.AonNavigationHandler</navigation-handler>  
 		<resource-bundle>
 			<base-name>com.code.aon.web.ecommerce.i18n.messages</base-name>
 			<var>appBundle</var>

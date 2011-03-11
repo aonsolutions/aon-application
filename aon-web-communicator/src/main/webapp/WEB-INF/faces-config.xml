@@ -11,6 +11,7 @@
 			<default-locale>es</default-locale>
 			<supported-locale>en</supported-locale>
 		</locale-config>
+		<navigation-handler>com.code.aon.ui.common.AonNavigationHandler</navigation-handler>
 		<resource-bundle>
 			<base-name>com.code.aon.ui.communicator.i18n.application</base-name>
 			<var>appBundle</var>

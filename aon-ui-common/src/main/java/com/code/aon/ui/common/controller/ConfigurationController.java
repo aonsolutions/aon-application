@@ -89,6 +89,10 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	
 	private Map<String,Map<String,Object>> bean;	
 	
+	private String currentAction = "home";
+	
+	private String application;
+	
 	/**
 	 * The Constructor.
 	 */
@@ -168,6 +172,7 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	private void initApplicationVersion() {
 		try {
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			this.application = StringUtils.stripStart(ec.getRequestContextPath(), "/" );
 			InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
 			Manifest m = new Manifest(in);
 			Attributes attrs = m.getMainAttributes();
@@ -362,6 +367,39 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		return bean;
 	}
 	
+	/**
+	 * Gets the current action.
+	 *
+	 * @return the current action
+	 */
+	public String getCurrentAction() {
+		return currentAction;
+	}
+
+	/**
+	 * Sets the current action.
+	 *
+	 * @param currentAction the new current action
+	 */
+	public void setCurrentAction(String currentAction) {
+		this.currentAction = currentAction;
+	}
+
+	/**
+	 * Gets the help url.
+	 *
+	 * @return the help url
+	 */
+	public String getHelpURL() {
+		StringBuffer url = new StringBuffer();
+		url.append("http://help.aonsolutions.es/ayuda/resumen.php?application=");
+		url.append( this.application );
+		if ( this.currentAction != null ) {
+			url.append("&action_id=").append(this.currentAction);
+		}
+		return url.toString();
+	}
+
 	private class LogErrorHandler implements ErrorHandler {
 		
 		private boolean validationError;

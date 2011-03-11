@@ -4,23 +4,21 @@ import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.Session;
 import com.code.aon.audit.enumeration.AuditLevel;
+import com.code.aon.ui.common.AonNavigationHandler;
 
-public class AuditNavigationHandler extends NavigationHandler {
+public class AuditNavigationHandler extends AonNavigationHandler {
 
 	/** Obtiene un logger apropiado. */
 	private final static Logger LOGGER = LoggerFactory.getLogger(AuditNavigationHandler.class);
 	
-	private NavigationHandler _base;
-	
 	public AuditNavigationHandler(NavigationHandler base) {
-		_base = base;
+		super( base );
 	}	
 	
 	private void insertActionEntry( HttpSession httpSession, String name ) {
@@ -42,22 +40,13 @@ public class AuditNavigationHandler extends NavigationHandler {
 	private boolean isActionExecutionAuditEnabled( Session session ) {
 		return session.getApplication().getAuditLevel() == AuditLevel.MODULE;
 	}
-	
-	@Override
-	public void handleNavigation(FacesContext fc, String fromAction, String outcome) {
-		if (! StringUtils.isEmpty(outcome) ) {
-	    	HttpSession httpSession = (HttpSession) fc.getExternalContext().getSession(false);
-	    	if ( httpSession != null ) {
-	    		insertActionEntry(httpSession, outcome);	
-	    		outcome = StringUtils.substringBefore(outcome, "-");
-	    	}	
-		}
-		if (! StringUtils.isEmpty(fromAction) ) {
-			fromAction = StringUtils.substringBefore(fromAction, "-");
-		}
-		_base.handleNavigation(fc, fromAction, outcome);
-	}
 
-	
+	@Override
+	protected void process(FacesContext fc, String fromAction, String outcome) {
+    	HttpSession httpSession = (HttpSession) fc.getExternalContext().getSession(false);
+    	if ( httpSession != null ) {
+    		insertActionEntry(httpSession, outcome);	
+    	}	
+	}
 
 }

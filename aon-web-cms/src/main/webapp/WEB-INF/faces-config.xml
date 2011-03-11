@@ -9,6 +9,7 @@
 			<default-locale>es</default-locale>
 			<supported-locale>en</supported-locale>
 		</locale-config>
+		<navigation-handler>com.code.aon.ui.common.AonNavigationHandler</navigation-handler>
 		<resource-bundle>
 		   <base-name>com.code.aon.ui.cms.i18n.messages</base-name>
 		   <var>appBundle</var>

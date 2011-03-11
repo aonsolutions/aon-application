@@ -32,7 +32,9 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	
 	private static final String PARTIAL_SUBMIT = "partialSubmit";
 	
-	private TagHandler ajaxSupportHandler; 
+	private static final String AON_STATUS = "aonStatus";
+	
+	private TagHandler ajaxSupportHandler; 	
 	
 	private TagAttribute partialSubmit;
 	
@@ -65,7 +67,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	@Override
 	protected MetaRuleset createMetaRuleset(Class type) {
 		MetaRuleset set = super.createMetaRuleset(type);
-		set.ignore(RERENDER).ignore(PARTIAL_SUBMIT);
+		set.ignore(RERENDER).ignore(PARTIAL_SUBMIT).ignore(STATUS);
 		set.ignore(AJAX_SINGLE).ignore(FOCUS).ignore(ACTION_LISTENER);
 		return set;
 	}
@@ -126,6 +128,12 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 					String value = actionListener.getValue();
 					attributes.add( BasicComponentConfig.newAttribute(tag, ACTION_LISTENER, value) );					
 				}
+				String statusValue = AON_STATUS;
+				TagAttribute status = getAttribute(STATUS);
+				if ( status != null ) {
+					statusValue = focus.getValue(ctx);
+				}
+				attributes.add( BasicComponentConfig.newAttribute(tag, STATUS, statusValue) );				
 				BasicComponentConfig config = new BasicComponentConfig(getConfig(), attributes );
 				config.setComponentType(SUPPORT_COMPONENT_TYPE);
 				config.setRendererType(SUPPORT_RENDERER_TYPE);

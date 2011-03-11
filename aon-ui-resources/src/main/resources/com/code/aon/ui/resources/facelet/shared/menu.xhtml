@@ -1,4 +1,4 @@
-	<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
@@ -29,6 +29,13 @@
 	                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
 		                </f:facet>					                
 		                <ui:insert name="beforeHelpMenuContent"/>
+						<aon:menuItem submitMode="none" reRender="aonStatus">
+							<h:outputLink style="font-size:1em;"
+								value="#{aonConfiguration.helpURL}"
+								target="_blank" >
+								<aon:outputText value="#{bundle.aon_help}" />
+							</h:outputLink>
+						</aon:menuItem>
 						<aon:menuItem id="about" reRender="aboutWindowPanel"
 							value="#{bundle.aon_about}" >
 							<f:setPropertyActionListener target="#{aonConfiguration.properties.showAbout}" value="#{true}" />

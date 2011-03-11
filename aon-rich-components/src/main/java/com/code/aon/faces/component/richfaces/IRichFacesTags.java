@@ -46,5 +46,5 @@ public interface IRichFacesTags {
 	
 	String MIN_HEIGHT = "minHeight";
 	
-	
+	String STATUS = "status";
 }
