@@ -58,7 +58,7 @@ public class Mod347Manager {
 		+" AND it.tax_type=1 "
 		+" AND i.issue_date >= ?"
 		+" AND i.issue_date <= ?"
-		+" GROUP BY  key347,document,registry,province "
+		+" GROUP BY  key347,i.rdocument,i.registry,province "
 		+" HAVING amount > ? "
 		+" ORDER BY key347,name,amount desc";
 	
