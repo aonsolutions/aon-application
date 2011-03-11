@@ -26,12 +26,6 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.esferalia.aon</groupId>
-			<artifactId>aon.master.sql</artifactId>
-			<version>${pom.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
 			<version>${pom.version}</version>
