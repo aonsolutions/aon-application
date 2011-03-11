@@ -54,8 +54,6 @@
 	  <module>aon-project</module>
 	  <module>aon-registry</module>
 	  <module>aon-calendar</module>
-	  <module>aon-payroll</module>
-	  <module>aon-salary</module>
 	  <module>aon-account-bridge</module>
 	  <module>aon-accounting</module>
 	  <module>aon-commercial</module>
@@ -87,7 +85,6 @@
 	  <module>aon-ui-messaging</module>
 	  <module>aon-ui-registry</module>
 	  <module>aon-ui-calendar</module>
-	  <module>aon-ui-payroll</module>
 	  <module>aon-ui-account</module>
 	  <module>aon-ui-account-bridge</module>
 	  <module>aon-ui-accounting</module>
@@ -115,7 +112,6 @@
 	  <module>aon-file-format</module>
 	  <module>aon-file-bank</module>
 	  <module>aon-file-tax</module>
-	  <module>aon-file-payroll</module>
 	  <module>aon-facturae</module>
 	  <module>aon-stat</module>
 
@@ -126,8 +122,6 @@
 
     <!-- WEB MODULES -->
 	  <module>aon-desktop</module>
-	  <module>aon-web-payroll</module>
-	  <module>aon-web-employee</module>
 	  <module>aon-web-smb</module>
 	  <module>aon-web-account</module>
 	  <module>aon-web-asset</module>
@@ -146,7 +140,6 @@
 	  <module>aon-web-webmail</module>
   
     <!-- OTHER -->
- 	  <module>aon-payroll-ctsql2mysql</module>
  	  <module>aon-common-resources</module>
 
  </modules>
