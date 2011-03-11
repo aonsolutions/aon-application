@@ -10,7 +10,6 @@
 	<artifactId>aon-master</artifactId>
 	<version>6.2.0-SNAPSHOT</version>
 	<description>AON MASTER</description>
-	<packaging>maven-plugin</packaging>
 	<name>AON-MASTER</name>
 
 	<scm>
@@ -186,26 +185,6 @@
 						</configuration>
 					</plugin>
 
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>wagon-maven-plugin</artifactId>
-						<version>1.0-beta-3</version>
-						<executions>
-							<execution>
-								<id>upload-rpm</id>
-								<phase>deploy</phase>
-								<goals>
-									<goal>upload</goal>
-								</goals>
-								<configuration>
-									<fromDir>${project.basedir}/target/rpm/${project.artifactId}/RPMS/</fromDir>
-									<includes>**/*.rpm</includes>
-									<url>scp://dev.esferalia.com</url>
-									<toDir>/var/www/aon-payroll</toDir>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
 
 
 				</plugins>
