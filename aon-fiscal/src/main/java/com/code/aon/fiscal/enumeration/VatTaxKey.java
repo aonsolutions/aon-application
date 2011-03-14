@@ -61,9 +61,9 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	// Entregas Intracomunitarias
 	EI("EI", false, false, false, true, false,new VatTaxKey[]{}),
 	// Exportaciones Definitivas
-	EX1("EX", false, false, false, true, false,new VatTaxKey[]{}),
+	EX1("EX1", false, false, false, true, false,new VatTaxKey[]{}),
 	// Exportaciones Envios Definitivos a Canarias,Ceuta y Melilla
-	EX2("EX", false, false, false, true, false,new VatTaxKey[]{}),
+	EX2("EX2", false, false, false, true, false,new VatTaxKey[]{}),
 	// Otras Operaciones no sujetas con derecho a deducción
 	OO("OO", false, false, false, true, false,new VatTaxKey[]{}),
 	// Otras Op. no sujetas sin drcho. a deducción
