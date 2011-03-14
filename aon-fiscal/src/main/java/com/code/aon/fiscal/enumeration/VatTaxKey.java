@@ -26,20 +26,26 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	B1("B1", false, false, false, false, false),
 	// B2=OP. INTERIORES DE BIENES DE INVERSION
 	B2("B2", false, false, false, false, false),
+	// B3=OP. INTERIORES DE GASTOS
+	B3("B3", false, false, false, false, false),
 	// BT=TOTAL OP. INTERIORES
-	BT("BT", false, false, false, true, false,new VatTaxKey[]{VatTaxKey.B1,VatTaxKey.B2}),
+	BT("BT", false, false, false, true, false,new VatTaxKey[]{VatTaxKey.B1,VatTaxKey.B2,VatTaxKey.B3}),
 	// C1=IMPORTACIONES DE BIENES CORRIENTES
 	C1("C1", false, false, false, false, false),
 	// C2=IMPORTACIONES DE BIENES DE INVERSION
 	C2("C2", false, false, false, false, false),
+	// C3=IMPORTACIONES DE GASTOS
+	C3("C3", false, false, false, false, false),
 	// CT=TOTAL IMPORTACIONES
-	CT("CT", false, false, false, true, false,new VatTaxKey[]{VatTaxKey.C1,VatTaxKey.C2}),
+	CT("CT", false, false, false, true, false,new VatTaxKey[]{VatTaxKey.C1,VatTaxKey.C2,VatTaxKey.C3}),
 	// D1=ADQ. INTRACOM. DE BIENES CORRIENTES
 	D1("D1", false, false, false, false, false),
 	// D2=ADQ. INTRACOM. DE BIENES DE INVERSION
 	D2("D2", false, false, false, false, false),
+	// D3=TOTAL ADQ. INTRACOM. DE GASTOS
+	D3("D3", false, false, false, false, false),
 	// DT=TOTAL ADQ. INTRACOM.
-	DT("DT", false, false, false, true, false,new VatTaxKey[]{VatTaxKey.D1,VatTaxKey.D2}),
+	DT("DT", false, false, false, true, false,new VatTaxKey[]{VatTaxKey.D1,VatTaxKey.D2,VatTaxKey.D3}),
 	// ET=COMPENSACION REGIMEN ESPECIAL A,G Y P.
 	ET("ET", false, false, false, false, false),
 	// FT=TOTAL A DEDUCIR

@@ -26,7 +26,7 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
-import com.code.aon.fiscal.vat.tax.VatTaxCollectionProvider;
+import com.code.aon.fiscal.vat.tax.VatTaxManager;
 import com.code.aon.fiscal.vat.tax.VatTaxParameters;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -44,7 +44,7 @@ public class VatTaxController extends BasicController {
 	private DataModel vatTaxModel;
 	private List<VatTaxDetail> summary;
 	private VatTaxParameters params;
-	private  VatTaxCollectionProvider provider;
+	private  VatTaxManager provider;
 	private String selectedTab;
 	private FiscalParametersController fiscalParams;
 	
@@ -57,9 +57,9 @@ public class VatTaxController extends BasicController {
 		return fiscalParams;
 	}
 
-	public VatTaxCollectionProvider getProvider() {
+	public VatTaxManager getProvider() {
 		if (provider == null) {
-			provider = new VatTaxCollectionProvider();
+			provider = new VatTaxManager();
 		}
 		return provider;
 	}

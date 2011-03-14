@@ -29,7 +29,7 @@ import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 
-public class VatTaxCollectionProvider {
+public class VatTaxManager {
 
 	public List<VatTaxDetail> getVatTax(VatTaxParameters params) throws ManagerBeanException {
 		Calendar c = Calendar.getInstance();
@@ -200,11 +200,20 @@ public class VatTaxCollectionProvider {
 			if (transaction == InvoiceTransactionType.NATIONAL ) {
 				return investment?
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B1),new VatTaxKeyEx(VatTaxKey.GT,percent)};
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)};
 			}
-			if (transaction == InvoiceTransactionType.INTRACOMMUNITY || transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
-				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A4)};
+			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
+				return investment?
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.C2),new VatTaxKeyEx(VatTaxKey.BI,percent),new VatTaxKeyEx(VatTaxKey.A4)}:
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.C3),new VatTaxKeyEx(VatTaxKey.CP,percent),new VatTaxKeyEx(VatTaxKey.A4)};
 			}
+			
+			if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
+				return investment?
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.D2),new VatTaxKeyEx(VatTaxKey.BI,percent),new VatTaxKeyEx(VatTaxKey.A4)}:
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.D3),new VatTaxKeyEx(VatTaxKey.CP,percent),new VatTaxKeyEx(VatTaxKey.A4)};
+			}
+			
 		}
 		System.out.println( "No exite tipo de IVA para " + invoiceType+", "+transaction + ", " + investment);
 		return null; 
