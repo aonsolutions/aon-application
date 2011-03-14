@@ -316,8 +316,8 @@ public class VatTaxController extends BasicController {
 						}
 					}
 				}
-				onRecalculate(event);
 			}
+			onRecalculate(event);
 		} catch (ManagerBeanException e) {
 			String msg = "No se pudieron copiar los ajustes del periodo anterior. " + e.getMessage();
 			LOGGER.error(msg, e);
