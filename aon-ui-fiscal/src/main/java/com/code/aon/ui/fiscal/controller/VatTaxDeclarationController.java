@@ -133,12 +133,33 @@ public class VatTaxDeclarationController extends LinesController {
 		dec.setAdministration(adm);
 		dec.setPercent(percent);
 		dec.setStatus( VatTaxDeclarationStatus.PENDING );
-		fillPreviousData(vatTax,dec);
+		if (vatTax.isAnual()) {
+			fillPreviousData(vatTax,dec);
+		} else {
+			fillYearPreviousData(vatTax,dec);
+		}
 		calculate(dec);
 		accept(null);
 		dec.setRegistryBank(null);	
 	}
 
+	private void fillYearPreviousData(VatTax vatTax, VatTaxDeclaration dec) throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		criteria.addExpression( ExpressionUtilities.getNotEqualExpression(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId()));
+		criteria.addEqualExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_YEAR), vatTax.getYear());
+		criteria.addLessThanExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), vatTax.getPeriod());
+		criteria.addEqualExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_ADMINISTRATION), dec.getAdministration());
+		criteria.addOrder( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_NUMBER), false);
+		criteria.addOrder( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_REPLACEMENT), false);
+		List<ITransferObject> list = getManagerBean().getList(criteria);
+		double pycq = 0.0;
+		if (list != null && list.size() > 0){
+			VatTaxDeclaration vtd = (VatTaxDeclaration) list .get(0);
+			pycq = vtd.getCompensate();
+		}
+		dec.setPreviousYearCompensateQuota(pycq);
+	}
+	
 	private void fillPreviousData(VatTax vatTax,VatTaxDeclaration dec) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		criteria.addExpression( ExpressionUtilities.getNotEqualExpression(getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId()));
@@ -147,7 +168,6 @@ public class VatTaxDeclarationController extends LinesController {
 		criteria.addEqualExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_ADMINISTRATION), dec.getAdministration());
 		criteria.addOrder( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_NUMBER), false);
 		criteria.addOrder( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_REPLACEMENT), false);
-		System.out.println( criteria.toString() );
 		List<ITransferObject> list = getManagerBean().getList(criteria);
 		double pd = 0.0;
 		double pp = 0.0;
