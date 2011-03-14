@@ -40,6 +40,7 @@ public class ContractLeave implements ITransferObject {
 	private Double dailyRegBase;
 	private ContractLeave parent;
 	private DischargeCause dischargeCause;
+	private Date occupationalDiseaseDate;
 
 	@Id     
 	@GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
@@ -129,6 +130,7 @@ public class ContractLeave implements ITransferObject {
 	}
 	
 	@Transient
+//	@Column(name = "discharge_cause")
 	public DischargeCause getDischargeCause() {
 		return dischargeCause;
 	}
@@ -136,6 +138,15 @@ public class ContractLeave implements ITransferObject {
 		this.dischargeCause = dischargeCause;
 	}
 	
+	@Transient
+//	@Temporal(TemporalType.DATE)
+//	@Column(name = "Occupational_disease_date")
+	public Date getOccupationalDiseaseDate() {
+		return occupationalDiseaseDate;
+	}
+	public void setOccupationalDiseaseDate(Date occupationalDiseaseDate) {
+		this.occupationalDiseaseDate = occupationalDiseaseDate;
+	}
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

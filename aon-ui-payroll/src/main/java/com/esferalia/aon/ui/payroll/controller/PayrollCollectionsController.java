@@ -19,6 +19,9 @@ import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
+import com.esferalia.aon.payroll.enumeration.DischargeCause;
+import com.esferalia.aon.payroll.enumeration.LeaveReportType;
+import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.SalaryTemplate;
@@ -43,6 +46,9 @@ public class PayrollCollectionsController {
 	private List<SelectItem> salaryTemplates;
 	
 	private List<SelectItem> streetTypes;
+	private List<SelectItem> leaveReportTypes;
+	private List<SelectItem> leaveTypes;
+	private List<SelectItem> dischargeCauses;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -254,6 +260,51 @@ public class PayrollCollectionsController {
 			}
 		}
 		return ssRegimes;
+	}
+	
+	public List<SelectItem> getLeaveReportTypes() {
+		if (leaveReportTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+			.getLocale();
+			leaveReportTypes = new LinkedList<SelectItem>();
+			LeaveReportType[] reports = LeaveReportType.values();
+			for (LeaveReportType r : reports) {
+				String name = r.getName(locale);
+				SelectItem item = new SelectItem(r, name);
+				leaveReportTypes.add(item);
+			}
+		}
+		return leaveReportTypes;
+	}
+	
+	public List<SelectItem> getLeaveTypes() {
+		if (leaveTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+			.getLocale();
+			leaveTypes = new LinkedList<SelectItem>();
+			LeaveType[] leaves = LeaveType.values();
+			for (LeaveType l : leaves) {
+				String name = l.getName(locale);
+				SelectItem item = new SelectItem(l, name);
+				leaveTypes.add(item);
+			}
+		}
+		return leaveTypes;
+	}
+	
+	public List<SelectItem> getDischargeCauses() {
+		if (dischargeCauses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
+			.getLocale();
+			dischargeCauses = new LinkedList<SelectItem>();
+			DischargeCause[] causes = DischargeCause.values();
+			for (DischargeCause l : causes) {
+				String name = l.getName(locale);
+				SelectItem item = new SelectItem(l, name);
+				dischargeCauses.add(item);
+			}
+		}
+		return dischargeCauses;
 	}
 		
 }

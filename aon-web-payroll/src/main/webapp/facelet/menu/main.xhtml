@@ -60,6 +60,13 @@
 									value="#{payrollBundle.payroll_salary_launcher_module}">
 								</aon:commandLink>
 							</aon:div>		
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="contractLeave" 
+									action="contractLeave_search" 
+									actionListener="#{contract.onEditSearch}"
+									value="#{payrollBundle.payroll_contractLeave_module}">
+								</aon:commandLink>
+							</aon:div>		
 						</aon:div>
 					</aon:panelGrid>
 					<aon:panelGrid id="group_entity_payroll"

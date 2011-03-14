@@ -22,12 +22,6 @@ public class ContractListListener extends ControllerAdapter {
 	public void setWorkPlace(WorkPlace workPlace) {
 		this.workPlace = workPlace;
 	}
-
-	@Override
-	public void beforeBeanCreated(ControllerEvent event)
-			throws ControllerListenerException {
-		
-	}
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
@@ -35,7 +29,9 @@ public class ContractListListener extends ControllerAdapter {
 		try {
 			Expression expr1;
 	    	Expression expr2;
-			event.getController().getCriteria().addEqualExpression(getController().getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ID), getWorkPlace().getId());
+			if(getWorkPlace()!=null){
+				event.getController().getCriteria().addEqualExpression(getController().getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ID), getWorkPlace().getId());
+			}
 			event.getController().getCriteria().addLessThanOrEqualExpression(getController().getFieldName(IPayrollAlias.CONTRACT_START_DATE), new Date()); 
 	    	expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getController().getFieldName(IPayrollAlias.CONTRACT_END_DATE), new Date());
 	    	expr2 = ExpressionUtilities.getNullExpression(getController().getFieldName(IPayrollAlias.CONTRACT_END_DATE));

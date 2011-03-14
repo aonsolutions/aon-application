@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<aon:outputLabel for="ContractLeaveDetail_reportType"
+		value="#{payrollBundle.payroll_contractLeave_report_type}" />
+	<aon:div>
+		<aon:selectOneMenu id="ContractLeaveDetail_reportType"
+			disabled="#{contractLeave.report.id!=null}"
+			value="#{contractLeave.report.type}">
+			<f:selectItems value="#{payrollCollections.leaveReportTypes}" />
+			<a4j:support event="onchange" reRender="report_panel"
+				actionListener="#{contractLeave.onChangeType}" />
+		</aon:selectOneMenu>
+		<aon:outputLabel for="ContractLeaveDetail_it_id"
+			styleClass="aon-italic aon-padding"
+			rendered="#{!contractLeave.leaveSelected}"
+			value="#{payrollBundle.payroll_contractLeave_it_id}" />
+		<aon:selectOneMenu id="ContractLeaveDetail_it_id"
+			rendered="#{!contractLeave.leaveSelected}"
+			disabled="#{contractLeave.report.id!=null}"
+			value="#{contractLeave.report.contractLeave.id}">
+			<f:selectItems value="#{contractLeave.availableITList}" />
+			<a4j:support event="onchange" reRender="report_panel" />
+		</aon:selectOneMenu>
+		<aon:outputLabel for="ContractLeave_relapse"
+			styleClass="aon-italic aon-padding"
+			rendered="#{contractLeave.leaveSelected}"
+			value="#{payrollBundle.payroll_contractLeave_relapse}" />
+		<aon:selectOneMenu id="ContractLeave_relapse"
+			rendered="#{contractLeave.leaveSelected}"
+			disabled="#{contractLeave.report.id!=null}"
+			value="#{contractLeave.report.contractLeave.parent.id}">
+			<f:selectItem itemLabel="No" value="#{null}"/>
+			<f:selectItems value="#{contractLeave.relapseITList}" />
+			<a4j:support event="onchange" reRender="report_panel" />
+		</aon:selectOneMenu>
+	</aon:div>
+	
+	<aon:outputLabel for="ContractLeaveDetail_collegeNumber"
+		value="#{payrollBundle.payroll_contractLeave_collegeNumber}" />
+	<aon:div id="collegeNumber">
+		<aon:inputText id="ContractLeaveDetail_collegeNumber"
+			value="#{contractLeave.report.collegeNumber}" >
+			<a4j:support event="onchange" reRender="collegeNumber" 
+				actionListener="#{contractLeave.onChangeCollegeNumber}"/>
+		</aon:inputText>
+		<aon:outputText value="&#160;" 
+			rendered="#{contractLeave.validCollegeNumber and contractLeave.validCollegeNumber!=null}"
+			styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
+		<aon:outputText value="&#160;" 
+			rendered="#{!contractLeave.validCollegeNumber and contractLeave.validCollegeNumber!=null}"
+			styleClass="aon-icon-exception" style="padding-left: 15px;" />
+	</aon:div>
+
+	<aon:outputLabel for="ContractLeaveDetail_cias"
+		value="#{payrollBundle.payroll_contractLeave_cias}" />
+	<aon:div id="cias">
+		<aon:inputText id="ContractLeaveDetail_cias"
+			value="#{contractLeave.report.cias}" >
+			<a4j:support event="onchange" reRender="cias" 
+				actionListener="#{contractLeave.onChangeCias}"/>
+		</aon:inputText>
+		<aon:outputText value="&#160;" 
+			rendered="#{contractLeave.validCias and contractLeave.validCias!=null}"
+			styleClass="aon-icon-predetermine" style="padding-left: 15px;" />
+		<aon:outputText value="&#160;" 
+			rendered="#{!contractLeave.validCias and contractLeave.validCias!=null}"
+			styleClass="aon-icon-exception" style="padding-left: 15px;" />
+	</aon:div>
+
+	<aon:outputLabel for="ContractLeave_type"
+		rendered="#{contractLeave.leaveSelected}"
+		value="#{payrollBundle.payroll_contractLeave_type}" />
+	<aon:selectOneMenu id="ContractLeave_type"
+		rendered="#{contractLeave.leaveSelected}"
+		value="#{contractLeave.report.contractLeave.type}">
+		<f:selectItems value="#{payrollCollections.leaveTypes}" />
+	</aon:selectOneMenu>
+
+	<aon:outputLabel for="ContractLeave_description"
+		rendered="#{contractLeave.leaveSelected}"
+		value="#{bundle.aon_description}" />
+	<aon:inputText id="ContractLeave_description"
+		rendered="#{contractLeave.leaveSelected}" size="60" maxlength="64"
+		value="#{contractLeave.report.contractLeave.description}" />
+
+	<aon:outputLabel for="ContractLeaveDetail_date"
+		value="#{bundle.aon_date}" />
+	<aon:selectInputDate id="ContractLeaveDetail_date" 
+		renderAsPopup="true" value="#{contractLeave.report.date}"
+		popupDateFormat="dd/MM/yyyy">
+	</aon:selectInputDate>
+	
+	<aon:outputLabel for="ContractLeave_dischargeCause"
+		rendered="#{contractLeave.dischargeSelected}"
+		value="#{payrollBundle.payroll_contractLeave_dischargeCause}" />
+	<aon:selectOneMenu id="ContractLeave_dischargeCause"
+		rendered="#{contractLeave.dischargeSelected}"
+		value="#{contractLeave.report.contractLeave.dischargeCause}">
+		<f:selectItems value="#{payrollCollections.dischargeCauses}" />
+	</aon:selectOneMenu>
+
+<!--  
+	<aon:outputLabel for="ContractLeave_dailyCgcBase"
+		rendered="#{contractLeave.leaveSelected}"
+		value="#{payrollBundle.payroll_contractLeave_dailyCgcBase}" />
+	<aon:inputText id="ContractLeave_dailyCgcBase"
+		rendered="#{contractLeave.leaveSelected}"
+		value="#{contractLeave.report.contractLeave.dailyCgcBase}" />
+
+	<aon:outputLabel for="ContractLeave_dailyCgpBase" 
+		rendered="#{contractLeave.leaveSelected}"
+		value="#{payrollBundle.payroll_contractLeave_dailyCgpBase}" />
+	<aon:inputText id="ContractLeave_dailyCgpBase"
+		rendered="#{contractLeave.leaveSelected}"
+		value="#{contractLeave.report.contractLeave.dailyCgpBase}" />
+-->	
+	
+</ui:composition>
