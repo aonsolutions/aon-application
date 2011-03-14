@@ -47,7 +47,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	private boolean ajaxNeeded;
 	
 	public AonAjaxInputHandler(ComponentConfig config) {
-		super(config);
+		super( config );
 		partialSubmit = getAttribute(PARTIAL_SUBMIT);
 		reRender = getAttribute(RERENDER);
 		ajaxSingle = getAttribute(AJAX_SINGLE);
@@ -112,16 +112,16 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 				attributes.add( BasicComponentConfig.newAttribute(tag, EVENT, event) );
 				String ajaxSingleValue = "true";
 				if ( ajaxSingle != null ) {
-					ajaxSingleValue = ajaxSingle.getValue(ctx);
+					ajaxSingleValue = ajaxSingle.getValue();
 				}
 				attributes.add( BasicComponentConfig.newAttribute(tag, AJAX_SINGLE, ajaxSingleValue) );
 				if ( reRender != null ) {
-					String value = reRender.getValue(ctx);
+					String value = reRender.getValue();
 					attributes.add( BasicComponentConfig.newAttribute(tag, RERENDER, value) );
 				}
 				TagAttribute focus = getAttribute(FOCUS);
 				if ( focus != null ) {
-					String value = focus.getValue(ctx);
+					String value = focus.getValue();
 					attributes.add( BasicComponentConfig.newAttribute(tag, FOCUS, value) );					
 				}
 				if ( actionListener != null ) {
@@ -131,7 +131,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 				String statusValue = AON_STATUS;
 				TagAttribute status = getAttribute(STATUS);
 				if ( status != null ) {
-					statusValue = focus.getValue(ctx);
+					statusValue = focus.getValue();
 				}
 				attributes.add( BasicComponentConfig.newAttribute(tag, STATUS, statusValue) );				
 				BasicComponentConfig config = new BasicComponentConfig(getConfig(), attributes );
