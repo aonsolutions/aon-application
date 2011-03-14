@@ -14,11 +14,16 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
+import com.code.aon.ql.Criteria;
 
 @Entity
 @Table(name = "fs_vat")
@@ -36,6 +41,8 @@ public class VatTax implements ITransferObject, IConfidentialable {
 	private boolean replacement;
 	private boolean taxRefundRegistry;
 	private Integer number;
+	
+	private Boolean replaced;
 	
     @Id
     @GeneratedValue
@@ -142,7 +149,27 @@ public class VatTax implements ITransferObject, IConfidentialable {
 		return getStatus() == VatTaxStatus.FINISHED;
 	}
 	
-	@Override
+    @Transient
+    public boolean isReplaced() {
+    	if (replaced == null) {
+	    	try {
+	    		IManagerBean bean = BeanManager.getManagerBean(VatTax.class);
+	    		Criteria c = new Criteria();
+	    		c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_YEAR), getYear());
+	    		c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_PERIOD), getPeriod());
+	    		c.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_REPLACEMENT), true);
+	    		if (isReplacement()) {
+	    			c.addGreaterThanExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_NUMBER), getNumber());	
+	    		}
+	    		replaced = (bean.getCount(c) > 0);
+	    	} catch (ManagerBeanException e) {
+	    		replaced = false;
+			}
+    	}
+    	return replaced;
+    }
+
+    @Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;

@@ -5,6 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich">
 
 	<aon:dataTable id="vatTaxList" value="#{vatTax.vatTaxModel}"
@@ -80,19 +81,29 @@
 			<f:facet name="header">
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
-			<aon:outputText value="#{to.taxableBaseDeclared}" rendered="#{to.key.detailed}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
+			<aon:commandLink actionListener="#{vatTax.onShowDeclared}"
+				reRender="declaredDataContainer" 
+				onmouseover="this.style.textDecoration='underline';"
+				onmouseout="this.style.textDecoration='inherit';">
+				<aon:outputText value="#{to.taxableBaseDeclared}" rendered="#{to.key.detailed}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+   			</aon:commandLink>
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_fee}" />
 			</f:facet>
-			<aon:outputText value="#{to.quotaDeclared}" rendered="#{!to.key.blank}"   
-				style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}">
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
+			<aon:commandLink actionListener="#{vatTax.onShowDeclared}"
+				reRender="declaredDataContainer" 
+				onmouseover="this.style.textDecoration='underline';"
+				onmouseout="this.style.textDecoration='inherit';">
+				<aon:outputText value="#{to.quotaDeclared}" rendered="#{!to.key.blank}"   
+					style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+   			</aon:commandLink>
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;">
@@ -153,6 +164,8 @@
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:column>
-
 	</aon:dataTable>
+	
+	<ui:include src="/com/code/aon/ui/fiscal/facelet/vatTax/declaredPanel.xhtml" />
+	
 </ui:composition>

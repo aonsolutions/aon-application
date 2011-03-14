@@ -21,27 +21,18 @@
 					<ui:param name="controller" value="#{vatTax}" />
 
 					<ui:define name="columns">
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80 #{to.replaced?'aon-line-through':''}">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_year}" />
 							</f:facet>
 							<aon:outputText value="#{to.year}" />
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-80 #{to.replaced?'aon-line-through':''}">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_period}" />
 							</f:facet>
 							<aon:outputText value="#{to.period}" />
-						</aon:column>
-
-						<aon:column styleClass="aon-editDataTable-textColumn aon-text-center aon-width-50">
-							<f:facet name="header">
-								<aon:outputText value="#{fiscalBundle.fiscal_complementary_abbr}" />
-							</f:facet>
-							<aon:div styleClass="#{to.complementary?'aon-icon-checked':'aon-icon-check'}">
-								<aon:outputText value="&#160;" />
-							</aon:div>
 						</aon:column>
 
 						<aon:column styleClass="aon-editDataTable-textColumn aon-text-center aon-width-50">
@@ -53,14 +44,14 @@
 							</aon:div>
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80 #{to.replaced?'aon-line-through':''}">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_number}" />
 							</f:facet>
 							<aon:outputText value="#{to.number}" rendered="#{to.complementary or to.replacement}" />
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto #{to.replaced?'aon-line-through':''}">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>

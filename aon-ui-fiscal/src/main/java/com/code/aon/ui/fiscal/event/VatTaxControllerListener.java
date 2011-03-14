@@ -23,6 +23,7 @@ public class VatTaxControllerListener extends ControllerAdapter {
 		vatTax.setTaxRefundRegistry(c.getFiscalParams().isTaxRefundRegistry());
 		c.setAnyPreviousAdjust(false);
 		c.setScoredInvoices(false);
+		c.setDeclaredPanelVisible(false);
 	}
 
 	@Override
@@ -44,6 +45,7 @@ public class VatTaxControllerListener extends ControllerAdapter {
 			c.initializeVatTax( false );
 			c.setSelectedTab(vatTax.isFinished()?VatTaxController.PAY_TAB:VatTaxController.DETAIL_TAB);
 			c.refreshPreviousAdjustFlag();
+			c.setDeclaredPanelVisible(false);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}

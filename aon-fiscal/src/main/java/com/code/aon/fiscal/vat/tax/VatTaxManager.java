@@ -255,10 +255,10 @@ public class VatTaxManager {
 
 		int i = params.getPeriod().ordinal(); 
 		if (i == 0 ) {
-			criteria.addEqualExpression(periodAlias, Period.M01);  // ENERO y COMPLENTARIA
+			criteria.addEqualExpression(periodAlias, Period.M01);  // ENERO y COMPLEMENTARIA
 		}
 		if (i == 12 ) {
-			criteria.addEqualExpression(periodAlias, Period.T1); // 1 TRIMESTRE y COMPLENTARIA
+			criteria.addEqualExpression(periodAlias, Period.T1); // 1 TRIMESTRE y COMPLEMENTARIA
 		}
 		if (i >0 && i<12) {
 			criteria.addBetweenExpression(periodAlias, Period.M01, Period.values()[params.getPeriod().ordinal() -1 ]);
@@ -274,22 +274,24 @@ public class VatTaxManager {
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to: list) {
 			VatTaxDetail detail = (VatTaxDetail) to;
-			VatTaxKey key = detail.getKey();
-			double percent = detail.getPercent();
-			boolean found = false;
-			for (VatTaxDetail model: summary) {
-				if (key == model.getKey() && (!key.isPercentVisible() || key.isPercentVisible() && model.getPercent() == percent)) {
-					model.setTaxableBaseDeclared( CommonUtil.round( model.getQuotaDeclared() + detail.getTaxableBase() ));
-					model.setQuotaDeclared( CommonUtil.round( model.getQuotaDeclared() + detail.getQuota() ));
-					model.setDeductibleQuotaDeclared( CommonUtil.round( model.getDeductibleQuotaDeclared() + detail.getDeductibleQuota() ));
-					found = true; 
-					break;
+			if (!detail.getVatTax().isReplaced()) {
+				VatTaxKey key = detail.getKey();
+				double percent = detail.getPercent();
+				boolean found = false;
+				for (VatTaxDetail model: summary) {
+					if (key == model.getKey() && (!key.isPercentVisible() || key.isPercentVisible() && model.getPercent() == percent)) {
+						model.setTaxableBaseDeclared( CommonUtil.round( model.getQuotaDeclared() + detail.getTaxableBase() ));
+						model.setQuotaDeclared( CommonUtil.round( model.getQuotaDeclared() + detail.getQuota() ));
+						model.setDeductibleQuotaDeclared( CommonUtil.round( model.getDeductibleQuotaDeclared() + detail.getDeductibleQuota() ));
+						found = true; 
+						break;
+					}
 				}
-			}
-			if (!found) {
-				// Si hay algo declarado y no hay línea en esta declaracion. Ej:
-				//	Una venta al 5% de IVA en el periodo anterior
-				summary.add(detail);
+				if (!found) {
+					// Si hay algo declarado y no hay línea en esta declaracion. Ej:
+					//	Una venta al 5% de IVA en el periodo anterior
+					summary.add(detail);
+				}
 			}
 		}
 	}
@@ -305,6 +307,20 @@ public class VatTaxManager {
 		Collections.sort(details, comparator);
 		decorate(details);
 		return details;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<VatTaxDetail>  getPeriodDeclaredDetails(VatTaxDetail detail) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(VatTaxDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_YEAR), detail.getVatTax().getYear());
+		criteria.addLessThanExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_VAT_TAX_PERIOD), detail.getVatTax().getPeriod());
+		criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_KEY), detail.getKey());
+		if (detail.getKey().isPercentVisible()) {
+			criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DETAIL_PERCENT), detail.getPercent());	
+		}
+		List<?> list = bean.getList(criteria);
+		return (List<VatTaxDetail>) list;
 	}
 	
 }

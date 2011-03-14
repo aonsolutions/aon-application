@@ -43,6 +43,8 @@ public class VatTaxController extends BasicController {
 	public static final String DETAIL_TAB = "detailTab";
 	
 	private DataModel vatTaxModel;
+	private DataModel declaredModel;
+	
 	private List<VatTaxDetail> summary;
 	private VatTaxParameters params;
 	private  VatTaxManager provider;
@@ -50,8 +52,9 @@ public class VatTaxController extends BasicController {
 	private FiscalParametersController fiscalParams;
 	
 	private boolean scoredInvoices;
-	
+	private boolean declaredPanelVisible;
 	private boolean anyPreviousAdjust;
+	private VatTaxDetail detail;
 
 	public FiscalParametersController getFiscalParams() {
 		if (fiscalParams == null) {
@@ -60,7 +63,7 @@ public class VatTaxController extends BasicController {
 		return fiscalParams;
 	}
 
-	public VatTaxManager getProvider() {
+	public VatTaxManager getManager() {
 		if (provider == null) {
 			provider = new VatTaxManager();
 		}
@@ -77,6 +80,14 @@ public class VatTaxController extends BasicController {
 		this.vatTaxModel = vatTaxModel;
 	}
 
+	
+	public DataModel getDeclaredModel() {
+		return declaredModel;
+	}
+	public void setDeclaredModel(DataModel declaredModel) {
+		this.declaredModel = declaredModel;
+	}
+
 	public VatTaxParameters getParams() {
 		return params;
 	}
@@ -91,11 +102,25 @@ public class VatTaxController extends BasicController {
 		this.anyPreviousAdjust = anyPreviousAdjust;
 	}
 
+	public boolean isDeclaredPanelVisible() {
+		return declaredPanelVisible;
+	}
+	public void setDeclaredPanelVisible(boolean declaredPanelVisible) {
+		this.declaredPanelVisible = declaredPanelVisible;
+	}
+
 	public boolean isScoredInvoices() {
 		return scoredInvoices;
 	}
 	public void setScoredInvoices(boolean scoredInvoices) {
 		this.scoredInvoices = scoredInvoices;
+	}
+	
+	public VatTaxDetail getDetail() {
+		return detail;
+	}
+	public void setDetail(VatTaxDetail detail) {
+		this.detail = detail;
 	}
 
 	public List<VatTaxDetail> getSummary() {
@@ -124,12 +149,12 @@ public class VatTaxController extends BasicController {
 		getParams().setPeriod( vatTax.getPeriod() );
 		getParams().setInvoiceStatus( isScoredInvoices()?InvoiceStatus.SCORED: null);
 		if (isNew) {
-			setSummary(getProvider().getVatTax(getParams()));
-			getProvider().fillDeclared(getParams(),getSummary());
+			setSummary(getManager().getVatTax(getParams()));
+			getManager().fillDeclared(getParams(),getSummary());
 			calculateTax();
 			saveVatTax(); //TODO OJO ¡Se inicia otra transaccion! PROBAR
 		} else {
-			setSummary(getProvider().getDetailList(getParams()));
+			setSummary(getManager().getDetailList(getParams()));
 		}
 		setVatTaxModel(new ListDataModel(getSummary()));
 	}
@@ -146,8 +171,8 @@ public class VatTaxController extends BasicController {
 	}
 	
 	private void recalculate() {
-		getProvider().initializeTotals(getSummary());
-		getProvider().calculate(getSummary());
+		getManager().initializeTotals(getSummary());
+		getManager().calculate(getSummary());
 		calculateTax();
 	}
 	
@@ -345,4 +370,23 @@ public class VatTaxController extends BasicController {
 		return null;
 	}
 	
+	public void onHideDeclared(ActionEvent event) {
+		setDeclaredPanelVisible(false);
+	}
+
+	public void onShowDeclared(ActionEvent event) {
+		try {
+			setDeclaredPanelVisible(true);
+			VatTaxDetail detail = (VatTaxDetail) getVatTaxModel().getRowData();
+			setDetail(detail);
+			VatTaxManager manager = getManager();
+			setDeclaredModel( new ListDataModel( manager.getPeriodDeclaredDetails( detail ) ) );
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo mostrar el desglose de lo declarado. " + e.getMessage();
+			LOGGER.error(msg, e);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
 }
