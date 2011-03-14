@@ -3,6 +3,7 @@ package com.code.aon.fiscal.vat.tax;
 import java.util.Date;
 
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.enumeration.Period;
 
@@ -15,6 +16,8 @@ public class VatTaxParameters {
 	private Period period;
 	private VatTax	vatTax;
 	private SecurityLevel securityLevel;
+	private InvoiceStatus invoiceStatus;
+
 
 	public VatTaxParameters() {
 		setFromDate(null);
@@ -71,4 +74,10 @@ public class VatTaxParameters {
 		this.securityLevel = securityLevel;
 	}
 
+	public InvoiceStatus getInvoiceStatus() {
+		return invoiceStatus;
+	}
+	public void setInvoiceStatus(InvoiceStatus invoiceStatus) {
+		this.invoiceStatus = invoiceStatus;
+	}
 }

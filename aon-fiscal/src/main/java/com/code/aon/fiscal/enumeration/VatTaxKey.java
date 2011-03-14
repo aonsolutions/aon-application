@@ -34,10 +34,8 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	C1("C1", false, false, false, false, false),
 	// C2=IMPORTACIONES DE BIENES DE INVERSION
 	C2("C2", false, false, false, false, false),
-	// C3=IMPORTACIONES DE GASTOS
-	C3("C3", false, false, false, false, false),
 	// CT=TOTAL IMPORTACIONES
-	CT("CT", false, false, false, true, false,new VatTaxKey[]{VatTaxKey.C1,VatTaxKey.C2,VatTaxKey.C3}),
+	CT("CT", false, false, false, true, false,new VatTaxKey[]{VatTaxKey.C1,VatTaxKey.C2}),
 	// D1=ADQ. INTRACOM. DE BIENES CORRIENTES
 	D1("D1", false, false, false, false, false),
 	// D2=ADQ. INTRACOM. DE BIENES DE INVERSION

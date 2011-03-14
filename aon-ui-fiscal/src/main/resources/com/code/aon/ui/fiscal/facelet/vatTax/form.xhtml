@@ -123,20 +123,6 @@
 					<aon:inputTextarea id="VatTax_comments" cols="80" rows="2" value="#{vatTax.to.comments}"/>
 
 					<aon:div>
-<!-- 
-						<aon:div>
-							<aon:selectBooleanCheckbox id="VatTax_complementary"
-								disabled="#{vatTax.to.finished}"
-								value="#{vatTax.to.complementary}"/>
-							<aon:outputLabel for="VatTax_complementary" styleClass="aon-italic"
-								value="#{fiscalBundle.fiscal_complementary}" />
-							<aon:panelGroup rendered="#{!vatTax.new and vatTax.to.complementary}" styleClass="aon-italic aon-margin-left">		
-								<aon:outputText styleClass="aon-margin-left" value="#{bundle.aon_number}" />
-								<aon:outputText value=":" />
-								<aon:outputText styleClass="aon-margin-left" value="#{vatTax.to.number}" />
-							</aon:panelGroup>
-						</aon:div>
- -->					
 						<aon:div>
 							<aon:selectBooleanCheckbox id="VatTax_replacement"
 								disabled="#{vatTax.to.finished}"
@@ -160,6 +146,23 @@
 					</aon:div>
 				</aon:panelGrid>
 				
+				<c:if test="#{vatTax.new}">
+					<aon:div styleClass="aon-panelGrid-search">
+						<aon:div styleClass="aon-panelGrid-search-info">
+							<aon:outputText value="#{fiscalBundle.fiscal_vat_tax_import_info}" 
+									styleClass="aon-panelGrid-search-info-internal"/>
+						</aon:div>
+						
+						<aon:panelGrid id="searchContentID" columns="2">
+							<aon:outputText value="&#160;" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="vatTax_scoredInvoices" value="#{vatTax.scoredInvoices}"/>
+								<aon:outputLabel for="vatTax_scoredInvoices" value="#{fiscalBundle.fiscal_vatTax_scored_invoices}" />
+							</aon:div>
+						</aon:panelGrid>
+					</aon:div>
+				</c:if>
+
 				<c:if test="#{!vatTax.new}">
 					<aon:panelTabSet selectedTab="#{vatTax.selectedTab}">
 						<aon:panelTab id="detailTab" label="LIQUIDACION">

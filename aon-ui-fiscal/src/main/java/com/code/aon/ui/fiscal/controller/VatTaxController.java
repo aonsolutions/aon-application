@@ -19,6 +19,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.dao.IFiscalAlias;
@@ -47,6 +48,8 @@ public class VatTaxController extends BasicController {
 	private  VatTaxManager provider;
 	private String selectedTab;
 	private FiscalParametersController fiscalParams;
+	
+	private boolean scoredInvoices;
 	
 	private boolean anyPreviousAdjust;
 
@@ -88,6 +91,13 @@ public class VatTaxController extends BasicController {
 		this.anyPreviousAdjust = anyPreviousAdjust;
 	}
 
+	public boolean isScoredInvoices() {
+		return scoredInvoices;
+	}
+	public void setScoredInvoices(boolean scoredInvoices) {
+		this.scoredInvoices = scoredInvoices;
+	}
+
 	public List<VatTaxDetail> getSummary() {
 		if (summary == null) {
 			summary = new LinkedList<VatTaxDetail>();
@@ -112,6 +122,7 @@ public class VatTaxController extends BasicController {
 		getParams().setVatTax( vatTax );
 		getParams().setYear( vatTax.getYear() );
 		getParams().setPeriod( vatTax.getPeriod() );
+		getParams().setInvoiceStatus( isScoredInvoices()?InvoiceStatus.SCORED: null);
 		if (isNew) {
 			setSummary(getProvider().getVatTax(getParams()));
 			getProvider().fillDeclared(getParams(),getSummary());

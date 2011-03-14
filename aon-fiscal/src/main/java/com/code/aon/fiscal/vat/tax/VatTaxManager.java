@@ -19,6 +19,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
+import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
@@ -59,9 +60,9 @@ public class VatTaxManager {
 			stmt.append(" WHERE it.tax_type = 1");
 			stmt.append(" AND i.tax_date >= ?");
 			stmt.append(" AND i.tax_date <= ?");
-//			if (params.getSecurityLevel() != null) {
-//				stmt.append(" AND i.security_level = " + params.getSecurityLevel().ordinal());
-//			}
+			if (params.getInvoiceStatus() == InvoiceStatus.SCORED) {
+				stmt.append(" AND i.status = 1 ");
+			}
 			stmt.append(" GROUP BY i.type,it.percentage,it.surcharge,i.transaction,i.investment");
 			String sessionName = HibernateUtil.getSessionFactoryName();
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
@@ -203,9 +204,7 @@ public class VatTaxManager {
 					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)};
 			}
 			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
-				return investment?
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.C2),new VatTaxKeyEx(VatTaxKey.BI,percent),new VatTaxKeyEx(VatTaxKey.A4)}:
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.C3),new VatTaxKeyEx(VatTaxKey.CP,percent),new VatTaxKeyEx(VatTaxKey.A4)};
+				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A4)};
 			}
 			
 			if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
