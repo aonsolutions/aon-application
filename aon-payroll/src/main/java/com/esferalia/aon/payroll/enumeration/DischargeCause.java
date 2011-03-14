@@ -5,28 +5,30 @@ import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
-public enum LeaveType implements IResourceable {
-
-	COMMON_DISEASE,
-	OCCUPATIONAL_DISEASE,
-	MATERNITY,
-	PATERNITY,
-	PREGNANCY_RISK,
-	BREASTFEEDING_RISK,
-	NON_OCCUPATIONAL_DISEASE
-	;
+public enum DischargeCause implements IResourceable {
+	
+	
+	CURATION,
+	DEATH,
+	MEDICAL_INSPECTION,
+	DISABILITY,
+	TIME_EXHAUSTION,
+	IMPROVEMENT,
+	ENTERING,
+	CONTROL_INSS,
+	RECOVERY,
+	ENTERING_EDUCATION;
+	
 
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_leave_type_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_discharge_cause_";
 
-	
-	@Override
-	public String getName(Locale locale) {
+    public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
-	}
-
+    }
+    
 }

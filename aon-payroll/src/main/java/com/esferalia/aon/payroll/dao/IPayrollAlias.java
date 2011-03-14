@@ -12,6 +12,8 @@ import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractCalendarEvent;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractLeave;
+import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.EnterpriseAgreement;
@@ -463,6 +465,122 @@ public interface IPayrollAlias {
 	* Hibernate value: ContractDeduction.type
 	*/
 	String  CONTRACT_DEDUCTION_TYPE = CONTRACT_DEDUCTION_ENTRY.getAliasNames()[9];
+
+
+
+	/** 
+	* DAOConstantsEntry for ContractLeave entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_LEAVE_ENTRY = DAOConstants.getDAOConstant(ContractLeave.class);
+
+	/** 
+	* Alias value: ContractLeave_contract_id
+	* Hibernate value: ContractLeave.contract.id
+	*/
+	String  CONTRACT_LEAVE_CONTRACT_ID = CONTRACT_LEAVE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractLeave_dailyCgcBase
+	* Hibernate value: ContractLeave.dailyCgcBase
+	*/
+	String  CONTRACT_LEAVE_DAILY_CGC_BASE = CONTRACT_LEAVE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractLeave_dailyCgpBase
+	* Hibernate value: ContractLeave.dailyCgpBase
+	*/
+	String  CONTRACT_LEAVE_DAILY_CGP_BASE = CONTRACT_LEAVE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractLeave_dailyRegBase
+	* Hibernate value: ContractLeave.dailyRegBase
+	*/
+	String  CONTRACT_LEAVE_DAILY_REG_BASE = CONTRACT_LEAVE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractLeave_description
+	* Hibernate value: ContractLeave.description
+	*/
+	String  CONTRACT_LEAVE_DESCRIPTION = CONTRACT_LEAVE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContractLeave_endDate
+	* Hibernate value: ContractLeave.endDate
+	*/
+	String  CONTRACT_LEAVE_END_DATE = CONTRACT_LEAVE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ContractLeave_id
+	* Hibernate value: ContractLeave.id
+	*/
+	String  CONTRACT_LEAVE_ID = CONTRACT_LEAVE_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ContractLeave_parent_id
+	* Hibernate value: ContractLeave.parent.id
+	*/
+	String  CONTRACT_LEAVE_PARENT_ID = CONTRACT_LEAVE_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: ContractLeave_startDate
+	* Hibernate value: ContractLeave.startDate
+	*/
+	String  CONTRACT_LEAVE_START_DATE = CONTRACT_LEAVE_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: ContractLeave_type
+	* Hibernate value: ContractLeave.type
+	*/
+	String  CONTRACT_LEAVE_TYPE = CONTRACT_LEAVE_ENTRY.getAliasNames()[9];
+
+
+
+	/** 
+	* DAOConstantsEntry for ContractLeaveDetail entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_LEAVE_DETAIL_ENTRY = DAOConstants.getDAOConstant(ContractLeaveDetail.class);
+
+	/** 
+	* Alias value: ContractLeaveDetail_cias
+	* Hibernate value: ContractLeaveDetail.cias
+	*/
+	String  CONTRACT_LEAVE_DETAIL_CIAS = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractLeaveDetail_collegeNumber
+	* Hibernate value: ContractLeaveDetail.collegeNumber
+	*/
+	String  CONTRACT_LEAVE_DETAIL_COLLEGE_NUMBER = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractLeaveDetail_contractLeave_id
+	* Hibernate value: ContractLeaveDetail.contractLeave.id
+	*/
+	String  CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractLeaveDetail_date
+	* Hibernate value: ContractLeaveDetail.date
+	*/
+	String  CONTRACT_LEAVE_DETAIL_DATE = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractLeaveDetail_id
+	* Hibernate value: ContractLeaveDetail.id
+	*/
+	String  CONTRACT_LEAVE_DETAIL_ID = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContractLeaveDetail_processed
+	* Hibernate value: ContractLeaveDetail.processed
+	*/
+	String  CONTRACT_LEAVE_DETAIL_PROCESSED = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ContractLeaveDetail_type
+	* Hibernate value: ContractLeaveDetail.type
+	*/
+	String  CONTRACT_LEAVE_DETAIL_TYPE = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[6];
 
 
 

@@ -15,6 +15,8 @@ import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractCalendarEvent;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractLeave;
+import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.EnterpriseAgreement;
@@ -37,7 +39,7 @@ public class PayrollAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/home/ecastellano/AON-6.0.0/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
+		File file = new File("/AON-TRUNK/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] { 
 				Agreement.class.getName(),
 				AgreementLevel.class.getName(),
@@ -49,6 +51,8 @@ public class PayrollAliasWriter {
 				ContractCalendarEvent.class.getName(),
 				ContractData.class.getName(),
 				ContractDeduction.class.getName(),
+				ContractLeave.class.getName(),
+				ContractLeaveDetail.class.getName(),
 				ContractPayment.class.getName(),
 				DeductionConcept.class.getName(),
 				EnterpriseAgreement.class.getName(),
