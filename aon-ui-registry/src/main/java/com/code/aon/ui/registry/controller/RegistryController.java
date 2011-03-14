@@ -50,18 +50,32 @@ public class RegistryController extends BasicController {
 	}
 
 	public void onSendEmail(ActionEvent event) {
-		MessageController messageController = (MessageController) AonUtil
-				.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
 		messageController.initNewMessage();
 		FacesContext context = FacesContext.getCurrentInstance();
 		Object email = context.getExternalContext().getRequestParameterMap().get("email");
 		messageController.setRecipientsTo(email.toString());
 	}
 
+	public void initDocument() {
+		Registry registry = ((IRegistry) getTo()).getRegistry();
+		registry.setType(RegistryType.LEGAL);
+		registry.setNationality(Country.ES);
+		registry.setDocumentCountry(Country.ES);
+		registry.setDocumentType(DocumentType.CIF);		
+	}	
+	
+	public void onChangeRegistryType(ActionEvent event) {
+		IRegistry iRegistry = (IRegistry) getTo();
+		iRegistry.getRegistry().setDocumentType(iRegistry.getRegistry().getType() == RegistryType.LEGAL ? DocumentType.CIF : DocumentType.NIF);
+	}
+	
 	public void onChangeDocument(ActionEvent event) {
+		IRegistry iRegistry = (IRegistry) getTo();
+		iRegistry.getRegistry().setType(iRegistry.getRegistry().getDocumentType() == DocumentType.CIF ? RegistryType.LEGAL : RegistryType.NATURAL);
+
 		try {
 			if (isNew()) {
-				IRegistry iRegistry = (IRegistry) getTo();
 				RegistryController.validateDocument(iRegistry, getManagerBean());
 			}
 		} catch (ManagerBeanException e) {
@@ -69,29 +83,19 @@ public class RegistryController extends BasicController {
 		}
 	}
 	
-	public void initDocument() {
-		Registry registry = ((IRegistry) getTo()).getRegistry();
-		registry.setNationality(Country.ES);
-		registry.setDocumentCountry(Country.ES);
-		registry.setDocumentType(DocumentType.CIF);		
-	}	
-	
 	public static void validateDocument(IRegistry iRegistry, IManagerBean bean) throws ManagerBeanException {
-		validateDocument(iRegistry.getRegistry(), ClassUtils.getShortClassName(bean.getPOJOClass()) + "_registry", bean);
+		validateDocument(iRegistry.getRegistry(), ClassUtils.getShortClassName(bean.getPOJOClass()) + ".registry", bean);
 	}
 	
 	public static void validateDocument(Registry registry, String preffix, IManagerBean bean) throws ManagerBeanException {
-		String document = registry.getDocument();
-		Country country = registry.getDocumentCountry();
-		DocumentType type = registry.getDocumentType();
-		if (StringUtils.isNotEmpty(document)) {
+		if (StringUtils.isNotEmpty(registry.getDocument())) {
 			Criteria criteria = new Criteria();
-			String alias = bean.getFieldName( preffix + "_document");
-			criteria.addEqualExpression(alias, document);
+			criteria.addEqualExpression(preffix + ".document", registry.getDocument());
+			criteria.addEqualExpression(preffix + ".documentCountry", registry.getDocumentCountry());
 			List<ITransferObject> list = bean.getList(criteria);
 			if (list.size() > 0 ) {
 				String msg = AonUtil.getMessage(BUNDLE_NAME, REGISTRY_DOCUMENT_ERROR); 
-				AonUtil.addWarningMessage(msg + " " + document);
+				AonUtil.addWarningMessage(msg + " " + registry.getDocument());
 			}
 		}
 	}	

@@ -235,43 +235,44 @@
 					<aon:outputLabel for="Finance_holder_document"
 						value="#{bundle.aon_company_document}" />
 					<aon:panelGroup id="Finance_holder_document">
-						<aon:outputText styleClass="aon-italic"
+						<aon:selectOneMenu id="Finance_registry_document_type" 
+							disabled="#{!finance.new}"
+							value="#{finance.to.registryDocumentType}"
+							reRender="Finance_holder_document_icon">
+							<f:selectItems value="#{registryCollections.documentTypes}" />
+						</aon:selectOneMenu>
+						<aon:outputText styleClass="aon-margin-left aon-italic"
 							value="#{bundle.aon_country}" />
 						<aon:selectOneMenu id="Finance_registry_document_country"
 							styleClass="aon-margin-left" disabled="#{!finance.new}"
 							value="#{finance.to.registryDocumentCountry}"
-							reRender="Finance_holder_document">
+							reRender="Finance_holder_document_icon">
 							<f:selectItems value="#{commonCollections.countryCodes}" />
-						</aon:selectOneMenu>
-						<aon:outputText styleClass="aon-margin-left aon-italic"
-							value="#{bundle.aon_type}" />
-						<aon:selectOneMenu id="Finance_registry_document_type" 
-							styleClass="aon-margin-left" disabled="#{!finance.new}"
-							value="#{finance.to.registryDocumentType}"
-							reRender="Finance_holder_document">
-							<f:selectItems value="#{registryCollections.documentTypes}" />
 						</aon:selectOneMenu>
 						<aon:inputText id="Finance_registry_document" 
 							style="margin-left: 5px;" disabled="#{!finance.new}"
 							value="#{finance.to.registryDocument}" size="16" maxlength="16"
-							reRender="Finance_holder_document">
+							reRender="Finance_holder_document_icon" 
+							onblur="toUpperCase(this);">
 							<f:validateLength minimum="1" maximum="16" />
  						</aon:inputText>
-						<aon:outputText 
-							rendered="#{!finance.to.registryDocumentValidable}"
-							styleClass="aon-icon-question"
-							style="padding-left: 15px;"
-							value="&#160;" />
-						<aon:outputText 
-							rendered="#{finance.to.registryDocumentValidable and finance.to.validRegistryDocument}"
-							styleClass="aon-icon-predetermine"
-							style="padding-left: 15px;"
-							value="&#160;" />
-						<aon:outputText 
-							rendered="#{finance.to.registryDocumentValidable and !finance.to.validRegistryDocument}"
-							styleClass="aon-icon-exception"
-							style="padding-left: 15px;"
-							value="&#160;" />
+						<aon:panelGroup id="Finance_holder_document_icon">
+							<aon:outputText 
+								rendered="#{!finance.to.registryDocumentValidable}"
+								styleClass="aon-icon-question"
+								style="padding-left: 15px;"
+								value="&#160;" />
+							<aon:outputText 
+								rendered="#{finance.to.registryDocumentValidable and finance.to.validRegistryDocument}"
+								styleClass="aon-icon-predetermine"
+								style="padding-left: 15px;"
+								value="&#160;" />
+							<aon:outputText 
+								rendered="#{finance.to.registryDocumentValidable and !finance.to.validRegistryDocument}"
+								styleClass="aon-icon-exception"
+								style="padding-left: 15px;"
+								value="&#160;" />
+	 					</aon:panelGroup>
  					</aon:panelGroup>
 
 					<aon:outputLabel for="Finance_payMethod_id"

@@ -192,43 +192,44 @@
 					<aon:outputLabel for="Creditor_document"
 						value="#{bundle.aon_company_document}" />
 					<aon:panelGroup id="Creditor_document">
-						<aon:outputText styleClass="aon-italic"
+						<aon:selectOneMenu id="Creditor_registry_document_type" 
+							disabled="#{expenseInvoice.readOnly}"
+							value="#{expenseInvoice.to.registryDocumentType}"
+							reRender="Creditor_document_icon">
+							<f:selectItems value="#{registryCollections.documentTypes}" />
+						</aon:selectOneMenu>
+						<aon:outputText styleClass="aon-margin-left aon-italic"
 							value="#{bundle.aon_country}" />
 						<aon:selectOneMenu id="Creditor_registry_document_country"
 							styleClass="aon-margin-left" disabled="#{expenseInvoice.readOnly}"
 							value="#{expenseInvoice.to.registryDocumentCountry}"
-							reRender="Creditor_document">
+							reRender="Creditor_document_icon">
 							<f:selectItems value="#{commonCollections.countryCodes}" />
 						</aon:selectOneMenu>
-						<aon:outputText styleClass="aon-margin-left aon-italic"
-							value="#{bundle.aon_type}" />
-						<aon:selectOneMenu id="Creditor_registry_document_type" 
-							styleClass="aon-margin-left" disabled="#{expenseInvoice.readOnly}"
-							value="#{expenseInvoice.to.registryDocumentType}"
-							reRender="Creditor_document">
-							<f:selectItems value="#{registryCollections.documentTypes}" />
-						</aon:selectOneMenu>
 						<aon:inputText id="Creditor_registry_document" 
-							style="margin-left: 5px;" disabled="#{expenseInvoice.readOnly}"
+							style="margin-left: 3px;" disabled="#{expenseInvoice.readOnly}"
 							value="#{expenseInvoice.to.registryDocument}" size="16" maxlength="16"
-							reRender="Creditor_document">
+							reRender="Creditor_document_icon" 
+							onblur="toUpperCase(this);">
 							<f:validateLength minimum="1" maximum="16" />
  						</aon:inputText>
-						<aon:outputText 
-							rendered="#{!expenseInvoice.to.registryDocumentValidable}"
-							styleClass="aon-icon-question"
-							style="padding-left: 15px;"
-							value="&#160;" />
-						<aon:outputText 
-							rendered="#{expenseInvoice.to.registryDocumentValidable and expenseInvoice.to.validRegistryDocument}"
-							styleClass="aon-icon-predetermine"
-							style="padding-left: 15px;"
-							value="&#160;" />
-						<aon:outputText 
-							rendered="#{expenseInvoice.to.registryDocumentValidable and !expenseInvoice.to.validRegistryDocument}"
-							styleClass="aon-icon-exception"
-							style="padding-left: 15px;"
-							value="&#160;" />
+						<aon:panelGroup id="Creditor_document_icon">
+							<aon:outputText 
+								rendered="#{!expenseInvoice.to.registryDocumentValidable}"
+								styleClass="aon-icon-question"
+								style="padding-left: 15px;"
+								value="&#160;" />
+							<aon:outputText 
+								rendered="#{expenseInvoice.to.registryDocumentValidable and expenseInvoice.to.validRegistryDocument}"
+								styleClass="aon-icon-predetermine"
+								style="padding-left: 15px;"
+								value="&#160;" />
+							<aon:outputText 
+								rendered="#{expenseInvoice.to.registryDocumentValidable and !expenseInvoice.to.validRegistryDocument}"
+								styleClass="aon-icon-exception"
+								style="padding-left: 15px;"
+								value="&#160;" />
+	 					</aon:panelGroup>
  					</aon:panelGroup>
 
 					<aon:outputLabel for="Invoice_registryAddress_id"

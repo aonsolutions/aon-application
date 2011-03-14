@@ -6,35 +6,32 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:valueParam name="pojoName" default="#{controller.pojoShortName}"/>
-	<aon:valueParam name="registry" default="#{controller.to.registry}"/>
-
 	<aon:outputLabel for="#{pojoName}_document" value="#{bundle.aon_document}" />
 	<aon:panelGroup id="#{pojoName}DocumentPanel">
-		<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-italic"/>
+		<aon:selectOneMenu id="#{pojoName}_document_type" value="#{registry.documentType}">
+			<f:selectItems value="#{registryCollections.documentTypes}" />
+			<a4j:support event="onchange" focus="#{pojoName}_document"
+				actionListener="#{controller.onChangeDocument}"
+				reRender="#{pojoName}DocumentPanel,#{pojoName}_type" 
+				ajaxSingle="true" />
+		</aon:selectOneMenu>
+		<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-italic aon-margin-left"/>
 		<aon:selectOneMenu id="#{pojoName}_document_country" value="#{registry.documentCountry}"
 			styleClass="aon-margin-left">
 			<f:selectItems value="#{commonCollections.countryCodes}" />
-			<a4j:support event="onchange" focus="#{pojoName}_document_type"
-				actionListener="#{controller.onChangeDocument}"
-				ajaxSingle="true" limitToList="true"
-				reRender="#{pojoName}DocumentPanel"/>
-		</aon:selectOneMenu>
-		<aon:outputText value="#{bundle.aon_type}" styleClass="aon-margin-left aon-italic"/>
-		<aon:selectOneMenu id="#{pojoName}_document_type" value="#{registry.documentType}"	styleClass="aon-margin-left">
-			<f:selectItems value="#{registryCollections.documentTypes}" />
 			<a4j:support event="onchange" focus="#{pojoName}_document"
-				actionListener="#{controller.onChangeDocument}" 
-				ajaxSingle="true" limitToList="true"
-				reRender="#{pojoName}DocumentPanel"/>
+				actionListener="#{controller.onChangeDocument}"
+				reRender="#{pojoName}DocumentPanel"
+				ajaxSingle="true" />
 		</aon:selectOneMenu>
-		<aon:inputText id="#{pojoName}_document" maxlength="16" style="margin-left: 5px;"
-			value="#{registry.document}" size="16">
+		<aon:inputText id="#{pojoName}_document" style="margin-left: 3px;"
+			value="#{registry.document}" size="16" maxlength="16">
 			<f:validateLength minimum="1" maximum="16" />
-			<a4j:support event="onchange" focus="#{pojoName}_name"
-				actionListener="#{controller.onChangeDocument}" 
-				ajaxSingle="true" limitToList="true"
-				reRender="#{pojoName}DocumentPanel"/>
+			<a4j:support onsubmit="toUpperCase(this);"
+				event="onchange" focus="#{pojoName}_name"
+				actionListener="#{controller.onChangeDocument}"
+				reRender="#{pojoName}DocumentPanel" 
+				ajaxSingle="true" />
 		</aon:inputText>
 		<aon:outputText 
 			rendered="#{!registry.documentValidable}"
