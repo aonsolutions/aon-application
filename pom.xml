@@ -22,8 +22,8 @@
 	  <module>aon-dbutils</module>
 	  <module>aon-ui-dbutils</module>
 	  <module>aon-ui-db-manager</module>
-
 	  <module>aon-maven-plugin</module>
+	  <module>aon-sql-payroll</module>
 
     <!-- FRAMEWORK -->
 	  <module>aon-audit</module>
