@@ -19,6 +19,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
@@ -149,10 +150,9 @@ public class VatTaxController extends BasicController {
 		getParams().setPeriod( vatTax.getPeriod() );
 		getParams().setInvoiceStatus( isScoredInvoices()?InvoiceStatus.SCORED: null);
 		if (isNew) {
-			setSummary(getManager().getVatTax(getParams()));
-			getManager().fillDeclared(getParams(),getSummary());
+			setSummary( getManager().getVatTax(params));
 			calculateTax();
-			saveVatTax(); //TODO OJO ¡Se inicia otra transaccion! PROBAR
+			saveVatTax();
 		} else {
 			setSummary(getManager().getDetailList(getParams()));
 		}
@@ -388,5 +388,17 @@ public class VatTaxController extends BasicController {
 			throw new AbortProcessingException(msg);
 		}
 	}
-
+	
+	public void onChangeTaxableBaseAdjust(ActionEvent event) {
+		VatTaxDetail detail = (VatTaxDetail) getVatTaxModel().getRowData();
+		if ( detail.getQuotaAdjust() == 0 ) {
+			detail.setQuotaAdjust(CommonUtil.round(detail.getTaxableBaseAdjust() * detail.getPercent() / 100)); 
+		}
+	}
+	public void onChangeQuotaAdjust(ActionEvent event) {
+		VatTaxDetail detail = (VatTaxDetail) getVatTaxModel().getRowData();
+		if (detail.getKey().isDetailed() && detail.getTaxableBaseAdjust() == 0 && detail.getPercent() != 0) {
+			detail.setTaxableBaseAdjust(CommonUtil.round(detail.getQuotaAdjust() *  100 / detail.getPercent()));
+		}
+	}
 }

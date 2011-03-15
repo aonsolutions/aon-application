@@ -82,7 +82,8 @@
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
 			<aon:commandLink actionListener="#{vatTax.onShowDeclared}"
-				reRender="declaredDataContainer" 
+				reRender="declaredDataContainer"
+				tabindex="50000" 
 				onmouseover="this.style.textDecoration='underline';"
 				onmouseout="this.style.textDecoration='inherit';">
 				<aon:outputText value="#{to.taxableBaseDeclared}" rendered="#{to.key.detailed}">
@@ -97,6 +98,7 @@
 			</f:facet>
 			<aon:commandLink actionListener="#{vatTax.onShowDeclared}"
 				reRender="declaredDataContainer" 
+				tabindex="50000" 
 				onmouseover="this.style.textDecoration='underline';"
 				onmouseout="this.style.textDecoration='inherit';">
 				<aon:outputText value="#{to.quotaDeclared}" rendered="#{!to.key.blank}"   
@@ -129,9 +131,17 @@
 			<f:facet name="header">
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
-			<aon:outputText value="#{to.taxableBaseAdjust}" rendered="#{to.key.detailed}">
+			<aon:outputText value="#{to.taxableBaseAdjust}" rendered="#{to.key.detailed and vatTax.to.finished}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
+			<aon:inputText id="taxableBaseAdjust" value="#{to.taxableBaseAdjust}" rendered="#{to.key.detailed and !vatTax.to.finished}" 
+				required="true" size="8">
+				<a4j:support event="onchange"
+					ajaxSingle="true" limitToList="true"
+					actionListener="#{vatTax.onChangeTaxableBaseAdjust}"
+					focus="quotaAdjust"
+					reRender="quotaAdjust"/>
+			</aon:inputText>
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="font-size: 0.9em;">
@@ -142,8 +152,14 @@
 				style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
-			<aon:inputText value="#{to.quotaAdjust}" rendered="#{!to.key.total and !to.key.subtotal and !vatTax.to.finished and !to.key.blank}" 
-				required="true" size="8" />
+			<aon:inputText id="quotaAdjust" value="#{to.quotaAdjust}" rendered="#{!to.key.total and !to.key.subtotal and !vatTax.to.finished and !to.key.blank}" 
+				required="true" size="8">
+				<a4j:support event="onchange"	
+					rendered="#{to.key.detailed}"
+					ajaxSingle="true" limitToList="true"
+					actionListener="#{vatTax.onChangeQuotaAdjust}"
+					reRender="taxableBaseAdjust"/>
+			</aon:inputText>
 		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80" style="background-color:#f6f5e3;font-size: 0.9em;">

@@ -108,8 +108,9 @@ public class VatTaxManager {
 			}
 			VatTaxDetailComparator comparator = new VatTaxDetailComparator();
 			Collections.sort(list, comparator);
-			decorate(list);
 			calculate(list);
+			fillDeclared(params,list);		
+			list = decorate(list);
 			return list;
 		} catch (SQLException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
@@ -129,12 +130,31 @@ public class VatTaxManager {
 		}
 	}
 
-	private void decorate(List<VatTaxDetail> list) {
+	private List<VatTaxDetail> decorate(List<VatTaxDetail> list) {
+		List<VatTaxDetail> newList = new LinkedList<VatTaxDetail>();
+		for (VatTaxDetail detail : list) {
+			if (detail.getKey().isPercentVisible()
+				&& detail.getTaxableBaseAccumulated() == 0.0 && detail.getQuotaAccumulated() == 0.0
+				&& detail.getDeductibleQuotaAccumulated() == 0.0 && detail.getTaxableBaseDeclared() == 0.0
+				&& detail.getQuotaDeclared() == 0.0 && detail.getDeductibleQuotaDeclared() == 0.0
+				&& detail.getTaxableBaseResult() == 0.0 && detail.getQuotaResult() == 0.0
+				&& detail.getDeductibleQuotaResult() == 0.0 && detail.getTaxableBaseAdjust() == 0.0
+				&& detail.getQuotaAdjust() == 0.0 && detail.getDeductibleQuotaAdjust() == 0.0
+				&& detail.getTaxableBase() == 0.0 && detail.getQuota() == 0.0
+				&& detail.getDeductibleQuota() == 0.0) {
+					// nothing
+			} else {
+				newList.add(detail);	
+			}
+		}
+		list = newList;
+
 		VatTaxKey pre = null;
 		for (VatTaxDetail m: list) {
 			m.setDescriptionDisabled(m.getKey() == pre );
 			pre = m.getKey();
 		}
+		return list;
 	}
 
 	private void initializeList(List<VatTaxDetail> list) {
@@ -241,7 +261,7 @@ public class VatTaxManager {
 		}
 	}
 
-	public void fillDeclared(VatTaxParameters params, List<VatTaxDetail> summary) throws ManagerBeanException {
+	private void fillDeclared(VatTaxParameters params, List<VatTaxDetail> summary) throws ManagerBeanException {
 		VatTax vatTax = params.getVatTax();
 		// Primera declaración del ejercicio, si no es complementaria, 
 		// no se debe tener en cuenta lo almacenado en ese periodo.
