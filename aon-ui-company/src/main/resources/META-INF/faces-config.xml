@@ -627,8 +627,8 @@
 				<value>#{enterpriseControllerListener}</value>				
 				<value>#{enterpriseWorkPlaceChildListener}</value>
 				<value>#{enterpriseActivityChildListener}</value>
-				<value>#{enterpriseAddressListener}</value>
 				<value>#{enterpriseMediaListener}</value>
+				<value>#{enterpriseAddressListener}</value>
 				<value>#{enterpriseRBankChildListener}</value>
 				<value>#{enterpriseRPayMethodChildListener}</value>
 				<value>#{enterpriseAddInfoListener}</value>

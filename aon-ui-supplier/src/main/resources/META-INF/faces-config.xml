@@ -43,8 +43,8 @@
 				<value>#{supplierSearch}</value>
 				<value>#{supplierForm}</value>
 				<value>#{supplierScopeListener}</value>
-				<value>#{supplierAddressListener}</value>
 				<value>#{supplierMediaListener}</value>
+				<value>#{supplierAddressListener}</value>
 				<value>#{supplierRBankChildListener}</value>
 				<value>#{supplierRPayMethodChildListener}</value>
 				<value>#{supplierSegmentListener}</value>

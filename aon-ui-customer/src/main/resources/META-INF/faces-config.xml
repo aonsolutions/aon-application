@@ -46,8 +46,8 @@
 				<value>#{customerSearch}</value>
 				<value>#{customerControllerListener}</value>
 				<value>#{customerForm}</value>
-				<value>#{customerAddressListener}</value>
 				<value>#{customerMediaListener}</value>
+				<value>#{customerAddressListener}</value>
 				<value>#{customerScopeListener}</value>				
 				<value>#{customerObservationListener}</value>
 				<value>#{customerRBankChildListener}</value>

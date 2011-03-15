@@ -46,8 +46,8 @@
 				</value-class>
 				<value>#{sellerSearch}</value>
 				<value>#{sellerForm}</value>
-				<value>#{sellerAddressListener}</value>
 				<value>#{sellerMediaListener}</value>
+				<value>#{sellerAddressListener}</value>
 				<value>#{sellerRAttachChildListener}</value>
 			</list-entries>
 		</managed-property>

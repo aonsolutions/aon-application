@@ -425,8 +425,8 @@
 				<value>#{creditorSearch}</value>
 				<value>#{creditorForm}</value>
 				<value>#{creditorScopeListener}</value>
-				<value>#{creditorAddressListener}</value>
 				<value>#{creditorMediaListener}</value>
+				<value>#{creditorAddressListener}</value>
 				<value>#{creditorRBankChildListener}</value>
 				<value>#{creditorRPayMethodChildListener}</value>
 				<value>#{creditorSegmentListener}</value>

@@ -162,8 +162,8 @@
 				<value>#{targetControllerListener}</value>
 				<value>#{targetSearch}</value>
 				<value>#{targetForm}</value>
-				<value>#{targetAddressListener}</value>
 				<value>#{targetMediaListener}</value>
+				<value>#{targetAddressListener}</value>
 				<value>#{targetRBankChildListener}</value>
 				<value>#{targetRPayMethodChildListener}</value>
 				<value>#{targetNoteChildListener}</value>
