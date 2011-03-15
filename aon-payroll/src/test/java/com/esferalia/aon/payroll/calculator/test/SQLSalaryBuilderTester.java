@@ -12,8 +12,8 @@ import java.util.Map;
 
 
 import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.master.sql.SQLConstants;
-import com.esferalia.aon.master.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;

@@ -2,13 +2,11 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.EventListener;
-import java.util.EventObject;
 
-import com.esferalia.aon.master.sql.AbstractSQL;
-import com.esferalia.aon.master.sql.SQLConstants.SalaryColumns;
-import com.esferalia.aon.master.sql.SQLReader;
-import com.esferalia.aon.master.sql.SQLReader.SalaryReader;
+import com.esferalia.aon.payroll.sql.AbstractSQL;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLReader;
+import com.esferalia.aon.payroll.sql.SQLReader.SalaryReader;
 import com.esferalia.aon.salary.ISalary;
 
 public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {

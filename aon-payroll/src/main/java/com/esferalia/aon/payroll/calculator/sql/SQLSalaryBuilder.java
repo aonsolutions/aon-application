@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.esferalia.aon.master.sql.AbstractSQL;
-import com.esferalia.aon.master.sql.BufferedSQLWriter;
+import com.esferalia.aon.payroll.sql.AbstractSQL;
+import com.esferalia.aon.payroll.sql.SQLWriter;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -17,13 +17,13 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 public class SQLSalaryBuilder extends  AbstractSQLSalaryBuilder {
 
 	
-	private BufferedSQLWriter sqlWriter;
+	private SQLWriter sqlWriter;
 	
 	public SQLSalaryBuilder(Connection connection) 
 	throws SQLException
 	{
 		super();
-		sqlWriter = new BufferedSQLWriter(connection);
+		sqlWriter = new SQLWriter(connection);
 	}
 	
 	@Override

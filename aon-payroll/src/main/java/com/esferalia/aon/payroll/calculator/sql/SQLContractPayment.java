@@ -4,10 +4,10 @@ import java.sql.ResultSet;
 import java.util.Date;
 
 import com.code.aon.common.enumeration.Month;
-import com.esferalia.aon.master.sql.AbstractSQL.PaymentConcept;
-import com.esferalia.aon.master.sql.SQLConstants;
-import com.esferalia.aon.master.sql.SQLConstants.ContractPaymentColumns;
-import com.esferalia.aon.master.sql.SQLConstants.PaymentConceptColumns;
+import com.esferalia.aon.payroll.sql.AbstractSQL.PaymentConcept;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
