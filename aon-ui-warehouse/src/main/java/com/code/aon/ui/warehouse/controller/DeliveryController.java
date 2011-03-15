@@ -54,6 +54,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.util.WarehouseEmailUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -396,10 +397,15 @@ public class DeliveryController extends BasicController {
 	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
-		messageController.initNewMessage();
-		emailUtil.initMessageController(messageController, (Delivery) getTo());
-		messageController.setShowNewMessageWindow(true);
+		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
+		if (webmailController.isLogged()) {
+			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+			messageController.initNewMessage();
+			emailUtil.initMessageController(messageController, (Delivery) getTo());
+			messageController.setShowNewMessageWindow(true);
+		} else {
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+		}
 	}	
 	
 }

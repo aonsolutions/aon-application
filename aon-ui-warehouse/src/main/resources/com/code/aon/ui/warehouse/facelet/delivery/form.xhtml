@@ -43,7 +43,7 @@
 						</c:if>
 						<aon:commandButton value="&#160;" id="email"
 							title="#{webmailBundle.webmail_send_email}"
-							rendered="#{webmail.logged and !delivery.new and deliveryDetail.model.rowCount > 0 and deliveryDetail.to == null}"
+							rendered="#{deliveryDetail.model.rowCount > 0 and deliveryDetail.to == null}"
 							styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 							<aon:actionListener method="#{delivery.onSendByEmail}" />
 						</aon:commandButton>															

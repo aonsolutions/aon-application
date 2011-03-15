@@ -55,6 +55,7 @@ import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.SecurityInfo;
 
 public class InvoiceController extends BasicController implements ISignatureController {
@@ -183,7 +184,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		this.showInvoiceAddressWindow = value;
 	}
 
-	public void onInvoiceAddressShow( ActionEvent event ) {
+	public void onInvoiceAddressShow(ActionEvent event) {
 		BasicController addressController = (BasicController)FormUtil.getController(invoiceAddressControllerName);
 		ITransferObject to = addressController.getTo();
 		if (to == null) {
@@ -443,7 +444,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	@Override
 	public IAttachment newAttachment(ITransferObject parent) {
 		InvoiceAttachment attachment = new InvoiceAttachment();
-		attachment.setInvoice( (Invoice) parent );
+		attachment.setInvoice((Invoice) parent);
 		return attachment;
 	}
 
@@ -476,10 +477,10 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return (SignerController) AonUtil.getRegisteredBean(IFinanceConstants.SALE_INVOICE_SIGNER_CONTROLLER_NAME);
 	}
 	
-	public IAttachment getInvoiceData( Invoice invoice ) throws ManagerBeanException {
+	public IAttachment getInvoiceData(Invoice invoice) throws ManagerBeanException {
 		SignerController signer = getSignerController();
 		IAttachment attach = null;
-		if ( invoice.isSigned() ) {
+		if (invoice.isSigned()) {
 			attach = signer.getSignedAttachment(invoice.getId());
 		} else {
 			attach = getUnsignedAttachment(invoice);
@@ -487,18 +488,23 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return attach;		
 	}
 	
-	public void onSendInvoiceByEmail( ActionEvent event ) throws ManagerBeanException, IOException {
-		sendInvoiceByEmail( null, true );
+	public void onSendInvoiceByEmail(ActionEvent event) throws ManagerBeanException, IOException {
+		sendInvoiceByEmail(null, true);
 	}
 
-	private void sendInvoiceByEmail( SecurityInfo securyInfo, boolean facturae ) throws ManagerBeanException, IOException {
-		Invoice invoice = getInvoice();
-		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
-		messageController.initNewMessage();
-		IAttachment attach = getInvoiceData(invoice);
-		emailController.initMessageController(messageController, invoice, attach, facturae);
-		messageController.setShowNewMessageWindow(true);
-		messageController.setSecurityInfo( securyInfo );
+	private void sendInvoiceByEmail(SecurityInfo securyInfo, boolean facturae) throws ManagerBeanException, IOException {
+		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
+		if (webmailController.isLogged()) {
+			Invoice invoice = getInvoice();
+			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+			messageController.initNewMessage();
+			IAttachment attach = getInvoiceData(invoice);
+			emailController.initMessageController(messageController, invoice, attach, facturae);
+			messageController.setShowNewMessageWindow(true);
+			messageController.setSecurityInfo(securyInfo);
+		} else {
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+		}
 	}
 	
 	public void onLoadInvoice(ActionEvent event, Invoice invoice, String backAction, String invoiceControllerName) throws ManagerBeanException {

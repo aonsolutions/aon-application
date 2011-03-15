@@ -43,6 +43,7 @@ import com.code.aon.ui.supplier.util.SupplierValidationManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
@@ -350,10 +351,15 @@ public class PurchaseController extends BasicController {
 	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
-		messageController.initNewMessage();
-		emailUtil.initMessageController(messageController, (Purchase) getTo());
-		messageController.setShowNewMessageWindow(true);
+		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
+		if (webmailController.isLogged()) {
+			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+			messageController.initNewMessage();
+			emailUtil.initMessageController(messageController, (Purchase) getTo());
+			messageController.setShowNewMessageWindow(true);
+		} else {
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+		}
 	}		
 	
 }

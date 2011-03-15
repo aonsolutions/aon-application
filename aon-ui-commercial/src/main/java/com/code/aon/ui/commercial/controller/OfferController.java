@@ -72,6 +72,7 @@ import com.code.aon.ui.sign.controller.SignerController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.SecurityInfo;
 
 /**
@@ -620,16 +621,21 @@ public class OfferController extends BasicController implements ISignatureContro
     	return null;
 	}
 
-	public void onSendOfferByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		sendOfferByEmail( null );
+	public void onSendOfferByEmail(ActionEvent event) throws ManagerBeanException, ReportException, IOException, SAXException {
+		sendOfferByEmail(null);
 	}
 
-	public void sendOfferByEmail( SecurityInfo securyInfo ) throws ManagerBeanException, ReportException, IOException, SAXException {
-		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
-		messageController.initNewMessage();
-		emailUtil.initMessageController(messageController, getOffer());
-		messageController.setShowNewMessageWindow(true);
-		messageController.setSecurityInfo( securyInfo );
+	public void sendOfferByEmail(SecurityInfo securyInfo) throws ManagerBeanException, ReportException, IOException, SAXException {
+		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
+		if (webmailController.isLogged()) {
+			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+			messageController.initNewMessage();
+			emailUtil.initMessageController(messageController, getOffer());
+			messageController.setShowNewMessageWindow(true);
+			messageController.setSecurityInfo(securyInfo);
+		} else {
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+		}
 	}
 
 	@Override
@@ -660,7 +666,7 @@ public class OfferController extends BasicController implements ISignatureContro
 	@Override
 	public IAttachment newAttachment(ITransferObject parent) {
 		OfferAttachment attachment = new OfferAttachment();
-		attachment.setOffer( (Offer) parent );
+		attachment.setOffer((Offer) parent);
 		return attachment;
 	}
 
@@ -758,7 +764,7 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 
 	public String backAction() {
-		if ( backAction != null ) {
+		if (backAction != null) {
 			return backAction;
 		}
 		return ICommercialConstants.NAVIGATION_OFFER_LIST;

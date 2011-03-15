@@ -26,6 +26,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.code.aon.ui.webmail.controller.WebMailController;
 
 /**
  * Controller used in the registry maintenance.
@@ -50,11 +51,16 @@ public class RegistryController extends BasicController {
 	}
 
 	public void onSendEmail(ActionEvent event) {
-		MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
-		messageController.initNewMessage();
-		FacesContext context = FacesContext.getCurrentInstance();
-		Object email = context.getExternalContext().getRequestParameterMap().get("email");
-		messageController.setRecipientsTo(email.toString());
+		WebMailController webmailController = (WebMailController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_WEBMAIL);
+		if (webmailController.isLogged()) {
+			MessageController messageController = (MessageController) AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
+			messageController.initNewMessage();
+			FacesContext context = FacesContext.getCurrentInstance();
+			Object email = context.getExternalContext().getRequestParameterMap().get("email");
+			messageController.setRecipientsTo(email.toString());
+		} else {
+			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
+		}
 	}
 
 	public void initDocument() {

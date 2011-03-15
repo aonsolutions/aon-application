@@ -137,7 +137,7 @@
 						ajaxSingle="true" reRender="showNewMessageWindow"
 						actionListener="#{controller.masterController.onSendEmail}" value="&#160;"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
-						rendered="#{webmail.logged and (to.mediaType == 'EMAIL')}" >
+						rendered="#{to.mediaType == 'EMAIL'}" >
 						<f:setPropertyActionListener target="#{webmailMessage.showNewMessageWindow}" value="#{true}" />
 						<f:param name="email" value="#{to.value}" />
 					</aon:commandLink>
