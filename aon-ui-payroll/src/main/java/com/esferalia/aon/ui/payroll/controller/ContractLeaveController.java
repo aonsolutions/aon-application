@@ -207,6 +207,7 @@ public class ContractLeaveController extends BasicController {
 				ContractLeaveDetail lastLeave = getLastLeave();
 				if(lastLeave!=null && lastLeave.getType()!=LeaveReportType.DISCHARGE){
 					detail.setType(LeaveReportType.CONFIRM);
+					detail.setConfirmOrder(lastLeave.getConfirmOrder()+1);
 					detail.setContractLeave(lastLeave.getContractLeave());
 					detail.setCias(lastLeave.getCias());
 					detail.setCollegeNumber(lastLeave.getCollegeNumber());
@@ -312,7 +313,7 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	private int getConfirmReportNumber() {
-		return getLeaveDetailList().size()-1;
+		return getLastLeave().getConfirmOrder();
 	}
 	
 	public void onChangeType(ActionEvent event) {

@@ -23,6 +23,8 @@ import com.esferalia.aon.payroll.EnterpriseAgreement;
 import com.esferalia.aon.payroll.EnterpriseCertificate;
 import com.esferalia.aon.payroll.EnterpriseCertificateDetail;
 import com.esferalia.aon.payroll.FunctionConstant;
+import com.esferalia.aon.payroll.LeaveBatch;
+import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryDeduction;
@@ -59,6 +61,8 @@ public class PayrollAliasWriter {
 				EnterpriseCertificate.class.getName(),
 				EnterpriseCertificateDetail.class.getName(),
 				FunctionConstant.class.getName(),
+				LeaveBatch.class.getName(),
+				LeaveBatchDetail.class.getName(),
 				PaymentConcept.class.getName(),
 				Salary.class.getName(),
 				SalaryPayment.class.getName(),

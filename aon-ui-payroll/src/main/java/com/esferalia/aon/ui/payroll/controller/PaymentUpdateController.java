@@ -35,7 +35,6 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
-import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorManager;
 import com.esferalia.aon.salary.expression.IExpression;
 

@@ -16,6 +16,10 @@
 			value="#{appBundle.menu_main}"
 			action="menu_main" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-general" />
+		<aon:commandLink id="wizard"
+			value="#{appBundle.menu_wizard}"
+			action="menu_wizard" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-utilities" />
 		<c:if test="#{aonRole.config}">
 			<aon:commandLink id="config"
 				value="#{bundle.aon_configuration}"

@@ -34,6 +34,8 @@
 		<mapping class="com.esferalia.aon.payroll.EnterpriseCertificateDetail"/>
 		<mapping class="com.esferalia.aon.payroll.DeductionConcept"/>
 		<mapping class="com.esferalia.aon.payroll.FunctionConstant"/>
+		<mapping class="com.esferalia.aon.payroll.LeaveBatch"/>
+		<mapping class="com.esferalia.aon.payroll.LeaveBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>
 		<mapping class="com.esferalia.aon.payroll.Salary"/>
 		<mapping class="com.esferalia.aon.payroll.SalaryPayment"/>

@@ -40,6 +40,9 @@
 			
 				<aon:div styleClass="aon-width-100 aon-editDataTable-textColumn aon-noborder">
 					<aon:outputText value="#{detail.type}" />
+					<aon:outputText value="&#160;" />
+					<aon:outputText rendered="#{detail.confirm}" 
+						value="#{detail.confirmOrder}" />
 				</aon:div>
 				
 				<aon:div styleClass="aon-width-150 aon-editDataTable-textColumn aon-noborder">

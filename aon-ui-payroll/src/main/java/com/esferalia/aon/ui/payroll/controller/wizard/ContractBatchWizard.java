@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.controller.wizard;
 
 
 import java.io.FileInputStream;

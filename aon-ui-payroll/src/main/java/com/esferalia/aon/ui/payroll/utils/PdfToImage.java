@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.esferalia.aon.ui.payroll.controller.ContractGenerationWizard;
+import com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard;
 import com.sun.pdfview.PDFFile;
 import com.sun.pdfview.PDFPage;
 

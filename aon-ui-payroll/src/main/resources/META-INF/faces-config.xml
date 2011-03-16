@@ -423,7 +423,7 @@
 	<managed-bean>
 		<managed-bean-name>contractGenerationWizard</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.ContractGenerationWizard
+			com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -432,16 +432,16 @@
 	<managed-bean>
 		<managed-bean-name>contractBatchWizard</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.ContractBatchWizard
+			com.esferalia.aon.ui.payroll.controller.wizard.ContractBatchWizard
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ************ Parte IT Wizard **************** -->
 	<managed-bean>
-		<managed-bean-name>parteITWizard</managed-bean-name>
+		<managed-bean-name>leaveBatchWizard</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.ParteITWizard
+			com.esferalia.aon.ui.payroll.controller.wizard.LeaveBatchWizard
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -1046,26 +1046,6 @@
 	    </navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== ParteIT Wizard Management========================== -->
-	<navigation-rule id="parteITWizard">
-	    <navigation-case>
-    	  	<from-outcome>parteITWizard_step0</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step0.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>parteITWizard_step1</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step1.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>parteITWizard_step2</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step2.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>parteITWizard_step3</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/parteIT/step3.xhtml</to-view-id>
-	    </navigation-case>
-	</navigation-rule>
-	
 	<!-- =================== Contract Tracking Management========================== -->
 	<navigation-rule id="contractOptions">
 	    <navigation-case>
@@ -1162,6 +1142,30 @@
 	    <navigation-case>
     	  	<from-outcome>contractLeave_form</from-outcome>
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractLeave/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== LeaveBatch Wizard Management========================== -->
+	<navigation-rule id="leaveBatchWizard">
+	    <navigation-case>
+    	  	<from-outcome>leaveBatchWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/leaveBatch/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>leaveBatchWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/leaveBatch/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>leaveBatchWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/leaveBatch/step2.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>leaveBatchWizard_step3</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/leaveBatch/step3.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>leaveBatchWizard_step4</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/leaveBatch/step4.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 		

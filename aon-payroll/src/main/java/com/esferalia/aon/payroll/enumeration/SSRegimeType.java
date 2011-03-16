@@ -13,7 +13,8 @@ public enum SSRegimeType implements IResourceable{
 	SELF_EMPLOYED,
 	COAL_MINING,
 	SEA_WORKERS,
-	STUDENT_INSURANCE;
+	STUDENT_INSURANCE, 
+	ARTIST;
 
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";

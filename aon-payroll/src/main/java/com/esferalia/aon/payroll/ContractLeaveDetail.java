@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -31,6 +32,7 @@ public class ContractLeaveDetail implements ITransferObject {
 	private LeaveReportType type;
 	private ContractLeave contractLeave;
 	private String collegeNumber;
+	private Integer confirmOrder;
 	private String cias;
 	private Date date;
 	private boolean processed;
@@ -68,6 +70,14 @@ public class ContractLeaveDetail implements ITransferObject {
 	}
 	public void setCollegeNumber(String collegeNumber) {
 		this.collegeNumber = collegeNumber;
+	}
+	
+	@Column(name="confirm_order", length=2)
+	public Integer getConfirmOrder() {
+		return confirmOrder;
+	}
+	public void setConfirmOrder(Integer confirmOrder) {
+		this.confirmOrder = confirmOrder;
 	}
 	
 	@Column(length=11)
@@ -127,6 +137,11 @@ public class ContractLeaveDetail implements ITransferObject {
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
+	}
+	
+	@Transient
+	public boolean isConfirm(){
+		return getType()==LeaveReportType.CONFIRM;
 	}
 	
 }

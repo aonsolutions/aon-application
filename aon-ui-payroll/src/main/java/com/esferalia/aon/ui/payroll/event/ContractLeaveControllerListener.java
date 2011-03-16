@@ -154,6 +154,7 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 		to.setCias(detail.getCias());
 		to.setCollegeNumber(detail.getCollegeNumber());
 		to.setType(detail.getType());
+		to.setConfirmOrder(detail.getConfirmOrder());
 		to.setDate(detail.getDate());
 	}
 	
