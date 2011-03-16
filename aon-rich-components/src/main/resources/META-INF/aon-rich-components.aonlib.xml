@@ -188,6 +188,7 @@
     	<attribute name="selectItemClass" value="aon-dropDownMenu-selectItem" />
     	<attribute name="disabledItemClass" value="aon-dropDownMenu-disabledItem" />   		
     	<attribute name="event" value="onclick" />
+    	<attribute name="submitMode" value="ajax" />
 	</component>
 	
 	<component localName="menuGroup">

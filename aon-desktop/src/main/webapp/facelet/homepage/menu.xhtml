@@ -24,4 +24,9 @@
 		</c:forEach>			
 	</ui:define>
 	
+	<ui:define name="beforeHelpMenuContent">	
+		<aon:menuItem id="userData" action="changeuser_form"
+			value="#{appBundle.aon_user_data}" />		
+	</ui:define>	
+	
 </ui:composition>

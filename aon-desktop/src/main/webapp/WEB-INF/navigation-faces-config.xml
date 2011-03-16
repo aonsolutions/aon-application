@@ -24,10 +24,6 @@
 			<to-view-id>/facelet/user/changePasswordContent.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>user_change_form</from-outcome>
-			<to-view-id>/facelet/user/changeUser.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>changeuser_form</from-outcome>
 			<to-view-id>/facelet/user/changeUserContent.xhtml</to-view-id>
 		</navigation-case>
