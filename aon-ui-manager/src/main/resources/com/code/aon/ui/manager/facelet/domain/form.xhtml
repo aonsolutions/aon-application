@@ -129,34 +129,13 @@
 							</c:if>								
 						</c:if>
 					</c:if>
-
-					<c:if test="#{manager.config.showDomainMail}" >
-						<aon:outputLabel for="Domain_mail"
-							value="#{bundle.aon_email}" />
-						<aon:inputText id="Domain_mail" size="60" maxlength="256"
-							value="#{domain.to.mail}" />
-					</c:if>
-
-					<c:if test="#{manager.config.showDomainMobile}" >
-						<aon:outputLabel for="Domain_mobile"
-							value="#{bundle.aon_cellular}" />
-						<aon:inputText id="Domain_mobile" size="40"
-							value="#{domain.to.mobile}" />
-					</c:if>
-
-					<c:if test="#{manager.config.showDomainHost}" >
-						<aon:outputLabel for="Domain_host"
-							value="#{managerBundle.manager_domain_host}" />
-						<aon:inputText id="Domain_host" size="40" maxlength="256"
-							value="#{domain.to.host}" />
-					</c:if>
 					
 				</aon:panelGrid>
 				
-				<c:if test="#{manager.config.showDomainManagement || manager.administrator}" >
+				<c:if test="#{manager.config.showDomainManagementTab || manager.administrator}" >
 					<aon:panelTabSet selectedTab="#{domain.selectedTab}" >
 					
-						<aon:panelTab name="domainManagament" rendered="#{manager.config.showDomainManagement}"
+						<aon:panelTab name="domainManagament" rendered="#{manager.config.showDomainManagementTab}"
 							label="#{managerBundle.manager_domain_management}">
 							
 							<aon:panelGrid columns="2">
@@ -173,7 +152,7 @@
 				                	valueChangeListener="#{domain.userManagementChanged}"
 									value="#{domain.to.userManagement}"/>
 			
-								<c:if test="#{(domain.new and manager.administrator) or (domain.to.parentDomain.id == null)}" >			
+								<c:if test="#{manager.config.showDomainManagement}" >			
 									<aon:outputLabel for="Domain_domainManagement"
 										value="#{managerBundle.manager_domain_domainManagement}" />
 					                <aon:selectBooleanCheckbox id="Domain_domainManagement"
