@@ -1,5 +1,5 @@
 # Database: aon_master
-# Version: Actualizacion de la version 6.1.0 a la version 6.1.1.
+# Version: Actualizacion de la version 6.1.1 a la version 6.2.0.
 # Created by: rtrepiana
 # Creation Date: 25/02/2011 10:36
 # Comentarios: esta actualización no contiene cambios invalidantes de base de datos.
