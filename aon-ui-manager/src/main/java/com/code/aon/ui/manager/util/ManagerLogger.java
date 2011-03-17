@@ -78,7 +78,8 @@ public class ManagerLogger {
 		if ( isConfigured() ) {
 			try {		
 				sender.connect();
-				sender.sendMessage(to, subject, content);
+				String fullContent = subject + SystemUtils.LINE_SEPARATOR + content;
+				sender.sendMessage(to, subject, fullContent);
 				sender.disconnect();
 			} catch (Throwable e) {
 				LOGGER.error(e.getMessage(), e );
