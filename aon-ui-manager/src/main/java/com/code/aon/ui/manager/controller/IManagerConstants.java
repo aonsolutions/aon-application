@@ -47,6 +47,8 @@ public interface IManagerConstants {
 
 	// Properties
 	
+	String ADVANCED_MODE_USER = "advancedMode_user";
+	String ADVANCED_MODE_PASSWORD = "advancedMode_password";
 	String NOTIFICATION_EMAIL = "notification_email";
 	String NEW_DOMAIN_APPLICATION_URL = "newDomainApplicationURL";
 	String MAIL_ACCOUNT_CREATE_SCRIPT = "MailAccount_create_script";

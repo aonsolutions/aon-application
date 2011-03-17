@@ -56,10 +56,6 @@ public class ManagerController implements IManagerConstants {
 	private static final File MANAGER_PROPERTIES = new File( "/home/COMMON-RESOURCES/aon-manager/config.properties" );
 	
 	private final static String HOME = "home";
-	
-	private final static String USER = "esferalia";
-
-	private final static String PASSWORD = "113e2f4682d921b8a33eff77b489409d";
 
 	private String _user;
 
@@ -187,7 +183,9 @@ public class ManagerController implements IManagerConstants {
 	
 	public void onAccept(ActionEvent event) {
 		String crypted = hash(_password);
-		if (USER.equals(_user) && PASSWORD.equals(crypted)) {
+		String amUser = getProperties().getProperty(ADVANCED_MODE_USER); 
+		String amPassword = getProperties().getProperty(ADVANCED_MODE_PASSWORD);
+		if (amUser.equals(_user) && amPassword.equals(crypted)) {
 			setUserType(UserType.ESFERALIA);
 			init(userType);
 		} else {
