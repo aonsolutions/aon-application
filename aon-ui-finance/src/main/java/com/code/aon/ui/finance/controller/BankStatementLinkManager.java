@@ -40,8 +40,12 @@ import com.code.aon.ui.util.AonUtil;
 public class BankStatementLinkManager implements IFinanceConstants {
 
 	private final String STATEMENT_LINK_TAB = "statementLinkTab";
+	private final String FINANCE_LINK_TAB = "financeLinkTab";
+	private final String FBATCH_LINK_TAB = "fbatchLinkTab";
 	private final String OTHER_CONCEPT_LINK_TAB = "otherConceptsLinkTab";
-
+	private final String ENTRY_DETAIL_LINK_TAB = "entryDetailLinkTab";
+	private final String COMMENTS_LINK_TAB = "commentsLinkTab";
+	
 	private BankStatement currentStatement;
 	private String selectedTab;
 	private BankConcept bankConcept;
@@ -117,6 +121,14 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		return (currentStatement != null && currentStatement.isReturned());
 	}
 
+	public boolean isTrackingLinked() throws ManagerBeanException {
+		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), getCurrentStatement().getId());
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE), StatementLinkSource.FINANCE_TRACKING);
+		return (statementLinkBean.getCount(criteria) > 0);
+	}
+
 	public boolean isBatchSource() {
 		return (currentStatement != null && currentStatement.isCollectionBatch());
 	}
@@ -131,6 +143,26 @@ public class BankStatementLinkManager implements IFinanceConstants {
 
 	public void setStatementLinkTab() {
 		setSelectedTab(STATEMENT_LINK_TAB);
+	}
+
+	public void setFinanceLinkTab() {
+		setSelectedTab(FINANCE_LINK_TAB);
+	}
+
+	public void setFBatchLinkTab() {
+		setSelectedTab(FBATCH_LINK_TAB);
+	}
+
+	public void setOtherConceptLinkTab() {
+		setSelectedTab(OTHER_CONCEPT_LINK_TAB);
+	}
+
+	public void setEntryDetailLinkTab() {
+		setSelectedTab(ENTRY_DETAIL_LINK_TAB);
+	}
+
+	public void setCommentsLinkTab() {
+		setSelectedTab(COMMENTS_LINK_TAB);
 	}
 
 	public double getCheckedAmount() throws ManagerBeanException {

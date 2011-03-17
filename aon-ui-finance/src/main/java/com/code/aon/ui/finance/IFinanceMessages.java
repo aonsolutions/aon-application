@@ -33,5 +33,7 @@ public interface IFinanceMessages {
 	String FINANCE_INVOICE_CHECKING_MODULE_NO_FINANCE = "finance_invoice_checking_module_no_finance";	
 	String FINANCE_INVOICE_CHECKING_MODULE_WRONG_FINANCE = "finance_invoice_checking_module_wrong_finance";
 	String FINANCE_INVOICE_INTEGRITY_NO_RESULT = "finance_integrity_no_result";
+	String FINANCE_IMPORT_BANK_ACCOUNT_NOT_FOUND = "finance_import_bank_account_not_found_message";
+	String FINANCE_CHECK_NO_LINE_SELECTED = "finance_check_no_line_selected_message";
 }
 

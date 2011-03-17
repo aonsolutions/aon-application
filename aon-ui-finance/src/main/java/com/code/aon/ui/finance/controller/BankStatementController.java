@@ -295,8 +295,46 @@ public class BankStatementController extends BasicController implements IFinance
 		}
 	}
 
-	public void onSelectNone(ActionEvent event) throws ManagerBeanException {
+	@SuppressWarnings("unchecked")
+	public void onSelectCurrentPage(ActionEvent event) throws ManagerBeanException {
 		clearCheckedBankStatement();
+		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
+		while (iterator.hasNext()) {
+			BankStatement statement = (BankStatement)iterator.next();
+			bankStatementChecks.add(statement);
+		}
+	}
+
+	public void onBreakdownSelected(ActionEvent event) throws ManagerBeanException {
+		for (BankStatement statement : getCheckedBankStatement()) {
+			statement.setShowBankStatementLink(statement.isChecked());
+			statement.setShowAccountEntry(AonUtil.getRoleManager().isAccountingOperator() && statement.isRecorded());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onBreakdownCurrentPage(ActionEvent event) throws ManagerBeanException {
+		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
+		while (iterator.hasNext()) {
+			BankStatement statement = (BankStatement)iterator.next();
+			statement.setShowBankStatementLink(statement.isChecked());
+			statement.setShowAccountEntry(AonUtil.getRoleManager().isAccountingOperator() && statement.isRecorded());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public void onBreakdownNone(ActionEvent event) throws ManagerBeanException {
+		for (BankStatement statement : getCheckedBankStatement()) {
+			statement.setShowBankStatementLink(false);
+			statement.setShowAccountEntry(false);
+		}
+
+		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
+		while (iterator.hasNext()) {
+			BankStatement statement = (BankStatement)iterator.next();
+			statement.setShowBankStatementLink(false);
+			statement.setShowAccountEntry(false);
+		}
 	}
 
 	public void onCancelAll(ActionEvent event) throws ManagerBeanException {
@@ -348,38 +386,6 @@ public class BankStatementController extends BasicController implements IFinance
 			}
 		}
 		onSearch(null);
-	}
-
-	public void onBreakdownSelected(ActionEvent event) throws ManagerBeanException {
-		for (BankStatement statement : getCheckedBankStatement()) {
-			statement.setShowBankStatementLink(statement.isChecked());
-			statement.setShowAccountEntry(AonUtil.getRoleManager().isAccountingOperator() && statement.isRecorded());
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public void onBreakdownCurrentPage(ActionEvent event) throws ManagerBeanException {
-		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
-		while (iterator.hasNext()) {
-			BankStatement statement = (BankStatement)iterator.next();
-			statement.setShowBankStatementLink(statement.isChecked());
-			statement.setShowAccountEntry(AonUtil.getRoleManager().isAccountingOperator() && statement.isRecorded());
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public void onBreakdownNone(ActionEvent event) throws ManagerBeanException {
-		for (BankStatement statement : getCheckedBankStatement()) {
-			statement.setShowBankStatementLink(false);
-			statement.setShowAccountEntry(false);
-		}
-
-		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
-		while (iterator.hasNext()) {
-			BankStatement statement = (BankStatement)iterator.next();
-			statement.setShowBankStatementLink(false);
-			statement.setShowAccountEntry(false);
-		}
 	}
 
 	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -528,6 +534,9 @@ public class BankStatementController extends BasicController implements IFinance
 		Iterator<?> iterator = rBankBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return (RegistryBank)iterator.next();
+		} else {
+			bankAcc = line.substring(2, 6) + "." + line.substring(6, 10) + ".**." + line.substring(10, 20);
+			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_IMPORT_BANK_ACCOUNT_NOT_FOUND, bankAcc);
 		}
 		return null;
 	}
@@ -695,14 +704,20 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onCheckLinks(ActionEvent event) throws ManagerBeanException {
+		if (getCheckedBankStatement().size() == 0) {
+			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_CHECK_NO_LINE_SELECTED);
+			return;
+		}
+
 		try {
-			List<ITransferObject> bankStatementList = getManagerBean().getList(getCriteria());
-			for (ITransferObject ito : bankStatementList) {
-				BankStatement to = (BankStatement)ito;
+			for (BankStatement to : getCheckedBankStatement()) {
 				if (to.isPending()) {
 					getErrors().put(to.getId(), "No se ha encontrado ninguna coincidencia para Puntear la línea del Extracto.");
 					if (hasFinanceLink(to.getCommonConcept())) {
 						findFinance(to, false);
+						if (to.isPending()) {
+							findFinanceBatch(to);
+						}
 					} else if (hasFinanceReturnLink(to.getCommonConcept())) {
 						findFinance(to, true);
 					} else if (hasFinanceBatchLink(to.getCommonConcept())) {
@@ -1063,7 +1078,9 @@ public class BankStatementController extends BasicController implements IFinance
 			criteria.setOrderByList(trackingList.getOrderList());
 			trackingList.setCriteria(criteria);
 			trackingList.onSearch(null);
-		} else {
+		}
+
+		if (to.getCommonConcept() != StatementConcept.RETURNED) {
 			FBatchListController batchList = (FBatchListController)FormUtil.getController(FINANCE_BATCH_LIST_CONTROLLER_NAME);
 			batchList.onEditSearch(null);
 			criteria = new Criteria();
@@ -1095,8 +1112,15 @@ public class BankStatementController extends BasicController implements IFinance
 
         getBankStatementLinkManager().setCurrentStatement(to);
         getBankStatementLinkManager().setComments(to.getComments());
-        if (statementLinkList.getRowCount() > 0) {
+
+        if (getBankStatementLinkManager().getEntryDetailList() != null && getBankStatementLinkManager().getEntryDetailList().size() > 0) {
+        	getBankStatementLinkManager().setEntryDetailLinkTab();
+        } else if (statementLinkList.getRowCount() > 0) {
         	getBankStatementLinkManager().setStatementLinkTab();
+        } else if (to.getCommonConcept() == StatementConcept.COLLECTION_BATCH) {
+        	getBankStatementLinkManager().setFBatchLinkTab();
+        } else {
+        	getBankStatementLinkManager().setFinanceLinkTab();
         }
         getBankStatementLinkManager().setAmountPending();
         getErrors().remove(to.getId());
@@ -1149,6 +1173,50 @@ public class BankStatementController extends BasicController implements IFinance
 		return false;
 	}
 
+	public void onSetVeryHighReliability(ActionEvent event) {
+		try {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			to.setReliability(StatementReliability.VERY_HIGH);
+			getManagerBean().update(to);
+		} catch (ManagerBeanException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	public void onSetHighReliability(ActionEvent event) {
+		try {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			to.setReliability(StatementReliability.HIGH);
+			getManagerBean().update(to);
+		} catch (ManagerBeanException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	public void onSetMediumReliability(ActionEvent event) {
+		try {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			to.setReliability(StatementReliability.MEDIUM);
+			getManagerBean().update(to);
+		} catch (ManagerBeanException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	public void onSetLowReliability(ActionEvent event) {
+		try {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			to.setReliability(StatementReliability.LOW);
+			getManagerBean().update(to);
+		} catch (ManagerBeanException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
 	public void onShowBankStatementLink(ActionEvent event) {
 		try {
 			BankStatement to = (BankStatement)getModel().getRowData();
@@ -1173,6 +1241,11 @@ public class BankStatementController extends BasicController implements IFinance
 
 	@SuppressWarnings("unchecked")
 	public void onRecordStatement(ActionEvent event) throws ManagerBeanException {
+		if (getCheckedBankStatement().size() == 0) {
+			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_CHECK_NO_LINE_SELECTED);
+			return;
+		}
+
 		for (BankStatement statement : getCheckedBankStatement()) {
 			if (statement.isChecked()) {
 				boolean financeTrackingMode = false;
@@ -1285,6 +1358,11 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onUnrecordStatement(ActionEvent event) throws ManagerBeanException {
+		if (getCheckedBankStatement().size() == 0) {
+			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_CHECK_NO_LINE_SELECTED);
+			return;
+		}
+
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		for (BankStatement statement : getCheckedBankStatement()) {
 			if (statement.isRecorded()) {

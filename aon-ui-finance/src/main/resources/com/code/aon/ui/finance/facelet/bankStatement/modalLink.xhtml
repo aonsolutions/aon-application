@@ -166,7 +166,7 @@
 										</aon:panelTab>
 
 										<aon:panelTab id="financeLinkTab" label="#{financeBundle.finance_unchecked_finances}"
-											rendered="#{!linkManager.batchSource}">
+											rendered="#{!linkManager.batchSource and !linkManager.batchLinked}">
 											<aon:div styleClass="aon-toolbar">
 												<aon:commandButton title="#{bundle.aon_check_all}"
 													styleClass="aon-finding-toolbar-item aon-icon-checkAll"
@@ -360,7 +360,7 @@
 										</aon:panelTab>
 
 										<aon:panelTab id="fbatchLinkTab" label="#{financeBundle.finance_unchecked_fbatches}"
-											rendered="#{linkManager.batchSource and !linkManager.batchLinked}">
+											rendered="#{!linkManager.returnSource and !linkManager.batchLinked and !linkManager.trackingLinked}">
 											<aon:div styleClass="aon-toolbar" rendered="#{fbatchList.model.rowCount > 0}">
 												<aon:commandButton title="#{financeBundle.finance_check_selected}"
 													styleClass="aon-finding-toolbar-item aon-icon-newFolder"
@@ -457,7 +457,7 @@
 																<ui:param name="renderedAttr" value="#{true}" />
 																<ui:param name="disabled" value="#{false}" />
 																<ui:param name="entity" value="#{linkManager.account}" />
-																<ui:param name="ELExpression" value="linkManager.account" />
+																<ui:param name="ELExpression" value="bankStatement.bankStatementLinkManager.account" />
 															</ui:include>
 														</c:if>
 														<aon:outputText value="#{bundle.aon_concept} " />
@@ -476,7 +476,7 @@
 											<aon:dataTable id="entryDetailData" value="#{linkManager.entryDetailModel}"
 												var="to" rows="10" rendered="#{linkManager.entryDetailModel.rowCount > 0}"
 												columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, 
-													aon-editDataTable-textColumn, aon-editDataTable-numberColumn, 
+													aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn,	
 													aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
 												<aon:column>
@@ -495,6 +495,13 @@
 													</aon:commandButton>
 		 										</aon:column>
 			
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{financeBundle.finance_account_entry}" />
+													</f:facet>
+													<aon:outputText value="#{to.accountEntry.id}" />
+												</aon:column>
+
 												<aon:column>
 													<f:facet name="header">
 														<aon:outputText value="#{bundle.aon_date}" />
@@ -526,7 +533,7 @@
 														<aon:outputText value="#{financeBundle.finance_balancing_account}" />
 													</f:facet>
 													<aon:outputText value="#{to.balancingAccount.id}" />
-													<rich:toolTip>
+													<rich:toolTip direction="bottom-left">
 														<aon:outputText value="#{to.balancingAccount.description}" />
 													</rich:toolTip>
 												</aon:column>
@@ -539,7 +546,6 @@
 												</aon:column>
 
 											</aon:dataTable>
-
 										</aon:panelTab>
 
 										<aon:panelTab id="commentsLinkTab" label="#{bundle.aon_comment}">

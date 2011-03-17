@@ -187,9 +187,9 @@
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-							<aon:commandLink value="#{financeBundle.finance_none}"
-								style="padding-right:60px; margin-left:5px; text-decoration:underline;"
-								actionListener="#{bankStatement.onSelectNone}"
+							<aon:commandLink value="#{financeBundle.finance_list_current_page}"
+								style="padding-right:32px; margin-left:5px; text-decoration:underline;"
+								actionListener="#{bankStatement.onSelectCurrentPage}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
@@ -326,15 +326,34 @@
 											<aon:div style="display:inline; cursor:pointer;"
 												rendered="#{to.checked and controller.errorMessage == null}">
 												<aon:outputText value="&#160;" styleClass="aon-icon-point-green"
-													style="padding-left:12px" rendered="#{to.exact}" />
+													style="padding-left:12px" rendered="#{to.exact}"
+													title="#{financeBundle.finance_check_exact_message}" />
 												<aon:outputText value="&#160;" styleClass="aon-icon-point-light-green"
-													style="padding-left:12px" rendered="#{to.approximate}" />
+													style="padding-left:12px" rendered="#{to.approximate}"
+													title="#{financeBundle.finance_check_approximate_message}" />
 												<aon:outputText value="&#160;" styleClass="aon-icon-point-yellow"
-													style="padding-left:12px" rendered="#{to.ambiguous}" />
+													style="padding-left:12px" rendered="#{to.ambiguous}"
+													title="#{financeBundle.finance_check_ambiguous_message}" />
 												<aon:outputText value="&#160;" styleClass="aon-icon-point-orange"
-													style="padding-left:12px" rendered="#{to.inexact}" />
-												<rich:toolTip>
-													<aon:outputText value="#{to.reliability}" />
+													style="padding-left:12px" rendered="#{to.inexact}"
+													title="#{financeBundle.finance_check_very_ambiguous_message}" />
+												<rich:toolTip showEvent="onclick" hideEvent="onmouseout" hideDelay="2000" direction="top-right">
+													<aon:commandButton id="to_exact"
+														value="&#160;" styleClass="aon-icon-point-green aon-noborder"
+														actionListener="#{controller.onSetVeryHighReliability}"
+														reRender="#{dataTableId}" />
+													<aon:commandButton id="to_app"
+														value="&#160;" styleClass="aon-icon-point-light-green aon-noborder"
+														actionListener="#{controller.onSetHighReliability}"
+														reRender="#{dataTableId}" />
+													<aon:commandButton id="to_am"
+														value="&#160;" styleClass="aon-icon-point-yellow aon-noborder"
+														actionListener="#{controller.onSetMediumReliability}"
+														reRender="#{dataTableId}" />
+													<aon:commandButton id="to_inexact"
+														value="&#160;" styleClass="aon-icon-point-orange aon-noborder"
+														actionListener="#{controller.onSetLowReliability}"
+														reRender="#{dataTableId}" />
 												</rich:toolTip>
 											</aon:div>
 										</aon:column>
