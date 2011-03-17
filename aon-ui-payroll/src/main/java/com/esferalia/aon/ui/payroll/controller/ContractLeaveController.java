@@ -212,7 +212,7 @@ public class ContractLeaveController extends BasicController {
 					detail.setCias(lastLeave.getCias());
 					detail.setCollegeNumber(lastLeave.getCollegeNumber());
 					detail.setProcessed(lastLeave.isProcessed());
-					detail.setDate(getConfirmSuggestedDate(detail.getContractLeave().getStartDate()));
+					detail.setDate(getConfirmSuggestedDate(detail.getContractLeave().getStartDate(),getLastLeave().getConfirmOrder()));
 				} else {
 					detail.setType(LeaveReportType.LEAVE);
 					detail.setContractLeave(new ContractLeave());
@@ -233,7 +233,7 @@ public class ContractLeaveController extends BasicController {
 	
 	public void initialize() {
 		this.onReset(null);
-		setContract((Contract) ((ContractController)AonUtil.getRegisteredBean("contract")).getTo());
+		setContract((Contract) ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER)).getTo());
 		try {
 			buildLeaveList();
 		} catch (ManagerBeanException e) {
@@ -263,7 +263,7 @@ public class ContractLeaveController extends BasicController {
 	 * ACTION LISTENER
 	 */
 	public void onSelectContract(ActionEvent event) {
-		ContractController controller = ((ContractController)AonUtil.getRegisteredBean("contract"));
+		ContractController controller = ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER));
 		if(controller.getTo()==null){
 			controller.onSelect(event);
 		}
@@ -305,15 +305,15 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	
-	private Date getConfirmSuggestedDate(Date date) {
+	private Date getConfirmSuggestedDate(Date date, Integer confirmReportNumber) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		cal.add(Calendar.DAY_OF_YEAR, 3 + ((getConfirmReportNumber()  * 7)));
+		cal.add(Calendar.DAY_OF_YEAR, 3 + ((confirmReportNumber  * 7)));
 		return cal.getTime();
 	}
 	
-	private int getConfirmReportNumber() {
-		return getLastLeave().getConfirmOrder();
+	public void onChangeConfirmOrder(ActionEvent event) {
+		getReport().setDate(getConfirmSuggestedDate(getReport().getContractLeave().getStartDate(), getReport().getConfirmOrder()-1));
 	}
 	
 	public void onChangeType(ActionEvent event) {

@@ -48,7 +48,10 @@
 		value="#{payrollBundle.payroll_contractLeave_confirmfOrder}" />
 	<aon:inputText id="ContractLeaveDetail_confirmfOrder"
 		rendered="#{contractLeave.confirmSelected}"
-		value="#{contractLeave.report.confirmOrder}" size="2" maxLenght="2" />
+		value="#{contractLeave.report.confirmOrder}" size="2" maxLenght="2" >
+		<a4j:support event="onchange" reRender="report_panel" 
+			actionListener="#{contractLeave.onChangeConfirmOrder}"/>
+	</aon:inputText>
 	
 	<aon:outputLabel for="ContractLeaveDetail_collegeNumber"
 		value="#{payrollBundle.payroll_contractLeave_collegeNumber}" />

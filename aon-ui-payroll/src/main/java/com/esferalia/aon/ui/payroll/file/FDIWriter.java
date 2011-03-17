@@ -26,13 +26,19 @@ import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.salary.SalaryException;
 
 
 public class FDIWriter {
 	
 	private ETI eti;
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
+	
+	public ETI getEti() {
+		return eti;
+	}
+	public void setEti(ETI eti) {
+		this.eti = eti;
+	}
 
 	public FileOutput createFDI(List<ContractLeaveDetail> partes, String loggedUser ) throws ManagerBeanException {
 		try {
@@ -77,8 +83,6 @@ public class FDIWriter {
 //		} else {
 //			cccss = "    ";
 //		}
-		
-		
 		if (contract.getRegimeType() == SSRegimeType.GENERAL) {
 			cccss = "0111";
 		} else if (contract.getRegimeType() == SSRegimeType.AGRICULTURAL) {
@@ -209,33 +213,25 @@ public class FDIWriter {
 
 	private DEC createDECRecord(ContractLeaveDetail detail) {
 		DEC dec = new DEC();
-//		IContrato contrato = getParteITDAO().getContrato(parte);
-		Contract contract = detail.getContractLeave().getContract();
+		// TODO DAR SOPORTE A LA OBTENCION DE LAS BASES Y DIAS COTIZADOS
 //		if (contrato.getTipoContrato() == TipoContrato.TIEMPO_COMPLETO) {
-//			dec.setBaseCotizacion( parte.getBaseRetribucionPeriodoAnterior() );
-//			dec.setDiasCotizados( parte.getDiasPeriodoAnterior() );
+			if(detail.getContractLeave().getType()==LeaveType.OCCUPATIONAL_DISEASE){
+				dec.setBaseCotizacion( detail.getContractLeave().getDailyCgpBase() );
+			} else {
+				dec.setBaseCotizacion( detail.getContractLeave().getDailyCgcBase() );
+			}
+//			dec.setDiasCotizados( detail.getContractLeave().getTmeUnits() );
 //		} else {
-//			dec.setSumaBasesCotizacion(parte.getBaseRetribucionPeriodoAnterior() );
-//			dec.setSumaDiasCotizados( parte.getDiasPeriodoAnterior() );
+			if(detail.getContractLeave().getType()==LeaveType.OCCUPATIONAL_DISEASE){
+				dec.setSumaBasesCotizacion( detail.getContractLeave().getDailyCgpBase() );
+			} else {
+				dec.setSumaBasesCotizacion( detail.getContractLeave().getDailyCgcBase() );
+			}
+//			dec.setSumaDiasCotizados( detail.getContractLeave().getTmeUnits() );
 //		}
-		try {
-			dec.setBaseCotizacion( contract.getSalary().getCommonBase() );
-			dec.setDiasCotizados( contract.getSalary().getTimeUnits() );
-		} catch (SalaryException e) {
-			// TODO DAR SOPORTE A LA OBTENCION DE LAS BASES Y DIAS COTIZADOS
-			dec.setBaseCotizacion( 0.0 );
-			dec.setDiasCotizados( 0 );
-		}
 		dec.setCotizacionAnteriorHorasExtras(0.0);
 		dec.setCotizacionAnteriorOtros(0.0);
 		return dec;
 	}
 
-	public ETI getEti() {
-		return eti;
-	}
-	public void setEti(ETI eti) {
-		this.eti = eti;
-	}
-	
 }

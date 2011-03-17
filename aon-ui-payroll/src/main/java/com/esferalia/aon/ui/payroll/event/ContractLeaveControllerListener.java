@@ -27,6 +27,7 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	public void beforeBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
 //		getController(event).initialize();
+		getController(event).buildLeaveReport(true);
 	}
 	
 	@Override
