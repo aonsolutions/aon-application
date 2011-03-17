@@ -47,8 +47,8 @@ ALTER TABLE `agreement_level_payment` ADD `salary_type` tinyint(2) COMMENT 'Tipo
 ALTER TABLE `agreement_level_payment` ADD `description_decorable` tinyint(2) NOT NULL DEFAULT '0' COMMENT '';
 ALTER TABLE `agreement_level_payment` ADD `irpf_expression` varchar(128) collate latin1_spanish_ci DEFAULT NULL COMMENT 'Importe tributable';
 ALTER TABLE `agreement_level_payment` ADD `quote_expression` varchar(128) collate latin1_spanish_ci DEFAULT NULL COMMENT 'Importe cotizable';
-ALTER TABLE `agreement_level_payment` ADD KEY `IDX_AGREEMENT_LEVEL_PAYMENT_PAYMENT_CONCEPT` (`payment_concept`);
-ALTER TABLE `agreement_level_payment` ADD CONSTRAINT `FK_AGREEMENT_LEVEL_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`);
+ALTER TABLE `agreement_level_payment` ADD KEY `IDX_AGREEMENT_PAYMENT_PAYMENT_CONCEPT` (`payment_concept`);
+ALTER TABLE `agreement_level_payment` ADD CONSTRAINT `FK_AGREEMENT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`);
 
 CREATE TABLE `agreement_level_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
