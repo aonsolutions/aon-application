@@ -24,6 +24,8 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.IConfidentialable;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.enumeration.StatementConcept;
 import com.code.aon.finance.enumeration.StatementReliability;
 import com.code.aon.finance.enumeration.StatementStatus;
@@ -31,7 +33,7 @@ import com.code.aon.registry.RegistryBank;
 
 @Entity
 @Table(name = "bank_statement")
-public class BankStatement implements ITransferObject {
+public class BankStatement implements ITransferObject, IConfidentialable {
 
 	private static final long serialVersionUID = 6904628009460137531L;
 
@@ -48,6 +50,7 @@ public class BankStatement implements ITransferObject {
     private String reference2;
     private String description;
     private StatementReliability reliability;
+	private SecurityLevel securityLevel;
     private StatementStatus status;
 	private String comments;
 
@@ -162,6 +165,14 @@ public class BankStatement implements ITransferObject {
 		this.reliability = reliability;
 	}
 
+	@Column(name = "security_level")
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
+	}
+
 	public StatementStatus getStatus() {
 		return status;
 	}
@@ -203,6 +214,15 @@ public class BankStatement implements ITransferObject {
 	@Transient
 	public boolean isInexact() {
 		return reliability == StatementReliability.LOW;
+	}
+
+	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+	@Transient
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 	}
 
 	@Transient
@@ -248,14 +268,15 @@ public class BankStatement implements ITransferObject {
 				.append(this.description,o.description)
 				.append(this.document,o.document)
 				.append(this.lotNumber,o.lotNumber)
-				.append(this.operationDate,o.operationDate)		
+				.append(this.operationDate,o.operationDate)
 				.append(this.ownConcept,o.ownConcept)
-				.append(this.payment,o.payment)		
+				.append(this.payment,o.payment)
 				.append(this.registryBank,o.registryBank)		
 				.append(this.reference1,o.reference1)
 				.append(this.reference2,o.reference2)
-				.append(this.reliability,o.reliability)		
-				.append(this.status,o.status)		
+				.append(this.reliability,o.reliability)
+				.append(this.securityLevel,o.securityLevel)
+				.append(this.status,o.status)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -271,14 +292,15 @@ public class BankStatement implements ITransferObject {
 			.append(this.description)
 			.append(this.document)
 			.append(this.lotNumber)
-			.append(this.operationDate)		
+			.append(this.operationDate)
 			.append(this.ownConcept)
-			.append(this.payment)		
-			.append(this.registryBank)		
+			.append(this.payment)
+			.append(this.registryBank)
 			.append(this.reference1)
 			.append(this.reference2)
-			.append(this.reliability)		
-			.append(this.status)		
+			.append(this.reliability)
+			.append(this.securityLevel)
+			.append(this.status)
 			.toHashCode();
 	}	
 

@@ -6,6 +6,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.StatementConcept;
 import com.code.aon.finance.enumeration.StatementReliability;
@@ -25,6 +26,7 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 	private String description;
 	private String comments;
 	private StatementReliability[] statementReliabilities;
+	private Boolean confidential;
 	private StatementStatus[] statementStatuses;
 	
 	public String getLotNumber() {
@@ -99,6 +101,14 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		this.statementReliabilities = statementReliabilities;
 	}
 	
+	public Boolean getConfidential() {
+		return confidential;
+	}
+
+	public void setConfidential(Boolean confidential) {
+		this.confidential = confidential;
+	}
+
 	public StatementStatus[] getStatementStatuses() {
 		return statementStatuses;
 	}
@@ -122,6 +132,7 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		setDescription(null);
 		setComments(null);
 		setStatementReliabilities(new StatementReliability[0]);
+		setConfidential(null);
 		StatementStatus[] defaultStatementStatus = {StatementStatus.PENDING};
 		setStatementStatuses(defaultStatementStatus);
 	}
@@ -155,6 +166,10 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		if (!ArrayUtils.isEmpty(getStatementReliabilities())) {
 			String reliability = getController().resolveAlias(IFinanceAlias.BANK_STATEMENT_RELIABILITY);
 			addEnumToCriteria(criteria, reliability, getStatementReliabilities());
+		}
+		if (getConfidential() != null) {
+			SecurityLevel securityLevel = (getConfidential().booleanValue()) ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL;
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_SECURITY_LEVEL), securityLevel);			
 		}
 		if (!ArrayUtils.isEmpty(getStatementStatuses())) {
 			String status = getController().resolveAlias(IFinanceAlias.BANK_STATEMENT_STATUS);

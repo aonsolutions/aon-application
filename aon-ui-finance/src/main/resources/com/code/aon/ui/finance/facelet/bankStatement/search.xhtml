@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -106,8 +107,20 @@
 						value="#{bankStatementSearch.lotNumber}"
 						size="5" />
 
-					<aon:outputText value="#{bundle.aon_status}"/>
-					<aon:selectManyCheckbox value="#{bankStatementSearch.statementStatuses}">
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel for="BankStatement_securityLevel"
+							value="#{bundle.aon_confidential}" />
+						<aon:selectOneRadio id="BankStatement_securityLevel"
+							value="#{bankStatementSearch.confidential}">
+							<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+							<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+						</aon:selectOneRadio>				
+					</c:if>
+
+					<aon:outputLabel for="BankStatement_status" 
+						value="#{bundle.aon_status}"/>
+					<aon:selectManyCheckbox id="BankStatement_status"
+						value="#{bankStatementSearch.statementStatuses}">
 						<f:selectItems value="#{financeCollections.statementStatuses}"/>
 					</aon:selectManyCheckbox>							
 	

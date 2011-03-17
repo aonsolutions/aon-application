@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showImportFileWindow">
 		<c:if test="#{bankStatement.showImportFileWindow}">
 			<rich:modalPanel id="importFileModalPanel" minHeight="240"
-				minWidth="520" rendered="#{bankStatement.showImportFileWindow}"
+				minWidth="550" rendered="#{bankStatement.showImportFileWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -69,6 +69,14 @@
 											value="#{bankStatement.aeb43}">
 											<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_file_aeb43}" itemValue="#{true}" />
 											<f:selectItem itemLabel="#{financeBundle.finance_bank_statement_file_csv}" itemValue="#{false}" />
+										</aon:selectOneRadio>
+
+										<aon:outputLabel for="BankStatement_confidential"
+											value="#{bundle.aon_confidential}" />
+										<aon:selectOneRadio id="BankStatement_confidential" 
+											value="#{bankStatement.confidential}">
+											<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}" />
+											<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}" />
 										</aon:selectOneRadio>
 
 										<aon:outputLabel for="BankStatement_file"

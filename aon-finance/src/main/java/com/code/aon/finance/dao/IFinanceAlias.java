@@ -136,10 +136,16 @@ public interface IFinanceAlias {
 	String  BANK_STATEMENT_RELIABILITY = BANK_STATEMENT_ENTRY.getAliasNames()[13];
 
 	/** 
+	* Alias value: BankStatement_securityLevel
+	* Hibernate value: BankStatement.securityLevel
+	*/
+	String  BANK_STATEMENT_SECURITY_LEVEL = BANK_STATEMENT_ENTRY.getAliasNames()[14];
+
+	/** 
 	* Alias value: BankStatement_status
 	* Hibernate value: BankStatement.status
 	*/
-	String  BANK_STATEMENT_STATUS = BANK_STATEMENT_ENTRY.getAliasNames()[14];
+	String  BANK_STATEMENT_STATUS = BANK_STATEMENT_ENTRY.getAliasNames()[15];
 
 
 

@@ -160,6 +160,15 @@ public class BankStatementLink implements ITransferObject {
 		return null;
 	}
 	@Transient
+	public boolean isConfidential() throws ManagerBeanException {
+		if (isFinanceTracking()) {
+			return ((FinanceTracking)getSourceTo()).getFinance().isConfidential();
+		} else if (isFinanceBatch()) {
+			return ((FinanceBatch)getSourceTo()).isConfidential();
+		}
+		return getBankStatement().isConfidential();
+	}
+	@Transient
 	public String getConcept() throws ManagerBeanException {
 		if (isFinanceTracking()) {
 			return ((FinanceTracking)getSourceTo()).getFinance().getDocumentNumber();

@@ -80,6 +80,7 @@ public class BankStatementController extends BasicController implements IFinance
 	private Account account;
 	private boolean showImportFileWindow;
 	private boolean aeb43;
+	private boolean confidential;
 	private AonFile aonFile;
 	private boolean showLinkWindow;
 	private BankStatementLinkManager linkManager;
@@ -127,6 +128,13 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 	public void setAeb43(boolean aeb43) {
 		this.aeb43 = aeb43;
+	}
+
+	public boolean isConfidential() {
+		return confidential;
+	}
+	public void setConfidential(boolean confidential) {
+		this.confidential = confidential;
 	}
 
 	public AonFile getAonFile() {
@@ -445,6 +453,7 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onImportFileShow(ActionEvent event) {
 		setAeb43(true);
+		setConfidential(false);
 		setAonFile(null);
 
 		try {
@@ -558,6 +567,7 @@ public class BankStatementController extends BasicController implements IFinance
 		bankStatement.setReference2(line.substring(64, 80));
 		bankStatement.setDescription(line.substring(52, 80));
 		bankStatement.setReliability(StatementReliability.VERY_HIGH);
+		bankStatement.setSecurityLevel(isConfidential() ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 		bankStatement.setStatus(StatementStatus.PENDING);
 		return (BankStatement)getManagerBean().insert(bankStatement);
 	}
@@ -635,6 +645,7 @@ public class BankStatementController extends BasicController implements IFinance
 		bankStatement.setReference2(null);
 		bankStatement.setDescription((description.length() > 80) ? description.substring(0, 80) : description);
 		bankStatement.setReliability(StatementReliability.VERY_HIGH);
+		bankStatement.setSecurityLevel(isConfidential() ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
 		bankStatement.setStatus(StatementStatus.PENDING);
 		return (BankStatement)getManagerBean().insert(bankStatement);
 	}
@@ -1308,7 +1319,7 @@ public class BankStatementController extends BasicController implements IFinance
 						recordingTo.setDate(statement.getOperationDate());
 						recordingTo.setPaymentAccount(getWriter().obtainPaymentAccount(statement.getRegistryBank(), null));
 						recordingTo.setBalancingConcept(StringUtils.abbreviate(statement.getDescription(), 32));
-						recordingTo.setSecurityLevel(SecurityLevel.OFFICIAL);
+						recordingTo.setSecurityLevel(statement.getSecurityLevel());
 						recordingTo.setComments(statement.getComments());
 						recordingTo.setAccountMap(accountMap);
 
@@ -1352,6 +1363,7 @@ public class BankStatementController extends BasicController implements IFinance
 	public void recordBankStatement(AccountEntry entry, BankStatement statement) throws ManagerBeanException {
 		getWriter().insertAccountEntryBankStatement(entry, statement);
 
+		statement.setSecurityLevel(entry.getSecurityLevel());
 		statement.setStatus(StatementStatus.RECORDED);
 		statement.setShowBankStatementLink(false);
 		getManagerBean().update(statement);

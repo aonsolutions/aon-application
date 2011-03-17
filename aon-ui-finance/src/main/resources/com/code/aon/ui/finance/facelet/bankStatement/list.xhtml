@@ -370,7 +370,7 @@
 										</aon:column>
 
 										<aon:column alias="BankStatement.operationDate"
-											styleClass="aon-editDataTable-textColumn aon-width-120">
+											styleClass="aon-editDataTable-textColumn aon-width-100">
 											<f:facet name="header">
 												<aon:outputText value="#{bundle.aon_date}" />
 											</f:facet>
@@ -380,19 +380,40 @@
 													timeZone="#{timeZoneController.timeZoneId}" />
 											</aon:outputText>
 											<aon:selectInputDate id="BankStatement_operationDate" 
-												value="#{controller.to.operationDate}"
+												value="#{controller.to.operationDate}" inputSize="7"
 												rendered="#{formEdit and controller.to.pending}" required="true"
 												timeZone="#{timeZoneController.timeZone}"
 												popupDateFormat="#{bundle.aon_date_pattern}"/>
 											<f:facet name="footer">
 												<aon:selectInputDate id="BankStatement_operationDate-New" 
-													value="#{controller.to.operationDate}"
+													value="#{controller.to.operationDate}" inputSize="7"
 													rendered="#{formNew}" required="true"
 													timeZone="#{timeZoneController.timeZone}"
 													popupDateFormat="#{bundle.aon_date_pattern}"/>
 											</f:facet>
 										</aon:column>
 
+										<c:if test="#{aonRole.confidentiality}">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+												<f:facet name="header">
+													<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
+														styleClass="aon-icon-confidential" style="padding-left:15px" />
+												</f:facet>
+												<aon:outputText value="&#160;"
+													rendered="#{formList or controller.to.recorded}"
+													styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
+													style="padding-left:20px" />
+												<aon:selectBooleanCheckbox id="BankStatement_securityLevel"
+													value="#{controller.to.confidential}" 
+													rendered="#{formEdit and !controller.to.recorded}" />
+												<f:facet name="footer">
+													<aon:selectBooleanCheckbox id="BankStatement_securityLevel-New"
+														value="#{controller.to.confidential}" 
+														rendered="#{formNew}" />
+												</f:facet>
+											</aon:column>
+										</c:if>
+ 
 										<aon:column alias="BankStatement.commonConcept"
 											styleClass="aon-editDataTable-textColumn aon-width-120">
 											<f:facet name="header">
@@ -482,7 +503,7 @@
 												<aon:inputText id="BankStatement_amount-New"
 													value="#{controller.to.amount}"
 													rendered="#{formNew}" required="true"
-													size="10">
+													size="8">
 													<f:validateDoubleRange minimum="0.0" />
 												</aon:inputText> 
 											</f:facet>
@@ -546,6 +567,16 @@
 												</aon:outputText>
 											</aon:column>
 
+											<c:if test="#{aonRole.confidentiality}">
+												<aon:column styleClass="aon-editDataTable-textColumn aon-subTable-yellow-column">
+													<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
+														styleClass="aon-icon-confidential" style="padding-left:15px"
+														rendered="#{statementLink.confidential}" />
+													<aon:outputText value="&#160;"
+														rendered="#{!statementLink.confidential}" />
+												</aon:column>
+											</c:if>
+
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
 												<aon:outputText value="#{financeBundle.finance_tracking_batched} "
 													rendered="#{statementLink.financeBatch}" />
@@ -589,12 +620,6 @@
 
 											<aon:column colspan="3" 
 												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
-												<f:facet name="header">
-													<aon:div>
-														<aon:outputText value="#{bundle.aon_confidential}" 
-															rendered="#{controller.accountEntry.confidential}" />
-													</aon:div>
-												</f:facet>
 												<aon:outputText value="&#160;" />
 											</aon:column>
 
@@ -608,6 +633,21 @@
 												</f:facet>
 												<aon:outputText value="#{entryDetail.concept}" />
 											</aon:column>
+
+											<c:if test="#{aonRole.confidentiality}">
+												<aon:column styleClass="aon-editDataTable-textColumn aon-subTable-green-column">
+													<f:facet name="header">
+														<aon:div>
+															<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
+																styleClass="aon-icon-confidential" style="padding-left:15px"
+																rendered="#{controller.accountEntry.confidential}" />
+															<aon:outputText value="&#160;"
+																rendered="#{!controller.accountEntry.confidential}" />
+														</aon:div>
+													</f:facet>
+													<aon:outputText value="&#160;" />
+												</aon:column>
+											</c:if>
 
 											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
 												<f:facet name="header">

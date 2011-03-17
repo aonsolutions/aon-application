@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.event;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.StatementReliability;
@@ -37,6 +38,7 @@ public class BankStatementControllerListener extends ControllerAdapter {
 		bankStatement.setOperationDate(controller.getOperationDate());
 		bankStatement.setPayment(true);
 		bankStatement.setReliability(StatementReliability.VERY_HIGH);
+		bankStatement.setSecurityLevel(SecurityLevel.OFFICIAL);
 		bankStatement.setStatus(StatementStatus.PENDING);
 	}
 
@@ -45,6 +47,9 @@ public class BankStatementControllerListener extends ControllerAdapter {
 		BankStatementController controller = (BankStatementController)event.getController();
 		BankStatement bankStatement = (BankStatement)controller.getTo();
 		bankStatement.setRegistryBank(controller.getRegistryBank());
+		if (bankStatement.getSecurityLevel() == null) {
+			bankStatement.setSecurityLevel(SecurityLevel.OFFICIAL);
+		}
 	}
 
 	@Override
