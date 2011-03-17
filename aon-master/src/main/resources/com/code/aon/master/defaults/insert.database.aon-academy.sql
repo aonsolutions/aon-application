@@ -10,7 +10,7 @@ SET FOREIGN_KEY_CHECKS=0;
 DELETE FROM `tax_detail`;
 DELETE FROM `tax`;
 
-INSERT INTO `tax` (`id`, `name`, `tax_type`, `percentage`, `surcharge`, `start_date`) VALUES 
+INSERT INTO `tax` (`id`, `name`, `tax_type`, `percentage`, `surcharge`, `start_date`,`vat_deduction_type`,`withholding_type`) VALUES 
   (1,'SIN IVA',1,0,0,'2000-01-01',0,0),
   (2,'GENERAL',1,18,4,'2010-07-01',0,0),
   (3,'REDUCIDO',1,8,1,'2010-07-01',0,0),
