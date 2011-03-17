@@ -78,7 +78,12 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
+			<param id="declarations" value="#{vatTax.getDeclarations}" />
 		</params>
+		<nested-report report="vatTaxDeclarationReport"/>
+	</report>
+	<report id="vatTaxDeclarationReport" description="Cartas de pago de la Declaracion de IVA">
+		<template path="/com/code/aon/ui/fiscal/report/vatTax_declaraction.jasper"/>
 	</report>
 	
 	<!--  *********  Declaracion de IVA ********* -->

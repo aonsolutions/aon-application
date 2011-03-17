@@ -22,6 +22,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.fiscal.VatTax;
+import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Period;
@@ -400,5 +401,23 @@ public class VatTaxController extends BasicController {
 		if (detail.getKey().isDetailed() && detail.getTaxableBaseAdjust() == 0 && detail.getPercent() != 0) {
 			detail.setTaxableBaseAdjust(CommonUtil.round(detail.getQuotaAdjust() *  100 / detail.getPercent()));
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<VatTaxDeclaration> getDeclarations() {
+		VatTax vatTax = (VatTax) getTo();
+		if  (vatTax != null) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(VatTaxDeclaration.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_ID), vatTax.getId());
+				criteria.addOrder(bean.getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_PERCENT),false);
+				List<?> list = bean.getList(criteria);
+				return (List<VatTaxDeclaration>) list;
+			} catch (ManagerBeanException e) {
+			}
+		}
+		return null;
+		
 	}
 }

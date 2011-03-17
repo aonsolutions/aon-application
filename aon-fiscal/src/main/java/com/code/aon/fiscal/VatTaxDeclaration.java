@@ -1,5 +1,6 @@
 package com.code.aon.fiscal;
 
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -253,6 +255,27 @@ public class VatTaxDeclaration implements ITransferObject {
 	@Transient
 	public boolean isDepositEnabled() {
 		return getDeposit() > 0 || (getDeposit() == 0 && getPayBack() == 0 && getCompensate() == 0);
+	}
+
+	@Transient
+	public VatTaxDeclaration getDeclaration() {
+		return this;
+	}
+
+	@Transient
+	public String getBankAccount() {
+		if (getRegistryBank() != null && getRegistryBank().getBankAccount() != null ) {
+			return getRegistryBank().getBankAccount().getMaskedBankAccount();
+		}
+		return null;
+	}
+	
+	@Transient
+	public String getBank() {
+		if (getRegistryBank() != null && getRegistryBank().getBank() != null ) {
+			return StringUtils.abbreviate(getRegistryBank().getBank().getName(), 50);
+		}
+		return null;
 	}
 
 	@Override

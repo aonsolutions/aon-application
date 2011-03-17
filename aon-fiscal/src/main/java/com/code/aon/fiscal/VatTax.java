@@ -1,6 +1,5 @@
 package com.code.aon.fiscal;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,12 +11,12 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.fiscal.dao.IFiscalAlias;
@@ -144,7 +143,7 @@ public class VatTax implements ITransferObject, IConfidentialable {
         this.number = number;
     }
 
-    @Transient
+	@Transient
 	public boolean isFinished() {
 		return getStatus() == VatTaxStatus.FINISHED;
 	}
@@ -209,7 +208,7 @@ public class VatTax implements ITransferObject, IConfidentialable {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return PojoToStringBuilder.reflectionToString(this);
 	}
 
 }

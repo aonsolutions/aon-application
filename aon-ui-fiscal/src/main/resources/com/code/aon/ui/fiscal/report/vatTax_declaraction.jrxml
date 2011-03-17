@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vatTax_declaraction" columnCount="5" pageWidth="422" pageHeight="802" columnWidth="84" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.771561000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="declaration" class="com.code.aon.fiscal.VatTaxDeclaration"/>
+	<group name="DeclarationGroup" isStartNewColumn="true">
+		<groupExpression><![CDATA[$F{declaration}.getId()]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="170">
+			<printWhenExpression><![CDATA[!$F{declaration}.getVatTax().isAnual()]]></printWhenExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="84" height="12"/>
+				<box rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{declaration}.getAdministration().getName($P{REPORT_LOCALE})]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="12" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{declaration}.isWithoutActivity()?"Sin Actividad":null]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="36" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{declaration}.getQuota()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="48" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{declaration}.getPreviousYearCompensateQuota()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="60" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{declaration}.getResult()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="72" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{declaration}.isCompensateEnabled()?$F{declaration}.getCompensate():null]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="84" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{declaration}.isPayBackEnabled()?$F{declaration}.getPayBack():null]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="96" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{declaration}.isDepositEnabled()?$F{declaration}.getDeposit():null]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="108" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{declaration}.isDepositEnabled()?$F{declaration}.getExtraCharge():null]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="120" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{declaration}.isDepositEnabled()?$F{declaration}.getDelayInterest():null]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="132" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{declaration}.isDepositEnabled()?$F{declaration}.getTotalTaxDebt():null]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="144" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="6" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{declaration}.getBank()]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="156" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="6" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{declaration}.getBankAccount()]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<reportElement key="textField-16" mode="Transparent" x="0" y="24" width="84" height="12" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.25" lineColor="#AAAAAA"/>
+					<bottomPen lineWidth="0.0" lineColor="#AAAAAA"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" lineSpacing="Single" markup="none">
+					<font fontName="SansSerif" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{declaration}.getPercent() / 100 ]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="50">
+			<printWhenExpression><![CDATA[$F{declaration}.getVatTax().isAnual()]]></printWhenExpression>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

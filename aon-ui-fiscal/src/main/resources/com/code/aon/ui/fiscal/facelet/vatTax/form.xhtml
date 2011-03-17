@@ -106,7 +106,7 @@
 									onmouseout="this.style.textDecoration='inherit';"
 									actionListener="#{vatTax.onAdjustCopy}"
 									onclick="if (!confirm('#{fiscalBundle.fiscal_adjust_copy}')) return false;"
-									rendered="#{vatTax.anyPreviousAdjust}">
+									rendered="#{!vatTax.to.finished and vatTax.anyPreviousAdjust}">
 									<aon:outputText value="#{fiscalBundle.fiscal_copy} "/>								
 									<aon:outputText value="#{vatTax.previousPeriod}"/>
 								</aon:commandLink>
