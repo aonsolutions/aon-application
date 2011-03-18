@@ -10,7 +10,7 @@
 
 	<aon:panelGroup id="showFinanceSearchWindow">
 		<c:if test="#{financeList.showFinanceSearchWindow}">
-			<rich:modalPanel id="financeSearchModalPanel" minHeight="260"
+			<rich:modalPanel id="financeSearchModalPanel" minHeight="280"
 				minWidth="580" rendered="#{financeList.showFinanceSearchWindow}"
 				showWhenRendered="true" zindex="100">
 				<f:facet name="header">
@@ -112,6 +112,15 @@
 												popupDateFormat="#{bundle.aon_date_pattern}">
 											</aon:selectInputDate>
 										</aon:div>
+
+										<aon:outputLabel for="Finance_payMethod_id"
+											value="#{configBundle.config_pay_method}" />
+										<aon:selectOneMenu id="Finance_payMethod_id"
+											value="#{configCollections.payMethod}"
+											valueChangeListener="#{controller.addIdEqualExpression}">
+											<f:selectItem itemLabel="-" value="#{null}"/>
+											<f:selectItems value="#{payMethodSearchList}" />
+										</aon:selectOneMenu>
 
 										<c:if test="#{aonRole.confidentiality}">
 											<aon:outputLabel for="Finance_securityLevel"

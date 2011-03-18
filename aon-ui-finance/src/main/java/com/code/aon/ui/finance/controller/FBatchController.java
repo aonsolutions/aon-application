@@ -6,10 +6,13 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,6 +31,8 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
+import com.code.aon.config.PayMethod;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.finance.Finance;
@@ -166,6 +171,33 @@ public class FBatchController extends BasicController implements ICollectionProv
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
 		financeList.onEditSearch(event);
         financeList.setCriteria(getAvailableFinancesCriteria());
+	}
+
+	public List<SelectItem> getSearchPayMethods() throws ManagerBeanException {
+        FinanceBatch to = (FinanceBatch)this.getTo();
+
+        List<SelectItem> payMethods = new LinkedList<SelectItem>();
+		IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(payMethodBean.getFieldName(IConfigAlias.PAY_METHOD_NAME));
+		Iterator<?> iter = payMethodBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			PayMethod payMethod = (PayMethod) iter.next();
+			boolean validPayMethod = true;
+			if (to.getFinanceBatchType() != (FinanceBatchType.NONE)) {
+				if (to.getFinanceBatchType() != FinanceBatchType.AEB_34) {
+					validPayMethod = (payMethod.getType() == PayMethodType.NEGOTIABLE_DOCUMENT);
+				} else {
+					validPayMethod = (payMethod.getType() == PayMethodType.CHEQUE || payMethod.getType() == PayMethodType.BANK_TRANSFER);
+				}
+			}
+
+			if (validPayMethod) {
+				SelectItem item = new SelectItem(payMethod, payMethod.getName());
+				payMethods.add(item);
+			}
+		}
+		return payMethods;
 	}
 
 	private Criteria getAvailableFinancesCriteria() throws ManagerBeanException {

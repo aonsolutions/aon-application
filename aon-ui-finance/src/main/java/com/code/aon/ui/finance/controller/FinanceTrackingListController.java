@@ -36,6 +36,8 @@ public class FinanceTrackingListController extends BasicController {
 				addGreaterThanOrEqualExpression(event);
 			} else if (event.getComponent().getId().contains("-To")) {
 				addLessThanOrEqualExpression(event);
+			} else if (event.getComponent().getId().contains("_id")) {
+				addIdEqualExpression(event);
 			} else {
 				addExpression(event);
 			}

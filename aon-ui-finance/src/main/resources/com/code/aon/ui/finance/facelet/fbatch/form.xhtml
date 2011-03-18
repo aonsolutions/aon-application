@@ -143,13 +143,13 @@
 					<aon:panelTabSet rendered="#{!fbatch.new}">
 	
 						<c:if test="#{fBatchDetail.model.rowCount > 0}" >
-							<aon:panelTab name="fBatchDetail" label="#{financeBundle.finance_included_finance}">
+							<aon:panelTab id="fBatchDetailTab" label="#{financeBundle.finance_included_finance}">
 								<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formDetail.xhtml" />
 							</aon:panelTab>
 						</c:if>
 	
 						<c:if test="#{!fbatch.recorded}" >
-							<aon:panelTab name="finance" label="#{financeBundle.finance_not_batched_finances}">
+							<aon:panelTab id="financeTab" label="#{financeBundle.finance_not_batched_finances}">
 								<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formFinance.xhtml" />
 							</aon:panelTab>
 						</c:if>
@@ -162,7 +162,8 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalSearch.xhtml">
 			<ui:param name="controller" value="#{financeList}" />
 			<ui:param name="showType" value="false" />
-			<ui:param name="searchReRender" value="financeDataDiv" />
+			<ui:param name="payMethodSearchList" value="#{fbatch.searchPayMethods}" />
+			<ui:param name="searchReRender" value="financeToolBarDiv,financeDataDiv" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/modalRecord.xhtml" />
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />

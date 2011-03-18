@@ -235,6 +235,14 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		trackingList.setExpression(event);
 	}
 
+	public void addIdEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+		FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+		financeList.addIdEqualExpression(event);
+
+		FinanceTrackingListController trackingList = (FinanceTrackingListController)FormUtil.getController(FINANCE_TRACKING_LIST_CONTROLLER_NAME);
+		trackingList.setExpression(event);
+	}
+
 	public void onSearch(ActionEvent event) throws ManagerBeanException {
 		FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
 		financeList.onSearch(event);

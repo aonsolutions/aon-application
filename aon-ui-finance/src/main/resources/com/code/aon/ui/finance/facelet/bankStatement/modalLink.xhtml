@@ -631,6 +631,7 @@
 				<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalSearch.xhtml">
 					<ui:param name="controller" value="#{bankStatement.bankStatementLinkManager}" />
 					<ui:param name="showType" value="true" />
+					<ui:param name="payMethodSearchList" value="#{configCollections.payMethods}" />
 					<ui:param name="searchReRender" value="statementLinkCheckDiv" />
 				</ui:include>
 			</rich:modalPanel>
