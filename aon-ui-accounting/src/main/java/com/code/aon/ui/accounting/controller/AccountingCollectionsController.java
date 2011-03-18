@@ -21,6 +21,7 @@ import com.code.aon.accounting.enumeration.AccountPeriodStatus;
 import com.code.aon.accounting.enumeration.AmortizationPeriod;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.enumeration.LoanStatus;
+import com.code.aon.accounting.enumeration.Quarter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -38,6 +39,7 @@ public class AccountingCollectionsController {
 	private LinkedList<SelectItem> amortizationPeriods;
 	private LinkedList<SelectItem> periodStatuses;
 	private LinkedList<SelectItem> loanStatuses;
+	private LinkedList<SelectItem> quarters;
 	
 	private List<SelectItem> autoConcepts;
 	private List<String> concepts;
@@ -387,5 +389,21 @@ public class AccountingCollectionsController {
 		}
 		return annualReports;
 	}
+	
+	public List<SelectItem> getQuarters() {
+		if (quarters == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			quarters = new LinkedList<SelectItem>();
+			Quarter[] bTypes = Quarter.values();
+			for (int i = 0; i < bTypes.length; i++) {
+				Quarter type = bTypes[i];
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				quarters.add(item);
+			}
+		}
+		return quarters;
+	}
+		
 
 }

@@ -3,6 +3,7 @@ package com.code.aon.accounting.summary;
 import java.util.Date;
 
 import com.code.aon.accounting.Period;
+import com.code.aon.accounting.enumeration.Quarter;
 import com.code.aon.common.enumeration.SecurityLevel;
 
 public class SummaryProviderParameters implements Cloneable{
@@ -36,6 +37,7 @@ public class SummaryProviderParameters implements Cloneable{
 	
 	private int fromAccountLevel = 1;
 
+	private Quarter quarter;
 	/**
 	 * Desde fecha.
 	 */
@@ -87,6 +89,7 @@ public class SummaryProviderParameters implements Cloneable{
 		setNoTouchedAccountVisible(false);
 		setAccountLevel(4);
 		setFromAccountLevel(5);
+		setQuarter(null);
 		setFromDate(null);
 		setToDate(null);
 		setDate( new Date() );
@@ -159,6 +162,14 @@ public class SummaryProviderParameters implements Cloneable{
 
 	public void setFromAccountLevel(int fromAccountLevel) {
 		this.fromAccountLevel = fromAccountLevel;
+	}
+
+	public Quarter getQuarter() {
+		return quarter;
+	}
+
+	public void setQuarter(Quarter quarter) {
+		this.quarter = quarter;
 	}
 
 	public Date getFromDate() {
@@ -291,6 +302,7 @@ public class SummaryProviderParameters implements Cloneable{
 		cloned.setAccountLevel(getAccountLevel());
 		cloned.setBudgeted(isBudgeted());
 		cloned.setDate(getDate());
+		cloned.setQuarter(getQuarter());
 		cloned.setFromDate(getFromDate());
 		cloned.setLowerLevelVisible(isLowerLevelVisible());
 		cloned.setMonthlyGrouping(isMonthlyGrouping());

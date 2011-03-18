@@ -61,6 +61,16 @@
 
 					<aon:outputText value="#{bundle.aon_date_select}" />
 					<aon:div>
+						<aon:selectOneMenu
+							id="AccountEntryDetail_accountEntry_quarter"
+							value="#{trialBalance.parameters.quarter}"
+							valueChangeListener="#{trialBalance.onQuarterChanged}"
+							reRender="AccountEntryDetail_accountEntry_entryDate-From,AccountEntryDetail_accountEntry_entryDate-To" 
+							ajaxSingle="true">
+							<f:selectItem itemValue="#{null}" itemLabel="-" />
+							<f:selectItems value="#{accountingCollections.quarters}" />
+						</aon:selectOneMenu>
+
 						<aon:outputLabel
 							for="AccountEntryDetail_accountEntry_entryDate-From"
 							styleClass="aon-form-date-label aon-margin-left aon-margin-right"

@@ -16,6 +16,7 @@ import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.accounting.enumeration.Quarter;
 import com.code.aon.accounting.summary.Summary;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
@@ -25,6 +26,7 @@ import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -274,6 +276,15 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 			}
 		} catch (ManagerBeanException e) {
 			// Nothing.
+		}
+	}
+
+	public void onQuarterChanged(ValueChangeEvent event) {
+		Quarter quarter = (Quarter) event.getNewValue();
+		if (quarter != null && getParameters().getPeriod() != null) {
+			int year = CommonUtil.getYear(getParameters().getPeriod().getInitiationDate()); 
+			getParameters().setFromDate(quarter.getStartDate(year));
+			getParameters().setToDate(quarter.getDueDate(year));
 		}
 	}
 
