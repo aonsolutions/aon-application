@@ -74,19 +74,24 @@ public class StatementController extends BasicController {
 
 	@Override
 	public void onSelect(ActionEvent event) {
+		super.onSelect(event);
+		refresh();
+	}
+
+	public void onRefresh(ActionEvent event) {
+		refresh();
+	}
+
+	private void refresh() {
 		try {
-			super.onSelect(event);
 			initialize();
 			initializeAmounts();
 			transformDetailModel();
 		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException(e.getMessage(), e);
+			throw new AbortProcessingException("No se pudo actualizar la página."+e.getMessage(), e);
 		}
 	}
 
-	public void onRefresh(ActionEvent event) {
-			onSelect(event);
-	}
 
 	private void initialize() {
 		setOpeningEntry(null);
@@ -218,7 +223,7 @@ public class StatementController extends BasicController {
 		return (getFromOpeningEntry() != null);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Collection getCollection() {
 		return getDetail();
