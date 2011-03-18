@@ -2430,14 +2430,14 @@ COMMIT;
 # Data for the `deduction_concept` table  (LIMIT 0,500)
 #
 
-INSERT INTO `deduction_concept` (`id`, `code`, `description`, `type`) VALUES 
-  (1,'CGC','(BASE_CGC/CGC*100)+''%''',0),
-  (2,'CGP','(BASE_CGP/CGP*100)+''%''',1),
-  (3,'DESMP','(BASE_CGP/DESMP*100)+''%''',2),
-  (4,'FP','(BASE_CGP/FP*100)+''%''',3),
-  (5,'NESTR','(BASE_NESTR/NESTR*100)+''%''',4),
-  (6,'ESTR','(BASE_ESTR/ESTR*100)+''%''',5),
-  (7,'IRPF','(BASE_IRPF/IRPF*100)+''%''',6);
+INSERT INTO `deduction_concept` VALUES 
+(1,'CGC','@{CGC/BASE_CGC*100} %',0,1,'BASE_CGC * 4.70/100'),
+(2,'CGP','(BASE_CGP/CGP*100)+\'%\'',1,0,NULL),
+(3,'DESMP','@{DESMP/BASE_CGP*100} %',2,1,'BASE_CGP * (INDEFINIDO ? 1.55 : 1.60 )/100'),
+(4,'FP','@{FP/BASE_CGP*100} %',3,1,'BASE_CGP * 0.10/100'),
+(5,'NESTR','@{ESTR/BASE_ESTR*100} %',4,1,'BASE_ESTR * 2.00/100'),
+(6,'ESTR','@{NESTR/BASE_NESTR*100} %',5,1,'BASE_NESTR * 4.70/100'),
+(7,'IRPF','@{IRPF/BASE_IRPF*100} %',6,1,'BASE_IRPF * PORCENTAJE_IRPF/100');
 
 COMMIT;
 
@@ -2445,13 +2445,13 @@ COMMIT;
 # Data for the `function_constant` table  (LIMIT 0,500)
 #
 
-INSERT INTO `function_constant` (`id`, `name`, `expression`, `start_date`, `end_date`, `read_only`, `comments`) VALUES 
-  (1,'BASE_CGC_MIN','[\t1 : 1031.70, 2 : 855.90, 3 : 744.60, 4 : 3198.00, 5 : 738.90, 6 : 738.90, 7 : 738.90, 8 : 24.63*DIAS_MES, 9 : 24.63*DIAS_MES, 10: 24.63*DIAS_MES, 11: 24.63*DIAS_MES]','2010-01-01',NULL,1,'Bases minimas'),
-  (2,'BASE_CGC_MAX','[\t1 : 3198.00, 2 : 3198.00, 3 : 3198.00, 4 : 3198.00, 5 : 3198.00, 6 : 3198.00, 7 : 3198.00, 8 : 106.60*DIAS_MES, 9 : 106.60*DIAS_MES, 10: 106.60*DIAS_MES, 11: 106.60*DIAS_MES]','2010-01-01',NULL,1,'Bases maximas'),
-  (3,'IPREM','516.90','2008-01-01','2008-12-31',1,'Indicador Público de Renta de Efectos Múltiples (IPREM) '),
-  (4,'IPREM','527.24','2009-01-01','2009-12-31',1,'Indicador Público de Renta de Efectos Múltiples (IPREM) '),
-  (5,'IPREM','531.51','2010-01-01','2010-12-31',1,'Indicador Público de Renta de Efectos Múltiples (IPREM) '),
-  (6,'IPREM','531.51','2011-01-01',NULL,1,'Indicador Público de Renta de Efectos Múltiples (IPREM) ');
+INSERT INTO `system_data` VALUES 
+(1,'BASE_CGC_MIN','[	1 : 1031.70, 2 : 855.90, 3 : 744.60, 4 : 3198.00, 5 : 738.90, 6 : 738.90, 7 : 738.90, 8 : 24.63*DIAS_MES, 9 : 24.63*DIAS_MES, 10: 24.63*DIAS_MES, 11: 24.63*DIAS_MES]','2010-01-01',NULL,1,'Bases minimas'),
+(2,'BASE_CGC_MAX','[	1 : 3198.00, 2 : 3198.00, 3 : 3198.00, 4 : 3198.00, 5 : 3198.00, 6 : 3198.00, 7 : 3198.00, 8 : 106.60*DIAS_MES, 9 : 106.60*DIAS_MES, 10: 106.60*DIAS_MES, 11: 106.60*DIAS_MES]','2010-01-01',NULL,1,'Bases maximas'),
+(3,'IPREM','516.90','2008-01-01','2008-12-31',1,'Indicador Público de Renta de Efectos Múltiples (IPREM) '),
+(4,'IPREM','527.24','2009-01-01','2009-12-31',1,'Indicador Público de Renta de Efectos Múltiples (IPREM) '),
+(5,'IPREM','531.51','2010-01-01','2010-12-31',1,'Indicador Público de Renta de Efectos Múltiples (IPREM) '),
+(6,'IPREM','531.51','2011-01-01',NULL,1,'Indicador Público de Renta de Efectos Múltiples (IPREM) ');
 
 COMMIT;
 
@@ -2459,13 +2459,13 @@ COMMIT;
 # Data for the `system_deduction` table  (LIMIT 0,500)
 #
 
-INSERT INTO `system_deduction` (`id`, `type`, `deduction_concept`, `description`, `description_decorable`, `expression`, `start_date`, `end_date`, `month`) VALUES 
-  (1,0,1,NULL,1,'BASE_CGC * 4.70/100','2010-01-01',NULL,NULL),
-  (2,2,3,NULL,1,'BASE_CGP * (INDEFINIDO ? 1.55 : 1,60 )/100','2010-01-01',NULL,NULL),
-  (3,3,4,NULL,1,'BASE_CGP * 0.10/100','2010-01-01',NULL,NULL),
-  (4,4,5,NULL,1,'BASE_NESTR * 4.70/100','2010-01-01',NULL,NULL),
-  (5,5,6,NULL,1,'BASE_ESTR * 2.00/100','2010-01-01',NULL,NULL),
-  (6,6,7,NULL,1,'BASE_IRPF * PORCENTAJE_IRPF/100','2010-01-01',NULL,NULL);
+INSERT INTO `system_deduction` VALUES 
+(1,0,1,NULL,1,NULL,'2010-01-01',NULL,NULL),
+(2,2,3,NULL,1,NULL,'2010-01-01',NULL,NULL),
+(3,3,4,NULL,1,NULL,'2010-01-01',NULL,NULL),
+(4,4,5,NULL,1,NULL,'2010-01-01',NULL,NULL),
+(5,5,6,NULL,1,NULL,'2010-01-01',NULL,NULL),
+(6,6,7,NULL,1,NULL,'2010-01-01',NULL,NULL);
 
 COMMIT;
 
