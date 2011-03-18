@@ -28,7 +28,8 @@
 							action="accountEntry_form"
 							actionListener="#{accountEntry.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							rendered="#{!accountEntry.new}" />
+							rendered="#{!accountEntry.new}"
+							focus="AccountEntry_accountPeriod" />
 
 						<aon:commandButton id="save-add" value="#{bundle.aon_save}"
 							title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save})"
@@ -276,5 +277,7 @@
 
 		</aon:div>
 		<aon:lookupButtonPopup lookup="#{accountLookup}" />
+		
+		<rich:jQuery timing="onload" selector="#AccountEntry_accountPeriod" query="focus()"/>
 	</ui:define>
 </ui:composition>
