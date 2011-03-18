@@ -224,20 +224,32 @@ public class AccountingCollectionsController {
 	public List<SelectItem> getAccountTypes() {
 		if (accountEntryTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			
 			accountEntryTypes = new LinkedList<SelectItem>();
-			AccountEntryType[] aeTypes = AccountEntryType.values();
-			for (int i = 0; i < aeTypes.length; i++) {
-				AccountEntryType type = aeTypes[i];
-				if (type != AccountEntryType.LEASING_FEE && type != AccountEntryType.LEASING
-					// STOCK_VARIATION no se usa.
-					&& type != AccountEntryType.STOCK_VARIATION 
-					// INVESTMENT_INVOICE no se usa.
-					&& type != AccountEntryType.INVESTMENT_INVOICE ) {
-					String name = type.getName(locale);
-					SelectItem item = new SelectItem(type, name);
-					accountEntryTypes.add(item);	
-				}
-			}
+			String r = "------------------";
+			accountEntryTypes.add(new SelectItem(AccountEntryType.MANUAL,AccountEntryType.MANUAL.getName(locale)));
+			accountEntryTypes.add(new SelectItem(null,r,r,true));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.SALES_INVOICE,AccountEntryType.SALES_INVOICE.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.PURCHASE_INVOICE,AccountEntryType.PURCHASE_INVOICE.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.EXPENSE_INVOICE,AccountEntryType.EXPENSE_INVOICE.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.PAYMENT,AccountEntryType.PAYMENT.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.COLLECTION,AccountEntryType.COLLECTION.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.RETURNED_PAYMENT,AccountEntryType.RETURNED_PAYMENT.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.RETURNED_COLLECTION,AccountEntryType.RETURNED_COLLECTION.getName(locale)));
+			accountEntryTypes.add(new SelectItem(null,r,r,true));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.SALARY,AccountEntryType.SALARY.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.EXPENSES,AccountEntryType.EXPENSES.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.SOCIAL_INSURANCE,AccountEntryType.SOCIAL_INSURANCE.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.SOCIAL_INSURANCE_ADJUST,AccountEntryType.SOCIAL_INSURANCE_ADJUST.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.LOAN,AccountEntryType.LOAN.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.LOAN_FEE,AccountEntryType.LOAN_FEE.getName(locale)));
+			accountEntryTypes.add(new SelectItem(null,r,r,true));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.AMORTIZATION,AccountEntryType.AMORTIZATION.getName(locale)));
+			accountEntryTypes.add(new SelectItem(null,r,r,true));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.OPENING,AccountEntryType.OPENING.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.CLOSING,AccountEntryType.CLOSING.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.OPERATING,AccountEntryType.OPERATING.getName(locale)));
+
 		}
 		return accountEntryTypes;
 	}

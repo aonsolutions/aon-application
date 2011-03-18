@@ -49,7 +49,7 @@
 					<aon:selectOneMenu id="AccountEntry_type"
 						converter="aon.EnumConverter"
 						valueChangeListener="#{accountEntry.addEqualExpression}">
-						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItem itemLabel="------------------" value="#{null}" />
 						<f:selectItems value="#{accountingCollections.accountTypes}" />
 					</aon:selectOneMenu>
 
