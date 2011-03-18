@@ -18,6 +18,14 @@ UPDATE `registry` SET `type` = 0 WHERE `document_type` != 1;
 
 UPDATE `registry` SET `type` = 1 WHERE `document_type` = 1; 
 
+UPDATE `invoice` SET `rdocument_type` = 2 WHERE SUBSTR(`rdocument`, 1, 1) IN ('X','Y','Z');
+
+UPDATE `invoice` SET `rdocument_type` = 1 WHERE SUBSTR(`rdocument`, 1, 1) BETWEEN 'A' AND 'J' OR SUBSTR(`rdocument`, 1, 1) BETWEEN 'N' AND 'W';
+
+UPDATE `finance` SET `rdocument_type` = 2 WHERE SUBSTR(`rdocument`, 1, 1) IN ('X','Y','Z');
+
+UPDATE `finance` SET `rdocument_type` = 1 WHERE SUBSTR(`rdocument`, 1, 1) BETWEEN 'A' AND 'J' OR SUBSTR(`rdocument`, 1, 1) BETWEEN 'N' AND 'W';
+
 ALTER TABLE `bank_statement` ADD `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad' AFTER `reliability`;
 
 ALTER TABLE `contract` ADD `agreement_level_category` int(4) default NULL COMMENT 'Identificador unico de la Categoria Profesional';
