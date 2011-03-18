@@ -11,6 +11,7 @@ public abstract class HierarchyIterator<E> extends AbstractIterator<E> {
 	
 	private Iterator<E> childs [];
 	
+
 	public HierarchyIterator(Iterator<E> ... childs) {
 		this.childs = childs;
 		this.cur = 0;

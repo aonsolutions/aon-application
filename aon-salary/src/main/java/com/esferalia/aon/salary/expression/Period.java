@@ -87,13 +87,17 @@ public class Period implements Comparable<Period>{
 		
 		Period aPeriod = null;
 		Period bPeriod = null;
-		while ( aIterator.hasNext() && bIterator.hasNext() ){
+		while ( aIterator.hasNext() || bIterator.hasNext() ){
 			
 			int ends = compareEnds(aPeriod, bPeriod );
 			if ( ends <= 0 ) {
+				if ( !aIterator.hasNext() )
+					break;
 				aPeriod =  aIterator.next();
 			}
 			if ( ends >= 0 ) {
+				if ( !bIterator.hasNext() )
+					break;
 				bPeriod =  bIterator.next();
 			}
 			
@@ -102,7 +106,7 @@ public class Period implements Comparable<Period>{
 				periods.add( intersectPeriod );
 			}
 		}
-	
+		
 		return periods;
 	}
 	

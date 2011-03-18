@@ -8,19 +8,82 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum PaymentType implements IResourceable {
 
 	
-	BASE_SALARY,
-	SALARY_SUPPLEMENTS,
-	STRUCTURAL_HOURS,
-	NON_STRUCTURAL_HOURS,
-	SPECIAL_BONUSES,
-	SALARY_IN_KIND,
-	COMPENSATION_OR_PREPAID_EXPENSES,
-	SOCIAL_SECURITY_BENEFITS,
-	MOVING_COMPENSATION,
+	BASE_SALARY 
+	{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) {
+			visitor.visitBaseSalary(this);
+		}
+	},
+	SALARY_SUPPLEMENTS
+	{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) {
+			visitor.visitSalarySupplement(this);
+		}
+	},
+	STRUCTURAL_HOURS
+	{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) {
+			visitor.visitStructuralHours(this);
+		}
+	},
+	NON_STRUCTURAL_HOURS
+	{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) {
+			visitor.visitNonStructuralHours(this);
+		}
+	},
+	SPECIAL_BONUSES
+	{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) {
+			visitor.visitSpecialBonos(this);
+		}
+	},
+	SALARY_IN_KIND
+	{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) {
+			visitor.visitSalaryInKind(this);
+		}
+	},
+	COMPENSATION_OR_PREPAID_EXPENSES
+	{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) {
+			visitor.visitCompensationExpense(this);
+		}
+	},
+	SOCIAL_SECURITY_BENEFITS
+	{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) {
+			visitor.visitSocialSecurityBenefits(this);
+		}
+	},
+	MOVING_COMPENSATION
+	{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) {
+			visitor.visitMovingCompensation(this);
+		}
+	},
 	OTHER_NON_WAGE
-	;
+	{
+		@Override
+		public void accept(PaymentTypeVisitor visitor) {
+			visitor.visitOtherNonWage(this);
+		}
+	}	;
 	
-	/** Message file base path. */
+
+    public abstract void accept( PaymentTypeVisitor visitor );
+    
+
+    /** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.salary.i18n.messages";
     
     /** Message key prefix. */
@@ -38,5 +101,7 @@ public enum PaymentType implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
-	
+    
+    
+
 }

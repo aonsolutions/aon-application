@@ -3,7 +3,13 @@ package com.esferalia.aon.payroll.calculator.sql;
 import java.sql.ResultSet;
 import java.util.Date;
 
+import com.esferalia.aon.payroll.DeductionConcept;
+import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.DeductionConceptColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
@@ -11,16 +17,9 @@ public class SQLContractDeduction
 	extends SQLCollection<IContractDeduction> 
 	implements IContractDeduction {
 
-	public static final String TYPE 		= "type";
-	public static final String CONCEPT 		= "concept";
-	public static final String START_DATE 	= "start_date";
-	public static final String END_DATE 	= "end_date";
-	public static final String EXPRESSION 	= "expression";
-	public static final String DESCRIPTION 	= "description";
-
 	public SQLContractDeduction() {
-		super();
 	}
+	
 	
 	protected SQLContractDeduction(ResultSet resultSet) {
 		super(resultSet);
@@ -40,34 +39,6 @@ public class SQLContractDeduction
 	//-------------------------------------------
 
 	@Override
-	public DeductionType getType() {
-		int ordinal = getInt(TYPE);
-		DeductionType type = 
-			DeductionType.values()[ordinal];
-		return type;
-	}
-
-	@Override
-	public String getDescription() {
-		return getString(DESCRIPTION);
-	}
-
-	@Override
-	public String getExpression() {
-		return getString(EXPRESSION);
-	}
-
-	@Override
-	public double getAmount() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getName() {
-		return getString(CONCEPT);
-	}
-
-	@Override
 	public ExpressionScope getScope() {
 		throw new UnsupportedOperationException();
 	}
@@ -78,13 +49,52 @@ public class SQLContractDeduction
 	}
 
 	@Override
+	public double getAmount() {
+		throw new UnsupportedOperationException();
+	}
+
+
+	@Override
+	public String getName() {
+		return getString(PaymentConceptColumns.CODE);
+	}
+
+	@Override
 	public Date getStartDate() {
-		return getDate(START_DATE);
+		return getDate(ContractDeductionColumns.START_DATE);
 	}
 
 	@Override
 	public Date getEndDate() {
-		return getDate(END_DATE);
+		return getDate(ContractDeductionColumns.END_DATE);
 	}
+	@Override
+	public DeductionType getType() {
+		Integer ordinal = getInt(ContractDeductionColumns.TYPE, 
+				DeductionConceptColumns.TYPE);
+		return ordinal != null ? DeductionType.values()[ordinal] : null ;
+	}
+
+	@Override
+	public String getDescription() {
+		return getString(ContractDeductionColumns.DESCRIPTION, 
+				DeductionConceptColumns.DESCRIPTION);
+	}
+
+	@Override
+	public String getExpression() {
+		return getString(ContractDeductionColumns.EXPRESSION, 
+				DeductionConceptColumns.EXPRESSION);
+	}
+
+	
+	private Integer getInt(String deductionLabel, String conceptColumn ) {
+		return super.getInt(deductionLabel, SQLConstants.DEDUCTION_CONCEPT +"."+ conceptColumn );
+	}
+
+	private String getString(String deductionLabel, String conceptColumn ) {
+		return super.getString(deductionLabel, SQLConstants.DEDUCTION_CONCEPT +"."+ conceptColumn );
+	}
+	
 	
 }

@@ -41,38 +41,6 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 	// ------------------------------------------
 	
 	@Override
-	public Month getMonth() {
-		Integer month = getInt(ContractPaymentColumns.MONTH);
-		return  month == null ? null :Month.values()[month];
-	}
-	
-	@Override
-	public PaymentType getType() {
-		int type = getInt(ContractPaymentColumns.TYPE);
-		return PaymentType.values()[type];
-	}
-
-	@Override
-	public String getDescription() {
-		return getString(ContractPaymentColumns.DESCRIPTION);
-	}
-
-	@Override
-	public String getExpression() {
-		return getString(ContractPaymentColumns.EXPRESSION);
-	}
-
-	@Override
-	public double getAmount() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getName() {
-		return getString(SQLConstants.PAYMENT_CONCEPT + "." + PaymentConceptColumns.CODE);
-	}
-
-	@Override
 	public ExpressionScope getScope() {
 		throw new UnsupportedOperationException();
 	}
@@ -83,13 +51,8 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 	}
 	
 	@Override
-	public String getIrpfExpression() {
-		return getString(ContractPaymentColumns.IRPF_EXPRESSION);
-	}
-	
-	@Override
-	public String getQuoteExpression() {
-		return getString(ContractPaymentColumns.QUOTE_EXPRESSION);
+	public double getAmount() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -111,5 +74,56 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 	public SalaryType getSalaryType() {
 		Integer type = getInt(ContractPaymentColumns.SALARY_TYPE);
 		return type != null ? SalaryType.values()[type] : null;
+	}
+	
+	@Override
+	public Month getMonth() {
+		Integer month = getInt(ContractPaymentColumns.MONTH);
+		return  month == null ? null :Month.values()[month];
+	}
+	
+	@Override
+	public PaymentType getType() {
+		Integer type = getInt(ContractPaymentColumns.TYPE, 
+				PaymentConceptColumns.TYPE);
+		return type == null ? null : PaymentType.values()[type];
+	}
+
+	@Override
+	public String getDescription() {
+		return getString(ContractPaymentColumns.DESCRIPTION, 
+				PaymentConceptColumns.DESCRIPTION);
+	}
+
+	@Override
+	public String getExpression() {
+		return getString(ContractPaymentColumns.EXPRESSION, 
+				PaymentConceptColumns.EXPRESSION);
+	}
+
+	@Override
+	public String getName() {
+		return getString(PaymentConceptColumns.CODE);
+	}
+
+	@Override
+	public String getIrpfExpression() {
+		return getString(ContractPaymentColumns.IRPF_EXPRESSION, 
+				PaymentConceptColumns.IRPF_EXPRESSION);
+	}
+	
+	@Override
+	public String getQuoteExpression() {
+		return getString(ContractPaymentColumns.QUOTE_EXPRESSION, 
+				PaymentConceptColumns.QUOTE_EXPRESSION);
+	}
+
+
+	public Integer getInt(String paymentColumn, String conceptColumn ) {
+		return super.getInt(paymentColumn, SQLConstants.PAYMENT_CONCEPT + "." + conceptColumn );
+	}
+
+	public String getString(String paymentColumn, String conceptColumn ) {
+		return super.getString(paymentColumn, SQLConstants.PAYMENT_CONCEPT + "." + conceptColumn );
 	}
 }

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.mvel2.UnresolveablePropertyException;
@@ -95,7 +96,10 @@ public class Variables implements Comparator<ITimedObject<?>> {
 	
 	public Variables(Variables variables) {
 		// TODO:  Delegate Map	
-		vars = new HashMap<String, List<ITimedObject<?>>>(variables.vars);
+		vars = new HashMap<String, List<ITimedObject<?>>>();
+		for (Entry<String, List<ITimedObject<?>>> var : variables.vars.entrySet()) {
+			 vars.put(var.getKey(), new ArrayList<ITimedObject<?>>(var.getValue()));
+		}
 	}
 
 	public void put ( String name, ITimedObject<?> timedObject ){
@@ -168,7 +172,9 @@ public class Variables implements Comparator<ITimedObject<?>> {
 		
 	}
 
-	public List<Map<String, Object>> getBindings(Set<String> vars, Date start, Date end) {
+	public List<Map<String, Object>> getBindings(Set<String> vars, Date start, Date end) 
+		throws UndefinedVariableException
+	{
 		List<Map<String, Object>> list =
 			new LinkedList<Map<String,Object>>();
 		
@@ -178,7 +184,7 @@ public class Variables implements Comparator<ITimedObject<?>> {
 		for (String var : vars) {
 			List<Period> varPeriods = getPeriods(var);
 			if ( varPeriods == null ) {
-				continue;
+				throw new UndefinedVariableException(var);
 			}
 			periods = Period.intersect(periods, varPeriods);
 		}
@@ -195,6 +201,11 @@ public class Variables implements Comparator<ITimedObject<?>> {
 		Period p1 = o1.getPeriod();
 		Period p2 = o2.getPeriod();
 		return p1.compareTo(p2);
+	}
+	
+	
+	public PeriodMap getPeriodMap(Date start, Date end) {
+		return new PeriodMap(new Period(start, end)); 
 	}
 	
 

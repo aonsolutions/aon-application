@@ -7,15 +7,65 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum SSRegimeType implements IResourceable{
 	
-	GENERAL,
-	AGRICULTURAL,
-	DOMESTIC_EMPLOYEES,
-	SELF_EMPLOYED,
-	COAL_MINING,
-	SEA_WORKERS,
-	STUDENT_INSURANCE, 
-	ARTIST;
+	GENERAL
+	{
+		@Override
+		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
+			return visitor.visitGeneralRegime(this);
+		}
+	},
+	AGRICULTURAL
+	{
+		@Override
+		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
+			return visitor.visitAgriculturalRegime(this);
+		}
+	},
+	DOMESTIC_EMPLOYEES
+	{
+		@Override
+		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
+			return visitor.visitDomesticEmployeesRegime(this);
+		}
+	},
+	SELF_EMPLOYED
+	{
+		@Override
+		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
+			return visitor.visitSelfEmployedRegime(this);
+		}
+	},
+	COAL_MINING
+	{
+		@Override
+		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
+			return visitor.visitCoalMiningRegime(this);
+		}
+	},
+	SEA_WORKERS
+	{
+		@Override
+		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
+			return visitor.visitSeaWorkersRegime(this);
+		}
+	},
+	STUDENT_INSURANCE
+	{
+		@Override
+		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
+			return visitor.visitStudentInsuranceRegime(this);
+		}
+	},
+	ARTIST
+	{
+		@Override
+		public <E> E accept(SSRegimeTypeVisitor<E> visitor) {
+			return visitor.visitArtistRegime(this);
+		}
+	};
 
+	public abstract <E> E accept(SSRegimeTypeVisitor<E> visitor);
+	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     

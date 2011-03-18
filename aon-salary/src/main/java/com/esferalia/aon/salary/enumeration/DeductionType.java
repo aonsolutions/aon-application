@@ -8,16 +8,76 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum DeductionType implements IResourceable {
 
 	
-	COMMON_CONTINGENCY(true),
-	PROFESSIONAL_CONTINGENCY(true),
-	UNEMPLOYMENT(true),
-	JOB_TRAINING(true),
-	STRUCTURAL_OVERTIME(true),
-	NON_STRUCTURAL_OVERTIME(true),
-	IRPF(false),
-	ADVANCE_PAYMENT(false),
-	IN_KIND(false),
+	COMMON_CONTINGENCY(true)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitCommonContigency(this);
+		}
+	},
+	PROFESSIONAL_CONTINGENCY(true)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitProfessionalContigency(this);
+		}
+	},
+	UNEMPLOYMENT(true)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitUnemployent(this);
+		}
+	},
+	JOB_TRAINING(true)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitJobTraining(this);
+		}
+	},
+	STRUCTURAL_OVERTIME(true)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitStructuralOvertime(this);
+		}
+	},
+	NON_STRUCTURAL_OVERTIME(true)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitNonStructuralOvertime(this);
+		}
+	},
+	IRPF(false)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitIrpf(this);
+		}
+	},
+	ADVANCE_PAYMENT(false)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitAdvancePayment(this);
+		}
+	},
+	IN_KIND(false)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitInkind(this);
+		}
+	},
 	OTHER(false)
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitOther(this);
+		}
+	}
 	;
 	
 	
@@ -27,6 +87,8 @@ public enum DeductionType implements IResourceable {
 	private DeductionType(boolean ssDeduction) {
 		this.ssDeduction = ssDeduction;
 	}
+
+	public abstract void accept( DeductionTypeVisitor visitor );
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.salary.i18n.messages";

@@ -1,20 +1,27 @@
 package com.esferalia.aon.payroll.calculator;
 
-import java.util.Date;
-import java.util.List;
-
-import com.esferalia.aon.salary.enumeration.PaymentType;
-import com.esferalia.aon.salary.expression.Period;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class HierarchyPayments extends HierarchyIterator<IContractPayment> {
 	
-	public HierarchyPayments(HierarchyIterator<IContractPayment> ... payments) {
+	private Set<String> names;
+	
+	public HierarchyPayments(Iterator<IContractPayment> ... payments) {
 		super(payments);
+		names = new HashSet<String>();
 	}
 	
 	@Override
 	protected IContractPayment next(IContractPayment e) {
-		return e;
+		String name = e.getName();
+		if ( name == null ) 
+			return e;
+		if ( names.add(name))
+			return e;
+		else
+			return  null;
 	}
 
 }

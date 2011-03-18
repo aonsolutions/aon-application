@@ -12,9 +12,9 @@ import com.esferalia.aon.payroll.calculator.AbstractIterator;
 public abstract class SQLCollection <E>  extends AbstractIterator<E> 
 {
 	
-	protected SQLCollection() {
+	public SQLCollection() {
 	}
-
+	
 	protected SQLCollection(ResultSet resultSet) {
 		this.resultSet = resultSet;
 	}
@@ -52,6 +52,16 @@ public abstract class SQLCollection <E>  extends AbstractIterator<E>
 		}
 	}
 	
+	protected String getString(String ...columnLabels) {
+		for (String columnLabel : columnLabels) {
+			String value = getString(columnLabel);
+			if ( value != null ) {
+				return value;
+			}
+		}
+		return null;
+	}
+
 	protected Integer getInt(String columnLabel) {
 		try {
 			Object value = this.resultSet.getObject(columnLabel);
@@ -59,6 +69,16 @@ public abstract class SQLCollection <E>  extends AbstractIterator<E>
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	protected Integer getInt(String ...columnLabels) {
+		for (String columnLabel : columnLabels) {
+			Integer value = getInt(columnLabel);
+			if ( value != null ) {
+				return value;
+			}
+		}
+		return null;
 	}
 	
 	protected Date getDate(String columnLabel) {

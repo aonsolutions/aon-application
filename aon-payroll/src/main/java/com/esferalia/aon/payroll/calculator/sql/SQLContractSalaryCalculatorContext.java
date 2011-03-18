@@ -1,88 +1,72 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.LEAVE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.MONTH_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.YEAR_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.ACTUAL_DAYS;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
-import com.esferalia.aon.payroll.ContractPayment;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractDeduction;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractPayment;
-import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
+import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.LRUCache;
+import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalaryProxy;
-import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
-import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.Period;
-
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
+import com.esferalia.aon.salary.expression.UndefinedVariableException;
 
 public class SQLContractSalaryCalculatorContext implements
-		IContractSalaryCalculatorContext {
+		IContractSalaryCalculatorContext{
 	
-
-	private static final String ID						= "id";
-
-	private static final String START_DATE				= "start_date";
-	private static final String END_DATE				= "end_date";
+	public static final String PERSON_REGISTRY = "person_registry";
+	public static final String ENTERPRISE_REGISTRY = "enterprise_registry";
 	
-	private static final String CCC						= "ccc";
-	private static final String SS_REGIME				= "ss_regime";
-	private static final String ENTERPRISE_NAME			= "enterprise_name";
-	private static final String ENTERPRISE_DOC			= "enterprise_doc";
-	
-	private static final String EMPLOYEE_NAME			= "employee_name";
-	private static final String EMPLOYEE_FIRST_SURNAME	= "employee_first_surname";
-	private static final String EMPLOYEE_SECOND_SURNAME	= "employee_second_surname";
-
-	private static final String EMPLOYEE_DOC			= "employee_doc";
-	private static final String SOCIAL_SECURITY_NUMBER	= "social_security";
-	private static final String SENIORITY_DATE			= "seniority_date";
-	private static final String CATEGORY				= "category";
-	
-	private static final String MAIN_SQL = "SELECT "
-		+ "contract.id AS " + ID 
-		+", contract.start_date AS " + START_DATE
-		+", contract.end_date AS " + END_DATE
-		+", contract.ss_regime AS " + SS_REGIME
-		+", person.name AS " + EMPLOYEE_NAME
-		+", person.first_surname AS " + EMPLOYEE_FIRST_SURNAME
-		+", person.second_surname AS " + EMPLOYEE_SECOND_SURNAME
-		+", person_registry.document AS " + EMPLOYEE_DOC
-		+", person.social_security_num AS " + SOCIAL_SECURITY_NUMBER
-		+", enterprise_ccc.ccc AS " + CCC
-		+", enterprise_registry.name AS " + ENTERPRISE_NAME
-		+", enterprise_registry.document AS " + ENTERPRISE_DOC
+	private static final String MAIN_SQL = "SELECT * "
 		+" FROM contract"
-		+ " LEFT JOIN enterprise_ccc ON (contract.enterprise_ccc = enterprise_ccc.id)"
+		+" LEFT JOIN enterprise_ccc ON (contract.enterprise_ccc = enterprise_ccc.id)"
+		+" LEFT JOIN agreement_level_category ON (contract.agreement_level_category = agreement_level_category.id)"
 		+", person"
-		+", registry AS person_registry"
+		+", registry AS " + PERSON_REGISTRY
 		+", workplace"
 		+", enterprise"
-		+", registry AS enterprise_registry"
+		+", registry AS " + ENTERPRISE_REGISTRY
 		+", raddress "
 		+" WHERE contract.person = person.registry"				// INNER JOIN: person es NOT NULL
 		+" AND person.registry = person_registry.id"			// INNER JOIN: registry es NOT NULL
@@ -98,40 +82,32 @@ public class SQLContractSalaryCalculatorContext implements
 		"SELECT * "
 		+" FROM contract_payment"
 		+" LEFT JOIN  payment_concept" 							// LEFT JOIN: payment_concept puede ser NULL
-		+"	ON contract_payment.payment_concept = payment_concept.id"	
-		+" WHERE contract_payment.contract = ? "
-		+" AND contract_payment.start_date <= ? "
-		+" AND ( contract_payment.end_date IS NULL "
-		+" OR contract_payment.end_date >= ? )";
+		+"	ON payment_concept = payment_concept.id"	
+		+" WHERE contract = ? "
+		+" AND start_date <= ? "
+		+" AND ( end_date IS NULL "
+		+" OR end_date >= ? )"
+		+" AND salary_type IN ("+SalaryType.SALARY.ordinal()+" ,"+SalaryType.EXTRA.ordinal()+")";
 
 	private static final String DEDUCTION_SQL =
-		"SELECT deduction_concept.code AS " + SQLContractDeduction.CONCEPT
-		+", contract_deduction.expression AS " +  SQLContractDeduction.EXPRESSION
-		+", contract_deduction.type AS " +  SQLContractDeduction.TYPE
-		+", contract_deduction.start_date AS " +  SQLContractDeduction.START_DATE
-		+", contract_deduction.end_date AS " +  SQLContractDeduction.END_DATE
-		+", IFNULL(contract_deduction.description, deduction_concept.description) AS " +  SQLContractDeduction.DESCRIPTION
+		"SELECT *"
 		+" FROM contract_deduction"
 		+" LEFT JOIN  deduction_concept" 							// LEFT JOIN: deduction_concept puede ser NULL
-		+"	ON contract_deduction.deduction_concept = deduction_concept.id"	
-		+" WHERE contract_deduction.contract = ? "
-		+" AND contract_deduction.start_date <= ? "
-		+" AND ( contract_deduction.end_date IS NULL"
-		+" OR contract_deduction.end_date >= ? )";
+		+"	ON deduction_concept = deduction_concept.id"	
+		+" WHERE contract = ? "
+		+" AND start_date <= ? "
+		+" AND ( end_date IS NULL"
+		+" OR end_date >= ? )";
 
 	private static final String SYSTEM_DEDUCTION_SQL =
-		"SELECT deduction_concept.code AS " + SQLContractDeduction.CONCEPT
-		+", system_deduction.expression AS " +  SQLContractDeduction.EXPRESSION
-		+", system_deduction.type AS " +  SQLContractDeduction.TYPE
-		+", system_deduction.start_date AS " +  SQLContractDeduction.START_DATE
-		+", system_deduction.end_date AS " +  SQLContractDeduction.END_DATE
-		+", IFNULL(system_deduction.description, deduction_concept.description) AS " +  SQLContractDeduction.DESCRIPTION
+		"SELECT system_deduction.*"
+		+", deduction_concept.*"
 		+" FROM system_deduction"
 		+" LEFT JOIN  deduction_concept" 							// LEFT JOIN: deduction_concept puede ser NULL
-		+"	ON system_deduction.deduction_concept = deduction_concept.id"	
-		+" WHERE system_deduction.start_date <= ? "
-		+" AND ( system_deduction.end_date IS NULL"
-		+" OR system_deduction.end_date >= ? )";
+		+"	ON deduction_concept = deduction_concept.id"	
+		+" WHERE start_date <= ? "
+		+" AND ( end_date IS NULL"
+		+" OR end_date >= ? )";
 
 	
 	private static final String CDATA_SQL =
@@ -150,27 +126,72 @@ public class SQLContractSalaryCalculatorContext implements
 		+" AND ( end_date IS NULL "
 		+" OR end_date >= ? )";
 	
+	
+	private static final int CACHE_SIZE = 25;
+	
+	
+	/**
+	 * Clase base para implementar variables pesadas con evaluación perezosa.
+	 * Las clases hijas únicamente deberán implementar el método 'V getValue()'. 
+	 * 
+	 * @author rtrepiana
+	 *
+	 * @param <V>
+	 */
+	private abstract class LazyTimedObject<V> 
+		implements ITimedObject<V> 
+	{
+		protected Period period =
+			new Period(startDate, endDate);
+		
+		@Override
+		public Period getPeriod() {
+			return period;
+		}
+	}
+	
+	/**
+	 * 'DIAS_EFECTIVOS'.
+	 * 
+	 * @author rtrepiana
+	 *
+	 */
+	private class ActualDays extends LazyTimedObject<Long> {
+		Long actual_days = null;
+		
+		@Override
+		public Long getValue() {
+			if ( actual_days == null ){
+				actual_days = getActualDays();
+			}
+			return actual_days;
+		}
+	}
+		
 
-	private Date issueDate;
-	private Date startDate;
-	private Date endDate;
-	
-	private ResultSet resultSet;  
-	private PreparedStatement ceventStmt;
-	private PreparedStatement cleaveStmt;
-	private PreparedStatement paymentStmt;
-	private PreparedStatement deductionStmt;
+	private Criteria 										criteria;
+	private Connection 										connection;
 
-	private SQLContractPayment sqlContractPayment;  
-	private SQLContractDeduction sqlContractDeduction;  
+	private Date 											issueDate;
+	private Date 											startDate;
+	private Date 											endDate;
 	
-	private Criteria criteria;
-	private Connection connection;
+	private ResultSet 										resultSet;  
+	private PreparedStatement 								ceventStmt;
+	private PreparedStatement 								cleaveStmt;
+	private PreparedStatement 								paymentStmt;
+	private PreparedStatement 								deductionStmt;
+
+	private IContractLeave									contractLeavel;
+	private SQLContractPayment 								sqlContractPayment;  
+	private SQLContractDeduction 							sqlContractDeduction;  
+	private ExpressionContext 								contractExpressionContext;
 	
-	private ExpressionContext systemExpressionContext;
-	private ExpressionContext contractExpressionContext;
+	private Collection<IContractDeduction> 					systemDeductions;
 	
-	private Collection<IContractDeduction> systemDeductions;
+	private LRUCache<Integer, ICalendar> 					calendars;
+	private LRUCache<Integer, Collection<IContractPayment>> agreementPayments;
+	private LRUCache<Integer, ExpressionContext> 			agreementExpressionContexts;
 	
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate) 
 	throws SQLException, ExpressionException {
@@ -195,13 +216,27 @@ public class SQLContractSalaryCalculatorContext implements
 		initDeductionStmt();
 		initCeventStmt();
 		initLeaveStmt();
-		initSystemExpressionCtx();
 		initSystemDeductions();
 
 		this.sqlContractPayment = 
 			new SQLContractPayment();
 		this.sqlContractDeduction = 
 			new SQLContractDeduction();
+		
+		SQLCalendarFactory calendarFactory = 
+			new SQLCalendarFactory(connection, startDate, endDate);
+		this.calendars = 
+			new LRUCache<Integer, ICalendar>(CACHE_SIZE, calendarFactory);
+		
+		SQLAgreementPaymentsFactory agreementPaymentsFactory =
+			new SQLAgreementPaymentsFactory(connection, startDate, endDate);
+		this.agreementPayments = 
+			new LRUCache<Integer, Collection<IContractPayment>>(CACHE_SIZE, agreementPaymentsFactory);
+
+		SQLAgreementContextFactory agreementContextFactory =
+			new SQLAgreementContextFactory(connection, startDate, endDate);
+		this.agreementExpressionContexts = 
+			new LRUCache<Integer, ExpressionContext>(CACHE_SIZE, agreementContextFactory);
 	}
 
 	@Override
@@ -231,12 +266,12 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public String getCcc() {
-		return getString(CCC);
+		return getString(SQLConstants.ENTERPRISE_CCC ,EnterpriseCccColumns.CCC);
 	}
 
 	@Override
 	public String getEnterpriseName() {
-		String name = getString(ENTERPRISE_NAME );
+		String name = getString(ENTERPRISE_REGISTRY,RegistryColumns.NAME);
 		if ( ! StringUtils.isEmpty(name) ) {
 			return name;
 		}
@@ -253,12 +288,12 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public String getEnterpriseDocument() {
-		return getString(ENTERPRISE_DOC );
+		return getString(ENTERPRISE_REGISTRY,RegistryColumns.DOCUMENT);
 	}
 	
 	@Override
 	public SSRegimeType getSSRegime() {
-		int ordinal =  getInt(SS_REGIME); // 'ss_regime' is NOT NULL
+		int ordinal =  getInt(SQLConstants.CONTRACT,ContractColumns.SS_REGIME); // 'ss_regime' is NOT NULL
 		return SSRegimeType.values()[ordinal];
 	}
 
@@ -269,9 +304,9 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public String getEmployeeName() {
-		String name = getString(EMPLOYEE_NAME);
-		String firstSurname = getString(EMPLOYEE_FIRST_SURNAME);
-		String secondSurname = getString(EMPLOYEE_SECOND_SURNAME);
+		String name = getString(SQLConstants.PERSON , PersonColumns.NAME);
+		String firstSurname = getString(SQLConstants.PERSON , PersonColumns.FIRST_SURNAME);
+		String secondSurname = getString(SQLConstants.PERSON , PersonColumns.SECOND_SURNAME);
 		
 		StringBuffer employeeName = new StringBuffer();
 		
@@ -292,12 +327,12 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public String getEmployeeDocument() {
-		return getString(EMPLOYEE_DOC);
+		return getString(PERSON_REGISTRY,RegistryColumns.DOCUMENT);
 	}
 
 	@Override
 	public String getSocialSecurityNumber() {
-		return getString(SOCIAL_SECURITY_NUMBER);
+		return getString(SQLConstants.PERSON , PersonColumns.SOCIAL_SECURITY_NUM);
 	}
 
 	@Override
@@ -321,7 +356,7 @@ public class SQLContractSalaryCalculatorContext implements
 			paymentStmt.setInt(1,id);
 			ResultSet rs = paymentStmt.executeQuery();
 			this.sqlContractPayment.setResultSet(rs);
-			return this.sqlContractPayment;
+			return new HierarchyPayments(this.sqlContractPayment, getAgreementPayments().iterator());
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
@@ -337,7 +372,8 @@ public class SQLContractSalaryCalculatorContext implements
 			deductionStmt.setInt(1,id);
 			ResultSet rs = deductionStmt.executeQuery();
 			this.sqlContractDeduction.setResultSet(rs);
-			return new HierarchyDeductions( this.sqlContractDeduction, this.systemDeductions.iterator());
+			HierarchyDeductions hierarchyDeductions = new HierarchyDeductions( this.sqlContractDeduction, this.systemDeductions.iterator());
+			return hierarchyDeductions;
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
@@ -345,31 +381,17 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	
 	public int getId() {
-		return getInt(ID);
+		return getInt(SQLConstants.CONTRACT, ContractColumns.ID);
 	}
 	
 
 	public boolean next() throws SQLException, ExpressionException{
+		
 		boolean next =  this.resultSet.next();
 		if ( next ) {
 			initContractExpressionCtx();
 		}
 		return next;
-	}
-	
-	public IContractSalaryCalculatorContext get(int index) 
-	throws SQLException, ExpressionException {
-		if ( this.resultSet.absolute(index+1) ){
-			initContractExpressionCtx();
-			return this;
-		}
-		else {
-			throw new IndexOutOfBoundsException();
-		}
-	}
-	
-	public int size() {
-		return 100;
 	}
 
 	//----------------------------------------------------------------------------------------
@@ -423,109 +445,89 @@ public class SQLContractSalaryCalculatorContext implements
 		this.cleaveStmt.setDate(3, toSqlDate( this.startDate) );
 	}
 
-	private IExpression getYearDays() {
-		ExpressionImpl yearDaysExpr = 
-			new ExpressionImpl();
-		yearDaysExpr.setName(YEAR_DAYS.getName());
-		yearDaysExpr.setScope(ExpressionScope.SYSTEM);
-		Date startDate = CommonUtil.getYearFirstDay(this.startDate);
-		Date endDate = CommonUtil.getYearLastDay(this.endDate);
-		long yearDays = 
-			CommonUtil.getDaysBetweenDates(startDate, endDate);
-		yearDays += 1;
-		yearDaysExpr.setExpression(Long.toString(yearDays));
-		return yearDaysExpr;
-	}
 
-	private IExpression getMonthDays() {
-		ExpressionImpl monthDaysExpr = 
-			new ExpressionImpl();
-		monthDaysExpr.setName(MONTH_DAYS.getName());
-		monthDaysExpr.setScope(ExpressionScope.SYSTEM);
-		Date startDate = CommonUtil.getMonthFirstDay(this.startDate);
-		Date endDate = CommonUtil.getMonthLastDay(this.endDate);
-		long monthDays = 
-			CommonUtil.getDaysBetweenDates(startDate, endDate);
-		monthDays += 1;
-		monthDaysExpr.setExpression(Long.toString(monthDays));
-		return monthDaysExpr;
-	}
-
-	private IExpression getZeroExpression( String name, ExpressionScope scope ) {
-		ExpressionImpl monthDaysExpr = 
-			new ExpressionImpl();
-		monthDaysExpr.setName(name);
-		monthDaysExpr.setScope(ExpressionScope.SYSTEM);
-		monthDaysExpr.setExpression("0");
-		return monthDaysExpr;
+	private  Integer getAgreementLevel() {
+		Object value = getObject(SQLConstants.AGREEMENT_LEVEL_CATEGORY, AgreementLevelCategoryColumns.AGREEMENT_LEVEL);
+		return value == null ? null : ( Integer ) value ;
 	}
 	
-
-	private void initSystemExpressionCtx() throws SQLException, ExpressionException {
-		this.systemExpressionContext = 
-			new ExpressionContext();
-		
-		IExpression yearDaysExpr = getYearDays(); 
-		systemExpressionContext.addExpression(yearDaysExpr, startDate, endDate);
-
-		IExpression monthDaysExpr = getMonthDays(); 
-		systemExpressionContext.addExpression(monthDaysExpr, startDate, endDate);
-		
-		IExpression holidays = 
-			getZeroExpression (HOLIDAYS.getName(), ExpressionScope.SYSTEM);
-		systemExpressionContext.addExpression(holidays, startDate, endDate);
-		
-		loadSystemData(systemExpressionContext);
-	}
-	
-	private void loadSystemData(ExpressionContext expressionCtx) 
+	private ExpressionContext getAgreementContext()
 	throws SQLException, ExpressionException {
-		ResultSet rs = null;
-		PreparedStatement stmt = null; 
-		try {
-			String sql = 
-				getStartEndDateSql(SQLConstants.SYSTEM_DATA, 
-						SystemDataColumns.START_DATE, 
-						SystemDataColumns.END_DATE );
-			stmt = 
-				connection.prepareStatement(sql );
-			stmt.setDate(1, toSqlDate( this.endDate ));
-			stmt.setDate(2, toSqlDate( this.startDate ));
-			rs = stmt.executeQuery();
-			while ( rs.next() ) {
-				ExpressionImpl expr = 
-					new ExpressionImpl();
-				expr.setName(rs.getString(SystemDataColumns.NAME));
-				expr.setExpression(rs.getString(SystemDataColumns.EXPRESSION));
-				expr.setScope(ExpressionScope.APPLICATION);
-				Date start = Period.max(rs.getDate(SystemDataColumns.START_DATE), startDate);
-				Date end = Period.min ( rs.getDate(SystemDataColumns.END_DATE), endDate );
-				expressionCtx.addExpression(expr, start, end );
-			}
-		}finally {
-			if ( rs != null )
-				rs.close();
-			if ( stmt != null )
-				stmt.close();
+		Integer agreementLevelId = 
+			getAgreementLevel();
+		return  agreementExpressionContexts.get(agreementLevelId);
+	}
+
+	private Collection<IContractPayment> getAgreementPayments()
+	throws SQLException, ExpressionException {
+		Integer agreementLevelId = 
+			getAgreementLevel();
+		return agreementPayments.get(agreementLevelId);
+	}
+	
+	/*
+	 * Devuelve el <code>ICalendar</code> asociado con el contrato (trabajador), 
+	 * si no tiene calendario propio devuelve el de su centro de trabajo o el 
+	 * del sistema ( calendario estatal ) si el centro tampoco tiene calendario
+	 * propio. 
+	 */
+	private ICalendar getCalendar() {
+		Object calendarId = getObject(SQLConstants.CONTRACT ,ContractColumns.CALENDAR);
+		if ( calendarId == null ){
+			calendarId = getObject(SQLConstants.WORKPLACE ,WorkplaceColumns.CALENDAR);
 		}
+		return calendars.get((Integer) calendarId); // (Integer) null devuelve  null, perfecto. 
 	}
 	
 	private long getAvailableDays() {
-		Date start = Period.max ( this.startDate, getDate(START_DATE));
-		Date end = Period.min ( this.endDate, getDate(END_DATE));
+		Date dbStart = getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE);
+		Date start = Period.max ( this.startDate, dbStart );
+		Date dbEnd = getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE);
+		Date end = Period.min ( this.endDate, dbEnd);
 		long workedDays = 
 			CommonUtil.getDaysBetweenDates(start, 
 					end);
 		workedDays += 1;
 		return workedDays;
 	}
-
-
 	
+	private boolean isActualDay( DayType type ) {
+		return type == DayType.WORKING_DAY || 
+			type == DayType.CONTINUOUS_TIME ||
+			type == DayType.OTHER; // TODO: Estos tipos de dias son un cachondeo ¿ OTHER, CONTINUOUS_TIME ?
+	}
+	
+	/* 
+	 * Calcula los 'DIAS_EFECTIVOS' para el contrato (trabajador), 
+	 * según su calendario y/o bajas. 
+	 */
+	// TODO : ¿ Y las vaciones ?
+	private long getActualDays() {
+		long days = 0;
+
+		ICalendar calendar = getCalendar();
+		Calendar end = Calendar.getInstance();
+		end.setTime(endDate);
+		Calendar day = Calendar.getInstance();
+		day.setTime(startDate);
+		while  (end.after(day) || end.equals(day)) {
+			DayType type = calendar.getDayType(day);
+			if ( isActualDay(type) ) {
+				days++;
+			} // TODO : Consultar las bajas del trabajador.
+			day.add(Calendar.DATE, 1);
+		}
+		return days;
+	}
+
+	/*
+	 * Inicializa el contexto dentro del cual se calcularán ejecutarán las
+	 * percepciones y deducciones de trabajador.
+	 */
 	private void initContractExpressionCtx() 
 	throws SQLException, ExpressionException  {
 		this.contractExpressionContext = 
-			new ExpressionContext(systemExpressionContext);
+			new ExpressionContext(getAgreementContext());
 		
 
 		loadContractData(contractExpressionContext);
@@ -536,8 +538,16 @@ public class SQLContractSalaryCalculatorContext implements
 		
 		this.contractExpressionContext.addVariable(WORKED_DAYS, workedDays, startDate, endDate);
 		this.contractExpressionContext.addVariable(LEAVE_DAYS, leaveDays, startDate, endDate);
+		
+		// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de querys adicionales...)
+		this.contractExpressionContext.addVariable(ACTUAL_DAYS, new ActualDays() );
 	}
 	
+	/*
+	 * Carga, ejecuta los datos del contrato 'contract_data' para este periodo.
+	 * Ejecuta porque al valor de una variable no tiene porque ser un literal,
+	 * puede ser una expresión ej : '15 / 100' o 'DIAS_TRABAJADOS * 0.01'
+	 */
 	private void loadContractData(ExpressionContext ctx ) throws SQLException{
 		ResultSet rs = null;
 		try{ 
@@ -555,7 +565,6 @@ public class SQLContractSalaryCalculatorContext implements
 					this.contractExpressionContext.addExpression(expr, start, end );
 				} catch (Exception e) {
 				}
-				
 			}
 			
 		}finally {
@@ -611,25 +620,33 @@ public class SQLContractSalaryCalculatorContext implements
 	}
 	
 
-	private int getInt(String columnLabel) {
+	private Object getObject(String tableLabel, String columnLabel) {
 		try {
-			return this.resultSet.getInt(columnLabel);
+			return this.resultSet.getObject(tableLabel +"."+columnLabel);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private Date getDate(String columnLabel) {
+	private Integer getInt(String tableLabel, String columnLabel) {
 		try {
-			return this.resultSet.getDate(columnLabel);
+			return this.resultSet.getInt(tableLabel +"."+columnLabel);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private String getString(String columnLabel) {
+	private Date getDate(String tableLabel, String columnLabel) {
 		try {
-			return this.resultSet.getString(columnLabel);
+			return this.resultSet.getDate(tableLabel +"."+columnLabel);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private String getString(String tableLabel, String columnLabel) {
+		try {
+			return this.resultSet.getString(tableLabel +"."+columnLabel);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -639,16 +656,4 @@ public class SQLContractSalaryCalculatorContext implements
 		return new java.sql.Date(date.getTime()); 
 	}
 
-	private static String getStartEndDateSql ( String tableName, String startDateColName, String endDateColName ){
-
-		String format =
-			"SELECT * " 
-			+" FROM `%1$s`"
-			+" WHERE %2$s <= ? "
-			+" AND ( %3$s IS NULL "
-			+" OR %3$s >= ? )";
-		
-		return String.format(format, tableName, startDateColName, endDateColName );
-	}
-	
 }

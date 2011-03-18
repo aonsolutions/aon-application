@@ -1,7 +1,6 @@
 package com.esferalia.aon.payroll.calculator;
 
 
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.AMOUNT;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.IRPF_BASE;
@@ -15,7 +14,6 @@ import java.util.List;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -23,11 +21,11 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.UndefinedVariableException;
 
 public class ContractSalaryCalculator implements ISalaryCalculator{
 
@@ -45,8 +43,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 
 	@Override
 	public void initialize(ISalaryCalculatorContext ctx) throws SalaryException {
-		// TODO La manera de obtener el context es más compleja que lo programado aquí.
-		// Será necesario sacarlo de éste método.
+		// TODO : Borrar.
 	}
 
 	@Override
@@ -94,31 +91,19 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 
 	private Double fillPayments(IContractSalaryCalculatorContext ctx) 
 	throws SalaryException{
-		ExpressionContext expressionContext = 
-			ctx.getExpressionContext();
 		try {
 			
-			double itBase = 0 ;
-
-			double irpfBase = 0 ;
-
-			double cgcBase = 0 ;
-			double cgpBase = 0 ;
-			
-			double structuralBase = 0;
-			double nonStructuralBase = 0;
-
-			double renumeration = 0;
-
-			double totalPayment = 0;
-			double proExtBase = 0;
+			ExpressionContext expressionContext = 
+				ctx.getExpressionContext();
 			
 			Date start  = ctx.getStartDate();
 			Date end  = ctx.getEndDate();
-			Month issueMonth = getMonth(ctx.getStartDate());
 			
+			QuoteCalculator quoteCalculator = 
+				QuoteCalculator.getQuoteCalculator(ctx);
 			
-			SSRegimeType ssRegimen = ctx.getSSRegime();
+			TaxCalculator taxCalculator = 
+				TaxCalculator.getTaxCalculator(ctx);
 			
 			Collection<IContractPayment> payments =  ctx.getContractPayments();
 			for (IContractPayment contractPayment : payments) {
@@ -126,92 +111,53 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				Date paymentStart = Period.max(contractPayment.getStartDate(), start);
 				Date paymentEnd= Period.min(contractPayment.getEndDate(), end );
 				
-				
-				List<ITimedObject<Double>> amounts = 
-					expressionContext.addExpression(contractPayment, paymentStart, paymentEnd, Double.class ) ;
-				
-				Double amount = sum(amounts);
-
-				
-				PaymentType type = contractPayment.getType();
-				
-				Double quote = 0.00;
-				if ( ssRegimen != SSRegimeType.SELF_EMPLOYED ) {
-					String quoteExpr = contractPayment.getQuoteExpression();
-					List<ITimedObject<Double>> quotes = expressionContext.eval(quoteExpr, paymentStart, paymentEnd, Double.class) ;
-					quote = sum(quotes);
-					if ( type == PaymentType.STRUCTURAL_HOURS ){
-						structuralBase += quote;
-					}else if ( type == PaymentType.NON_STRUCTURAL_HOURS){
-							nonStructuralBase += quote;
-					}else {
-						cgcBase += quote;
-					}
-					cgpBase += quote;
-				} // TODO : Esto es muy primitivo, demasiado if 
-				
-				Month month = contractPayment.getMonth();
-				if ( contractPayment.getSalaryType() != SalaryType.SALARY
-						|| (  month != null && month != issueMonth ) ) {
-					proExtBase += quote;
-					continue;
-				}
+				try {
+					List<ITimedObject<Double>> amounts = 
+						expressionContext.addExpression(contractPayment, paymentStart, paymentEnd, Double.class ) ;
+					Double amount = summarize(amounts);
 					
-				renumeration += amount; 
-				if ( type != PaymentType.SALARY_IN_KIND ) {
-					totalPayment += amount;
-				}
-				else {
+					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, amount);
 					
-				}
-				
-				String irpfExpr = contractPayment.getIrpfExpression();
-				List<ITimedObject<Double>> irpfs = 
-					expressionContext.eval(irpfExpr, paymentStart, paymentEnd, Double.class);
-				double irpf = sum(irpfs);
-				irpfBase += irpf;
-				
-				if ( amount == 0 ) 
-					continue;
+					double payment = taxCalculator.tax(contractPayment, paymentStart, paymentEnd, amount);
 
-				String concept = contractPayment.getName(); 
-				String description  = null;
-				try  {
-					Object result = expressionContext.eval(contractPayment.getDescription(),paymentStart, paymentEnd );
-					description = result != null ? result.toString() : null;
-				} catch (ExpressionException e ) {
-					description = contractPayment.getDescription();
-				}
+					if ( payment != 0 ) {
+						String description  = 
+							expressionContext.evalTemplate(contractPayment.getDescription(), paymentStart, paymentEnd);
+						
+						String concept = contractPayment.getName(); 
+						PaymentType type = contractPayment.getType();
+						salaryBuilder.addPayment(type, concept, payment, description, null);
+					} // end-if: Sólo si la cantidad a pagar es mayor que cero...
 				
-				String expression = contractPayment.getExpression() ;
-				salaryBuilder.addPayment(type, concept, amount, description, expression);
+				} catch ( UndefinedVariableException e ) {
+					// TODO : notificar ??? 
+				}
 			}
 
-			salaryBuilder.setRemuneration(renumeration);
-			salaryBuilder.setTotalPayment(totalPayment);
+			salaryBuilder.setRemuneration(taxCalculator.getRenumeration());
+			salaryBuilder.setTotalPayment(taxCalculator.getTotalPayment());
 
-			salaryBuilder.setItBase(itBase); 
+			salaryBuilder.setItBase(quoteCalculator.getItBase()); 
 
-			salaryBuilder.setIrpfBase(irpfBase); 
-			expressionContext.addVariable(IRPF_BASE, irpfBase, start, end );
+			salaryBuilder.setIrpfBase(taxCalculator.getIrpfBase()); 
+			expressionContext.addVariable(IRPF_BASE, taxCalculator.getIrpfBase(), start, end );
 
-			salaryBuilder.setRawCgcBase(cgcBase); 
-			salaryBuilder.setCgcBase(cgcBase); 
+			salaryBuilder.setCgcBase(quoteCalculator.getCgcBase()); 
+			salaryBuilder.setRawCgcBase(quoteCalculator.getCgcBase()); 
+			expressionContext.addVariable(CGC_BASE, quoteCalculator.getCgcBase(), start, end );
 			
-			expressionContext.addVariable(CGC_BASE, cgcBase, start, end );
-			
-			salaryBuilder.setCgpBase(cgpBase);
-			expressionContext.addVariable(CGP_BASE, cgpBase, start, end );
+			salaryBuilder.setCgpBase(quoteCalculator.getCgpBase());
+			expressionContext.addVariable(CGP_BASE, quoteCalculator.getCgpBase(), start, end );
 
-			salaryBuilder.setNonHExtraBase(nonStructuralBase); 
-			expressionContext.addVariable(NON_STRUCTURAL_OVERTIME_BASE, nonStructuralBase, start, end );
+			salaryBuilder.setNonHExtraBase(quoteCalculator.getNonStructuralBase()); 
+			expressionContext.addVariable(NON_STRUCTURAL_OVERTIME_BASE, quoteCalculator.getNonStructuralBase(), start, end );
 			
-			salaryBuilder.setHExtraBase(structuralBase); 
-			expressionContext.addVariable(STRUCTURAL_OVERTIME_BASE, structuralBase, start, end );
+			salaryBuilder.setHExtraBase(quoteCalculator.getStructuralBase()); 
+			expressionContext.addVariable(STRUCTURAL_OVERTIME_BASE, quoteCalculator.getStructuralBase(), start, end );
 			
-			salaryBuilder.setProExtBase(proExtBase);
+			salaryBuilder.setProExtBase(quoteCalculator.getProExtBase());
 
-			return totalPayment ;
+			return taxCalculator.getTotalPayment() ;
 		}catch ( ExpressionException e ) {
 			throw new SalaryException(e.getMessage(),e);			
 		}catch (AonException e) {
@@ -246,14 +192,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		}
 	}
 	
-	private Month getMonth(Date date ) {
-		if ( date == null )
-			return null;
-		int monthValue = CommonUtil.getMonth(date);
-		return Month.getMonthByValue(monthValue);
-	}
-	
-	
 	
 	private Double resolveDeduction(ExpressionContext ctx,IContractDeduction d) throws ExpressionException {
 		String concept = d.getName();
@@ -271,13 +209,11 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			if ( value == 0 ) 
 				continue;
 			String description  = null;
-			
 			try  {
 				Period period = amount.getPeriod();
-				List<ITimedObject<String>> result = ctx.eval(d.getDescription(), period.getStart(), period.getEnd(), String.class);
-				description = result.isEmpty() ? null : result.get(0).getValue();
-			} catch (ExpressionException e ) {
-				description = d.getDescription();
+				description = ctx.evalTemplate(d.getDescription(), period.getStart(), period.getEnd());
+			} catch (Exception e ) {
+				//TODO : Log ???
 			}
 			salaryBuilder.addDeduction(type, concept, value, description, expression);
 			total += value;
@@ -286,7 +222,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		return total ;
 	}
 	
-	private static Double sum(List<ITimedObject<Double>> list) {
+	private static Double summarize(List<ITimedObject<Double>> list) {
 		double  sum = 0.00;
 		for (ITimedObject<Double> timedObject : list) {
 			 sum += timedObject.getValue();
