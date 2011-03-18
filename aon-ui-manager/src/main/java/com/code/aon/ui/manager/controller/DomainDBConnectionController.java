@@ -51,7 +51,19 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<DBConnnection> getDBConnnections() throws ManagerBeanException {
-		return (List) getModel().getWrappedData();
+		DBConnnection dbc = getManager().getCurrentDBConnection();
+		List<DBConnnection> dbcs = (List) getModel().getWrappedData();
+		if ( (dbc != null) && (dbcs.size() > 1) ) {
+			List<DBConnnection> list = new LinkedList<DBConnnection>();
+			for( DBConnnection connection : dbcs ) {
+				if (! dbc.equals(connection) ) {
+					list.add(connection);
+				}
+			}
+			list.add( dbc );
+			return list;
+		}
+		return dbcs;
 	}	
 	
 	public List<SelectItem> getDataSources() {

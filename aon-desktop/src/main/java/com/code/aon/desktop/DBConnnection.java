@@ -1,5 +1,13 @@
 package com.code.aon.desktop;
 
+import static com.code.aon.ldap.IAonObjectClasses.DB_CONNECTION;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+import static com.code.aon.ldap.ILdapConstants.COMMON_NAME_ATTRIBUTE;
+import static com.code.aon.ldap.ILdapConstants.DRIVER_CLASS_NAME_ATTRIBUTE;
+import static com.code.aon.ldap.ILdapConstants.LABELED_URI_ATTRIBUTE;
+import static com.code.aon.ldap.ILdapConstants.USER_ID_ATTRIBUTE;
+import static com.code.aon.ldap.ILdapConstants.USER_PASSWORD_ATTRIBUTE;
+
 import java.util.Properties;
 
 import javax.naming.Name;
@@ -7,8 +15,9 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
@@ -19,9 +28,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.IAonObjectClasses;
 
-@EntryObject(mainObjectClass=IAonObjectClasses.DB_CONNECTION, objectClasses={IAonObjectClasses.TOP})
+@EntryObject(mainObjectClass=DB_CONNECTION, objectClasses={TOP})
 public class DBConnnection implements ITransferObject, Cloneable {
 
 	private static final long serialVersionUID = -16395756416577198L;
@@ -52,7 +60,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 	}
 	
 	@RDN
-	@Attribute(name="cn",nullable=false)
+	@Attribute(name=COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {
 		return commonName;
 	}
@@ -61,7 +69,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		this.commonName = commonName;
 	}
 	
-	@Attribute(name="driverClassName",nullable=false)
+	@Attribute(name=DRIVER_CLASS_NAME_ATTRIBUTE,nullable=false)
 	public String getDriverClassName() {
 		return driverClassName;
 	}
@@ -70,7 +78,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		this.driverClassName = driverClassName;
 	}
 
-	@Attribute(name="labeledURI",nullable=false)
+	@Attribute(name=LABELED_URI_ATTRIBUTE,nullable=false)
 	public String getLabeledURI() {
 		return labeledURI;
 	}
@@ -79,7 +87,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		this.labeledURI = labeledURI;
 	}
 
-	@Attribute(name="uid",length=256,nullable=false)
+	@Attribute(name=USER_ID_ATTRIBUTE,length=256,nullable=false)
 	public String getUid() {
 		return uid;
 	}
@@ -88,7 +96,7 @@ public class DBConnnection implements ITransferObject, Cloneable {
 		this.uid = uid;
 	}
 	
-	@Attribute(name="userPassword",length=128,nullable=false)
+	@Attribute(name=USER_PASSWORD_ATTRIBUTE,length=128,nullable=false)
 	public byte[] getUserPassword() {
 		return userPassword;
 	}
@@ -136,31 +144,33 @@ public class DBConnnection implements ITransferObject, Cloneable {
         return obj;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
-		}
-		if (obj instanceof DBConnnection) {
-			DBConnnection o = (DBConnnection) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
+	public boolean equalsDB(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final DBConnnection o = (DBConnnection) obj;
+		return new EqualsBuilder()
+			.append(this.driverClassName, o.driverClassName)
+			.append(this.labeledURI, o.labeledURI)				
+			.append(this.uid, o.uid)
+			.append(this.userPassword, o.userPassword)				
+			.isEquals();
+	}	
+	
 	@Override
 	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
+		return new HashCodeBuilder()
+			.append(commonName)
+			.append(driverClassName)
+			.append(labeledURI)	
+			.append(uid)			
+			.append(userPassword)
+			.toHashCode();
 	}
 
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
-	}	
+	}		
 	
 }

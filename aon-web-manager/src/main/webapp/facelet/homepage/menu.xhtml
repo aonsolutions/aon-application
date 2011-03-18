@@ -8,19 +8,24 @@
 	<ui:define name="afterMenuContent">
 				
 		<aon:commandLink id="domains" 
-			action="domain_list"
+			action="domain_list" immediate="true"
 			title="#{managerBundle.manager_domains}"  
 			value="#{managerBundle.manager_domains}"
 			styleClass="aon-top-menu-item aon-icon-config">
 		</aon:commandLink>
 		<aon:commandLink id="applications" 
-			action="aonApplication_list"
+			action="aonApplication_list" immediate="true"
 			rendered="#{manager.config.showApplications}"
 			title="#{managerBundle.manager_applications}"  
 			value="#{managerBundle.manager_applications}"
 			styleClass="aon-top-menu-item aon-icon-general">
 		</aon:commandLink>
-				
+		<aon:commandLink id="config"
+			action="manager_config" immediate="true"
+			rendered="#{manager.config.showConfig}"
+			title="#{bundle.aon_configuration}"  
+			value="#{bundle.aon_configuration}"
+			styleClass="aon-top-menu-item aon-icon-utilities" />
 	</ui:define>
 
 	<ui:define name="beforeHelpMenuContent">	

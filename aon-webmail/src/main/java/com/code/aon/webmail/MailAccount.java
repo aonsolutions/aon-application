@@ -35,6 +35,8 @@ public class MailAccount implements ILdapTransferObject {
 
 	// email
     private String email;
+    
+    private String replyToMail;
 
     // mail protocol imap, smtp, pop3, etc.
     private String protocol = "imap";
@@ -113,6 +115,15 @@ public class MailAccount implements ILdapTransferObject {
 	 */
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	@Attribute(name="replyToMail")
+	public String getReplyToMail() {
+		return replyToMail;
+	}
+
+	public void setReplyToMail(String replyToMail) {
+		this.replyToMail = replyToMail;
 	}
 
 	/**
@@ -377,6 +388,7 @@ public class MailAccount implements ILdapTransferObject {
 				.append(this.outgoingVerification, o.outgoingVerification)				
 				.append(this.password, o.password)
 				.append(this.protocol, o.protocol)				
+				.append(this.replyToMail, o.replyToMail)
 				.append(this.sentFolder, o.sentFolder)
 				.append(this.signature, o.signature)
 				.append(this.spamFolder, o.spamFolder)				
@@ -404,6 +416,7 @@ public class MailAccount implements ILdapTransferObject {
 			.append(outgoingVerification)			
 			.append(password)			
 			.append(protocol)
+			.append(replyToMail)
 			.append(sentFolder)			
 			.append(signature)
 			.append(spamFolder)

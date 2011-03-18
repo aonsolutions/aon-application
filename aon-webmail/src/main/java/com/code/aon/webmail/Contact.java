@@ -334,6 +334,14 @@ public class Contact implements IPerson {
 
 	public void setContacts(List<GroupContact> contacts) {
 		this.contacts = contacts;
+		if ( (contacts != null) && !contacts.isEmpty() ) {
+			this.contacts = new LinkedList<GroupContact>();
+			for( GroupContact gc : contacts ) {
+				if ( gc != null ) {
+					this.contacts.add(gc);					
+				}
+			}				
+		}
 	}
 	
 	private String getEmailLarge( String displayName, String email ) {

@@ -482,11 +482,28 @@
 		</managed-property>		
 	</managed-bean>	
 			
+	<!-- ************ CONFIG ************** -->
+	<managed-bean>
+		<managed-bean-name>aonConfig</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.ConfigController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>aonConfig</value>
+		</managed-property>								
+	</managed-bean>			
+			
 	<!-- =================== Main ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>advancedMode</from-outcome>
 			<to-view-id>/com/code/aon/ui/manager/facelet/manager/advancedMode.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>manager_config</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/manager/config.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 		
@@ -551,6 +568,10 @@
 		<navigation-case>
 			<from-outcome>domainUser_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/manager/facelet/domainUser/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domainUser_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/domainUser/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 		

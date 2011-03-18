@@ -14,7 +14,6 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{managerBundle.manager_users} (#{domain.to.commonName})" />
 				<ui:param name="controller" value="#{domainUser}" />
-				<ui:param name="skipSearchButton" value="#{true}" />
 				<ui:param name="skipResetButton" value="#{!manager.userManagement}" />
 				<ui:param name="skipRemoveButton" value="#{!domainUser.userRemoveable}" />
 				<ui:param name="removeConfirmMessage" value="#{managerBundle.manager_domain_user_remove_confirm}" />

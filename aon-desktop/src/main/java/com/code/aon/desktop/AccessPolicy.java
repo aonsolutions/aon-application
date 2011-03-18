@@ -4,18 +4,24 @@
  */
 package com.code.aon.desktop;
 
+import static com.code.aon.ldap.IAonObjectClasses.ACCESS_POLICY;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+import static com.code.aon.ldap.ILdapConstants.COMMON_NAME_ATTRIBUTE;
+
 import javax.naming.Name;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.IAonObjectClasses;
 
 /**
  * 
@@ -23,7 +29,7 @@ import com.code.aon.ldap.IAonObjectClasses;
  * @since 1.0
  *
  */
-@EntryObject(mainObjectClass=IAonObjectClasses.ACCESS_POLICY, objectClasses={IAonObjectClasses.TOP})
+@EntryObject(mainObjectClass=ACCESS_POLICY, objectClasses={TOP})
 public class AccessPolicy implements ITransferObject {
 
 	private static final long serialVersionUID = -9075569722189572290L;
@@ -63,7 +69,7 @@ public class AccessPolicy implements ITransferObject {
 	}
 
 	@RDN
-	@Attribute(name="cn",nullable=false)
+	@Attribute(name=COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {
 		return commonName;
 	}
@@ -72,9 +78,6 @@ public class AccessPolicy implements ITransferObject {
 		this.commonName = commonName;
 	}	
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.client.ast.IAccessPolicy#getMaxAllowedUsers()
-	 */
 	@Attribute(name="maxAllowedUsers",nullable=false)
 	public Integer getMaxAllowedUsers() {
 		return maxAllowedUsers;
@@ -87,9 +90,6 @@ public class AccessPolicy implements ITransferObject {
 		this.maxAllowedUsers = maxAllowedUsers;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.client.ast.IAccessPolicy#getMaxDefinedUsers()
-	 */
 	@Attribute(name="maxDefinedUsers",nullable=false)
 	public Integer getMaxDefinedUsers() {
 		return maxDefinedUsers;
@@ -102,9 +102,6 @@ public class AccessPolicy implements ITransferObject {
 		this.maxDefinedUsers = maxDefinedUsers;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.client.ast.IAccessPolicy#getMaxSessions4User()
-	 */
 	@Attribute(name="maxSessions4User",nullable=false)
 	public Integer getMaxSessions4User() {
 		return maxSessions4User;
@@ -117,9 +114,6 @@ public class AccessPolicy implements ITransferObject {
 		this.maxSessions4User = maxSessions4User;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.client.ast.IAccessPolicy#isExceptionThrowableIfMaximumExceeded()
-	 */
 	@Attribute(name="exceptionThrowableIfMaximumExceeded",nullable=false)
 	public boolean isExceptionThrowableIfMaximumExceeded() {
 		return exceptionThrowableIfMaximumExceeded;
@@ -132,38 +126,37 @@ public class AccessPolicy implements ITransferObject {
 		this.exceptionThrowableIfMaximumExceeded = exceptionThrowableIfMaximumExceeded;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "IAccessPolicy: " + this.id 
-			+ " [Defined:" + this.maxDefinedUsers 
-			+ " Allowed:" + this.maxAllowedUsers 
-			+ " Sessions4User:" + this.maxSessions4User 
-			+ " ExceptionIfMaximumExceeded:" + this.exceptionThrowableIfMaximumExceeded + "]";
-	}
-
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final AccessPolicy o = (AccessPolicy) obj;
+		if (o.getCommonName() == null && getCommonName() == null) {
+			return new EqualsBuilder()
+				.append(this.exceptionThrowableIfMaximumExceeded, o.exceptionThrowableIfMaximumExceeded)
+				.append(this.maxAllowedUsers, o.maxAllowedUsers)				
+				.append(this.maxDefinedUsers, o.maxDefinedUsers)
+				.append(this.maxSessions4User, o.maxSessions4User)				
+				.isEquals();
 		}
-		if (obj instanceof Domain) {
-			AccessPolicy o = (AccessPolicy) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getCommonName(), o.getCommonName());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(commonName)
+			.append(exceptionThrowableIfMaximumExceeded)
+			.append(maxAllowedUsers)	
+			.append(maxDefinedUsers)			
+			.append(maxSessions4User)
+			.toHashCode();
 	}
 
 	@Override
-	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}	
 		
 }

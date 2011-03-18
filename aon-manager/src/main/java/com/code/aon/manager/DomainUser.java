@@ -488,7 +488,7 @@ public class DomainUser implements IPerson {
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
 		final DomainUser o = (DomainUser) obj;
-		if (o.getId() == null && getId() == null) {
+		if (o.getUid() == null && getUid() == null) {
 			return new EqualsBuilder()
 				.append(this.active, o.active)
 				.append(this.address, o.address)
@@ -519,7 +519,6 @@ public class DomainUser implements IPerson {
 				.append(this.surname, o.surname)				
 				.append(this.title, o.title)
 				.append(this.web, o.web)
-				.append(this.uid, o.uid)
 				.append(this.uidNumber, o.uidNumber)
 				.isEquals();
 		}

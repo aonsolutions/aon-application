@@ -71,6 +71,14 @@ public interface ILdapConstants {
 	String SERVER_ID_ATTRIBUTE = "serverId";
 	
 	String CONTACT_GROUP_ATTRIBUTE = "contactGroup";
+	
+	String MAX_DOCUMENT_SIZE_ATTRIBUTE = "maxDocumentSize";
+	
+	String MAX_TOTAL_DOCUMENT_SIZE_ATTRIBUTE = "maxTotalDocumentSize";
+	
+	String DATA_BASE_ID_ATTRIBUTE = "dataBaseId";
+	
+	String ADMINISTRATOR_ATTRIBUTE = "administrator";
 
 	String[] DN_ATTRIBUTES = new String[] {
 		MEMBER_ATTRIBUTE, DATA_SOURCE_ATTRIBUTE, SIGNATURE_MEMBER_ATTRIBUTE

@@ -37,12 +37,6 @@ public class Domain implements ILdapTransferObject {
 	
 	private String organizationName;
 	
-	private String host;
-	
-	private String mail;
-	
-	private String mobile;
-	
 	private Integer status;
 	
 	private Domain parentDomain;
@@ -58,6 +52,14 @@ public class Domain implements ILdapTransferObject {
 	private byte[] jpegLogo;
 	
 	private String subDomainSuffix;
+	
+	private Integer maxDocumentSize;
+	
+	private Integer maxTotalDocumentSize;
+	
+	private Integer dataBaseId;
+	
+	private DomainUser administrator;
 	
 	public Domain() {
 		this.status = 0;
@@ -90,33 +92,6 @@ public class Domain implements ILdapTransferObject {
 
 	public void setOrganizationName(String organizationName) {
 		this.organizationName = organizationName;
-	}
-
-	@Attribute(name=HOST_ATTRIBUTE,length=256)
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	@Attribute(name=MAIL_ATTRIBUTE,length=256)
-	public String getMail() {
-		return mail;
-	}
-
-	public void setMail(String mail) {
-		this.mail = mail;
-	}
-
-	@Attribute(name=MOBILE_ATTRIBUTE)
-	public String getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
 	}
 
 	@Attribute(name=DOMAIN_TYPE_ATTRIBUTE)
@@ -193,6 +168,44 @@ public class Domain implements ILdapTransferObject {
 		this.subDomainSuffix = subDomainSuffix;
 	}	
 	
+	@Attribute(name=MAX_DOCUMENT_SIZE_ATTRIBUTE)
+	public Integer getMaxDocumentSize() {
+		return maxDocumentSize;
+	}
+
+	public void setMaxDocumentSize(Integer maxDocumentSize) {
+		this.maxDocumentSize = maxDocumentSize;
+	}
+
+	@Attribute(name=MAX_TOTAL_DOCUMENT_SIZE_ATTRIBUTE)
+	public Integer getMaxTotalDocumentSize() {
+		return maxTotalDocumentSize;
+	}
+
+	public void setMaxTotalDocumentSize(Integer maxTotalDocumentSize) {
+		this.maxTotalDocumentSize = maxTotalDocumentSize;
+	}
+
+	@Attribute(name=DATA_BASE_ID_ATTRIBUTE)
+	public Integer getDataBaseId() {
+		return dataBaseId;
+	}
+
+	public void setDataBaseId(Integer dataBaseId) {
+		this.dataBaseId = dataBaseId;
+	}
+
+	@Cascade(CascadeType.ALL)
+	@BaseDN("ou=users,{this}")
+	@Attribute(name=ADMINISTRATOR_ATTRIBUTE)
+	public DomainUser getAdministrator() {
+		return administrator;
+	}
+
+	public void setAdministrator(DomainUser administrator) {
+		this.administrator = administrator;
+	}
+
 	public static void delete( BasicLdap ldap, Name dn ) {
 		String domain = NameResolver.getFirstValue(dn);
 		Name usersDN = NameResolver.getUsersDN(domain);
@@ -239,18 +252,18 @@ public class Domain implements ILdapTransferObject {
 		final Domain o = (Domain) obj;
 		if (o.getCommonName() == null && getCommonName() == null) {
 			return new EqualsBuilder()
-				.append(this.commonName, o.commonName)
-				.append(this.type, o.type)		
+				.append(this.administrator, o.administrator)		
+				.append(this.dataBaseId, o.dataBaseId)
 				.append(this.documentManagement, o.documentManagement)
-				.append(this.domainManagement, o.domainManagement)				
-				.append(this.host, o.host)				
+				.append(this.domainManagement, o.domainManagement)							
 				.append(this.jpegLogo, o.jpegLogo)				
-				.append(this.mail, o.mail)				
-				.append(this.mobile, o.mobile)				
+				.append(this.maxDocumentSize, o.maxDocumentSize)
+				.append(this.maxTotalDocumentSize, o.maxTotalDocumentSize)
 				.append(this.organizationName, o.organizationName)				
 				.append(this.parentDomain, o.parentDomain)				
 				.append(this.status, o.status)
 				.append(this.subDomainSuffix, o.subDomainSuffix)
+				.append(this.type, o.type)
 				.append(this.userManagement, o.userManagement)
 				.isEquals();
 		}
@@ -260,18 +273,19 @@ public class Domain implements ILdapTransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(administrator)
 			.append(commonName)
-			.append(type)
+			.append(dataBaseId)
 			.append(documentManagement)
 			.append(domainManagement)
-			.append(host)
 			.append(jpegLogo)
-			.append(mail)
-			.append(mobile)
+			.append(maxDocumentSize)
+			.append(maxTotalDocumentSize)
 			.append(organizationName)
 			.append(parentDomain)
 			.append(status)
 			.append(subDomainSuffix)
+			.append(type)
 			.append(userManagement)
 			.toHashCode();
 	}
@@ -279,17 +293,18 @@ public class Domain implements ILdapTransferObject {
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).
+			append("administrator", (administrator != null) ? administrator.getUid() : "null" ).
 			append("commonName", commonName ).
-			append("type", type ).
+			append("dataBaseId", dataBaseId ).
 			append("documentManagement", documentManagement ).
 			append("domainManagement", domainManagement ).
-			append("host", host ).
-			append("mail", mail).
-			append("mobile", mobile).
+			append("maxDocumentSize", maxDocumentSize ).
+			append("maxTotalDocumentSize", maxTotalDocumentSize ).
 			append("organizationName", organizationName).
 			append("parentDomain", (parentDomain != null) ? parentDomain.getCommonName() : "null" ).
 			append("status", status).
 			append("subDomainSuffix", subDomainSuffix).
+			append("type", type ).
 			append("userManagement", userManagement).
 			toString();
 	}

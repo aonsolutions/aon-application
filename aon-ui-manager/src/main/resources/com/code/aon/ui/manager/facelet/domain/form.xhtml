@@ -101,8 +101,23 @@
 						<aon:selectOneMenu id="Domain_type" 
 							value="#{domain.to.type}">
 							<f:selectItems value="#{domain.domainTypes}" />
-						</aon:selectOneMenu>										
-					
+						</aon:selectOneMenu>		
+						
+						<aon:outputLabel for="Domain_dataBaseId"
+							value="#{managerBundle.manager_domain_dataBaseId}" />
+						<aon:inputText id="Domain_dataBaseId"
+							size="10" maxlength="20"
+							value="#{domain.to.dataBaseId}" />
+							
+						<aon:outputLabel for="Domain_administrator"
+							value="#{managerBundle.manager_domain_administrator}" />
+						<aon:selectOneMenu id="Domain_administrator"
+							converter="#{domainUser.converter}"
+							value="#{domain.to.administrator}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{domainUser.userList}" />
+						</aon:selectOneMenu>	
+								
 					</c:if>
 
 					<c:if test="#{manager.config.showDomainSubDomainSuffix}" >
@@ -145,7 +160,23 @@
 				                <aon:selectBooleanCheckbox id="Domain_documentManagement"
 				                	valueChangeListener="#{domain.documentManagementChanged}"
 									value="#{domain.to.documentManagement}"/>
-			
+									
+								<c:if test="#{domain.to.documentManagement}" >
+									<aon:outputLabel for="Config_maxDocumentSize"
+										value="#{managerBundle.manager_domain_maxDocumentSize}" />
+									<aon:inputText id="Config_maxDocumentSize" size="10" 
+										maxlength="20" value="#{domain.to.maxDocumentSize}" >
+										<f:validateLongRange minimum="1" maximum="16384" />
+									</aon:inputText>
+				
+									<aon:outputLabel for="Config_maxTotalDocumentSize"
+										value="#{managerBundle.manager_domain_maxTotalDocumentSize}" />
+									<aon:inputText id="Config_maxTotalDocumentSize" size="10"  
+										maxlength="20" value="#{domain.to.maxTotalDocumentSize}" >
+										<f:validateLongRange minimum="1" />
+									</aon:inputText>	
+								</c:if>								
+				
 								<aon:outputLabel for="Domain_userManagement"
 									value="#{managerBundle.manager_domain_userManagement}" />
 				                <aon:selectBooleanCheckbox id="Domain_userManagement"
@@ -159,7 +190,7 @@
 					                	valueChangeListener="#{domain.domainManagementChanged}"
 										value="#{domain.to.domainManagement}"/>
 								</c:if>
-	
+
 							</aon:panelGrid>
 							
 	                    </aon:panelTab>

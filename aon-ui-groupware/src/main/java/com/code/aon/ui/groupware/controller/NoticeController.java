@@ -260,41 +260,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
                 LOGGER.error("Error obteniendo propiedades del usuario " + username);
 			}
 		}
-		if (email == null) {
-			//Comprobamos si el dominio tiene algun dominio alternativo.
-			Name domainDN = NameResolver.getDomainDN(domain);
-			if ( ldap.exists(domainDN, DOMAIN) ) {
-				//Si existe entonces buscamos al usuario en el nuevo dominio.
-				Entry domainEntry = ldap.get(domainDN, DOMAIN, MEMBER_ATTRIBUTE);
-				List<Object> alternativeDomain = null;
-				if ( (domainEntry != null) && (domainEntry.containsKey(MEMBER_ATTRIBUTE)) ) {
-					alternativeDomain = domainEntry.get(MEMBER_ATTRIBUTE);
-					for (int i=0;i<alternativeDomain.size();i++) {
-						String altdomain = ""+alternativeDomain.get(i);
-						altdomain = altdomain.substring(3, altdomain.indexOf(","));
-						Name altuserDN = NameResolver.getUserDN( altdomain, username );
-						if ( ldap.exists(altuserDN, USER) ) {
-							email = "<"+username+"@"+altdomain+">";
-							Entry userEntry = ldap.get(altuserDN, USER, MAIL_ATTRIBUTE, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
-							if ( userEntry != null ) {
-								String alternativeEmail = null;
-								String name = username;
-								String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
-								String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
-								name = cn + " " + sn;
-								if ( userEntry.containsKey(MAIL_ATTRIBUTE) ) {
-									alternativeEmail = userEntry.getAsString(MAIL_ATTRIBUTE);
-								}
-								email = name+" "+email;
-								if (! StringUtils.isEmpty(alternativeEmail) ) {
-									email = email + ", "+ name +" <"+alternativeEmail+">";
-								}
-							}
-						}
-					}
-				}
-			}
-		}
 		return email;
 	}
 
@@ -304,14 +269,11 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		String sms = null;
 		if ( ldap.exists(userDN, USER) ) {
 			Entry userEntry = ldap.get(userDN, USER, MOBILE_ATTRIBUTE, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
-			if ( userEntry != null ) {
+			if ( (userEntry != null) && userEntry.containsKey(MOBILE_ATTRIBUTE) ) {
 				String cn = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
 				String sn = userEntry.getAsString(SURNAME_ATTRIBUTE);
 				String name = cn + " " + sn;
-				if ( userEntry.containsKey(MOBILE_ATTRIBUTE) ) {
-					sms = userEntry.getAsString(MOBILE_ATTRIBUTE);	
-				}
-				sms = name+"-"+sms;
+				sms = name+"-"+userEntry.getAsString(MOBILE_ATTRIBUTE);
 			}
 		}
 		return sms;

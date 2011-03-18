@@ -265,6 +265,10 @@ public class ManagerController implements IManagerConstants {
 		return workGroupStatuses;
 	}	
 	
+	public DBConnnection getCurrentDBConnection() {
+		return this.dbConnection;
+	}
+	
 	public boolean changeDbConnection(DBConnnection dbc) {
 		if (! dbc.equalsDB(this.dbConnection) ) {
 			this.dbConnection = dbc;	

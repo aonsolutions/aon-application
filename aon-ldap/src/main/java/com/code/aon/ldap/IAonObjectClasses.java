@@ -52,4 +52,6 @@ public interface IAonObjectClasses {
 	
 	String MESSAGE = "aonMessage";
 	
+	String CONFIG = "aonConfig";
+	
 }

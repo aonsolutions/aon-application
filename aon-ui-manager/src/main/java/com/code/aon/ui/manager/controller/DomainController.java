@@ -239,8 +239,7 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 
 	public Converter getConverter() {
 		if ( converter == null ) {
-			IController controller = (IController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-			this.converter = new TransferObjectConverter(controller);			
+			this.converter = new TransferObjectConverter(this);			
 		}
 		return converter;
 	}

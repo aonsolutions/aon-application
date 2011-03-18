@@ -21,8 +21,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.faces.convert.Converter;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.naming.Name;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -47,11 +49,13 @@ import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
+import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
@@ -74,6 +78,8 @@ public class DomainUserController extends LdapBasicController implements IManage
 	
 	private String selectedTab;
 	
+	private Converter converter;
+	
 	private ManagerController getManager() {
 		return (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 	}
@@ -90,6 +96,18 @@ public class DomainUserController extends LdapBasicController implements IManage
 	public List<DomainUser> getUsers() throws ManagerBeanException {
 		return (List) getModel().getWrappedData();
 	}	
+	
+	public List<SelectItem> getUserList() throws ManagerBeanException {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for ( DomainUser user : getUsers() ) {
+			if ( user.isActive() ) {
+				SelectItem item = new SelectItem(user, user.getUid() );
+				list.add(item);				
+			}
+		}
+		return list;
+	}	
+	
 	
 	public DomainUser getDomainUser() {
 		return (DomainUser) getTo();
@@ -415,6 +433,11 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}
 	
 	private boolean isAdmin( DomainUser user ) {
+		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		DomainUser admin = controller.getDomain().getAdministrator();
+		if ( (admin != null) && (admin.getId() != null) ) {
+			return admin.equals(user);
+		}
 		return StringUtils.equals(ADMIN_USER, user.getUid());
 	}
 	
@@ -430,6 +453,13 @@ public class DomainUserController extends LdapBasicController implements IManage
 			return true;
 		}
 		return getManager().isUserManagement() && !isAdmin(getDomainUser());
+	}
+
+	public Converter getConverter() {
+		if ( converter == null ) {
+			this.converter = new TransferObjectConverter(this);			
+		}
+		return converter;
 	}
 	
 }

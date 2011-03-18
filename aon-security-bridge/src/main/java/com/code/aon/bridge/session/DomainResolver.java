@@ -5,22 +5,16 @@ import javax.naming.Name;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import sun.net.util.IPAddressUtil;
 
 import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
-import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
 
 public class DomainResolver implements ILdapConstants, IAonObjectClasses {
 	
-	private final static Logger LOGGER = LoggerFactory.getLogger(DomainResolver.class);
-
 	public static final String CONTROLLER_NAME = "domainResolver";
 	
     private static boolean isIPAddress( String host ) {
@@ -33,33 +27,9 @@ public class DomainResolver implements ILdapConstants, IAonObjectClasses {
     	return ldap.exists(dn, DOMAIN);
     }
     
-    private static String findDomain( String ipAddress ) {
-    	BasicLdap ldap = new BasicLdap();
-    	Name dn = NameResolver.getDomainsDN();
-		try {
-			String objectClass = NameResolver.getObjectClass(IAonObjectClasses.DOMAIN);
-			String host = NameResolver.getEqualExpression(HOST_ATTRIBUTE, ipAddress);
-			String filter = NameResolver.getAndExpression( host, objectClass );
-			Entry entry = ldap.getLdapSession().searchOne(dn, filter, COMMON_NAME_ATTRIBUTE);
-			if ( entry != null ) {
-				return entry.getAsString(COMMON_NAME_ATTRIBUTE);
-			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			ldap.closeSession();
-		}
-		return null;
-    }
-    
     public static String getDomain( HttpServletRequest request ) {
     	String host = request.getServerName();
-    	if ( isIPAddress(host) ) {
-    		String domain = findDomain(host);
-    		if ( domain != null ) {
-    			host = domain;
-    		}
-    	} else {
+    	if (! isIPAddress(host) ) {
     		if (! existsDomain(host) ) {
     			String domain = StringUtils.substringAfter(host, ".");
     			while (! StringUtils.isBlank(domain) ) {

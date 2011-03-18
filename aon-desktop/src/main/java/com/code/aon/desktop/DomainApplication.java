@@ -1,22 +1,29 @@
 package com.code.aon.desktop;
 
+import static com.code.aon.ldap.IAonObjectClasses.DOMAIN_APPLICATION;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+import static com.code.aon.ldap.ILdapConstants.COMMON_NAME_ATTRIBUTE;
+import static com.code.aon.ldap.ILdapConstants.STATUS_ATTRIBUTE;
+
 import javax.naming.Name;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.IAonObjectClasses;
 
-@EntryObject(mainObjectClass=IAonObjectClasses.DOMAIN_APPLICATION, objectClasses={IAonObjectClasses.TOP})
+@EntryObject(mainObjectClass=DOMAIN_APPLICATION, objectClasses={TOP})
 public class DomainApplication implements ITransferObject, Cloneable {
 
 	private static final long serialVersionUID = -1729654908005345126L;
@@ -43,7 +50,7 @@ public class DomainApplication implements ITransferObject, Cloneable {
 	}
 	
 	@RDN
-	@Attribute(name="cn",nullable=false)
+	@Attribute(name=COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {
 		return commonName;
 	}
@@ -52,7 +59,7 @@ public class DomainApplication implements ITransferObject, Cloneable {
 		this.commonName = commonName;
 	}
 	
-	@Attribute(name="status")
+	@Attribute(name=STATUS_ATTRIBUTE)
 	public Integer getStatus() {
 		return status;
 	}
@@ -84,24 +91,32 @@ public class DomainApplication implements ITransferObject, Cloneable {
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final DomainApplication o = (DomainApplication) obj;
+		if (o.getCommonName() == null && getCommonName() == null) {
+			return new EqualsBuilder()
+				.append(this.commonName, o.commonName)
+				.append(this.dataSource, o.dataSource)				
+				.append(this.status, o.status)
+				.isEquals();
 		}
-		if (obj instanceof DomainApplication) {
-			DomainApplication o = (DomainApplication) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getCommonName(), o.getCommonName());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(commonName)
+			.append(dataSource)
+			.append(status)	
+			.toHashCode();
 	}
 
 	@Override
-	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
 	}	
 	
 }

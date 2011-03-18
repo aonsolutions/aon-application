@@ -32,6 +32,12 @@
 				<aon:inputText id="MailAccount_email" disabled="#{controller.to.default}"
 					size="60" maxlength="45" required="true"
 					value="#{controller.to.email}" />
+					
+				<aon:outputLabel for="MailAccount_replyToMail"
+					value="#{webmailBundle.webmail_mailAccount_replyToMail}" />
+				<aon:inputText id="MailAccount_replyToMail"
+					size="60" maxlength="45"
+					value="#{controller.to.replyToMail}" />
 
 				<aon:outputLabel for="MailAccount_signature"
 					value="#{webmailBundle.webmail_signature_signature}" />

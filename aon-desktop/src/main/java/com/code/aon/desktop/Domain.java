@@ -1,11 +1,22 @@
 package com.code.aon.desktop;
 
+import static com.code.aon.ldap.IAonObjectClasses.DOMAIN;
+import static com.code.aon.ldap.IAonObjectClasses.TOP;
+import static com.code.aon.ldap.ILdapConstants.COMMON_NAME_ATTRIBUTE;
+import static com.code.aon.ldap.ILdapConstants.DOMAIN_MANAGEMENT_ATTRIBUTE;
+import static com.code.aon.ldap.ILdapConstants.ORGANIZATION_NAME_ATTRIBUTE;
+import static com.code.aon.ldap.ILdapConstants.STATUS_ATTRIBUTE;
+import static com.code.aon.ldap.ILdapConstants.USER_MANAGEMENT_ATTRIBUTE;
+
 import javax.naming.Name;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -14,9 +25,8 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
-import com.code.aon.ldap.IAonObjectClasses;
 
-@EntryObject(baseDN="ou=domains",mainObjectClass=IAonObjectClasses.DOMAIN, objectClasses={IAonObjectClasses.TOP})
+@EntryObject(baseDN="ou=domains",mainObjectClass=DOMAIN, objectClasses={TOP})
 public class Domain implements ITransferObject {
 
 	private static final long serialVersionUID = -4808900608917312113L;
@@ -27,17 +37,9 @@ public class Domain implements ITransferObject {
 	
 	private String organizationName;
 	
-	private String host;
-	
-	private String mail;
-	
-	private String mobile;
-	
 	private Integer status;
 	
 	private Domain parentDomain;
-	
-	private boolean dnsManagement;
 	
 	private boolean userManagement;
 	
@@ -61,7 +63,7 @@ public class Domain implements ITransferObject {
 	}
 	
 	@RDN
-	@Attribute(name="cn",nullable=false)
+	@Attribute(name=COMMON_NAME_ATTRIBUTE,nullable=false)
 	public String getCommonName() {
 		return commonName;
 	}
@@ -70,7 +72,7 @@ public class Domain implements ITransferObject {
 		this.commonName = commonName;
 	}
 	
-	@Attribute(name="o")
+	@Attribute(name=ORGANIZATION_NAME_ATTRIBUTE)
 	public String getOrganizationName() {
 		return organizationName;
 	}
@@ -79,43 +81,7 @@ public class Domain implements ITransferObject {
 		this.organizationName = organizationName;
 	}
 
-	@Attribute(name="host",length=256)
-	public String getHost() {
-		return host;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	@Attribute(name="mail",length=256)
-	public String getMail() {
-		return mail;
-	}
-
-	public void setMail(String mail) {
-		this.mail = mail;
-	}
-
-	@Attribute(name="mobile")
-	public String getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
-
-	@Attribute(name="dnsManagement")
-	public Boolean getDnsManagement() {
-		return dnsManagement;
-	}
-
-	public void setDnsManagement(Boolean dnsManagement) {
-		this.dnsManagement = dnsManagement;
-	}
-
-	@Attribute(name="status")
+	@Attribute(name=STATUS_ATTRIBUTE)
 	public Integer getStatus() {
 		return status;
 	}
@@ -124,7 +90,7 @@ public class Domain implements ITransferObject {
 		this.status = status;
 	}
 
-	@Attribute(name="userManagement")
+	@Attribute(name=USER_MANAGEMENT_ATTRIBUTE)
 	public Boolean getUserManagement() {
 		return userManagement;
 	}
@@ -133,7 +99,7 @@ public class Domain implements ITransferObject {
 		this.userManagement = userManagement;
 	}
 	
-	@Attribute(name="domainManagement")	
+	@Attribute(name=DOMAIN_MANAGEMENT_ATTRIBUTE)	
 	public Boolean getDomainManagement() {
 		return domainManagement;
 	}
@@ -164,24 +130,47 @@ public class Domain implements ITransferObject {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null) {
-    		return super.equals(obj);
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Domain o = (Domain) obj;
+		if (o.getCommonName() == null && getCommonName() == null) {
+			return new EqualsBuilder()
+				.append(this.commonName, o.commonName)
+				.append(this.domainManagement, o.domainManagement)							
+				.append(this.jpegLogo, o.jpegLogo)				
+				.append(this.organizationName, o.organizationName)				
+				.append(this.parentDomain, o.parentDomain)				
+				.append(this.status, o.status)
+				.append(this.userManagement, o.userManagement)
+				.isEquals();
 		}
-		if (obj instanceof Domain) {
-			Domain o = (Domain) obj;
-			if (o.getId() == null && id == null) {
-				return super.equals(obj);	
-			}
-			if (ObjectUtils.equals(getId(), o.getId())) {
-				return true;
-			}
-		}
-		return false;
+		return ObjectUtils.equals(getCommonName(), o.getCommonName());		
 	}
 
 	@Override
 	public int hashCode() {
-		return (this.id != null) ? id.hashCode() : super.hashCode();
-	}	
+		return new HashCodeBuilder()
+			.append(commonName)
+			.append(domainManagement)
+			.append(jpegLogo)
+			.append(organizationName)
+			.append(parentDomain)
+			.append(status)
+			.append(userManagement)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+			append("commonName", commonName ).
+			append("domainManagement", domainManagement ).
+			append("organizationName", organizationName).
+			append("parentDomain", (parentDomain != null) ? parentDomain.getCommonName() : "null" ).
+			append("status", status).
+			append("userManagement", userManagement).
+			toString();
+	}
 	
 }
