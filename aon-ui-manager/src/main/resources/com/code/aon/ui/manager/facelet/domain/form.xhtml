@@ -73,17 +73,17 @@
 								value="#{bundle.aon_login}" styleClass="aon-italic"/>						
 							<aon:inputText id="Domain_userUid" required="true"
 								styleClass="aon-inputText aon-margin-left"
-								size="20" maxlength="256" value="#{domain.adminUser.uid}" />
+								size="20" maxlength="256" value="#{domain.to.administrator.uid}" />
 							<aon:outputLabel for="Domain_userName" styleClass="aon-margin-left aon-italic"
 								value="#{bundle.aon_name}" />						
 							<aon:inputText id="Domain_userName" required="true"
 								styleClass="aon-inputText aon-margin-left"
-								size="20" value="#{domain.adminUser.name}" />
+								size="20" value="#{domain.to.administrator.name}" />
 							<aon:outputLabel for="Domain_userSurname" styleClass="aon-margin-left aon-italic"
 								value="#{bundle.aon_surname}" />						
 							<aon:inputText id="Domain_userSurname" required="true"
 								styleClass="aon-inputText aon-margin-left"
-								size="20" value="#{domain.adminUser.surname}" />
+								size="20" value="#{domain.to.administrator.surname}" />
 						</aon:div>					
 					</c:if>
 

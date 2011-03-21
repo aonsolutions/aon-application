@@ -37,7 +37,7 @@
 						size="80" disabled="true" rendered="#{!domainApplication.new}"
 						value="#{domainApplication.to.commonName}" />
 					
-					<c:if test="#{domainApplication.showDBConnection}" >
+					<c:if test="#{!domainApplication.withoutDB and manager.config.showDomainApplicationDBConnection}" >
 						<aon:outputLabel for="DomainApplication_dataSource"
 							value="#{managerBundle.manager_db_connection}" />
 						<aon:selectOneMenu id="DomainApplication_dataSource" required="true"
@@ -48,7 +48,7 @@
 						</aon:selectOneMenu>
 					</c:if>						
 
-					<c:if test="#{manager.administrator}">
+					<c:if test="#{manager.config.showDomainApplicationStatus}">
 						<aon:outputLabel for="DomainApplication_status"
 							value="#{bundle.aon_status}" />
 						<aon:selectOneMenu id="DomainApplication_status" required="true"

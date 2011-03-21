@@ -37,7 +37,6 @@ import com.code.aon.manager.AccessPolicy;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
-import com.code.aon.manager.DomainUser;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.manager.enumeration.AccessPolicyType;
 import com.code.aon.manager.enumeration.DomainType;
@@ -45,7 +44,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.event.BankAccountValidationListener;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
@@ -75,8 +73,6 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	private boolean documentManagementChanged;
 	
 	private boolean showCompanyWindow;
-	
-	private DomainUser adminUser;
 	
 	private RegistryBank registryBank;
 	
@@ -309,14 +305,6 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 
 	public void setShowCompanyWindow(boolean showCompanyWindow) {
 		this.showCompanyWindow = showCompanyWindow;
-	}
-
-	public DomainUser getAdminUser() {
-		return adminUser;
-	}
-
-	public void setAdminUser(DomainUser adminUser) {
-		this.adminUser = adminUser;
 	}
 
 	public boolean isEnterpriseRecipient() {

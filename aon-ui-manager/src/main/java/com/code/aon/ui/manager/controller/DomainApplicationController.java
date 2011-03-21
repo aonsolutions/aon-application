@@ -159,18 +159,4 @@ public class DomainApplicationController extends LdapBasicController implements 
 		return ArrayUtils.contains(APPLICATIONS_WITHOUT_DB, getDomainApplication().getCommonName());	
 	}
 	
-	public boolean isShowDBConnection() {
-		if ( isWithoutDB() ) {
-			return false;	
-		}
-		if ( getManager().isAdministrator() || (! isNew()) ) {
-			return true;
-		}
-		DomainController dc =(DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-		if ( dc.isChildDomain() ) {
-			return false;
-		}
-		return true;
-	}
-	
 }

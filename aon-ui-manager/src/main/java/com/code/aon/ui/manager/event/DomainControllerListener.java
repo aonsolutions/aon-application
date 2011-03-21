@@ -46,10 +46,10 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 				domain.setParentDomain( getManager().getCurrentDomain() );
 			}
 			domainController.updateParentDomains();
-			DomainUser admin = new DomainUser();
-			admin.setUid(ADMIN_USER);
-			admin.setName(USUARIO_PROFILE);
-			domainController.setAdminUser(admin);
+			DomainUser administrator = new DomainUser();
+			administrator.setUid(ADMIN_USER);
+			administrator.setName(USUARIO_PROFILE);
+			domain.setAdministrator(administrator);
 			domainController.setEnterpriseRecipient(false);
 			RegistryBank registryBank = new RegistryBank();
 			registryBank.setBank( new Bank() );
@@ -183,7 +183,8 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	
 	private void addAdminUser( DomainController dc, DBConnnection dbc ) throws ManagerBeanException, LdapException {		
 		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);		
-		duc.createUser(dbc, dc.getAdminUser());		
+		duc.createUser(dbc, dc.getDomain().getAdministrator());
+		dc.getManagerBean().update(dc.getDomain());
 	}
 	
 }

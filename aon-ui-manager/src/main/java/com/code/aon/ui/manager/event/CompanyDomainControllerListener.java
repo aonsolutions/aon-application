@@ -32,7 +32,7 @@ public class CompanyDomainControllerListener extends ControllerAdapter implement
 		Company company = (Company) event.getController().getTo();
 		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 		try {
-			DomainUser admin = dc.getAdminUser();
+			DomainUser admin = dc.getDomain().getAdministrator();
 			String companyName = company.getName();
 			updateSignature(admin, companyName);
 		} catch (Throwable e) {
