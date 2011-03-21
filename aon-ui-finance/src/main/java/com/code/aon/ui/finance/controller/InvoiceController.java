@@ -373,6 +373,16 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			Invoice invoice = getInvoice();
 			getManagerBean().restoreNullSubPOJOs(invoice);
 			getAccountWriter().unrecordAndUpdateInvoice(invoice);
+
+			// En el caso de que se haya accedido al mantenimiento de facturas desde el mantenimiento de apuntes,
+			// hay que tener en cuenta que al descontabilizar la factura, se está borrando el apunte del que 
+			// provienes. De tal forma, se sobreescribe la funcionalidad del botón Volver, para que vaya a la 
+			// pantalla de búsqueda de apuntes, ejecutando el actionListener correspondiente. 
+			if (ObjectUtils.equals(IFinanceConstants.ACCOUNT_ENTRY_FORM_PAGE,this.backAction())) {
+				setBackAction(IFinanceConstants.ACCOUNT_ENTRY_SEARCH_PAGE);
+				setBackActionListener(IFinanceConstants.ACCOUNT_ENTRY_ON_EDIT_SEARCH_ACTION);
+				AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_UNRECORD_INVOICE_WARNING);
+			}
 			
 			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {
@@ -400,14 +410,13 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return (getInvoice().isRecorded() || getInvoice().isSigned());
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Integer getAccountEntryId() throws ManagerBeanException {
     	Invoice invoice = getInvoice();
 		if (invoice != null && invoice.getId() != null) {
 			IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_INVOICE_ID), invoice.getId());
-			Iterator iterator = accountEntryInvoiceBean.getList(criteria).iterator();
+			Iterator<?> iterator = accountEntryInvoiceBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iterator.next();
 				return accountEntryInvoice.getAccountEntry().getId();

@@ -22,13 +22,17 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.accounting.IAccountingConstants;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
+import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -335,6 +339,35 @@ public class AccountEntryController extends BasicController {
 	}
 	public void hideCommentPanel(ActionEvent event  ) {
 		setCommentPanelVisible(false);
+	}
+	
+	public String onLoadInvoice() throws ManagerBeanException {
+		String invoiceViewer = null;
+   		AccountEntry entry = (AccountEntry) getTo();
+		IManagerBean aeiBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(aeiBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID),entry.getId());
+		List<ITransferObject> list = aeiBean.getList(criteria);
+		if (list != null && list.size() > 0 ) {
+			Invoice invoice = ((AccountEntryInvoice)list.get(0)).getInvoice();	
+			String invoiceControllerName = "";
+			if (invoice.getType() == InvoiceType.SALES) {
+				invoiceControllerName = IFinanceConstants.SALE_INVOICE_CONTROLLER_NAME;
+				invoiceViewer = IFinanceConstants.SALE_INVOICE_FORM_NAME;
+			} else if (invoice.getType() == InvoiceType.PURCHASE) {
+				invoiceControllerName = IFinanceConstants.PURCHASE_INVOICE_CONTROLLER_NAME;
+				invoiceViewer = IFinanceConstants.PURCHASE_INVOICE_FORM_NAME;
+			} else if (invoice.getType() == InvoiceType.EXPENSES) {
+				invoiceControllerName = IFinanceConstants.EXPENSE_INVOICE_CONTROLLER_NAME;
+				invoiceViewer = IFinanceConstants.EXPENSE_INVOICE_FORM_NAME;
+			} else if (invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
+				invoiceControllerName = IFinanceConstants.UNDEDUCTIBLE_INVOICE_CONTROLLER_NAME;
+				invoiceViewer = IFinanceConstants.UNDEDUCTIBLE_INVOICE_FORM_NAME;
+			}
+			InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(invoiceControllerName);
+			invoiceController.onLoadInvoice(null, invoice, IAccountingConstants.ACCOUNT_ENTRY_FORM_NAVKEY, invoiceControllerName);
+		}
+		return invoiceViewer;
 	}
 	
 }

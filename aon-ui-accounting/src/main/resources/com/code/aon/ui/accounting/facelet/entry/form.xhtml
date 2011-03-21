@@ -82,6 +82,14 @@
 							styleClass="aon-finding-toolbar-item aon-icon-refresh"
 							immediate="true" />
 							
+						<aon:commandButton id="viewInvoice" 
+							value="#{financeBundle.finance_invoice}"
+							accesskey="I" title="#{financeBundle.finance_invoice} Alt+I"
+							action="#{accountEntry.onLoadInvoice}"
+							rendered="#{!accountEntry.new and accountEntry.aonInvoice}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" />
+
 						<aon:commandButton id="back" value="#{bundle.aon_back}"
 							accesskey="K" title="#{bundle.aon_back} Alt+K"
 							action="#{accountEntry.backAction}"
