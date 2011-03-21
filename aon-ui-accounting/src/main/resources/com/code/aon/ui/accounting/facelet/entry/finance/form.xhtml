@@ -125,15 +125,13 @@
 					<aon:outputLabel for="AccountEntry_balancingDeposit"
 						value="#{accountingBundle.accounting_deposit}" />
 					<aon:selectOneRadio id="AccountEntry_balancingDeposit"
-						style="display:inline;" ajaxSingle="true"
-						value="#{financeEntry.deposit}" reRender="financeEntryHeader">
-						<f:selectItem itemLabel="#{configBundle.config_bank}"
-							itemValue="0" />
-						<f:selectItem itemLabel="#{accountingBundle.accounting_cash}"
-							itemValue="1" />
+						style="display:inline;" value="#{financeEntry.deposit}">
+						<f:selectItem itemLabel="#{configBundle.config_bank}" itemValue="0" />
+						<f:selectItem itemLabel="#{accountingBundle.accounting_cash}" itemValue="1" />
+						<a4j:support event="onclick" reRender="financeTablesData" ajaxSingle="true"/>
 					</aon:selectOneRadio>
 
-					<aon:outputText for="AccountEntry_balancingRegistryBank"
+					<aon:outputLabel for="AccountEntry_balancingRegistryBank"
 						value="#{configBundle.config_bank}"
 						rendered="#{financeEntry.deposit == 0}" />
 					<aon:selectOneMenu id="AccountEntry_balancingRegistryBank"
