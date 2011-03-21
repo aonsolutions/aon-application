@@ -76,12 +76,6 @@ public class CompositePayment implements IPayment {
 		return type;
 	}
 	
-	@Override
-	public boolean isSalaryInKind() {
-		return getType()==PaymentType.SALARY_IN_KIND;
-	}
-
-	
 	protected void setDescription(String description) {
 		this.description = description;
 	}

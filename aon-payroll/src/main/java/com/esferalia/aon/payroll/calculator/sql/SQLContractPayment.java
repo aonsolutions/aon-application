@@ -4,11 +4,10 @@ import java.sql.ResultSet;
 import java.util.Date;
 
 import com.code.aon.common.enumeration.Month;
-import com.esferalia.aon.payroll.sql.AbstractSQL.PaymentConcept;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
-import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -63,11 +62,6 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 	@Override
 	public Date getEndDate() {
 		return getDate(ContractPaymentColumns.END_DATE);
-	}
-	
-	@Override
-	public boolean isSalaryInKind() {
-		return getType()==PaymentType.SALARY_IN_KIND;
 	}
 	
 	@Override

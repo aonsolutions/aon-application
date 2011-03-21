@@ -14,10 +14,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 
-/**
- * Transfer Object that represents the salary concepts.
- * 
- */
 @Entity
 @Table(name="payment_concept")
 public class PaymentConcept implements ITransferObject{
@@ -25,13 +21,13 @@ public class PaymentConcept implements ITransferObject{
 	private static final long serialVersionUID = 7444822569487413214L;
 
 	private Integer id;
-
 	private String code;
-
 	private String description;
-	
 	private PaymentType type;
-
+	private String expression;
+	private String quoteExpression;
+	private String irpfExpression;
+	private boolean descriptionDecorable; 
 	
 	@Id
 	@GeneratedValue
@@ -70,7 +66,38 @@ public class PaymentConcept implements ITransferObject{
 		this.description = description;
 	}
 	
-	
+	@Column(length = 128)
+	public String getExpression() {
+		return expression;
+	}
+	public void setExpression(String expression) {
+		this.expression = expression;
+	}
+
+	@Column(name = "quote_expression", length = 128)
+	public String getQuoteExpression() {
+		return quoteExpression;
+	}
+	public void setQuoteExpression(String quoteExpression) {
+		this.quoteExpression = quoteExpression;
+	}
+
+	@Column(name = "irpf_expression",length = 128)
+	public String getIrpfExpression() {
+		return irpfExpression;
+	}
+	public void setIrpfExpression(String irpfExpression) {
+		this.irpfExpression = irpfExpression;
+	}
+
+	@Column( name = "description_decorable" )
+	public boolean isDescriptionDecorable() {
+		return descriptionDecorable;
+	}
+	public void setDescriptionDecorable(boolean descriptionDecorable) {
+		this.descriptionDecorable = descriptionDecorable;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -82,6 +109,10 @@ public class PaymentConcept implements ITransferObject{
 				.append(this.code, o.code)
 				.append(this.description, o.description)
 				.append(this.type, o.type)
+				.append(this.expression, o.expression)
+				.append(this.quoteExpression, o.quoteExpression)
+				.append(this.irpfExpression, o.irpfExpression)
+				.append(this.descriptionDecorable, o.descriptionDecorable) 
 				.isEquals();	
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -93,6 +124,10 @@ public class PaymentConcept implements ITransferObject{
 			.append(code)
 			.append(description)
 			.append(type)
+			.append(expression)
+			.append(quoteExpression)
+			.append(irpfExpression)
+			.append(descriptionDecorable) 
 			.toHashCode();
 	}
 

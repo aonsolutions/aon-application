@@ -171,9 +171,4 @@ public class SalaryPayment implements ITransferObject, IPayment, IExpression {
 		return true;
 	}
 	
-	@Override
-	@Transient
-	public boolean isSalaryInKind() {
-		return getType()==PaymentType.SALARY_IN_KIND;
-	}
 }

@@ -83,22 +83,6 @@ public class SalaryDraftController extends BasicController {
 		return true;
 	}
 	
-//	public ISalary getSalary() {
-//		try {
-//			if (salary == null) {
-//				Contract contract = (Contract) getTo();
-//				SalaryCalculatorContext ctx = contract.getSalaryCalculatorContext();
-//				ctx.setIssueDate(getIssueDate());
-//				ctx.setStartDate(getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate());
-//				ctx.setEndDate((contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate());
-//				salary = contract.getSalary();
-//			}
-//			return salary;
-//		} catch (SalaryException e) {
-//			throw new AbortProcessingException("Imposible mostrar el borrador de la nómina");
-//		}
-//	}
-	
 	public ISalary getSalary() {
 		try {
 			if (salary == null) {
@@ -119,6 +103,12 @@ public class SalaryDraftController extends BasicController {
 
 	public void setSalary(ISalary salary) {
 		this.salary = salary;
+		if (salary == null) {
+			Contract c = (Contract) getTo();
+			if (c != null) {
+				c.setSalaryCalculatorContext(null);		
+			}
+		}
 	}
 
 	@Override

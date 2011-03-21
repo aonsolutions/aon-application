@@ -147,11 +147,6 @@ public class SQLCollections {
 		}
 
 		@Override
-		public boolean isSalaryInKind() {
-			return type == PaymentType.SALARY_IN_KIND;
-		}
-		
-		@Override
 		public SalaryType getSalaryType() {
 			return salaryType;
 		}

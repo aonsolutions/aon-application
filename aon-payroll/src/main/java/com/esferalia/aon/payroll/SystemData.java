@@ -20,28 +20,18 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 
-/**
- * Transfer Object that represents the function context.
- * 
- */
 @Entity
-@Table(name="function_constant")
-public class FunctionConstant implements ITransferObject, IExpression{
+@Table(name="system_data")
+public class SystemData implements ITransferObject, IExpression{
 	
 	private static final long serialVersionUID = -3605182384674355773L;
 
 	private Integer id;
-	
 	private String name;
-
 	private String expression;
-	
 	private Date startDate;	
-
 	private Date endDate;
-	
 	public boolean readOnly;
-	
 	private String comments;
 	
 	@Id
@@ -116,7 +106,7 @@ public class FunctionConstant implements ITransferObject, IExpression{
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final FunctionConstant o = (FunctionConstant) obj;
+		final SystemData o = (SystemData) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.name, o.name)

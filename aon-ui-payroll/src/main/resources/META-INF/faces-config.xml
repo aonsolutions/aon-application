@@ -446,9 +446,9 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************ FUNCTION CONSTANT ************** -->
+	<!-- ************ SYSTEM DATA  ************** -->
 	<managed-bean>
-		<managed-bean-name>functionConstant</managed-bean-name>
+		<managed-bean-name>systemData</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -457,18 +457,56 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.FunctionConstant</value>
+			<value>com.esferalia.aon.payroll.SystemData</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>functionConstant</value>
+			<value>systemData</value>
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************ SYSTEM DEDUCTION  ************** -->
+	<managed-bean>
+		<managed-bean-name>systemDeduction</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.SystemDeduction</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>systemDeduction</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ SYSTEM PAYMENT  ************** -->
+	<managed-bean>
+		<managed-bean-name>systemPayment</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.SystemPayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>systemPayment</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************ PaymentConcept ************** -->
 	<managed-bean>
 		<managed-bean-name>paymentConcept</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PaymentConceptController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -487,7 +525,7 @@
 	<!-- ************ DeductionConcept ************** -->
 	<managed-bean>
 		<managed-bean-name>deductionConcept</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.DeductionConceptController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -664,6 +702,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{agreementLevelCategoryChildListener}</value>
+				<value>#{agreementLevelDataChildListener}</value>
 				<value>#{agreementLevelPaymentChildListener}</value>
 				<value>#{agreementLevelTreeControllerListener}</value>
 			</list-entries>
@@ -726,6 +765,58 @@
 			</map-entries>
 		</managed-property>		
 	</managed-bean>
+	<!-- ************ AGREEMENT LEVEL DATA LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementLevelDataChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>agreementLevelData</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AgreementLevelData_level_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ AGREEMENT LEVEL DATA ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementLevelData</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.AgreementLevelData</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>agreementLevelData</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>agreementLevel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>level.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+	</managed-bean>
+
 	<!-- ************ AGREEMENT LEVEL Payment LISTENER ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementLevelPaymentChildListener</managed-bean-name>
@@ -749,7 +840,7 @@
 	<!-- ************ AGREEMENT LEVEL Payment ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementLevelPayment</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.AgreementLevelPaymentController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -1054,14 +1145,46 @@
 	    </navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== FunctionConstant ========================== -->
+	<!-- =================== System Data ========================== -->
 	<navigation-rule>
 	    <navigation-case>
-    	  	<from-outcome>functionConstant_grid</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/functionConstant/grid.xhtml</to-view-id>
+    	  	<from-outcome>systemData_grid</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemData/grid.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	
+	<!-- =================== System Deduction ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>systemDeduction_search</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemDeduction/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>systemDeduction_list</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemDeduction/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>systemDeduction_form</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemDeduction/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+	<!-- =================== System Payment ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>systemPayment_search</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemPayment/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>systemPayment_list</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemPayment/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>systemPayment_form</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemPayment/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
 	<!-- =================== PaymentConcept ========================== -->
 	<navigation-rule>
 	    <navigation-case>

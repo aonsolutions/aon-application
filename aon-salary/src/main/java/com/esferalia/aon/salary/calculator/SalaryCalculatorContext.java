@@ -22,30 +22,35 @@ public class SalaryCalculatorContext implements ISalaryCalculatorContext{
 		this.endDate = endDate;
 		this.issueDate = issueDate;
 	}
+	@Override
 	public ISalaryProxy getSalaryProxy() {
 		return salaryProxy;
 	}
 	public void setSalaryProxy(ISalaryProxy salaryProxy) {
 		this.salaryProxy = salaryProxy;
 	}
+	@Override
 	public Date getIssueDate() {
 		return issueDate;
 	}
 	public void setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
 	}
+	@Override
 	public Date getStartDate() {
 		return startDate;
 	}
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
+	@Override
 	public Date getEndDate() {
 		return endDate;
 	}
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
+	@Override
 	public ExpressionContext getExpressionContext() {
 		return ExpressionContext;
 	}

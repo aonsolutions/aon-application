@@ -314,5 +314,8 @@ public class Contract implements ITransferObject, ISalaryProxy {
 		}
 		return ctx;
 	}
+	public void setSalaryCalculatorContext(ISalaryCalculatorContext ctx) {
+		this.ctx = ctx;
+	}
 
 }

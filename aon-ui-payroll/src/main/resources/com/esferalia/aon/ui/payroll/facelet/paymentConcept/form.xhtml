@@ -4,6 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -37,6 +39,84 @@
 					<aon:inputText id="PaymentConcept_description" size="64" maxlength="64"
 						value="#{paymentConcept.to.description}" />
 						
+					<aon:outputText value="&#160;"/>
+					<aon:panelGroup>
+						<aon:selectBooleanCheckbox id="PaymentConcept_decorateDescription" value="#{paymentConcept.to.descriptionDecorable}" />
+						<aon:outputLabel for="PaymentConcept_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
+					</aon:panelGroup>
+
+					<aon:outputLabel for="PaymentConcept_expression"
+						value="#{payrollBundle.payroll_salary_expression}" />
+					<aon:inputTextarea id="PaymentConcept_expression" cols="60" rows="3" maxlength="128"
+						value="#{paymentConcept.to.expression}">
+						<f:validateLength maximum="128"/>
+						<a4j:region>
+							<rich:suggestionbox id="PaymentConcept_expression_suggestion"
+								for="PaymentConcept_expression"
+								onselect="suggestionBoxActive=false;"
+								suggestionAction="#{paymentConcept.expressionContext}" var="exp"
+								similarityGroupingId=""
+								tokens=" +-/*%(){}[]"
+								fetchValue="#{exp}"
+								immediate="true" limitToList="true" ajaxSingle="true"
+								eventsQueue="PaymentConcept_expressionSug" ignoreDupResponses="true"
+								requestDelay="100" width="500" height="100"
+								nothingLabel="#{bundle.aon_search_no_results}">
+								<aon:column>
+									<aon:outputText value="#{exp}" styleClass="aon-bold"/>
+								</aon:column>
+							</rich:suggestionbox>
+						</a4j:region>
+					</aon:inputTextarea>
+
+					<aon:outputLabel for="PaymentConcept_irpf_expression"
+						value="#{payrollBundle.payroll_salary_irpf_expression}" />
+					<aon:inputTextarea id="PaymentConcept_irpf_expression" cols="60" rows="3" maxlength="128"
+						value="#{paymentConcept.to.irpfExpression}">
+						<f:validateLength maximum="128"/>
+						<a4j:region>
+							<rich:suggestionbox id="PaymentConcept_irpf_expression_suggestion"
+								for="PaymentConcept_irpf_expression"
+								onselect="suggestionBoxActive=false;"
+								suggestionAction="#{paymentConcept.expressionContext}" var="exp"
+								similarityGroupingId=""
+								tokens=" +-/*%(){}[]"
+								fetchValue="#{exp}"
+								immediate="true" limitToList="true" ajaxSingle="true"
+								eventsQueue="PaymentConcept_irpf_expressionSug" ignoreDupResponses="true"
+								requestDelay="100" width="500" height="100"
+								nothingLabel="#{bundle.aon_search_no_results}">
+								<aon:column>
+									<aon:outputText value="#{exp}" styleClass="aon-bold"/>
+								</aon:column>
+							</rich:suggestionbox>
+						</a4j:region>
+					</aon:inputTextarea>
+
+					<aon:outputLabel for="PaymentConcept_quote_expression"
+						value="#{payrollBundle.payroll_salary_quote_expression}" />
+					<aon:inputTextarea id="PaymentConcept_quote_expression" cols="60" rows="3" maxlength="128"
+						value="#{paymentConcept.to.quoteExpression}">
+						<f:validateLength maximum="128"/>
+						<a4j:region>
+							<rich:suggestionbox id="PaymentConcept_quote_expression_suggestion"
+								for="PaymentConcept_quote_expression"
+								onselect="suggestionBoxActive=false;"
+								suggestionAction="#{paymentConcept.expressionContext}" var="exp"
+								similarityGroupingId=""
+								tokens=" +-/*%(){}[]"
+								fetchValue="#{exp}"
+								immediate="true" limitToList="true" ajaxSingle="true"
+								eventsQueue="PaymentConcept_quote_expressionSug" ignoreDupResponses="true"
+								requestDelay="100" width="500" height="100"
+								nothingLabel="#{bundle.aon_search_no_results}">
+								<aon:column>
+									<aon:outputText value="#{exp}" styleClass="aon-bold"/>
+								</aon:column>
+							</rich:suggestionbox>
+						</a4j:region>
+					</aon:inputTextarea>
+
 				</aon:panelGrid>
 
 			</aon:div>

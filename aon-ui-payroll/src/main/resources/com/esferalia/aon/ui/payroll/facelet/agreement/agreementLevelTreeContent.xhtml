@@ -41,6 +41,20 @@
 			aon-noborder aon-padding-left aon-width-auto aon-vertical-align-top">
 		
 			<aon:panelTabSet rendered="#{!agreementLevel.new}" >
+
+				<aon:panelTab id="payment" disabled="#{agreementLevel.model==null}"
+					label="#{payrollBundle.payroll_agreementLevel_payment}">
+					
+					<aon:div style="font-size: 0.9em;">
+						<c:if test="#{agreementLevelPayment.to == null}">
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementLevelPaymentList.xhtml" />
+						</c:if>
+						<c:if test="#{agreementLevelPayment.to != null}">
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementLevelPaymentForm.xhtml" />
+						</c:if>
+					</aon:div>
+				</aon:panelTab>
+
 				<aon:panelTab id="category" label="#{payrollBundle.payroll_agreementLevel_category}">
 						<aon:methodParam name="resetAction" value="" />
 						<aon:methodParam name="saveAction" value="" />
@@ -81,66 +95,11 @@
 						</ui:decorate>
 				</aon:panelTab>
 				
-				<aon:panelTab id="payment" disabled="#{agreementLevel.model==null}"
-					label="#{payrollBundle.payroll_agreementLevel_payment}">
-
-					<aon:methodParam name="resetAction" value="" />
-					<aon:methodParam name="saveAction" value="" />
-					<aon:methodParam name="removeAction"  value="" />
-					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-				 		<ui:param name="controller" value="#{agreementLevelPayment}" />
-						<ui:define name="columns">
-						
-							<aon:column styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputLabel for="AgreementLevelPayment_type" value="#{payrollBundle.payroll_agreementLevel_type}" />
-								</f:facet>
-								<aon:outputText value="#{to.type}" rendered="#{formList}" />
-								<aon:selectOneMenu id="AgreementLevelPayment_type" required="true"
-									value="#{controller.to.type}" rendered="#{formEdit}">
-									<f:selectItems value="#{payrollCollections.paymentTypes}" />
-								</aon:selectOneMenu>
-								<f:facet name="footer">
-									<aon:selectOneMenu id="AgreementLevelPayment_type-New" required="true"
-										value="#{controller.to.type}" rendered="#{formNew}">
-										<f:selectItems value="#{payrollCollections.paymentTypes}" />
-									</aon:selectOneMenu>
-								</f:facet>
-							</aon:column>
-						
-							<aon:column styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputLabel for="AgreementLevelPayment_description" value="#{bundle.aon_description}" />
-								</f:facet>
-								<aon:outputText value="#{to.description}" rendered="#{formList}" />
-								<aon:inputText id="AgreementLevelPayment_description"
-									value="#{controller.to.description}"
-									rendered="#{formEdit}" required="true" maxlength="64" size="30" />
-								<f:facet name="footer">
-									<aon:inputText id="AgreementLevelPayment_description-New"
-										value="#{controller.to.description}"
-										rendered="#{formNew}" required="true" maxlength="64" size="30" />
-								</f:facet>
-							</aon:column>
-				
-							<aon:column styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputLabel for="AgreementLevelPayment_expression" value="#{payrollBundle.payroll_salary_expression}" />
-								</f:facet>
-								<aon:outputText value="#{to.expression}" rendered="#{formList}" />
-								<aon:inputText id="AgreementLevelPayment_expression"
-									value="#{controller.to.expression}"
-									rendered="#{formEdit}" required="true" maxlength="128" size="30" />
-								<f:facet name="footer">
-									<aon:inputText id="AgreementLevelPayment_expression-New"
-										value="#{controller.to.expression}"
-										rendered="#{formNew}" required="true" maxlength="128" size="30" />
-								</f:facet>
-							</aon:column>
-						
-						</ui:define>
-					</ui:decorate>
+				<aon:panelTab id="levelData" disabled="#{agreementLevel.model==null}"
+					label="#{payrollBundle.payroll_agreement_data}">
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementLevelData.xhtml" />
 				</aon:panelTab>
+				
 			</aon:panelTabSet>
 		</aon:panelGrid>
 		

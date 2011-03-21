@@ -27,6 +27,7 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.SalaryTemplate;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class PayrollCollectionsController {
 
@@ -35,6 +36,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> contractCalendarEventTypes;
 	private List<SelectItem> paymentTypes;
 	private List<SelectItem> deductionTypes;
+	private List<SelectItem> salaryTypes;
 	
 	private List<SelectItem> contractCodes;
 	private Map<ContractType,List<SelectItem>> contractCodesMap;
@@ -76,6 +78,19 @@ public class PayrollCollectionsController {
 		return deductionTypes;
 	}
 	
+	public List<SelectItem> getSalaryTypes() {
+		if (salaryTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			salaryTypes = new LinkedList<SelectItem>();
+			for( SalaryType salaryType : SalaryType.values() ) {
+				String name = salaryType.getName(locale);
+				SelectItem item = new SelectItem(salaryType, name);
+				salaryTypes.add(item);			
+			}
+		}
+		return salaryTypes;
+	}
+
 	public List<SelectItem> getContractDurations() {
 		if (contractDurations == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();

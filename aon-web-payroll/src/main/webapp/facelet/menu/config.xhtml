@@ -20,7 +20,7 @@
 					<aon:panelGroup>
 						<aon:panelGrid id="group_config_company"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-config aon-direct-access-panel">
+							headerClass="aon-icon-company aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{companyBundle.company_menu_group}"/>
 							</f:facet>					
@@ -30,16 +30,6 @@
 										action="company" actionListener="#{company.onLoad}"
 										value="#{companyBundle.company_data_module}">
 									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="payMethod-management" 
-										action="payMethod"
-										value="#{configBundle.config_paymethod_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="bank-management" 
-										action="bank"
-										value="#{configBundle.config_bank_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -65,7 +55,7 @@
 					<aon:panelGroup>
 						<aon:panelGrid id="group_config_predefined"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-report aon-direct-access-panel">
+							headerClass="aon-icon-account-entry aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.predefined_menu_group}"/>
 							</f:facet>					
@@ -82,73 +72,29 @@
 										action="cnae_list" actionListener="#{cnae.onSearch}" 
 										value="#{companyBundle.company_cnae_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="wayKind"
-										action="streetType_list"
-										value="#{appBundle.way_kind_module}">
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="irpf"
-										disabled="true" 
-										action="company-irpf" actionListener="#{company.onLoad}"
-										value="#{appBundle.irpf_module}">
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="mutual"
-										disabled="true" 
-										action="company-mutual" actionListener="#{company.onLoad}"
-										value="#{appBundle.mutual_module}">
-									</aon:commandLink>
-								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 	
-						<aon:panelGrid id="group_config_editable"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-auxiliary aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{appBundle.editable_menu_group}"/>
-							</f:facet>					
-							<aon:div styleClass="aon-direct-access-list">
+							<aon:panelGrid id="group_treasury_auxiliar"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-auxiliary aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.menu_auxiliary}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="country" 
-										disabled="true" 
-										action="company-country" actionListener="#{company.onLoad}"
-										value="#{appBundle.country_module}">
-									</aon:commandLink>
+									<aon:commandLink id="geotreeParent_list-config" 
+										action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
+										value="#{geozoneBundle.geozone_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="banks" 
-										disabled="true" 
-										action="company-banks" actionListener="#{company.onLoad}"
-										value="#{appBundle.banks_module}">
-									</aon:commandLink>
+									<aon:commandLink id="bank-treasury"
+										action="bank-treasury"
+										value="#{configBundle.config_bank_module}" />
 								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="functionConstant"
-										action="functionConstant_grid" 
-										actionListener="#{functionConstant.onSearch}"
-										value="#{payrollBundle.payroll_functionConstant_module}">
-									</aon:commandLink>
-								</aon:div>		
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="paymentConcept" 
-										action="paymentConcept_search" 
-										actionListener="#{paymentConcept.onEditSearch}"
-										value="#{payrollBundle.payroll_paymentConcept_module}">
-									</aon:commandLink>
-								</aon:div>		
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="deductionConcept" 
-										action="deductionConcept_search" 
-										actionListener="#{deductionConcept.onEditSearch}"
-										value="#{payrollBundle.payroll_deductionConcept_module}">
-									</aon:commandLink>
-								</aon:div>	
-							</aon:div>
-						</aon:panelGrid>
+								</aon:div>
+							</aon:panelGrid>
+
 					</aon:panelGroup>	
 					
 				</h:panelGrid>

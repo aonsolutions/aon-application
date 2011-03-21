@@ -5,6 +5,7 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
+import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementLevelPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBatch;
@@ -19,13 +20,15 @@ import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.EnterpriseAgreement;
 import com.esferalia.aon.payroll.EnterpriseCertificate;
 import com.esferalia.aon.payroll.EnterpriseCertificateDetail;
-import com.esferalia.aon.payroll.FunctionConstant;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.SalaryDeduction;
+import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.SystemData;
+import com.esferalia.aon.payroll.SystemDeduction;
+import com.esferalia.aon.payroll.SystemPayment;
 
 /** 
 * Interface for holding entity properties constants.
@@ -116,6 +119,49 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for AgreementLevelData entity.
+	*/ 
+	DAOConstantsEntry AGREEMENT_LEVEL_DATA_ENTRY = DAOConstants.getDAOConstant(AgreementLevelData.class);
+
+	/** 
+	* Alias value: AgreementLevelData_endDate
+	* Hibernate value: AgreementLevelData.endDate
+	*/
+	String  AGREEMENT_LEVEL_DATA_END_DATE = AGREEMENT_LEVEL_DATA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AgreementLevelData_expression
+	* Hibernate value: AgreementLevelData.expression
+	*/
+	String  AGREEMENT_LEVEL_DATA_EXPRESSION = AGREEMENT_LEVEL_DATA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AgreementLevelData_id
+	* Hibernate value: AgreementLevelData.id
+	*/
+	String  AGREEMENT_LEVEL_DATA_ID = AGREEMENT_LEVEL_DATA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AgreementLevelData_level_id
+	* Hibernate value: AgreementLevelData.level.id
+	*/
+	String  AGREEMENT_LEVEL_DATA_LEVEL_ID = AGREEMENT_LEVEL_DATA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AgreementLevelData_name
+	* Hibernate value: AgreementLevelData.name
+	*/
+	String  AGREEMENT_LEVEL_DATA_NAME = AGREEMENT_LEVEL_DATA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: AgreementLevelData_startDate
+	* Hibernate value: AgreementLevelData.startDate
+	*/
+	String  AGREEMENT_LEVEL_DATA_START_DATE = AGREEMENT_LEVEL_DATA_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
 	* DAOConstantsEntry for AgreementLevelPayment entity.
 	*/ 
 	DAOConstantsEntry AGREEMENT_LEVEL_PAYMENT_ENTRY = DAOConstants.getDAOConstant(AgreementLevelPayment.class);
@@ -127,28 +173,76 @@ public interface IPayrollAlias {
 	String  AGREEMENT_LEVEL_PAYMENT_DESCRIPTION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: AgreementLevelPayment_descriptionDecorable
+	* Hibernate value: AgreementLevelPayment.descriptionDecorable
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_DESCRIPTION_DECORABLE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AgreementLevelPayment_endDate
+	* Hibernate value: AgreementLevelPayment.endDate
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_END_DATE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: AgreementLevelPayment_expression
 	* Hibernate value: AgreementLevelPayment.expression
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_EXPRESSION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[1];
+	String  AGREEMENT_LEVEL_PAYMENT_EXPRESSION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: AgreementLevelPayment_id
 	* Hibernate value: AgreementLevelPayment.id
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[2];
+	String  AGREEMENT_LEVEL_PAYMENT_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: AgreementLevelPayment_irpfExpression
+	* Hibernate value: AgreementLevelPayment.irpfExpression
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_IRPF_EXPRESSION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: AgreementLevelPayment_level_id
 	* Hibernate value: AgreementLevelPayment.level.id
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_LEVEL_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[3];
+	String  AGREEMENT_LEVEL_PAYMENT_LEVEL_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: AgreementLevelPayment_month
+	* Hibernate value: AgreementLevelPayment.month
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_MONTH = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: AgreementLevelPayment_paymentConcept_id
+	* Hibernate value: AgreementLevelPayment.paymentConcept.id
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_PAYMENT_CONCEPT_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: AgreementLevelPayment_quoteExpression
+	* Hibernate value: AgreementLevelPayment.quoteExpression
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_QUOTE_EXPRESSION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: AgreementLevelPayment_salaryType
+	* Hibernate value: AgreementLevelPayment.salaryType
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_SALARY_TYPE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: AgreementLevelPayment_startDate
+	* Hibernate value: AgreementLevelPayment.startDate
+	*/
+	String  AGREEMENT_LEVEL_PAYMENT_START_DATE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: AgreementLevelPayment_type
 	* Hibernate value: AgreementLevelPayment.type
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_TYPE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[4];
+	String  AGREEMENT_LEVEL_PAYMENT_TYPE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[12];
 
 
 
@@ -695,16 +789,28 @@ public interface IPayrollAlias {
 	String  DEDUCTION_CONCEPT_DESCRIPTION = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: DeductionConcept_descriptionDecorable
+	* Hibernate value: DeductionConcept.descriptionDecorable
+	*/
+	String  DEDUCTION_CONCEPT_DESCRIPTION_DECORABLE = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: DeductionConcept_expression
+	* Hibernate value: DeductionConcept.expression
+	*/
+	String  DEDUCTION_CONCEPT_EXPRESSION = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: DeductionConcept_id
 	* Hibernate value: DeductionConcept.id
 	*/
-	String  DEDUCTION_CONCEPT_ID = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[2];
+	String  DEDUCTION_CONCEPT_ID = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: DeductionConcept_type
 	* Hibernate value: DeductionConcept.type
 	*/
-	String  DEDUCTION_CONCEPT_TYPE = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[3];
+	String  DEDUCTION_CONCEPT_TYPE = DEDUCTION_CONCEPT_ENTRY.getAliasNames()[5];
 
 
 
@@ -814,55 +920,6 @@ public interface IPayrollAlias {
 
 
 	/** 
-	* DAOConstantsEntry for FunctionConstant entity.
-	*/ 
-	DAOConstantsEntry FUNCTION_CONSTANT_ENTRY = DAOConstants.getDAOConstant(FunctionConstant.class);
-
-	/** 
-	* Alias value: FunctionConstant_comments
-	* Hibernate value: FunctionConstant.comments
-	*/
-	String  FUNCTION_CONSTANT_COMMENTS = FUNCTION_CONSTANT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: FunctionConstant_endDate
-	* Hibernate value: FunctionConstant.endDate
-	*/
-	String  FUNCTION_CONSTANT_END_DATE = FUNCTION_CONSTANT_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: FunctionConstant_expression
-	* Hibernate value: FunctionConstant.expression
-	*/
-	String  FUNCTION_CONSTANT_EXPRESSION = FUNCTION_CONSTANT_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: FunctionConstant_id
-	* Hibernate value: FunctionConstant.id
-	*/
-	String  FUNCTION_CONSTANT_ID = FUNCTION_CONSTANT_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: FunctionConstant_name
-	* Hibernate value: FunctionConstant.name
-	*/
-	String  FUNCTION_CONSTANT_NAME = FUNCTION_CONSTANT_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: FunctionConstant_readOnly
-	* Hibernate value: FunctionConstant.readOnly
-	*/
-	String  FUNCTION_CONSTANT_READ_ONLY = FUNCTION_CONSTANT_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: FunctionConstant_startDate
-	* Hibernate value: FunctionConstant.startDate
-	*/
-	String  FUNCTION_CONSTANT_START_DATE = FUNCTION_CONSTANT_ENTRY.getAliasNames()[6];
-
-
-
-	/** 
 	* DAOConstantsEntry for LeaveBatch entity.
 	*/ 
 	DAOConstantsEntry LEAVE_BATCH_ENTRY = DAOConstants.getDAOConstant(LeaveBatch.class);
@@ -924,16 +981,40 @@ public interface IPayrollAlias {
 	String  PAYMENT_CONCEPT_DESCRIPTION = PAYMENT_CONCEPT_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: PaymentConcept_descriptionDecorable
+	* Hibernate value: PaymentConcept.descriptionDecorable
+	*/
+	String  PAYMENT_CONCEPT_DESCRIPTION_DECORABLE = PAYMENT_CONCEPT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: PaymentConcept_expression
+	* Hibernate value: PaymentConcept.expression
+	*/
+	String  PAYMENT_CONCEPT_EXPRESSION = PAYMENT_CONCEPT_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: PaymentConcept_id
 	* Hibernate value: PaymentConcept.id
 	*/
-	String  PAYMENT_CONCEPT_ID = PAYMENT_CONCEPT_ENTRY.getAliasNames()[2];
+	String  PAYMENT_CONCEPT_ID = PAYMENT_CONCEPT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: PaymentConcept_irpfExpression
+	* Hibernate value: PaymentConcept.irpfExpression
+	*/
+	String  PAYMENT_CONCEPT_IRPF_EXPRESSION = PAYMENT_CONCEPT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: PaymentConcept_quoteExpression
+	* Hibernate value: PaymentConcept.quoteExpression
+	*/
+	String  PAYMENT_CONCEPT_QUOTE_EXPRESSION = PAYMENT_CONCEPT_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: PaymentConcept_type
 	* Hibernate value: PaymentConcept.type
 	*/
-	String  PAYMENT_CONCEPT_TYPE = PAYMENT_CONCEPT_ENTRY.getAliasNames()[3];
+	String  PAYMENT_CONCEPT_TYPE = PAYMENT_CONCEPT_ENTRY.getAliasNames()[7];
 
 
 
@@ -1095,6 +1176,49 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for SalaryDeduction entity.
+	*/ 
+	DAOConstantsEntry SALARY_DEDUCTION_ENTRY = DAOConstants.getDAOConstant(SalaryDeduction.class);
+
+	/** 
+	* Alias value: SalaryDeduction_amount
+	* Hibernate value: SalaryDeduction.amount
+	*/
+	String  SALARY_DEDUCTION_AMOUNT = SALARY_DEDUCTION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SalaryDeduction_description
+	* Hibernate value: SalaryDeduction.description
+	*/
+	String  SALARY_DEDUCTION_DESCRIPTION = SALARY_DEDUCTION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SalaryDeduction_expression
+	* Hibernate value: SalaryDeduction.expression
+	*/
+	String  SALARY_DEDUCTION_EXPRESSION = SALARY_DEDUCTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SalaryDeduction_id
+	* Hibernate value: SalaryDeduction.id
+	*/
+	String  SALARY_DEDUCTION_ID = SALARY_DEDUCTION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SalaryDeduction_salary_id
+	* Hibernate value: SalaryDeduction.salary.id
+	*/
+	String  SALARY_DEDUCTION_SALARY_ID = SALARY_DEDUCTION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: SalaryDeduction_type
+	* Hibernate value: SalaryDeduction.type
+	*/
+	String  SALARY_DEDUCTION_TYPE = SALARY_DEDUCTION_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
 	* DAOConstantsEntry for SalaryPayment entity.
 	*/ 
 	DAOConstantsEntry SALARY_PAYMENT_ENTRY = DAOConstants.getDAOConstant(SalaryPayment.class);
@@ -1144,45 +1268,191 @@ public interface IPayrollAlias {
 
 
 	/** 
-	* DAOConstantsEntry for SalaryDeduction entity.
+	* DAOConstantsEntry for SystemData entity.
 	*/ 
-	DAOConstantsEntry SALARY_DEDUCTION_ENTRY = DAOConstants.getDAOConstant(SalaryDeduction.class);
+	DAOConstantsEntry SYSTEM_DATA_ENTRY = DAOConstants.getDAOConstant(SystemData.class);
 
 	/** 
-	* Alias value: SalaryDeduction_amount
-	* Hibernate value: SalaryDeduction.amount
+	* Alias value: SystemData_comments
+	* Hibernate value: SystemData.comments
 	*/
-	String  SALARY_DEDUCTION_AMOUNT = SALARY_DEDUCTION_ENTRY.getAliasNames()[0];
+	String  SYSTEM_DATA_COMMENTS = SYSTEM_DATA_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: SalaryDeduction_description
-	* Hibernate value: SalaryDeduction.description
+	* Alias value: SystemData_endDate
+	* Hibernate value: SystemData.endDate
 	*/
-	String  SALARY_DEDUCTION_DESCRIPTION = SALARY_DEDUCTION_ENTRY.getAliasNames()[1];
+	String  SYSTEM_DATA_END_DATE = SYSTEM_DATA_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: SalaryDeduction_expression
-	* Hibernate value: SalaryDeduction.expression
+	* Alias value: SystemData_expression
+	* Hibernate value: SystemData.expression
 	*/
-	String  SALARY_DEDUCTION_EXPRESSION = SALARY_DEDUCTION_ENTRY.getAliasNames()[2];
+	String  SYSTEM_DATA_EXPRESSION = SYSTEM_DATA_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: SalaryDeduction_id
-	* Hibernate value: SalaryDeduction.id
+	* Alias value: SystemData_id
+	* Hibernate value: SystemData.id
 	*/
-	String  SALARY_DEDUCTION_ID = SALARY_DEDUCTION_ENTRY.getAliasNames()[3];
+	String  SYSTEM_DATA_ID = SYSTEM_DATA_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: SalaryDeduction_salary_id
-	* Hibernate value: SalaryDeduction.salary.id
+	* Alias value: SystemData_name
+	* Hibernate value: SystemData.name
 	*/
-	String  SALARY_DEDUCTION_SALARY_ID = SALARY_DEDUCTION_ENTRY.getAliasNames()[4];
+	String  SYSTEM_DATA_NAME = SYSTEM_DATA_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: SalaryDeduction_type
-	* Hibernate value: SalaryDeduction.type
+	* Alias value: SystemData_readOnly
+	* Hibernate value: SystemData.readOnly
 	*/
-	String  SALARY_DEDUCTION_TYPE = SALARY_DEDUCTION_ENTRY.getAliasNames()[5];
+	String  SYSTEM_DATA_READ_ONLY = SYSTEM_DATA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: SystemData_startDate
+	* Hibernate value: SystemData.startDate
+	*/
+	String  SYSTEM_DATA_START_DATE = SYSTEM_DATA_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for SystemDeduction entity.
+	*/ 
+	DAOConstantsEntry SYSTEM_DEDUCTION_ENTRY = DAOConstants.getDAOConstant(SystemDeduction.class);
+
+	/** 
+	* Alias value: SystemDeduction_deductionConcept_id
+	* Hibernate value: SystemDeduction.deductionConcept.id
+	*/
+	String  SYSTEM_DEDUCTION_DEDUCTION_CONCEPT_ID = SYSTEM_DEDUCTION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SystemDeduction_description
+	* Hibernate value: SystemDeduction.description
+	*/
+	String  SYSTEM_DEDUCTION_DESCRIPTION = SYSTEM_DEDUCTION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SystemDeduction_descriptionDecorable
+	* Hibernate value: SystemDeduction.descriptionDecorable
+	*/
+	String  SYSTEM_DEDUCTION_DESCRIPTION_DECORABLE = SYSTEM_DEDUCTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SystemDeduction_endDate
+	* Hibernate value: SystemDeduction.endDate
+	*/
+	String  SYSTEM_DEDUCTION_END_DATE = SYSTEM_DEDUCTION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SystemDeduction_expression
+	* Hibernate value: SystemDeduction.expression
+	*/
+	String  SYSTEM_DEDUCTION_EXPRESSION = SYSTEM_DEDUCTION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: SystemDeduction_id
+	* Hibernate value: SystemDeduction.id
+	*/
+	String  SYSTEM_DEDUCTION_ID = SYSTEM_DEDUCTION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: SystemDeduction_month
+	* Hibernate value: SystemDeduction.month
+	*/
+	String  SYSTEM_DEDUCTION_MONTH = SYSTEM_DEDUCTION_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: SystemDeduction_startDate
+	* Hibernate value: SystemDeduction.startDate
+	*/
+	String  SYSTEM_DEDUCTION_START_DATE = SYSTEM_DEDUCTION_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: SystemDeduction_type
+	* Hibernate value: SystemDeduction.type
+	*/
+	String  SYSTEM_DEDUCTION_TYPE = SYSTEM_DEDUCTION_ENTRY.getAliasNames()[8];
+
+
+
+	/** 
+	* DAOConstantsEntry for SystemPayment entity.
+	*/ 
+	DAOConstantsEntry SYSTEM_PAYMENT_ENTRY = DAOConstants.getDAOConstant(SystemPayment.class);
+
+	/** 
+	* Alias value: SystemPayment_description
+	* Hibernate value: SystemPayment.description
+	*/
+	String  SYSTEM_PAYMENT_DESCRIPTION = SYSTEM_PAYMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SystemPayment_descriptionDecorable
+	* Hibernate value: SystemPayment.descriptionDecorable
+	*/
+	String  SYSTEM_PAYMENT_DESCRIPTION_DECORABLE = SYSTEM_PAYMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SystemPayment_endDate
+	* Hibernate value: SystemPayment.endDate
+	*/
+	String  SYSTEM_PAYMENT_END_DATE = SYSTEM_PAYMENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SystemPayment_expression
+	* Hibernate value: SystemPayment.expression
+	*/
+	String  SYSTEM_PAYMENT_EXPRESSION = SYSTEM_PAYMENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SystemPayment_id
+	* Hibernate value: SystemPayment.id
+	*/
+	String  SYSTEM_PAYMENT_ID = SYSTEM_PAYMENT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: SystemPayment_irpfExpression
+	* Hibernate value: SystemPayment.irpfExpression
+	*/
+	String  SYSTEM_PAYMENT_IRPF_EXPRESSION = SYSTEM_PAYMENT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: SystemPayment_month
+	* Hibernate value: SystemPayment.month
+	*/
+	String  SYSTEM_PAYMENT_MONTH = SYSTEM_PAYMENT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: SystemPayment_paymentConcept_id
+	* Hibernate value: SystemPayment.paymentConcept.id
+	*/
+	String  SYSTEM_PAYMENT_PAYMENT_CONCEPT_ID = SYSTEM_PAYMENT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: SystemPayment_quoteExpression
+	* Hibernate value: SystemPayment.quoteExpression
+	*/
+	String  SYSTEM_PAYMENT_QUOTE_EXPRESSION = SYSTEM_PAYMENT_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: SystemPayment_salaryType
+	* Hibernate value: SystemPayment.salaryType
+	*/
+	String  SYSTEM_PAYMENT_SALARY_TYPE = SYSTEM_PAYMENT_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: SystemPayment_startDate
+	* Hibernate value: SystemPayment.startDate
+	*/
+	String  SYSTEM_PAYMENT_START_DATE = SYSTEM_PAYMENT_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: SystemPayment_type
+	* Hibernate value: SystemPayment.type
+	*/
+	String  SYSTEM_PAYMENT_TYPE = SYSTEM_PAYMENT_ENTRY.getAliasNames()[11];
 
 
 }

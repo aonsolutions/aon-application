@@ -1,7 +1,6 @@
 package com.esferalia.aon.salary.payment;
 
 import com.esferalia.aon.salary.enumeration.PaymentType;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public interface IPayment {
 		
@@ -13,6 +12,5 @@ public interface IPayment {
 	
 	public double getAmount();
 	
-	public boolean isSalaryInKind();
-	
+
 }

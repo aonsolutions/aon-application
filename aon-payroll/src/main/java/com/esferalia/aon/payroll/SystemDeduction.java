@@ -1,32 +1,47 @@
 package com.esferalia.aon.payroll;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.Month;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 
+/**
+ * Transfer Object that represents the contract deduction.
+ * 
+ */
 @Entity
-@Table(name="deduction_concept")
-public class DeductionConcept implements ITransferObject{
-	
-	private static final long serialVersionUID = 3933542592010025754L;
+@Table(name="system_deduction")
+public class SystemDeduction implements ITransferObject {
+
+	private static final long serialVersionUID = 4510451091870851884L;
 
 	private Integer id;
-	private String code;
-	private String description;
 	private DeductionType type;
+	private DeductionConcept deductionConcept;
+	private String description;
 	private String expression;
-	private boolean descriptionDecorable; 
-
+	private Date startDate;	
+	private Date endDate;	
+	private Month month;
+	private boolean descriptionDecorable;
 	
 	@Id
 	@GeneratedValue
@@ -47,15 +62,17 @@ public class DeductionConcept implements ITransferObject{
 		this.type = type;
 	}
 	
-	@Column(length = 5)
-	public String getCode() {
-		return code;
+	@ManyToOne
+	@JoinColumn(name = "deduction_concept")
+	@ForeignKey(name = "FK_SYSTEM_DEDUCTION_DEDUCTION_CONCEPT")
+	@Index(name = "IDX_SYSTEM_DEDUCTION_DEDUCTION_CONCEPT")
+	public DeductionConcept getDeductionConcept() {
+		return deductionConcept;
 	}
-	
-	public void setCode(String code) {
-		this.code = code;
+	public void setDeductionConcept(DeductionConcept deductionConcept) {
+		this.deductionConcept = deductionConcept;
 	}
-	
+
 	@Column(length = 64)
 	public String getDescription() {
 		return description;
@@ -69,10 +86,38 @@ public class DeductionConcept implements ITransferObject{
 	public String getExpression() {
 		return expression;
 	}
+	
 	public void setExpression(String expression) {
 		this.expression = expression;
 	}
+	
+	@Temporal(TemporalType.DATE)
+	@Column( name = "start_date", nullable = false )
+    public Date getStartDate() {
+		return startDate;
+	}
 
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	@Temporal(TemporalType.DATE)
+	@Column( name = "end_date" )
+    public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}	
+	
+	public Month getMonth() {
+		return month;
+	}
+	public void setMonth(Month month) {
+		this.month = month;
+	}
+	
 	@Column( name = "description_decorable" )
 	public boolean isDescriptionDecorable() {
 		return descriptionDecorable;
@@ -80,19 +125,22 @@ public class DeductionConcept implements ITransferObject{
 	public void setDescriptionDecorable(boolean descriptionDecorable) {
 		this.descriptionDecorable = descriptionDecorable;
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final DeductionConcept o = (DeductionConcept) obj;
+		final SystemDeduction o = (SystemDeduction) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.code, o.code)
-				.append(this.description, o.description)
 				.append(this.type, o.type)
+				.append(this.deductionConcept,o.deductionConcept)
+				.append(this.description, o.description)
 				.append(this.expression, o.expression)
+				.append(this.startDate, o.startDate)
+				.append(this.endDate, o.endDate)
+				.append(this.month, o.month)
 				.append(this.descriptionDecorable, o.descriptionDecorable)
 				.isEquals();	
 		}
@@ -102,10 +150,14 @@ public class DeductionConcept implements ITransferObject{
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(code)
-			.append(description)
+			.append(id)
 			.append(type)
+			.append(deductionConcept)
+			.append(description)
 			.append(expression)
+			.append(startDate)
+			.append(endDate)
+			.append(month)
 			.append(descriptionDecorable)
 			.toHashCode();
 	}

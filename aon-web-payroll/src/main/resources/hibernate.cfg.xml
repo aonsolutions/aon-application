@@ -93,6 +93,7 @@
 		<mapping class="com.esferalia.aon.payroll.Agreement"/>
 		<mapping class="com.esferalia.aon.payroll.AgreementLevel"/>
 		<mapping class="com.esferalia.aon.payroll.AgreementLevelCategory"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementLevelData"/>
 		<mapping class="com.esferalia.aon.payroll.AgreementLevelPayment"/>
 		<mapping class="com.esferalia.aon.payroll.Contract"/>
 		<mapping class="com.esferalia.aon.payroll.ContractBatch"/>
@@ -107,13 +108,15 @@
 		<mapping class="com.esferalia.aon.payroll.EnterpriseCertificate"/>
 		<mapping class="com.esferalia.aon.payroll.EnterpriseCertificateDetail"/>
 		<mapping class="com.esferalia.aon.payroll.DeductionConcept"/>
-		<mapping class="com.esferalia.aon.payroll.FunctionConstant"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatch"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>
 		<mapping class="com.esferalia.aon.payroll.Salary"/>
-		<mapping class="com.esferalia.aon.payroll.SalaryPayment"/>
 		<mapping class="com.esferalia.aon.payroll.SalaryDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryPayment"/>
+		<mapping class="com.esferalia.aon.payroll.SystemData"/>
+		<mapping class="com.esferalia.aon.payroll.SystemDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.SystemPayment"/>
 
 	</session-factory>
 

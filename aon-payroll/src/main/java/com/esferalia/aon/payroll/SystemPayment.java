@@ -11,32 +11,26 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.Month;
-import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.expression.ExpressionScope;
 
 @Entity
-@Table(name="contract_payment")
-public class ContractPayment implements ITransferObject, IContractPayment {
+@Table(name="system_payment")
+public class SystemPayment implements ITransferObject {
 	
 	private static final long serialVersionUID = 2831598401831457550L;
 
 	private Integer id;
-	private Contract contract;
 	private PaymentType type;
 	private PaymentConcept paymentConcept;
 	private String description;
@@ -59,20 +53,7 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
-	@ManyToOne
-	@JoinColumn(name = "contract", nullable = false, updatable = false)
-	@ForeignKey(name = "FK_DEDUCTION_CONTRACT")
-	@Index(name = "FK_DEDUCTION_CONTRACT")
-	public Contract getContract() {
-		return contract;
-	}
-	
-	public void setContract(Contract contract) {
-		this.contract = contract;
-	}
-	
-	@Override
+
 	public PaymentType getType() {
 		return type;
 	}
@@ -82,8 +63,8 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 	
 	@ManyToOne
 	@JoinColumn(name = "payment_concept")
-	@ForeignKey(name = "FK_CONTRACT_PAYMENT_PAYMENT_CONCEPT")
-	@Index(name = "IDX_CONTRACT_PAYMENT_PAYMENT_CONCEPT")
+	@ForeignKey(name = "FK_SYSTEM_PAYMENT_PAYMENT_CONCEPT")
+	@Index(name = "IDX_SYSTEM_PAYMENT_PAYMENT_CONCEPT")
 	public PaymentConcept getPaymentConcept() {
 		return paymentConcept;
 	}
@@ -91,7 +72,6 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 		this.paymentConcept = paymentConcept;
 	}
 
-	@Override
 	@Column(length = 64)
 	public String getDescription() {
 		return description;
@@ -100,7 +80,6 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 		this.description = description;
 	}
 	
-	@Override
 	@Column(length = 128)
 	public String getExpression() {
 		return expression;
@@ -143,7 +122,6 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 		this.endDate = endDate;
 	}	
 
-	@Override
 	public Month getMonth() {
 		return month;
 	}
@@ -172,10 +150,9 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final ContractPayment o = (ContractPayment) obj;
+		final SystemPayment o = (SystemPayment) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.contract, o.contract)
 				.append(this.type, o.type)
 				.append(this.description, o.description)
 				.append(this.paymentConcept,o.paymentConcept)
@@ -195,7 +172,7 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(contract)
+			.append(id)
 			.append(type)
 			.append(paymentConcept)
 			.append(description)
@@ -213,40 +190,6 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
-	}
-
-	@Override
-	@Transient
-	public double getAmount() {
-		if (NumberUtils.isNumber(getExpression()) ) {
-			return NumberUtils.toDouble(getExpression());	
-		}
-		return 0;
-	}
-	
-	@Override
-	@Transient
-	public String getName() {
-		return getPaymentConcept()==null?null:getPaymentConcept().getCode();
-	}
-
-	@Override
-	@Transient
-	public ExpressionScope getScope() {
-		return ExpressionScope.CONTRACT;
-	}
-
-	@Transient
-	public String getFullDescription() {
-		return (getPaymentConcept() == null || StringUtils.isEmpty(getPaymentConcept().getCode()))?
-				getDescription():
-				getPaymentConcept().getCode()+ " - " + getDescription();
-	}
-	
-	@Override
-	@Transient
-	public boolean isReadOnly() {
-		return false;
 	}
 	
 }

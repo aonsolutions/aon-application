@@ -22,15 +22,6 @@
 					<aon:inputText id="PaymentConcept_code" size="5" maxlength="5"
 						valueChangeListener="#{paymentConcept.addExpression}" />
 
-					<aon:outputLabel for="PaymentConcept_type"
-						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="PaymentConcept_type" 
-						converter="aon.EnumConverter"
-						valueChangeListener="#{paymentConcept.addEqualExpression}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{payrollCollections.paymentTypes}" />
-					</aon:selectOneMenu>	
-
 					<aon:outputLabel for="PaymentConcept_description"
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="PaymentConcept_description" size="64" maxlength="64"

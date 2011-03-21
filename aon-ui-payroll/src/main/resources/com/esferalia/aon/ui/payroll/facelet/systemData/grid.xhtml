@@ -8,13 +8,13 @@
 
 	<ui:define name="content">
 
-		<aon:form id="functionConstantGrid">
+		<aon:form id="systemDataGrid">
 
 			<aon:div ajaxRendered="true" layout="none">
 			
 				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
-					<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_functionConstant_module}" />
-					<ui:param name="controller" value="#{functionConstant}" />
+					<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_systemData_module}" />
+					<ui:param name="controller" value="#{systemData}" />
 				</ui:include>			
 
 				<!--  aon-region-body -->
@@ -22,110 +22,110 @@
 	
 					<ui:decorate
 						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-						<ui:param name="controller" value="#{functionConstant}" />
+						<ui:param name="controller" value="#{systemData}" />
 						<ui:define name="columns">	
 						
 
-							<aon:column alias="FunctionConstant.name" styleClass="aon-editDataTable-textColumn aon-width-150">
+							<aon:column alias="systemData.name" styleClass="aon-editDataTable-textColumn aon-width-150">
 								<f:facet name="header">
-									<aon:outputLabel for="FunctionConstant_name"
+									<aon:outputLabel for="systemData_name"
 										value="#{bundle.aon_name}" />
 								</f:facet>
 								<aon:outputText rendered="#{formList}" 
 									value="#{to.name}" />
-								<aon:inputText id="FunctionConstant_name" rendered="#{formEdit}" required="true" 
+								<aon:inputText id="systemData_name" rendered="#{formEdit}" required="true" 
 									size="16" maxlength="16" value="#{controller.to.name}" />
 								<f:facet name="footer">
-									<aon:inputText id="FunctionConstant_name-New" rendered="#{formNew}" required="true" 
+									<aon:inputText id="systemData_name-New" rendered="#{formNew}" required="true" 
 										size="16" maxlength="16" value="#{controller.to.name}" />
 								</f:facet>		
 							</aon:column>
 
-							<aon:column alias="FunctionConstant.startDate" styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+							<aon:column alias="systemData.startDate" styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
 								<f:facet name="header">
-									<aon:outputLabel for="FunctionConstant_startDate" value="#{bundle.aon_start_date}" />
+									<aon:outputLabel for="systemData_startDate" value="#{bundle.aon_start_date}" />
 								</f:facet>
 								<aon:outputText value="#{to.startDate}" rendered="#{formList}">
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>		
-								<aon:selectInputDate id="FunctionConstant_startDate" rendered="#{formEdit}"
+								<aon:selectInputDate id="systemData_startDate" rendered="#{formEdit}"
 									value="#{controller.to.startDate}"
 									timeZone="#{timeZoneController.timeZone}"
 									popupDateFormat="#{bundle.aon_date_pattern}"/>
 								<f:facet name="footer">
-									<aon:selectInputDate id="FunctionConstant_startDate-New" rendered="#{formNew}"
+									<aon:selectInputDate id="systemData_startDate-New" rendered="#{formNew}"
 										value="#{controller.to.startDate}"
 										timeZone="#{timeZoneController.timeZone}"
 										popupDateFormat="#{bundle.aon_date_pattern}"/>
 								</f:facet>
 							</aon:column>
 						
-							<aon:column alias="FunctionConstant.endDate" styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+							<aon:column alias="systemData.endDate" styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
 								<f:facet name="header">
-									<aon:outputLabel for="FunctionConstant_endDate" value="#{bundle.aon_end_date}" />
+									<aon:outputLabel for="systemData_endDate" value="#{bundle.aon_end_date}" />
 								</f:facet>
 								<aon:outputText value="#{to.endDate}" rendered="#{formList}">
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>		
-								<aon:selectInputDate id="FunctionConstant_endDate" rendered="#{formEdit}"
+								<aon:selectInputDate id="systemData_endDate" rendered="#{formEdit}"
 									value="#{controller.to.endDate}"
 									timeZone="#{timeZoneController.timeZone}"
 									popupDateFormat="#{bundle.aon_date_pattern}"/>
 								<f:facet name="footer">
-									<aon:selectInputDate id="FunctionConstant_endDate-New" rendered="#{formNew}"
+									<aon:selectInputDate id="systemData_endDate-New" rendered="#{formNew}"
 										value="#{controller.to.endDate}"
 										timeZone="#{timeZoneController.timeZone}"
 										popupDateFormat="#{bundle.aon_date_pattern}"/>
 								</f:facet>	
 							</aon:column>
 
-							<aon:column alias="FunctionConstant.readOnly" styleClass="aon-width-80"
+							<aon:column alias="systemData.readOnly" styleClass="aon-width-80"
 								style="padding-bottom: 6px;">
 								<f:facet name="header">
-									<aon:outputLabel for="FunctionConstant_readOnly" value="#{payrollBundle.payroll_constant}" />
+									<aon:outputLabel for="systemData_readOnly" value="#{payrollBundle.payroll_constant}" />
 								</f:facet>
 								<aon:outputText value="&#160;" 
 									styleClass="#{(to.readOnly)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
 									style="padding-bottom: 5px;"
 									rendered="#{formList}"/>
-								<aon:selectBooleanCheckbox id="FunctionConstant_readOnly" rendered="#{formEdit}" 
+								<aon:selectBooleanCheckbox id="systemData_readOnly" rendered="#{formEdit}" 
 									value="#{controller.to.readOnly}"/>
 								<f:facet name="footer">
-									<aon:selectBooleanCheckbox id="FunctionConstant_readOnly-New"
+									<aon:selectBooleanCheckbox id="systemData_readOnly-New"
 										rendered="#{formNew}" value="#{controller.to.readOnly}" />
 								</f:facet>
 							</aon:column>
 							
-							<aon:column alias="FunctionConstant.expression" styleClass="aon-editDataTable-textColumn aon-width-250">
+							<aon:column alias="systemData.expression" styleClass="aon-editDataTable-textColumn aon-width-250">
 								<f:facet name="header">
-									<aon:outputLabel for="FunctionConstant_expression"
+									<aon:outputLabel for="systemData_expression"
 										value="#{bundle.aon_value}" />
 								</f:facet>
 								<aon:outputText rendered="#{formList}" value="#{to.expression}" >
 									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 								</aon:outputText>		
-								<aon:inputText id="FunctionConstant_expression" rendered="#{formEdit}" size="30"
+								<aon:inputText id="systemData_expression" rendered="#{formEdit}" size="30"
 										maxlength="128" value="#{controller.to.expression}" required="true" />
 								<f:facet name="footer">
-									<aon:inputText id="FunctionConstant_expression-New" rendered="#{formNew}" size="30"
+									<aon:inputText id="systemData_expression-New" rendered="#{formNew}" size="30"
 										maxlength="128" 
 										value="#{controller.to.expression}" required="true" />
 								</f:facet>
 							</aon:column>
 
-							<aon:column alias="FunctionConstant.comments" styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<aon:column alias="systemData.comments" styleClass="aon-editDataTable-textColumn aon-width-auto">
 								<f:facet name="header">
-									<aon:outputLabel for="FunctionConstant_comments" value="#{bundle.aon_comment}" />
+									<aon:outputLabel for="systemData_comments" value="#{bundle.aon_comment}" />
 								</f:facet>
 								<aon:outputText rendered="#{formList}" value="#{to.comments}" >
 									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 								</aon:outputText>		
-								<aon:inputText id="FunctionConstant_comments" rendered="#{formEdit}" size="30"
+								<aon:inputText id="systemData_comments" rendered="#{formEdit}" size="30"
 										maxlength="128" value="#{controller.to.comments}"  />
 								<f:facet name="footer">
-									<aon:inputText id="FunctionConstant_comments-New" rendered="#{formNew}" size="30"
+									<aon:inputText id="systemData_comments-New" rendered="#{formNew}" size="30"
 											maxlength="128" value="#{controller.to.comments}"/>
 								</f:facet>
 							</aon:column>

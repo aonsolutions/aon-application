@@ -26,16 +26,7 @@
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="DeductionConcept_description" size="64" maxlength="64"
 						valueChangeListener="#{deductionConcept.addExpression}" />
-						
-					<aon:outputLabel for="DeductionConcept_type"
-						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="DeductionConcept_type" 
-						converter="aon.EnumConverter"
-						valueChangeListener="#{deductionConcept.addEqualExpression}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{payrollCollections.deductionTypes}" />
-					</aon:selectOneMenu>	
-						
+
 				</ui:define>
 			</ui:decorate>
 			
