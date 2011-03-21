@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.mvel2.UnresolveablePropertyException;
-
 
 public class Variables implements Comparator<ITimedObject<?>> {
 

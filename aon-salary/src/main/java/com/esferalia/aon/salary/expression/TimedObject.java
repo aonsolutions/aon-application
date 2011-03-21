@@ -1,7 +1,6 @@
 package com.esferalia.aon.salary.expression;
 
 import java.util.Date;
-import java.util.List;
 
 public class TimedObject<V> implements ITimedObject<V> {
 

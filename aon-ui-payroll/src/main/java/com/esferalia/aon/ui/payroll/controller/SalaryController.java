@@ -187,7 +187,6 @@ public class SalaryController extends BasicController implements IPayrollConstan
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unchecked")
 	public RegistryAttachment obtainCompanyLogo() throws ManagerBeanException {
 		Integer id = ((Salary)getTo()).getContract().getWorkPlace().getEnterprise().getId();
 		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
@@ -196,7 +195,7 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		criteria.addEqualExpression(alias, id);
 		String type = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE);
 		criteria.addEqualExpression(type, RegistryAttachmentType.LOGO);
-		Iterator iter = registryAttachBean.getList(criteria).iterator();
+		Iterator<?> iter = registryAttachBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAttachment)iter.next();
 		}

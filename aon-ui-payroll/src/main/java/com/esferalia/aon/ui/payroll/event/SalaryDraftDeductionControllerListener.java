@@ -6,10 +6,7 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractDeduction;
-import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.SalaryDraftController;
 import com.esferalia.aon.ui.payroll.controller.SalaryDraftDeductionController;
 
@@ -43,11 +40,11 @@ public class SalaryDraftDeductionControllerListener extends ControllerAdapter{
 	}
 
 	private void checkExpression(ControllerEvent event) throws ControllerListenerException {
-		LinesController l = (LinesController) event.getController();
-		SalaryDraftController sc =  (SalaryDraftController) l.getMasterController();
-		ContractDeduction cp = (ContractDeduction) l.getTo();
-		Contract contract = (Contract) sc.getTo();
 		//TODO ¿¿??
+//		LinesController l = (LinesController) event.getController();
+//		SalaryDraftController sc =  (SalaryDraftController) l.getMasterController();
+//		ContractDeduction cp = (ContractDeduction) l.getTo();
+//		Contract contract = (Contract) sc.getTo();
 //		try {
 //			contract.getSalaryCalculatorContext().getExpressionContext().resolve( cp );
 //		} catch (ExpressionException e) {

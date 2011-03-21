@@ -1,6 +1,5 @@
 package com.esferalia.aon.payroll.calculator;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 public abstract class HierarchyIterator<E> extends AbstractIterator<E> {

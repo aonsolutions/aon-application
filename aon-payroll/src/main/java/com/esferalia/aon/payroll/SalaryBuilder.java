@@ -2,10 +2,6 @@ package com.esferalia.aon.payroll;
 
 import java.util.Date;
 
-import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.SalaryDeduction;
-import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.enumeration.DeductionType;

@@ -144,9 +144,8 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	/*
 	 *  COLLECTION PARA EL JASPERREPORT
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public Collection getCollection() {
+	public Collection<?> getCollection() {
 		try {
 			loadList();
 		} catch (ManagerBeanException e) {
@@ -159,9 +158,8 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 		return getList();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Collection getCollection(boolean forceRefresh)
+	public Collection<?> getCollection(boolean forceRefresh)
 			throws ManagerBeanException {
 		return getCollection();
 	}

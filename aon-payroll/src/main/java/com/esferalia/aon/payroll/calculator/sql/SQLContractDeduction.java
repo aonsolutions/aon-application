@@ -3,8 +3,6 @@ package com.esferalia.aon.payroll.calculator.sql;
 import java.sql.ResultSet;
 import java.util.Date;
 
-import com.esferalia.aon.payroll.DeductionConcept;
-import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDeductionColumns;

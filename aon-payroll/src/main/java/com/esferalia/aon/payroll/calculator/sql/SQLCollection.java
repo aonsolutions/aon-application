@@ -2,9 +2,7 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 
 import com.esferalia.aon.payroll.calculator.AbstractIterator;
 

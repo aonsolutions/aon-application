@@ -1,10 +1,8 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.LEAVE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.WORKED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.YEAR_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.ACTUAL_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.LEAVE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.WORKED_DAYS;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,9 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -29,10 +25,8 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.LRUCache;
-import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.sql.SQLConstants;
-import com.esferalia.aon.payroll.sql.SQLConstants.AgreementColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
@@ -40,7 +34,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -50,7 +43,6 @@ import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.Period;
-import com.esferalia.aon.salary.expression.UndefinedVariableException;
 
 public class SQLContractSalaryCalculatorContext implements
 		IContractSalaryCalculatorContext{

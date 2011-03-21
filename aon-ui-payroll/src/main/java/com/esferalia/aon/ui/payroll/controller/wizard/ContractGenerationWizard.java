@@ -727,9 +727,9 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 //		getList().add((Contract)bean.getList(null).get(0));
 		getList().add(getContract());
 	}
-	@SuppressWarnings("unchecked")
+
 	@Override
-	public Collection getCollection() {
+	public Collection<?> getCollection() {
 		try {
 			loadList();
 		} catch (ManagerBeanException e) {
@@ -738,9 +738,8 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		return getList();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Collection getCollection(boolean forceRefresh)
+	public Collection<?> getCollection(boolean forceRefresh)
 			throws ManagerBeanException {
 		return getCollection();
 	}

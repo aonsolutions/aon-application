@@ -141,7 +141,6 @@ public class ContractBuilder implements IPayrollConstants {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void readPdfFields(PdfReader reader) throws IOException{
 		
 		setContractWidth((int)reader.getPageSize(1).getWidth());
@@ -149,10 +148,10 @@ public class ContractBuilder implements IPayrollConstants {
 		
 		numberOfContractPages = reader.getNumberOfPages();
 		AcroFields form = reader.getAcroFields();
-		HashMap fields = form.getFields();
+		HashMap<?,?> fields = form.getFields();
 		String key;
 		ContractField field;
-		for (Iterator it = fields.keySet().iterator(); it.hasNext();) {
+		for (Iterator<?> it = fields.keySet().iterator(); it.hasNext();) {
 			key = (String) it.next();
 			field = new ContractField();
 			if(form.getFieldType(key)==AcroFields.FIELD_TYPE_CHECKBOX){

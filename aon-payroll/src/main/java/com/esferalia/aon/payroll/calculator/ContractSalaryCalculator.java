@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.List;
 
 import com.code.aon.common.AonException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
