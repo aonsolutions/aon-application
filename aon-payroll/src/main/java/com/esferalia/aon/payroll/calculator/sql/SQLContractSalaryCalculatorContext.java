@@ -30,7 +30,6 @@ import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
-import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
@@ -92,8 +91,7 @@ public class SQLContractSalaryCalculatorContext implements
 		+" OR end_date >= ? )";
 
 	private static final String SYSTEM_DEDUCTION_SQL =
-		"SELECT system_deduction.*"
-		+", deduction_concept.*"
+		"SELECT *"
 		+" FROM system_deduction"
 		+" LEFT JOIN  deduction_concept" 							// LEFT JOIN: deduction_concept puede ser NULL
 		+"	ON deduction_concept = deduction_concept.id"	
@@ -101,6 +99,14 @@ public class SQLContractSalaryCalculatorContext implements
 		+" AND ( end_date IS NULL"
 		+" OR end_date >= ? )";
 
+	private static final String SYSTEM_PAYMENT_SQL =
+		"SELECT *"
+		+" FROM system_payment"
+		+" LEFT JOIN  payment_concept" 								// LEFT JOIN: payment_concept puede ser NULL
+		+"	ON payment_concept = payment_concept.id"	
+		+" WHERE start_date <= ? "
+		+" AND ( end_date IS NULL"
+		+" OR end_date >= ? )";
 	
 	private static final String CDATA_SQL =
 		"SELECT * " 
@@ -174,12 +180,12 @@ public class SQLContractSalaryCalculatorContext implements
 	private PreparedStatement 								paymentStmt;
 	private PreparedStatement 								deductionStmt;
 
-	private IContractLeave									contractLeavel;
 	private SQLContractPayment 								sqlContractPayment;  
 	private SQLContractDeduction 							sqlContractDeduction;  
 	private ExpressionContext 								contractExpressionContext;
 	
 	private Collection<IContractDeduction> 					systemDeductions;
+	private Collection<IContractPayment> 					systemPayments;
 	
 	private LRUCache<Integer, ICalendar> 					calendars;
 	private LRUCache<Integer, Collection<IContractPayment>> agreementPayments;
@@ -209,6 +215,7 @@ public class SQLContractSalaryCalculatorContext implements
 		initCeventStmt();
 		initLeaveStmt();
 		initSystemDeductions();
+		initSystemPayments();
 
 		this.sqlContractPayment = 
 			new SQLContractPayment();
@@ -348,7 +355,9 @@ public class SQLContractSalaryCalculatorContext implements
 			paymentStmt.setInt(1,id);
 			ResultSet rs = paymentStmt.executeQuery();
 			this.sqlContractPayment.setResultSet(rs);
-			return new HierarchyPayments(this.sqlContractPayment, getAgreementPayments().iterator());
+			return new HierarchyPayments(this.sqlContractPayment, 
+					getAgreementPayments().iterator(),
+					this.systemPayments.iterator() );
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
@@ -567,22 +576,13 @@ public class SQLContractSalaryCalculatorContext implements
 	}
 	
 	private long loadContractLeave(ExpressionContext ctx ) throws SQLException{
-		long leaveDays = 0;
-		
+		SQLContractLeaveLoader leaveLoader = 
+			new SQLContractLeaveLoader(this.startDate, this.endDate);
 		ResultSet rs = null;
 		try{ 
 			cleaveStmt.setInt(1, getId());
 			rs = cleaveStmt.executeQuery();
-			while ( rs.next() ) {
-				Date start = Period.max ( rs.getDate(ContractLeaveColumns.START_DATE), startDate );
-				Date end = Period.min( rs.getDate(ContractLeaveColumns.END_DATE), endDate );
-				try {
-				} catch (Exception e) {
-				}
-				leaveDays += CommonUtil.getDaysBetweenDates(start, end) + 1 ;
-			}
-			return leaveDays;
-			
+			return leaveLoader.loadContractLevae(rs, ctx);
 		}finally {
 			if ( rs != null ){
 				rs.close();
@@ -598,8 +598,10 @@ public class SQLContractSalaryCalculatorContext implements
 				connection.prepareStatement(SYSTEM_DEDUCTION_SQL);
 			java.sql.Date sqlEndDate = 
 				new java.sql.Date(this.endDate.getTime());
+			java.sql.Date sqlStartDate = 
+				new java.sql.Date(this.startDate.getTime());
 			stmt.setDate(1, sqlEndDate);
-			stmt.setDate(2, sqlEndDate);
+			stmt.setDate(2, sqlStartDate);
 			rs = stmt.executeQuery();
 			systemDeductions = SQLCollections.deductionsCollection(rs);
 		}
@@ -611,6 +613,28 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 	}
 	
+	private void initSystemPayments() throws SQLException {
+		ResultSet rs = null ;
+		PreparedStatement stmt= null ;
+		try {
+			stmt = 
+				connection.prepareStatement(SYSTEM_PAYMENT_SQL);
+			java.sql.Date sqlEndDate = 
+				new java.sql.Date(this.endDate.getTime());
+			java.sql.Date sqlStartDate = 
+				new java.sql.Date(this.startDate.getTime());
+			stmt.setDate(1, sqlEndDate);
+			stmt.setDate(2, sqlStartDate);
+			rs = stmt.executeQuery();
+			systemPayments = SQLCollections.paymentsCollection(rs);
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	private Object getObject(String tableLabel, String columnLabel) {
 		try {

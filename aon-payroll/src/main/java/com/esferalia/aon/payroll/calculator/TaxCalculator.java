@@ -151,7 +151,7 @@ public abstract class TaxCalculator {
 //			}
 //				
 			
-			final double  payment = 0.00;
+			final double  payment = amount;
 			return payment;
 		}
 	}
