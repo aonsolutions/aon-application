@@ -294,6 +294,7 @@
 										<aon:commandLink id="#{dataTableId}-selectButton"
 											styleClass="aon-table-row-link" value="&#160;"
 											immediate="true" ajaxSingle="true" requestDelay="100"
+											rendered="#{!to.recorded}"
 											actionListener="#{controller.onSelect}"
 											onkeyup="#{dataTableId}KeyUp(this)"
 											onfocus="#{dataTableId}SelectRow(this)"
@@ -441,7 +442,7 @@
 												<aon:outputText value="#{bundle.aon_concept}" />
 											</f:facet>
 											<aon:outputText value="#{to.description}"
-												rendered="#{formList}">
+												rendered="#{formList or controller.to.recorded}">
 												<aon:abbreviateConverter maxWidth="50" />
 											</aon:outputText>
 											<rich:toolTip rendered="#{controller.descriptionLength > 50}">
@@ -449,7 +450,7 @@
 											</rich:toolTip>
 											<aon:inputText id="BankStatement_description"
 												value="#{controller.to.description}"
-												rendered="#{formEdit}" required="true"
+												rendered="#{formEdit and !controller.to.recorded}" required="true"
 												size="50" maxlength="80" />
 											<f:facet name="footer">
 												<aon:inputText id="BankStatement_description-New"
@@ -555,8 +556,14 @@
 											rendered="#{to.checked and controller.showBankStatementLink}"
 											value="#{controller.bankStatementLinkList}" var="statementLink">
 
-											<aon:column colspan="4"	
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
+												<aon:outputText value="&#160;" />
+											</aon:column>
+
+											<aon:column colspan="3"	
 												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
+												<aon:outputText value="-- #{financeBundle.finance_link_transfer} --"
+													rendered="#{statementLink.linkedBankStatementLink != null}" />
 												<aon:outputText value="&#160;" />
 											</aon:column>
 

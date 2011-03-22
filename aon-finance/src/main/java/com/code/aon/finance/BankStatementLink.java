@@ -42,6 +42,7 @@ public class BankStatementLink implements ITransferObject {
     private Date sourceDate;
     private double amount;
     private StatementLinkStatus status;
+    private BankStatementLink linkedBankStatementLink;
 
     private ITransferObject sourceTo;
 
@@ -105,6 +106,17 @@ public class BankStatementLink implements ITransferObject {
 		this.status = status;
 	}
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="linked_bank_statement_link")
+    @ForeignKey(name="FK_BANK_STATEMENT_LINK_BANK_STATEMENT_LINK")
+    @Index(name="IDX_BANK_STATEMENT_LINK_BANK_STATEMENT_LINK")
+	public BankStatementLink getLinkedBankStatementLink() {
+		return linkedBankStatementLink;
+	}
+	public void setLinkedBankStatementLink(BankStatementLink bankStatementLink) {
+		this.linkedBankStatementLink = bankStatementLink;
+	}
+	
 	@Transient
 	public boolean isFinanceTracking() {
 		return getSource() == StatementLinkSource.FINANCE_TRACKING;
@@ -153,9 +165,9 @@ public class BankStatementLink implements ITransferObject {
 		} else if (isFinanceBatch()) {
 			return ((FinanceBatch)getSourceTo()).getIssueDate();
 		} else if (isBankConcept()) {
-			return getBankStatement().getOperationDate();
+			return (getLinkedBankStatementLink() == null) ? getBankStatement().getOperationDate() : getLinkedBankStatementLink().getSourceDate();
 		} else if (isAccount()) {
-			return getBankStatement().getOperationDate();
+			return (getLinkedBankStatementLink() == null) ? getBankStatement().getOperationDate() : getLinkedBankStatementLink().getSourceDate();
 		}
 		return null;
 	}
@@ -215,6 +227,7 @@ public class BankStatementLink implements ITransferObject {
 			return new EqualsBuilder()
 				.append(this.amount,o.amount)
 				.append(this.bankStatement,o.bankStatement)
+				.append(this.linkedBankStatementLink,o.linkedBankStatementLink)
 				.append(this.source,o.source)
 				.append(this.sourceDate,o.sourceDate)
 				.append(this.sourceId,o.sourceId)
@@ -230,6 +243,7 @@ public class BankStatementLink implements ITransferObject {
 			.append(id)		
 			.append(this.amount)
 			.append(this.bankStatement)
+			.append(this.linkedBankStatementLink)
 			.append(this.source)		
 			.append(this.sourceDate)		
 			.append(this.sourceId)		

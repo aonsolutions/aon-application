@@ -88,8 +88,11 @@ public interface IFinanceConstants {
 
 	String CASH_FLOW_FORECAST_CONTROLLER_NAME = "cashFlowForecast";
 
+
 	String ACCOUNT_ENTRY_FORM_PAGE = "accountEntry_form";
+
 	String ACCOUNT_ENTRY_SEARCH_PAGE = "accountEntry_search";
+
 	String ACCOUNT_ENTRY_ON_EDIT_SEARCH_ACTION = "accountEntry.onEditSearch";
 	
 }

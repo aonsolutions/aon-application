@@ -54,4 +54,9 @@
 		<alias names="amount,financeBatch_id,finance_id,id,status,financeBatch_issueDate,financeBatch_securityLevel,finance_invoice_referenceCode,finance_concept,finance_dueDate" />
 		<hibernate names="amount,financeBatch.id,finance.id,id,status,financeBatch.issueDate,financeBatch.securityLevel,finance.invoice&lt;referenceCode,finance.concept,finance.dueDate" />
 	</bean>
+
+	<bean class="com.code.aon.finance.BankStatementLink" sqlName="bank_statement_link">
+		<alias names="amount,bankStatement_id,bankStatement_operationDate,bankStatement_payment,bankStatement_securityLevel,bankStatement_status,id,linkedBankStatementLink,linkedBankStatementLink_id,source,sourceDate,sourceId,status" />
+		<hibernate names="amount,bankStatement.id,bankStatement.operationDate,bankStatement.payment,bankStatement.securityLevel,bankStatement.status,id,linkedBankStatementLink,linkedBankStatementLink.id,source,sourceDate,sourceId,status" />
+	</bean>
 </dao>

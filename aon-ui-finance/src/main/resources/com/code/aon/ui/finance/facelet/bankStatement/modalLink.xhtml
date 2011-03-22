@@ -82,7 +82,7 @@
 									</aon:panelGrid>
 								</aon:div>
 
-								<aon:div id="statementLinkCheckDiv" styleClass="aon-scroll-area">
+								<aon:div id="statementLinkBody" styleClass="aon-scroll-area">
 									<aon:panelTabSet id="statementLinkTabSet" selectedTab="#{linkManager.selectedTab}">
 										<aon:panelTab id="statementLinkTab" label="#{financeBundle.finance_checked_concepts}"
 											rendered="#{bankStatementLink.model.rowCount > 0}">
@@ -103,7 +103,7 @@
 													styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
 													value="#{financeBundle.finance_cancel_checks}"
 													actionListener="#{linkManager.onRemoveLinks}" 
-													reRender="statementLinkToolbar,statementLinkCheckDiv"
+													reRender="statementLinkToolbar,statementLinkBody"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 											</aon:div>
@@ -175,7 +175,7 @@
 										</aon:panelTab>
 
 										<aon:panelTab id="financeLinkTab" label="#{financeBundle.finance_unchecked_finances}"
-											rendered="#{!linkManager.batchSource and !linkManager.batchLinked}">
+											rendered="#{!linkManager.batchSource and !linkManager.batchLinked and !linkManager.transferLinked}">
 											<aon:div styleClass="aon-toolbar">
 												<aon:commandButton title="#{bundle.aon_check_all}"
 													styleClass="aon-finding-toolbar-item aon-icon-checkAll"
@@ -205,8 +205,8 @@
 													styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 													value="#{financeBundle.finance_check_selected}"
 													rendered="#{financeList.model.rowCount > 0 or financeTrackingList.model.rowCount > 0}"
-													actionListener="#{linkManager.onAddLinks}" 
-													reRender="statementLinkToolbar,statementLinkCheckDiv"
+													actionListener="#{linkManager.onAddFinanceLinks}" 
+													reRender="statementLinkToolbar,statementLinkBody"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 											</aon:div>
@@ -395,13 +395,13 @@
 										</aon:panelTab>
 
 										<aon:panelTab id="fbatchLinkTab" label="#{financeBundle.finance_unchecked_fbatches}"
-											rendered="#{!linkManager.returnSource and !linkManager.batchLinked and !linkManager.trackingLinked}">
+											rendered="#{!linkManager.returnSource and !linkManager.batchLinked and !linkManager.trackingLinked and !linkManager.transferLinked}">
 											<aon:div styleClass="aon-toolbar" rendered="#{fbatchList.model.rowCount > 0}">
 												<aon:commandButton title="#{financeBundle.finance_check_selected}"
 													styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 													value="#{financeBundle.finance_check_selected}"
-													actionListener="#{linkManager.onAddLinks}" 
-													reRender="statementLinkToolbar,statementLinkCheckDiv"
+													actionListener="#{linkManager.onAddBatchLinks}" 
+													reRender="statementLinkToolbar,statementLinkBody"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 											</aon:div>
@@ -478,13 +478,72 @@
 											</aon:div>
 										</aon:panelTab>
 
+										<aon:panelTab id="linkTransferLinkTab" label="#{financeBundle.finance_link_transfers}" 
+											rendered="#{linkManager.linkTransferModel.rowCount > 0 and bankStatementLink.model.rowCount == 0}">
+											<aon:dataTable id="linkTransferData" value="#{linkManager.linkTransferModel}"
+												var="to" rows="10" rendered="#{linkManager.linkTransferModel.rowCount > 0}">
+
+												<aon:column styleClass="aon-editDataTable-iconColumn">
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<aon:commandButton id="addLinkTransfer"
+														value="&#160;" styleClass="aon-icon-attach-file aon-noborder"
+														title="#{financeBundle.finance_bank_statement_check}"
+														actionListener="#{linkManager.onAddTransferLinks}"
+														reRender="statementLinkToolbar,statementLinkBody"
+														onclick="Richfaces.showModalPanel('waitProccess')" 
+											     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+		 										</aon:column>
+			
+												<aon:column styleClass="aon-editDataTable-textColumn">
+													<f:facet name="header">
+														<aon:outputText value="#{bundle.aon_date}" />
+													</f:facet>
+													<aon:outputText value="#{to.date}">
+														<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+															timeZone="#{timeZoneController.timeZoneId}" />
+													</aon:outputText>
+												</aon:column>
+
+												<c:if test="#{aonRole.confidentiality}">
+													<aon:column styleClass="aon-editDataTable-textColumn aon-width-20">
+														<f:facet name="header">
+															<aon:outputText value="&#160;" title="#{bundle.aon_confidential}"
+																styleClass="aon-icon-confidential" style="padding-left:15px" />
+														</f:facet>
+														<aon:outputText value="&#160;"
+															styleClass="#{to.confidential?'aon-icon-checked':'aon-icon-check'}" 
+															style="padding-left:20px" />
+													</aon:column>
+												</c:if>
+
+												<aon:column styleClass="aon-editDataTable-textColumn">
+													<f:facet name="header">
+														<aon:outputText value="#{financeBundle.finance_source}" />
+													</f:facet>
+													<aon:outputText value="#{to.bankStatement.registryBank.fullName}" />
+												</aon:column>
+
+												<aon:column styleClass="aon-editDataTable-numberColumn">
+													<f:facet name="header">
+														<aon:outputText value="#{bundle.aon_amount}" />
+													</f:facet>
+													<aon:outputText value="#{to.amount}">
+														<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+													</aon:outputText>
+												</aon:column>
+
+											</aon:dataTable>
+										</aon:panelTab>
+
 										<aon:panelTab id="otherConceptsLinkTab" label="#{financeBundle.finance_other_concepts}">
 											<aon:div styleClass="aon-toolbar">
 												<aon:commandButton title="#{financeBundle.finance_bank_statement_check}"
 													styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 													value="#{financeBundle.finance_bank_statement_check}"
-													actionListener="#{linkManager.onAddLinkOtherConcept}" 
-													reRender="statementLinkToolbar,statementLinkCheckDiv"
+													actionListener="#{linkManager.onAddOtherConceptLinks}" 
+													reRender="statementLinkToolbar,statementLinkBody"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 											</aon:div>
@@ -632,7 +691,7 @@
 					<ui:param name="controller" value="#{bankStatement.bankStatementLinkManager}" />
 					<ui:param name="showType" value="true" />
 					<ui:param name="payMethodSearchList" value="#{configCollections.payMethods}" />
-					<ui:param name="searchReRender" value="statementLinkCheckDiv" />
+					<ui:param name="searchReRender" value="statementLinkBody" />
 				</ui:include>
 			</rich:modalPanel>
 		</c:if>
