@@ -30,6 +30,7 @@ public class SQLContractLeaveLoader  {
 			final Date start = Period.max ( rs.getDate(ContractLeaveColumns.START_DATE), startDate );
 			final Date end = Period.min( rs.getDate(ContractLeaveColumns.END_DATE), endDate );
 			final long leaveDays = CommonUtil.getDaysBetweenDates(start, end) + 1 ; // Recuerda ambos inclusive
+			final long monthDays = exprCtx.getVariable(ContractVariables.MONTH_DAYS, start, end, Long.class );
 			final double regBase = rs.getDouble(ContractLeaveColumns.DAILY_REG_BASE);
 			LeaveType type = LeaveType.values()[rs.getInt(ContractLeaveColumns.TYPE)]; // Los valores nulos como 0 'COMMON_SISEASE'
 			
@@ -42,12 +43,15 @@ public class SQLContractLeaveLoader  {
 
 				@Override
 				public Long visitOcupationalDisease(LeaveType leaveType) {
+					//exprCtx.addVariable(ContractVariables.OCCUPATIONAL_DISEASE_DAYS, leaveDays, start, end );
+					//exprCtx.addVariable(ContractVariables.REGULATORY_BASE, regBase, start, end );
 					return leaveDays;
 				}
 
 				@Override
 				public Long visitMaternity(LeaveType leaveType) {
-					exprCtx.addVariable(ContractVariables.MATERNITY_DAYS, leaveDays, start, end );
+					long roundLeaveDays = 30 - monthDays + leaveDays; 
+					exprCtx.addVariable(ContractVariables.MATERNITY_DAYS, roundLeaveDays, start, end );
 					exprCtx.addVariable(ContractVariables.REGULATORY_BASE, regBase, start, end );
 					return leaveDays;
 				}

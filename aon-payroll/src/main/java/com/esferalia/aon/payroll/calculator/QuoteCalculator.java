@@ -9,6 +9,7 @@ import com.esferalia.aon.payroll.enumeration.SSRegimeTypeVisitor;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedObject;
 
@@ -169,6 +170,34 @@ public abstract class QuoteCalculator {
 			});
 			
 			SalaryType salaryType = payment.getSalaryType();
+			salaryType.accept(new SalaryTypeVisitor<Object>() {
+
+				@Override
+				public Object visitSalary(SalaryType salaryType) {
+					return null;
+				}
+
+				@Override
+				public Object visitExtra(SalaryType salaryType) {
+					GeneralQuote.this.proExtBase += quote;
+					return null;
+				}
+
+				@Override
+				public Object visitSettle(SalaryType salaryType) {
+					return null;
+				}
+
+				@Override
+				public Object visitDelay(SalaryType salaryType) {
+					return null;
+				}
+
+				@Override
+				public Object visitNotEnjoyedVacations(SalaryType salaryType) {
+					return null;
+				}
+			});
 		}
 		
 	}

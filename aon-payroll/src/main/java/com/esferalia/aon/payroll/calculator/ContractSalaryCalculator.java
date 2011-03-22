@@ -169,12 +169,17 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		try {
 			double totalDeduction = 0; 
 			double ssContributions = 0;
-			
+	
+			Date start  = ctx.getStartDate();
+			Date end  = ctx.getEndDate();
+	 			
 			Collection<IContractDeduction> contractDeductions = 
 				ctx.getContractDeductions();
 			ExpressionContext expressionContext = ctx.getExpressionContext();
 			for (IContractDeduction contractDeduction : contractDeductions) {
-					totalDeduction += resolveDeduction(expressionContext, contractDeduction);
+					Date deductionStart = Period.max(contractDeduction.getStartDate(), start);
+					Date deductionEnd= Period.min(contractDeduction.getEndDate(), end );
+					totalDeduction += resolveDeduction(expressionContext, contractDeduction, deductionStart, deductionEnd );
 					if ( contractDeduction.getType().isSsDeduction() ) {
 						ssContributions += totalDeduction;
 					}
@@ -192,12 +197,11 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	}
 	
 	
-	private Double resolveDeduction(ExpressionContext ctx,IContractDeduction d) throws ExpressionException {
+	private Double resolveDeduction(ExpressionContext ctx,IContractDeduction d, Date start, Date end ) throws ExpressionException {
 		String concept = d.getName();
 		String expression = d.getExpression() ;
 		DeductionType type = d.getType()  ;
-		Date start = d.getStartDate();
-		Date end = d.getEndDate();
+
 		List<ITimedObject<Double>> amounts =  
 			ctx.addExpression(d, start, end, Double.class);
 		
@@ -212,6 +216,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				Period period = amount.getPeriod();
 				description = ctx.evalTemplate(d.getDescription(), period.getStart(), period.getEnd());
 			} catch (Exception e ) {
+				System.err.println(d.getDescription() + " = " + e.getMessage() );
 				//TODO : Log ???
 			}
 			salaryBuilder.addDeduction(type, concept, value, description, expression);
