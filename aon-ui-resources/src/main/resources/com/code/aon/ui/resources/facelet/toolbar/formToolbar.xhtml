@@ -17,7 +17,8 @@
 		<aon:methodParam name="removeActionListener" default="#{controller.onRemove}" type="actionListener" />
 		<aon:methodParam name="removeAction" default="#{controller.beanName}_list" resolve="true" />			
 		<aon:methodParam name="searchActionListener" default="#{controller.onEditSearch}" type="actionListener" />
-		<aon:methodParam name="searchAction" default="#{controller.beanName}_search" resolve="true" />		
+		<aon:methodParam name="searchAction" default="#{controller.beanName}_search" resolve="true" />
+		<aon:valueParam name="resetLabel" default="#{bundle.aon_reset}" />		
 		<aon:methodParam name="resetActionListener" default="#{controller.onReset}" type="actionListener" />
 		<aon:methodParam name="resetAction" default="#{controller.beanName}_form" resolve="true" />			
 		<aon:methodParam name="backActionListener" default="#{controller.onBackActionListener}" type="actionListener" />

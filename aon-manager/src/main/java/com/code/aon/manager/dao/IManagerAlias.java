@@ -177,4 +177,23 @@ public interface IManagerAlias {
 	*/
 	String  DOMAIN_APPLICATION_STATUS = "DomainApplication_status";
 	
+
+	/** 
+	* Alias value: DomainUser_id
+	* Hibernate value: DomainUser.id
+	*/
+	String  DOMAIN_USER_ID = "DomainUser_id";
+
+	/** 
+	* Alias value: DomainUser_uid
+	* Hibernate value: DomainUser.uid
+	*/
+	String  DOMAIN_USER_UID = "DomainUser_uid";
+
+	/** 
+	* Alias value: DomainUser_active
+	* Hibernate value: DomainUser.active
+	*/
+	String  DOMAIN_USER_ACTIVE = "DomainUser_active";
+	
 }

@@ -49,9 +49,9 @@ import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
-import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
+import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -94,16 +94,16 @@ public class DomainUserController extends LdapBasicController implements IManage
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<DomainUser> getUsers() throws ManagerBeanException {
-		return (List) getModel().getWrappedData();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(getFieldName(IManagerAlias.DOMAIN_USER_ACTIVE), Boolean.TRUE);
+		return (List) getManagerBean().getList(criteria);
 	}	
 	
 	public List<SelectItem> getUserList() throws ManagerBeanException {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		for ( DomainUser user : getUsers() ) {
-			if ( user.isActive() ) {
-				SelectItem item = new SelectItem(user, user.getUid() );
-				list.add(item);				
-			}
+			SelectItem item = new SelectItem(user, user.getUid() );
+			list.add(item);				
 		}
 		return list;
 	}	

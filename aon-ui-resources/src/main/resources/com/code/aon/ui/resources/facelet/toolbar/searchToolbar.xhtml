@@ -8,7 +8,8 @@
 		<aon:valueParam name="toolbarDescription" default="#{bundle.aon_toolbar_search}" />
 		<aon:valueParam name="toolbarID" default="#{controller.beanName}Toolbar" />	
 		<aon:methodParam name="backActionListener" default="#{controller.onCancel}" type="actionListener" />
-		<aon:methodParam name="backAction" default="#{controller.beanName}_list" resolve="true" />		
+		<aon:methodParam name="backAction" default="#{controller.beanName}_list" resolve="true" />
+		<aon:valueParam name="resetLabel" default="#{bundle.aon_reset}" />		
 		<aon:methodParam name="resetActionListener" default="#{controller.onReset}" type="actionListener" />
 		<aon:methodParam name="resetAction" default="#{controller.beanName}_form" resolve="true" />									
 	</ui:include>
