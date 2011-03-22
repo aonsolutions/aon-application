@@ -8,12 +8,45 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum SalaryType implements IResourceable {
 
 	
-	SALARY,
-	EXTRA,
-	SETTLE,
-	DELAY,
-	NOT_ENJOYED_VACATIONS,
+	SALARY
+	{
+		@Override
+		public <E> E accept(SalaryTypeVisitor<E> visitor) {
+			return visitor.visitSalary(this);
+		}
+	},
+	EXTRA
+	{
+		@Override
+		public <E> E accept(SalaryTypeVisitor<E> visitor) {
+			return visitor.visitExtra(this);
+		}
+	},
+	SETTLE
+	{
+		@Override
+		public <E> E accept(SalaryTypeVisitor<E> visitor) {
+			return visitor.visitSettle(this);
+		}
+	},
+	DELAY
+	{
+		@Override
+		public <E> E accept(SalaryTypeVisitor<E> visitor) {
+			return visitor.visitDelay(this);
+		}
+	},
+	NOT_ENJOYED_VACATIONS
+	{
+		@Override
+		public <E> E accept(SalaryTypeVisitor<E> visitor) {
+			return visitor.visitNotEnjoyedVacations(this);
+		}
+	}
 	;
+	
+	
+	public abstract <E> E accept(SalaryTypeVisitor<E>  visitor);
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.salary.i18n.messages";

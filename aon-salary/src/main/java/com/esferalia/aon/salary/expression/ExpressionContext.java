@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hibernate.dialect.function.VarArgsSQLFunction;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.mvel2.templates.TemplateRuntime;
@@ -44,7 +46,11 @@ public class ExpressionContext {
 			new TimedObject<Object>(value, start, end );
 		this.addVariable(name.toString(), timedObject);
 	}
-
+	
+	public <T> T getVariable(Object name, Date start, Date end,Class<T> toType   ) {
+		return ( T ) variables.get(name.toString(), new Period(start, end));
+	}
+	
 	public List<ITimedObject<Object>> addExpression(IExpression expression,Date start, Date end ) 
 	throws ExpressionException {
 		return addExpression(expression, start, end, Object.class );
@@ -107,7 +113,6 @@ public class ExpressionContext {
 	// ------------------------------------------
 	//
 	// ------------------------------------------
-	
 	
 	
 }
