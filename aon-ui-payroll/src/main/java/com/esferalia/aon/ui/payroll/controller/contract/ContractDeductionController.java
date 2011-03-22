@@ -1,4 +1,5 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.controller.contract;
+
 
 import java.util.LinkedList;
 import java.util.List;
@@ -6,17 +7,30 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
+import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
-public class SalaryDraftDeductionController extends SalaryDraftLinesController {
-	
+public class ContractDeductionController extends ContractDetailAbstractController {
+	@Override
+	public void onSave(ActionEvent event) {
+		IController master = FormUtil.getController("contract");
+		Contract contract = (Contract) master.getTo();
+		ContractDeduction cd  = (ContractDeduction) getTo();
+		cd.setContract(contract);
+		super.onSave(event);
+	}
+	@Override
 	protected void initialiceConcepts() {
 		setConcepts(new LinkedList<SelectItem>());
 		try {
@@ -37,7 +51,7 @@ public class SalaryDraftDeductionController extends SalaryDraftLinesController {
 	
 	public void onDeductionConceptChange(ActionEvent event) {
 		ContractDeduction cp = (ContractDeduction) getTo();
-		if (cp.getType() != null) {
+		if (cp.getType() != null && StringUtils.isEmpty(cp.getDescription())) {
 			cp.setDescription( cp.getDeductionConcept().getDescription() );
 		}
 	}

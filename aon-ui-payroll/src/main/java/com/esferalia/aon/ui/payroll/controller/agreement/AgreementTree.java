@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.controller.agreement;
 
 
 import java.io.Serializable;
@@ -21,6 +21,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class AgreementTree {
 

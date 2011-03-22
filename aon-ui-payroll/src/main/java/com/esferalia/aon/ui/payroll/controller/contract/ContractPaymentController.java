@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.util.LinkedList;
 import java.util.List;

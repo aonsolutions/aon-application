@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.controller.contract;
 
 
 import java.util.Calendar;
@@ -27,6 +27,7 @@ import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.NumberValidation;
 
 public class ContractLeaveController extends BasicController {

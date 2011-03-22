@@ -37,6 +37,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorManager;
 import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 
 public class PaymentUpdateController {
 	

@@ -1,26 +1,23 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.common.enumeration.Month;
-import com.code.aon.common.util.CommonUtil;
-import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.IExpression;
 
-public abstract class SalaryDraftLinesController extends LinesController {
+public abstract class ContractDetailAbstractController extends BasicController {
 	
 	private List<SelectItem> concepts;
 	private boolean modalPanelVisible;
-	private SelectItem currentMonth;
 	
 	public boolean isModalPanelVisible() {
 		return modalPanelVisible;
@@ -32,7 +29,7 @@ public abstract class SalaryDraftLinesController extends LinesController {
 	public List<?> expressionContext(Object suggest) {
 		try {
 			List<IExpression> list = new LinkedList<IExpression>();
-			SalaryDraftController master = (SalaryDraftController) getMasterController();
+			IController master = FormUtil.getController("contract");
 			Contract contract = (Contract) master.getTo();
 			ExpressionContext ec = contract.getSalaryCalculatorContext().getExpressionContext();
 			String filter = (String) suggest;
@@ -56,20 +53,27 @@ public abstract class SalaryDraftLinesController extends LinesController {
 		reset(false);
 	}
 
+	@Override
 	public void onCancel(ActionEvent event) {
 		super.onCancel(event);
 		reset(false);
 	}
 
+	@Override
 	public void onRemove(ActionEvent event) {
 		super.onRemove(event);
 		reset(false);
 	}
-
+	
+	@Override
+	public void onReset(ActionEvent event) {
+		super.onReset(event);
+		reset(true);
+	}
+	
 	public void reset(boolean panelVisible) {
 		setModalPanelVisible(panelVisible);
 		setConcepts(null);
-		setCurrentMonth(null);
 	}
 	
 	public void onTypeChange(ActionEvent event) {
@@ -85,20 +89,6 @@ public abstract class SalaryDraftLinesController extends LinesController {
 	}
 	public void setConcepts(List<SelectItem> concepts) {
 		this.concepts = concepts;
-	}
-
-
-	public SelectItem getCurrentMonth() {
-		if (currentMonth == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			SalaryDraftController master = (SalaryDraftController) getMasterController();
-			Month month = Month.getMonthByValue(CommonUtil.getMonth( master.getIssueDate()));
-			setCurrentMonth( new SelectItem(month,month.getName(locale)));
-		}
-		return currentMonth; 
-	}
-	public void setCurrentMonth(SelectItem currentMonth) {
-		this.currentMonth = currentMonth;
 	}
 
 	protected abstract void initialiceConcepts();

@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.event;
+package com.esferalia.aon.ui.payroll.event.salary;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;

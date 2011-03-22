@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.controller.agreement;
 
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
@@ -7,6 +7,7 @@ import javax.faces.context.FacesContext;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public enum AgreementTreeType {
 	

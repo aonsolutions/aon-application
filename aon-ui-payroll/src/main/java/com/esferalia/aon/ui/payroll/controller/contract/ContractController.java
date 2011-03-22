@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.controller.contract;
 
 
 import java.io.ByteArrayInputStream;
@@ -46,6 +46,8 @@ import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
+import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class ContractController extends BasicController {
 

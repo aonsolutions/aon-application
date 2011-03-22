@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.controller.salary;
 
 import java.io.Serializable;
 import java.util.Calendar;
@@ -28,6 +28,7 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 
 public class SalaryExpenseController implements Serializable, ICollectionProvider{
 

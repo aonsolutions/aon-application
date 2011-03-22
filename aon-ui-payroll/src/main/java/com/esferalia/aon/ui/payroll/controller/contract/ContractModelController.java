@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -19,6 +19,8 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.Classpath;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.PayrollCollectionsController;
 
 public class ContractModelController {
 

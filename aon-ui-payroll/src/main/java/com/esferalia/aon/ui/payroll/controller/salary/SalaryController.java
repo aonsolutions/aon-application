@@ -1,4 +1,4 @@
-package com.esferalia.aon.ui.payroll.controller;
+package com.esferalia.aon.ui.payroll.controller.salary;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
@@ -45,6 +45,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class SalaryController extends BasicController implements IPayrollConstants {
 	

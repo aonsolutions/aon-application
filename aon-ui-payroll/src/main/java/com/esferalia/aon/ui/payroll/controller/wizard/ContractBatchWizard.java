@@ -34,7 +34,7 @@ import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
-import com.esferalia.aon.ui.payroll.controller.ContractController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.file.AFIWriter;
 
 public class ContractBatchWizard {
