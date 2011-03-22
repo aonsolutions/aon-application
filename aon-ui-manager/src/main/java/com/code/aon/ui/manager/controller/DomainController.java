@@ -37,6 +37,7 @@ import com.code.aon.manager.AccessPolicy;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplication;
+import com.code.aon.manager.DomainUser;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.manager.enumeration.AccessPolicyType;
 import com.code.aon.manager.enumeration.DomainType;
@@ -194,6 +195,13 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 			}
 		}
 	}	
+	
+	public void removeMailAccounts() throws ManagerBeanException {
+		DomainUserController controller = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
+		for (DomainUser user : controller.getUsers()) {
+			controller.removeMailAccount(user);
+		}
+	}		
 	
 	public DBConnnection createAndRegister( Domain domain ) throws ManagerBeanException {
 		DBConnnection dbc = new DBConnnection();

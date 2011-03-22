@@ -99,6 +99,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		DomainController domainController = (DomainController) event.getController();
 		try {		
 			domainController.removeDBs( domainController.getDomain() );
+			domainController.removeMailAccounts();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
