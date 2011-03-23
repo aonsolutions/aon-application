@@ -70,12 +70,6 @@
 		/>
 	</finance:config>
 
-	<fiscal:config version="1.0" xmlns:fiscal="http://www.esferalia.com/fiscal">
-		<fiscal:fiscal
-			model347Enabled="true" 
-		/>
-	</fiscal:config>
-
 	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
 		<product:catalogue
 			showEcommerceData="false"
@@ -83,7 +77,7 @@
 		<product:product
 			showBarcode="false"
 			showType="true"
-			showBrand="true"
+			showBrand="false"
 			showStock="false"
 			showAlternatives="false"
 			showSuppliers="false"
@@ -96,6 +90,12 @@
  			showCategoryGroup="false"
  		/>
 	</product:config>
+
+	<fiscal:config version="1.0" xmlns:fiscal="http://www.esferalia.com/fiscal">
+		<fiscal:fiscal
+			model347Enabled="true" 
+		/>
+	</fiscal:config>
 
 	<webmail:config version="1.1" xmlns:webmail="http://www.esferalia.com/webmail" >
 		<webmail:webmail
