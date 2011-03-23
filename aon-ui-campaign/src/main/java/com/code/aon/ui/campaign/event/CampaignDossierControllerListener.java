@@ -24,7 +24,6 @@ public class CampaignDossierControllerListener extends ControllerAdapter {
 
             Criteria criteria = controller.getCriteria();
             criteria.addOrder(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_DOSSIER_CUSTOMER_NAME));
-            criteria.addOrder(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_DOSSIER_CUSTOMER_SURNAME));
             criteria.addOrder(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_DOSSIER_CUSTOMER_DOCUMENT));
             criteria.addOrder(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_DOSSIER_DOSSIER_NUMBER));
             controller.setCriteria(criteria);
