@@ -6,7 +6,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<aon:dataTable id="ContractPaymentTable" var="to" value="#{controller.model}" rows="0">
+	<aon:dataTable id="ContractPaymentTable" var="to" value="#{salaryDraft.paymentsModel}" rows="0">
+
 		<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 			<f:facet name="header">
 				<aon:outputText value="&#160;" />
@@ -28,30 +29,6 @@
 				</aon:div>
 			</f:facet>
 		</aon:column>
-
-		<c:if test="#{!skipStartDateColumn}">
-			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_start_date}" />
-				</f:facet>
-				<aon:outputText value="#{to.startDate}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-			</aon:column>
-		</c:if>
-		
-		<c:if test="#{!skipEndDateColumn}">
-			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
-				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_end_date}" />
-				</f:facet>
-				<aon:outputText value="#{to.endDate}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>		
-			</aon:column>
-		</c:if>
 		
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 			<f:facet name="header">
@@ -65,13 +42,12 @@
 				<aon:outputText value="#{bundle.aon_description}" />
 			</f:facet>
 			<aon:outputText value="#{to.fullDescription}" />
-<!-- 			
-			<aon:panelGroup styleClass="aon-italic">
-				<aon:outputText value="&#160;(" />	
-				<aon:outputText value="#{to.expression}" />	
-				<aon:outputText value=")" />	
-			</aon:panelGroup>
- -->
+		</aon:column>
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_type}" />
+			</f:facet>
+			<aon:outputText value="#{to.expression}"/>
 		</aon:column>
 	</aon:dataTable>
 	

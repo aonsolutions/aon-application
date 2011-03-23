@@ -8,7 +8,10 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
@@ -17,9 +20,13 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.payment.IPayment;
 
 public class SalaryDraftController extends BasicController {
 
@@ -30,6 +37,8 @@ public class SalaryDraftController extends BasicController {
 	private Date startDate;
 	private Date endDate;
 	private ISalary salary;
+	private DataModel paymentsModel;
+	private DataModel deductionsModel;
 
 	public Date getIssueDate() {
 		if (issueDate == null) {
@@ -135,6 +144,7 @@ public class SalaryDraftController extends BasicController {
 				Date issueDate = getIssueDate(); 
 				ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate);
 				salary = ctx.getSalaryProxy().getSalary();
+				paymentsModel = null;
 			}
 			return salary;
 		} catch (SalaryException e) {
@@ -151,5 +161,42 @@ public class SalaryDraftController extends BasicController {
 			}
 		}
 	}
-	
+
+	public DataModel getPaymentsModel() {
+		if (paymentsModel == null) {
+			initializePaymentModel();
+		}
+		return paymentsModel;
+	}
+	private void initializePaymentModel() {
+		try {
+			Contract contract = (Contract) getTo();
+			ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext();
+			Collection<IContractPayment> payments = ctx.getContractPayments();
+			List<ContractPayment> list = new LinkedList<ContractPayment>();
+			for (IContractPayment payment: payments) {
+				ContractPayment cp = new ContractPayment();
+				cp.setContract(contract);
+				cp.setStartDate(getStartDate());
+				cp.setEndDate(getEndDate());
+				cp.setType(payment.getType());
+				cp.setDescription(payment.getDescription());
+				cp.setExpression(payment.getExpression());
+//				cp.setPaymentConcept(payment.getPaymentConcept());
+				cp.setIrpfExpression(payment.getIrpfExpression());
+				cp.setQuoteExpression(payment.getQuoteExpression());
+				cp.setMonth(payment.getMonth());
+				cp.setSalaryType(payment.getSalaryType());
+				cp.setDescriptionDecorable(payment.isDescriptionDecorable());
+				list.add(cp);
+			}
+			paymentsModel = new ListDataModel(list);
+		} catch (SalaryException e) {
+			e.printStackTrace();
+			throw new AbortProcessingException("Imposible mostrar los devengos de la nómina");
+		} catch (AonException e) {
+			e.printStackTrace();
+			throw new AbortProcessingException("Imposible mostrar los devengos de la nómina");
+		}
+	}
 }

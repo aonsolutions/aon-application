@@ -48,11 +48,7 @@
 							<c:if test="#{aonConfiguration.bean.payroll.showPaymentEditionTab}">
 								<aon:panelTab id="paymentsEditTab" label="#{bundle.aon_edit}">
 									<aon:div style="width: 840px; margin-top: 10px;">
-										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
-											<ui:param name="controller" value="#{salaryDraftPayment}" />
-											<ui:param name="skipStartDateColumn" value="#{true}" />
-											<ui:param name="skipEndDateColumn" value="#{true}" />
-										</ui:include>
+										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/paymentsList.xhtml" />
 									</aon:div>
 								</aon:panelTab>
 							</c:if>								

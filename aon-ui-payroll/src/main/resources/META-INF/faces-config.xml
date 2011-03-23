@@ -745,6 +745,12 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.launcher.SalaryLauncher</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<!-- ************ SALARY LAUNCHER  ************** -->
+	<managed-bean>
+		<managed-bean-name>salaryTestLauncher</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.launcher.SalaryTestLauncher</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUPS ========================== -->
@@ -1107,7 +1113,15 @@
 			<to-view-id>/com/code/aon/ui/company/facelet/enterpriseActivity/formTree.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- =================== Payment Update ========================== -->
+	<!-- =================== SALARY TEST LAUNCHER ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>salaryTestLauncher_form</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryTestLauncher/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== SALARY TEST LAUNCHER ========================== -->
 	<navigation-rule>
 	    <navigation-case>
     	  	<from-outcome>salaryLauncher_form</from-outcome>

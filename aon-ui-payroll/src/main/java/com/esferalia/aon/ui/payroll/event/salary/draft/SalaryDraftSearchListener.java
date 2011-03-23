@@ -48,6 +48,9 @@ public class SalaryDraftSearchListener extends ControllerSearchListener {
 	protected void init() throws ManagerBeanException {
 		setPerson(new Person());
 		setEnterprise(new Enterprise());
+		
+		// TODO BORRAR
+		//getEnterprise().setId(59158);
 	}
 	
 	@Override

@@ -26,13 +26,13 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
+import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester.UnExpectedValue;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
-public class SalaryLauncher {
+public class SalaryTestLauncher {
 	private static final String LOG_FORMAT = "[{0}] {1}, {2} : {3}";
 	
 	private SalaryLauncherParams params;
@@ -43,6 +43,10 @@ public class SalaryLauncher {
 	private boolean saveLog;
 	private boolean debugEnabled;
 	private boolean refreshEnabled;
+	private boolean testTotalPayment;
+	private boolean testBaseIRPF;
+	private boolean testBaseCGC;
+	
 	
 	public boolean isPollEnabled() {
 		return pollEnabled;
@@ -69,6 +73,28 @@ public class SalaryLauncher {
 		this.refreshEnabled = refreshEnabled;
 	}
 
+	public boolean isTestTotalPayment() {
+		return testTotalPayment;
+	}
+	public void setTestTotalPayment(boolean testTotalPayment) {
+		this.testTotalPayment = testTotalPayment;
+	}
+
+	public boolean isTestBaseIRPF() {
+		return testBaseIRPF;
+	}
+	public void setTestBaseIRPF(boolean testBaseIRPF) {
+		this.testBaseIRPF = testBaseIRPF;
+	}
+
+	public boolean isTestBaseCGC() {
+		return testBaseCGC;
+	}
+
+	public void setTestBaseCGC(boolean testBaseCGC) {
+		this.testBaseCGC = testBaseCGC;
+	}
+
 	public SalaryLauncherParams getParams() {
 		if (params == null) {
 			params = new SalaryLauncherParams();
@@ -85,6 +111,9 @@ public class SalaryLauncher {
 		pollEnabled = false;
 		setSaveLog(false);
 		setDebugEnabled(false);
+		setTestBaseCGC(true);
+		setTestTotalPayment(true);
+		setTestBaseIRPF(true);
 	}
 	
 	public String getBeanName() {
@@ -141,7 +170,10 @@ public class SalaryLauncher {
 	
 				String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
 				Connection connection = HibernateUtil.getSQLConnection(sessionFactory);
-				SQLSalaryBuilder salaryBuilder = new SQLSalaryBuilder(connection);
+				SQLSalaryBuilderTester salaryBuilder = new SQLSalaryBuilderTester(connection);
+				salaryBuilder.setTestBaseCGC(isTestBaseCGC());
+				salaryBuilder.setTestBaseIRPF(isTestBaseIRPF());
+				salaryBuilder.setTestTotalPayment(isTestTotalPayment());
 				listener = new ListSalaryBuilderListener();
 				listener.setDebugEnabled(isDebugEnabled());
 				listener.setSaveLog(isSaveLog());
@@ -173,7 +205,6 @@ public class SalaryLauncher {
 				while ( sqlCtx.next() ) {
 					try {
 						calculator.calculate(sqlCtx);
-						salaryBuilder.insertSalary();
 					} catch (UnExpectedValue e) {
 						msg = MessageFormat.format(LOG_FORMAT,
 								new Object[]{
@@ -192,13 +223,9 @@ public class SalaryLauncher {
 						listener.onError(msg);
 					}
 				}
-				try {
-					salaryBuilder.commit();
-				} catch (Throwable e) {
-					listener.onError(e.getLocalizedMessage());
-					salaryBuilder.rollback();
-				}
-				msg = MessageFormat.format("Total nóminas insertadas: {0} ",new Object[]{salaryBuilder.getInsertedSalaries()});
+				msg = MessageFormat.format("Total contratos procesados: {0} ",new Object[]{salaryBuilder.getContractCount()});
+				listener.onInfo(msg);
+				msg = MessageFormat.format("Total nóminas comparadas: {0} ",new Object[]{salaryBuilder.getSalaryCount()});
 				listener.onInfo(msg);
 			} catch (ExpressionException e) {
 				throw new SalaryException(e);
