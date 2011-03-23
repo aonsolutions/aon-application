@@ -65,7 +65,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement ${table.name}Stmt = null;
 
-	private static class $table {
+	public static class $table {
 #foreach ($column in $table.columns)
 		private $column.javaClass $column.name; 
 #end
@@ -202,7 +202,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @throws SQLException
 	*/
 #set($colCount = 0)
-	protected #if($table.isAutoIncrement())int#{else}void#end insert$table(#foreach ($column in $table.columns)
+	public #if($table.isAutoIncrement())int#{else}void#end insert$table(#foreach ($column in $table.columns)
 #if (!$column.isAutoIncrement())#if( $colCount > 0 ), #end$column.javaClass $column.name #set($colCount = $colCount + 1)#end
 #end)
 	throws SQLException {

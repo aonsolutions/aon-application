@@ -134,16 +134,20 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 				compare = -1 ;
 				return ;
 			}
-			String perRedExt = percep.getRedext() != null ? percep.getRedext(): "";
-			String nivRedExt = percniv.getRedext()!= null ? percniv.getRedext():"";
-                        if ( !nivRedExt.equals(perRedExt) ){
-                                compare = -1  ;
-                                return ;
-                        }
 			if ( ! percniv.getImporte().equals(percep.getImporte()) ){
 				compare = 1 ;
 				return ;
 			}
+                        if ( percniv.getRedext()!= null &&  
+				percep.getRedext()!= null &&
+				! percniv.getRedext().equals(percep.getRedext()) ){
+                                compare = 1 ;
+                                return ;
+                        }
+                        else if ( percniv.getRedext()!= percep.getRedext() ) {
+                                compare = 1 ;
+                                return ;
+			}  
 			
 			compare = 0;
 		}

@@ -236,6 +236,36 @@ public class AbstractCtsqlDB {
 
 	
 
+
+	/**
+	 * Db_version
+	 * 
+	 */
+	public class Db_version {
+		
+		private ResultSet rs;
+		
+		private Db_version (ResultSet rs) 
+		throws SQLException {
+			this.rs =rs;
+		}
+		
+		/**
+		 * Numero de la versión de la DB
+		 * @return the column 'version_number' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getVersion_number()
+		throws SQLException {
+			return rs.getString(1);
+		}
+
+
+	}
+	
+
+	
+
 	private PreparedStatement _nif_iif_lerStmt = null;
 		
 	private void initNif_iif_lerStmt() 
@@ -56047,6 +56077,107 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finipextnu's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFinipextnu(Integer cdg, Date fecini, String codcom, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",codcom" 
+				+ ",importe" 
+				+ ",descom" 
+				+ " FROM finipextnu" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  "  + "AND" 				  
+				+ " codcom = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+				stmt.setString(3, codcom ); 
+
+			rs = stmt.executeQuery();
+			Finipextnu finipextnu = new Finipextnu(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFinipextnu(finipextnu);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Db_version's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitDb_version(CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		Statement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.createStatement();
+			rs = stmt.executeQuery("SELECT "
+				+ "version_number" 
+				+ " FROM db_version");
+			Db_version db_version = new Db_version(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitDb_version(db_version);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
+	/**
+	 * Visit all Db_version's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitDb_version(String version_number, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "version_number" 
+				+ " FROM db_version" 
+				+ " WHERE" 
+				+ " version_number = ?  " 				  
+				);
+
+				stmt.setString(1, version_number ); 
+
+			rs = stmt.executeQuery();
+			Db_version db_version = new Db_version(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitDb_version(db_version);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Finindem's .
@@ -56079,6 +56210,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finindem's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFinindem(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",texto" 
+				+ ",importe" 
+				+ ",irpf" 
+				+ " FROM finindem" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Finindem finindem = new Finindem(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFinindem(finindem);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Cuota's .
@@ -56113,6 +56282,46 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Cuota's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCuota(Date fecini, Integer num_tramo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "num_tramo" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",hasta" 
+				+ ",pesetas" 
+				+ ",resto" 
+				+ ",porcentaje" 
+				+ " FROM cuota" 
+				+ " WHERE" 
+				+ " fecini = ?  "  + "AND" 				  
+				+ " num_tramo = ?  " 				  
+				);
+
+				stmt.setDate(1, fecini ); 
+				stmt.setInt(2, num_tramo); 
+
+			rs = stmt.executeQuery();
+			Cuota cuota = new Cuota(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCuota(cuota);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Sincomun's .
@@ -56142,6 +56351,41 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Sincomun's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitSincomun(Integer cdg, Date fecha, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecha" 
+				+ " FROM sincomun" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecha = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecha ); 
+
+			rs = stmt.executeQuery();
+			Sincomun sincomun = new Sincomun(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitSincomun(sincomun);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Unidades's .
@@ -56173,6 +56417,41 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Unidades's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitUnidades(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",unidad" 
+				+ ",importe" 
+				+ " FROM unidades" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Unidades unidades = new Unidades(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitUnidades(unidades);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Detalle's .
@@ -56203,6 +56482,42 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Detalle's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitDetalle(String tabla, String campo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "tabla" 
+				+ ",campo" 
+				+ ",descripcion" 
+				+ " FROM detalle" 
+				+ " WHERE" 
+				+ " tabla = ?  "  + "AND" 				  
+				+ " campo = ?  " 				  
+				);
+
+				stmt.setString(1, tabla ); 
+				stmt.setString(2, campo ); 
+
+			rs = stmt.executeQuery();
+			Detalle detalle = new Detalle(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitDetalle(detalle);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Minor_01's .
@@ -56238,6 +56553,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Minor_01's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitMinor_01(Date fecini, Integer num_tramo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "num_tramo" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",desde_importe" 
+				+ ",hasta_importe" 
+				+ ",min_minus" 
+				+ ",min_ayuda" 
+				+ ",min_granminus" 
+				+ " FROM minor_01" 
+				+ " WHERE" 
+				+ " fecini = ?  "  + "AND" 				  
+				+ " num_tramo = ?  " 				  
+				);
+
+				stmt.setDate(1, fecini ); 
+				stmt.setInt(2, num_tramo); 
+
+			rs = stmt.executeQuery();
+			Minor_01 minor_01 = new Minor_01(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitMinor_01(minor_01);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Avisos's .
@@ -56273,6 +56629,45 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Avisos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitAvisos(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ ",descripcion" 
+				+ ",fecha" 
+				+ ",tipo" 
+				+ " FROM avisos" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Avisos avisos = new Avisos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitAvisos(avisos);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszavis's .
@@ -56302,7 +56697,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Tipovia's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -56331,6 +56725,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tipovia's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipovia(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tipovia" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipovia tipovia = new Tipovia(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipovia(tipovia);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Lintc2's .
@@ -56376,6 +56803,57 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Lintc2's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLintc2(Integer cdg, Integer linea, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",linea" 
+				+ ",numero" 
+				+ ",codper" 
+				+ ",codtc2" 
+				+ ",codepi" 
+				+ ",numdh" 
+				+ ",clave" 
+				+ ",base" 
+				+ ",sitesp" 
+				+ ",dc_dias" 
+				+ ",dc_clave" 
+				+ ",dc_importe" 
+				+ ",dc_fecha" 
+				+ ",inddoc" 
+				+ ",numdoc" 
+				+ ",aliastc2" 
+				+ ",numss" 
+				+ " FROM lintc2" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " linea = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, linea); 
+
+			rs = stmt.executeQuery();
+			Lintc2 lintc2 = new Lintc2(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLintc2(lintc2);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Variables's .
@@ -56405,6 +56883,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Variables's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitVariables(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM variables" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Variables variables = new Variables(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitVariables(variables);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Lintc2epi's .
@@ -56440,6 +56951,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Lintc2epi's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLintc2epi(Integer cdg, Integer linea, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",linea" 
+				+ ",codepi" 
+				+ ",importe" 
+				+ ",prcit" 
+				+ ",cuotait" 
+				+ ",prcims" 
+				+ ",cuotaims" 
+				+ " FROM lintc2epi" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " linea = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, linea); 
+
+			rs = stmt.executeQuery();
+			Lintc2epi lintc2epi = new Lintc2epi(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLintc2epi(lintc2epi);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Remesa_inss's .
@@ -56470,6 +57022,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Remesa_inss's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitRemesa_inss(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "id" 
+				+ ",fecha" 
+				+ ",hora" 
+				+ " FROM remesa_inss" 
+				+ " WHERE" 
+				+ " id = ?  " 				  
+				);
+
+				stmt.setInt(1, id); 
+
+			rs = stmt.executeQuery();
+			Remesa_inss remesa_inss = new Remesa_inss(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitRemesa_inss(remesa_inss);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Linprestacion's .
@@ -56503,6 +57089,45 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linprestacion's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinprestacion(Integer cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",jefe" 
+				+ ",jefe2" 
+				+ ",cajero" 
+				+ " FROM linprestacion" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Linprestacion linprestacion = new Linprestacion(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinprestacion(linprestacion);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Tipocnae2009's .
@@ -56533,6 +57158,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tipocnae2009's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipocnae2009(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",seccion" 
+				+ " FROM tipocnae2009" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipocnae2009 tipocnae2009 = new Tipocnae2009(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipocnae2009(tipocnae2009);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Cliente's .
@@ -56595,6 +57254,72 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Cliente's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCliente(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",coddlg" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",persona" 
+				+ ",telefono" 
+				+ ",telefono2" 
+				+ ",telefono3" 
+				+ ",fax" 
+				+ ",email" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",tipemp" 
+				+ ",obscli" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",inactivo" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",divisa" 
+				+ ",soloases" 
+				+ ",envioss" 
+				+ " FROM cliente" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Cliente cliente = new Cliente(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCliente(cliente);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nsztrab's .
@@ -56676,7 +57401,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Autonomos's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -56741,6 +57465,75 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Autonomos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitAutonomos(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",persona" 
+				+ ",fecinigestion" 
+				+ ",fecfingestion" 
+				+ ",honorarios" 
+				+ ",observaciones" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",tipautonomo" 
+				+ ",fecconstitucion" 
+				+ ",fecalta" 
+				+ ",mutua" 
+				+ ",codregistro" 
+				+ ",desregistro" 
+				+ ",tomo" 
+				+ ",libro" 
+				+ ",folio" 
+				+ ",seccion" 
+				+ ",hoja" 
+				+ ",otros" 
+				+ ",baseminima" 
+				+ ",baseelegida" 
+				+ ",basemaxima" 
+				+ ",incremento" 
+				+ ",incapacidad" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM autonomos" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Autonomos autonomos = new Autonomos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitAutonomos(autonomos);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Tipreg's .
@@ -56770,6 +57563,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tipreg's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipreg(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tipreg" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipreg tipreg = new Tipreg(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipreg(tipreg);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Comunica's .
@@ -56816,6 +57642,58 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Comunica's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitComunica(Integer cdg, Date feccom, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",feccom" 
+				+ ",fecefe" 
+				+ ",anionac" 
+				+ ",sitfam" 
+				+ ",nifcony" 
+				+ ",otras" 
+				+ ",xminus" 
+				+ ",pension" 
+				+ ",imp_pension" 
+				+ ",imp_anual" 
+				+ ",imp_irreg" 
+				+ ",imp_ss" 
+				+ ",solicita" 
+				+ ",imp_retr_est" 
+				+ ",tipodoc" 
+				+ ",movilidad" 
+				+ ",prolongacion" 
+				+ ",hipoteca" 
+				+ " FROM comunica" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " feccom = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, feccom ); 
+
+			rs = stmt.executeQuery();
+			Comunica comunica = new Comunica(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitComunica(comunica);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Epigrafe's .
@@ -56845,6 +57723,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Epigrafe's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEpigrafe(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM epigrafe" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Epigrafe epigrafe = new Epigrafe(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEpigrafe(epigrafe);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Httincidencia's .
@@ -56879,6 +57790,48 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Httincidencia's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitHttincidencia(Integer cdg, Integer orden, String tipo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",fecinicio" 
+				+ ",fecfin" 
+				+ ",tipo" 
+				+ ",cantidad" 
+				+ ",importe" 
+				+ " FROM httincidencia" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  "  + "AND" 				  
+				+ " tipo = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+				stmt.setString(3, tipo ); 
+
+			rs = stmt.executeQuery();
+			Httincidencia httincidencia = new Httincidencia(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitHttincidencia(httincidencia);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Minora's .
@@ -56913,6 +57866,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Minora's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitMinora(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",descripcion" 
+				+ ",importe" 
+				+ ",orden" 
+				+ " FROM minora" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Minora minora = new Minora(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitMinora(minora);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszpeop's .
@@ -56946,7 +57937,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Finidtonu's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -56977,6 +57967,43 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finidtonu's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFinidtonu(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",texto" 
+				+ ",importe" 
+				+ " FROM finidtonu" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Finidtonu finidtonu = new Finidtonu(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFinidtonu(finidtonu);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Pluses's .
@@ -57006,6 +58033,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Pluses's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPluses(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM pluses" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Pluses pluses = new Pluses(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPluses(pluses);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Httaviso's .
@@ -57038,6 +58098,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Httaviso's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitHttaviso(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",fecha" 
+				+ ",tipo" 
+				+ ",texto" 
+				+ " FROM httaviso" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Httaviso httaviso = new Httaviso(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitHttaviso(httaviso);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszanex's .
@@ -57066,7 +58164,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Action_entry's .
@@ -57098,6 +58195,41 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Action_entry's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitAction_entry(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "id" 
+				+ ",executiondate" 
+				+ ",action_id" 
+				+ ",session_id" 
+				+ " FROM action_entry" 
+				+ " WHERE" 
+				+ " id = ?  " 				  
+				);
+
+				stmt.setInt(1, id); 
+
+			rs = stmt.executeQuery();
+			Action_entry action_entry = new Action_entry(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitAction_entry(action_entry);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Basecoti's .
@@ -57128,6 +58260,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Basecoti's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitBasecoti(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",indpro" 
+				+ " FROM basecoti" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Basecoti basecoti = new Basecoti(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitBasecoti(basecoti);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Lincnae2009's .
@@ -57161,6 +58327,45 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Lincnae2009's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLincnae2009(String cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",pctit" 
+				+ ",pctims" 
+				+ ",pcttotal" 
+				+ " FROM lincnae2009" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Lincnae2009 lincnae2009 = new Lincnae2009(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLincnae2009(lincnae2009);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Percniv's .
@@ -57210,6 +58415,63 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Percniv's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPercniv(String cdg, String nivel, String codcom, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",nivel" 
+				+ ",codcom" 
+				+ ",descom" 
+				+ ",desabr" 
+				+ ",tipcot" 
+				+ ",calculo" 
+				+ ",mes" 
+				+ ",unidades" 
+				+ ",impuni" 
+				+ ",importe" 
+				+ ",garilt" 
+				+ ",redext" 
+				+ ",codcomapl" 
+				+ ",fijovar" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",indcom" 
+				+ ",tipcom" 
+				+ ",dinesp" 
+				+ " FROM percniv" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " nivel = ?  "  + "AND" 				  
+				+ " codcom = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setString(2, nivel ); 
+				stmt.setString(3, codcom ); 
+
+			rs = stmt.executeQuery();
+			Percniv percniv = new Percniv(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPercniv(percniv);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nominaexdf's .
@@ -57268,6 +58530,70 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nominaexdf's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNominaexdf(Integer cdg, Integer numero, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",codcom" 
+				+ ",importe" 
+				+ ",fijovar" 
+				+ ",irpf" 
+				+ ",impirpf" 
+				+ ",liquido" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",feccob" 
+				+ ",descom" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",fecemi" 
+				+ ",nomemp" 
+				+ ",nomper" 
+				+ ",direccion" 
+				+ ",localidad" 
+				+ ",descat" 
+				+ ",profesion" 
+				+ ",nummat" 
+				+ ",fecant" 
+				+ ",total_deducir" 
+				+ ",cdgnom" 
+				+ " FROM nominaexdf" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " numero = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, numero); 
+
+			rs = stmt.executeQuery();
+			Nominaexdf nominaexdf = new Nominaexdf(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNominaexdf(nominaexdf);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Mutua's .
@@ -57297,6 +58623,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Mutua's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitMutua(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM mutua" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Mutua mutua = new Mutua(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitMutua(mutua);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Divisa's .
@@ -57329,6 +58688,42 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Divisa's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitDivisa(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",redondeo" 
+				+ ",mask1" 
+				+ ",mask2" 
+				+ " FROM divisa" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Divisa divisa = new Divisa(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitDivisa(divisa);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nominadev's .
@@ -57371,6 +58766,54 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nominadev's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNominadev(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",codcom" 
+				+ ",descom" 
+				+ ",unidades" 
+				+ ",impuni" 
+				+ ",importe" 
+				+ ",fijovar" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",indcom" 
+				+ ",tipcom" 
+				+ ",dinesp" 
+				+ " FROM nominadev" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Nominadev nominadev = new Nominadev(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNominadev(nominadev);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszrece's .
@@ -57403,7 +58846,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Lincomun's .
@@ -57440,6 +58882,50 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Lincomun's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLincomun(Integer cdg, Date feccom, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",feccom" 
+				+ ",orden" 
+				+ ",anionac" 
+				+ ",anioaco" 
+				+ ",xminus" 
+				+ ",des_asc" 
+				+ ",descen_ent" 
+				+ ",conviv" 
+				+ " FROM lincomun" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " feccom = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, feccom ); 
+				stmt.setInt(3, orden); 
+
+			rs = stmt.executeQuery();
+			Lincomun lincomun = new Lincomun(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLincomun(lincomun);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Tipcotc2's .
@@ -57471,6 +58957,41 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tipcotc2's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipcotc2(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",desabr" 
+				+ ",cdgant" 
+				+ " FROM tipcotc2" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipcotc2 tipcotc2 = new Tipcotc2(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipcotc2(tipcotc2);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszunco's .
@@ -57504,7 +59025,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Nszotpe's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -57535,7 +59055,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Otrperc's .
@@ -57578,6 +59097,52 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Otrperc's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitOtrperc(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codper" 
+				+ ",codemp" 
+				+ ",fecha" 
+				+ ",concepto" 
+				+ ",clave" 
+				+ ",importe" 
+				+ ",base" 
+				+ ",prcret" 
+				+ ",retencion" 
+				+ ",aporta_ss" 
+				+ ",anio" 
+				+ ",ingreso" 
+				+ ",subclave" 
+				+ ",natret" 
+				+ " FROM otrperc" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Otrperc otrperc = new Otrperc(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitOtrperc(otrperc);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Lincalcu's .
@@ -57617,6 +59182,57 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Lincalcu's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLincalcu(Integer numero, Integer anio, Integer mes, Integer dia, Integer linea, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "numero" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",dia" 
+				+ ",linea" 
+				+ ",codcom" 
+				+ ",descom" 
+				+ ",fecini" 
+				+ ",fijovar" 
+				+ ",importe_uni" 
+				+ ",unidades" 
+				+ ",importe" 
+				+ " FROM lincalcu" 
+				+ " WHERE" 
+				+ " numero = ?  "  + "AND" 				  
+				+ " anio = ?  "  + "AND" 				  
+				+ " mes = ?  "  + "AND" 				  
+				+ " dia = ?  "  + "AND" 				  
+				+ " linea = ?  " 				  
+				);
+
+				stmt.setInt(1, numero); 
+				stmt.setInt(2, anio); 
+				stmt.setInt(3, mes); 
+				stmt.setInt(4, dia); 
+				stmt.setInt(5, linea); 
+
+			rs = stmt.executeQuery();
+			Lincalcu lincalcu = new Lincalcu(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLincalcu(lincalcu);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Emprban's .
@@ -57650,6 +59266,43 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Emprban's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEmprban(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codent" 
+				+ ",codsuc" 
+				+ ",dc" 
+				+ ",numcta" 
+				+ ",codcli" 
+				+ " FROM emprban" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Emprban emprban = new Emprban(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEmprban(emprban);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Colectivos's .
@@ -57680,6 +59333,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Colectivos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitColectivos(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",descripcorta" 
+				+ " FROM colectivos" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Colectivos colectivos = new Colectivos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitColectivos(colectivos);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Trabajadores's .
@@ -57715,6 +59402,55 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Trabajadores's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTrabajadores(Integer cdg, Integer codcli, Integer codemp, Integer codact, Integer coddom, Integer codtra, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",coddom" 
+				+ ",codtra" 
+				+ ",descripcion" 
+				+ ",campo" 
+				+ " FROM trabajadores" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " codcli = ?  "  + "AND" 				  
+				+ " codemp = ?  "  + "AND" 				  
+				+ " codact = ?  "  + "AND" 				  
+				+ " coddom = ?  "  + "AND" 				  
+				+ " codtra = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, codcli); 
+				stmt.setInt(3, codemp); 
+				stmt.setInt(4, codact); 
+				stmt.setInt(5, coddom); 
+				stmt.setInt(6, codtra); 
+
+			rs = stmt.executeQuery();
+			Trabajadores trabajadores = new Trabajadores(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTrabajadores(trabajadores);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Finipext's .
@@ -57748,6 +59484,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finipext's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFinipext(Integer cdg, Date fecini, String codcom, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",codcom" 
+				+ ",importe" 
+				+ ",descom" 
+				+ " FROM finipext" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  "  + "AND" 				  
+				+ " codcom = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+				stmt.setString(3, codcom ); 
+
+			rs = stmt.executeQuery();
+			Finipext finipext = new Finipext(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFinipext(finipext);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Emprper's .
@@ -57795,6 +59572,57 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Emprper's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEmprper(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codper" 
+				+ ",codnsz" 
+				+ ",fecalt" 
+				+ ",fecbaj" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",domicilio" 
+				+ ",codccc" 
+				+ ",codcco" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",contr_temp" 
+				+ ",mayor65" 
+				+ ",afi" 
+				+ ",indagrario" 
+				+ ",indgrupo" 
+				+ ",pariente" 
+				+ " FROM emprper" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Emprper emprper = new Emprper(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEmprper(emprper);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszfini's .
@@ -57838,7 +59666,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Pagaext's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -57873,6 +59700,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Pagaext's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPagaext(String cdg, String codcom, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcom" 
+				+ ",perini" 
+				+ ",indini" 
+				+ ",perfin" 
+				+ ",indfin" 
+				+ ",feccob" 
+				+ ",prorat" 
+				+ " FROM pagaext" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " codcom = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setString(2, codcom ); 
+
+			rs = stmt.executeQuery();
+			Pagaext pagaext = new Pagaext(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPagaext(pagaext);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszcoco's .
@@ -57906,7 +59774,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Linporco's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -57939,6 +59806,45 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linporco's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinporco(String cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",pctemp" 
+				+ ",pcttra" 
+				+ ",pcttot" 
+				+ " FROM linporco" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Linporco linporco = new Linporco(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinporco(linporco);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Httrabajador's .
@@ -58028,6 +59934,99 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Httrabajador's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitHttrabajador(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",actividad" 
+				+ ",domicilio" 
+				+ ",apellido1" 
+				+ ",apellido2" 
+				+ ",nombre" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",lugnac" 
+				+ ",pronac" 
+				+ ",fecnac" 
+				+ ",padre" 
+				+ ",madre" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",estado" 
+				+ ",ccc" 
+				+ ",profesion" 
+				+ ",categoria" 
+				+ ",descategoria" 
+				+ ",tarifa" 
+				+ ",epigrafe" 
+				+ ",cno" 
+				+ ",nivel" 
+				+ ",cotizacion" 
+				+ ",retribucion" 
+				+ ",actualizar" 
+				+ ",fecalta" 
+				+ ",fecbaja" 
+				+ ",fecantiguedad" 
+				+ ",numeross" 
+				+ ",matricula" 
+				+ ",contrato" 
+				+ ",contratotc2" 
+				+ ",fecinicio" 
+				+ ",fecfin" 
+				+ ",diascontrato" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",indirpf" 
+				+ ",irpf" 
+				+ ",especial" 
+				+ ",dtoincidencia" 
+				+ ",dtoit" 
+				+ ",coeficiente" 
+				+ ",jornada" 
+				+ ",tiempoparcial" 
+				+ ",jornadatp" 
+				+ ",minutosdiastp" 
+				+ ",baseantiguedad" 
+				+ ",pluriempleo" 
+				+ ",minpluriempleo" 
+				+ ",maxpluriempleo" 
+				+ ",fecpluriempleo" 
+				+ " FROM httrabajador" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Httrabajador httrabajador = new Httrabajador(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitHttrabajador(httrabajador);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Tipocont's .
@@ -58064,6 +60063,46 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tipocont's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipocont(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",codpct" 
+				+ ",desemple" 
+				+ ",mujersub" 
+				+ ",incaread" 
+				+ ",primertra" 
+				+ ",gradomin" 
+				+ ",excsocial" 
+				+ " FROM tipocont" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipocont tipocont = new Tipocont(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipocont(tipocont);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Linbasec's .
@@ -58102,6 +60141,50 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linbasec's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinbasec(String cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",mincot" 
+				+ ",maxcot" 
+				+ ",mindia" 
+				+ ",minhor" 
+				+ ",jordiaagr" 
+				+ ",mindiaart1" 
+				+ ",mindiaart2" 
+				+ ",acdiaart" 
+				+ " FROM linbasec" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Linbasec linbasec = new Linbasec(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinbasec(linbasec);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszcatg's .
@@ -58135,7 +60218,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Linocupacion's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -58168,6 +60250,45 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linocupacion's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinocupacion(String cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",pctit" 
+				+ ",pctims" 
+				+ ",pcttotal" 
+				+ " FROM linocupacion" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Linocupacion linocupacion = new Linocupacion(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinocupacion(linocupacion);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Remesainss's .
@@ -58206,6 +60327,62 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Remesainss's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitRemesainss(Integer cdg, Integer codcli, Integer codemp, Integer codact, Integer coddom, Integer codtra, Date fecha, String accion, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",coddom" 
+				+ ",codtra" 
+				+ ",fecha" 
+				+ ",descripcion" 
+				+ ",accion" 
+				+ ",causa" 
+				+ ",fecini" 
+				+ " FROM remesainss" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " codcli = ?  "  + "AND" 				  
+				+ " codemp = ?  "  + "AND" 				  
+				+ " codact = ?  "  + "AND" 				  
+				+ " coddom = ?  "  + "AND" 				  
+				+ " codtra = ?  "  + "AND" 				  
+				+ " fecha = ?  "  + "AND" 				  
+				+ " accion = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, codcli); 
+				stmt.setInt(3, codemp); 
+				stmt.setInt(4, codact); 
+				stmt.setInt(5, coddom); 
+				stmt.setInt(6, codtra); 
+				stmt.setDate(7, fecha ); 
+				stmt.setString(8, accion ); 
+
+			rs = stmt.executeQuery();
+			Remesainss remesainss = new Remesainss(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitRemesainss(remesainss);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Lincnae's .
@@ -58239,6 +60416,45 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Lincnae's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLincnae(String cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",pctit" 
+				+ ",pctims" 
+				+ ",pcttotal" 
+				+ " FROM lincnae" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Lincnae lincnae = new Lincnae(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLincnae(lincnae);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Finindemdf's .
@@ -58271,6 +60487,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finindemdf's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFinindemdf(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",texto" 
+				+ ",importe" 
+				+ ",irpf" 
+				+ " FROM finindemdf" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Finindemdf finindemdf = new Finindemdf(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFinindemdf(finindemdf);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Entidad's .
@@ -58300,6 +60554,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Entidad's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEntidad(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM entidad" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Entidad entidad = new Entidad(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEntidad(entidad);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nomdto's .
@@ -58335,6 +60622,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nomdto's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNomdto(Integer cdg, Integer linea, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",linea" 
+				+ ",concepto" 
+				+ ",importe" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM nomdto" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " linea = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, linea); 
+
+			rs = stmt.executeQuery();
+			Nomdto nomdto = new Nomdto(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNomdto(nomdto);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszreac's .
@@ -58383,7 +60711,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Cnae's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -58413,6 +60740,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Cnae's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCnae(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",ocupacion" 
+				+ " FROM cnae" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Cnae cnae = new Cnae(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCnae(cnae);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Impr190's .
@@ -58456,6 +60817,53 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Impr190's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitImpr190(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",num_percep" 
+				+ ",imp_percep" 
+				+ ",imp_retenc" 
+				+ ",fecha" 
+				+ ",disco" 
+				+ ",descuadrado" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ " FROM impr190" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Impr190 impr190 = new Impr190(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitImpr190(impr190);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Usuario's .
@@ -58490,6 +60898,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Usuario's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitUsuario(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "id" 
+				+ ",name" 
+				+ ",login" 
+				+ ",available" 
+				+ ",validate" 
+				+ ",aon_key" 
+				+ ",status" 
+				+ " FROM usuario" 
+				+ " WHERE" 
+				+ " id = ?  " 				  
+				);
+
+				stmt.setInt(1, id); 
+
+			rs = stmt.executeQuery();
+			Usuario usuario = new Usuario(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitUsuario(usuario);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Finiquitonu's .
@@ -58545,6 +60991,65 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finiquitonu's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFiniquitonu(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "codper" 
+				+ ",fecbaj" 
+				+ ",causa" 
+				+ ",vacfecini" 
+				+ ",vacimporte" 
+				+ ",total_conceptos" 
+				+ ",base" 
+				+ ",irpf" 
+				+ ",importe_irpf" 
+				+ ",liquido" 
+				+ ",importesin" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",cdg" 
+				+ ",simula" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",diasvac" 
+				+ ",costessemp" 
+				+ ",codbas" 
+				+ ",basecg" 
+				+ ",prccg" 
+				+ ",importecg" 
+				+ ",baseacc" 
+				+ ",prcacc" 
+				+ ",importeacc" 
+				+ " FROM finiquitonu" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Finiquitonu finiquitonu = new Finiquitonu(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFiniquitonu(finiquitonu);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Linplus's .
@@ -58577,6 +61082,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linplus's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinplus(String cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",importe" 
+				+ ",codcom" 
+				+ " FROM linplus" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Linplus linplus = new Linplus(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinplus(linplus);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Rem_cert_empr's .
@@ -58609,6 +61152,42 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Rem_cert_empr's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitRem_cert_empr(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "id" 
+				+ ",empresa" 
+				+ ",fecha" 
+				+ ",estado" 
+				+ ",huella" 
+				+ " FROM rem_cert_empr" 
+				+ " WHERE" 
+				+ " id = ?  " 				  
+				);
+
+				stmt.setInt(1, id); 
+
+			rs = stmt.executeQuery();
+			Rem_cert_empr rem_cert_empr = new Rem_cert_empr(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitRem_cert_empr(rem_cert_empr);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Embargo's .
@@ -58646,6 +61225,49 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Embargo's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEmbargo(Integer cdg, Date fecha, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecha" 
+				+ ",codper" 
+				+ ",concepto" 
+				+ ",afecta" 
+				+ ",importe" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM embargo" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecha = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecha ); 
+
+			rs = stmt.executeQuery();
+			Embargo embargo = new Embargo(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEmbargo(embargo);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nomdfdev's .
@@ -58686,6 +61308,52 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nomdfdev's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNomdfdev(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",codcom" 
+				+ ",descom" 
+				+ ",unidades" 
+				+ ",impuni" 
+				+ ",importe" 
+				+ ",fijovar" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",indcom" 
+				+ " FROM nomdfdev" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Nomdfdev nomdfdev = new Nomdfdev(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNomdfdev(nomdfdev);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Automat's .
@@ -58716,6 +61384,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Automat's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitAutomat(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",tipo" 
+				+ " FROM automat" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Automat automat = new Automat(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitAutomat(automat);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszcopa's .
@@ -58750,7 +61452,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Parteitnu's .
@@ -58794,6 +61495,55 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Parteitnu's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitParteitnu(Integer cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",tipoit" 
+				+ ",recaida" 
+				+ ",feciniori" 
+				+ ",proret" 
+				+ ",baseant" 
+				+ ",diasant" 
+				+ ",baseregdia" 
+				+ ",basediacg" 
+				+ ",basediaacc" 
+				+ ",prest60" 
+				+ ",prest75" 
+				+ ",procesado" 
+				+ ",riesgo" 
+				+ " FROM parteitnu" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Parteitnu parteitnu = new Parteitnu(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitParteitnu(parteitnu);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Categoria's .
@@ -58828,6 +61578,46 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Categoria's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCategoria(String codcon, String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "codcon" 
+				+ ",nivel" 
+				+ ",cdg" 
+				+ ",descripcion" 
+				+ ",codbas" 
+				+ ",codepi" 
+				+ ",cno" 
+				+ " FROM categoria" 
+				+ " WHERE" 
+				+ " codcon = ?  "  + "AND" 				  
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, codcon ); 
+				stmt.setString(2, cdg ); 
+
+			rs = stmt.executeQuery();
+			Categoria categoria = new Categoria(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCategoria(categoria);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Emprccos's .
@@ -58858,6 +61648,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Emprccos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEmprccos(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codact" 
+				+ ",descripcion" 
+				+ " FROM emprccos" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Emprccos emprccos = new Emprccos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEmprccos(emprccos);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Porcoti's .
@@ -58888,6 +61712,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Porcoti's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPorcoti(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",ordpct" 
+				+ ",descripcion" 
+				+ " FROM porcoti" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Porcoti porcoti = new Porcoti(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPorcoti(porcoti);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Regidocu's .
@@ -58932,6 +61790,54 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Regidocu's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitRegidocu(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",codper" 
+				+ ",tipo" 
+				+ ",fechaefe" 
+				+ ",fechaent" 
+				+ ",fechapre" 
+				+ ",lugar" 
+				+ ",observa" 
+				+ ",fechaenv" 
+				+ ",tipdom" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM regidocu" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Regidocu regidocu = new Regidocu(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitRegidocu(regidocu);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Calendar's .
@@ -58965,6 +61871,43 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Calendar's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCalendar(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",feccal" 
+				+ ",tipdia" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",domicilio" 
+				+ " FROM calendar" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Calendar calendar = new Calendar(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCalendar(calendar);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nacion's .
@@ -58994,6 +61937,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nacion's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNacion(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM nacion" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Nacion nacion = new Nacion(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNacion(nacion);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Elemirpf's .
@@ -59024,6 +62000,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Elemirpf's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitElemirpf(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",porcentaje" 
+				+ " FROM elemirpf" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Elemirpf elemirpf = new Elemirpf(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitElemirpf(elemirpf);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Trabdto's .
@@ -59064,6 +62074,52 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Trabdto's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTrabdto(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",linea" 
+				+ ",concepto" 
+				+ ",afecta" 
+				+ ",importe" 
+				+ ",indimp" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM trabdto" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Trabdto trabdto = new Trabdto(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTrabdto(trabdto);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Domicilio's .
@@ -59110,6 +62166,56 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Domicilio's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitDomicilio(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "codcli" 
+				+ ",cdg" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",persona" 
+				+ ",telefono" 
+				+ ",telefono2" 
+				+ ",telefono3" 
+				+ ",fax" 
+				+ ",email" 
+				+ ",linea1" 
+				+ ",linea2" 
+				+ ",aclaracion" 
+				+ ",codnsz" 
+				+ " FROM domicilio" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Domicilio domicilio = new Domicilio(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitDomicilio(domicilio);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Masivo's .
@@ -59147,6 +62253,61 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Masivo's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitMasivo(String cdg1, String cdg2, String cdg3, String cdg4, String cdg5, String cdg6, String cdg7, String cdg8, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg1" 
+				+ ",cdg2" 
+				+ ",cdg3" 
+				+ ",cdg4" 
+				+ ",cdg5" 
+				+ ",cdg6" 
+				+ ",cdg7" 
+				+ ",cdg8" 
+				+ ",descripcion" 
+				+ ",dato" 
+				+ " FROM masivo" 
+				+ " WHERE" 
+				+ " cdg1 = ?  "  + "AND" 				  
+				+ " cdg2 = ?  "  + "AND" 				  
+				+ " cdg3 = ?  "  + "AND" 				  
+				+ " cdg4 = ?  "  + "AND" 				  
+				+ " cdg5 = ?  "  + "AND" 				  
+				+ " cdg6 = ?  "  + "AND" 				  
+				+ " cdg7 = ?  "  + "AND" 				  
+				+ " cdg8 = ?  " 				  
+				);
+
+				stmt.setString(1, cdg1 ); 
+				stmt.setString(2, cdg2 ); 
+				stmt.setString(3, cdg3 ); 
+				stmt.setString(4, cdg4 ); 
+				stmt.setString(5, cdg5 ); 
+				stmt.setString(6, cdg6 ); 
+				stmt.setString(7, cdg7 ); 
+				stmt.setString(8, cdg8 ); 
+
+			rs = stmt.executeQuery();
+			Masivo masivo = new Masivo(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitMasivo(masivo);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Complevar's .
@@ -59178,6 +62339,41 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Complevar's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitComplevar(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",importe" 
+				+ ",percep" 
+				+ " FROM complevar" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Complevar complevar = new Complevar(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitComplevar(complevar);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszcere's .
@@ -59211,7 +62407,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Cuota_01's .
@@ -59251,6 +62446,51 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Cuota_01's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCuota_01(Date fecini, Integer num_tramo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "num_tramo" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",desde_importe" 
+				+ ",hasta_importe" 
+				+ ",h_0" 
+				+ ",h_1" 
+				+ ",h_2" 
+				+ ",h_3" 
+				+ ",h_4" 
+				+ ",h_5" 
+				+ ",h_6" 
+				+ " FROM cuota_01" 
+				+ " WHERE" 
+				+ " fecini = ?  "  + "AND" 				  
+				+ " num_tramo = ?  " 				  
+				);
+
+				stmt.setDate(1, fecini ); 
+				stmt.setInt(2, num_tramo); 
+
+			rs = stmt.executeQuery();
+			Cuota_01 cuota_01 = new Cuota_01(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCuota_01(cuota_01);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Finidto's .
@@ -59282,6 +62522,43 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finidto's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFinidto(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",texto" 
+				+ ",importe" 
+				+ " FROM finidto" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Finidto finidto = new Finidto(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFinidto(finidto);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszrari's .
@@ -59343,7 +62620,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Nszdomi's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -59377,6 +62653,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nszdomi's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNszdomi(String sdm0, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "sdm0" 
+				+ ",sdm1" 
+				+ ",sdm2" 
+				+ ",sdm3" 
+				+ ",sdm4" 
+				+ ",sdm5" 
+				+ ",sdm6" 
+				+ " FROM nszdomi" 
+				+ " WHERE" 
+				+ " sdm0 = ?  " 				  
+				);
+
+				stmt.setString(1, sdm0 ); 
+
+			rs = stmt.executeQuery();
+			Nszdomi nszdomi = new Nszdomi(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNszdomi(nszdomi);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Ocupacion's .
@@ -59407,6 +62721,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Ocupacion's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitOcupacion(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",exclusivo" 
+				+ " FROM ocupacion" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Ocupacion ocupacion = new Ocupacion(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitOcupacion(ocupacion);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Trabajo's .
@@ -59493,6 +62841,98 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Trabajo's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTrabajo(Integer cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",fecant" 
+				+ ",ctacar" 
+				+ ",profesion" 
+				+ ",codcon" 
+				+ ",codcat" 
+				+ ",nivel" 
+				+ ",descat" 
+				+ ",codbas" 
+				+ ",codepi" 
+				+ ",irpf" 
+				+ ",cno" 
+				+ ",procot" 
+				+ ",proret" 
+				+ ",nummat" 
+				+ ",codcont" 
+				+ ",codtc2" 
+				+ ",destc2" 
+				+ ",fecinicont" 
+				+ ",fecfincont" 
+				+ ",diascont" 
+				+ ",autorizacion" 
+				+ ",fecaut" 
+				+ ",codent" 
+				+ ",codsuc" 
+				+ ",numcta" 
+				+ ",plunumaut" 
+				+ ",plufecaut" 
+				+ ",pluprcmin" 
+				+ ",pluprcmax" 
+				+ ",coered" 
+				+ ",semana" 
+				+ ",semanatp" 
+				+ ",cantp" 
+				+ ",baseant" 
+				+ ",indalt" 
+				+ ",inddtoit" 
+				+ ",inddtootr" 
+				+ ",codpct" 
+				+ ",indtp" 
+				+ ",indirpf" 
+				+ ",concol" 
+				+ ",indactcon" 
+				+ ",especial" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",dc" 
+				+ ",historico" 
+				+ ",indceutamelilla" 
+				+ ",colectivo" 
+				+ ",relacion" 
+				+ ",ocupacion" 
+				+ ",ocupacion2009" 
+				+ ",tipotp" 
+				+ ",diastp" 
+				+ " FROM trabajo" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Trabajo trabajo = new Trabajo(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTrabajo(trabajo);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszconv's .
@@ -59533,7 +62973,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Empresa's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -59570,6 +63009,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Empresa's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEmpresa(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",pathlog" 
+				+ " FROM empresa" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Empresa empresa = new Empresa(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEmpresa(empresa);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszcont's .
@@ -59601,7 +63081,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Cnae2009's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -59631,6 +63110,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Cnae2009's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCnae2009(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",ocupacion" 
+				+ " FROM cnae2009" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Cnae2009 cnae2009 = new Cnae2009(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCnae2009(cnae2009);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Emprccc's .
@@ -59665,6 +63178,46 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Emprccc's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEmprccc(Integer cdg, String tipccc, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",tipccc" 
+				+ ",descripcion" 
+				+ ",mutuaccc" 
+				+ ",indss" 
+				+ ",concol" 
+				+ ",seguro" 
+				+ " FROM emprccc" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " tipccc = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setString(2, tipccc ); 
+
+			rs = stmt.executeQuery();
+			Emprccc emprccc = new Emprccc(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEmprccc(emprccc);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszepig's .
@@ -59695,7 +63248,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Persona's .
@@ -59757,6 +63309,71 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Persona's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPersona(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",descripcion" 
+				+ ",apellido2" 
+				+ ",nombre" 
+				+ ",alias" 
+				+ ",aliastc2" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",telefono" 
+				+ ",fax" 
+				+ ",email" 
+				+ ",lugnac" 
+				+ ",pronac" 
+				+ ",painac" 
+				+ ",fecnac" 
+				+ ",padre" 
+				+ ",madre" 
+				+ ",nacion" 
+				+ ",numss" 
+				+ ",estciv" 
+				+ ",obsper" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",sexo" 
+				+ " FROM persona" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Persona persona = new Persona(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPersona(persona);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Variaciones's .
@@ -59808,6 +63425,65 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Variaciones's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitVariaciones(Integer cdg, Integer anio, Integer mes, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",domicilio" 
+				+ ",codcat" 
+				+ ",descripcion" 
+				+ ",horaext" 
+				+ ",inventariot" 
+				+ ",mediofestivo" 
+				+ ",festivo" 
+				+ ",sustitucion2jt" 
+				+ ",sustitucionjt" 
+				+ ",rapidez1" 
+				+ ",rapidez2" 
+				+ ",robo" 
+				+ ",diaenfermedad" 
+				+ ",inventarioa" 
+				+ ",retribucionesp" 
+				+ ",ingresocta" 
+				+ ",prestacion" 
+				+ ",incorporacion" 
+				+ " FROM variaciones" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " anio = ?  "  + "AND" 				  
+				+ " mes = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, anio); 
+				stmt.setInt(3, mes); 
+
+			rs = stmt.executeQuery();
+			Variaciones variaciones = new Variaciones(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitVariaciones(variaciones);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nsztido's .
@@ -59836,7 +63512,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Opercepciones's .
@@ -59871,6 +63546,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Opercepciones's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitOpercepciones(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",importe" 
+				+ ",base" 
+				+ ",irpf" 
+				+ ",retencion" 
+				+ ",aportass" 
+				+ " FROM opercepciones" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Opercepciones opercepciones = new Opercepciones(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitOpercepciones(opercepciones);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Emprnif's .
@@ -59931,6 +63644,70 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Emprnif's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEmprnif(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",inddoc" 
+				+ ",paiemi" 
+				+ ",numdoc" 
+				+ ",representante" 
+				+ ",cargo" 
+				+ ",fecnac" 
+				+ ",nrodocrep" 
+				+ ",codadm" 
+				+ ",tipempr" 
+				+ ",sexo" 
+				+ ",feccon" 
+				+ ",obsnif" 
+				+ ",datreg" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",tipdocrep" 
+				+ ",paidocrep" 
+				+ ",indirpf" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",divisa" 
+				+ ",envioss" 
+				+ ",cecon" 
+				+ ",modimpuesto" 
+				+ " FROM emprnif" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Emprnif emprnif = new Emprnif(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEmprnif(emprnif);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Tipboni's .
@@ -59968,6 +63745,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tipboni's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipboni(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",calculo" 
+				+ ",prc_cg" 
+				+ ",prc_acc" 
+				+ ",prc_accfgs" 
+				+ ",boniss" 
+				+ ",mayor60" 
+				+ ",rdl052006" 
+				+ ",restait" 
+				+ " FROM tipboni" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Tipboni tipboni = new Tipboni(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipboni(tipboni);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Config's .
@@ -59997,7 +63815,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Emprdom's .
@@ -60031,6 +63848,43 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Emprdom's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEmprdom(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",tipdom" 
+				+ ",codcli" 
+				+ ",coddom" 
+				+ " FROM emprdom" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Emprdom emprdom = new Emprdom(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEmprdom(emprdom);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nomdtoex's .
@@ -60067,6 +63921,50 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nomdtoex's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNomdtoex(Integer cdg, Integer numero, Integer linea, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",linea" 
+				+ ",concepto" 
+				+ ",importe" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM nomdtoex" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " numero = ?  "  + "AND" 				  
+				+ " linea = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, numero); 
+				stmt.setInt(3, linea); 
+
+			rs = stmt.executeQuery();
+			Nomdtoex nomdtoex = new Nomdtoex(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNomdtoex(nomdtoex);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Lbonifica's .
@@ -60101,6 +63999,50 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Lbonifica's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLbonifica(Integer cdg, Integer numero, Integer codbon, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",codbon" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",horas" 
+				+ ",importe" 
+				+ " FROM lbonifica" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " numero = ?  "  + "AND" 				  
+				+ " codbon = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, numero); 
+				stmt.setInt(3, codbon); 
+				stmt.setDate(4, fecini ); 
+
+			rs = stmt.executeQuery();
+			Lbonifica lbonifica = new Lbonifica(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLbonifica(lbonifica);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Parteit's .
@@ -60152,6 +64094,63 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Parteit's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitParteit(Integer cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",numcolbaj" 
+				+ ",ciasbaj" 
+				+ ",bajproc" 
+				+ ",fecfin" 
+				+ ",numcolalt" 
+				+ ",ciasalt" 
+				+ ",altproc" 
+				+ ",tipoit" 
+				+ ",recaida" 
+				+ ",feciniori" 
+				+ ",proret" 
+				+ ",baseant" 
+				+ ",diasant" 
+				+ ",baseregdia" 
+				+ ",basediacg" 
+				+ ",basediaacc" 
+				+ ",prest60" 
+				+ ",prest75" 
+				+ ",procesado" 
+				+ ",riesgo" 
+				+ ",causa_alta" 
+				+ ",fecha_at" 
+				+ " FROM parteit" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Parteit parteit = new Parteit(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitParteit(parteit);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Calen's .
@@ -60199,7 +64198,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Formcont's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -60231,6 +64229,48 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Formcont's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFormcont(Integer cdg, String tipccc, Integer mes, Integer anio, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",tipccc" 
+				+ ",mes" 
+				+ ",anio" 
+				+ ",importe" 
+				+ " FROM formcont" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " tipccc = ?  "  + "AND" 				  
+				+ " mes = ?  "  + "AND" 				  
+				+ " anio = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setString(2, tipccc ); 
+				stmt.setInt(3, mes); 
+				stmt.setInt(4, anio); 
+
+			rs = stmt.executeQuery();
+			Formcont formcont = new Formcont(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFormcont(formcont);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Httcomplemento's .
@@ -60267,6 +64307,48 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Httcomplemento's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitHttcomplemento(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",complemento" 
+				+ ",calculo" 
+				+ ",mes" 
+				+ ",cotizacion" 
+				+ ",importe" 
+				+ ",garantizado" 
+				+ ",redondeo" 
+				+ " FROM httcomplemento" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Httcomplemento httcomplemento = new Httcomplemento(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitHttcomplemento(httcomplemento);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nominadf's .
@@ -60385,6 +64467,128 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nominadf's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNominadf(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",mes" 
+				+ ",anio" 
+				+ ",orden" 
+				+ ",tipo" 
+				+ ",nomemp" 
+				+ ",fecemi" 
+				+ ",nomper" 
+				+ ",direccion" 
+				+ ",localidad" 
+				+ ",descat" 
+				+ ",profesion" 
+				+ ",nummat" 
+				+ ",fecant" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",diasnomina" 
+				+ ",total_devengos" 
+				+ ",total_devengos_e" 
+				+ ",total_deducir" 
+				+ ",total_liquido" 
+				+ ",feccob" 
+				+ ",base_concom" 
+				+ ",base_acctra" 
+				+ ",base_proext" 
+				+ ",base_con_it" 
+				+ ",base_acc_it" 
+				+ ",base_con_mat" 
+				+ ",base_acc_mat" 
+				+ ",base_con_mat_no" 
+				+ ",base_acc_mat_no" 
+				+ ",base_fogasa" 
+				+ ",base_fp" 
+				+ ",base_desempleo" 
+				+ ",base_hextras" 
+				+ ",base_hextras_no" 
+				+ ",base_exceso" 
+				+ ",base_nocotiza" 
+				+ ",base_especie" 
+				+ ",base_especie_no" 
+				+ ",base_irpf" 
+				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
+				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
+				+ ",base_horascom" 
+				+ ",base_perdes" 
+				+ ",remuneracion" 
+				+ ",base_it" 
+				+ ",total_1" 
+				+ ",codbas" 
+				+ ",base_cg" 
+				+ ",base_acc" 
+				+ ",prc_cg" 
+				+ ",prc_acc" 
+				+ ",prc_hex" 
+				+ ",prc_hexno" 
+				+ ",importe_cg" 
+				+ ",importe_acc" 
+				+ ",importe_hex" 
+				+ ",importe_hexno" 
+				+ ",mincg" 
+				+ ",maxcg" 
+				+ ",minacc" 
+				+ ",maxacc" 
+				+ ",cuota_empresa" 
+				+ ",base_acc_sin_hex" 
+				+ ",importe_cuotas" 
+				+ ",prc_irpf" 
+				+ ",importe_irpf" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",diastrab" 
+				+ ",diasefec" 
+				+ ",baseant" 
+				+ ",proret" 
+				+ ",procot" 
+				+ ",codcon" 
+				+ ",codpct" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",base_irpf_ant" 
+				+ ",importe_irpf_ant" 
+				+ ",importe_cuotas_ant" 
+				+ ",base_cg_pts" 
+				+ ",base_acc_pts" 
+				+ ",base_acc_sin_h_pts" 
+				+ ",cdgnom" 
+				+ " FROM nominadf" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Nominadf nominadf = new Nominadf(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNominadf(nominadf);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nomina's .
@@ -60502,6 +64706,127 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nomina's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNomina(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",mes" 
+				+ ",anio" 
+				+ ",orden" 
+				+ ",tipo" 
+				+ ",nomemp" 
+				+ ",fecemi" 
+				+ ",nomper" 
+				+ ",direccion" 
+				+ ",localidad" 
+				+ ",descat" 
+				+ ",profesion" 
+				+ ",nummat" 
+				+ ",fecant" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",diasnomina" 
+				+ ",total_devengos" 
+				+ ",total_devengos_e" 
+				+ ",total_deducir" 
+				+ ",total_liquido" 
+				+ ",feccob" 
+				+ ",base_concom" 
+				+ ",base_acctra" 
+				+ ",base_proext" 
+				+ ",base_con_it" 
+				+ ",base_acc_it" 
+				+ ",base_con_mat" 
+				+ ",base_acc_mat" 
+				+ ",base_con_mat_no" 
+				+ ",base_acc_mat_no" 
+				+ ",base_fogasa" 
+				+ ",base_fp" 
+				+ ",base_desempleo" 
+				+ ",base_hextras" 
+				+ ",base_hextras_no" 
+				+ ",base_exceso" 
+				+ ",base_nocotiza" 
+				+ ",base_especie" 
+				+ ",base_especie_no" 
+				+ ",base_irpf" 
+				+ ",base_irpf_especie" 
+				+ ",base_irpf_espec_no" 
+				+ ",base_irpf_nocotiza" 
+				+ ",base_irpf_nocoti_e" 
+				+ ",base_horascom" 
+				+ ",base_perdes" 
+				+ ",remuneracion" 
+				+ ",base_it" 
+				+ ",total_1" 
+				+ ",codbas" 
+				+ ",base_cg" 
+				+ ",base_acc" 
+				+ ",prc_cg" 
+				+ ",prc_acc" 
+				+ ",prc_hex" 
+				+ ",prc_hexno" 
+				+ ",importe_cg" 
+				+ ",importe_acc" 
+				+ ",importe_hex" 
+				+ ",importe_hexno" 
+				+ ",mincg" 
+				+ ",maxcg" 
+				+ ",minacc" 
+				+ ",maxacc" 
+				+ ",cuota_empresa" 
+				+ ",base_acc_sin_hex" 
+				+ ",importe_cuotas" 
+				+ ",prc_irpf" 
+				+ ",importe_irpf" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",diastrab" 
+				+ ",diasefec" 
+				+ ",baseant" 
+				+ ",proret" 
+				+ ",procot" 
+				+ ",codcon" 
+				+ ",codpct" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",base_irpf_ant" 
+				+ ",importe_irpf_ant" 
+				+ ",importe_cuotas_ant" 
+				+ ",base_cg_pts" 
+				+ ",base_acc_pts" 
+				+ ",base_acc_sin_h_pts" 
+				+ " FROM nomina" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Nomina nomina = new Nomina(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNomina(nomina);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Exclusion's .
@@ -60534,6 +64859,46 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Exclusion's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitExclusion(Date fecini, String situacion, String hijos, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "fecini" 
+				+ ",fecfin" 
+				+ ",situacion" 
+				+ ",hijos" 
+				+ ",importe" 
+				+ " FROM exclusion" 
+				+ " WHERE" 
+				+ " fecini = ?  "  + "AND" 				  
+				+ " situacion = ?  "  + "AND" 				  
+				+ " hijos = ?  " 				  
+				);
+
+				stmt.setDate(1, fecini ); 
+				stmt.setString(2, situacion ); 
+				stmt.setString(3, hijos ); 
+
+			rs = stmt.executeQuery();
+			Exclusion exclusion = new Exclusion(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitExclusion(exclusion);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszpaga's .
@@ -60564,7 +64929,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Nomdfdto's .
@@ -60600,6 +64964,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nomdfdto's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNomdfdto(Integer cdg, Integer linea, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",linea" 
+				+ ",concepto" 
+				+ ",importe" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM nomdfdto" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " linea = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, linea); 
+
+			rs = stmt.executeQuery();
+			Nomdfdto nomdfdto = new Nomdfdto(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNomdfdto(nomdfdto);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszmupa's .
@@ -60629,7 +65034,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Tiposdoc's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -60658,6 +65062,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tiposdoc's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTiposdoc(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tiposdoc" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tiposdoc tiposdoc = new Tiposdoc(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTiposdoc(tiposdoc);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszbolc's .
@@ -60727,7 +65164,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Nszpoco's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -60760,7 +65196,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Tipinc's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -60791,6 +65226,41 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tipinc's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipinc(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",indresta" 
+				+ ",inddto" 
+				+ " FROM tipinc" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipinc tipinc = new Tipinc(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipinc(tipinc);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Session's .
@@ -60826,6 +65296,45 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Session's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitSession(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "id" 
+				+ ",enddate" 
+				+ ",remote_address" 
+				+ ",remote_host" 
+				+ ",session_id" 
+				+ ",startdate" 
+				+ ",application_id" 
+				+ ",user_id" 
+				+ " FROM session" 
+				+ " WHERE" 
+				+ " id = ?  " 				  
+				);
+
+				stmt.setInt(1, id); 
+
+			rs = stmt.executeQuery();
+			Session session = new Session(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitSession(session);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Lcomunica's .
@@ -60861,6 +65370,49 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Lcomunica's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLcomunica(Integer cdg, Integer numero, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",orden" 
+				+ ",anionac" 
+				+ ",xminus" 
+				+ ",des_asc" 
+				+ ",descen_ent" 
+				+ ",conviv" 
+				+ " FROM lcomunica" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " numero = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, numero); 
+				stmt.setInt(3, orden); 
+
+			rs = stmt.executeQuery();
+			Lcomunica lcomunica = new Lcomunica(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLcomunica(lcomunica);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Linautom's .
@@ -60890,6 +65442,41 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linautom's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinautom(Integer cdg, Integer codigo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codigo" 
+				+ " FROM linautom" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " codigo = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, codigo); 
+
+			rs = stmt.executeQuery();
+			Linautom linautom = new Linautom(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinautom(linautom);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Cuota_20's .
@@ -60929,6 +65516,51 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Cuota_20's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCuota_20(Date fecini, Integer num_tramo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "num_tramo" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",desde_importe" 
+				+ ",hasta_importe" 
+				+ ",h_0" 
+				+ ",h_1" 
+				+ ",h_2" 
+				+ ",h_3" 
+				+ ",h_4" 
+				+ ",h_5" 
+				+ ",h_6" 
+				+ " FROM cuota_20" 
+				+ " WHERE" 
+				+ " fecini = ?  "  + "AND" 				  
+				+ " num_tramo = ?  " 				  
+				);
+
+				stmt.setDate(1, fecini ); 
+				stmt.setInt(2, num_tramo); 
+
+			rs = stmt.executeQuery();
+			Cuota_20 cuota_20 = new Cuota_20(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCuota_20(cuota_20);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Opfile's .
@@ -60971,6 +65603,52 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Opfile's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitOpfile(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",apellido1" 
+				+ ",apellido2" 
+				+ ",nombre" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",importe" 
+				+ ",retencion" 
+				+ ",segsocial" 
+				+ ",fecnac" 
+				+ " FROM opfile" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Opfile opfile = new Opfile(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitOpfile(opfile);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Tc2's .
@@ -61026,6 +65704,65 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tc2's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTc2(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codact" 
+				+ ",codccc" 
+				+ ",codcon" 
+				+ ",numtra" 
+				+ ",mes" 
+				+ ",anio" 
+				+ ",mesref" 
+				+ ",anioref" 
+				+ ",tipo" 
+				+ ",base_concom" 
+				+ ",base_acctra" 
+				+ ",base_hexno" 
+				+ ",base_hexest" 
+				+ ",base_cccemp" 
+				+ ",base_occemp" 
+				+ ",comp_ecal" 
+				+ ",comp_acc" 
+				+ ",red_concom" 
+				+ ",red_inem" 
+				+ ",imprime" 
+				+ ",divisa" 
+				+ ",tc2red" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",indregimen" 
+				+ " FROM tc2" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Tc2 tc2 = new Tc2(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTc2(tc2);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Tc1's .
@@ -61138,6 +65875,122 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tc1's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTc1(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codact" 
+				+ ",codccc" 
+				+ ",numtra" 
+				+ ",desde_mes" 
+				+ ",desde_anio" 
+				+ ",hasta_mes" 
+				+ ",hasta_anio" 
+				+ ",mutuaccc" 
+				+ ",base_concom" 
+				+ ",prc_concom" 
+				+ ",cuota_concom" 
+				+ ",base_hexno" 
+				+ ",prc_hexno" 
+				+ ",cuota_hexno" 
+				+ ",base_hexest" 
+				+ ",prc_hexest" 
+				+ ",cuota_hexest" 
+				+ ",base_redit" 
+				+ ",base_redcc" 
+				+ ",base_reducc" 
+				+ ",liq_cotgen" 
+				+ ",base_acctra" 
+				+ ",cuotas_it" 
+				+ ",cuotas_ims" 
+				+ ",cuotas_acc" 
+				+ ",comp_it" 
+				+ ",liq_acc" 
+				+ ",prc_desem" 
+				+ ",cuota_desem" 
+				+ ",red_inem" 
+				+ ",liq_otras" 
+				+ ",base_mora" 
+				+ ",prc_mora" 
+				+ ",cuota_mora" 
+				+ ",importe_tc1" 
+				+ ",base_servcom" 
+				+ ",prc_servcom" 
+				+ ",cuota_servcom" 
+				+ ",base_dedcol" 
+				+ ",prc_dedcol" 
+				+ ",cuota_dedcol" 
+				+ ",numero" 
+				+ ",codper" 
+				+ ",dias" 
+				+ ",codbas" 
+				+ ",codtc2" 
+				+ ",codepi" 
+				+ ",horas" 
+				+ ",diasit" 
+				+ ",diasmat" 
+				+ ",base_acc" 
+				+ ",fecha" 
+				+ ",sitesp" 
+				+ ",nombre" 
+				+ ",apellidos" 
+				+ ",mostrar" 
+				+ ",cdgred" 
+				+ ",desglose" 
+				+ ",comision" 
+				+ ",tipotc1" 
+				+ ",tc2" 
+				+ ",divisa" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",cdg_otrcon" 
+				+ ",base_otrcon" 
+				+ ",prc_otrcon" 
+				+ ",cuota_otrcon" 
+				+ ",base_concom_ce" 
+				+ ",prc_concom_ce" 
+				+ ",cuota_concom_ce" 
+				+ ",base_desem_ce" 
+				+ ",prc_desem_ce" 
+				+ ",cuota_desem_ce" 
+				+ ",base_desem" 
+				+ ",horcomp" 
+				+ ",impcomp" 
+				+ ",horpres" 
+				+ ",imppres" 
+				+ ",hordist" 
+				+ ",impdist" 
+				+ ",indregimen" 
+				+ " FROM tc1" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Tc1 tc1 = new Tc1(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTc1(tc1);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Tipaut's .
@@ -61167,6 +66020,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tipaut's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipaut(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tipaut" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipaut tipaut = new Tipaut(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipaut(tipaut);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Delegacion's .
@@ -61204,6 +66090,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Delegacion's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitDelegacion(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",otrdir" 
+				+ ",codpos" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",telefono" 
+				+ " FROM delegacion" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Delegacion delegacion = new Delegacion(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitDelegacion(delegacion);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Sucursal's .
@@ -61236,6 +66163,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Sucursal's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitSucursal(String codent, String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "codent" 
+				+ ",cdg" 
+				+ ",domsuc" 
+				+ ",munsuc" 
+				+ ",cpsuc" 
+				+ " FROM sucursal" 
+				+ " WHERE" 
+				+ " codent = ?  "  + "AND" 				  
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, codent ); 
+				stmt.setString(2, cdg ); 
+
+			rs = stmt.executeQuery();
+			Sucursal sucursal = new Sucursal(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitSucursal(sucursal);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Pais's .
@@ -61265,6 +66230,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Pais's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPais(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM pais" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Pais pais = new Pais(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPais(pais);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Convenio's .
@@ -61296,6 +66294,41 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Convenio's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitConvenio(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",inddia" 
+				+ ",tipcon" 
+				+ " FROM convenio" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Convenio convenio = new Convenio(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitConvenio(convenio);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Action_denied's .
@@ -61326,6 +66359,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Action_denied's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitAction_denied(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "id" 
+				+ ",action_id" 
+				+ ",user_id" 
+				+ " FROM action_denied" 
+				+ " WHERE" 
+				+ " id = ?  " 				  
+				);
+
+				stmt.setInt(1, id); 
+
+			rs = stmt.executeQuery();
+			Action_denied action_denied = new Action_denied(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitAction_denied(action_denied);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Admon's .
@@ -61355,6 +66422,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Admon's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitAdmon(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM admon" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Admon admon = new Admon(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitAdmon(admon);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Linelem's .
@@ -61387,6 +66487,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linelem's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinelem(String cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",dato1" 
+				+ ",dato2" 
+				+ " FROM linelem" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Linelem linelem = new Linelem(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinelem(linelem);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszmest's .
@@ -61449,7 +66587,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Calfiniquito's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -61485,6 +66622,56 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Calfiniquito's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCalfiniquito(Integer cdg, Integer codcli, Integer codemp, Integer codact, Integer coddom, Integer codtra, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",coddom" 
+				+ ",codtra" 
+				+ ",descripcion" 
+				+ ",fecha" 
+				+ ",causa" 
+				+ " FROM calfiniquito" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " codcli = ?  "  + "AND" 				  
+				+ " codemp = ?  "  + "AND" 				  
+				+ " codact = ?  "  + "AND" 				  
+				+ " coddom = ?  "  + "AND" 				  
+				+ " codtra = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, codcli); 
+				stmt.setInt(3, codemp); 
+				stmt.setInt(4, codact); 
+				stmt.setInt(5, coddom); 
+				stmt.setInt(6, codtra); 
+
+			rs = stmt.executeQuery();
+			Calfiniquito calfiniquito = new Calfiniquito(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCalfiniquito(calfiniquito);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Cuota_31's .
@@ -61528,6 +66715,55 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Cuota_31's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCuota_31(Date fecini, Integer num_tramo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "num_tramo" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",desde_importe" 
+				+ ",hasta_importe" 
+				+ ",h_0" 
+				+ ",h_1" 
+				+ ",h_2" 
+				+ ",h_3" 
+				+ ",h_4" 
+				+ ",h_5" 
+				+ ",h_6" 
+				+ ",h_7" 
+				+ ",h_8" 
+				+ ",h_9" 
+				+ ",h_10" 
+				+ " FROM cuota_31" 
+				+ " WHERE" 
+				+ " fecini = ?  "  + "AND" 				  
+				+ " num_tramo = ?  " 				  
+				);
+
+				stmt.setDate(1, fecini ); 
+				stmt.setInt(2, num_tramo); 
+
+			rs = stmt.executeQuery();
+			Cuota_31 cuota_31 = new Cuota_31(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCuota_31(cuota_31);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Percepcion's .
@@ -61558,6 +66794,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Percepcion's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPercepcion(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",tipo" 
+				+ " FROM percepcion" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Percepcion percepcion = new Percepcion(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPercepcion(percepcion);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Linpercepcion's .
@@ -61591,6 +66861,45 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linpercepcion's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinpercepcion(String cdg, Date fecinicio, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecinicio" 
+				+ ",fecfin" 
+				+ ",importe" 
+				+ ",nocturno" 
+				+ ",empresa" 
+				+ " FROM linpercepcion" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecinicio = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecinicio ); 
+
+			rs = stmt.executeQuery();
+			Linpercepcion linpercepcion = new Linpercepcion(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinpercepcion(linpercepcion);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Perfil's .
@@ -61632,6 +66941,51 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Perfil's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPerfil(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",autoriza" 
+				+ ",silcon" 
+				+ ",actpwd" 
+				+ ",newpwd" 
+				+ ",fecini" 
+				+ ",nombre" 
+				+ ",servidorsmtp" 
+				+ ",puertosmtp" 
+				+ ",servidorpop3" 
+				+ ",autenticacion" 
+				+ ",usuario" 
+				+ ",contrasena" 
+				+ ",correo" 
+				+ " FROM perfil" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Perfil perfil = new Perfil(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPerfil(perfil);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszinci's .
@@ -61672,7 +67026,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Nszcdtr's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -61706,7 +67059,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Complemento's .
@@ -61742,6 +67094,45 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Complemento's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitComplemento(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",tipcot" 
+				+ ",descripcion" 
+				+ ",desabr" 
+				+ ",tipcom" 
+				+ ",fijovar" 
+				+ ",indcom" 
+				+ ",dinesp" 
+				+ " FROM complemento" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Complemento complemento = new Complemento(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitComplemento(complemento);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszadmh's .
@@ -61770,7 +67161,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Nszbase's .
@@ -61804,7 +67194,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Finiquito's .
@@ -61860,6 +67249,65 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finiquito's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFiniquito(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "codper" 
+				+ ",fecbaj" 
+				+ ",causa" 
+				+ ",vacfecini" 
+				+ ",vacimporte" 
+				+ ",total_conceptos" 
+				+ ",base" 
+				+ ",irpf" 
+				+ ",importe_irpf" 
+				+ ",liquido" 
+				+ ",importesin" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",cdg" 
+				+ ",simula" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",diasvac" 
+				+ ",costessemp" 
+				+ ",codbas" 
+				+ ",basecg" 
+				+ ",prccg" 
+				+ ",importecg" 
+				+ ",baseacc" 
+				+ ",prcacc" 
+				+ ",importeacc" 
+				+ " FROM finiquito" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Finiquito finiquito = new Finiquito(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFiniquito(finiquito);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Action_favorite's .
@@ -61891,6 +67339,41 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Action_favorite's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitAction_favorite(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "id" 
+				+ ",position" 
+				+ ",action_id" 
+				+ ",user_id" 
+				+ " FROM action_favorite" 
+				+ " WHERE" 
+				+ " id = ?  " 				  
+				);
+
+				stmt.setInt(1, id); 
+
+			rs = stmt.executeQuery();
+			Action_favorite action_favorite = new Action_favorite(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitAction_favorite(action_favorite);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Tipocnae's .
@@ -61920,6 +67403,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tipocnae's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipocnae(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tipocnae" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipocnae tipocnae = new Tipocnae(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipocnae(tipocnae);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Prcdivnom's .
@@ -61951,6 +67467,43 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Prcdivnom's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPrcdivnom(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",prc" 
+				+ ",texto" 
+				+ " FROM prcdivnom" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Prcdivnom prcdivnom = new Prcdivnom(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPrcdivnom(prcdivnom);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszilte's .
@@ -61987,7 +67540,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Nominaex's .
@@ -62045,6 +67597,69 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nominaex's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNominaex(Integer cdg, Integer numero, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",codcom" 
+				+ ",importe" 
+				+ ",fijovar" 
+				+ ",irpf" 
+				+ ",impirpf" 
+				+ ",liquido" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",feccob" 
+				+ ",descom" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",fecemi" 
+				+ ",nomemp" 
+				+ ",nomper" 
+				+ ",direccion" 
+				+ ",localidad" 
+				+ ",descat" 
+				+ ",profesion" 
+				+ ",nummat" 
+				+ ",fecant" 
+				+ ",total_deducir" 
+				+ " FROM nominaex" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " numero = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, numero); 
+
+			rs = stmt.executeQuery();
+			Nominaex nominaex = new Nominaex(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNominaex(nominaex);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Cuota_48's .
@@ -62084,6 +67699,51 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Cuota_48's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCuota_48(Date fecini, Integer num_tramo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "num_tramo" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",desde_importe" 
+				+ ",hasta_importe" 
+				+ ",h_0" 
+				+ ",h_1" 
+				+ ",h_2" 
+				+ ",h_3" 
+				+ ",h_4" 
+				+ ",h_5" 
+				+ ",h_6" 
+				+ " FROM cuota_48" 
+				+ " WHERE" 
+				+ " fecini = ?  "  + "AND" 				  
+				+ " num_tramo = ?  " 				  
+				);
+
+				stmt.setDate(1, fecini ); 
+				stmt.setInt(2, num_tramo); 
+
+			rs = stmt.executeQuery();
+			Cuota_48 cuota_48 = new Cuota_48(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCuota_48(cuota_48);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nominaitnu's .
@@ -62131,6 +67791,61 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nominaitnu's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNominaitnu(Integer cdg, Date feciniit, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",feciniit" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",tipoit" 
+				+ ",diasit" 
+				+ ",dias_ss" 
+				+ ",diasemp" 
+				+ ",diasin" 
+				+ ",dias60" 
+				+ ",dias75" 
+				+ ",pts_ss" 
+				+ ",ptsemp" 
+				+ ",basecon" 
+				+ ",baseacc" 
+				+ ",totaldias" 
+				+ ",simula" 
+				+ ",basecon_total" 
+				+ ",baseacc_total" 
+				+ ",riesgo" 
+				+ " FROM nominaitnu" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " feciniit = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, feciniit ); 
+				stmt.setDate(3, fecini ); 
+
+			rs = stmt.executeQuery();
+			Nominaitnu nominaitnu = new Nominaitnu(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNominaitnu(nominaitnu);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Parteconf's .
@@ -62165,6 +67880,48 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Parteconf's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitParteconf(Integer cdg, Date fecini, Integer numero, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",numero" 
+				+ ",numcol" 
+				+ ",cias" 
+				+ ",fecconf" 
+				+ ",parproc" 
+				+ " FROM parteconf" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  "  + "AND" 				  
+				+ " numero = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+				stmt.setInt(3, numero); 
+
+			rs = stmt.executeQuery();
+			Parteconf parteconf = new Parteconf(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitParteconf(parteconf);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Tipdoc's .
@@ -62194,6 +67951,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tipdoc's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipdoc(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tipdoc" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipdoc tipdoc = new Tipdoc(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipdoc(tipdoc);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Elemcoti's .
@@ -62223,6 +68013,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Elemcoti's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitElemcoti(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM elemcoti" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Elemcoti elemcoti = new Elemcoti(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitElemcoti(elemcoti);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Remesaafi's .
@@ -62263,6 +68086,54 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Remesaafi's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitRemesaafi(Integer cdg, Integer codtra, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",coddom" 
+				+ ",codtra" 
+				+ ",fecini" 
+				+ ",descripcion" 
+				+ ",fecha" 
+				+ ",accion" 
+				+ ",situacion" 
+				+ ",orden" 
+				+ ",tipo" 
+				+ " FROM remesaafi" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " codtra = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, codtra); 
+				stmt.setInt(3, orden); 
+
+			rs = stmt.executeQuery();
+			Remesaafi remesaafi = new Remesaafi(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitRemesaafi(remesaafi);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Impr11x's .
@@ -62334,6 +68205,81 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Impr11x's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitImpr11x(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",tipo" 
+				+ ",codemp" 
+				+ ",codadm" 
+				+ ",provincia" 
+				+ ",anio" 
+				+ ",trimestre" 
+				+ ",mes" 
+				+ ",tradinper" 
+				+ ",tradinimp" 
+				+ ",tradinret" 
+				+ ",traespper" 
+				+ ",traespimp" 
+				+ ",traespret" 
+				+ ",actdinper" 
+				+ ",actdinimp" 
+				+ ",actdinret" 
+				+ ",actespper" 
+				+ ",actespimp" 
+				+ ",actespret" 
+				+ ",predinper" 
+				+ ",predinimp" 
+				+ ",predinret" 
+				+ ",preespper" 
+				+ ",preespimp" 
+				+ ",preespret" 
+				+ ",liqtotal" 
+				+ ",fpago" 
+				+ ",entidad" 
+				+ ",sucursal" 
+				+ ",dc" 
+				+ ",cuenta" 
+				+ ",fecha" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",divisa" 
+				+ ",imgper" 
+				+ ",imgimp" 
+				+ ",imgret" 
+				+ ",modimpuesto" 
+				+ ",nrc" 
+				+ ",fecremimp" 
+				+ " FROM impr11x" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Impr11x impr11x = new Impr11x(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitImpr11x(impr11x);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nominait's .
@@ -62381,6 +68327,61 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nominait's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNominait(Integer cdg, Date feciniit, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",feciniit" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",tipoit" 
+				+ ",diasit" 
+				+ ",dias_ss" 
+				+ ",diasemp" 
+				+ ",diasin" 
+				+ ",dias60" 
+				+ ",dias75" 
+				+ ",pts_ss" 
+				+ ",ptsemp" 
+				+ ",basecon" 
+				+ ",baseacc" 
+				+ ",totaldias" 
+				+ ",simula" 
+				+ ",basecon_total" 
+				+ ",baseacc_total" 
+				+ ",riesgo" 
+				+ " FROM nominait" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " feciniit = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, feciniit ); 
+				stmt.setDate(3, fecini ); 
+
+			rs = stmt.executeQuery();
+			Nominait nominait = new Nominait(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNominait(nominait);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Httbonificacion's .
@@ -62415,6 +68416,46 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Httbonificacion's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitHttbonificacion(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",bonificacion" 
+				+ ",fecinicio" 
+				+ ",fecfin" 
+				+ ",horas" 
+				+ ",importe" 
+				+ " FROM httbonificacion" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Httbonificacion httbonificacion = new Httbonificacion(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitHttbonificacion(httbonificacion);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Prestaciones's .
@@ -62443,6 +68484,38 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Prestaciones's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPrestaciones(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ " FROM prestaciones" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Prestaciones prestaciones = new Prestaciones(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPrestaciones(prestaciones);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Autbases's .
@@ -62475,6 +68548,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Autbases's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitAutbases(Integer cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",base" 
+				+ ",cuota" 
+				+ " FROM autbases" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Autbases autbases = new Autbases(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitAutbases(autbases);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Rem_cert_empr_det's .
@@ -62507,6 +68618,42 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Rem_cert_empr_det's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitRem_cert_empr_det(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "id" 
+				+ ",rem_cert_empr" 
+				+ ",empleado" 
+				+ ",fecha_baja" 
+				+ ",causa_suspension" 
+				+ " FROM rem_cert_empr_det" 
+				+ " WHERE" 
+				+ " id = ?  " 				  
+				);
+
+				stmt.setInt(1, id); 
+
+			rs = stmt.executeQuery();
+			Rem_cert_empr_det rem_cert_empr_det = new Rem_cert_empr_det(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitRem_cert_empr_det(rem_cert_empr_det);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Emprctra's .
@@ -62551,6 +68698,58 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Emprctra's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEmprctra(Integer codact, Integer cdg, Integer domicilio, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "codact" 
+				+ ",cdg" 
+				+ ",domicilio" 
+				+ ",superficie" 
+				+ ",pelectri" 
+				+ ",horario" 
+				+ ",maquina" 
+				+ ",toxicos" 
+				+ ",inddia" 
+				+ ",codcon" 
+				+ ",represen" 
+				+ ",jornada" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",fiestas" 
+				+ ",envioss" 
+				+ " FROM emprctra" 
+				+ " WHERE" 
+				+ " codact = ?  "  + "AND" 				  
+				+ " cdg = ?  "  + "AND" 				  
+				+ " domicilio = ?  " 				  
+				);
+
+				stmt.setInt(1, codact); 
+				stmt.setInt(2, cdg); 
+				stmt.setInt(3, domicilio); 
+
+			rs = stmt.executeQuery();
+			Emprctra emprctra = new Emprctra(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEmprctra(emprctra);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszprov's .
@@ -62579,7 +68778,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Bonifica's .
@@ -62615,6 +68813,49 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Bonifica's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitBonifica(Integer numero, Integer cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "numero" 
+				+ ",cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",horas" 
+				+ ",importe" 
+				+ ",tipo" 
+				+ ",prorrateo" 
+				+ " FROM bonifica" 
+				+ " WHERE" 
+				+ " numero = ?  "  + "AND" 				  
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setInt(1, numero); 
+				stmt.setInt(2, cdg); 
+				stmt.setDate(3, fecini ); 
+
+			rs = stmt.executeQuery();
+			Bonifica bonifica = new Bonifica(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitBonifica(bonifica);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Minor_48's .
@@ -62650,6 +68891,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Minor_48's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitMinor_48(Date fecini, Integer num_tramo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "num_tramo" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",desde_importe" 
+				+ ",hasta_importe" 
+				+ ",min_minus" 
+				+ ",min_ayuda" 
+				+ ",min_granminus" 
+				+ " FROM minor_48" 
+				+ " WHERE" 
+				+ " fecini = ?  "  + "AND" 				  
+				+ " num_tramo = ?  " 				  
+				);
+
+				stmt.setDate(1, fecini ); 
+				stmt.setInt(2, num_tramo); 
+
+			rs = stmt.executeQuery();
+			Minor_48 minor_48 = new Minor_48(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitMinor_48(minor_48);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Percep's .
@@ -62702,6 +68984,64 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Percep's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPercep(Integer numero, Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",fecret" 
+				+ ",codcom" 
+				+ ",descom" 
+				+ ",desabr" 
+				+ ",calculo" 
+				+ ",tipcot" 
+				+ ",unidades" 
+				+ ",impuni" 
+				+ ",importe" 
+				+ ",mes" 
+				+ ",garilt" 
+				+ ",comapl" 
+				+ ",redext" 
+				+ ",fijovar" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",indcom" 
+				+ ",tipcom" 
+				+ ",dinesp" 
+				+ " FROM percep" 
+				+ " WHERE" 
+				+ " numero = ?  "  + "AND" 				  
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, numero); 
+				stmt.setInt(2, cdg); 
+
+			rs = stmt.executeQuery();
+			Percep percep = new Percep(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPercep(percep);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Calculo's .
@@ -62781,6 +69121,95 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Calculo's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCalculo(Integer cdg, Integer anio, Integer mes, Integer dia, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",anio" 
+				+ ",mes" 
+				+ ",dia" 
+				+ ",indirpf" 
+				+ ",aplicado" 
+				+ ",retr_ant" 
+				+ ",retr_acu_fij" 
+				+ ",retr_acu_var" 
+				+ ",retr_pre_fij" 
+				+ ",retr_pre_var" 
+				+ ",retr_estimada" 
+				+ ",retr_consid" 
+				+ ",imp_acu_ss" 
+				+ ",imp_pre_ss" 
+				+ ",imp_irreg" 
+				+ ",imp_rentas" 
+				+ ",imp_personal" 
+				+ ",imp_familiar" 
+				+ ",imp_descen" 
+				+ ",imp_pension" 
+				+ ",imp_css" 
+				+ ",imp_ascen" 
+				+ ",base_calculo" 
+				+ ",imp_anualid" 
+				+ ",cuota_calculo" 
+				+ ",cuota_anualid" 
+				+ ",irpf_acu" 
+				+ ",irpf_cal" 
+				+ ",irpf" 
+				+ ",irpf_anterior" 
+				+ ",regula" 
+				+ ",diascont" 
+				+ ",hijos" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",minforal" 
+				+ ",imp_discapacidadt" 
+				+ ",imp_cuidadohijo" 
+				+ ",imp_discapacidad" 
+				+ ",imp_pensionista" 
+				+ ",imp_prolongacion" 
+				+ ",imp_movilidad" 
+				+ ",imp_asistencia" 
+				+ ",retanualn" 
+				+ ",retanualb" 
+				+ ",difret" 
+				+ ",irpfanual" 
+				+ ",prcredhipoteca" 
+				+ ",impredhipoteca" 
+				+ " FROM calculo" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " anio = ?  "  + "AND" 				  
+				+ " mes = ?  "  + "AND" 				  
+				+ " dia = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, anio); 
+				stmt.setInt(3, mes); 
+				stmt.setInt(4, dia); 
+
+			rs = stmt.executeQuery();
+			Calculo calculo = new Calculo(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCalculo(calculo);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Action's .
@@ -62812,6 +69241,41 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Action's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitAction(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "id" 
+				+ ",menu" 
+				+ ",name" 
+				+ ",application_id" 
+				+ " FROM action" 
+				+ " WHERE" 
+				+ " id = ?  " 				  
+				);
+
+				stmt.setInt(1, id); 
+
+			rs = stmt.executeQuery();
+			Action action = new Action(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitAction(action);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszdcpr's .
@@ -62917,7 +69381,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Nivel's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -62946,6 +69409,41 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nivel's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNivel(String codcon, String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "codcon" 
+				+ ",cdg" 
+				+ " FROM nivel" 
+				+ " WHERE" 
+				+ " codcon = ?  "  + "AND" 				  
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, codcon ); 
+				stmt.setString(2, cdg ); 
+
+			rs = stmt.executeQuery();
+			Nivel nivel = new Nivel(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNivel(nivel);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszodet's .
@@ -62975,7 +69473,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Procesos's .
@@ -63007,6 +69504,43 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Procesos's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitProcesos(Integer cdg, String tipo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",tipo" 
+				+ ",fecha" 
+				+ ",hora" 
+				+ " FROM procesos" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " tipo = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setString(2, tipo ); 
+
+			rs = stmt.executeQuery();
+			Procesos procesos = new Procesos(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitProcesos(procesos);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Remesa_parte_it's .
@@ -63055,6 +69589,58 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Remesa_parte_it's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitRemesa_parte_it(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "id" 
+				+ ",remesa_inss" 
+				+ ",empleado" 
+				+ ",fecha_baja" 
+				+ ",fecha_parte" 
+				+ ",numero_colegiado" 
+				+ ",cias" 
+				+ ",tipo_parte_it" 
+				+ ",numero" 
+				+ ",tipo_it" 
+				+ ",recaida" 
+				+ ",prorrateo_coti" 
+				+ ",baseant" 
+				+ ",diasant" 
+				+ ",baseregdia" 
+				+ ",basediacg" 
+				+ ",basediaacc" 
+				+ ",prest60" 
+				+ ",prest75" 
+				+ ",procesado" 
+				+ ",riesgo" 
+				+ " FROM remesa_parte_it" 
+				+ " WHERE" 
+				+ " id = ?  " 				  
+				);
+
+				stmt.setInt(1, id); 
+
+			rs = stmt.executeQuery();
+			Remesa_parte_it remesa_parte_it = new Remesa_parte_it(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitRemesa_parte_it(remesa_parte_it);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Linepigr's .
@@ -63089,6 +69675,46 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linepigr's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinepigr(String cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",indit" 
+				+ ",canit" 
+				+ ",indipm" 
+				+ ",canipm" 
+				+ " FROM linepigr" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Linepigr linepigr = new Linepigr(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinepigr(linepigr);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Lin190's .
@@ -63176,6 +69802,99 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Lin190's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLin190(Integer cdg, Integer linea, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",linea" 
+				+ ",numdoc" 
+				+ ",clave" 
+				+ ",subclave" 
+				+ ",imp_per_din" 
+				+ ",imp_ret_din" 
+				+ ",imp_per_esp" 
+				+ ",imp_ing_cta" 
+				+ ",imp_ing_rep" 
+				+ ",devengo" 
+				+ ",anionac" 
+				+ ",xminus" 
+				+ ",sitfam" 
+				+ ",nifcony" 
+				+ ",hijo_3" 
+				+ ",hijo_16" 
+				+ ",hijo_25" 
+				+ ",minus_33" 
+				+ ",minus_65" 
+				+ ",hijos" 
+				+ ",relacion" 
+				+ ",imp_reducc" 
+				+ ",imp_gastos" 
+				+ ",imp_pension" 
+				+ ",imp_anual" 
+				+ ",nomapel" 
+				+ ",provincia" 
+				+ ",c_m" 
+				+ ",descentero" 
+				+ ",totalasc" 
+				+ ",ascentero" 
+				+ ",ascminus_33" 
+				+ ",ascminus_65" 
+				+ ",movilidad" 
+				+ ",prolongacion" 
+				+ ",hipoteca" 
+				+ ",descme3" 
+				+ ",descme3e" 
+				+ ",descma3" 
+				+ ",descma3e" 
+				+ ",computo1" 
+				+ ",computo2" 
+				+ ",computo3" 
+				+ ",descdi33" 
+				+ ",descdi33e" 
+				+ ",descdimr" 
+				+ ",descdimre" 
+				+ ",descdi65" 
+				+ ",descdi65e" 
+				+ ",ascme75" 
+				+ ",ascme75e" 
+				+ ",ascma75" 
+				+ ",ascma75e" 
+				+ ",ascdi33" 
+				+ ",ascdi33e" 
+				+ ",ascdimr" 
+				+ ",ascdimre" 
+				+ ",ascdi65" 
+				+ ",ascdi65e" 
+				+ " FROM lin190" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " linea = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, linea); 
+
+			rs = stmt.executeQuery();
+			Lin190 lin190 = new Lin190(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLin190(lin190);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Ajustes's .
@@ -63209,6 +69928,43 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Ajustes's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitAjustes(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",descripcion" 
+				+ ",importe" 
+				+ " FROM ajustes" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Ajustes ajustes = new Ajustes(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitAjustes(ajustes);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Finipextdf's .
@@ -63242,6 +69998,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finipextdf's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFinipextdf(Integer cdg, Date fecini, String codcom, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",codcom" 
+				+ ",importe" 
+				+ ",descom" 
+				+ " FROM finipextdf" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  "  + "AND" 				  
+				+ " codcom = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+				stmt.setString(3, codcom ); 
+
+			rs = stmt.executeQuery();
+			Finipextdf finipextdf = new Finipextdf(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFinipextdf(finipextdf);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Tipempr's .
@@ -63271,6 +70068,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Tipempr's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTipempr(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM tipempr" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Tipempr tipempr = new Tipempr(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTipempr(tipempr);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Emprlban's .
@@ -63304,6 +70134,43 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Emprlban's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEmprlban(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codcta" 
+				+ ",codcli" 
+				+ ",codemp" 
+				+ ",codact" 
+				+ ",tipcta" 
+				+ " FROM emprlban" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Emprlban emprlban = new Emprlban(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEmprlban(emprlban);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Finiquitodf's .
@@ -63359,6 +70226,65 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finiquitodf's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFiniquitodf(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "codper" 
+				+ ",fecbaj" 
+				+ ",causa" 
+				+ ",vacfecini" 
+				+ ",vacimporte" 
+				+ ",total_conceptos" 
+				+ ",base" 
+				+ ",irpf" 
+				+ ",importe_irpf" 
+				+ ",liquido" 
+				+ ",importesin" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",cdg" 
+				+ ",cdgnom" 
+				+ ",feccobreal" 
+				+ ",divisa" 
+				+ ",diasvac" 
+				+ ",costessemp" 
+				+ ",codbas" 
+				+ ",basecg" 
+				+ ",prccg" 
+				+ ",importecg" 
+				+ ",baseacc" 
+				+ ",prcacc" 
+				+ ",importeacc" 
+				+ " FROM finiquitodf" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Finiquitodf finiquitodf = new Finiquitodf(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFiniquitodf(finiquitodf);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszbanc's .
@@ -63387,7 +70313,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Lin_divisa's .
@@ -63421,6 +70346,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Lin_divisa's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLin_divisa(String cdg, String divisa_final, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",divisa_final" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",unidades" 
+				+ ",importe" 
+				+ " FROM lin_divisa" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " divisa_final = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setString(2, divisa_final ); 
+				stmt.setDate(3, fecini ); 
+
+			rs = stmt.executeQuery();
+			Lin_divisa lin_divisa = new Lin_divisa(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLin_divisa(lin_divisa);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszempr's .
@@ -63516,7 +70482,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Linmutua's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -63548,6 +70513,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linmutua's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinmutua(String cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",prcacctrab" 
+				+ ",prcit" 
+				+ " FROM linmutua" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Linmutua linmutua = new Linmutua(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinmutua(linmutua);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Provincia's .
@@ -63578,6 +70581,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Provincia's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitProvincia(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",compro" 
+				+ " FROM provincia" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Provincia provincia = new Provincia(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitProvincia(provincia);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Minor_20's .
@@ -63613,6 +70650,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Minor_20's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitMinor_20(Date fecini, Integer num_tramo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "num_tramo" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",desde_importe" 
+				+ ",hasta_importe" 
+				+ ",min_minus" 
+				+ ",min_ayuda" 
+				+ ",min_granminus" 
+				+ " FROM minor_20" 
+				+ " WHERE" 
+				+ " fecini = ?  "  + "AND" 				  
+				+ " num_tramo = ?  " 				  
+				);
+
+				stmt.setDate(1, fecini ); 
+				stmt.setInt(2, num_tramo); 
+
+			rs = stmt.executeQuery();
+			Minor_20 minor_20 = new Minor_20(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitMinor_20(minor_20);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Printers's .
@@ -63642,6 +70720,39 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Printers's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPrinters(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ " FROM printers" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Printers printers = new Printers(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPrinters(printers);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Comunidad's .
@@ -63672,6 +70783,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Comunidad's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitComunidad(String cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",descripcion" 
+				+ ",paicom" 
+				+ " FROM comunidad" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+
+			rs = stmt.executeQuery();
+			Comunidad comunidad = new Comunidad(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitComunidad(comunidad);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszcala's .
@@ -63701,7 +70846,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Trabinci's .
@@ -63739,6 +70883,51 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Trabinci's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitTrabinci(Integer cdg, Date fecini, String codinc, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",codinc" 
+				+ ",cantidad" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",importe" 
+				+ " FROM trabinci" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  "  + "AND" 				  
+				+ " codinc = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+				stmt.setString(3, codinc ); 
+
+			rs = stmt.executeQuery();
+			Trabinci trabinci = new Trabinci(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitTrabinci(trabinci);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nomdfdtoex's .
@@ -63775,6 +70964,50 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Nomdfdtoex's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitNomdfdtoex(Integer cdg, Integer numero, Integer linea, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",linea" 
+				+ ",concepto" 
+				+ ",importe" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ " FROM nomdfdtoex" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " numero = ?  "  + "AND" 				  
+				+ " linea = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, numero); 
+				stmt.setInt(3, linea); 
+
+			rs = stmt.executeQuery();
+			Nomdfdtoex nomdfdtoex = new Nomdfdtoex(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitNomdfdtoex(nomdfdtoex);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Application's .
@@ -63805,6 +71038,40 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Application's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitApplication(Integer id, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "id" 
+				+ ",audit_level" 
+				+ ",name" 
+				+ " FROM application" 
+				+ " WHERE" 
+				+ " id = ?  " 				  
+				);
+
+				stmt.setInt(1, id); 
+
+			rs = stmt.executeQuery();
+			Application application = new Application(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitApplication(application);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszboni's .
@@ -63842,7 +71109,6 @@ public class AbstractCtsqlDB {
 		}
 	}
 
-
 	/**
 	 * Visit all Nszregi's .
 	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
@@ -63870,7 +71136,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Costes's .
@@ -63947,6 +71212,88 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Costes's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitCostes(Integer cdg, Integer numero, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",numero" 
+				+ ",codemp" 
+				+ ",descripcion" 
+				+ ",anionac" 
+				+ ",sitfam" 
+				+ ",xminus" 
+				+ ",imp_pension" 
+				+ ",imp_anual" 
+				+ ",imp_irreg" 
+				+ ",imp_ss" 
+				+ ",solicita" 
+				+ ",minimo" 
+				+ ",aprendiz" 
+				+ ",temporal" 
+				+ ",alto" 
+				+ ",codbas" 
+				+ ",codepi" 
+				+ ",procot" 
+				+ ",proret" 
+				+ ",plunumaut" 
+				+ ",pluprcmin" 
+				+ ",pluprcmax" 
+				+ ",semana" 
+				+ ",semanatp" 
+				+ ",cantp" 
+				+ ",indtp" 
+				+ ",codpct" 
+				+ ",imp_actual" 
+				+ ",imp_ext_actual" 
+				+ ",ss_actual" 
+				+ ",irpf_actual" 
+				+ ",neto_actual" 
+				+ ",ss_emp_actual" 
+				+ ",coste_actual" 
+				+ ",imp_supuesto" 
+				+ ",imp_ext_supuesto" 
+				+ ",ss_supuesto" 
+				+ ",irpf_supuesto" 
+				+ ",neto_supuesto" 
+				+ ",ss_emp_supuesto" 
+				+ ",coste_supuesto" 
+				+ ",imp_diferencia" 
+				+ ",imp_ext_diferencia" 
+				+ ",ss_diferencia" 
+				+ ",irpf_diferencia" 
+				+ ",neto_diferencia" 
+				+ ",ss_emp_diferencia" 
+				+ ",coste_diferencia" 
+				+ " FROM costes" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " numero = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, numero); 
+
+			rs = stmt.executeQuery();
+			Costes costes = new Costes(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitCostes(costes);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Prcdivtrab's .
@@ -63980,6 +71327,47 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Prcdivtrab's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitPrcdivtrab(Integer cdg, Date fecini, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",orden" 
+				+ ",prc" 
+				+ ",texto" 
+				+ " FROM prcdivtrab" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setDate(2, fecini ); 
+				stmt.setInt(3, orden); 
+
+			rs = stmt.executeQuery();
+			Prcdivtrab prcdivtrab = new Prcdivtrab(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitPrcdivtrab(prcdivtrab);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Finidtodf's .
@@ -64011,6 +71399,43 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finidtodf's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFinidtodf(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",texto" 
+				+ ",importe" 
+				+ " FROM finidtodf" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Finidtodf finidtodf = new Finidtodf(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFinidtodf(finidtodf);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Datosafi's .
@@ -64104,6 +71529,103 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Datosafi's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitDatosafi(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codtrab" 
+				+ ",passact" 
+				+ ",provrrss" 
+				+ ",numrrss" 
+				+ ",tipemp" 
+				+ ",paisemp" 
+				+ ",provccc" 
+				+ ",numccc" 
+				+ ",numidemp" 
+				+ ",indrs" 
+				+ ",codact" 
+				+ ",razon" 
+				+ ",provnaf" 
+				+ ",numnaf" 
+				+ ",tipidipf" 
+				+ ",paisipf" 
+				+ ",nacion" 
+				+ ",apel1" 
+				+ ",apel2" 
+				+ ",nombre" 
+				+ ",tipovia" 
+				+ ",nomvia" 
+				+ ",numero" 
+				+ ",bloque" 
+				+ ",escalera" 
+				+ ",piso" 
+				+ ",puerta" 
+				+ ",codpos" 
+				+ ",munic" 
+				+ ",localidad" 
+				+ ",provincia" 
+				+ ",accion" 
+				+ ",situacion" 
+				+ ",fecreal" 
+				+ ",grucot" 
+				+ ",epigat" 
+				+ ",contrab" 
+				+ ",coeftp" 
+				+ ",indimp" 
+				+ ",diastrab" 
+				+ ",coefper" 
+				+ ",fecnac" 
+				+ ",sexo" 
+				+ ",catprof" 
+				+ ",alfaclave" 
+				+ ",entidad" 
+				+ ",coltrab" 
+				+ ",calemp" 
+				+ ",regss" 
+				+ ",rlabcaresp" 
+				+ ",provsstrasust" 
+				+ ",numsstrasust" 
+				+ ",causasust" 
+				+ ",autorizacion" 
+				+ ",fecaut" 
+				+ ",fecinicont" 
+				+ ",indsubrog" 
+				+ ",emporigen" 
+				+ ",excoti" 
+				+ ",provempusu" 
+				+ ",numempusu" 
+				+ ",contrint" 
+				+ ",pariente" 
+				+ ",embarcacion" 
+				+ ",ocupacion" 
+				+ " FROM datosafi" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Datosafi datosafi = new Datosafi(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitDatosafi(datosafi);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Empract's .
@@ -64163,6 +71685,69 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Empract's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitEmpract(Integer cdg, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",codnsz" 
+				+ ",codemp" 
+				+ ",convenio" 
+				+ ",descripcion" 
+				+ ",alias" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",acteco" 
+				+ ",epiiae" 
+				+ ",cnae" 
+				+ ",fecnew" 
+				+ ",hornew" 
+				+ ",fecmod" 
+				+ ",hormod" 
+				+ ",cnae2009" 
+				+ ",indred" 
+				+ ",indmutua" 
+				+ ",indtc1" 
+				+ ",indcal" 
+				+ ",indnom" 
+				+ ",indcoste" 
+				+ ",envioss" 
+				+ ",flc" 
+				+ ",colss" 
+				+ ",ingespemp" 
+				+ ",modpago" 
+				+ ",tiponomina" 
+				+ ",indlogo" 
+				+ ",indfirma" 
+				+ ",indregimen" 
+				+ ",prevencion" 
+				+ " FROM empract" 
+				+ " WHERE" 
+				+ " cdg = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+
+			rs = stmt.executeQuery();
+			Empract empract = new Empract(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitEmpract(empract);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Minor_31's .
@@ -64197,6 +71782,46 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Minor_31's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitMinor_31(Date fecini, Integer num_tramo, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "num_tramo" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",desde_importe" 
+				+ ",hasta_importe" 
+				+ ",min_minus" 
+				+ ",min_granminus" 
+				+ " FROM minor_31" 
+				+ " WHERE" 
+				+ " fecini = ?  "  + "AND" 				  
+				+ " num_tramo = ?  " 				  
+				);
+
+				stmt.setDate(1, fecini ); 
+				stmt.setInt(2, num_tramo); 
+
+			rs = stmt.executeQuery();
+			Minor_31 minor_31 = new Minor_31(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitMinor_31(minor_31);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Finindemnu's .
@@ -64229,6 +71854,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Finindemnu's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitFinindemnu(Integer cdg, Integer orden, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",orden" 
+				+ ",texto" 
+				+ ",importe" 
+				+ ",irpf" 
+				+ " FROM finindemnu" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " orden = ?  " 				  
+				);
+
+				stmt.setInt(1, cdg); 
+				stmt.setInt(2, orden); 
+
+			rs = stmt.executeQuery();
+			Finindemnu finindemnu = new Finindemnu(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitFinindemnu(finindemnu);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Linvariables's .
@@ -64268,6 +71931,51 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linvariables's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinvariables(String cdg, Date fecinicio, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecinicio" 
+				+ ",fecfin" 
+				+ ",nocturnidad" 
+				+ ",transporte" 
+				+ ",festivo" 
+				+ ",festivoesp" 
+				+ ",domingo" 
+				+ ",diurna" 
+				+ ",nocturna" 
+				+ ",festdiurna" 
+				+ ",festnocturna" 
+				+ " FROM linvariables" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecinicio = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecinicio ); 
+
+			rs = stmt.executeQuery();
+			Linvariables linvariables = new Linvariables(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinvariables(linvariables);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 	/**
 	 * Visit all Nszcomp's .
@@ -64298,7 +72006,6 @@ public class AbstractCtsqlDB {
 				stmt.close();
 		}
 	}
-
 
 	/**
 	 * Visit all Linirpf's .
@@ -64331,6 +72038,44 @@ public class AbstractCtsqlDB {
 		}
 	}
 
+	/**
+	 * Visit all Linirpf's .
+	 * @param ctsqlDBVisitor a CtsqlDBVisitor.
+	 * @throws SQLException
+	 */
+	public void visitLinirpf(String cdg, Date fecini, CtsqlDBVisitor ctsqlDBVisitor) throws SQLException{
+		ResultSet rs 	= null;
+		PreparedStatement stmt 	= null;
+		try {
+			
+			stmt = ctsqlConnection.prepareStatement("SELECT "
+				+ "cdg" 
+				+ ",fecini" 
+				+ ",fecfin" 
+				+ ",hasta" 
+				+ ",importe" 
+				+ " FROM linirpf" 
+				+ " WHERE" 
+				+ " cdg = ?  "  + "AND" 				  
+				+ " fecini = ?  " 				  
+				);
+
+				stmt.setString(1, cdg ); 
+				stmt.setDate(2, fecini ); 
+
+			rs = stmt.executeQuery();
+			Linirpf linirpf = new Linirpf(rs); 
+			while ( rs.next() ) {
+				ctsqlDBVisitor.visitLinirpf(linirpf);
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
 
 
 	@Override

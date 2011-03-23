@@ -1,8 +1,12 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.enumeration.CCCType;
@@ -10,6 +14,8 @@ import com.code.aon.company.enumeration.EnterpriseActivityType;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.registry.enumeration.RegistryType;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calendar;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cliente;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Delegacion;
@@ -20,6 +26,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprccc;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprctra;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprdom;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprnif;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.CNAENotFoundException;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.InvalidFaxException;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.InvalidTelephoneException;
@@ -31,6 +38,44 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		Integer	id;
 		String 	ingespemp;
 		String	indregimen;
+	}
+	
+	private static class InterruptedVisit extends Error{
+		public InterruptedVisit() {
+		}
+	}
+	
+	private static class EmprCtra extends DefaultCtsqlDBVisitor{
+		
+		private String codCon = null;
+		private Integer codAct = null;
+		
+		public EmprCtra(Domicilio domicilio) 
+		throws SQLException {
+			try {
+				domicilio.visitEmprctra_domicilio(this);
+			}catch (InterruptedVisit e) {
+			}
+		}
+		
+		@Override
+		public void visitEmprctra_domicilio(Emprctra emprctra,
+				Domicilio domicilio) throws SQLException {
+			codCon = emprctra.getCodcon();
+			codAct = emprctra.getCodact();
+			if ( codCon != null && codAct != null ) 
+				throw new InterruptedVisit();
+		}
+		
+		@Override
+		public void visitEmprper_domiclio(Emprper emprper, Domicilio domicilio)
+				throws SQLException {
+			codAct = emprper.getCodact();
+			if ( codAct != null ) 
+				throw new InterruptedVisit();
+		}
+		
+		
 	}
 	
 	// --------------------------------------------------------------
@@ -46,22 +91,29 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 	private Integer 							scopeId;
 	
 	private DefaultMysqlDB 						mysqlDB;
+	private MyCalendar							myCalendar;
 	private MyAgreement							myAgreement;
 
 	private Map<Integer, Map<String, Integer>> 	cccs;
 
 	private Map<String, Integer> 				cifs;
 	private Map<Integer, Integer> 				enterprises;
+	private Map<String, Integer> 				customerChilds;
+	private Integer 							customerId;
 	
 	private Map<Integer, Activity> 				activities ;
 	private Map<Integer, Map<Integer, Integer>> cnae_activity ;
 	private Map<Integer, Map<Integer, Integer>> raddresses ;
 
-	private Map<Integer, Map<Integer,Integer>> workplaces ;
+	private Map<Integer, Map<Integer,Integer>> 	workplaces ;
+	private Map<Integer, Integer> 				calendars;
+	
+	private Map<Integer, Map<Integer,String>> workplaces_old_agreements ;
 
-	public MyEnterprise(DefaultMysqlDB mysqlDB, MyAgreement myAgreement) {
+	public MyEnterprise(DefaultMysqlDB mysqlDB, MyAgreement myAgreement, MyCalendar myCalendar) {
 		this.mysqlDB = mysqlDB;
 		this.myAgreement = myAgreement;
+		this.myCalendar = myCalendar;
 		this.activities = new HashMap<Integer, Activity>();
 		this.cifs= new HashMap<String, Integer>();
 		this.enterprises = new HashMap<Integer, Integer>();
@@ -69,6 +121,9 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		this.cnae_activity = new HashMap<Integer, Map<Integer, Integer>>();
 		this.raddresses = new HashMap<Integer, Map<Integer, Integer>>();
 		this.workplaces = new HashMap<Integer, Map<Integer,Integer>>();
+		this.workplaces_old_agreements = new HashMap<Integer, Map<Integer,String>>();
+		this.customerChilds = new HashMap<String,Integer>();
+		this.calendars = new HashMap<Integer, Integer>();
 	}
 	
 
@@ -128,7 +183,43 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 	@Override
 	public void visitCliente_delegacion(Cliente cliente, Delegacion delegacion) 
 	throws SQLException {
+		
+		customerChilds.clear();
 		cliente.visitRel_emp_cli(this); 
+		
+		if ( customerChilds.size() > 1 ) {
+			Integer registry  = customerChilds.get(cliente.getNumdoc());
+			if (registry == null ){
+			
+					Short status = "N".equals(cliente.getInactivo()) ? 
+						DefaultMysqlDB.enum2short(CustomerStatus.ACTIVE) :
+							DefaultMysqlDB.enum2short(CustomerStatus.INACTIVE);
+				Country docCountry = mysqlDB.getCountry( cliente.getPaiemi() );
+				
+				registry =  mysqlDB.insertRegistry(cliente.getNumdoc(), 
+						MysqlDB.enum2short(DocumentType.CIF), 
+						docCountry != null ? docCountry.getValue() : Country.ES.getValue(), 
+						cliente.getDescripcion(), 
+						cliente.getAlias(), 
+						MysqlDB.enum2short(RegistryType.LEGAL), 
+						Country.ES.getValue());
+				mysqlDB.insertCustomer(registry,null, false, false,false,null,status,null,  scopeId,false, true,true);
+			}
+			
+			Integer group = mysqlDB.insertInvoicing_group(registry);
+
+			for (Map.Entry<String, Integer> child  : customerChilds.entrySet()) {
+				mysqlDB.insertInvoicing_group_detail(group, child.getValue(), false);
+			}
+			customerId = registry;
+			cliente.visitEmprbanc_cliente(this);
+		}
+		else if (customerChilds.size() == 1) {
+			customerId = customerChilds.values().iterator().next();
+			cliente.visitEmprbanc_cliente(this);
+		}
+		
+		
 	}
 	
 	@Override
@@ -152,7 +243,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 				emprnif.getNumdoc(), 
 				docCountry,
 				emprnif.getDescripcion(), 
-				null,
+				Country.ES,
 				emprnif.getAlias(), 	
 				scopeId,
 				status);
@@ -161,6 +252,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		cifs.put(emprnif.getNumdoc(), registry);
 		enterprises.put(emprnif.getCdg(), registry);
 
+		customerChilds.put(emprnif.getNumdoc(), registry);
 		
 		Integer userId = 
 			mysqlDB.insertUser(
@@ -176,7 +268,46 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		emprnif.visitEmpract_emprnif(this);
 	}
 	
+	@Override
+	public void visitEmprbanc_cliente(Emprban emprban, Cliente cliente)
+			throws SQLException {
+		Integer bankId = mysqlDB.getBankId(emprban.getCodent());
+		if ( bankId == null ) {
+			Emprbanc_entidad emprbanc_entidad = 
+				new Emprbanc_entidad();
+			emprban.visitEmprbanc_entidad(emprbanc_entidad);
+			String name = emprbanc_entidad.getEntidad_Descripcion();
+			if ( name != null ) {
+				bankId = mysqlDB.insertBank(emprbanc_entidad.getEntidad_Descripcion(), emprban.getCodent());
+			}
+			else {
+				mysqlDB.error("emprban[{}]: Entidad {} without name ", emprban.getCdg() , emprban.getCodent());
+				return;
+			}
+		}
+		
+		String dc = emprban.getDc();
+		String codent = emprban.getCodent();
+		String codsuc = emprban.getCodsuc();
+		String numcta = emprban.getNumcta();
+		
+		String bankAccount = String.format("%s%s%s%s", 
+				codent, 
+				codsuc,
+				dc != null ? dc : "XX" ,
+				numcta);
+		
+		// TODOD : Chequear con BankAccount ...
+		if ( bankAccount.length() == 20 ) {
+		
+			mysqlDB.insertRbank(customerId, 
+					bankId, 
+					bankAccount, 
+					null);
+		}
 
+	}
+	
 	@Override
 	public void visitEmpract_emprnif(Empract empract, Emprnif emprnif) throws SQLException {
 		
@@ -338,8 +469,19 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 				}
 				
 				
+				EmprCtra emprCtra = new EmprCtra(domicilio);
 				
-				Integer agreement = null; 
+				Integer agreement = emprCtra.codCon != null ? 
+					myAgreement.getAgreement(emprCtra.codCon) : null;
+				
+					
+				Integer calendar = 
+					myCalendar.getCalendar(emprdom.getCodemp(), emprdom.getCoddom(), emprCtra.codAct);	
+				if ( calendar == null ) {
+					mysqlDB.info("emprdom[{}]: Calendar not found for {}/{}/{}", 
+							emprdom.getCdg(), emprdom.getCodemp(), emprdom.getCoddom(), emprCtra.codAct);
+					
+				} 
 				
 				workplace = mysqlDB.insertWorkplace(
 						enterprise, 
@@ -347,13 +489,20 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 						raddress, 
 						null,				// TODO:  Concierto Económico del Centro de Trabajo
 						true,
-						null,				// TODO: ¿ Calendar ?
+						calendar,				// TODO: ¿ Calendar ?
 						null,
 						agreement);
-				
+				if ( calendar != null ) {
+					calendars.put(workplace, calendar);
+				}
 				DefaultMysqlDB.save(workplaces, emprdom.getCodemp(), emprdom.getCoddom(),workplace);
+				DefaultMysqlDB.save(workplaces_old_agreements, emprdom.getCodemp(), emprdom.getCoddom(),emprCtra.codCon);
 			}
 		}
+	}
+	
+	public Integer getCalendar(Integer workplace) {
+		return calendars.get(workplace);
 	}
 
 	public Integer getEnterprise(Integer oldCdg) {
@@ -387,5 +536,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		return DefaultMysqlDB.get( workplaces, oldCdgEmp, oldCdgDomicilio);
 	}
 
+	public String getOldAgreement(Integer oldCdgEmp, Integer oldCdgDomicilio) {
+		return DefaultMysqlDB.get( workplaces_old_agreements, oldCdgEmp, oldCdgDomicilio);
+	}
 	
 }

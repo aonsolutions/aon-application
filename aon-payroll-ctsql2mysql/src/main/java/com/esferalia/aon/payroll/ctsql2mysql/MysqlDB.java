@@ -54,33 +54,40 @@ public class MysqlDB extends DefaultMysqlDB{
 		start();
 
 		MyPerson myPerson = 
-			new MyPerson(this); 
+			new MyPerson(this);
+		MyConcepts myConcepts = 
+			new MyConcepts(this);
 		MyAgreement myAgreement = 
-			new MyAgreement(this); 
-		MyEnterprise myEnterprise = 
-			new MyEnterprise(this, 
-					myAgreement );
-		MyContract myContract= 
-			new MyContract(this, 
-					myEnterprise, 
-					myPerson,
-					fromDate);
+			new MyAgreement(this, 
+					myConcepts, fromDate); 
 		MyHoliday myHoliday =
 			new MyHoliday(this, 
 						"Aplicación Total");
 		MyCalendar myCalendar = 
 			new MyCalendar(this, 
-					myHoliday, 
-					myEnterprise);
+					myHoliday);
+		MyEnterprise myEnterprise = 
+			new MyEnterprise(this, 
+					myAgreement,
+					myCalendar);
+		MyContract myContract= 
+			new MyContract(this, 
+					myEnterprise, 
+					myPerson,
+					myConcepts,
+					myAgreement,
+					myCalendar,
+					fromDate);
 		
 		ctsqlReader.visitPais(this);
 		ctsqlReader.visitTipdoc(this);
 		ctsqlReader.visit(myHoliday);
 		
 		ctsqlReader.visit(myPerson);
+		ctsqlReader.visit(myConcepts);
 		ctsqlReader.visit(myAgreement);
-		ctsqlReader.visit(myEnterprise);
 		ctsqlReader.visit(myCalendar);
+		ctsqlReader.visit(myEnterprise);
 		ctsqlReader.visit(myContract);
 
 		finish();

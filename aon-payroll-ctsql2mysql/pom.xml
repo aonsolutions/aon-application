@@ -11,7 +11,7 @@
 	<version>6.2.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>aon-payroll-ctsql2mysql</name>
+	<name>AON-PAYROLL-CTSQL2MYSQL</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

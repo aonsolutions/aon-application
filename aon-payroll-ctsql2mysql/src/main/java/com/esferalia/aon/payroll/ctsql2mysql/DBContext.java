@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -161,6 +162,7 @@ public class DBContext extends VelocityContext{
 		private String name;
 		private int size;
 		private String remarks;
+		private List<Column> pkColumns;
 		private Map<String,Column> columns;
 		private ArrayList<ForeignKey> childs; 
 		private ArrayList<ForeignKey> parents; 
@@ -188,6 +190,15 @@ public class DBContext extends VelocityContext{
 					this.size += column.size;
 				}
 				this.isAutoIncrement |= column.isAutoIncrement();
+			}
+			
+			rs.close();
+			
+			this.pkColumns = new LinkedList<Column>();
+			rs = dbMetaData.getPrimaryKeys(null, null, name);
+			while  (rs.next() ){
+				String name = rs.getString("COLUMN_NAME");
+				this.pkColumns.add(this.columns.get(name));
 			}
 			rs.close();
 		}
@@ -220,6 +231,10 @@ public class DBContext extends VelocityContext{
 
 		public Column getColumn( String name ) {
 			return this.columns.get(name);
+		}
+
+		public List<Column> getPkColumns() {
+			return pkColumns;
 		}
 
 		public Column [] getColumns() throws SQLException {

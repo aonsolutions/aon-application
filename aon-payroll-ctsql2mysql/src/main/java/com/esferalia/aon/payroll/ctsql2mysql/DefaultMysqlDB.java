@@ -129,6 +129,10 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		return DATE_FORMAT.format(date);
 	}
 
+	public static String format (String format, Object ...args) {
+		return format != null ? String.format(format, args) : null;
+	}
+	
 	protected static <K,V> boolean save( Map<K, Set<V>> map, K key, V value){
 		Set<V> set ; 
 		set = map.get(key);
@@ -166,7 +170,7 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		if ( map2 != null ){
 			map3 = map2.get(key2);
 			if ( map3 != null ) {
-				if ( map3.containsKey(key2) )
+				if ( map3.containsKey(key3) )
 					return false;
 			}
 			else {
@@ -194,6 +198,17 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 			return null;
 		
 		return map3.get(key3);
+	}
+
+	protected static <K1,K2,K3, V> boolean contains( Map<K1, Map<K2,Map<K3,V>>> map, K1 key1, K2 key2, K2 key3  ){
+		Map<K2,Map<K3,V>>  map2 = map.get(key1);
+		if ( map2 == null ) 
+			return false;
+		Map<K3,V> map3  = map2.get(key2); 
+		if ( map3 == null ) 
+			return false;
+		
+		return map3.containsKey(key3);
 	}
 
 	protected static <K1,K2,V> boolean save( Map<K1, Map<K2,V>> map, K1 key1, K2 key2, V value){
@@ -368,9 +383,12 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 				country != null ? country.getValue() : null);
 		super.insertEnterprise(registry, 
 				scope, 
-				null,		// TODO: ¿ Calendar ? 
-				null);
+				null );		// TODO: ¿ Calendar ? 
+		
+		
 		super.insertCustomer(registry,null, false, false,false,null,status,null,  scope,false, true,true);
+
+		super.insertTarget(registry, null, (short) 0, false, false, (short)0, status);
 		
 		return registry;
 	}
@@ -489,7 +507,8 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 
 		
 	protected Country getCountry(String oldCdg) {
-		return countries.get(oldCdg);
+		Country country = countries.get(oldCdg);
+		return country != null ? country : Country.ES;  
 	}
 
 	private Pattern overtimePattern = 
@@ -570,5 +589,34 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 				stmt.close();
 		}
 	}
-
+	
+	public Integer getBankId(String code) throws SQLException {
+		ResultSet rs = null; 
+		PreparedStatement stmt = null ;
+		try {
+			stmt = mysqlConnection.prepareStatement("SELECT id FROM bank WHERE code = ?");
+			stmt.setString(1, code);
+			rs = stmt.executeQuery();
+			if ( rs.next() ){
+				return rs.getInt("id");
+			}
+			else {
+				return null;
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+	
+	public static boolean is9999 ( Date date ) {
+		if ( date == null )
+			return false;
+		int year =  date.getYear() + 1900;
+		return year == 9999; 
+	}
+	
 }

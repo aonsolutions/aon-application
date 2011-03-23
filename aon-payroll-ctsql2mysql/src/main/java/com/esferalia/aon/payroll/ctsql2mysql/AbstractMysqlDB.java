@@ -64,7 +64,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement leasingStmt = null;
 
-	private static class Leasing {
+	public static class Leasing {
 		private Integer id; 
 		private Date leasing_date; 
 		private String supplier_name; 
@@ -269,7 +269,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertLeasing(Date leasing_date, String supplier_name, String supplier_document, String description, String term, String interest_percent, String review, Double amount, Integer rbank, Short security_level, String fixed_asset_account, Integer vat)
+	public int insertLeasing(Date leasing_date, String supplier_name, String supplier_document, String description, String term, String interest_percent, String review, Double amount, Integer rbank, Short security_level, String fixed_asset_account, Integer vat)
 	throws SQLException {
 		int id = nextLeasingId();
 
@@ -309,7 +309,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement db_versionStmt = null;
 
-	private static class Db_version {
+	public static class Db_version {
 		private String version_number; 
 	}
 	
@@ -393,7 +393,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement composition_detailStmt = null;
 
-	private static class Composition_detail {
+	public static class Composition_detail {
 		private Integer id; 
 		private Integer composition; 
 		private Integer item; 
@@ -542,7 +542,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertComposition_detail(Integer composition, Integer item, String description, Double quantity, Double price)
+	public int insertComposition_detail(Integer composition, Integer item, String description, Double quantity, Double price)
 	throws SQLException {
 		int id = nextComposition_detailId();
 
@@ -575,7 +575,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement cv_evaluate_typeStmt = null;
 
-	private static class Cv_evaluate_type {
+	public static class Cv_evaluate_type {
 		private Integer id; 
 		private String name; 
 	}
@@ -692,7 +692,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCv_evaluate_type(String name)
+	public int insertCv_evaluate_type(String name)
 	throws SQLException {
 		int id = nextCv_evaluate_typeId();
 
@@ -721,7 +721,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement pcategoryStmt = null;
 
-	private static class Pcategory {
+	public static class Pcategory {
 		private Integer id; 
 		private String name; 
 		private String detail_pattern; 
@@ -854,7 +854,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPcategory(String name, String detail_pattern, Integer pcategory_group)
+	public int insertPcategory(String name, String detail_pattern, Integer pcategory_group)
 	throws SQLException {
 		int id = nextPcategoryId();
 
@@ -885,7 +885,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement warehouseStmt = null;
 
-	private static class Warehouse {
+	public static class Warehouse {
 		private Integer id; 
 		private String name; 
 	}
@@ -1002,7 +1002,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWarehouse(String name)
+	public int insertWarehouse(String name)
 	throws SQLException {
 		int id = nextWarehouseId();
 
@@ -1031,7 +1031,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement customerStmt = null;
 
-	private static class Customer {
+	public static class Customer {
 		private Integer registry; 
 		private Integer tariff; 
 		private Boolean taxfree; 
@@ -1192,7 +1192,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement productionStmt = null;
 
-	private static class Production {
+	public static class Production {
 		private Integer id; 
 		private String description; 
 		private String lot_code; 
@@ -1357,7 +1357,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProduction(String description, String lot_code, Date production_date, Integer item, Double initial_quantity, Double quantity, Double price)
+	public int insertProduction(String description, String lot_code, Date production_date, Integer item, Double initial_quantity, Double quantity, Double price)
 	throws SQLException {
 		int id = nextProductionId();
 
@@ -1392,7 +1392,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement posStmt = null;
 
-	private static class Pos {
+	public static class Pos {
 		private Integer id; 
 		private String description; 
 		private Integer raddress; 
@@ -1517,7 +1517,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPos(String description, Integer raddress)
+	public int insertPos(String description, Integer raddress)
 	throws SQLException {
 		int id = nextPosId();
 
@@ -1547,7 +1547,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement message_contentStmt = null;
 
-	private static class Message_content {
+	public static class Message_content {
 		private Integer id; 
 		private String content; 
 	}
@@ -1664,7 +1664,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertMessage_content(String content)
+	public int insertMessage_content(String content)
 	throws SQLException {
 		int id = nextMessage_contentId();
 
@@ -1693,7 +1693,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement invoice_taxStmt = null;
 
-	private static class Invoice_tax {
+	public static class Invoice_tax {
 		private Integer id; 
 		private Integer invoice_detail; 
 		private Short tax_type; 
@@ -1874,7 +1874,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoice_tax(Integer invoice_detail, Short tax_type, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
+	public int insertInvoice_tax(Integer invoice_detail, Short tax_type, Double percentage, Double surcharge, Double quota, Double surcharge_quota, Short vat_deduction_type, Short withholding_type, Double deductible_quota)
 	throws SQLException {
 		int id = nextInvoice_taxId();
 
@@ -1911,7 +1911,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement iattachStmt = null;
 
-	private static class Iattach {
+	public static class Iattach {
 		private Integer id; 
 		private Integer item; 
 		private Short mimeType; 
@@ -2060,7 +2060,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertIattach(Integer item, Short mimeType, String description, InputStream data, Short type)
+	public int insertIattach(Integer item, Short mimeType, String description, InputStream data, Short type)
 	throws SQLException {
 		int id = nextIattachId();
 
@@ -2093,7 +2093,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement tas_itemStmt = null;
 
-	private static class Tas_item {
+	public static class Tas_item {
 		private Integer id; 
 		private Integer model; 
 		private String publicCode; 
@@ -2242,7 +2242,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTas_item(Integer model, String publicCode, String privateCode, String description, String add_info)
+	public int insertTas_item(Integer model, String publicCode, String privateCode, String description, String add_info)
 	throws SQLException {
 		int id = nextTas_itemId();
 
@@ -2275,11 +2275,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement payment_conceptStmt = null;
 
-	private static class Payment_concept {
+	public static class Payment_concept {
 		private Integer id; 
 		private String code; 
 		private String description; 
 		private Short type; 
+		private Short description_decorable; 
+		private String expression; 
+		private String irpf_expression; 
+		private String quote_expression; 
 	}
 	
 	private void insertPayment_concept( List<Payment_concept> payment_concepts )
@@ -2290,7 +2294,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( payment_conceptStmt != null ) {
 				payment_conceptStmt.close();
 			}
-			String values = "(?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -2299,7 +2303,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			payment_conceptStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO payment_concept (id,code,description,type)"  
+				"INSERT INTO payment_concept (id,code,description,type,description_decorable,expression,irpf_expression,quote_expression)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			payment_conceptStmtSize = size;
@@ -2324,6 +2328,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				payment_conceptStmt.setNull(offset++, -6);
 			else
 				payment_conceptStmt.setShort(offset++, payment_concept.type);
+			if ( payment_concept.description_decorable == null )
+				payment_conceptStmt.setNull(offset++, -6);
+			else
+				payment_conceptStmt.setShort(offset++, payment_concept.description_decorable);
+			if ( payment_concept.expression == null )
+				payment_conceptStmt.setNull(offset++, 12);
+			else
+				payment_conceptStmt.setString(offset++, payment_concept.expression);
+			if ( payment_concept.irpf_expression == null )
+				payment_conceptStmt.setNull(offset++, 12);
+			else
+				payment_conceptStmt.setString(offset++, payment_concept.irpf_expression);
+			if ( payment_concept.quote_expression == null )
+				payment_conceptStmt.setNull(offset++, 12);
+			else
+				payment_conceptStmt.setString(offset++, payment_concept.quote_expression);
 		}
 		payment_conceptStmt.executeUpdate();
 		payment_conceptInserted += size;
@@ -2378,9 +2398,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param code Codigo
 	 * @param description Descripcion
 	 * @param type Tipo de Percepcion Salarial
+	 * @param description_decorable 
+	 * @param expression Importe
+	 * @param irpf_expression Importe tributable
+	 * @param quote_expression Importe cotizable
 	 * @throws SQLException
 	*/
-	protected void insertPayment_concept(Integer id, String code, String description, Short type)
+	protected void insertPayment_concept(Integer id, String code, String description, Short type, Short description_decorable, String expression, String irpf_expression, String quote_expression)
 	throws SQLException {
 
 		Payment_concept payment_concept_ = new Payment_concept();
@@ -2388,12 +2412,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		payment_concept_.code = code;
 		payment_concept_.description = description;
 		payment_concept_.type = type;
+		payment_concept_.description_decorable = description_decorable;
+		payment_concept_.expression = expression;
+		payment_concept_.irpf_expression = irpf_expression;
+		payment_concept_.quote_expression = quote_expression;
 
 		payment_concepts.add(payment_concept_);
 		
 		int payment_conceptCount = payment_concepts.size();
 		
-		if ( 82 * payment_conceptCount >=  this.maxAllowedPacket ){
+		if ( 469 * payment_conceptCount >=  this.maxAllowedPacket ){
 			insertPayment_concept(payment_concepts);
 			payment_concepts.clear();
 		} 
@@ -2405,10 +2433,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param code Codigo
 	 * @param description Descripcion
 	 * @param type Tipo de Percepcion Salarial
+	 * @param description_decorable 
+	 * @param expression Importe
+	 * @param irpf_expression Importe tributable
+	 * @param quote_expression Importe cotizable
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPayment_concept(String code, String description, Short type)
+	public int insertPayment_concept(String code, String description, Short type, Short description_decorable, String expression, String irpf_expression, String quote_expression)
 	throws SQLException {
 		int id = nextPayment_conceptId();
 
@@ -2417,12 +2449,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		payment_concept_.code = code;
 		payment_concept_.description = description;
 		payment_concept_.type = type;
+		payment_concept_.description_decorable = description_decorable;
+		payment_concept_.expression = expression;
+		payment_concept_.irpf_expression = irpf_expression;
+		payment_concept_.quote_expression = quote_expression;
 
 		payment_concepts.add(payment_concept_);
 		
 		int payment_conceptCount = payment_concepts.size();
 		
-		if ( 82 * payment_conceptCount >=  this.maxAllowedPacket ){
+		if ( 469 * payment_conceptCount >=  this.maxAllowedPacket ){
 			insertPayment_concept(payment_concepts);
 			payment_concepts.clear();
 		} 
@@ -2439,7 +2475,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement tas_offerStmt = null;
 
-	private static class Tas_offer {
+	public static class Tas_offer {
 		private Integer id; 
 		private Integer support_order; 
 		private Integer offer; 
@@ -2564,7 +2600,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTas_offer(Integer support_order, Integer offer)
+	public int insertTas_offer(Integer support_order, Integer offer)
 	throws SQLException {
 		int id = nextTas_offerId();
 
@@ -2594,7 +2630,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement salaryStmt = null;
 
-	private static class Salary {
+	public static class Salary {
 		private Integer id; 
 		private Short type; 
 		private Integer contract; 
@@ -2967,7 +3003,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSalary(Short type, Integer contract, Date start_date, Date end_date, String enterprise_name, String enterprise_address, String enterprise_document, String ccc, String employee_name, String social_security_number, String employee_document, Date seniority_date, String quote_group, String category, Integer registration, Integer time_units, Double total_payment, Double total_deduction, Double total_liquid, Double total_enterprise, Date issue_date, Double remuneration, Double pro_ext_base, Double it_base, Double raw_cgc_base, Double cgc_base, Double hextra_base, Double non_hextra_base, Double cgp_base, Double money_irpf_base, Double inkind_irpf_base, Double irpf_base, Double social_security_contributions)
+	public int insertSalary(Short type, Integer contract, Date start_date, Date end_date, String enterprise_name, String enterprise_address, String enterprise_document, String ccc, String employee_name, String social_security_number, String employee_document, Date seniority_date, String quote_group, String category, Integer registration, Integer time_units, Double total_payment, Double total_deduction, Double total_liquid, Double total_enterprise, Date issue_date, Double remuneration, Double pro_ext_base, Double it_base, Double raw_cgc_base, Double cgc_base, Double hextra_base, Double non_hextra_base, Double cgp_base, Double money_irpf_base, Double inkind_irpf_base, Double irpf_base, Double social_security_contributions)
 	throws SQLException {
 		int id = nextSalaryId();
 
@@ -3028,7 +3064,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement commissionStmt = null;
 
-	private static class Commission {
+	public static class Commission {
 		private Integer id; 
 		private String name; 
 		private Date start_date; 
@@ -3161,7 +3197,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCommission(String name, Date start_date, Date end_date)
+	public int insertCommission(String name, Date start_date, Date end_date)
 	throws SQLException {
 		int id = nextCommissionId();
 
@@ -3192,7 +3228,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement support_order_insuranceStmt = null;
 
-	private static class Support_order_insurance {
+	public static class Support_order_insurance {
 		private Integer id; 
 		private Integer support_order; 
 		private Integer insurance; 
@@ -3349,7 +3385,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSupport_order_insurance(Integer support_order, Integer insurance, Integer appraiser, String claim_number, String policy_type, String franchise)
+	public int insertSupport_order_insurance(Integer support_order, Integer insurance, Integer appraiser, String claim_number, String policy_type, String franchise)
 	throws SQLException {
 		int id = nextSupport_order_insuranceId();
 
@@ -3383,7 +3419,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement supplierStmt = null;
 
-	private static class Supplier {
+	public static class Supplier {
 		private Integer registry; 
 		private Boolean withholding; 
 		private Short transaction; 
@@ -3502,7 +3538,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement user_scopeStmt = null;
 
-	private static class User_scope {
+	public static class User_scope {
 		private Integer id; 
 		private Integer user_id; 
 		private Integer scope; 
@@ -3627,7 +3663,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertUser_scope(Integer user_id, Integer scope)
+	public int insertUser_scope(Integer user_id, Integer scope)
 	throws SQLException {
 		int id = nextUser_scopeId();
 
@@ -3657,7 +3693,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement assetStmt = null;
 
-	private static class Asset {
+	public static class Asset {
 		private Integer id; 
 		private String description; 
 		private String name; 
@@ -3782,7 +3818,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAsset(String description, String name)
+	public int insertAsset(String description, String name)
 	throws SQLException {
 		int id = nextAssetId();
 
@@ -3812,7 +3848,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement item_warehouseStmt = null;
 
-	private static class Item_warehouse {
+	public static class Item_warehouse {
 		private Integer id; 
 		private Integer item; 
 		private Integer warehouse; 
@@ -3961,7 +3997,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertItem_warehouse(Integer item, Integer warehouse, Double stock_max, Double stock_min, String location)
+	public int insertItem_warehouse(Integer item, Integer warehouse, Double stock_max, Double stock_min, String location)
 	throws SQLException {
 		int id = nextItem_warehouseId();
 
@@ -3994,7 +4030,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement rnoteStmt = null;
 
-	private static class Rnote {
+	public static class Rnote {
 		private Integer id; 
 		private Integer registry; 
 		private String description; 
@@ -4151,7 +4187,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRnote(Integer registry, String description, Date note_date, String comments, Short note_type, Short security_level)
+	public int insertRnote(Integer registry, String description, Date note_date, String comments, Short note_type, Short security_level)
 	throws SQLException {
 		int id = nextRnoteId();
 
@@ -4185,7 +4221,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement favoriteStmt = null;
 
-	private static class Favorite {
+	public static class Favorite {
 		private Integer id; 
 		private Integer favorite_category; 
 		private String description; 
@@ -4326,7 +4362,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFavorite(Integer favorite_category, String description, String url, Integer user_id)
+	public int insertFavorite(Integer favorite_category, String description, String url, Integer user_id)
 	throws SQLException {
 		int id = nextFavoriteId();
 
@@ -4358,7 +4394,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement daily_trackingStmt = null;
 
-	private static class Daily_tracking {
+	public static class Daily_tracking {
 		private Integer id; 
 		private Integer user_id; 
 		private Date tracking_date; 
@@ -4531,7 +4567,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertDaily_tracking(Integer user_id, Date tracking_date, Double tracking_duration, Integer job_type, Integer customer, Integer dossier, Integer activity, String comments)
+	public int insertDaily_tracking(Integer user_id, Date tracking_date, Double tracking_duration, Integer job_type, Integer customer, Integer dossier, Integer activity, String comments)
 	throws SQLException {
 		int id = nextDaily_trackingId();
 
@@ -4567,7 +4603,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement loanStmt = null;
 
-	private static class Loan {
+	public static class Loan {
 		private Integer id; 
 		private String description; 
 		private Date loan_date; 
@@ -4780,7 +4816,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertLoan(String description, Date loan_date, String term, String interest, String review, Double amount, Double expenses, Integer rbank, Short security_level, Double fee_amount, Integer recurrence, Integer pay_day, Short status)
+	public int insertLoan(String description, Date loan_date, String term, String interest, String review, Double amount, Double expenses, Integer rbank, Short security_level, Double fee_amount, Integer recurrence, Integer pay_day, Short status)
 	throws SQLException {
 		int id = nextLoanId();
 
@@ -4821,7 +4857,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement tas_deliveryStmt = null;
 
-	private static class Tas_delivery {
+	public static class Tas_delivery {
 		private Integer id; 
 		private Integer support_order; 
 		private Integer delivery; 
@@ -4954,7 +4990,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTas_delivery(Integer support_order, Integer delivery, Integer offer)
+	public int insertTas_delivery(Integer support_order, Integer delivery, Integer offer)
 	throws SQLException {
 		int id = nextTas_deliveryId();
 
@@ -4985,7 +5021,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement question_valueStmt = null;
 
-	private static class Question_value {
+	public static class Question_value {
 		private Integer id; 
 		private Integer question; 
 		private String value_text; 
@@ -5126,7 +5162,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertQuestion_value(Integer question, String value_text, Double value_number, Timestamp value_date)
+	public int insertQuestion_value(Integer question, String value_text, Double value_number, Timestamp value_date)
 	throws SQLException {
 		int id = nextQuestion_valueId();
 
@@ -5149,6 +5185,215 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int fs_mod347_detailStmtSize = 0;
+
+	private int fs_mod347_detailInserted = 0;
+
+	private List<Fs_mod347_detail> fs_mod347_details = 
+		new LinkedList<Fs_mod347_detail>();
+
+	private PreparedStatement fs_mod347_detailStmt = null;
+
+	public static class Fs_mod347_detail {
+		private Integer id; 
+		private Integer fs_mod347; 
+		private String type; 
+		private String document; 
+		private Integer registry; 
+		private String name; 
+		private Integer province; 
+		private String country; 
+		private Double amount; 
+	}
+	
+	private void insertFs_mod347_detail( List<Fs_mod347_detail> fs_mod347_details )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = fs_mod347_details.size();
+		if ( fs_mod347_detailStmtSize != size ) {
+			if ( fs_mod347_detailStmt != null ) {
+				fs_mod347_detailStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			fs_mod347_detailStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO fs_mod347_detail (id,fs_mod347,type,document,registry,name,province,country,amount)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			fs_mod347_detailStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Fs_mod347_detail fs_mod347_detail : fs_mod347_details) {
+			if ( fs_mod347_detail.id == null )
+				fs_mod347_detailStmt.setNull(offset++, 4);
+			else
+				fs_mod347_detailStmt.setInt(offset++, fs_mod347_detail.id);
+			if ( fs_mod347_detail.fs_mod347 == null )
+				fs_mod347_detailStmt.setNull(offset++, 4);
+			else
+				fs_mod347_detailStmt.setInt(offset++, fs_mod347_detail.fs_mod347);
+			if ( fs_mod347_detail.type == null )
+				fs_mod347_detailStmt.setNull(offset++, 12);
+			else
+				fs_mod347_detailStmt.setString(offset++, fs_mod347_detail.type);
+			if ( fs_mod347_detail.document == null )
+				fs_mod347_detailStmt.setNull(offset++, 12);
+			else
+				fs_mod347_detailStmt.setString(offset++, fs_mod347_detail.document);
+			if ( fs_mod347_detail.registry == null )
+				fs_mod347_detailStmt.setNull(offset++, 4);
+			else
+				fs_mod347_detailStmt.setInt(offset++, fs_mod347_detail.registry);
+			if ( fs_mod347_detail.name == null )
+				fs_mod347_detailStmt.setNull(offset++, 12);
+			else
+				fs_mod347_detailStmt.setString(offset++, fs_mod347_detail.name);
+			if ( fs_mod347_detail.province == null )
+				fs_mod347_detailStmt.setNull(offset++, 4);
+			else
+				fs_mod347_detailStmt.setInt(offset++, fs_mod347_detail.province);
+			if ( fs_mod347_detail.country == null )
+				fs_mod347_detailStmt.setNull(offset++, 12);
+			else
+				fs_mod347_detailStmt.setString(offset++, fs_mod347_detail.country);
+			if ( fs_mod347_detail.amount == null )
+				fs_mod347_detailStmt.setNull(offset++, 8);
+			else
+				fs_mod347_detailStmt.setDouble(offset++, fs_mod347_detail.amount);
+		}
+		fs_mod347_detailStmt.executeUpdate();
+		fs_mod347_detailInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Fs_mod347_details in {} milliseconds.", size, fs_mod347_detailInserted, elapsed );		
+	}
+		
+		private int fs_mod347_detailId = -1;
+		
+		private void initFs_mod347_detailId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `fs_mod347_detail`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.fs_mod347_detailId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextFs_mod347_detailId() {
+			return ++this.fs_mod347_detailId;
+		} 
+
+		public void setFs_mod347_detailId(Integer fs_mod347_detailId) {
+			this.fs_mod347_detailId = fs_mod347_detailId;
+		} 
+	
+	private void flushFs_mod347_detail(  )
+	throws SQLException {
+		if ( ! fs_mod347_details.isEmpty() )
+			insertFs_mod347_detail(fs_mod347_details);
+		if ( fs_mod347_detailStmt != null )
+			fs_mod347_detailStmt.close();
+	}	
+
+	/**
+	 * Fs_mod347_detail
+	 * @param id Identificador unico
+	 * @param fs_mod347 Identificador de la Declaracion
+	 * @param type Clave de operacion
+	 * @param document NIF del declarado
+	 * @param registry Identificador del Declarado
+	 * @param name Apellidos  y Nombre del declarado
+	 * @param province Provincia del declarado
+	 * @param country Pais del declarado
+	 * @param amount Importe de las operaciones
+	 * @throws SQLException
+	*/
+	protected void insertFs_mod347_detail(Integer id, Integer fs_mod347, String type, String document, Integer registry, String name, Integer province, String country, Double amount)
+	throws SQLException {
+
+		Fs_mod347_detail fs_mod347_detail_ = new Fs_mod347_detail();
+		fs_mod347_detail_.id = id;
+		fs_mod347_detail_.fs_mod347 = fs_mod347;
+		fs_mod347_detail_.type = type;
+		fs_mod347_detail_.document = document;
+		fs_mod347_detail_.registry = registry;
+		fs_mod347_detail_.name = name;
+		fs_mod347_detail_.province = province;
+		fs_mod347_detail_.country = country;
+		fs_mod347_detail_.amount = amount;
+
+		fs_mod347_details.add(fs_mod347_detail_);
+		
+		int fs_mod347_detailCount = fs_mod347_details.size();
+		
+		if ( 131 * fs_mod347_detailCount >=  this.maxAllowedPacket ){
+			insertFs_mod347_detail(fs_mod347_details);
+			fs_mod347_details.clear();
+		} 
+	}
+
+
+	/**
+	 * Fs_mod347_detail
+	 * @param fs_mod347 Identificador de la Declaracion
+	 * @param type Clave de operacion
+	 * @param document NIF del declarado
+	 * @param registry Identificador del Declarado
+	 * @param name Apellidos  y Nombre del declarado
+	 * @param province Provincia del declarado
+	 * @param country Pais del declarado
+	 * @param amount Importe de las operaciones
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_mod347_detail(Integer fs_mod347, String type, String document, Integer registry, String name, Integer province, String country, Double amount)
+	throws SQLException {
+		int id = nextFs_mod347_detailId();
+
+		Fs_mod347_detail fs_mod347_detail_ = new Fs_mod347_detail();
+		fs_mod347_detail_.id = id;
+		fs_mod347_detail_.fs_mod347 = fs_mod347;
+		fs_mod347_detail_.type = type;
+		fs_mod347_detail_.document = document;
+		fs_mod347_detail_.registry = registry;
+		fs_mod347_detail_.name = name;
+		fs_mod347_detail_.province = province;
+		fs_mod347_detail_.country = country;
+		fs_mod347_detail_.amount = amount;
+
+		fs_mod347_details.add(fs_mod347_detail_);
+		
+		int fs_mod347_detailCount = fs_mod347_details.size();
+		
+		if ( 131 * fs_mod347_detailCount >=  this.maxAllowedPacket ){
+			insertFs_mod347_detail(fs_mod347_details);
+			fs_mod347_details.clear();
+		} 
+		return id;
+	}
+
+
 	private int web_info_styleStmtSize = 0;
 
 	private int web_info_styleInserted = 0;
@@ -5158,7 +5403,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement web_info_styleStmt = null;
 
-	private static class Web_info_style {
+	public static class Web_info_style {
 		private Integer id; 
 		private String variable; 
 		private String value; 
@@ -5283,7 +5528,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWeb_info_style(String variable, String value)
+	public int insertWeb_info_style(String variable, String value)
 	throws SQLException {
 		int id = nextWeb_info_styleId();
 
@@ -5313,7 +5558,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement salary_paymentStmt = null;
 
-	private static class Salary_payment {
+	public static class Salary_payment {
 		private Integer id; 
 		private Integer salary; 
 		private Short type; 
@@ -5470,7 +5715,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSalary_payment(Integer salary, Short type, String payment_concept, String description, String expression, Double amount)
+	public int insertSalary_payment(Integer salary, Short type, String payment_concept, String description, String expression, Double amount)
 	throws SQLException {
 		int id = nextSalary_paymentId();
 
@@ -5504,7 +5749,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement contract_dataStmt = null;
 
-	private static class Contract_data {
+	public static class Contract_data {
 		private Integer id; 
 		private String name; 
 		private Integer contract; 
@@ -5653,7 +5898,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_data(String name, Integer contract, String expression, Date start_date, Date end_date)
+	public int insertContract_data(String name, Integer contract, String expression, Date start_date, Date end_date)
 	throws SQLException {
 		int id = nextContract_dataId();
 
@@ -5686,7 +5931,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement cv_workexperienceStmt = null;
 
-	private static class Cv_workexperience {
+	public static class Cv_workexperience {
 		private Integer id; 
 		private Date startingdate; 
 		private Date endingdate; 
@@ -5835,7 +6080,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCv_workexperience(Date startingdate, Date endingdate, String job, String company, Integer curriculum)
+	public int insertCv_workexperience(Date startingdate, Date endingdate, String job, String company, Integer curriculum)
 	throws SQLException {
 		int id = nextCv_workexperienceId();
 
@@ -5868,7 +6113,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement incidence_typeStmt = null;
 
-	private static class Incidence_type {
+	public static class Incidence_type {
 		private Integer id; 
 		private String alias; 
 		private String description; 
@@ -6001,7 +6246,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertIncidence_type(String alias, String description, Boolean compute)
+	public int insertIncidence_type(String alias, String description, Boolean compute)
 	throws SQLException {
 		int id = nextIncidence_typeId();
 
@@ -6032,7 +6277,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement item_posStmt = null;
 
-	private static class Item_pos {
+	public static class Item_pos {
 		private Integer id; 
 		private Integer item; 
 		private String plu; 
@@ -6181,7 +6426,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertItem_pos(Integer item, String plu, String barcode, String desc_short, Short plu_product_type)
+	public int insertItem_pos(Integer item, String plu, String barcode, String desc_short, Short plu_product_type)
 	throws SQLException {
 		int id = nextItem_posId();
 
@@ -6214,12 +6459,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement agreement_level_paymentStmt = null;
 
-	private static class Agreement_level_payment {
+	public static class Agreement_level_payment {
 		private Integer id; 
 		private Integer agreement_level; 
 		private Short type; 
 		private String expression; 
 		private String description; 
+		private Date start_date; 
+		private Date end_date; 
+		private Short month; 
+		private Integer payment_concept; 
+		private Short salary_type; 
+		private Short description_decorable; 
+		private String irpf_expression; 
+		private String quote_expression; 
 	}
 	
 	private void insertAgreement_level_payment( List<Agreement_level_payment> agreement_level_payments )
@@ -6230,7 +6483,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( agreement_level_paymentStmt != null ) {
 				agreement_level_paymentStmt.close();
 			}
-			String values = "(?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -6239,7 +6492,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			agreement_level_paymentStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO agreement_level_payment (id,agreement_level,type,expression,description)"  
+				"INSERT INTO agreement_level_payment (id,agreement_level,type,expression,description,start_date,end_date,month,payment_concept,salary_type,description_decorable,irpf_expression,quote_expression)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			agreement_level_paymentStmtSize = size;
@@ -6268,6 +6521,38 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				agreement_level_paymentStmt.setNull(offset++, 12);
 			else
 				agreement_level_paymentStmt.setString(offset++, agreement_level_payment.description);
+			if ( agreement_level_payment.start_date == null )
+				agreement_level_paymentStmt.setNull(offset++, 91);
+			else
+				agreement_level_paymentStmt.setDate(offset++, agreement_level_payment.start_date);
+			if ( agreement_level_payment.end_date == null )
+				agreement_level_paymentStmt.setNull(offset++, 91);
+			else
+				agreement_level_paymentStmt.setDate(offset++, agreement_level_payment.end_date);
+			if ( agreement_level_payment.month == null )
+				agreement_level_paymentStmt.setNull(offset++, -6);
+			else
+				agreement_level_paymentStmt.setShort(offset++, agreement_level_payment.month);
+			if ( agreement_level_payment.payment_concept == null )
+				agreement_level_paymentStmt.setNull(offset++, 4);
+			else
+				agreement_level_paymentStmt.setInt(offset++, agreement_level_payment.payment_concept);
+			if ( agreement_level_payment.salary_type == null )
+				agreement_level_paymentStmt.setNull(offset++, -6);
+			else
+				agreement_level_paymentStmt.setShort(offset++, agreement_level_payment.salary_type);
+			if ( agreement_level_payment.description_decorable == null )
+				agreement_level_paymentStmt.setNull(offset++, -6);
+			else
+				agreement_level_paymentStmt.setShort(offset++, agreement_level_payment.description_decorable);
+			if ( agreement_level_payment.irpf_expression == null )
+				agreement_level_paymentStmt.setNull(offset++, 12);
+			else
+				agreement_level_paymentStmt.setString(offset++, agreement_level_payment.irpf_expression);
+			if ( agreement_level_payment.quote_expression == null )
+				agreement_level_paymentStmt.setNull(offset++, 12);
+			else
+				agreement_level_paymentStmt.setString(offset++, agreement_level_payment.quote_expression);
 		}
 		agreement_level_paymentStmt.executeUpdate();
 		agreement_level_paymentInserted += size;
@@ -6323,9 +6608,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param type Tipo de Percepcin Salarial
 	 * @param expression Frmula
 	 * @param description Descripcion
+	 * @param start_date Fecha de inicio
+	 * @param end_date Fecha de finalizacion
+	 * @param month Mes de la percepcion
+	 * @param payment_concept Identificador unico del concepto
+	 * @param salary_type Tipo de Nomina/Recibo
+	 * @param description_decorable 
+	 * @param irpf_expression Importe tributable
+	 * @param quote_expression Importe cotizable
 	 * @throws SQLException
 	*/
-	protected void insertAgreement_level_payment(Integer id, Integer agreement_level, Short type, String expression, String description)
+	protected void insertAgreement_level_payment(Integer id, Integer agreement_level, Short type, String expression, String description, Date start_date, Date end_date, Short month, Integer payment_concept, Short salary_type, Short description_decorable, String irpf_expression, String quote_expression)
 	throws SQLException {
 
 		Agreement_level_payment agreement_level_payment_ = new Agreement_level_payment();
@@ -6334,12 +6627,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		agreement_level_payment_.type = type;
 		agreement_level_payment_.expression = expression;
 		agreement_level_payment_.description = description;
+		agreement_level_payment_.start_date = start_date;
+		agreement_level_payment_.end_date = end_date;
+		agreement_level_payment_.month = month;
+		agreement_level_payment_.payment_concept = payment_concept;
+		agreement_level_payment_.salary_type = salary_type;
+		agreement_level_payment_.description_decorable = description_decorable;
+		agreement_level_payment_.irpf_expression = irpf_expression;
+		agreement_level_payment_.quote_expression = quote_expression;
 
 		agreement_level_payments.add(agreement_level_payment_);
 		
 		int agreement_level_paymentCount = agreement_level_payments.size();
 		
-		if ( 215 * agreement_level_paymentCount >=  this.maxAllowedPacket ){
+		if ( 510 * agreement_level_paymentCount >=  this.maxAllowedPacket ){
 			insertAgreement_level_payment(agreement_level_payments);
 			agreement_level_payments.clear();
 		} 
@@ -6352,10 +6653,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param type Tipo de Percepcin Salarial
 	 * @param expression Frmula
 	 * @param description Descripcion
+	 * @param start_date Fecha de inicio
+	 * @param end_date Fecha de finalizacion
+	 * @param month Mes de la percepcion
+	 * @param payment_concept Identificador unico del concepto
+	 * @param salary_type Tipo de Nomina/Recibo
+	 * @param description_decorable 
+	 * @param irpf_expression Importe tributable
+	 * @param quote_expression Importe cotizable
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAgreement_level_payment(Integer agreement_level, Short type, String expression, String description)
+	public int insertAgreement_level_payment(Integer agreement_level, Short type, String expression, String description, Date start_date, Date end_date, Short month, Integer payment_concept, Short salary_type, Short description_decorable, String irpf_expression, String quote_expression)
 	throws SQLException {
 		int id = nextAgreement_level_paymentId();
 
@@ -6365,12 +6674,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		agreement_level_payment_.type = type;
 		agreement_level_payment_.expression = expression;
 		agreement_level_payment_.description = description;
+		agreement_level_payment_.start_date = start_date;
+		agreement_level_payment_.end_date = end_date;
+		agreement_level_payment_.month = month;
+		agreement_level_payment_.payment_concept = payment_concept;
+		agreement_level_payment_.salary_type = salary_type;
+		agreement_level_payment_.description_decorable = description_decorable;
+		agreement_level_payment_.irpf_expression = irpf_expression;
+		agreement_level_payment_.quote_expression = quote_expression;
 
 		agreement_level_payments.add(agreement_level_payment_);
 		
 		int agreement_level_paymentCount = agreement_level_payments.size();
 		
-		if ( 215 * agreement_level_paymentCount >=  this.maxAllowedPacket ){
+		if ( 510 * agreement_level_paymentCount >=  this.maxAllowedPacket ){
 			insertAgreement_level_payment(agreement_level_payments);
 			agreement_level_payments.clear();
 		} 
@@ -6387,7 +6704,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement ec_paymethodStmt = null;
 
-	private static class Ec_paymethod {
+	public static class Ec_paymethod {
 		private Integer id; 
 		private Integer pay_method; 
 		private String user_name; 
@@ -6528,7 +6845,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEc_paymethod(Integer pay_method, String user_name, String password, String signature)
+	public int insertEc_paymethod(Integer pay_method, String user_name, String password, String signature)
 	throws SQLException {
 		int id = nextEc_paymethodId();
 
@@ -6560,7 +6877,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement fs_renting_detailStmt = null;
 
-	private static class Fs_renting_detail {
+	public static class Fs_renting_detail {
 		private Integer id; 
 		private Integer fs_renting; 
 		private Short type; 
@@ -6757,7 +7074,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFs_renting_detail(Integer fs_renting, Short type, String document, String name, Double paid_returns, Double percent, Double account_deposit, Integer accrual_period, String address, String city, String province)
+	public int insertFs_renting_detail(Integer fs_renting, Short type, String document, String name, Double paid_returns, Double percent, Double account_deposit, Integer accrual_period, String address, String city, String province)
 	throws SQLException {
 		int id = nextFs_renting_detailId();
 
@@ -6796,7 +7113,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement mk_actionStmt = null;
 
-	private static class Mk_action {
+	public static class Mk_action {
 		private Integer id; 
 		private Integer campaign; 
 		private Integer media_type; 
@@ -6945,7 +7262,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertMk_action(Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey)
+	public int insertMk_action(Integer campaign, Integer media_type, Timestamp start_date, Timestamp end_date, Integer survey)
 	throws SQLException {
 		int id = nextMk_actionId();
 
@@ -6978,10 +7295,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement fs_vat_detailStmt = null;
 
-	private static class Fs_vat_detail {
+	public static class Fs_vat_detail {
 		private Integer id; 
 		private Integer fs_vat; 
-		private Short vat_key; 
+		private String vat_key; 
 		private Double percent; 
 		private Double taxable_base; 
 		private Double quota; 
@@ -7035,9 +7352,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			else
 				fs_vat_detailStmt.setInt(offset++, fs_vat_detail.fs_vat);
 			if ( fs_vat_detail.vat_key == null )
-				fs_vat_detailStmt.setNull(offset++, -6);
+				fs_vat_detailStmt.setNull(offset++, 12);
 			else
-				fs_vat_detailStmt.setShort(offset++, fs_vat_detail.vat_key);
+				fs_vat_detailStmt.setString(offset++, fs_vat_detail.vat_key);
 			if ( fs_vat_detail.percent == null )
 				fs_vat_detailStmt.setNull(offset++, 8);
 			else
@@ -7173,7 +7490,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param res_deductible_quota Cuota deducible resultado
 	 * @throws SQLException
 	*/
-	protected void insertFs_vat_detail(Integer id, Integer fs_vat, Short vat_key, Double percent, Double taxable_base, Double quota, Double deductible_quota, Double adj_taxable_base, Double adj_quota, Double adj_deductible_quota, Double acu_taxable_base, Double acu_quota, Double acu_deductible_quota, Double dec_taxable_base, Double dec_quota, Double dec_deductible_quota, Double res_taxable_base, Double res_quota, Double res_deductible_quota)
+	protected void insertFs_vat_detail(Integer id, Integer fs_vat, String vat_key, Double percent, Double taxable_base, Double quota, Double deductible_quota, Double adj_taxable_base, Double adj_quota, Double adj_deductible_quota, Double acu_taxable_base, Double acu_quota, Double acu_deductible_quota, Double dec_taxable_base, Double dec_quota, Double dec_deductible_quota, Double res_taxable_base, Double res_quota, Double res_deductible_quota)
 	throws SQLException {
 
 		Fs_vat_detail fs_vat_detail_ = new Fs_vat_detail();
@@ -7231,7 +7548,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFs_vat_detail(Integer fs_vat, Short vat_key, Double percent, Double taxable_base, Double quota, Double deductible_quota, Double adj_taxable_base, Double adj_quota, Double adj_deductible_quota, Double acu_taxable_base, Double acu_quota, Double acu_deductible_quota, Double dec_taxable_base, Double dec_quota, Double dec_deductible_quota, Double res_taxable_base, Double res_quota, Double res_deductible_quota)
+	public int insertFs_vat_detail(Integer fs_vat, String vat_key, Double percent, Double taxable_base, Double quota, Double deductible_quota, Double adj_taxable_base, Double adj_quota, Double adj_deductible_quota, Double acu_taxable_base, Double acu_quota, Double acu_deductible_quota, Double dec_taxable_base, Double dec_quota, Double dec_deductible_quota, Double res_taxable_base, Double res_quota, Double res_deductible_quota)
 	throws SQLException {
 		int id = nextFs_vat_detailId();
 
@@ -7268,188 +7585,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int cv_languagesStmtSize = 0;
-
-	private int cv_languagesInserted = 0;
-
-	private List<Cv_languages> cv_languagess = 
-		new LinkedList<Cv_languages>();
-
-	private PreparedStatement cv_languagesStmt = null;
-
-	private static class Cv_languages {
-		private Integer id; 
-		private Short language; 
-		private Short spoken; 
-		private Short wrote; 
-		private Short read_level; 
-		private Integer curriculum; 
-	}
-	
-	private void insertCv_languages( List<Cv_languages> cv_languagess )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = cv_languagess.size();
-		if ( cv_languagesStmtSize != size ) {
-			if ( cv_languagesStmt != null ) {
-				cv_languagesStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			cv_languagesStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO cv_languages (id,language,spoken,wrote,read_level,curriculum)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			cv_languagesStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Cv_languages cv_languages : cv_languagess) {
-			if ( cv_languages.id == null )
-				cv_languagesStmt.setNull(offset++, 4);
-			else
-				cv_languagesStmt.setInt(offset++, cv_languages.id);
-			if ( cv_languages.language == null )
-				cv_languagesStmt.setNull(offset++, -6);
-			else
-				cv_languagesStmt.setShort(offset++, cv_languages.language);
-			if ( cv_languages.spoken == null )
-				cv_languagesStmt.setNull(offset++, -6);
-			else
-				cv_languagesStmt.setShort(offset++, cv_languages.spoken);
-			if ( cv_languages.wrote == null )
-				cv_languagesStmt.setNull(offset++, -6);
-			else
-				cv_languagesStmt.setShort(offset++, cv_languages.wrote);
-			if ( cv_languages.read_level == null )
-				cv_languagesStmt.setNull(offset++, -6);
-			else
-				cv_languagesStmt.setShort(offset++, cv_languages.read_level);
-			if ( cv_languages.curriculum == null )
-				cv_languagesStmt.setNull(offset++, 4);
-			else
-				cv_languagesStmt.setInt(offset++, cv_languages.curriculum);
-		}
-		cv_languagesStmt.executeUpdate();
-		cv_languagesInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Cv_languagess in {} milliseconds.", size, cv_languagesInserted, elapsed );		
-	}
-		
-		private int cv_languagesId = -1;
-		
-		private void initCv_languagesId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `cv_languages`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.cv_languagesId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCv_languagesId() {
-			return ++this.cv_languagesId;
-		} 
-
-		public void setCv_languagesId(Integer cv_languagesId) {
-			this.cv_languagesId = cv_languagesId;
-		} 
-	
-	private void flushCv_languages(  )
-	throws SQLException {
-		if ( ! cv_languagess.isEmpty() )
-			insertCv_languages(cv_languagess);
-		if ( cv_languagesStmt != null )
-			cv_languagesStmt.close();
-	}	
-
-	/**
-	 * Cv_languages
-	 * @param id Identificador nico del Idioma
-	 * @param language Idioma
-	 * @param spoken Nivel oral del Idioma
-	 * @param wrote Nivel escrito del Idioma
-	 * @param read_level Nivel ledo del Idioma
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @throws SQLException
-	*/
-	protected void insertCv_languages(Integer id, Short language, Short spoken, Short wrote, Short read_level, Integer curriculum)
-	throws SQLException {
-
-		Cv_languages cv_languages_ = new Cv_languages();
-		cv_languages_.id = id;
-		cv_languages_.language = language;
-		cv_languages_.spoken = spoken;
-		cv_languages_.wrote = wrote;
-		cv_languages_.read_level = read_level;
-		cv_languages_.curriculum = curriculum;
-
-		cv_languagess.add(cv_languages_);
-		
-		int cv_languagesCount = cv_languagess.size();
-		
-		if ( 32 * cv_languagesCount >=  this.maxAllowedPacket ){
-			insertCv_languages(cv_languagess);
-			cv_languagess.clear();
-		} 
-	}
-
-
-	/**
-	 * Cv_languages
-	 * @param language Idioma
-	 * @param spoken Nivel oral del Idioma
-	 * @param wrote Nivel escrito del Idioma
-	 * @param read_level Nivel ledo del Idioma
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertCv_languages(Short language, Short spoken, Short wrote, Short read_level, Integer curriculum)
-	throws SQLException {
-		int id = nextCv_languagesId();
-
-		Cv_languages cv_languages_ = new Cv_languages();
-		cv_languages_.id = id;
-		cv_languages_.language = language;
-		cv_languages_.spoken = spoken;
-		cv_languages_.wrote = wrote;
-		cv_languages_.read_level = read_level;
-		cv_languages_.curriculum = curriculum;
-
-		cv_languagess.add(cv_languages_);
-		
-		int cv_languagesCount = cv_languagess.size();
-		
-		if ( 32 * cv_languagesCount >=  this.maxAllowedPacket ){
-			insertCv_languages(cv_languagess);
-			cv_languagess.clear();
-		} 
-		return id;
-	}
-
-
 	private int offer_detail_commissionStmtSize = 0;
 
 	private int offer_detail_commissionInserted = 0;
@@ -7459,7 +7594,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement offer_detail_commissionStmt = null;
 
-	private static class Offer_detail_commission {
+	public static class Offer_detail_commission {
 		private Integer id; 
 		private Integer offer_detail; 
 		private Double commission; 
@@ -7608,7 +7743,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertOffer_detail_commission(Integer offer_detail, Double commission, Double amount, Short status, Date pay_date)
+	public int insertOffer_detail_commission(Integer offer_detail, Double commission, Double amount, Short status, Date pay_date)
 	throws SQLException {
 		int id = nextOffer_detail_commissionId();
 
@@ -7632,6 +7767,188 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int cv_languagesStmtSize = 0;
+
+	private int cv_languagesInserted = 0;
+
+	private List<Cv_languages> cv_languagess = 
+		new LinkedList<Cv_languages>();
+
+	private PreparedStatement cv_languagesStmt = null;
+
+	public static class Cv_languages {
+		private Integer id; 
+		private Short language; 
+		private Short spoken; 
+		private Short wrote; 
+		private Short read_level; 
+		private Integer curriculum; 
+	}
+	
+	private void insertCv_languages( List<Cv_languages> cv_languagess )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = cv_languagess.size();
+		if ( cv_languagesStmtSize != size ) {
+			if ( cv_languagesStmt != null ) {
+				cv_languagesStmt.close();
+			}
+			String values = "(?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			cv_languagesStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO cv_languages (id,language,spoken,wrote,read_level,curriculum)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			cv_languagesStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Cv_languages cv_languages : cv_languagess) {
+			if ( cv_languages.id == null )
+				cv_languagesStmt.setNull(offset++, 4);
+			else
+				cv_languagesStmt.setInt(offset++, cv_languages.id);
+			if ( cv_languages.language == null )
+				cv_languagesStmt.setNull(offset++, -6);
+			else
+				cv_languagesStmt.setShort(offset++, cv_languages.language);
+			if ( cv_languages.spoken == null )
+				cv_languagesStmt.setNull(offset++, -6);
+			else
+				cv_languagesStmt.setShort(offset++, cv_languages.spoken);
+			if ( cv_languages.wrote == null )
+				cv_languagesStmt.setNull(offset++, -6);
+			else
+				cv_languagesStmt.setShort(offset++, cv_languages.wrote);
+			if ( cv_languages.read_level == null )
+				cv_languagesStmt.setNull(offset++, -6);
+			else
+				cv_languagesStmt.setShort(offset++, cv_languages.read_level);
+			if ( cv_languages.curriculum == null )
+				cv_languagesStmt.setNull(offset++, 4);
+			else
+				cv_languagesStmt.setInt(offset++, cv_languages.curriculum);
+		}
+		cv_languagesStmt.executeUpdate();
+		cv_languagesInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Cv_languagess in {} milliseconds.", size, cv_languagesInserted, elapsed );		
+	}
+		
+		private int cv_languagesId = -1;
+		
+		private void initCv_languagesId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `cv_languages`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.cv_languagesId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCv_languagesId() {
+			return ++this.cv_languagesId;
+		} 
+
+		public void setCv_languagesId(Integer cv_languagesId) {
+			this.cv_languagesId = cv_languagesId;
+		} 
+	
+	private void flushCv_languages(  )
+	throws SQLException {
+		if ( ! cv_languagess.isEmpty() )
+			insertCv_languages(cv_languagess);
+		if ( cv_languagesStmt != null )
+			cv_languagesStmt.close();
+	}	
+
+	/**
+	 * Cv_languages
+	 * @param id Identificador nico del Idioma
+	 * @param language Idioma
+	 * @param spoken Nivel oral del Idioma
+	 * @param wrote Nivel escrito del Idioma
+	 * @param read_level Nivel ledo del Idioma
+	 * @param curriculum Identificador del Curriculum Vitae
+	 * @throws SQLException
+	*/
+	protected void insertCv_languages(Integer id, Short language, Short spoken, Short wrote, Short read_level, Integer curriculum)
+	throws SQLException {
+
+		Cv_languages cv_languages_ = new Cv_languages();
+		cv_languages_.id = id;
+		cv_languages_.language = language;
+		cv_languages_.spoken = spoken;
+		cv_languages_.wrote = wrote;
+		cv_languages_.read_level = read_level;
+		cv_languages_.curriculum = curriculum;
+
+		cv_languagess.add(cv_languages_);
+		
+		int cv_languagesCount = cv_languagess.size();
+		
+		if ( 32 * cv_languagesCount >=  this.maxAllowedPacket ){
+			insertCv_languages(cv_languagess);
+			cv_languagess.clear();
+		} 
+	}
+
+
+	/**
+	 * Cv_languages
+	 * @param language Idioma
+	 * @param spoken Nivel oral del Idioma
+	 * @param wrote Nivel escrito del Idioma
+	 * @param read_level Nivel ledo del Idioma
+	 * @param curriculum Identificador del Curriculum Vitae
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCv_languages(Short language, Short spoken, Short wrote, Short read_level, Integer curriculum)
+	throws SQLException {
+		int id = nextCv_languagesId();
+
+		Cv_languages cv_languages_ = new Cv_languages();
+		cv_languages_.id = id;
+		cv_languages_.language = language;
+		cv_languages_.spoken = spoken;
+		cv_languages_.wrote = wrote;
+		cv_languages_.read_level = read_level;
+		cv_languages_.curriculum = curriculum;
+
+		cv_languagess.add(cv_languages_);
+		
+		int cv_languagesCount = cv_languagess.size();
+		
+		if ( 32 * cv_languagesCount >=  this.maxAllowedPacket ){
+			insertCv_languages(cv_languagess);
+			cv_languagess.clear();
+		} 
+		return id;
+	}
+
+
 	private int favorite_categoryStmtSize = 0;
 
 	private int favorite_categoryInserted = 0;
@@ -7641,7 +7958,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement favorite_categoryStmt = null;
 
-	private static class Favorite_category {
+	public static class Favorite_category {
 		private Integer id; 
 		private String description; 
 		private Integer user_id; 
@@ -7766,7 +8083,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFavorite_category(String description, Integer user_id)
+	public int insertFavorite_category(String description, Integer user_id)
 	throws SQLException {
 		int id = nextFavorite_categoryId();
 
@@ -7796,7 +8113,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement balance_detailStmt = null;
 
-	private static class Balance_detail {
+	public static class Balance_detail {
 		private Integer id; 
 		private Integer balance; 
 		private String code; 
@@ -7987,7 +8304,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertBalance_detail(Integer balance, String code, String description, String accounts, Integer sortKey, Boolean title, Boolean internal_calculation, Boolean visible, Boolean zeroFlag, Boolean creditNature)
+	public int insertBalance_detail(Integer balance, String code, String description, String accounts, Integer sortKey, Boolean title, Boolean internal_calculation, Boolean visible, Boolean zeroFlag, Boolean creditNature)
 	throws SQLException {
 		int id = nextBalance_detailId();
 
@@ -8025,7 +8342,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement invoice_tax_accountStmt = null;
 
-	private static class Invoice_tax_account {
+	public static class Invoice_tax_account {
 		private Integer id; 
 		private Integer invoice_tax; 
 		private String account; 
@@ -8150,7 +8467,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoice_tax_account(Integer invoice_tax, String account)
+	public int insertInvoice_tax_account(Integer invoice_tax, String account)
 	throws SQLException {
 		int id = nextInvoice_tax_accountId();
 
@@ -8171,6 +8488,224 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int fs_mod347StmtSize = 0;
+
+	private int fs_mod347Inserted = 0;
+
+	private List<Fs_mod347> fs_mod347s = 
+		new LinkedList<Fs_mod347>();
+
+	private PreparedStatement fs_mod347Stmt = null;
+
+	public static class Fs_mod347 {
+		private Integer id; 
+		private Integer year; 
+		private Short administration; 
+		private String comments; 
+		private Short status; 
+		private Short security_level; 
+		private Boolean complementary; 
+		private Boolean replacement; 
+		private Integer number; 
+		private Integer replaced_number; 
+	}
+	
+	private void insertFs_mod347( List<Fs_mod347> fs_mod347s )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = fs_mod347s.size();
+		if ( fs_mod347StmtSize != size ) {
+			if ( fs_mod347Stmt != null ) {
+				fs_mod347Stmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			fs_mod347Stmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO fs_mod347 (id,year,administration,comments,status,security_level,complementary,replacement,number,replaced_number)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			fs_mod347StmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Fs_mod347 fs_mod347 : fs_mod347s) {
+			if ( fs_mod347.id == null )
+				fs_mod347Stmt.setNull(offset++, 4);
+			else
+				fs_mod347Stmt.setInt(offset++, fs_mod347.id);
+			if ( fs_mod347.year == null )
+				fs_mod347Stmt.setNull(offset++, 4);
+			else
+				fs_mod347Stmt.setInt(offset++, fs_mod347.year);
+			if ( fs_mod347.administration == null )
+				fs_mod347Stmt.setNull(offset++, -6);
+			else
+				fs_mod347Stmt.setShort(offset++, fs_mod347.administration);
+			if ( fs_mod347.comments == null )
+				fs_mod347Stmt.setNull(offset++, -1);
+			else
+				fs_mod347Stmt.setString(offset++, fs_mod347.comments);
+			if ( fs_mod347.status == null )
+				fs_mod347Stmt.setNull(offset++, -6);
+			else
+				fs_mod347Stmt.setShort(offset++, fs_mod347.status);
+			if ( fs_mod347.security_level == null )
+				fs_mod347Stmt.setNull(offset++, -6);
+			else
+				fs_mod347Stmt.setShort(offset++, fs_mod347.security_level);
+			if ( fs_mod347.complementary == null )
+				fs_mod347Stmt.setNull(offset++, -7);
+			else
+				fs_mod347Stmt.setBoolean(offset++, fs_mod347.complementary);
+			if ( fs_mod347.replacement == null )
+				fs_mod347Stmt.setNull(offset++, -7);
+			else
+				fs_mod347Stmt.setBoolean(offset++, fs_mod347.replacement);
+			if ( fs_mod347.number == null )
+				fs_mod347Stmt.setNull(offset++, 4);
+			else
+				fs_mod347Stmt.setInt(offset++, fs_mod347.number);
+			if ( fs_mod347.replaced_number == null )
+				fs_mod347Stmt.setNull(offset++, 4);
+			else
+				fs_mod347Stmt.setInt(offset++, fs_mod347.replaced_number);
+		}
+		fs_mod347Stmt.executeUpdate();
+		fs_mod347Inserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Fs_mod347s in {} milliseconds.", size, fs_mod347Inserted, elapsed );		
+	}
+		
+		private int fs_mod347Id = -1;
+		
+		private void initFs_mod347Id() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `fs_mod347`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.fs_mod347Id = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextFs_mod347Id() {
+			return ++this.fs_mod347Id;
+		} 
+
+		public void setFs_mod347Id(Integer fs_mod347Id) {
+			this.fs_mod347Id = fs_mod347Id;
+		} 
+	
+	private void flushFs_mod347(  )
+	throws SQLException {
+		if ( ! fs_mod347s.isEmpty() )
+			insertFs_mod347(fs_mod347s);
+		if ( fs_mod347Stmt != null )
+			fs_mod347Stmt.close();
+	}	
+
+	/**
+	 * Fs_mod347
+	 * @param id Identificador unico
+	 * @param year Ejercicio de la Declaracion
+	 * @param administration Administracion
+	 * @param comments Comentarios de la Declaracion
+	 * @param status Estado de la Declaracion
+	 * @param security_level Nivel de seguridad
+	 * @param complementary Declaracion complementaria
+	 * @param replacement Declaracion sustitutiva
+	 * @param number Numero de Decl.
+	 * @param replaced_number Numero de Decl. complementada o sustituida
+	 * @throws SQLException
+	*/
+	protected void insertFs_mod347(Integer id, Integer year, Short administration, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Integer number, Integer replaced_number)
+	throws SQLException {
+
+		Fs_mod347 fs_mod347_ = new Fs_mod347();
+		fs_mod347_.id = id;
+		fs_mod347_.year = year;
+		fs_mod347_.administration = administration;
+		fs_mod347_.comments = comments;
+		fs_mod347_.status = status;
+		fs_mod347_.security_level = security_level;
+		fs_mod347_.complementary = complementary;
+		fs_mod347_.replacement = replacement;
+		fs_mod347_.number = number;
+		fs_mod347_.replaced_number = replaced_number;
+
+		fs_mod347s.add(fs_mod347_);
+		
+		int fs_mod347Count = fs_mod347s.size();
+		
+		if ( 49 * fs_mod347Count >=  this.maxAllowedPacket ){
+			insertFs_mod347(fs_mod347s);
+			fs_mod347s.clear();
+		} 
+	}
+
+
+	/**
+	 * Fs_mod347
+	 * @param year Ejercicio de la Declaracion
+	 * @param administration Administracion
+	 * @param comments Comentarios de la Declaracion
+	 * @param status Estado de la Declaracion
+	 * @param security_level Nivel de seguridad
+	 * @param complementary Declaracion complementaria
+	 * @param replacement Declaracion sustitutiva
+	 * @param number Numero de Decl.
+	 * @param replaced_number Numero de Decl. complementada o sustituida
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_mod347(Integer year, Short administration, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Integer number, Integer replaced_number)
+	throws SQLException {
+		int id = nextFs_mod347Id();
+
+		Fs_mod347 fs_mod347_ = new Fs_mod347();
+		fs_mod347_.id = id;
+		fs_mod347_.year = year;
+		fs_mod347_.administration = administration;
+		fs_mod347_.comments = comments;
+		fs_mod347_.status = status;
+		fs_mod347_.security_level = security_level;
+		fs_mod347_.complementary = complementary;
+		fs_mod347_.replacement = replacement;
+		fs_mod347_.number = number;
+		fs_mod347_.replaced_number = replaced_number;
+
+		fs_mod347s.add(fs_mod347_);
+		
+		int fs_mod347Count = fs_mod347s.size();
+		
+		if ( 49 * fs_mod347Count >=  this.maxAllowedPacket ){
+			insertFs_mod347(fs_mod347s);
+			fs_mod347s.clear();
+		} 
+		return id;
+	}
+
+
 	private int product_accountStmtSize = 0;
 
 	private int product_accountInserted = 0;
@@ -8180,7 +8715,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement product_accountStmt = null;
 
-	private static class Product_account {
+	public static class Product_account {
 		private Integer id; 
 		private Integer product; 
 		private String account; 
@@ -8313,7 +8848,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProduct_account(Integer product, String account, Short type)
+	public int insertProduct_account(Integer product, String account, Short type)
 	throws SQLException {
 		int id = nextProduct_accountId();
 
@@ -8344,7 +8879,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement pcategory_treeStmt = null;
 
-	private static class Pcategory_tree {
+	public static class Pcategory_tree {
 		private Integer id; 
 		private Integer parent; 
 		private Integer child; 
@@ -8469,7 +9004,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPcategory_tree(Integer parent, Integer child)
+	public int insertPcategory_tree(Integer parent, Integer child)
 	throws SQLException {
 		int id = nextPcategory_treeId();
 
@@ -8499,7 +9034,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_entry_detailStmt = null;
 
-	private static class Account_entry_detail {
+	public static class Account_entry_detail {
 		private Integer id; 
 		private Integer account_entry; 
 		private Integer line; 
@@ -8672,7 +9207,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_entry_detail(Integer account_entry, Integer line, String account, String concept, String balancing_account, Double debit, Double credit, String document_number)
+	public int insertAccount_entry_detail(Integer account_entry, Integer line, String account, String concept, String balancing_account, Double debit, Double credit, String document_number)
 	throws SQLException {
 		int id = nextAccount_entry_detailId();
 
@@ -8708,7 +9243,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement tariff_catalogueStmt = null;
 
-	private static class Tariff_catalogue {
+	public static class Tariff_catalogue {
 		private Integer id; 
 		private Integer tariff; 
 		private Integer catalogue; 
@@ -8833,7 +9368,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTariff_catalogue(Integer tariff, Integer catalogue)
+	public int insertTariff_catalogue(Integer tariff, Integer catalogue)
 	throws SQLException {
 		int id = nextTariff_catalogueId();
 
@@ -8863,7 +9398,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement supplier_segmentStmt = null;
 
-	private static class Supplier_segment {
+	public static class Supplier_segment {
 		private Integer id; 
 		private String description; 
 	}
@@ -8980,7 +9515,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSupplier_segment(String description)
+	public int insertSupplier_segment(String description)
 	throws SQLException {
 		int id = nextSupplier_segmentId();
 
@@ -9009,7 +9544,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement amortization_detailStmt = null;
 
-	private static class Amortization_detail {
+	public static class Amortization_detail {
 		private Integer id; 
 		private Integer amortization; 
 		private Date from_date; 
@@ -9182,7 +9717,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAmortization_detail(Integer amortization, Date from_date, Date to_date, Double coefficient, Double allocation, Short status, Integer account_entry, Double fiscal_allocation)
+	public int insertAmortization_detail(Integer amortization, Date from_date, Date to_date, Double coefficient, Double allocation, Short status, Integer account_entry, Double fiscal_allocation)
 	throws SQLException {
 		int id = nextAmortization_detailId();
 
@@ -9218,7 +9753,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement noticeStmt = null;
 
-	private static class Notice {
+	public static class Notice {
 		private Integer id; 
 		private Timestamp date; 
 		private Integer sender; 
@@ -9415,7 +9950,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertNotice(Timestamp date, Integer sender, Integer work_group, Integer recipient, String source, String company, String phone, String subject, Short status, Short type, Short priority)
+	public int insertNotice(Timestamp date, Integer sender, Integer work_group, Integer recipient, String source, String company, String phone, String subject, Short status, Short type, Short priority)
 	throws SQLException {
 		int id = nextNoticeId();
 
@@ -9454,7 +9989,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement production_detailStmt = null;
 
-	private static class Production_detail {
+	public static class Production_detail {
 		private Integer id; 
 		private Integer production; 
 		private Integer item; 
@@ -9611,7 +10146,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProduction_detail(Integer production, Integer item, String description, Double initial_quantity, Double quantity, Double price)
+	public int insertProduction_detail(Integer production, Integer item, String description, Double initial_quantity, Double quantity, Double price)
 	throws SQLException {
 		int id = nextProduction_detailId();
 
@@ -9645,7 +10180,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement amortization_typeStmt = null;
 
-	private static class Amortization_type {
+	public static class Amortization_type {
 		private Integer id; 
 		private String fixed_asset_account; 
 		private String accumulated_account; 
@@ -9794,7 +10329,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAmortization_type(String fixed_asset_account, String accumulated_account, String allocation_account, Double percentage, String description)
+	public int insertAmortization_type(String fixed_asset_account, String accumulated_account, String allocation_account, Double percentage, String description)
 	throws SQLException {
 		int id = nextAmortization_typeId();
 
@@ -9827,7 +10362,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement delivery_detailStmt = null;
 
-	private static class Delivery_detail {
+	public static class Delivery_detail {
 		private Integer id; 
 		private Integer delivery; 
 		private Integer line; 
@@ -10024,7 +10559,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertDelivery_detail(Integer delivery, Integer line, Integer item, String description, Integer warehouse, Double quantity, Double price, String discount_expr, Short type, Short source, Integer sales_detail)
+	public int insertDelivery_detail(Integer delivery, Integer line, Integer item, String description, Integer warehouse, Double quantity, Double price, String discount_expr, Short type, Short source, Integer sales_detail)
 	throws SQLException {
 		int id = nextDelivery_detailId();
 
@@ -10063,7 +10598,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement catalogueStmt = null;
 
-	private static class Catalogue {
+	public static class Catalogue {
 		private Integer id; 
 		private String name; 
 		private Date start_date; 
@@ -10196,7 +10731,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCatalogue(String name, Date start_date, Date end_date)
+	public int insertCatalogue(String name, Date start_date, Date end_date)
 	throws SQLException {
 		int id = nextCatalogueId();
 
@@ -10227,7 +10762,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement action_entryStmt = null;
 
-	private static class Action_entry {
+	public static class Action_entry {
 		private Integer id; 
 		private Timestamp executionDate; 
 		private Integer action_id; 
@@ -10360,7 +10895,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAction_entry(Timestamp executionDate, Integer action_id, Integer session_id)
+	public int insertAction_entry(Timestamp executionDate, Integer action_id, Integer session_id)
 	throws SQLException {
 		int id = nextAction_entryId();
 
@@ -10391,7 +10926,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement absenceStmt = null;
 
-	private static class Absence {
+	public static class Absence {
 		private Integer id; 
 		private Integer course_alumn; 
 		private Date absence_date; 
@@ -10532,7 +11067,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAbsence(Integer course_alumn, Date absence_date, String comments, Short evaluation)
+	public int insertAbsence(Integer course_alumn, Date absence_date, String comments, Short evaluation)
 	throws SQLException {
 		int id = nextAbsenceId();
 
@@ -10555,6 +11090,242 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int system_paymentStmtSize = 0;
+
+	private int system_paymentInserted = 0;
+
+	private List<System_payment> system_payments = 
+		new LinkedList<System_payment>();
+
+	private PreparedStatement system_paymentStmt = null;
+
+	public static class System_payment {
+		private Integer id; 
+		private Short type; 
+		private Integer payment_concept; 
+		private String description; 
+		private Short description_decorable; 
+		private String expression; 
+		private String irpf_expression; 
+		private String quote_expression; 
+		private Date start_date; 
+		private Short month; 
+		private Date end_date; 
+		private Short salary_type; 
+	}
+	
+	private void insertSystem_payment( List<System_payment> system_payments )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = system_payments.size();
+		if ( system_paymentStmtSize != size ) {
+			if ( system_paymentStmt != null ) {
+				system_paymentStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			system_paymentStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO system_payment (id,type,payment_concept,description,description_decorable,expression,irpf_expression,quote_expression,start_date,month,end_date,salary_type)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			system_paymentStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (System_payment system_payment : system_payments) {
+			if ( system_payment.id == null )
+				system_paymentStmt.setNull(offset++, 4);
+			else
+				system_paymentStmt.setInt(offset++, system_payment.id);
+			if ( system_payment.type == null )
+				system_paymentStmt.setNull(offset++, -6);
+			else
+				system_paymentStmt.setShort(offset++, system_payment.type);
+			if ( system_payment.payment_concept == null )
+				system_paymentStmt.setNull(offset++, 4);
+			else
+				system_paymentStmt.setInt(offset++, system_payment.payment_concept);
+			if ( system_payment.description == null )
+				system_paymentStmt.setNull(offset++, 12);
+			else
+				system_paymentStmt.setString(offset++, system_payment.description);
+			if ( system_payment.description_decorable == null )
+				system_paymentStmt.setNull(offset++, -6);
+			else
+				system_paymentStmt.setShort(offset++, system_payment.description_decorable);
+			if ( system_payment.expression == null )
+				system_paymentStmt.setNull(offset++, 12);
+			else
+				system_paymentStmt.setString(offset++, system_payment.expression);
+			if ( system_payment.irpf_expression == null )
+				system_paymentStmt.setNull(offset++, 12);
+			else
+				system_paymentStmt.setString(offset++, system_payment.irpf_expression);
+			if ( system_payment.quote_expression == null )
+				system_paymentStmt.setNull(offset++, 12);
+			else
+				system_paymentStmt.setString(offset++, system_payment.quote_expression);
+			if ( system_payment.start_date == null )
+				system_paymentStmt.setNull(offset++, 91);
+			else
+				system_paymentStmt.setDate(offset++, system_payment.start_date);
+			if ( system_payment.month == null )
+				system_paymentStmt.setNull(offset++, -6);
+			else
+				system_paymentStmt.setShort(offset++, system_payment.month);
+			if ( system_payment.end_date == null )
+				system_paymentStmt.setNull(offset++, 91);
+			else
+				system_paymentStmt.setDate(offset++, system_payment.end_date);
+			if ( system_payment.salary_type == null )
+				system_paymentStmt.setNull(offset++, -6);
+			else
+				system_paymentStmt.setShort(offset++, system_payment.salary_type);
+		}
+		system_paymentStmt.executeUpdate();
+		system_paymentInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} System_payments in {} milliseconds.", size, system_paymentInserted, elapsed );		
+	}
+		
+		private int system_paymentId = -1;
+		
+		private void initSystem_paymentId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `system_payment`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.system_paymentId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextSystem_paymentId() {
+			return ++this.system_paymentId;
+		} 
+
+		public void setSystem_paymentId(Integer system_paymentId) {
+			this.system_paymentId = system_paymentId;
+		} 
+	
+	private void flushSystem_payment(  )
+	throws SQLException {
+		if ( ! system_payments.isEmpty() )
+			insertSystem_payment(system_payments);
+		if ( system_paymentStmt != null )
+			system_paymentStmt.close();
+	}	
+
+	/**
+	 * System_payment
+	 * @param id Identificador unico
+	 * @param type Tipo de Percepcin Salarial
+	 * @param payment_concept Identificador unico del concepto
+	 * @param description Descripcion
+	 * @param description_decorable 
+	 * @param expression Importe
+	 * @param irpf_expression Importe tributable
+	 * @param quote_expression Importe cotizable
+	 * @param start_date Fecha de inicio
+	 * @param month Mes de la percepcion
+	 * @param end_date Fecha de finalizacion
+	 * @param salary_type Tipo de Nomina/Recibo
+	 * @throws SQLException
+	*/
+	protected void insertSystem_payment(Integer id, Short type, Integer payment_concept, String description, Short description_decorable, String expression, String irpf_expression, String quote_expression, Date start_date, Short month, Date end_date, Short salary_type)
+	throws SQLException {
+
+		System_payment system_payment_ = new System_payment();
+		system_payment_.id = id;
+		system_payment_.type = type;
+		system_payment_.payment_concept = payment_concept;
+		system_payment_.description = description;
+		system_payment_.description_decorable = description_decorable;
+		system_payment_.expression = expression;
+		system_payment_.irpf_expression = irpf_expression;
+		system_payment_.quote_expression = quote_expression;
+		system_payment_.start_date = start_date;
+		system_payment_.month = month;
+		system_payment_.end_date = end_date;
+		system_payment_.salary_type = salary_type;
+
+		system_payments.add(system_payment_);
+		
+		int system_paymentCount = system_payments.size();
+		
+		if ( 500 * system_paymentCount >=  this.maxAllowedPacket ){
+			insertSystem_payment(system_payments);
+			system_payments.clear();
+		} 
+	}
+
+
+	/**
+	 * System_payment
+	 * @param type Tipo de Percepcin Salarial
+	 * @param payment_concept Identificador unico del concepto
+	 * @param description Descripcion
+	 * @param description_decorable 
+	 * @param expression Importe
+	 * @param irpf_expression Importe tributable
+	 * @param quote_expression Importe cotizable
+	 * @param start_date Fecha de inicio
+	 * @param month Mes de la percepcion
+	 * @param end_date Fecha de finalizacion
+	 * @param salary_type Tipo de Nomina/Recibo
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertSystem_payment(Short type, Integer payment_concept, String description, Short description_decorable, String expression, String irpf_expression, String quote_expression, Date start_date, Short month, Date end_date, Short salary_type)
+	throws SQLException {
+		int id = nextSystem_paymentId();
+
+		System_payment system_payment_ = new System_payment();
+		system_payment_.id = id;
+		system_payment_.type = type;
+		system_payment_.payment_concept = payment_concept;
+		system_payment_.description = description;
+		system_payment_.description_decorable = description_decorable;
+		system_payment_.expression = expression;
+		system_payment_.irpf_expression = irpf_expression;
+		system_payment_.quote_expression = quote_expression;
+		system_payment_.start_date = start_date;
+		system_payment_.month = month;
+		system_payment_.end_date = end_date;
+		system_payment_.salary_type = salary_type;
+
+		system_payments.add(system_payment_);
+		
+		int system_paymentCount = system_payments.size();
+		
+		if ( 500 * system_paymentCount >=  this.maxAllowedPacket ){
+			insertSystem_payment(system_payments);
+			system_payments.clear();
+		} 
+		return id;
+	}
+
+
 	private int item_tariffStmtSize = 0;
 
 	private int item_tariffInserted = 0;
@@ -10564,7 +11335,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement item_tariffStmt = null;
 
-	private static class Item_tariff {
+	public static class Item_tariff {
 		private Integer id; 
 		private Integer item; 
 		private Integer tariff; 
@@ -10697,7 +11468,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertItem_tariff(Integer item, Integer tariff, Double percentage)
+	public int insertItem_tariff(Integer item, Integer tariff, Double percentage)
 	throws SQLException {
 		int id = nextItem_tariffId();
 
@@ -10728,7 +11499,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_entry_fbatchStmt = null;
 
-	private static class Account_entry_fbatch {
+	public static class Account_entry_fbatch {
 		private Integer id; 
 		private Integer account_entry; 
 		private Integer fbatch; 
@@ -10853,7 +11624,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_entry_fbatch(Integer account_entry, Integer fbatch)
+	public int insertAccount_entry_fbatch(Integer account_entry, Integer fbatch)
 	throws SQLException {
 		int id = nextAccount_entry_fbatchId();
 
@@ -10883,7 +11654,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement sellerStmt = null;
 
-	private static class Seller {
+	public static class Seller {
 		private Integer registry; 
 		private Integer commission_type; 
 		private Short status; 
@@ -10981,7 +11752,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement offer_attachStmt = null;
 
-	private static class Offer_attach {
+	public static class Offer_attach {
 		private Integer id; 
 		private Integer offer; 
 		private Short mimeType; 
@@ -11122,7 +11893,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertOffer_attach(Integer offer, Short mimeType, String description, InputStream data)
+	public int insertOffer_attach(Integer offer, Short mimeType, String description, InputStream data)
 	throws SQLException {
 		int id = nextOffer_attachId();
 
@@ -11154,7 +11925,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement process_detailStmt = null;
 
-	private static class Process_detail {
+	public static class Process_detail {
 		private Integer id; 
 		private Integer process; 
 		private String description; 
@@ -11343,7 +12114,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProcess_detail(Integer process, String description, Integer position, Short date_reference, Integer days, Integer alert_days, Integer workgroup, Short priority, Short status, String comments)
+	public int insertProcess_detail(Integer process, String description, Integer position, Short date_reference, Integer days, Integer alert_days, Integer workgroup, Short priority, Short status, String comments)
 	throws SQLException {
 		int id = nextProcess_detailId();
 
@@ -11381,7 +12152,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement relationshipStmt = null;
 
-	private static class Relationship {
+	public static class Relationship {
 		private Integer id; 
 		private String description; 
 	}
@@ -11498,7 +12269,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRelationship(String description)
+	public int insertRelationship(String description)
 	throws SQLException {
 		int id = nextRelationshipId();
 
@@ -11527,7 +12298,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_budget_detailStmt = null;
 
-	private static class Account_budget_detail {
+	public static class Account_budget_detail {
 		private Integer id; 
 		private Integer account_budget; 
 		private String account_period; 
@@ -11692,7 +12463,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_budget_detail(Integer account_budget, String account_period, String account, Short security_level, Date entry_date, Double debit, Double credit)
+	public int insertAccount_budget_detail(Integer account_budget, String account_period, String account, Short security_level, Date entry_date, Double debit, Double credit)
 	throws SQLException {
 		int id = nextAccount_budget_detailId();
 
@@ -11727,7 +12498,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_entry_invoiceStmt = null;
 
-	private static class Account_entry_invoice {
+	public static class Account_entry_invoice {
 		private Integer id; 
 		private Integer account_entry; 
 		private Integer invoice; 
@@ -11852,7 +12623,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_entry_invoice(Integer account_entry, Integer invoice)
+	public int insertAccount_entry_invoice(Integer account_entry, Integer invoice)
 	throws SQLException {
 		int id = nextAccount_entry_invoiceId();
 
@@ -11882,7 +12653,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement tax_accountStmt = null;
 
-	private static class Tax_account {
+	public static class Tax_account {
 		private Integer id; 
 		private Integer tax; 
 		private String account; 
@@ -12015,7 +12786,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTax_account(Integer tax, String account, Short type)
+	public int insertTax_account(Integer tax, String account, Short type)
 	throws SQLException {
 		int id = nextTax_accountId();
 
@@ -12046,7 +12817,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement expenseStmt = null;
 
-	private static class Expense {
+	public static class Expense {
 		private Integer id; 
 		private String description; 
 		private Double unit_price; 
@@ -12171,7 +12942,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertExpense(String description, Double unit_price)
+	public int insertExpense(String description, Double unit_price)
 	throws SQLException {
 		int id = nextExpenseId();
 
@@ -12201,7 +12972,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement inventoryStmt = null;
 
-	private static class Inventory {
+	public static class Inventory {
 		private Integer id; 
 		private Date inventory_date; 
 		private Integer warehouse; 
@@ -12334,7 +13105,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInventory(Date inventory_date, Integer warehouse, String description)
+	public int insertInventory(Date inventory_date, Integer warehouse, String description)
 	throws SQLException {
 		int id = nextInventoryId();
 
@@ -12365,7 +13136,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement commercial_termStmt = null;
 
-	private static class Commercial_term {
+	public static class Commercial_term {
 		private Integer id; 
 		private Integer line; 
 		private String name; 
@@ -12506,7 +13277,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCommercial_term(Integer line, String name, String description, Boolean term_general)
+	public int insertCommercial_term(Integer line, String name, String description, Boolean term_general)
 	throws SQLException {
 		int id = nextCommercial_termId();
 
@@ -12538,7 +13309,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement production_expenseStmt = null;
 
-	private static class Production_expense {
+	public static class Production_expense {
 		private Integer id; 
 		private Integer production; 
 		private String description; 
@@ -12679,7 +13450,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProduction_expense(Integer production, String description, Double quantity, Double price)
+	public int insertProduction_expense(Integer production, String description, Double quantity, Double price)
 	throws SQLException {
 		int id = nextProduction_expenseId();
 
@@ -12702,152 +13473,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int commercial_activityStmtSize = 0;
-
-	private int commercial_activityInserted = 0;
-
-	private List<Commercial_activity> commercial_activitys = 
-		new LinkedList<Commercial_activity>();
-
-	private PreparedStatement commercial_activityStmt = null;
-
-	private static class Commercial_activity {
-		private Integer id; 
-		private String name; 
-	}
-	
-	private void insertCommercial_activity( List<Commercial_activity> commercial_activitys )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = commercial_activitys.size();
-		if ( commercial_activityStmtSize != size ) {
-			if ( commercial_activityStmt != null ) {
-				commercial_activityStmt.close();
-			}
-			String values = "(?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			commercial_activityStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO commercial_activity (id,name)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			commercial_activityStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Commercial_activity commercial_activity : commercial_activitys) {
-			if ( commercial_activity.id == null )
-				commercial_activityStmt.setNull(offset++, 4);
-			else
-				commercial_activityStmt.setInt(offset++, commercial_activity.id);
-			if ( commercial_activity.name == null )
-				commercial_activityStmt.setNull(offset++, 12);
-			else
-				commercial_activityStmt.setString(offset++, commercial_activity.name);
-		}
-		commercial_activityStmt.executeUpdate();
-		commercial_activityInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Commercial_activitys in {} milliseconds.", size, commercial_activityInserted, elapsed );		
-	}
-		
-		private int commercial_activityId = -1;
-		
-		private void initCommercial_activityId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `commercial_activity`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.commercial_activityId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCommercial_activityId() {
-			return ++this.commercial_activityId;
-		} 
-
-		public void setCommercial_activityId(Integer commercial_activityId) {
-			this.commercial_activityId = commercial_activityId;
-		} 
-	
-	private void flushCommercial_activity(  )
-	throws SQLException {
-		if ( ! commercial_activitys.isEmpty() )
-			insertCommercial_activity(commercial_activitys);
-		if ( commercial_activityStmt != null )
-			commercial_activityStmt.close();
-	}	
-
-	/**
-	 * Commercial_activity
-	 * @param id Identificador unico
-	 * @param name Nombre de la Actividad Comercial
-	 * @throws SQLException
-	*/
-	protected void insertCommercial_activity(Integer id, String name)
-	throws SQLException {
-
-		Commercial_activity commercial_activity_ = new Commercial_activity();
-		commercial_activity_.id = id;
-		commercial_activity_.name = name;
-
-		commercial_activitys.add(commercial_activity_);
-		
-		int commercial_activityCount = commercial_activitys.size();
-		
-		if ( 42 * commercial_activityCount >=  this.maxAllowedPacket ){
-			insertCommercial_activity(commercial_activitys);
-			commercial_activitys.clear();
-		} 
-	}
-
-
-	/**
-	 * Commercial_activity
-	 * @param name Nombre de la Actividad Comercial
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertCommercial_activity(String name)
-	throws SQLException {
-		int id = nextCommercial_activityId();
-
-		Commercial_activity commercial_activity_ = new Commercial_activity();
-		commercial_activity_.id = id;
-		commercial_activity_.name = name;
-
-		commercial_activitys.add(commercial_activity_);
-		
-		int commercial_activityCount = commercial_activitys.size();
-		
-		if ( 42 * commercial_activityCount >=  this.maxAllowedPacket ){
-			insertCommercial_activity(commercial_activitys);
-			commercial_activitys.clear();
-		} 
-		return id;
-	}
-
-
 	private int offer_termStmtSize = 0;
 
 	private int offer_termInserted = 0;
@@ -12857,7 +13482,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement offer_termStmt = null;
 
-	private static class Offer_term {
+	public static class Offer_term {
 		private Integer id; 
 		private Integer offer; 
 		private Integer line; 
@@ -13006,7 +13631,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertOffer_term(Integer offer, Integer line, String name, String description, Boolean term_general)
+	public int insertOffer_term(Integer offer, Integer line, String name, String description, Boolean term_general)
 	throws SQLException {
 		int id = nextOffer_termId();
 
@@ -13030,6 +13655,152 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int commercial_activityStmtSize = 0;
+
+	private int commercial_activityInserted = 0;
+
+	private List<Commercial_activity> commercial_activitys = 
+		new LinkedList<Commercial_activity>();
+
+	private PreparedStatement commercial_activityStmt = null;
+
+	public static class Commercial_activity {
+		private Integer id; 
+		private String name; 
+	}
+	
+	private void insertCommercial_activity( List<Commercial_activity> commercial_activitys )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = commercial_activitys.size();
+		if ( commercial_activityStmtSize != size ) {
+			if ( commercial_activityStmt != null ) {
+				commercial_activityStmt.close();
+			}
+			String values = "(?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			commercial_activityStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO commercial_activity (id,name)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			commercial_activityStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Commercial_activity commercial_activity : commercial_activitys) {
+			if ( commercial_activity.id == null )
+				commercial_activityStmt.setNull(offset++, 4);
+			else
+				commercial_activityStmt.setInt(offset++, commercial_activity.id);
+			if ( commercial_activity.name == null )
+				commercial_activityStmt.setNull(offset++, 12);
+			else
+				commercial_activityStmt.setString(offset++, commercial_activity.name);
+		}
+		commercial_activityStmt.executeUpdate();
+		commercial_activityInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Commercial_activitys in {} milliseconds.", size, commercial_activityInserted, elapsed );		
+	}
+		
+		private int commercial_activityId = -1;
+		
+		private void initCommercial_activityId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `commercial_activity`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.commercial_activityId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCommercial_activityId() {
+			return ++this.commercial_activityId;
+		} 
+
+		public void setCommercial_activityId(Integer commercial_activityId) {
+			this.commercial_activityId = commercial_activityId;
+		} 
+	
+	private void flushCommercial_activity(  )
+	throws SQLException {
+		if ( ! commercial_activitys.isEmpty() )
+			insertCommercial_activity(commercial_activitys);
+		if ( commercial_activityStmt != null )
+			commercial_activityStmt.close();
+	}	
+
+	/**
+	 * Commercial_activity
+	 * @param id Identificador unico
+	 * @param name Nombre de la Actividad Comercial
+	 * @throws SQLException
+	*/
+	protected void insertCommercial_activity(Integer id, String name)
+	throws SQLException {
+
+		Commercial_activity commercial_activity_ = new Commercial_activity();
+		commercial_activity_.id = id;
+		commercial_activity_.name = name;
+
+		commercial_activitys.add(commercial_activity_);
+		
+		int commercial_activityCount = commercial_activitys.size();
+		
+		if ( 42 * commercial_activityCount >=  this.maxAllowedPacket ){
+			insertCommercial_activity(commercial_activitys);
+			commercial_activitys.clear();
+		} 
+	}
+
+
+	/**
+	 * Commercial_activity
+	 * @param name Nombre de la Actividad Comercial
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCommercial_activity(String name)
+	throws SQLException {
+		int id = nextCommercial_activityId();
+
+		Commercial_activity commercial_activity_ = new Commercial_activity();
+		commercial_activity_.id = id;
+		commercial_activity_.name = name;
+
+		commercial_activitys.add(commercial_activity_);
+		
+		int commercial_activityCount = commercial_activitys.size();
+		
+		if ( 42 * commercial_activityCount >=  this.maxAllowedPacket ){
+			insertCommercial_activity(commercial_activitys);
+			commercial_activitys.clear();
+		} 
+		return id;
+	}
+
+
 	private int rsegmentStmtSize = 0;
 
 	private int rsegmentInserted = 0;
@@ -13039,7 +13810,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement rsegmentStmt = null;
 
-	private static class Rsegment {
+	public static class Rsegment {
 		private Integer id; 
 		private Integer registry; 
 		private Integer segment; 
@@ -13164,7 +13935,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRsegment(Integer registry, Integer segment)
+	public int insertRsegment(Integer registry, Integer segment)
 	throws SQLException {
 		int id = nextRsegmentId();
 
@@ -13194,7 +13965,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement delivery_detail_labourStmt = null;
 
-	private static class Delivery_detail_labour {
+	public static class Delivery_detail_labour {
 		private Integer id; 
 		private Integer delivery_detail; 
 		private Integer employee; 
@@ -13327,7 +14098,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertDelivery_detail_labour(Integer delivery_detail, Integer employee, Double quantity)
+	public int insertDelivery_detail_labour(Integer delivery_detail, Integer employee, Double quantity)
 	throws SQLException {
 		int id = nextDelivery_detail_labourId();
 
@@ -13358,7 +14129,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement process_transition_typeStmt = null;
 
-	private static class Process_transition_type {
+	public static class Process_transition_type {
 		private Integer id; 
 		private String description; 
 	}
@@ -13475,7 +14246,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProcess_transition_type(String description)
+	public int insertProcess_transition_type(String description)
 	throws SQLException {
 		int id = nextProcess_transition_typeId();
 
@@ -13504,11 +14275,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement deduction_conceptStmt = null;
 
-	private static class Deduction_concept {
+	public static class Deduction_concept {
 		private Integer id; 
 		private String code; 
 		private String description; 
 		private Short type; 
+		private Short description_decorable; 
+		private String expression; 
 	}
 	
 	private void insertDeduction_concept( List<Deduction_concept> deduction_concepts )
@@ -13519,7 +14292,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( deduction_conceptStmt != null ) {
 				deduction_conceptStmt.close();
 			}
-			String values = "(?,?,?,?)";
+			String values = "(?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -13528,7 +14301,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			deduction_conceptStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO deduction_concept (id,code,description,type)"  
+				"INSERT INTO deduction_concept (id,code,description,type,description_decorable,expression)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			deduction_conceptStmtSize = size;
@@ -13553,6 +14326,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				deduction_conceptStmt.setNull(offset++, -6);
 			else
 				deduction_conceptStmt.setShort(offset++, deduction_concept.type);
+			if ( deduction_concept.description_decorable == null )
+				deduction_conceptStmt.setNull(offset++, -6);
+			else
+				deduction_conceptStmt.setShort(offset++, deduction_concept.description_decorable);
+			if ( deduction_concept.expression == null )
+				deduction_conceptStmt.setNull(offset++, 12);
+			else
+				deduction_conceptStmt.setString(offset++, deduction_concept.expression);
 		}
 		deduction_conceptStmt.executeUpdate();
 		deduction_conceptInserted += size;
@@ -13607,9 +14388,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param code Codigo
 	 * @param description Descripcion
 	 * @param type Tipo de Deduccion Salarial
+	 * @param description_decorable 
+	 * @param expression Importe
 	 * @throws SQLException
 	*/
-	protected void insertDeduction_concept(Integer id, String code, String description, Short type)
+	protected void insertDeduction_concept(Integer id, String code, String description, Short type, Short description_decorable, String expression)
 	throws SQLException {
 
 		Deduction_concept deduction_concept_ = new Deduction_concept();
@@ -13617,12 +14400,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		deduction_concept_.code = code;
 		deduction_concept_.description = description;
 		deduction_concept_.type = type;
+		deduction_concept_.description_decorable = description_decorable;
+		deduction_concept_.expression = expression;
 
 		deduction_concepts.add(deduction_concept_);
 		
 		int deduction_conceptCount = deduction_concepts.size();
 		
-		if ( 82 * deduction_conceptCount >=  this.maxAllowedPacket ){
+		if ( 213 * deduction_conceptCount >=  this.maxAllowedPacket ){
 			insertDeduction_concept(deduction_concepts);
 			deduction_concepts.clear();
 		} 
@@ -13634,10 +14419,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param code Codigo
 	 * @param description Descripcion
 	 * @param type Tipo de Deduccion Salarial
+	 * @param description_decorable 
+	 * @param expression Importe
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertDeduction_concept(String code, String description, Short type)
+	public int insertDeduction_concept(String code, String description, Short type, Short description_decorable, String expression)
 	throws SQLException {
 		int id = nextDeduction_conceptId();
 
@@ -13646,12 +14433,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		deduction_concept_.code = code;
 		deduction_concept_.description = description;
 		deduction_concept_.type = type;
+		deduction_concept_.description_decorable = description_decorable;
+		deduction_concept_.expression = expression;
 
 		deduction_concepts.add(deduction_concept_);
 		
 		int deduction_conceptCount = deduction_concepts.size();
 		
-		if ( 82 * deduction_conceptCount >=  this.maxAllowedPacket ){
+		if ( 213 * deduction_conceptCount >=  this.maxAllowedPacket ){
 			insertDeduction_concept(deduction_concepts);
 			deduction_concepts.clear();
 		} 
@@ -13668,7 +14457,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement leasing_accountStmt = null;
 
-	private static class Leasing_account {
+	public static class Leasing_account {
 		private Integer id; 
 		private Integer leasing; 
 		private String account; 
@@ -13793,7 +14582,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertLeasing_account(Integer leasing, String account)
+	public int insertLeasing_account(Integer leasing, String account)
 	throws SQLException {
 		int id = nextLeasing_accountId();
 
@@ -13823,7 +14612,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement contract_batchStmt = null;
 
-	private static class Contract_batch {
+	public static class Contract_batch {
 		private Integer id; 
 		private Date date; 
 		private Date red_notify_date; 
@@ -13972,7 +14761,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_batch(Date date, Date red_notify_date, Date red_notify_id, Date red_response_date, Date red_response_id)
+	public int insertContract_batch(Date date, Date red_notify_date, Date red_notify_id, Date red_response_date, Date red_response_id)
 	throws SQLException {
 		int id = nextContract_batchId();
 
@@ -14005,7 +14794,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement cv_knowledgeStmt = null;
 
-	private static class Cv_knowledge {
+	public static class Cv_knowledge {
 		private Integer id; 
 		private String name; 
 		private Short level; 
@@ -14154,7 +14943,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCv_knowledge(String name, Short level, Short experience, Short lastuse, Integer curriculum)
+	public int insertCv_knowledge(String name, Short level, Short experience, Short lastuse, Integer curriculum)
 	throws SQLException {
 		int id = nextCv_knowledgeId();
 
@@ -14187,7 +14976,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement quality_skillStmt = null;
 
-	private static class Quality_skill {
+	public static class Quality_skill {
 		private Integer id; 
 		private String code; 
 		private String description; 
@@ -14312,7 +15101,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertQuality_skill(String code, String description)
+	public int insertQuality_skill(String code, String description)
 	throws SQLException {
 		int id = nextQuality_skillId();
 
@@ -14342,7 +15131,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement ec_targetStmt = null;
 
-	private static class Ec_target {
+	public static class Ec_target {
 		private Integer id; 
 		private Integer target; 
 		private String login; 
@@ -14491,7 +15280,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEc_target(Integer target, String login, String password, Short type, Date last_access)
+	public int insertEc_target(Integer target, String login, String password, Short type, Date last_access)
 	throws SQLException {
 		int id = nextEc_targetId();
 
@@ -14524,7 +15313,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement balanceStmt = null;
 
-	private static class Balance {
+	public static class Balance {
 		private Integer id; 
 		private String name; 
 		private Boolean removable; 
@@ -14657,7 +15446,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertBalance(String name, Boolean removable, Short type)
+	public int insertBalance(String name, Boolean removable, Short type)
 	throws SQLException {
 		int id = nextBalanceId();
 
@@ -14688,7 +15477,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement qualificationStmt = null;
 
-	private static class Qualification {
+	public static class Qualification {
 		private Integer id; 
 		private String code; 
 		private String description; 
@@ -14829,7 +15618,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertQualification(String code, String description, Double min_value, Double max_value)
+	public int insertQualification(String code, String description, Double min_value, Double max_value)
 	throws SQLException {
 		int id = nextQualificationId();
 
@@ -14861,7 +15650,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement tax_detailStmt = null;
 
-	private static class Tax_detail {
+	public static class Tax_detail {
 		private Integer id; 
 		private Integer tax; 
 		private Date start_date; 
@@ -15010,7 +15799,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTax_detail(Integer tax, Date start_date, Date end_date, Double value, Double surcharge)
+	public int insertTax_detail(Integer tax, Date start_date, Date end_date, Double value, Double surcharge)
 	throws SQLException {
 		int id = nextTax_detailId();
 
@@ -15043,7 +15832,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement supplier_accountStmt = null;
 
-	private static class Supplier_account {
+	public static class Supplier_account {
 		private Integer id; 
 		private Integer supplier; 
 		private String account; 
@@ -15168,7 +15957,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSupplier_account(Integer supplier, String account)
+	public int insertSupplier_account(Integer supplier, String account)
 	throws SQLException {
 		int id = nextSupplier_accountId();
 
@@ -15198,7 +15987,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement compositionStmt = null;
 
-	private static class Composition {
+	public static class Composition {
 		private Integer id; 
 		private Short type; 
 		private String description; 
@@ -15371,7 +16160,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertComposition(Short type, String description, Integer item, Double quantity, Double price, Double expenses_percent, Double expenses_fixed, Boolean price_in_details)
+	public int insertComposition(Short type, String description, Integer item, Double quantity, Double price, Double expenses_percent, Double expenses_fixed, Boolean price_in_details)
 	throws SQLException {
 		int id = nextCompositionId();
 
@@ -15407,7 +16196,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement bankStmt = null;
 
-	private static class Bank {
+	public static class Bank {
 		private Integer id; 
 		private String name; 
 		private String code; 
@@ -15532,7 +16321,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertBank(String name, String code)
+	public int insertBank(String name, String code)
 	throws SQLException {
 		int id = nextBankId();
 
@@ -15562,7 +16351,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement activity_typeStmt = null;
 
-	private static class Activity_type {
+	public static class Activity_type {
 		private Integer id; 
 		private String description; 
 		private Integer dossier_type; 
@@ -15687,7 +16476,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertActivity_type(String description, Integer dossier_type)
+	public int insertActivity_type(String description, Integer dossier_type)
 	throws SQLException {
 		int id = nextActivity_typeId();
 
@@ -15717,7 +16506,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement course_evaluationStmt = null;
 
-	private static class Course_evaluation {
+	public static class Course_evaluation {
 		private Integer id; 
 		private Integer course; 
 		private Integer quality_skill; 
@@ -15858,7 +16647,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCourse_evaluation(Integer course, Integer quality_skill, Double evaluation, Integer quantity)
+	public int insertCourse_evaluation(Integer course, Integer quality_skill, Double evaluation, Integer quantity)
 	throws SQLException {
 		int id = nextCourse_evaluationId();
 
@@ -15890,7 +16679,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_entry_linkStmt = null;
 
-	private static class Account_entry_link {
+	public static class Account_entry_link {
 		private Integer id; 
 		private Integer account_entry_from; 
 		private Integer account_entry_to; 
@@ -16015,7 +16804,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_entry_link(Integer account_entry_from, Integer account_entry_to)
+	public int insertAccount_entry_link(Integer account_entry_from, Integer account_entry_to)
 	throws SQLException {
 		int id = nextAccount_entry_linkId();
 
@@ -16045,7 +16834,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement support_orderStmt = null;
 
-	private static class Support_order {
+	public static class Support_order {
 		private Integer id; 
 		private Integer tas_item; 
 		private Integer target; 
@@ -16258,7 +17047,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSupport_order(Integer tas_item, Integer target, String series, Integer number, String description, Date final_date, Short status, Date start_date, Integer employee, Double counterti, String levelti, Short operation, Integer workplace)
+	public int insertSupport_order(Integer tas_item, Integer target, String series, Integer number, String description, Date final_date, Short status, Date start_date, Integer employee, Double counterti, String levelti, Short operation, Integer workplace)
 	throws SQLException {
 		int id = nextSupport_orderId();
 
@@ -16299,7 +17088,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement process_detail_transitionStmt = null;
 
-	private static class Process_detail_transition {
+	public static class Process_detail_transition {
 		private Integer id; 
 		private Integer process_detail; 
 		private Integer process_transition_type; 
@@ -16432,7 +17221,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProcess_detail_transition(Integer process_detail, Integer process_transition_type, Integer next_process_detail)
+	public int insertProcess_detail_transition(Integer process_detail, Integer process_transition_type, Integer next_process_detail)
 	throws SQLException {
 		int id = nextProcess_detail_transitionId();
 
@@ -16463,7 +17252,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement customer_feeStmt = null;
 
-	private static class Customer_fee {
+	public static class Customer_fee {
 		private Integer id; 
 		private Integer customer; 
 		private Integer line; 
@@ -16676,7 +17465,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCustomer_fee(Integer customer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Date initial_date, Date final_date, Date billing_date, Integer period, Short security_level, Integer workplace)
+	public int insertCustomer_fee(Integer customer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Date initial_date, Date final_date, Date billing_date, Integer period, Short security_level, Integer workplace)
 	throws SQLException {
 		int id = nextCustomer_feeId();
 
@@ -16717,7 +17506,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement purchase_detailStmt = null;
 
-	private static class Purchase_detail {
+	public static class Purchase_detail {
 		private Integer id; 
 		private Integer purchase; 
 		private Integer line; 
@@ -16906,7 +17695,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPurchase_detail(Integer purchase, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Double delivered)
+	public int insertPurchase_detail(Integer purchase, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Double delivered)
 	throws SQLException {
 		int id = nextPurchase_detailId();
 
@@ -16944,7 +17733,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement pm_type_detailStmt = null;
 
-	private static class Pm_type_detail {
+	public static class Pm_type_detail {
 		private Integer id; 
 		private Short type; 
 		private String description; 
@@ -17069,7 +17858,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPm_type_detail(Short type, String description)
+	public int insertPm_type_detail(Short type, String description)
 	throws SQLException {
 		int id = nextPm_type_detailId();
 
@@ -17099,7 +17888,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement holiday_detailStmt = null;
 
-	private static class Holiday_detail {
+	public static class Holiday_detail {
 		private Integer id; 
 		private Integer holiday; 
 		private Date date; 
@@ -17232,7 +18021,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertHoliday_detail(Integer holiday, Date date, String description)
+	public int insertHoliday_detail(Integer holiday, Date date, String description)
 	throws SQLException {
 		int id = nextHoliday_detailId();
 
@@ -17263,7 +18052,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement target_itemStmt = null;
 
-	private static class Target_item {
+	public static class Target_item {
 		private Integer id; 
 		private Integer target; 
 		private Integer item; 
@@ -17396,7 +18185,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTarget_item(Integer target, Integer item, Short status)
+	public int insertTarget_item(Integer target, Integer item, Short status)
 	throws SQLException {
 		int id = nextTarget_itemId();
 
@@ -17427,7 +18216,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement agreement_level_categoryStmt = null;
 
-	private static class Agreement_level_category {
+	public static class Agreement_level_category {
 		private Integer id; 
 		private Integer agreement_level; 
 		private String description; 
@@ -17552,7 +18341,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAgreement_level_category(Integer agreement_level, String description)
+	public int insertAgreement_level_category(Integer agreement_level, String description)
 	throws SQLException {
 		int id = nextAgreement_level_categoryId();
 
@@ -17582,7 +18371,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement holidayStmt = null;
 
-	private static class Holiday {
+	public static class Holiday {
 		private Integer id; 
 		private String description; 
 		private Integer holiday; 
@@ -17715,7 +18504,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertHoliday(String description, Integer holiday, Boolean editable)
+	public int insertHoliday(String description, Integer holiday, Boolean editable)
 	throws SQLException {
 		int id = nextHolidayId();
 
@@ -17746,7 +18535,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement pm_type_detail_accountStmt = null;
 
-	private static class Pm_type_detail_account {
+	public static class Pm_type_detail_account {
 		private Integer id; 
 		private Integer pm_type_detail; 
 		private String account; 
@@ -17871,7 +18660,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPm_type_detail_account(Integer pm_type_detail, String account)
+	public int insertPm_type_detail_account(Integer pm_type_detail, String account)
 	throws SQLException {
 		int id = nextPm_type_detail_accountId();
 
@@ -17901,7 +18690,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement commission_categoryStmt = null;
 
-	private static class Commission_category {
+	public static class Commission_category {
 		private Integer id; 
 		private Integer commission; 
 		private Integer category; 
@@ -18042,7 +18831,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCommission_category(Integer commission, Integer category, Double quantity, Double rate)
+	public int insertCommission_category(Integer commission, Integer category, Double quantity, Double rate)
 	throws SQLException {
 		int id = nextCommission_categoryId();
 
@@ -18074,7 +18863,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement academic_yearStmt = null;
 
-	private static class Academic_year {
+	public static class Academic_year {
 		private Integer id; 
 		private String description; 
 	}
@@ -18191,7 +18980,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAcademic_year(String description)
+	public int insertAcademic_year(String description)
 	throws SQLException {
 		int id = nextAcademic_yearId();
 
@@ -18220,7 +19009,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement bank_concept_accountStmt = null;
 
-	private static class Bank_concept_account {
+	public static class Bank_concept_account {
 		private Integer id; 
 		private Integer bank_concept; 
 		private String account; 
@@ -18345,7 +19134,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertBank_concept_account(Integer bank_concept, String account)
+	public int insertBank_concept_account(Integer bank_concept, String account)
 	throws SQLException {
 		int id = nextBank_concept_accountId();
 
@@ -18375,7 +19164,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement creditor_accountStmt = null;
 
-	private static class Creditor_account {
+	public static class Creditor_account {
 		private Integer id; 
 		private Integer creditor; 
 		private String account; 
@@ -18500,7 +19289,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCreditor_account(Integer creditor, String account)
+	public int insertCreditor_account(Integer creditor, String account)
 	throws SQLException {
 		int id = nextCreditor_accountId();
 
@@ -18530,7 +19319,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement finance_trackingStmt = null;
 
-	private static class Finance_tracking {
+	public static class Finance_tracking {
 		private Integer id; 
 		private Integer finance; 
 		private Date tracking_date; 
@@ -18711,7 +19500,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFinance_tracking(Integer finance, Date tracking_date, Short type, String description, Integer pm_type_detail, Integer rbank, Integer bank_statement_link, Double amount, Boolean recorded)
+	public int insertFinance_tracking(Integer finance, Date tracking_date, Short type, String description, Integer pm_type_detail, Integer rbank, Integer bank_statement_link, Double amount, Boolean recorded)
 	throws SQLException {
 		int id = nextFinance_trackingId();
 
@@ -18748,7 +19537,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement rattachStmt = null;
 
-	private static class Rattach {
+	public static class Rattach {
 		private Integer id; 
 		private Integer registry; 
 		private Integer category; 
@@ -18929,7 +19718,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRattach(Integer registry, Integer category, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
+	public int insertRattach(Integer registry, Integer category, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
 	throws SQLException {
 		int id = nextRattachId();
 
@@ -18957,6 +19746,161 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int leave_batch_detailStmtSize = 0;
+
+	private int leave_batch_detailInserted = 0;
+
+	private List<Leave_batch_detail> leave_batch_details = 
+		new LinkedList<Leave_batch_detail>();
+
+	private PreparedStatement leave_batch_detailStmt = null;
+
+	public static class Leave_batch_detail {
+		private Integer id; 
+		private Integer leave_batch; 
+		private Integer contract_leave_detail; 
+	}
+	
+	private void insertLeave_batch_detail( List<Leave_batch_detail> leave_batch_details )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = leave_batch_details.size();
+		if ( leave_batch_detailStmtSize != size ) {
+			if ( leave_batch_detailStmt != null ) {
+				leave_batch_detailStmt.close();
+			}
+			String values = "(?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			leave_batch_detailStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO leave_batch_detail (id,leave_batch,contract_leave_detail)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			leave_batch_detailStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Leave_batch_detail leave_batch_detail : leave_batch_details) {
+			if ( leave_batch_detail.id == null )
+				leave_batch_detailStmt.setNull(offset++, 4);
+			else
+				leave_batch_detailStmt.setInt(offset++, leave_batch_detail.id);
+			if ( leave_batch_detail.leave_batch == null )
+				leave_batch_detailStmt.setNull(offset++, 4);
+			else
+				leave_batch_detailStmt.setInt(offset++, leave_batch_detail.leave_batch);
+			if ( leave_batch_detail.contract_leave_detail == null )
+				leave_batch_detailStmt.setNull(offset++, 4);
+			else
+				leave_batch_detailStmt.setInt(offset++, leave_batch_detail.contract_leave_detail);
+		}
+		leave_batch_detailStmt.executeUpdate();
+		leave_batch_detailInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Leave_batch_details in {} milliseconds.", size, leave_batch_detailInserted, elapsed );		
+	}
+		
+		private int leave_batch_detailId = -1;
+		
+		private void initLeave_batch_detailId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `leave_batch_detail`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.leave_batch_detailId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextLeave_batch_detailId() {
+			return ++this.leave_batch_detailId;
+		} 
+
+		public void setLeave_batch_detailId(Integer leave_batch_detailId) {
+			this.leave_batch_detailId = leave_batch_detailId;
+		} 
+	
+	private void flushLeave_batch_detail(  )
+	throws SQLException {
+		if ( ! leave_batch_details.isEmpty() )
+			insertLeave_batch_detail(leave_batch_details);
+		if ( leave_batch_detailStmt != null )
+			leave_batch_detailStmt.close();
+	}	
+
+	/**
+	 * Leave_batch_detail
+	 * @param id Identificador unico
+	 * @param leave_batch Identificador unico de la remesa
+	 * @param contract_leave_detail Identificador unico del parte
+	 * @throws SQLException
+	*/
+	protected void insertLeave_batch_detail(Integer id, Integer leave_batch, Integer contract_leave_detail)
+	throws SQLException {
+
+		Leave_batch_detail leave_batch_detail_ = new Leave_batch_detail();
+		leave_batch_detail_.id = id;
+		leave_batch_detail_.leave_batch = leave_batch;
+		leave_batch_detail_.contract_leave_detail = contract_leave_detail;
+
+		leave_batch_details.add(leave_batch_detail_);
+		
+		int leave_batch_detailCount = leave_batch_details.size();
+		
+		if ( 30 * leave_batch_detailCount >=  this.maxAllowedPacket ){
+			insertLeave_batch_detail(leave_batch_details);
+			leave_batch_details.clear();
+		} 
+	}
+
+
+	/**
+	 * Leave_batch_detail
+	 * @param leave_batch Identificador unico de la remesa
+	 * @param contract_leave_detail Identificador unico del parte
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertLeave_batch_detail(Integer leave_batch, Integer contract_leave_detail)
+	throws SQLException {
+		int id = nextLeave_batch_detailId();
+
+		Leave_batch_detail leave_batch_detail_ = new Leave_batch_detail();
+		leave_batch_detail_.id = id;
+		leave_batch_detail_.leave_batch = leave_batch;
+		leave_batch_detail_.contract_leave_detail = contract_leave_detail;
+
+		leave_batch_details.add(leave_batch_detail_);
+		
+		int leave_batch_detailCount = leave_batch_details.size();
+		
+		if ( 30 * leave_batch_detailCount >=  this.maxAllowedPacket ){
+			insertLeave_batch_detail(leave_batch_details);
+			leave_batch_details.clear();
+		} 
+		return id;
+	}
+
+
 	private int sales_detailStmtSize = 0;
 
 	private int sales_detailInserted = 0;
@@ -18966,7 +19910,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement sales_detailStmt = null;
 
-	private static class Sales_detail {
+	public static class Sales_detail {
 		private Integer id; 
 		private Integer sales; 
 		private Integer line; 
@@ -19171,7 +20115,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSales_detail(Integer sales, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Short source, Integer offer_detail, Double delivered)
+	public int insertSales_detail(Integer sales, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Double taxes, Short status, Short source, Integer offer_detail, Double delivered)
 	throws SQLException {
 		int id = nextSales_detailId();
 
@@ -19211,7 +20155,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement system_deductionStmt = null;
 
-	private static class System_deduction {
+	public static class System_deduction {
 		private Integer id; 
 		private Short type; 
 		private Integer deduction_concept; 
@@ -19384,7 +20328,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSystem_deduction(Short type, Integer deduction_concept, String description, Short description_decorable, String expression, Date start_date, Date end_date, Short month)
+	public int insertSystem_deduction(Short type, Integer deduction_concept, String description, Short description_decorable, String expression, Date start_date, Date end_date, Short month)
 	throws SQLException {
 		int id = nextSystem_deductionId();
 
@@ -19420,7 +20364,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement curriculumStmt = null;
 
-	private static class Curriculum {
+	public static class Curriculum {
 		private Integer registry; 
 		private Date entrydate; 
 		private Date birthdate; 
@@ -19595,7 +20539,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement makeStmt = null;
 
-	private static class Make {
+	public static class Make {
 		private Integer id; 
 		private String name; 
 	}
@@ -19712,7 +20656,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertMake(String name)
+	public int insertMake(String name)
 	throws SQLException {
 		int id = nextMakeId();
 
@@ -19741,7 +20685,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement rbank_accountStmt = null;
 
-	private static class Rbank_account {
+	public static class Rbank_account {
 		private Integer id; 
 		private Integer rbank; 
 		private String account; 
@@ -19866,7 +20810,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRbank_account(Integer rbank, String account)
+	public int insertRbank_account(Integer rbank, String account)
 	throws SQLException {
 		int id = nextRbank_accountId();
 
@@ -19896,7 +20840,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement modelStmt = null;
 
-	private static class Model {
+	public static class Model {
 		private Integer id; 
 		private Integer make; 
 		private String name; 
@@ -20021,7 +20965,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertModel(Integer make, String name)
+	public int insertModel(Integer make, String name)
 	throws SQLException {
 		int id = nextModelId();
 
@@ -20051,7 +20995,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement cnaeStmt = null;
 
-	private static class Cnae {
+	public static class Cnae {
 		private Integer id; 
 		private String code; 
 		private String title; 
@@ -20176,7 +21120,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCnae(String code, String title)
+	public int insertCnae(String code, String title)
 	throws SQLException {
 		int id = nextCnaeId();
 
@@ -20206,7 +21150,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement departmentStmt = null;
 
-	private static class Department {
+	public static class Department {
 		private Integer id; 
 		private Integer parent; 
 		private String description; 
@@ -20331,7 +21275,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertDepartment(Integer parent, String description)
+	public int insertDepartment(Integer parent, String description)
 	throws SQLException {
 		int id = nextDepartmentId();
 
@@ -20361,7 +21305,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement target_profileStmt = null;
 
-	private static class Target_profile {
+	public static class Target_profile {
 		private Integer id; 
 		private Integer target; 
 		private Timestamp last_update; 
@@ -20518,7 +21462,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTarget_profile(Integer target, Timestamp last_update, Integer question, String value_text, Double value_number, Timestamp value_date)
+	public int insertTarget_profile(Integer target, Timestamp last_update, Integer question, String value_text, Double value_number, Timestamp value_date)
 	throws SQLException {
 		int id = nextTarget_profileId();
 
@@ -20552,7 +21496,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement purchaseStmt = null;
 
-	private static class Purchase {
+	public static class Purchase {
 		private Integer id; 
 		private Integer supplier; 
 		private String series; 
@@ -20805,7 +21749,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPurchase(Integer supplier, String series, Integer number, Integer address, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	public int insertPurchase(Integer supplier, String series, Integer number, Integer address, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
 	throws SQLException {
 		int id = nextPurchaseId();
 
@@ -20851,7 +21795,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement web_infoStmt = null;
 
-	private static class Web_info {
+	public static class Web_info {
 		private Integer id; 
 		private Integer company; 
 		private String commercial_description; 
@@ -20992,7 +21936,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWeb_info(Integer company, String commercial_description, String schedule, String slogan)
+	public int insertWeb_info(Integer company, String commercial_description, String schedule, String slogan)
 	throws SQLException {
 		int id = nextWeb_infoId();
 
@@ -21024,7 +21968,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement lh_positionStmt = null;
 
-	private static class Lh_position {
+	public static class Lh_position {
 		private Integer id; 
 		private Integer employee; 
 		private Date startingdate; 
@@ -21189,7 +22133,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertLh_position(Integer employee, Date startingdate, Date endingdate, String description, Integer workplace, Integer workactivity, Integer calendar)
+	public int insertLh_position(Integer employee, Date startingdate, Date endingdate, String description, Integer workplace, Integer workactivity, Integer calendar)
 	throws SQLException {
 		int id = nextLh_positionId();
 
@@ -21224,7 +22168,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement bank_statement_linkStmt = null;
 
-	private static class Bank_statement_link {
+	public static class Bank_statement_link {
 		private Integer id; 
 		private Integer bank_statement; 
 		private Short source; 
@@ -21232,6 +22176,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private Date source_date; 
 		private Double amount; 
 		private Short status; 
+		private Integer linked_bank_statement_link; 
 	}
 	
 	private void insertBank_statement_link( List<Bank_statement_link> bank_statement_links )
@@ -21242,7 +22187,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( bank_statement_linkStmt != null ) {
 				bank_statement_linkStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -21251,7 +22196,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			bank_statement_linkStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO bank_statement_link (id,bank_statement,source,source_id,source_date,amount,status)"  
+				"INSERT INTO bank_statement_link (id,bank_statement,source,source_id,source_date,amount,status,linked_bank_statement_link)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			bank_statement_linkStmtSize = size;
@@ -21288,6 +22233,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				bank_statement_linkStmt.setNull(offset++, -6);
 			else
 				bank_statement_linkStmt.setShort(offset++, bank_statement_link.status);
+			if ( bank_statement_link.linked_bank_statement_link == null )
+				bank_statement_linkStmt.setNull(offset++, 4);
+			else
+				bank_statement_linkStmt.setInt(offset++, bank_statement_link.linked_bank_statement_link);
 		}
 		bank_statement_linkStmt.executeUpdate();
 		bank_statement_linkInserted += size;
@@ -21345,9 +22294,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param source_date Fecha del origen
 	 * @param amount Importe
 	 * @param status Estado
+	 * @param linked_bank_statement_link Identificador del Enlace de Extracto bancario asociado
 	 * @throws SQLException
 	*/
-	protected void insertBank_statement_link(Integer id, Integer bank_statement, Short source, Integer source_id, Date source_date, Double amount, Short status)
+	protected void insertBank_statement_link(Integer id, Integer bank_statement, Short source, Integer source_id, Date source_date, Double amount, Short status, Integer linked_bank_statement_link)
 	throws SQLException {
 
 		Bank_statement_link bank_statement_link_ = new Bank_statement_link();
@@ -21358,12 +22308,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		bank_statement_link_.source_date = source_date;
 		bank_statement_link_.amount = amount;
 		bank_statement_link_.status = status;
+		bank_statement_link_.linked_bank_statement_link = linked_bank_statement_link;
 
 		bank_statement_links.add(bank_statement_link_);
 		
 		int bank_statement_linkCount = bank_statement_links.size();
 		
-		if ( 61 * bank_statement_linkCount >=  this.maxAllowedPacket ){
+		if ( 71 * bank_statement_linkCount >=  this.maxAllowedPacket ){
 			insertBank_statement_link(bank_statement_links);
 			bank_statement_links.clear();
 		} 
@@ -21378,10 +22329,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param source_date Fecha del origen
 	 * @param amount Importe
 	 * @param status Estado
+	 * @param linked_bank_statement_link Identificador del Enlace de Extracto bancario asociado
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertBank_statement_link(Integer bank_statement, Short source, Integer source_id, Date source_date, Double amount, Short status)
+	public int insertBank_statement_link(Integer bank_statement, Short source, Integer source_id, Date source_date, Double amount, Short status, Integer linked_bank_statement_link)
 	throws SQLException {
 		int id = nextBank_statement_linkId();
 
@@ -21393,12 +22345,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		bank_statement_link_.source_date = source_date;
 		bank_statement_link_.amount = amount;
 		bank_statement_link_.status = status;
+		bank_statement_link_.linked_bank_statement_link = linked_bank_statement_link;
 
 		bank_statement_links.add(bank_statement_link_);
 		
 		int bank_statement_linkCount = bank_statement_links.size();
 		
-		if ( 61 * bank_statement_linkCount >=  this.maxAllowedPacket ){
+		if ( 71 * bank_statement_linkCount >=  this.maxAllowedPacket ){
 			insertBank_statement_link(bank_statement_links);
 			bank_statement_links.clear();
 		} 
@@ -21415,7 +22368,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement cv_evaluateStmt = null;
 
-	private static class Cv_evaluate {
+	public static class Cv_evaluate {
 		private Integer id; 
 		private Integer type; 
 		private Short value; 
@@ -21548,7 +22501,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCv_evaluate(Integer type, Short value, Integer curriculum)
+	public int insertCv_evaluate(Integer type, Short value, Integer curriculum)
 	throws SQLException {
 		int id = nextCv_evaluateId();
 
@@ -21579,7 +22532,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement course_alumnStmt = null;
 
-	private static class Course_alumn {
+	public static class Course_alumn {
 		private Integer id; 
 		private Integer course; 
 		private Integer customer; 
@@ -21712,7 +22665,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCourse_alumn(Integer course, Integer customer, Short status)
+	public int insertCourse_alumn(Integer course, Integer customer, Short status)
 	throws SQLException {
 		int id = nextCourse_alumnId();
 
@@ -21743,7 +22696,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement fs_rentingStmt = null;
 
-	private static class Fs_renting {
+	public static class Fs_renting {
 		private Integer id; 
 		private Integer year; 
 		private Short period; 
@@ -22188,7 +23141,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFs_renting(Integer year, Short period, Short administration, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Double lessor_count_accumulated, Double lessor_count_declared, Double lessor_count_result, Double lessor_count_adjust, Double lessor_count, Double renting_amount_accumulated, Double renting_amount_declared, Double renting_amount_result, Double renting_amount_adjust, Double renting_amount, Double retention_accumulated, Double retention_declared, Double retention_result, Double retention_adjust, Double retention, Double lessor_count_in_kind_accumulated, Double lessor_count_in_kind_declared, Double lessor_count_in_kind_result, Double lessor_count_in_kind_adjust, Double lessor_count_in_kind, Double remuneration_in_kind_accumulated, Double remuneration_in_kind_declared, Double remuneration_in_kind_result, Double remuneration_in_kind_adjust, Double remuneration_in_kind, Double account_deposit_accumulated, Double account_deposit_declared, Double account_deposit_result, Double account_deposit_adjust, Double account_deposit, Double extra_charge, Double delay_interest, Double total_tax_debt, Integer rbank)
+	public int insertFs_renting(Integer year, Short period, Short administration, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Double lessor_count_accumulated, Double lessor_count_declared, Double lessor_count_result, Double lessor_count_adjust, Double lessor_count, Double renting_amount_accumulated, Double renting_amount_declared, Double renting_amount_result, Double renting_amount_adjust, Double renting_amount, Double retention_accumulated, Double retention_declared, Double retention_result, Double retention_adjust, Double retention, Double lessor_count_in_kind_accumulated, Double lessor_count_in_kind_declared, Double lessor_count_in_kind_result, Double lessor_count_in_kind_adjust, Double lessor_count_in_kind, Double remuneration_in_kind_accumulated, Double remuneration_in_kind_declared, Double remuneration_in_kind_result, Double remuneration_in_kind_adjust, Double remuneration_in_kind, Double account_deposit_accumulated, Double account_deposit_declared, Double account_deposit_result, Double account_deposit_adjust, Double account_deposit, Double extra_charge, Double delay_interest, Double total_tax_debt, Integer rbank)
 	throws SQLException {
 		int id = nextFs_rentingId();
 
@@ -22258,7 +23211,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement questionStmt = null;
 
-	private static class Question {
+	public static class Question {
 		private Integer id; 
 		private Boolean active; 
 		private String question_text; 
@@ -22399,7 +23352,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertQuestion(Boolean active, String question_text, Short type, String argument)
+	public int insertQuestion(Boolean active, String question_text, Short type, String argument)
 	throws SQLException {
 		int id = nextQuestionId();
 
@@ -22431,7 +23384,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement record_dataStmt = null;
 
-	private static class Record_data {
+	public static class Record_data {
 		private Integer id; 
 		private Integer registry; 
 		private Date creation_date; 
@@ -22636,7 +23589,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRecord_data(Integer registry, Date creation_date, String description, String notary, String number, Date record_date, String volume, String section, String page, String sheet, String registration, Integer attach)
+	public int insertRecord_data(Integer registry, Date creation_date, String description, String notary, String number, Date record_date, String volume, String section, String page, String sheet, String registration, Integer attach)
 	throws SQLException {
 		int id = nextRecord_dataId();
 
@@ -22676,7 +23629,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement employeeStmt = null;
 
-	private static class Employee {
+	public static class Employee {
 		private Integer registry; 
 		private Integer workactivity; 
 		private String social_security_num; 
@@ -22788,7 +23741,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement alumn_loanStmt = null;
 
-	private static class Alumn_loan {
+	public static class Alumn_loan {
 		private Integer id; 
 		private Integer customer; 
 		private String material; 
@@ -22937,7 +23890,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAlumn_loan(Integer customer, String material, Date loan_date, Date end_date, String comments)
+	public int insertAlumn_loan(Integer customer, String material, Date loan_date, Date end_date, String comments)
 	throws SQLException {
 		int id = nextAlumn_loanId();
 
@@ -22970,7 +23923,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement activityStmt = null;
 
-	private static class Activity {
+	public static class Activity {
 		private Integer id; 
 		private Integer dossier; 
 		private Integer activity_type; 
@@ -23103,7 +24056,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertActivity(Integer dossier, Integer activity_type, Integer workgroup)
+	public int insertActivity(Integer dossier, Integer activity_type, Integer workgroup)
 	throws SQLException {
 		int id = nextActivityId();
 
@@ -23134,7 +24087,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement calendarStmt = null;
 
-	private static class Calendar {
+	public static class Calendar {
 		private Integer id; 
 		private Integer holiday; 
 		private Double anual_hours; 
@@ -23403,7 +24356,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCalendar(Integer holiday, Double anual_hours, String description, String comments, Short monday, Double monday_hours, Short tuesday, Double tuesday_hours, Short wednesday, Double wednesday_hours, Short thursday, Double thursday_hours, Short friday, Double friday_hours, Short saturday, Double saturday_hours, Short sunday, Double sunday_hours, Boolean generic, Integer calendar)
+	public int insertCalendar(Integer holiday, Double anual_hours, String description, String comments, Short monday, Double monday_hours, Short tuesday, Double tuesday_hours, Short wednesday, Double wednesday_hours, Short thursday, Double thursday_hours, Short friday, Double friday_hours, Short saturday, Double saturday_hours, Short sunday, Double sunday_hours, Boolean generic, Integer calendar)
 	throws SQLException {
 		int id = nextCalendarId();
 
@@ -23451,7 +24404,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement ec_offer_pay_infoStmt = null;
 
-	private static class Ec_offer_pay_info {
+	public static class Ec_offer_pay_info {
 		private Integer id; 
 		private Integer offer; 
 		private Short payment_status; 
@@ -23584,7 +24537,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEc_offer_pay_info(Integer offer, Short payment_status, Integer authorization_number)
+	public int insertEc_offer_pay_info(Integer offer, Short payment_status, Integer authorization_number)
 	throws SQLException {
 		int id = nextEc_offer_pay_infoId();
 
@@ -23615,7 +24568,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement asset_activityStmt = null;
 
-	private static class Asset_activity {
+	public static class Asset_activity {
 		private Integer id; 
 		private Integer asset; 
 		private Date date; 
@@ -23780,7 +24733,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAsset_activity(Integer asset, Date date, Timestamp from_time, Timestamp to_time, String who, String why, Short status)
+	public int insertAsset_activity(Integer asset, Date date, Timestamp from_time, Timestamp to_time, String who, String why, Short status)
 	throws SQLException {
 		int id = nextAsset_activityId();
 
@@ -23815,7 +24768,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement calendar_periodStmt = null;
 
-	private static class Calendar_period {
+	public static class Calendar_period {
 		private Integer id; 
 		private Integer calendar; 
 		private String description; 
@@ -24076,7 +25029,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCalendar_period(Integer calendar, String description, Short month, Short start_day, Short end_day, Short monday, Double monday_hours, Short tuesday, Double tuesday_hours, Short wednesday, Double wednesday_hours, Short thursday, Double thursday_hours, Short friday, Double friday_hours, Short saturday, Double saturday_hours, Short sunday, Double sunday_hours)
+	public int insertCalendar_period(Integer calendar, String description, Short month, Short start_day, Short end_day, Short monday, Double monday_hours, Short tuesday, Double tuesday_hours, Short wednesday, Double wednesday_hours, Short thursday, Double thursday_hours, Short friday, Double friday_hours, Short saturday, Double saturday_hours, Short sunday, Double sunday_hours)
 	throws SQLException {
 		int id = nextCalendar_periodId();
 
@@ -24123,7 +25076,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement fbatchStmt = null;
 
-	private static class Fbatch {
+	public static class Fbatch {
 		private Integer id; 
 		private String description; 
 		private Date issue_date; 
@@ -24296,7 +25249,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFbatch(String description, Date issue_date, Short type, Short status, Integer rbank, Integer bank_statement_link, Boolean payment, Short security_level)
+	public int insertFbatch(String description, Date issue_date, Short type, Short status, Integer rbank, Integer bank_statement_link, Boolean payment, Short security_level)
 	throws SQLException {
 		int id = nextFbatchId();
 
@@ -24332,7 +25285,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement invoice_detail_accountStmt = null;
 
-	private static class Invoice_detail_account {
+	public static class Invoice_detail_account {
 		private Integer id; 
 		private Integer invoice_detail; 
 		private String account; 
@@ -24457,7 +25410,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoice_detail_account(Integer invoice_detail, String account)
+	public int insertInvoice_detail_account(Integer invoice_detail, String account)
 	throws SQLException {
 		int id = nextInvoice_detail_accountId();
 
@@ -24487,7 +25440,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement commission_typeStmt = null;
 
-	private static class Commission_type {
+	public static class Commission_type {
 		private Integer id; 
 		private String name; 
 		private Double rate; 
@@ -24612,7 +25565,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCommission_type(String name, Double rate)
+	public int insertCommission_type(String name, Double rate)
 	throws SQLException {
 		int id = nextCommission_typeId();
 
@@ -24642,7 +25595,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement enterprise_certificate_detailStmt = null;
 
-	private static class Enterprise_certificate_detail {
+	public static class Enterprise_certificate_detail {
 		private Integer id; 
 		private Integer enterprise_certificate; 
 		private Integer contract; 
@@ -24783,7 +25736,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEnterprise_certificate_detail(Integer enterprise_certificate, Integer contract, Date expire_date, String suspension_cause)
+	public int insertEnterprise_certificate_detail(Integer enterprise_certificate, Integer contract, Date expire_date, String suspension_cause)
 	throws SQLException {
 		int id = nextEnterprise_certificate_detailId();
 
@@ -24815,7 +25768,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement alarmStmt = null;
 
-	private static class Alarm {
+	public static class Alarm {
 		private Integer id; 
 		private String description; 
 		private Timestamp alarm_date; 
@@ -24980,7 +25933,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAlarm(String description, Timestamp alarm_date, Short status, Short source, Integer source_id, Integer user_id, Short priority)
+	public int insertAlarm(String description, Timestamp alarm_date, Short status, Short source, Integer source_id, Integer user_id, Short priority)
 	throws SQLException {
 		int id = nextAlarmId();
 
@@ -25015,7 +25968,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement pay_methodStmt = null;
 
-	private static class Pay_method {
+	public static class Pay_method {
 		private Integer id; 
 		private String name; 
 		private Short type; 
@@ -25140,7 +26093,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPay_method(String name, Short type)
+	public int insertPay_method(String name, Short type)
 	throws SQLException {
 		int id = nextPay_methodId();
 
@@ -25170,7 +26123,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement ec_catalogueStmt = null;
 
-	private static class Ec_catalogue {
+	public static class Ec_catalogue {
 		private Integer id; 
 		private Integer catalogue; 
 		private InputStream catalogue_img; 
@@ -25319,7 +26272,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEc_catalogue(Integer catalogue, InputStream catalogue_img, InputStream catalogue_icon, Short type, Boolean visible)
+	public int insertEc_catalogue(Integer catalogue, InputStream catalogue_img, InputStream catalogue_icon, Short type, Boolean visible)
 	throws SQLException {
 		int id = nextEc_catalogueId();
 
@@ -25352,7 +26305,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement workactivityStmt = null;
 
-	private static class Workactivity {
+	public static class Workactivity {
 		private Integer id; 
 		private String description; 
 		private Integer workplace; 
@@ -25493,7 +26446,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWorkactivity(String description, Integer workplace, Integer enterpriseCCC, Boolean active)
+	public int insertWorkactivity(String description, Integer workplace, Integer enterpriseCCC, Boolean active)
 	throws SQLException {
 		int id = nextWorkactivityId();
 
@@ -25525,7 +26478,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement ec_configStmt = null;
 
-	private static class Ec_config {
+	public static class Ec_config {
 		private Integer id; 
 		private Boolean active; 
 		private String name; 
@@ -25890,7 +26843,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEc_config(Boolean active, String name, Short skin, InputStream header_img, String series, Boolean commerce, Short show_login, Short price, Short tax_in_price, Short discount, Integer bank_transfer, Integer cash_on_delivery, Integer visa, Integer paypal, Integer bank_draft, String legal_note1, String legal_note2, String legal_note3, Integer tariff, String header_color, String telephone, Short row_items, InputStream left_banner, InputStream right_banner, InputStream welcome_banner, Short ecommerce_status, Double shipping_costs, Double free_shipping, String title_note1, String title_note2, String title_note3, String email)
+	public int insertEc_config(Boolean active, String name, Short skin, InputStream header_img, String series, Boolean commerce, Short show_login, Short price, Short tax_in_price, Short discount, Integer bank_transfer, Integer cash_on_delivery, Integer visa, Integer paypal, Integer bank_draft, String legal_note1, String legal_note2, String legal_note3, Integer tariff, String header_color, String telephone, Short row_items, InputStream left_banner, InputStream right_banner, InputStream welcome_banner, Short ecommerce_status, Double shipping_costs, Double free_shipping, String title_note1, String title_note2, String title_note3, String email)
 	throws SQLException {
 		int id = nextEc_configId();
 
@@ -25950,7 +26903,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_budgetStmt = null;
 
-	private static class Account_budget {
+	public static class Account_budget {
 		private Integer id; 
 		private String account_period; 
 		private String account; 
@@ -26083,7 +27036,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_budget(String account_period, String account, Short security_level)
+	public int insertAccount_budget(String account_period, String account, Short security_level)
 	throws SQLException {
 		int id = nextAccount_budgetId();
 
@@ -26114,7 +27067,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement course_observationStmt = null;
 
-	private static class Course_observation {
+	public static class Course_observation {
 		private Integer id; 
 		private Integer course; 
 		private String observation; 
@@ -26239,7 +27192,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCourse_observation(Integer course, String observation)
+	public int insertCourse_observation(Integer course, String observation)
 	throws SQLException {
 		int id = nextCourse_observationId();
 
@@ -26269,7 +27222,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement survey_responseStmt = null;
 
-	private static class Survey_response {
+	public static class Survey_response {
 		private Integer id; 
 		private Timestamp creationDate; 
 		private Timestamp response_date; 
@@ -26426,7 +27379,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSurvey_response(Timestamp creationDate, Timestamp response_date, Integer survey, Integer target, Integer user, Integer campaign_action)
+	public int insertSurvey_response(Timestamp creationDate, Timestamp response_date, Integer survey, Integer target, Integer user, Integer campaign_action)
 	throws SQLException {
 		int id = nextSurvey_responseId();
 
@@ -26460,7 +27413,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement evaluation_observationStmt = null;
 
-	private static class Evaluation_observation {
+	public static class Evaluation_observation {
 		private Integer id; 
 		private Integer alumn; 
 		private Short evaluation; 
@@ -26593,7 +27546,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEvaluation_observation(Integer alumn, Short evaluation, String comments)
+	public int insertEvaluation_observation(Integer alumn, Short evaluation, String comments)
 	throws SQLException {
 		int id = nextEvaluation_observationId();
 
@@ -26624,7 +27577,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement personStmt = null;
 
-	private static class Person {
+	public static class Person {
 		private Integer registry; 
 		private Date birth_date; 
 		private Short gender; 
@@ -26757,7 +27710,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement contract_paymentStmt = null;
 
-	private static class Contract_payment {
+	public static class Contract_payment {
 		private Integer id; 
 		private Short type; 
 		private Integer contract; 
@@ -26962,7 +27915,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_payment(Short type, Integer contract, Integer payment_concept, String description, Short description_decorable, String expression, String irpf_expression, String quote_expression, Date start_date, Short month, Date end_date, Short salary_type)
+	public int insertContract_payment(Short type, Integer contract, Integer payment_concept, String description, Short description_decorable, String expression, String irpf_expression, String quote_expression, Date start_date, Short month, Date end_date, Short salary_type)
 	throws SQLException {
 		int id = nextContract_paymentId();
 
@@ -27002,7 +27955,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement cashflow_forecastStmt = null;
 
-	private static class Cashflow_forecast {
+	public static class Cashflow_forecast {
 		private Integer id; 
 		private Boolean payment; 
 		private String description; 
@@ -27263,7 +28216,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCashflow_forecast(Boolean payment, String description, Date start_date, Date due_date, Integer rbank, Double amount, Double payment_day, Boolean january, Boolean february, Boolean march, Boolean april, Boolean may, Boolean june, Boolean july, Boolean august, Boolean september, Boolean october, Boolean november, Boolean december)
+	public int insertCashflow_forecast(Boolean payment, String description, Date start_date, Date due_date, Integer rbank, Double amount, Double payment_day, Boolean january, Boolean february, Boolean march, Boolean april, Boolean may, Boolean june, Boolean july, Boolean august, Boolean september, Boolean october, Boolean november, Boolean december)
 	throws SQLException {
 		int id = nextCashflow_forecastId();
 
@@ -27310,7 +28263,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_entryStmt = null;
 
-	private static class Account_entry {
+	public static class Account_entry {
 		private Integer id; 
 		private String account_period; 
 		private Date entry_date; 
@@ -27467,7 +28420,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_entry(String account_period, Date entry_date, Short entry_type, Integer journal, Short security_level, String comments)
+	public int insertAccount_entry(String account_period, Date entry_date, Short entry_type, Integer journal, Short security_level, String comments)
 	throws SQLException {
 		int id = nextAccount_entryId();
 
@@ -27501,7 +28454,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement geotreeStmt = null;
 
-	private static class Geotree {
+	public static class Geotree {
 		private Integer id; 
 		private Integer parent; 
 		private Integer child; 
@@ -27626,7 +28579,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertGeotree(Integer parent, Integer child)
+	public int insertGeotree(Integer parent, Integer child)
 	throws SQLException {
 		int id = nextGeotreeId();
 
@@ -27656,7 +28609,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement sales_purchaseStmt = null;
 
-	private static class Sales_purchase {
+	public static class Sales_purchase {
 		private Integer id; 
 		private Integer sales_detail; 
 		private Integer purchase_detail; 
@@ -27781,7 +28734,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSales_purchase(Integer sales_detail, Integer purchase_detail)
+	public int insertSales_purchase(Integer sales_detail, Integer purchase_detail)
 	throws SQLException {
 		int id = nextSales_purchaseId();
 
@@ -27811,7 +28764,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement item_supplierStmt = null;
 
-	private static class Item_supplier {
+	public static class Item_supplier {
 		private Integer id; 
 		private Integer item; 
 		private Integer supplier; 
@@ -27952,7 +28905,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertItem_supplier(Integer item, Integer supplier, String code, Short priority)
+	public int insertItem_supplier(Integer item, Integer supplier, String code, Short priority)
 	throws SQLException {
 		int id = nextItem_supplierId();
 
@@ -27984,7 +28937,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement customer_accountStmt = null;
 
-	private static class Customer_account {
+	public static class Customer_account {
 		private Integer id; 
 		private Integer customer; 
 		private String account; 
@@ -28109,7 +29062,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCustomer_account(Integer customer, String account)
+	public int insertCustomer_account(Integer customer, String account)
 	throws SQLException {
 		int id = nextCustomer_accountId();
 
@@ -28139,7 +29092,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement dossierStmt = null;
 
-	private static class Dossier {
+	public static class Dossier {
 		private Integer id; 
 		private Integer customer; 
 		private Integer dossier_type; 
@@ -28288,7 +29241,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertDossier(Integer customer, Integer dossier_type, String number, String location, Short status)
+	public int insertDossier(Integer customer, Integer dossier_type, String number, String location, Short status)
 	throws SQLException {
 		int id = nextDossierId();
 
@@ -28321,7 +29274,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement survey_questionStmt = null;
 
-	private static class Survey_question {
+	public static class Survey_question {
 		private Integer id; 
 		private Integer survey; 
 		private Integer question; 
@@ -28454,7 +29407,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSurvey_question(Integer survey, Integer question, Integer position)
+	public int insertSurvey_question(Integer survey, Integer question, Integer position)
 	throws SQLException {
 		int id = nextSurvey_questionId();
 
@@ -28485,7 +29438,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement cv_evaluate_summaryStmt = null;
 
-	private static class Cv_evaluate_summary {
+	public static class Cv_evaluate_summary {
 		private Integer id; 
 		private String strengths; 
 		private String weaknesses; 
@@ -28634,7 +29587,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCv_evaluate_summary(String strengths, String weaknesses, Short profile, String comments, Integer curriculum)
+	public int insertCv_evaluate_summary(String strengths, String weaknesses, Short profile, String comments, Integer curriculum)
 	throws SQLException {
 		int id = nextCv_evaluate_summaryId();
 
@@ -28667,7 +29620,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement courseStmt = null;
 
-	private static class Course {
+	public static class Course {
 		private Integer id; 
 		private String code; 
 		private String description; 
@@ -28864,7 +29817,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCourse(String code, String description, Date start_date, Date end_date, Integer academic_year, Integer subject, Integer level, Integer workplace, Integer alumn_limit, Short status, String comments)
+	public int insertCourse(String code, String description, Date start_date, Date end_date, Integer academic_year, Integer subject, Integer level, Integer workplace, Integer alumn_limit, Short status, String comments)
 	throws SQLException {
 		int id = nextCourseId();
 
@@ -28903,7 +29856,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement stockStmt = null;
 
-	private static class Stock {
+	public static class Stock {
 		private Integer id; 
 		private Integer warehouse; 
 		private Integer item; 
@@ -29036,7 +29989,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertStock(Integer warehouse, Integer item, Double quantity)
+	public int insertStock(Integer warehouse, Integer item, Double quantity)
 	throws SQLException {
 		int id = nextStockId();
 
@@ -29067,7 +30020,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement rbankStmt = null;
 
-	private static class Rbank {
+	public static class Rbank {
 		private Integer id; 
 		private Integer registry; 
 		private Integer bank; 
@@ -29208,7 +30161,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRbank(Integer registry, Integer bank, String bank_account, String sufix)
+	public int insertRbank(Integer registry, Integer bank, String bank_account, String sufix)
 	throws SQLException {
 		int id = nextRbankId();
 
@@ -29240,7 +30193,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement rpaymethodStmt = null;
 
-	private static class Rpaymethod {
+	public static class Rpaymethod {
 		private Integer id; 
 		private Integer registry; 
 		private Integer pay_method; 
@@ -29405,7 +30358,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRpaymethod(Integer registry, Integer pay_method, Integer rbank, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days)
+	public int insertRpaymethod(Integer registry, Integer pay_method, Integer rbank, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days)
 	throws SQLException {
 		int id = nextRpaymethodId();
 
@@ -29440,7 +30393,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement salesStmt = null;
 
-	private static class Sales {
+	public static class Sales {
 		private Integer id; 
 		private Integer customer; 
 		private String series; 
@@ -29709,7 +30662,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSales(Integer customer, String series, Integer number, Integer shipping_address, Integer seller, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, Integer pos, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	public int insertSales(Integer customer, String series, Integer number, Integer shipping_address, Integer seller, String discount_expr, Date issue_date, Integer pay_method, Short document_type, Short security_level, Short status, Integer pos, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
 	throws SQLException {
 		int id = nextSalesId();
 
@@ -29757,7 +30710,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement incomeStmt = null;
 
-	private static class Income {
+	public static class Income {
 		private Integer id; 
 		private String series; 
 		private Integer number; 
@@ -29994,7 +30947,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertIncome(String series, Integer number, Integer supplier, Integer address, Date issue_time, Integer pay_method, Short security_level, Short status, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	public int insertIncome(String series, Integer number, Integer supplier, Integer address, Date issue_time, Integer pay_method, Short security_level, Short status, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
 	throws SQLException {
 		int id = nextIncomeId();
 
@@ -30038,7 +30991,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement enterprise_activityStmt = null;
 
-	private static class Enterprise_activity {
+	public static class Enterprise_activity {
 		private Integer id; 
 		private String description; 
 		private Integer enterprise; 
@@ -30179,7 +31132,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEnterprise_activity(String description, Integer enterprise, Integer cnae, Short type)
+	public int insertEnterprise_activity(String description, Integer enterprise, Integer cnae, Short type)
 	throws SQLException {
 		int id = nextEnterprise_activityId();
 
@@ -30211,7 +31164,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement web_info_page_resourceStmt = null;
 
-	private static class Web_info_page_resource {
+	public static class Web_info_page_resource {
 		private Integer id; 
 		private Integer web_info_page; 
 		private Integer rattach; 
@@ -30344,7 +31297,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWeb_info_page_resource(Integer web_info_page, Integer rattach, String content)
+	public int insertWeb_info_page_resource(Integer web_info_page, Integer rattach, String content)
 	throws SQLException {
 		int id = nextWeb_info_page_resourceId();
 
@@ -30375,7 +31328,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement fbatch_detailStmt = null;
 
-	private static class Fbatch_detail {
+	public static class Fbatch_detail {
 		private Integer id; 
 		private Integer fbatch; 
 		private Integer finance; 
@@ -30516,7 +31469,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFbatch_detail(Integer fbatch, Integer finance, Double amount, Short status)
+	public int insertFbatch_detail(Integer fbatch, Integer finance, Double amount, Short status)
 	throws SQLException {
 		int id = nextFbatch_detailId();
 
@@ -30548,16 +31501,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement contract_leaveStmt = null;
 
-	private static class Contract_leave {
+	public static class Contract_leave {
 		private Integer id; 
 		private Short type; 
 		private Integer contract; 
-		private Boolean relapse; 
 		private String description; 
 		private Date start_date; 
 		private Date end_date; 
 		private Double daily_cgc_base; 
 		private Double daily_cgp_base; 
+		private Integer parent; 
+		private Double daily_reg_base; 
+		private Short discharge_cause; 
 	}
 	
 	private void insertContract_leave( List<Contract_leave> contract_leaves )
@@ -30568,7 +31523,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( contract_leaveStmt != null ) {
 				contract_leaveStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -30577,7 +31532,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			contract_leaveStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO contract_leave (id,type,contract,relapse,description,start_date,end_date,daily_cgc_base,daily_cgp_base)"  
+				"INSERT INTO contract_leave (id,type,contract,description,start_date,end_date,daily_cgc_base,daily_cgp_base,parent,daily_reg_base,discharge_cause)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			contract_leaveStmtSize = size;
@@ -30598,10 +31553,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_leaveStmt.setNull(offset++, 4);
 			else
 				contract_leaveStmt.setInt(offset++, contract_leave.contract);
-			if ( contract_leave.relapse == null )
-				contract_leaveStmt.setNull(offset++, -7);
-			else
-				contract_leaveStmt.setBoolean(offset++, contract_leave.relapse);
 			if ( contract_leave.description == null )
 				contract_leaveStmt.setNull(offset++, 12);
 			else
@@ -30622,6 +31573,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				contract_leaveStmt.setNull(offset++, 8);
 			else
 				contract_leaveStmt.setDouble(offset++, contract_leave.daily_cgp_base);
+			if ( contract_leave.parent == null )
+				contract_leaveStmt.setNull(offset++, 4);
+			else
+				contract_leaveStmt.setInt(offset++, contract_leave.parent);
+			if ( contract_leave.daily_reg_base == null )
+				contract_leaveStmt.setNull(offset++, 8);
+			else
+				contract_leaveStmt.setDouble(offset++, contract_leave.daily_reg_base);
+			if ( contract_leave.discharge_cause == null )
+				contract_leaveStmt.setNull(offset++, -6);
+			else
+				contract_leaveStmt.setShort(offset++, contract_leave.discharge_cause);
 		}
 		contract_leaveStmt.executeUpdate();
 		contract_leaveInserted += size;
@@ -30675,33 +31638,37 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param id Identificador unico
 	 * @param type Tipo de Baja
 	 * @param contract Contrato
-	 * @param relapse Recaida
 	 * @param description Descripcion
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param daily_cgc_base Base de cotizacion por contingencias comunes
 	 * @param daily_cgp_base Base de cotizacion por contingencias profesionales
+	 * @param parent Baja origen, si es recaida
+	 * @param daily_reg_base Base reguladora
+	 * @param discharge_cause Causa del alta
 	 * @throws SQLException
 	*/
-	protected void insertContract_leave(Integer id, Short type, Integer contract, Boolean relapse, String description, Date start_date, Date end_date, Double daily_cgc_base, Double daily_cgp_base)
+	protected void insertContract_leave(Integer id, Short type, Integer contract, String description, Date start_date, Date end_date, Double daily_cgc_base, Double daily_cgp_base, Integer parent, Double daily_reg_base, Short discharge_cause)
 	throws SQLException {
 
 		Contract_leave contract_leave_ = new Contract_leave();
 		contract_leave_.id = id;
 		contract_leave_.type = type;
 		contract_leave_.contract = contract;
-		contract_leave_.relapse = relapse;
 		contract_leave_.description = description;
 		contract_leave_.start_date = start_date;
 		contract_leave_.end_date = end_date;
 		contract_leave_.daily_cgc_base = daily_cgc_base;
 		contract_leave_.daily_cgp_base = daily_cgp_base;
+		contract_leave_.parent = parent;
+		contract_leave_.daily_reg_base = daily_reg_base;
+		contract_leave_.discharge_cause = discharge_cause;
 
 		contract_leaves.add(contract_leave_);
 		
 		int contract_leaveCount = contract_leaves.size();
 		
-		if ( 137 * contract_leaveCount >=  this.maxAllowedPacket ){
+		if ( 165 * contract_leaveCount >=  this.maxAllowedPacket ){
 			insertContract_leave(contract_leaves);
 			contract_leaves.clear();
 		} 
@@ -30712,16 +31679,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Contract_leave
 	 * @param type Tipo de Baja
 	 * @param contract Contrato
-	 * @param relapse Recaida
 	 * @param description Descripcion
 	 * @param start_date Fecha de inicio 
 	 * @param end_date Fecha de finalizacion
 	 * @param daily_cgc_base Base de cotizacion por contingencias comunes
 	 * @param daily_cgp_base Base de cotizacion por contingencias profesionales
+	 * @param parent Baja origen, si es recaida
+	 * @param daily_reg_base Base reguladora
+	 * @param discharge_cause Causa del alta
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_leave(Short type, Integer contract, Boolean relapse, String description, Date start_date, Date end_date, Double daily_cgc_base, Double daily_cgp_base)
+	public int insertContract_leave(Short type, Integer contract, String description, Date start_date, Date end_date, Double daily_cgc_base, Double daily_cgp_base, Integer parent, Double daily_reg_base, Short discharge_cause)
 	throws SQLException {
 		int id = nextContract_leaveId();
 
@@ -30729,18 +31698,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		contract_leave_.id = id;
 		contract_leave_.type = type;
 		contract_leave_.contract = contract;
-		contract_leave_.relapse = relapse;
 		contract_leave_.description = description;
 		contract_leave_.start_date = start_date;
 		contract_leave_.end_date = end_date;
 		contract_leave_.daily_cgc_base = daily_cgc_base;
 		contract_leave_.daily_cgp_base = daily_cgp_base;
+		contract_leave_.parent = parent;
+		contract_leave_.daily_reg_base = daily_reg_base;
+		contract_leave_.discharge_cause = discharge_cause;
 
 		contract_leaves.add(contract_leave_);
 		
 		int contract_leaveCount = contract_leaves.size();
 		
-		if ( 137 * contract_leaveCount >=  this.maxAllowedPacket ){
+		if ( 165 * contract_leaveCount >=  this.maxAllowedPacket ){
 			insertContract_leave(contract_leaves);
 			contract_leaves.clear();
 		} 
@@ -30757,7 +31728,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement calendar_holidayStmt = null;
 
-	private static class Calendar_holiday {
+	public static class Calendar_holiday {
 		private Integer id; 
 		private Integer calendar; 
 		private String description; 
@@ -30906,7 +31877,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCalendar_holiday(Integer calendar, String description, Date date, Short day_type, Double hours)
+	public int insertCalendar_holiday(Integer calendar, String description, Date date, Short day_type, Double hours)
 	throws SQLException {
 		int id = nextCalendar_holidayId();
 
@@ -30939,7 +31910,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement workgroupStmt = null;
 
-	private static class Workgroup {
+	public static class Workgroup {
 		private Integer id; 
 		private String description; 
 		private Short status; 
@@ -31064,7 +32035,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWorkgroup(String description, Short status)
+	public int insertWorkgroup(String description, Short status)
 	throws SQLException {
 		int id = nextWorkgroupId();
 
@@ -31085,197 +32056,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int function_constantStmtSize = 0;
-
-	private int function_constantInserted = 0;
-
-	private List<Function_constant> function_constants = 
-		new LinkedList<Function_constant>();
-
-	private PreparedStatement function_constantStmt = null;
-
-	private static class Function_constant {
-		private Integer id; 
-		private String name; 
-		private String expression; 
-		private Date start_date; 
-		private Date end_date; 
-		private Boolean read_only; 
-		private String comments; 
-	}
-	
-	private void insertFunction_constant( List<Function_constant> function_constants )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = function_constants.size();
-		if ( function_constantStmtSize != size ) {
-			if ( function_constantStmt != null ) {
-				function_constantStmt.close();
-			}
-			String values = "(?,?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			function_constantStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO function_constant (id,name,expression,start_date,end_date,read_only,comments)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			function_constantStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Function_constant function_constant : function_constants) {
-			if ( function_constant.id == null )
-				function_constantStmt.setNull(offset++, 4);
-			else
-				function_constantStmt.setInt(offset++, function_constant.id);
-			if ( function_constant.name == null )
-				function_constantStmt.setNull(offset++, 12);
-			else
-				function_constantStmt.setString(offset++, function_constant.name);
-			if ( function_constant.expression == null )
-				function_constantStmt.setNull(offset++, 12);
-			else
-				function_constantStmt.setString(offset++, function_constant.expression);
-			if ( function_constant.start_date == null )
-				function_constantStmt.setNull(offset++, 91);
-			else
-				function_constantStmt.setDate(offset++, function_constant.start_date);
-			if ( function_constant.end_date == null )
-				function_constantStmt.setNull(offset++, 91);
-			else
-				function_constantStmt.setDate(offset++, function_constant.end_date);
-			if ( function_constant.read_only == null )
-				function_constantStmt.setNull(offset++, -7);
-			else
-				function_constantStmt.setBoolean(offset++, function_constant.read_only);
-			if ( function_constant.comments == null )
-				function_constantStmt.setNull(offset++, 12);
-			else
-				function_constantStmt.setString(offset++, function_constant.comments);
-		}
-		function_constantStmt.executeUpdate();
-		function_constantInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Function_constants in {} milliseconds.", size, function_constantInserted, elapsed );		
-	}
-		
-		private int function_constantId = -1;
-		
-		private void initFunction_constantId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `function_constant`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.function_constantId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextFunction_constantId() {
-			return ++this.function_constantId;
-		} 
-
-		public void setFunction_constantId(Integer function_constantId) {
-			this.function_constantId = function_constantId;
-		} 
-	
-	private void flushFunction_constant(  )
-	throws SQLException {
-		if ( ! function_constants.isEmpty() )
-			insertFunction_constant(function_constants);
-		if ( function_constantStmt != null )
-			function_constantStmt.close();
-	}	
-
-	/**
-	 * Function_constant
-	 * @param id Identificador unico
-	 * @param name Nombre
-	 * @param expression Expresion
-	 * @param start_date Fecha de inicio 
-	 * @param end_date Fecha de finalizacion
-	 * @param read_only Modificable
-	 * @param comments Comentario de ayuda
-	 * @throws SQLException
-	*/
-	protected void insertFunction_constant(Integer id, String name, String expression, Date start_date, Date end_date, Boolean read_only, String comments)
-	throws SQLException {
-
-		Function_constant function_constant_ = new Function_constant();
-		function_constant_.id = id;
-		function_constant_.name = name;
-		function_constant_.expression = expression;
-		function_constant_.start_date = start_date;
-		function_constant_.end_date = end_date;
-		function_constant_.read_only = read_only;
-		function_constant_.comments = comments;
-
-		function_constants.add(function_constant_);
-		
-		int function_constantCount = function_constants.size();
-		
-		if ( 686 * function_constantCount >=  this.maxAllowedPacket ){
-			insertFunction_constant(function_constants);
-			function_constants.clear();
-		} 
-	}
-
-
-	/**
-	 * Function_constant
-	 * @param name Nombre
-	 * @param expression Expresion
-	 * @param start_date Fecha de inicio 
-	 * @param end_date Fecha de finalizacion
-	 * @param read_only Modificable
-	 * @param comments Comentario de ayuda
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertFunction_constant(String name, String expression, Date start_date, Date end_date, Boolean read_only, String comments)
-	throws SQLException {
-		int id = nextFunction_constantId();
-
-		Function_constant function_constant_ = new Function_constant();
-		function_constant_.id = id;
-		function_constant_.name = name;
-		function_constant_.expression = expression;
-		function_constant_.start_date = start_date;
-		function_constant_.end_date = end_date;
-		function_constant_.read_only = read_only;
-		function_constant_.comments = comments;
-
-		function_constants.add(function_constant_);
-		
-		int function_constantCount = function_constants.size();
-		
-		if ( 686 * function_constantCount >=  this.maxAllowedPacket ){
-			insertFunction_constant(function_constants);
-			function_constants.clear();
-		} 
-		return id;
-	}
-
-
 	private int categoryStmtSize = 0;
 
 	private int categoryInserted = 0;
@@ -31285,7 +32065,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement categoryStmt = null;
 
-	private static class Category {
+	public static class Category {
 		private Integer id; 
 		private String name; 
 	}
@@ -31402,7 +32182,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCategory(String name)
+	public int insertCategory(String name)
 	throws SQLException {
 		int id = nextCategoryId();
 
@@ -31431,7 +32211,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement mk_action_targetStmt = null;
 
-	private static class Mk_action_target {
+	public static class Mk_action_target {
 		private Integer id; 
 		private Integer action; 
 		private Integer target; 
@@ -31572,7 +32352,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertMk_action_target(Integer action, Integer target, Short status, Integer survey_response)
+	public int insertMk_action_target(Integer action, Integer target, Short status, Integer survey_response)
 	throws SQLException {
 		int id = nextMk_action_targetId();
 
@@ -31604,7 +32384,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement taxStmt = null;
 
-	private static class Tax {
+	public static class Tax {
 		private Integer id; 
 		private String name; 
 		private Short tax_type; 
@@ -31769,7 +32549,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTax(String name, Short tax_type, Double percentage, Double surcharge, Date start_date, Short vat_deduction_type, Short withholding_type)
+	public int insertTax(String name, Short tax_type, Double percentage, Double surcharge, Date start_date, Short vat_deduction_type, Short withholding_type)
 	throws SQLException {
 		int id = nextTaxId();
 
@@ -31804,7 +32584,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement sessionStmt = null;
 
-	private static class Session {
+	public static class Session {
 		private Integer id; 
 		private Timestamp endDate; 
 		private String remote_address; 
@@ -31969,7 +32749,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSession(Timestamp endDate, String remote_address, String remote_host, String session_id, Timestamp startDate, Integer application_id, Integer user_id)
+	public int insertSession(Timestamp endDate, String remote_address, String remote_host, String session_id, Timestamp startDate, Integer application_id, Integer user_id)
 	throws SQLException {
 		int id = nextSessionId();
 
@@ -32004,7 +32784,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement cv_studiesStmt = null;
 
-	private static class Cv_studies {
+	public static class Cv_studies {
 		private Integer id; 
 		private Date startingdate; 
 		private Date endingdate; 
@@ -32161,7 +32941,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCv_studies(Date startingdate, Date endingdate, Short degree, String speciality, String centre, Integer curriculum)
+	public int insertCv_studies(Date startingdate, Date endingdate, Short degree, String speciality, String centre, Integer curriculum)
 	throws SQLException {
 		int id = nextCv_studiesId();
 
@@ -32195,7 +32975,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement invoicing_groupStmt = null;
 
-	private static class Invoicing_group {
+	public static class Invoicing_group {
 		private Integer id; 
 		private Integer parent; 
 	}
@@ -32312,7 +33092,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoicing_group(Integer parent)
+	public int insertInvoicing_group(Integer parent)
 	throws SQLException {
 		int id = nextInvoicing_groupId();
 
@@ -32341,7 +33121,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement registryStmt = null;
 
-	private static class Registry {
+	public static class Registry {
 		private Integer id; 
 		private String document; 
 		private Short document_type; 
@@ -32506,7 +33286,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRegistry(String document, Short document_type, String document_country, String name, String alias, Short type, String nationality)
+	public int insertRegistry(String document, Short document_type, String document_country, String name, String alias, Short type, String nationality)
 	throws SQLException {
 		int id = nextRegistryId();
 
@@ -32541,7 +33321,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement creditorStmt = null;
 
-	private static class Creditor {
+	public static class Creditor {
 		private Integer registry; 
 		private Boolean withholding; 
 		private Short transaction; 
@@ -32653,7 +33433,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement deliveryStmt = null;
 
-	private static class Delivery {
+	public static class Delivery {
 		private Integer id; 
 		private String series; 
 		private Integer number; 
@@ -32890,7 +33670,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertDelivery(String series, Integer number, Integer customer, Integer address, Timestamp issue_time, Integer pay_method, Short security_level, Short status, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	public int insertDelivery(String series, Integer number, Integer customer, Integer address, Timestamp issue_time, Integer pay_method, Short security_level, Short status, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
 	throws SQLException {
 		int id = nextDeliveryId();
 
@@ -32934,7 +33714,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_periodStmt = null;
 
-	private static class Account_period {
+	public static class Account_period {
 		private String id; 
 		private Date initiation_date; 
 		private Date deadline; 
@@ -33039,7 +33819,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement seriesStmt = null;
 
-	private static class Series {
+	public static class Series {
 		private String id; 
 		private String description; 
 		private Integer workplace; 
@@ -33151,7 +33931,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement fs_vat_declarationStmt = null;
 
-	private static class Fs_vat_declaration {
+	public static class Fs_vat_declaration {
 		private Integer id; 
 		private Integer fs_vat; 
 		private Boolean without_activity; 
@@ -33420,7 +34200,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFs_vat_declaration(Integer fs_vat, Boolean without_activity, Short administration, Double percent, Double operations_volume, Double quota, Double prev_year_compensate_quota, Double done_deposits, Double done_refunds, Double extra_charge, Double delay_interest, Double compensate, Double pay_back, Double deposit, Double prev_deposit, Double prev_pay_back, Double total_tax_debt, Integer rbank, Boolean compensable, Short status)
+	public int insertFs_vat_declaration(Integer fs_vat, Boolean without_activity, Short administration, Double percent, Double operations_volume, Double quota, Double prev_year_compensate_quota, Double done_deposits, Double done_refunds, Double extra_charge, Double delay_interest, Double compensate, Double pay_back, Double deposit, Double prev_deposit, Double prev_pay_back, Double total_tax_debt, Integer rbank, Boolean compensable, Short status)
 	throws SQLException {
 		int id = nextFs_vat_declarationId();
 
@@ -33468,7 +34248,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement course_levelStmt = null;
 
-	private static class Course_level {
+	public static class Course_level {
 		private Integer id; 
 		private String description; 
 	}
@@ -33585,7 +34365,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCourse_level(String description)
+	public int insertCourse_level(String description)
 	throws SQLException {
 		int id = nextCourse_levelId();
 
@@ -33614,7 +34394,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement workplaceStmt = null;
 
-	private static class Workplace {
+	public static class Workplace {
 		private Integer id; 
 		private Integer enterprise; 
 		private String description; 
@@ -33787,7 +34567,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWorkplace(Integer enterprise, String description, Integer address, Short economicAgreement, Boolean active, Integer calendar, Integer enterprise_activity, Integer agreement)
+	public int insertWorkplace(Integer enterprise, String description, Integer address, Short economicAgreement, Boolean active, Integer calendar, Integer enterprise_activity, Integer agreement)
 	throws SQLException {
 		int id = nextWorkplaceId();
 
@@ -33823,7 +34603,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement action_deniedStmt = null;
 
-	private static class Action_denied {
+	public static class Action_denied {
 		private Integer id; 
 		private Integer action_id; 
 		private Integer user_id; 
@@ -33948,7 +34728,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAction_denied(Integer action_id, Integer user_id)
+	public int insertAction_denied(Integer action_id, Integer user_id)
 	throws SQLException {
 		int id = nextAction_deniedId();
 
@@ -33978,7 +34758,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement agreement_levelStmt = null;
 
-	private static class Agreement_level {
+	public static class Agreement_level {
 		private Integer id; 
 		private Integer agreement; 
 		private String description; 
@@ -34103,7 +34883,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAgreement_level(Integer agreement, String description)
+	public int insertAgreement_level(Integer agreement, String description)
 	throws SQLException {
 		int id = nextAgreement_levelId();
 
@@ -34133,7 +34913,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement contactStmt = null;
 
-	private static class Contact {
+	public static class Contact {
 		private Integer id; 
 		private Integer user; 
 		private String name; 
@@ -34314,7 +35094,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContact(Integer user, String name, String organization, String phone, String cellular_phone, String fax, String email, String address, String note)
+	public int insertContact(Integer user, String name, String organization, String phone, String cellular_phone, String fax, String email, String address, String note)
 	throws SQLException {
 		int id = nextContactId();
 
@@ -34351,7 +35131,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement user_workgroupStmt = null;
 
-	private static class User_workgroup {
+	public static class User_workgroup {
 		private Integer id; 
 		private Integer user_id; 
 		private Integer workgroup; 
@@ -34476,7 +35256,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertUser_workgroup(Integer user_id, Integer workgroup)
+	public int insertUser_workgroup(Integer user_id, Integer workgroup)
 	throws SQLException {
 		int id = nextUser_workgroupId();
 
@@ -34506,7 +35286,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement course_scheduleStmt = null;
 
-	private static class Course_schedule {
+	public static class Course_schedule {
 		private Integer id; 
 		private Integer course; 
 		private Short day_of_week; 
@@ -34647,7 +35427,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCourse_schedule(Integer course, Short day_of_week, Time start_time, Time end_time)
+	public int insertCourse_schedule(Integer course, Short day_of_week, Time start_time, Time end_time)
 	throws SQLException {
 		int id = nextCourse_scheduleId();
 
@@ -34679,7 +35459,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement rrelationshipStmt = null;
 
-	private static class Rrelationship {
+	public static class Rrelationship {
 		private Integer id; 
 		private Integer registry; 
 		private Integer related_registry; 
@@ -34820,7 +35600,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRrelationship(Integer registry, Integer related_registry, Integer relationship, String comments)
+	public int insertRrelationship(Integer registry, Integer related_registry, Integer relationship, String comments)
 	throws SQLException {
 		int id = nextRrelationshipId();
 
@@ -34852,7 +35632,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement annual_report_detailStmt = null;
 
-	private static class Annual_report_detail {
+	public static class Annual_report_detail {
 		private Integer id; 
 		private Integer annual_report; 
 		private Integer sortKey; 
@@ -34993,7 +35773,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAnnual_report_detail(Integer annual_report, Integer sortKey, String content, Short style)
+	public int insertAnnual_report_detail(Integer annual_report, Integer sortKey, String content, Short style)
 	throws SQLException {
 		int id = nextAnnual_report_detailId();
 
@@ -35025,7 +35805,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement web_info_pageStmt = null;
 
-	private static class Web_info_page {
+	public static class Web_info_page {
 		private Integer id; 
 		private String name; 
 		private Short type; 
@@ -35166,7 +35946,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWeb_info_page(String name, Short type, Short position, Boolean active)
+	public int insertWeb_info_page(String name, Short type, Short position, Boolean active)
 	throws SQLException {
 		int id = nextWeb_info_pageId();
 
@@ -35198,7 +35978,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement enterprise_certificateStmt = null;
 
-	private static class Enterprise_certificate {
+	public static class Enterprise_certificate {
 		private Integer id; 
 		private Integer enterprise; 
 		private Date date; 
@@ -35339,7 +36119,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEnterprise_certificate(Integer enterprise, Date date, Integer status, String sign)
+	public int insertEnterprise_certificate(Integer enterprise, Date date, Integer status, String sign)
 	throws SQLException {
 		int id = nextEnterprise_certificateId();
 
@@ -35371,7 +36151,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement campaignStmt = null;
 
-	private static class Campaign {
+	public static class Campaign {
 		private Integer id; 
 		private String description; 
 		private Integer process; 
@@ -35544,7 +36324,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCampaign(String description, Integer process, Integer activity_type, Date start_date, Date end_date, Integer workgroup, Short type, Short status)
+	public int insertCampaign(String description, Integer process, Integer activity_type, Date start_date, Date end_date, Integer workgroup, Short type, Short status)
 	throws SQLException {
 		int id = nextCampaignId();
 
@@ -35580,7 +36360,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement fs_vatStmt = null;
 
-	private static class Fs_vat {
+	public static class Fs_vat {
 		private Integer id; 
 		private Integer year; 
 		private Short period; 
@@ -35761,7 +36541,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFs_vat(Integer year, Short period, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Boolean tax_refund_registry, Integer number)
+	public int insertFs_vat(Integer year, Short period, String comments, Short status, Short security_level, Boolean complementary, Boolean replacement, Boolean tax_refund_registry, Integer number)
 	throws SQLException {
 		int id = nextFs_vatId();
 
@@ -35798,7 +36578,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement contract_deductionStmt = null;
 
-	private static class Contract_deduction {
+	public static class Contract_deduction {
 		private Integer id; 
 		private Short type; 
 		private Integer deduction_concept; 
@@ -35979,7 +36759,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_deduction(Short type, Integer deduction_concept, Integer contract, String description, Short description_decorable, String expression, Date start_date, Date end_date, Short month)
+	public int insertContract_deduction(Short type, Integer deduction_concept, Integer contract, String description, Short description_decorable, String expression, Date start_date, Date end_date, Short month)
 	throws SQLException {
 		int id = nextContract_deductionId();
 
@@ -36016,7 +36796,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement noteStmt = null;
 
-	private static class Note {
+	public static class Note {
 		private Integer id; 
 		private String subject; 
 		private Timestamp date; 
@@ -36157,7 +36937,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertNote(String subject, Timestamp date, Integer owner, String note)
+	public int insertNote(String subject, Timestamp date, Integer owner, String note)
 	throws SQLException {
 		int id = nextNoteId();
 
@@ -36189,7 +36969,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement course_subjectStmt = null;
 
-	private static class Course_subject {
+	public static class Course_subject {
 		private Integer id; 
 		private String description; 
 	}
@@ -36306,7 +37086,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCourse_subject(String description)
+	public int insertCourse_subject(String description)
 	throws SQLException {
 		int id = nextCourse_subjectId();
 
@@ -36335,7 +37115,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement observationStmt = null;
 
-	private static class Observation {
+	public static class Observation {
 		private Integer id; 
 		private String description; 
 	}
@@ -36452,7 +37232,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertObservation(String description)
+	public int insertObservation(String description)
 	throws SQLException {
 		int id = nextObservationId();
 
@@ -36481,7 +37261,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement action_favoriteStmt = null;
 
-	private static class Action_favorite {
+	public static class Action_favorite {
 		private Integer id; 
 		private Integer position; 
 		private Integer action_id; 
@@ -36614,7 +37394,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAction_favorite(Integer position, Integer action_id, Integer user_id)
+	public int insertAction_favorite(Integer position, Integer action_id, Integer user_id)
 	throws SQLException {
 		int id = nextAction_favoriteId();
 
@@ -36645,7 +37425,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement loan_accountStmt = null;
 
-	private static class Loan_account {
+	public static class Loan_account {
 		private Integer id; 
 		private Integer loan; 
 		private String account; 
@@ -36770,7 +37550,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertLoan_account(Integer loan, String account)
+	public int insertLoan_account(Integer loan, String account)
 	throws SQLException {
 		int id = nextLoan_accountId();
 
@@ -36800,7 +37580,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement survey_workflowStmt = null;
 
-	private static class Survey_workflow {
+	public static class Survey_workflow {
 		private Integer id; 
 		private Integer questionValue; 
 		private Integer surveyQuestion; 
@@ -36965,7 +37745,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSurvey_workflow(Integer questionValue, Integer surveyQuestion, Integer nextSurveyQuestion, Short operator, String value_text, Double value_number, Timestamp value_date)
+	public int insertSurvey_workflow(Integer questionValue, Integer surveyQuestion, Integer nextSurveyQuestion, Short operator, String value_text, Double value_number, Timestamp value_date)
 	throws SQLException {
 		int id = nextSurvey_workflowId();
 
@@ -37000,7 +37780,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement productStmt = null;
 
-	private static class Product {
+	public static class Product {
 		private Integer id; 
 		private String name; 
 		private String code; 
@@ -37189,7 +37969,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProduct(String name, String code, Integer brand, Integer category, Boolean inventoriable, Short status, Integer vat, Integer retention, Short type, Boolean composition)
+	public int insertProduct(String name, String code, Integer brand, Integer category, Boolean inventoriable, Short status, Integer vat, Integer retention, Short type, Boolean composition)
 	throws SQLException {
 		int id = nextProductId();
 
@@ -37227,7 +38007,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement processStmt = null;
 
-	private static class Process {
+	public static class Process {
 		private Integer id; 
 		private String description; 
 		private Short status; 
@@ -37352,7 +38132,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertProcess(String description, Short status)
+	public int insertProcess(String description, Short status)
 	throws SQLException {
 		int id = nextProcessId();
 
@@ -37373,6 +38153,206 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int contract_leave_detailStmtSize = 0;
+
+	private int contract_leave_detailInserted = 0;
+
+	private List<Contract_leave_detail> contract_leave_details = 
+		new LinkedList<Contract_leave_detail>();
+
+	private PreparedStatement contract_leave_detailStmt = null;
+
+	public static class Contract_leave_detail {
+		private Integer id; 
+		private Short type; 
+		private Integer contract_leave; 
+		private String college_number; 
+		private Short confirm_order; 
+		private String cias; 
+		private Date date; 
+		private Boolean processed; 
+	}
+	
+	private void insertContract_leave_detail( List<Contract_leave_detail> contract_leave_details )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = contract_leave_details.size();
+		if ( contract_leave_detailStmtSize != size ) {
+			if ( contract_leave_detailStmt != null ) {
+				contract_leave_detailStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			contract_leave_detailStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO contract_leave_detail (id,type,contract_leave,college_number,confirm_order,cias,date,processed)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			contract_leave_detailStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Contract_leave_detail contract_leave_detail : contract_leave_details) {
+			if ( contract_leave_detail.id == null )
+				contract_leave_detailStmt.setNull(offset++, 4);
+			else
+				contract_leave_detailStmt.setInt(offset++, contract_leave_detail.id);
+			if ( contract_leave_detail.type == null )
+				contract_leave_detailStmt.setNull(offset++, -6);
+			else
+				contract_leave_detailStmt.setShort(offset++, contract_leave_detail.type);
+			if ( contract_leave_detail.contract_leave == null )
+				contract_leave_detailStmt.setNull(offset++, 4);
+			else
+				contract_leave_detailStmt.setInt(offset++, contract_leave_detail.contract_leave);
+			if ( contract_leave_detail.college_number == null )
+				contract_leave_detailStmt.setNull(offset++, 12);
+			else
+				contract_leave_detailStmt.setString(offset++, contract_leave_detail.college_number);
+			if ( contract_leave_detail.confirm_order == null )
+				contract_leave_detailStmt.setNull(offset++, -6);
+			else
+				contract_leave_detailStmt.setShort(offset++, contract_leave_detail.confirm_order);
+			if ( contract_leave_detail.cias == null )
+				contract_leave_detailStmt.setNull(offset++, 12);
+			else
+				contract_leave_detailStmt.setString(offset++, contract_leave_detail.cias);
+			if ( contract_leave_detail.date == null )
+				contract_leave_detailStmt.setNull(offset++, 91);
+			else
+				contract_leave_detailStmt.setDate(offset++, contract_leave_detail.date);
+			if ( contract_leave_detail.processed == null )
+				contract_leave_detailStmt.setNull(offset++, -7);
+			else
+				contract_leave_detailStmt.setBoolean(offset++, contract_leave_detail.processed);
+		}
+		contract_leave_detailStmt.executeUpdate();
+		contract_leave_detailInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Contract_leave_details in {} milliseconds.", size, contract_leave_detailInserted, elapsed );		
+	}
+		
+		private int contract_leave_detailId = -1;
+		
+		private void initContract_leave_detailId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `contract_leave_detail`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.contract_leave_detailId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextContract_leave_detailId() {
+			return ++this.contract_leave_detailId;
+		} 
+
+		public void setContract_leave_detailId(Integer contract_leave_detailId) {
+			this.contract_leave_detailId = contract_leave_detailId;
+		} 
+	
+	private void flushContract_leave_detail(  )
+	throws SQLException {
+		if ( ! contract_leave_details.isEmpty() )
+			insertContract_leave_detail(contract_leave_details);
+		if ( contract_leave_detailStmt != null )
+			contract_leave_detailStmt.close();
+	}	
+
+	/**
+	 * Contract_leave_detail
+	 * @param id Identificador unico
+	 * @param type Tipo de parte
+	 * @param contract_leave Contrato
+	 * @param college_number Numero de colegiado
+	 * @param confirm_order Numero de orden del parte de confirmacion
+	 * @param cias codigo identificacion area sanitaria
+	 * @param date Fecha del parte
+	 * @param processed Indica si esta procesado
+	 * @throws SQLException
+	*/
+	protected void insertContract_leave_detail(Integer id, Short type, Integer contract_leave, String college_number, Short confirm_order, String cias, Date date, Boolean processed)
+	throws SQLException {
+
+		Contract_leave_detail contract_leave_detail_ = new Contract_leave_detail();
+		contract_leave_detail_.id = id;
+		contract_leave_detail_.type = type;
+		contract_leave_detail_.contract_leave = contract_leave;
+		contract_leave_detail_.college_number = college_number;
+		contract_leave_detail_.confirm_order = confirm_order;
+		contract_leave_detail_.cias = cias;
+		contract_leave_detail_.date = date;
+		contract_leave_detail_.processed = processed;
+
+		contract_leave_details.add(contract_leave_detail_);
+		
+		int contract_leave_detailCount = contract_leave_details.size();
+		
+		if ( 55 * contract_leave_detailCount >=  this.maxAllowedPacket ){
+			insertContract_leave_detail(contract_leave_details);
+			contract_leave_details.clear();
+		} 
+	}
+
+
+	/**
+	 * Contract_leave_detail
+	 * @param type Tipo de parte
+	 * @param contract_leave Contrato
+	 * @param college_number Numero de colegiado
+	 * @param confirm_order Numero de orden del parte de confirmacion
+	 * @param cias codigo identificacion area sanitaria
+	 * @param date Fecha del parte
+	 * @param processed Indica si esta procesado
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertContract_leave_detail(Short type, Integer contract_leave, String college_number, Short confirm_order, String cias, Date date, Boolean processed)
+	throws SQLException {
+		int id = nextContract_leave_detailId();
+
+		Contract_leave_detail contract_leave_detail_ = new Contract_leave_detail();
+		contract_leave_detail_.id = id;
+		contract_leave_detail_.type = type;
+		contract_leave_detail_.contract_leave = contract_leave;
+		contract_leave_detail_.college_number = college_number;
+		contract_leave_detail_.confirm_order = confirm_order;
+		contract_leave_detail_.cias = cias;
+		contract_leave_detail_.date = date;
+		contract_leave_detail_.processed = processed;
+
+		contract_leave_details.add(contract_leave_detail_);
+		
+		int contract_leave_detailCount = contract_leave_details.size();
+		
+		if ( 55 * contract_leave_detailCount >=  this.maxAllowedPacket ){
+			insertContract_leave_detail(contract_leave_details);
+			contract_leave_details.clear();
+		} 
+		return id;
+	}
+
+
 	private int itemStmtSize = 0;
 
 	private int itemInserted = 0;
@@ -37382,7 +38362,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement itemStmt = null;
 
-	private static class Item {
+	public static class Item {
 		private Integer id; 
 		private Integer product; 
 		private String detail; 
@@ -37579,7 +38559,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertItem(Integer product, String detail, String description, Double price, Short status, Double expenses_percent, Double expenses_fixed, Double profit_percent, Double purchase_price, Boolean internet, String barcode)
+	public int insertItem(Integer product, String detail, String description, Double price, Short status, Double expenses_percent, Double expenses_fixed, Double profit_percent, Double purchase_price, Boolean internet, String barcode)
 	throws SQLException {
 		int id = nextItemId();
 
@@ -37618,7 +38598,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement accountStmt = null;
 
-	private static class Account {
+	public static class Account {
 		private String id; 
 		private String description; 
 		private String alias; 
@@ -37730,7 +38710,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement brandStmt = null;
 
-	private static class Brand {
+	public static class Brand {
 		private Integer id; 
 		private String name; 
 	}
@@ -37847,7 +38827,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertBrand(String name)
+	public int insertBrand(String name)
 	throws SQLException {
 		int id = nextBrandId();
 
@@ -37876,7 +38856,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement target_sellerStmt = null;
 
-	private static class Target_seller {
+	public static class Target_seller {
 		private Integer id; 
 		private Integer target; 
 		private Integer seller; 
@@ -38025,7 +39005,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTarget_seller(Integer target, Integer seller, Date start_date, Date end_date, Short status)
+	public int insertTarget_seller(Integer target, Integer seller, Date start_date, Date end_date, Short status)
 	throws SQLException {
 		int id = nextTarget_sellerId();
 
@@ -38058,7 +39038,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement contract_bonusStmt = null;
 
-	private static class Contract_bonus {
+	public static class Contract_bonus {
 		private Integer id; 
 		private Integer contract; 
 		private String description; 
@@ -38207,7 +39187,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_bonus(Integer contract, String description, String expression, Date start_date, Date end_date)
+	public int insertContract_bonus(Integer contract, String description, String expression, Date start_date, Date end_date)
 	throws SQLException {
 		int id = nextContract_bonusId();
 
@@ -38240,11 +39220,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement financeStmt = null;
 
-	private static class Finance {
+	public static class Finance {
 		private Integer id; 
 		private Boolean payment; 
 		private Integer registry; 
 		private String rdocument; 
+		private Short rdocument_type; 
+		private String rdocument_country; 
 		private String rname; 
 		private Double amount; 
 		private Double expenses; 
@@ -38267,7 +39249,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( financeStmt != null ) {
 				financeStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -38276,7 +39258,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			financeStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO finance (id,payment,registry,rdocument,rname,amount,expenses,concept,invoice,due_date,pay_method,bank,bank_account,status,security_level,scope)"  
+				"INSERT INTO finance (id,payment,registry,rdocument,rdocument_type,rdocument_country,rname,amount,expenses,concept,invoice,due_date,pay_method,bank,bank_account,status,security_level,scope)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			financeStmtSize = size;
@@ -38301,6 +39283,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				financeStmt.setNull(offset++, 12);
 			else
 				financeStmt.setString(offset++, finance.rdocument);
+			if ( finance.rdocument_type == null )
+				financeStmt.setNull(offset++, -6);
+			else
+				financeStmt.setShort(offset++, finance.rdocument_type);
+			if ( finance.rdocument_country == null )
+				financeStmt.setNull(offset++, 12);
+			else
+				financeStmt.setString(offset++, finance.rdocument_country);
 			if ( finance.rname == null )
 				financeStmt.setNull(offset++, 12);
 			else
@@ -38403,6 +39393,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param payment Indica si es un pago o un cobro
 	 * @param registry Identificador del Cliente o Proveedor
 	 * @param rdocument Numero de Documento del Cliente o Proveedor
+	 * @param rdocument_type Tipo de documento (NIF, CIF...)
+	 * @param rdocument_country Pais del documento
 	 * @param rname Nombre completo del Cliente o Proveedor
 	 * @param amount Importe del Vencimiento
 	 * @param expenses Gastos asociados al Vencimiento
@@ -38417,7 +39409,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param scope Ambito del Vencimiento
 	 * @throws SQLException
 	*/
-	protected void insertFinance(Integer id, Boolean payment, Integer registry, String rdocument, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope)
+	protected void insertFinance(Integer id, Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope)
 	throws SQLException {
 
 		Finance finance_ = new Finance();
@@ -38425,6 +39417,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		finance_.payment = payment;
 		finance_.registry = registry;
 		finance_.rdocument = rdocument;
+		finance_.rdocument_type = rdocument_type;
+		finance_.rdocument_country = rdocument_country;
 		finance_.rname = rname;
 		finance_.amount = amount;
 		finance_.expenses = expenses;
@@ -38442,7 +39436,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int financeCount = finances.size();
 		
-		if ( 319 * financeCount >=  this.maxAllowedPacket ){
+		if ( 324 * financeCount >=  this.maxAllowedPacket ){
 			insertFinance(finances);
 			finances.clear();
 		} 
@@ -38454,6 +39448,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param payment Indica si es un pago o un cobro
 	 * @param registry Identificador del Cliente o Proveedor
 	 * @param rdocument Numero de Documento del Cliente o Proveedor
+	 * @param rdocument_type Tipo de documento (NIF, CIF...)
+	 * @param rdocument_country Pais del documento
 	 * @param rname Nombre completo del Cliente o Proveedor
 	 * @param amount Importe del Vencimiento
 	 * @param expenses Gastos asociados al Vencimiento
@@ -38469,7 +39465,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertFinance(Boolean payment, Integer registry, String rdocument, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope)
+	public int insertFinance(Boolean payment, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Double amount, Double expenses, String concept, Integer invoice, Date due_date, Integer pay_method, Integer bank, String bank_account, Short status, Short security_level, Integer scope)
 	throws SQLException {
 		int id = nextFinanceId();
 
@@ -38478,6 +39474,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		finance_.payment = payment;
 		finance_.registry = registry;
 		finance_.rdocument = rdocument;
+		finance_.rdocument_type = rdocument_type;
+		finance_.rdocument_country = rdocument_country;
 		finance_.rname = rname;
 		finance_.amount = amount;
 		finance_.expenses = expenses;
@@ -38495,7 +39493,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int financeCount = finances.size();
 		
-		if ( 319 * financeCount >=  this.maxAllowedPacket ){
+		if ( 324 * financeCount >=  this.maxAllowedPacket ){
 			insertFinance(finances);
 			finances.clear();
 		} 
@@ -38512,7 +39510,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement dossier_typeStmt = null;
 
-	private static class Dossier_type {
+	public static class Dossier_type {
 		private Integer id; 
 		private String description; 
 	}
@@ -38629,7 +39627,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertDossier_type(String description)
+	public int insertDossier_type(String description)
 	throws SQLException {
 		int id = nextDossier_typeId();
 
@@ -38658,7 +39656,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement geozoneStmt = null;
 
-	private static class Geozone {
+	public static class Geozone {
 		private Integer id; 
 		private String name; 
 		private String code; 
@@ -38791,7 +39789,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertGeozone(String name, String code, Boolean system)
+	public int insertGeozone(String name, String code, Boolean system)
 	throws SQLException {
 		int id = nextGeozoneId();
 
@@ -38822,7 +39820,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement pcategory_groupStmt = null;
 
-	private static class Pcategory_group {
+	public static class Pcategory_group {
 		private Integer id; 
 		private String name; 
 	}
@@ -38939,7 +39937,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertPcategory_group(String name)
+	public int insertPcategory_group(String name)
 	throws SQLException {
 		int id = nextPcategory_groupId();
 
@@ -38968,7 +39966,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement segmentStmt = null;
 
-	private static class Segment {
+	public static class Segment {
 		private Integer id; 
 		private String name; 
 	}
@@ -39085,7 +40083,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSegment(String name)
+	public int insertSegment(String name)
 	throws SQLException {
 		int id = nextSegmentId();
 
@@ -39114,7 +40112,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement salary_deductionStmt = null;
 
-	private static class Salary_deduction {
+	public static class Salary_deduction {
 		private Integer id; 
 		private Integer salary; 
 		private Short type; 
@@ -39271,7 +40269,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSalary_deduction(Integer salary, Short type, Integer deduction_concept, String description, String expression, Double amount)
+	public int insertSalary_deduction(Integer salary, Short type, Integer deduction_concept, String description, String expression, Double amount)
 	throws SQLException {
 		int id = nextSalary_deductionId();
 
@@ -39305,13 +40303,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement invoiceStmt = null;
 
-	private static class Invoice {
+	public static class Invoice {
 		private Integer id; 
 		private String series; 
 		private Integer number; 
 		private String reference_code; 
 		private Integer registry; 
 		private String rdocument; 
+		private Short rdocument_type; 
+		private String rdocument_country; 
 		private String rname; 
 		private Integer raddress; 
 		private Date issue_date; 
@@ -39337,7 +40337,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( invoiceStmt != null ) {
 				invoiceStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -39346,7 +40346,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			invoiceStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO invoice (id,series,number,reference_code,registry,rdocument,rname,raddress,issue_date,tax_date,security_level,status,type,taxFree,surcharge,withholding,comments,investment,transaction,signed,scope)"  
+				"INSERT INTO invoice (id,series,number,reference_code,registry,rdocument,rdocument_type,rdocument_country,rname,raddress,issue_date,tax_date,security_level,status,type,taxFree,surcharge,withholding,comments,investment,transaction,signed,scope)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			invoiceStmtSize = size;
@@ -39379,6 +40379,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoiceStmt.setNull(offset++, 12);
 			else
 				invoiceStmt.setString(offset++, invoice.rdocument);
+			if ( invoice.rdocument_type == null )
+				invoiceStmt.setNull(offset++, -6);
+			else
+				invoiceStmt.setShort(offset++, invoice.rdocument_type);
+			if ( invoice.rdocument_country == null )
+				invoiceStmt.setNull(offset++, 12);
+			else
+				invoiceStmt.setString(offset++, invoice.rdocument_country);
 			if ( invoice.rname == null )
 				invoiceStmt.setNull(offset++, 12);
 			else
@@ -39495,6 +40503,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param reference_code Codigo de referencia de la Factura
 	 * @param registry Identificador del Cliente o Proveedor
 	 * @param rdocument Numero de Documento del Cliente o Proveedor
+	 * @param rdocument_type Tipo de documento (NIF, CIF...)
+	 * @param rdocument_country Pais del documento
 	 * @param rname Nombre completo del Cliente o Proveedor
 	 * @param raddress Identificador de la Direccion de envio de la Factura
 	 * @param issue_date Fecha de emision de la Factura
@@ -39512,7 +40522,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param scope Ambito de la Factura
 	 * @throws SQLException
 	*/
-	protected void insertInvoice(Integer id, String series, Integer number, String reference_code, Integer registry, String rdocument, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, Boolean investment, Short transaction, Boolean signed, Integer scope)
+	protected void insertInvoice(Integer id, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, Boolean investment, Short transaction, Boolean signed, Integer scope)
 	throws SQLException {
 
 		Invoice invoice_ = new Invoice();
@@ -39522,6 +40532,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_.reference_code = reference_code;
 		invoice_.registry = registry;
 		invoice_.rdocument = rdocument;
+		invoice_.rdocument_type = rdocument_type;
+		invoice_.rdocument_country = rdocument_country;
 		invoice_.rname = rname;
 		invoice_.raddress = raddress;
 		invoice_.issue_date = issue_date;
@@ -39542,7 +40554,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int invoiceCount = invoices.size();
 		
-		if ( 263 * invoiceCount >=  this.maxAllowedPacket ){
+		if ( 268 * invoiceCount >=  this.maxAllowedPacket ){
 			insertInvoice(invoices);
 			invoices.clear();
 		} 
@@ -39556,6 +40568,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param reference_code Codigo de referencia de la Factura
 	 * @param registry Identificador del Cliente o Proveedor
 	 * @param rdocument Numero de Documento del Cliente o Proveedor
+	 * @param rdocument_type Tipo de documento (NIF, CIF...)
+	 * @param rdocument_country Pais del documento
 	 * @param rname Nombre completo del Cliente o Proveedor
 	 * @param raddress Identificador de la Direccion de envio de la Factura
 	 * @param issue_date Fecha de emision de la Factura
@@ -39574,7 +40588,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoice(String series, Integer number, String reference_code, Integer registry, String rdocument, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, Boolean investment, Short transaction, Boolean signed, Integer scope)
+	public int insertInvoice(String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, Boolean investment, Short transaction, Boolean signed, Integer scope)
 	throws SQLException {
 		int id = nextInvoiceId();
 
@@ -39585,6 +40599,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_.reference_code = reference_code;
 		invoice_.registry = registry;
 		invoice_.rdocument = rdocument;
+		invoice_.rdocument_type = rdocument_type;
+		invoice_.rdocument_country = rdocument_country;
 		invoice_.rname = rname;
 		invoice_.raddress = raddress;
 		invoice_.issue_date = issue_date;
@@ -39605,7 +40621,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int invoiceCount = invoices.size();
 		
-		if ( 263 * invoiceCount >=  this.maxAllowedPacket ){
+		if ( 268 * invoiceCount >=  this.maxAllowedPacket ){
 			insertInvoice(invoices);
 			invoices.clear();
 		} 
@@ -39622,7 +40638,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement invoice_attachStmt = null;
 
-	private static class Invoice_attach {
+	public static class Invoice_attach {
 		private Integer id; 
 		private Integer invoice; 
 		private Short mimeType; 
@@ -39763,7 +40779,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoice_attach(Integer invoice, Short mimeType, String description, InputStream data)
+	public int insertInvoice_attach(Integer invoice, Short mimeType, String description, InputStream data)
 	throws SQLException {
 		int id = nextInvoice_attachId();
 
@@ -39795,7 +40811,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement invoice_detailStmt = null;
 
-	private static class Invoice_detail {
+	public static class Invoice_detail {
 		private Integer id; 
 		private Integer invoice; 
 		private Integer line; 
@@ -40000,7 +41016,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoice_detail(Integer invoice, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Integer workplace)
+	public int insertInvoice_detail(Integer invoice, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short source, Integer source_id, Double taxable_base, Double taxes, Integer workplace)
 	throws SQLException {
 		int id = nextInvoice_detailId();
 
@@ -40031,6 +41047,152 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int leave_batchStmtSize = 0;
+
+	private int leave_batchInserted = 0;
+
+	private List<Leave_batch> leave_batchs = 
+		new LinkedList<Leave_batch>();
+
+	private PreparedStatement leave_batchStmt = null;
+
+	public static class Leave_batch {
+		private Integer id; 
+		private Timestamp date; 
+	}
+	
+	private void insertLeave_batch( List<Leave_batch> leave_batchs )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = leave_batchs.size();
+		if ( leave_batchStmtSize != size ) {
+			if ( leave_batchStmt != null ) {
+				leave_batchStmt.close();
+			}
+			String values = "(?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			leave_batchStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO leave_batch (id,date)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			leave_batchStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Leave_batch leave_batch : leave_batchs) {
+			if ( leave_batch.id == null )
+				leave_batchStmt.setNull(offset++, 4);
+			else
+				leave_batchStmt.setInt(offset++, leave_batch.id);
+			if ( leave_batch.date == null )
+				leave_batchStmt.setNull(offset++, 93);
+			else
+				leave_batchStmt.setTimestamp(offset++, leave_batch.date);
+		}
+		leave_batchStmt.executeUpdate();
+		leave_batchInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Leave_batchs in {} milliseconds.", size, leave_batchInserted, elapsed );		
+	}
+		
+		private int leave_batchId = -1;
+		
+		private void initLeave_batchId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `leave_batch`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.leave_batchId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextLeave_batchId() {
+			return ++this.leave_batchId;
+		} 
+
+		public void setLeave_batchId(Integer leave_batchId) {
+			this.leave_batchId = leave_batchId;
+		} 
+	
+	private void flushLeave_batch(  )
+	throws SQLException {
+		if ( ! leave_batchs.isEmpty() )
+			insertLeave_batch(leave_batchs);
+		if ( leave_batchStmt != null )
+			leave_batchStmt.close();
+	}	
+
+	/**
+	 * Leave_batch
+	 * @param id Identificador unico
+	 * @param date Fecha de la Remesa
+	 * @throws SQLException
+	*/
+	protected void insertLeave_batch(Integer id, Timestamp date)
+	throws SQLException {
+
+		Leave_batch leave_batch_ = new Leave_batch();
+		leave_batch_.id = id;
+		leave_batch_.date = date;
+
+		leave_batchs.add(leave_batch_);
+		
+		int leave_batchCount = leave_batchs.size();
+		
+		if ( 29 * leave_batchCount >=  this.maxAllowedPacket ){
+			insertLeave_batch(leave_batchs);
+			leave_batchs.clear();
+		} 
+	}
+
+
+	/**
+	 * Leave_batch
+	 * @param date Fecha de la Remesa
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertLeave_batch(Timestamp date)
+	throws SQLException {
+		int id = nextLeave_batchId();
+
+		Leave_batch leave_batch_ = new Leave_batch();
+		leave_batch_.id = id;
+		leave_batch_.date = date;
+
+		leave_batchs.add(leave_batch_);
+		
+		int leave_batchCount = leave_batchs.size();
+		
+		if ( 29 * leave_batchCount >=  this.maxAllowedPacket ){
+			insertLeave_batch(leave_batchs);
+			leave_batchs.clear();
+		} 
+		return id;
+	}
+
+
 	private int annual_reportStmtSize = 0;
 
 	private int annual_reportInserted = 0;
@@ -40040,7 +41202,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement annual_reportStmt = null;
 
-	private static class Annual_report {
+	public static class Annual_report {
 		private Integer id; 
 		private String name; 
 	}
@@ -40157,7 +41319,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAnnual_report(String name)
+	public int insertAnnual_report(String name)
 	throws SQLException {
 		int id = nextAnnual_reportId();
 
@@ -40186,7 +41348,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement course_instructorStmt = null;
 
-	private static class Course_instructor {
+	public static class Course_instructor {
 		private Integer id; 
 		private Integer course; 
 		private Integer employee; 
@@ -40319,7 +41481,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCourse_instructor(Integer course, Integer employee, Short type)
+	public int insertCourse_instructor(Integer course, Integer employee, Short type)
 	throws SQLException {
 		int id = nextCourse_instructorId();
 
@@ -40350,7 +41512,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_entry_finance_trackingStmt = null;
 
-	private static class Account_entry_finance_tracking {
+	public static class Account_entry_finance_tracking {
 		private Integer id; 
 		private Integer account_entry; 
 		private Integer finance_tracking; 
@@ -40475,7 +41637,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_entry_finance_tracking(Integer account_entry, Integer finance_tracking)
+	public int insertAccount_entry_finance_tracking(Integer account_entry, Integer finance_tracking)
 	throws SQLException {
 		int id = nextAccount_entry_finance_trackingId();
 
@@ -40496,6 +41658,188 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int agreement_level_dataStmtSize = 0;
+
+	private int agreement_level_dataInserted = 0;
+
+	private List<Agreement_level_data> agreement_level_datas = 
+		new LinkedList<Agreement_level_data>();
+
+	private PreparedStatement agreement_level_dataStmt = null;
+
+	public static class Agreement_level_data {
+		private Integer id; 
+		private String name; 
+		private Integer agreement_level; 
+		private String expression; 
+		private Date start_date; 
+		private Date end_date; 
+	}
+	
+	private void insertAgreement_level_data( List<Agreement_level_data> agreement_level_datas )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = agreement_level_datas.size();
+		if ( agreement_level_dataStmtSize != size ) {
+			if ( agreement_level_dataStmt != null ) {
+				agreement_level_dataStmt.close();
+			}
+			String values = "(?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			agreement_level_dataStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO agreement_level_data (id,name,agreement_level,expression,start_date,end_date)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			agreement_level_dataStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Agreement_level_data agreement_level_data : agreement_level_datas) {
+			if ( agreement_level_data.id == null )
+				agreement_level_dataStmt.setNull(offset++, 4);
+			else
+				agreement_level_dataStmt.setInt(offset++, agreement_level_data.id);
+			if ( agreement_level_data.name == null )
+				agreement_level_dataStmt.setNull(offset++, 12);
+			else
+				agreement_level_dataStmt.setString(offset++, agreement_level_data.name);
+			if ( agreement_level_data.agreement_level == null )
+				agreement_level_dataStmt.setNull(offset++, 4);
+			else
+				agreement_level_dataStmt.setInt(offset++, agreement_level_data.agreement_level);
+			if ( agreement_level_data.expression == null )
+				agreement_level_dataStmt.setNull(offset++, 12);
+			else
+				agreement_level_dataStmt.setString(offset++, agreement_level_data.expression);
+			if ( agreement_level_data.start_date == null )
+				agreement_level_dataStmt.setNull(offset++, 91);
+			else
+				agreement_level_dataStmt.setDate(offset++, agreement_level_data.start_date);
+			if ( agreement_level_data.end_date == null )
+				agreement_level_dataStmt.setNull(offset++, 91);
+			else
+				agreement_level_dataStmt.setDate(offset++, agreement_level_data.end_date);
+		}
+		agreement_level_dataStmt.executeUpdate();
+		agreement_level_dataInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Agreement_level_datas in {} milliseconds.", size, agreement_level_dataInserted, elapsed );		
+	}
+		
+		private int agreement_level_dataId = -1;
+		
+		private void initAgreement_level_dataId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `agreement_level_data`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.agreement_level_dataId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextAgreement_level_dataId() {
+			return ++this.agreement_level_dataId;
+		} 
+
+		public void setAgreement_level_dataId(Integer agreement_level_dataId) {
+			this.agreement_level_dataId = agreement_level_dataId;
+		} 
+	
+	private void flushAgreement_level_data(  )
+	throws SQLException {
+		if ( ! agreement_level_datas.isEmpty() )
+			insertAgreement_level_data(agreement_level_datas);
+		if ( agreement_level_dataStmt != null )
+			agreement_level_dataStmt.close();
+	}	
+
+	/**
+	 * Agreement_level_data
+	 * @param id Identificador unico
+	 * @param name Nombre
+	 * @param agreement_level Nivel retributivo
+	 * @param expression Expresion
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @throws SQLException
+	*/
+	protected void insertAgreement_level_data(Integer id, String name, Integer agreement_level, String expression, Date start_date, Date end_date)
+	throws SQLException {
+
+		Agreement_level_data agreement_level_data_ = new Agreement_level_data();
+		agreement_level_data_.id = id;
+		agreement_level_data_.name = name;
+		agreement_level_data_.agreement_level = agreement_level;
+		agreement_level_data_.expression = expression;
+		agreement_level_data_.start_date = start_date;
+		agreement_level_data_.end_date = end_date;
+
+		agreement_level_datas.add(agreement_level_data_);
+		
+		int agreement_level_dataCount = agreement_level_datas.size();
+		
+		if ( 184 * agreement_level_dataCount >=  this.maxAllowedPacket ){
+			insertAgreement_level_data(agreement_level_datas);
+			agreement_level_datas.clear();
+		} 
+	}
+
+
+	/**
+	 * Agreement_level_data
+	 * @param name Nombre
+	 * @param agreement_level Nivel retributivo
+	 * @param expression Expresion
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertAgreement_level_data(String name, Integer agreement_level, String expression, Date start_date, Date end_date)
+	throws SQLException {
+		int id = nextAgreement_level_dataId();
+
+		Agreement_level_data agreement_level_data_ = new Agreement_level_data();
+		agreement_level_data_.id = id;
+		agreement_level_data_.name = name;
+		agreement_level_data_.agreement_level = agreement_level;
+		agreement_level_data_.expression = expression;
+		agreement_level_data_.start_date = start_date;
+		agreement_level_data_.end_date = end_date;
+
+		agreement_level_datas.add(agreement_level_data_);
+		
+		int agreement_level_dataCount = agreement_level_datas.size();
+		
+		if ( 184 * agreement_level_dataCount >=  this.maxAllowedPacket ){
+			insertAgreement_level_data(agreement_level_datas);
+			agreement_level_datas.clear();
+		} 
+		return id;
+	}
+
+
 	private int income_detailStmtSize = 0;
 
 	private int income_detailInserted = 0;
@@ -40505,7 +41849,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement income_detailStmt = null;
 
-	private static class Income_detail {
+	public static class Income_detail {
 		private Integer id; 
 		private Integer income; 
 		private Integer line; 
@@ -40702,7 +42046,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertIncome_detail(Integer income, Integer line, Integer item, String description, Integer warehouse, Double quantity, Double price, String discount_expr, Short type, Short source, Integer purchase_detail)
+	public int insertIncome_detail(Integer income, Integer line, Integer item, String description, Integer warehouse, Double quantity, Double price, String discount_expr, Short type, Short source, Integer purchase_detail)
 	throws SQLException {
 		int id = nextIncome_detailId();
 
@@ -40741,7 +42085,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement rmediaStmt = null;
 
-	private static class Rmedia {
+	public static class Rmedia {
 		private Integer id; 
 		private Integer registry; 
 		private Short media; 
@@ -40914,7 +42258,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRmedia(Integer registry, Short media, String value, String comment, Boolean administrative, Boolean commercial, Boolean technical, Integer raddress)
+	public int insertRmedia(Integer registry, Short media, String value, String comment, Boolean administrative, Boolean commercial, Boolean technical, Integer raddress)
 	throws SQLException {
 		int id = nextRmediaId();
 
@@ -40950,7 +42294,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement commercial_trackingStmt = null;
 
-	private static class Commercial_tracking {
+	public static class Commercial_tracking {
 		private Integer id; 
 		private Date date; 
 		private Integer seller; 
@@ -41131,7 +42475,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCommercial_tracking(Date date, Integer seller, Integer target, Integer activity, String comments, Short status, Integer next_commercial_tracking, Date end_date, Integer offer)
+	public int insertCommercial_tracking(Date date, Integer seller, Integer target, Integer activity, String comments, Short status, Integer next_commercial_tracking, Date end_date, Integer offer)
 	throws SQLException {
 		int id = nextCommercial_trackingId();
 
@@ -41168,7 +42512,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement raddressStmt = null;
 
-	private static class Raddress {
+	public static class Raddress {
 		private Integer id; 
 		private Integer registry; 
 		private Short type; 
@@ -41373,7 +42717,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRaddress(Integer registry, Short type, String recipient, String street_type, String address, String number, String address2, String address3, String zip, String city, Integer geozone, String alias)
+	public int insertRaddress(Integer registry, Short type, String recipient, String street_type, String address, String number, String address2, String address3, String zip, String city, Integer geozone, String alias)
 	throws SQLException {
 		int id = nextRaddressId();
 
@@ -41413,7 +42757,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement actionStmt = null;
 
-	private static class Action {
+	public static class Action {
 		private Integer id; 
 		private Boolean menu; 
 		private String name; 
@@ -41546,7 +42890,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAction(Boolean menu, String name, Integer application_id)
+	public int insertAction(Boolean menu, String name, Integer application_id)
 	throws SQLException {
 		int id = nextActionId();
 
@@ -41577,7 +42921,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement surveyStmt = null;
 
-	private static class Survey {
+	public static class Survey {
 		private Integer id; 
 		private Boolean active; 
 		private Timestamp creationDate; 
@@ -41710,7 +43054,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSurvey(Boolean active, Timestamp creationDate, String description)
+	public int insertSurvey(Boolean active, Timestamp creationDate, String description)
 	throws SQLException {
 		int id = nextSurveyId();
 
@@ -41741,7 +43085,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement survey_response_detailStmt = null;
 
-	private static class Survey_response_detail {
+	public static class Survey_response_detail {
 		private Integer id; 
 		private String value_text; 
 		private Double value_number; 
@@ -41890,7 +43234,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertSurvey_response_detail(String value_text, Double value_number, Timestamp value_date, Integer question, Integer surveyResponse)
+	public int insertSurvey_response_detail(String value_text, Double value_number, Timestamp value_date, Integer question, Integer surveyResponse)
 	throws SQLException {
 		int id = nextSurvey_response_detailId();
 
@@ -41923,7 +43267,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement raddinfoStmt = null;
 
-	private static class Raddinfo {
+	public static class Raddinfo {
 		private Integer id; 
 		private Integer registry; 
 		private String attribute; 
@@ -42064,7 +43408,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRaddinfo(Integer registry, String attribute, String value, Date value_date)
+	public int insertRaddinfo(Integer registry, String attribute, String value, Date value_date)
 	throws SQLException {
 		int id = nextRaddinfoId();
 
@@ -42096,7 +43440,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement invoicing_group_detailStmt = null;
 
-	private static class Invoicing_group_detail {
+	public static class Invoicing_group_detail {
 		private Integer id; 
 		private Integer invoicing_group; 
 		private Integer child; 
@@ -42229,7 +43573,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoicing_group_detail(Integer invoicing_group, Integer child, Boolean grouped)
+	public int insertInvoicing_group_detail(Integer invoicing_group, Integer child, Boolean grouped)
 	throws SQLException {
 		int id = nextInvoicing_group_detailId();
 
@@ -42260,7 +43604,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement commission_itemStmt = null;
 
-	private static class Commission_item {
+	public static class Commission_item {
 		private Integer id; 
 		private Integer commission; 
 		private Integer item; 
@@ -42409,7 +43753,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCommission_item(Integer commission, Integer item, Double quantity, Double amount, Double rate)
+	public int insertCommission_item(Integer commission, Integer item, Double quantity, Double amount, Double rate)
 	throws SQLException {
 		int id = nextCommission_itemId();
 
@@ -42442,7 +43786,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement catalogue_itemStmt = null;
 
-	private static class Catalogue_item {
+	public static class Catalogue_item {
 		private Integer id; 
 		private Integer catalogue; 
 		private Integer item; 
@@ -42591,7 +43935,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCatalogue_item(Integer catalogue, Integer item, Double quantity, Double price, Double discount)
+	public int insertCatalogue_item(Integer catalogue, Integer item, Double quantity, Double price, Double discount)
 	throws SQLException {
 		int id = nextCatalogue_itemId();
 
@@ -42624,7 +43968,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement academic_skillStmt = null;
 
-	private static class Academic_skill {
+	public static class Academic_skill {
 		private Integer id; 
 		private String code; 
 		private String description; 
@@ -42749,7 +44093,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAcademic_skill(String code, String description)
+	public int insertAcademic_skill(String code, String description)
 	throws SQLException {
 		int id = nextAcademic_skillId();
 
@@ -42779,7 +44123,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement appraiserStmt = null;
 
-	private static class Appraiser {
+	public static class Appraiser {
 		private Integer registry; 
 	}
 	
@@ -42854,260 +44198,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 
 
-	private int contractStmtSize = 0;
-
-	private int contractInserted = 0;
-
-	private List<Contract> contracts = 
-		new LinkedList<Contract>();
-
-	private PreparedStatement contractStmt = null;
-
-	private static class Contract {
-		private Integer id; 
-		private Integer person; 
-		private Integer workplace; 
-		private Integer enterprise_ccc; 
-		private Date start_date; 
-		private Date end_date; 
-		private Integer calendar; 
-		private InputStream document; 
-		private String description; 
-		private Short status; 
-		private Integer registration; 
-		private Date seniority_date; 
-		private Integer enterprise_activity; 
-		private Short ss_regime; 
-	}
-	
-	private void insertContract( List<Contract> contracts )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = contracts.size();
-		if ( contractStmtSize != size ) {
-			if ( contractStmt != null ) {
-				contractStmt.close();
-			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			contractStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO contract (id,person,workplace,enterprise_ccc,start_date,end_date,calendar,document,description,status,registration,seniority_date,enterprise_activity,ss_regime)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			contractStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Contract contract : contracts) {
-			if ( contract.id == null )
-				contractStmt.setNull(offset++, 4);
-			else
-				contractStmt.setInt(offset++, contract.id);
-			if ( contract.person == null )
-				contractStmt.setNull(offset++, 4);
-			else
-				contractStmt.setInt(offset++, contract.person);
-			if ( contract.workplace == null )
-				contractStmt.setNull(offset++, 4);
-			else
-				contractStmt.setInt(offset++, contract.workplace);
-			if ( contract.enterprise_ccc == null )
-				contractStmt.setNull(offset++, 4);
-			else
-				contractStmt.setInt(offset++, contract.enterprise_ccc);
-			if ( contract.start_date == null )
-				contractStmt.setNull(offset++, 91);
-			else
-				contractStmt.setDate(offset++, contract.start_date);
-			if ( contract.end_date == null )
-				contractStmt.setNull(offset++, 91);
-			else
-				contractStmt.setDate(offset++, contract.end_date);
-			if ( contract.calendar == null )
-				contractStmt.setNull(offset++, 4);
-			else
-				contractStmt.setInt(offset++, contract.calendar);
-			if ( contract.document == null )
-				contractStmt.setNull(offset++, -4);
-			else
-				contractStmt.setBinaryStream(offset++, contract.document);
-			if ( contract.description == null )
-				contractStmt.setNull(offset++, 12);
-			else
-				contractStmt.setString(offset++, contract.description);
-			if ( contract.status == null )
-				contractStmt.setNull(offset++, -6);
-			else
-				contractStmt.setShort(offset++, contract.status);
-			if ( contract.registration == null )
-				contractStmt.setNull(offset++, 4);
-			else
-				contractStmt.setInt(offset++, contract.registration);
-			if ( contract.seniority_date == null )
-				contractStmt.setNull(offset++, 91);
-			else
-				contractStmt.setDate(offset++, contract.seniority_date);
-			if ( contract.enterprise_activity == null )
-				contractStmt.setNull(offset++, 4);
-			else
-				contractStmt.setInt(offset++, contract.enterprise_activity);
-			if ( contract.ss_regime == null )
-				contractStmt.setNull(offset++, -6);
-			else
-				contractStmt.setShort(offset++, contract.ss_regime);
-		}
-		contractStmt.executeUpdate();
-		contractInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Contracts in {} milliseconds.", size, contractInserted, elapsed );		
-	}
-		
-		private int contractId = -1;
-		
-		private void initContractId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `contract`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.contractId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextContractId() {
-			return ++this.contractId;
-		} 
-
-		public void setContractId(Integer contractId) {
-			this.contractId = contractId;
-		} 
-	
-	private void flushContract(  )
-	throws SQLException {
-		if ( ! contracts.isEmpty() )
-			insertContract(contracts);
-		if ( contractStmt != null )
-			contractStmt.close();
-	}	
-
-	/**
-	 * Contract
-	 * @param id Identificador unico
-	 * @param person Identificador de la Persona
-	 * @param workplace Identificador del Centro de Trabajo
-	 * @param enterprise_ccc CCC
-	 * @param start_date Fecha de inicio del Contrato
-	 * @param end_date Fecha de finalizacion del Contrato
-	 * @param calendar Calendario
-	 * @param document Impreso (.pdf) del contrato.
-	 * @param description Descripcion
-	 * @param status Estado de notificacion del contrato
-	 * @param registration Nmero libro de matricula
-	 * @param seniority_date Fecha de antiguedad 
-	 * @param enterprise_activity Actividad
-	 * @param ss_regime Regimen de la Seguridad Social
-	 * @throws SQLException
-	*/
-	protected void insertContract(Integer id, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime)
-	throws SQLException {
-
-		Contract contract_ = new Contract();
-		contract_.id = id;
-		contract_.person = person;
-		contract_.workplace = workplace;
-		contract_.enterprise_ccc = enterprise_ccc;
-		contract_.start_date = start_date;
-		contract_.end_date = end_date;
-		contract_.calendar = calendar;
-		contract_.document = document;
-		contract_.description = description;
-		contract_.status = status;
-		contract_.registration = registration;
-		contract_.seniority_date = seniority_date;
-		contract_.enterprise_activity = enterprise_activity;
-		contract_.ss_regime = ss_regime;
-
-		contracts.add(contract_);
-		
-		int contractCount = contracts.size();
-		
-		if ( 170 * contractCount >=  this.maxAllowedPacket ){
-			insertContract(contracts);
-			contracts.clear();
-		} 
-	}
-
-
-	/**
-	 * Contract
-	 * @param person Identificador de la Persona
-	 * @param workplace Identificador del Centro de Trabajo
-	 * @param enterprise_ccc CCC
-	 * @param start_date Fecha de inicio del Contrato
-	 * @param end_date Fecha de finalizacion del Contrato
-	 * @param calendar Calendario
-	 * @param document Impreso (.pdf) del contrato.
-	 * @param description Descripcion
-	 * @param status Estado de notificacion del contrato
-	 * @param registration Nmero libro de matricula
-	 * @param seniority_date Fecha de antiguedad 
-	 * @param enterprise_activity Actividad
-	 * @param ss_regime Regimen de la Seguridad Social
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertContract(Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime)
-	throws SQLException {
-		int id = nextContractId();
-
-		Contract contract_ = new Contract();
-		contract_.id = id;
-		contract_.person = person;
-		contract_.workplace = workplace;
-		contract_.enterprise_ccc = enterprise_ccc;
-		contract_.start_date = start_date;
-		contract_.end_date = end_date;
-		contract_.calendar = calendar;
-		contract_.document = document;
-		contract_.description = description;
-		contract_.status = status;
-		contract_.registration = registration;
-		contract_.seniority_date = seniority_date;
-		contract_.enterprise_activity = enterprise_activity;
-		contract_.ss_regime = ss_regime;
-
-		contracts.add(contract_);
-		
-		int contractCount = contracts.size();
-		
-		if ( 170 * contractCount >=  this.maxAllowedPacket ){
-			insertContract(contracts);
-			contracts.clear();
-		} 
-		return id;
-	}
-
-
 	private int offer_detailStmtSize = 0;
 
 	private int offer_detailInserted = 0;
@@ -43117,7 +44207,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement offer_detailStmt = null;
 
-	private static class Offer_detail {
+	public static class Offer_detail {
 		private Integer id; 
 		private Integer offer; 
 		private Integer line; 
@@ -43290,7 +44380,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertOffer_detail(Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
+	public int insertOffer_detail(Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
 	throws SQLException {
 		int id = nextOffer_detailId();
 
@@ -43317,6 +44407,269 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int contractStmtSize = 0;
+
+	private int contractInserted = 0;
+
+	private List<Contract> contracts = 
+		new LinkedList<Contract>();
+
+	private PreparedStatement contractStmt = null;
+
+	public static class Contract {
+		private Integer id; 
+		private Integer person; 
+		private Integer workplace; 
+		private Integer enterprise_ccc; 
+		private Date start_date; 
+		private Date end_date; 
+		private Integer calendar; 
+		private InputStream document; 
+		private String description; 
+		private Short status; 
+		private Integer registration; 
+		private Date seniority_date; 
+		private Integer enterprise_activity; 
+		private Short ss_regime; 
+		private Integer agreement_level_category; 
+	}
+	
+	private void insertContract( List<Contract> contracts )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = contracts.size();
+		if ( contractStmtSize != size ) {
+			if ( contractStmt != null ) {
+				contractStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			contractStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO contract (id,person,workplace,enterprise_ccc,start_date,end_date,calendar,document,description,status,registration,seniority_date,enterprise_activity,ss_regime,agreement_level_category)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			contractStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Contract contract : contracts) {
+			if ( contract.id == null )
+				contractStmt.setNull(offset++, 4);
+			else
+				contractStmt.setInt(offset++, contract.id);
+			if ( contract.person == null )
+				contractStmt.setNull(offset++, 4);
+			else
+				contractStmt.setInt(offset++, contract.person);
+			if ( contract.workplace == null )
+				contractStmt.setNull(offset++, 4);
+			else
+				contractStmt.setInt(offset++, contract.workplace);
+			if ( contract.enterprise_ccc == null )
+				contractStmt.setNull(offset++, 4);
+			else
+				contractStmt.setInt(offset++, contract.enterprise_ccc);
+			if ( contract.start_date == null )
+				contractStmt.setNull(offset++, 91);
+			else
+				contractStmt.setDate(offset++, contract.start_date);
+			if ( contract.end_date == null )
+				contractStmt.setNull(offset++, 91);
+			else
+				contractStmt.setDate(offset++, contract.end_date);
+			if ( contract.calendar == null )
+				contractStmt.setNull(offset++, 4);
+			else
+				contractStmt.setInt(offset++, contract.calendar);
+			if ( contract.document == null )
+				contractStmt.setNull(offset++, -4);
+			else
+				contractStmt.setBinaryStream(offset++, contract.document);
+			if ( contract.description == null )
+				contractStmt.setNull(offset++, 12);
+			else
+				contractStmt.setString(offset++, contract.description);
+			if ( contract.status == null )
+				contractStmt.setNull(offset++, -6);
+			else
+				contractStmt.setShort(offset++, contract.status);
+			if ( contract.registration == null )
+				contractStmt.setNull(offset++, 4);
+			else
+				contractStmt.setInt(offset++, contract.registration);
+			if ( contract.seniority_date == null )
+				contractStmt.setNull(offset++, 91);
+			else
+				contractStmt.setDate(offset++, contract.seniority_date);
+			if ( contract.enterprise_activity == null )
+				contractStmt.setNull(offset++, 4);
+			else
+				contractStmt.setInt(offset++, contract.enterprise_activity);
+			if ( contract.ss_regime == null )
+				contractStmt.setNull(offset++, -6);
+			else
+				contractStmt.setShort(offset++, contract.ss_regime);
+			if ( contract.agreement_level_category == null )
+				contractStmt.setNull(offset++, 4);
+			else
+				contractStmt.setInt(offset++, contract.agreement_level_category);
+		}
+		contractStmt.executeUpdate();
+		contractInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Contracts in {} milliseconds.", size, contractInserted, elapsed );		
+	}
+		
+		private int contractId = -1;
+		
+		private void initContractId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `contract`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.contractId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextContractId() {
+			return ++this.contractId;
+		} 
+
+		public void setContractId(Integer contractId) {
+			this.contractId = contractId;
+		} 
+	
+	private void flushContract(  )
+	throws SQLException {
+		if ( ! contracts.isEmpty() )
+			insertContract(contracts);
+		if ( contractStmt != null )
+			contractStmt.close();
+	}	
+
+	/**
+	 * Contract
+	 * @param id Identificador unico
+	 * @param person Identificador de la Persona
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param enterprise_ccc CCC
+	 * @param start_date Fecha de inicio del Contrato
+	 * @param end_date Fecha de finalizacion del Contrato
+	 * @param calendar Calendario
+	 * @param document Impreso (.pdf) del contrato.
+	 * @param description Descripcion
+	 * @param status Estado de notificacion del contrato
+	 * @param registration Nmero libro de matricula
+	 * @param seniority_date Fecha de antiguedad
+	 * @param enterprise_activity Actividad
+	 * @param ss_regime Regimen de la Seguridad Social
+	 * @param agreement_level_category Identificador unico de la Categoria Profesional
+	 * @throws SQLException
+	*/
+	protected void insertContract(Integer id, Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category)
+	throws SQLException {
+
+		Contract contract_ = new Contract();
+		contract_.id = id;
+		contract_.person = person;
+		contract_.workplace = workplace;
+		contract_.enterprise_ccc = enterprise_ccc;
+		contract_.start_date = start_date;
+		contract_.end_date = end_date;
+		contract_.calendar = calendar;
+		contract_.document = document;
+		contract_.description = description;
+		contract_.status = status;
+		contract_.registration = registration;
+		contract_.seniority_date = seniority_date;
+		contract_.enterprise_activity = enterprise_activity;
+		contract_.ss_regime = ss_regime;
+		contract_.agreement_level_category = agreement_level_category;
+
+		contracts.add(contract_);
+		
+		int contractCount = contracts.size();
+		
+		if ( 180 * contractCount >=  this.maxAllowedPacket ){
+			insertContract(contracts);
+			contracts.clear();
+		} 
+	}
+
+
+	/**
+	 * Contract
+	 * @param person Identificador de la Persona
+	 * @param workplace Identificador del Centro de Trabajo
+	 * @param enterprise_ccc CCC
+	 * @param start_date Fecha de inicio del Contrato
+	 * @param end_date Fecha de finalizacion del Contrato
+	 * @param calendar Calendario
+	 * @param document Impreso (.pdf) del contrato.
+	 * @param description Descripcion
+	 * @param status Estado de notificacion del contrato
+	 * @param registration Nmero libro de matricula
+	 * @param seniority_date Fecha de antiguedad
+	 * @param enterprise_activity Actividad
+	 * @param ss_regime Regimen de la Seguridad Social
+	 * @param agreement_level_category Identificador unico de la Categoria Profesional
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertContract(Integer person, Integer workplace, Integer enterprise_ccc, Date start_date, Date end_date, Integer calendar, InputStream document, String description, Short status, Integer registration, Date seniority_date, Integer enterprise_activity, Short ss_regime, Integer agreement_level_category)
+	throws SQLException {
+		int id = nextContractId();
+
+		Contract contract_ = new Contract();
+		contract_.id = id;
+		contract_.person = person;
+		contract_.workplace = workplace;
+		contract_.enterprise_ccc = enterprise_ccc;
+		contract_.start_date = start_date;
+		contract_.end_date = end_date;
+		contract_.calendar = calendar;
+		contract_.document = document;
+		contract_.description = description;
+		contract_.status = status;
+		contract_.registration = registration;
+		contract_.seniority_date = seniority_date;
+		contract_.enterprise_activity = enterprise_activity;
+		contract_.ss_regime = ss_regime;
+		contract_.agreement_level_category = agreement_level_category;
+
+		contracts.add(contract_);
+		
+		int contractCount = contracts.size();
+		
+		if ( 180 * contractCount >=  this.maxAllowedPacket ){
+			insertContract(contracts);
+			contracts.clear();
+		} 
+		return id;
+	}
+
+
 	private int expendituresStmtSize = 0;
 
 	private int expendituresInserted = 0;
@@ -43326,7 +44679,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement expendituresStmt = null;
 
-	private static class Expenditures {
+	public static class Expenditures {
 		private Integer id; 
 		private Integer resource; 
 		private Integer expenditures_item; 
@@ -43467,7 +44820,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertExpenditures(Integer resource, Integer expenditures_item, Date date, Double amount)
+	public int insertExpenditures(Integer resource, Integer expenditures_item, Date date, Double amount)
 	throws SQLException {
 		int id = nextExpendituresId();
 
@@ -43499,7 +44852,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement amortizationStmt = null;
 
-	private static class Amortization {
+	public static class Amortization {
 		private Integer id; 
 		private String description; 
 		private Integer amortization_type; 
@@ -43712,7 +45065,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAmortization(String description, Integer amortization_type, Date initial_date, Date deadline, Double amount, Short fee_period, Double sale_amount, String comments, String fixed_asset_account, String accumulated_account, String allocation_account, Double percentage, Short security_level)
+	public int insertAmortization(String description, Integer amortization_type, Date initial_date, Date deadline, Double amount, Short fee_period, Double sale_amount, String comments, String fixed_asset_account, String accumulated_account, String allocation_account, Double percentage, Short security_level)
 	throws SQLException {
 		int id = nextAmortizationId();
 
@@ -43753,11 +45106,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement enterpriseStmt = null;
 
-	private static class Enterprise {
+	public static class Enterprise {
 		private Integer registry; 
 		private Integer scope; 
 		private Integer calendar; 
-		private Integer agreement; 
 	}
 	
 	private void insertEnterprise( List<Enterprise> enterprises )
@@ -43768,7 +45120,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( enterpriseStmt != null ) {
 				enterpriseStmt.close();
 			}
-			String values = "(?,?,?,?)";
+			String values = "(?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -43777,7 +45129,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			enterpriseStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO enterprise (registry,scope,calendar,agreement)"  
+				"INSERT INTO enterprise (registry,scope,calendar)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			enterpriseStmtSize = size;
@@ -43798,10 +45150,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				enterpriseStmt.setNull(offset++, 4);
 			else
 				enterpriseStmt.setInt(offset++, enterprise.calendar);
-			if ( enterprise.agreement == null )
-				enterpriseStmt.setNull(offset++, 4);
-			else
-				enterpriseStmt.setInt(offset++, enterprise.agreement);
 		}
 		enterpriseStmt.executeUpdate();
 		enterpriseInserted += size;
@@ -43825,23 +45173,21 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param registry Registro de la Empresa
 	 * @param scope Identificador del Ambito
 	 * @param calendar Calendario
-	 * @param agreement Convenio
 	 * @throws SQLException
 	*/
-	protected void insertEnterprise(Integer registry, Integer scope, Integer calendar, Integer agreement)
+	protected void insertEnterprise(Integer registry, Integer scope, Integer calendar)
 	throws SQLException {
 
 		Enterprise enterprise_ = new Enterprise();
 		enterprise_.registry = registry;
 		enterprise_.scope = scope;
 		enterprise_.calendar = calendar;
-		enterprise_.agreement = agreement;
 
 		enterprises.add(enterprise_);
 		
 		int enterpriseCount = enterprises.size();
 		
-		if ( 40 * enterpriseCount >=  this.maxAllowedPacket ){
+		if ( 30 * enterpriseCount >=  this.maxAllowedPacket ){
 			insertEnterprise(enterprises);
 			enterprises.clear();
 		} 
@@ -43858,7 +45204,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement markStmt = null;
 
-	private static class Mark {
+	public static class Mark {
 		private Integer id; 
 		private Integer subject; 
 		private Integer alumn; 
@@ -43999,7 +45345,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertMark(Integer subject, Integer alumn, Short evaluation, Double mark)
+	public int insertMark(Integer subject, Integer alumn, Short evaluation, Double mark)
 	throws SQLException {
 		int id = nextMarkId();
 
@@ -44031,7 +45377,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement expense_accountStmt = null;
 
-	private static class Expense_account {
+	public static class Expense_account {
 		private Integer id; 
 		private Integer registry; 
 		private Short expense_holder_type; 
@@ -44188,7 +45534,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertExpense_account(Integer registry, Short expense_holder_type, Short status, Date issue_date, String description, String comments)
+	public int insertExpense_account(Integer registry, Short expense_holder_type, Short status, Date issue_date, String description, String comments)
 	throws SQLException {
 		int id = nextExpense_accountId();
 
@@ -44222,7 +45568,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement catalogue_categoryStmt = null;
 
-	private static class Catalogue_category {
+	public static class Catalogue_category {
 		private Integer id; 
 		private Integer catalogue; 
 		private Integer category; 
@@ -44363,7 +45709,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCatalogue_category(Integer catalogue, Integer category, Double quantity, Double discount)
+	public int insertCatalogue_category(Integer catalogue, Integer category, Double quantity, Double discount)
 	throws SQLException {
 		int id = nextCatalogue_categoryId();
 
@@ -44395,7 +45741,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement lh_contractStmt = null;
 
-	private static class Lh_contract {
+	public static class Lh_contract {
 		private Integer id; 
 		private Integer employee; 
 		private Date startingdate; 
@@ -44544,7 +45890,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertLh_contract(Integer employee, Date startingdate, Date endingdate, Short contract_type, Double gross_salary)
+	public int insertLh_contract(Integer employee, Date startingdate, Date endingdate, Short contract_type, Double gross_salary)
 	throws SQLException {
 		int id = nextLh_contractId();
 
@@ -44577,7 +45923,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_summaryStmt = null;
 
-	private static class Account_summary {
+	public static class Account_summary {
 		private Integer id; 
 		private String account_period; 
 		private String account; 
@@ -44734,7 +46080,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_summary(String account_period, String account, Short security_level, Date entry_date, Double debit, Double credit)
+	public int insertAccount_summary(String account_period, String account, Short security_level, Date entry_date, Double debit, Double credit)
 	throws SQLException {
 		int id = nextAccount_summaryId();
 
@@ -44768,7 +46114,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement lh_courseStmt = null;
 
-	private static class Lh_course {
+	public static class Lh_course {
 		private Integer id; 
 		private Integer employee; 
 		private Date startingdate; 
@@ -44909,7 +46255,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertLh_course(Integer employee, Date startingdate, Date endingdate, String description)
+	public int insertLh_course(Integer employee, Date startingdate, Date endingdate, String description)
 	throws SQLException {
 		int id = nextLh_courseId();
 
@@ -44941,7 +46287,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement companyStmt = null;
 
-	private static class Company {
+	public static class Company {
 		private Integer registry; 
 		private Boolean active; 
 		private Boolean surcharge; 
@@ -45053,7 +46399,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_entry_bank_statementStmt = null;
 
-	private static class Account_entry_bank_statement {
+	public static class Account_entry_bank_statement {
 		private Integer id; 
 		private Integer account_entry; 
 		private Integer bank_statement; 
@@ -45178,7 +46524,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_entry_bank_statement(Integer account_entry, Integer bank_statement)
+	public int insertAccount_entry_bank_statement(Integer account_entry, Integer bank_statement)
 	throws SQLException {
 		int id = nextAccount_entry_bank_statementId();
 
@@ -45208,7 +46554,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement lh_workStmt = null;
 
-	private static class Lh_work {
+	public static class Lh_work {
 		private Integer id; 
 		private Integer employee; 
 		private Date startingdate; 
@@ -45349,7 +46695,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertLh_work(Integer employee, Date startingdate, Date endingdate, String description)
+	public int insertLh_work(Integer employee, Date startingdate, Date endingdate, String description)
 	throws SQLException {
 		int id = nextLh_workId();
 
@@ -45381,7 +46727,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement scaleStmt = null;
 
-	private static class Scale {
+	public static class Scale {
 		private Integer id; 
 		private Short scale_model; 
 		private String program_path; 
@@ -45578,7 +46924,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertScale(Short scale_model, String program_path, Date inidate, Date enddate, String serie, String code1, String code2, String code3, String code4, String code5, Boolean verified)
+	public int insertScale(Short scale_model, String program_path, Date inidate, Date enddate, String serie, String code1, String code2, String code3, String code4, String code5, Boolean verified)
 	throws SQLException {
 		int id = nextScaleId();
 
@@ -45617,7 +46963,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement commission_type_commissionStmt = null;
 
-	private static class Commission_type_commission {
+	public static class Commission_type_commission {
 		private Integer id; 
 		private Integer commission_type; 
 		private Integer commission; 
@@ -45742,7 +47088,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCommission_type_commission(Integer commission_type, Integer commission)
+	public int insertCommission_type_commission(Integer commission_type, Integer commission)
 	throws SQLException {
 		int id = nextCommission_type_commissionId();
 
@@ -45772,7 +47118,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement inventory_detailStmt = null;
 
-	private static class Inventory_detail {
+	public static class Inventory_detail {
 		private Integer id; 
 		private Integer inventory; 
 		private Integer item; 
@@ -45921,7 +47267,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInventory_detail(Integer inventory, Integer item, Double actual_quantity, Double real_quantity, Double cost)
+	public int insertInventory_detail(Integer inventory, Integer item, Double actual_quantity, Double real_quantity, Double cost)
 	throws SQLException {
 		int id = nextInventory_detailId();
 
@@ -45954,7 +47300,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement scopeStmt = null;
 
-	private static class Scope {
+	public static class Scope {
 		private Integer id; 
 		private String description; 
 	}
@@ -46071,7 +47417,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertScope(String description)
+	public int insertScope(String description)
 	throws SQLException {
 		int id = nextScopeId();
 
@@ -46100,7 +47446,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement target_supplierStmt = null;
 
-	private static class Target_supplier {
+	public static class Target_supplier {
 		private Integer id; 
 		private Integer target; 
 		private Integer supplier; 
@@ -46297,7 +47643,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTarget_supplier(Integer target, Integer supplier, String target_external_code, Integer tariff, Integer pay_method, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
+	public int insertTarget_supplier(Integer target, Integer supplier, String target_external_code, Integer tariff, Integer pay_method, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account)
 	throws SQLException {
 		int id = nextTarget_supplierId();
 
@@ -46327,152 +47673,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int customer_segmentStmtSize = 0;
-
-	private int customer_segmentInserted = 0;
-
-	private List<Customer_segment> customer_segments = 
-		new LinkedList<Customer_segment>();
-
-	private PreparedStatement customer_segmentStmt = null;
-
-	private static class Customer_segment {
-		private Integer id; 
-		private String description; 
-	}
-	
-	private void insertCustomer_segment( List<Customer_segment> customer_segments )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = customer_segments.size();
-		if ( customer_segmentStmtSize != size ) {
-			if ( customer_segmentStmt != null ) {
-				customer_segmentStmt.close();
-			}
-			String values = "(?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			customer_segmentStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO customer_segment (id,description)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			customer_segmentStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Customer_segment customer_segment : customer_segments) {
-			if ( customer_segment.id == null )
-				customer_segmentStmt.setNull(offset++, 4);
-			else
-				customer_segmentStmt.setInt(offset++, customer_segment.id);
-			if ( customer_segment.description == null )
-				customer_segmentStmt.setNull(offset++, 12);
-			else
-				customer_segmentStmt.setString(offset++, customer_segment.description);
-		}
-		customer_segmentStmt.executeUpdate();
-		customer_segmentInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Customer_segments in {} milliseconds.", size, customer_segmentInserted, elapsed );		
-	}
-		
-		private int customer_segmentId = -1;
-		
-		private void initCustomer_segmentId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `customer_segment`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.customer_segmentId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCustomer_segmentId() {
-			return ++this.customer_segmentId;
-		} 
-
-		public void setCustomer_segmentId(Integer customer_segmentId) {
-			this.customer_segmentId = customer_segmentId;
-		} 
-	
-	private void flushCustomer_segment(  )
-	throws SQLException {
-		if ( ! customer_segments.isEmpty() )
-			insertCustomer_segment(customer_segments);
-		if ( customer_segmentStmt != null )
-			customer_segmentStmt.close();
-	}	
-
-	/**
-	 * Customer_segment
-	 * @param id Identificador unico del Segmento
-	 * @param description Descripcion del Segmento
-	 * @throws SQLException
-	*/
-	protected void insertCustomer_segment(Integer id, String description)
-	throws SQLException {
-
-		Customer_segment customer_segment_ = new Customer_segment();
-		customer_segment_.id = id;
-		customer_segment_.description = description;
-
-		customer_segments.add(customer_segment_);
-		
-		int customer_segmentCount = customer_segments.size();
-		
-		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
-			insertCustomer_segment(customer_segments);
-			customer_segments.clear();
-		} 
-	}
-
-
-	/**
-	 * Customer_segment
-	 * @param description Descripcion del Segmento
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	protected int insertCustomer_segment(String description)
-	throws SQLException {
-		int id = nextCustomer_segmentId();
-
-		Customer_segment customer_segment_ = new Customer_segment();
-		customer_segment_.id = id;
-		customer_segment_.description = description;
-
-		customer_segments.add(customer_segment_);
-		
-		int customer_segmentCount = customer_segments.size();
-		
-		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
-			insertCustomer_segment(customer_segments);
-			customer_segments.clear();
-		} 
-		return id;
-	}
-
-
 	private int contract_batch_detailStmtSize = 0;
 
 	private int contract_batch_detailInserted = 0;
@@ -46482,7 +47682,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement contract_batch_detailStmt = null;
 
-	private static class Contract_batch_detail {
+	public static class Contract_batch_detail {
 		private Integer id; 
 		private Integer contract_batch; 
 		private Integer contract; 
@@ -46607,7 +47807,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_batch_detail(Integer contract_batch, Integer contract)
+	public int insertContract_batch_detail(Integer contract_batch, Integer contract)
 	throws SQLException {
 		int id = nextContract_batch_detailId();
 
@@ -46628,6 +47828,152 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int customer_segmentStmtSize = 0;
+
+	private int customer_segmentInserted = 0;
+
+	private List<Customer_segment> customer_segments = 
+		new LinkedList<Customer_segment>();
+
+	private PreparedStatement customer_segmentStmt = null;
+
+	public static class Customer_segment {
+		private Integer id; 
+		private String description; 
+	}
+	
+	private void insertCustomer_segment( List<Customer_segment> customer_segments )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = customer_segments.size();
+		if ( customer_segmentStmtSize != size ) {
+			if ( customer_segmentStmt != null ) {
+				customer_segmentStmt.close();
+			}
+			String values = "(?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			customer_segmentStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO customer_segment (id,description)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			customer_segmentStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Customer_segment customer_segment : customer_segments) {
+			if ( customer_segment.id == null )
+				customer_segmentStmt.setNull(offset++, 4);
+			else
+				customer_segmentStmt.setInt(offset++, customer_segment.id);
+			if ( customer_segment.description == null )
+				customer_segmentStmt.setNull(offset++, 12);
+			else
+				customer_segmentStmt.setString(offset++, customer_segment.description);
+		}
+		customer_segmentStmt.executeUpdate();
+		customer_segmentInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Customer_segments in {} milliseconds.", size, customer_segmentInserted, elapsed );		
+	}
+		
+		private int customer_segmentId = -1;
+		
+		private void initCustomer_segmentId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `customer_segment`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.customer_segmentId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCustomer_segmentId() {
+			return ++this.customer_segmentId;
+		} 
+
+		public void setCustomer_segmentId(Integer customer_segmentId) {
+			this.customer_segmentId = customer_segmentId;
+		} 
+	
+	private void flushCustomer_segment(  )
+	throws SQLException {
+		if ( ! customer_segments.isEmpty() )
+			insertCustomer_segment(customer_segments);
+		if ( customer_segmentStmt != null )
+			customer_segmentStmt.close();
+	}	
+
+	/**
+	 * Customer_segment
+	 * @param id Identificador unico del Segmento
+	 * @param description Descripcion del Segmento
+	 * @throws SQLException
+	*/
+	protected void insertCustomer_segment(Integer id, String description)
+	throws SQLException {
+
+		Customer_segment customer_segment_ = new Customer_segment();
+		customer_segment_.id = id;
+		customer_segment_.description = description;
+
+		customer_segments.add(customer_segment_);
+		
+		int customer_segmentCount = customer_segments.size();
+		
+		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
+			insertCustomer_segment(customer_segments);
+			customer_segments.clear();
+		} 
+	}
+
+
+	/**
+	 * Customer_segment
+	 * @param description Descripcion del Segmento
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCustomer_segment(String description)
+	throws SQLException {
+		int id = nextCustomer_segmentId();
+
+		Customer_segment customer_segment_ = new Customer_segment();
+		customer_segment_.id = id;
+		customer_segment_.description = description;
+
+		customer_segments.add(customer_segment_);
+		
+		int customer_segmentCount = customer_segments.size();
+		
+		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
+			insertCustomer_segment(customer_segments);
+			customer_segments.clear();
+		} 
+		return id;
+	}
+
+
 	private int auto_conceptStmtSize = 0;
 
 	private int auto_conceptInserted = 0;
@@ -46637,7 +47983,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement auto_conceptStmt = null;
 
-	private static class Auto_concept {
+	public static class Auto_concept {
 		private Integer id; 
 		private String description; 
 	}
@@ -46754,7 +48100,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAuto_concept(String description)
+	public int insertAuto_concept(String description)
 	throws SQLException {
 		int id = nextAuto_conceptId();
 
@@ -46783,7 +48129,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement web_info_page_detailStmt = null;
 
-	private static class Web_info_page_detail {
+	public static class Web_info_page_detail {
 		private Integer id; 
 		private Integer web_info_page; 
 		private String title; 
@@ -46932,7 +48278,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertWeb_info_page_detail(Integer web_info_page, String title, Integer layout, String content, String extra)
+	public int insertWeb_info_page_detail(Integer web_info_page, String title, Integer layout, String content, String extra)
 	throws SQLException {
 		int id = nextWeb_info_page_detailId();
 
@@ -46965,7 +48311,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement job_typeStmt = null;
 
-	private static class Job_type {
+	public static class Job_type {
 		private Integer id; 
 		private String description; 
 	}
@@ -47082,7 +48428,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertJob_type(String description)
+	public int insertJob_type(String description)
 	throws SQLException {
 		int id = nextJob_typeId();
 
@@ -47111,7 +48457,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement scale_relationStmt = null;
 
-	private static class Scale_relation {
+	public static class Scale_relation {
 		private Integer id; 
 		private Integer aon_id; 
 		private String scale_id1; 
@@ -47260,7 +48606,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertScale_relation(Integer aon_id, String scale_id1, String scale_id2, String type, Short scale_model)
+	public int insertScale_relation(Integer aon_id, String scale_id1, String scale_id2, String type, Short scale_model)
 	throws SQLException {
 		int id = nextScale_relationId();
 
@@ -47293,7 +48639,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement campaign_dossierStmt = null;
 
-	private static class Campaign_dossier {
+	public static class Campaign_dossier {
 		private Integer id; 
 		private Integer campaign; 
 		private Integer dossier; 
@@ -47418,7 +48764,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCampaign_dossier(Integer campaign, Integer dossier)
+	public int insertCampaign_dossier(Integer campaign, Integer dossier)
 	throws SQLException {
 		int id = nextCampaign_dossierId();
 
@@ -47448,7 +48794,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement tariffStmt = null;
 
-	private static class Tariff {
+	public static class Tariff {
 		private Integer id; 
 		private String name; 
 	}
@@ -47565,7 +48911,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTariff(String name)
+	public int insertTariff(String name)
 	throws SQLException {
 		int id = nextTariffId();
 
@@ -47585,6 +48931,161 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int enterprise_agreementStmtSize = 0;
+
+	private int enterprise_agreementInserted = 0;
+
+	private List<Enterprise_agreement> enterprise_agreements = 
+		new LinkedList<Enterprise_agreement>();
+
+	private PreparedStatement enterprise_agreementStmt = null;
+
+	public static class Enterprise_agreement {
+		private Integer id; 
+		private Integer enterprise; 
+		private Integer agreement; 
+	}
+	
+	private void insertEnterprise_agreement( List<Enterprise_agreement> enterprise_agreements )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = enterprise_agreements.size();
+		if ( enterprise_agreementStmtSize != size ) {
+			if ( enterprise_agreementStmt != null ) {
+				enterprise_agreementStmt.close();
+			}
+			String values = "(?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			enterprise_agreementStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO enterprise_agreement (id,enterprise,agreement)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			enterprise_agreementStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Enterprise_agreement enterprise_agreement : enterprise_agreements) {
+			if ( enterprise_agreement.id == null )
+				enterprise_agreementStmt.setNull(offset++, 4);
+			else
+				enterprise_agreementStmt.setInt(offset++, enterprise_agreement.id);
+			if ( enterprise_agreement.enterprise == null )
+				enterprise_agreementStmt.setNull(offset++, 4);
+			else
+				enterprise_agreementStmt.setInt(offset++, enterprise_agreement.enterprise);
+			if ( enterprise_agreement.agreement == null )
+				enterprise_agreementStmt.setNull(offset++, 4);
+			else
+				enterprise_agreementStmt.setInt(offset++, enterprise_agreement.agreement);
+		}
+		enterprise_agreementStmt.executeUpdate();
+		enterprise_agreementInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Enterprise_agreements in {} milliseconds.", size, enterprise_agreementInserted, elapsed );		
+	}
+		
+		private int enterprise_agreementId = -1;
+		
+		private void initEnterprise_agreementId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `enterprise_agreement`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.enterprise_agreementId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextEnterprise_agreementId() {
+			return ++this.enterprise_agreementId;
+		} 
+
+		public void setEnterprise_agreementId(Integer enterprise_agreementId) {
+			this.enterprise_agreementId = enterprise_agreementId;
+		} 
+	
+	private void flushEnterprise_agreement(  )
+	throws SQLException {
+		if ( ! enterprise_agreements.isEmpty() )
+			insertEnterprise_agreement(enterprise_agreements);
+		if ( enterprise_agreementStmt != null )
+			enterprise_agreementStmt.close();
+	}	
+
+	/**
+	 * Enterprise_agreement
+	 * @param id Identificador unico
+	 * @param enterprise Identificador de la Empresa
+	 * @param agreement Identificador del Convenio
+	 * @throws SQLException
+	*/
+	protected void insertEnterprise_agreement(Integer id, Integer enterprise, Integer agreement)
+	throws SQLException {
+
+		Enterprise_agreement enterprise_agreement_ = new Enterprise_agreement();
+		enterprise_agreement_.id = id;
+		enterprise_agreement_.enterprise = enterprise;
+		enterprise_agreement_.agreement = agreement;
+
+		enterprise_agreements.add(enterprise_agreement_);
+		
+		int enterprise_agreementCount = enterprise_agreements.size();
+		
+		if ( 30 * enterprise_agreementCount >=  this.maxAllowedPacket ){
+			insertEnterprise_agreement(enterprise_agreements);
+			enterprise_agreements.clear();
+		} 
+	}
+
+
+	/**
+	 * Enterprise_agreement
+	 * @param enterprise Identificador de la Empresa
+	 * @param agreement Identificador del Convenio
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertEnterprise_agreement(Integer enterprise, Integer agreement)
+	throws SQLException {
+		int id = nextEnterprise_agreementId();
+
+		Enterprise_agreement enterprise_agreement_ = new Enterprise_agreement();
+		enterprise_agreement_.id = id;
+		enterprise_agreement_.enterprise = enterprise;
+		enterprise_agreement_.agreement = agreement;
+
+		enterprise_agreements.add(enterprise_agreement_);
+		
+		int enterprise_agreementCount = enterprise_agreements.size();
+		
+		if ( 30 * enterprise_agreementCount >=  this.maxAllowedPacket ){
+			insertEnterprise_agreement(enterprise_agreements);
+			enterprise_agreements.clear();
+		} 
+		return id;
+	}
+
+
 	private int invoice_addressStmtSize = 0;
 
 	private int invoice_addressInserted = 0;
@@ -47594,10 +49095,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement invoice_addressStmt = null;
 
-	private static class Invoice_address {
+	public static class Invoice_address {
 		private Integer id; 
 		private Integer invoice; 
+		private String street_type; 
 		private String address; 
+		private String number; 
 		private String address2; 
 		private String zip; 
 		private String city; 
@@ -47612,7 +49115,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( invoice_addressStmt != null ) {
 				invoice_addressStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -47621,7 +49124,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			invoice_addressStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO invoice_address (id,invoice,address,address2,zip,city,geozone)"  
+				"INSERT INTO invoice_address (id,invoice,street_type,address,number,address2,zip,city,geozone)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			invoice_addressStmtSize = size;
@@ -47638,10 +49141,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoice_addressStmt.setNull(offset++, 4);
 			else
 				invoice_addressStmt.setInt(offset++, invoice_address.invoice);
+			if ( invoice_address.street_type == null )
+				invoice_addressStmt.setNull(offset++, 12);
+			else
+				invoice_addressStmt.setString(offset++, invoice_address.street_type);
 			if ( invoice_address.address == null )
 				invoice_addressStmt.setNull(offset++, 12);
 			else
 				invoice_addressStmt.setString(offset++, invoice_address.address);
+			if ( invoice_address.number == null )
+				invoice_addressStmt.setNull(offset++, 12);
+			else
+				invoice_addressStmt.setString(offset++, invoice_address.number);
 			if ( invoice_address.address2 == null )
 				invoice_addressStmt.setNull(offset++, 12);
 			else
@@ -47710,20 +49221,24 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * Invoice_address
 	 * @param id Identificador unico
 	 * @param invoice Identificador de la Factura
+	 * @param street_type Tipo de via
 	 * @param address Primera parte de la Direccion
+	 * @param number Numero
 	 * @param address2 Segunda parte de la Direccion
 	 * @param zip Codigo Postal
 	 * @param city Localidad
 	 * @param geozone Identificador de la Zona Geografica
 	 * @throws SQLException
 	*/
-	protected void insertInvoice_address(Integer id, Integer invoice, String address, String address2, String zip, String city, Integer geozone)
+	protected void insertInvoice_address(Integer id, Integer invoice, String street_type, String address, String number, String address2, String zip, String city, Integer geozone)
 	throws SQLException {
 
 		Invoice_address invoice_address_ = new Invoice_address();
 		invoice_address_.id = id;
 		invoice_address_.invoice = invoice;
+		invoice_address_.street_type = street_type;
 		invoice_address_.address = address;
+		invoice_address_.number = number;
 		invoice_address_.address2 = address2;
 		invoice_address_.zip = zip;
 		invoice_address_.city = city;
@@ -47733,7 +49248,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int invoice_addressCount = invoice_addresss.size();
 		
-		if ( 181 * invoice_addressCount >=  this.maxAllowedPacket ){
+		if ( 195 * invoice_addressCount >=  this.maxAllowedPacket ){
 			insertInvoice_address(invoice_addresss);
 			invoice_addresss.clear();
 		} 
@@ -47743,7 +49258,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	/**
 	 * Invoice_address
 	 * @param invoice Identificador de la Factura
+	 * @param street_type Tipo de via
 	 * @param address Primera parte de la Direccion
+	 * @param number Numero
 	 * @param address2 Segunda parte de la Direccion
 	 * @param zip Codigo Postal
 	 * @param city Localidad
@@ -47751,14 +49268,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertInvoice_address(Integer invoice, String address, String address2, String zip, String city, Integer geozone)
+	public int insertInvoice_address(Integer invoice, String street_type, String address, String number, String address2, String zip, String city, Integer geozone)
 	throws SQLException {
 		int id = nextInvoice_addressId();
 
 		Invoice_address invoice_address_ = new Invoice_address();
 		invoice_address_.id = id;
 		invoice_address_.invoice = invoice;
+		invoice_address_.street_type = street_type;
 		invoice_address_.address = address;
+		invoice_address_.number = number;
 		invoice_address_.address2 = address2;
 		invoice_address_.zip = zip;
 		invoice_address_.city = city;
@@ -47768,7 +49287,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int invoice_addressCount = invoice_addresss.size();
 		
-		if ( 181 * invoice_addressCount >=  this.maxAllowedPacket ){
+		if ( 195 * invoice_addressCount >=  this.maxAllowedPacket ){
 			insertInvoice_address(invoice_addresss);
 			invoice_addresss.clear();
 		} 
@@ -47785,7 +49304,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement message_logStmt = null;
 
-	private static class Message_log {
+	public static class Message_log {
 		private Integer id; 
 		private String message_id; 
 		private Integer message_content; 
@@ -47950,7 +49469,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertMessage_log(String message_id, Integer message_content, String recipient, String type, Timestamp sent_date, Short message_parts, String username)
+	public int insertMessage_log(String message_id, Integer message_content, String recipient, String type, Timestamp sent_date, Short message_parts, String username)
 	throws SQLException {
 		int id = nextMessage_logId();
 
@@ -47985,7 +49504,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement applicationStmt = null;
 
-	private static class Application {
+	public static class Application {
 		private Integer id; 
 		private Short audit_level; 
 		private String name; 
@@ -48110,7 +49629,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertApplication(Short audit_level, String name)
+	public int insertApplication(Short audit_level, String name)
 	throws SQLException {
 		int id = nextApplicationId();
 
@@ -48140,7 +49659,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement contract_calendar_eventStmt = null;
 
-	private static class Contract_calendar_event {
+	public static class Contract_calendar_event {
 		private Integer id; 
 		private Integer contract; 
 		private Date date; 
@@ -48281,7 +49800,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertContract_calendar_event(Integer contract, Date date, Short type, Double duration)
+	public int insertContract_calendar_event(Integer contract, Date date, Short type, Double duration)
 	throws SQLException {
 		int id = nextContract_calendar_eventId();
 
@@ -48313,7 +49832,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement rdir_staffStmt = null;
 
-	private static class Rdir_staff {
+	public static class Rdir_staff {
 		private Integer id; 
 		private Integer registry; 
 		private String document; 
@@ -48510,7 +50029,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertRdir_staff(Integer registry, String document, String name, Boolean shareholder, Boolean representative, Boolean director, Double percent_share, Integer share_number, Double nominal_value, Date due_date, Boolean representative_labor)
+	public int insertRdir_staff(Integer registry, String document, String name, Boolean shareholder, Boolean representative, Boolean director, Double percent_share, Integer share_number, Double nominal_value, Date due_date, Boolean representative_labor)
 	throws SQLException {
 		int id = nextRdir_staffId();
 
@@ -48549,7 +50068,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement taskStmt = null;
 
-	private static class Task {
+	public static class Task {
 		private Integer id; 
 		private String description; 
 		private Date start_date; 
@@ -48778,7 +50297,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertTask(String description, Date start_date, Date end_date, Date due_date, Short priority, Short status, Short percent, Integer user_id, Integer workgroup, Short source, Integer dossier, Integer activity, Integer sender, String comments, Short repeat_period)
+	public int insertTask(String description, Date start_date, Date end_date, Date due_date, Short priority, Short status, Short percent, Integer user_id, Integer workgroup, Short source, Integer dossier, Integer activity, Integer sender, String comments, Short repeat_period)
 	throws SQLException {
 		int id = nextTaskId();
 
@@ -48821,7 +50340,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement resourceStmt = null;
 
-	private static class Resource {
+	public static class Resource {
 		private Integer id; 
 		private Integer employee; 
 		private Integer workplace; 
@@ -48970,7 +50489,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertResource(Integer employee, Integer workplace, Integer workactivity, Date startingdate, Date endingdate)
+	public int insertResource(Integer employee, Integer workplace, Integer workactivity, Date startingdate, Date endingdate)
 	throws SQLException {
 		int id = nextResourceId();
 
@@ -49003,7 +50522,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement agreementStmt = null;
 
-	private static class Agreement {
+	public static class Agreement {
 		private Integer id; 
 		private Integer calendar; 
 		private String description; 
@@ -49128,7 +50647,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAgreement(Integer calendar, String description)
+	public int insertAgreement(Integer calendar, String description)
 	throws SQLException {
 		int id = nextAgreementId();
 
@@ -49158,7 +50677,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement offerStmt = null;
 
-	private static class Offer {
+	public static class Offer {
 		private Integer id; 
 		private Integer target; 
 		private String series; 
@@ -49459,7 +50978,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertOffer(Integer target, String series, Integer number, Integer version, Integer address, Integer tariff, Integer seller, Integer supplier, String discount_expr, Date issue_date, Integer pay_method, Short security_level, Short status, Short type, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Boolean signed, String comments)
+	public int insertOffer(Integer target, String series, Integer number, Integer version, Integer address, Integer tariff, Integer seller, Integer supplier, String discount_expr, Date issue_date, Integer pay_method, Short security_level, Short status, Short type, Integer workplace, Integer scope, Integer number_of_pymnts, Integer days_to_first_pymnt, Integer days_between_pymnts, String pymnt_days, Integer bank, String bank_account, Boolean signed, String comments)
 	throws SQLException {
 		int id = nextOfferId();
 
@@ -49511,7 +51030,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement composition_expenseStmt = null;
 
-	private static class Composition_expense {
+	public static class Composition_expense {
 		private Integer id; 
 		private Integer composition; 
 		private String description; 
@@ -49652,7 +51171,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertComposition_expense(Integer composition, String description, Double quantity, Double price)
+	public int insertComposition_expense(Integer composition, String description, Double quantity, Double price)
 	throws SQLException {
 		int id = nextComposition_expenseId();
 
@@ -49684,7 +51203,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement account_helperStmt = null;
 
-	private static class Account_helper {
+	public static class Account_helper {
 		private Integer id; 
 		private Integer counter; 
 		private String account; 
@@ -49817,7 +51336,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertAccount_helper(Integer counter, String account, String balancing_account)
+	public int insertAccount_helper(Integer counter, String account, String balancing_account)
 	throws SQLException {
 		int id = nextAccount_helperId();
 
@@ -49839,6 +51358,197 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int system_dataStmtSize = 0;
+
+	private int system_dataInserted = 0;
+
+	private List<System_data> system_datas = 
+		new LinkedList<System_data>();
+
+	private PreparedStatement system_dataStmt = null;
+
+	public static class System_data {
+		private Integer id; 
+		private String name; 
+		private String expression; 
+		private Date start_date; 
+		private Date end_date; 
+		private Boolean read_only; 
+		private String comments; 
+	}
+	
+	private void insertSystem_data( List<System_data> system_datas )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = system_datas.size();
+		if ( system_dataStmtSize != size ) {
+			if ( system_dataStmt != null ) {
+				system_dataStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			system_dataStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO system_data (id,name,expression,start_date,end_date,read_only,comments)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			system_dataStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (System_data system_data : system_datas) {
+			if ( system_data.id == null )
+				system_dataStmt.setNull(offset++, 4);
+			else
+				system_dataStmt.setInt(offset++, system_data.id);
+			if ( system_data.name == null )
+				system_dataStmt.setNull(offset++, 12);
+			else
+				system_dataStmt.setString(offset++, system_data.name);
+			if ( system_data.expression == null )
+				system_dataStmt.setNull(offset++, 12);
+			else
+				system_dataStmt.setString(offset++, system_data.expression);
+			if ( system_data.start_date == null )
+				system_dataStmt.setNull(offset++, 91);
+			else
+				system_dataStmt.setDate(offset++, system_data.start_date);
+			if ( system_data.end_date == null )
+				system_dataStmt.setNull(offset++, 91);
+			else
+				system_dataStmt.setDate(offset++, system_data.end_date);
+			if ( system_data.read_only == null )
+				system_dataStmt.setNull(offset++, -7);
+			else
+				system_dataStmt.setBoolean(offset++, system_data.read_only);
+			if ( system_data.comments == null )
+				system_dataStmt.setNull(offset++, 12);
+			else
+				system_dataStmt.setString(offset++, system_data.comments);
+		}
+		system_dataStmt.executeUpdate();
+		system_dataInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} System_datas in {} milliseconds.", size, system_dataInserted, elapsed );		
+	}
+		
+		private int system_dataId = -1;
+		
+		private void initSystem_dataId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `system_data`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.system_dataId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextSystem_dataId() {
+			return ++this.system_dataId;
+		} 
+
+		public void setSystem_dataId(Integer system_dataId) {
+			this.system_dataId = system_dataId;
+		} 
+	
+	private void flushSystem_data(  )
+	throws SQLException {
+		if ( ! system_datas.isEmpty() )
+			insertSystem_data(system_datas);
+		if ( system_dataStmt != null )
+			system_dataStmt.close();
+	}	
+
+	/**
+	 * System_data
+	 * @param id Identificador unico
+	 * @param name Nombre
+	 * @param expression Expresion
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param read_only Modificable
+	 * @param comments Comentario de ayuda
+	 * @throws SQLException
+	*/
+	protected void insertSystem_data(Integer id, String name, String expression, Date start_date, Date end_date, Boolean read_only, String comments)
+	throws SQLException {
+
+		System_data system_data_ = new System_data();
+		system_data_.id = id;
+		system_data_.name = name;
+		system_data_.expression = expression;
+		system_data_.start_date = start_date;
+		system_data_.end_date = end_date;
+		system_data_.read_only = read_only;
+		system_data_.comments = comments;
+
+		system_datas.add(system_data_);
+		
+		int system_dataCount = system_datas.size();
+		
+		if ( 686 * system_dataCount >=  this.maxAllowedPacket ){
+			insertSystem_data(system_datas);
+			system_datas.clear();
+		} 
+	}
+
+
+	/**
+	 * System_data
+	 * @param name Nombre
+	 * @param expression Expresion
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param read_only Modificable
+	 * @param comments Comentario de ayuda
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertSystem_data(String name, String expression, Date start_date, Date end_date, Boolean read_only, String comments)
+	throws SQLException {
+		int id = nextSystem_dataId();
+
+		System_data system_data_ = new System_data();
+		system_data_.id = id;
+		system_data_.name = name;
+		system_data_.expression = expression;
+		system_data_.start_date = start_date;
+		system_data_.end_date = end_date;
+		system_data_.read_only = read_only;
+		system_data_.comments = comments;
+
+		system_datas.add(system_data_);
+		
+		int system_dataCount = system_datas.size();
+		
+		if ( 686 * system_dataCount >=  this.maxAllowedPacket ){
+			insertSystem_data(system_datas);
+			system_datas.clear();
+		} 
+		return id;
+	}
+
+
 	private int bank_conceptStmtSize = 0;
 
 	private int bank_conceptInserted = 0;
@@ -49848,7 +51558,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement bank_conceptStmt = null;
 
-	private static class Bank_concept {
+	public static class Bank_concept {
 		private Integer id; 
 		private String name; 
 	}
@@ -49965,7 +51675,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertBank_concept(String name)
+	public int insertBank_concept(String name)
 	throws SQLException {
 		int id = nextBank_conceptId();
 
@@ -49994,7 +51704,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement course_academicskillStmt = null;
 
-	private static class Course_academicskill {
+	public static class Course_academicskill {
 		private Integer id; 
 		private Integer course; 
 		private Integer academic_skill; 
@@ -50127,7 +51837,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertCourse_academicskill(Integer course, Integer academic_skill, Integer weight)
+	public int insertCourse_academicskill(Integer course, Integer academic_skill, Integer weight)
 	throws SQLException {
 		int id = nextCourse_academicskillId();
 
@@ -50158,7 +51868,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement enterprise_cccStmt = null;
 
-	private static class Enterprise_ccc {
+	public static class Enterprise_ccc {
 		private Integer id; 
 		private String ccc; 
 		private Short type; 
@@ -50299,7 +52009,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertEnterprise_ccc(String ccc, Short type, Integer enterprise_activity, Integer geozone)
+	public int insertEnterprise_ccc(String ccc, Short type, Integer enterprise_activity, Integer geozone)
 	throws SQLException {
 		int id = nextEnterprise_cccId();
 
@@ -50331,7 +52041,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement targetStmt = null;
 
-	private static class Target {
+	public static class Target {
 		private Integer registry; 
 		private Integer tariff; 
 		private Short advertising; 
@@ -50457,7 +52167,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement mk_campaignStmt = null;
 
-	private static class Mk_campaign {
+	public static class Mk_campaign {
 		private Integer id; 
 		private Boolean active; 
 		private String description; 
@@ -50582,7 +52292,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertMk_campaign(Boolean active, String description)
+	public int insertMk_campaign(Boolean active, String description)
 	throws SQLException {
 		int id = nextMk_campaignId();
 
@@ -50612,7 +52322,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement activity_processStmt = null;
 
-	private static class Activity_process {
+	public static class Activity_process {
 		private Integer id; 
 		private Integer campaign; 
 		private Integer activity; 
@@ -50753,7 +52463,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertActivity_process(Integer campaign, Integer activity, Integer process_detail, Integer task)
+	public int insertActivity_process(Integer campaign, Integer activity, Integer process_detail, Integer task)
 	throws SQLException {
 		int id = nextActivity_processId();
 
@@ -50785,7 +52495,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement bank_statementStmt = null;
 
-	private static class Bank_statement {
+	public static class Bank_statement {
 		private Integer id; 
 		private Integer rbank; 
 		private Integer lot_number; 
@@ -50799,6 +52509,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		private String reference2; 
 		private String description; 
 		private Short reliability; 
+		private Short security_level; 
 		private Short status; 
 		private String comments; 
 	}
@@ -50811,7 +52522,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( bank_statementStmt != null ) {
 				bank_statementStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -50820,7 +52531,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			bank_statementStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO bank_statement (id,rbank,lot_number,operation_date,common_concept,own_concept,payment,amount,document,reference1,reference2,description,reliability,status,comments)"  
+				"INSERT INTO bank_statement (id,rbank,lot_number,operation_date,common_concept,own_concept,payment,amount,document,reference1,reference2,description,reliability,security_level,status,comments)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			bank_statementStmtSize = size;
@@ -50881,6 +52592,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				bank_statementStmt.setNull(offset++, -6);
 			else
 				bank_statementStmt.setShort(offset++, bank_statement.reliability);
+			if ( bank_statement.security_level == null )
+				bank_statementStmt.setNull(offset++, -6);
+			else
+				bank_statementStmt.setShort(offset++, bank_statement.security_level);
 			if ( bank_statement.status == null )
 				bank_statementStmt.setNull(offset++, -6);
 			else
@@ -50952,11 +52667,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param reference2 Referencia 2
 	 * @param description Descripcion
 	 * @param reliability Fiabilidad del punteo
+	 * @param security_level Nivel de seguridad
 	 * @param status Estado
 	 * @param comments Comentarios
 	 * @throws SQLException
 	*/
-	protected void insertBank_statement(Integer id, Integer rbank, Integer lot_number, Date operation_date, Short common_concept, String own_concept, Boolean payment, Double amount, Integer document, String reference1, String reference2, String description, Short reliability, Short status, String comments)
+	protected void insertBank_statement(Integer id, Integer rbank, Integer lot_number, Date operation_date, Short common_concept, String own_concept, Boolean payment, Double amount, Integer document, String reference1, String reference2, String description, Short reliability, Short security_level, Short status, String comments)
 	throws SQLException {
 
 		Bank_statement bank_statement_ = new Bank_statement();
@@ -50973,6 +52689,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		bank_statement_.reference2 = reference2;
 		bank_statement_.description = description;
 		bank_statement_.reliability = reliability;
+		bank_statement_.security_level = security_level;
 		bank_statement_.status = status;
 		bank_statement_.comments = comments;
 
@@ -50980,7 +52697,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int bank_statementCount = bank_statements.size();
 		
-		if ( 187 * bank_statementCount >=  this.maxAllowedPacket ){
+		if ( 190 * bank_statementCount >=  this.maxAllowedPacket ){
 			insertBank_statement(bank_statements);
 			bank_statements.clear();
 		} 
@@ -51001,12 +52718,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param reference2 Referencia 2
 	 * @param description Descripcion
 	 * @param reliability Fiabilidad del punteo
+	 * @param security_level Nivel de seguridad
 	 * @param status Estado
 	 * @param comments Comentarios
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertBank_statement(Integer rbank, Integer lot_number, Date operation_date, Short common_concept, String own_concept, Boolean payment, Double amount, Integer document, String reference1, String reference2, String description, Short reliability, Short status, String comments)
+	public int insertBank_statement(Integer rbank, Integer lot_number, Date operation_date, Short common_concept, String own_concept, Boolean payment, Double amount, Integer document, String reference1, String reference2, String description, Short reliability, Short security_level, Short status, String comments)
 	throws SQLException {
 		int id = nextBank_statementId();
 
@@ -51024,6 +52742,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		bank_statement_.reference2 = reference2;
 		bank_statement_.description = description;
 		bank_statement_.reliability = reliability;
+		bank_statement_.security_level = security_level;
 		bank_statement_.status = status;
 		bank_statement_.comments = comments;
 
@@ -51031,7 +52750,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int bank_statementCount = bank_statements.size();
 		
-		if ( 187 * bank_statementCount >=  this.maxAllowedPacket ){
+		if ( 190 * bank_statementCount >=  this.maxAllowedPacket ){
 			insertBank_statement(bank_statements);
 			bank_statements.clear();
 		} 
@@ -51048,7 +52767,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement item_alternativeStmt = null;
 
-	private static class Item_alternative {
+	public static class Item_alternative {
 		private Integer id; 
 		private Integer item; 
 		private Integer alternative_item; 
@@ -51181,7 +52900,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertItem_alternative(Integer item, Integer alternative_item, Short priority)
+	public int insertItem_alternative(Integer item, Integer alternative_item, Short priority)
 	throws SQLException {
 		int id = nextItem_alternativeId();
 
@@ -51212,7 +52931,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement userStmt = null;
 
-	private static class User {
+	public static class User {
 		private Integer id; 
 		private String name; 
 		private String login; 
@@ -51369,7 +53088,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertUser(String name, String login, Integer enterprise, Integer registry, Boolean active, String password)
+	public int insertUser(String name, String login, Integer enterprise, Integer registry, Boolean active, String password)
 	throws SQLException {
 		int id = nextUserId();
 
@@ -51403,7 +53122,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement expense_account_detailStmt = null;
 
-	private static class Expense_account_detail {
+	public static class Expense_account_detail {
 		private Integer id; 
 		private Integer expense_account; 
 		private Integer expense; 
@@ -51552,7 +53271,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertExpense_account_detail(Integer expense_account, Integer expense, Double quantity, Double price, Double amount)
+	public int insertExpense_account_detail(Integer expense_account, Integer expense, Double quantity, Double price, Double amount)
 	throws SQLException {
 		int id = nextExpense_account_detailId();
 
@@ -51585,7 +53304,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement app_paramStmt = null;
 
-	private static class App_param {
+	public static class App_param {
 		private String name; 
 		private String value; 
 	}
@@ -51676,7 +53395,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	private PreparedStatement expenditures_itemsStmt = null;
 
-	private static class Expenditures_items {
+	public static class Expenditures_items {
 		private Integer id; 
 		private String name; 
 	}
@@ -51793,7 +53512,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	protected int insertExpenditures_items(String name)
+	public int insertExpenditures_items(String name)
 	throws SQLException {
 		int id = nextExpenditures_itemsId();
 
@@ -51843,6 +53562,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushLoan();
 		flushTas_delivery();
 		flushQuestion_value();
+		flushFs_mod347_detail();
 		flushWeb_info_style();
 		flushSalary_payment();
 		flushContract_data();
@@ -51854,11 +53574,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushFs_renting_detail();
 		flushMk_action();
 		flushFs_vat_detail();
-		flushCv_languages();
 		flushOffer_detail_commission();
+		flushCv_languages();
 		flushFavorite_category();
 		flushBalance_detail();
 		flushInvoice_tax_account();
+		flushFs_mod347();
 		flushProduct_account();
 		flushPcategory_tree();
 		flushAccount_entry_detail();
@@ -51872,6 +53593,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushCatalogue();
 		flushAction_entry();
 		flushAbsence();
+		flushSystem_payment();
 		flushItem_tariff();
 		flushAccount_entry_fbatch();
 		flushSeller();
@@ -51885,8 +53607,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushInventory();
 		flushCommercial_term();
 		flushProduction_expense();
-		flushCommercial_activity();
 		flushOffer_term();
+		flushCommercial_activity();
 		flushRsegment();
 		flushDelivery_detail_labour();
 		flushProcess_transition_type();
@@ -51921,6 +53643,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushCreditor_account();
 		flushFinance_tracking();
 		flushRattach();
+		flushLeave_batch_detail();
 		flushSales_detail();
 		flushSystem_deduction();
 		flushCurriculum();
@@ -51982,7 +53705,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushContract_leave();
 		flushCalendar_holiday();
 		flushWorkgroup();
-		flushFunction_constant();
 		flushCategory();
 		flushMk_action_target();
 		flushTax();
@@ -52017,6 +53739,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushSurvey_workflow();
 		flushProduct();
 		flushProcess();
+		flushContract_leave_detail();
 		flushItem();
 		flushAccount();
 		flushBrand();
@@ -52031,9 +53754,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushInvoice();
 		flushInvoice_attach();
 		flushInvoice_detail();
+		flushLeave_batch();
 		flushAnnual_report();
 		flushCourse_instructor();
 		flushAccount_entry_finance_tracking();
+		flushAgreement_level_data();
 		flushIncome_detail();
 		flushRmedia();
 		flushCommercial_tracking();
@@ -52047,8 +53772,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushCatalogue_item();
 		flushAcademic_skill();
 		flushAppraiser();
-		flushContract();
 		flushOffer_detail();
+		flushContract();
 		flushExpenditures();
 		flushAmortization();
 		flushEnterprise();
@@ -52066,14 +53791,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushInventory_detail();
 		flushScope();
 		flushTarget_supplier();
-		flushCustomer_segment();
 		flushContract_batch_detail();
+		flushCustomer_segment();
 		flushAuto_concept();
 		flushWeb_info_page_detail();
 		flushJob_type();
 		flushScale_relation();
 		flushCampaign_dossier();
 		flushTariff();
+		flushEnterprise_agreement();
 		flushInvoice_address();
 		flushMessage_log();
 		flushApplication();
@@ -52085,6 +53811,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushOffer();
 		flushComposition_expense();
 		flushAccount_helper();
+		flushSystem_data();
 		flushBank_concept();
 		flushCourse_academicskill();
 		flushEnterprise_ccc();
@@ -52208,6 +53935,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initQuestion_valueId();
 		initMaxAllowedPacket();
+		initFs_mod347_detailId();
+		initMaxAllowedPacket();
 		initWeb_info_styleId();
 		initMaxAllowedPacket();
 		initSalary_paymentId();
@@ -52230,15 +53959,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initFs_vat_detailId();
 		initMaxAllowedPacket();
-		initCv_languagesId();
-		initMaxAllowedPacket();
 		initOffer_detail_commissionId();
+		initMaxAllowedPacket();
+		initCv_languagesId();
 		initMaxAllowedPacket();
 		initFavorite_categoryId();
 		initMaxAllowedPacket();
 		initBalance_detailId();
 		initMaxAllowedPacket();
 		initInvoice_tax_accountId();
+		initMaxAllowedPacket();
+		initFs_mod347Id();
 		initMaxAllowedPacket();
 		initProduct_accountId();
 		initMaxAllowedPacket();
@@ -52266,6 +53997,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initAbsenceId();
 		initMaxAllowedPacket();
+		initSystem_paymentId();
+		initMaxAllowedPacket();
 		initItem_tariffId();
 		initMaxAllowedPacket();
 		initAccount_entry_fbatchId();
@@ -52291,9 +54024,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initProduction_expenseId();
 		initMaxAllowedPacket();
-		initCommercial_activityId();
-		initMaxAllowedPacket();
 		initOffer_termId();
+		initMaxAllowedPacket();
+		initCommercial_activityId();
 		initMaxAllowedPacket();
 		initRsegmentId();
 		initMaxAllowedPacket();
@@ -52362,6 +54095,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initFinance_trackingId();
 		initMaxAllowedPacket();
 		initRattachId();
+		initMaxAllowedPacket();
+		initLeave_batch_detailId();
 		initMaxAllowedPacket();
 		initSales_detailId();
 		initMaxAllowedPacket();
@@ -52482,8 +54217,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initWorkgroupId();
 		initMaxAllowedPacket();
-		initFunction_constantId();
-		initMaxAllowedPacket();
 		initCategoryId();
 		initMaxAllowedPacket();
 		initMk_action_targetId();
@@ -52549,6 +54282,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initProcessId();
 		initMaxAllowedPacket();
+		initContract_leave_detailId();
+		initMaxAllowedPacket();
 		initItemId();
 		initMaxAllowedPacket();
 		initMaxAllowedPacket();
@@ -52576,11 +54311,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initInvoice_detailId();
 		initMaxAllowedPacket();
+		initLeave_batchId();
+		initMaxAllowedPacket();
 		initAnnual_reportId();
 		initMaxAllowedPacket();
 		initCourse_instructorId();
 		initMaxAllowedPacket();
 		initAccount_entry_finance_trackingId();
+		initMaxAllowedPacket();
+		initAgreement_level_dataId();
 		initMaxAllowedPacket();
 		initIncome_detailId();
 		initMaxAllowedPacket();
@@ -52607,9 +54346,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initAcademic_skillId();
 		initMaxAllowedPacket();
 		initMaxAllowedPacket();
-		initContractId();
-		initMaxAllowedPacket();
 		initOffer_detailId();
+		initMaxAllowedPacket();
+		initContractId();
 		initMaxAllowedPacket();
 		initExpendituresId();
 		initMaxAllowedPacket();
@@ -52643,9 +54382,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initTarget_supplierId();
 		initMaxAllowedPacket();
-		initCustomer_segmentId();
-		initMaxAllowedPacket();
 		initContract_batch_detailId();
+		initMaxAllowedPacket();
+		initCustomer_segmentId();
 		initMaxAllowedPacket();
 		initAuto_conceptId();
 		initMaxAllowedPacket();
@@ -52658,6 +54397,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initCampaign_dossierId();
 		initMaxAllowedPacket();
 		initTariffId();
+		initMaxAllowedPacket();
+		initEnterprise_agreementId();
 		initMaxAllowedPacket();
 		initInvoice_addressId();
 		initMaxAllowedPacket();
@@ -52680,6 +54421,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initComposition_expenseId();
 		initMaxAllowedPacket();
 		initAccount_helperId();
+		initMaxAllowedPacket();
+		initSystem_dataId();
 		initMaxAllowedPacket();
 		initBank_conceptId();
 		initMaxAllowedPacket();

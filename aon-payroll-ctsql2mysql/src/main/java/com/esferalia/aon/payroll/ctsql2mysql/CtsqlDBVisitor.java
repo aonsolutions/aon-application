@@ -15,6 +15,7 @@ package com.esferalia.aon.payroll.ctsql2mysql;
 import java.sql.SQLException;
 
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finipextnu;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Db_version;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finindem;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cuota;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Sincomun;
@@ -232,6 +233,10 @@ public interface CtsqlDBVisitor {
 	
 
 	public void visitFinipextnu(Finipextnu finipextnu)
+	throws SQLException;
+
+
+	public void visitDb_version(Db_version db_version)
 	throws SQLException;
 
 
