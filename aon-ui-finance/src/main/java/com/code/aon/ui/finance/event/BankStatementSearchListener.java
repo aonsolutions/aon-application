@@ -120,6 +120,9 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		initData();
+
+		StatementStatus[] defaultStatementStatus = {StatementStatus.PENDING};
+		setStatementStatuses(defaultStatementStatus);
 	}
 
 	public void initData() throws ManagerBeanException {
@@ -133,8 +136,7 @@ public class BankStatementSearchListener extends ControllerSearchListener {
 		setComments(null);
 		setStatementReliabilities(new StatementReliability[0]);
 		setConfidential(null);
-		StatementStatus[] defaultStatementStatus = {StatementStatus.PENDING};
-		setStatementStatuses(defaultStatementStatus);
+		setStatementStatuses(new StatementStatus[0]);
 	}
 
 	@Override

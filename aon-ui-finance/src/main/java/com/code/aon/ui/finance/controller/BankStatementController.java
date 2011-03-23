@@ -178,16 +178,14 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onSeeAll(ActionEvent event) throws ManagerBeanException {
-		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_LISTENER_NAME;
-		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
 		searchListener.setStatementReliabilities(new StatementReliability[0]);
 		searchListener.setStatementStatuses(new StatementStatus[0]);
 		searchBankStatements(getRegistryBank());
 	}
 
 	public void onSeePending(ActionEvent event) throws ManagerBeanException {
-		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_LISTENER_NAME;
-		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
 		searchListener.setStatementReliabilities(new StatementReliability[0]);
 		StatementStatus[] statementStatus = {StatementStatus.PENDING};
 		searchListener.setStatementStatuses(statementStatus);
@@ -195,8 +193,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onSeeChecked(ActionEvent event) throws ManagerBeanException {
-		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_LISTENER_NAME;
-		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
 		searchListener.setStatementReliabilities(new StatementReliability[0]);
 		StatementStatus[] statementStatus = {StatementStatus.CHECKED};
 		searchListener.setStatementStatuses(statementStatus);
@@ -204,8 +201,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onSeeExact(ActionEvent event) throws ManagerBeanException {
-		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_LISTENER_NAME;
-		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
 		StatementReliability[] statementReliability = {StatementReliability.VERY_HIGH};
 		searchListener.setStatementReliabilities(statementReliability);
 		StatementStatus[] statementStatus = {StatementStatus.CHECKED};
@@ -214,8 +210,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onSeeApproximate(ActionEvent event) throws ManagerBeanException {
-		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_LISTENER_NAME;
-		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
 		StatementReliability[] statementReliability = {StatementReliability.HIGH};
 		searchListener.setStatementReliabilities(statementReliability);
 		StatementStatus[] statementStatus = {StatementStatus.CHECKED};
@@ -224,8 +219,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onSeeAmbiguous(ActionEvent event) throws ManagerBeanException {
-		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_LISTENER_NAME;
-		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
 		StatementReliability[] statementReliability = {StatementReliability.MEDIUM, StatementReliability.LOW};
 		searchListener.setStatementReliabilities(statementReliability);
 		StatementStatus[] statementStatus = {StatementStatus.CHECKED};
@@ -234,8 +228,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onSeeRecorded(ActionEvent event) throws ManagerBeanException {
-		String searchController = IFinanceConstants.BANK_STATEMENT_SEARCH_LISTENER_NAME;
-		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchController);
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
 		searchListener.setStatementReliabilities(new StatementReliability[0]);
 		StatementStatus[] statementStatus = {StatementStatus.RECORDED};
 		searchListener.setStatementStatuses(statementStatus);
@@ -530,11 +523,10 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	private RegistryBank importAeb43Header(String line) throws ManagerBeanException {
-		String searchControllerName = IFinanceConstants.BANK_STATEMENT_SEARCH_LISTENER_NAME;
-		BankStatementSearchListener bankStatementSearch = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchControllerName);
-		bankStatementSearch.initData();
-		bankStatementSearch.setFromDate(obtainDateAAMMDD(line.substring(20, 26)));
-		bankStatementSearch.setToDate(obtainDateAAMMDD(line.substring(26, 32)));
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
+		searchListener.initData();
+		searchListener.setFromDate(obtainDateAAMMDD(line.substring(20, 26)));
+		searchListener.setToDate(obtainDateAAMMDD(line.substring(26, 32)));
 
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
@@ -627,10 +619,9 @@ public class BankStatementController extends BasicController implements IFinance
 		}
 
 		if (firstLine) {
-			String searchControllerName = IFinanceConstants.BANK_STATEMENT_SEARCH_LISTENER_NAME;
-			BankStatementSearchListener bankStatementSearch = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchControllerName);
-			bankStatementSearch.initData();
-			bankStatementSearch.setFromDate(date);
+			BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
+			searchListener.initData();
+			searchListener.setFromDate(date);
 		}
 
 		BankStatement bankStatement = new BankStatement();
@@ -652,9 +643,8 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	private void setCsvToDate(Date toDate) {
-		String searchControllerName = IFinanceConstants.BANK_STATEMENT_SEARCH_LISTENER_NAME;
-		BankStatementSearchListener bankStatementSearch = (BankStatementSearchListener)AonUtil.getRegisteredBean(searchControllerName);
-		bankStatementSearch.setToDate(toDate);
+		BankStatementSearchListener searchListener = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
+		searchListener.setToDate(toDate);
 	}
 
 	private Date obtainDateAAMMDD(String date) {
@@ -1664,19 +1654,16 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onLoadBankStatement(ActionEvent event, BankStatement statement, String backAction) throws ManagerBeanException {
-		BankStatementSearchListener statementSearch = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
+		onEditSearch(null);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_ID), statement.getId());
+		criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), statement.getRegistryBank().getId());
+		setCriteria(criteria);
 
-		onEditSearch(event);
-		getCriteria().addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_ID), statement.getId());
-		statementSearch.setFromDate(statement.getOperationDate());
-		statementSearch.setToDate(statement.getOperationDate());
-		statementSearch.setPayment(statement.isPayment());
-		statementSearch.setAmount(Double.toString(statement.getAmount()));
-		statementSearch.setDescription(statement.getDescription());
-		statementSearch.setCommonConcept(statement.getCommonConcept());
-		statementSearch.setLotNumber(Integer.toString(statement.getLotNumber()));
-		statementSearch.setStatementStatuses(null);
-		onSearch(event);
+		setRegistryBank(statement.getRegistryBank());
+		BankStatementSearchListener statementSearch = (BankStatementSearchListener)AonUtil.getRegisteredBean(BANK_STATEMENT_SEARCH_LISTENER_NAME);
+		statementSearch.initData();
+		onSearch(null);
 
 		setBackAction(backAction);
 		setBackActionListener(BANK_STATEMENT_CONTROLLER_NAME + ".onBack");
