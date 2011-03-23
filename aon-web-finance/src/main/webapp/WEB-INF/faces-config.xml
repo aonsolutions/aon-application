@@ -121,8 +121,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<list-entries>
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-			<!--  aon.ui.finance -->
-			<value>#{customerFeeChildListener}</value>
 			<!--  aon.ui.account.bridge -->
 			<value>#{customerAccount}</value>
 		</list-entries>
