@@ -7,9 +7,9 @@
 	<ui:define name="menuContent">
 		<c:if test="#{aonRole.commercialOperator}">
 			<aon:commandLink id="commercial"
-				value="#{appBundle.menu_commercial}"
+				value="#{commercialBundle.commercial_module_group}"
 				action="menu_commercial" immediate="true"
-				styleClass="aon-top-menu-item aon-icon-offer" />
+				styleClass="aon-top-menu-item aon-icon-commercial" />
 		</c:if>
 		<c:if test="#{aonRole.financeOperator}">
 			<aon:commandLink id="sales"

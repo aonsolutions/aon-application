@@ -236,6 +236,7 @@
 		<list-entries>
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<value>#{targetItemListener}</value>
+			<value>#{targetTrackingListener}</value>
 			<value>#{targetSellerListener}</value>
 			<value>#{targetSupplierListener}</value>
 		</list-entries>		
