@@ -3,6 +3,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns="http://www.esferalia.com/config" >
 	
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia 
+			showSendEmail="true"
+		/>
+	</registry:config>
+
 	<company:config version="1.1" xmlns:company="http://www.esferalia.com/company">
 		<company:company 
 			showRegistryBank="true" 
@@ -27,29 +33,25 @@
 			showFinanceData="true" 
 			showProjectData="false"
 			showFinanceFeeData="false" 
+			showTaxInfoData="true"
 			showAccount="true"
 			showTariff="false" 
 			showSegment="false"
 			showNote="false"
 			showRelationship="false"
 			showRecordData="false"
-			showTaxInfoData="true"
 			showAddInfo="false"
 			showDirStaff="false"
 			showHistory="false"
 		/>
 	</customer:config>
 
-	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
-		<registry:rmedia showSendEmail="true" />
-	</registry:config>
-
 	<supplier:config version="1.0" xmlns:supplier="http://www.esferalia.com/supplier">
 		<supplier:supplier
 			showFinanceData="true" 
+			showTaxInfoData="true"
 			showAccount="true"
 			showSegment="false"
-			showTaxInfoData="true"
 			showAddInfo="false"
 		/>
 	</supplier:config>
@@ -57,8 +59,8 @@
 	<finance:config version="1.0" xmlns:finance="http://www.esferalia.com/finance">
 		<finance:creditor
 			showFinanceData="true" 
-			showAccount="true"
 			showTaxInfoData="true"
+			showAccount="true"
 			showAddInfo="false"
 			showSegment="false"
 		/>
