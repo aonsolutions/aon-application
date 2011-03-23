@@ -455,10 +455,6 @@ public class FinanceController extends FinanceListController implements IFinance
 			throw new AbortProcessingException();
 		}
 		if (getPaymentAmount() != finance.getTotalAmount()) {
-			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR);
-		}
-
-		if (getPaymentAmount() != finance.getTotalAmount()) {
 			double amount = finance.getTotalAmount();
 
 			finance.setAmount(CommonUtil.round(getPaymentAmount() - finance.getExpenses(), 2));
@@ -468,6 +464,8 @@ public class FinanceController extends FinanceListController implements IFinance
 			Finance fraction = getFinanceGenerator().duplicateFinance(finance, CommonUtil.round(amount - getPaymentAmount(), 2));
 			message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 2, 2);
 			FinanceTrackingWriter.addFinanceTracking(fraction, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
+
+			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR);
 		}
 		finance.setFinanceStatus(FinanceStatus.PAID);
 		super.accept(null);

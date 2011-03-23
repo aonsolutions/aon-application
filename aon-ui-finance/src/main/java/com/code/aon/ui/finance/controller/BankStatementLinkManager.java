@@ -32,6 +32,7 @@ import com.code.aon.finance.enumeration.StatementLinkSource;
 import com.code.aon.finance.enumeration.StatementLinkStatus;
 import com.code.aon.finance.enumeration.StatementReliability;
 import com.code.aon.finance.enumeration.StatementStatus;
+import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.finance.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
@@ -51,6 +52,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	
 	private BankStatement currentStatement;
 	private String selectedTab;
+	private Finance fractionFinance;
 	private BankConcept bankConcept;
 	private Account account;
 	private Double amount;
@@ -75,6 +77,13 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		if (selectedTab.equals(OTHER_CONCEPT_LINK_TAB)) {
 			setAmountPending();
 		}
+	}
+
+	public Finance getFractionFinance() {
+		return fractionFinance;
+	}
+	public void setFractionFinance(Finance finance) {
+		this.fractionFinance = finance;
 	}
 
 	public BankConcept getBankConcept() {
@@ -588,6 +597,35 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		statement.setReliability(StatementReliability.VERY_HIGH);
 		statement.setStatus(StatementStatus.PENDING);
 		statementBean.update(statement);
+	}
+
+	public void onFractionShow(ActionEvent event) throws ManagerBeanException {
+		FinanceListController financeList = (FinanceListController)FormUtil.getController(FINANCE_LIST_CONTROLLER_NAME);
+		setFractionFinance((Finance)financeList.getModel().getRowData());
+		setAmountPending();
+	}
+
+	public void onFraction(ActionEvent event) throws ManagerBeanException {
+		if (getAmount() == 0) {
+			AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_INVALID_AMOUNT_ERROR);
+			throw new AbortProcessingException();
+		}
+		if (getAmount().doubleValue() != getFractionFinance().getTotalAmount()) {
+			double amount = getFractionFinance().getTotalAmount();
+
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			getFractionFinance().setAmount(CommonUtil.round(getAmount().doubleValue() - getFractionFinance().getExpenses(), 2));
+			financeBean.update(getFractionFinance());
+			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 1, 2);
+			FinanceTrackingWriter.addFinanceTracking(getFractionFinance(), new Date(), FinanceTrackingType.FRACTIONED, message, amount);
+
+			FinanceGenerator financeGenerator = new FinanceGenerator();
+			Finance fraction = financeGenerator.duplicateFinance(getFractionFinance(), CommonUtil.round(amount - getAmount().doubleValue(), 2));
+			message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 2, 2);
+			FinanceTrackingWriter.addFinanceTracking(fraction, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
+
+			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.PAYMENT_NOT_MATCH_AMOUNT_ERROR);
+		}
 	}
 
 	public void onBindEntryDetail(ActionEvent event) throws ManagerBeanException {

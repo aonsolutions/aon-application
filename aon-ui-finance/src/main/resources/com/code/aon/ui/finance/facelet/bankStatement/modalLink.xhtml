@@ -291,9 +291,17 @@
 															<f:facet name="header">
 																<aon:outputText value="#{bundle.aon_amount}" />
 															</f:facet>
-															<aon:outputText value="#{to.totalAmount}">
-																<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-															</aon:outputText>
+															<aon:commandLink immediate="#{true}" 
+																styleClass="aon-dataTable-link"
+																title="#{financeBundle.finance_to_fraction}"
+																actionListener="#{linkManager.onFractionShow}"
+																reRender="showFinanceFractionWindow">
+																<aon:outputText styleClass="aon-italic" value="#{to.totalAmount}">
+																	<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+																</aon:outputText>
+																<f:setPropertyActionListener target="#{financeList.showFinanceFractionWindow}"
+																	value="#{true}" />
+															</aon:commandLink>
 														</aon:column>
 
 													</aon:dataTable>
@@ -570,8 +578,11 @@
 														<aon:selectOneMenu value="#{linkManager.bankConcept}">
 															<f:selectItems value="#{financeCollections.bankConcepts}" />
 														</aon:selectOneMenu>
-														<aon:outputText value="#{bundle.aon_amount} " />
-														<aon:inputText value="#{linkManager.amount}" size="8" />
+														<aon:outputLabel for="BankStatementLink_amount"
+															 value="#{bundle.aon_amount} " />
+														<aon:inputText id="BankStatementLink_amount" 
+															value="#{linkManager.amount}" 
+															required="true" size="8" />
 													</aon:panelGrid>
 												</aon:div>
 											</aon:div>
@@ -692,6 +703,12 @@
 					<ui:param name="showType" value="true" />
 					<ui:param name="payMethodSearchList" value="#{configCollections.payMethods}" />
 					<ui:param name="searchReRender" value="statementLinkBody" />
+				</ui:include>
+				<ui:include src="/com/code/aon/ui/finance/facelet/finance/modalFraction.xhtml">
+					<ui:param name="controller" value="#{bankStatement.bankStatementLinkManager}" />
+					<ui:param name="fractionFinance" value="#{bankStatement.bankStatementLinkManager.fractionFinance}" />
+					<ui:param name="fractionAmount" value="#{bankStatement.bankStatementLinkManager.amount}" />
+					<ui:param name="fractionReRender" value="statementLinkBody" />
 				</ui:include>
 			</rich:modalPanel>
 		</c:if>

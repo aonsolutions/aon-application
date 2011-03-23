@@ -13,6 +13,7 @@ import com.code.aon.ui.form.BasicController;
 public class FinanceListController extends BasicController {
 
 	private boolean showFinanceSearchWindow;
+	private boolean showFinanceFractionWindow;
 	private ArrayList<Finance> checks = new ArrayList<Finance>();
 
 	public boolean isShowFinanceSearchWindow() {
@@ -21,6 +22,14 @@ public class FinanceListController extends BasicController {
 
 	public void setShowFinanceSearchWindow(boolean value) {
 		this.showFinanceSearchWindow = value;
+	}
+
+	public boolean isShowFinanceFractionWindow() {
+		return showFinanceFractionWindow;
+	}
+
+	public void setShowFinanceFractionWindow(boolean value) {
+		this.showFinanceFractionWindow = value;
 	}
 
 	public void onSearch(ActionEvent event) {
