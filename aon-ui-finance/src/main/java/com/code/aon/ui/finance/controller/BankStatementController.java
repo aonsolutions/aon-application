@@ -309,8 +309,8 @@ public class BankStatementController extends BasicController implements IFinance
 
 	public void onBreakdownSelected(ActionEvent event) throws ManagerBeanException {
 		for (BankStatement statement : getCheckedBankStatement()) {
-			statement.setShowBankStatementLink(statement.isChecked());
-			statement.setShowAccountEntry(AonUtil.getRoleManager().isAccountingOperator() && statement.isRecorded());
+			statement.setShowBankStatementLink(true);
+			statement.setShowAccountEntry(AonUtil.getRoleManager().isAccountingOperator());
 		}
 	}
 
@@ -319,8 +319,8 @@ public class BankStatementController extends BasicController implements IFinance
 		Iterator<ITransferObject> iterator = ((List<ITransferObject>)getModel().getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			BankStatement statement = (BankStatement)iterator.next();
-			statement.setShowBankStatementLink(statement.isChecked());
-			statement.setShowAccountEntry(AonUtil.getRoleManager().isAccountingOperator() && statement.isRecorded());
+			statement.setShowBankStatementLink(true);
+			statement.setShowAccountEntry(AonUtil.getRoleManager().isAccountingOperator());
 		}
 	}
 
@@ -1366,8 +1366,8 @@ public class BankStatementController extends BasicController implements IFinance
 	public void onShowBankStatementLink(ActionEvent event) {
 		try {
 			BankStatement to = (BankStatement)getModel().getRowData();
-			to.setShowBankStatementLink(to.isChecked());
-			to.setShowAccountEntry(AonUtil.getRoleManager().isAccountingOperator() && to.isRecorded());
+			to.setShowBankStatementLink(true);
+			to.setShowAccountEntry(AonUtil.getRoleManager().isAccountingOperator());
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -1545,7 +1545,6 @@ public class BankStatementController extends BasicController implements IFinance
 
 		statement.setSecurityLevel(entry.getSecurityLevel());
 		statement.setStatus(StatementStatus.RECORDED);
-		statement.setShowBankStatementLink(false);
 		getManagerBean().update(statement);
 	}
 
@@ -1626,7 +1625,6 @@ public class BankStatementController extends BasicController implements IFinance
 		getWriter().removeAccountEntryBankStatement(statement, hasLinks);
 
 		statement.setStatus((hasLinks) ? StatementStatus.CHECKED : StatementStatus.PENDING);
-		statement.setShowBankStatementLink(false);
 		getManagerBean().update(statement);
 	}
 
