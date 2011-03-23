@@ -705,7 +705,7 @@ public class BankStatementController extends BasicController implements IFinance
 		clearCheckedBankStatement();
 	}
 
-	public void onCheckLinks(ActionEvent event) throws ManagerBeanException {
+	public void onAutoCheckSelected(ActionEvent event) throws ManagerBeanException {
 		if (getCheckedBankStatement().size() == 0) {
 			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_CHECK_NO_LINE_SELECTED);
 			return;
@@ -1385,150 +1385,159 @@ public class BankStatementController extends BasicController implements IFinance
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public void onRecordStatement(ActionEvent event) throws ManagerBeanException {
+	public void onRecordSelected(ActionEvent event) throws ManagerBeanException {
 		if (getCheckedBankStatement().size() == 0) {
 			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_CHECK_NO_LINE_SELECTED);
 			return;
 		}
 
 		for (BankStatement statement : getCheckedBankStatement()) {
-			if (statement.isChecked()) {
-				List<FinanceTracking> financeTrackingList = new LinkedList<FinanceTracking>();
-				List<FinanceBatch> financeBatchList = new LinkedList<FinanceBatch>();
-				List<BankStatementLink> transferList = new LinkedList<BankStatementLink>();
-				Map<Account, Double> accountMap = new HashMap<Account, Double>();
-				double linksAmount = 0;
-
-				getErrors().remove(statement.getId());
-				for (ITransferObject ito : getBankStatementLinkList(statement)) {
-					BankStatementLink statementLink = (BankStatementLink)ito;
-					if (statement.isReturned() && statementLink.isFinanceTracking()) {
-						linksAmount += statementLink.getAmount() * (statementLink.isPayment() ? 1 : (-1));
-					} else {
-						linksAmount += statementLink.getAmount() * (statementLink.isPayment() ? (-1) : 1);
-					}
-					if (statementLink.getSource() == StatementLinkSource.FINANCE_TRACKING) {
-						FinanceTracking tracking = (FinanceTracking)statementLink.getSourceTo();
-						if (!tracking.isRecorded()) {
-							financeTrackingList.add(tracking);
-						} else {
-							String docNumber = tracking.getFinance().getDocumentNumber();
-							getErrors().put(statement.getId(), "El Vencimiento " + docNumber + " ya esta Contabilizado.");
-						}
-					} else if (statementLink.getSource() == StatementLinkSource.FINANCE_BATCH) {
-						FinanceBatch batch = (FinanceBatch)statementLink.getSourceTo();
-						if (batch.getFinanceBatchStatus() != FinanceBatchStatus.RECORDED) {
-							financeBatchList.add(batch);
-						} else {
-							getErrors().put(statement.getId(), "La Remesa " + batch.getId() + " ya esta Contabilizada.");
-						}
-					} else {
-						if (statementLink.getSource() == StatementLinkSource.BANK_CONCEPT) {
-							IManagerBean conceptAccountBean = BeanManager.getManagerBean(BankConceptAccount.class);
-							String conceptAlias = conceptAccountBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID);
-							BankConcept concept = (BankConcept)statementLink.getSourceTo();
-							Criteria criteria = new Criteria();
-							criteria.addEqualExpression(conceptAlias, concept.getId());
-							Iterator<ITransferObject> iterator = conceptAccountBean.getList(criteria).iterator();
-							if (iterator.hasNext()) {
-								BankConceptAccount conceptAccount = (BankConceptAccount)iterator.next();
-								accountMap.put(conceptAccount.getAccount(), new Double(statementLink.getAmount()));
-							} else {
-								getErrors().put(statement.getId(), "El Concepto " + concept.getName() + " no tiene Cuenta Contable asociada.");
-							}
-						} else if (statementLink.getSource() == StatementLinkSource.ACCOUNT) {
-							accountMap.put((Account)statementLink.getSourceTo(), new Double(statementLink.getAmount()));
-						}
-
-						if (statementLink.getLinkedBankStatementLink() != null) {
-							transferList.add(statementLink.getLinkedBankStatementLink());
-						}
-					}
-				}
-
-				if (getErrors().get(statement.getId()) == null) {
-					double statementAmount = (statement.isPayment()) ? (0 - statement.getAmount()) : statement.getAmount();
-					if (statementAmount != CommonUtil.round(linksAmount)) {
-						getErrors().put(statement.getId(), "El Importe de la línea del Extracto no cuadra con la suma de los Detalles del mismo.");
-					} else {
-						AccountEntry entry = null;
-						Account bankAccount = getWriter().obtainPaymentAccount(statement.getRegistryBank(), null);
-						for (BankStatementLink linkTransfer : transferList) {
-							IManagerBean entryStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
-							Criteria criteria = new Criteria();
-							String alias = entryStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID);
-							criteria.addEqualExpression(alias, linkTransfer.getBankStatement().getId());
-							for (ITransferObject ito : entryStatementBean.getList(criteria)) {
-								entry = ((AccountEntryBankStatement)ito).getAccountEntry();
-
-								IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-								criteria = new Criteria();
-								alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID);
-								criteria.addEqualExpression(alias, entry.getId());
-								alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
-								criteria.addEqualExpression(alias, bankAccount.getId());
-								if ((statement.isPayment() && statement.getAmount() < 0) || (!statement.isPayment() && statement.getAmount() >= 0)) {
-									alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT);
-								} else {
-									alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT);
-								}
-								criteria.addEqualExpression(alias, statement.getAmount());
-								if (entryDetailBean.getCount(criteria) == 0) {
-									getErrors().put(statement.getId(), "El Apunte " + entry.getId() + " no tiene el importe correcto para esta línea");
-									entry = null;
-								} else {
-									getErrors().remove(statement.getId());
-									break;
-								}
-							}
-						}
-						
-						if (entry == null && getErrors().get(statement.getId()) == null) {
-							FinanceRecordingTo recordingTo = new FinanceRecordingTo();
-							recordingTo.setType((statement.isPayment()) ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
-							recordingTo.setDate(statement.getOperationDate());
-							recordingTo.setPaymentAccount(bankAccount);
-							recordingTo.setBalancingConcept(StringUtils.abbreviate(statement.getDescription(), 32));
-							recordingTo.setSecurityLevel(statement.getSecurityLevel());
-							recordingTo.setComments(statement.getComments());
-							recordingTo.setAccountMap(accountMap);
-	
-							if (financeTrackingList.size() > 0) {
-								if (statement.getCommonConcept() == StatementConcept.RETURNED) {
-									recordingTo.setType((statement.isPayment()) ? AccountEntryType.RETURNED_COLLECTION : AccountEntryType.RETURNED_PAYMENT);
-								}
-								recordingTo.setFinanceTrackingList(financeTrackingList);
-								entry = getWriter().recordFinanceTrackings(recordingTo, entry);
-							} else if (financeBatchList.size() > 0) {
-								if (financeBatchList.size() > 1) {
-									getErrors().put(statement.getId(), "No puede haber más de una Remesa en la misma línea del Extracto.");
-								} else {
-									FinanceBatch fBatch = financeBatchList.get(0);
-									recordingTo.setBalancingConcept(fBatch.getDescription());
-									recordingTo.setFBatchDetailList(fBatch.getDetailList());
-									entry = getWriter().recordFBatch(recordingTo, fBatch, entry);
-								}
-							} else {
-								recordingTo.setType(AccountEntryType.MANUAL);
-								entry = getWriter().recordBankStatementLinks(recordingTo, statement.isPayment(), statement.getAmount());
-							}
-						}
-
-						if (entry != null) {
-							recordBankStatement(entry, statement);
-						}
-					}
-				}
-			} else if (statement.getStatus() == StatementStatus.PENDING) {
-				getErrors().put(statement.getId(), "La línea del Extracto esta Pendiente. No se puede Contabilizar.");
-			} else if (statement.getStatus() == StatementStatus.RECORDED) {
-				getErrors().put(statement.getId(), "La línea del Extracto ya esta Contabilizada.");
-			}
+			onRecordBankStatement(statement);
 		}
 
 		onSearch(null);
 		clearCheckedBankStatement();
+	}
+
+	public void onRecordBankStatement(ActionEvent event) throws ManagerBeanException {
+		BankStatement to = (BankStatement)getModel().getRowData();
+		onRecordBankStatement(to);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void onRecordBankStatement(BankStatement statement) throws ManagerBeanException {
+		if (statement.isChecked()) {
+			List<FinanceTracking> financeTrackingList = new LinkedList<FinanceTracking>();
+			List<FinanceBatch> financeBatchList = new LinkedList<FinanceBatch>();
+			List<BankStatementLink> transferList = new LinkedList<BankStatementLink>();
+			Map<Account, Double> accountMap = new HashMap<Account, Double>();
+			double linksAmount = 0;
+
+			getErrors().remove(statement.getId());
+			for (ITransferObject ito : getBankStatementLinkList(statement)) {
+				BankStatementLink statementLink = (BankStatementLink)ito;
+				if (statement.isReturned() && statementLink.isFinanceTracking()) {
+					linksAmount += statementLink.getAmount() * (statementLink.isPayment() ? 1 : (-1));
+				} else {
+					linksAmount += statementLink.getAmount() * (statementLink.isPayment() ? (-1) : 1);
+				}
+				if (statementLink.getSource() == StatementLinkSource.FINANCE_TRACKING) {
+					FinanceTracking tracking = (FinanceTracking)statementLink.getSourceTo();
+					if (!tracking.isRecorded()) {
+						financeTrackingList.add(tracking);
+					} else {
+						String docNumber = tracking.getFinance().getDocumentNumber();
+						getErrors().put(statement.getId(), "El Vencimiento " + docNumber + " ya esta Contabilizado.");
+					}
+				} else if (statementLink.getSource() == StatementLinkSource.FINANCE_BATCH) {
+					FinanceBatch batch = (FinanceBatch)statementLink.getSourceTo();
+					if (batch.getFinanceBatchStatus() != FinanceBatchStatus.RECORDED) {
+						financeBatchList.add(batch);
+					} else {
+						getErrors().put(statement.getId(), "La Remesa " + batch.getId() + " ya esta Contabilizada.");
+					}
+				} else {
+					if (statementLink.getSource() == StatementLinkSource.BANK_CONCEPT) {
+						IManagerBean conceptAccountBean = BeanManager.getManagerBean(BankConceptAccount.class);
+						String conceptAlias = conceptAccountBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID);
+						BankConcept concept = (BankConcept)statementLink.getSourceTo();
+						Criteria criteria = new Criteria();
+						criteria.addEqualExpression(conceptAlias, concept.getId());
+						Iterator<ITransferObject> iterator = conceptAccountBean.getList(criteria).iterator();
+						if (iterator.hasNext()) {
+							BankConceptAccount conceptAccount = (BankConceptAccount)iterator.next();
+							accountMap.put(conceptAccount.getAccount(), new Double(statementLink.getAmount()));
+						} else {
+							getErrors().put(statement.getId(), "El Concepto " + concept.getName() + " no tiene Cuenta Contable asociada.");
+						}
+					} else if (statementLink.getSource() == StatementLinkSource.ACCOUNT) {
+						accountMap.put((Account)statementLink.getSourceTo(), new Double(statementLink.getAmount()));
+					}
+
+					if (statementLink.getLinkedBankStatementLink() != null) {
+						transferList.add(statementLink.getLinkedBankStatementLink());
+					}
+				}
+			}
+
+			if (getErrors().get(statement.getId()) == null) {
+				double statementAmount = (statement.isPayment()) ? (0 - statement.getAmount()) : statement.getAmount();
+				if (statementAmount != CommonUtil.round(linksAmount)) {
+					getErrors().put(statement.getId(), "El Importe de la línea del Extracto no cuadra con la suma de los Detalles del mismo.");
+				} else {
+					AccountEntry entry = null;
+					Account bankAccount = getWriter().obtainPaymentAccount(statement.getRegistryBank(), null);
+					for (BankStatementLink linkTransfer : transferList) {
+						IManagerBean entryStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
+						Criteria criteria = new Criteria();
+						String alias = entryStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID);
+						criteria.addEqualExpression(alias, linkTransfer.getBankStatement().getId());
+						for (ITransferObject ito : entryStatementBean.getList(criteria)) {
+							entry = ((AccountEntryBankStatement)ito).getAccountEntry();
+
+							IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+							criteria = new Criteria();
+							alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID);
+							criteria.addEqualExpression(alias, entry.getId());
+							alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
+							criteria.addEqualExpression(alias, bankAccount.getId());
+							if ((statement.isPayment() && statement.getAmount() < 0) || (!statement.isPayment() && statement.getAmount() >= 0)) {
+								alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT);
+							} else {
+								alias = entryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CREDIT);
+							}
+							criteria.addEqualExpression(alias, statement.getAmount());
+							if (entryDetailBean.getCount(criteria) == 0) {
+								getErrors().put(statement.getId(), "El Apunte " + entry.getId() + " no tiene el importe correcto para esta línea");
+								entry = null;
+							} else {
+								getErrors().remove(statement.getId());
+								break;
+							}
+						}
+					}
+					
+					if (entry == null && getErrors().get(statement.getId()) == null) {
+						FinanceRecordingTo recordingTo = new FinanceRecordingTo();
+						recordingTo.setType((statement.isPayment()) ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
+						recordingTo.setDate(statement.getOperationDate());
+						recordingTo.setPaymentAccount(bankAccount);
+						recordingTo.setBalancingConcept(StringUtils.abbreviate(statement.getDescription(), 32));
+						recordingTo.setSecurityLevel(statement.getSecurityLevel());
+						recordingTo.setComments(statement.getComments());
+						recordingTo.setAccountMap(accountMap);
+
+						if (financeTrackingList.size() > 0) {
+							if (statement.getCommonConcept() == StatementConcept.RETURNED) {
+								recordingTo.setType((statement.isPayment()) ? AccountEntryType.RETURNED_COLLECTION : AccountEntryType.RETURNED_PAYMENT);
+							}
+							recordingTo.setFinanceTrackingList(financeTrackingList);
+							entry = getWriter().recordFinanceTrackings(recordingTo, entry);
+						} else if (financeBatchList.size() > 0) {
+							if (financeBatchList.size() > 1) {
+								getErrors().put(statement.getId(), "No puede haber más de una Remesa en la misma línea del Extracto.");
+							} else {
+								FinanceBatch fBatch = financeBatchList.get(0);
+								recordingTo.setBalancingConcept(fBatch.getDescription());
+								recordingTo.setFBatchDetailList(fBatch.getDetailList());
+								entry = getWriter().recordFBatch(recordingTo, fBatch, entry);
+							}
+						} else {
+							recordingTo.setType(AccountEntryType.MANUAL);
+							entry = getWriter().recordBankStatementLinks(recordingTo, statement.isPayment(), statement.getAmount());
+						}
+					}
+
+					if (entry != null) {
+						recordBankStatement(entry, statement);
+					}
+				}
+			}
+		} else if (statement.getStatus() == StatementStatus.PENDING) {
+			getErrors().put(statement.getId(), "La línea del Extracto esta Pendiente. No se puede Contabilizar.");
+		} else if (statement.getStatus() == StatementStatus.RECORDED) {
+			getErrors().put(statement.getId(), "La línea del Extracto ya esta Contabilizada.");
+		}
 	}
 
 	public void recordBankStatement(AccountEntry entry, BankStatement statement) throws ManagerBeanException {
@@ -1540,66 +1549,77 @@ public class BankStatementController extends BasicController implements IFinance
 		getManagerBean().update(statement);
 	}
 
-	public void onUnrecordStatement(ActionEvent event) throws ManagerBeanException {
+	public void onUnrecordSelected(ActionEvent event) throws ManagerBeanException {
 		if (getCheckedBankStatement().size() == 0) {
 			AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_CHECK_NO_LINE_SELECTED);
 			return;
 		}
 
-		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		for (BankStatement statement : getCheckedBankStatement()) {
-			if (statement.isRecorded()) {
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
-				if (statementLinkBean.getCount(criteria) > 0) {
-					IManagerBean accEntryStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
-					criteria = new Criteria();
-					String alias = accEntryStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID);
-					criteria.addEqualExpression(alias, statement.getId());
-					for (ITransferObject ito : accEntryStatementBean.getList(criteria)) {
-						AccountEntryBankStatement accEntryStatement = (AccountEntryBankStatement)ito;
-						AccountEntry accEntry = accEntryStatement.getAccountEntry();
-
-						IManagerBean accEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
-						criteria = new Criteria();
-						alias = accEntryFBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_ACCOUNT_ENTRY_ID);
-						criteria.addEqualExpression(alias, accEntry.getId());
-						for (ITransferObject fto : accEntryFBatchBean.getList(criteria)) {
-							AccountEntryFinanceBatch accEntryFBatch = (AccountEntryFinanceBatch)fto;
-							FinanceBatch fBatch = accEntryFBatch.getFinanceBatch();
-					        if (getWriter().canRemoveAccountEntryFinanceBatch(fBatch)) {
-								getWriter().removeAccountEntryFinanceBatch(fBatch, false);
-					        } else {
-					            AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_UNRECORD_ERROR);
-					            throw new AbortProcessingException();
-					        }
-						}
-
-				        IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
-						IManagerBean accEntryTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
-						criteria = new Criteria();
-						alias = accEntryTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID);
-						criteria.addEqualExpression(alias, accEntry.getId());
-						for (ITransferObject fto : accEntryTrackingBean.getList(criteria)) {
-							AccountEntryFinanceTracking accEntryTracking = (AccountEntryFinanceTracking)fto;
-							FinanceTracking tracking = accEntryTracking.getFinanceTracking();
-							getWriter().removeAccountEntryFinanceTracking(tracking, false);
-
-							tracking.setDescription(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_PENDING));
-							tracking.setRecorded(false);
-					        trackingBean.update(tracking);
-						}
-					}
-
-					unrecordBankStatement(statement, true);
-				} else {
-					unrecordBankStatement(statement, false);
-				}
-			}
+			onUnrecordBankStatement(statement);
 		}
 
 		onSearch(null);
 		clearCheckedBankStatement();
+	}
+
+	public void onUnrecordBankStatement(ActionEvent event) throws ManagerBeanException {
+		BankStatement to = (BankStatement)getModel().getRowData();
+		onUnrecordBankStatement(to);
+	}
+
+	private void onUnrecordBankStatement(BankStatement statement) throws ManagerBeanException {
+		if (statement.isRecorded()) {
+			IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
+			if (statementLinkBean.getCount(criteria) > 0) {
+				IManagerBean accEntryStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
+				criteria = new Criteria();
+				String alias = accEntryStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID);
+				criteria.addEqualExpression(alias, statement.getId());
+				for (ITransferObject ito : accEntryStatementBean.getList(criteria)) {
+					AccountEntryBankStatement accEntryStatement = (AccountEntryBankStatement)ito;
+					AccountEntry accEntry = accEntryStatement.getAccountEntry();
+
+					IManagerBean accEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
+					criteria = new Criteria();
+					alias = accEntryFBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_ACCOUNT_ENTRY_ID);
+					criteria.addEqualExpression(alias, accEntry.getId());
+					for (ITransferObject fto : accEntryFBatchBean.getList(criteria)) {
+						AccountEntryFinanceBatch accEntryFBatch = (AccountEntryFinanceBatch)fto;
+						FinanceBatch fBatch = accEntryFBatch.getFinanceBatch();
+				        if (getWriter().canRemoveAccountEntryFinanceBatch(fBatch)) {
+							getWriter().removeAccountEntryFinanceBatch(fBatch, false);
+				        } else {
+				            AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_UNRECORD_ERROR);
+				            throw new AbortProcessingException();
+				        }
+					}
+
+			        IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
+					IManagerBean accEntryTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
+					criteria = new Criteria();
+					alias = accEntryTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID);
+					criteria.addEqualExpression(alias, accEntry.getId());
+					for (ITransferObject fto : accEntryTrackingBean.getList(criteria)) {
+						AccountEntryFinanceTracking accEntryTracking = (AccountEntryFinanceTracking)fto;
+						FinanceTracking tracking = accEntryTracking.getFinanceTracking();
+						getWriter().removeAccountEntryFinanceTracking(tracking, false);
+
+						tracking.setDescription(AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_PENDING));
+						tracking.setRecorded(false);
+				        trackingBean.update(tracking);
+					}
+				}
+
+				unrecordBankStatement(statement, true);
+			} else {
+				unrecordBankStatement(statement, false);
+			}
+		} else {
+			getErrors().put(statement.getId(), "La línea del Extracto no esta Contabilizada. No se puede Descontabilizar.");
+		}
 	}
 
 	public void unrecordBankStatement(BankStatement statement, boolean hasLinks) throws ManagerBeanException {

@@ -20,7 +20,7 @@
 					<ui:param name="skipSearchButton" value="false" />
 
 					<ui:define name="additionalToolbarContent">
-						<aon:commandButton id="removeStatement"
+						<aon:commandButton id="removeSelectedBankStatements"
 							value="#{bundle.aon_remove}"
 							title="#{financeBundle.finance_remove_selected}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
@@ -39,31 +39,31 @@
 							<f:setPropertyActionListener target="#{controller.showImportFileWindow}"
 								value="#{true}" />
 						</aon:commandButton>
-						<aon:commandButton id="checkLinks"
+						<aon:commandButton id="autoCheckSelectedBankStatements"
 							value="#{financeBundle.finance_bank_statement_check_auto}"
 							title="#{financeBundle.finance_bank_statement_check_auto}"
 							styleClass="aon-finding-toolbar-item aon-icon-attach-file"
 							rendered="#{!controller.new and controller.to == null}"
-							actionListener="#{controller.onCheckLinks}"
+							actionListener="#{controller.onAutoCheckSelected}"
 							reRender="#{dataTableId}"
 							onclick="Richfaces.showModalPanel('waitProccess')"
 							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						<c:if test="#{aonRole.accountingOperator}">
-							<aon:commandButton id="recordStatement"
+							<aon:commandButton id="recordSelectedBankStatements"
 								value="#{financeBundle.finance_record}"
 								title="#{financeBundle.finance_record_selected}"
 								styleClass="aon-finding-toolbar-item aon-icon-task-assume"
 								rendered="#{!controller.new and controller.to == null}"
-								actionListener="#{controller.onRecordStatement}"
+								actionListener="#{controller.onRecordSelected}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')"
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-							<aon:commandButton id="unrecordStatement"
+							<aon:commandButton id="unrecordSelectedBankStatements"
 								value="#{financeBundle.finance_unrecord}"
 								title="#{financeBundle.finance_unrecord_selected}"
 								styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
 								rendered="#{!controller.new and controller.to == null}"
-								actionListener="#{controller.onUnrecordStatement}"
+								actionListener="#{controller.onUnrecordSelected}"
 								reRender="#{dataTableId}"
 								onclick="Richfaces.showModalPanel('waitProccess')" 
 					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
@@ -532,21 +532,33 @@
 												<f:setPropertyActionListener target="#{controller.showLinkWindow}"
 													value="#{true}" />
 											</aon:commandButton>
-											<aon:commandButton id="showLink"
+											<aon:commandButton id="showBankStatementLink"
 												value="&#160;" styleClass="aon-icon-tree-root aon-noborder"
 												title="#{financeBundle.finance_tobreakdown}"
 												rendered="#{(to.checked and !to.showBankStatementLink) or (to.recorded and !to.showAccountEntry)}" 
 												actionListener="#{controller.onShowBankStatementLink}"
 												reRender="#{dataTableId}" />
-											<aon:commandButton id="hideLink"
+											<aon:commandButton id="hideBankStatementLink"
 												value="&#160;" styleClass="aon-icon-index aon-noborder"
 												title="#{financeBundle.finance_hide}"
 												rendered="#{(to.checked and to.showBankStatementLink) or (to.recorded and to.showAccountEntry)}" 
 												actionListener="#{controller.onHideBankStatementLink}"
 												reRender="#{dataTableId}" />
+											<aon:commandButton id="recordCurrentBankStatement"
+												value="&#160;" styleClass="aon-icon-task-assume aon-noborder"
+												title="#{financeBundle.finance_record}"
+												rendered="#{to.checked}" 
+												actionListener="#{controller.onRecordBankStatement}"
+												reRender="#{dataTableId}" />
+											<aon:commandButton id="unrecordCurrentBankStatement"
+												value="&#160;" styleClass="aon-icon-task-liberate aon-noborder"
+												title="#{financeBundle.finance_unrecord}"
+												rendered="#{to.recorded}" 
+												actionListener="#{controller.onUnrecordBankStatement}"
+												reRender="#{dataTableId}" />
 											<aon:div style="display:inline; cursor:pointer;" rendered="#{!empty to.comments}">
 												<aon:outputText value="&#160;" styleClass="aon-icon-comment-red" 
-													style="padding-left:30px" />
+													style="padding-left:10px" />
 												<rich:toolTip direction="bottom-left">
 													<aon:outputText value="#{to.comments}" />
 												</rich:toolTip>
