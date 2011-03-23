@@ -91,6 +91,11 @@
 				</aon:column>
 			</c:if>
 		</ui:define>
+		<ui:define name="additionalDataTableContent" >
+			<aon:div styleClass="aon-margin-top" >
+				<aon:outputText value="#{documentManager.freeSpaceMessage}" />
+			</aon:div>				
+		</ui:define>
 	</ui:decorate>
 
 </ui:composition>

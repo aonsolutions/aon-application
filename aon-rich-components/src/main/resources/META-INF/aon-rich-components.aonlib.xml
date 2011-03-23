@@ -220,6 +220,7 @@
 
 	<component localName="fileUpload">
     	<attribute name="listHeight" value="0px" />
+    	<attribute name="onsizerejected" value="alert('#{bundle.aon_document_max_size_error}');" />
     	<attribute name="immediateUpload" value="true" type="1" />    	
     	<attribute name="autoclear" value="true" type="1" />
 	</component>

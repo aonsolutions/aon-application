@@ -231,10 +231,15 @@
 	</context-param>
  -->
  
+	<!-- RichFaces Filter -->
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
 		<filter-class>org.ajax4jsf.Filter</filter-class>
+        <init-param>
+            <param-name>maxRequestSize</param-name>
+            <param-value>16777216</param-value>
+        </init-param>				
 	</filter>
 
 	<filter-mapping>
@@ -245,7 +250,7 @@
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
 
-        <!-- Sessions Filter -->
+	<!-- Sessions Filter -->
 	<filter>
 		<description>Enables and Registers session for concurrent sessions</description>
 	   <filter-name>SessionFilter</filter-name>

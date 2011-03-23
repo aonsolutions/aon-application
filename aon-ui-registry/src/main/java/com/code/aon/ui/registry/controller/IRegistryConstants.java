@@ -41,4 +41,6 @@ public interface IRegistryConstants {
 	
 	String PERSON_CONTROLLER_NAME = "person";
 	
+	String DOCUMENT_MANAGER_CONTROLLER_NAME = "documentManager";
+	
 }

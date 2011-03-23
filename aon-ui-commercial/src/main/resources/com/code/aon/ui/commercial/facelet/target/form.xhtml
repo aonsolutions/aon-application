@@ -131,7 +131,7 @@
  							</aon:panelTab>
 						</c:if>
 						
-						<c:if test="#{company.documentManagement}">
+						<c:if test="#{documentManager.show}">
 							<aon:panelTab id="documentManagement"
 								label="#{bundle.aon_documents}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">

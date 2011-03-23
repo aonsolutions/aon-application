@@ -841,10 +841,6 @@
 			<value>#{registryCollections.registryAttachmentTypes[5].value}</value>
 		</managed-property>
 		<managed-property>
-			<property-name>maximumSize</property-name>
-			<value>1048576</value>
-		</managed-property>
-		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
 		</managed-property>

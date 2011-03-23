@@ -113,6 +113,8 @@
 				</f:facet>
 			</aon:column>
 		</aon:editDataTable>
+		
+		<ui:insert name="additionalDataTableContent"/>
 
 		<c:if test="#{showDataScroller}">
 			<aon:dataScroller2 for="#{dataTableId}" showNote="#{showNote}" />

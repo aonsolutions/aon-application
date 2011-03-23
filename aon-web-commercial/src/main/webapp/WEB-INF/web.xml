@@ -176,15 +176,18 @@
 		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>*.jspx</url-pattern>
 	</servlet-mapping>
+	
+	<!-- RichFaces Filter -->
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
 		<filter-class>org.ajax4jsf.Filter</filter-class>
-		<init-param>
-			<param-name>forceparser</param-name>
-			<param-value>false</param-value>
-		</init-param>
+        <init-param>
+            <param-name>maxRequestSize</param-name>
+            <param-value>16777216</param-value>
+        </init-param>				
 	</filter>
+
 	<filter-mapping>
 		<filter-name>richfaces</filter-name>
 		<servlet-name>Faces Servlet</servlet-name>
@@ -192,6 +195,7 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>INCLUDE</dispatcher>
 	</filter-mapping>
+	
 	<!-- Resource Servlet -->
 	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>

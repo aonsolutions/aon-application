@@ -27,6 +27,9 @@ public interface ICommonConstants {
 	/** The document max size error. */
 	String DOCUMENT_MAX_SIZE_ERROR = "aon_document_max_size_error";	
 	
+	/** The document size message. */
+	String DOCUMENT_SIZE_MESSAGE = "aon_document_size_message";	
+	
 	/** The hide header links. */
 	String HIDE_HEADER_LINKS = "hideHeaderLinks";
 

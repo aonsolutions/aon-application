@@ -109,7 +109,6 @@
 	</context-param>
 
 	<!-- JSF-FACELETS CONFIGURATION -->
-
 	<context-param>
 		<description>
 			When a page is requested, what interval in seconds should 
@@ -121,7 +120,6 @@
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
-
 	<context-param>
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
@@ -196,10 +194,15 @@
 		<param-value>../aon-desktop/richFaces3.3.3.Final/</param-value>
 	</context-param>
 
+	<!-- RichFaces Filter -->
 	<filter>
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
 		<filter-class>org.ajax4jsf.Filter</filter-class>
+        <init-param>
+            <param-name>maxRequestSize</param-name>
+            <param-value>16777216</param-value>
+        </init-param>				
 	</filter>
 
 	<filter-mapping>

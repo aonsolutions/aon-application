@@ -96,8 +96,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean printRecordData;
 	
 	private boolean smartCard;
-	
-	private boolean documentManagement;
 
     /**
      * Gets the company label.
@@ -585,14 +583,6 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.smartCard = smartCard;
 	}
 
-	public boolean isDocumentManagement() {
-		return documentManagement;
-	}
-
-	public void setDocumentManagement(boolean documentManagement) {
-		this.documentManagement = documentManagement;
-	}
-
 	/**
 	 * Gets the child bean.
 	 * 
@@ -644,18 +634,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	public boolean obtainSmartCard() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(SMART_CARD_PARAM);
 		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
-	}
-
-	public boolean obtainDocumentManagement() throws ManagerBeanException {
-    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
-    	String domain = resolver.getDomain();
-		Name domainDN = NameResolver.getDomainDN(domain);
-		BasicLdap ldap = new BasicLdap();
-		Entry entry = ldap.get(domainDN, DOMAIN, DOCUMENT_MANAGEMENT_ATTRIBUTE);
-		if ( (entry != null) && entry.containsKey(DOCUMENT_MANAGEMENT_ATTRIBUTE) ) {
-			return entry.toBoolean(DOCUMENT_MANAGEMENT_ATTRIBUTE);
-		}
-		return false;
 	}
 	
 	@SuppressWarnings("unchecked")
