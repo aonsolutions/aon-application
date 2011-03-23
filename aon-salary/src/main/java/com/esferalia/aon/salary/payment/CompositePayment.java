@@ -13,8 +13,9 @@ public class CompositePayment implements IPayment {
 	
 	List<IPayment> payments;
 
+	String name;
 	String description;
-	String function;
+	String expression;
 	PaymentType type;
 	
 	protected List<IPayment> getPayments() {
@@ -35,7 +36,8 @@ public class CompositePayment implements IPayment {
 		if (getPayments().size() == 0) {
 			setDescription(p.getDescription());
 			setType(p.getType());
-			setFunction(p.getExpression());
+			setExpression(p.getExpression());
+			setName(p.getName());
 		}
 		boolean ok = true;
 		// En principio solo se permite la inclusión en un composite de payments del mismo tipo,
@@ -67,8 +69,13 @@ public class CompositePayment implements IPayment {
 	}
 
 	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
 	public String getExpression() {
-		return function;
+		return expression;
 	}
 
 	@Override
@@ -79,8 +86,11 @@ public class CompositePayment implements IPayment {
 	protected void setDescription(String description) {
 		this.description = description;
 	}
-	protected void setFunction(String function) {
-		this.function = function;
+	protected void setName(String name) {
+		this.name = name;
+	}
+	protected void setExpression(String expression) {
+		this.expression = expression;
 	}
 	protected void setType(PaymentType type) {
 		this.type = type;

@@ -92,4 +92,13 @@ public interface ISalaryBuilder {
 	public void addPayment(PaymentType type, String concept, Double amount, String description , String expression);
 	
 	public void addDeduction(DeductionType type, String concept, Double amount, String description , String expression);
+	
+	
+	// ------------------------------------------------------------------------
+	// Listener  
+	
+	public void setListener(ISalaryBuilderListener listener);
+	
+	
+	
 }

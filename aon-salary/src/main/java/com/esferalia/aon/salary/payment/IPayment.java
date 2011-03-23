@@ -5,11 +5,9 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 public interface IPayment {
 		
 	public PaymentType getType();
-	
 	public String getDescription();
-	
+	public String getName();
 	public String getExpression();
-	
 	public double getAmount();
 	
 

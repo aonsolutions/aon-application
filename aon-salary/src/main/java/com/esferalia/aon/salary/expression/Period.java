@@ -1,9 +1,12 @@
 package com.esferalia.aon.salary.expression;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.lang.time.DateUtils;
 
 public class Period implements Comparable<Period>{
 
@@ -29,13 +32,15 @@ public class Period implements Comparable<Period>{
      * @throws IllegalArgumentException cuando start >= end
      */
 	public Period(Date start, Date end ) {
-	   	if (compare(start, end) > 0) {
+		Date a = DateUtils.truncate(start, Calendar.DAY_OF_MONTH);
+		Date b = DateUtils.truncate(end, Calendar.DAY_OF_MONTH);
+	   	if (compare(a, b) > 0) {
     		throw new IllegalArgumentException(
     			"start : " + start + " must be <= than end : " + end
     		);
 	   	}
-		this.start = start;
-		this.end = end;
+		this.start = start; // a
+		this.end = end;     // b
 	}
 	
 	public Date getStart() {
