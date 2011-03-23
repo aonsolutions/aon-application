@@ -6,7 +6,7 @@
 	</bean>
 
 	<bean class="com.code.aon.campaign.CampaignDossier" sqlName="campaign_dossier">
-		<alias names="id,campaign_id,dossier_id,dossier_number,customer_document,customer_name,customer_surname" />
-		<hibernate names="id,campaign.id,dossier.id,dossier.number,dossier.customer.registry.document,dossier.customer.registry.name,dossier.customer.registry.surname" />
+		<alias names="id,campaign_id,dossier_id,dossier_number,customer_document,customer_name" />
+		<hibernate names="id,campaign.id,dossier.id,dossier.number,dossier.customer.registry.document,dossier.customer.registry.name" />
 	</bean>
 </dao>

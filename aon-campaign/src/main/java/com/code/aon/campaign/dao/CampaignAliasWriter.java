@@ -16,17 +16,17 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 public class CampaignAliasWriter {
 
 	public static void main(String[] args) throws IOException {
-
-		File file = new File("/AON-PROJECT/aon-campaign/src/main/java/com/code/aon/campaign/dao/ICampaignAlias.java");
-		String[] classes = new String[7]; 
-		classes[0] = ActivityProcess.class.getName();
-		classes[1] = Campaign.class.getName();
-		classes[2] = CampaignDossier.class.getName();
-		classes[3] = Process.class.getName();
-		classes[4] = ProcessDetail.class.getName();
-		classes[5] = ProcessDetailTransition.class.getName();
-		classes[6] = ProcessTransitionType.class.getName();
-		HibernateUtil.getSessionFactory(null);
+		File file = new File("/AON-TRUNK/aon-campaign/src/main/java/com/code/aon/campaign/dao/ICampaignAlias.java");
+		String[] classes = new String[] { 
+			ActivityProcess.class.getName(),
+			Campaign.class.getName(),
+			CampaignDossier.class.getName(),
+			Process.class.getName(),
+			ProcessDetail.class.getName(),
+			ProcessDetailTransition.class.getName(),
+			ProcessTransitionType.class.getName()
+		};
+		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.campaign.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

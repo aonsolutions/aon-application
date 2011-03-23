@@ -186,12 +186,6 @@ public interface ICampaignAlias {
 	*/
 	String  CAMPAIGN_DOSSIER_CUSTOMER_NAME = CAMPAIGN_DOSSIER_ENTRY.getAliasNames()[5];
 
-	/** 
-	* Alias value: CampaignDossier_customer_surname
-	* Hibernate value: CampaignDossier.dossier.customer.registry.surname
-	*/
-	String  CAMPAIGN_DOSSIER_CUSTOMER_SURNAME = CAMPAIGN_DOSSIER_ENTRY.getAliasNames()[6];
-
 
 
 	/** 

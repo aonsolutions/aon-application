@@ -65,16 +65,10 @@ public interface IProjectAlias {
 	String  ACTIVITY_CUSTOMER_NAME = ACTIVITY_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: Activity_customer_surname
-	* Hibernate value: Activity.dossier.customer.registry.surname
-	*/
-	String  ACTIVITY_CUSTOMER_SURNAME = ACTIVITY_ENTRY.getAliasNames()[7];
-
-	/** 
 	* Alias value: Activity_dossier_status
 	* Hibernate value: Activity.dossier.status
 	*/
-	String  ACTIVITY_DOSSIER_STATUS = ACTIVITY_ENTRY.getAliasNames()[8];
+	String  ACTIVITY_DOSSIER_STATUS = ACTIVITY_ENTRY.getAliasNames()[7];
 
 
 
@@ -151,40 +145,34 @@ public interface IProjectAlias {
 	String  DAILY_TRACKING_CUSTOMER_REGISTRY_NAME = DAILY_TRACKING_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: DailyTracking_customer_registry_surname
-	* Hibernate value: DailyTracking.customer.registry.surname
-	*/
-	String  DAILY_TRACKING_CUSTOMER_REGISTRY_SURNAME = DAILY_TRACKING_ENTRY.getAliasNames()[7];
-
-	/** 
 	* Alias value: DailyTracking_customer_status
 	* Hibernate value: DailyTracking.customer.status
 	*/
-	String  DAILY_TRACKING_CUSTOMER_STATUS = DAILY_TRACKING_ENTRY.getAliasNames()[8];
+	String  DAILY_TRACKING_CUSTOMER_STATUS = DAILY_TRACKING_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: DailyTracking_dossier_id
 	* Hibernate value: DailyTracking.dossier.id
 	*/
-	String  DAILY_TRACKING_DOSSIER_ID = DAILY_TRACKING_ENTRY.getAliasNames()[9];
+	String  DAILY_TRACKING_DOSSIER_ID = DAILY_TRACKING_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: DailyTracking_dossier_number
 	* Hibernate value: DailyTracking.dossier.number
 	*/
-	String  DAILY_TRACKING_DOSSIER_NUMBER = DAILY_TRACKING_ENTRY.getAliasNames()[10];
+	String  DAILY_TRACKING_DOSSIER_NUMBER = DAILY_TRACKING_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: DailyTracking_activity_id
 	* Hibernate value: DailyTracking.activity.id
 	*/
-	String  DAILY_TRACKING_ACTIVITY_ID = DAILY_TRACKING_ENTRY.getAliasNames()[11];
+	String  DAILY_TRACKING_ACTIVITY_ID = DAILY_TRACKING_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: DailyTracking_comments
 	* Hibernate value: DailyTracking.comments
 	*/
-	String  DAILY_TRACKING_COMMENTS = DAILY_TRACKING_ENTRY.getAliasNames()[12];
+	String  DAILY_TRACKING_COMMENTS = DAILY_TRACKING_ENTRY.getAliasNames()[11];
 
 
 
