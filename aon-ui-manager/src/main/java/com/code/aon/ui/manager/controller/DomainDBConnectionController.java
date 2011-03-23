@@ -31,8 +31,6 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	
 	private final static String DB_NAME_PREFFIX = "aon-";
 	
-	private List<SelectItem> dataSources;
-	
 	private boolean createDB;
 	
 	private Converter converter;
@@ -46,13 +44,12 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		String domain = NameResolver.getValue(parent, 0);
 		Name baseDN = NameResolver.getDomainBDsDN(domain);
 		getLdapDAO().setBaseDN(baseDN);
-		updateDataSources();
 	}	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<DBConnnection> getDBConnnections() throws ManagerBeanException {
 		DBConnnection dbc = getManager().getCurrentDBConnection();
-		List<DBConnnection> dbcs = (List) getModel().getWrappedData();
+		List<DBConnnection> dbcs = (List) getManagerBean().getList(null);
 		if ( (dbc != null) && (dbcs.size() > 1) ) {
 			List<DBConnnection> list = new LinkedList<DBConnnection>();
 			for( DBConnnection connection : dbcs ) {
@@ -67,20 +64,16 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	}	
 	
 	public List<SelectItem> getDataSources() {
-		return this.dataSources;
-	}
-
-	public void updateDataSources() {
-		this.dataSources = new LinkedList<SelectItem>();
+		List<SelectItem> list = new LinkedList<SelectItem>();
 		try {
-			initializeModel();
 			for (DBConnnection dbc : getDBConnnections()) {
 				SelectItem item = new SelectItem(dbc, dbc.getCommonName() );
-				this.dataSources.add(item);
+				list.add(item);
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}
+		return list;
 	}	
 	
 	public DBConnnection getMasterConnection() throws ManagerBeanException {

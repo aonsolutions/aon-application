@@ -35,8 +35,7 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-		getManager().resetTermsOfServiceAccepted();
-		updateDataSources();		
+		getManager().resetTermsOfServiceAccepted();	
 	}
 
 	@Override
@@ -55,7 +54,6 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 			throws ControllerListenerException {
 		DomainApplicationController dac = (DomainApplicationController) event.getController();
 		updateApplication(dac);
-		updateDataSources();
 	}
 	
 	@Override
@@ -79,11 +77,6 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 		pc.updateBaseDN(application.getId());
 		pc.onSearch(null);
 		updateDBConnection(dac);
-	}
-	
-	private void updateDataSources() {
-		DomainDBConnectionController ddbcc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
-		ddbcc.updateDataSources();		
 	}
 	
 	private void setDBConnection( DomainApplicationController dac, DomainApplication application ) throws ControllerListenerException {
