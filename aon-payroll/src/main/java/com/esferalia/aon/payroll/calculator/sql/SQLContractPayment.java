@@ -112,6 +112,11 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 				PaymentConceptColumns.QUOTE_EXPRESSION);
 	}
 
+	@Override
+	public boolean isDescriptionDecorable() {
+		Integer i = getInt(ContractPaymentColumns.DESCRIPTION_DECORABLE,PaymentConceptColumns.DESCRIPTION_DECORABLE); 
+		return (i==1); 
+	}
 
 	public Integer getInt(String paymentColumn, String conceptColumn ) {
 		return super.getInt(paymentColumn, SQLConstants.PAYMENT_CONCEPT + "." + conceptColumn );

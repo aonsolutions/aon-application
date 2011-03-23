@@ -38,6 +38,7 @@ public class SQLCollections {
 			contractPayment.quoteExpression = sqlContractPayment.getQuoteExpression();
 			contractPayment.description = sqlContractPayment.getDescription();
 			contractPayment.salaryType = sqlContractPayment.getSalaryType();
+			contractPayment.descriptionDecorable = sqlContractPayment.isDescriptionDecorable();
 			
 			contractPaymentList.add(contractPayment);
 		}
@@ -81,6 +82,7 @@ public class SQLCollections {
 		private Date endDate;
 		private Month month;
 		private boolean readOnly;
+		private boolean descriptionDecorable;
 		private Double amount;
 		private ExpressionScope expressionScope;
 		private SalaryType salaryType;
@@ -149,6 +151,11 @@ public class SQLCollections {
 		@Override
 		public SalaryType getSalaryType() {
 			return salaryType;
+		}
+		
+		@Override
+		public boolean isDescriptionDecorable() {
+			return descriptionDecorable;
 		}
 	}
 	

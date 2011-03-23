@@ -6,11 +6,15 @@ import java.sql.SQLException;
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.payroll.sql.SQLWriter;
 import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.ISalaryBuilderListener;
 
 public class SQLSalaryBuilder extends  AbstractSQLSalaryBuilder {
 
 	
+	private ISalaryBuilderListener listener;
 	private SQLWriter sqlWriter;
+	private int insertedSalaries;
+	private static final String FORMAT = "[%s]: %s - %s";
 	
 	public SQLSalaryBuilder(Connection connection) 
 	throws SQLException
@@ -23,6 +27,14 @@ public class SQLSalaryBuilder extends  AbstractSQLSalaryBuilder {
 	public ISalary getSalary() {
 		try {
 			insertSalary();
+			if (listener.isDebugEnabled()) {
+				String msg = String.format(FORMAT, 
+						salary.getEmployeeDocument(),
+						salary.getEnterpriseName(),
+						salary.getEmployeeName());
+				listener.onDebug(msg);
+			}
+			++insertedSalaries;
 		} catch (SQLException e) {
 		}
 		return null;
@@ -54,6 +66,16 @@ public class SQLSalaryBuilder extends  AbstractSQLSalaryBuilder {
 		}
 	}
 
-	
+	@Override
+	public void setListener(ISalaryBuilderListener listener) {
+		this.listener = listener;		
+	}
+	public ISalaryBuilderListener getListener() {
+		return listener;
+	}
+
+	public int getInsertedSalaries() {
+		return insertedSalaries;
+	}
 
 }

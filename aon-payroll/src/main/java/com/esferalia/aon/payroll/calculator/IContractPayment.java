@@ -20,5 +20,6 @@ public interface IContractPayment extends IPayment, IExpression {
 	
 	public SalaryType getSalaryType();
 	
+	public boolean isDescriptionDecorable();
 
 }

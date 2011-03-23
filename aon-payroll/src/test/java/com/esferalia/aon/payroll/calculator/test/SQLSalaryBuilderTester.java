@@ -17,6 +17,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
+import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -289,6 +290,11 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 
 	private void addField(String field, Object value) {
 		this.fields.put(field, value);
+	}
+
+	@Override
+	public void setListener(ISalaryBuilderListener listener) {
+		throw new UnsupportedOperationException("No implementado!");
 	}
 
 	

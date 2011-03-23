@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
+import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -12,6 +13,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 
 	
 	private Salary salary;
+	private ISalaryBuilderListener listener;
 	
 	@Override
 	public ISalary getSalary() {
@@ -227,6 +229,14 @@ public class SalaryBuilder implements ISalaryBuilder {
 		
 		this.salary.getSalaryDeductions().add(deduction);
 		
+	}
+
+	@Override
+	public void setListener(ISalaryBuilderListener listener) {
+		this.listener = listener;
+	}
+	public ISalaryBuilderListener getListener( ) {
+		return listener;
 	}
 
 	
