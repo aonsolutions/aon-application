@@ -49,9 +49,9 @@
 	<supplier:config version="1.0" xmlns:supplier="http://www.esferalia.com/supplier">
 		<supplier:supplier
 			showFinanceData="true" 
+			showTaxInfoData="true"
 			showAccount="true"
 			showSegment="true"
-			showTaxInfoData="true"
 			showAddInfo="true"
 		/>
 	</supplier:config>
