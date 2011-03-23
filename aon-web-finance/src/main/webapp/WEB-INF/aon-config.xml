@@ -77,7 +77,7 @@
 		<product:product
 			showBarcode="false"
 			showType="true"
-			showBrand="true"
+			showBrand="false"
 			showStock="false"
 			showAlternatives="false"
 			showSuppliers="false"
