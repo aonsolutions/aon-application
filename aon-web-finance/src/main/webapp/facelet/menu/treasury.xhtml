@@ -19,11 +19,11 @@
 
 					<aon:panelGroup>
 
-						<aon:panelGrid id="group_treasury_treasury"
+						<aon:panelGrid id="group_treasury_charge"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-treasury aon-direct-access-panel">
+							headerClass="aon-icon-charge aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{financeBundle.finance_menu_group}" />
+								<aon:outputText value="#{financeBundle.finance_charge_menu}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -33,10 +33,32 @@
 										value="#{financeBundle.finance_charge_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="fbatchCharge" 
+										action="fbatch_search-Charge"
+										actionListener="#{fbatch.onEditSearchCharge}"
+										value="#{financeBundle.finance_fbatch_charge_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:panelGrid id="group_treasury_payment"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-payment aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_payment_menu}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="financePayment-treasury"
 										action="finance_search-Payment"
 										actionListener="#{finance.onEditSearchPayment}"
 										value="#{financeBundle.finance_payment_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="fbatchPayment" 
+										action="fbatch_search-Payment"
+										actionListener="#{fbatch.onEditSearchPayment}"
+										value="#{financeBundle.finance_fbatch_payment_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
@@ -63,6 +85,10 @@
 							</aon:div>
 						</aon:panelGrid>
 
+					</aon:panelGroup>
+
+					<aon:panelGroup>
+
 						<aon:panelGrid id="group_treasury_forecast"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-forecast aon-direct-access-panel">
@@ -86,10 +112,6 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
-
-					</aon:panelGroup>
-
-					<aon:panelGroup>
 
 						<c:if test="#{aonRole.config}">
 							<aon:panelGrid id="group_treasury_auxiliar"
