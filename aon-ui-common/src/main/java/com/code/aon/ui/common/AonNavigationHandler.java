@@ -41,8 +41,8 @@ public class AonNavigationHandler extends NavigationHandler {
 	public void handleNavigation(FacesContext fc, String fromAction, String outcome) {
 		if (! StringUtils.isEmpty(outcome) ) {
 			process(fc, fromAction, outcome);
+			AonUtil.getConfigurationController().setCurrentAction(outcome);			
 			outcome = strip(outcome);
-			AonUtil.getConfigurationController().setCurrentAction(outcome);
 		}
 		if (! StringUtils.isEmpty(fromAction) ) {
 			fromAction = strip(fromAction);
