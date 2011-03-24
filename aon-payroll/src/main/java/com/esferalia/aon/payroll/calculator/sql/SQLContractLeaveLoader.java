@@ -36,7 +36,7 @@ public class SQLContractLeaveLoader  {
 		public Long getDays(long parentDays, long leaveDays) {
 			long rangeEnd = end != null ? Math.min(parentDays + leaveDays, end ) :
 				parentDays + leaveDays;
-			long rangeStart =	Math.max(start, parentDays );
+			long rangeStart =	Math.max(start, parentDays + 1);
 			
 			return rangeEnd > rangeStart ? ( rangeEnd - rangeStart ) + 1 : 0 ;
 		}

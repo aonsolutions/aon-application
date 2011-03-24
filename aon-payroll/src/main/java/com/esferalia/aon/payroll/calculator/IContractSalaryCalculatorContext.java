@@ -23,6 +23,8 @@ public interface IContractSalaryCalculatorContext extends ISalaryCalculatorConte
 	
 	public String getCategory();
 
+	public String getQuoteGroup();
+
 	public String getEmployeeName();
 	
 	public String getEmployeeDocument();

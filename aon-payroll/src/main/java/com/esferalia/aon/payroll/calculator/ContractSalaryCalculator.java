@@ -77,6 +77,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		salaryBuilder.setRegistration(ctx.getRegistration()); 
 		salaryBuilder.setSocialSecurityNumber(ctx.getSocialSecurityNumber());
 		salaryBuilder.setCategory(ctx.getCategory()); 
+		salaryBuilder.setQuoteGroup(ctx.getQuoteGroup()); 
 		salaryBuilder.setSeniorityDate(ctx.getSeniorityDate());
 	}
 

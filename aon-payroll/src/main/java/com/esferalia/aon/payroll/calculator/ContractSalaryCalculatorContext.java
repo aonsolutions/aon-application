@@ -97,7 +97,12 @@ public class ContractSalaryCalculatorContext implements IContractSalaryCalculato
 	public String getCategory() {
 		return ctx.getCategory();
 	}
-
+	
+	@Override
+	public String getQuoteGroup() {
+		return ctx.getQuoteGroup();
+	}
+	
 	@Override
 	public String getEmployeeName() {
 		return ctx.getEmployeeName();

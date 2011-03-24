@@ -25,6 +25,7 @@ import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.LRUCache;
+import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
@@ -337,9 +338,15 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public String getCategory() {
-		return null;
+		return contractExpressionContext.getVariable(ContractVariables.CATEGORY, startDate, endDate, String.class);
 	}
 
+	@Override
+	public String getQuoteGroup() {
+		return contractExpressionContext.getVariable(ContractVariables.QUOTE_GROUP, startDate, endDate, String.class);
+	}
+	
+	
 	@Override
 	public String getEmployeeName() {
 		String name = getString(SQLConstants.PERSON , PersonColumns.NAME);
