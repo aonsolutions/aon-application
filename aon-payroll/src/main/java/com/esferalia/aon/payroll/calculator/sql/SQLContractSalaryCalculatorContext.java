@@ -304,7 +304,7 @@ public class SQLContractSalaryCalculatorContext implements
 		// TODO Añadir la tabla y columnas a las constantes.
 		String streetType = getString("raddress","street_type");
 		String address = getString("raddress","address");
-		Integer number = getInt("raddress","number");
+		String number = getString("raddress","number");
 		String address2 = getString("raddress","address2");
 		String address3 = getString("raddress","address3");
 		
@@ -313,8 +313,8 @@ public class SQLContractSalaryCalculatorContext implements
     	buf.append(streetType==null?EMPTY:DOT);
     	buf.append(streetType==null?EMPTY:SPACE);
     	buf.append(StringUtils.isEmpty(address)?EMPTY:address);
-    	buf.append(number==null?EMPTY:SPACE);
-    	buf.append(number==null?EMPTY:number);
+    	buf.append(StringUtils.isEmpty(number)?EMPTY:SPACE);
+    	buf.append(StringUtils.isEmpty(number)?EMPTY:number);
     	buf.append(StringUtils.isEmpty(address2)?EMPTY:COMMA);
     	buf.append(StringUtils.isEmpty(address2)?EMPTY:SPACE);
     	buf.append(StringUtils.isEmpty(address2)?EMPTY:address2);
