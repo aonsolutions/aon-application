@@ -10,9 +10,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.calendar.enumeration.DayType;
+import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.sql.SQLConstants.CalendarColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.CalendarHolidayColumns;
+import com.mysql.jdbc.exceptions.DeadlockTimeoutRollbackMarker;
 
 public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 	
@@ -25,10 +27,20 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 		
 		private DayType week [] = new DayType [7];
 		
+		private DefaultCalendar parent = null;
+		
 		@Override
 		public DayType getDayType(Calendar day) {
 			DayType type = days.get(day.getTime()) ;
-			return type != null ? type : week[day.get(Calendar.DAY_OF_WEEK)-1];
+			if (  type != null )
+				return type;
+			
+			if ( parent != null ){
+				type = parent.days.get(day.getTime()); 
+				if ( type != null )
+					return type ;
+			}
+			return week[day.get(Calendar.DAY_OF_WEEK)-1];
 		}
 		
 		protected void add ( Date day, DayType type ) {
@@ -56,6 +68,7 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 	
 	private PreparedStatement calendarStmt;
 	private PreparedStatement holidayStmt;
+	private LRUCache<Integer, ICalendar> cache;
 	
 	
 	public SQLCalendarFactory(Connection connection, Date startDate, Date endDate) 
@@ -74,13 +87,17 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 			new DefaultCalendar();
 		
 		try {
-			loadCalendar(calendarId, calendar);
 			loadHolidays( calendarId, calendar);
+			loadCalendar(calendarId, calendar);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 		
 		return calendar;
+	}
+
+	public void setCache(LRUCache<Integer, ICalendar> cache) {
+		this.cache = cache;
 	}
 	
 	// ------------------------------------------
@@ -88,11 +105,13 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 	
 	private void loadCalendar(Integer calendarId, DefaultCalendar calendar ) 
 		throws SQLException {
+		Integer parent = null;
 		ResultSet rs = null;
 		try  {
 			calendarStmt.setInt(1, calendarId );
 			rs = calendarStmt.executeQuery();
 			while ( rs.next() ) {
+				parent = ( Integer ) rs.getObject(CalendarColumns.CALENDAR);
 				calendar.set(Calendar.MONDAY, int2DayType(rs.getInt(CalendarColumns.MONDAY)) );
 				calendar.set(Calendar.TUESDAY, int2DayType(rs.getInt(CalendarColumns.TUESDAY)) );
 				calendar.set(Calendar.WEDNESDAY, int2DayType(rs.getInt(CalendarColumns.WEDNESDAY)) );
@@ -106,6 +125,7 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 			if ( rs != null )
 				rs.close();
 		}
+		calendar.parent = ( DefaultCalendar ) cache.get(parent);
 	}
 
 	private void loadHolidays( Integer calendarId, DefaultCalendar calendar ) 
@@ -144,5 +164,7 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 	private static DayType int2DayType(int ordinal ) {
 		return DayType.values()[ordinal];
 	}
+
+
 
 }

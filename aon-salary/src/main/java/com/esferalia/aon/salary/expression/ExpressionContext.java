@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.print.attribute.HashAttributeSet;
+
 import org.hibernate.dialect.function.VarArgsSQLFunction;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
@@ -114,5 +116,9 @@ public class ExpressionContext {
 	//
 	// ------------------------------------------
 	
-	
+	public static void main(String[] args) {
+		Map<String, Object> vars = new HashMap<String, Object>();
+		vars.put("DIAS_ENFERMEDAD_COMUN_1_3}", 100);
+		System.out.println ( MVEL.eval("DIAS_ENFERMEDAD_COMUN_1..3  * 0.60", vars));
+	}
 }

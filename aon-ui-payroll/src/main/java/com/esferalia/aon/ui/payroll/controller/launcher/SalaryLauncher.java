@@ -170,10 +170,10 @@ public class SalaryLauncher {
 							endDate,
 							Calendar.getInstance().getTime(),
 							criteria );
+				salaryBuilder.begin();
 				while ( sqlCtx.next() ) {
 					try {
 						calculator.calculate(sqlCtx);
-						salaryBuilder.insertSalary();
 					} catch (UnExpectedValue e) {
 						msg = MessageFormat.format(LOG_FORMAT,
 								new Object[]{

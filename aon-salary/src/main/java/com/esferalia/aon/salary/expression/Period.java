@@ -51,6 +51,11 @@ public class Period implements Comparable<Period>{
 		return end;
 	}
 	
+	public boolean contains(Date date) {
+		return compare(this.start, date ) <= 0 &&  
+			compare(this.end, date ) >= 0 ;
+	}
+
 	public boolean contains(Period p) {
 		return compare(this.start, p.start ) <= 0 &&  
 			compare(this.end, p.end ) >= 0 ;

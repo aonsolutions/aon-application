@@ -115,9 +115,17 @@ public class SQLContractSalaryCalculatorContext implements
 		+ "AND start_date <= ? "
 		+" AND ( end_date IS NULL "
 		+" OR end_date >= ? )";
-
+	
+	public static final String CLEAVE_SQL_PARENT_DAYS = "dias";
+	
 	private static final String CLEAVE_SQL =
-		"SELECT * "
+		"SELECT * ,"
+		+"( SELECT sum(DATEDIFF(end_date,start_date))"
+		+" FROM contract_leave AS parent"
+		+" WHERE ( parent.id=contract_leave.parent"+
+		"  OR parent=contract_leave.parent )"+
+		" AND parent.start_date < contract_leave.start_date )"+
+		" AS " + CLEAVE_SQL_PARENT_DAYS
 		+" FROM contract_leave"
 		+" WHERE contract = ? " 
 		+ "AND start_date <= ? "
@@ -183,6 +191,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private SQLContractPayment 								sqlContractPayment;  
 	private SQLContractDeduction 							sqlContractDeduction;  
 	private ExpressionContext 								contractExpressionContext;
+	private SQLContractLeaveLoader 							leaveLoader;
 	
 	private Collection<IContractDeduction> 					systemDeductions;
 	private Collection<IContractPayment> 					systemPayments;
@@ -226,6 +235,7 @@ public class SQLContractSalaryCalculatorContext implements
 			new SQLCalendarFactory(connection, startDate, endDate);
 		this.calendars = 
 			new LRUCache<Integer, ICalendar>(CACHE_SIZE, calendarFactory);
+		calendarFactory.setCache(calendars); // TODO: Todo en la misma clase???
 		
 		SQLAgreementPaymentsFactory agreementPaymentsFactory =
 			new SQLAgreementPaymentsFactory(connection, startDate, endDate);
@@ -236,6 +246,9 @@ public class SQLContractSalaryCalculatorContext implements
 			new SQLAgreementContextFactory(connection, startDate, endDate);
 		this.agreementExpressionContexts = 
 			new LRUCache<Integer, ExpressionContext>(CACHE_SIZE, agreementContextFactory);
+		this.leaveLoader = 
+			new SQLContractLeaveLoader(this.startDate, this.endDate);
+
 	}
 
 	@Override
@@ -513,9 +526,10 @@ public class SQLContractSalaryCalculatorContext implements
 		day.setTime(startDate);
 		while  (end.after(day) || end.equals(day)) {
 			DayType type = calendar.getDayType(day);
-			if ( isActualDay(type) ) {
+			if ( isActualDay(type) &&  
+					!leaveLoader.isLeaveDay(day) ) {
 				days++;
-			} // TODO : Consultar las bajas del trabajador.
+			} 
 			day.add(Calendar.DATE, 1);
 		}
 		return days;
@@ -532,8 +546,9 @@ public class SQLContractSalaryCalculatorContext implements
 		
 
 		loadContractData(contractExpressionContext);
-		Long leaveDays = loadContractLeave(contractExpressionContext);
+		loadContractLeave(contractExpressionContext);
 		
+		Long leaveDays = leaveLoader.getLeavesDays();  
 		Long availableDays = getAvailableDays();
 		Long workedDays = availableDays - leaveDays; 
 		
@@ -575,14 +590,12 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 	}
 	
-	private long loadContractLeave(ExpressionContext ctx ) throws SQLException{
-		SQLContractLeaveLoader leaveLoader = 
-			new SQLContractLeaveLoader(this.startDate, this.endDate);
+	private void loadContractLeave(ExpressionContext ctx ) throws SQLException{
 		ResultSet rs = null;
 		try{ 
 			cleaveStmt.setInt(1, getId());
 			rs = cleaveStmt.executeQuery();
-			return leaveLoader.loadContractLevae(rs, ctx);
+			leaveLoader.loadContractLevae(rs, ctx);
 		}finally {
 			if ( rs != null ){
 				rs.close();

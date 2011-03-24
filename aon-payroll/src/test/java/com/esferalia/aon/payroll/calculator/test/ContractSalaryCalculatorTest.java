@@ -94,9 +94,10 @@ public class ContractSalaryCalculatorTest {
 
 	/**
 	 * Test method for {@link com.esferalia.aon.payroll.calculator.ContractSalaryCalculator#calculate(com.esferalia.aon.salary.calculator.ISalaryCalculatorContext)}.
+	 * @throws com.code.aon.ql.util.ExpressionException 
 	 */
 	@Test
-	public void testCalculate() throws SQLException, ExpressionException, SalaryException, ParseException {
+	public void testCalculate() throws SQLException, ExpressionException, SalaryException, ParseException, com.code.aon.ql.util.ExpressionException {
 		
 		SQLSalaryBuilderTester salaryBuilderTester = 
 			new SQLSalaryBuilderTester(connection);
@@ -110,7 +111,8 @@ public class ContractSalaryCalculatorTest {
 		info("testCalculate {}:{}",period.getStart(), period.getEnd());
 		
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression("person_registry.document", "76227745H");
+		criteria.addEqualExpression("person_registry.document", "02507118A");
+		//criteria.addOrExpression("person_registry.document", "53412119R");
 		
 		SQLContractSalaryCalculatorContext sqlCtx = 
 			new SQLContractSalaryCalculatorContext(connection, 
@@ -129,15 +131,13 @@ public class ContractSalaryCalculatorTest {
 						sqlCtx.getEnterpriseName(),
 						sqlCtx.getEmployeeName());
 				salaryBuilderTester.test();
-			}catch ( Throwable t ) {
-				error("{} [{}] {}, {} : {}",
-						count,
-						sqlCtx.getEmployeeDocument(),
-						sqlCtx.getEnterpriseName(),
-						sqlCtx.getEmployeeName(),
-						t.getLocalizedMessage());
 			}
-	
+			catch ( NoSuchSalaryError err ){
+				
+			}
+			catch( AssertionError err ) {
+				error(err.getMessage());
+			}
 		}
 		info("salarys {} ",count);
 
