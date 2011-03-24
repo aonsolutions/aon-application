@@ -227,6 +227,8 @@ public class SalaryTestLauncher {
 				listener.onInfo(msg);
 				msg = MessageFormat.format("Total nóminas comparadas: {0} ",new Object[]{salaryBuilder.getSalaryCount()});
 				listener.onInfo(msg);
+				msg = MessageFormat.format("Total nóminas chequeadas sin detectar problemas: {0} ",new Object[]{salaryBuilder.getRightTestedsalariesCount()});
+				listener.onInfo(msg);
 			} catch (ExpressionException e) {
 				throw new SalaryException(e);
 			} catch (SQLException e) {

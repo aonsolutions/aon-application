@@ -3,6 +3,8 @@ package com.esferalia.aon.payroll.calculator.sql;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.payroll.sql.SQLReader;
 import com.esferalia.aon.payroll.sql.SQLReader.SalaryReader;
@@ -16,40 +18,26 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	private static final String FORMAT = "[%s]: %s - %s";
 	private static final String NO_SALARY_FORMAT  ="No hay nómina que calcular para: '%s' [%s,%s]";
 	private static final String TOTAL_PAYMENT  ="[Total Devengado]";
-	private static final Object BASE_IRPF = "[Base I.R.P.F.]";
-	private static final Object BASE_CGC = "[Base C.G.C.]";
+	private static final String BASE_IRPF = "[Base I.R.P.F.]";
+	private static final String BASE_CGC = "[Base C.G.C.]";
+	private static final String EMPTY = "";
+	private static final String SPACE = " ";
+	private static final String LESSTHAN = "<";
+	private static final String GREATHERTHAN = ">";
+	private static final String WAITED = "Esperado: ";
+	private static final String FOUND = " pero se encontró: ";
 	
 	private boolean testTotalPayment;
 	private boolean testBaseIRPF;
 	private boolean testBaseCGC;
 	
-	public static class UnExpectedValue extends Error{
-		
-		private static final long serialVersionUID = -3256215858427420045L;
-
-		public UnExpectedValue(String message) {
-			super(message);
-		}
-		
-	}
-	
-	public static class UnExpectedSalary extends Error{
-		
-		private static final long serialVersionUID = 1347570769647418339L;
-
-		public UnExpectedSalary(String message) {
-			super(message);
-		}
-		
-	}
-	
-
 	private double delta = 0.01;
 	private SQLReader sqlReader ;
 	
 	private int contractCount;
 	private int salaryCount;
-	
+	private int rightTestedsalariesCount;
+
 	public SQLSalaryBuilderTester(Connection connection) throws SQLException {
 		sqlReader= new SQLReader(connection);
 		testTotalPayment = true;
@@ -105,9 +93,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 				listener.onDebug(msg);
 			}
 			
-			SalaryReader salaryReader = 
-				sqlReader.newSalaryReader();
-
+			SalaryReader salaryReader = sqlReader.newSalaryReader();
 			salaryReader.setStartDate(salary.getStartDate());
 			salaryReader.setEndDate(salary.getEndDate());
 			salaryReader.setContract(salary.getContract());
@@ -119,24 +105,19 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 						salary.getStartDate(),
 						salary.getEndDate());
 				onWarning(msg);
-				// throw new UnExpectedSalary(msg);
 				return null;
 			}
 			++salaryCount;
-			
-			String msg;			
 			if (testTotalPayment) {
-				msg = String.format("[%s]:%s",salary.getEmployeeDocument(),TOTAL_PAYMENT);
-				testEquals(msg,dbSalary.getTotalPayment(),salary.getTotalPayment(),delta);
+				testEquals(TOTAL_PAYMENT,dbSalary.getTotalPayment(),salary.getTotalPayment(),delta);
 			}
 			if (testBaseIRPF) {
-				msg = String.format("[%s]:%s",salary.getEmployeeDocument(),BASE_IRPF);
-				testEquals(msg,dbSalary.getIrpfBase(),salary.getIrpfBase(),delta);
+				testEquals( BASE_IRPF,dbSalary.getIrpfBase(),salary.getIrpfBase(),delta);
 			}
 			if (testBaseCGC) {
-				msg = String.format("[%s]:%s",salary.getEmployeeDocument(),BASE_CGC);
-				testEquals(msg,dbSalary.getCgcBase(),salary.getCgcBase(),delta);
+				testEquals(BASE_CGC,dbSalary.getCgcBase(),salary.getCgcBase(),delta);
 			}
+			++rightTestedsalariesCount;
 		} catch (SQLException e) {
 			onError(e.getLocalizedMessage());
 		}
@@ -153,18 +134,18 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	public int getSalaryCount() {
 		return salaryCount;
 	}
+	public int getRightTestedsalariesCount() {
+		return rightTestedsalariesCount;
+	}
 
-
-	public void testEquals(String message, double expected,
-			double actual, double delta) {
+	public void testEquals(String message, double expected, double actual, double delta) {
 		if (Double.compare(expected, actual) == 0)
 			return;
 		if (!(Math.abs(expected - actual) <= delta))
 			unExpectedValue(message, new Double(expected), new Double(actual));		
 	}
 	
-	static private void unExpectedValue(String message, Object expected,
-			Object actual) {
+	private static void unExpectedValue(String message, Object expected,Object actual) {
 		throw new UnExpectedValue(format(message, expected, actual));
 	}
 	
@@ -179,23 +160,33 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 		}
 	}
 
-	static String format(String message, Object expected, Object actual) {
-		String formatted= "";
-		if (message != null && !message.equals(""))
-			formatted= message + " ";
+	private static String format(String message, Object expected, Object actual) {
+		StringBuffer formatted = new StringBuffer(EMPTY);
+		formatted.append(StringUtils.isEmpty(message)?EMPTY:message);
+		formatted.append(StringUtils.isEmpty(message)?EMPTY:SPACE);
 		String expectedString= String.valueOf(expected);
 		String actualString= String.valueOf(actual);
-		if (expectedString.equals(actualString))
-			return formatted + "Esperado: "
-					+ formatClassAndValue(expected, expectedString)
-					+ " pero se encontró: " + formatClassAndValue(actual, actualString);
-		else
-			return formatted + "Esperado: <" + expectedString + "> pero se encontró: <" + actualString + ">";
+		if (expectedString.equals(actualString)) {
+			formatted.append(WAITED);
+			formatted.append(formatClassAndValue(expected, expectedString));
+			formatted.append(FOUND);
+			formatted.append(formatClassAndValue(actual, actualString));
+		} else {
+			formatted.append(WAITED);
+			formatted.append(LESSTHAN);
+			formatted.append(expectedString);
+			formatted.append(GREATHERTHAN);
+			formatted.append(FOUND);
+			formatted.append(LESSTHAN);
+			formatted.append(actualString);
+			formatted.append(GREATHERTHAN);
+		}
+		return formatted.toString(); 
 	}
 	
 	private static String formatClassAndValue(Object value, String valueString) {
 		String className= value == null ? "null" : value.getClass().getName();
-		return className + "<" + valueString + ">";
+		return className + LESSTHAN + valueString + GREATHERTHAN;
 	}
 
 
@@ -204,4 +195,12 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 		this.listener = listener;		
 	}
 
+	public static class UnExpectedValue extends Error{
+		
+		private static final long serialVersionUID = -3256215858427420045L;
+
+		public UnExpectedValue(String message) {
+			super(message);
+		}
+	}
 }
