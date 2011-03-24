@@ -48,6 +48,12 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	public static final String PERSON_REGISTRY = "person_registry";
 	public static final String ENTERPRISE_REGISTRY = "enterprise_registry";
+	public static final String EMPTY = "";
+	public static final String SPACE = " ";
+	public static final String COMMA = ",";
+	public static final String DOT = ".";
+	public static final String OPEN_BRACKET = "(";
+	public static final String CLOSE_BRACKET = ")";
 	
 	private static final String MAIN_SQL = "SELECT * "
 		+" FROM contract"
@@ -294,8 +300,28 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public String getEnterpriseAddress() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO Añadir la tabla y columnas a las constantes.
+		String streetType = getString("raddress","street_type");
+		String address = getString("raddress","address");
+		Integer number = getInt("raddress","number");
+		String address2 = getString("raddress","address2");
+		String address3 = getString("raddress","address3");
+		
+    	StringBuffer buf = new StringBuffer();
+    	buf.append(streetType==null?EMPTY:streetType);
+    	buf.append(streetType==null?EMPTY:DOT);
+    	buf.append(streetType==null?EMPTY:SPACE);
+    	buf.append(StringUtils.isEmpty(address)?EMPTY:address);
+    	buf.append(number==null?EMPTY:SPACE);
+    	buf.append(number==null?EMPTY:number);
+    	buf.append(StringUtils.isEmpty(address2)?EMPTY:COMMA);
+    	buf.append(StringUtils.isEmpty(address2)?EMPTY:SPACE);
+    	buf.append(StringUtils.isEmpty(address2)?EMPTY:address2);
+    	buf.append(StringUtils.isEmpty(address3)?EMPTY:SPACE);
+    	buf.append(StringUtils.isEmpty(address3)?EMPTY:OPEN_BRACKET);
+    	buf.append(StringUtils.isEmpty(address3)?EMPTY:address3);
+    	buf.append(StringUtils.isEmpty(address3)?EMPTY:CLOSE_BRACKET);
+    	return StringUtils.abbreviate(buf.toString(), 64); // Avoid truncate
 	}
 
 	@Override
@@ -326,11 +352,12 @@ public class SQLContractSalaryCalculatorContext implements
 			employeeName.append(firstSurname);
 		}
 		if (!StringUtils.isEmpty(secondSurname)){
-			employeeName.append(" ");
+			employeeName.append(SPACE);
 			employeeName.append(secondSurname);
 		}
 		if (!StringUtils.isEmpty(name)){
-			employeeName.append(", ");
+			employeeName.append(COMMA);
+			employeeName.append(SPACE);
 			employeeName.append(name);
 		}
 			
@@ -349,14 +376,12 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public Integer getRegistration() {
-		// TODO Add 'seniory_date' column to table 'contract_data'
-		return 0;
+		return getInt(SQLConstants.CONTRACT,ContractColumns.REGISTRATION);
 	}
 
 	@Override
 	public Date getSeniorityDate() {
-		// TODO Add 'seniory_date' column to table 'contract_data'
-		return null;
+		return getDate(SQLConstants.CONTRACT,ContractColumns.SENIORITY_DATE);
 	}
 
 	@Override

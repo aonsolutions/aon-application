@@ -64,12 +64,10 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 		if (getList().size() > 25 ) {
 			getList().pop();
 		}
-		String now = DateFormat.getDateTimeInstance().format(new Date());
+		
 		buf = new StringBuffer(PREFIX0);
 		buf.append(level);
 		buf.append(PREFIX1);
-		buf.append(now);
-		buf.append(SPACE);
 		buf.append(level);
 		buf.append(SPACE);
 		buf.append(msg);
@@ -80,7 +78,7 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 			try {
 				FileWriter fstream = new FileWriter(file, true);
 				BufferedWriter out = new BufferedWriter(fstream);
-				out.write(now);
+				out.write(DateFormat.getDateTimeInstance().format(new Date()));
 				out.write(SPACE);
 				out.write(level.toString());
 				out.write(SPACE);
