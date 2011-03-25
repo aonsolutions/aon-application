@@ -12,8 +12,6 @@ import com.code.aon.accounting.AccountSummary;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.AmortizationType;
-import com.code.aon.accounting.AnnualReport;
-import com.code.aon.accounting.AnnualReportDetail;
 import com.code.aon.accounting.AutoConcept;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
@@ -33,7 +31,7 @@ public class AccountingAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/home/ecastellano/AON-TRUNK/aon-accounting/src/main/java/com/code/aon/accounting/dao/IAccountingAlias.java");
+		File file = new File("/home/ecastellano/AON-6.0.0/aon-accounting/src/main/java/com/code/aon/accounting/dao/IAccountingAlias.java");
 		String[] classes = new String[]{
 			AccountBudget.class.getName(),
 			AccountEntry.class.getName(),
@@ -44,8 +42,6 @@ public class AccountingAliasWriter {
 			Amortization.class.getName(),
 			AmortizationDetail.class.getName(),
 			AmortizationType.class.getName(),
-			AnnualReport.class.getName(),
-			AnnualReportDetail.class.getName(),
 			AutoConcept.class.getName(),
 			Balance.class.getName(),
 			BalanceDetail.class.getName(),	

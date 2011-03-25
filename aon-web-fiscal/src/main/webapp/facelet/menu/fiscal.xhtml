@@ -63,30 +63,42 @@
 
 						<aon:panelGrid id="group_fiscal_mercantile_registry"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-report aon-direct-access-panel">
+							headerClass="aon-icon-transfer aon-direct-access-panel">
 							<f:facet name="header">
 								<aon:outputText value="#{fiscalBundle.fiscal_mercantile_registry}"/>
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="annualReport_report"
-										action="annualReport_search"
-										actionListener="#{annualReport.onEditSearch}"
-										value="#{accountingBundle.accounting_annual_report_module}" />
-								</aon:div>
-	
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="annualReportLauncher_report"
-										action="annualReportLauncher_search"
-										actionListener="#{annualReportLauncher.onReset}"
-										value="#{accountingBundle.accounting_annual_report_launcher_module}" />
-								</aon:div>
-
-								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="accountingBook_report"
 										action="accountingBook_search"
 										actionListener="#{accountingBook.onReset}"
+										value="#{accountingBundle.accounting_book_module}" />
+								</aon:div>
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="accountDeposit_report"
+										onclick="alert('Opción no disponible.');"
 										value="#{fiscalBundle.fiscal_account_deposit_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+						<aon:panelGrid id="group_fiscal_reports"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-payroll aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_reports}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="report_template"
+										onclick="alert('Opción no disponible.');"
+										value="#{accountingBundle.accounting_reports_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="report_launcher"
+										onclick="alert('Opción no disponible.');"
+										value="#{accountingBundle.accounting_reports_launcher_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

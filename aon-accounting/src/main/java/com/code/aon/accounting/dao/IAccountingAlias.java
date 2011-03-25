@@ -11,8 +11,6 @@ import com.code.aon.accounting.AccountSummary;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.AmortizationType;
-import com.code.aon.accounting.AnnualReport;
-import com.code.aon.accounting.AnnualReportDetail;
 import com.code.aon.accounting.AutoConcept;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
@@ -578,56 +576,6 @@ public interface IAccountingAlias {
 	* Hibernate value: AmortizationType.percentage
 	*/
 	String  AMORTIZATION_TYPE_PERCENTAGE = AMORTIZATION_TYPE_ENTRY.getAliasNames()[5];
-
-
-
-	/** 
-	* DAOConstantsEntry for AnnualReport entity.
-	*/ 
-	DAOConstantsEntry ANNUAL_REPORT_ENTRY = DAOConstants.getDAOConstant(AnnualReport.class);
-
-	/** 
-	* Alias value: AnnualReport_id
-	* Hibernate value: AnnualReport.id
-	*/
-	String  ANNUAL_REPORT_ID = ANNUAL_REPORT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: AnnualReport_name
-	* Hibernate value: AnnualReport.name
-	*/
-	String  ANNUAL_REPORT_NAME = ANNUAL_REPORT_ENTRY.getAliasNames()[1];
-
-
-
-	/** 
-	* DAOConstantsEntry for AnnualReportDetail entity.
-	*/ 
-	DAOConstantsEntry ANNUAL_REPORT_DETAIL_ENTRY = DAOConstants.getDAOConstant(AnnualReportDetail.class);
-
-	/** 
-	* Alias value: AnnualReportDetail_annualReport_id
-	* Hibernate value: AnnualReportDetail.annualReport.id
-	*/
-	String  ANNUAL_REPORT_DETAIL_ANNUAL_REPORT_ID = ANNUAL_REPORT_DETAIL_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: AnnualReportDetail_content
-	* Hibernate value: AnnualReportDetail.content
-	*/
-	String  ANNUAL_REPORT_DETAIL_CONTENT = ANNUAL_REPORT_DETAIL_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: AnnualReportDetail_id
-	* Hibernate value: AnnualReportDetail.id
-	*/
-	String  ANNUAL_REPORT_DETAIL_ID = ANNUAL_REPORT_DETAIL_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: AnnualReportDetail_sortKey
-	* Hibernate value: AnnualReportDetail.sortKey
-	*/
-	String  ANNUAL_REPORT_DETAIL_SORT_KEY = ANNUAL_REPORT_DETAIL_ENTRY.getAliasNames()[3];
 
 
 

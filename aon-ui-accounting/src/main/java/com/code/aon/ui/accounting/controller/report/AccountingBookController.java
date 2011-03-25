@@ -18,7 +18,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.accounting.AnnualReport;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.BalanceType;
@@ -54,8 +53,8 @@ public class AccountingBookController implements ICollectionProvider{
 	private Balance situationBalance;
 	private boolean patrimonyEnabled;
 	private Balance patrimonyBalance;
-	private boolean annualReportEnabled;
-	private AnnualReport annualReport;
+//	private boolean annualReportEnabled;
+//	private AnnualReport annualReport;
 	private int generatedPages = 0;
 	private String coverTitle;
 	private String coverSubTitle;
@@ -212,19 +211,19 @@ public class AccountingBookController implements ICollectionProvider{
 		this.patrimonyBalance = patrimonyBalance;
 	}
 
-	public boolean isAnnualReportEnabled() {
-		return annualReportEnabled;
-	}
-	public void setAnnualReportEnabled(boolean annualReportEnabled) {
-		this.annualReportEnabled = annualReportEnabled;
-	}
+//	public boolean isAnnualReportEnabled() {
+//		return annualReportEnabled;
+//	}
+//	public void setAnnualReportEnabled(boolean annualReportEnabled) {
+//		this.annualReportEnabled = annualReportEnabled;
+//	}
 
-	public AnnualReport getAnnualReport() {
-		return annualReport;
-	}
-	public void setAnnualReport(AnnualReport annualReport) {
-		this.annualReport = annualReport;
-	}
+//	public AnnualReport getAnnualReport() {
+//		return annualReport;
+//	}
+//	public void setAnnualReport(AnnualReport annualReport) {
+//		this.annualReport = annualReport;
+//	}
 
 	public List<SelectItem> getProfitAndLostBalances() throws ManagerBeanException {
 		AccountingCollectionsController c = (AccountingCollectionsController) AonUtil
@@ -258,7 +257,7 @@ public class AccountingBookController implements ICollectionProvider{
 		setProfitAndLostEnabled(true);
 		setSituationEnabled(true);
 		setPatrimonyEnabled(true);
-		setAnnualReportEnabled(false);
+//		setAnnualReportEnabled(false);
 		setGeneratedPages(0);
 		setCoverTitle("CUENTAS ANUALES");
 		setCoverSubTitle("PLAN GENERAL DE CONTABILIDAD DE PEQUEÑAS Y MEDIANAS EMPRESAS");
@@ -328,10 +327,10 @@ public class AccountingBookController implements ICollectionProvider{
 				addPatrimony(zout,index);
 				++index;
 			}
-			if (isAnnualReportEnabled()) {
-				addAnnualReport(zout,index);
-				++index;
-			}
+//			if (isAnnualReportEnabled()) {
+//				addAnnualReport(zout,index);
+//				++index;
+//			}
 			zout.flush();
 			zout.finish();
 		    res.flushBuffer();
@@ -340,9 +339,6 @@ public class AccountingBookController implements ICollectionProvider{
 			AonUtil.addErrorMessage("El fichero no es correcto");
 			throw new AbortProcessingException( e );
 		} catch (ReportException e) {
-			AonUtil.addErrorMessage("Error al ejecutar el listado");
-			throw new AbortProcessingException( e );
-		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error al ejecutar el listado");
 			throw new AbortProcessingException( e );
 		}
@@ -362,10 +358,10 @@ public class AccountingBookController implements ICollectionProvider{
 			AonUtil.addErrorMessage("Seleccione un Balance de Patrimonio.");
 			ok = false;
 		}
-		if (isAnnualReportEnabled() && getAnnualReport() == null) {
-			AonUtil.addErrorMessage("Seleccione un modelo de Memoria Anual.");
-			ok = false;
-		}
+//		if (isAnnualReportEnabled() && getAnnualReport() == null) {
+//			AonUtil.addErrorMessage("Seleccione un modelo de Memoria Anual.");
+//			ok = false;
+//		}
 		if (!ok) {
 			throw new AbortProcessingException( "Compruebe los parámetros." );
 		}
@@ -693,17 +689,17 @@ public class AccountingBookController implements ICollectionProvider{
 		zout.closeEntry();
 	}
 
-	private void addAnnualReport(ZipOutputStream zout,int index) throws IOException, ManagerBeanException {
-		NumberFormat formatter = new DecimalFormat("00");
-		ZipEntry ze = new ZipEntry(formatter.format(index) + "-MemoriaAnual.pdf");
-	    zout.putNextEntry(ze);
-        AnnualReportLauncher c = (AnnualReportLauncher) AonUtil.getRegisteredBean("annualReportLauncher");
-        c.onReset(null);
-        c.setAnnualReport(getAnnualReport());
-        c.getParams().setPeriod(getPeriod());
-        c.pdf(zout);
-		zout.closeEntry();
-	}
+//	private void addAnnualReport(ZipOutputStream zout,int index) throws IOException, ManagerBeanException {
+//		NumberFormat formatter = new DecimalFormat("00");
+//		ZipEntry ze = new ZipEntry(formatter.format(index) + "-MemoriaAnual.pdf");
+//	    zout.putNextEntry(ze);
+//        AnnualReportLauncher c = (AnnualReportLauncher) AonUtil.getRegisteredBean("annualReportLauncher");
+//        c.onReset(null);
+//        c.setAnnualReport(getAnnualReport());
+//        c.getParams().setPeriod(getPeriod());
+//        c.pdf(zout);
+//		zout.closeEntry();
+//	}
 
 	@Override
 	public Collection<?> getCollection() {
