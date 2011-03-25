@@ -45,8 +45,8 @@
 				<value>#{supplierScopeListener}</value>
 				<value>#{supplierMediaListener}</value>
 				<value>#{supplierAddressListener}</value>
-				<value>#{supplierRBankChildListener}</value>
 				<value>#{supplierRPayMethodChildListener}</value>
+				<value>#{supplierRBankChildListener}</value>
 				<value>#{supplierSegmentListener}</value>
 				<value>#{supplierAddInfoListener}</value>
 				<value>#{supplierRAttachChildListener}</value>

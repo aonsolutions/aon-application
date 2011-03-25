@@ -427,8 +427,8 @@
 				<value>#{creditorScopeListener}</value>
 				<value>#{creditorMediaListener}</value>
 				<value>#{creditorAddressListener}</value>
-				<value>#{creditorRBankChildListener}</value>
 				<value>#{creditorRPayMethodChildListener}</value>
+				<value>#{creditorRBankChildListener}</value>
 				<value>#{creditorSegmentListener}</value>
 				<value>#{creditorAddInfoListener}</value>
 				<value>#{creditorRAttachChildListener}</value>

@@ -47,8 +47,8 @@
 				<value>#{companyAppParamControllerListener}</value>
 				<value>#{companyAddressChildListener}</value>
 				<value>#{companyWorkPlaceChildListener}</value>
-				<value>#{companyRBankChildListener}</value>
 				<value>#{companyRPayMethodChildListener}</value>
+				<value>#{companyRBankChildListener}</value>
 				<value>#{companyRecordDataChildListener}</value>
 			</list-entries>
 		</managed-property>

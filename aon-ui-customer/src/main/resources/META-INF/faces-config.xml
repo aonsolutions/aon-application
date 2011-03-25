@@ -50,8 +50,8 @@
 				<value>#{customerAddressListener}</value>
 				<value>#{customerScopeListener}</value>				
 				<value>#{customerObservationListener}</value>
-				<value>#{customerRBankChildListener}</value>
 				<value>#{customerRPayMethodChildListener}</value>
+				<value>#{customerRBankChildListener}</value>
 				<value>#{customerRecordDataChildListener}</value>
 				<value>#{customerRelationshipChildListener}</value>
 				<value>#{customerNoteChildListener}</value>
