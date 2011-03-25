@@ -60,6 +60,26 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
+						
+						<aon:panelGrid id="group_fiscal_reports"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-payroll aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{accountingBundle.menu_reports_annual}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="report_template"
+										onclick="alert('Opción no disponible en esta versión.');"
+										value="#{accountingBundle.accounting_reports_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="report_launcher"
+										onclick="alert('Opción no disponible  en esta versión.');"
+										value="#{accountingBundle.accounting_reports_launcher_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
 
 						<aon:panelGrid id="group_fiscal_mercantile_registry"
 							styleClass="aon-width-all" columnClasses="aon-padding"
@@ -77,31 +97,12 @@
 
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="accountDeposit_report"
-										onclick="alert('Opción no disponible.');"
+										onclick="alert('Opción no disponible  en esta versión.');"
 										value="#{fiscalBundle.fiscal_account_deposit_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 
-						<aon:panelGrid id="group_fiscal_reports"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-payroll aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_reports}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="report_template"
-										onclick="alert('Opción no disponible.');"
-										value="#{accountingBundle.accounting_reports_module}" />
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="report_launcher"
-										onclick="alert('Opción no disponible.');"
-										value="#{accountingBundle.accounting_reports_launcher_module}" />
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
 
 						<aon:panelGrid id="group_fiscal_accounting_entry_generation"
 							styleClass="aon-width-all" columnClasses="aon-padding"
