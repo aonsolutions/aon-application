@@ -785,7 +785,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	@Override
 	public List<ITransferObject> search(int start, int count) throws ManagerBeanException {
 		Criteria criteria = getCriteria();
-		LOGGER.info("search:[{},start={},count={}]", new Object[]{((criteria != null) ? criteria.toString() : null), start, count} );
+		LOGGER.info("search:[{},{},start={},count={}]", new Object[]{getBeanName(), ((criteria != null) ? criteria.toString() : null), start, count} );
 		List<ITransferObject> list = getManagerBean().getList(criteria, start, count);
 		return list;
 	}

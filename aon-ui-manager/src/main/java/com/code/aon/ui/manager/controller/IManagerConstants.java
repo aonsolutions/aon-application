@@ -7,6 +7,7 @@ public interface IManagerConstants {
 	
 	// Controllers
 	String MANAGER_CONTROLLER_NAME = "manager";
+	String DB_MANAGER_CONTROLLER_NAME = "dbManager";
 	String DOMAIN_CONTROLLER_NAME = "domain";
 	String APPLICATION_CONTROLLER_NAME = "aonApplication";
 	String ROLE_CONTROLLER_NAME = "role";
@@ -16,10 +17,8 @@ public interface IManagerConstants {
 	String DOMAIN_APPLICATION_CONTROLLER_NAME = "domainApplication";
 	String DOMAIN_USER_CONTROLLER_NAME = "domainUser";
 	String DOMAIN_APPLICATION_USER_CONTROLLER_NAME = "appUser";
-	String WORK_GROUP_CONTROLLER_NAME = "workGroup";
-	String SCOPE_CONTROLLER_NAME = "scope";
-	String USER_WORK_GROUP_CONTROLLER_NAME = "userWorkgroup";
-	String USER_SCOPE_CONTROLLER_NAME = "userScope";
+	String USER_WORK_GROUP_CONTROLLER_NAME = "userWorkGroupEx";
+	String USER_SCOPE_CONTROLLER_NAME = "userScopeEx";
 	String COMPANY_BASIC_CONTROLLER_NAME = "companyBasic";
 	
 	// Applications
@@ -33,6 +32,11 @@ public interface IManagerConstants {
 	String ADMINISTRADOR_PROFILE = "Administrador";
 	String ADMIN_USER = "admin";
 	String GENERAL_SCOPE = "GENERAL";
+	
+	String USER_TABLE = "user";
+	String COMPANY_TABLE = "company";
+	String SCOPE_TABLE = "scope";
+	String WORK_GROUP_TABLE = "workgroup";
 	
 	// Messages
 	String DOMAIN_INVALID_NAME = "manager_domain_invalid_name";
@@ -55,4 +59,3 @@ public interface IManagerConstants {
 	String MAIL_ACCOUNT_DELETE_SCRIPT = "MailAccount_delete_script";
 	
 }
-

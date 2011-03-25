@@ -53,6 +53,7 @@ import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.converter.TransferObjectConverter;
@@ -80,9 +81,23 @@ public class DomainUserController extends LdapBasicController implements IManage
 	
 	private Converter converter;
 	
+	private User user;
+	
+	public User getUser() {
+		return user;
+	}
+	
+	public void setUser(User user) {
+		this.user = user;
+	}	
+	
 	private ManagerController getManager() {
 		return (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 	}
+	
+	private DBManagerController getDBManager() {
+		return (DBManagerController) AonUtil.getRegisteredBean(DB_MANAGER_CONTROLLER_NAME);
+	}		
 	
 	public String getSelectedTab() {
 		return selectedTab;
@@ -292,7 +307,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}
 	
 	private void registerScope( String userUid, String scopeName ) throws ManagerBeanException {
-		IController scopeController = FormUtil.getController(SCOPE_CONTROLLER_NAME);
+		IController scopeController = FormUtil.getController(ConfigConstants.SCOPE);
 		Criteria scopeCriteria = new Criteria();
 		scopeCriteria.addEqualExpression(scopeController.getFieldName(IConfigAlias.SCOPE_DESCRIPTION), scopeName);
 		List<ITransferObject> scopes = scopeController.getManagerBean().getList(scopeCriteria);
@@ -311,8 +326,8 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}	
 
 	public void registerScopeInDB( DBConnnection dbc, String userUid, String scope ) throws ManagerBeanException {
-		getManager().changeDbConnection(dbc);
-		if ( getManager().getDBManager().existsTable(dbc, "scope") ) {
+		getDBManager().changeDbConnection(dbc);
+		if ( getDBManager().isAonDB(dbc) ) {
 			try {
 				registerScope(userUid, scope);	
 			} catch ( Throwable th ) {
@@ -386,11 +401,11 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}		
 
 	public void deactiveDBUser( DomainUser user ) throws ManagerBeanException {
-		ManagerController manager = getManager();
+		DBManagerController dbManager = getDBManager();
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		for (DBConnnection dbc : ddbc.getDBConnnections()) {
-			manager.changeDbConnection(dbc);
-			if ( manager.getDBManager().existsTable(dbc, "user") ) {
+			dbManager.changeDbConnection(dbc);
+			if ( dbManager.isAonDB(dbc) ) {
 				try {
 					deactiveDBUser(user.getUid());	
 				} catch ( Throwable th ) {

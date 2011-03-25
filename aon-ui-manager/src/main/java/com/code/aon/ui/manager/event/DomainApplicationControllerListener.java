@@ -10,19 +10,16 @@ import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.master.IConstants;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.manager.controller.DBManagerController;
 import com.code.aon.ui.manager.controller.DomainApplicationController;
-import com.code.aon.ui.manager.controller.DomainApplicationUserController;
 import com.code.aon.ui.manager.controller.DomainDBConnectionController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.manager.controller.ManagerController;
-import com.code.aon.ui.manager.controller.ProfileController;
-import com.code.aon.ui.manager.controller.RoleController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.LdapBasicController;
 
 public class DomainApplicationControllerListener extends ControllerAdapter implements IManagerConstants {
 	
@@ -64,19 +61,19 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 		getManager().getLogger().domainApplicationRemoved(application);
 	}	
 	
+	private void updateController( String name, Name parent ) {
+		LdapBasicController controller = (LdapBasicController) AonUtil.getRegisteredBean(name);
+		controller.updateBaseDN(parent);
+		controller.onSearch(null);				
+	}
+	
 	private void updateApplication( DomainApplicationController dac ) {
 		DomainApplication application = dac.getDomainApplication();
-		DomainApplicationUserController dau = (DomainApplicationUserController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_USER_CONTROLLER_NAME);
-		dau.updateBaseDN(application.getId());
-		dau.onSearch(null);		
-		RoleController rc = (RoleController) AonUtil.getRegisteredBean(ROLE_CONTROLLER_NAME);
-		Name applicationId = NameResolver.getApplicationDN(application.getCommonName()); 
-		rc.updateBaseDN(applicationId);
-		rc.onSearch(null);
-		ProfileController pc = (ProfileController) AonUtil.getRegisteredBean(DOMAIN_PROFILE_CONTROLLER_NAME);
-		pc.updateBaseDN(application.getId());
-		pc.onSearch(null);
-		updateDBConnection(dac);
+		Name applicationId = NameResolver.getApplicationDN(application.getCommonName());
+		updateController(ROLE_CONTROLLER_NAME, applicationId);
+		updateController(PROFILE_CONTROLLER_NAME, applicationId);
+		updateController(DOMAIN_APPLICATION_USER_CONTROLLER_NAME, application.getId());
+		updateController(DOMAIN_PROFILE_CONTROLLER_NAME, application.getId());
 	}
 	
 	private void setDBConnection( DomainApplicationController dac, DomainApplication application ) throws ControllerListenerException {
@@ -95,32 +92,14 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 		}		
 	}
 	
-	private void updateDBConnection( DomainApplicationController dac ) {
-		dac.setAonDB(false);
-		DBConnnection dbc = dac.getDomainApplication().getDataSource();
-		if ( (dbc != null) && (dbc.getId() != null) ) {
-			ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
-			if ( manager.getDBManager().exists(dbc) ) {
-				manager.changeDbConnection(dbc);
-				if ( manager.getDBManager().existsTable(dbc, "user") ) {
-					dac.setAonDB(true);
-					IController uwg = FormUtil.getController(WORK_GROUP_CONTROLLER_NAME);
-					uwg.onSearch(null);			
-					IController scopes = FormUtil.getController(SCOPE_CONTROLLER_NAME);
-					scopes.onSearch(null);			
-				}
-			}
-		}		
-	}
-	
 	private void insertApplicationDBDefaults(DomainApplication application) throws ControllerListenerException {
 		DBConnnection dbc = application.getDataSource();
 		if ( (dbc != null) && (dbc.getId() != null) ) {
 			String name = application.getCommonName();
 			if ( ArrayUtils.contains(IConstants.DEFAULTS, name) ) {
-				ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+				DBManagerController dbManager = (DBManagerController) AonUtil.getRegisteredBean(DB_MANAGER_CONTROLLER_NAME);
 				try {
-					manager.insertDefaults(dbc, name);
+					dbManager.insertDefaults(dbc, name);
 				} catch (Throwable e) {
 					LOGGER.error(e.getMessage(), e);
 					throw new ControllerListenerException( e.getMessage(), e );

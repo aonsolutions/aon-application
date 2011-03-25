@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,26 +13,20 @@ import java.util.Locale;
 import java.util.Properties;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.session.DomainResolver;
-import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.enumeration.WorkGroupStatus;
-import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.ql.Criteria;
@@ -41,7 +34,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.manager.BeanManagerEx;
 import com.code.aon.ui.manager.UserType;
-import com.code.aon.ui.manager.util.DBManager;
 import com.code.aon.ui.manager.util.ManagerLogger;
 import com.code.aon.ui.util.AonUtil;
 
@@ -69,12 +61,6 @@ public class ManagerController implements IManagerConstants {
 	
 	private List<SelectItem> workGroupStatuses;
 	
-	private DBManager dbManager;
-	
-	private DBConnnection dbConnection;
-	
-	private SessionFactory sessionFactory;
-	
 	private Properties properties;
 	
 	private Properties config;
@@ -85,7 +71,6 @@ public class ManagerController implements IManagerConstants {
 	
 	public ManagerController() {
 		BeanManager.setManager(BeanManagerEx.getInstance());
-		this.dbManager = new DBManager();
 		this.properties = PropertiesUtil.getProperties(MANAGER_PROPERTIES, DEFAULT_PROPERTIES);
 		this.currentDomain = calculateCurrentDomain();
 		this.logger = new ManagerLogger( this.properties.getProperty(NOTIFICATION_EMAIL) );
@@ -107,10 +92,6 @@ public class ManagerController implements IManagerConstants {
 	
 	public ManagerLogger getLogger() {
 		return logger;
-	}
-
-	public DBManager getDBManager() {
-		return dbManager;
 	}
 
 	public UserType getUserType() {
@@ -220,38 +201,6 @@ public class ManagerController implements IManagerConstants {
 		return md5_passwd;
 	} 
 	
-	public void createDB( DBConnnection dbConnection ) {
-		if (! getDBManager().exists(dbConnection) ) {
-			try {
-				getDBManager().createDB(dbConnection);
-			} catch (AonException e) {
-				LOGGER.error(e.getMessage(), e);
-				try {
-					removeDB(dbConnection);
-				} catch ( SQLException sqle ) {
-					LOGGER.error(sqle.getMessage(), sqle);
-				}
-				throw new AbortProcessingException( e.getMessage(), e );
-			}
-		} else {
-			AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DB_DUPLICATED, dbConnection.getDBName());
-		}
-	}
-	
-	public void removeDB( DBConnnection dbConnection ) throws SQLException {
-		if ( getDBManager().exists(dbConnection) ) {
-			getDBManager().dropDB(dbConnection);
-		}
-	}		
-	
-	public void insertDefaults( DBConnnection dbConnection, String application ) throws AonException {
-		if ( getDBManager().exists(dbConnection) ) {
-			getDBManager().insertDefaults(dbConnection, application);
-		} else {
-			AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, DB_NOT_EXIST, dbConnection.getDBName());
-		}
-	}
-	
 	public List<SelectItem> getWorkGroupStatuses() {
 		if(workGroupStatuses == null){
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -264,37 +213,6 @@ public class ManagerController implements IManagerConstants {
 		}
 		return workGroupStatuses;
 	}	
-	
-	public DBConnnection getCurrentDBConnection() {
-		return this.dbConnection;
-	}
-	
-	public boolean changeDbConnection(DBConnnection dbc) {
-		if (! dbc.equalsDB(this.dbConnection) ) {
-			this.dbConnection = dbc;	
-			if ( this.sessionFactory != null ) {
-				this.sessionFactory.close();
-			}
-			this.sessionFactory = initSessionFactory(this.dbConnection);				
-			return true;
-		}
-		return false;
-	}
-
-	private SessionFactory initSessionFactory( DBConnnection dbc ) {
-		AnnotationConfiguration configuration = new AnnotationConfiguration();
-		dbc.configure(configuration);
-   		configuration.buildMappings();
-		SessionFactory sessionFactory = configuration.buildSessionFactory();
-		BeanManagerEx.getInstance().update(sessionFactory);
-        DAOConstantsResolver resolver = new DAOConstantsResolver(configuration);
-        resolver.createDAOConstants();
-        return sessionFactory;
-	}
-	
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
 	
 	private Domain calculateCurrentDomain() {
 		DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
@@ -404,5 +322,5 @@ public class ManagerController implements IManagerConstants {
         }		
         return exitVal;
 	}
-	
+
 }

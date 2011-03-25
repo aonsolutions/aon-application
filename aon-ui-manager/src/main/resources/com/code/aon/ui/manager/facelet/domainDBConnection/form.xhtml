@@ -59,6 +59,29 @@
 					</c:if>
 
 				</aon:panelGrid>
+				
+				<c:if test="#{!domainDBConnection.new and domainDBConnection.aonDB}">
+					<aon:panelTabSet selectedTab="#{domainDBConnection.selectedTab}">
+
+						<c:if test="#{manager.config.showDBConnectionWorkGroup}" >
+							<aon:panelTab name="userWorkGroups" label="#{managerBundle.manager_workgroups}">
+								<ui:include src="/com/code/aon/ui/manager/facelet/workGroup/grid.xhtml" >
+									<ui:param name="controller" value="#{workGroup}" />
+								</ui:include>
+		                    </aon:panelTab>
+						</c:if>
+	                                        
+						<c:if test="#{manager.config.showDBConnectionScope}" >	                                        
+							<aon:panelTab name="scopes" label="#{managerBundle.manager_scopes}">
+								<ui:include src="/com/code/aon/ui/manager/facelet/scope/grid.xhtml" >
+									<ui:param name="controller" value="#{scope}" />
+								</ui:include>
+		                    </aon:panelTab>
+						</c:if>
+	                                                            
+					</aon:panelTabSet>
+				</c:if>						
+				
 			</aon:div>
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />

@@ -85,6 +85,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			updateDomainManagement(dc, false);
 			initCompanyData(dc);
 			addAdminUser(dc, dbc);
+			updateAonDBConnection(dc, dbc);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			dc.removeDomain( domain );
@@ -116,11 +117,12 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	@Override
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
-		DomainController domainController = (DomainController) event.getController();
-		updateDomain(domainController.getDomain());
+		DomainController dc = (DomainController) event.getController();
+		updateDomain(dc.getDomain());
 		try {
-			domainController.init();
-			domainController.updateParentDomains();
+			dc.init();
+			dc.updateParentDomains();
+			updateAonDBConnection(dc, null);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -187,5 +189,13 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		duc.createUser(dbc, dc.getDomain().getAdministrator());
 		dc.getManagerBean().update(dc.getDomain());
 	}
+
+	public void updateAonDBConnection( DomainController dc, DBConnnection dbc ) throws ManagerBeanException {
+		DomainDBConnectionController ddbcc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
+		if ( dbc == null ) {
+			dbc = ddbcc.getMasterConnection();
+		}
+		dc.setAonDB( ddbcc.updateAonDBConnection(dbc) );
+	}		
 	
 }

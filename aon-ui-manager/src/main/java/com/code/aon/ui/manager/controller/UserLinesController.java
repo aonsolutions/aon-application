@@ -17,8 +17,8 @@ public class UserLinesController extends BasicController implements IManagerCons
 	public void accept(ActionEvent event) {
 		try {
 			if (isNew()) {
-				DomainApplicationUserController dauc = (DomainApplicationUserController) AonUtil.getRegisteredBean(DOMAIN_APPLICATION_USER_CONTROLLER_NAME);
-				updateUser(dauc.getUser(), getTo());
+				DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
+				updateUser(duc.getUser(), getTo());
 			}
 			super.accept(event);
 		} catch (ManagerBeanException e) {

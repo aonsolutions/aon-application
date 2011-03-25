@@ -1,6 +1,6 @@
 package com.code.aon.ui.manager;
 
-import static com.code.aon.ui.manager.controller.IManagerConstants.MANAGER_CONTROLLER_NAME;
+import static com.code.aon.ui.manager.controller.IManagerConstants.DB_MANAGER_CONTROLLER_NAME;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +10,7 @@ import org.hibernate.SessionFactory;
 import com.code.aon.common.IBeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.manager.controller.ManagerController;
+import com.code.aon.ui.manager.controller.DBManagerController;
 import com.code.aon.ui.util.AonUtil;
 
 public class BeanManagerEx implements IBeanManager {
@@ -39,8 +39,8 @@ public class BeanManagerEx implements IBeanManager {
     }
 	
 	public SessionFactory getSessionFactory() {
-		ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
-		return mc.getSessionFactory();
+		DBManagerController dbManager = (DBManagerController) AonUtil.getRegisteredBean(DB_MANAGER_CONTROLLER_NAME);
+		return dbManager.getSessionFactory();
 	}
     
 	public void update( SessionFactory sessionFactory ) {

@@ -3,7 +3,13 @@ package com.code.aon.ui.manager.event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
 import com.code.aon.manager.DomainUser;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.AbstractPojoController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -34,6 +40,7 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 		if ( duc.isWebmail() ) {
 			updateWebmail(user);
 		}
+		updateDBUser( duc, user );
 	}
 	
 	@Override
@@ -52,6 +59,7 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 			duc.registerUserInApplication(user, AON_DESKTOP, USUARIO_PROFILE);
 			duc.registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
 			duc.registerScopeInDBs(user.getUid(), GENERAL_SCOPE);
+			updateDBUser( duc, user );
 			duc.createMailAccount(user);
 			DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
 			duc.addDefaultWebmailData(user, controller.getCompany());
@@ -91,4 +99,30 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 		cc.onSearch(null);
 	}	
 
+	private void updateDBUser( DomainUserController duc, DomainUser domainUser ) throws ControllerListenerException {
+		try {		
+			User user = duc.ensureDBUser( domainUser.getUid() );
+			duc.setUser(user);
+			updateLines( domainUser );
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+	}
+	
+	private void updateLines( DomainUser user ) throws ManagerBeanException {
+		IController us = FormUtil.getController(USER_SCOPE_CONTROLLER_NAME);
+		updateLine( us, user );
+		IController uwg = FormUtil.getController(USER_WORK_GROUP_CONTROLLER_NAME);
+		updateLine( uwg, user );
+	}	
+	
+	private void updateLine( IController controller, DomainUser user ) throws ManagerBeanException {
+		controller.clearCriteria();
+		Criteria criteria = controller.getCriteria();
+		String alias = ((AbstractPojoController)controller).getPojoShortName() + ".user.login";
+		criteria.addEqualExpression(alias, user.getUid());
+		controller.onSearch(null);
+	}
+	
 }

@@ -89,27 +89,41 @@
 							<ui:param name="controller" value="#{domainUser}" />
 						</ui:include>							
                     </aon:panelTab>
+                    
+                    <c:if test="#{!domainUser.new}" >
+						<c:if test="#{domain.aonDB}" >					
+							<aon:panelTab name="userWorkGroups" label="#{managerBundle.manager_workgroups}">
+								<ui:include src="/com/code/aon/ui/manager/facelet/userWorkgroup/grid.xhtml" />						
+		                    </aon:panelTab>
+	
+							<aon:panelTab name="scopes" label="#{managerBundle.manager_scopes}">
+								<ui:include src="/com/code/aon/ui/manager/facelet/userScope/grid.xhtml" />
+		                    </aon:panelTab>
+						</c:if>
 
-					<aon:panelTab name="contacts" rendered="#{(!domainUser.new) and domainUser.webmail}"
-						label="#{webmailBundle.webmail_email}">						
-						<ui:include src="/com/code/aon/ui/webmail/facelet/contact/grid.xhtml" >
-							<ui:param name="controller" value="#{contact}" />
-						</ui:include>						
-                    </aon:panelTab>
-
-					<aon:panelTab name="signature" rendered="#{(!domainUser.new) and domainUser.webmail}"
-						label="#{webmailBundle.webmail_signature}">
-						<ui:include src="/com/code/aon/ui/webmail/facelet/signature/grid.xhtml" >
-							<ui:param name="controller" value="#{signature}" />
-						</ui:include>						
-                    </aon:panelTab>
-
-					<aon:panelTab name="mailAccount" rendered="#{(!domainUser.new) and domainUser.webmail}"
-						label="#{webmailBundle.webmail_mailAccount}">
-						<ui:include src="/com/code/aon/ui/webmail/facelet/mailAccount/grid.xhtml" >
-							<ui:param name="controller" value="#{mailAccount}" />
-						</ui:include>						
-                    </aon:panelTab>
+						<c:if test="#{domainUser.webmail}" >
+							<aon:panelTab name="contacts"
+								label="#{webmailBundle.webmail_email}">						
+								<ui:include src="/com/code/aon/ui/webmail/facelet/contact/grid.xhtml" >
+									<ui:param name="controller" value="#{contact}" />
+								</ui:include>						
+		                    </aon:panelTab>
+		
+							<aon:panelTab name="signature"
+								label="#{webmailBundle.webmail_signature}">
+								<ui:include src="/com/code/aon/ui/webmail/facelet/signature/grid.xhtml" >
+									<ui:param name="controller" value="#{signature}" />
+								</ui:include>						
+		                    </aon:panelTab>
+		
+							<aon:panelTab name="mailAccount"
+								label="#{webmailBundle.webmail_mailAccount}">
+								<ui:include src="/com/code/aon/ui/webmail/facelet/mailAccount/grid.xhtml" >
+									<ui:param name="controller" value="#{mailAccount}" />
+								</ui:include>						
+		                    </aon:panelTab>
+						</c:if>
+					</c:if>
                     
 				</aon:panelTabSet>					
 

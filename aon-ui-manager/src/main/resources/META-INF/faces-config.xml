@@ -18,6 +18,15 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
+	
+	<!-- ************* DB MANAGER ***************** -->
+	<managed-bean>
+		<managed-bean-name>dbManager</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.DBManagerController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>		
 		
 	<!-- ************* DOMAIN ***************** -->
 	<managed-bean>
@@ -374,59 +383,9 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>					
 
-	<!-- ************ WORK GROUP ************** -->
-	<managed-bean>
-		<managed-bean-name>workGroup</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.config.WorkGroup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>workGroup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>WorkGroup_description</value>
-		</managed-property>		
-	</managed-bean>
-	
-	<!-- ************ SCOPE ************** -->
-	<managed-bean>
-		<managed-bean-name>scope</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.config.Scope</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>scope</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Scope_description</value>
-		</managed-property>		
-	</managed-bean>
-		
 	<!-- ************ USER SCOPE ************** -->
 	<managed-bean>
-		<managed-bean-name>userScope</managed-bean-name>
+		<managed-bean-name>userScopeEx</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.manager.controller.UserLinesController
 		</managed-bean-class>
@@ -441,7 +400,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>userScope</value>
+			<value>userScopeEx</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -455,7 +414,7 @@
 	
 	<!-- ************ USER WORKGROUP ************** -->
 	<managed-bean>
-		<managed-bean-name>userWorkgroup</managed-bean-name>
+		<managed-bean-name>userWorkGroupEx</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.manager.controller.UserLinesController
 		</managed-bean-class>
@@ -470,7 +429,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>userWorkgroup</value>
+			<value>userWorkGroupEx</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>

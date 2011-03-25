@@ -14,12 +14,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.dao.ldap.ILdapTransferObject;
+import com.code.aon.dbutils.AonSQLFile;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
@@ -35,10 +39,34 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	
 	private Converter converter;
 	
+	private boolean aonDB;
+	
+	private String selectedTab;
+	
 	public DomainDBConnectionController() {
 		this.createDB = true;
 	}
+
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
 	
+	public boolean isAonDB() {
+		return aonDB;
+	}
+
+	public void setAonDB(boolean aonDB) {
+		this.aonDB = aonDB;
+	}	
+	
+	public DBConnnection getDBConnnection() {
+		return (DBConnnection) getTo();
+	}	
+		
 	@Override
 	public void updateBaseDN(Name parent) {
 		String domain = NameResolver.getValue(parent, 0);
@@ -48,7 +76,7 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<DBConnnection> getDBConnnections() throws ManagerBeanException {
-		DBConnnection dbc = getManager().getCurrentDBConnection();
+		DBConnnection dbc = getDBManager().getCurrentDBConnection();
 		List<DBConnnection> dbcs = (List) getManagerBean().getList(null);
 		if ( (dbc != null) && (dbcs.size() > 1) ) {
 			List<DBConnnection> list = new LinkedList<DBConnnection>();
@@ -77,15 +105,13 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	}	
 	
 	public DBConnnection getMasterConnection() throws ManagerBeanException {
-		Properties properties = getManager().getProperties();
-		String masterDataSource = properties.getProperty(IManagerAlias.DB_CONNECTION_COMMON_NAME);
-		List<DBConnnection> list = getDBConnnections();
-		for (DBConnnection dbc : list ) {
-			if ( dbc.getCommonName().equals(masterDataSource) ) {
-				return dbc;
-			}
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(getFieldName(IManagerAlias.DB_CONNECTION_COMMON_NAME), AonSQLFile.AON_MASTER);
+		List<ITransferObject> list = getManagerBean().getList(criteria);
+		if (! list.isEmpty() ) {
+			return (DBConnnection) list.get(0);
 		}
-		return ( list.isEmpty() ) ? null : list.get(0);
+		return null;
 	}
 	
 	public boolean isCreateDB() {
@@ -121,7 +147,8 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	}
 	
 	public void init( DBConnnection dbc, String name ) {
-		Properties properties = getManager().getProperties();
+		ManagerController manager = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		Properties properties = manager.getProperties();
 		dbc.setCommonName( properties.getProperty(IManagerAlias.DB_CONNECTION_COMMON_NAME) );
 		dbc.setDriverClassName( properties.getProperty(IManagerAlias.DB_CONNECTION_DRIVER_CLASS_NAME) );
 		dbc.setUid( properties.getProperty(IManagerAlias.DB_CONNECTION_UID) );
@@ -132,8 +159,26 @@ public class DomainDBConnectionController extends LdapBasicController implements
 		dbc.setLabeledURI(url);			
 	}
 
-	private ManagerController getManager() {
-		return (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+	private DBManagerController getDBManager() {
+		return (DBManagerController) AonUtil.getRegisteredBean(DB_MANAGER_CONTROLLER_NAME);
 	}
+	
+	public boolean updateAonDBConnection( DBConnnection dbc ) {
+		boolean aonDB = false;
+		if ( (dbc != null) && (dbc.getId() != null) ) {
+			DBManagerController dbManager = getDBManager();
+			if ( dbManager.exists(dbc) ) {
+				dbManager.changeDbConnection(dbc);
+				if ( dbManager.isAonDB(dbc) ) {
+					aonDB = true;
+					IController uwg = FormUtil.getController(ConfigConstants.WORK_GROUP);
+					uwg.onSearch(null);			
+					IController scopes = FormUtil.getController(ConfigConstants.SCOPE);
+					scopes.onSearch(null);			
+				}
+			}
+		}		
+		return aonDB;
+	}		
 	
 }

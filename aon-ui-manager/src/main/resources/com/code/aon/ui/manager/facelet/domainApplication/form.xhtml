@@ -76,25 +76,25 @@
 	
 						<aon:panelTab name="profiles"
 							label="#{managerBundle.manager_profiles}">
+
 							<ui:include src="/com/code/aon/ui/manager/facelet/profile/grid.xhtml" >
 								<ui:param name="controller" value="#{domainProfile}" />
 							</ui:include>
+							
+							<aon:div styleClass="aon-form-group" >
+								<aon:div styleClass="aon-form-group-title">
+									<aon:div styleClass="aon-form-group-title-internal">
+										<aon:outputLabel for="profileData" value="#{managerBundle.manager_systemProfiles}" />
+									</aon:div>
+								</aon:div>
+								<ui:include src="/com/code/aon/ui/manager/facelet/profile/grid.xhtml" >
+									<ui:param name="controller" value="#{profile}" />
+									<ui:param name="skipProfileEdit" value="#{true}" />
+								</ui:include>								
+							</aon:div>							
+							
 	                    </aon:panelTab>
 	                
-	                    <c:if test="#{domainApplication.aonDB}">
-							<aon:panelTab name="userWorkGroups" label="#{managerBundle.manager_workgroups}">
-								<ui:include src="/com/code/aon/ui/manager/facelet/workGroup/grid.xhtml" >
-									<ui:param name="controller" value="#{workGroup}" />
-								</ui:include>
-		                    </aon:panelTab>
-		                                        
-							<aon:panelTab name="scopes" label="#{managerBundle.manager_scopes}">
-								<ui:include src="/com/code/aon/ui/manager/facelet/scope/grid.xhtml" >
-									<ui:param name="controller" value="#{scope}" />
-								</ui:include>
-		                    </aon:panelTab>
-						</c:if>
-	                                                            
 					</aon:panelTabSet>
 				</c:if>						
 				

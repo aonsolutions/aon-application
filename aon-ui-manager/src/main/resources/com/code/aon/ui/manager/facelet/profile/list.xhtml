@@ -5,14 +5,18 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/webmail/facelet/util/listInnerToolbar.xhtml" >
-		<ui:param name="skipSearchButton" value="#{true}" />
-	</ui:include>
+	<c:if test="#{!skipProfileEdit}">
+		<ui:include src="/com/code/aon/ui/webmail/facelet/util/listInnerToolbar.xhtml" >
+			<ui:param name="skipSearchButton" value="#{true}" />
+		</ui:include>
+	</c:if>
 
 	<aon:div styleClass="aon-scroll-area">
 
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 			<ui:param name="showNote" value="#{false}" />
+			<ui:param name="skipSelectButton" value="#{skipProfileEdit}" />
+			<ui:param name="showDataScroller" value="#{!skipProfileEdit}" />
 			<ui:define name="columns">
 		
 				<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn">

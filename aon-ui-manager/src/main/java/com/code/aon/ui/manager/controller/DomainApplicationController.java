@@ -23,6 +23,7 @@ import com.code.aon.manager.Application;
 import com.code.aon.manager.BasicProfile;
 import com.code.aon.manager.DomainApplication;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -36,22 +37,12 @@ public class DomainApplicationController extends LdapBasicController implements 
 	
 	private String selectedTab;
 	
-	private boolean aonDB;
-	
 	public String getSelectedTab() {
 		return selectedTab;
 	}
 
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
-	}
-	
-	public boolean isAonDB() {
-		return aonDB;
-	}
-
-	public void setAonDB(boolean aonDB) {
-		this.aonDB = aonDB;
 	}
 
 	@Override
@@ -124,7 +115,7 @@ public class DomainApplicationController extends LdapBasicController implements 
     
 	public List<SelectItem> getScopes() throws ManagerBeanException {
 		List<SelectItem> scopes = new LinkedList<SelectItem>();
-		IController controller = FormUtil.getController(SCOPE_CONTROLLER_NAME);
+		IController controller = FormUtil.getController(ConfigConstants.SCOPE);
 		IManagerBean scopeBean = controller.getManagerBean();
 		Criteria criteria = new Criteria();
 		criteria.addOrder("Scope.description");
@@ -138,7 +129,7 @@ public class DomainApplicationController extends LdapBasicController implements 
 	
 	public List<SelectItem> getWorkgroups() throws ManagerBeanException {
 		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
-		IController controller = FormUtil.getController(WORK_GROUP_CONTROLLER_NAME);
+		IController controller = FormUtil.getController(ConfigConstants.WORK_GROUP);
 		IManagerBean workGroupBean = controller.getManagerBean(); 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression("WorkGroup.status", WorkGroupStatus.ACTIVE);

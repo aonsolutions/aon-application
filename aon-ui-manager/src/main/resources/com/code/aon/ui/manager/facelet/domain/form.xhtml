@@ -147,9 +147,24 @@
 					
 				</aon:panelGrid>
 				
-				<c:if test="#{manager.config.showDomainManagementTab || manager.administrator}" >
+				<c:if test="#{manager.config.showDomainManagementTab or manager.config.showDomainAccessPolicy or
+								(!domain.new and domain.aonDB)}" >
 					<aon:panelTabSet selectedTab="#{domain.selectedTab}" >
 					
+						<c:if test="#{domain.aonDB}" >					
+							<aon:panelTab name="userWorkGroups" label="#{managerBundle.manager_workgroups}">
+								<ui:include src="/com/code/aon/ui/manager/facelet/workGroup/grid.xhtml" >
+									<ui:param name="controller" value="#{workGroup}" />
+								</ui:include>
+		                    </aon:panelTab>
+
+							<aon:panelTab name="scopes" label="#{managerBundle.manager_scopes}">
+								<ui:include src="/com/code/aon/ui/manager/facelet/scope/grid.xhtml" >
+									<ui:param name="controller" value="#{scope}" />
+								</ui:include>
+		                    </aon:panelTab>
+						</c:if>
+
 						<aon:panelTab name="domainManagament" rendered="#{manager.config.showDomainManagementTab}"
 							label="#{managerBundle.manager_domain_management}">
 							
@@ -195,7 +210,7 @@
 							
 	                    </aon:panelTab>
 	
-						<aon:panelTab name="accessPolicy" rendered="#{manager.administrator}"
+						<aon:panelTab name="accessPolicy" rendered="#{manager.config.showDomainAccessPolicy}"
 							label="#{managerBundle.manager_access_policy}">
 							
 							<aon:panelGrid columns="2">

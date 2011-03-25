@@ -79,12 +79,22 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	
 	private boolean enterpriseRecipient;
 	
+	private boolean aonDB;
+	
 	public String getSelectedTab() {
 		return selectedTab;
 	}
 
 	public void setSelectedTab(String selectedTab) {
 		this.selectedTab = selectedTab;
+	}	
+	
+	public boolean isAonDB() {
+		return aonDB;
+	}
+
+	public void setAonDB(boolean aonDB) {
+		this.aonDB = aonDB;
 	}	
 	
 	public int getDomainNameMaxLength() {
@@ -163,6 +173,10 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		return (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 	}
 	
+	private DBManagerController getDBManager() {
+		return (DBManagerController) AonUtil.getRegisteredBean(DB_MANAGER_CONTROLLER_NAME);
+	}	
+	
 	public void removeDomain( Domain domain ) {
 		BasicLdap ldap = null;
 		try {
@@ -188,7 +202,7 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 			ddbc.updateBaseDN(domain.getId());
 			for (ITransferObject to : ddbc.getManagerBean().getList(null) ) {
 				try {
-					getManager().removeDB( (DBConnnection) to );
+					getDBManager().removeDB( (DBConnnection) to );
 				} catch ( SQLException sqle ) {
 					LOGGER.error(sqle.getMessage(), sqle);
 				}
@@ -208,8 +222,8 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		DomainDBConnectionController ddbcc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		ddbcc.init( dbc, domain.getCommonName() );
 		ddbcc.getManagerBean().insert(dbc);
-		getManager().createDB(dbc);
-		getManager().changeDbConnection(dbc);
+		getDBManager().createDB(dbc);
+		getDBManager().changeDbConnection(dbc);
 		return dbc;
 	}
 	
@@ -353,11 +367,11 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	}		
 	
 	public Company getCompany() throws ManagerBeanException {
-		ManagerController manager = getManager();
+		DBManagerController dbManager = getDBManager();
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		for (DBConnnection dbc : ddbc.getDBConnnections()) {
-			manager.changeDbConnection(dbc);
-			if ( manager.getDBManager().existsTable(dbc, "company") ) {
+			dbManager.changeDbConnection(dbc);
+			if ( dbManager.isAonDB(dbc) ) {
 				try {
 					IManagerBean bean = BeanManager.getManagerBean(Company.class);
 					List<ITransferObject> list = bean.getList(null);
