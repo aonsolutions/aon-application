@@ -38,8 +38,6 @@
 		<mapping class="com.code.aon.accounting.Amortization"/>
 		<mapping class="com.code.aon.accounting.AmortizationDetail"/>
 		<mapping class="com.code.aon.accounting.AmortizationType"/>
-		<mapping class="com.code.aon.accounting.AnnualReport"/>
-		<mapping class="com.code.aon.accounting.AnnualReportDetail"/>
 		<mapping class="com.code.aon.accounting.Balance"/>
 		<mapping class="com.code.aon.accounting.BalanceDetail"/>
 		<mapping class="com.code.aon.accounting.Loan"/>
