@@ -38,7 +38,7 @@ public class SQLContractLeaveLoader  {
 				parentDays + leaveDays;
 			long rangeStart =	Math.max(start, parentDays + 1);
 			
-			return rangeEnd > rangeStart ? ( rangeEnd - rangeStart ) + 1 : 0 ;
+			return rangeEnd >= rangeStart ? ( rangeEnd - rangeStart ) + 1 : 0 ;
 		}
 
 		public String getName(ContractVariables variable) {

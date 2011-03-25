@@ -139,6 +139,20 @@ public class MyConcepts extends DefaultCtsqlDBVisitor {
 		return "%1$s";
 	}
 
+	public String getGrtzdoExprFormat(String calculo, double gtzdo) 
+	throws SQLException {
+		if (calculo.equals("1")) {
+			return gtzdo == 1.00 ? 
+					"%1$s" : 
+					String.format("%%1$s * %.2f", gtzdo );
+		}else if (calculo.equals("2")) {
+			return gtzdo == 1.00 ? 
+					String.format("%%1$s * %s ",MONTH_DAYS ) : 
+					String.format("%%1$s * %s * %.2f",MONTH_DAYS, gtzdo );
+		}	
+		return null;
+	}
+
 	public String getExprFormat(String calculo, BigDecimal importe, String indCom, String comApl) 
 	throws SQLException {
 		String format = getExprFormat(calculo, indCom, comApl);

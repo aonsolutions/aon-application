@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.regex.Pattern;
 
 
@@ -91,6 +92,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 	private Integer 		agreementCategoryId;
 	private String			codCon;
 	private String			nivel;
+	private Queue<String>	gtzdos;
 	
 	private Date 			fromDate;
 	private MyPerson 		myPerson;
@@ -124,6 +126,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		this.myCalendar = myCalendar;
 		this.contractDatas = new LinkedList<ContractData>();
 		this.parteIts = new HashMap<Date, Integer>();
+		this.gtzdos = new LinkedList<String>();
 	}
 
 	private boolean outOfDate ( Date date ) {
@@ -808,6 +811,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		}
 		else {
 			
+			
 			if ( inheritFromAgreement(percep, endDate ) ) {
 				return ;
 			}
@@ -850,6 +854,9 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					null,
 					endDate,
 					enum2short(salaryType));
+
+						
+
 		}
 	}
 	
@@ -1172,6 +1179,20 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					endDate);
 		
 		return true ;
+	}
+	
+	private void addGtzdo(Percep percep, String variable ) 
+	throws SQLException {
+
+		double garilt = toDouble(percep.getGarilt()); 
+		
+		if ( garilt > 0.00 ) {
+			String grtzdo = 
+				myConcepts.getGrtzdoExprFormat(percep.getCalculo(), garilt/100 );
+			if ( grtzdo  != null ){
+				gtzdos.add(DefaultMysqlDB.format(grtzdo, variable ) );
+			}
+		}
 	}
 
 }

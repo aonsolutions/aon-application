@@ -119,15 +119,13 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, amount);
 					
 					double payment = taxCalculator.tax(contractPayment, paymentStart, paymentEnd, amount);
-
-//					if ( payment != 0 ) {
-						String description  = 
-							expressionContext.evalTemplate(contractPayment.getDescription(), paymentStart, paymentEnd);
-						
-						String concept = contractPayment.getName(); 
-						PaymentType type = contractPayment.getType();
-						salaryBuilder.addPayment(type, concept, payment, description, null);
-//					} // end-if: Sólo si la cantidad a pagar es mayor que cero...
+					
+					String description  = 
+						expressionContext.evalTemplate(contractPayment.getDescription(), paymentStart, paymentEnd);
+					
+					String concept = contractPayment.getName(); 
+					PaymentType type = contractPayment.getType();
+					salaryBuilder.addPayment(type, concept, payment, description, null);
 				
 				} catch ( UndefinedVariableException e ) {
 					// TODO : notificar ??? 

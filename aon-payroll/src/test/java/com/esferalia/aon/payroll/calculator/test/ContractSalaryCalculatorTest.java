@@ -28,11 +28,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.CriteriaUtilities;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.Period;
@@ -106,12 +111,20 @@ public class ContractSalaryCalculatorTest {
 			new ContractSalaryCalculator();
 		calculator.setSalaryBuilder(salaryBuilderTester);
 		
-		Period period = getStartAndEndDate();
+		
+		SimpleDateFormat dateFormat = 
+			new SimpleDateFormat("dd/MM/yyyy");
+		Date start = dateFormat.parse("01/01/2011");
+		Date end = dateFormat.parse("31/01/2011");
+		
+		Period period = new Period(start, end); //getStartAndEndDate();
 		
 		info("testCalculate {}:{}",period.getStart(), period.getEnd());
 		
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression("person_registry.document", "02507118A");
+		criteria.addEqualExpression(SQLConstants.CUSTOMER + "." + CustomerColumns.STATUS, 
+				CustomerStatus.ACTIVE );
+		//criteria.addEqualExpression("person_registry.document", "50022042D");
 		//criteria.addOrExpression("person_registry.document", "53412119R");
 		
 		SQLContractSalaryCalculatorContext sqlCtx = 

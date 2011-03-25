@@ -590,6 +590,28 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		}
 	}
 	
+	public Integer getPaymentConceptId(String code) throws SQLException {
+		ResultSet rs = null; 
+		PreparedStatement stmt = null ;
+		try {
+			stmt = mysqlConnection.prepareStatement("SELECT id FROM payment_concept WHERE code = ?");
+			stmt.setString(1, code);
+			rs = stmt.executeQuery();
+			if ( rs.next() ){
+				return rs.getInt("id");
+			}
+			else {
+				return null;
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+
 	public Integer getBankId(String code) throws SQLException {
 		ResultSet rs = null; 
 		PreparedStatement stmt = null ;

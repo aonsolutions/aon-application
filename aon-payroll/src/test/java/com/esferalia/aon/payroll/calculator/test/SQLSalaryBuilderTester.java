@@ -30,7 +30,8 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 									+ " FROM " + SQLConstants.SALARY
 									+ " WHERE " + SalaryColumns.CONTRACT + " = ? "
 									+ " AND " + SalaryColumns.START_DATE + "  = ? "
-									+ " AND " + SalaryColumns.END_DATE + " = ? ";
+									+ " AND " + SalaryColumns.END_DATE + " = ? "
+									+ " AND " + SalaryColumns.TYPE + " = " + SalaryType.SALARY.ordinal();
 	
 	
 	private Connection connection;

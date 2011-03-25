@@ -65,12 +65,14 @@ public class SQLContractSalaryCalculatorContext implements
 		+", workplace"
 		+", enterprise"
 		+", registry AS " + ENTERPRISE_REGISTRY
-		+", raddress "
+		+", customer"
+		+", raddress"
 		+" WHERE contract.person = person.registry"				// INNER JOIN: person es NOT NULL
 		+" AND person.registry = person_registry.id"			// INNER JOIN: registry es NOT NULL
 		+" AND contract.workplace = workplace.id"				// INNER JOIN: workplace es NOT NULL
 		+" AND workplace.enterprise = enterprise.registry"		// INNER JOIN: enterprise es NOT NULL
 		+" AND enterprise.registry = enterprise_registry.id"	// INNER JOIN: registry es NOT NULL
+		+" AND customer.registry = enterprise_registry.id"		// INNER JOIN: registry es NOT NULL
 		+" AND workplace.address = raddress.id"					// INNER JOIN: address es NOT NULL
 		+" AND contract.start_date <= ? "					 
 		+" AND ( contract.end_date  IS NULL"
@@ -127,7 +129,7 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	private static final String CLEAVE_SQL =
 		"SELECT * ,"
-		+"( SELECT sum(DATEDIFF(end_date,start_date))"
+		+"( SELECT sum(DATEDIFF(end_date,start_date)+1)"
 		+" FROM contract_leave AS parent"
 		+" WHERE ( parent.id=contract_leave.parent"+
 		"  OR parent=contract_leave.parent )"+
@@ -181,6 +183,41 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 	}
 		
+	/**
+	 * 'DIAS_TRABAJADOS'.
+	 * 
+	 * @author rtrepiana
+	 *
+	 */
+	private class WorkDays extends LazyTimedObject<Long> {
+		Long work_days = null;
+		
+		@Override
+		public Long getValue() {
+			if ( work_days == null ){
+				work_days = getWorkDays();
+			}
+			return work_days;
+		}
+	}
+
+	/**
+	 * 'DIAS_TRABAJADOS'.
+	 * 
+	 * @author rtrepiana
+	 *
+	 */
+	private class LeaveDays extends LazyTimedObject<Long> {
+		Long leave_days = null;
+		
+		@Override
+		public Long getValue() {
+			if ( leave_days == null ){
+				leave_days = getLeaveDays();
+			}
+			return leave_days;
+		}
+	}
 
 	private Criteria 										criteria;
 	private Connection 										connection;
@@ -301,7 +338,8 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public String getEnterpriseAddress() {
-		// TODO Añadir la tabla y columnas a las constantes.
+		/* TODO Añadir la tabla y columnas a las constantes.		*/
+
 		String streetType = getString("raddress","street_type");
 		String address = getString("raddress","address");
 		String number = getString("raddress","number");
@@ -567,6 +605,26 @@ public class SQLContractSalaryCalculatorContext implements
 		return days;
 	}
 
+	/* 
+	 * Calcula los 'DIAS_TRABAJADOS' (DIAS_MES - DIAS_BAJA). 
+	 */
+	private long getWorkDays() {
+
+		Long availableDays = getAvailableDays();
+		Long leaveDays = leaveLoader.getLeavesDays();  
+		
+		Long workedDays = availableDays - leaveDays; 
+		
+		return workedDays;
+	}
+	
+	
+	private long getLeaveDays() {
+
+		Long leaveDays = leaveLoader.getLeavesDays();  
+		
+		return leaveDays;
+	}
 	/*
 	 * Inicializa el contexto dentro del cual se calcularán ejecutarán las
 	 * percepciones y deducciones de trabajador.
@@ -576,19 +634,18 @@ public class SQLContractSalaryCalculatorContext implements
 		this.contractExpressionContext = 
 			new ExpressionContext(getAgreementContext());
 		
+		// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de querys adicionales...)
+		this.contractExpressionContext.addVariable(ACTUAL_DAYS, 
+				new ActualDays() );
+		this.contractExpressionContext.addVariable(WORKED_DAYS, 
+				new WorkDays() );
+		this.contractExpressionContext.addVariable(LEAVE_DAYS, 
+				new LeaveDays());
 
 		loadContractData(contractExpressionContext);
 		loadContractLeave(contractExpressionContext);
 		
-		Long leaveDays = leaveLoader.getLeavesDays();  
-		Long availableDays = getAvailableDays();
-		Long workedDays = availableDays - leaveDays; 
 		
-		this.contractExpressionContext.addVariable(WORKED_DAYS, workedDays, startDate, endDate);
-		this.contractExpressionContext.addVariable(LEAVE_DAYS, leaveDays, startDate, endDate);
-		
-		// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de querys adicionales...)
-		this.contractExpressionContext.addVariable(ACTUAL_DAYS, new ActualDays() );
 	}
 	
 	/*

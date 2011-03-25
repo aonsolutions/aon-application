@@ -118,7 +118,9 @@ public class ExpressionContext {
 	
 	public static void main(String[] args) {
 		Map<String, Object> vars = new HashMap<String, Object>();
-		vars.put("DIAS_ENFERMEDAD_COMUN_1_3}", 100);
-		System.out.println ( MVEL.eval("DIAS_ENFERMEDAD_COMUN_1..3  * 0.60", vars));
+		vars.put("DIAS_TRABAJADOS", 10);
+		System.out.println ( MVEL.eval("100 * DIAS_TRABAJADOS", vars));
+		System.out.println ( MVEL.eval("with(DIAS_TRABAJADOS=31){ 100 * 100}", vars));
+		System.out.println(vars);
 	}
 }

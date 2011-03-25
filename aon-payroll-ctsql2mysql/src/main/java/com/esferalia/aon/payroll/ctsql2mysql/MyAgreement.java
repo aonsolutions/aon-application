@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Categoria;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Convenio;
@@ -44,6 +45,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 	private  int level;
 	private int agreement;
 	java.sql.Date startDate ;
+	private Queue<String> gtzdos ;
 	
 	private MyConcepts myConcepts;
 	private DefaultMysqlDB mysqlDB;
@@ -54,6 +56,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 	private Map<String, Map<String, Integer>>	levels;
 	private Map<String, Map<String, Map<String, Integer>>>	categories;
 	
+	private Map<Integer, String>	levelGtzdos;
 	private Map<String,Map<String,List<String>>> agreementPayments;
 
 	public MyAgreement(DefaultMysqlDB mysqlDB, MyConcepts myConcepts) {
@@ -63,10 +66,12 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 		this.mysqlDB = mysqlDB;
 		this.myConcepts = myConcepts;
 		this.startDate = startDate == null ? START_DATE : new java.sql.Date(startDate.getTime());
+		this.gtzdos = new LinkedList<String>();
 		this.levels = new HashMap<String, Map<String,Integer>>();
 		this.categories = new HashMap<String, Map<String,Map<String,Integer>>>();
 		this.agreements = new HashMap<String, Integer>();
 		this.agreementPayments = new HashMap<String, Map<String,List<String>>>();
+		this.levelGtzdos = new HashMap<Integer, String>();
 	}
 	
 	
@@ -188,7 +193,9 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 		return comparator.compare;
 	}
 	
-	
+	public String getGtzdo(Integer level) {
+		return levelGtzdos.get(level);
+	}
 	
 	
 	public boolean inherits(Emprper emprper, String codcon, String nivel  ) throws SQLException {
@@ -205,6 +212,23 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 			new EmprperNivelComparator(codcoms);
 		emprper.visitRel_pcp_epp(emprperNivelComparator);
 		return emprperNivelComparator.inherits();
+	}
+	
+	
+	public String getGtzdoExpression(Queue<String> gtzdos) {
+		StringBuffer gtzdosBuffer =
+			new StringBuffer();
+		gtzdosBuffer.append(gtzdos.poll());
+		while( !gtzdos.isEmpty() ) {
+			gtzdosBuffer.append(" + ");
+			gtzdosBuffer.append(gtzdos.poll());
+		}
+		
+		return DefaultMysqlDB.format("(( %s ) * %s / %s ) - ( ECEMP + ECSS + ATET )", 
+				gtzdosBuffer, 
+				ContractVariables.GUARANTEED_DAYS,
+				ContractVariables.MONTH_DAYS);
+		
 	}
 	
 	@Override
@@ -228,7 +252,34 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 		DefaultMysqlDB.save(levels, nivel.getCodcon(), nivel.getCdg(), this.level);
 		DefaultMysqlDB.save(agreementPayments, nivel.getCodcon(), nivel.getCdg(), new LinkedList<String>() );
 		
+		
 		nivel.visitPercniv_nivel(this);
+		
+		if ( gtzdos.isEmpty() ) {
+			return;
+		}
+		
+		String expression = getGtzdoExpression(gtzdos);
+		
+		Integer paymentConcept = mysqlDB.getPaymentConceptId("GTZDO");
+		
+		mysqlDB.insertAgreement_level_payment(
+				level, 
+				null, 
+				expression, 
+				null, 
+				startDate, 
+				null, 
+				null, 
+				paymentConcept, 
+				MysqlDB.enum2short(SalaryType.SALARY),
+				(short)1, 
+				null, 
+				null); // TODO : No cotiza ????
+	
+		mysqlDB.info("agreement_level[{}]: GTZDO {}", level, expression);
+		
+		levelGtzdos.put(level, expression);
 	}
 	
 	@Override
@@ -301,13 +352,14 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 			quote = MyConcepts.getPorQuote(percniv.getRedext(), 
 					MyConcepts.getQuoteExprFormat(tipCot) );
 		}
+		
 
 		mysqlDB.insertAgreement_level_payment(
 				this.level, 
 				DefaultMysqlDB.enum2short(paymetType), 
 				amount,
 				description,
-				START_DATE,
+				startDate,
 				null,
 				month,
 				concept.id ,
@@ -331,8 +383,18 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 			}
 		}
 		
+		double garilt = toDouble(percniv.getGarilt()); 
+		
+		if ( garilt > 0.00 ) {
+			String grtzdo = 
+				myConcepts.getGrtzdoExprFormat(percniv.getCalculo(), garilt/100 );
+			if ( grtzdo  != null ){
+				gtzdos.add(DefaultMysqlDB.format(grtzdo, variable ) );
+			}
+		}
 		
 	}
+
 	private String getExprFormat(Percniv percniv) 
 	throws SQLException {
 
@@ -345,4 +407,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 	
 	
 	
+	private double toDouble(BigDecimal bigDecimal) {
+		return bigDecimal != null  ? bigDecimal.doubleValue() : 0 ;
+	}
 }
