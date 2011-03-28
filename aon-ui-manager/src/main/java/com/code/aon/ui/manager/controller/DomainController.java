@@ -369,20 +369,19 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	public Company getCompany() throws ManagerBeanException {
 		DBManagerController dbManager = getDBManager();
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
-		for (DBConnnection dbc : ddbc.getDBConnnections()) {
-			dbManager.changeDbConnection(dbc);
-			if ( dbManager.isAonDB(dbc) ) {
-				try {
-					IManagerBean bean = BeanManager.getManagerBean(Company.class);
-					List<ITransferObject> list = bean.getList(null);
-					if (! list.isEmpty() ) {
-						return (Company) list.get(0);
-					}
-				} catch ( Throwable th ) {
-					LOGGER.error( "Error getting company in " + dbc, th );
+		DBConnnection dbc = ddbc.getMasterConnection();
+		dbManager.changeDbConnection(dbc);
+		if ( dbManager.isAonDB(dbc) ) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Company.class);
+				List<ITransferObject> list = bean.getList(null);
+				if (! list.isEmpty() ) {
+					return (Company) list.get(0);
 				}
-			}					
-		}
+			} catch ( Throwable th ) {
+				LOGGER.error( "Error getting company in " + dbc, th );
+			}
+		}					
 		return null;
 	}
 	

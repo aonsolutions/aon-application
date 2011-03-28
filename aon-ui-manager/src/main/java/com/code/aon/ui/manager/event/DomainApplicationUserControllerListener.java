@@ -26,7 +26,7 @@ public class DomainApplicationUserControllerListener extends ControllerAdapter i
 		DomainApplicationUser user = (DomainApplicationUser) event.getController().getTo();
 		DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);
 		try {		
-			duc.registerScopeInDBs(user.getCommonName(), GENERAL_SCOPE);		
+			duc.registerInDBs(user.getCommonName(), GENERAL_SCOPE);		
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );

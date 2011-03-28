@@ -42,6 +42,8 @@ import com.code.aon.company.Company;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
+import com.code.aon.config.UserWorkGroup;
+import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.ldap.BasicLdap;
@@ -53,7 +55,6 @@ import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.manager.converter.TransferObjectConverter;
@@ -307,37 +308,56 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}
 	
 	private void registerScope( String userUid, String scopeName ) throws ManagerBeanException {
-		IController scopeController = FormUtil.getController(ConfigConstants.SCOPE);
+		IManagerBean bean = BeanManager.getManagerBean(Scope.class);
 		Criteria scopeCriteria = new Criteria();
-		scopeCriteria.addEqualExpression(scopeController.getFieldName(IConfigAlias.SCOPE_DESCRIPTION), scopeName);
-		List<ITransferObject> scopes = scopeController.getManagerBean().getList(scopeCriteria);
+		scopeCriteria.addEqualExpression(bean.getFieldName(IConfigAlias.SCOPE_DESCRIPTION), scopeName);
+		List<ITransferObject> scopes = bean.getList(scopeCriteria);
 		if (! scopes.isEmpty() ) {
 			Scope scope = (Scope) scopes.get(0);
 			User user = ensureDBUser( userUid );
 			ensureDBUserScope(user, scope);
 		}
 	}
+
+	private void registerWorkGroup( String userUid, String workGroupName ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(WorkGroup.class);
+		Criteria wgCriteria = new Criteria();
+		wgCriteria.addEqualExpression(bean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION), workGroupName);
+		List<ITransferObject> wgs = bean.getList(wgCriteria);
+		WorkGroup workGroup = null;
+		if (! wgs.isEmpty() ) {
+			workGroup = (WorkGroup) wgs.get(0);
+		} else {
+			workGroup = new WorkGroup();
+			workGroup.setDescription(workGroupName);
+			bean.insert(workGroup);
+		}
+		User user = ensureDBUser( userUid );
+		ensureDBUserWorkGroup(user, workGroup);
+	}
 	
-	public void registerScopeInDBs( String userUid, String scope ) throws ManagerBeanException {
+	public void registerInDBs( String userUid, String name ) throws ManagerBeanException {
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		for (DBConnnection dbc : ddbc.getDBConnnections()) {
-			registerScopeInDB(dbc, userUid, scope);
+			registerInDB(dbc, userUid, name);
 		}
 	}	
 
-	public void registerScopeInDB( DBConnnection dbc, String userUid, String scope ) throws ManagerBeanException {
+	public void registerInDB( DBConnnection dbc, String userUid, String name ) throws ManagerBeanException {
 		getDBManager().changeDbConnection(dbc);
 		if ( getDBManager().isAonDB(dbc) ) {
 			try {
-				registerScope(userUid, scope);	
+				registerScope(userUid, name);	
+				registerWorkGroup(userUid, name);
 			} catch ( Throwable th ) {
-				LOGGER.error( "Error registering " + scope + " for user " + userUid + " in " + dbc, th );
+				LOGGER.error( "Error registering " + name + " for user " + userUid + " in " + dbc, th );
 			}					
 		}
 	}	
 
 	private User initDBUser( String uid ) throws ManagerBeanException {
 		User user = new User();
+		user.setEnterprise( getEnterpriseId() );
 		user.setLogin(uid);
 		user.setActive(true);
 		Criteria criteria = new Criteria();
@@ -352,6 +372,16 @@ public class DomainUserController extends LdapBasicController implements IManage
 		}
 		return user;
 	}
+	
+	public Integer getEnterpriseId() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Company.class);
+		List<ITransferObject> list = bean.getList(null);
+		if (! list.isEmpty() ) {
+			Company company = (Company) list.get(0);
+			return company.getId();
+		}
+		return null;
+	}	
 	
 	public User ensureDBUser( String uid ) throws ManagerBeanException {
 		User user = null;
@@ -370,7 +400,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		return user;
 	}	
 
-	public void ensureDBUserScope( User user, Scope scope ) throws ManagerBeanException {	
+	private void ensureDBUserScope( User user, Scope scope ) throws ManagerBeanException {	
 		IController userScopeController = FormUtil.getController(USER_SCOPE_CONTROLLER_NAME);
 		IManagerBean bean = userScopeController.getManagerBean();
 		Criteria criteria = new Criteria();
@@ -384,6 +414,20 @@ public class DomainUserController extends LdapBasicController implements IManage
 		}
 	}	
 
+	public void ensureDBUserWorkGroup( User user, WorkGroup workGroup ) throws ManagerBeanException {	
+		IController userWGController = FormUtil.getController(USER_WORK_GROUP_CONTROLLER_NAME);
+		IManagerBean bean = userWGController.getManagerBean();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroup.getId());
+		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_ID), user.getId());
+		if ( bean.getCount(criteria) == 0 ) {
+			UserWorkGroup uwg = new UserWorkGroup();
+			uwg.setWorkGroup(workGroup);
+			uwg.setUser(user);
+			bean.insert(uwg);
+		}
+	}		
+	
 	public void createMailAccount( DomainUser user ) throws ManagerBeanException {
 		ManagerController manager = getManager();
 		String command = null; 
@@ -442,7 +486,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		registerUserInApplication(user, AON_DESKTOP, ADMINISTRADOR_PROFILE);
 		registerUserInApplication(user, AON_MANAGER, ADMINISTRADOR_PROFILE);
 		registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
-		registerScopeInDB( dbc, user.getUid(), GENERAL_SCOPE);
+		registerInDB( dbc, user.getUid(), GENERAL_SCOPE);
 		createMailAccount(user);
 		addDefaultWebmailData(user, null);
 	}

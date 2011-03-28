@@ -151,7 +151,7 @@
 								(!domain.new and domain.aonDB)}" >
 					<aon:panelTabSet selectedTab="#{domain.selectedTab}" >
 					
-						<c:if test="#{domain.aonDB}" >					
+						<c:if test="#{!domain.new and domain.aonDB}" >					
 							<aon:panelTab name="userWorkGroups" label="#{managerBundle.manager_workgroups}">
 								<ui:include src="/com/code/aon/ui/manager/facelet/workGroup/grid.xhtml" >
 									<ui:param name="controller" value="#{workGroup}" />
