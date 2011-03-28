@@ -766,23 +766,27 @@ public class BankStatementController extends BasicController implements IFinance
 
 	private void findFinance(BankStatement to, boolean returned) throws ManagerBeanException, ExpressionException {
 		boolean payment = (to.getCommonConcept() != StatementConcept.RETURNED) ? to.isPayment() : !to.isPayment();
-		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
-		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
 		double fromAmount = CommonUtil.round(to.getAmount() * 0.9);
 		double toAmount = CommonUtil.round(to.getAmount() * 1.1);
+		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
+		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
 
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		for (int key=1; key<=3 && to.isPending(); key++) {
 			Criteria criteriaFin = new Criteria();
 			criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
-
-			Criteria criteriaTrk = new Criteria();
+	        Criteria criteriaTrk = new Criteria();
 			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
 			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_REGISTRY_BANK_ID), to.getRegistryBank().getId());
 			criteriaTrk.addNullExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_BANK_STATEMENT_LINK));
 			criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_RECORDED), new Boolean(false));
-			if (!returned) {
+			if (!AonUtil.getRoleManager().isConfidentiality()) {
+				criteriaFin.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+
+				criteriaTrk.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+			}
+	        if (!returned) {
 				criteriaFin.addNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PAID);
 				criteriaFin.addNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.BATCHED);
 
@@ -824,7 +828,6 @@ public class BankStatementController extends BasicController implements IFinance
 					break;
 				}
 			}
-			//SCOPE y SECURITY_LEVEL!!
 
 			ITransferObject linkedTo = null;
 			List<ITransferObject> financeList = financeBean.getList(criteriaFin);
@@ -862,18 +865,21 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	private void findFinanceBatch(BankStatement to) throws ManagerBeanException {
-		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
-		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
 		double fromAmount = CommonUtil.round(to.getAmount() * 0.9);
 		double toAmount = CommonUtil.round(to.getAmount() * 1.1);
+		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
+		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
 
 		IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
 		for (int key=1; key<=2 && to.isPending(); key++) {
 			Criteria criteria = new Criteria();
-			criteria.addNullExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_BANK_STATEMENT_LINK));
-			criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), to.getRegistryBank().getId());
-			criteria.addNotEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
 			criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_PAYMENT), new Boolean(to.isPayment()));
+	        if (!AonUtil.getRoleManager().isConfidentiality()) {
+				criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+			}
+			criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), to.getRegistryBank().getId());
+			criteria.addNullExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_BANK_STATEMENT_LINK));
+			criteria.addNotEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
 			switch (key) {
 				case 1: {
 					criteria.addEqualExpression(fBatchBean.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), to.getOperationDate());
@@ -885,7 +891,6 @@ public class BankStatementController extends BasicController implements IFinance
 					break;
 				}
 			}
-			//SECURITY_LEVEL!!
 
 			ITransferObject linkedTo = null;
 			int matchesAmount = 0;
@@ -922,10 +927,10 @@ public class BankStatementController extends BasicController implements IFinance
 
 	private void findTransfer(BankStatement to) throws ManagerBeanException, ExpressionException {
 		boolean payment = to.isPayment();
-		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
-		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
 		double fromAmount = CommonUtil.round(to.getAmount() * 0.9);
 		double toAmount = CommonUtil.round(to.getAmount() * 1.1);
+		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
+		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
 		Account bankAccount = getWriter().obtainPaymentAccount(to.getRegistryBank(), null);
 
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
@@ -947,6 +952,9 @@ public class BankStatementController extends BasicController implements IFinance
 	        Criteria criteria = new Criteria();
 	        criteria.addExpression((bankConceptExpr == null) ? accountExpr : ExpressionUtilities.getOrExpression(accountExpr, bankConceptExpr));
 	        criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_PAYMENT), new Boolean(!payment));
+	        if (!AonUtil.getRoleManager().isConfidentiality()) {
+				criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+			}
 	        criteria.addNullExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_LINKED_BANK_STATEMENT_LINK));
 			criteria.addNotEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_STATUS), StatementStatus.RECORDED);
 			switch (key) {
@@ -968,7 +976,6 @@ public class BankStatementController extends BasicController implements IFinance
 					break;
 				}
 			}
-			//SECURITY_LEVEL!!
 
 			ITransferObject linkedTo = null;
 			List<ITransferObject> transferList = statementLinkBean.getList(criteria);
@@ -1131,10 +1138,10 @@ public class BankStatementController extends BasicController implements IFinance
 	public void onAddLinkShow(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		BankStatement to = (BankStatement)getModel().getRowData();
 		boolean payment = (to.getCommonConcept() != StatementConcept.RETURNED) ? to.isPayment() : !to.isPayment();
-		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
-		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
 		Double fromAmount = new Double(CommonUtil.round(to.getAmount() * 0.9));
 		Double toAmount = new Double(CommonUtil.round(to.getAmount() * 1.1));
+		Date fromDate = DateUtils.addDays(to.getOperationDate(), -7);
+		Date toDate = DateUtils.addDays(to.getOperationDate(), 7);
 
 		BankStatementLinkController statementLinkList = (BankStatementLinkController)FormUtil.getController(BANK_STATEMENT_LINK_CONTROLLER_NAME);
 		statementLinkList.clearCheckedStatementLinks();
@@ -1157,8 +1164,11 @@ public class BankStatementController extends BasicController implements IFinance
 			}
 	        criteria = new Criteria();
 			criteria.addEqualExpression(financeList.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
-			criteria.addBetweenExpression(financeList.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), fromDate, toDate);
+	        if (!AonUtil.getRoleManager().isConfidentiality()) {
+				criteria.addEqualExpression(financeList.getFieldName(IFinanceAlias.FINANCE_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+			}
 			criteria.addBetweenExpression(financeList.getFieldName(IFinanceAlias.FINANCE_AMOUNT), fromAmount, toAmount);
+			criteria.addBetweenExpression(financeList.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), fromDate, toDate);
 			criteria.setOrderByList(financeList.getOrderList());
 			financeList.setCriteria(criteria);
 			financeList.onSearch(null);
@@ -1176,8 +1186,11 @@ public class BankStatementController extends BasicController implements IFinance
 			}
 			criteria = new Criteria();
 			criteria.addEqualExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_PAYMENT), new Boolean(payment));
-			criteria.addBetweenExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate, toDate);
+	        if (!AonUtil.getRoleManager().isConfidentiality()) {
+				criteria.addEqualExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+			}
 			criteria.addBetweenExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_AMOUNT), fromAmount, toAmount);
+			criteria.addBetweenExpression(trackingList.getFieldName(IFinanceAlias.FINANCE_TRACKING_TRACKING_DATE), fromDate, toDate);
 			criteria.setOrderByList(trackingList.getOrderList());
 			trackingList.setCriteria(criteria);
 			trackingList.onSearch(null);
@@ -1187,10 +1200,13 @@ public class BankStatementController extends BasicController implements IFinance
 			FBatchListController batchList = (FBatchListController)FormUtil.getController(FINANCE_BATCH_LIST_CONTROLLER_NAME);
 			batchList.onEditSearch(null);
 			criteria = new Criteria();
-			criteria.addNullExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_BANK_STATEMENT_LINK));
-			criteria.addEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), to.getRegistryBank().getId());
-			criteria.addNotEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
 			criteria.addEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_PAYMENT), new Boolean(payment));
+	        if (!AonUtil.getRoleManager().isConfidentiality()) {
+				criteria.addEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+			}
+			criteria.addEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_REGISTRY_BANK_ID), to.getRegistryBank().getId());
+			criteria.addNullExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_BANK_STATEMENT_LINK));
+			criteria.addNotEqualExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_FINANCE_BATCH_STATUS), FinanceBatchStatus.RECORDED);
 			criteria.addBetweenExpression(batchList.getFieldName(IFinanceAlias.FINANCE_BATCH_ISSUE_DATE), fromDate, toDate);
 			criteria.setOrderByList(batchList.getOrderList());
 			batchList.setCriteria(criteria);
@@ -1216,13 +1232,13 @@ public class BankStatementController extends BasicController implements IFinance
         criteria = new Criteria();
         criteria.addExpression((bankConceptExpr == null) ? accountExpr : ExpressionUtilities.getOrExpression(accountExpr, bankConceptExpr));
         criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_PAYMENT), new Boolean(!payment));
-        criteria.addBetweenExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE), fromDate, toDate);
-        criteria.addBetweenExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_AMOUNT), fromAmount, toAmount);
-        criteria.addNullExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_LINKED_BANK_STATEMENT_LINK));
         if (!AonUtil.getRoleManager().isConfidentiality()) {
 			criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
 		}
+        criteria.addNullExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_LINKED_BANK_STATEMENT_LINK));
 		criteria.addNotEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_STATUS), StatementStatus.RECORDED);
+        criteria.addBetweenExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_AMOUNT), fromAmount, toAmount);
+        criteria.addBetweenExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE), fromDate, toDate);
 		criteria.addOrder(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_OPERATION_DATE));
 		getBankStatementLinkManager().setLinkTransferList(statementLinkBean.getList(criteria));
 		getBankStatementLinkManager().setLinkTransferModel(null);
