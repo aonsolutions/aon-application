@@ -182,18 +182,26 @@ public class ActionDeniedController implements IAuditConstants {
 			this.options.removeAll(deniedList);
 		}
 	}
+	
+	private String getAction( UICommand command ) {
+		String action = null;
+		MethodExpression expression = command.getActionExpression();
+		if ( expression != null ) {
+			action = expression.getExpressionString();
+			if ( MenuParser.isReference(action) ) {
+				action = command.getId();
+			}
+		}		
+		return action;
+	}
 
 	public void renderedCommand( UIComponent component, UIComponent parent ) {
 		if ( component.isRendered() ) {
-			UICommand command = (UICommand) component;
-			MethodExpression expression = command.getActionExpression();
-			if ( expression != null ) {
-				String action = expression.getExpressionString();
-				if ( this.deniedActionsMap.containsKey(action) ) {
-					parent.setRendered(false);
-					component.setRendered(false);
-				}				
-			}
+			String action = getAction( (UICommand) component );
+			if ( this.deniedActionsMap.containsKey(action) ) {
+				parent.setRendered(false);
+				component.setRendered(false);
+			}				
 		}
 	}
 	

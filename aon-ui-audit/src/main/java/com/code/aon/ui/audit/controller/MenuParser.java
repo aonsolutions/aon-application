@@ -205,7 +205,7 @@ public class MenuParser {
 		return outputText.attributeValue(VALUE_ATTRIBUTE);
 	}
 	
-	private boolean isReference( String value ) {
+	public static boolean isReference( String value ) {
 		return StringUtils.startsWith(value, "#{") && StringUtils.endsWith(value, "}");
 	}
 	
