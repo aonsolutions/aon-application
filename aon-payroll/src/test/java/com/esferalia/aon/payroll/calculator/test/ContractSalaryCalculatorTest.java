@@ -103,7 +103,8 @@ public class ContractSalaryCalculatorTest {
 	 */
 	@Test
 	public void testCalculate() throws SQLException, ExpressionException, SalaryException, ParseException, com.code.aon.ql.util.ExpressionException {
-		
+		/*		
+
 		SQLSalaryBuilderTester salaryBuilderTester = 
 			new SQLSalaryBuilderTester(connection);
 		
@@ -153,7 +154,7 @@ public class ContractSalaryCalculatorTest {
 			}
 		}
 		info("salarys {} ",count);
-
+		*/
 	}
 	
 	
