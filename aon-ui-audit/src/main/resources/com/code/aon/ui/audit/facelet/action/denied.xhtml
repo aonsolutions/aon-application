@@ -32,7 +32,7 @@
 						value="#{bundle.aon_login_user}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="User_login" property="#{actionDenied.user}"
-							reRender="User_name,optionList" lookup="#{userLookup}"
+							reRender="User_name,optionList" lookup="#{userAuditLookup}"
 							lookupChangeListener="#{actionDenied.userChanged}"
 							value="#{actionDenied.user.login}" size="20">
 							<aon:joinProperty alias="User_login" value="#{actionDenied.user.login}" />
@@ -40,7 +40,7 @@
 						<aon:lookupButton 
 							windowTitle="#{configBundle.config_user_selection}"
 							selectReRender="User_login,User_name,optionList" 
-							lookup="#{userLookup}" minHeight="460" minWidth="650"
+							lookup="#{userAuditLookup}" minHeight="460" minWidth="650"
 							lookupChangeListener="#{actionDenied.userChanged}"
 							property="#{actionDenied.user}">
 						</aon:lookupButton>
@@ -78,6 +78,6 @@
         		</rich:listShuttle>
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{userLookup}" />
+		<aon:lookupButtonPopup lookup="#{userAuditLookup}" />
 	</ui:define>
 </ui:composition>

@@ -17,12 +17,10 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.velocity.TemplateHelper;
 import com.code.aon.common.velocity.VelocityHelper;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
 import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.audit.OptionGroup;
-import com.code.aon.ui.config.util.UserUtils;
 
 /**
  * @author atellitu
@@ -97,12 +95,11 @@ public class ApplicationOptionController {
 		this.optionMap = new HashMap<String, ApplicationOption>();
 		this.groupMap = new HashMap<String, OptionGroup>();
 		this.categories = new ArrayList<ApplicationCategory>();
-		AuthPrincipal principal = UserUtils.getInstance().getPrincipal();
 		String context = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
 		try {
 			this.application = AuditManager.getApplication(context);
 		} catch (ManagerBeanException e) {
-			LOGGER.error( "Error getting application for " + principal, e );
+			LOGGER.error( "Error getting application", e );
 		}		
 		new MenuParser().parse(this);
 	}
