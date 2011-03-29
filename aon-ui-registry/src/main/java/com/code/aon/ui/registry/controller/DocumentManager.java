@@ -107,9 +107,10 @@ public class DocumentManager {
 	}
 
 	public String getFreeSpaceMessage() {
+		String totalSpace = FileUtils.byteCountToDisplaySize(this.maxTotalDocumentSize);
 		String freeSpace = FileUtils.byteCountToDisplaySize(getFreeSpace()); 
 		String maxSize = FileUtils.byteCountToDisplaySize(maxDocumentSize);
-		return AonUtil.getMessage(DEFAULT_BUNDLE, DOCUMENT_SIZE_MESSAGE, freeSpace, maxSize);
+		return AonUtil.getMessage(DEFAULT_BUNDLE, DOCUMENT_SIZE_MESSAGE, totalSpace, freeSpace, maxSize);
 	}
 	
 }
