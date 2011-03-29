@@ -1091,6 +1091,15 @@ public class BasicController extends AbstractPojoController implements IControll
 	}
 	
 	/**
+	 * Gets the back action listener.
+	 * 
+	 * @return the back action listener
+	 */
+	public String getBackActionListener() {
+		return backActionListener;
+	}
+
+	/**
 	 * Sets the back action listener.
 	 *
 	 * @param expression the new back action listener
