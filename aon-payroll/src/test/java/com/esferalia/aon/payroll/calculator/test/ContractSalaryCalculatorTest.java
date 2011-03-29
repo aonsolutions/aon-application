@@ -82,7 +82,7 @@ public class ContractSalaryCalculatorTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		String url = "jdbc:mysql://localhost:3306/payroll-esferalia-org?autoReconnect=true";
+		String url = "jdbc:mysql://volga:3306/payroll-esferalia-org?autoReconnect=true";
 		String usr = "dbuser"; 
 		String psw = "serubd2000";
 		Class.forName("com.mysql.jdbc.Driver");
