@@ -103,58 +103,6 @@ public class ContractSalaryCalculatorTest {
 	 */
 	@Test
 	public void testCalculate() throws SQLException, ExpressionException, SalaryException, ParseException, com.code.aon.ql.util.ExpressionException {
-		/*		
-
-		SQLSalaryBuilderTester salaryBuilderTester = 
-			new SQLSalaryBuilderTester(connection);
-		
-		ContractSalaryCalculator calculator = 
-			new ContractSalaryCalculator();
-		calculator.setSalaryBuilder(salaryBuilderTester);
-		
-		
-		SimpleDateFormat dateFormat = 
-			new SimpleDateFormat("dd/MM/yyyy");
-		Date start = dateFormat.parse("01/01/2011");
-		Date end = dateFormat.parse("31/01/2011");
-		
-		Period period = new Period(start, end); //getStartAndEndDate();
-		
-		info("testCalculate {}:{}",period.getStart(), period.getEnd());
-		
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(SQLConstants.CUSTOMER + "." + CustomerColumns.STATUS, 
-				CustomerStatus.ACTIVE );
-		//criteria.addEqualExpression("person_registry.document", "50022042D");
-		//criteria.addOrExpression("person_registry.document", "53412119R");
-		
-		SQLContractSalaryCalculatorContext sqlCtx = 
-			new SQLContractSalaryCalculatorContext(connection, 
-					period.getStart(), 
-					period.getEnd(),
-					Calendar.getInstance().getTime(),
-					criteria );
-		
-		int count ;
-		for ( count = 0;  sqlCtx.next() ; count++ ) {
-			try {
-				calculator.calculate(sqlCtx);
-				debug("{} [{}] {}, {} ", 
-						count,
-						sqlCtx.getEmployeeDocument(),
-						sqlCtx.getEnterpriseName(),
-						sqlCtx.getEmployeeName());
-				salaryBuilderTester.test();
-			}
-			catch ( NoSuchSalaryError err ){
-				
-			}
-			catch( AssertionError err ) {
-				error(err.getMessage());
-			}
-		}
-		info("salarys {} ",count);
-		*/
 	}
 	
 	
