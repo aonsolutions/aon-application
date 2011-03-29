@@ -119,7 +119,18 @@ public class CompanyCollectionsController {
 	}	
 
 	public int getWorkPlacesCount() throws ManagerBeanException {
-		return BeanManager.getManagerBean(WorkPlace.class).getCount(null);
+		int workPlacesCount = 0;
+		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+    	Iterator<?> iterator = companyBean.getList(null).iterator();
+    	if(iterator.hasNext()) {
+    		Company company = (Company)iterator.next();
+    		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
+    		Criteria criteria = new Criteria();
+    		criteria.addEqualExpression(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), company.getId());
+    		criteria.addEqualExpression(workPlaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ACTIVE), true);
+    		workPlacesCount = workPlaceBean.getCount(criteria);
+		}
+		return workPlacesCount;
 	}
 
 }
