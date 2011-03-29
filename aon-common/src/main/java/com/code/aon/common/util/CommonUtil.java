@@ -39,6 +39,32 @@ public class CommonUtil {
 	}
 
 	/**
+	 * Trunca un valor decimal a la precisión requerida
+	 * 
+	 * @param value
+	 *            el valor a truncar
+	 * 
+	 * @param precision
+	 *            la precisión de la parte decimal
+	 * @return double el valor truncado
+	 */
+	public static double truncate(double value, int precision) {
+		return Math.floor(value * Math.pow(10, precision)) / Math.pow(10, precision);
+	}
+
+	/**
+	 * Trunca un valor decimal a 2 dígitos en la parte decimal
+	 * 
+	 * @param value
+	 *            el valor a truncar
+	 * 
+	 * @return double el valor tuncado
+	 */
+	public static double truncate(double value) {
+		return truncate(value, 2);
+	}
+
+	/**
 	 * Devuelve el último dia del año en función de año pasado por parámetro.
 	 * 
 	 * @param year
