@@ -107,7 +107,7 @@ public class Item implements ITransferObject {
     }
 
     public void setPrice(double price) {
-        this.price = price;
+        this.price = CommonUtil.round(price, 4);
     }
 
     public ProductStatus getStatus() {
@@ -151,7 +151,7 @@ public class Item implements ITransferObject {
 	}
 	
     public void setPurchasePrice(double purchasePrice) {
-		this.purchasePrice = purchasePrice;
+		this.purchasePrice = CommonUtil.round(purchasePrice, 4);
 	}
       
 	public boolean isInternet() {
@@ -172,11 +172,13 @@ public class Item implements ITransferObject {
 
 	@Transient
 	public double getSalesPrice() {
-		double price = this.getPrice();
+		return getSalesPrice(this.getPrice());
+	}
+	public double getSalesPrice(double price) {
 		Product product = this.getProduct();
-		double vatPercent = (product.getVat() != null) ? product.getVat().getPercentage() : 0;
-		double retentionPercent = (product.getRetention() != null) ? product.getRetention().getPercentage() : 0;
-		return CommonUtil.round(price* (1 + vatPercent / 100 - retentionPercent / 100));
+		double vatQuota = (product.getVat() != null) ? CommonUtil.round(price * product.getVat().getPercentage() / 100) : 0;
+		double retentionQuota = (product.getRetention() != null) ? CommonUtil.round(price * product.getRetention().getPercentage() / 100) : 0;
+		return CommonUtil.round(CommonUtil.round(price) + vatQuota - retentionQuota);
 	}
 	
 	public void setSalesPrice(double salesPrice) {

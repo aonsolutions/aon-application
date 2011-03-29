@@ -23,21 +23,27 @@ public class ItemController extends BasicController {
 	}
 
 	public void onSalesPriceChanged(ValueChangeEvent event) {
+		Item item = (Item)this.getTo();
 		double price = 0;
 		if (event.getNewValue() != null	&& !event.getNewValue().toString().equals("")) {
 			double salesPrice = CommonUtil.round(new Double(event.getNewValue().toString()).doubleValue());
-			((Item)this.getTo()).setSalesPrice(salesPrice);
 
-			Product product = ((Item)this.getTo()).getProduct();
+			Product product = item.getProduct();
 			double vatPercent = (product.getVat() != null) ? product.getVat().getPercentage() : 0;
 			double retentionPercent = (product.getRetention() != null) ? product.getRetention().getPercentage()	: 0;
-			price = CommonUtil.round(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100));
-			double calculatedSalesPrice = CommonUtil.round(price * (1 + vatPercent / 100 - retentionPercent / 100));
-			if (salesPrice != calculatedSalesPrice) {
-				price = CommonUtil.truncate(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100)) + 0.005;
+			for (int i=2; i<=4; i++) {
+				price = CommonUtil.round(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100), i);
+				if (salesPrice == item.getSalesPrice(price)) {
+					break;
+				} else {
+					price = CommonUtil.truncate(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100), i);
+					if (salesPrice == item.getSalesPrice(price)) {
+						break;
+					}
+				}
 			}
 		}
-		((Item)this.getTo()).setPrice(price);
+		item.setPrice(price);
 	}
 	
 	public void onProductHistory(ActionEvent e){
