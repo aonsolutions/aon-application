@@ -258,17 +258,21 @@ public class MenuParser {
 		return group;
 	}
 	
+	private boolean isTemplateCategoryOption( Element element ) {
+		return StringUtils.contains(element.attributeValue(ID_ATTRIBUTE), CATEGORY_EXPRESSION);
+	}
+	
 	private ApplicationOption getApplicationOption( Element element ) {
 		ApplicationOption option = null;
 		String action = getAction(element);
 		if ( action != null ) {
 			option = new ApplicationOption();
 			option.setAction(action);
+			if ( isTemplateCategoryOption(element) ) {
+				element.addAttribute(ACTION_ATTRIBUTE, action);	
+			}
 			String id = getId(element);
 			if ( id != null ) {
-				if ( StringUtils.contains(id, CATEGORY_EXPRESSION) ) {
-					id = StringUtils.replace(id, CATEGORY_EXPRESSION, group.getCategory().getAlias());
-				}
 				option.setId(id);	
 			} else {
 				LOGGER.warn( "Element without id {}", element );
