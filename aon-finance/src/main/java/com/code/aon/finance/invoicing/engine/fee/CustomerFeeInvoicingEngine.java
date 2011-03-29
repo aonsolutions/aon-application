@@ -358,7 +358,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoiceDetail.setItem(customerFee.getItem());
         invoiceDetail.setDescription(obtainFeeDescription(customerFee, invoice, params));
         invoiceDetail.setDiscountExpression(customerFee.getDiscountExpression());
-		invoiceDetail.setPrice(CommonUtil.round(customerFee.getPrice() * calculateCorrectionFactor(customerFee, params), 2));
+		invoiceDetail.setPrice(CommonUtil.round(customerFee.getPrice() * calculateCorrectionFactor(customerFee, params), 3));
 		invoiceDetail.setQuantity(customerFee.getQuantity());
 		invoiceDetail.setSource(InvoiceSource.FEE);
 		invoiceDetail.setSourceId((customerFee.getBillingDateYear() * 100) + customerFee.getBillingDateMonth().ordinal() + 1);

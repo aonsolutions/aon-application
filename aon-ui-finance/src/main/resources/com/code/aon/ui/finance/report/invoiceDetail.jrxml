@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.4641000000000006"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="128"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -166,7 +166,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{discountExpression}.getDiscountExpr()+" %"]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.000" isBlankWhenNull="true">
 				<reportElement key="textField-5" x="461" y="0" width="74" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
 				</reportElement>
@@ -181,7 +181,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{taxableBase}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.000" isBlankWhenNull="true">
 				<reportElement key="textField-3" x="372" y="0" width="54" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
 				</reportElement>

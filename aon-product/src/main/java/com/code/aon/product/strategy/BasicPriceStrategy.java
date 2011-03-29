@@ -63,7 +63,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error obtaining basePrice", e);
 		}
-		return CommonUtil.round(price);
+		return CommonUtil.round(price, 3);
 	}
 	
 	/* (non-Javadoc)

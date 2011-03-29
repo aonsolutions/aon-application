@@ -25,11 +25,17 @@ public class ItemController extends BasicController {
 	public void onSalesPriceChanged(ValueChangeEvent event) {
 		double price = 0;
 		if (event.getNewValue() != null	&& !event.getNewValue().toString().equals("")) {
-			double salesPrice = new Double(event.getNewValue().toString()).doubleValue();
+			double salesPrice = CommonUtil.round(new Double(event.getNewValue().toString()).doubleValue());
+			((Item)this.getTo()).setSalesPrice(salesPrice);
+
 			Product product = ((Item)this.getTo()).getProduct();
 			double vatPercent = (product.getVat() != null) ? product.getVat().getPercentage() : 0;
 			double retentionPercent = (product.getRetention() != null) ? product.getRetention().getPercentage()	: 0;
-			price = CommonUtil.round(salesPrice	/ (1 + vatPercent / 100 - retentionPercent / 100));
+			price = CommonUtil.round(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100));
+			double calculatedSalesPrice = CommonUtil.round(price * (1 + vatPercent / 100 - retentionPercent / 100));
+			if (salesPrice != calculatedSalesPrice) {
+				price = CommonUtil.truncate(salesPrice / (1 + vatPercent / 100 - retentionPercent / 100)) + 0.005;
+			}
 		}
 		((Item)this.getTo()).setPrice(price);
 	}

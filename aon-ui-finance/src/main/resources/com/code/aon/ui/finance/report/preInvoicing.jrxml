@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.2100000000000004"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="60"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -330,7 +330,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[new Integer($V{REPORT_COUNT}.intValue())]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Group" evaluationGroup="invoiceGroup" pattern="#,##0.00" isBlankWhenNull="false">
+			<textField evaluationTime="Group" evaluationGroup="invoiceGroup" pattern="#,##0.000" isBlankWhenNull="false">
 				<reportElement key="textField-29" positionType="Float" x="464" y="10" width="85" height="17"/>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

@@ -133,8 +133,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[($F{bankAccount}!=null && !$F{bankAccount}.toString().isEmpty())?
 ($F{negotiableDocument}?$F{bankAccount}.getMaskedBankAccount():$F{bankAccount}.toString()):
-("")
-]]></textFieldExpression>
+("")]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
 				<reportElement key="textField-4" x="0" y="0" width="60" height="14"/>
@@ -149,8 +148,8 @@
 				</textElement>
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{dueDate}]]></textFieldExpression>
 			</textField>
-			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-5" x="460" y="0" width="75" height="14"/>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="460" y="0" width="65" height="14"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -161,6 +160,19 @@
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="525" y="0" width="10" height="14"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["€"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
