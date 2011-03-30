@@ -374,17 +374,17 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			getManagerBean().restoreNullSubPOJOs(invoice);
 			getAccountWriter().unrecordAndUpdateInvoice(invoice);
 
+			HibernateUtil.commitTransaction(sessionName);
+
 			// En el caso de que se haya accedido al mantenimiento de facturas desde el mantenimiento de apuntes,
 			// hay que tener en cuenta que al descontabilizar la factura, se está borrando el apunte del que 
 			// provienes. De tal forma, se sobreescribe la funcionalidad del botón Volver, para que vaya a la 
 			// pantalla de búsqueda de apuntes, ejecutando el actionListener correspondiente. 
-			if (ObjectUtils.equals(IFinanceConstants.ACCOUNT_ENTRY_FORM_PAGE,this.backAction())) {
+			if (ObjectUtils.equals(IFinanceConstants.ACCOUNT_ENTRY_FORM_PAGE, this.backAction())) {
 				setBackAction(IFinanceConstants.ACCOUNT_ENTRY_SEARCH_PAGE);
 				setBackActionListener(IFinanceConstants.ACCOUNT_ENTRY_ON_EDIT_SEARCH_ACTION);
 				AonUtil.addWarningMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_UNRECORD_INVOICE_WARNING);
 			}
-			
-			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {
 			try {
 				HibernateUtil.rollbackTransaction(sessionName);
