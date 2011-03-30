@@ -25,6 +25,7 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
@@ -84,8 +85,8 @@ public class AccountEntryInvoiceWriter {
 	}
 
 	public void unrecordInvoice(Invoice invoice) throws ManagerBeanException {
-		AccountEntryInvoice accEntryInvoice = obtainAccountEntryInvoice(invoice);
-		if (accEntryInvoice != null) {
+		for (ITransferObject ito : obtainAccountEntryInvoices(invoice)) {
+			AccountEntryInvoice accEntryInvoice = (AccountEntryInvoice)ito;
 			removeAccountEntryInvoice(accEntryInvoice);
 			removeInvoiceDetailAccounts(accEntryInvoice.getInvoice());
 			removeInvoiceTaxAccounts(accEntryInvoice.getInvoice());
@@ -407,15 +408,11 @@ public class AccountEntryInvoiceWriter {
 		return (AccountEntryInvoice) accountEntryInvoiceBean.insert(accountEntryInvoice);
 	}
 
-	private AccountEntryInvoice obtainAccountEntryInvoice(Invoice invoice) throws ManagerBeanException {
+	private List<ITransferObject> obtainAccountEntryInvoices(Invoice invoice) throws ManagerBeanException {
 		IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_INVOICE_ID), invoice.getId());
-		Iterator<?> iterator = accountEntryInvoiceBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			return (AccountEntryInvoice) iterator.next();
-		}
-		return null;
+		return accountEntryInvoiceBean.getList(criteria);
 	}
 
 	private void removeAccountEntryInvoice(AccountEntryInvoice accEntryInvoice) throws ManagerBeanException {
