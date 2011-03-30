@@ -101,7 +101,7 @@ public class Item implements ITransferObject {
         this.barcode = barcode;
     }
 
-    @Column(nullable=true)
+    @Column(precision=15, scale=4)
     public double getPrice() {
         return price;
     }
@@ -145,7 +145,7 @@ public class Item implements ITransferObject {
 		this.profitPercent = profitPercent;
 	}
 
-	@Column(name="purchase_price")
+	@Column(name="purchase_price", precision=15, scale=4)
 	public double getPurchasePrice() {
 		return purchasePrice;
 	}

@@ -16,8 +16,9 @@
 			aon-panelGrid-even aon-width-200">
 
 		<aon:outputLabel for="Item_product_code" value="#{bundle.aon_id}" />
-		<aon:inputText id="Item_product_code" value="#{controller.to.product.code}"
-			required="true" size="20" maxLength="15" onblur="toUpperCase(this);" />
+		<aon:inputText id="Item_product_code" 
+			value="#{controller.to.product.code}" required="true" size="20" maxLength="15" 
+			onblur="toUpperCase(this);" />
 	
 		<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
 		<aon:selectOneMenu id="Item_status" value="#{controller.to.status}">
@@ -32,8 +33,8 @@
 		</aon:div>
 		<aon:div>
 			<c:if test="#{aonConfiguration.bean.product.showBarcode}">
-				<aon:inputText id="Item_barcode" value="#{controller.to.barcode}"
-					size="25" maxLength="32" />
+				<aon:inputText id="Item_barcode" 
+					value="#{controller.to.barcode}" size="25" maxLength="32" />
 	 		</c:if>
 			<aon:outputText value="&#160;" />
 		</aon:div>
@@ -48,8 +49,8 @@
 			aon-panelGrid-even aon-width-200">
 
 		<aon:outputLabel for="Item_product_name" value="#{bundle.aon_description}" />
-		<aon:inputText id="Item_product_name" value="#{controller.to.product.name}"
-			required="true" size="100" maxLength="64" />
+		<aon:inputText id="Item_product_name" 
+			value="#{controller.to.product.name}" required="true" size="100" maxLength="64" />
 
 		<aon:div>
 			<c:if test="#{aonConfiguration.bean.product.showType}">
@@ -119,7 +120,8 @@
 		</aon:div>
  		
 		<aon:outputLabel for="Item_purchase_price" value="#{productBundle.product_purchase_price}" />
-		<aon:inputText id="Item_purchase_price" value="#{controller.to.purchasePrice}" size="10">
+		<aon:inputText id="Item_purchase_price" 
+			value="#{controller.to.purchasePrice}" required="true" size="10">
 			<f:validateDoubleRange />
 		</aon:inputText>
 
