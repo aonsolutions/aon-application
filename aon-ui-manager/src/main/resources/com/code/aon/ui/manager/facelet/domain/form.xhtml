@@ -147,22 +147,30 @@
 					
 				</aon:panelGrid>
 				
-				<c:if test="#{manager.config.showDomainManagementTab or manager.config.showDomainAccessPolicy or
-								(!domain.new and domain.aonDB)}" >
+				<c:if test="#{!domain.new or manager.config.showDomainManagementTab or manager.config.showDomainAccessPolicy}" >
 					<aon:panelTabSet selectedTab="#{domain.selectedTab}" >
 					
-						<c:if test="#{!domain.new and domain.aonDB}" >					
-							<aon:panelTab name="userWorkGroups" label="#{managerBundle.manager_workgroups}">
-								<ui:include src="/com/code/aon/ui/manager/facelet/workGroup/grid.xhtml" >
-									<ui:param name="controller" value="#{workGroup}" />
+						<c:if test="#{!domain.new}" >
+						
+							<aon:panelTab name="aliases" label="#{managerBundle.manager_alias}">
+								<ui:include src="/com/code/aon/ui/manager/facelet/alias/grid.xhtml" >
+									<ui:param name="controller" value="#{alias}" />
 								</ui:include>
 		                    </aon:panelTab>
 
-							<aon:panelTab name="scopes" label="#{managerBundle.manager_scopes}">
-								<ui:include src="/com/code/aon/ui/manager/facelet/scope/grid.xhtml" >
-									<ui:param name="controller" value="#{scope}" />
-								</ui:include>
-		                    </aon:panelTab>
+							<c:if test="#{domain.aonDB}" >					
+								<aon:panelTab name="userWorkGroups" label="#{managerBundle.manager_workgroups}">
+									<ui:include src="/com/code/aon/ui/manager/facelet/workGroup/grid.xhtml" >
+										<ui:param name="controller" value="#{workGroup}" />
+									</ui:include>
+			                    </aon:panelTab>
+	
+								<aon:panelTab name="scopes" label="#{managerBundle.manager_scopes}">
+									<ui:include src="/com/code/aon/ui/manager/facelet/scope/grid.xhtml" >
+										<ui:param name="controller" value="#{scope}" />
+									</ui:include>
+			                    </aon:panelTab>
+							</c:if>
 						</c:if>
 
 						<aon:panelTab name="domainManagament" rendered="#{manager.config.showDomainManagementTab}"

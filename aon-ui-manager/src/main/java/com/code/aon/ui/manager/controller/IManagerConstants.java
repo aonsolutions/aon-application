@@ -20,6 +20,7 @@ public interface IManagerConstants {
 	String USER_WORK_GROUP_CONTROLLER_NAME = "userWorkGroupEx";
 	String USER_SCOPE_CONTROLLER_NAME = "userScopeEx";
 	String COMPANY_BASIC_CONTROLLER_NAME = "companyBasic";
+	String ALIAS_CONTROLLER_NAME = "alias";
 	
 	// Applications
 	String AON_DESKTOP = "aon-desktop";
@@ -48,7 +49,8 @@ public interface IManagerConstants {
 	String NEW_PASSWORD_ERROR = "manager_new_passwd_error";
 	String NEED_MAIL_ACCOUNT = "manager_need_mail_account";
 	String WRONG_MAIL_ACCOUNT = "manager_wrong_mail_account";
-
+	String WRONG_EMAIL = "manager_wrong_email";
+	
 	// Properties
 	
 	String ADVANCED_MODE_USER = "advancedMode_user";

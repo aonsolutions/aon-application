@@ -242,6 +242,10 @@ public class Domain implements ILdapTransferObject {
 		if (! ldap.exists(usersDN, ORGANIZATIONAL_UNIT) ) {
 			ldap.addOrganizationUnit(usersDN);
 		}
+		Name aliasesDN = NameResolver.getAliasesDN(getCommonName());
+		if (! ldap.exists(aliasesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(aliasesDN);
+		}
 	}
 	
 	@Override

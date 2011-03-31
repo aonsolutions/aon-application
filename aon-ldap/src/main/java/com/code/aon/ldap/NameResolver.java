@@ -35,6 +35,8 @@ public class NameResolver implements ILdapConstants {
 	
 	public static final String MESSAGES = "messages";
 	
+	public static final String ALIAS = "alias";
+	
 	public static final String DEFAULT_MAIL_ACCOUNT_NAME = "default";
 	
 	public static Rdn getRdn( String type, Object value ) {
@@ -271,6 +273,14 @@ public class NameResolver implements ILdapConstants {
 
 	public static Name getMessageDN( int status, String language ) {
 		return getName( status(status), getMessagesDN(language) );
+	}
+
+	public static Name getAliasesDN( String domain ) {
+		return getName( ou(ALIAS), getDomainDN(domain) );
+	}
+
+	public static Name getAliasDN( String domain, String alias ) {
+		return getName( cn(alias), getAliasesDN(domain) );
 	}
 	
 }

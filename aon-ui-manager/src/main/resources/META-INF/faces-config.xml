@@ -441,6 +441,35 @@
 		</managed-property>		
 	</managed-bean>	
 			
+	<!-- ************* ALIAS ***************** -->
+	<managed-bean>
+		<managed-bean-name>alias</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.AliasController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.manager.Alias</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>alias</value>
+		</managed-property>								
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Alias_commonName</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>
+	</managed-bean>		
+			
 	<!-- ************ CONFIG ************** -->
 	<managed-bean>
 		<managed-bean-name>aonConfig</managed-bean-name>

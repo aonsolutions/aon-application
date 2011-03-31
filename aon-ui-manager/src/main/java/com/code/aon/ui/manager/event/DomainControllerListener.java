@@ -1,15 +1,22 @@
 package com.code.aon.ui.manager.event;
 
+import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+
+import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
+import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainUser;
@@ -19,6 +26,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.manager.UserType;
+import com.code.aon.ui.manager.controller.AliasController;
 import com.code.aon.ui.manager.controller.DomainApplicationController;
 import com.code.aon.ui.manager.controller.DomainController;
 import com.code.aon.ui.manager.controller.DomainDBConnectionController;
@@ -118,12 +126,13 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	public void afterBeanSelected(ControllerEvent event)
 			throws ControllerListenerException {
 		DomainController dc = (DomainController) event.getController();
-		updateDomain(dc.getDomain());
 		try {
+			ensureAliases(dc);
+			updateDomain(dc.getDomain());
 			dc.init();
 			dc.updateParentDomains();
 			updateAonDBConnection(dc, null);
-		} catch (ManagerBeanException e) {
+		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
@@ -157,6 +166,9 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		duc.updateBaseDN(domain.getId());		
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		ddbc.updateBaseDN(domain.getId());		
+		AliasController ac = (AliasController) AonUtil.getRegisteredBean(ALIAS_CONTROLLER_NAME);
+		ac.updateBaseDN(domain.getId());
+		ac.onCancel(null);
 	}
 
 	private void updateDomainManagement( DomainController domainController, boolean updated ) throws ManagerBeanException {
@@ -190,7 +202,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		dc.getManagerBean().update(dc.getDomain());
 	}
 
-	public void updateAonDBConnection( DomainController dc, DBConnnection dbc ) throws ManagerBeanException {
+	private void updateAonDBConnection( DomainController dc, DBConnnection dbc ) throws ManagerBeanException {
 		DomainDBConnectionController ddbcc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		if ( dbc == null ) {
 			dbc = ddbcc.getMasterConnection();
@@ -198,4 +210,12 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		dc.setAonDB( ddbcc.updateAonDBConnection(dbc) );
 	}		
 	
+	private void ensureAliases( DomainController dc ) throws DAOException {
+		String domain = dc.getDomain().getCommonName();
+		Name aliasesDN = NameResolver.getAliasesDN(domain);
+		if (! dc.getLdapDAO().exists(aliasesDN, ORGANIZATIONAL_UNIT) ) {
+			dc.getLdapDAO().addOrganizationUnit(aliasesDN);
+		}
+	}
+
 }
