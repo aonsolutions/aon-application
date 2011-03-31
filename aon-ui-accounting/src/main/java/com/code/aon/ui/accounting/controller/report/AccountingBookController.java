@@ -1,11 +1,13 @@
 package com.code.aon.ui.accounting.controller.report;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -18,15 +20,22 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
+
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.BalanceType;
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.fiscal.enumeration.InvoiceReportOrder;
 import com.code.aon.fiscal.enumeration.VatType;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.accounting.controller.balance.BalanceSheetController;
@@ -53,8 +62,10 @@ public class AccountingBookController implements ICollectionProvider{
 	private Balance situationBalance;
 	private boolean patrimonyEnabled;
 	private Balance patrimonyBalance;
-//	private boolean annualReportEnabled;
-//	private AnnualReport annualReport;
+	private boolean reportTemplateEnabled;
+	private Integer reportTemplate;
+	private boolean reportEnabled;
+	private Integer report;
 	private int generatedPages = 0;
 	private String coverTitle;
 	private String coverSubTitle;
@@ -211,19 +222,33 @@ public class AccountingBookController implements ICollectionProvider{
 		this.patrimonyBalance = patrimonyBalance;
 	}
 
-//	public boolean isAnnualReportEnabled() {
-//		return annualReportEnabled;
-//	}
-//	public void setAnnualReportEnabled(boolean annualReportEnabled) {
-//		this.annualReportEnabled = annualReportEnabled;
-//	}
+	public boolean isReportTemplateEnabled() {
+		return reportTemplateEnabled;
+	}
+	public void setReportTemplateEnabled(boolean reportTemplateEnabled) {
+		this.reportTemplateEnabled = reportTemplateEnabled;
+	}
 
-//	public AnnualReport getAnnualReport() {
-//		return annualReport;
-//	}
-//	public void setAnnualReport(AnnualReport annualReport) {
-//		this.annualReport = annualReport;
-//	}
+	public Integer getReportTemplate() {
+		return reportTemplate;
+	}
+	public void setReportTemplate(Integer reportTemplate) {
+		this.reportTemplate = reportTemplate;
+	}
+
+	public boolean isReportEnabled() {
+		return reportEnabled;
+	}
+	public void setReportEnabled(boolean reportEnabled) {
+		this.reportEnabled = reportEnabled;
+	}
+
+	public Integer getReport() {
+		return report;
+	}
+	public void setReport(Integer report) {
+		this.report = report;
+	}
 
 	public List<SelectItem> getProfitAndLostBalances() throws ManagerBeanException {
 		AccountingCollectionsController c = (AccountingCollectionsController) AonUtil
@@ -257,7 +282,10 @@ public class AccountingBookController implements ICollectionProvider{
 		setProfitAndLostEnabled(true);
 		setSituationEnabled(true);
 		setPatrimonyEnabled(true);
-//		setAnnualReportEnabled(false);
+		setReportTemplateEnabled(false);
+		setReportTemplate(null);
+		setReportEnabled(false);
+		setReport(null);
 		setGeneratedPages(0);
 		setCoverTitle("CUENTAS ANUALES");
 		setCoverSubTitle("PLAN GENERAL DE CONTABILIDAD DE PEQUEÑAS Y MEDIANAS EMPRESAS");
@@ -327,10 +355,14 @@ public class AccountingBookController implements ICollectionProvider{
 				addPatrimony(zout,index);
 				++index;
 			}
-//			if (isAnnualReportEnabled()) {
-//				addAnnualReport(zout,index);
-//				++index;
-//			}
+			if (isReportTemplateEnabled()) {
+				addReportTemplate(zout,index);
+				++index;
+			}
+			if (isReportEnabled()) {
+				addReport(zout,index);
+				++index;
+			}
 			zout.flush();
 			zout.finish();
 		    res.flushBuffer();
@@ -339,6 +371,9 @@ public class AccountingBookController implements ICollectionProvider{
 			AonUtil.addErrorMessage("El fichero no es correcto");
 			throw new AbortProcessingException( e );
 		} catch (ReportException e) {
+			AonUtil.addErrorMessage("Error al ejecutar el listado");
+			throw new AbortProcessingException( e );
+		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Error al ejecutar el listado");
 			throw new AbortProcessingException( e );
 		}
@@ -358,10 +393,6 @@ public class AccountingBookController implements ICollectionProvider{
 			AonUtil.addErrorMessage("Seleccione un Balance de Patrimonio.");
 			ok = false;
 		}
-//		if (isAnnualReportEnabled() && getAnnualReport() == null) {
-//			AonUtil.addErrorMessage("Seleccione un modelo de Memoria Anual.");
-//			ok = false;
-//		}
 		if (!ok) {
 			throw new AbortProcessingException( "Compruebe los parámetros." );
 		}
@@ -689,17 +720,39 @@ public class AccountingBookController implements ICollectionProvider{
 		zout.closeEntry();
 	}
 
-//	private void addAnnualReport(ZipOutputStream zout,int index) throws IOException, ManagerBeanException {
-//		NumberFormat formatter = new DecimalFormat("00");
-//		ZipEntry ze = new ZipEntry(formatter.format(index) + "-MemoriaAnual.pdf");
-//	    zout.putNextEntry(ze);
-//        AnnualReportLauncher c = (AnnualReportLauncher) AonUtil.getRegisteredBean("annualReportLauncher");
-//        c.onReset(null);
-//        c.setAnnualReport(getAnnualReport());
-//        c.getParams().setPeriod(getPeriod());
-//        c.pdf(zout);
-//		zout.closeEntry();
-//	}
+	private void addReportTemplate(ZipOutputStream zout,int index) throws IOException, ManagerBeanException {
+		NumberFormat formatter = new DecimalFormat("00");
+		ZipEntry ze = new ZipEntry(formatter.format(index) + "-MemoriaAnual.pdf");
+	    zout.putNextEntry(ze);
+        ReportsLauncher c = (ReportsLauncher) AonUtil.getRegisteredBean("reportsLauncher");
+        c.onReset(null);
+        c.setUseAttachedTemplate((getReportTemplate() != null));
+        c.setUseDefaultTemplate((getReportTemplate() == null));
+        c.setReportTemplate(getReportTemplate());
+        if (c.isUseAttachedTemplate()) {
+        	c.onChangeReportTemplate(null);	
+        }
+        c.getParams().setPeriod(getPeriod());
+        c.pdf(zout);
+		zout.closeEntry();
+	}
+
+	private void addReport(ZipOutputStream zout,int index) throws IOException, ManagerBeanException {
+		if (getReport() != null) {
+			IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID),getReport());
+	        Iterator<?> iter = bean.getList(criteria).iterator();
+			if (iter.hasNext()) {
+				RegistryAttachment ra = (RegistryAttachment) iter.next();
+				NumberFormat formatter = new DecimalFormat("00");
+				ZipEntry ze = new ZipEntry(formatter.format(index) + "-" + ra.getDescription() + (ra.getMimeType()!=null?("." + ra.getMimeType().getExtension()):""));
+			    zout.putNextEntry(ze);
+			    IOUtils.copy(new ByteArrayInputStream(ra.getData()), zout);
+				zout.closeEntry();
+			}
+		}
+	}
 
 	@Override
 	public Collection<?> getCollection() {

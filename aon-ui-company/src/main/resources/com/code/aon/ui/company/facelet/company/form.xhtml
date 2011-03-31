@@ -179,7 +179,19 @@
 							<ui:include src="/com/code/aon/ui/registry/facelet/record_data/tab_include.xhtml">
 								<ui:param name="controller" value="#{companyRecordData}" />
 							</ui:include>
-						</aon:panelTab>				
+						</aon:panelTab>
+						
+						<c:if test="#{aonConfiguration.bean.company.showDirStaff}">
+							<aon:panelTab id="dirStaff"
+								label="#{registryBundle.registry_dir_staff}">
+								<aon:div rendered="#{true}">
+									<ui:include	src="/com/code/aon/ui/registry/facelet/rdirstaff/tab_grid.xhtml">
+										<ui:param name="controller" value="#{companyDirStaff}" />
+									</ui:include>
+								</aon:div>
+							</aon:panelTab>
+						</c:if>
+										
 						<c:if test="#{aonConfiguration.bean.company.showDigitalCertificate}">
 							<aon:panelTab label="#{registryBundle.registry_digital_certificates}">
 								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">

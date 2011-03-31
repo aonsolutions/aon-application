@@ -5,29 +5,16 @@ import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
-/**
- * The Enum RegistryAttachmentType.
- */
 public enum RegistryAttachmentType implements IResourceable {
 
-
-	/** The LOGO. */
 	LOGO,
-	
-	/** The ADDITIONAL IMAGE. */
 	ADDITIONAL_IMAGE,
-	
-	/** The BANNER. */
 	BANNER,
-	
-	/** Corporate Identity DOCUMENTS **/
 	CORPORATE_IDENTITY,
-	
-	/** The DIGITAL CERTIFICATE. */
 	DIGITAL_CERTIFICATE,
-	
-	/** The DOCUMENT. */
-	DOCUMENT;
+	DOCUMENT,
+	FISCAL_TEMPLATES,
+	FISCAL_REPORTS;
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.registry.i18n.messages";

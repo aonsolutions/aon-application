@@ -6,9 +6,9 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://volga:3306/aon-account-com?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://volga:3306/aon-esferalia-com?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
-		<property name="show_sql">true</property>		
+		<property name="show_sql">false</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
 		<property name="connection.password">serubd2000</property>		
@@ -36,26 +36,26 @@
 		<!-- ACCOUNT -->
 		<mapping class="com.code.aon.account.Account"/>
 
-		<!-- REGISTRY -->
-		<mapping class="com.code.aon.registry.Registry"/>
-		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.RegistryBank"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
 		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
+		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Segment"/>
 		
 				
 		<!-- GEOZONE -->
 		<mapping class="com.code.aon.geozone.GeoZone"/>
-		
-		<!-- PRODUCT 
-		<mapping class="com.code.aon.product.Item"/>
-		<mapping class="com.code.aon.product.Product"/>
-	  	<mapping class="com.code.aon.product.ProductCategory"/>
-		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
-		<mapping class="com.code.aon.product.Brand"/>
-		-->
 		
 		<!-- CONFIG -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
@@ -68,6 +68,10 @@
 		<mapping class="com.code.aon.config.User"/>
 		<mapping class="com.code.aon.config.UserScope"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
+
+		<!-- AON-COMPANY Mapping files -->	
+		<mapping class="com.code.aon.company.Company"/>
+		
 	</session-factory>
 
 </hibernate-configuration>

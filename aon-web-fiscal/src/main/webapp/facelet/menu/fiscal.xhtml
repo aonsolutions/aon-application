@@ -70,12 +70,14 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="report_template"
-										onclick="alert('Opción no disponible en esta versión.');"
+										action="reportAttach_form"
+										actionListener="#{reportAttach.onSearch}"
 										value="#{accountingBundle.accounting_reports_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="report_launcher"
-										onclick="alert('Opción no disponible  en esta versión.');"
+										action="reports_launcher"
+										actionListener="#{reportsLauncher.onReset}"
 										value="#{accountingBundle.accounting_reports_launcher_module}" />
 								</aon:div>
 							</aon:div>

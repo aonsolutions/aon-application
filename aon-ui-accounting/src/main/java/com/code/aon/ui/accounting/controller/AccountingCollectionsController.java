@@ -25,10 +25,15 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.util.AonUtil;
 
 public class AccountingCollectionsController {
 
@@ -39,6 +44,7 @@ public class AccountingCollectionsController {
 	private LinkedList<SelectItem> periodStatuses;
 	private LinkedList<SelectItem> loanStatuses;
 	private LinkedList<SelectItem> quarters;
+	private LinkedList<SelectItem> templateTypes;
 	
 	private List<SelectItem> autoConcepts;
 	private List<String> concepts;
@@ -392,5 +398,49 @@ public class AccountingCollectionsController {
 		return quarters;
 	}
 		
+	public List<SelectItem> getTemplateTypes() {
+		if (templateTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			templateTypes = new LinkedList<SelectItem>();
+			templateTypes.add(new SelectItem(RegistryAttachmentType.FISCAL_REPORTS, RegistryAttachmentType.FISCAL_REPORTS.getName(locale)));
+			templateTypes.add(new SelectItem(RegistryAttachmentType.FISCAL_TEMPLATES, RegistryAttachmentType.FISCAL_TEMPLATES.getName(locale)));
+		}
+		return templateTypes;
+	}
 
+	public List<SelectItem> getReportTemplates() throws ManagerBeanException {
+		List<SelectItem> reportTemplates = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
+				RegistryAttachmentType.FISCAL_TEMPLATES);
+        if (!AonUtil.getRoleManager().isConfidentiality()) {
+        	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+        }
+        Iterator<?> iter = bean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			RegistryAttachment ra = (RegistryAttachment) iter.next();
+			SelectItem item = new SelectItem(ra.getId(), ra.getDescription());
+			reportTemplates.add(item);
+		}
+		return reportTemplates;
+	}
+
+	public List<SelectItem> getReportAttachments() throws ManagerBeanException {
+		List<SelectItem> reportTemplates = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
+				RegistryAttachmentType.FISCAL_REPORTS);
+        if (!AonUtil.getRoleManager().isConfidentiality()) {
+        	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+        }
+        Iterator<?> iter = bean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			RegistryAttachment ra = (RegistryAttachment) iter.next();
+			SelectItem item = new SelectItem(ra.getId(), ra.getDescription());
+			reportTemplates.add(item);
+		}
+		return reportTemplates;
+	}
 }

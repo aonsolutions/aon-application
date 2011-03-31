@@ -17,16 +17,16 @@
 				<aon:outputText value="#{to.document}" rendered="#{formList}" />
 				<aon:inputText id="Registry_Lookup_document-Edit" size="16"
 					rendered="#{formEdit}" value="#{controller.to.document}" >
-					<a4j:support event="onchange"
-						reRender="#{dataTableId}" focus="Registry_full_name-Edit"
+					<a4j:support event="onchange" ajaxSingle="true"
+						reRender="Registry_full_name-Edit" focus="Registry_full_name-Edit"
 						actionListener="#{controller.onDocumentChange}"/>
 				</aon:inputText>
 				<f:facet name="footer">
 					<aon:inputText id="Registry_Lookup_document-New" size="16"
 						rendered="#{formNew}" required="true"
-						value="#{controller.to.document}">
-					<a4j:support event="onchange"
-						reRender="#{dataTableId}" focus="Registry_full_name-New"
+						value="#{controller.to.document}"> 
+					<a4j:support event="onchange" ajaxSingle="true"
+						reRender="Registry_full_name-New" focus="Registry_full_name-New"
 						actionListener="#{controller.onDocumentChange}"/>
 				</aon:inputText>
  
@@ -57,12 +57,14 @@
 				</aon:div>
 				<aon:selectBooleanCheckbox id="RegistryDirStaff_shareHolder-Edit"
 					rendered="#{formEdit}" value="#{controller.to.shareHolder}"
-					valueChangeListener="#{controller.onChangeShareHolder}" 
-					reRender="#{dataTableId}"/>
+					valueChangeListener="#{controller.onChangeShareHolder}"
+					reRender="RegistryDirStaff_shareNumber-Edit,RegistryDirStaff_percentShare-Edit,RegistryDirStaff_nominalValue-Edit" 
+					ajaxSingle="true"/>
 				<f:facet name="footer">
 					<aon:selectBooleanCheckbox id="RegistryDirStaff_shareHolder-New"
 						rendered="#{formNew}" value="#{controller.to.shareHolder}" 
-						reRender="#{dataTableId}"/>
+						reRender="RegistryDirStaff_shareNumber-New,RegistryDirStaff_percentShare-New,RegistryDirStaff_nominalValue-New" 
+						ajaxSingle="true"/>
 				</f:facet>
 			</aon:column>
 
@@ -85,19 +87,18 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText
-						value="#{registryBundle.registry_dir_staff_is_director}" />
+					<aon:outputText	value="#{registryBundle.registry_dir_staff_is_director}" />
 				</f:facet>
 				<aon:div rendered="#{formList}"
 					styleClass="#{to.director?'aon-text-center aon-icon-checked':'aon-text-center aon-icon-check'}">
 					<aon:outputText value="&#160;" />
 				</aon:div>
 				<aon:selectBooleanCheckbox id="RegistryDirStaff_director-Edit"
-					reRender="#{dataTableId}"
+					reRender="RegistryDirStaff_dueDate-Edit" ajaxSingle="true"
 					rendered="#{formEdit}" value="#{controller.to.director}" />
 				<f:facet name="footer">
 					<aon:selectBooleanCheckbox id="RegistryDirStaff_director-New"
-						reRender="#{dataTableId}"
+						reRender="RegistryDirStaff_dueDate-New" ajaxSingle="true"
 						rendered="#{formNew}" value="#{controller.to.director}" />
 				</f:facet>
 			</aon:column>
@@ -112,11 +113,9 @@
 					<aon:outputText value="&#160;" />
 				</aon:div>
 				<aon:selectBooleanCheckbox id="RegistryDirStaff_representativeLabor-Edit"
-					reRender="#{dataTableId}"
 					rendered="#{formEdit}" value="#{controller.to.representativeLabor}" />
 				<f:facet name="footer">
 					<aon:selectBooleanCheckbox id="RegistryDirStaff_representativeLabor-New"
-						reRender="#{dataTableId}"
 						rendered="#{formNew}" value="#{controller.to.representativeLabor}" />
 				</f:facet>
 			</aon:column>

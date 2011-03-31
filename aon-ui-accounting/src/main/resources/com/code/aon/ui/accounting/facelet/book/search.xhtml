@@ -122,16 +122,27 @@
 							<f:selectItems value="#{accountingBook.patrimonyBalances}" />
 						</aon:selectOneMenu>
 					</aon:div>
-<!-- 
+ 
 					<aon:outputText value="" />
 					<aon:div>
-						<aon:selectBooleanCheckbox id="annualReportEnabled" value="#{accountingBook.annualReportEnabled}"/>
-						<aon:outputLabel for="annualReportEnabled" value="#{accountingBundle.accounting_annualReportEnabled}" />
-						<aon:selectOneMenu value="#{accountingBook.annualReport}">
-							<f:selectItems value="#{accountingCollections.annualReports}" />
+						<aon:selectBooleanCheckbox id="reportTemplateEnabled" value="#{accountingBook.reportTemplateEnabled}"/>
+						<aon:outputLabel for="reportTemplateEnabled" value="#{accountingBundle.accounting_annual_report_template}" />
+						<aon:selectOneMenu value="#{accountingBook.reportTemplate}">
+							<f:selectItem itemValue="#{null}" itemLabel=" - "/>
+							<f:selectItems value="#{accountingCollections.reportTemplates}" />
 						</aon:selectOneMenu>
 					</aon:div>
- -->					
+					
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="reportEnabled" value="#{accountingBook.reportEnabled}"/>
+						<aon:outputLabel for="reportTemplateEnabled" value="#{accountingBundle.accounting_report_saved}" />
+						<aon:selectOneMenu value="#{accountingBook.report}">
+							<f:selectItem itemValue="#{null}" itemLabel=" - "/>
+							<f:selectItems value="#{accountingCollections.reportAttachments}" />
+						</aon:selectOneMenu>
+					</aon:div>
+
 					<aon:outputText value="" />
 					<aon:div styleClass="aon-search-commandButton-left">
 						<aon:div styleClass="aon-search-commandButton-right">

@@ -34,7 +34,7 @@ public class AttachmentControllerListener extends ControllerAdapter implements I
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
-		AttachmentController controller = (AttachmentController) event.getController();
+		IAttachmentController controller = (IAttachmentController) event.getController();
 		AttachmentUtil.checkFileData(controller, event.getController().isNew(), true);
 		AttachmentUtil.updateAttachment(controller);
 	}

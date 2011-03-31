@@ -6,13 +6,14 @@
 		<registry:rmedia showSendEmail="true"/>
 	</registry:config>
 		
-	<company:config version="1.1" xmlns:company="http://www.esferalia.com/company">
+	<company:config version="1.2" xmlns:company="http://www.esferalia.com/company">
 		<company:company 
 			showRegistryBank="true" 
 			showCompanyOtherData="true"
 			showPanelTabSet="true" 
 			showEInvoice="false"
 			showDigitalCertificate="false"
+			showDirStaff="false"
 		/>
 		<company:enterprise 
 			showFinanceData="true" 
