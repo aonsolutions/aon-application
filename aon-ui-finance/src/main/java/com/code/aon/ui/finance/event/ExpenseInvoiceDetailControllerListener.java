@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.event;
 
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,10 +19,12 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.controller.ExpenseInvoiceDetailController;
 import com.code.aon.ui.finance.controller.InvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControllerListener {
 
@@ -76,20 +79,55 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
-		invoiceDetail.setQuantity(1);
-		invoiceDetail.setPrice(invoiceDetail.getTaxableBase());
-		invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
+		beforeSaveExpenseDetail(invoiceDetail);
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
+		beforeSaveExpenseDetail(invoiceDetail);
+	}
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		ExpenseInvoiceDetailController controller = (ExpenseInvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
+		afterSaveExpenseDetail(invoiceDetail, controller.getVatQuota(invoiceDetail), controller.getRetentionQuota(invoiceDetail));
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		ExpenseInvoiceDetailController controller = (ExpenseInvoiceDetailController)event.getController();
+		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
+		afterSaveExpenseDetail(invoiceDetail, controller.getVatQuota(invoiceDetail), controller.getRetentionQuota(invoiceDetail));
+	}
+
+	private void beforeSaveExpenseDetail(InvoiceDetail invoiceDetail) {
 		invoiceDetail.setQuantity(1);
 		invoiceDetail.setPrice(invoiceDetail.getTaxableBase());
 		invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
 	}
 
-	public void fillTaxDataInDetail(InvoiceDetail invoiceDetail) throws ControllerListenerException {
+	private void afterSaveExpenseDetail(InvoiceDetail invoiceDetail, double calculatedVatQuota, double calculatedRetentionQuota) {
+		if ((invoiceDetail.getVatQuota() != calculatedVatQuota) || (invoiceDetail.getRetentionQuota() != calculatedRetentionQuota)) {
+			String bundle = IFinanceMessages.BUNDLE_KEY;
+			String msg = IFinanceMessages.FINANCE_EXPENSE_INVOICE_QUOTA_WARNING;
+			DecimalFormat formatter = new DecimalFormat("#,###.00");
+			if (invoiceDetail.getVatQuota() != calculatedVatQuota) {
+				String taxType = TaxType.VAT.getName(AonUtil.getCurrentLocale());
+				String quotaFormatted = formatter.format(calculatedVatQuota);
+				AonUtil.addWarningMessage(AonUtil.getMessage(bundle, msg, taxType, quotaFormatted));
+			}
+			if (invoiceDetail.getRetentionQuota() != calculatedRetentionQuota) {
+				String taxType = TaxType.RETENTION.getName(AonUtil.getCurrentLocale());
+				String quotaFormatted = formatter.format(calculatedRetentionQuota);
+				AonUtil.addWarningMessage(AonUtil.getMessage(bundle, msg, taxType, quotaFormatted));
+			}
+			AonUtil.addWarningMessageFromBundle(bundle, IFinanceMessages.FINANCE_EXPENSE_INVOICE_CHECK_WARNING);
+		}
+	}
+
+	private void fillTaxDataInDetail(InvoiceDetail invoiceDetail) throws ControllerListenerException {
 		try {
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			Criteria criteria = new Criteria();

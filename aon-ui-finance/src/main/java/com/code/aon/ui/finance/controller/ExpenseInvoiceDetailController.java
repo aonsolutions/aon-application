@@ -20,6 +20,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Tax;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;
@@ -114,15 +115,20 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 
 	public void itemChanged(Item item) throws ManagerBeanException {
 		Date taxDate = ((Invoice)getMasterController().getTo()).getIssueDate();
+		Tax vat = item.getProduct().getVat();
+		Tax retention = item.getProduct().getRetention();
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		invoiceDetail.setItem(item);
 		invoiceDetail.setDescription(item.getProduct().getName() + (item.getDetail() !=null ? " " + item.getDetail() : ""));
 		invoiceDetail.setQuantity(1);
-		invoiceDetail.setTaxableBase(item.getPurchasePrice());
-		invoiceDetail.setVatPercent(item.getProduct().getVat() != null ? getTaxPercent(item.getProduct().getVat(), taxDate, false) : 0);
-		invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
-		invoiceDetail.setRetentionPercent(item.getProduct().getRetention() != null ? getTaxPercent(item.getProduct().getRetention(), taxDate, false) : 0);
-		invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
+		if (vat == null || invoiceDetail.getVatPercent() != vat.getPercentage()) {
+			invoiceDetail.setVatPercent(vat != null ? getTaxPercent(vat, taxDate, false) : 0);
+			invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
+		}
+		if (retention == null || invoiceDetail.getRetentionPercent() != retention.getPercentage()) {
+			invoiceDetail.setRetentionPercent(retention != null ? getTaxPercent(retention, taxDate, false) : 0);
+			invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
+		}
 	}
 
 	public void onTaxableBaseChanged(ValueChangeEvent event) {
@@ -141,6 +147,11 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 			Double vatQuota = (Double)event.getNewValue();
 			if (vatQuota == 0 && invoiceDetail.getVatPercent() != 0) {
 				invoiceDetail.setVatPercent(0);
+			} else if (vatQuota != 0 && invoiceDetail.getVatPercent() == 0 && invoiceDetail.getItem() != null) {
+				double vatPercent = invoiceDetail.getItem().getProduct().getVat().getPercentage();
+				if (vatQuota == getQuota(invoiceDetail.getTaxableBase(), vatPercent)) {
+					invoiceDetail.setVatPercent(vatPercent);
+				}
 			}
 		}
 	}
@@ -151,6 +162,12 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 			Double retentionQuota = (Double)event.getNewValue();
 			if (retentionQuota == 0 && invoiceDetail.getRetentionPercent() != 0) {
 				invoiceDetail.setRetentionPercent(0);
+			} else if (retentionQuota != 0 && invoiceDetail.getRetentionPercent() == 0 && invoiceDetail.getItem() != null) {
+				Tax retention = invoiceDetail.getItem().getProduct().getRetention();
+				double retentionPercent = (retention != null) ? retention.getPercentage() : 0;
+				if (retentionQuota == getQuota(invoiceDetail.getTaxableBase(), retentionPercent)) {
+					invoiceDetail.setRetentionPercent(retentionPercent);
+				}
 			}
 		}
 	}
@@ -166,12 +183,16 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 		}
 	}
 
-	private double getVatQuota(InvoiceDetail invoiceDetail) {
-		return CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getVatPercent()/100);
+	public double getVatQuota(InvoiceDetail invoiceDetail) {
+		return getQuota(invoiceDetail.getTaxableBase(), invoiceDetail.getVatPercent());
 	}
 
-	private double getRetentionQuota(InvoiceDetail invoiceDetail) {
-		return CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceDetail.getRetentionPercent()/100);
+	public double getRetentionQuota(InvoiceDetail invoiceDetail) {
+		return getQuota(invoiceDetail.getTaxableBase(), invoiceDetail.getRetentionPercent());
+	}
+
+	private double getQuota(double base, double percent) {
+		return CommonUtil.round(base * percent / 100);
 	}
 
 	public double getInvoiceDetailTotal() throws ManagerBeanException {
@@ -188,7 +209,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 	}
 
 	private double getTotal(InvoiceDetail invoiceDetail) {
-		return CommonUtil.round(invoiceDetail.getTaxableBase() + invoiceDetail.getVatQuota() - invoiceDetail.getRetentionQuota());
+		return CommonUtil.round(invoiceDetail.getTaxableBase() + invoiceDetail.getVatQuota() - invoiceDetail.getRetentionQuota(), 4);
 	}
 
 }
