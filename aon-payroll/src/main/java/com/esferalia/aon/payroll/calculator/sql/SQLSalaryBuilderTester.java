@@ -10,6 +10,7 @@ import com.esferalia.aon.payroll.sql.SQLReader;
 import com.esferalia.aon.payroll.sql.SQLReader.SalaryReader;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 
@@ -31,7 +32,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	private boolean testBaseIRPF;
 	private boolean testBaseCGC;
 	
-	private double delta = 0.01;
+	private double delta = 0.9;
 	private SQLReader sqlReader ;
 	
 	private int contractCount;
@@ -97,6 +98,8 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 			salaryReader.setStartDate(salary.getStartDate());
 			salaryReader.setEndDate(salary.getEndDate());
 			salaryReader.setContract(salary.getContract());
+			salaryReader.setType(enum2short(SalaryType.SALARY));
+			
 			++contractCount;
 			AbstractSQL.ISalary dbSalary = salaryReader.findSalary();
 			if ( dbSalary == null ) {
@@ -115,7 +118,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 				testEquals( BASE_IRPF,dbSalary.getIrpfBase(),salary.getIrpfBase(),delta);
 			}
 			if (testBaseCGC) {
-				testEquals(BASE_CGC,dbSalary.getCgcBase(),salary.getCgcBase(),delta);
+				testEquals(BASE_CGC,dbSalary.getRawCgcBase(),salary.getRawCgcBase(),delta);
 			}
 			++rightTestedsalariesCount;
 		} catch (SQLException e) {
@@ -145,6 +148,20 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 			unExpectedValue(message, new Double(expected), new Double(actual));		
 	}
 	
+	@Override
+	public void setListener(ISalaryBuilderListener listener) {
+		this.listener = listener;		
+	}
+
+	public static class UnExpectedValue extends Error{
+		
+		private static final long serialVersionUID = -3256215858427420045L;
+
+		public UnExpectedValue(String message) {
+			super(message);
+		}
+	}
+
 	private static void unExpectedValue(String message, Object expected,Object actual) {
 		throw new UnExpectedValue(format(message, expected, actual));
 	}
@@ -189,18 +206,8 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 		return className + LESSTHAN + valueString + GREATHERTHAN;
 	}
 
-
-	@Override
-	public void setListener(ISalaryBuilderListener listener) {
-		this.listener = listener;		
+	protected static Short enum2short(Enum<?> type) {
+		return type == null ? null : (short ) type.ordinal();
 	}
 
-	public static class UnExpectedValue extends Error{
-		
-		private static final long serialVersionUID = -3256215858427420045L;
-
-		public UnExpectedValue(String message) {
-			super(message);
-		}
-	}
 }

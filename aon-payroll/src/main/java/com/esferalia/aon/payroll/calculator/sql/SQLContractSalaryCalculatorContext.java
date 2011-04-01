@@ -2,7 +2,11 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.ACTUAL_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.LEAVE_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.QUOTE_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.GUARANTEED;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.GUARANTEED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.TOTAL_BENEFITS_IT;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +15,7 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -156,6 +161,9 @@ public class SQLContractSalaryCalculatorContext implements
 	private abstract class LazyTimedObject<V> 
 		implements ITimedObject<V> 
 	{
+		private V value ;
+		private boolean initialized = false;
+		
 		protected Period period =
 			new Period(startDate, endDate);
 		
@@ -163,61 +171,20 @@ public class SQLContractSalaryCalculatorContext implements
 		public Period getPeriod() {
 			return period;
 		}
+		
+		@Override
+		public V getValue() {
+			if ( !initialized ){
+				value = create();
+				initialized=true;
+			}
+			
+			return value;
+		}
+		
+		public abstract V create() ;
 	}
 	
-	/**
-	 * 'DIAS_EFECTIVOS'.
-	 * 
-	 * @author rtrepiana
-	 *
-	 */
-	private class ActualDays extends LazyTimedObject<Long> {
-		Long actual_days = null;
-		
-		@Override
-		public Long getValue() {
-			if ( actual_days == null ){
-				actual_days = getActualDays();
-			}
-			return actual_days;
-		}
-	}
-		
-	/**
-	 * 'DIAS_TRABAJADOS'.
-	 * 
-	 * @author rtrepiana
-	 *
-	 */
-	private class WorkDays extends LazyTimedObject<Long> {
-		Long work_days = null;
-		
-		@Override
-		public Long getValue() {
-			if ( work_days == null ){
-				work_days = getWorkDays();
-			}
-			return work_days;
-		}
-	}
-
-	/**
-	 * 'DIAS_TRABAJADOS'.
-	 * 
-	 * @author rtrepiana
-	 *
-	 */
-	private class LeaveDays extends LazyTimedObject<Long> {
-		Long leave_days = null;
-		
-		@Override
-		public Long getValue() {
-			if ( leave_days == null ){
-				leave_days = getLeaveDays();
-			}
-			return leave_days;
-		}
-	}
 
 	private Criteria 										criteria;
 	private Connection 										connection;
@@ -438,9 +405,10 @@ public class SQLContractSalaryCalculatorContext implements
 			paymentStmt.setInt(1,id);
 			ResultSet rs = paymentStmt.executeQuery();
 			this.sqlContractPayment.setResultSet(rs);
-			return new HierarchyPayments(this.sqlContractPayment, 
+			return new HierarchyPayments(
+					this.sqlContractPayment, 
 					getAgreementPayments().iterator(),
-					this.systemPayments.iterator() );
+					this.systemPayments.iterator());
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
@@ -456,7 +424,10 @@ public class SQLContractSalaryCalculatorContext implements
 			deductionStmt.setInt(1,id);
 			ResultSet rs = deductionStmt.executeQuery();
 			this.sqlContractDeduction.setResultSet(rs);
-			HierarchyDeductions hierarchyDeductions = new HierarchyDeductions( this.sqlContractDeduction, this.systemDeductions.iterator());
+			HierarchyDeductions hierarchyDeductions = 
+				new HierarchyDeductions( 
+						this.sqlContractDeduction,
+						this.systemDeductions.iterator());
 			return hierarchyDeductions;
 		} catch (SQLException e) {
 			throw new AonException(e);
@@ -605,6 +576,7 @@ public class SQLContractSalaryCalculatorContext implements
 		return days;
 	}
 
+	
 	/* 
 	 * Calcula los 'DIAS_TRABAJADOS' (DIAS_MES - DIAS_BAJA). 
 	 */
@@ -619,12 +591,37 @@ public class SQLContractSalaryCalculatorContext implements
 	}
 	
 	
-	private long getLeaveDays() {
 
-		Long leaveDays = leaveLoader.getLeavesDays();  
-		
-		return leaveDays;
+	private double getDoubleVariable(String name) {
+		Double value =  this.contractExpressionContext.getVariable(name, 
+				this.startDate, this.endDate, Double.class);
+		return value != null ? value : 0.00;
 	}
+
+	private double getTotalBenefitsIt() {
+		double totalBenefitsIt = 0.00;
+		
+		totalBenefitsIt += getDoubleVariable("ECEMP");
+		totalBenefitsIt += getDoubleVariable("ECSS");
+		totalBenefitsIt += getDoubleVariable("ATEP");
+		
+		return totalBenefitsIt;
+	}
+	
+	private double getGuarenteed() {
+		double guarenteed = 0.00;
+		
+		Set<String> vars = 
+			contractExpressionContext.variablesSet();
+		for (String var : vars) {
+			if ( var.endsWith("_GARANTIZADO")) {
+				guarenteed += getDoubleVariable(var);
+			}
+		}
+		
+		return guarenteed;
+	}
+
 	/*
 	 * Inicializa el contexto dentro del cual se calcularán ejecutarán las
 	 * percepciones y deducciones de trabajador.
@@ -634,18 +631,72 @@ public class SQLContractSalaryCalculatorContext implements
 		this.contractExpressionContext = 
 			new ExpressionContext(getAgreementContext());
 		
+
+		LazyTimedObject<Long> workedDays =  new LazyTimedObject<Long>(){
+			@Override
+			public Long create() {
+				return getWorkDays();
+			}
+		};
+
+		this.contractExpressionContext.addVariable(WORKED_DAYS, 
+				workedDays
+		);
+
+		this.contractExpressionContext.addVariable(QUOTE_DAYS, 
+				workedDays
+		);
+
+		
 		// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de querys adicionales...)
 		this.contractExpressionContext.addVariable(ACTUAL_DAYS, 
-				new ActualDays() );
-		this.contractExpressionContext.addVariable(WORKED_DAYS, 
-				new WorkDays() );
-		this.contractExpressionContext.addVariable(LEAVE_DAYS, 
-				new LeaveDays());
+				new LazyTimedObject<Long>(){
+					@Override
+					public Long create() {
+						return getActualDays();
+					}
+				}
+		);
 
-		loadContractData(contractExpressionContext);
-		loadContractLeave(contractExpressionContext);
+		loadContractLeave(this.contractExpressionContext);
+		loadContractData(this.contractExpressionContext);
+		
+
+		if ( leaveLoader.getLeavesDays() == 0 ) {
+			return;
+		} // Si no hay bajas... 
+			
+		this.contractExpressionContext.addVariable(LEAVE_DAYS, 
+			leaveLoader.getLeavesDays(), this.startDate, this.endDate );
 		
 		
+		long guarenteedDays = leaveLoader.getCommonDiseaseDays() + 
+			leaveLoader.getProfessionalDiseaseDays();
+		
+		if ( guarenteedDays == 0  ) {
+			return ;
+		} // No hay bajas por enfermedad común y/o profesional.
+		
+		double guaranteed = getGuarenteed();
+		
+		if ( guaranteed == 0.00 ) {
+			return;
+		}
+
+		this.contractExpressionContext.addVariable(GUARANTEED_DAYS, 
+				guarenteedDays, this.startDate, this.endDate );
+
+		this.contractExpressionContext.addVariable(GUARANTEED, 
+				guaranteed, this.startDate, this.endDate );
+
+		this.contractExpressionContext.addVariable(TOTAL_BENEFITS_IT, 
+				new LazyTimedObject<Double>(){
+					@Override
+					public Double create() {
+						return getTotalBenefitsIt();
+					}
+				}
+		);
 	}
 	
 	/*
@@ -667,8 +718,9 @@ public class SQLContractSalaryCalculatorContext implements
 				Date start = Period.max ( rs.getDate(ContractDataColumns.START_DATE), startDate );
 				Date end = Period.min( rs.getDate(ContractDataColumns.END_DATE), endDate );
 				try {
-					this.contractExpressionContext.addExpression(expr, start, end );
+					ctx.addExpression(expr, start, end );
 				} catch (Exception e) {
+					//TODO: ¿ Que hacemos con esta excepcion ? 
 				}
 			}
 			

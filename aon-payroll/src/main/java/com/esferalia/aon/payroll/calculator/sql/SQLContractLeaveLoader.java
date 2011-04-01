@@ -65,6 +65,8 @@ public class SQLContractLeaveLoader  {
 	
 	private Long leavesDays;
 	private Collection<Period> leaves;
+	private long commonDiseaseDays;
+	private long professionalDiseaseDays;
 	
 	public SQLContractLeaveLoader(Date startDate, Date endDate) {
 		this.startDate = startDate;
@@ -76,6 +78,14 @@ public class SQLContractLeaveLoader  {
 	
 	public Long getLeavesDays() {
 		return this.leavesDays;
+	}
+	
+	public Long getCommonDiseaseDays() {
+		return commonDiseaseDays;
+	}
+	
+	public Long getProfessionalDiseaseDays() {
+		return professionalDiseaseDays;
 	}
 	
 	public boolean isLeaveDay(Calendar day) {
@@ -92,8 +102,11 @@ public class SQLContractLeaveLoader  {
 	{
 		this.leaves.clear();
 		this.leavesDays = 0L;
-		
+		this.commonDiseaseDays = 0L;
+		this.professionalDiseaseDays = 0L;
+
 		while ( rs.next() ) {
+			
 			Date leaveStart = rs.getDate(ContractLeaveColumns.START_DATE);
 			final Date start = Period.max (leaveStart , startDate );
 			Date leaveEnd = rs.getDate(ContractLeaveColumns.END_DATE);
@@ -116,17 +129,20 @@ public class SQLContractLeaveLoader  {
 					}
 					exprCtx.addVariable(ContractVariables.REGULATORY_BASE, regBase, start, end );
 					exprCtx.addVariable(ContractVariables.COMMON_DISEASE_DAYS, leaveDays, start, end );
+					addCommonDiseaseDays(leaveDays);
 					return leaveDays;
 				}
 
 				@Override
 				public Long visitOcupationalDisease(LeaveType leaveType) {
-					long days = leaveDays -1 ; 	// Enfermedad profesional o accidente de trabajo: 
-												// Desde el día siguiente al de la baja en el trabajo.
+					long days = parentDays ==  0 ? 
+							leaveDays -1 : leaveDays; 	// Enfermedad profesional o accidente de trabajo: 
+														// Desde el día siguiente al de la baja en el trabajo.
 					if ( days <= 0 )
 						return 0L;
 					exprCtx.addVariable(ContractVariables.OCCUPATIONAL_DISEASE_DAYS, days, start, end );
 					exprCtx.addVariable(ContractVariables.REGULATORY_BASE, regBase, start, end );
+					addProfessionalDiseaseDays(leaveDays);
 					return days;
 				}
 
@@ -160,5 +176,13 @@ public class SQLContractLeaveLoader  {
 			});
 			leaves.add(new Period(start, end));
 		}
+	}
+	
+	private void addCommonDiseaseDays(long days ) {
+		this.commonDiseaseDays += days;
+	}
+
+	private void addProfessionalDiseaseDays(long days ) {
+		this.professionalDiseaseDays += days;
 	}
 }

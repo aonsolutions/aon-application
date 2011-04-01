@@ -100,6 +100,10 @@ public class Variables implements Comparator<ITimedObject<?>> {
 		}
 	}
 
+	public Set<String> varsSet() {
+		return vars.keySet();
+	}
+
 	public void put ( String name, ITimedObject<?> timedObject ){
 		List<ITimedObject<?>> values =  
 			vars.get(name);
@@ -114,8 +118,27 @@ public class Variables implements Comparator<ITimedObject<?>> {
 				values.set(index, timedObject);
 			}
 			else {
+				int position = -(index + 1);
+				values.add(position, timedObject);
+				if ( values.size() == 1 ){
+					return;
+				} // Es el único valor para esta variable
+				
 				// TODO : cuidado con los que se superponen
-				values.add(-(index + 1), timedObject);
+				if ( position + 1 < values.size() ){
+					ITimedObject<?> next = values.get(position+1);
+					if ( intersects(timedObject, next )) {
+						values.remove(position+1);
+					} // Eliminamos 
+				}
+				
+				if ( position - 1 >= 0  ){
+					ITimedObject<?> previous = values.get(position-1);
+					if ( intersects(timedObject, previous )) {
+						values.remove(position-1);
+					} // Eliminamos 
+				}
+				
 			}
 		}
 		
@@ -201,6 +224,11 @@ public class Variables implements Comparator<ITimedObject<?>> {
 		return p1.compareTo(p2);
 	}
 	
+	public boolean intersects(ITimedObject<?> o1, ITimedObject<?> o2) {
+		Period p1 = o1.getPeriod();
+		Period p2 = o2.getPeriod();
+		return p1.intersect(p2) != null;
+	}
 	
 	public PeriodMap getPeriodMap(Date start, Date end) {
 		return new PeriodMap(new Period(start, end)); 

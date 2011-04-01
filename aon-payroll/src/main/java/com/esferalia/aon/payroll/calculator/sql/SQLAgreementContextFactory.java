@@ -3,6 +3,8 @@ package com.esferalia.aon.payroll.calculator.sql;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.MONTH_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.YEAR_DAYS;
 
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.LEAVE_DAYS;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,6 +13,7 @@ import java.util.Date;
 
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
+import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -88,15 +91,14 @@ public class SQLAgreementContextFactory
 				expr.setExpression(rs.getString(AgreementLevelDataColumns.EXPRESSION));
 				Date start = Period.max(rs.getDate(AgreementLevelDataColumns.START_DATE), startDate);
 				Date end = Period.min ( rs.getDate(AgreementLevelDataColumns.END_DATE), endDate );
-				expressionCtx.addExpression(expr, start, end );
-
+				try {
+					expressionCtx.addExpression(expr, start, end );
+				} catch (Exception e) {
+					//TODO: ¿ Que hacemos con esta excepcion ? 
+				}
 			}
 			return expressionCtx;
-		}catch (ExpressionException e) {
-			//TODO : ¿ Deberiamos crear una excepción espefícica como CreateException ? 
-			throw new RuntimeException(e);
-		}
-		catch (SQLException e) {
+		}catch (SQLException e) {
 			//TODO : ¿ Deberiamos crear una excepción espefícica como CreateException ? 
 			throw new RuntimeException(e);
 		}
@@ -133,6 +135,11 @@ public class SQLAgreementContextFactory
 		systemExpressionContext.addVariable(MONTH_DAYS, monthDays, startDate, endDate);
 		
 		loadSystemData(connection, startDate, endDate, systemExpressionContext);
+
+		Object leaveDays = null;
+		systemExpressionContext.addVariable(LEAVE_DAYS, leaveDays, startDate, endDate);
+
+
 	}
 
 	private void loadSystemData(Connection connection, Date startDate, Date endDate, ExpressionContext expressionCtx) 
@@ -153,7 +160,11 @@ public class SQLAgreementContextFactory
 				expr.setScope(ExpressionScope.APPLICATION);
 				Date start = Period.max(rs.getDate(SystemDataColumns.START_DATE), startDate);
 				Date end = Period.min ( rs.getDate(SystemDataColumns.END_DATE), endDate );
-				expressionCtx.addExpression(expr, start, end );
+				try {
+					expressionCtx.addExpression(expr, start, end );
+				}catch ( Exception e ) {
+					// TODO: ¿ Mejor reportarlas ? 
+				}
 			}
 		}finally {
 			if ( rs != null )

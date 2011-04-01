@@ -111,16 +111,12 @@ public class ExpressionContext {
 		return expressions;
 	}
 	
+	public Set<String> variablesSet()  {
+		return variables.varsSet();
+	}
 	
 	// ------------------------------------------
 	//
 	// ------------------------------------------
 	
-	public static void main(String[] args) {
-		Map<String, Object> vars = new HashMap<String, Object>();
-		vars.put("DIAS_TRABAJADOS", 10);
-		System.out.println ( MVEL.eval("100 * DIAS_TRABAJADOS", vars));
-		System.out.println ( MVEL.eval("with(DIAS_TRABAJADOS=31){ 100 * 100}", vars));
-		System.out.println(vars);
-	}
 }
