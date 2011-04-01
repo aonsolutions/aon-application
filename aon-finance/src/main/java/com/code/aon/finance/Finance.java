@@ -131,7 +131,7 @@ public class Finance implements ITransferObject, IBankAccountContainer, IConfide
 		this.registryDocumentCountry = registryDocumentCountry;
 	}
 
-	@Column(nullable=true)
+	@Column(precision=15,scale=2)
 	public double getAmount() {
 		return amount;
 	}
@@ -139,7 +139,7 @@ public class Finance implements ITransferObject, IBankAccountContainer, IConfide
 		this.amount = amount;
 	}
 
-	@Column(nullable=true,precision=15,scale=3)
+	@Column(precision=15,scale=2)
 	public double getExpenses() {
 		return expenses;
 	}

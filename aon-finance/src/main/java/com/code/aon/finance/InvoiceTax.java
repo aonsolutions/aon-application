@@ -65,7 +65,7 @@ public class InvoiceTax implements ITransferObject {
 		this.taxType = taxType;
 	}
 
-	@Column(name="percentage", precision=15, scale=3)
+	@Column(precision=15, scale=3)
 	public double getPercentage() {
 		return percentage;
 	}
@@ -73,7 +73,7 @@ public class InvoiceTax implements ITransferObject {
 		this.percentage = percentage;
 	}
 
-	@Column(name="surcharge", precision=15, scale=3)
+	@Column(precision=15, scale=3)
 	public double getSurcharge() {
 		return surcharge;
 	}
@@ -81,7 +81,7 @@ public class InvoiceTax implements ITransferObject {
 		this.surcharge = surcharge;
 	}
 
-    @Column(nullable=true)
+	@Column(precision=15, scale=2)
     public double getQuota() {
         return quota;
     }
@@ -89,7 +89,7 @@ public class InvoiceTax implements ITransferObject {
         this.quota = quota;
     }
 
-    @Column(name="surcharge_quota", nullable=true)
+    @Column(name="surcharge_quota", precision=15, scale=2)
     public double getSurchargeQuota() {
         return surchargeQuota;
     }
@@ -113,7 +113,7 @@ public class InvoiceTax implements ITransferObject {
 		this.withholdingType = withholdingType;
 	}
 
-    @Column(name="deductible_quota", nullable=true)
+    @Column(name="deductible_quota", precision=15, scale=2)
     public double getDeductibleQuota() {
         return deductibleQuota;
     }

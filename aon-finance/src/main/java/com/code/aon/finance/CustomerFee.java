@@ -29,6 +29,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.IConfidentialable;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.enumeration.BillingPeriod;
@@ -113,12 +114,12 @@ public class CustomerFee implements ITransferObject, ICalculable, IConfidentiala
         this.quantity = quantity;
     }
 
-    @Column(precision=15, scale=3)
+    @Column(precision=15, scale=4)
     public double getPrice() {
         return price;
     }
     public void setPrice(double price) {
-        this.price = price;
+        this.price = CommonUtil.round(price, 4);
     }
 
 	@Column(name="discount_expr", length = 32)

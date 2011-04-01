@@ -101,7 +101,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 					TaxBreakDown taxBreakDown;
 					if(map.containsKey(calc.getItem().getProduct().getVat().getId())){
 						taxBreakDown = map.get(calc.getItem().getProduct().getVat().getId());
-						taxBreakDown.setBase(taxBreakDown.getBase() + getBasePrice(calc)); 
+						taxBreakDown.setBase(CommonUtil.round(taxBreakDown.getBase() + getBasePrice(calc), 4)); 
 					}else{
 						taxBreakDown = new TaxBreakDown();
 						taxBreakDown.setTaxType(taxType);
@@ -144,7 +144,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 				taxableBase = taxableBase * ( 1 - icc.getDiscountExpression().getDiscounts()[i] /100);
 			}
 		}
-		return taxableBase;
+		return CommonUtil.round(taxableBase);
 	}
 
 	/* (non-Javadoc)

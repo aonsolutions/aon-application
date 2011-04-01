@@ -26,6 +26,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -82,7 +83,6 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
         this.invoice = invoice;
     }
 
-    @Column(nullable=true)
     public int getLine() {
         return line;
     }
@@ -109,7 +109,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
         this.description = description;
     }
 
-    @Column(nullable=true)
+	@Column(precision=15, scale=3)
     public double getQuantity() {
         return quantity;
     }
@@ -117,12 +117,12 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
         this.quantity = quantity;
     }
 
-    @Column(nullable=true)
+	@Column(precision=15, scale=4)
     public double getPrice() {
         return price;
     }
     public void setPrice(double price) {
-        this.price = price;
+        this.price = CommonUtil.round(price, 4);
     }
 
     @Column(name ="discount_expr",length=32)
@@ -151,20 +151,20 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
         this.sourceId = sourceId;
     }
     
-    @Column(name="taxable_base", precision=15, scale=3)
+    @Column(name="taxable_base", precision=15, scale=4)
 	public double getTaxableBase() {
 		return taxableBase;
 	}
 	public void setTaxableBase(double taxableBase) {
-		this.taxableBase = taxableBase;
+		this.taxableBase = CommonUtil.round(taxableBase, 4);
 	}
 	
-	@Column(nullable=true, precision=15, scale=3)
+	@Column(precision=15, scale=3)
 	public double getTaxes() {
 		return taxes;
 	}
 	public void setTaxes(double taxes) {
-		this.taxes = taxes;
+		this.taxes = CommonUtil.round(taxes, 3);
 	}
 	
     @ManyToOne
@@ -192,7 +192,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 		return vatPercent;
 	}
 	public void setVatPercent(double vatPercent) {
-		this.vatPercent = vatPercent;
+		this.vatPercent = CommonUtil.round(vatPercent);
 	}
 
 	@Transient
@@ -200,7 +200,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 		return vatQuota;
 	}
 	public void setVatQuota(double vatQuota) {
-		this.vatQuota = vatQuota;
+		this.vatQuota = CommonUtil.round(vatQuota);
 	}
 
 	@Transient
@@ -208,7 +208,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 		return retentionPercent;
 	}
 	public void setRetentionPercent(double retentionPercent) {
-		this.retentionPercent = retentionPercent;
+		this.retentionPercent = CommonUtil.round(retentionPercent);
 	}
 
 	@Transient
@@ -216,7 +216,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 		return retentionQuota;
 	}
 	public void setRetentionQuota(double retentionQuota) {
-		this.retentionQuota = retentionQuota;
+		this.retentionQuota = CommonUtil.round(retentionQuota);
 	}
 
 	@Transient

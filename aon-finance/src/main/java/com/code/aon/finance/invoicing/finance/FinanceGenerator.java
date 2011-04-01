@@ -71,14 +71,14 @@ public class FinanceGenerator {
 			date = (payMethod == null?date:calculatePaymentDate(payMethod.getDaysToFirstPayment(),payMethod.getPaymentDaysArray(),date));
 			financeList.add(createFinance(invoice,date,(payMethod==null?null:payMethod.getPayment()),totalPrice,payMethod.getBank(),payMethod.getBankAccount()));
 		}else{
-			double paymentPrice = CommonUtil.round((totalPrice/payMethod.getNumberOfPayments()),2);
+			double paymentPrice = CommonUtil.round((totalPrice/payMethod.getNumberOfPayments()));
 			date = calculatePaymentDate(payMethod.getDaysToFirstPayment(),payMethod.getPaymentDaysArray(),date);
 			financeList.add(createFinance(invoice,date,payMethod.getPayment(),paymentPrice,payMethod.getBank(),payMethod.getBankAccount()));
 			for(int i = 2;i <= payMethod.getNumberOfPayments() - 1;i++){
 				date = calculatePaymentDate(payMethod.getDaysBetweenPayments(), payMethod.getPaymentDaysArray(), date);
 				financeList.add(createFinance(invoice,date,payMethod.getPayment(),paymentPrice,payMethod.getBank(),payMethod.getBankAccount()));
 			}
-			paymentPrice = CommonUtil.round(totalPrice - (paymentPrice * (payMethod.getNumberOfPayments() - 1)), 2);
+			paymentPrice = CommonUtil.round(totalPrice - (paymentPrice * (payMethod.getNumberOfPayments() - 1)));
 			date = calculatePaymentDate(payMethod.getDaysBetweenPayments(), payMethod.getPaymentDaysArray(), date);
 			financeList.add(createFinance(invoice,date,payMethod.getPayment(),paymentPrice,payMethod.getBank(),payMethod.getBankAccount()));
 		}
@@ -98,14 +98,14 @@ public class FinanceGenerator {
 			date = (rPayMethod == null?date:calculatePaymentDate(rPayMethod.getDaysToFirstPayment(),rPayMethod.getPaymentDaysArray(),date));
 			financeList.add(createFinance(invoice,date,(rPayMethod==null?null:rPayMethod.getPayment()),totalPrice,rBank));
 		}else{
-			double paymentPrice = CommonUtil.round((totalPrice/rPayMethod.getNumberOfPayments()),2);
+			double paymentPrice = CommonUtil.round((totalPrice/rPayMethod.getNumberOfPayments()));
 			date = calculatePaymentDate(rPayMethod.getDaysToFirstPayment(),rPayMethod.getPaymentDaysArray(),date);
 			financeList.add(createFinance(invoice,date,rPayMethod.getPayment(),paymentPrice,rBank));
 			for(int i = 2;i <= rPayMethod.getNumberOfPayments() - 1;i++){
 				date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
 				financeList.add(createFinance(invoice,date,rPayMethod.getPayment(),paymentPrice,rBank));
 			}
-			paymentPrice = CommonUtil.round(totalPrice - (paymentPrice * (rPayMethod.getNumberOfPayments() - 1)), 2);
+			paymentPrice = CommonUtil.round(totalPrice - (paymentPrice * (rPayMethod.getNumberOfPayments() - 1)));
 			date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
 			financeList.add(createFinance(invoice,date,rPayMethod.getPayment(),paymentPrice,rBank));
 		}
