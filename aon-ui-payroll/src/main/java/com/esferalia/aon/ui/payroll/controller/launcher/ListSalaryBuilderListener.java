@@ -61,7 +61,7 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 	}
 	
 	private void addMessage(SalaryBuilderListenerLevel level, String msg ) {
-		if (getList().size() > 25 ) {
+		if (getList().size() > 256 ) {
 			getList().pop();
 		}
 		
@@ -74,6 +74,7 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 		buf.append(SUFIX);
 
 		getList().add(buf.toString());
+//		getList().add(new String[]{level==SalaryBuilderListenerLevel.ERROR?"E":null,buf.toString()});
 		if (isSaveLog()) {
 			try {
 				FileWriter fstream = new FileWriter(file, true);
