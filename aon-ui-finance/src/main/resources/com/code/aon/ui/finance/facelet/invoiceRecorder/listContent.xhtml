@@ -359,12 +359,12 @@
 										<aon:outputText value="#{taxBreakDown.taxType}" />
 
 										<aon:outputText value="#{taxBreakDown.base}">
-											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 
 										<aon:div>
 											<aon:outputText value="#{taxBreakDown.taxPercent}">
-												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+												<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 											</aon:outputText>
 											<aon:outputText value="%" />
 										</aon:div>
@@ -381,12 +381,12 @@
 
 										<aon:outputText value="#{taxBreakDown.base}"
 											rendered="#{to.invoice.surcharge}">
-											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+											<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 										</aon:outputText>
 
 										<aon:div rendered="#{to.invoice.surcharge}">
 											<aon:outputText value="#{taxBreakDown.surchargePercent}">
-												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+												<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 											</aon:outputText>
 											<aon:outputText value="%" />
 										</aon:div>

@@ -22,7 +22,7 @@
 					<ui:param name="showNote" value="false" />
 					<ui:param name="showDataScroller" value="false" />
 					<ui:param name="skipResetButton" value="#{invoiceController.readOnly}" />
-					<ui:param name="skipLineEdition" value="#{true}" />
+					<ui:param name="skipLineEdition" value="true" />
 					<ui:param name="rowSelectorReRender" value="menuExt" />
 					<ui:param name="resetButtonReRender" value="menuExt" />
 					<ui:param name="newCancelButtonReRender" value="menuExt" />
@@ -44,7 +44,7 @@
 							focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
 						</aon:commandLink>
 					</ui:define>
-	
+
 					<ui:define name="columns">
 	
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
@@ -119,7 +119,7 @@
 							</f:facet>
 							<aon:outputText value="#{to.taxableBase}"
 								rendered="#{formList}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 							</aon:outputText>
 							<aon:inputText id="InvoiceDetail_taxableBase"
 								value="#{controller.to.taxableBase}" rendered="#{formEdit}"

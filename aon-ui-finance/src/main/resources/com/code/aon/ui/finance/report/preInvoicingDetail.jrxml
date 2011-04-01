@@ -17,6 +17,9 @@
 		<variableExpression><![CDATA[$F{taxableBase}]]></variableExpression>
 		<initialValueExpression><![CDATA[new Double(0)]]></initialValueExpression>
 	</variable>
+	<variable name="invoiceTotalRounded" class="java.lang.Double">
+		<variableExpression><![CDATA[com.code.aon.common.util.CommonUtil.round($V{invoiceTotal})]]></variableExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -44,7 +47,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.###" isBlankWhenNull="true">
 				<reportElement key="textField-2" x="265" y="0" width="65" height="12">
 					<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
 				</reportElement>
@@ -59,7 +62,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{quantity}]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.000" isBlankWhenNull="true">
+			<textField pattern="#,##0.00##" isBlankWhenNull="true">
 				<reportElement key="textField-3" x="330" y="0" width="65" height="12">
 					<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
 				</reportElement>
@@ -87,7 +90,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{discountExpression}.getDiscountExpr()]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.000" isBlankWhenNull="true">
+			<textField pattern="#,##0.00##" isBlankWhenNull="true">
 				<reportElement key="textField-5" x="450" y="0" width="97" height="12">
 					<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
 				</reportElement>

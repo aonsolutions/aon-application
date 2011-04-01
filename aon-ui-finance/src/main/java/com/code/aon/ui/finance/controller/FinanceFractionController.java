@@ -239,9 +239,9 @@ public class FinanceFractionController implements IFinanceConstants {
 		Iterator iterator = ((List)getModel().getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
-			pending = CommonUtil.round(pending - finance.getTotalAmount(), 2);
+			pending = CommonUtil.round(pending - finance.getTotalAmount());
 		}
-		return CommonUtil.round(pending, 2);
+		return CommonUtil.round(pending);
 	}
 
 }

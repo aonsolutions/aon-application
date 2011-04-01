@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="2.253944402704734"/>
-	<property name="ireport.x" value="1902"/>
+	<property name="ireport.x" value="2535"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -303,9 +303,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7" isBold="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoiceDetail}.getInvoice().getReferenceCode()
-
-]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoiceDetail}.getInvoice().getReferenceCode()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-19" x="362" y="0" width="30" height="14"/>
@@ -362,7 +360,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoiceDetail}.getDescription()]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.###" isBlankWhenNull="true">
 				<reportElement key="textField-10" x="997" y="0" width="57" height="14"/>
 				<box>
 					<pen lineColor="#CCCCCC"/>
@@ -376,7 +374,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.Double"><![CDATA[new Double($F{invoiceDetail}.getQuantity())]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.00##" isBlankWhenNull="true">
 				<reportElement key="textField-10" x="1054" y="0" width="57" height="14"/>
 				<box>
 					<pen lineColor="#CCCCCC"/>
@@ -404,7 +402,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoiceDetail}.getDiscountExpression().getDiscountExpr()]]></textFieldExpression>
 			</textField>
-			<textField pattern="#,##0.00" isBlankWhenNull="true">
+			<textField pattern="#,##0.00##" isBlankWhenNull="true">
 				<reportElement key="textField-10" x="1168" y="0" width="57" height="14"/>
 				<box>
 					<pen lineColor="#CCCCCC"/>

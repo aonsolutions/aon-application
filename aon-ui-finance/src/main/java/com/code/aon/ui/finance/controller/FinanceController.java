@@ -457,11 +457,11 @@ public class FinanceController extends FinanceListController implements IFinance
 		if (getPaymentAmount() != finance.getTotalAmount()) {
 			double amount = finance.getTotalAmount();
 
-			finance.setAmount(CommonUtil.round(getPaymentAmount() - finance.getExpenses(), 2));
+			finance.setAmount(CommonUtil.round(getPaymentAmount() - finance.getExpenses()));
 			String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 1, 2);
 			FinanceTrackingWriter.addFinanceTracking(finance, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 
-			Finance fraction = getFinanceGenerator().duplicateFinance(finance, CommonUtil.round(amount - getPaymentAmount(), 2));
+			Finance fraction = getFinanceGenerator().duplicateFinance(finance, CommonUtil.round(amount - getPaymentAmount()));
 			message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_TRACKING_FRACTIONED, 2, 2);
 			FinanceTrackingWriter.addFinanceTracking(fraction, new Date(), FinanceTrackingType.FRACTIONED, message, amount);
 

@@ -85,7 +85,7 @@
 	</columnHeader>
 	<detail>
 		<band height="14" splitType="Stretch">
-			<textField pattern="#,##0.000" isBlankWhenNull="true">
+			<textField pattern="#,##0.00##" isBlankWhenNull="true">
 				<reportElement key="textField-16" x="0" y="0" width="70" height="14">
 					<printWhenExpression><![CDATA[new Boolean($F{base}.doubleValue() != 0)]]></printWhenExpression>
 				</reportElement>

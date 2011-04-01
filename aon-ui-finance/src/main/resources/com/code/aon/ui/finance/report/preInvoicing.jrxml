@@ -247,8 +247,8 @@
 				<reportElement key="subreport-1" x="0" y="0" width="549" height="14"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{detailList})]]></dataSourceExpression>
-				<returnValue subreportVariable="invoiceTotal" toVariable="invoiceTotal"/>
-				<returnValue subreportVariable="invoiceTotal" toVariable="invoiceTotalAmount" calculation="Sum"/>
+				<returnValue subreportVariable="invoiceTotalRounded" toVariable="invoiceTotal"/>
+				<returnValue subreportVariable="invoiceTotalRounded" toVariable="invoiceTotalAmount"/>
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("preInvoicingDetail")]]></subreportExpression>
 			</subreport>
 			<line>
@@ -330,7 +330,7 @@
 				</textElement>
 				<textFieldExpression class="java.lang.Integer"><![CDATA[new Integer($V{REPORT_COUNT}.intValue())]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Group" evaluationGroup="invoiceGroup" pattern="#,##0.000" isBlankWhenNull="false">
+			<textField evaluationTime="Group" evaluationGroup="invoiceGroup" pattern="#,##0.00" isBlankWhenNull="false">
 				<reportElement key="textField-29" positionType="Float" x="464" y="10" width="85" height="17"/>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

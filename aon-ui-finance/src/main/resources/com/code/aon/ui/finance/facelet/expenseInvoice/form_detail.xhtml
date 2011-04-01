@@ -119,7 +119,7 @@
 							</f:facet>
 							<aon:outputText value="#{to.taxableBase}"
 								rendered="#{formList}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 							</aon:outputText>
 							<aon:inputText id="InvoiceDetail_taxableBase"
 								value="#{controller.to.taxableBase}" rendered="#{formEdit}"
@@ -141,16 +141,16 @@
 							</f:facet>
 							<aon:outputText value="#{to.vatPercent}"
 								rendered="#{formList}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 							</aon:outputText>
 							<aon:outputText id="InvoiceDetail_vatPercent"
 								value="#{controller.to.vatPercent}" rendered="#{formEdit}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 							</aon:outputText>
 							<f:facet name="footer">
 								<aon:outputText id="InvoiceDetail_vatPercent-New"
 									value="#{controller.to.vatPercent}" rendered="#{formNew}">
-									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 								</aon:outputText>
 							</f:facet>
 						</aon:column>
@@ -184,16 +184,16 @@
 								</f:facet>
 								<aon:outputText value="#{to.retentionPercent}"
 									rendered="#{formList}">
-									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 								</aon:outputText>
 								<aon:outputText id="InvoiceDetail_retentionPercent"
 									value="#{controller.to.retentionPercent}" rendered="#{formEdit}">
-									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 								</aon:outputText>
 								<f:facet name="footer">
 									<aon:outputText id="InvoiceDetail_retentionPercent-New"
 										value="#{controller.to.retentionPercent}" rendered="#{formNew}">
-										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 									</aon:outputText>
 								</f:facet>
 							</aon:column>
@@ -208,12 +208,14 @@
 								</aon:outputText>
 								<aon:inputText id="InvoiceDetail_retentionQuota"
 									value="#{controller.to.retentionQuota}" rendered="#{formEdit}"
+									disabled="#{controller.to.item.product.retention == null}"
 									valueChangeListener="#{controller.onRetentionQuotaChanged}"
 									reRender="InvoiceDetail_retentionPercent,InvoiceDetail_total"
 									required="true" size="5" focus="InvoiceDetail_total" />
 								<f:facet name="footer">
 									<aon:inputText id="InvoiceDetail_retentionQuota-New"
 										value="#{controller.to.retentionQuota}" rendered="#{formNew}"
+										disabled="#{controller.to.item.product.retention == null}"
 										valueChangeListener="#{controller.onRetentionQuotaChanged}"
 										reRender="InvoiceDetail_retentionPercent-New,InvoiceDetail_total-New"
 										required="true" size="5" focus="InvoiceDetail_total-New" />
@@ -227,7 +229,7 @@
 							</f:facet>
 							<aon:outputText value="#{controller.invoiceDetailTotal}"
 								rendered="#{formList}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 							</aon:outputText>
 							<aon:inputText id="InvoiceDetail_total"
 								value="#{controller.toInvoiceDetailTotal}" rendered="#{formEdit}"
