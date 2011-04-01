@@ -205,6 +205,8 @@ public class SQLContractSalaryCalculatorContext implements
 	private ExpressionContext 								contractExpressionContext;
 	private SQLContractLeaveLoader 							leaveLoader;
 	
+	private Date 											contractStartDate;
+	private Date 											contractEndDate;
 	private Collection<IContractDeduction> 					systemDeductions;
 	private Collection<IContractPayment> 					systemPayments;
 	
@@ -272,12 +274,12 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public Date getStartDate() {
-		return this.startDate;
+		return this.contractStartDate;
 	}
 
 	@Override
 	public Date getEndDate() {
-		return this.endDate;
+		return this.contractEndDate;
 	}
 
 	@Override
@@ -538,13 +540,9 @@ public class SQLContractSalaryCalculatorContext implements
 	}
 	
 	private long getAvailableDays() {
-		Date dbStart = getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE);
-		Date start = Period.max ( this.startDate, dbStart );
-		Date dbEnd = getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE);
-		Date end = Period.min ( this.endDate, dbEnd);
 		long workedDays = 
-			CommonUtil.getDaysBetweenDates(start, 
-					end);
+			CommonUtil.getDaysBetweenDates(contractStartDate, 
+					contractEndDate);
 		workedDays += 1;
 		return workedDays;
 	}
@@ -565,9 +563,9 @@ public class SQLContractSalaryCalculatorContext implements
 
 		ICalendar calendar = getCalendar();
 		Calendar end = Calendar.getInstance();
-		end.setTime(endDate);
+		end.setTime(contractEndDate);
 		Calendar day = Calendar.getInstance();
-		day.setTime(startDate);
+		day.setTime(contractStartDate);
 		while  (end.after(day) || end.equals(day)) {
 			DayType type = calendar.getDayType(day);
 			if ( isActualDay(type) &&  
@@ -597,7 +595,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	private double getDoubleVariable(String name) {
 		Double value =  this.contractExpressionContext.getVariable(name, 
-				this.startDate, this.endDate, Double.class);
+				this.contractStartDate, this.contractEndDate, Double.class);
 		return value != null ? value : 0.00;
 	}
 
@@ -631,6 +629,12 @@ public class SQLContractSalaryCalculatorContext implements
 	 */
 	private void initContractExpressionCtx() 
 	throws SQLException, ExpressionException  {
+		
+		this.contractStartDate = 
+			Period.max(getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE), startDate);
+		this.contractEndDate = 
+			Period.min(getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE), endDate);
+		
 		this.contractExpressionContext = 
 			new ExpressionContext(getAgreementContext());
 		
@@ -718,8 +722,8 @@ public class SQLContractSalaryCalculatorContext implements
 				expr.setName(rs.getString(ContractDataColumns.NAME));
 				expr.setExpression(rs.getString(ContractDataColumns.EXPRESSION));
 				expr.setScope(ExpressionScope.CONTRACT );
-				Date start = Period.max ( rs.getDate(ContractDataColumns.START_DATE), startDate );
-				Date end = Period.min( rs.getDate(ContractDataColumns.END_DATE), endDate );
+				Date start = contractStartDate;
+				Date end = contractEndDate;
 				try {
 					ctx.addExpression(expr, start, end );
 				} catch (Exception e) {
