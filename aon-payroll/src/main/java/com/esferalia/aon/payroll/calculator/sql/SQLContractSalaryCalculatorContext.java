@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
@@ -224,9 +225,11 @@ public class SQLContractSalaryCalculatorContext implements
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate, Criteria criteria) 
 	throws SQLException, ExpressionException {
 		this.connection = connection;
-		this.startDate = new Date ( startDate.getTime() );
-		this.endDate = new Date ( endDate.getTime() );
+		
+		this.startDate = new Date ( DateUtils.truncate(startDate, Calendar.DAY_OF_MONTH).getTime() );
+		this.endDate = new Date ( DateUtils.truncate(endDate, Calendar.DAY_OF_MONTH).getTime() );
 		this.issueDate = new Date ( issueDate.getTime() );
+		
 		this.criteria = criteria;
 		
 		initResultSet();

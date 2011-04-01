@@ -22,12 +22,16 @@ import org.apache.commons.io.IOUtils;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester.UnExpectedValue;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -187,15 +191,20 @@ public class SalaryTestLauncher {
 				String msg = MessageFormat.format("Test de cálculo de nóminas {0}:{1}",new Object[] {startDate, endDate});
 				listener.onInfo(msg);
 				
-				Criteria criteria = null;
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(SQLConstants.CUSTOMER + "." + CustomerColumns.STATUS, 
+						CustomerStatus.ACTIVE );
 				if (parameters.getEnterprise() != null && parameters.getEnterprise().getId() != null ) {
-					criteria = new Criteria();
-					criteria.addEqualExpression("enterprise_registry.id", parameters.getEnterprise().getId());
+					criteria.addEqualExpression(
+							SQLContractSalaryCalculatorContext.ENTERPRISE_REGISTRY + "." + RegistryColumns.ID, 
+							parameters.getEnterprise().getId());
 				}
 				if (parameters.getPerson() != null && parameters.getPerson().getId() != null ) {
-					criteria = criteria==null?new Criteria():criteria;
-					criteria.addEqualExpression("person_registry.id", parameters.getPerson().getId());
+					criteria.addEqualExpression(
+							SQLContractSalaryCalculatorContext.PERSON_REGISTRY + "." + RegistryColumns.ID, 
+							parameters.getPerson().getId());
 				}
+
 				SQLContractSalaryCalculatorContext sqlCtx = 
 					new SQLContractSalaryCalculatorContext(connection, 
 							startDate, 
