@@ -47,7 +47,7 @@
 				</f:facet>
 			</aon:column>		
 			<c:if test="#{!skipScopeColumn}"> 
-				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.scope.description"
+				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.scope&lt;description"
 					styleClass="aon-editDataTable-textColumn aon-width-100">
 					<f:facet name="header">
 						<aon:outputLabel for="#{controller.beanName}_scope"
@@ -69,7 +69,7 @@
 				</aon:column>
 			</c:if>
 			<c:if test="#{!skipCategoryColumn}"> 
-				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.category.name"
+				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.category&lt;name"
 					styleClass="aon-editDataTable-textColumn aon-width-100">
 					<f:facet name="header">
 						<aon:outputLabel for="#{controller.beanName}_category"
