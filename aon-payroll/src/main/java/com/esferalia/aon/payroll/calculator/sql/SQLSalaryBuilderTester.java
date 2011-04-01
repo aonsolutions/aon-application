@@ -39,6 +39,8 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	private int salaryCount;
 	private int rightTestedsalariesCount;
 
+	AbstractSQL.ISalary dbSalary = null;
+	
 	public SQLSalaryBuilderTester(Connection connection) throws SQLException {
 		sqlReader= new SQLReader(connection);
 		testTotalPayment = true;
@@ -47,6 +49,13 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 		
 	}
 	
+	public AbstractSQL.ISalary getSalaryDraft()  {
+		return super.salary;
+	}
+
+	public AbstractSQL.ISalary getDBSalary()  {
+		return dbSalary;
+	}
 	
 	public boolean isTestTotalPayment() {
 		return testTotalPayment;
@@ -101,7 +110,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 			salaryReader.setType(enum2short(SalaryType.SALARY));
 			
 			++contractCount;
-			AbstractSQL.ISalary dbSalary = salaryReader.findSalary();
+			this.dbSalary = salaryReader.findSalary();
 			if ( dbSalary == null ) {
 				String msg = String.format(NO_SALARY_FORMAT, 
 						salary.getEmployeeDocument(),
@@ -152,6 +161,9 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	public void setListener(ISalaryBuilderListener listener) {
 		this.listener = listener;		
 	}
+	
+	
+	
 
 	public static class UnExpectedValue extends Error{
 		
