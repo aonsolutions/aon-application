@@ -178,7 +178,7 @@ public class SalaryTestLauncher {
 				salaryBuilder.setTestBaseCGC(isTestBaseCGC());
 				salaryBuilder.setTestBaseIRPF(isTestBaseIRPF());
 				salaryBuilder.setTestTotalPayment(isTestTotalPayment());
-				listener = new ListSalaryBuilderListener();
+				listener = new ListSQLSalaryBuilderTesterListener(salaryBuilder);
 				listener.setDebugEnabled(isDebugEnabled());
 				listener.setSaveLog(isSaveLog());
 				salaryBuilder.setListener(listener);
