@@ -146,18 +146,20 @@
 						style="background-color: #EEEEEE; border: solid black 1px; height:400px; overflow-y: scroll;">
 						<aon:outputText value="#{salaryTestLauncher.style}" escape="false"/>
 						<ul>
-						<ui:repeat var="msg" value="#{salaryTestLauncher.messages}">
-							<aon:outputText value="#{msg}" escape="false"/>	
-<!--  
-							<aon:commandLink  rendered="#{msg[0]!=null}"
-								style="display: list-item; "
-								actionListener="#{salaryTestLauncher.onSalaryDraft}"
-								action="salaryDraft_form"
-								>
-								<aon:outputText value="#{msg[1]}" escape="false" />
-					     	</aon:commandLink>	
-							<aon:outputText value="#{msg[1]}" escape="false" rendered="#{msg[0]==null}"/>
--->
+						<ui:repeat var="message" value="#{salaryTestLauncher.messages}">
+							<li>
+								<aon:commandLink  
+									rendered="#{message.link and message.contractId!=null}"
+									style="display: inline; "
+									action="salaryDraft_form" >
+									<aon:outputText value="#{message.msg}" escape="false" />
+									<f:setPropertyActionListener value="#{message.contractId}" 
+										target="#{salaryTestLauncher.contractId}" />
+									<aon:actionListener method="#{salaryTestLauncher.onSalaryDraft}" />
+						     	</aon:commandLink>	
+								<aon:outputText value="#{message.msg}" escape="false" 
+									rendered="#{!(message.link and message.contractId!=null)}"/>
+							</li>
 						</ui:repeat>
 						</ul>
 						<aon:graphicImage

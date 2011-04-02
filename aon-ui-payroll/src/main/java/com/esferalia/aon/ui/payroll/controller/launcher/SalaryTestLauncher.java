@@ -20,27 +20,33 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester.UnExpectedValue;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.launcher.ListSQLSalaryBuilderTesterListener.TestLogMessage;
+import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 
 public class SalaryTestLauncher {
 	private static final String LOG_FORMAT = "[{0}] {1}, {2} : {3}";
 	
 	private SalaryLauncherParams params;
-	private ListSalaryBuilderListener listener;
+	private ListSQLSalaryBuilderTesterListener listener;
 	
 	private boolean pollEnabled;
 	
@@ -246,9 +252,9 @@ public class SalaryTestLauncher {
 		}
 	}
 
-	public List<String> getMessages() {
+	public List<TestLogMessage> getMessages() {
 		if (listener == null) return null;
-		return listener.getList();
+		return listener.getTestList();
 	}
 	public String getStyle() {
 		return listener.getStyle();
@@ -282,5 +288,36 @@ public class SalaryTestLauncher {
 			throw new AbortProcessingException("Imposible descargar fichero");
 		}
 	}
+	
+	private Integer contractId;
+	public Integer getContractId() {
+		return contractId;
+	}
+	public void setContractId(Integer contractId) {
+		this.contractId = contractId;
+	}
+
+	public void onSalaryDraft(ActionEvent event) {
+		try {
+			SalaryDraftController controller = (SalaryDraftController) FormUtil.getController("salaryDraft");
+			Calendar c = Calendar.getInstance();
+			c.set(Calendar.YEAR, getParams().getIssueYear());
+			c.set(Calendar.MONTH, getParams().getIssueMonth().ordinal());
+			c.set(Calendar.DAY_OF_MONTH, 1);
+			controller.setIssueDate(c.getTime());
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IPayrollAlias.CONTRACT_ID), getContractId());
+			controller.setCriteria(criteria);
+			controller.onSearch(null);
+			controller.getModel().setRowIndex(0);
+			controller.onSelect(null);
+			controller.setBackAction("salaryTestLauncher_form");
+		} catch (ManagerBeanException e) {
+			String msg = "Error al el borrador de la nómina.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
 
 }

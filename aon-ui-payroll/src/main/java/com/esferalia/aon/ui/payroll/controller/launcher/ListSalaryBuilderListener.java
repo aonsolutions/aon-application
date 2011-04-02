@@ -13,8 +13,8 @@ import com.esferalia.aon.salary.SalaryBuilderListenerLevel;
 
 public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 
-	private static final String SPACE = " ";
-	private static final String STYLE =
+	protected static final String SPACE = " ";
+	protected static final String STYLE =
 		"<style type=\"text/css\">"
 		+"	.lst {margin-left: 20px; font-family: Courier; white-space: nowrap;}"
 		+"	.lst_ERROR {color:red; font-weight: bold;}"
@@ -22,12 +22,12 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 		+"	.lst_INFO {color:black;}"
 		+"   .lst_DEBUG {color: blue;}"
 		+"<style>";
-	private static final String PREFIX0 = "<li><span class=\"lst lst_";
-	private static final String PREFIX1 = "\">";
-	private static final String SUFIX = "</span></li>";
+	protected static final String PREFIX0 = "<span class=\"lst lst_";
+	protected static final String PREFIX1 = "\">";
+	protected static final String SUFIX = "</span>";
 
 	private LinkedList<String> list; // Usado como una pila FIFO.
-	private StringBuffer buf;
+	protected StringBuffer buf;
 	private File file;
 	
 	private int errorCounter;
@@ -60,7 +60,7 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 		return list;
 	}
 	
-	private void addMessage(SalaryBuilderListenerLevel level, String msg ) {
+	protected void addMessage(SalaryBuilderListenerLevel level, String msg ) {
 		if (getList().size() > 256 ) {
 			getList().pop();
 		}
@@ -74,7 +74,6 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 		buf.append(SUFIX);
 
 		getList().add(buf.toString());
-//		getList().add(new String[]{level==SalaryBuilderListenerLevel.ERROR?"E":null,buf.toString()});
 		if (isSaveLog()) {
 			try {
 				FileWriter fstream = new FileWriter(file, true);
