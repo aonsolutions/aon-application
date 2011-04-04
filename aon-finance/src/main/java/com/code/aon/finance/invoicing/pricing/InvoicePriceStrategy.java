@@ -16,7 +16,24 @@ import com.code.aon.product.strategy.TaxKey;
 import com.code.aon.registry.ITaxInfo;
 
 public class InvoicePriceStrategy extends BasicPriceStrategy {
-	
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public double getTaxableBase(ICalculableContainer icc) {
+		double taxableBase = 0;
+		Iterator iter = icc.getDetailList().iterator();
+		while(iter.hasNext()){
+			InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
+			taxableBase += invoiceDetail.getTaxableBase();
+		}
+		if(icc.getDiscountExpression().getDiscounts() != null){
+			for(int i = 0;i<icc.getDiscountExpression().getDiscounts().length;i++){
+				taxableBase = taxableBase * ( 1 - icc.getDiscountExpression().getDiscounts()[i] /100);
+			}
+		}
+		return CommonUtil.round(taxableBase);
+	}
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti) {
