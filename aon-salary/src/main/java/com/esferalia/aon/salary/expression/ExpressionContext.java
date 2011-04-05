@@ -119,4 +119,8 @@ public class ExpressionContext {
 	//
 	// ------------------------------------------
 	
+	public static void main(String[] args) {
+		System.out.println(MVEL.eval("'52' contains '501'[0]"));
+	}
+	
 }

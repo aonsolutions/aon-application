@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.payroll.sql.SQLReader;
 import com.esferalia.aon.payroll.sql.SQLReader.SalaryReader;
@@ -18,15 +19,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	private ISalaryBuilderListener listener;
 	private static final String FORMAT = "[%s]: %s - %s";
 	private static final String NO_SALARY_FORMAT  ="No hay nómina que calcular para: '%s' [%s,%s]";
-	private static final String TOTAL_PAYMENT  ="[Total Devengado]";
-	private static final String BASE_IRPF = "[Base I.R.P.F.]";
-	private static final String BASE_CGC = "[Base C.G.C.]";
-	private static final String EMPTY = "";
-	private static final String SPACE = " ";
-	private static final String LESSTHAN = "<";
-	private static final String GREATHERTHAN = ">";
-	private static final String WAITED = "Esperado: ";
-	private static final String FOUND = " pero se encontró: ";
+	private static final String TOTAL_LIQUID  ="Líquido Total a Percibir";
 	
 	private boolean testTotalPayment;
 	private boolean testBaseIRPF;
@@ -120,15 +113,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 				return null;
 			}
 			++salaryCount;
-			if (testTotalPayment) {
-				testEquals(TOTAL_PAYMENT,dbSalary.getTotalPayment(),salary.getTotalPayment(),delta);
-			}
-			if (testBaseIRPF) {
-				testEquals( BASE_IRPF,dbSalary.getIrpfBase(),salary.getIrpfBase(),delta);
-			}
-			if (testBaseCGC) {
-				testEquals(BASE_CGC,dbSalary.getRawCgcBase(),salary.getRawCgcBase(),delta);
-			}
+			testEquals(TOTAL_LIQUID,dbSalary.getTotalPayment(),salary.getTotalPayment(),delta);
 			++rightTestedsalariesCount;
 		} catch (SQLException e) {
 			onError(e.getLocalizedMessage());
@@ -154,7 +139,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 		if (Double.compare(expected, actual) == 0)
 			return;
 		if (!(Math.abs(expected - actual) <= delta))
-			unExpectedValue(message, new Double(expected), new Double(actual));		
+			unExpectedValue(message, expected, actual);		
 	}
 	
 	@Override
@@ -174,9 +159,10 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 		}
 	}
 
-	private static void unExpectedValue(String message, Object expected,Object actual) {
+	private static void unExpectedValue(String message, double expected,double actual) {
 		throw new UnExpectedValue(format(message, expected, actual));
 	}
+
 	
 	private void onError(String msg) {
 		if (listener != null) {
@@ -189,35 +175,11 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 		}
 	}
 
-	private static String format(String message, Object expected, Object actual) {
-		StringBuffer formatted = new StringBuffer(EMPTY);
-		formatted.append(StringUtils.isEmpty(message)?EMPTY:message);
-		formatted.append(StringUtils.isEmpty(message)?EMPTY:SPACE);
-		String expectedString= String.valueOf(expected);
-		String actualString= String.valueOf(actual);
-		if (expectedString.equals(actualString)) {
-			formatted.append(WAITED);
-			formatted.append(formatClassAndValue(expected, expectedString));
-			formatted.append(FOUND);
-			formatted.append(formatClassAndValue(actual, actualString));
-		} else {
-			formatted.append(WAITED);
-			formatted.append(LESSTHAN);
-			formatted.append(expectedString);
-			formatted.append(GREATHERTHAN);
-			formatted.append(FOUND);
-			formatted.append(LESSTHAN);
-			formatted.append(actualString);
-			formatted.append(GREATHERTHAN);
-		}
-		return formatted.toString(); 
+	private static String format(String message, double expected, double actual) {
+			return String.format("%s diferente. En la nómina '%f', en el borrador '%f'", 
+					message, CommonUtil.round(expected), CommonUtil.round(actual));
 	}
 	
-	private static String formatClassAndValue(Object value, String valueString) {
-		String className= value == null ? "null" : value.getClass().getName();
-		return className + LESSTHAN + valueString + GREATHERTHAN;
-	}
-
 	protected static Short enum2short(Enum<?> type) {
 		return type == null ? null : (short ) type.ordinal();
 	}

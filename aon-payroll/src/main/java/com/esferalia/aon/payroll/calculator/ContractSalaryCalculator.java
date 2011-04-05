@@ -4,15 +4,22 @@ package com.esferalia.aon.payroll.calculator;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGC_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGP_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGC_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGC_BASE_MAX;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGP_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGP_BASE_MAX;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.NON_STRUCTURAL_OVERTIME_BASE;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.STRUCTURAL_OVERTIME_BASE;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -140,9 +147,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			salaryBuilder.setIrpfBase(taxCalculator.getIrpfBase()); 
 			expressionContext.addVariable(IRPF_BASE, taxCalculator.getIrpfBase(), start, end );
 
+			salaryBuilder.setRawCgcBase(quoteCalculator.getRawCgcBase());
+
 			salaryBuilder.setCgcBase(quoteCalculator.getCgcBase()); 
-			salaryBuilder.setRawCgcBase(quoteCalculator.getCgcBase()); 
-			expressionContext.addVariable(CGC_BASE, quoteCalculator.getCgcBase(), start, end );
+			expressionContext.addVariable(CGC_BASE, quoteCalculator.getCgcBase() , start, end );
 			
 			salaryBuilder.setCgpBase(quoteCalculator.getCgpBase());
 			expressionContext.addVariable(CGP_BASE, quoteCalculator.getCgpBase(), start, end );

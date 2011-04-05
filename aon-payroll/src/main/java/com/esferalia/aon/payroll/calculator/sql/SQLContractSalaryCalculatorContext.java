@@ -1,12 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.ACTUAL_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.LEAVE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.QUOTE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.WORKED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.GUARANTEED;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.GUARANTEED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.TOTAL_BENEFITS_IT;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -248,18 +242,18 @@ public class SQLContractSalaryCalculatorContext implements
 			new SQLContractDeduction();
 		
 		SQLCalendarFactory calendarFactory = 
-			new SQLCalendarFactory(connection, startDate, endDate);
+			new SQLCalendarFactory(connection, this.startDate, this.endDate);
 		this.calendars = 
 			new LRUCache<Integer, ICalendar>(CACHE_SIZE, calendarFactory);
 		calendarFactory.setCache(calendars); // TODO: Todo en la misma clase???
 		
 		SQLAgreementPaymentsFactory agreementPaymentsFactory =
-			new SQLAgreementPaymentsFactory(connection, startDate, endDate);
+			new SQLAgreementPaymentsFactory(connection, this.startDate, this.endDate);
 		this.agreementPayments = 
 			new LRUCache<Integer, Collection<IContractPayment>>(CACHE_SIZE, agreementPaymentsFactory);
 
 		SQLAgreementContextFactory agreementContextFactory =
-			new SQLAgreementContextFactory(connection, startDate, endDate);
+			new SQLAgreementContextFactory(connection, this.startDate, this.endDate);
 		this.agreementExpressionContexts = 
 			new LRUCache<Integer, ExpressionContext>(CACHE_SIZE, agreementContextFactory);
 		this.leaveLoader = 
@@ -591,12 +585,54 @@ public class SQLContractSalaryCalculatorContext implements
 		return workedDays;
 	}
 	
+	/* 
+	 * Calcula los 'DIAS_TRABAJADOS' (DIAS_MES - DIAS_BAJA). 
+	 */
+	private long getSalaryDays() {
+
+		Long availableDays = getAvailableDays();
+		
+		return availableDays;
+	}
 	
+	
+	private double getSalaryHours() {
+		Number weekHours = getVariable(WEEK_HOURS, Number.class);
+		if ( weekHours == null ) {
+			weekHours = 40.00;
+		}
+		Long salaryDays = getVariable(SALARY_DAYS, Long.class );
+		
+		return salaryDays == null ? null : salaryDays * weekHours.doubleValue() / 7; 
+	}
+	
+	private boolean isIndefinite() {
+		String tc2 = getVariable(TC2, String.class);
+		return tc2 == null ? true : "123".indexOf(tc2.charAt(0)) != -1; 
+	}
+
+	private boolean isFullTime() {
+		String tc2 = getVariable(TC2, String.class);
+		return tc2 == null ? true : "14".indexOf(tc2.charAt(0)) != -1; 
+	}
+
+	private double getDoubleVariable(ContractVariables var) {
+		return getDoubleVariable(var.getName());
+	}
 
 	private double getDoubleVariable(String name) {
 		Double value =  this.contractExpressionContext.getVariable(name, 
 				this.contractStartDate, this.contractEndDate, Double.class);
 		return value != null ? value : 0.00;
+	}
+
+	private <T> T getVariable(ContractVariables var, Class<T> toType ) {
+		return getVariable(var.getName(), toType);
+	}
+
+	private <T> T getVariable(String name, Class<T> toType ) {
+		return this.contractExpressionContext.getVariable(name, 
+				this.contractStartDate, this.contractEndDate, toType);
 	}
 
 	private double getTotalBenefitsIt() {
@@ -654,7 +690,42 @@ public class SQLContractSalaryCalculatorContext implements
 				workedDays
 		);
 
+		this.contractExpressionContext.addVariable(SALARY_DAYS, 
+				new LazyTimedObject<Long>(){
+					@Override
+					public Long create() {
+						return getSalaryDays();
+					}
+				}
+		);
+
+		this.contractExpressionContext.addVariable(SALARY_HOURS, 
+				new LazyTimedObject<Double>(){
+					@Override
+					public Double create() {
+						return getSalaryHours();
+					}
+				}
+		);
 		
+		this.contractExpressionContext.addVariable(INDEFINITE, 
+				new LazyTimedObject<Boolean>(){
+					@Override
+					public Boolean create() {
+						return isIndefinite();
+					}
+				}
+		);
+
+		this.contractExpressionContext.addVariable(FULL_TIME, 
+				new LazyTimedObject<Boolean>(){
+					@Override
+					public Boolean create() {
+						return isFullTime();
+					}
+				}
+		);
+
 		// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de querys adicionales...)
 		this.contractExpressionContext.addVariable(ACTUAL_DAYS, 
 				new LazyTimedObject<Long>(){
