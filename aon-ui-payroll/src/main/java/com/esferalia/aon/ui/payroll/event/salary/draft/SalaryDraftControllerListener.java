@@ -13,6 +13,7 @@ public class SalaryDraftControllerListener extends ControllerAdapter{
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		resetSalary(event);
+		searchSavedSalary(event);
 	}
 	@Override
 	public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
@@ -28,6 +29,10 @@ public class SalaryDraftControllerListener extends ControllerAdapter{
     private void resetSalary(ControllerEvent event) {
     	SalaryDraftController sc = (SalaryDraftController) event.getController();
 		sc.setSalary(null);
+    }
+    private void searchSavedSalary(ControllerEvent event) {
+    	SalaryDraftController sc = (SalaryDraftController) event.getController();
+		sc.searchSavedDraftSalary();
     }
     
 }

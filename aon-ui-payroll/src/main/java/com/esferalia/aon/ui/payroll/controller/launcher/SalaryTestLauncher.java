@@ -300,6 +300,7 @@ public class SalaryTestLauncher {
 	public void onSalaryDraft(ActionEvent event) {
 		try {
 			SalaryDraftController controller = (SalaryDraftController) FormUtil.getController("salaryDraft");
+			controller.onEditSearch(event);
 			Calendar c = Calendar.getInstance();
 			c.set(Calendar.YEAR, getParams().getIssueYear());
 			c.set(Calendar.MONTH, getParams().getIssueMonth().ordinal());

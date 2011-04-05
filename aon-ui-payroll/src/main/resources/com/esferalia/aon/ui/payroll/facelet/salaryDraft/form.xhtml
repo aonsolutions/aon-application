@@ -38,13 +38,24 @@
 					<aon:div>
 						<aon:panelTabSet>
 							<aon:panelTab id="paymentsTab" label="#{payrollBundle.payroll_salary_payment}">
-								<aon:div style="width: 840px; margin-top: 10px;">
-									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/gridContent.xhtml" >
-										<ui:param name="controller" value="#{salaryDraft.salary.payments}" />
-										<ui:param name="totalPayment" value="#{salaryDraft.salary.totalPayment}" />
+								<c:if test="#{salaryDraft.savedSalaryDraft==null}" >
+									<aon:div style="width: 840px; margin-top: 10px;">
+										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/gridContent.xhtml" >
+											<ui:param name="controller" value="#{salaryDraft.salary.payments}" />
+											<ui:param name="totalPayment" value="#{salaryDraft.salary.totalPayment}" />
+										</ui:include>
+									</aon:div>
+								</c:if>
+								<c:if test="#{salaryDraft.savedSalaryDraft!=null}" >
+									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/savedDraftPayment.xhtml" >
+										<ui:param name="controller" value="#{salaryDraft.savedSalaryDraft.payments}" />
+										<ui:param name="totalPayment" value="#{salaryDraft.savedSalaryDraft.totalPayment}" />
+										<ui:param name="payments" value="#{salaryDraft.printer.payments}" />
 									</ui:include>
-								</aon:div>
+								</c:if>
 							</aon:panelTab>
+<!--  
+-->
 							<c:if test="#{aonConfiguration.bean.payroll.showPaymentEditionTab}">
 								<aon:panelTab id="paymentsEditTab" label="#{bundle.aon_edit}">
 									<aon:div style="width: 840px; margin-top: 10px;">
@@ -55,12 +66,25 @@
 						</aon:panelTabSet>
 						<aon:panelTabSet>
 							<aon:panelTab id="deductionsTab" label="#{payrollBundle.payroll_salary_deduction}">
-								<aon:div style="width: 840px; margin-top: 10px;">
-									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/gridContent.xhtml" >
-										<ui:param name="controller" value="#{salaryDraft.salary.deductions}" />
-										<ui:param name="totalDeduction" value="#{salaryDraft.salary.totalDeduction}" />
-									</ui:include>
-								</aon:div>
+								<c:if test="#{salaryDraft.savedSalaryDraft==null}" >
+									<aon:div style="width: 840px; margin-top: 10px;">
+										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/gridContent.xhtml" >
+											<ui:param name="controller" value="#{salaryDraft.salary.deductions}" />
+											<ui:param name="totalDeduction" value="#{salaryDraft.salary.totalDeduction}" />
+										</ui:include>
+									</aon:div>
+								</c:if>
+								<c:if test="#{salaryDraft.savedSalaryDraft!=null}" >
+									<aon:div style="width: 840px; margin-top: 10px;">
+										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/savedDraftDeduction.xhtml" >
+<!--  
+											<ui:param name="controller" value="#{salaryDraft.savedSalaryDraft.deductions}" />
+											<ui:param name="totalDeduction" value="#{salaryDraft.savedSalaryDraft.totalDeduction}" />
+-->											
+											<ui:param name="deductions" value="#{salaryDraft.printer.deductions}" />
+										</ui:include>
+									</aon:div>
+								</c:if>
 							</aon:panelTab>
 							<c:if test="#{aonConfiguration.bean.payroll.showDeductionEditionTab}">
 								<aon:panelTab id="deductionsEditTab" label="#{bundle.aon_edit}">
@@ -74,11 +98,23 @@
 								</aon:panelTab>
 							</c:if>
 						</aon:panelTabSet>
-						<aon:div style="width: 840px; margin-top: 10px;">
-							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formBases.xhtml" >
-								<ui:param name="salaryTO" value="#{salaryDraft.salary}" />
-							</ui:include>
-						</aon:div>
+						<aon:panelGrid columns="2" style="width: 1000px;margin-right:10px;"
+							columnClasses="aon-noborder, aon-noborder">
+							<aon:div style="width: 840px; margin-top: 10px;">
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formBases.xhtml" >
+									<ui:param name="salaryTO" value="#{salaryDraft.salary}" />
+								</ui:include>
+							</aon:div>
+							
+							<aon:div style="width: 155px; margin-top: 10px;">
+								<c:if test="#{salaryDraft.savedSalaryDraft!=null}" >
+									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/savedDraftBases.xhtml" >
+										<ui:param name="bases" value="#{salaryDraft.printer.bases}" />
+									</ui:include>
+								</c:if>
+							</aon:div>
+						</aon:panelGrid>
+							
 					</aon:div>
 				</c:if>
 			</aon:div>

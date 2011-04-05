@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<aon:panelGrid columns="2" style="width: 1000px;margin-right:10px;"
+		columnClasses="aon-noborder, aon-noborder">
+	
+	<aon:div style="width: 840px; margin-top: 10px;">
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/gridContent.xhtml" >
+			<ui:param name="controller" value="#{salaryDraft.salary.deductions}" />
+			<ui:param name="totalDeduction" value="#{salaryDraft.salary.totalDeduction}" />
+		</ui:include>
+	</aon:div>
+	
+	<aon:div styleClass="aon-margin-top aon-border" 
+		style="width: 155px;margin-left: 5px;background-color: #F6F6F6;">
+		
+		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
+			columnClasses="aon-noborder aon-padding-right aon-width-150 aon-text-right aon-bold">
+			
+			<aon:outputText value="&#160;II. #{payrollBundle.payroll_salary_deductions}&#160;" 
+				styleClass="aon-bold" style="position: relative; top: -8px; margin-left: 5px; background-color: white;"/>
+
+			<aon:outputText value="&#160;"/>
+		</aon:panelGrid>
+
+		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
+			columnClasses="aon-noborder aon-padding-right aon-width-150 aon-text-right aon-bold">
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{deductions.commonContingency.value}"
+					styleClass="#{deductions.commonContingency.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{deductions.unemployment.value}"
+					styleClass="#{deductions.unemployment.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{deductions.jobTraining.value}"
+					styleClass="#{deductions.jobTraining.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{deductions.structuralOvertime.value}"
+					styleClass="#{deductions.structuralOvertime.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{deductions.nonStructuralOvertime.value}"
+					styleClass="#{deductions.nonStructuralOvertime.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{deductions.socialSecurityContributions.value}"
+					styleClass="#{deductions.socialSecurityContributions.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{deductions.irpf.value}"
+					styleClass="#{deductions.irpf.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{deductions.advancePayment.value}"
+					styleClass="#{deductions.advancePayment.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{deductions.inKind.value}"
+					styleClass="#{deductions.inKind.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{deductions.other.value}"
+					styleClass="#{deductions.other.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{deductions.totalDeduction.value}"
+					styleClass="#{deductions.totalDeduction.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+		</aon:panelGrid>		
+	</aon:div>
+	</aon:panelGrid>
+</ui:composition>
