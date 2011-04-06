@@ -11,7 +11,6 @@ import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 
 public class PurchaseDetailBeanListener extends ManagerBeanListenerAdapter {
 
@@ -23,7 +22,7 @@ public class PurchaseDetailBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean detailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), detail.getPurchase().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_ID), detail.getId()));
+		criteria.addNotEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_ID), detail.getId());
 		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_LINE), detail.getLine());
 		criteria.addOrder(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
@@ -47,12 +46,12 @@ public class PurchaseDetailBeanListener extends ManagerBeanListenerAdapter {
 			IManagerBean detailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), detail.getPurchase().getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_ID), detail.getId()));
+			criteria.addNotEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_ID), detail.getId());
 			criteria.addEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_LINE), detail.getLine());
 			if (detailBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
 				criteria.addEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), detail.getPurchase().getId());
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_ID), detail.getId()));
+				criteria.addNotEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_ID), detail.getId());
 				criteria.addOrder(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_LINE));
 				List<ITransferObject> list = detailBean.getList(criteria);
 				int index = 1;
@@ -77,7 +76,7 @@ public class PurchaseDetailBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean detailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), detail.getPurchase().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_ID), detail.getId()));
+		criteria.addNotEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_ID), detail.getId());
 		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_LINE), detail.getLine());
 		criteria.addOrder(detailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);

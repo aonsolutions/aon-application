@@ -14,7 +14,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.dao.ISalesAlias;
 
@@ -28,7 +27,7 @@ public class SalesDetailBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean detailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), detail.getSales().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_ID), detail.getId()));
+		criteria.addNotEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_ID), detail.getId());
 		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_LINE), detail.getLine());
 		criteria.addOrder(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
@@ -52,12 +51,12 @@ public class SalesDetailBeanListener extends ManagerBeanListenerAdapter {
 			IManagerBean detailBean = BeanManager.getManagerBean(SalesDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), detail.getSales().getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_ID), detail.getId()));
+			criteria.addNotEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_ID), detail.getId());
 			criteria.addEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_LINE), detail.getLine());
 			if (detailBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
 				criteria.addEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), detail.getSales().getId());
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_ID), detail.getId()));
+				criteria.addNotEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_ID), detail.getId());
 				criteria.addOrder(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_LINE));
 				List<ITransferObject> list = detailBean.getList(criteria);
 				int index = 1;
@@ -86,7 +85,7 @@ public class SalesDetailBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean detailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), detail.getSales().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_ID), detail.getId()));
+		criteria.addNotEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_ID), detail.getId());
 		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_LINE), detail.getLine());
 		criteria.addOrder(detailBean.getFieldName(ISalesAlias.SALES_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
