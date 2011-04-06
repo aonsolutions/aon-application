@@ -21,7 +21,6 @@ import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 
 public class PurchaseTransferManager {
 
@@ -105,7 +104,7 @@ public class PurchaseTransferManager {
 			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_STATUS), PurchaseDetailStatus.SETTLED));
+			criteria.addNotEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_STATUS), PurchaseDetailStatus.SETTLED);
 			criteria.addOrder(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_LINE));
 			Iterator<?> iterator = purchaseDetailBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {

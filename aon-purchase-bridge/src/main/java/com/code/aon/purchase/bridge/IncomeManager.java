@@ -14,7 +14,6 @@ import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -70,7 +69,7 @@ public class IncomeManager {
 		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_STATUS), PurchaseDetailStatus.SETTLED));
+		criteria.addNotEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_STATUS), PurchaseDetailStatus.SETTLED);
 		criteria.addOrder(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_LINE));
 		Iterator<?> iterator = purchaseDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
@@ -118,7 +117,7 @@ public class IncomeManager {
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), purchaseDetail.getPurchase().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_STATUS), PurchaseDetailStatus.SETTLED));
+		criteria.addNotEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_STATUS), PurchaseDetailStatus.SETTLED);
 		if (purchaseDetailBean.getCount(criteria) == 0) {
 			updatePurchaseStatus(purchaseDetail.getPurchase());
 		}

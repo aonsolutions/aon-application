@@ -10,7 +10,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.dao.ISalesAlias;
@@ -75,7 +74,7 @@ public class DeliveryManager {
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), sales.getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED));
+		criteria.addNotEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED);
 		criteria.addOrder(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_LINE));
 		Iterator<?> iterator = salesDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
@@ -123,7 +122,7 @@ public class DeliveryManager {
 
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), salesDetail.getSales().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED));
+		criteria.addNotEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED);
 		if (salesDetailBean.getCount(criteria) == 0) {
 			updateSalesStatus(salesDetail.getSales());
 		}

@@ -105,7 +105,7 @@ public class SalesTransferManager {
 			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), sales.getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED));
+			criteria.addNotEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_STATUS), SalesDetailStatus.SETTLED);
 			criteria.addOrder(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_LINE));
 			Iterator<?> iterator = salesDetailBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
