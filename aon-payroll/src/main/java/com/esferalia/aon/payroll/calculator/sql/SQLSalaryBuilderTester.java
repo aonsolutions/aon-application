@@ -113,7 +113,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 				return null;
 			}
 			++salaryCount;
-			testEquals(TOTAL_LIQUID,dbSalary.getTotalPayment(),salary.getTotalPayment(),delta);
+			testEquals(TOTAL_LIQUID,dbSalary.getTotalLiquid(),salary.getTotalLiquid(),delta);
 			++rightTestedsalariesCount;
 		} catch (SQLException e) {
 			onError(e.getLocalizedMessage());
@@ -176,7 +176,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	}
 
 	private static String format(String message, double expected, double actual) {
-			return String.format("%s diferente. En la nómina '%f', en el borrador '%f'", 
+			return String.format("%s diferente. En la nómina '%.2f', en el borrador '%.2f'", 
 					message, CommonUtil.round(expected), CommonUtil.round(actual));
 	}
 	
