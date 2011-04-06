@@ -605,7 +605,7 @@ public class BankStatementController extends BasicController implements IFinance
 		while (stk.hasMoreTokens()) {
 			String token = stk.nextToken();
 			if (pos == 1) {
-				date = obtainDateDDMMAA(token.replace("-", ""));
+				date = obtainDateDDMMAA(token.replace("-", "").replace("/", ""));
 			} else if (stk.hasMoreTokens()) {
 				description += token;
 			} else {
