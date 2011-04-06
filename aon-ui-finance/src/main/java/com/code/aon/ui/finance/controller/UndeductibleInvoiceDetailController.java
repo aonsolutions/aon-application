@@ -45,7 +45,7 @@ public class UndeductibleInvoiceDetailController extends InvoiceDetailController
 		for (SelectItem to : expenseItemList) {
 			Item item = (Item)to.getValue();
 			if (item != null) {
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_ID), item.getId()));
+				criteria.addNotEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_ID), item.getId());
 			}
 		}
 		criteria.addOrder(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_NAME));

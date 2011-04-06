@@ -316,7 +316,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			Criteria criteria = new Criteria();
 			Finance finance = (Finance)iter.next();
 			criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.FRACTIONED));
+			criteria.addNotEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.FRACTIONED);
 			if (trackingBean.getCount(criteria) > 0) {
 				return true;
 			}

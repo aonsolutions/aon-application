@@ -56,7 +56,7 @@ public class InvoicingGroupDetailControllerListener extends ControllerAdapter {
         	Criteria criteria = new Criteria();
         	criteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_CHILD_ID), detail.getChild().getId());
         	if (detail.getId() != null) {
-            	criteria.addExpression(ExpressionUtilities.getNotEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_ID), detail.getId()));
+            	criteria.addNotEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_ID), detail.getId());
         	}
         	if (invoicingGroupDetailBean.getCount(criteria) > 0) {
         		String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.INVALID_INVOICING_GROUP_DETAIL_CHILD_KEY);
