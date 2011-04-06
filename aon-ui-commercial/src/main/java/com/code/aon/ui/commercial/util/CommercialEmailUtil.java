@@ -22,8 +22,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.commercial.ICommercialMessages;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
@@ -78,11 +76,8 @@ public class CommercialEmailUtil extends CompanyEmailUtil implements ICommercial
 	public List<AonFile> getOfferAttachemnts( Offer offer ) throws ManagerBeanException, IOException {
 		IManagerBean offerAttach = BeanManager.getManagerBean(OfferAttachment.class);
 		Criteria criteria = new Criteria();
-		String offerIdAlias = offerAttach.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID);
-		criteria.addEqualExpression(offerIdAlias, offer.getId());
-		String typeAlias = offerAttach.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_MIME_TYPE);
-		Expression exp = ExpressionUtilities.getNotEqualExpression(typeAlias, MimeType.MIME_SIGNED_PDF);
-		criteria.addExpression( exp );
+		criteria.addEqualExpression(offerAttach.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID), offer.getId());
+		criteria.addNotEqualExpression(offerAttach.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_MIME_TYPE), MimeType.MIME_SIGNED_PDF);
 		List<ITransferObject> list = offerAttach.getList(criteria);
 		if (! list.isEmpty() ) {
 			List<AonFile> files = new LinkedList<AonFile>();
