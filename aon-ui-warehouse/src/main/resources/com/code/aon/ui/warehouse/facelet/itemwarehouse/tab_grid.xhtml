@@ -36,7 +36,7 @@
 					<aon:outputLabel for="StockMax" value="#{warehouseBundle.warehouse_stock_max}" />
 				</f:facet>
 				<aon:outputText value="#{to.stockMax}" rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="StockMax" 
 					value="#{itemWarehouse.to.stockMax}"
@@ -53,7 +53,7 @@
 					<aon:outputLabel for="StockMin" value="#{warehouseBundle.warehouse_stock_min}" />
 				</f:facet>
 				<aon:outputText value="#{to.stockMin}" rendered="#{formList}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="StockMin" 
 					value="#{itemWarehouse.to.stockMin}"
@@ -83,10 +83,10 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-vertical-align-top aon-width-150 aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="StockMax" value="#{warehouseBundle.warehouse_item_stock_actual}" />
+					<aon:outputLabel value="#{warehouseBundle.warehouse_item_stock_actual}" />
 				</f:facet>
 				<aon:outputText value="#{to.stock}" rendered="#{formList or formEdit}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
 				<f:facet name="footer">
 					<aon:outputText value="&#160;" />

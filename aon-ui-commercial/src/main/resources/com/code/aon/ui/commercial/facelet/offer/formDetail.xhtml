@@ -178,7 +178,7 @@
 				</f:facet>
 				<aon:outputText value="#{to.quantity}"
 					rendered="#{formList and to.item != null and to.item.id != null}">
-					<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
+					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="OfferDetail_quantity" 
 					value="#{controller.to.quantity}" rendered="#{formEdit}"
@@ -200,7 +200,7 @@
 				</f:facet>
 				<aon:outputText value="#{to.price}"
 					rendered="#{formList and to.item != null and to.item.id != null}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="OfferDetail_price" 
 					value="#{controller.to.price}" rendered="#{formEdit}"
@@ -220,7 +220,7 @@
 				</f:facet>
 				<aon:outputText value="#{to.discountExpression.discountExpr}"
 					rendered="#{formList and to.item != null and to.item.id != null}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="OfferDetail_discount" 
 					value="#{controller.to.discountExpression.discountExpr}" rendered="#{formEdit}"
@@ -240,21 +240,21 @@
 				</f:facet>
 				<aon:outputText value="#{controller.modelAmount}"
 					rendered="#{formList and to.item != null and to.item.id != null}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 				<aon:outputText id="OfferDetail_amount" 
 					value="#{controller.amount}" rendered="#{formEdit}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 				</aon:outputText>
 				<f:facet name="footer">
 					<aon:div style="text-align:right;">
 						<aon:outputText id="OfferDetail_amount-New" 
 							value="#{controller.amount}" rendered="#{formNew}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
 						<aon:outputText id="Offer_taxableBase" 
 							value="#{offer.taxableBase}" rendered="#{!formNew}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
 						</aon:outputText>
 					</aon:div>
 				</f:facet>

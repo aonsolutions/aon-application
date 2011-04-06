@@ -155,7 +155,7 @@ public class SalesDetailController extends LinesController {
 
 	public String getLineStatusInfo() throws ManagerBeanException {
 		StringBuffer info = new StringBuffer(64);
-		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage("bundle", "aon_decimal3_truncate_pattern"));
+		DecimalFormat formatter = new DecimalFormat(AonUtil.getMessage("bundle", "aon_quantity_pattern"));
 
 		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
