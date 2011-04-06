@@ -8,14 +8,14 @@
 	<STYLE type="text/css">
 @media screen
   {
-  body {font-family:verdana,sans-serif;font-size:14px;}
+  body {font-family:verdana,sans-serif;font-size:12px;}
   }
 @media print
   {
-  body {font-family:verdana,sans-serif;font-size:14px;}
+  body {font-family:verdana,sans-serif;font-size:12px;}
   
   }
-.table{border: solid black 1px; margin-top: 10px;margin-bottom: 10px;font-size:14px;}
+.table{border: solid black 1px; margin-top: 10px;margin-bottom: 10px;font-size:12px;}
 .table td{border: solid black 1px; padding: 2px;}
 .headerCell{text-align: center; font-weight: bold;}
 .numCell {text-align: right;}
@@ -65,23 +65,23 @@ El objeto social de la Empresa es: <br/>
 	</tr>
 	<tr>
 		<td>Saldo de la cuenta de Pérdidas y Ganancias</td>
-		<td class="numCell">${conta.saldo("129")}</td>
+		<td class="numCell">${conta.saldoAcreedor("129")}</td>
 	</tr>
 	<tr>
 		<td>Remanente</td>
-		<td class="numCell">${conta.saldo("120")}</td>
+		<td class="numCell">${conta.saldoAcreedor("120")}</td>
 	</tr>
 	<tr>
 		<td>Reservas voluntarias</td>
-		<td class="numCell">${conta.saldo("117")}</td>
+		<td class="numCell">${conta.saldoAcreedor("113")}</td>
 	</tr>
 	<tr>
 		<td>Otras Reservas de libre disposición</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td><b>TOTAL</b></td>
-		<td class="numCell">${conta.saldo("129,120,(117),XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("129,120,113")}</td>
 	</tr>
 	<tr>
 		<td>&#160;</td>
@@ -93,39 +93,39 @@ El objeto social de la Empresa es: <br/>
 	</tr>
 	<tr>
 		<td>A reserva legal</td>
-		<td class="numCell">${conta.saldo("112")}</td>
+		<td class="numCell">${conta.saldoAcreedor("112")}</td>
 	</tr>
 	<tr>
 		<td>A reserva por fondo de comercio</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>A reservas especiales</td>
-		<td class="numCell">${conta.saldo("113")}</td>
+		<td class="numCell">${conta.saldoAcreedor("114")}</td>
 	</tr>
 	<tr>
 		<td>A reservas voluntarias</td>
-		<td class="numCell">${conta.saldo("117")}</td>
+		<td class="numCell">${conta.saldoAcreedor("113")}</td>
 	</tr>
 	<tr>
 		<td>A dividendos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>A compensación pérdidas Ejercicios Anteriores</td>
-		<td class="numCell">${conta.saldo("129")}</td>
+		<td class="numCell">${conta.saldoAcreedor("121")}</td>
 	</tr>
 	<tr>
 		<td>A Remanente</td>
-		<td class="numCell">${conta.saldo("129")}</td>
+		<td class="numCell">${conta.saldoAcreedor("120")}</td>
 	</tr>
 	<tr>
 		<td>A otras aplicaciones</td>
-		<td class="numCell">${conta.saldo("129")}</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td><b>TOTAL</b></td>
-		<td class="numCell">${conta.saldo("129")}</td>
+		<td class="numCell">${conta.saldoAcreedor("112,114,113,121,120")}</td>
 	</tr>
   </tbody>
 </table>
@@ -250,91 +250,91 @@ El objeto social de la Empresa es: <br/>
 	</tr>
 	<tr>
 		<td>Terrenos y bienes naturales</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("210")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Construcciones</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("211")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Inst. Técnicas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("212")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Maquinaria</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("213")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Utillaje</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("214")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Otras instalaciones</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("215")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Mobiliario</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("216")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Equipos para procesos de información</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("217")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Elementos de transporte</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("218")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Otro inmovilizado material</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("219")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>TOTAL</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("21")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
   </tbody>
 </table>
@@ -351,91 +351,91 @@ El objeto social de la Empresa es: <br/>
 	</tr>
 	<tr>
 		<td>Terrenos y bienes naturales</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Construcciones</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2811")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Inst. Técnicas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2812")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Maquinaria</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2813")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Utillaje</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2814")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Otras instalaciones</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2815")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Mobiliario</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2816")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Equipos para procesos de información</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2817")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Elementos de transporte</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2818")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Otro inmovilizado material</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2819")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>TOTAL</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2811,2812,2813,2814,2815,2816,2817,2818,2819")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
   </tbody>
 </table>
@@ -453,59 +453,59 @@ El objeto social de la Empresa es: <br/>
 	</tr>
 	<tr>
 		<td>Desarrollo</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("201")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Concesiones administrativas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("202")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Propiedad industrial</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("203")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Derechos de traspaso</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("205")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Aplicaciones informáticas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("206")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Anticipos para inmovilizaciones intangibles</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("209")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>TOTAL</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("201,202,203,205,206,209")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
   </tbody>
 </table>
@@ -522,59 +522,59 @@ El objeto social de la Empresa es: <br/>
 	</tr>
 	<tr>
 		<td>Desarrollo</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2801")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Concesiones administrativas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2802")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Propiedad industrial</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2803")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Derechos de traspaso</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2805")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Aplicaciones informáticas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2806")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Anticipos para inmovilizaciones intangibles</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2809")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>TOTAL</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("2801,2802,2803,2805,2806,2809")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
   </tbody>
 </table>
@@ -593,27 +593,27 @@ El objeto social de la Empresa es: <br/>
 	</tr>
 	<tr>
 		<td>Inversiones en terrenos y bienes naturales</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("220")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Inversiones en construcciones</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("221")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>TOTAL</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("220,221")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>&#160;</td>
@@ -633,27 +633,27 @@ El objeto social de la Empresa es: <br/>
 	</tr>
 	<tr>
 		<td>Inversiones en terrenos y bienes naturales</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Inversiones en construcciones</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("282")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>TOTAL</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("282")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>&#160;</td>
@@ -673,27 +673,27 @@ El objeto social de la Empresa es: <br/>
 	</tr>
 	<tr>
 		<td>Inversiones en terrenos y bienes naturales</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Inversiones en construcciones</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>TOTAL</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
   </tbody>
 </table>
@@ -709,8 +709,6 @@ Nº Cuenta              Denominación        Saldo inicial        Cargos         A
 C).- CORRECCIONES VALORATIVAS POR DETERIORO
 Nº Cuenta               Denominación        Saldo inicial        Cargos        Abonos         Saldo final
 </p>
-
-
 
 <H3>6.- ACTIVOS FINANCIERIOS</H3>
 <p>Los activos financieros se han clasificado según su naturaleza y según la función que cumplen en la sociedad.</p> 
@@ -736,39 +734,39 @@ Nº Cuenta               Denominación        Saldo inicial        Cargos        A
 	</tr>
 	<tr>
 		<td>Activos financieros mantenidos para negociar</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("250")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("250")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">${conta.saldoAcreedor("252,253,242,249")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("252,253,242,249")}</td>
 	</tr>
 	<tr>
 		<td>Activos financieros a coste amortizado</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">${conta.saldoAcreedor("251,241")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("251,241")}</td>
+		<td class="numCell">${conta.saldoAcreedor("254,255,257,258,259,260,265")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("254,255,257,258,259,260,265")}</td>
 	</tr>
 	<tr>
 		<td>Activos financieros a coste</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("240")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("240")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Total</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("250,240")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("250,240")}</td>
+		<td class="numCell">${conta.saldoAcreedor("251,241")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("251,241")}</td>
+		<td class="numCell">${conta.saldoAcreedor("252,253,242,249,254,255,257,258,259,260,265")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("252,253,242,249,254,255,257,258,259,260,265")}</td>
 	</tr>
   </tbody>
 </table>
@@ -794,43 +792,42 @@ Nº Cuenta               Denominación        Saldo inicial        Cargos        A
 	</tr>
 	<tr>
 		<td>Activos financieros mantenidos para negociar</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">${conta.saldoAcreedor("542,543")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("542,543")}</td>
 	</tr>
 	<tr>
 		<td>Activos financieros a coste amortizado</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">${conta.saldoAcreedor("541")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("541")}</td>
+		<td class="numCell">${conta.saldoAcreedor("544,545,546,547,548,549,565,566")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("544,545,546,547,548,549,565,566")}</td>
 	</tr>
 	<tr>
 		<td>Activos financieros a coste</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("540")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("540")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Total</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("540")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("540")}</td>
+		<td class="numCell">${conta.saldoAcreedor("541")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("541")}</td>
+		<td class="numCell">${conta.saldoAcreedor("542,543,544,545,546,547,548,549,565,566")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("542,543,544,545,546,547,548,549,565,566")}</td>
 	</tr>
   </tbody>
 </table>
-
 <H3>7.- PASIVOS FINANCIEROS</H3>
 <p>Los pasivos financieros se han clasificado según su naturaleza y según la función que cumplen en la sociedad. El valor en libros de cada una de las categorías es el siguiente:</p>
 <table align="center" class="table" cellspacing="0" cellpadding="0">
@@ -855,30 +852,30 @@ Nº Cuenta               Denominación        Saldo inicial        Cargos        A
 	</tr>
 	<tr>
 		<td>Pasivos financieros a coste amortizado</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("170,160")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("170,160")}</td>
+		<td class="numCell">${conta.saldoAcreedor("177,178,179")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("177,178,179")}</td>
+		<td class="numCell">${conta.saldoAcreedor("171,172,173,174,175,176,161,162,163,180,181,185,189")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("171,172,173,174,175,176,161,162,163,180,181,185,189")}</td>
 	</tr>
 	<tr>
 		<td>Pasivos financieros mantenidos para negociar</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Total</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("170,160")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("170,160")}</td>
+		<td class="numCell">${conta.saldoAcreedor("177,178,179")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("177,178,179")}</td>
+		<td class="numCell">${conta.saldoAcreedor("171,172,173,174,175,176,161,162,163,180,181,185,189")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("171,172,173,174,175,176,161,162,163,180,181,185,189")}</td>
 	</tr>
   </tbody>
 </table>
@@ -904,30 +901,30 @@ Nº Cuenta               Denominación        Saldo inicial        Cargos        A
 	</tr>
 	<tr>
 		<td>Pasivos financieros a coste amortizado</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("520,510")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("520,510")}</td>
+ 		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">${conta.saldoAcreedor("521,522,523,524,525,526,527,528,529,560,561,511,513,514,512")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("521,522,523,524,525,526,527,528,529,560,561,511,513,514,512")}</td>
 	</tr>
 	<tr>
 		<td>Pasivos financieros mantenidos para negociar</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Total</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("520,510")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("520,510")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">${conta.saldoAcreedor("521,522,523,524,525,526,527,528,529,560,561,511,513,514,512")}</td>
+		<td class="numCell">${conta.saldoAcreedorAnterior("521,522,523,524,525,526,527,528,529,560,561,511,513,514,512")}</td>
 	</tr>
   </tbody>
 </table>
@@ -937,40 +934,168 @@ Nº Cuenta               Denominación        Saldo inicial        Cargos        A
 <table align="center" class="table" cellspacing="0" cellpadding="0">
   <tbody>
 	<tr>
-		<td class="headerCell">Concepto</td>
-		<td class="headerCell">${conta.ejercicio()}</td>
-		<td class="headerCell">${conta.ejercicioAnterior()}</td>
+		<td class="headerCell">CONCEPTO</td>
+		<td class="headerCell">SALDO INICIAL</td>
+		<td class="headerCell">ALTAS</td>
+		<td class="headerCell">BAJAS</td>
+		<td class="headerCell">SALDO FINAL</td>
 	</tr>
 	<tr>
 		<td>Capital social</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("100")}</td>
+		<td class="numCell">${conta.variacionDebe("100")}</td>
+		<td class="numCell">${conta.variacionHaber("100")}</td>
+		<td class="numCell">${conta.saldoAcreedor("100")}</td>
 	</tr>
 	<tr>
-		<td>Primas de emisión</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td>Fondol social</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("101")}</td>
+		<td class="numCell">${conta.variacionDebe("101")}</td>
+		<td class="numCell">${conta.variacionHaber("101")}</td>
+		<td class="numCell">${conta.saldoAcreedor("101")}</td>
 	</tr>
 	<tr>
-		<td>Gastos de ampliación de capital</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td>Capital</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("102")}</td>
+		<td class="numCell">${conta.variacionDebe("102")}</td>
+		<td class="numCell">${conta.variacionHaber("102")}</td>
+		<td class="numCell">${conta.saldoAcreedor("102")}</td>
 	</tr>
 	<tr>
-		<td>Ganancias acumuladas y otras reservas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td>Socios por desembolsos no exigidos</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("103")}</td>
+		<td class="numCell">${conta.variacionDebe("103")}</td>
+		<td class="numCell">${conta.variacionHaber("103")}</td>
+		<td class="numCell">${conta.saldoAcreedor("103")}</td>
 	</tr>
 	<tr>
-		<td>Dividendo a cuenta entregado</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td>Socios por aportaciones no dinerarias pendientes</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("104")}</td>
+		<td class="numCell">${conta.variacionDebe("104")}</td>
+		<td class="numCell">${conta.variacionHaber("104")}</td>
+		<td class="numCell">${conta.saldoAcreedor("104")}</td>
 	</tr>
 	<tr>
-		<td>Total</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td>Acciones o participaciones propias en situaciones especiales</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("108")}</td>
+		<td class="numCell">${conta.variacionDebe("108")}</td>
+		<td class="numCell">${conta.variacionHaber("108")}</td>
+		<td class="numCell">${conta.saldoAcreedor("108")}</td>
 	</tr>
+	<tr>
+		<td>Acciones o participaciones propias para reducción de capital</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("109")}</td>
+		<td class="numCell">${conta.variacionDebe("109")}</td>
+		<td class="numCell">${conta.variacionHaber("109")}</td>
+		<td class="numCell">${conta.saldoAcreedor("109")}</td>
+	</tr>
+	<tr>
+		<td>Prima de emisión o asunción</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("110")}</td>
+		<td class="numCell">${conta.variacionDebe("110")}</td>
+		<td class="numCell">${conta.variacionHaber("110")}</td>
+		<td class="numCell">${conta.saldoAcreedor("110")}</td>
+	</tr>
+	<tr>
+		<td>Reserva legal</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("112")}</td>
+		<td class="numCell">${conta.variacionDebe("112")}</td>
+		<td class="numCell">${conta.variacionHaber("112")}</td>
+		<td class="numCell">${conta.saldoAcreedor("112")}</td>
+	</tr>
+	<tr>
+		<td>Reservas voluntarias</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("113")}</td>
+		<td class="numCell">${conta.variacionDebe("113")}</td>
+		<td class="numCell">${conta.variacionHaber("113")}</td>
+		<td class="numCell">${conta.saldoAcreedor("113")}</td>
+	</tr>
+	<tr>
+		<td>Reservas especiales</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("114")}</td>
+		<td class="numCell">${conta.variacionDebe("114")}</td>
+		<td class="numCell">${conta.variacionHaber("114")}</td>
+		<td class="numCell">${conta.saldoAcreedor("114")}</td>
+	</tr>
+	<tr>
+		<td>Aportaciones de socios o propietarios</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("118")}</td>
+		<td class="numCell">${conta.variacionDebe("118")}</td>
+		<td class="numCell">${conta.variacionHaber("118")}</td>
+		<td class="numCell">${conta.saldoAcreedor("118")}</td>
+	</tr>
+	<tr>
+		<td>Diferencias por ajuste del capital a euros</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("119")}</td>
+		<td class="numCell">${conta.variacionDebe("119")}</td>
+		<td class="numCell">${conta.variacionHaber("119")}</td>
+		<td class="numCell">${conta.saldoAcreedor("119")}</td>
+	</tr>
+	<tr>
+		<td>Remenente</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("120")}</td>
+		<td class="numCell">${conta.variacionDebe("120")}</td>
+		<td class="numCell">${conta.variacionHaber("120")}</td>
+		<td class="numCell">${conta.saldoAcreedor("120")}</td>
+	</tr>
+	<tr>
+		<td>Resultados negativos de ejercicios anteriores</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("121")}</td>
+		<td class="numCell">${conta.variacionDebe("121")}</td>
+		<td class="numCell">${conta.variacionHaber("121")}</td>
+		<td class="numCell">${conta.saldoAcreedor("121")}</td>
+	</tr>
+	<tr>
+		<td>Resultado del ejericio</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("129")}</td>
+		<td class="numCell">${conta.variacionDebe("129")}</td>
+		<td class="numCell">${conta.variacionHaber("129")}</td>
+		<td class="numCell">${conta.saldoAcreedor("129")}</td>
+	</tr>
+	<tr>
+		<td>Subvenciones oficiales de capital</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("130")}</td>
+		<td class="numCell">${conta.variacionDebe("130")}</td>
+		<td class="numCell">${conta.variacionHaber("130")}</td>
+		<td class="numCell">${conta.saldoAcreedor("130")}</td>
+	</tr>
+	<tr>
+		<td>Donaciones y legados de capital</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("131")}</td>
+		<td class="numCell">${conta.variacionDebe("131")}</td>
+		<td class="numCell">${conta.variacionHaber("131")}</td>
+		<td class="numCell">${conta.saldoAcreedor("131")}</td>
+	</tr>
+	<tr>
+		<td>Otras subvenciones, donaciones y legados</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("132")}</td>
+		<td class="numCell">${conta.variacionDebe("132")}</td>
+		<td class="numCell">${conta.variacionHaber("132")}</td>
+		<td class="numCell">${conta.saldoAcreedor("132")}</td>
+	</tr>
+	<tr>
+		<td>TOTAL</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("100,101,102,103,104,108,109,110,112,113,114,118,119,120,121,129,130,131,132")}</td>
+		<td class="numCell">${conta.variacionDebe("100,101,102,103,104,108,109,110,112,113,114,118,119,120,121,129,130,131,132")}</td>
+		<td class="numCell">${conta.variacionHaber("100,101,102,103,104,108,109,110,112,113,114,118,119,120,121,129,130,131,132")}</td>
+		<td class="numCell">${conta.saldoAcreedor("100,101,102,103,104,108,109,110,112,113,114,118,119,120,121,129,130,131,132")}</td>
+	</tr>
+
+	<tr>
+		<td>PRUEBA</td>
+		<td class="numCell">${conta.saldoAcreedorInicial("572000001")}</td>
+		<td class="numCell">${conta.variacionDebe("572000001")}</td>
+		<td class="numCell">${conta.variacionHaber("572000001")}</td>
+		<td class="numCell">${conta.saldoAcreedor("572000001")}</td>
+	</tr>
+	<tr>
+		<td>PRUEBA</td>
+		<td class="numCell">${conta.saldoDeudorInicial("572000001")}</td>
+		<td class="numCell">${conta.variacionDebe("572000001")}</td>
+		<td class="numCell">${conta.variacionHaber("572000001")}</td>
+		<td class="numCell">${conta.saldoDeudor("572000001")}</td>
+	</tr>
+
   </tbody>
 </table> 
 <p>
@@ -1004,8 +1129,8 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 	</tr>
 	<tr>
 		<td>Saldo de ingresos y gastos del ejercicio</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("129")}</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>&#160;</td>
@@ -1014,41 +1139,42 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 	</tr>
 	<tr>
 		<td>Impuesto sobre Sociedades</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("630")}</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Diferencias permanentes</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Diferencias temporarias</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>- con origen en el ejercicio</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>- con origen en ejercicios anteriores</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Compensación de bases imponibles negativas de ejercicios a anteriores</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
 	<tr>
 		<td>Base imponible (resultado fiscal):</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">&#160;</td>
+		<td class="numCell">&#160;</td>
 	</tr>
   </tbody>
 </table>
+
 
 <H3>10. Ingresos y gastos</H3>
 <ol>
@@ -1062,84 +1188,89 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 		<td class="headerCell">${conta.ejercicioAnterior()}</td>
 	</tr>
 	<tr>
+		<td>Compras de mercaderías</td>
+		<td class="numCell">${conta.saldoDeudor("600")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("600")}</td>
+	</tr>
+	<tr>
 		<td>Compras de materias primas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("601")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("601")}</td>
 	</tr>
 	<tr>
 		<td>Compras de otros aprovisionamientos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("602")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("602")}</td>
 	</tr>
 	<tr>
 		<td>Descuentos sobre compras por pronto pago</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("626")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("626")}</td>
 	</tr>
 	<tr>
 		<td>Trabajos realizados por otras empresas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("607")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("607")}</td>
 	</tr>
 	<tr>
 		<td>Devolución de compras y operaciones similares</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("608")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("608")}</td>
 	</tr>
 	<tr>
 		<td>Rappels por compras</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("609")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("609")}</td>
 	</tr>
 	<tr>
 		<td>Variación de mercaderías</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("610")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("610")}</td>
 	</tr>
 	<tr>
 		<td>Variación de materias primas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("611")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("611")}</td>
 	</tr>
 	<tr>
 		<td>Variación de otros aprovisionamientos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("612")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("612")}</td>
 	</tr>
 	<tr>
 		<td>Pérdidas por deterioro de mercaderías</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("6930,6931")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("6930,6931")}</td>
 	</tr>
 	<tr>
 		<td>Pérdidas por deterioro de materias primas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("6932")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("6932")}</td>
 	</tr>
 	<tr>
 		<td>Pérdidas por deterioro de otros aprovisionamientos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("6933")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("6933")}</td>
 	</tr>
 	<tr>
 		<td>Reversión del deterioro de mercaderías</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("7930,7931")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("7930,7931")}</td>
 	</tr>
 	<tr>
 		<td>Reversión del deterioro de materias primas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("7932")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("7932")}</td>
 	</tr>
 	<tr>
 		<td>Reversión de deterioro de otros aprovisionamientos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("7933")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("7933")}</td>
 	</tr>
 	<tr>
 		<td>Total</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("600,601,602,626,607,608,609,610,611,612,6930,6931,6932,6933,7930,7931,7932,7933")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("600,601,602,626,607,608,609,610,611,612,6930,6931,6932,6933,7930,7931,7932,7933")}</td>
 	</tr>
   </tbody>
 </table>
@@ -1155,43 +1286,38 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 	</tr>
 	<tr>
 		<td>Sueldos y salarios</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("640")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("640")}</td>
 	</tr>
 	<tr>
 		<td>Indemnizaciones</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("641")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("641")}</td>
 	</tr>
 	<tr>
 		<td>Seguridad social a cargo de la empresa</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("642")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("642")}</td>
 	</tr>
 	<tr>
 		<td>Retribuciones a largo plazo mediante sistemas de prestación definida</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("643,644")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("643,644")}</td>
 	</tr>
 	<tr>
 		<td>Retribuciones al personal mediante instrumentos de patrimonio</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("645")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("645")}</td>
 	</tr>
 	<tr>
-		<td>Exceso de provisión por retribuciones al personal</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-	</tr>
-	<tr>
-		<td>Exceso de provisión por transacciones con pagos basados en instrumentos de patrimonio</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td>Otros gastos sociales</td>
+		<td class="numCell">${conta.saldoDeudor("649")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("649")}</td>
 	</tr>
 	<tr>
 		<td>Total</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoDeudor("640,641,642,643,644,645,649")}</td>
+		<td class="numCell">${conta.saldoDeudorAnterior("640,641,642,643,644,645,649")}</td>
 	</tr>
   </tbody>
 </table>
@@ -1206,43 +1332,43 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 	</tr>
 	<tr>
 		<td>Servicios exteriores</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Otros tributos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Ajustes negativos en la imposición indirecta</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Devolución impuestos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Ajustes positivos en la imposición indirecta</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Otros gastos de gestión</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Pérdidas por deterioro de créditos por operaciones comerciales</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Dotación a la provisión por operaciones comerciales</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
   </tbody>
 </table>
@@ -1257,13 +1383,13 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 	</tr>
 	<tr>
 		<td>Importe de la venta de bienes y prestación de servicios producidos por permuta de bienes no monetarios y servicios</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Resultados originados fuera de la actividad normal de la empresa (otros resultados)</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
   </tbody>
 </table>
@@ -1283,19 +1409,19 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 	</tr>
 	<tr>
 		<td>Saldo inicial</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Adiciones</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Bajas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Saldo final</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
   </tbody>
 </table>
@@ -1308,19 +1434,19 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 	</tr>
 	<tr>
 		<td>Saldo inicial</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Adiciones</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Bajas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Saldo final</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
   </tbody>
 </table>
@@ -1333,19 +1459,19 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 	</tr>
 	<tr>
 		<td>Saldo inicial</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Adiciones</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Bajas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Saldo final</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
   </tbody>
 </table>
@@ -1379,183 +1505,183 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 	</tr>
 	<tr>
 		<td>ACTIVOS</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Préstamos y cuentas a cobrar</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Activos financieros disponibles para la venta</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Efectivo y otros activos líquidos equivalentes</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Otros activos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Total</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>PASIVOS</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Deudas con entidades de crédito</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Otros pasivos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Total</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>INGRESOS</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Ingresos financieros</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Ingresos por ventas y prestación de servicios</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Ingresos por ventas y alquileres de inmuebles</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Otros ingresos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Total</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>GASTOS</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Gastos financieros</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Comisiones pagadas</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Total</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
   </tbody>
 </table>
@@ -1577,18 +1703,18 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 	</tr>
 	<tr>
 		<td>Consejo de Administración</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Consejeros</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Altos Directivos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
   </tbody>
 </table>
@@ -1609,39 +1735,38 @@ La conciliación entre el resultado contable y la base imponible del impuesto sob
 	</tr>
 	<tr>
 		<td>Fijos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Eventuales</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Directores</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Mandos intermedios</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Técnicos</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
 	<tr>
 		<td>Otros</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
-		<td class="numCell">${conta.saldo("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
+		<td class="numCell">${conta.saldoAcreedor("XXX")}</td>
 	</tr>
   </tbody>
 </table>
 </li>
 <li>No existe ningún acuerdo de la empresa que no figure en balance y sobre los que no se haya incorporado información en otra nota de la memoria.</li>
 </ol>
-
 </BODY>
 </HTML>

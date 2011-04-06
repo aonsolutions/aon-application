@@ -34,7 +34,6 @@ import com.code.aon.registry.dao.IRegistryAlias;
 public class AnnualReportContext {
 	
 	// COMMON
-	private String SKIP = "XXX";
 	private String ASTERISK = "*";
 	private String EMPTY = "";
 	private String OPEN_BRACKET = "(";
@@ -151,8 +150,8 @@ public class AnnualReportContext {
 			String accountExp = getAccountsExpression(accounts);
 			SummaryProviderParameters spp = getParams().getParams().clone();
 			spp.setPeriod(getPreviousPeriod());
-			getParams().getParams().setAccountExpression(accountExp.toString());
-			return getSummaryProvider().getSummaryCollection(getParams().getParams(),false);
+			spp.setAccountExpression(accountExp.toString());
+			return getSummaryProvider().getSummaryCollection(spp,false);
 		} catch (CloneNotSupportedException e) {
 			// TODO ERROR
 			return null;
@@ -326,55 +325,49 @@ public class AnnualReportContext {
 		}
 		return ZERO;
 	}
+	
+	//*************************************************************************************
+	//*************************************************************************************
+	//********************************* S A L D O S ***************************************
+	//*************************************************************************************
+	//*************************************************************************************
 
 	/**
-	 * Devuelve el Saldo acumulado de la o las cuentas indicadas. Si el Saldo es
-	 * deudor, el resultado será negativo.
-	 * 
-	 * @param account
-	 *            Número Entero, es decir, sin comillas.
-	 * @return Número Decimal.
-	 */
-	public Double saldo(long account) {
-		return saldo(Long.toString(account));
-	}
-
-	/**
-	 * Devuelve el Saldo acumulado de la o las cuentas indicadas. Si el Saldo es
-	 * deudor, el resultado será negativo.
+	 * Devuelve el saldo deudor inicial de la o las cuentas indicadas. Si el saldo de la cuenta es
+	 * negativo, devuelve cero.
 	 * 
 	 * @param accounts
 	 *            Cadena de caracteres, es decir, entre comillas dobles.
 	 * @return Número Decimal.
 	 */
-	public Double saldo(String accounts) {
-		if (!SKIP.equals(accounts)) {
-			try {
-				SummaryCollection summaryCollection = getSummaryCollection(accounts);
-				return CommonUtil.round(summaryCollection.getCredit() - summaryCollection.getDebit());
-			} catch (ManagerBeanException e) {
-				//TODO ERROR.
-				return ZERO;
-			}
+	public Double saldoDeudorInicial(String accounts) {
+		try {
+			SummaryCollection summaryCollection = getSummaryCollection(accounts);
+			double saldo = CommonUtil.round(summaryCollection.getInitialDebit() - summaryCollection.getInitialCredit()); 
+			return saldo > 0 ? saldo : ZERO;
+		} catch (ManagerBeanException e) {
+			return ZERO;
 		}
-		//TODO ERROR.
-		return ZERO;
 	}
 
 	/**
-	 * Devuelve el saldo deudor de la o las cuentas indicadas. Si el Saldo de la cuenta es
-	 * negativo, devuelve cero.
+	 * Devuelve el sumatorio del debe entre los asientos de apertura y, explotación o cierre, sin incluir el valor de éstos. 
 	 * 
 	 * @param accounts
-	 *            Número Entero, es decir, sin comillas.
+	 *            Cadena de caracteres, es decir, entre comillas dobles.
 	 * @return Número Decimal.
 	 */
-	public Double saldoDeudor(long account) {
-		return saldoDeudor(Long.toString(account));
+	public Double variacionDebe(String accounts) {
+		try {
+			SummaryCollection summaryCollection = getSummaryCollection(accounts);
+			return CommonUtil.round(summaryCollection.getDebit() - summaryCollection.getInitialDebit());
+		} catch (ManagerBeanException e) {
+			return ZERO;
+		}
 	}
 
 	/**
-	 * Devuelve el Saldo deudor de la o las cuentas indicadas. Si el Saldo de la cuenta es
+	 * Devuelve el saldo deudor de la o las cuentas indicadas. Si el saldo de la cuenta es
 	 * negativo, devuelve cero.
 	 * 
 	 * @param accounts
@@ -382,34 +375,69 @@ public class AnnualReportContext {
 	 * @return Número Decimal.
 	 */
 	public Double saldoDeudor(String accounts) {
-		if (!SKIP.equals(accounts)) {
-			try {
-				SummaryCollection summaryCollection = getSummaryCollection(accounts);
-				double saldo = CommonUtil.round(summaryCollection.getDebit() - summaryCollection.getCredit()); 
-				return saldo > 0 ? saldo : ZERO;
-			} catch (ManagerBeanException e) {
-				//TODO ERROR.
-				return ZERO;
-			}
+		try {
+			SummaryCollection summaryCollection = getSummaryCollection(accounts);
+			return summaryCollection.getUnpaidBalance();
+		} catch (ManagerBeanException e) {
+			//TODO ERROR.
+			return ZERO;
 		}
-		//TODO ERROR.
-		return ZERO;
 	}
 
+
 	/**
-	 * Devuelve el Saldo acreedor de la o las cuentas indicadas. Si el Saldo de la cuenta es
+	 * Devuelve el saldo deudor inicial del ejercicio anterior, de la o las cuentas indicadas. Si el saldo de la cuenta es
 	 * negativo, devuelve cero.
 	 * 
 	 * @param accounts
-	 *            Número Entero, es decir, sin comillas.
+	 *            Cadena de caracteres, es decir, entre comillas dobles.
 	 * @return Número Decimal.
 	 */
-	public Double saldoAcreedor(long account) {
-		return saldoAcreedor(Long.toString(account));
+	public Double saldoDeudorInicialAnterior(String accounts) {
+		try {
+			SummaryCollection summaryCollection = getPreviousSummaryCollection(accounts);
+			double saldo = CommonUtil.round(summaryCollection.getInitialDebit() - summaryCollection.getInitialCredit()); 
+			return saldo > 0 ? saldo : ZERO;
+		} catch (ManagerBeanException e) {
+			return ZERO;
+		}
 	}
 
 	/**
-	 * Devuelve el Saldo acreedor de la o las cuentas indicadas. Si el Saldo de la cuenta es
+	 * Devuelve el sumatorio del debe entre los asientos de apertura y, explotación o cierre, sin incluir el valor de éstos, del ejericio anterior. 
+	 * 
+	 * @param accounts
+	 *            Cadena de caracteres, es decir, entre comillas dobles.
+	 * @return Número Decimal.
+	 */
+	public Double variacionDebeAnterior(String accounts) {
+		try {
+			SummaryCollection summaryCollection = getPreviousSummaryCollection(accounts);
+			return CommonUtil.round(summaryCollection.getDebit() - summaryCollection.getInitialDebit());
+		} catch (ManagerBeanException e) {
+			return ZERO;
+		}
+	}
+
+	/**
+	 * Devuelve el saldo deudor del ejercicio anterior, de la o las cuentas
+	 * indicadas. Si el saldo de la cuenta es negativo, devuelve cero.
+	 * 
+	 * @param accounts
+	 *            Cadena de caracteres, es decir, entre comillas dobles.
+	 * @return Número Decimal.
+	 */
+	public Double saldoDeudorAnterior(String accounts) {
+		try {
+			SummaryCollection summaryCollection = getPreviousSummaryCollection(accounts);
+			return summaryCollection.getUnpaidBalance();
+		} catch (ManagerBeanException e) {
+			return ZERO;
+		}
+	}
+
+	/**
+	 * Devuelve el saldo acreedor de la o las cuentas indicadas. Si el saldo de la cuenta es
 	 * negativo, devuelve cero.
 	 * 
 	 * @param accounts
@@ -417,122 +445,100 @@ public class AnnualReportContext {
 	 * @return Número Decimal.
 	 */
 	public Double saldoAcreedor(String accounts) {
-		if (!SKIP.equals(accounts)) {
-			try {
-				SummaryCollection summaryCollection = getSummaryCollection(accounts);
-				double saldo = CommonUtil.round(summaryCollection.getDebit() - summaryCollection.getCredit()); 
-				return saldo > 0 ? saldo : ZERO;
-			} catch (ManagerBeanException e) {
-				//TODO ERROR.
-				return ZERO;
-			}
+		try {
+			SummaryCollection summaryCollection = getSummaryCollection(accounts);
+			return summaryCollection.getCreditBalance();
+		} catch (ManagerBeanException e) {
+			return ZERO;
 		}
-		//TODO ERROR.
-		return ZERO;
 	}
 
 	/**
-	 * Devuelve el Saldo acumulado del ejercicio anterior, de la o las cuentas
-	 * indicadas. Si el Saldo es deudor, el resultado será negativo.
-	 * 
-	 * @param account
-	 *            Número Entero, es decir, sin comillas.
-	 * @return Número Decimal.
-	 */
-	public Double saldoAnterior(long account) {
-		return saldo(Long.toString(account));
-	}
-
-	/**
-	 * Devuelve el Saldo acumulado del ejercicio anterior, de la o las cuentas
-	 * indicadas. Si el Saldo es deudor, el resultado será negativo.
+	 * Devuelve el sumatorio del haber entre los asientos de apertura y, explotación o cierre, sin incluir el valor de éstos. 
 	 * 
 	 * @param accounts
 	 *            Cadena de caracteres, es decir, entre comillas dobles.
 	 * @return Número Decimal.
 	 */
-	public Double saldoAnterior(String accounts) {
-		if (!SKIP.equals(accounts)) {
-			try {
-				SummaryCollection summaryCollection = getPreviousSummaryCollection(accounts);
-				return CommonUtil.round(summaryCollection.getCredit() - summaryCollection.getDebit());
-			} catch (ManagerBeanException e) {
-				// TODO ERROR.
-				return ZERO;
-			}
+	public Double variacionHaber(String accounts) {
+		try {
+			SummaryCollection summaryCollection = getSummaryCollection(accounts);
+			return CommonUtil.round(summaryCollection.getCredit() - summaryCollection.getInitialCredit());
+		} catch (ManagerBeanException e) {
+			return ZERO;
 		}
-		// TODO ERROR.
-		return ZERO;
 	}
 
+	
 	/**
-	 * Devuelve el saldo deudor del ejercicio anterior, de la o las cuentas
-	 * indicadas. Si el Saldo de la cuenta es negativo, devuelve cero.
-	 * 
-	 * @param accounts
-	 *            Número Entero, es decir, sin comillas.
-	 * @return Número Decimal.
-	 */
-	public Double saldoDeudorAnterior(long account) {
-		return saldoDeudor(Long.toString(account));
-	}
-
-	/**
-	 * Devuelve el Saldo deudor del ejercicio anterior, de la o las cuentas
-	 * indicadas. Si el Saldo de la cuenta es negativo, devuelve cero.
+	 * Devuelve el saldo acreedor inicial de la o las cuentas indicadas. Si el Saldo de la cuenta es
+	 * negativo, devuelve cero.
 	 * 
 	 * @param accounts
 	 *            Cadena de caracteres, es decir, entre comillas dobles.
 	 * @return Número Decimal.
 	 */
-	public Double saldoDeudorAnterior(String accounts) {
-		if (!SKIP.equals(accounts)) {
-			try {
-				SummaryCollection summaryCollection = getPreviousSummaryCollection(accounts);
-				double saldo = CommonUtil.round(summaryCollection.getDebit() - summaryCollection.getCredit());
-				return saldo > 0 ? saldo : ZERO;
-			} catch (ManagerBeanException e) {
-				// TODO ERROR.
-				return ZERO;
-			}
+	public Double saldoAcreedorInicial(String accounts) {
+		try {
+			SummaryCollection summaryCollection = getSummaryCollection(accounts);
+			double saldo = CommonUtil.round(summaryCollection.getInitialCredit() - summaryCollection.getInitialDebit()); 
+			return saldo > 0 ? saldo : ZERO;
+		} catch (ManagerBeanException e) {
+			return ZERO;
 		}
-		// TODO ERROR.
-		return ZERO;
 	}
 
-	/**
-	 * Devuelve el Saldo acreedor del ejercicio anterior, de la o las cuentas
-	 * indicadas. Si el Saldo de la cuenta es negativo, devuelve cero.
-	 * 
-	 * @param accounts
-	 *            Número Entero, es decir, sin comillas.
-	 * @return Número Decimal.
-	 */
-	public Double saldoAcreedorAnterior(long account) {
-		return saldoAcreedor(Long.toString(account));
-	}
 
 	/**
-	 * Devuelve el Saldo acreedor del ejercicio anterior, de la o las cuentas
-	 * indicadas. Si el Saldo de la cuenta es negativo, devuelve cero.
+	 * Devuelve el saldo acreedor del ejercicio anterior, de la o las cuentas
+	 * indicadas. Si el saldo de la cuenta es negativo, devuelve cero.
 	 * 
 	 * @param accounts
 	 *            Cadena de caracteres, es decir, entre comillas dobles.
 	 * @return Número Decimal.
 	 */
 	public Double saldoAcreedorAnterior(String accounts) {
-		if (!SKIP.equals(accounts)) {
-			try {
-				SummaryCollection summaryCollection = getPreviousSummaryCollection(accounts);
-				double saldo = CommonUtil.round(summaryCollection.getDebit() - summaryCollection.getCredit());
-				return saldo > 0 ? saldo : ZERO;
-			} catch (ManagerBeanException e) {
-				// TODO ERROR.
-				return ZERO;
-			}
+		try {
+			SummaryCollection summaryCollection = getPreviousSummaryCollection(accounts);
+			return summaryCollection.getCreditBalance();
+		} catch (ManagerBeanException e) {
+			// TODO ERROR.
+			return ZERO;
 		}
-		// TODO ERROR.
-		return ZERO;
 	}	
+
+	/**
+	 * Devuelve el sumatorio del haber entre los asientos de apertura y, explotación o cierre, sin incluir el valor de éstos del ejercicio anterior. 
+	 * 
+	 * @param accounts
+	 *            Cadena de caracteres, es decir, entre comillas dobles.
+	 * @return Número Decimal.
+	 */
+	public Double variacionHaberAnterior(String accounts) {
+		try {
+			SummaryCollection summaryCollection = getPreviousSummaryCollection(accounts);
+			return CommonUtil.round(summaryCollection.getCredit() - summaryCollection.getInitialCredit());
+		} catch (ManagerBeanException e) {
+			return ZERO;
+		}
+	}
+
 	
+	/**
+	 * Devuelve el saldo acreedor inicial del ejercicio anterior de la o las cuentas indicadas. Si el Saldo de la cuenta es
+	 * negativo, devuelve cero.
+	 * 
+	 * @param accounts
+	 *            Cadena de caracteres, es decir, entre comillas dobles.
+	 * @return Número Decimal.
+	 */
+	public Double saldoAcreedorInicialAnterior(String accounts) {
+		try {
+			SummaryCollection summaryCollection = getPreviousSummaryCollection(accounts);
+			double saldo = CommonUtil.round(summaryCollection.getInitialCredit() - summaryCollection.getInitialDebit()); 
+			return saldo > 0 ? saldo : ZERO;
+		} catch (ManagerBeanException e) {
+			return ZERO;
+		}
+	}
 }

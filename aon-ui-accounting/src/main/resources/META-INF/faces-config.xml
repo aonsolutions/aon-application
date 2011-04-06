@@ -50,6 +50,15 @@
 			com.code.aon.ui.accounting.controller.report.AccountingBookController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- **************** ANNUAL FINANCIAL STATEMENTS   ************************** -->
+	<managed-bean>
+		<managed-bean-name>annualFinancialStatements</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.AnnualFinancialStatementsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- **************** ACCOUNT BUDGET ************************** -->
 	<managed-bean>
 		<managed-bean-name>accountBudget</managed-bean-name>
@@ -1062,6 +1071,15 @@
 			<to-view-id>/com/code/aon/ui/accounting/facelet/book/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+
+	<!-- **************** ANNUAL FINANCIAL STATEMENTS  ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>annualFinancialStatements_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/annualFinancialStatements/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 
 	<!-- **************** ACCOUNT BUDGET ************************** -->
 	<navigation-rule>

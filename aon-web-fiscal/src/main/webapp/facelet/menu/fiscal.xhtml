@@ -98,9 +98,10 @@
 								</aon:div>
 
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="accountDeposit_report"
-										onclick="alert('Opción no disponible  en esta versión.');"
-										value="#{fiscalBundle.fiscal_account_deposit_module}" />
+									<aon:commandLink id="annualFinancialStatements_report"
+										action="annualFinancialStatements_search"
+										actionListener="#{annualFinancialStatements.onReset}"
+										value="#{accountingBundle.accounting_annual_financial_statements_module}" />
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>

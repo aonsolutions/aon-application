@@ -79,7 +79,6 @@ public class SummaryProviderParameters implements Cloneable{
 	private boolean coverVisible = false;
 	private boolean counterVisible = false;
 	private int pageCounter = 0;
-	
 
 	public SummaryProviderParameters() {
 		setAccountExpression(null);
@@ -316,6 +315,9 @@ public class SummaryProviderParameters implements Cloneable{
 		cloned.setRowsPerPage(getRowsPerPage());
 		cloned.setSecurityLevel(getSecurityLevel());
 		cloned.setToDate(getToDate());
+		cloned.setPageCounter(getPageCounter());
+		cloned.setCounterVisible(isCounterVisible());
+		cloned.setCoverVisible(isCoverVisible());
 		return cloned;
 	}
 }

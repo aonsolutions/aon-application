@@ -118,19 +118,21 @@ public class BalanceDefaults {
 		LineNumberReader reader = new LineNumberReader( isr );
 		while (reader.ready()) {
 			String line = reader.readLine();
-			String[] tokens = StringUtils.splitPreserveAllTokens(line, '|');
-			BalanceDetail bd = new BalanceDetail();
-			bd.setBalance(balance);
-			bd.setCode(tokens[0]);
-			bd.setDescription(tokens[1]);
-			bd.setAccounts(tokens[2]);
-			bd.setSortKey( Integer.parseInt(tokens[3]));
-			bd.setTitle( Boolean.parseBoolean(tokens[4]));
-			bd.setInternalCalculation( Boolean.parseBoolean(tokens[5]));
-			bd.setVisible( Boolean.parseBoolean(tokens[6]));
-			bd.setZeroFlag( Boolean.parseBoolean(tokens[7]));
-			bd.setCreditNature( Boolean.parseBoolean(tokens[8]));
-			detailBean.insert(bd);			
+			if (!StringUtils.isEmpty(line)) {
+				String[] tokens = StringUtils.splitPreserveAllTokens(line, '|');
+				BalanceDetail bd = new BalanceDetail();
+				bd.setBalance(balance);
+				bd.setCode(tokens[0]);
+				bd.setDescription(tokens[1]);
+				bd.setAccounts(tokens[2]);
+				bd.setSortKey( Integer.parseInt(tokens[3]));
+				bd.setTitle( Boolean.parseBoolean(tokens[4]));
+				bd.setInternalCalculation( Boolean.parseBoolean(tokens[5]));
+				bd.setVisible( Boolean.parseBoolean(tokens[6]));
+				bd.setZeroFlag( Boolean.parseBoolean(tokens[7]));
+				bd.setCreditNature( Boolean.parseBoolean(tokens[8]));
+				detailBean.insert(bd);
+			}
 		}
 	}
 

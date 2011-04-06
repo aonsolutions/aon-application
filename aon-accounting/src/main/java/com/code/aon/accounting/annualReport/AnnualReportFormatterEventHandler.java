@@ -15,7 +15,7 @@ public class AnnualReportFormatterEventHandler implements ReferenceInsertionEven
 	
 	private NumberFormat getNumberFormatter() {
 		if (numberFormatter == null) {
-			numberFormatter = DecimalFormat.getInstance();
+			numberFormatter = new DecimalFormat("#,##0.00");
 		}
 		return numberFormatter;
 	}

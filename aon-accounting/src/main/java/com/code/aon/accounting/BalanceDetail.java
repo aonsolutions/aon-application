@@ -151,8 +151,16 @@ public class BalanceDetail implements ITransferObject {
 	
 	@Transient
 	public int getLevel() {
-		if ( getCode() != null) {
-			return StringUtils.countMatches(getCode(), ".");
+		if ( !StringUtils.isEmpty(getCode())) {
+			try {
+				int c = Integer.parseInt(getCode());
+				if (c%10000 == 0) return 0;
+				if (c%1000 == 0) return 1;
+				if (c%100 == 0) return 2;
+				if (c%10 == 0) return 3;
+			} catch (NumberFormatException e) {
+				// Nothing.
+			}
 		}
 		return 0;
 	}

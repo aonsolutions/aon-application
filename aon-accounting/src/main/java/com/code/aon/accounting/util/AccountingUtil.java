@@ -200,7 +200,6 @@ public class AccountingUtil {
 		return balance;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Balance getPeriodBalance(Date fromDate, Date toDate, String accountId, SecurityLevel securityLevel,
 			boolean excludeOpeningEntry, boolean excludeClosingEntry) throws ManagerBeanException {
 		IManagerBean sumBean = BeanManager.getManagerBean(AccountSummary.class);
@@ -223,7 +222,7 @@ public class AccountingUtil {
 		if (securityLevel != null) {
 			c.addEqualExpression(securityLevelAlias,securityLevel);
 		}
-		List list = sumBean.getList(pl, c);
+		List<?> list = sumBean.getList(pl, c);
 		if (list.size() == 0) {
 			return null;
 		}
@@ -266,7 +265,6 @@ public class AccountingUtil {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	// TODO ¿?
 	public AccountEntryDetail getEntryDetailFromAccountPattern(AccountEntry entry, String accountPattern) throws ManagerBeanException{
 		try {
@@ -274,7 +272,7 @@ public class AccountingUtil {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
 			criteria.addExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), accountPattern);
-			Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+			Iterator<?> iter = accountEntryDetailBean.getList(criteria).iterator();
 			return iter.hasNext()?(AccountEntryDetail)iter.next():null;
 		} catch (ExpressionException e) {
 			throw new ManagerBeanException(e.getMessage(),e);
