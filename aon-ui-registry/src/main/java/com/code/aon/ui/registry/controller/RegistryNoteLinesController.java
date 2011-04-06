@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.NoteType;
 import com.code.aon.ui.form.IController;
@@ -76,9 +75,9 @@ public class RegistryNoteLinesController extends LinesController {
 		if(getNoteType() != null){
 			customCriteria.addEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), getNoteType());
 		}
-		customCriteria.addExpression(ExpressionUtilities.getNotEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION));
+		customCriteria.addNotEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);
 		IController controller = getMasterController();
-		Serializable pk = controller.getManagerBean().getId( controller.getTo());
+		Serializable pk = controller.getManagerBean().getId(controller.getTo());
 		customCriteria.addEqualExpression(this.getFieldName(IRegistryAlias.REGISTRY_NOTE_REGISTRY_ID), pk );
 		return customCriteria;
 	}

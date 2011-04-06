@@ -3,8 +3,6 @@ package com.code.aon.ui.registry.controller.event;
 import java.util.Date;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.NoteType;
@@ -18,9 +16,8 @@ public class RegistryNoteControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			IController c = event.getController();
-			Expression expression = ExpressionUtilities.getNotEqualExpression(c.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);
-			event.getController().getCriteria().addExpression(expression);
+			IController controller = event.getController();
+			controller.getCriteria().addNotEqualExpression(controller.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
@@ -28,9 +25,8 @@ public class RegistryNoteControllerListener extends ControllerAdapter {
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		IController c = event.getController();
-		RegistryNote rn = (RegistryNote) c.getTo();
-		rn.setNoteDate( new Date() );
+		RegistryNote note = (RegistryNote)event.getController().getTo();
+		note.setNoteDate(new Date());
 	}
-	
+
 }

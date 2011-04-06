@@ -28,8 +28,6 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.ImageUtil;
 import com.code.aon.common.util.MimeResolver;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
@@ -242,9 +240,8 @@ public class CompanyImagesController extends LinesController implements ICompany
 		IManagerBean bean = getManagerBean();
 		Criteria criteria = new Criteria();
 		RegistryAttachment ra = (RegistryAttachment) getTo();
-		if ( ra.getId() != null ) {
-			Expression exp = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID), ra.getId());
-			criteria.addExpression(exp);
+		if (ra.getId() != null) {
+			criteria.addNotEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_ID), ra.getId());
 		}
 		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_DESCRIPTION), imageName);
 		int count = bean.getCount(criteria);

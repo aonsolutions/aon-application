@@ -7,7 +7,6 @@ import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -38,7 +37,7 @@ public class TaxDetailControllerListener extends ControllerAdapter {
 			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
 			criteria = new Criteria();
 			criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID), taxDetail.getTax().getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_ID), taxDetail.getId()));
+			criteria.addNotEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_ID), taxDetail.getId());
 			criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), taxDetail.getEndDate());
 			criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), taxDetail.getStartDate());
 			if (taxDetailBean.getCount(criteria) > 0) {
