@@ -11,7 +11,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 
 /**
  * @author Consulting & Development
@@ -27,7 +26,7 @@ public class CommercialTermBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean termBean = BeanManager.getManagerBean(CommercialTerm.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_GENERAL), term.isGeneral());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_ID), term.getId()));
+		criteria.addNotEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_ID), term.getId());
 		criteria.addGreaterThanOrEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_LINE), term.getLine());
 		criteria.addOrder(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_LINE));
 		List<ITransferObject> list = termBean.getList(criteria);
@@ -51,12 +50,12 @@ public class CommercialTermBeanListener extends ManagerBeanListenerAdapter {
 			IManagerBean termBean = BeanManager.getManagerBean(CommercialTerm.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_GENERAL), term.isGeneral());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_ID), term.getId()));
+			criteria.addNotEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_ID), term.getId());
 			criteria.addEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_LINE), term.getLine());
 			if (termBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
 				criteria.addEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_GENERAL), term.isGeneral());
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_ID), term.getId()));
+				criteria.addNotEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_ID), term.getId());
 				criteria.addOrder(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_LINE));
 				List<ITransferObject> list = termBean.getList(criteria);
 				int index = 1;
@@ -81,7 +80,7 @@ public class CommercialTermBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean termBean = BeanManager.getManagerBean(CommercialTerm.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_GENERAL), term.isGeneral());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_ID), term.getId()));
+		criteria.addNotEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_ID), term.getId());
 		criteria.addGreaterThanOrEqualExpression(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_LINE), term.getLine());
 		criteria.addOrder(termBean.getFieldName(ICommercialAlias.COMMERCIAL_TERM_LINE));
 		List<ITransferObject> list = termBean.getList(criteria);

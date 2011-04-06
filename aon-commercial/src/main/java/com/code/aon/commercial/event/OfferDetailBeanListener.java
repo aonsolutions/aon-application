@@ -11,7 +11,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 
 /**
  * @author Consulting & Development
@@ -27,7 +26,7 @@ public class OfferDetailBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean detailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
+		criteria.addNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId());
 		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE), detail.getLine());
 		criteria.addOrder(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
@@ -51,12 +50,12 @@ public class OfferDetailBeanListener extends ManagerBeanListenerAdapter {
 			IManagerBean detailBean = BeanManager.getManagerBean(OfferDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
+			criteria.addNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId());
 			criteria.addEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE), detail.getLine());
 			if (detailBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
 				criteria.addEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
+				criteria.addNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId());
 				criteria.addOrder(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE));
 				List<ITransferObject> list = detailBean.getList(criteria);
 				int index = 1;
@@ -81,7 +80,7 @@ public class OfferDetailBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean detailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), detail.getOffer().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId()));
+		criteria.addNotEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ID), detail.getId());
 		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE), detail.getLine());
 		criteria.addOrder(detailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
