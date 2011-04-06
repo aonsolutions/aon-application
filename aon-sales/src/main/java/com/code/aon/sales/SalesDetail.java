@@ -17,6 +17,7 @@ import org.hibernate.annotations.Type;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
@@ -87,6 +88,7 @@ public class SalesDetail implements ITransferObject, ICalculable {
         this.description = description;
     }
 
+	@Column(precision=15, scale=3)
     public double getQuantity() {
         return quantity;
     }
@@ -94,11 +96,12 @@ public class SalesDetail implements ITransferObject, ICalculable {
         this.quantity = quantity;
     }
 
+	@Column(precision=15, scale=4)
     public double getPrice() {
         return price;
     }
     public void setPrice(double price) {
-        this.price = price;
+        this.price = CommonUtil.round(price, 4);
     }
 
 	@Column(name="discount_expr")
@@ -110,6 +113,7 @@ public class SalesDetail implements ITransferObject, ICalculable {
         this.discountExpression = discountExpression;
     }
 
+	@Column(precision=15, scale=3)
 	public double getTaxes() {
 		return taxes;
 	}
@@ -140,6 +144,7 @@ public class SalesDetail implements ITransferObject, ICalculable {
 		this.offerDetail = offerDetail;
 	}
 
+	@Column(precision=15, scale=3)
 	public double getDelivered() {
 		return delivered;
 	}
@@ -149,7 +154,8 @@ public class SalesDetail implements ITransferObject, ICalculable {
 
 	@Transient
 	public double getTransfered() {
-		transfered = transfered > (quantity - delivered) ? (quantity - delivered) : transfered;
+		double pending = CommonUtil.round(quantity - delivered, 3);
+		transfered = (transfered > pending) ? pending : transfered;
 		return transfered;
 	}
 

@@ -24,6 +24,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemSupplier;
 import com.code.aon.product.dao.IProductAlias;
@@ -95,6 +96,7 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
         this.description = description;
     }
 
+	@Column(precision=15, scale=3)
     public double getQuantity() {
         return quantity;
     }
@@ -102,11 +104,12 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
         this.quantity = quantity;
     }
 
+	@Column(precision=15, scale=4)
     public double getPrice() {
         return price;
     }
     public void setPrice(double price) {
-        this.price = price;
+        this.price = CommonUtil.round(price, 4);
     }
 
 	@Column(name="discount_expr")
@@ -118,6 +121,7 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
         this.discountExpression = discountExpression;
     }
 
+	@Column(precision=15, scale=3)
 	public double getTaxes() {
 		return taxes;
 	}
@@ -132,6 +136,7 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
 		this.status = status;
 	}
 
+	@Column(precision=15, scale=3)
 	public double getDelivered() {
 		return delivered;
 	}

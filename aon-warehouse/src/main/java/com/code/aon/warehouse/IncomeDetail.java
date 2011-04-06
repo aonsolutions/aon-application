@@ -24,6 +24,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemSupplier;
 import com.code.aon.product.dao.IProductAlias;
@@ -65,7 +66,7 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	}
 	
 	@ManyToOne
-    @JoinColumn( name="income", nullable = false, updatable = false )
+    @JoinColumn(name="income", nullable = false, updatable = false)
 	public Income getIncome() {
 		return income;
 	}
@@ -81,7 +82,7 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	}
 
 	@ManyToOne
-	@JoinColumn( name="item", nullable=false )
+	@JoinColumn(name="item", nullable=false)
 	public Item getItem() {
 		return item;
 	}
@@ -98,7 +99,7 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	}
 	
 	@ManyToOne
-	@JoinColumn( name="warehouse", nullable = false )
+	@JoinColumn(name="warehouse", nullable = false)
 	public Warehouse getWarehouse() {
 		return warehouse;
 	}
@@ -106,6 +107,7 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 		this.warehouse = warehouse;
 	}
 
+	@Column(precision=15, scale=3)
 	public double getQuantity() {
 		return quantity;
 	}
@@ -113,11 +115,12 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 		this.quantity = quantity;
 	}
 	
+	@Column(precision=15, scale=4)
 	public double getPrice() {
 		return price;
 	}
 	public void setPrice(double price) {
-		this.price = price;
+        this.price = CommonUtil.round(price, 4);
 	}
 	
 	@Column(name ="discount_expr")
@@ -144,7 +147,7 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	}
 
 	@ManyToOne
-    @JoinColumn( name="purchase_detail" )
+    @JoinColumn(name="purchase_detail")
 	public PurchaseDetail getPurchaseDetail() {
 		return purchaseDetail;
 	}

@@ -61,12 +61,8 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 
     private static final String DELIM = " ";
 
-    /** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(Offer.class.getName());
 	
-	/**
-	 * The Constructor. Sets TODAY to issueDate
-	 */
 	public Offer() {
 		this.issueDate = new Date();
 	}

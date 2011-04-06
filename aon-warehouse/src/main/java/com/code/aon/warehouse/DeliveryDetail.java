@@ -17,6 +17,7 @@ import org.hibernate.annotations.Type;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
@@ -54,7 +55,7 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 	}
 	
 	@ManyToOne
-	@JoinColumn( name="delivery", nullable=false, updatable=false )
+	@JoinColumn(name="delivery", nullable=false, updatable=false)
 	public Delivery getDelivery() {
 		return delivery;
 	}
@@ -70,7 +71,7 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 	}
 
 	@ManyToOne
-	@JoinColumn( name="item", nullable=false )
+	@JoinColumn(name="item", nullable=false)
 	public Item getItem() {
 		return item;
 	}
@@ -87,7 +88,7 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 	}
 	
 	@ManyToOne
-	@JoinColumn( name="warehouse", nullable = false )
+	@JoinColumn(name="warehouse", nullable = false)
 	public Warehouse getWarehouse() {
 		return warehouse;
 	}
@@ -95,6 +96,7 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 		this.warehouse = warehouse;
 	}
 
+	@Column(precision=15, scale=3)
 	public double getQuantity() {
 		return quantity;
 	}
@@ -102,11 +104,12 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 		this.quantity = quantity;
 	}
 	
+	@Column(precision=15, scale=4)
 	public double getPrice() {
 		return price;
 	}
 	public void setPrice(double price) {
-		this.price = price;
+        this.price = CommonUtil.round(price, 4);
 	}
 	
 	@Column(name ="discount_expr")
@@ -133,7 +136,7 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 	}
 
 	@ManyToOne
-	@JoinColumn( name="sales_detail" )
+	@JoinColumn(name="sales_detail")
 	public SalesDetail getSalesDetail() {
 		return salesDetail;
 	}
