@@ -11,7 +11,6 @@ import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.finance.CustomerFee;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 
 public class CustomerFeeBeanListener extends ManagerBeanListenerAdapter {
 	
@@ -23,7 +22,7 @@ public class CustomerFeeBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), fee.getCustomer().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ID), fee.getId()));
+		criteria.addNotEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ID), fee.getId());
 		criteria.addGreaterThanOrEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE), fee.getLine());
 		criteria.addOrder(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE));
 		List<ITransferObject> list = feeBean.getList(criteria);
@@ -47,12 +46,12 @@ public class CustomerFeeBeanListener extends ManagerBeanListenerAdapter {
 			IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), fee.getCustomer().getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ID), fee.getId()));
+			criteria.addNotEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ID), fee.getId());
 			criteria.addEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE), fee.getLine());
 			if (feeBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
 				criteria.addEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), fee.getCustomer().getId());
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ID), fee.getId()));
+				criteria.addNotEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ID), fee.getId());
 				criteria.addOrder(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE));
 				List<ITransferObject> list = feeBean.getList(criteria);
 				int index = 1;
@@ -77,7 +76,7 @@ public class CustomerFeeBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), fee.getCustomer().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ID), fee.getId()));
+		criteria.addNotEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ID), fee.getId());
 		criteria.addGreaterThanOrEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE), fee.getLine());
 		criteria.addOrder(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE));
 		List<ITransferObject> list = feeBean.getList(criteria);
