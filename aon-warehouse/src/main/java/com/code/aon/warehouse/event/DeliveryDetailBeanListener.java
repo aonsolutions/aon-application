@@ -9,7 +9,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
@@ -27,7 +26,7 @@ public class DeliveryDetailBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean detailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId()));
+		criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId());
 		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE), detail.getLine());
 		criteria.addOrder(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
@@ -51,12 +50,12 @@ public class DeliveryDetailBeanListener extends ManagerBeanListenerAdapter {
 			IManagerBean detailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId()));
+			criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId());
 			criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE), detail.getLine());
 			if (detailBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
 				criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId()));
+				criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId());
 				criteria.addOrder(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
 				List<ITransferObject> list = detailBean.getList(criteria);
 				int index = 1;
@@ -85,7 +84,7 @@ public class DeliveryDetailBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean detailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), detail.getDelivery().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId()));
+		criteria.addNotEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), detail.getId());
 		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE), detail.getLine());
 		criteria.addOrder(detailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
