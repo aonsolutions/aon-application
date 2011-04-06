@@ -41,7 +41,6 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;

@@ -10,7 +10,6 @@ import com.code.aon.finance.InvoicingGroup;
 import com.code.aon.finance.InvoicingGroupDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.event.ControllerAdapter;

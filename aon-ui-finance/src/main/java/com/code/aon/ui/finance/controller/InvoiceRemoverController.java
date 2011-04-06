@@ -20,7 +20,6 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
