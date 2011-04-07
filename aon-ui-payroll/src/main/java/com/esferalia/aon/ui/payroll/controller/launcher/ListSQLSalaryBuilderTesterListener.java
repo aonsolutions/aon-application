@@ -52,54 +52,49 @@ public class ListSQLSalaryBuilderTesterListener extends
 		buf.append(msg);
 		buf.append(SUFIX);
 
-		TestLogMessage testMsg = new TestLogMessage();
-		if(level==SalaryBuilderListenerLevel.ERROR){
-			testMsg.setLink(true);
+		ISalary salaryDraft = getSalaryDraft();
+
+		TestLogMessage testMsg = new TestLogMessage(level, msg );
+		if ( salaryDraft != null ) {
 			try {
-				testMsg.setContractId(getDBSalary().getContract());
-			} catch (SQLException e1) {
-				// NADA, el id de contrato se queda a null
+				testMsg.setContractId(salaryDraft.getContract());
+				testMsg.setEmployeeName(salaryDraft.getEmployeeName());
+				testMsg.setEnterpriseName(salaryDraft.getEnterpriseName());
+			} catch (SQLException e) {
+				// TODO employee & enterprise name a null ???
 			}
-		} else {
-			testMsg.setLink(false);
 		}
-		testMsg.setMsg(buf.toString());
-		
+
 		getTestList().add(testMsg);
-		if (isSaveLog()) {
-			try {
-				FileWriter fstream = new FileWriter(getFile(), true);
-				BufferedWriter out = new BufferedWriter(fstream);
-				out.write(DateFormat.getDateTimeInstance().format(new Date()));
-				out.write(SPACE);
-				out.write(level.toString());
-				out.write(SPACE);
-				out.write(msg);
-				out.write("\r\n");
-				out.close();
-			} catch (Exception e) {
-				System.err.println("Error: " + e.getMessage());
-			}
-		}
+		saveToLog(testMsg);
 	}
+
+	public void onInfo(TestLogMessage msg) {
+		getTestList().add(msg);
+		saveToLog(msg);
+	}
+
 	
-	public class TestLogMessage {
+	public static class TestLogMessage {
 		private String msg;
-		private boolean link;
 		private Integer salaryId;
 		private Integer contractId;
+		
+		private SalaryBuilderListenerLevel level;
+		private String employeeName ;
+		private String enterpriseName;
+		
+		
+		public TestLogMessage(SalaryBuilderListenerLevel level, String msg) {
+			this.level = level;
+			this.msg = msg;
+		}
 		
 		public String getMsg() {
 			return msg;
 		}
 		public void setMsg(String msg) {
 			this.msg = msg;
-		}
-		public boolean isLink() {
-			return link;
-		}
-		public void setLink(boolean link) {
-			this.link = link;
 		}
 		public Integer getSalaryId() {
 			return salaryId;
@@ -113,6 +108,42 @@ public class ListSQLSalaryBuilderTesterListener extends
 		public void setContractId(Integer contractId) {
 			this.contractId = contractId;
 		}
+		public SalaryBuilderListenerLevel getLevel() {
+			return level;
+		}
+		public void setLevel(SalaryBuilderListenerLevel level) {
+			this.level = level;
+		}
+		public String getEmployeeName() {
+			return employeeName;
+		}
+		public void setEmployeeName(String employeeName) {
+			this.employeeName = employeeName;
+		}
+		public String getEnterpriseName() {
+			return enterpriseName;
+		}
+		public void setEnterpriseName(String companyName) {
+			this.enterpriseName = companyName;
+		}
 	}
 	
+	
+	private void saveToLog(TestLogMessage msg) {
+		if (isSaveLog()) {
+			try {
+				FileWriter fstream = new FileWriter(getFile(), true);
+				BufferedWriter out = new BufferedWriter(fstream);
+				out.write(DateFormat.getDateTimeInstance().format(new Date()));
+				out.write(SPACE);
+				out.write(msg.level.toString());
+				out.write(SPACE);
+				out.write(msg.getMsg());
+				out.write("\r\n");
+				out.close();
+			} catch (Exception e) {
+				System.err.println("Error: " + e.getMessage());
+			}
+		}
+	}
 }

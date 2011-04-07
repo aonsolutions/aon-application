@@ -142,23 +142,28 @@
 							styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
 					</aon:div>
 						
-					<aon:div  styleClass="aon-margin-left aon-margin-top aon-margin-bottom aon-margin-right"
+					<aon:div  id="console" styleClass="aon-margin-left aon-margin-top aon-margin-bottom aon-margin-right"
 						style="background-color: #EEEEEE; border: solid black 1px; height:400px; overflow-y: scroll;">
 						<aon:outputText value="#{salaryTestLauncher.style}" escape="false"/>
 						<ul>
 						<ui:repeat var="message" value="#{salaryTestLauncher.messages}">
 							<li>
+								<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.level} : " />
+								
+								<aon:outputText value="#{message.enterpriseName} " 
+									rendered="#{message.contractId!=null}" />
+								
 								<aon:commandLink  
-									rendered="#{message.link and message.contractId!=null}"
-									style="display: inline; "
+									rendered="#{message.contractId!=null}"
+									style="display: inline; text-decoration:underline;"
 									action="salaryDraft_form" >
-									<aon:outputText value="#{message.msg}" escape="false" />
+									<aon:outputText value="#{message.employeeName} " />
 									<f:setPropertyActionListener value="#{message.contractId}" 
 										target="#{salaryTestLauncher.contractId}" />
 									<aon:actionListener method="#{salaryTestLauncher.onSalaryDraft}" />
 						     	</aon:commandLink>	
-								<aon:outputText value="#{message.msg}" escape="false" 
-									rendered="#{!(message.link and message.contractId!=null)}"/>
+								
+								<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.msg}" />
 							</li>
 						</ui:repeat>
 						</ul>
@@ -167,6 +172,10 @@
 							url="/css/images/processing.gif" 
 							rendered="#{salaryTestLauncher.pollEnabled}"/>
 					</aon:div>
+					<script type="text/javascript">
+						var objControl=document.getElementById("aonContent:salaryTestLauncherForm:console");
+						objControl.scrollTop = objControl.scrollHeight;
+					</script>					
 				</c:if>
 			</aon:div>
 		</aon:form>

@@ -138,4 +138,5 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 			addMessage(SalaryBuilderListenerLevel.DEBUG,msg);	
 		}
 	}
+
 }

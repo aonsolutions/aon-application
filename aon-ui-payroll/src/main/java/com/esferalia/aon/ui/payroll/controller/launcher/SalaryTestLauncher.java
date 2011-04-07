@@ -36,6 +36,7 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
+import com.esferalia.aon.salary.SalaryBuilderListenerLevel;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -142,20 +143,20 @@ public class SalaryTestLauncher {
 			try {
 				execute(getParams());
 				String msg = "Proceso Finalizado correctamente.";
-				listener.onInfo(msg);
+				listener.onInfo(new TestLogMessage(SalaryBuilderListenerLevel.INFO, msg));
 			} catch (Throwable e) {
 				listener.onError(e.getLocalizedMessage());
 				String msg = "Se produjeron errores en el cálculo de nóminas.";
-				listener.onError(msg);
+				listener.onInfo(new TestLogMessage(SalaryBuilderListenerLevel.INFO, msg));
 			}
 			if (listener.getWarningCounter() > 0) {
 				String msg = "Se produjeron " + listener.getWarningCounter() + " mesajes de aviso.";
-				listener.onInfo(msg);	
+				listener.onInfo(new TestLogMessage(SalaryBuilderListenerLevel.INFO, msg));
 			}
 			
 			if (listener.getErrorCounter() > 0) {
 				String msg = "Se produjeron " + listener.getErrorCounter() + " mesajes de error.";
-				listener.onInfo(msg);	
+				listener.onInfo(new TestLogMessage(SalaryBuilderListenerLevel.INFO, msg));
 			}
 			
 			Date endTime = new Date();
@@ -167,11 +168,12 @@ public class SalaryTestLauncher {
 			long restominuto = restohora%60000;
 			long segundo = restominuto/1000;
 			long restosegundo = restominuto%1000;
-			listener.onInfo("Tiempo de proceso: " + 
+			String msg = "Tiempo de proceso: " + 
 						(hora>0?""+hora + " hora"+(hora==1?"":"s"):"")
 						+(minuto>0?" "+minuto + " minuto"+(minuto==1?"":"s"):"")
 						+(segundo>0?" "+segundo + " segundo"+(segundo==1?"":"s"):"")
-						+" " + restosegundo + " milisegundos.");				
+						+" " + restosegundo + " milisegundos.";				
+			listener.onInfo(new TestLogMessage(SalaryBuilderListenerLevel.INFO, msg));
 			pollEnabled = false;
 	    }
 
@@ -195,7 +197,7 @@ public class SalaryTestLauncher {
 				Date endDate = parameters.getEndDate(); 
 				
 				String msg = MessageFormat.format("Test de cálculo de nóminas {0}:{1}",new Object[] {startDate, endDate});
-				listener.onInfo(msg);
+				listener.onInfo(new TestLogMessage(SalaryBuilderListenerLevel.INFO, msg));
 				
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(SQLConstants.CUSTOMER + "." + CustomerColumns.STATUS, 
@@ -221,29 +223,17 @@ public class SalaryTestLauncher {
 					try {
 						calculator.calculate(sqlCtx);
 					} catch (UnExpectedValue e) {
-						msg = MessageFormat.format(LOG_FORMAT,
-								new Object[]{
-								sqlCtx.getEmployeeDocument(),
-								sqlCtx.getEnterpriseName(),
-								sqlCtx.getEmployeeName(),
-								e.getLocalizedMessage()});
-						listener.onError(msg);
+						listener.onError(e.getLocalizedMessage());
 					} catch ( SalaryException e ) {
-						msg = MessageFormat.format(LOG_FORMAT,
-								new Object[]{
-								sqlCtx.getEmployeeDocument(),
-								sqlCtx.getEnterpriseName(),
-								sqlCtx.getEmployeeName(),
-								e.getLocalizedMessage()});
-						listener.onError(msg);
+						listener.onError(e.getLocalizedMessage());
 					}
 				}
 				msg = MessageFormat.format("Total contratos procesados: {0} ",new Object[]{salaryBuilder.getContractCount()});
-				listener.onInfo(msg);
+				listener.onInfo(new TestLogMessage(SalaryBuilderListenerLevel.INFO, msg));
 				msg = MessageFormat.format("Total nóminas comparadas: {0} ",new Object[]{salaryBuilder.getSalaryCount()});
-				listener.onInfo(msg);
+				listener.onInfo(new TestLogMessage(SalaryBuilderListenerLevel.INFO, msg));
 				msg = MessageFormat.format("Total nóminas chequeadas sin detectar problemas: {0} ",new Object[]{salaryBuilder.getRightTestedsalariesCount()});
-				listener.onInfo(msg);
+				listener.onInfo(new TestLogMessage(SalaryBuilderListenerLevel.INFO, msg));
 			} catch (ExpressionException e) {
 				throw new SalaryException(e);
 			} catch (SQLException e) {
