@@ -33,7 +33,11 @@
 			columnClasses="aon-noborder aon-padding-right aon-width-150 aon-text-right aon-bold">
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deductions.commonContingency.value}"
+				<aon:outputText rendered="#{!deductions.commonContingency.showAmount}" 
+					value="#{deductions.commonContingency.textValue}"
+					styleClass="#{deductions.commonContingency.style}" />
+				<aon:outputText rendered="#{deductions.commonContingency.showAmount}"
+					value="#{deductions.commonContingency.doubleValue}"
 					styleClass="#{deductions.commonContingency.style}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
@@ -41,7 +45,11 @@
 
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deductions.unemployment.value}"
+				<aon:outputText rendered="#{!deductions.unemployment.showAmount}" 
+					value="#{deductions.unemployment.textValue}"
+					styleClass="#{deductions.unemployment.style}" />
+				<aon:outputText rendered="#{deductions.unemployment.showAmount}"
+					value="#{deductions.unemployment.doubleValue}"
 					styleClass="#{deductions.unemployment.style}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
@@ -49,7 +57,11 @@
 
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deductions.jobTraining.value}"
+				<aon:outputText rendered="#{!deductions.jobTraining.showAmount}" 
+					value="#{deductions.jobTraining.textValue}"
+					styleClass="#{deductions.jobTraining.style}" />
+				<aon:outputText rendered="#{deductions.jobTraining.showAmount}"
+					value="#{deductions.jobTraining.doubleValue}"
 					styleClass="#{deductions.jobTraining.style}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
@@ -57,7 +69,11 @@
 
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deductions.structuralOvertime.value}"
+				<aon:outputText rendered="#{!deductions.structuralOvertime.showAmount}" 
+					value="#{deductions.structuralOvertime.textValue}"
+					styleClass="#{deductions.structuralOvertime.style}" />
+				<aon:outputText rendered="#{deductions.structuralOvertime.showAmount}"
+					value="#{deductions.structuralOvertime.doubleValue}"
 					styleClass="#{deductions.structuralOvertime.style}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
@@ -65,7 +81,11 @@
 			
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deductions.nonStructuralOvertime.value}"
+				<aon:outputText rendered="#{!deductions.nonStructuralOvertime.showAmount}" 
+					value="#{deductions.nonStructuralOvertime.textValue}"
+					styleClass="#{deductions.nonStructuralOvertime.style}" />
+				<aon:outputText rendered="#{deductions.nonStructuralOvertime.showAmount}"
+					value="#{deductions.nonStructuralOvertime.doubleValue}"
 					styleClass="#{deductions.nonStructuralOvertime.style}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
@@ -73,7 +93,11 @@
 
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deductions.socialSecurityContributions.value}"
+				<aon:outputText rendered="#{!deductions.socialSecurityContributions.showAmount}" 
+					value="#{deductions.socialSecurityContributions.textValue}"
+					styleClass="#{deductions.socialSecurityContributions.style}" />
+				<aon:outputText rendered="#{deductions.socialSecurityContributions.showAmount}"
+					value="#{deductions.socialSecurityContributions.doubleValue}"
 					styleClass="#{deductions.socialSecurityContributions.style}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
@@ -81,7 +105,11 @@
 
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deductions.irpf.value}"
+				<aon:outputText rendered="#{!deductions.irpf.showAmount}" 
+					value="#{deductions.irpf.textValue}"
+					styleClass="#{deductions.irpf.style}" />
+				<aon:outputText rendered="#{deductions.irpf.showAmount}"
+					value="#{deductions.irpf.doubleValue}"
 					styleClass="#{deductions.irpf.style}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
@@ -89,7 +117,11 @@
 
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deductions.advancePayment.value}"
+				<aon:outputText rendered="#{!deductions.advancePayment.showAmount}" 
+					value="#{deductions.advancePayment.textValue}"
+					styleClass="#{deductions.advancePayment.style}" />
+				<aon:outputText rendered="#{deductions.advancePayment.showAmount}" 
+					value="#{deductions.advancePayment.doubleValue}"
 					styleClass="#{deductions.advancePayment.style}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
@@ -97,7 +129,11 @@
 
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deductions.inKind.value}"
+				<aon:outputText rendered="#{!deductions.inKind.showAmount}" 
+					value="#{deductions.inKind.textValue}"
+					styleClass="#{deductions.inKind.style}" />
+				<aon:outputText rendered="#{deductions.inKind.showAmount}" 
+					value="#{deductions.inKind.doubleValue}"
 					styleClass="#{deductions.inKind.style}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
@@ -105,7 +141,11 @@
 
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deductions.other.value}"
+				<aon:outputText rendered="#{!deductions.other.showAmount}" 
+					value="#{deductions.other.textValue}"
+					styleClass="#{deductions.other.style}" />
+				<aon:outputText rendered="#{deductions.other.showAmount}" 
+					value="#{deductions.other.doubleValue}"
 					styleClass="#{deductions.other.style}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
@@ -113,7 +153,11 @@
 
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deductions.totalDeduction.value}"
+				<aon:outputText rendered="#{!deductions.totalDeduction.showAmount}" 
+					value="#{deductions.totalDeduction.textValue}"
+					styleClass="#{deductions.totalDeduction.style}" />
+				<aon:outputText rendered="#{deductions.totalDeduction.showAmount}" 
+					value="#{deductions.totalDeduction.doubleValue}"
 					styleClass="#{deductions.totalDeduction.style}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>

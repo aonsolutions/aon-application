@@ -20,8 +20,6 @@ import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.OtherNonWages;
 import com.esferalia.aon.salary.payment.SalarySupplements;
 
-
-
 public class SalaryDraftComparatorPrinter {
 	
 	private final String BLANK_TEXT = "";
@@ -48,19 +46,20 @@ public class SalaryDraftComparatorPrinter {
 			ctx = c.getSalaryCalculatorContext(startDate,endDate,issueDate);
 			this.draft = ctx.getSalaryProxy().getSalary();
 		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			String msg = "Imposible mostrar el borrador de la nómina";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		} catch (SalaryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			throw new AbortProcessingException("Imposible mostrar el borrador de la nómina");
+			String msg = "Imposible mostrar el borrador de la nómina";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 		initialize();
 	}
 	
 	public void initialize(){
 		if(getSalary()==null || getDraft()==null){
-			String msg = "No hay nomina o borrador para comparar";
+			String msg = "No hay nómina o borrador para comparar";
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
@@ -71,8 +70,9 @@ public class SalaryDraftComparatorPrinter {
 			setSalary(null);
 			setDraft(null);
 		} catch (SalaryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "Imposible comparar el borrador con la nómina";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 	
@@ -155,129 +155,129 @@ public class SalaryDraftComparatorPrinter {
 	 */
 	public class Payments{
 		
-		private Decorable baseSalary;
-		private List<Decorable> salarySupplements;
-		private Decorable overtimeHours;
-		private Decorable specialBonuses;
-		private Decorable salaryInKind;
-		private List<Decorable> compensationOrPrepaidExpenses;
-		private Decorable specialSecurityBenefits;
-		private Decorable movingCompensation;
-		private List<Decorable> otherNonWages;
-		private Decorable totalPayment;
+		private DecorableAmount baseSalary;
+		private List<DecorableAmount> salarySupplements;
+		private DecorableAmount overtimeHours;
+		private DecorableAmount specialBonuses;
+		private DecorableAmount salaryInKind;
+		private List<DecorableAmount> compensationOrPrepaidExpenses;
+		private DecorableAmount specialSecurityBenefits;
+		private DecorableAmount movingCompensation;
+		private List<DecorableAmount> otherNonWages;
+		private DecorableAmount totalPayment;
 		
-		public Decorable getBaseSalary() {
+		public DecorableAmount getBaseSalary() {
 			return baseSalary;
 		}
-		public void setBaseSalary(Decorable baseSalary) {
+		public void setBaseSalary(DecorableAmount baseSalary) {
 			this.baseSalary = baseSalary;
 		}
-		public List<Decorable> getSalarySupplements() {
+		public List<DecorableAmount> getSalarySupplements() {
 			return salarySupplements;
 		}
-		public void setSalarySupplements(List<Decorable> salarySupplements) {
+		public void setSalarySupplements(List<DecorableAmount> salarySupplements) {
 			this.salarySupplements = salarySupplements;
 		}
-		public Decorable getOvertimeHours() {
+		public DecorableAmount getOvertimeHours() {
 			return overtimeHours;
 		}
-		public void setOvertimeHours(Decorable overtimeHours) {
+		public void setOvertimeHours(DecorableAmount overtimeHours) {
 			this.overtimeHours = overtimeHours;
 		}
-		public Decorable getSpecialBonuses() {
+		public DecorableAmount getSpecialBonuses() {
 			return specialBonuses;
 		}
-		public void setSpecialBonuses(Decorable specialBonuses) {
+		public void setSpecialBonuses(DecorableAmount specialBonuses) {
 			this.specialBonuses = specialBonuses;
 		}
-		public Decorable getSalaryInKind() {
+		public DecorableAmount getSalaryInKind() {
 			return salaryInKind;
 		}
-		public void setSalaryInKind(Decorable salaryInKind) {
+		public void setSalaryInKind(DecorableAmount salaryInKind) {
 			this.salaryInKind = salaryInKind;
 		}
-		public List<Decorable> getCompensationOrPrepaidExpenses() {
+		public List<DecorableAmount> getCompensationOrPrepaidExpenses() {
 			return compensationOrPrepaidExpenses;
 		}
 		public void setCompensationOrPrepaidExpenses(
-				List<Decorable> compensationOrPrepaidExpenses) {
+				List<DecorableAmount> compensationOrPrepaidExpenses) {
 			this.compensationOrPrepaidExpenses = compensationOrPrepaidExpenses;
 		}
-		public Decorable getSpecialSecurityBenefits() {
+		public DecorableAmount getSpecialSecurityBenefits() {
 			return specialSecurityBenefits;
 		}
-		public void setSpecialSecurityBenefits(Decorable specialSecurityBenefits) {
+		public void setSpecialSecurityBenefits(DecorableAmount specialSecurityBenefits) {
 			this.specialSecurityBenefits = specialSecurityBenefits;
 		}
-		public Decorable getMovingCompensation() {
+		public DecorableAmount getMovingCompensation() {
 			return movingCompensation;
 		}
-		public void setMovingCompensation(Decorable movingCompensation) {
+		public void setMovingCompensation(DecorableAmount movingCompensation) {
 			this.movingCompensation = movingCompensation;
 		}
-		public List<Decorable> getOtherNonWages() {
+		public List<DecorableAmount> getOtherNonWages() {
 			return otherNonWages;
 		}
-		public void setOtherNonWages(List<Decorable> otherNonWages) {
+		public void setOtherNonWages(List<DecorableAmount> otherNonWages) {
 			this.otherNonWages = otherNonWages;
 		}
-		public Decorable getTotalPayment() {
+		public DecorableAmount getTotalPayment() {
 			return totalPayment;
 		}
-		public void setTotalPayment(Decorable totalPayment) {
+		public void setTotalPayment(DecorableAmount totalPayment) {
 			this.totalPayment = totalPayment;
 		}
 		
 		public void setTotalPayment(Double totalPayment2, Double totalPayment3) {
-			setTotalPayment(getDecorable(totalPayment2, totalPayment3));
+			setTotalPayment(getDecorableAmount(totalPayment2, totalPayment3));
 		}
 		public void setMovingCompensation(IPayment movingCompensation2,
 				IPayment movingCompensation3) {
-			setMovingCompensation(getDecorable(getDoubleValue(movingCompensation2), getDoubleValue(movingCompensation3)));
+			setMovingCompensation(getDecorableAmount(getDoubleValue(movingCompensation2), getDoubleValue(movingCompensation3)));
 		}
 		public void setSpecialSecurityBenefits(
 				IPayment specialSecurityBenefits2,
 				IPayment specialSecurityBenefits3) {
-			setSpecialSecurityBenefits(getDecorable(getDoubleValue(specialSecurityBenefits2), getDoubleValue(specialSecurityBenefits3)));
+			setSpecialSecurityBenefits(getDecorableAmount(getDoubleValue(specialSecurityBenefits2), getDoubleValue(specialSecurityBenefits3)));
 		}
 		public void setSalaryInKind(IPayment salaryInKind2,
 				IPayment salaryInKind3) {
-			setSalaryInKind(getDecorable(getDoubleValue(salaryInKind2), getDoubleValue(salaryInKind3)));
+			setSalaryInKind(getDecorableAmount(getDoubleValue(salaryInKind2), getDoubleValue(salaryInKind3)));
 		}
 		public void setSpecialBonuses(IPayment specialBonuses2,
 				IPayment specialBonuses3) {
-			setSpecialBonuses(getDecorable(getDoubleValue(specialBonuses2), getDoubleValue(specialBonuses3)));
+			setSpecialBonuses(getDecorableAmount(getDoubleValue(specialBonuses2), getDoubleValue(specialBonuses3)));
 		}
 		public void setOvertimeHours(IPayment overtimeHours2,
 				IPayment overtimeHours3) {
-			setOvertimeHours(getDecorable(getDoubleValue(overtimeHours2), getDoubleValue(overtimeHours3)));
+			setOvertimeHours(getDecorableAmount(getDoubleValue(overtimeHours2), getDoubleValue(overtimeHours3)));
 		}
 		public void setBaseSalary(IPayment baseSalary2, IPayment baseSalary3) {
-			setBaseSalary(getDecorable(getDoubleValue(baseSalary2), getDoubleValue(baseSalary3)));
+			setBaseSalary(getDecorableAmount(getDoubleValue(baseSalary2), getDoubleValue(baseSalary3)));
 		}
 		
 		public void setOtherNonWages(OtherNonWages salaryOtherNonWages,
 				OtherNonWages draftOtherNonWages) {
-			List<Decorable> list = new LinkedList<Decorable>();
+			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
 			for(IPayment p: draftOtherNonWages.getValues()){
-				list.add(getDecorable(getDoubleValue(getSameOtherNonWage(p, salaryOtherNonWages)), getDoubleValue(p)));
+				list.add(getDecorableAmount(getDoubleValue(getSameOtherNonWage(p, salaryOtherNonWages)), getDoubleValue(p)));
 			}
 			setOtherNonWages(list);
 		}
 		public void setCompensationOrPrepaidExpenses(
 				CompensationOrPrepaidExpenses salaryCompensationOrPrepaidExpenses,
 				CompensationOrPrepaidExpenses draftCompensationOrPrepaidExpenses) {
-			List<Decorable> list = new LinkedList<Decorable>();
+			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
 			for(IPayment p: draftCompensationOrPrepaidExpenses.getValues()){
-				list.add(getDecorable(getDoubleValue(getSameCompensationOrPrepaidExpense(p, salaryCompensationOrPrepaidExpenses)), getDoubleValue(p)));
+				list.add(getDecorableAmount(getDoubleValue(getSameCompensationOrPrepaidExpense(p, salaryCompensationOrPrepaidExpenses)), getDoubleValue(p)));
 			}
 			setCompensationOrPrepaidExpenses(list);
 		}
 		public void setSalarySupplements(SalarySupplements salarySalarySupplements,
 				List<IPayment> draftSalarySupplements) {
-			List<Decorable> list = new LinkedList<Decorable>();
+			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
 			for(IPayment p: draftSalarySupplements){
-				list.add(getDecorable(getDoubleValue(getSameSalarySupplement(p, salarySalarySupplements)), getDoubleValue(p)));
+				list.add(getDecorableAmount(getDoubleValue(getSameSalarySupplement(p, salarySalarySupplements)), getDoubleValue(p)));
 			}
 			setSalarySupplements(list);
 		}
@@ -316,147 +316,147 @@ public class SalaryDraftComparatorPrinter {
 			}
 			return payment.getAmount();
 		}
-		public Decorable getDecorable(Double salaryValue, Double draftValue){
-			Decorable decorable = new Decorable();
+		public DecorableAmount getDecorableAmount(Double salaryValue, Double draftValue){
+			DecorableAmount DecorableAmount = new DecorableAmount();
 			if(salaryValue==null && draftValue==null){
-				decorable.setValue(BLANK_TEXT);
-				decorable.setStyle(NORMAL_STYLE);
+				DecorableAmount.setTextValue(BLANK_TEXT);
+				DecorableAmount.setStyle(NORMAL_STYLE);
 			} else if(salaryValue!=null && draftValue!=null){
-				decorable.setValue(Double.toString(CommonUtil.round(salaryValue)));
-				decorable.setStyle(CommonUtil.round(salaryValue)==CommonUtil.round(draftValue)?NORMAL_STYLE:RED_STYLE);
+				DecorableAmount.setDoubleValue(CommonUtil.round(salaryValue));
+				DecorableAmount.setStyle(CommonUtil.round(salaryValue)==CommonUtil.round(draftValue)?NORMAL_STYLE:RED_STYLE);
 			} else {
 				if(salaryValue==null){
-					decorable.setValue(NO_ELEMENT_TEXT);	
-					decorable.setStyle(RED_STYLE);
+					DecorableAmount.setTextValue(NO_ELEMENT_TEXT);	
+					DecorableAmount.setStyle(RED_STYLE);
 				} else {
-					decorable.setValue(salaryValue.toString());
-					decorable.setStyle(NORMAL_STYLE);
+					DecorableAmount.setDoubleValue(CommonUtil.round(salaryValue));
+					DecorableAmount.setStyle(NORMAL_STYLE);
 				}
 			}
-			return decorable;
+			return DecorableAmount;
 		}
 	}
 	public class Deductions{
-		private Decorable commonContingency;
-		private Decorable unemployment;
-		private Decorable jobTraining;
-		private Decorable structuralOvertime;
-		private Decorable nonStructuralOvertime;
-		private Decorable socialSecurityContributions;
-		private Decorable irpf;
-		private Decorable advancePayment;
-		private Decorable inKind;
-		private Decorable other;
-		private Decorable totalDeduction;
+		private DecorableAmount commonContingency;
+		private DecorableAmount unemployment;
+		private DecorableAmount jobTraining;
+		private DecorableAmount structuralOvertime;
+		private DecorableAmount nonStructuralOvertime;
+		private DecorableAmount socialSecurityContributions;
+		private DecorableAmount irpf;
+		private DecorableAmount advancePayment;
+		private DecorableAmount inKind;
+		private DecorableAmount other;
+		private DecorableAmount totalDeduction;
 		
-		public Decorable getCommonContingency() {
+		public DecorableAmount getCommonContingency() {
 			return commonContingency;
 		}
-		public void setCommonContingency(Decorable commonContingency) {
+		public void setCommonContingency(DecorableAmount commonContingency) {
 			this.commonContingency = commonContingency;
 		}
-		public Decorable getUnemployment() {
+		public DecorableAmount getUnemployment() {
 			return unemployment;
 		}
-		public void setUnemployment(Decorable unemployment) {
+		public void setUnemployment(DecorableAmount unemployment) {
 			this.unemployment = unemployment;
 		}
-		public Decorable getJobTraining() {
+		public DecorableAmount getJobTraining() {
 			return jobTraining;
 		}
-		public void setJobTraining(Decorable jobTraining) {
+		public void setJobTraining(DecorableAmount jobTraining) {
 			this.jobTraining = jobTraining;
 		}
-		public Decorable getStructuralOvertime() {
+		public DecorableAmount getStructuralOvertime() {
 			return structuralOvertime;
 		}
-		public void setStructuralOvertime(Decorable structuralOvertime) {
+		public void setStructuralOvertime(DecorableAmount structuralOvertime) {
 			this.structuralOvertime = structuralOvertime;
 		}
-		public Decorable getNonStructuralOvertime() {
+		public DecorableAmount getNonStructuralOvertime() {
 			return nonStructuralOvertime;
 		}
-		public void setNonStructuralOvertime(Decorable nonStructuralOvertime) {
+		public void setNonStructuralOvertime(DecorableAmount nonStructuralOvertime) {
 			this.nonStructuralOvertime = nonStructuralOvertime;
 		}
-		public Decorable getSocialSecurityContributions() {
+		public DecorableAmount getSocialSecurityContributions() {
 			return socialSecurityContributions;
 		}
-		public void setSocialSecurityContributions(Decorable socialSecurityContributions) {
+		public void setSocialSecurityContributions(DecorableAmount socialSecurityContributions) {
 			this.socialSecurityContributions = socialSecurityContributions;
 		}
-		public Decorable getIrpf() {
+		public DecorableAmount getIrpf() {
 			return irpf;
 		}
-		public void setIrpf(Decorable irpf) {
+		public void setIrpf(DecorableAmount irpf) {
 			this.irpf = irpf;
 		}
-		public Decorable getAdvancePayment() {
+		public DecorableAmount getAdvancePayment() {
 			return advancePayment;
 		}
-		public void setAdvancePayment(Decorable advancePayment) {
+		public void setAdvancePayment(DecorableAmount advancePayment) {
 			this.advancePayment = advancePayment;
 		}
-		public Decorable getInKind() {
+		public DecorableAmount getInKind() {
 			return inKind;
 		}
-		public void setInKind(Decorable inKind) {
+		public void setInKind(DecorableAmount inKind) {
 			this.inKind = inKind;
 		}
-		public Decorable getOther() {
+		public DecorableAmount getOther() {
 			return other;
 		}
-		public void setOther(Decorable other) {
+		public void setOther(DecorableAmount other) {
 			this.other = other;
 		}
-		public Decorable getTotalDeduction() {
+		public DecorableAmount getTotalDeduction() {
 			return totalDeduction;
 		}
-		public void setTotalDeduction(Decorable totalDeduction) {
+		public void setTotalDeduction(DecorableAmount totalDeduction) {
 			this.totalDeduction = totalDeduction;
 		}
 		
 		public void setTotalDeduction(Double totalDeduction2,
 				Double totalDeduction3) {
-			setTotalDeduction(getDecorable(totalDeduction2, totalDeduction3));
+			setTotalDeduction(getDecorableAmount(totalDeduction2, totalDeduction3));
 		}
 		public void setOther(IDeduction other2, IDeduction other3) {
-			setInKind(getDecorable(getDoubleValue(other2), getDoubleValue(other3)));
+			setInKind(getDecorableAmount(getDoubleValue(other2), getDoubleValue(other3)));
 		}
 		public void setInKind(IDeduction inKind2, IDeduction inKind3) {
-			setInKind(getDecorable(getDoubleValue(inKind2), getDoubleValue(inKind3)));
+			setInKind(getDecorableAmount(getDoubleValue(inKind2), getDoubleValue(inKind3)));
 		}
 		public void setAdvancePayment(IDeduction advancePayment2,
 				IDeduction advancePayment3) {
-			setAdvancePayment(getDecorable(getDoubleValue(advancePayment2), getDoubleValue(advancePayment3)));
+			setAdvancePayment(getDecorableAmount(getDoubleValue(advancePayment2), getDoubleValue(advancePayment3)));
 		}
 		public void setIrpf(IDeduction irpf2, IDeduction irpf3) {
-			setIrpf(getDecorable(getDoubleValue(irpf2), getDoubleValue(irpf3)));
+			setIrpf(getDecorableAmount(getDoubleValue(irpf2), getDoubleValue(irpf3)));
 		}
 		public void setSocialSecurityContributions(
 				Double socialSecurityContributions2,
 				Double socialSecurityContributions3) {
-			setSocialSecurityContributions(getDecorable(socialSecurityContributions2, socialSecurityContributions3));
+			setSocialSecurityContributions(getDecorableAmount(socialSecurityContributions2, socialSecurityContributions3));
 		}
 		public void setNonStructuralOvertime(IDeduction nonStructuralOvertime2,
 				IDeduction nonStructuralOvertime3) {
-			setNonStructuralOvertime(getDecorable(getDoubleValue(nonStructuralOvertime2), getDoubleValue(nonStructuralOvertime3)));
+			setNonStructuralOvertime(getDecorableAmount(getDoubleValue(nonStructuralOvertime2), getDoubleValue(nonStructuralOvertime3)));
 		}
 		public void setStructuralOvertime(IDeduction structuralOvertime2,
 				IDeduction structuralOvertime3) {
-			setStructuralOvertime(getDecorable(getDoubleValue(structuralOvertime2), getDoubleValue(structuralOvertime3)));
+			setStructuralOvertime(getDecorableAmount(getDoubleValue(structuralOvertime2), getDoubleValue(structuralOvertime3)));
 		}
 		public void setJobTraining(IDeduction jobTraining2,
 				IDeduction jobTraining3) {
-			setJobTraining(getDecorable(getDoubleValue(jobTraining2), getDoubleValue(jobTraining3)));
+			setJobTraining(getDecorableAmount(getDoubleValue(jobTraining2), getDoubleValue(jobTraining3)));
 		}
 		public void setUnemployment(IDeduction unemployment2,
 				IDeduction unemployment3) {
-			setUnemployment(getDecorable(getDoubleValue(unemployment2), getDoubleValue(unemployment3)));
+			setUnemployment(getDecorableAmount(getDoubleValue(unemployment2), getDoubleValue(unemployment3)));
 		}
 		public void setCommonContingency(IDeduction commonContingency2,
 				IDeduction commonContingency3) {
-			setCommonContingency(getDecorable(getDoubleValue(commonContingency2), getDoubleValue(commonContingency3)));
+			setCommonContingency(getDecorableAmount(getDoubleValue(commonContingency2), getDoubleValue(commonContingency3)));
 		}
 		
 		private Double getDoubleValue(IDeduction deduction) {
@@ -465,150 +465,150 @@ public class SalaryDraftComparatorPrinter {
 			}
 			return deduction.getAmount();
 		}
-		public Decorable getDecorable(Double salaryValue, Double draftValue){
-			Decorable decorable = new Decorable();
+		public DecorableAmount getDecorableAmount(Double salaryValue, Double draftValue){
+			DecorableAmount DecorableAmount = new DecorableAmount();
 			if(salaryValue==null && draftValue==null){
-				decorable.setValue(BLANK_TEXT);
-				decorable.setStyle(NORMAL_STYLE);
+				DecorableAmount.setTextValue(BLANK_TEXT);
+				DecorableAmount.setStyle(NORMAL_STYLE);
 			} else if(salaryValue!=null && draftValue!=null){
-				decorable.setValue(Double.toString(CommonUtil.round(salaryValue)));
-				decorable.setStyle(CommonUtil.round(salaryValue)==CommonUtil.round(draftValue)?NORMAL_STYLE:RED_STYLE);
+				DecorableAmount.setDoubleValue(CommonUtil.round(salaryValue));
+				DecorableAmount.setStyle(CommonUtil.round(salaryValue)==CommonUtil.round(draftValue)?NORMAL_STYLE:RED_STYLE);
 			} else {
 				if(salaryValue==null){
-					decorable.setValue(NO_ELEMENT_TEXT);	
-					decorable.setStyle(RED_STYLE);
+					DecorableAmount.setTextValue(NO_ELEMENT_TEXT);	
+					DecorableAmount.setStyle(RED_STYLE);
 				} else {
-					decorable.setValue(salaryValue.toString());
-					decorable.setStyle(NORMAL_STYLE);
+					DecorableAmount.setDoubleValue(CommonUtil.round(salaryValue));
+					DecorableAmount.setStyle(NORMAL_STYLE);
 				}
 			}
-			return decorable;
+			return DecorableAmount;
 		}
 		
 	}
 	public class Bases{
-		private Decorable totalLiquid;
-		private Decorable remuneration;
-		private Decorable extraPayProration;
-		private Decorable commonBase;
-		private Decorable professionalBase;
-		private Decorable overtimeBase;
-		private Decorable irpfBase;
+		private DecorableAmount totalLiquid;
+		private DecorableAmount remuneration;
+		private DecorableAmount extraPayProration;
+		private DecorableAmount commonBase;
+		private DecorableAmount professionalBase;
+		private DecorableAmount overtimeBase;
+		private DecorableAmount irpfBase;
 	
-		public Decorable getTotalLiquid() {
+		public DecorableAmount getTotalLiquid() {
 			return totalLiquid;
 		}
-		public void setTotalLiquid(Decorable totalLiquid) {
+		public void setTotalLiquid(DecorableAmount totalLiquid) {
 			this.totalLiquid = totalLiquid;
 		}
-		public Decorable getRemuneration() {
+		public DecorableAmount getRemuneration() {
 			return remuneration;
 		}
-		public void setRemuneration(Decorable remuneration) {
+		public void setRemuneration(DecorableAmount remuneration) {
 			this.remuneration = remuneration;
 		}
-		public Decorable getExtraPayProration() {
+		public DecorableAmount getExtraPayProration() {
 			return extraPayProration;
 		}
-		public void setExtraPayProration(Decorable extraPayProration) {
+		public void setExtraPayProration(DecorableAmount extraPayProration) {
 			this.extraPayProration = extraPayProration;
 		}
-		public Decorable getCommonBase() {
+		public DecorableAmount getCommonBase() {
 			return commonBase;
 		}
-		public void setCommonBase(Decorable commonBase) {
+		public void setCommonBase(DecorableAmount commonBase) {
 			this.commonBase = commonBase;
 		}
-		public Decorable getProfessionalBase() {
+		public DecorableAmount getProfessionalBase() {
 			return professionalBase;
 		}
-		public void setProfessionalBase(Decorable professionalBase) {
+		public void setProfessionalBase(DecorableAmount professionalBase) {
 			this.professionalBase = professionalBase;
 		}
-		public Decorable getOvertimeBase() {
+		public DecorableAmount getOvertimeBase() {
 			return overtimeBase;
 		}
-		public void setOvertimeBase(Decorable overtimeBase) {
+		public void setOvertimeBase(DecorableAmount overtimeBase) {
 			this.overtimeBase = overtimeBase;
 		}
-		public Decorable getIrpfBase() {
+		public DecorableAmount getIrpfBase() {
 			return irpfBase;
 		}
-		public void setIrpfBase(Decorable irpfBase) {
+		public void setIrpfBase(DecorableAmount irpfBase) {
 			this.irpfBase = irpfBase;
 		}
 		
 		public void setIrpfBase(Double irpfBase2, Double irpfBase3) {
-			setIrpfBase(getDecorable(irpfBase2, irpfBase3));
+			setIrpfBase(getDecorableAmount(irpfBase2, irpfBase3));
 		}
 		public void setOvertimeBase(Double overtimeBase2, Double overtimeBase3) {
-			setOvertimeBase(getDecorable(overtimeBase2, overtimeBase3));
+			setOvertimeBase(getDecorableAmount(overtimeBase2, overtimeBase3));
 		}
 		public void setProfessionalBase(Double professionalBase2,
 				Double professionalBase3) {
-			setProfessionalBase(getDecorable(professionalBase2, professionalBase3));
+			setProfessionalBase(getDecorableAmount(professionalBase2, professionalBase3));
 		}
 		public void setCommonBase(Double commonBase2, Double commonBase3) {
-			setCommonBase(getDecorable(commonBase2, commonBase3));
+			setCommonBase(getDecorableAmount(commonBase2, commonBase3));
 		}
 		public void setExtraPayProration(Double extraPayProration2,
 				Double extraPayProration3) {
-			setExtraPayProration(getDecorable(extraPayProration2, extraPayProration3));
+			setExtraPayProration(getDecorableAmount(extraPayProration2, extraPayProration3));
 		}
 		public void setRemuneration(Double remuneration2, Double remuneration3) {
-			setRemuneration(getDecorable(remuneration2, remuneration3));
+			setRemuneration(getDecorableAmount(remuneration2, remuneration3));
 		}
 		public void setTotalLiquid(Double totalLiquid2, Double totalLiquid3) {
-			setTotalLiquid(getDecorable(totalLiquid2, totalLiquid3));
+			setTotalLiquid(getDecorableAmount(totalLiquid2, totalLiquid3));
 		}
 
-		public Decorable getDecorable(Double salaryValue, Double draftValue){
-			Decorable decorable = new Decorable();
+		public DecorableAmount getDecorableAmount(Double salaryValue, Double draftValue){
+			DecorableAmount DecorableAmount = new DecorableAmount();
 			if(salaryValue==null && draftValue==null){
-				decorable.setValue(BLANK_TEXT);
-				decorable.setStyle(NORMAL_STYLE);
+				DecorableAmount.setTextValue(BLANK_TEXT);
+				DecorableAmount.setStyle(NORMAL_STYLE);
 			} else if(salaryValue!=null && draftValue!=null){
-				decorable.setValue(Double.toString(CommonUtil.round(salaryValue)));
-				decorable.setStyle(CommonUtil.round(salaryValue)==CommonUtil.round(draftValue)?NORMAL_STYLE:RED_STYLE);
+				DecorableAmount.setDoubleValue(CommonUtil.round(salaryValue));
+				DecorableAmount.setStyle(CommonUtil.round(salaryValue)==CommonUtil.round(draftValue)?NORMAL_STYLE:RED_STYLE);
 			} else {
 				if(salaryValue==null){
-					decorable.setValue(NO_ELEMENT_TEXT);	
-					decorable.setStyle(RED_STYLE);
+					DecorableAmount.setTextValue(NO_ELEMENT_TEXT);	
+					DecorableAmount.setStyle(RED_STYLE);
 				} else {
-					decorable.setValue(salaryValue.toString());
-					decorable.setStyle(NORMAL_STYLE);
+					DecorableAmount.setDoubleValue(CommonUtil.round(salaryValue));
+					DecorableAmount.setStyle(NORMAL_STYLE);
 				}
 			}
-			return decorable;
+			return DecorableAmount;
 		}
 	}
 	
-	public class Decorable {
+	public class DecorableAmount {
 		private String style;
-		private String value;
-		private String description;
+		private String textValue;
+		private Double doubleValue;
+		
 		public String getStyle() {
 			return style;
 		}
 		public void setStyle(String style) {
 			this.style = style;
 		}
-		public String getValue() {
-			return value;
+		public String getTextValue() {
+			return textValue;
 		}
-		public void setValue(String value) {
-			this.value = value;
+		public void setTextValue(String textValue) {
+			this.textValue = textValue;
 		}
-		public String getDescription() {
-			return description;
+		public Double getDoubleValue() {
+			return doubleValue;
 		}
-		public void setDescription(String description) {
-			this.description = description;
+		public void setDoubleValue(Double doubleValue) {
+			this.doubleValue = doubleValue;
 		}
-		
+		public boolean isShowAmount(){
+			return getDoubleValue()!=null;
+		}
 	}
 	
-	
-	
-
 }
