@@ -52,7 +52,7 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 	private boolean isExtended(Account account) throws ManagerBeanException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), account.getId()));
+		criteria.addNotEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), account.getId());
 		criteria.addExpression(ExpressionUtilities.getLikeExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), account.getId()+"%"));
 		return accountBean.getCount(criteria) > 0;
 	}
