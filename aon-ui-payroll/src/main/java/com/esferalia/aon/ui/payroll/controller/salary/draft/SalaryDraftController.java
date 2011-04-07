@@ -22,18 +22,18 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-//import com.esferalia.aon.payroll.sql.AbstractSQL.Salary;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.salary.payment.SalarySupplements;
 import com.esferalia.aon.ui.payroll.event.salary.draft.SalaryDraftComparatorPrinter;
 
 public class SalaryDraftController extends BasicController {
@@ -153,11 +153,10 @@ public class SalaryDraftController extends BasicController {
 				ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate);
 				salary = ctx.getSalaryProxy().getSalary();
 				paymentsModel = null;
+				printer = null;
+				paymentsList = null;
 				initializePaymentModel();
 			}
-//			if(getSavedSalaryDraft()!=null){
-//				getPrinter();
-//			}
 			return salary;
 		} catch (SalaryException e) {
 			e.printStackTrace();
@@ -171,70 +170,6 @@ public class SalaryDraftController extends BasicController {
 			if (c != null) {
 				c.setSalaryCalculatorContext(null);		
 			}
-		}
-	}
-
-	private ISalary savedSalaryDraft;
-	public ISalary getSavedSalaryDraft() {
-		return savedSalaryDraft;
-	}
-	public void setSavedSalaryDraft(ISalary salary) {
-		savedSalaryDraft = salary;
-	}
-	
-	private SalaryDraftComparatorPrinter printer;
-	public SalaryDraftComparatorPrinter getPrinter() {
-//		searchSavedDraftSalary();
-		if(getSavedSalaryDraft()==null){
-			String msg = "No hay nomina guardada para este borrador";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
-		}
-		if(printer==null){
-//			getPaymentsModel();
-//			paymentsModel = null;
-//			initializePaymentModel();
-//			setSalary(null);
-//			this.salary = null;
-//			try {
-//				getSalary().getPayments();
-//			} catch (SalaryException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-			printer = new SalaryDraftComparatorPrinter();
-			printer.setSalary(getSavedSalaryDraft());
-			
-				
-			printer.setDraft(getSalary());
-//			printer.setDraft(getSalary());
-			printer.initialize();
-		}
-		return printer;
-	}
-	public void setPrinter(SalaryDraftComparatorPrinter printer) {
-		this.printer = printer;
-	}
-	
-	public void searchSavedDraftSalary(){
-		Contract contract = (Contract) this.getTo();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), contract.getId());
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), getStartDate());
-			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), getEndDate());
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				setSavedSalaryDraft((ISalary) list.get(0));
-				setPrinter(null);
-//				getPrinter();
-			} else {
-				setSavedSalaryDraft(null);
-			}
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -273,6 +208,98 @@ public class SalaryDraftController extends BasicController {
 		} catch (AonException e) {
 			e.printStackTrace();
 			throw new AbortProcessingException("Imposible mostrar los devengos de la nómina");
+		}
+	}
+	
+	// ****************************************
+	// OBTENCION DE LA DIFERENCIA DE LA NOMINA
+	// ****************************************
+	private List<IPayment> paymentsList;
+	public List<IPayment> getPaymentsList(){
+		if (paymentsList == null) {
+			initializeList();
+		}
+		return paymentsList;
+	}
+	public void initializeList(){
+		try {
+			Contract contract = (Contract) getTo();
+			contract.setSalaryCalculatorContext(null);
+			Date startDate = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate(); 
+			Date endDate = (contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate(); 
+			Date issueDate = getIssueDate(); 
+			ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate);
+			List<IPayment> payments = ctx.getSalaryProxy().getSalary().getPayments().getSalarySupplements().getValues();
+			
+			paymentsList = new LinkedList<IPayment>();
+			SalarySupplements ss = null;
+			ss = new SalarySupplements();
+			for(IPayment p: payments){
+				ss.addPayment(p);
+			}
+			paymentsList = ss.getValues();
+		} catch (SalaryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AonException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private boolean showSalaryDifference;
+	private ISalary bdSalary;
+	private SalaryDraftComparatorPrinter printer;
+	
+	public boolean isShowSalaryDifference() {
+		return showSalaryDifference;
+	}
+	public void setShowSalaryDifference(boolean showSalaryDifference) {
+		this.showSalaryDifference = showSalaryDifference;
+	}
+	public ISalary getBdSalary() {
+		return bdSalary;
+	}
+	public void setBdSalary(ISalary bdSalary) {
+		this.bdSalary = bdSalary;
+	}
+	
+	public SalaryDraftComparatorPrinter getPrinter() {
+		if(printer==null){
+			Contract contract = (Contract) getTo();
+			Date startDate = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate(); 
+			Date endDate = (contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate(); 
+			Date issueDate = getIssueDate(); 
+			printer = new SalaryDraftComparatorPrinter(contract, getBdSalary(), getPaymentsList(), startDate, endDate, issueDate);
+			contract.setSalaryCalculatorContext(null); 
+		}
+		return printer;
+	}
+	public void setPrinter(SalaryDraftComparatorPrinter printer) {
+		this.printer = printer;
+	}
+	
+	public void searchSavedDraftSalary(){
+		Contract contract = (Contract) this.getTo();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), contract.getId());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), getStartDate());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), getEndDate());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), SalaryType.SALARY);
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				setBdSalary((ISalary) list.get(0));
+				setShowSalaryDifference(true);
+			} else {
+				setBdSalary(null);
+				setShowSalaryDifference(false);
+			}
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

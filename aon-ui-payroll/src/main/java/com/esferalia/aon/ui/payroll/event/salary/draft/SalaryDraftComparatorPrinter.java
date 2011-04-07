@@ -1,13 +1,19 @@
 package com.esferalia.aon.ui.payroll.event.salary.draft;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.payment.CompensationOrPrepaidExpenses;
 import com.esferalia.aon.salary.payment.IPayment;
@@ -18,6 +24,8 @@ import com.esferalia.aon.salary.payment.SalarySupplements;
 
 public class SalaryDraftComparatorPrinter {
 	
+	private final String BLANK_TEXT = "";
+	private final String NO_ELEMENT_TEXT = "ND";
 	private final String RED_STYLE = "aon-label-error";
 	private final String NORMAL_STYLE = "aon-outputText";
 
@@ -26,10 +34,28 @@ public class SalaryDraftComparatorPrinter {
 	private Payments payments;
 	private Deductions deductions;
 	private Bases bases;
+	private List<IPayment> supplementsList;
 	
-	public SalaryDraftComparatorPrinter() {
-//		this.salary = salary;
-//		this.draft = draft;
+	public SalaryDraftComparatorPrinter(Contract contract, ISalary dbSalary, List<IPayment> list,Date startDate, Date endDate, Date issueDate) {
+		this.salary = dbSalary;
+		this.supplementsList = list;
+		
+		Contract c = null;
+		try {
+			c = (Contract) BeanManager.getManagerBean(Contract.class).get(contract.getId());
+			c.setSalaryCalculatorContext(null);
+			ISalaryCalculatorContext ctx;
+			ctx = c.getSalaryCalculatorContext(startDate,endDate,issueDate);
+			this.draft = ctx.getSalaryProxy().getSalary();
+		} catch (ManagerBeanException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (SalaryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new AbortProcessingException("Imposible mostrar el borrador de la nómina");
+		}
+		initialize();
 	}
 	
 	public void initialize(){
@@ -42,6 +68,8 @@ public class SalaryDraftComparatorPrinter {
 			decoratePayments();
 			decorateDeduction();
 			decorateBases();
+			setSalary(null);
+			setDraft(null);
 		} catch (SalaryException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -88,7 +116,7 @@ public class SalaryDraftComparatorPrinter {
 		payments.setSpecialSecurityBenefits(getSalary().getPayments().getSpecialSecurityBenefits(), getDraft().getPayments().getSpecialSecurityBenefits());
 		payments.setMovingCompensation(getSalary().getPayments().getMovingCompensation(), getDraft().getPayments().getMovingCompensation());
 		payments.setTotalPayment(getSalary().getTotalPayment(), getDraft().getTotalPayment());
-		payments.setSalarySupplements(getSalary().getPayments().getSalarySupplements(), getDraft().getPayments().getSalarySupplements());
+		payments.setSalarySupplements(getSalary().getPayments().getSalarySupplements(), supplementsList);
 		payments.setCompensationOrPrepaidExpenses(getSalary().getPayments().getCompensationOrPrepaidExpenses(), getDraft().getPayments().getCompensationOrPrepaidExpenses());
 		payments.setOtherNonWages(getSalary().getPayments().getOtherNonWages(), getDraft().getPayments().getOtherNonWages());
 		setPayments(payments);
@@ -246,14 +274,10 @@ public class SalaryDraftComparatorPrinter {
 			setCompensationOrPrepaidExpenses(list);
 		}
 		public void setSalarySupplements(SalarySupplements salarySalarySupplements,
-				SalarySupplements draftSalarySupplements) {
+				List<IPayment> draftSalarySupplements) {
 			List<Decorable> list = new LinkedList<Decorable>();
-			for(IPayment p: draftSalarySupplements.getValues()){
-//				list.add(getDecorable(getDoubleValue(getSameSalarySupplement(p, salarySalarySupplements)), getDoubleValue(p)));
-				Decorable d = getDecorable(getDoubleValue(getSameSalarySupplement(p, salarySalarySupplements)), getDoubleValue(p));
-				if(d!=null){
-					list.add(d);
-				}
+			for(IPayment p: draftSalarySupplements){
+				list.add(getDecorable(getDoubleValue(getSameSalarySupplement(p, salarySalarySupplements)), getDoubleValue(p)));
 			}
 			setSalarySupplements(list);
 		}
@@ -280,7 +304,7 @@ public class SalaryDraftComparatorPrinter {
 		private IPayment getSameSalarySupplement(IPayment draftPayment,
 				SalarySupplements list) {
 			for(IPayment p: list.getValues()){
-				if(draftPayment.getDescription().equals(p.getDescription()) && draftPayment.getAmount()==p.getAmount()){
+				if(draftPayment.getDescription().equals(p.getDescription()) && CommonUtil.round(draftPayment.getAmount())==CommonUtil.round(p.getAmount())){
 					return p;
 				}
 			}
@@ -295,17 +319,15 @@ public class SalaryDraftComparatorPrinter {
 		public Decorable getDecorable(Double salaryValue, Double draftValue){
 			Decorable decorable = new Decorable();
 			if(salaryValue==null && draftValue==null){
-				decorable.setValue("");
+				decorable.setValue(BLANK_TEXT);
 				decorable.setStyle(NORMAL_STYLE);
 			} else if(salaryValue!=null && draftValue!=null){
-				decorable.setValue(salaryValue.toString());
-				decorable.setStyle((salaryValue.equals(draftValue))?NORMAL_STYLE:RED_STYLE);
+				decorable.setValue(Double.toString(CommonUtil.round(salaryValue)));
+				decorable.setStyle(CommonUtil.round(salaryValue)==CommonUtil.round(draftValue)?NORMAL_STYLE:RED_STYLE);
 			} else {
 				if(salaryValue==null){
-					decorable.setValue("ND");	
+					decorable.setValue(NO_ELEMENT_TEXT);	
 					decorable.setStyle(RED_STYLE);
-					// PEDAZO DE TXURRO PARA SALIR DEL PASO
-					decorable = null;
 				} else {
 					decorable.setValue(salaryValue.toString());
 					decorable.setStyle(NORMAL_STYLE);
@@ -446,14 +468,14 @@ public class SalaryDraftComparatorPrinter {
 		public Decorable getDecorable(Double salaryValue, Double draftValue){
 			Decorable decorable = new Decorable();
 			if(salaryValue==null && draftValue==null){
-				decorable.setValue("");
+				decorable.setValue(BLANK_TEXT);
 				decorable.setStyle(NORMAL_STYLE);
 			} else if(salaryValue!=null && draftValue!=null){
-				decorable.setValue(salaryValue.toString());
-				decorable.setStyle((salaryValue.equals(draftValue))?NORMAL_STYLE:RED_STYLE);
+				decorable.setValue(Double.toString(CommonUtil.round(salaryValue)));
+				decorable.setStyle(CommonUtil.round(salaryValue)==CommonUtil.round(draftValue)?NORMAL_STYLE:RED_STYLE);
 			} else {
 				if(salaryValue==null){
-					decorable.setValue("ND");	
+					decorable.setValue(NO_ELEMENT_TEXT);	
 					decorable.setStyle(RED_STYLE);
 				} else {
 					decorable.setValue(salaryValue.toString());
@@ -543,14 +565,14 @@ public class SalaryDraftComparatorPrinter {
 		public Decorable getDecorable(Double salaryValue, Double draftValue){
 			Decorable decorable = new Decorable();
 			if(salaryValue==null && draftValue==null){
-				decorable.setValue("");
+				decorable.setValue(BLANK_TEXT);
 				decorable.setStyle(NORMAL_STYLE);
 			} else if(salaryValue!=null && draftValue!=null){
-				decorable.setValue(salaryValue.toString());
-				decorable.setStyle((salaryValue.equals(draftValue))?NORMAL_STYLE:RED_STYLE);
+				decorable.setValue(Double.toString(CommonUtil.round(salaryValue)));
+				decorable.setStyle(CommonUtil.round(salaryValue)==CommonUtil.round(draftValue)?NORMAL_STYLE:RED_STYLE);
 			} else {
 				if(salaryValue==null){
-					decorable.setValue("ND");	
+					decorable.setValue(NO_ELEMENT_TEXT);	
 					decorable.setStyle(RED_STYLE);
 				} else {
 					decorable.setValue(salaryValue.toString());
@@ -564,6 +586,7 @@ public class SalaryDraftComparatorPrinter {
 	public class Decorable {
 		private String style;
 		private String value;
+		private String description;
 		public String getStyle() {
 			return style;
 		}
@@ -576,6 +599,13 @@ public class SalaryDraftComparatorPrinter {
 		public void setValue(String value) {
 			this.value = value;
 		}
+		public String getDescription() {
+			return description;
+		}
+		public void setDescription(String description) {
+			this.description = description;
+		}
+		
 	}
 	
 	
