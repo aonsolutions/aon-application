@@ -116,7 +116,7 @@ public abstract class QuoteCalculator {
 
 		public double getCgpBase() {
 			if ( cgpBase == null ) {
-				Double rawCgpBase = getCgcBase() + structuralBase + nonStructuralBase;
+				Double rawCgpBase = rawCgcBase + structuralBase + nonStructuralBase;
 				cgpBase = getLimitedCgpBase(rawCgpBase, context, salaryStart, salaryEnd);
 			}
 			return cgpBase;

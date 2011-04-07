@@ -52,6 +52,8 @@ public enum ContractVariables implements IResourceable{
 	MATERNITY("MTNAD"),
 	QUOTE_IT("COTIZACION_IT"),
 	TOTAL_BENEFITS_IT("TOTAL_PRESTACIONES_IT"),
+	
+	ASSIMILATED ("ASIMILADO_REGIMEN_GRAL"),
 	;
 	
 	private final String name;

@@ -100,6 +100,24 @@ public class SQLCalendarFactory implements LRUCacheFactory<Integer, ICalendar> {
 		this.cache = cache;
 	}
 	
+	public void close() 
+	throws SQLException {
+		if ( calendarStmt != null ) {
+			calendarStmt.close();
+			calendarStmt = null;
+		}
+		if ( holidayStmt != null ) {
+			holidayStmt.close();
+			holidayStmt = null;
+		}
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		close();
+		super.finalize();
+	}
+	
 	// ------------------------------------------
 	
 	

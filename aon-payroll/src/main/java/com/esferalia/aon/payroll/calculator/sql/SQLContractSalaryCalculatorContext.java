@@ -17,6 +17,7 @@ import org.apache.commons.lang.time.DateUtils;
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
@@ -27,6 +28,7 @@ import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.sql.AbstractSQL.EnterpriseCcc;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
@@ -205,8 +207,11 @@ public class SQLContractSalaryCalculatorContext implements
 	private Collection<IContractPayment> 					systemPayments;
 	
 	private LRUCache<Integer, ICalendar> 					calendars;
+	private SQLCalendarFactory 								calendarFactory; 
 	private LRUCache<Integer, Collection<IContractPayment>> agreementPayments;
+	private SQLAgreementPaymentsFactory 					agreementPaymentsFactory;
 	private LRUCache<Integer, ExpressionContext> 			agreementExpressionContexts;
+	private SQLAgreementContextFactory 						agreementContextFactory ;
 	
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate) 
 	throws SQLException, ExpressionException {
@@ -241,18 +246,18 @@ public class SQLContractSalaryCalculatorContext implements
 		this.sqlContractDeduction = 
 			new SQLContractDeduction();
 		
-		SQLCalendarFactory calendarFactory = 
+		calendarFactory = 
 			new SQLCalendarFactory(connection, this.startDate, this.endDate);
 		this.calendars = 
 			new LRUCache<Integer, ICalendar>(CACHE_SIZE, calendarFactory);
 		calendarFactory.setCache(calendars); // TODO: Todo en la misma clase???
 		
-		SQLAgreementPaymentsFactory agreementPaymentsFactory =
+		agreementPaymentsFactory =
 			new SQLAgreementPaymentsFactory(connection, this.startDate, this.endDate);
 		this.agreementPayments = 
 			new LRUCache<Integer, Collection<IContractPayment>>(CACHE_SIZE, agreementPaymentsFactory);
 
-		SQLAgreementContextFactory agreementContextFactory =
+		agreementContextFactory =
 			new SQLAgreementContextFactory(connection, this.startDate, this.endDate);
 		this.agreementExpressionContexts = 
 			new LRUCache<Integer, ExpressionContext>(CACHE_SIZE, agreementContextFactory);
@@ -445,12 +450,57 @@ public class SQLContractSalaryCalculatorContext implements
 		if ( next ) {
 			initContractExpressionCtx();
 		}
+		else {
+			close();
+		}
 		return next;
+	}
+	
+	
+	public void close() throws SQLException {
+		if ( this.resultSet != null ) {
+			this.resultSet.close();
+			this.resultSet = null;
+		}
+		if ( this.ceventStmt != null ) {
+			this.ceventStmt.close();
+			this.ceventStmt = null;
+		}
+		if ( this.cleaveStmt != null ) {
+			this.cleaveStmt.close();
+			this.cleaveStmt = null;
+		}
+		if ( this.paymentStmt != null ) {
+			this.paymentStmt.close();
+			this.paymentStmt = null;
+		}
+		if ( this.deductionStmt != null ) {
+			this.deductionStmt.close();
+			this.deductionStmt = null;
+		}
+		if ( this.agreementContextFactory != null ) {
+			this.agreementContextFactory.close();
+			this.agreementContextFactory = null;
+		}
+		if ( this.agreementPaymentsFactory != null ) {
+			this.agreementPaymentsFactory.close();
+			this.agreementPaymentsFactory = null;
+		}
+		if ( this.calendarFactory != null ) {
+			this.calendarFactory.close();
+			this.calendarFactory = null;
+		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
 	}
 
 	//----------------------------------------------------------------------------------------
 	// don't look it's private
 	//----------------------------------------------------------------------------------------
+	
 	
 	
 	private void initResultSet() 
@@ -603,7 +653,7 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 		Long salaryDays = getVariable(SALARY_DAYS, Long.class );
 		
-		return salaryDays == null ? null : salaryDays * weekHours.doubleValue() / 7; 
+		return salaryDays == null ? null : Math.ceil(salaryDays * weekHours.doubleValue() / 7); // TODO : ¿ Se redondean las horas hacia arriba ?  
 	}
 	
 	private boolean isIndefinite() {
@@ -614,6 +664,15 @@ public class SQLContractSalaryCalculatorContext implements
 	private boolean isFullTime() {
 		String tc2 = getVariable(TC2, String.class);
 		return tc2 == null ? true : "14".indexOf(tc2.charAt(0)) != -1; 
+	}
+
+	private boolean isAssimilatted() {
+		Object object = getObject(SQLConstants.ENTERPRISE_CCC, EnterpriseCccColumns.TYPE);
+		if ( object == null ){
+			return false;
+		}
+		Integer ordinal = (Integer ) object;
+		return ordinal == CCCType.ASSIMILATEDS.ordinal();
 	}
 
 	private double getDoubleVariable(ContractVariables var) {
@@ -726,6 +785,15 @@ public class SQLContractSalaryCalculatorContext implements
 				}
 		);
 
+		this.contractExpressionContext.addVariable(ASSIMILATED, 
+				new LazyTimedObject<Boolean>(){
+					@Override
+					public Boolean create() {
+						return isAssimilatted();
+					}
+				}
+		);
+
 		// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de querys adicionales...)
 		this.contractExpressionContext.addVariable(ACTUAL_DAYS, 
 				new LazyTimedObject<Long>(){
@@ -735,6 +803,7 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 				}
 		);
+		
 
 		loadContractLeave(this.contractExpressionContext);
 		loadContractData(this.contractExpressionContext);
