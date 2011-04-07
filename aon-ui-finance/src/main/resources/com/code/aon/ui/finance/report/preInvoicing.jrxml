@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.2100000000000004"/>
-	<property name="ireport.x" value="60"/>
+	<property name="ireport.x" value="37"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -20,7 +20,6 @@
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="detailList" class="java.util.LinkedList"/>
 	<field name="id" class="java.lang.Integer"/>
-	<variable name="invoiceTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup"/>
 	<variable name="currentPreInvoice" class="com.code.aon.finance.invoicing.engine.fee.PreInvoice" resetType="Group" resetGroup="invoiceGroup">
 		<variableExpression><![CDATA[(com.code.aon.finance.invoicing.engine.fee.PreInvoice)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
@@ -36,9 +35,7 @@
 	<variable name="retentionTotalAmount" class="java.lang.Double" resetType="None">
 		<variableExpression><![CDATA[$V{retentionTotalAmount}]]></variableExpression>
 	</variable>
-	<variable name="reportTotal" class="java.lang.Double" resetType="None" calculation="Sum">
-		<variableExpression><![CDATA[$V{invoiceTotal}]]></variableExpression>
-	</variable>
+	<variable name="invoiceTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup"/>
 	<variable name="invoiceTotalAmount" class="java.lang.Double" resetType="None" incrementType="Report">
 		<variableExpression><![CDATA[$V{invoiceTotalAmount}]]></variableExpression>
 	</variable>
@@ -248,7 +245,7 @@
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{detailList})]]></dataSourceExpression>
 				<returnValue subreportVariable="invoiceTotalRounded" toVariable="invoiceTotal"/>
-				<returnValue subreportVariable="invoiceTotalRounded" toVariable="invoiceTotalAmount"/>
+				<returnValue subreportVariable="invoiceTotalRounded" toVariable="invoiceTotalAmount" calculation="Sum"/>
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("preInvoicingDetail")]]></subreportExpression>
 			</subreport>
 			<line>
