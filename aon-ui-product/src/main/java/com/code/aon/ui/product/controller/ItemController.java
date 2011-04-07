@@ -26,7 +26,7 @@ public class ItemController extends BasicController {
 		Item item = (Item)this.getTo();
 		double price = 0;
 		if (event.getNewValue() != null	&& !event.getNewValue().toString().equals("")) {
-			double salesPrice = CommonUtil.round(new Double(event.getNewValue().toString()).doubleValue());
+			double salesPrice = CommonUtil.round(((Double)event.getNewValue()).doubleValue());
 
 			Product product = item.getProduct();
 			double vatPercent = (product.getVat() != null) ? product.getVat().getPercentage() : 0;
