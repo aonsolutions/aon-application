@@ -149,11 +149,13 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 
 			salaryBuilder.setRawCgcBase(quoteCalculator.getRawCgcBase());
 
-			salaryBuilder.setCgcBase(quoteCalculator.getCgcBase()); 
-			expressionContext.addVariable(CGC_BASE, quoteCalculator.getCgcBase() , start, end );
+			salaryBuilder.setCgcBase(quoteCalculator.getCgcBase());
+			double cgcBaseVar = quoteCalculator.getCgcBase() - quoteCalculator.getMaternityBase();
+			expressionContext.addVariable(CGC_BASE, cgcBaseVar , start, end );
 			
 			salaryBuilder.setCgpBase(quoteCalculator.getCgpBase());
-			expressionContext.addVariable(CGP_BASE, quoteCalculator.getCgpBase(), start, end );
+			double cgpBaseVar = quoteCalculator.getCgpBase() - quoteCalculator.getMaternityBase();
+			expressionContext.addVariable(CGP_BASE, cgpBaseVar, start, end );
 
 			salaryBuilder.setNonHExtraBase(quoteCalculator.getNonStructuralBase()); 
 			expressionContext.addVariable(NON_STRUCTURAL_OVERTIME_BASE, quoteCalculator.getNonStructuralBase(), start, end );

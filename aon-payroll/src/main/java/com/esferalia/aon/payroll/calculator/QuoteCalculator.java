@@ -64,6 +64,8 @@ public abstract class QuoteCalculator {
 	public double getNonStructuralBase() {
 		return nonStructuralBase;
 	}
+	
+	public abstract double  getMaternityBase();
 
 	public abstract void quote(IContractPayment payment, Date start, Date end, double amount ) throws AonException;
 	
@@ -76,6 +78,11 @@ public abstract class QuoteCalculator {
 			throws AonException 
 		{
 			return; // No cotiza...
+		}
+		
+		@Override
+		public double getMaternityBase() {
+			return 0.00;
 		}
 		
 		private static QuoteCalculator SINGLETON = new NonQuote();
@@ -107,9 +114,7 @@ public abstract class QuoteCalculator {
 		
 		public double getCgcBase() {
 			if ( cgcBase == null ) {
-				Double maternity = bases.containsKey(MATERNITY.getName()) ? 
-						bases.get(MATERNITY.getName()) : 0.00; // restamos la prestación por maternidad
-				cgcBase = getLimitedCgcBase(rawCgcBase - maternity, context, salaryStart, salaryEnd);
+				cgcBase = getLimitedCgcBase(rawCgcBase, context, salaryStart, salaryEnd);
 			}
 			return cgcBase;
 		}
@@ -120,6 +125,12 @@ public abstract class QuoteCalculator {
 				cgpBase = getLimitedCgpBase(rawCgpBase, context, salaryStart, salaryEnd);
 			}
 			return cgpBase;
+		}
+		
+		@Override
+		public double getMaternityBase() {
+			return bases.containsKey(MATERNITY.getName()) ? 
+				bases.get(MATERNITY.getName()) : 0.00;
 		}
 		
 		

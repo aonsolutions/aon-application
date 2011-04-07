@@ -478,17 +478,37 @@ public class SQLContractSalaryCalculatorContext implements
 			this.deductionStmt.close();
 			this.deductionStmt = null;
 		}
+		if ( this.agreementExpressionContexts != null ){
+			this.agreementExpressionContexts.clear();
+			this.agreementExpressionContexts = null;
+		}
 		if ( this.agreementContextFactory != null ) {
 			this.agreementContextFactory.close();
 			this.agreementContextFactory = null;
+		}
+		if ( this.agreementExpressionContexts != null ){
+			this.agreementExpressionContexts.clear();
+			this.agreementExpressionContexts = null;
 		}
 		if ( this.agreementPaymentsFactory != null ) {
 			this.agreementPaymentsFactory.close();
 			this.agreementPaymentsFactory = null;
 		}
+		if ( this.calendars != null ){
+			this.calendars.clear();
+			this.calendars = null;
+		}
 		if ( this.calendarFactory != null ) {
 			this.calendarFactory.close();
 			this.calendarFactory = null;
+		}
+		if ( this.systemDeductions != null ) {
+			this.systemDeductions.clear();
+			this.systemDeductions = null;
+		}
+		if ( this.systemPayments != null ) {
+			this.systemPayments.clear();
+			this.systemPayments = null;
 		}
 	}
 
