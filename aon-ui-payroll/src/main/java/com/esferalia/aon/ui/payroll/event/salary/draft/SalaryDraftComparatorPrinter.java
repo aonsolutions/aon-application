@@ -421,7 +421,7 @@ public class SalaryDraftComparatorPrinter {
 			setTotalDeduction(getDecorableAmount(totalDeduction2, totalDeduction3));
 		}
 		public void setOther(IDeduction other2, IDeduction other3) {
-			setInKind(getDecorableAmount(getDoubleValue(other2), getDoubleValue(other3)));
+			setOther(getDecorableAmount(getDoubleValue(other2), getDoubleValue(other3)));
 		}
 		public void setInKind(IDeduction inKind2, IDeduction inKind3) {
 			setInKind(getDecorableAmount(getDoubleValue(inKind2), getDoubleValue(inKind3)));
