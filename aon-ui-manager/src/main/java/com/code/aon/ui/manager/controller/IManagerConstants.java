@@ -60,4 +60,8 @@ public interface IManagerConstants {
 	String MAIL_ACCOUNT_CREATE_SCRIPT = "MailAccount_create_script";
 	String MAIL_ACCOUNT_DELETE_SCRIPT = "MailAccount_delete_script";
 	
+	String DOMAIN_LIST = "domain_list";
+	String DOMAIN_FORM_TEMPLATE = "/com/code/aon/ui/manager/facelet/domain/form.xhtml";
+	String DOMAIN_LIST_TEMPLATE = "/com/code/aon/ui/manager/facelet/domain/list.xhtml";
+	
 }

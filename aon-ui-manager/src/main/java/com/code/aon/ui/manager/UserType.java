@@ -1,16 +1,19 @@
 package com.code.aon.ui.manager;
 
+import static com.code.aon.ui.manager.controller.IManagerConstants.DOMAIN_FORM_TEMPLATE;
+import static com.code.aon.ui.manager.controller.IManagerConstants.DOMAIN_LIST_TEMPLATE;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ui.manager.controller.ManagerController;
 
 public enum UserType {
 
-	ESFERALIA( "/homepage.xhtml" ),
+	ESFERALIA(DOMAIN_LIST_TEMPLATE),
 	
-	NORMAL("/com/code/aon/ui/manager/facelet/domain/form.xhtml"),
+	NORMAL(DOMAIN_FORM_TEMPLATE),
 	
-	PARENT("/com/code/aon/ui/manager/facelet/domain/list.xhtml");
+	PARENT(DOMAIN_LIST_TEMPLATE);
 	
 	private String template;
 	

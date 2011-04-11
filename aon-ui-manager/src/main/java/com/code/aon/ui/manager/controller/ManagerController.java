@@ -48,8 +48,6 @@ public class ManagerController implements IManagerConstants {
 	private static final String DEFAULT_PROPERTIES = PROPERTIES_PATH + "default.config.properties";
 	
 	private static final File MANAGER_PROPERTIES = new File( "/home/COMMON-RESOURCES/aon-manager/config.properties" );
-	
-	private final static String HOME = "home";
 
 	private String _user;
 
@@ -149,7 +147,7 @@ public class ManagerController implements IManagerConstants {
 	}
 	
 	public String loginAction() {
-		return isAdministrator() ? HOME : null;
+		return isAdministrator() ? DOMAIN_LIST : null;
 	}
 	
 	public boolean isTermsOfServiceAccepted() {
