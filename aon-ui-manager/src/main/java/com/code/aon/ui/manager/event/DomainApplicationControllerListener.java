@@ -19,7 +19,6 @@ import com.code.aon.ui.manager.controller.DomainDBConnectionController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.manager.controller.ManagerController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.LdapBasicController;
 
 public class DomainApplicationControllerListener extends ControllerAdapter implements IManagerConstants {
 	
@@ -61,19 +60,13 @@ public class DomainApplicationControllerListener extends ControllerAdapter imple
 		getManager().getLogger().domainApplicationRemoved(application);
 	}	
 	
-	private void updateController( String name, Name parent ) {
-		LdapBasicController controller = (LdapBasicController) AonUtil.getRegisteredBean(name);
-		controller.updateBaseDN(parent);
-		controller.onSearch(null);				
-	}
-	
 	private void updateApplication( DomainApplicationController dac ) {
 		DomainApplication application = dac.getDomainApplication();
 		Name applicationId = NameResolver.getApplicationDN(application.getCommonName());
-		updateController(ROLE_CONTROLLER_NAME, applicationId);
-		updateController(PROFILE_CONTROLLER_NAME, applicationId);
-		updateController(DOMAIN_APPLICATION_USER_CONTROLLER_NAME, application.getId());
-		updateController(DOMAIN_PROFILE_CONTROLLER_NAME, application.getId());
+		ManagerController.updateController(ROLE_CONTROLLER_NAME, applicationId);
+		ManagerController.updateController(PROFILE_CONTROLLER_NAME, applicationId);
+		ManagerController.updateController(DOMAIN_APPLICATION_USER_CONTROLLER_NAME, application.getId());
+		ManagerController.updateController(DOMAIN_PROFILE_CONTROLLER_NAME, application.getId());
 	}
 	
 	private void setDBConnection( DomainApplicationController dac, DomainApplication application ) throws ControllerListenerException {

@@ -6,9 +6,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.manager.controller.ApplicationController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
-import com.code.aon.ui.manager.controller.ProfileController;
-import com.code.aon.ui.manager.controller.RoleController;
-import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.manager.controller.ManagerController;
 
 public class ApplicationControllerListener extends ControllerAdapter implements IManagerConstants {
 
@@ -27,12 +25,8 @@ public class ApplicationControllerListener extends ControllerAdapter implements 
 	}
 	
 	private void updateApplication( Application application ) {
-		RoleController rc = (RoleController) AonUtil.getRegisteredBean(ROLE_CONTROLLER_NAME);
-		rc.updateBaseDN(application.getId());
-		rc.onSearch(null);
-		ProfileController pc = (ProfileController) AonUtil.getRegisteredBean(PROFILE_CONTROLLER_NAME);
-		pc.updateBaseDN(application.getId());
-		pc.onSearch(null);		
+		ManagerController.updateController(ROLE_CONTROLLER_NAME, application.getId());
+		ManagerController.updateController(PROFILE_CONTROLLER_NAME, application.getId());
 	}
 
 }

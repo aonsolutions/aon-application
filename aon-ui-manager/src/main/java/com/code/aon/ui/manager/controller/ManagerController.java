@@ -15,6 +15,7 @@ import java.util.Properties;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ import com.code.aon.ui.manager.BeanManagerEx;
 import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.manager.util.ManagerLogger;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.LdapBasicController;
 
 public class ManagerController implements IManagerConstants {
 	
@@ -323,4 +325,11 @@ public class ManagerController implements IManagerConstants {
         return exitVal;
 	}
 
+	
+	public static void updateController( String name, Name parent ) {
+		LdapBasicController controller = (LdapBasicController) AonUtil.getRegisteredBean(name);
+		controller.updateBaseDN(parent);
+		controller.onSearch(null);				
+	}
+	
 }

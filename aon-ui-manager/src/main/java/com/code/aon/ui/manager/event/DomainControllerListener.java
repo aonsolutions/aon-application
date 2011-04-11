@@ -13,8 +13,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
-import com.code.aon.ldap.IAonObjectClasses;
-import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
@@ -26,7 +24,6 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.manager.UserType;
-import com.code.aon.ui.manager.controller.AliasController;
 import com.code.aon.ui.manager.controller.DomainApplicationController;
 import com.code.aon.ui.manager.controller.DomainController;
 import com.code.aon.ui.manager.controller.DomainDBConnectionController;
@@ -166,9 +163,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		duc.updateBaseDN(domain.getId());		
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		ddbc.updateBaseDN(domain.getId());		
-		AliasController ac = (AliasController) AonUtil.getRegisteredBean(ALIAS_CONTROLLER_NAME);
-		ac.updateBaseDN(domain.getId());
-		ac.onCancel(null);
+		ManagerController.updateController(ALIAS_CONTROLLER_NAME, domain.getId());
 	}
 
 	private void updateDomainManagement( DomainController domainController, boolean updated ) throws ManagerBeanException {
