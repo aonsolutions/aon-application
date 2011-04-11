@@ -2368,6 +2368,12 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-security{
 	background:transparent url(images/aon-main-menu/aon-icon-security.png) no-repeat scroll center left;
 }
+.aon-icon-registradores{
+	background:transparent url(images/aon-main-menu/aon-icon-registradores.png) no-repeat scroll center left;
+}
+.aon-icon-registradores-black{
+	background:transparent url(images/aon-main-menu/aon-icon-registradores-black.png) no-repeat scroll center left;
+}
 
 .aon-subTable-green-header{
 	padding-left: 10px; 
