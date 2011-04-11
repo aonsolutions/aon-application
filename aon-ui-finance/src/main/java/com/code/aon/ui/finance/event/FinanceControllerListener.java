@@ -10,9 +10,12 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.finance.controller.FinanceController;
+import com.code.aon.ui.finance.controller.IFinanceConstants;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class FinanceControllerListener extends ControllerAdapter {
 
@@ -39,6 +42,28 @@ public class FinanceControllerListener extends ControllerAdapter {
 		finance.setPayment(controller.isPayment());
 		finance.setFinanceStatus(FinanceStatus.PENDING);
 		finance.setSecurityLevel(SecurityLevel.OFFICIAL);
+	}
+
+	@Override
+	public void beforeBeanCanceled(ControllerEvent event) throws ControllerListenerException {
+		FinanceController controller = (FinanceController)event.getController();
+		String invoiceFinanceControllerName = null;
+		if (controller.backAction() != null) {
+			if (controller.backAction().equals(IFinanceConstants.SALE_INVOICE_FORM_NAME)) {
+				invoiceFinanceControllerName = IFinanceConstants.SALE_INVOICE_FINANCE_CONTROLLER_NAME;
+			} else if (controller.backAction().equals(IFinanceConstants.PURCHASE_INVOICE_FORM_NAME)) {
+				invoiceFinanceControllerName = IFinanceConstants.PURCHASE_INVOICE_FINANCE_CONTROLLER_NAME;
+			} else if (controller.backAction().equals(IFinanceConstants.EXPENSE_INVOICE_FORM_NAME)) {
+				invoiceFinanceControllerName = IFinanceConstants.EXPENSE_INVOICE_FINANCE_CONTROLLER_NAME;
+			} else if (controller.backAction().equals(IFinanceConstants.UNDEDUCTIBLE_INVOICE_FORM_NAME)) {
+				invoiceFinanceControllerName = IFinanceConstants.UNDEDUCTIBLE_INVOICE_FINANCE_CONTROLLER_NAME;
+			}
+
+			if (invoiceFinanceControllerName != null) {
+				IController invoiceFinanceController = (IController)AonUtil.getRegisteredBean(invoiceFinanceControllerName);
+				invoiceFinanceController.onSearch(null);
+			}
+		}
 	}
 
 }
