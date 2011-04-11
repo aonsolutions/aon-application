@@ -38,6 +38,7 @@ import com.code.aon.finance.invoicing.engine.IInvoicingDAO;
 import com.code.aon.finance.invoicing.engine.IInvoicingEngine;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 
@@ -70,23 +71,23 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	}
 
 	private Criteria createInvoicingCriteria(InvoicingParameters params) throws ManagerBeanException {
-		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
+		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
 		Criteria criteria = new Criteria();
 		Expression dateExpression = createFromToExpression(params.getMonth(), params.getYear());
 		criteria.addExpression(dateExpression);
-		criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
-		criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_SECURITY_LEVEL), getSecurityLevel(params.isConfidential()));
+		criteria.addEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
+		criteria.addEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_SECURITY_LEVEL), getSecurityLevel(params.isConfidential()));
 		if (params.getItem() != null && params.getItem().getId() != null) {
-			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ITEM_ID), params.getItem().getId());
+			criteria.addEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ITEM_ID), params.getItem().getId());
 		}
 		if (params.getCategory() != null && params.getCategory().getId() != null) {
-			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ITEM_PRODUCT_CATEGORY_ID), params.getCategory().getId());
+			criteria.addEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_ITEM_PRODUCT_CATEGORY_ID), params.getCategory().getId());
 		}
 		if (params.getWorkPlace() != null && params.getWorkPlace().getId() != null) {
-			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlace().getId());
+			criteria.addEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
-		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
-		criteria.addOrder(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE));
+		criteria.addOrder(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
+		criteria.addOrder(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_LINE));
 		return criteria;
 	}
 
@@ -103,35 +104,37 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		calendar.set(Calendar.MINUTE, 59);
 		calendar.set(Calendar.SECOND, 59);
 		Date to = calendar.getTime();
-		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
-		Expression billingExpr = ExpressionUtilities.getBetweenExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_BILLING_DATE), from, to);
-		Expression initialExpr = ExpressionUtilities.getLessThanOrEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_INITIAL_DATE), to);
-        Expression finalExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_FINAL_DATE), from);
-        Expression finalNullExpr = ExpressionUtilities.getNullExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_FINAL_DATE));
+		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
+		Expression billingExpr = ExpressionUtilities.getBetweenExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_BILLING_DATE), from, to);
+		Expression initialExpr = ExpressionUtilities.getLessThanOrEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_INITIAL_DATE), to);
+        Expression finalExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_FINAL_DATE), from);
+        Expression finalNullExpr = ExpressionUtilities.getNullExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_FINAL_DATE));
         return ExpressionUtilities.getAndExpression(ExpressionUtilities.getAndExpression(billingExpr, initialExpr), ExpressionUtilities.getOrExpression(finalExpr, finalNullExpr));
 	}
 
 	@SuppressWarnings("unchecked")
-	private Criteria completeCriteriaWithCustomerData(Criteria criteria, InvoicingParameters params) throws ManagerBeanException {
-		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
-		if (params.getCustomer() != null && params.getCustomer().getId() != null) {
-			criteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomer().getId());
-			InvoicingGroup group = getInvoicingGroup(params.getCustomer().getRegistry());
-			if (group != null) {
-				IManagerBean invoicingGroupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
-				Expression expr = null;
-				Criteria parentCriteria = new Criteria();
-				parentCriteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_INVOICING_GROUP_ID), group.getId());
-				Iterator iter = invoicingGroupDetailBean.getList(parentCriteria).iterator();
-				while (iter.hasNext()) {
-					InvoicingGroupDetail detail = (InvoicingGroupDetail)iter.next();
-					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), detail.getChild().getId()));
-				}
+	private Criteria completeCriteriaWithCustomerData(Criteria criteria, Customer customer) throws ManagerBeanException {
+		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
+		if (customer != null && customer.getId() != null) {
+			Expression expr = null;
+			try {
+				expr = ExpressionUtilities.getExpression(customer.getId().toString(), feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID));
+			} catch (ExpressionException e) {
+				return criteria;
+			}
 
-				if (expr != null) {
-					criteria.addOrExpression(expr);
+			InvoicingGroup group = getInvoicingGroup(customer.getRegistry());
+			if (group != null) {
+				IManagerBean groupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
+				Criteria groupCriteria = new Criteria();
+				groupCriteria.addEqualExpression(groupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_INVOICING_GROUP_ID), group.getId());
+				Iterator iterator = groupDetailBean.getList(groupCriteria).iterator();
+				while (iterator.hasNext()) {
+					InvoicingGroupDetail detail = (InvoicingGroupDetail)iterator.next();
+					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), detail.getChild().getId()));
 				}
 			}
+			criteria.addExpression(expr);
 		}
 		return criteria;
 	}
@@ -166,11 +169,11 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		List parentFeeList = new LinkedList();
 		List childFeeList = new LinkedList();
 
-		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
+		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
 		Criteria feeCriteria = new Criteria();
 		feeCriteria.addExpression(criteria.getExpression());
-		feeCriteria = completeCriteriaWithCustomerData(feeCriteria, params);
-		List feeList = customerFeeBean.getList(feeCriteria);
+		feeCriteria = completeCriteriaWithCustomerData(feeCriteria, params.getCustomer());
+		List feeList = feeBean.getList(feeCriteria);
 		Iterator iterator = feeList.iterator();
 		while (iterator.hasNext()) {
 			CustomerFee customerFee = (CustomerFee)iterator.next();
@@ -180,8 +183,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 				if (!parentMap.containsKey(invoicingGroupDetail.getInvoicingGroup().getParent().getId())) {
 					Criteria parentCriteria = new Criteria();
 					parentCriteria.addExpression(feeCriteria.getExpression());
-					parentCriteria.addEqualExpression(customerFeeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), invoicingGroupDetail.getInvoicingGroup().getParent().getId());
-					if (customerFeeBean.getCount(parentCriteria) == 0) {
+					parentCriteria.addEqualExpression(feeBean.getFieldName(IFinanceAlias.CUSTOMER_FEE_CUSTOMER_ID), invoicingGroupDetail.getInvoicingGroup().getParent().getId());
+					if (feeBean.getCount(parentCriteria) == 0) {
 						Customer groupCustomer = new Customer();
 						groupCustomer.setId(invoicingGroupDetail.getInvoicingGroup().getParent().getId());
 						groupCustomer.setRegistry(invoicingGroupDetail.getInvoicingGroup().getParent());
@@ -289,11 +292,11 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 			tmpParams.setCustomer(customer);
 		}
 
-		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
+		IManagerBean feeBean = BeanManager.getManagerBean(CustomerFee.class);
 		Criteria feeCriteria = new Criteria();
 		feeCriteria.addExpression(criteria.getExpression());
-		feeCriteria = completeCriteriaWithCustomerData(feeCriteria, tmpParams);
-		Iterator feeIter = customerFeeBean.getList(feeCriteria).iterator();
+		feeCriteria = completeCriteriaWithCustomerData(feeCriteria, tmpParams.getCustomer());
+		Iterator feeIter = feeBean.getList(feeCriteria).iterator();
 		if (feeIter.hasNext()) {
 			Invoice invoice = createInvoice(group, counter, params);
 			counter++;
