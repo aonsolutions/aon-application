@@ -24,6 +24,7 @@ public interface IAccountingConstants {
 	String FINANCIAL_STATEMENT_CONTROLLER_NAME = "financialStatement";
 	String STATEMENT_CONTROLLER_NAME = "statement";
 	String TRIAL_BALANCE_CONTROLLER_NAME = "trialBalance";
+	String ACCOUNTING_COLLECTIONS_CONTROLLER_NAME =  "accountingCollections";
 	
 	// NAVIGATION KEYS
 	String ACCOUNT_ENTRY_FORM_NAVKEY = "accountEntry_form";

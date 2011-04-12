@@ -176,6 +176,7 @@ public class BalanceManager {
 			if (parameters.isPreviousPeriodVisible()) {
 				previous = parameters.clone();
 				changeParameters(previous);
+				parameters.setPreviousPeriodVisible(previous.isPreviousPeriodVisible());
 			}
 			for (BalanceItem item: list) {
 				if (!item.isResolved()) {
@@ -282,7 +283,7 @@ public class BalanceManager {
 					previous.setAccountExpression(exp);
 				}
 				Double a = getAccountsAmount(parameters,bd.isCreditNature());
-				if (bd.isCreditNature() && a > 0 ) {
+				if (a > 0 ) {
 					pAmount = CommonUtil.round(pAmount + a);
 				}
 				if (parameters.isPreviousPeriodVisible()) {
@@ -312,7 +313,7 @@ public class BalanceManager {
 					previous.setAccountExpression(exp);
 				}
 				Double a = getAccountsAmount(parameters,!bd.isCreditNature());
-				if (!bd.isCreditNature() && a > 0 ) {
+				if (a > 0 ) {
 					nAmount = CommonUtil.round(nAmount + a);
 				}
 				if (parameters.isPreviousPeriodVisible()) {
@@ -337,13 +338,16 @@ public class BalanceManager {
 	}
 
 	private Double getAccountsAmount(SummaryProviderParameters params, boolean creditNature) throws ManagerBeanException {
-		SummaryCollection summaryCollection = new SummaryCollection();
-		SummaryProvider summaryProvider = new SummaryProvider();
-		summaryCollection = summaryProvider.getSummaryCollection(params,false);
-		if (creditNature) {
-			return CommonUtil.round(summaryCollection.getCredit() - summaryCollection.getDebit());
+		if (params.getPeriod() != null && params.getPeriod().getId() != null) {
+			SummaryCollection summaryCollection = new SummaryCollection();
+			SummaryProvider summaryProvider = new SummaryProvider();
+			summaryCollection = summaryProvider.getSummaryCollection(params,false);
+			if (creditNature) {
+				return CommonUtil.round(summaryCollection.getCredit() - summaryCollection.getDebit());
+			}
+			return CommonUtil.round(summaryCollection.getDebit() - summaryCollection.getCredit());
 		}
-		return CommonUtil.round(summaryCollection.getDebit() - summaryCollection.getCredit());
+		return 0.0;
 	}
 	
 	private void changeParameters(SummaryProviderParameters previous) throws ManagerBeanException {
@@ -370,6 +374,7 @@ public class BalanceManager {
 				previous.setPeriod( (Period) iter.next());
 			} else {
 				previous.setPeriod( null );
+				previous.setPreviousPeriodVisible(false);
 			}
 		}
 	}
@@ -447,6 +452,7 @@ public class BalanceManager {
 			if (parameters.isPreviousPeriodVisible()) {
 				previousParameters = parameters.clone();
 				changeParameters(previousParameters);
+				parameters.setPreviousPeriodVisible(previousParameters.isPreviousPeriodVisible());
 			}
 			DocumentFactory factory = DocumentFactory.getInstance();
 			

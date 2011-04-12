@@ -174,7 +174,7 @@ public class BalanceSheetController implements ICollectionProvider {
 
 	public List<SelectItem> getBalances() throws ManagerBeanException {
 		AccountingCollectionsController c = (AccountingCollectionsController) AonUtil
-				.getRegisteredBean("accountingCollections");
+				.getRegisteredBean( IAccountingConstants.ACCOUNTING_COLLECTIONS_CONTROLLER_NAME);
 		return c.getBalances(balanceType);
 	}
 
