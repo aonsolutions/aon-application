@@ -8,15 +8,24 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.registry.IRegistry;
+import com.code.aon.registry.enumeration.DocumentType;
+import com.code.aon.registry.enumeration.RegistryType;
 
 public class RegistryRichLookupBean extends RichLookupBean {
     
 	private final static Logger LOGGER = LoggerFactory.getLogger(RegistryRichLookupBean.class);
 	
+	public void onChangeRegistryType(ActionEvent event) {
+		IRegistry iRegistry = (IRegistry) getTo();
+		iRegistry.getRegistry().setDocumentType(iRegistry.getRegistry().getType() == RegistryType.LEGAL ? DocumentType.CIF : DocumentType.NIF);
+	}
+	
 	public void onChangeDocument(ActionEvent event) {
+		IRegistry iRegistry = (IRegistry) getTo();
+		iRegistry.getRegistry().setType(iRegistry.getRegistry().getDocumentType() == DocumentType.CIF ? RegistryType.LEGAL : RegistryType.NATURAL);
+
 		try {
 			if (isNew()) {
-				IRegistry iRegistry = (IRegistry) getTo();
 				RegistryController.validateDocument(iRegistry, getController().getManagerBean());
 			}
 		} catch (ManagerBeanException e) {
