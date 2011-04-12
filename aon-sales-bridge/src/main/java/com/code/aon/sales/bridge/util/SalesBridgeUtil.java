@@ -62,7 +62,7 @@ public class SalesBridgeUtil {
 		RegistryPayMethod rPayMethod = new RegistryPayMethod();
 		rPayMethod.setRegistry(offer.getTarget().getRegistry());
 		rPayMethod.setPayment(offer.getPayMethod());
-		rPayMethod.setNumberOfPayments(offer.getNumberOfPayments());
+		rPayMethod.setNumberOfPayments((offer.getNumberOfPayments() == 0) ? 1 : offer.getNumberOfPayments());
 		rPayMethod.setDaysToFirstPayment(offer.getDaysToFirstPayment());
 		rPayMethod.setDaysBetweenPayments(offer.getDaysBetweenPayments());
 		rPayMethod.setPaymentDays(offer.getPaymentDays());
