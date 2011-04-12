@@ -1,6 +1,5 @@
 package com.code.aon.accounting.summary;
 
-import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.dao.IAccountAlias;
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
@@ -25,6 +25,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -69,6 +70,7 @@ public class SummaryProvider {
 		return getSummaryCollection(params,true);
 	}
 
+	@SuppressWarnings("deprecation")
 	public SummaryCollection getSummaryCollection(SummaryProviderParameters params, boolean authomaticBalance ) throws ManagerBeanException {
 		PreparedStatement sum = null;
 		ResultSet sumSet = null;
@@ -82,47 +84,59 @@ public class SummaryProvider {
 			
 			HibernateUtil.startSession(sessionName);
 			HibernateUtil.beginTransaction(sessionName);
-			StringWriter sumStmt = getStatement(params);
+			StringBuffer sumStmt = getStatement(params);
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			List<ITransferObject> accountList = accountBean.getList(getCriteria(params));
-			boolean operatingEntry = false;
 			Period period = params.getPeriod();
+			boolean openingEntry = false;
+			if (params.isExcludeOpeningEntry() && params.getPeriod() != null && params.getPeriod().getId() != null) {
+				openingEntry = getAccountingUtil().existsOpeningEntry(period, params.getSecurityLevel());
+			}
+			boolean operatingEntry = false;
 			if (params.isExcludeOperatingEntry() && params.getPeriod() != null && params.getPeriod().getId() != null) {
-				operatingEntry = getAccountingUtil().existsEntry(period, AccountEntryType.OPERATING, params.getSecurityLevel());
+				operatingEntry = getAccountingUtil().existsOperatingEntry(period, params.getSecurityLevel());
 			}
 			boolean closingEntry = false;
 			if (params.isExcludeClosingEntry() && params.getPeriod() != null && params.getPeriod().getId() != null) {
-				closingEntry = getAccountingUtil().existsEntry(period, AccountEntryType.CLOSING, params.getSecurityLevel());
+				closingEntry = getAccountingUtil().existsClosingEntry(period, params.getSecurityLevel());
 			}
-			if (operatingEntry || closingEntry) {
-				StringBuilder entryStatement = getEntryStatement(params);
-				entryStmt = HibernateUtil.getSQLConnection(sessionName).prepareStatement(entryStatement.toString());	
-			}
+			StringBuffer entryStatement = getEntryStatement(params);
+			entryStmt = HibernateUtil.getSQLConnection(sessionName).prepareStatement(entryStatement.toString());	
+			int p = 1  
+			 + (params.getFromDate() != null?1:0)
+			 + (params.getToDate() != null?1:0)
+			 + (params.getPeriod() != null && params.getPeriod().getId() != null?1:0)
+			 + (params.getSecurityLevel() != null?1:0);
 			sum = prepareStatement(sessionName,sum,sumStmt,params);
 			boolean add;
 			SummaryCollection sc = new SummaryCollection();
 			for (ITransferObject to : accountList) {
 				Account account = (Account) to;
 				add = true;
-				String likeAccount = account.getId() + PERCENT; 
-				sum.setString(1, likeAccount);
+				String likeAccount = account.getId() + PERCENT;
+				sum.setString(p, likeAccount);
 				sumSet = sum.executeQuery();
 				Double debit = 0.0;
 				Double credit = 0.0;
 				Summary s = null;
-				Balance oeb = null;
-				Balance ceb = null;
+				Balance openingBalance = null;
+				openingBalance = excludeEntry(entryStmt,AccountEntryType.OPENING.ordinal(),account.getId(), params );
+				if (openingEntry) {
+					credit = (openingBalance!=null)?CommonUtil.round(credit - openingBalance.getCredit()):credit;	
+					debit = (openingBalance!=null)?CommonUtil.round(debit - openingBalance.getDebit()):debit;	
+				}
+				Balance operatingBalance = null;
 				if (operatingEntry) {
-					oeb = excludeEntry(entryStmt,AccountEntryType.OPERATING.ordinal(),account.getId(), params );
-					credit = (oeb!=null)?CommonUtil.round(credit - oeb.getCredit()):credit;	
-					debit = (oeb!=null)?CommonUtil.round(debit - oeb.getDebit()):debit;	
+					operatingBalance = excludeEntry(entryStmt,AccountEntryType.OPERATING.ordinal(),account.getId(), params );
+					credit = (operatingBalance!=null)?CommonUtil.round(credit - operatingBalance.getCredit()):credit;	
+					debit = (operatingBalance!=null)?CommonUtil.round(debit - operatingBalance.getDebit()):debit;	
 				}
+				Balance closingBalance = null;
 				if (closingEntry) {
-					ceb = excludeEntry(entryStmt,AccountEntryType.CLOSING.ordinal(),account.getId(), params );
-					credit = (ceb!=null)?CommonUtil.round(credit - ceb.getCredit()):credit;	
-					debit = (ceb!=null)?CommonUtil.round(debit - ceb.getDebit()):debit;	
+					closingBalance = excludeEntry(entryStmt,AccountEntryType.CLOSING.ordinal(),account.getId(), params );
+					credit = (closingBalance!=null)?CommonUtil.round(credit - closingBalance.getCredit()):credit;	
+					debit = (closingBalance!=null)?CommonUtil.round(debit - closingBalance.getDebit()):debit;	
 				}
-
 				if (!params.isMonthlyGrouping()) {
 					if (sumSet.next()) {
 						debit = CommonUtil.round(debit + sumSet.getDouble(1));
@@ -132,7 +146,7 @@ public class SummaryProvider {
 					s.setDebit(debit);
 					s.setCredit(credit);
 				} else {
-					s = getSummaryMonthly(sumSet,account.getId(),debit,credit,authomaticBalance,oeb,ceb);
+					s = getSummaryMonthly(sumSet,account.getId(),debit,credit,authomaticBalance,operatingBalance,closingBalance);
 				}
 				if (!params.isNoTouchedAccountVisible() && 
 						(CommonUtil.round(s.getDebit()) == 0 && CommonUtil.round(s.getCredit()) == 0)) {
@@ -151,8 +165,9 @@ public class SummaryProvider {
 				if (add) {
 					s.setId(account.getId());
 					s.setDescription(account.getDescription());
-					s.setLastLevel(params.getAccountLevel() == account.getLevel()
-							|| account.isEntryEnabled());
+					s.setLastLevel(params.getAccountLevel() == account.getLevel() || account.isEntryEnabled());
+					s.setInitialCredit(openingBalance!=null?openingBalance.getCredit():0.0);					
+					s.setInitialDebit(openingBalance!=null?openingBalance.getDebit():0.0);
 					sc.add(s);
 				}
 				sumSet.close();
@@ -190,6 +205,9 @@ public class SummaryProvider {
 
 	private Balance excludeEntry(PreparedStatement entryStmt, int ordinal, String account, SummaryProviderParameters params) throws SQLException {
 		int i = 0;
+		if (params.getPeriod() != null && params.getPeriod().getId() != null) {
+			entryStmt.setString(++i, params.getPeriod().getId() );
+		}
 		entryStmt.setInt(++i, ordinal);
 		if (params.getFromDate() != null ) {
 			entryStmt.setDate(++i, new java.sql.Date( params.getFromDate().getTime() ) );
@@ -217,13 +235,14 @@ public class SummaryProvider {
 		return b;
 	}
 
-	private StringBuilder getEntryStatement(SummaryProviderParameters params) {
-		StringBuilder stmt = new StringBuilder();
+	private StringBuffer getEntryStatement(SummaryProviderParameters params) {
+		StringBuffer stmt = new StringBuffer();
 		stmt.append("SELECT a.entry_date,SUM(d.debit),SUM(d.credit)");
 		stmt.append(" FROM account_entry a,account_entry_detail d ");
-		stmt.append(" WHERE a.account_period = '");
-		stmt.append( params.getPeriod().getId() );
-		stmt.append("'");
+		stmt.append(" WHERE a.id = d.account_entry");
+		if (params.getPeriod() != null && params.getPeriod().getId() != null) {
+			stmt.append(" AND a.account_period = ?");
+		}
 		stmt.append(" AND a.entry_type = ?");
 		if (params.getFromDate() != null ) {
 			stmt.append(" AND a.entry_date >= ?");
@@ -234,24 +253,26 @@ public class SummaryProvider {
 		if (params.getSecurityLevel() != null ) {
 			stmt.append(" AND a.security_level = ?");
 		}
-		stmt.append(" AND a.id = d.account_entry");
-		stmt.append(" AND d.account LIKE ?");
+		
+		
+		// CUIDADO! A tener en cuenta si se modifica. La siguiente variable 
+		// host se añade dentro del bucle. El índice depende de las 
+		// que se hayan añadido anteriormente en función de los parámetros.
+ 		stmt.append(" AND d.account LIKE ?");
+ 		// ----------------------------------------------------------------
+ 		
 		stmt.append(" GROUP BY a.entry_date");
 		return stmt;
 	}
 	
-	private StringWriter getStatement(SummaryProviderParameters params) {
-		StringWriter sumStmt = new StringWriter();
-		sumStmt.append("SELECT SUM(s.debit),SUM(s.credit)");
+	private StringBuffer getStatement(SummaryProviderParameters params) {
+		StringBuffer sumStmt = new StringBuffer();
+		sumStmt.append("SELECT SUM(d.debit),SUM(d.credit)");
 		if (params.isMonthlyGrouping()) {
 			sumStmt.append(",MONTH(s.entry_date)");
 		}
-		if (!params.isBudgeted()) {
-			sumStmt.append(" FROM account_summary s ");
-		} else {
-			sumStmt.append(" FROM account_budget_detail s ");
-		}
-		sumStmt.append(" WHERE s.account LIKE ?");
+		sumStmt.append(" FROM account_entry s, account_entry_detail d");
+		sumStmt.append(" WHERE s.id = d.account_entry");
 		if (params.getFromDate() != null) {
 			sumStmt.append(" AND s.entry_date >= ?");
 		}
@@ -264,6 +285,7 @@ public class SummaryProvider {
 		if (params.getSecurityLevel() != null) {
 			sumStmt.append(" AND s.security_level = ?");
 		}
+		sumStmt.append(" AND d.account LIKE ?");
 		if (params.isMonthlyGrouping()) {
 			sumStmt.append(" GROUP BY MONTH(s.entry_date)");
 		}
@@ -350,9 +372,10 @@ public class SummaryProvider {
 		return criteria;
 	}
 
-	private PreparedStatement prepareStatement(String sessionName,PreparedStatement sum, StringWriter sumStmt, SummaryProviderParameters params) throws SQLException {
+	@SuppressWarnings("deprecation")
+	private PreparedStatement prepareStatement(String sessionName,PreparedStatement sum, StringBuffer sumStmt, SummaryProviderParameters params) throws SQLException {
 		sum = HibernateUtil.getSQLConnection(sessionName).prepareStatement(sumStmt.toString());
-		int p = 2;
+		int p = 1;
 		if (params.getFromDate() != null) {
 			sum.setDate(p, new java.sql.Date(params.getFromDate().getTime()));
 			p++;
@@ -382,5 +405,178 @@ public class SummaryProvider {
 		params.setAccountExpression(accountExpression);
 		return getSummaryCollection(params);
 	}
+	
+	public Balance getOpeningEntryBalance(Date date, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
+		return getAccountEntryBalance(date, accountId, AccountEntryType.OPENING,securityLevel);
+	}
+	public Balance getOpeningEntryBalance(Period period, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
+		if (period == null) {
+			throw new IllegalArgumentException("Period param must not be null.");
+		}
+		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.OPENING,securityLevel);
+	}
 
+	public Balance getOperatingEntryBalance(Date date, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
+		return getAccountEntryBalance(date, accountId, AccountEntryType.OPERATING,securityLevel);
+	}
+	public Balance getOperatingEntryBalance(Period period, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
+		if (period == null) {
+			throw new IllegalArgumentException("Period param must not be null.");
+		}
+		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.OPERATING,securityLevel);
+	}
+
+	public Balance getClosingEntryBalance(Date date, String accountId,SecurityLevel securityLevel) throws ManagerBeanException {
+		return getAccountEntryBalance(date, accountId, AccountEntryType.CLOSING,securityLevel);
+	}
+	public Balance getClosingEntryBalance(Period period, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
+		if (period == null) {
+			throw new IllegalArgumentException("period param must not be null.");
+		}
+		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.CLOSING,securityLevel);
+	}
+
+	@SuppressWarnings("deprecation")
+	private Balance getAccountEntryBalance(Date date, String accountId, AccountEntryType type,SecurityLevel securityLevel)
+			throws ManagerBeanException {
+		if (date == null) {
+			throw new IllegalArgumentException("date param must not be null.");
+		}
+		if (accountId == null) {
+			throw new IllegalArgumentException("accountId param must not be null.");
+		}
+		if (type == null) {
+			throw new IllegalArgumentException("type param must not be null.");
+		}
+		
+		PreparedStatement entryStmt = null;
+		ResultSet entrySet  = null;
+		try {
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT a.id,a.entry_date,SUM(d.debit),SUM(d.credit)");
+			stmt.append(" FROM account_entry a,account_entry_detail d ");
+			stmt.append(" WHERE a.id = d.account_entry");
+			stmt.append(" AND a.entry_type = ?");
+			stmt.append(" AND a.entry_date <= ?");
+			if (securityLevel != null ) {
+				stmt.append(" AND a.security_level = ?");
+			}
+	 		stmt.append(" AND d.account = ?");
+			stmt.append(" GROUP BY a.id,a.entry_date");
+	 		stmt.append(" ORDER BY a.entry_date desc");
+			String sessionName = HibernateUtil.getSessionFactoryName(AccountEntry.class.getName());
+			entryStmt = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString());
+			int i = 0;
+			entryStmt.setInt(++i, type.ordinal());
+			entryStmt.setDate(++i, new java.sql.Date( date.getTime() ) );
+			if (securityLevel != null ) {
+				entryStmt.setInt(++i, securityLevel.ordinal() );
+			}
+			entryStmt.setString(++i, accountId);
+			entrySet = entryStmt.executeQuery();
+			Balance b = null;
+			if (entrySet.next()) {
+				b = new Balance();
+				b.setAccountEntry(entrySet.getInt(1));
+				b.setFromDate(entrySet.getDate(2));
+				b.setDebit( CommonUtil.round(entrySet.getDouble(3)) );
+				b.setCredit(CommonUtil.round(entrySet.getDouble(4)) );
+				b.setUnpaidBalance(CommonUtil.round(entrySet.getDouble(3)) );
+				b.setCreditBalance(CommonUtil.round(entrySet.getDouble(4)) );
+			}
+			return b;
+		} catch (Exception e) {
+			throw new ManagerBeanException(e.getMessage(), e);
+		} finally {
+			try {
+				if (entryStmt != null) {
+					entryStmt.close();
+				}
+			} catch (Exception e) {
+				// nada
+			}
+			try {
+				if (entrySet != null) {
+					entrySet.close();
+				}
+			} catch (Exception e) {
+				// nada
+			}
+		}
+	}
+/*
+		
+		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
+		Criteria c = new Criteria();
+		String alias = entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE);
+		c.addLessThanOrEqualExpression(alias, date);
+		c.addOrder(alias, false);
+		c.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE), type);
+		if ( securityLevel != null) {
+			c.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);	
+		}
+		List<ITransferObject> list = entryBean.getList(c);
+		if (list.size() == 0) {
+			return null;
+		}
+		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+		double debit = 0;
+		double credit = 0;
+		AccountEntry entry = (AccountEntry) list.get(0);
+		Integer id = entry.getId();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(entryDetailBean
+				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), id);
+		criteria.addEqualExpression(entryDetailBean
+				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), accountId);
+		List<ITransferObject> details = entryDetailBean.getList(criteria);
+		if (details.size() > 0) {
+			for (ITransferObject to : details) {
+				AccountEntryDetail detail = (AccountEntryDetail) to;
+				debit = CommonUtil.round(debit + detail.getDebit());
+				credit = CommonUtil.round(credit + detail.getCredit());
+			}
+		}
+		Balance balance = null;
+		if (debit != 0 || credit != 0) {
+			balance = new Balance();
+			balance.setAccountEntry(entry.getId());
+			balance.setFromDate(entry.getEntryDate());
+			balance.setDebit(debit);
+			balance.setCredit(credit);
+			balance.setUnpaidBalance(debit);
+			balance.setCreditBalance(credit);
+		}
+		return balance;
+	}
+*/		
+
+	public Balance getPeriodBalance(Date fromDate, Date toDate, String accountId, SecurityLevel securityLevel,
+			boolean excludeOpeningEntry, boolean excludeClosingEntry) throws ManagerBeanException {
+		Balance balance = new Balance();
+		if (StringUtils.isNotEmpty(accountId)) {
+			SummaryProviderParameters params = new SummaryProviderParameters();
+			params.setFromDate(fromDate);
+			params.setToDate(toDate);
+			params.setAccountExpression(accountId);
+			int level = (accountId.length() > 4) ? 5 : accountId.length();
+			params.setAccountLevel(level);
+			params.setSecurityLevel(securityLevel);
+			params.setExcludeOpeningEntry(excludeOpeningEntry);
+			params.setExcludeClosingEntry(excludeClosingEntry);
+			SummaryCollection sc = getSummaryCollection(params);
+			if (sc.getSummaryList()!= null && !sc.getSummaryList().isEmpty() ) {
+				Summary summary = sc.getSummaryList().get(0);
+				balance.setFromDate(fromDate);
+				balance.setToDate(toDate);
+				balance.setDebit(summary.getDebit());
+				balance.setCredit(summary.getCredit());
+				balance.setUnpaidBalance(summary.getUnpaidBalance());
+				balance.setCreditBalance(summary.getCreditBalance());
+			}
+		}
+		return balance;
+	}
+	
+	
 }

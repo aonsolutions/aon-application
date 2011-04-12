@@ -18,10 +18,6 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 
-/**
- * @author Consulting & Development
- * 
- */
 public class AccountHelperBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
 	private AccountHelperManager manager;
@@ -33,7 +29,6 @@ public class AccountHelperBeanVetoListener extends ManagerBeanVetoListenerAdapte
 		return manager;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		try {
@@ -44,9 +39,9 @@ public class AccountHelperBeanVetoListener extends ManagerBeanVetoListenerAdapte
 					+ detail.getId();
 			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 			SQLQuery query = session.createSQLQuery(select);
-			List list = query.addScalar("account", Hibernate.STRING).addScalar("balancing_account",
+			List<?> list = query.addScalar("account", Hibernate.STRING).addScalar("balancing_account",
 					Hibernate.STRING).list();
-			Iterator iterator = list.iterator();
+			Iterator<?> iterator = list.iterator();
 			if (iterator.hasNext()) {
 				Object[] obj = (Object[]) iterator.next();
 				String accountId = (String) obj[0];

@@ -16,13 +16,9 @@
         <mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- Mapping files -->
-		<mapping class="com.code.aon.accounting.AccountBudget"/>
-		<mapping class="com.code.aon.accounting.AccountBudgetDetail"/>
 		<mapping class="com.code.aon.accounting.AccountEntry"/>
 		<mapping class="com.code.aon.accounting.AccountEntryDetail"/>
-		<mapping class="com.code.aon.accounting.AccountEntryLink"/>
 		<mapping class="com.code.aon.accounting.AccountHelper"/>
-		<mapping class="com.code.aon.accounting.AccountSummary"/>
 		<mapping class="com.code.aon.accounting.Amortization"/>
 		<mapping class="com.code.aon.accounting.AmortizationDetail"/>
 		<mapping class="com.code.aon.accounting.AmortizationType"/>

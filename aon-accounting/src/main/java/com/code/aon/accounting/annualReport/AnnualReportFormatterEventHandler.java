@@ -10,19 +10,23 @@ import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
 
 public class AnnualReportFormatterEventHandler implements ReferenceInsertionEventHandler{
 
+	private static final String NUMBER_PATTERN = "#,##0.00"; 
+	private static final String DATE_PATTERN = "dd/MM/yyyy"; 
+	private static final String EMPTY = ""; 
+		
 	private DateFormat dateFormatter;
 	private NumberFormat numberFormatter;
 	
 	private NumberFormat getNumberFormatter() {
 		if (numberFormatter == null) {
-			numberFormatter = new DecimalFormat("#,##0.00");
+			numberFormatter = new DecimalFormat(NUMBER_PATTERN);
 		}
 		return numberFormatter;
 	}
 	
 	private DateFormat getDateFormatter() {
 		if (dateFormatter == null) {
-			dateFormatter = new SimpleDateFormat("dd/MM/yyyy" );
+			dateFormatter = new SimpleDateFormat(DATE_PATTERN);
 		}
 		return dateFormatter;
 	}
@@ -30,7 +34,11 @@ public class AnnualReportFormatterEventHandler implements ReferenceInsertionEven
 	@Override
 	public Object referenceInsert(String reference, Object value) {
 		if (value != null && value instanceof Number) {
-			return getNumberFormatter().format((Number) value);
+			Number number = (Number) value; 
+			if (number.doubleValue() != 0) {
+				return getNumberFormatter().format(number);
+			}
+			return EMPTY;
 		}
 		if (value != null && value instanceof Date) {
 			return getDateFormatter().format((Date) value);

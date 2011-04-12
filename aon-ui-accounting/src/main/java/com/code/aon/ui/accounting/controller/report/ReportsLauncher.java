@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -17,9 +19,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.ajax4jsf.org.w3c.tidy.Tidy;
 import org.apache.commons.io.IOUtils;
@@ -27,8 +26,8 @@ import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.pdf.ITextRenderer;
-import org.xml.sax.SAXException;
 
+import com.code.aon.accounting.Period;
 import com.code.aon.accounting.annualReport.AnnualReportManager;
 import com.code.aon.accounting.annualReport.AnnualReportParameters;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
@@ -173,7 +172,6 @@ public class ReportsLauncher {
 		getParams().setNoTouchedAccountVisible(false);
 		getParams().setRowsPerPage(20);
 		getParams().setAccountLevel(5);
-		getParams().setBudgeted(false);
 		getParams().setPreviousPeriodVisible(true);
 		setUseDefaultTemplate(true);
 		setUseAttachedTemplate(false);
@@ -311,39 +309,51 @@ public class ReportsLauncher {
 			ITextRenderer renderer = new ITextRenderer();
 			ByteArrayOutputStream tidyOut = new ByteArrayOutputStream(); //we need this later
 			Tidy tidy = new Tidy(); 
-			tidy.setXHTML(true); 
+			tidy.setTidyMark(false);
+			tidy.setXHTML(true);
 			tidy.setInputEncoding(ENCODING);
 			tidy.setOutputEncoding(ENCODING);
-			tidy.parse( writer.toString(), tidyOut);
-			InputStream tidyIn = new ByteArrayInputStream(tidyOut.toByteArray());
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", Boolean.FALSE);
-			dbf.setFeature("http://xml.org/sax/features/validation", Boolean.FALSE);
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(tidyIn);
+			Document doc = tidy.parseDOM(writer.toString(), tidyOut);
 			renderer.setDocument(doc,null);
 			renderer.layout();
 			renderer.createPDF(out, false);
 			renderer.getWriter().setCloseStream(false);
 			renderer.finishPDF();
 			tidyOut.close();
-			tidyIn.close();
 		} catch (IOException e) {
 			AonUtil.addErrorMessage("El fichero no es correcto");
 			throw new AbortProcessingException(e);
 		} catch (DocumentException e) {
 			AonUtil.addErrorMessage("Error al ejecutar el listado");
 			throw new AbortProcessingException(e);
-		} catch (ParserConfigurationException e) {
-			AonUtil.addErrorMessage("Error al analizar el contenido");
-			throw new AbortProcessingException(e);
-		} catch (SAXException e) {
-			AonUtil.addErrorMessage("Error al analizar el contenido");
-			throw new AbortProcessingException(e);
 		}
 
 	}
 
+	public static void main(String[] args) throws ManagerBeanException, FileNotFoundException{
+		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		Period period = (Period) periodBean.get("2010");
+		ReportsLauncher rl = new ReportsLauncher();
+		SummaryProviderParameters parameters = new SummaryProviderParameters();
+		parameters = new SummaryProviderParameters();
+		parameters.setPeriod(period);
+		parameters.setFromDate(null);
+		parameters.setToDate(null);
+		parameters.setDate(new Date());
+		parameters.setAccountExpression(null);
+		parameters.setLowerLevelVisible(false);
+		parameters.setNoTouchedAccountVisible(false);
+		parameters.setRowsPerPage(20);
+		parameters.setAccountLevel(4);
+		rl.setParams(parameters);
+		rl.setUseDefaultTemplate(true);
+		rl.setUseAttachedTemplate(false);
+		rl.setUseLoadedTemplate(false);
+		FileOutputStream fos = new FileOutputStream("/home/ecastellano/memoria.pdf");
+		rl.pdf(fos);
+	}
+	
+	
 }
 
 

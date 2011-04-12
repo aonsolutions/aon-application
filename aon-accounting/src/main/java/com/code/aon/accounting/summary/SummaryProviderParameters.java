@@ -62,8 +62,6 @@ public class SummaryProviderParameters implements Cloneable{
 	
 	private int rowsPerPage;
 
-	private boolean budgeted;
-
 	private boolean monthlyGrouping;
 	
 	private boolean excludeOpeningEntry;
@@ -95,7 +93,6 @@ public class SummaryProviderParameters implements Cloneable{
 		setPeriod(null);
 		setSecurityLevel(null);
 		setRowsPerPage(20);
-		setBudgeted(false);
 		setMonthlyGrouping(false);
 		setExcludeOpeningEntry(false);
 		setExcludeOperatingEntry(false);
@@ -217,14 +214,6 @@ public class SummaryProviderParameters implements Cloneable{
 		this.rowsPerPage = rowsPerPage;
 	}
 
-	public boolean isBudgeted() {
-		return budgeted;
-	}
-
-	public void setBudgeted(boolean budgeted) {
-		this.budgeted = budgeted;
-	}
-
 	public boolean isMonthlyGrouping() {
 		return monthlyGrouping;
 	}
@@ -299,7 +288,6 @@ public class SummaryProviderParameters implements Cloneable{
 		cloned.setAccountDescription(getAccountDescription());
 		cloned.setAccountExpression(getAccountExpression());
 		cloned.setAccountLevel(getAccountLevel());
-		cloned.setBudgeted(isBudgeted());
 		cloned.setDate(getDate());
 		cloned.setQuarter(getQuarter());
 		cloned.setFromDate(getFromDate());

@@ -10,6 +10,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceReportParams {
 
@@ -76,7 +77,7 @@ public class InvoiceReportParams {
 		c.set(Calendar.DAY_OF_MONTH, 31);
 		setToTaxDate(c.getTime());
 		setToInvoiceDate(c.getTime());
-		setSecurityLevel(null);
+		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 	}
 	
 	public Criteria getCriteria() throws ManagerBeanException {

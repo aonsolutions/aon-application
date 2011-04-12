@@ -75,7 +75,6 @@ public class AnnualReportManager {
 		params.getParams().setNoTouchedAccountVisible(false);
 		params.getParams().setRowsPerPage(20);
 		params.getParams().setAccountLevel(5);
-		params.getParams().setBudgeted(false);
 		params.getParams().setPreviousPeriodVisible(true);
 		params.getParams().setExcludeOperatingEntry(true);
 		return params;

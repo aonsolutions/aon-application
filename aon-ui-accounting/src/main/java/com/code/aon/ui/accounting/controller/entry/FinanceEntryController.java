@@ -259,7 +259,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 	@SuppressWarnings("unchecked")
 	public double getTotal() {
 		double total = 0.0;
-		Iterator<Finance> iterator = ((List)lines.getWrappedData()).iterator();
+		Iterator<Finance> iterator = ((List<Finance>)lines.getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = iterator.next();
 			total += finance.getTotalAmount();
@@ -304,10 +304,9 @@ public class FinanceEntryController implements ISpecialAccountEntry{
         }
     }
 
-	@SuppressWarnings("unchecked")
 	private Expression obtainExistingLinesIds(IManagerBean bean) throws ManagerBeanException {
 		Expression expression = null;
-		Iterator iterator = ((List)lines.getWrappedData()).iterator();
+		Iterator<?> iterator = ((List<?>)lines.getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
 			Expression idExpression = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFinanceAlias.FINANCE_ID), finance.getId());
@@ -321,9 +320,9 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		return payMethodTypeDetailBean.getCount(null);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void onAddSelected(ActionEvent event) {
-        Iterator iterator = getCheckedFinances().iterator();
+        Iterator<?> iterator = getCheckedFinances().iterator();
         while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
 			((List)lines.getWrappedData()).add(finance);
@@ -333,9 +332,9 @@ public class FinanceEntryController implements ISpecialAccountEntry{
         clearCheckedFinances();
 	}
 
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void onRemoveSelected(ActionEvent event) {
-        Iterator iterator = getCheckedLines().iterator();
+        Iterator<?> iterator = getCheckedLines().iterator();
         while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
 			((List)lines.getWrappedData()).remove(finance);
@@ -369,11 +368,11 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			recordingTo.setPaymentAccount(obtainPaymentAccount());
 			recordingTo.setBalancingConcept(getConcept());
 			recordingTo.setSecurityLevel(getSecurityLevel());
-			recordingTo.setFinanceList((List)lines.getWrappedData());
+			recordingTo.setFinanceList((List<Finance>)lines.getWrappedData());
 			accountEntry = getWriter().recordFinances(recordingTo, accountEntry);
 
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			Iterator<Finance> iterator = ((List)lines.getWrappedData()).iterator();
+			Iterator<Finance> iterator = ((List<Finance>)lines.getWrappedData()).iterator();
 			while (iterator.hasNext()) {
 				Finance finance = iterator.next();
 				finance = (Finance)HibernateUtil.getSession(sessionName).merge(finance);
@@ -458,7 +457,6 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		}
 	}
 
-    @SuppressWarnings("unchecked")
 	private void deleteFinanceTracking(boolean removing) throws ManagerBeanException {
 		if (accountEntry != null) {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
@@ -466,7 +464,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 			IManagerBean accountEntryFTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), accountEntry.getId());
-			Iterator iterator = accountEntryFTrackingBean.getList(criteria).iterator();
+			Iterator<?> iterator = accountEntryFTrackingBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
 				FinanceTracking financeTracking = accountEntryFinanceTracking.getFinanceTracking();
@@ -487,13 +485,12 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void deleteAccountEntryDetails() throws ManagerBeanException {
 		if (accountEntry != null) {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
-			Iterator iterator = accountEntryDetailBean.getList(criteria).iterator();
+			Iterator<?> iterator = accountEntryDetailBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iterator.next();
 				accountEntryDetailBean.remove(accountEntryDetail);
@@ -501,13 +498,12 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void deleteAccountEntry() throws ManagerBeanException {
 		if (accountEntry != null) {
 			IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(accountEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), accountEntry.getId());
-			Iterator iterator = accountEntryBean.getList(criteria).iterator();
+			Iterator<?> iterator = accountEntryBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				AccountEntry accountEntry = (AccountEntry)iterator.next();
 				accountEntryBean.remove(accountEntry);
@@ -531,14 +527,13 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean isLastTracking(Finance finance) throws ManagerBeanException {
 		if (accountEntry != null) {
 			IManagerBean accountEntryFTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_ACCOUNT_ENTRY_ID), accountEntry.getId());
 			criteria.addEqualExpression(accountEntryFTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_FINANCE_ID), finance.getId());
-			Iterator iterator = accountEntryFTrackingBean.getList(criteria).iterator();
+			Iterator<?> iterator = accountEntryFTrackingBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
 				return FinanceTrackingWriter.isLastTracking(accountEntryFinanceTracking.getFinanceTracking());
@@ -608,9 +603,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		financeChecks = new ArrayList<Finance>();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void checkAllFinances(ActionEvent event) {
-		Iterator iterator = ((List)finances.getWrappedData()).iterator();
+		Iterator<?> iterator = ((List<?>)finances.getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
 			if (!financeChecks.contains(finance)) {
@@ -660,9 +654,8 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		lineChecks = new ArrayList<Finance>();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void checkAllLines(ActionEvent event) throws ManagerBeanException {
-		Iterator iterator = ((List)lines.getWrappedData()).iterator();
+		Iterator<?> iterator = ((List<?>)lines.getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			Finance finance = (Finance)iterator.next();
 			if (!lineChecks.contains(finance) && isLastTracking(finance)) {
@@ -675,7 +668,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		clearCheckedLines();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
 		onReset(null);
@@ -684,7 +677,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		IManagerBean accountEntryFBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryFBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_ACCOUNT_ENTRY_ID), entry.getId());
-		Iterator iter = accountEntryFBatchBean.getList(criteria).iterator();
+		Iterator<?> iter = accountEntryFBatchBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			String msg = "Asiento generado automáticamente. No se puede modificar.";
 			AonUtil.addErrorMessage(msg);

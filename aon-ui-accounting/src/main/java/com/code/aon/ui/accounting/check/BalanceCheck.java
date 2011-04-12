@@ -37,6 +37,7 @@ public class BalanceCheck implements IAccountCheck{
 			String idAlias = accountBean.getFieldName(IAccountAlias.ACCOUNT_ID);
 			String entryAlias = accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
 			IManagerBean balanceBean = BeanManager.getManagerBean(Balance.class);
+			
 			for (ITransferObject to: balanceBean.getList(null)) {
 				Balance balance = (Balance) to;
 				if (balance.getType() != BalanceType.CUSTOM) {
@@ -47,13 +48,21 @@ public class BalanceCheck implements IAccountCheck{
 								if (buf.length() > 0) {
 									buf.append(",");
 								}
-								buf.append( detail.getAccounts());
+								String accounts = detail.getAccounts();
+								if (StringUtils.isNotEmpty(accounts)) {
+									accounts = accounts.replace("(","");		
+									accounts = accounts.replace(")","");		
+									if (StringUtils.contains(accounts, "?")) {
+										accounts = accounts.replace("?","");
+									}
+									buf.append( accounts );	
+								}
+								
 							}
 						}
 						if (buf.length() > 0) {
 							buf.append(",");
 						}
-						buf = new StringBuilder( buf.toString().replace("(","").replace(")","") );
 						Criteria criteria = new Criteria();
 						criteria.addEqualExpression(entryAlias, true);
 						if (balance.getType() == BalanceType.CLOSING) {
@@ -77,7 +86,7 @@ public class BalanceCheck implements IAccountCheck{
 							int sum = count1 + count2 + count3 + count4; 
 							if ( sum > 1) {
 								BalanceCheckEntry e = new BalanceCheckEntry();
-								e.setMessage( "[" + account.getId() + "] cuenta definida dos veces en el balance '" + balance.getName() + "'");
+								e.setMessage( "[" + account.getId() + "] Cuenta definida dos veces en el balance '" + balance.getName() + "'.");
 								e.setTo(account);
 								list.add(e);
 							} else if ( sum == 0) {

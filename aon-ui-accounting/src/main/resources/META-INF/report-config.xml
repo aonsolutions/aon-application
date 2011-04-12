@@ -110,79 +110,9 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="params" value="#{profitAndLossReport.getParameters}" />
 		</params>
-	</report>-->
+	</report>
+-->
 
-	<!--  BALANCE DE PERDIDAS Y GANACIAS PRESUPUESTADO -->
-	<report id="budgetedProfitAndLoss" description="BudgetedProfitAndLoss">
-		<template path="/com/code/aon/ui/accounting/report/profitAndLoss.jasper"/>
-		<collection provider="#{budgetedProfitAndLossReport}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="params" value="#{budgetedProfitAndLossReport.getParameters}" />
-			<param id="reportTitle" value="#{budgetedProfitAndLossReport.getReportTitle}" />
-		</params>
-	</report>
-	
-	<!--  LISTADO DE CUENTAS CON PRESUPUESTO -->
-	<report id="budgetList" description="BudgetList">
-		<template path="/com/code/aon/ui/accounting/report/budgetList.jasper"/>
-		<bean key="com.code.aon.accounting.AccountBudget" />
-		<criteria provider="#{accountBudget}"/>
-		<fetch-mode paginated="true" page-count="5000" virtualizer-max-size="1000" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="creditList" value="#{accountBudget.getCreditList}" />
-			<param id="debitList" value="#{accountBudget.getDebitList}" />
-		</params>
-	</report>
-	
-	<!--  BALANCE DE PERDIDAS Y GANACIAS PRESUPUESTADO -->
-	<report id="profitAndLossComparison" description="BudgetedProfitAndLoss">
-		<template path="/com/code/aon/ui/accounting/report/profitAndLossComparison.jasper"/>
-		<collection provider="#{budgetedProfitAndLossComparison.list}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="params" value="#{budgetedProfitAndLossComparison.getParameters}"/>
-		</params>
-	</report>
-
-	<!--  BALANCE DE PERDIDAS Y GANACIAS PRESUPUESTADO GRAFICO -->
-	<report id="profitAndLossComparisonGraph" description="BudgetedProfitAndLoss">
-		<template path="/com/code/aon/ui/accounting/report/profitAndLossGraphComparisson.jasper"/>
-		<collection provider="#{budgetedProfitAndLossComparison.comparissonList}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="salesList" value="#{budgetedProfitAndLossComparison.getSalesList}" />
-			<param id="params" value="#{budgetedProfitAndLossComparison.getParameters}"/>
-		</params>
-		
-	 <nested-report report="salesList"/>
-				
-	</report>
-
-	<report id="salesList" description="Purchases List">
-		<template path="/com/code/aon/ui/accounting/report/extraAccounts.jasper"/>
-	</report>
-
-	
-
-	<!--  LISTADO DETALLADO DE CUENTAS CON PRESUPUESTO -->
-	<report id="budgetDetailList" description="BudgetDetailList">
-		<template path="/com/code/aon/ui/accounting/report/budgetDetailList.jasper"/>
-		<bean key="com.code.aon.accounting.AccountBudgetDetail" />
-		<criteria provider="#{accountBudgetDetail}"/>
-		<fetch-mode paginated="true" page-count="5000" virtualizer-max-size="1000" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="debitTotal" value="#{accountBudget.getDebitTotal}" />
-			<param id="monthNames" value="#{accountBudget.getMonthNames()}" />
-		</params>
-	</report>
 	
 	<!--  EXTRACTO DE CUENTA -->
 	<report id="statement" description="Account Statement">

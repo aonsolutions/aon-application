@@ -252,8 +252,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public Collection getCollection() {
+	public Collection<?> getCollection() {
 		try {
 			return getSummaryCollection().getSummaryList();
 		} catch (ManagerBeanException e) {
@@ -262,8 +261,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+	public Collection<?> getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 

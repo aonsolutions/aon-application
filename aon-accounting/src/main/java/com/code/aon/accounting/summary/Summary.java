@@ -39,6 +39,15 @@ public class Summary {
 	 * HABER
 	 */
 	private double credit;
+	/**
+	 * DEBE INICIAL
+	 */
+	private double initialDebit;
+	/**
+	 * HABER INICIALE
+	 */
+	private double initialCredit;
+	
 
 	private NumberFormat formatter = DecimalFormat.getCurrencyInstance();
 
@@ -130,6 +139,45 @@ public class Summary {
     public double getDifference() {
         return (credit - debit);
     }
+
+    public double getInitialDebit() {
+		return initialDebit;
+	}
+	public void setInitialDebit(double initialDebit) {
+		this.initialDebit = initialDebit;
+	}
+	public double getInitialCredit() {
+		return initialCredit;
+	}
+	public void setInitialCredit(double initialCredit) {
+		this.initialCredit = initialCredit;
+	}
+
+	/**
+	 * Saldo Deudor Inicial
+	 */
+	public double getInitialUnpaidBalance() {
+		if (getInitialDebit() > getInitialCredit()) {
+			return CommonUtil.round(getInitialDebit() - getInitialCredit());
+		}
+		return 0;
+	}
+	public String getInitialUnpaidBalanceFormmatted() {
+		return formatter.format(getInitialUnpaidBalance());
+	}
+
+	/**
+	 * Saldo Acreedor Inicial
+	 */
+	public double getInitialCreditBalance() {
+		if (getInitialCredit() > getInitialDebit()) {
+			return CommonUtil.round(getInitialCredit() - getInitialDebit());
+		}
+		return 0;
+	}
+	public String getInitialCreditBalanceFormmatted() {
+		return formatter.format(getInitialCreditBalance());
+	}
 
 	public String toString() {
 		return (StringUtils.rightPad(getId(), 12) + "\t" + isLastLevel() + "\t"

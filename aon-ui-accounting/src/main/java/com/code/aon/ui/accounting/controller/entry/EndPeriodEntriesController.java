@@ -281,7 +281,6 @@ public class EndPeriodEntriesController {
 		return navigationKey;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onClosingEntry(ActionEvent event) {
 		validateParameters(AccountEntryType.CLOSING);
 		// inicio transaccion
@@ -295,7 +294,7 @@ public class EndPeriodEntriesController {
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
 				this.navigationKey = "accountEntry_form";
-				List list = getUnbalancedAccounts(getPeriod(), AccountEntryType.CLOSING, getSecurityLevel());
+				List<?> list = getUnbalancedAccounts(getPeriod(), AccountEntryType.CLOSING, getSecurityLevel());
 				AccountEntry entry = saveClosingEntry(list);
 
 				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
@@ -328,8 +327,7 @@ public class EndPeriodEntriesController {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private AccountEntry saveClosingEntry(List list) throws ManagerBeanException {
+	private AccountEntry saveClosingEntry(List<?> list) throws ManagerBeanException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		AccountEntry entry = new AccountEntry();
@@ -366,7 +364,6 @@ public class EndPeriodEntriesController {
 		return entry;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void onOperatingEntry(ActionEvent event) {
 		validateParameters(AccountEntryType.OPERATING);
 		// inicio transaccion
@@ -380,7 +377,7 @@ public class EndPeriodEntriesController {
 				HibernateUtil.beginTransaction(sessionName);
 				// operaciones de la transaccion
 				this.navigationKey = "accountEntry_form";
-				List list = getUnbalancedAccounts(getPeriod(), AccountEntryType.OPERATING,getSecurityLevel());
+				List<?> list = getUnbalancedAccounts(getPeriod(), AccountEntryType.OPERATING,getSecurityLevel());
 				AccountEntry entry = saveOperatingEntry(list);
 
 				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
@@ -413,8 +410,7 @@ public class EndPeriodEntriesController {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private AccountEntry saveOperatingEntry(List list) throws ManagerBeanException {
+	private AccountEntry saveOperatingEntry(List<?> list) throws ManagerBeanException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		AccountEntry entry = new AccountEntry();
@@ -495,8 +491,7 @@ public class EndPeriodEntriesController {
 		return account;
 	}
 
-	@SuppressWarnings("unchecked")
-	private List getUnbalancedAccounts(Period period, AccountEntryType accountEntryType, SecurityLevel securityLevel) {
+	private List<?> getUnbalancedAccounts(Period period, AccountEntryType accountEntryType, SecurityLevel securityLevel) {
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		Session session = HibernateUtil.getSession(sessionName);
 		StringWriter sw = new StringWriter();

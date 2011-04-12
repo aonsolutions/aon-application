@@ -1,6 +1,7 @@
 package com.code.aon.ui.accounting.controller.report;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -151,7 +152,6 @@ public class AnnualFinancialStatementsController {
 			parameters.setNoTouchedAccountVisible(false);
 			parameters.setRowsPerPage(20);
 			parameters.setAccountLevel(4);
-			parameters.setBudgeted(false);
 			Element root = bm.getIntecoModuleRoot(parameters);
 			if (isCoverEnabled()) {
 				bm.getIntecoCover(root, parameters);
@@ -213,5 +213,9 @@ public class AnnualFinancialStatementsController {
 			throw new AbortProcessingException( "Compruebe los parámetros." );
 		}
 	}
-	
+
+	public static void main(String[] args) {
+		DecimalFormat df = new DecimalFormat("###.##");
+		System.out.println( df.format(0));
+	}
 }

@@ -2,12 +2,9 @@ package com.code.aon.accounting.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
-import com.code.aon.accounting.AccountBudget;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.AccountEntryLink;
 import com.code.aon.accounting.AccountHelper;
-import com.code.aon.accounting.AccountSummary;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.AmortizationType;
@@ -21,37 +18,6 @@ import com.code.aon.accounting.Period;
 * Interface for holding entity properties constants.
 */ 
 public interface IAccountingAlias {
-
-
-
-	/** 
-	* DAOConstantsEntry for AccountBudget entity.
-	*/ 
-	DAOConstantsEntry ACCOUNT_BUDGET_ENTRY = DAOConstants.getDAOConstant(AccountBudget.class);
-
-	/** 
-	* Alias value: AccountBudget_account_id
-	* Hibernate value: AccountBudget.account.id
-	*/
-	String  ACCOUNT_BUDGET_ACCOUNT_ID = ACCOUNT_BUDGET_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: AccountBudget_id
-	* Hibernate value: AccountBudget.id
-	*/
-	String  ACCOUNT_BUDGET_ID = ACCOUNT_BUDGET_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: AccountBudget_period
-	* Hibernate value: AccountBudget.period
-	*/
-	String  ACCOUNT_BUDGET_PERIOD = ACCOUNT_BUDGET_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: AccountBudget_securityLevel
-	* Hibernate value: AccountBudget.securityLevel
-	*/
-	String  ACCOUNT_BUDGET_SECURITY_LEVEL = ACCOUNT_BUDGET_ENTRY.getAliasNames()[3];
 
 
 
@@ -196,31 +162,6 @@ public interface IAccountingAlias {
 
 
 	/** 
-	* DAOConstantsEntry for AccountEntryLink entity.
-	*/ 
-	DAOConstantsEntry ACCOUNT_ENTRY_LINK_ENTRY = DAOConstants.getDAOConstant(AccountEntryLink.class);
-
-	/** 
-	* Alias value: AccountEntryLink_entryFrom_id
-	* Hibernate value: AccountEntryLink.entryFrom.id
-	*/
-	String  ACCOUNT_ENTRY_LINK_ENTRY_FROM_ID = ACCOUNT_ENTRY_LINK_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: AccountEntryLink_entryTo_id
-	* Hibernate value: AccountEntryLink.entryTo.id
-	*/
-	String  ACCOUNT_ENTRY_LINK_ENTRY_TO_ID = ACCOUNT_ENTRY_LINK_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: AccountEntryLink_id
-	* Hibernate value: AccountEntryLink.id
-	*/
-	String  ACCOUNT_ENTRY_LINK_ID = ACCOUNT_ENTRY_LINK_ENTRY.getAliasNames()[2];
-
-
-
-	/** 
 	* DAOConstantsEntry for AccountHelper entity.
 	*/ 
 	DAOConstantsEntry ACCOUNT_HELPER_ENTRY = DAOConstants.getDAOConstant(AccountHelper.class);
@@ -248,55 +189,6 @@ public interface IAccountingAlias {
 	* Hibernate value: AccountHelper.id
 	*/
 	String  ACCOUNT_HELPER_ID = ACCOUNT_HELPER_ENTRY.getAliasNames()[3];
-
-
-
-	/** 
-	* DAOConstantsEntry for AccountSummary entity.
-	*/ 
-	DAOConstantsEntry ACCOUNT_SUMMARY_ENTRY = DAOConstants.getDAOConstant(AccountSummary.class);
-
-	/** 
-	* Alias value: AccountSummary_accountPeriod
-	* Hibernate value: AccountSummary.accountPeriod
-	*/
-	String  ACCOUNT_SUMMARY_ACCOUNT_PERIOD = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: AccountSummary_account_id
-	* Hibernate value: AccountSummary.account.id
-	*/
-	String  ACCOUNT_SUMMARY_ACCOUNT_ID = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: AccountSummary_credit
-	* Hibernate value: AccountSummary.credit
-	*/
-	String  ACCOUNT_SUMMARY_CREDIT = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: AccountSummary_debit
-	* Hibernate value: AccountSummary.debit
-	*/
-	String  ACCOUNT_SUMMARY_DEBIT = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: AccountSummary_entryDate
-	* Hibernate value: AccountSummary.entryDate
-	*/
-	String  ACCOUNT_SUMMARY_ENTRY_DATE = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: AccountSummary_id
-	* Hibernate value: AccountSummary.id
-	*/
-	String  ACCOUNT_SUMMARY_ID = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: AccountSummary_securityLevel
-	* Hibernate value: AccountSummary.securityLevel
-	*/
-	String  ACCOUNT_SUMMARY_SECURITY_LEVEL = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[6];
 
 
 

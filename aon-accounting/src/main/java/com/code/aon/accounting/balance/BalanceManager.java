@@ -555,7 +555,6 @@ public class BalanceManager {
 		parameters.setNoTouchedAccountVisible(false);
 		parameters.setRowsPerPage(20);
 		parameters.setAccountLevel(4);
-		parameters.setBudgeted(false);
 		List<BalanceItem> list = bm.getBalanceCollection(parameters, balance);
 		System.out.println(  );
 		System.out.println(  );
@@ -585,7 +584,6 @@ public class BalanceManager {
 		parameters.setNoTouchedAccountVisible(false);
 		parameters.setRowsPerPage(20);
 		parameters.setAccountLevel(4);
-		parameters.setBudgeted(false);
 		OutputStream out = System.out;
 		Element root = bm.getIntecoModuleRoot(parameters);
 		bm.getIntecoCover(root,parameters);

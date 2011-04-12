@@ -221,7 +221,7 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		setCounterVisible(false);
 		setCoverVisible(false);
 		setPageCounter(0);
-		setSecurityLevel(null);
+		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 		setSummary(null);
 	}
 

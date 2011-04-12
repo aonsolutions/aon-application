@@ -27,6 +27,8 @@ public class SummaryCollection {
 
 	public void add(Summary summary) {
 		summaryList.add(summary);
+		setInitialDebit(CommonUtil.round(getInitialDebit() + summary.getInitialDebit()));
+		setInitialCredit(CommonUtil.round(getInitialCredit() + summary.getInitialCredit()));
 		if (summary.isLastLevel()) {
 			setDebit(CommonUtil.round(getDebit() + summary.getDebit()));
 			setCredit(CommonUtil.round(getCredit() + summary.getCredit()));

@@ -6,7 +6,6 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.util.AccountHelperManager;
 import com.code.aon.accounting.util.AccountJournalManager;
-import com.code.aon.accounting.util.AccountSummaryManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ui.accounting.check.AccountingCheckException;
@@ -17,7 +16,6 @@ public class AccountRegeneratorController {
 	private Period period;
 	private SecurityLevel securityLevel;
 
-	private boolean summary;
 	private boolean helper;
 	private boolean journal;
 
@@ -32,12 +30,6 @@ public class AccountRegeneratorController {
 	}
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
-	}
-	public boolean isSummary() {
-		return summary;
-	}
-	public void setSummary(boolean summary) {
-		this.summary = summary;
 	}
 	public boolean isHelper() {
 		return helper;
@@ -56,7 +48,6 @@ public class AccountRegeneratorController {
 		this.setPeriod(null);
 		this.setHelper(false);
 		this.setJournal(false);
-		this.setSummary(false);
 	}
 
 	public void regenerateAccount(ActionEvent event) {
@@ -75,9 +66,6 @@ public class AccountRegeneratorController {
 					throw new AbortProcessingException(msg);
 				}
 			}
-			if (isSummary()) {
-				regenerateAccountSummary();
-			}
 		} catch (AccountingCheckException e) {
 			String msg = "- Se produjeron errores al regenerar el número de diario.";
 			AonUtil.addErrorMessage(msg);
@@ -85,17 +73,6 @@ public class AccountRegeneratorController {
 		} 
 	}
 
-	private void regenerateAccountSummary() {
-		try {
-			AccountSummaryManager manager = new AccountSummaryManager();
-			manager.regenerateAccountSummary(getPeriod());
-			AonUtil.addInfoMessage("- Los Acumulados de Cuentas se han regenerado correctamente.");
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("- No se han podido regenerar los Acumulados de Cuentas. Causa: "
-					+ e.getMessage());
-		}
-	}
-	
 	private void regenerateAccountHelper() {
 		try {
 			AccountHelperManager manager = new AccountHelperManager();
@@ -117,17 +94,4 @@ public class AccountRegeneratorController {
 			throw new AbortProcessingException(msg,e);
 		}
 	}
-/*	
-	private void regenerateVat() {
-		try {
-			VatManager vm = new VatManager();
-			vm.regenerateVAT(getPeriod(),getSecurityLevel(),this);
-			AonUtil.addInfoMessage("- Los número en Facturas de IVA Soportado se han regenerado correctamente.");
-		} catch (ManagerBeanException e) {
-			String msg = "- Se produjeron errores al regenerar el número en Facturas de IVA Soportado.";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-	}
-*/
 }

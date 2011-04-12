@@ -13,7 +13,7 @@ import com.code.aon.accounting.Period;
 import com.code.aon.accounting.amortization.AmortizationManager;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
-import com.code.aon.accounting.util.AccountingUtil;
+import com.code.aon.accounting.summary.SummaryProvider;
 import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
@@ -33,18 +33,18 @@ public class PeriodAmortizationController extends BasicController {
 	private double totalAccumulated;
 	private double totalAllocation;
 	private double totalPending;
-	private AccountingUtil accountingUtil;	
+	private SummaryProvider summaryProvider;	
 	
 	@SuppressWarnings("unchecked")
 	public List<AmortizationDetail> getAmortizationList() throws ManagerBeanException {
 		return (List<AmortizationDetail>) getCalculatedModel().getWrappedData();
 	}
 	
-	public AccountingUtil getAccountingUtil() {
-		if (accountingUtil == null) {
-			accountingUtil = new AccountingUtil();
+	public SummaryProvider getSummaryProvider() {
+		if (summaryProvider == null) {
+			summaryProvider = new SummaryProvider();
 		}
-		return accountingUtil;
+		return summaryProvider;
 	}
 
 	public Period getPeriod() {
@@ -82,7 +82,7 @@ public class PeriodAmortizationController extends BasicController {
 			AmortizationDetail detail = (AmortizationDetail) model.getRowData();
 			Amortization a = detail.getAmortization();
 
-			Balance balance = getAccountingUtil().getPeriodBalance(period.getInitiationDate(),
+			Balance balance = getSummaryProvider().getPeriodBalance(period.getInitiationDate(),
 					period.getDeadline(), a.getAccumulatedAccount().getId(),null, false, false);
 			double accumulated = balance.getCreditBalance();
 			double pending = CommonUtil.round(a.getAmount() - accumulated

@@ -22,6 +22,7 @@ import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.accounting.controller.report.TrialBalanceController;
@@ -77,10 +78,12 @@ public class BalanceSheetController implements ICollectionProvider {
 		parameters.setNoTouchedAccountVisible(false);
 		parameters.setRowsPerPage(20);
 		parameters.setAccountLevel(5);
-		parameters.setBudgeted(false);
 		parameters.setPreviousPeriodVisible(true);
 		parameters.setCounterVisible(false);
 		parameters.setCoverVisible(false);
+		if (!AonUtil.getRoleManager().isConfidentiality()) {
+			parameters.setSecurityLevel(SecurityLevel.OFFICIAL);	
+		}
 	}
 
 	public void onBalance(ActionEvent event) {
@@ -148,9 +151,8 @@ public class BalanceSheetController implements ICollectionProvider {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+	public Collection<?> getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
 

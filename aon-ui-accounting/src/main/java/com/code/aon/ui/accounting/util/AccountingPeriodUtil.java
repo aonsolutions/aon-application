@@ -36,7 +36,6 @@ public class AccountingPeriodUtil {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static void validateAccountPeriod(Date date) throws ManagerBeanException {
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 		Criteria criteria = new Criteria();
@@ -44,7 +43,7 @@ public class AccountingPeriodUtil {
 				.getFieldName(IAccountingAlias.PERIOD_DEADLINE), date);
 		criteria.addLessThanOrEqualExpression(periodBean
 				.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), date);
-		Iterator iter = periodBean.getList(criteria).iterator();
+		Iterator<?> iter = periodBean.getList(criteria).iterator();
 		if (!iter.hasNext()) {
 			String msg = "No hay ejercicio contable definido para la fecha indicada";
 			LOGGER.error(msg);

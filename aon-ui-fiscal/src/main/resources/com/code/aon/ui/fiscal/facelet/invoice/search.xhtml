@@ -5,6 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -63,13 +64,15 @@
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:panelGrid>
 
-					<aon:outputLabel for="AccountEntry_securityLevel"
-						value="#{bundle.aon_security_level}" />
-					<aon:selectOneMenu id="AccountEntry_securityLevel"
-						value="#{invoiceReport.params.securityLevel}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{commonCollections.securityLevels}" />
-					</aon:selectOneMenu>
+					<c:if test="#{aonRole.confidentiality}">
+						<aon:outputLabel for="AccountEntry_securityLevel"
+							value="#{bundle.aon_security_level}" />
+						<aon:selectOneMenu id="AccountEntry_securityLevel"
+							value="#{invoiceReport.params.securityLevel}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{commonCollections.securityLevels}" />
+						</aon:selectOneMenu>
+					</c:if>
 
 					<aon:outputText value="" />
 					<aon:outputText value="" />

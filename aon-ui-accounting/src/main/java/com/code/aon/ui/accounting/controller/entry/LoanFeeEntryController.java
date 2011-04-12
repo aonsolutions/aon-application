@@ -172,12 +172,11 @@ public class LoanFeeEntryController {
 	}
 	
 	/* NO se llama a AccountUtil porque este aquí no se genera si no existe */	
-	@SuppressWarnings("unchecked")
 	private Account obtainLoanAccount(Loan loan) throws ManagerBeanException {
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LOAN_ACCOUNT_LOAN_ID), loan.getId());
-		Iterator iter = loanAccountBean.getList(criteria).iterator();
+		Iterator<?> iter = loanAccountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			LoanAccount loanAccount = (LoanAccount)iter.next();
 			return loanAccount.getAccount();
@@ -207,7 +206,6 @@ public class LoanFeeEntryController {
 			if (getRelatedAccount() != null) {
 				params.setAccountExpression( getRelatedAccount().getId());
 				params.setAccountLevel(5);
-				params.setBudgeted(false);
 				params.setFromDate(getEntry().getLoan().getLoanDate());
 				params.setSecurityLevel(getEntry().getLoan().getSecurityLevel());
 				SummaryCollection sc = sp.getSummaryCollection(params);

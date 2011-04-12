@@ -95,8 +95,10 @@ public class Balance implements Serializable {
 		double b = CommonUtil.round(d - c);
 		if ( b > 0 ) {
 			setUnpaidBalance(b);
+			setCreditBalance(0);
 		} else {
 			setCreditBalance(CommonUtil.round(b*(-1)));
+			setUnpaidBalance(0);
 		}
 	}
 

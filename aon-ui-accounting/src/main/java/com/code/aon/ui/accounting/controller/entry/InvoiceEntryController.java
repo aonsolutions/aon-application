@@ -758,7 +758,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			InvoiceEntryDetail detail = iter.next();
 			detailSum += detail.getTotal();
 		}
-		Iterator financeIter = ((LinkedList) getFinances().getWrappedData()).iterator();
+		Iterator<?> financeIter = ((List<?>) getFinances().getWrappedData()).iterator();
 		double financeSum = 0;
 		while (financeIter.hasNext()) {
 			Finance finance = (Finance) financeIter.next();
@@ -1460,12 +1460,11 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		getHeader().setTaxDate(getHeader().getDate());
 	}
 
-	@SuppressWarnings("unchecked")
 	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
+		Iterator<?> iter = seriesBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			Series series = (Series) iter.next();
 			if (series.getSecurityLevel() != null) {
@@ -1495,7 +1494,6 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		return 1;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void loadEntry(AccountEntry entry) throws ManagerBeanException {
 		onReset(null);
@@ -1506,7 +1504,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		criteria.addEqualExpression(accountEntryInvoiceBean
 				.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_ACCOUNT_ENTRY_ID),
 				entry.getId());
-		Iterator iter = accountEntryInvoiceBean.getList(criteria).iterator();
+		Iterator<?> iter = accountEntryInvoiceBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice) iter.next();
 			setAccountEntryInvoice(accountEntryInvoice);
@@ -1564,14 +1562,13 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private List obtainFinances(Invoice invoice) {
+	private List<?> obtainFinances(Invoice invoice) {
 		List<Finance> finances = new LinkedList<Finance>();
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-			Iterator iter = financeBean.getList(criteria).iterator();
+			Iterator<?> iter = financeBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				finances.add((Finance)iter.next());
 			}

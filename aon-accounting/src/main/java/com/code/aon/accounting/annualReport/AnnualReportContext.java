@@ -5,11 +5,8 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.accounting.Period;
-import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.summary.SummaryCollection;
 import com.code.aon.accounting.summary.SummaryProvider;
-import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -27,10 +24,6 @@ import com.code.aon.registry.dao.IRegistryAlias;
  * @author ecastellano
  *
  */
-/**
- * @author ecastellano
- *
- */
 public class AnnualReportContext {
 	
 	// COMMON
@@ -43,7 +36,6 @@ public class AnnualReportContext {
 	private Double ZERO = new Double(0);
 
 	private AnnualReportParameters params;
-	private Period previousPeriod;
 	private Company company;
 	private RecordData recordData; 
 	private List<RegistryDirStaff> registryDirStaffs;   
@@ -62,25 +54,6 @@ public class AnnualReportContext {
 			summaryProvider = new SummaryProvider();
 		}
 		return summaryProvider;
-	}
-	private Period getPreviousPeriod() {
-		if (previousPeriod == null) {
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(Period.class);
-				Criteria criteria = new Criteria();
-				criteria.addLessThanExpression(bean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE),  
-						getParams().getParams().getPeriod().getInitiationDate() );
-				criteria.addOrder(bean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE),  false );
-				List<ITransferObject> list = bean.getList(criteria);
-				if (list != null && list.size() > 0 ) {
-					ITransferObject to = list.get(0);
-					previousPeriod = (Period) to;
-				}
-			} catch (ManagerBeanException e) {
-				previousPeriod = null;
-			}
-		}
-		return previousPeriod;
 	}
 	
 	private Company getCompany() {
@@ -141,21 +114,14 @@ public class AnnualReportContext {
 	
 	private SummaryCollection getSummaryCollection(String accounts) throws ManagerBeanException {
 		String accountExp = getAccountsExpression(accounts);
-		getParams().getParams().setAccountExpression(accountExp.toString());
-		return getSummaryProvider().getSummaryCollection(getParams().getParams(),false);
+		SummaryCollection sc = getSummaryProvider().getSummaryCollection(getParams().getParams(accountExp),false);
+		return sc;
 	}
 
 	private SummaryCollection getPreviousSummaryCollection(String accounts) throws ManagerBeanException {
-		try {
-			String accountExp = getAccountsExpression(accounts);
-			SummaryProviderParameters spp = getParams().getParams().clone();
-			spp.setPeriod(getPreviousPeriod());
-			spp.setAccountExpression(accountExp.toString());
-			return getSummaryProvider().getSummaryCollection(spp,false);
-		} catch (CloneNotSupportedException e) {
-			// TODO ERROR
-			return null;
-		}
+		String accountExp = getAccountsExpression(accounts);
+		SummaryCollection sc = getSummaryProvider().getSummaryCollection(getParams().getPreviousParams(accountExp),false);
+		return sc;
 	}
 
 	private String getAccountsExpression(String accounts) {
@@ -173,7 +139,7 @@ public class AnnualReportContext {
 	}
 
 	/*
-	 * METODOS EXPUESTOS AL CLIENTE. COMENTARLOS CON JAVADOC POR FAVOR.
+	 * METODOS EXPUESTOS AL CLIENTE. COMENTADOS CON JAVADOC POR FAVOR.
 	 */
 	
 	/**
@@ -214,7 +180,7 @@ public class AnnualReportContext {
 	 * @return Fecha.
 	 */
 	public String ejercicioAnterior() {
-		return getPreviousPeriod() == null ? null : getPreviousPeriod().getId();
+		return getParams().getPreviousPeriod() == null ? null : getParams().getPreviousPeriod().getId();
 	}
 	
 	/**
@@ -376,6 +342,9 @@ public class AnnualReportContext {
 	 */
 	public Double saldoDeudor(String accounts) {
 		try {
+			if ("600".equals(accounts)) {
+				System.out.println(accounts);
+			}
 			SummaryCollection summaryCollection = getSummaryCollection(accounts);
 			return summaryCollection.getUnpaidBalance();
 		} catch (ManagerBeanException e) {
@@ -429,6 +398,9 @@ public class AnnualReportContext {
 	 */
 	public Double saldoDeudorAnterior(String accounts) {
 		try {
+			if ("600".equals(accounts)) {
+				System.out.println(accounts);
+			}
 			SummaryCollection summaryCollection = getPreviousSummaryCollection(accounts);
 			return summaryCollection.getUnpaidBalance();
 		} catch (ManagerBeanException e) {

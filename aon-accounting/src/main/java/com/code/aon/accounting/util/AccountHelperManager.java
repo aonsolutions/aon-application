@@ -91,7 +91,6 @@ public class AccountHelperManager {
         System.out.println( "Filas borradas: "  +  rows );
 	}
 
-	@SuppressWarnings("unchecked")
 	public void regenerateAccountHelper() throws ManagerBeanException {
 		deleteAccountHelper();
 
@@ -102,9 +101,9 @@ public class AccountHelperManager {
 						" group by detail.account, detail.balancingAccount ";
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
         Query query = session.createQuery(select);
-        List list = query.list();
+        List<?> list = query.list();
         int i = 0;
-        Iterator iterator = list.iterator();
+        Iterator<?> iterator = list.iterator();
         while (iterator.hasNext()) {
         	Object[] obj = (Object[])iterator.next();
         	AccountHelper ah = new AccountHelper();

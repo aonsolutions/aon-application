@@ -181,7 +181,8 @@ public class FinanceTrackingEntryController {
         }
     }
 
-	@SuppressWarnings("unchecked")
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void onAddSelected(ActionEvent event) {
         for (FinanceTracking ft: getCheckedFinances() ) {
 			((List)lines.getWrappedData()).add(ft);
@@ -191,7 +192,8 @@ public class FinanceTrackingEntryController {
         clearCheckedFinances();
 	}
 
-    @SuppressWarnings("unchecked")
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void onRemoveSelected(ActionEvent event) {
         for (FinanceTracking ft: getCheckedLines() ) {
 			((List)lines.getWrappedData()).remove(ft);
@@ -201,7 +203,7 @@ public class FinanceTrackingEntryController {
         clearCheckedFinances();
 	}
 
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
     public void accept(ActionEvent event) {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
@@ -211,7 +213,7 @@ public class FinanceTrackingEntryController {
 			HibernateUtil.setCloseSession(false);
 			HibernateUtil.beginTransaction(sessionName);
 			accountEntries = new LinkedList<Integer>();			
-			List<FinanceTracking> list = ((List)lines.getWrappedData());
+			List<FinanceTracking> list = (List<FinanceTracking>) lines.getWrappedData();
 			for (FinanceTracking ft : list) {
 				AccountEntry entry = getWriter().recordFinanceTracking(ft);
 				if (entry != null) {
@@ -308,7 +310,7 @@ public class FinanceTrackingEntryController {
 
 	@SuppressWarnings("unchecked")
 	public void checkAllFinances(ActionEvent event) {
-		List<FinanceTracking> list = ((List)finances.getWrappedData());
+		List<FinanceTracking> list = (List<FinanceTracking>)finances.getWrappedData();
 		for (FinanceTracking ft : list) {
 			if (!financeChecks.contains(ft)) {
 				financeChecks.add(ft);
@@ -358,7 +360,7 @@ public class FinanceTrackingEntryController {
 
 	@SuppressWarnings("unchecked")
 	public void checkAllLines(ActionEvent event) throws ManagerBeanException {
-		List<FinanceTracking> list = ((List)lines.getWrappedData());
+		List<FinanceTracking> list = (List<FinanceTracking>)lines.getWrappedData();
 		for (FinanceTracking ft : list) {
 			if (!lineChecks.contains(ft)) {
 				lineChecks.add(ft);

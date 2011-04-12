@@ -3,12 +3,9 @@ package com.code.aon.accounting.dao;
 import java.io.File;
 import java.io.IOException;
 
-import com.code.aon.accounting.AccountBudget;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.AccountEntryLink;
 import com.code.aon.accounting.AccountHelper;
-import com.code.aon.accounting.AccountSummary;
 import com.code.aon.accounting.Amortization;
 import com.code.aon.accounting.AmortizationDetail;
 import com.code.aon.accounting.AmortizationType;
@@ -33,12 +30,9 @@ public class AccountingAliasWriter {
 	public static void main(String[] args) throws IOException {
 		File file = new File("/home/ecastellano/AON-6.0.0/aon-accounting/src/main/java/com/code/aon/accounting/dao/IAccountingAlias.java");
 		String[] classes = new String[]{
-			AccountBudget.class.getName(),
 			AccountEntry.class.getName(),
 			AccountEntryDetail.class.getName(),
-			AccountEntryLink.class.getName(),
 			AccountHelper.class.getName(),
-			AccountSummary.class.getName(),
 			Amortization.class.getName(),
 			AmortizationDetail.class.getName(),
 			AmortizationType.class.getName(),

@@ -2,6 +2,8 @@ package com.code.aon.ui.accounting.controller.report;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +12,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +50,6 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	private List<Summary> grossMarginList= new LinkedList<Summary>();
 	private Double totalSales;
 	private Double totalPurchases;
-	private boolean budgeted;
 	
 	private AccountingUtil accountingUtil;
 	
@@ -56,15 +58,6 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 			accountingUtil = new AccountingUtil();
 		}
 		return accountingUtil;
-	}
-
-	public boolean isBudgeted() {
-		return budgeted;
-		
-	}
-
-	public void setBudgeted(boolean budgeted) {
-		this.budgeted = budgeted;
 	}
 
 	public SummaryCollection getGrossMargin() {
@@ -105,7 +98,6 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 			} catch (ManagerBeanException e) {
 				p.setPeriod(null);
 			}
-			p.setBudgeted(isBudgeted());
 			p.setLowerLevelVisible(false);
 			p.setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
 			boolean excludeOperating = false;
@@ -135,7 +127,6 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		spp.setFromDate(getParameters().getFromDate());
 		spp.setToDate(getParameters().getToDate());
 		spp.setAccountLevel(getParameters().getAccountLevel());
-		spp.setBudgeted(getParameters().isBudgeted());
 		spp.setLowerLevelVisible(getParameters().isLowerLevelVisible());
 		spp.setNoTouchedAccountVisible(getParameters().isNoTouchedAccountVisible());
 		spp.setPeriod(getParameters().getPeriod());
@@ -177,13 +168,20 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		netExpenses = new LinkedList<Summary>();
 		summaryList = getTotalExpenses().getSummaryList();
 		for (Summary summary: summaryList) {
-			if ((summary.getId().substring(0, 3).equals("640"))
-					|| (summary.getId().substring(0, 3).equals("642"))) {
-
+			if ((summary.getId().substring(0, 3).equals("640")) 
+				|| (summary.getId().substring(0, 3).equals("642"))) {
 			} else {
 				netExpenses.add(summary);
 			}
 		}
+		Collections.sort(netExpenses,new Comparator<Summary>( ) {
+			
+			@Override
+			public int compare(Summary o1, Summary o2) {
+				return NumberUtils.compare(o1.getUnpaidBalance(), o2.getUnpaidBalance()) * -1;
+			}
+			
+		});
 	}
 
 	public void onGenerateLists(ActionEvent event) {
@@ -300,9 +298,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	}
 
 	public String getReportTitle() {
-		return budgeted ? 
-				AonUtil.getMessage(ACCOUNTING_BUNDLE,"accounting_budgeted_balance_sheet_module") : 
-				AonUtil.getMessage(ACCOUNTING_BUNDLE,"accounting_profit_and_loss_module");
+		return AonUtil.getMessage(ACCOUNTING_BUNDLE,"accounting_profit_and_loss_module");
 	}
 	
 	public String getGraphName() {

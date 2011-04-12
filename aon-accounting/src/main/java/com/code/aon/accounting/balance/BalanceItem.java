@@ -75,7 +75,19 @@ public class BalanceItem implements Serializable{
 	}
 
 	public int getLevel() {
-		return detail.getCode() == null ? 0 : StringUtils.countMatches(detail.getCode(), ".");
+		if ( !StringUtils.isEmpty(detail.getCode())) {
+			try {
+				int c = Integer.parseInt(detail.getCode());
+				if (c%10000 == 0) return 0;
+				if (c%1000 == 0) return 1;
+				if (c%100 == 0) return 2;
+				if (c%10 == 0) return 3;
+			} catch (NumberFormatException e) {
+				// Nothing.
+			}
+		}
+		return 0;
+		
 	}
 
 	public void add(BalanceItem bi) {
