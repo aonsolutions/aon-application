@@ -150,11 +150,11 @@
 							<aon:selectOneMenu id="AccountEntry_accountPeriod"
 								styleClass="aon-form-selectOneMenu-field"
 								value="#{accountEntry.to.accountPeriod}"
-								rendered="#{accountEntry.new and accountEntry.manual}">
+								rendered="#{accountEntry.manual}">
 								<f:selectItems value="#{accountingCollections.enabledAccountPeriodKeys}" />
 							</aon:selectOneMenu>
 							<aon:outputText value="#{accountEntry.to.accountPeriod}"
-								rendered="#{!accountEntry.new or !accountEntry.manual}" />
+								rendered="#{!accountEntry.manual}" />
 						</aon:div>
 
 						<aon:outputText value="#{accountingBundle.accounting_journal}: " />
