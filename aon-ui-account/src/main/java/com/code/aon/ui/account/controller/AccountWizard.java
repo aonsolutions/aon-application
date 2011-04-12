@@ -75,8 +75,7 @@ public class AccountWizard extends AbstractWizard {
 		this.alias = alias;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List autocompleteId(Object suggest) {
+	public List<?> autocompleteId(Object suggest) {
 		try {
 			String condition = (String) suggest;
 			condition = condition.replace(ASTERISK, PERCENT);
@@ -95,14 +94,13 @@ public class AccountWizard extends AbstractWizard {
 
 	@Override
 	protected void fillCriteria(Criteria criteria) throws ExpressionException {
-		if (!StringUtils.isBlank(id)) {
+		if (StringUtils.isNotBlank(id)) {
 			criteria.addExpression(ExpressionUtilities.getExpression(getId(), ID));
 		}
-		if (!StringUtils.isBlank(description)) {
-			criteria
-					.addExpression(ExpressionUtilities.getExpression(getDescription(), DESCRIPTION));
+		if (StringUtils.isNotBlank(description)) {
+			criteria.addExpression(ExpressionUtilities.getExpression(getDescription(), DESCRIPTION));
 		}
-		if (!StringUtils.isBlank(alias)) {
+		if (StringUtils.isNotBlank(alias)) {
 			criteria.addExpression(ExpressionUtilities.getExpression(getAlias(), ALIAS));
 		}
 		criteria.addEqualExpression(ENTRY_ENABLED, true);
@@ -165,6 +163,7 @@ public class AccountWizard extends AbstractWizard {
 				account.setAlias(getAlias());
 				account = (Account) accountBean.insert(account);
 				onSearch(event);
+//				onSelect(event);
 			} catch (ManagerBeanException e) {
 				FacesContext context = FacesContext.getCurrentInstance();
 				FacesMessage message = new FacesMessage(e.getMessage());

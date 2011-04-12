@@ -35,9 +35,9 @@ function selectFirstRow(tableName) {
 }
 function changeSelection(row) {
 	if (oldRow!=undefined) {
-	    oldRow.style.backgroundColor='#ffffff';
+	    oldRow.style.backgroundColor='inherit';
 	} 
-    row.style.backgroundColor= '#AAAAAA';
+    row.style.backgroundColor= '#f6f5e3';
     e = row.getElementsByTagName("input");
     if (e && e.length>0) {
     	for (i=0;i<e.length;i++) {

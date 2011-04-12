@@ -102,9 +102,12 @@
 						label="#{bundle.aon_search_info}"
 						styleClass="aon-panelGrid-search" switchType="client"
 						headerClass="aon-panelGrid-search-info-internal"
-						bodyClass="aon-panelGrid-search-body">
+						bodyClass="aon-panelGrid-search-body aon-nopadding">
 
 						<aon:panelGrid columns="2" style="width:100%;">
+							<aon:outputText value="&#160;" />
+							<aon:outputText value="&#160;" />
+							
 							<aon:outputText value="#{bundle.aon_description}" />
 							<aon:inputText id="#{id}searchName" value="#{wizard.description}" size="40">
 								<a4j:support event="onchange" limitToList="true" ajaxSingle="true"
@@ -153,7 +156,7 @@
 					style="margin-top: 5px;margin-bottom: 5px;" />
 
 				<aon:div id="#{id}tableContainer">
-					<aon:editDataTable id="#{id}table" value="#{wizard.model}" sortMode="multi"
+					<aon:dataTable id="#{id}table" value="#{wizard.model}" sortMode="multi"
 						var="acc" rows="15" rendered="#{wizard.model.rowCount > 0}"
 						columnClasses="aon-editDataTable-iconColumn,
 						aon-editDataTable-textColumn,
@@ -198,7 +201,7 @@
 								<aon:abbreviateConverter maxWidth="75" />
 							</aon:outputText>
 						</aon:column>
-					</aon:editDataTable>
+					</aon:dataTable>
 
 					<aon:dataScroller2 for="#{id}table" showNote="true" />
 				</aon:div>
