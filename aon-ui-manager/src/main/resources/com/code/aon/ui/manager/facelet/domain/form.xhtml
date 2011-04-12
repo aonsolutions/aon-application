@@ -127,7 +127,7 @@
 							value="#{domain.to.subDomainSuffix}" />
 					</c:if>
 
-					<c:if test="#{!domain.to.domainManagement}" >					
+					<c:if test="#{manager.administrator or (domain.to.parentDomain.id != null)}" >
 						<aon:outputLabel for="Domain_parentDomain"
 							value="#{managerBundle.manager_domain_parent}" />
 						<c:if test="#{manager.administrator}" >								
@@ -141,8 +141,8 @@
 						<c:if test="#{!manager.administrator}" >	
 							<aon:inputText id="Domain_parentDomain" size="40" disabled="true"
 								value="#{domain.to.parentDomain.commonName}" />
-						</c:if>								
-					</c:if>
+						</c:if>
+					</c:if>								
 					
 				</aon:panelGrid>
 				
