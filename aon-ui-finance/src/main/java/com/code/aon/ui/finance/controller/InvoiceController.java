@@ -42,6 +42,7 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
+import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.finance.IFinanceMessages;
@@ -205,6 +206,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public double getTaxableBase(){
 		return getPriceStrategy().getTaxableBase((ICalculableContainer)getTo());
+	}
+
+	public double getVatQuota(){
+		return getPriceStrategy().getTotalVatQuota((ICalculableContainer)getTo(), (ITaxInfo)getTo());
+	}
+
+	public double getRetentionQuota(){
+		return getPriceStrategy().getTotalRetentionQuota((ICalculableContainer)getTo(), (ITaxInfo)getTo());
 	}
 
 	public double getToInvoiceTotalPrice() {

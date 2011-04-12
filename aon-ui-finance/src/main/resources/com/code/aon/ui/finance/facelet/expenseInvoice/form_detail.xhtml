@@ -127,11 +127,17 @@
 								reRender="InvoiceDetail_vatQuota,InvoiceDetail_retentionQuota,InvoiceDetail_total" 
 								required="true" size="5" focus="InvoiceDetail_vatQuota" />
 							<f:facet name="footer">
-								<aon:inputText id="InvoiceDetail_taxableBase-New"
-									value="#{controller.to.taxableBase}" rendered="#{formNew}"
-									valueChangeListener="#{controller.onTaxableBaseChanged}"
-									reRender="InvoiceDetail_vatQuota-New,InvoiceDetail_retentionQuota-New,InvoiceDetail_total-New" 
-									required="true" size="5" focus="InvoiceDetail_vatQuota-New" />
+								<aon:div style="text-align:right;">
+									<aon:inputText id="InvoiceDetail_taxableBase-New"
+										value="#{controller.to.taxableBase}" rendered="#{formNew}"
+										valueChangeListener="#{controller.onTaxableBaseChanged}"
+										reRender="InvoiceDetail_vatQuota-New,InvoiceDetail_retentionQuota-New,InvoiceDetail_total-New" 
+										required="true" size="5" focus="InvoiceDetail_vatQuota-New" />
+									<aon:outputText id="InvoiceTotal_taxableBase" 
+										value="#{invoiceController.taxableBase}" rendered="#{!formNew}">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</aon:div>
 							</f:facet>
 						</aon:column>
 	
@@ -167,13 +173,21 @@
 								value="#{controller.to.vatQuota}" rendered="#{formEdit}"
 								valueChangeListener="#{controller.onVatQuotaChanged}"
 								reRender="InvoiceDetail_vatPercent,InvoiceDetail_total"
-								required="true" size="5" focus="InvoiceDetail_total" />
+								required="true" size="5"
+								focus="#{invoiceController.to.withholding ? 'InvoiceDetail_retentionQuota' : 'InvoiceDetail_total'}" />
 							<f:facet name="footer">
-								<aon:inputText id="InvoiceDetail_vatQuota-New"
-									value="#{controller.to.vatQuota}" rendered="#{formNew}"
-									valueChangeListener="#{controller.onVatQuotaChanged}"
-									reRender="InvoiceDetail_vatPercent-New,InvoiceDetail_total-New"
-									required="true" size="5" focus="InvoiceDetail_total-New" />
+								<aon:div style="text-align:right;">
+									<aon:inputText id="InvoiceDetail_vatQuota-New"
+										value="#{controller.to.vatQuota}" rendered="#{formNew}"
+										valueChangeListener="#{controller.onVatQuotaChanged}"
+										reRender="InvoiceDetail_vatPercent-New,InvoiceDetail_total-New"
+										required="true" size="5" 
+										focus="#{invoiceController.to.withholding ? 'InvoiceDetail_retentionQuota-New' : 'InvoiceDetail_total-New'}" />
+									<aon:outputText id="InvoiceTotal_vatQuota" 
+										value="#{invoiceController.vatQuota}" rendered="#{!formNew}">
+										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									</aon:outputText>
+								</aon:div>
 							</f:facet>
 						</aon:column>
 	
@@ -213,12 +227,18 @@
 									reRender="InvoiceDetail_retentionPercent,InvoiceDetail_total"
 									required="true" size="5" focus="InvoiceDetail_total" />
 								<f:facet name="footer">
-									<aon:inputText id="InvoiceDetail_retentionQuota-New"
-										value="#{controller.to.retentionQuota}" rendered="#{formNew}"
-										disabled="#{controller.to.item.product.retention == null}"
-										valueChangeListener="#{controller.onRetentionQuotaChanged}"
-										reRender="InvoiceDetail_retentionPercent-New,InvoiceDetail_total-New"
-										required="true" size="5" focus="InvoiceDetail_total-New" />
+									<aon:div style="text-align:right;">
+										<aon:inputText id="InvoiceDetail_retentionQuota-New"
+											value="#{controller.to.retentionQuota}" rendered="#{formNew}"
+											disabled="#{controller.to.item.product.retention == null}"
+											valueChangeListener="#{controller.onRetentionQuotaChanged}"
+											reRender="InvoiceDetail_retentionPercent-New,InvoiceDetail_total-New"
+											required="true" size="5" focus="InvoiceDetail_total-New" />
+										<aon:outputText id="InvoiceTotal_retentionQuota" 
+											value="#{invoiceController.retentionQuota}" rendered="#{!formNew}">
+											<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+										</aon:outputText>
+									</aon:div>
 								</f:facet>
 							</aon:column>
 						</c:if>
@@ -229,7 +249,7 @@
 							</f:facet>
 							<aon:outputText value="#{controller.invoiceDetailTotal}"
 								rendered="#{formList}">
-								<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 							<aon:inputText id="InvoiceDetail_total"
 								value="#{controller.toInvoiceDetailTotal}" rendered="#{formEdit}"
@@ -243,7 +263,7 @@
 										valueChangeListener="#{controller.onTotalChanged}"
 										reRender="InvoiceDetail_taxableBase-New,InvoiceDetail_vatQuota-New,InvoiceDetail_retentionQuota-New" 
 										required="true" size="5" />
-									<aon:outputText id="Invoice_taxableBase" 
+									<aon:outputText id="InvoiceTotal_total" 
 										value="#{invoiceController.toInvoiceTotalPrice}" rendered="#{!formNew}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>

@@ -134,7 +134,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 	public void onTaxableBaseChanged(ValueChangeEvent event) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-			Double taxableBase = (Double)event.getNewValue();
+			double taxableBase = ((Double)event.getNewValue()).doubleValue();
 			invoiceDetail.setTaxableBase(taxableBase);
 			invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
 			invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
@@ -144,7 +144,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 	public void onVatQuotaChanged(ValueChangeEvent event) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-			Double vatQuota = (Double)event.getNewValue();
+			double vatQuota = ((Double)event.getNewValue()).doubleValue();
 			if (vatQuota == 0 && invoiceDetail.getVatPercent() != 0) {
 				invoiceDetail.setVatPercent(0);
 			} else if (vatQuota != 0 && invoiceDetail.getVatPercent() == 0 && invoiceDetail.getItem() != null) {
@@ -159,7 +159,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 	public void onRetentionQuotaChanged(ValueChangeEvent event) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
-			Double retentionQuota = (Double)event.getNewValue();
+			double retentionQuota = ((Double)event.getNewValue()).doubleValue();
 			if (retentionQuota == 0 && invoiceDetail.getRetentionPercent() != 0) {
 				invoiceDetail.setRetentionPercent(0);
 			} else if (retentionQuota != 0 && invoiceDetail.getRetentionPercent() == 0 && invoiceDetail.getItem() != null) {
@@ -174,13 +174,33 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 
 	public void onTotalChanged(ValueChangeEvent event) {
 		InvoiceDetail invoiceDetail = (InvoiceDetail) getTo();
+		double taxableBase = 0;
+		double vatQuota = 0;
+		double retentionQuota = 0;
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			double total = ((Double)event.getNewValue()).doubleValue();
-			invoiceDetail.setTaxableBase(total / ( 1 + (invoiceDetail.getVatPercent() / 100) - (invoiceDetail.getRetentionPercent() / 100)));
-			invoiceDetail.setVatQuota(getVatQuota(invoiceDetail));
-			invoiceDetail.setRetentionQuota(getRetentionQuota(invoiceDetail));
-			invoiceDetail.setTaxableBase(total - invoiceDetail.getVatQuota() + invoiceDetail.getRetentionQuota());
+			double vatPercent = invoiceDetail.getVatPercent();
+			double retentionPercent = invoiceDetail.getRetentionPercent();
+
+			for (int i=2; i<=4; i++) {
+				taxableBase = CommonUtil.round(total / ( 1 + vatPercent / 100 - retentionPercent / 100), i);
+				vatQuota = getQuota(taxableBase, vatPercent);
+				retentionQuota = getQuota(taxableBase, retentionPercent);
+				if (total == getTotal(taxableBase, vatQuota, retentionQuota)) {
+					break;
+				} else {
+					taxableBase = CommonUtil.truncate(total / ( 1 + vatPercent / 100 - retentionPercent / 100), i);
+					vatQuota = getQuota(taxableBase, vatPercent);
+					retentionQuota = getQuota(taxableBase, retentionPercent);
+					if (total == getTotal(taxableBase, vatQuota, retentionQuota)) {
+						break;
+					}
+				}
+			}
 		}
+		invoiceDetail.setTaxableBase(taxableBase);
+		invoiceDetail.setVatQuota(vatQuota);
+		invoiceDetail.setRetentionQuota(retentionQuota);
 	}
 
 	public double getVatQuota(InvoiceDetail invoiceDetail) {
@@ -197,19 +217,19 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 
 	public double getInvoiceDetailTotal() throws ManagerBeanException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
-		return getTotal(invoiceDetail);
+		return getTotal(invoiceDetail.getTaxableBase(), invoiceDetail.getVatQuota(), invoiceDetail.getRetentionQuota());
 	}
 
 	public double getToInvoiceDetailTotal() {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getTo();
-		return getTotal(invoiceDetail);
+		return getTotal(invoiceDetail.getTaxableBase(), invoiceDetail.getVatQuota(), invoiceDetail.getRetentionQuota());
 	}
 
 	public void setToInvoiceDetailTotal(double toInvoiceDetailTotal) {
 	}
 
-	private double getTotal(InvoiceDetail invoiceDetail) {
-		return CommonUtil.round(invoiceDetail.getTaxableBase() + invoiceDetail.getVatQuota() - invoiceDetail.getRetentionQuota(), 4);
+	private double getTotal(double taxableBase, double vatQuota, double retentionQuota) {
+		return CommonUtil.round(taxableBase + vatQuota - retentionQuota, 4);
 	}
 
 }
