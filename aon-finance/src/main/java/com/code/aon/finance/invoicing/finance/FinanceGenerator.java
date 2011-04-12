@@ -56,9 +56,9 @@ public class FinanceGenerator {
 		finance.setRegistryDocumentType(finance.getInvoice().getRegistryDocumentType());
 		finance.setRegistryDocumentCountry(finance.getInvoice().getRegistryDocumentCountry());
 		finance.setAmount(initialAmount);
-		if(finance.getInvoice().getType().equals(InvoiceType.SALES)){
+		if (finance.getInvoice().getType().equals(InvoiceType.SALES)) {
 			finance.setPayment(false);
-		}else{
+		} else {
 			finance.setPayment(true);
 		}
 		return finance;
@@ -67,10 +67,10 @@ public class FinanceGenerator {
 	public List<Finance> generateFinances(Invoice invoice, IPayMethod payMethod, double totalPrice, boolean insert) throws ManagerBeanException{
 		List<Finance> financeList = new LinkedList<Finance>();
 		Date date = invoice.getIssueDate();
-		if(payMethod == null || payMethod.getNumberOfPayments() == 1){
+		if (payMethod == null || payMethod.getNumberOfPayments() == 1) {
 			date = (payMethod == null?date:calculatePaymentDate(payMethod.getDaysToFirstPayment(),payMethod.getPaymentDaysArray(),date));
 			financeList.add(createFinance(invoice,date,(payMethod==null?null:payMethod.getPayment()),totalPrice,payMethod.getBank(),payMethod.getBankAccount()));
-		}else{
+		} else {
 			double paymentPrice = CommonUtil.round((totalPrice/payMethod.getNumberOfPayments()));
 			date = calculatePaymentDate(payMethod.getDaysToFirstPayment(),payMethod.getPaymentDaysArray(),date);
 			financeList.add(createFinance(invoice,date,payMethod.getPayment(),paymentPrice,payMethod.getBank(),payMethod.getBankAccount()));
@@ -82,7 +82,7 @@ public class FinanceGenerator {
 			date = calculatePaymentDate(payMethod.getDaysBetweenPayments(), payMethod.getPaymentDaysArray(), date);
 			financeList.add(createFinance(invoice,date,payMethod.getPayment(),paymentPrice,payMethod.getBank(),payMethod.getBankAccount()));
 		}
-		if(insert){
+		if (insert) {
 			insertFinances(financeList);
 		}
 		return financeList;
@@ -94,10 +94,10 @@ public class FinanceGenerator {
 		RegistryPayMethod rPayMethod = obtainRPayMethod(invoice);
 		RegistryBank rBank = rPayMethod==null?null:rPayMethod.getRegistryBank();
 		Date date = invoice.getIssueDate();
-		if(rPayMethod == null || rPayMethod.getNumberOfPayments() == 1){
+		if (rPayMethod == null || rPayMethod.getNumberOfPayments() == 1) {
 			date = (rPayMethod == null?date:calculatePaymentDate(rPayMethod.getDaysToFirstPayment(),rPayMethod.getPaymentDaysArray(),date));
 			financeList.add(createFinance(invoice,date,(rPayMethod==null?null:rPayMethod.getPayment()),totalPrice,rBank));
-		}else{
+		} else {
 			double paymentPrice = CommonUtil.round((totalPrice/rPayMethod.getNumberOfPayments()));
 			date = calculatePaymentDate(rPayMethod.getDaysToFirstPayment(),rPayMethod.getPaymentDaysArray(),date);
 			financeList.add(createFinance(invoice,date,rPayMethod.getPayment(),paymentPrice,rBank));
@@ -109,7 +109,7 @@ public class FinanceGenerator {
 			date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
 			financeList.add(createFinance(invoice,date,rPayMethod.getPayment(),paymentPrice,rBank));
 		}
-		if(insert){
+		if (insert) {
 			insertFinances(financeList);
 		}
 		return financeList;
@@ -126,7 +126,7 @@ public class FinanceGenerator {
 		criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), invoice.getRegistry().getId());
 		Iterator iter = rPayMethodBean.getList(criteria).iterator();
 		if (iter != null) {
-			if(iter.hasNext()){
+			if (iter.hasNext()) {
 				return (RegistryPayMethod)iter.next();
 			}
 		}
@@ -144,7 +144,7 @@ public class FinanceGenerator {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), company.getId());
 		Iterator iter = rPayMethodBean.getList(criteria).iterator();
-		if(iter.hasNext()){
+		if (iter.hasNext()) {
 			return (RegistryPayMethod)iter.next();
 		}
 		return null;
@@ -159,9 +159,9 @@ public class FinanceGenerator {
 		finance.setDueDate(date);
 		finance.setInvoice(invoice);
 		finance.setFinanceStatus(FinanceStatus.PENDING);
-		if(invoice.getType().equals(InvoiceType.SALES)){
+		if (invoice.getType().equals(InvoiceType.SALES)) {
 			finance.setPayment(false);
-		}else{
+		} else {
 			finance.setPayment(true);
 		}
 		finance.setPayMethod(payMethod);
@@ -195,11 +195,11 @@ public class FinanceGenerator {
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(date);
 		calendar.add(Calendar.DATE, daysNumber);
-		if(paymentDaysArray.length > 0){
+		if (paymentDaysArray.length > 0) {
 			for(int i = 0;i<paymentDaysArray.length;i++){
 				int days = CommonUtil.daysInMonth( date );
 				int day = paymentDaysArray[i]>days?days:paymentDaysArray[i];
-				if(calendar.get(Calendar.DAY_OF_MONTH) <= day){
+				if (calendar.get(Calendar.DAY_OF_MONTH) <= day) {
 					calendar.set(Calendar.DAY_OF_MONTH, day);
 					return calendar.getTime();
 				}

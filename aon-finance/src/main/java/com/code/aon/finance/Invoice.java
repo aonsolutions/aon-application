@@ -92,11 +92,16 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     private InvoiceTransactionType transaction;
     private boolean signed;    
     private Scope scope;
+    private double taxableBase;
+    private double vatQuota;
+    private double retentionQuota;
+    private double total;
 
 	private int issueYear;
 	private int issueMonth;
 	private int issueDay;
 	private boolean defaultTaxInfo;
+	private boolean updateEnabled;
 
 	private Set<InvoiceDetail> lines = new HashSet<InvoiceDetail>();
 	private Set<Finance> finances = new HashSet<Finance>();
@@ -106,6 +111,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	public Invoice() {
 		this.issueDate = new Date();
 		this.defaultTaxInfo = true;
+		this.updateEnabled = true;
 	}
 
     @Id
@@ -308,13 +314,45 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
         this.scope = scope;
     }
 
-	@Formula("year(issue_date)")
+    @Column(name="taxable_base")
+	public double getTaxableBase() {
+		return taxableBase;
+	}
+	public void setTaxableBase(double taxableBase) {
+		this.taxableBase = taxableBase;
+	}
+	
+    @Column(name="vat_quota")
+	public double getVatQuota() {
+		return vatQuota;
+	}
+	public void setVatQuota(double vatQuota) {
+		this.vatQuota = vatQuota;
+	}
+	
+    @Column(name="retention_quota")
+	public double getRetentionQuota() {
+		return retentionQuota;
+	}
+	public void setRetentionQuota(double retentionQuota) {
+		this.retentionQuota = retentionQuota;
+	}
+	
+	public double getTotal() {
+		return total;
+	}
+	public void setTotal(double total) {
+		this.total = total;
+	}
+	
+    @Formula("year(issue_date)")
 	public int getIssueYear() {
 	 return issueYear;	
 	}
 	public void setIssueYear(int year) {
 		issueYear = year;
 	}
+
 	@Formula("month(issue_date)")
 	public int getIssueMonth() {
 	 return issueMonth;	
@@ -337,6 +375,14 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 	public void setDefaultTaxInfo(boolean defaultTaxInfo) {
 		this.defaultTaxInfo = defaultTaxInfo;
+	}
+
+	@Transient
+	public boolean isUpdateEnabled() {
+		return updateEnabled;
+	}
+	public void setUpdateEnabled(boolean updateEnabled) {
+		this.updateEnabled = updateEnabled;
 	}
 
 	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
@@ -511,16 +557,20 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(this.registryDocumentType,o.registryDocumentType)
 			.append(this.registryDocumentCountry,o.registryDocumentCountry)
 			.append(this.registryName,o.registryName)
+			.append(this.retentionQuota,o.retentionQuota)
 			.append(this.securityLevel,o.securityLevel)
 			.append(this.scope,o.scope)
 			.append(this.series,o.series)
 			.append(this.signed,o.signed)
 			.append(this.status,o.status)
 			.append(this.surcharge,o.surcharge)
+			.append(this.taxableBase,o.taxableBase)
 			.append(this.taxDate,o.taxDate)
 			.append(this.taxFree,o.taxFree)
+			.append(this.total,o.total)
 			.append(this.transaction,o.transaction)
 			.append(this.type,o.type)
+			.append(this.vatQuota,o.vatQuota)
 			.append(this.withholding,o.withholding)
 			.isEquals();
 		}
@@ -542,16 +592,20 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(this.registryDocumentType)
 			.append(this.registryDocumentCountry)
 			.append(this.registryName)
+			.append(this.retentionQuota)
 			.append(this.securityLevel)
 			.append(this.scope)
 			.append(this.series)
 			.append(this.signed)
 			.append(this.status)
 			.append(this.surcharge)
+			.append(this.taxableBase)
 			.append(this.taxDate)		
 			.append(this.taxFree)		
+			.append(this.total)
 			.append(this.transaction)		
 			.append(this.type)		
+			.append(this.vatQuota)
 			.append(this.withholding)		
 			.toHashCode();
 	}	

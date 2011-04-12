@@ -35,7 +35,6 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 import com.code.aon.supplier.Supplier;
@@ -57,7 +56,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			invoice.setSeries(Integer.toString(CommonUtil.getYear(invoice.getIssueDate())));
 			if (invoice.getNumber() == 0) {
 				Criteria criteria = new Criteria();
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression("invoice.type", InvoiceType.SALES.ordinal()));
+				criteria.addNotEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
 				invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
 			}
 		} else if (invoice.getType() == InvoiceType.UNDEDUCTIBLE) {
@@ -77,22 +76,28 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (invoice.getScope() == null || invoice.getScope().getId() == null) {
 			invoice.setScope(obtainInvoiceScope(invoice.getType(), invoice.getRegistry()));
 		}
+		invoice.setTaxableBase(0);
+		invoice.setVatQuota(0);
+		invoice.setRetentionQuota(0);
+		invoice.setTotal(0);
 	}
 
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice) evt.getTo();
-		checkInvoice(invoice);
-		if (invoice.getType() == InvoiceType.SALES) {
-			checkNumber(invoice);
-			String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
-			if (!StringUtils.isEmpty(invoice.getSeries())) {
-				referenceCode = invoice.getSeries() + "/" + referenceCode;
+		if (invoice.isUpdateEnabled()) {
+			checkInvoice(invoice);
+			if (invoice.getType() == InvoiceType.SALES) {
+				checkNumber(invoice);
+				String referenceCode = StringUtils.leftPad(Integer.toString(invoice.getNumber()), 6, "0");
+				if (!StringUtils.isEmpty(invoice.getSeries())) {
+					referenceCode = invoice.getSeries() + "/" + referenceCode;
+				}
+				invoice.setReferenceCode(referenceCode);
 			}
-			invoice.setReferenceCode(referenceCode);
-		}
-		if (checkInvoiceDate(invoice)) {
-			invoice.setTaxDate(invoice.getIssueDate());
+			if (checkInvoiceDate(invoice)) {
+				invoice.setTaxDate(invoice.getIssueDate());
+			}
 		}
 	}
 
@@ -241,7 +246,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING));
+		criteria.addNotEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
 		if (financeBean.getCount(criteria) == 0) {
 			return true;
 		}

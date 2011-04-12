@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.strategy.BasicPriceStrategy;
 import com.code.aon.product.strategy.ICalculableContainer;
@@ -18,8 +19,13 @@ import com.code.aon.registry.ITaxInfo;
 public class InvoicePriceStrategy extends BasicPriceStrategy {
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public double getTaxableBase(ICalculableContainer icc) {
+		Invoice invoice = (Invoice)icc;
+		return (invoice.getTaxableBase() != 0) ? invoice.getTaxableBase() : getCalculatedTaxableBase(icc);
+	}
+
+	@SuppressWarnings("unchecked")
+	public double getCalculatedTaxableBase(ICalculableContainer icc) {
 		double taxableBase = 0;
 		Iterator iter = icc.getDetailList().iterator();
 		while(iter.hasNext()){
@@ -86,33 +92,46 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 		//Para redefinir en los hijos.
 	}
 
-	@SuppressWarnings("unchecked")
+	@Override
 	public double getTotalVatQuota(ICalculableContainer icc, ITaxInfo iti) {
-		double total = 0;
+		Invoice invoice = (Invoice)icc;
+		return (invoice.getVatQuota() != 0) ? invoice.getVatQuota() : getCalculatedTotalVatQuota(icc, iti);
+	}
+
+	public double getCalculatedTotalVatQuota(ICalculableContainer icc, ITaxInfo iti) {
+		return super.getTotalVatQuota(icc, iti);
+	}
+	
+	@Override
+	public double getTotalRetentionQuota(ICalculableContainer icc, ITaxInfo iti) {
+		Invoice invoice = (Invoice)icc;
+		return (invoice.getRetentionQuota() != 0) ? invoice.getRetentionQuota() : getCalculatedTotalRetentionQuota(icc, iti);
+	}
+
+	public double getCalculatedTotalRetentionQuota(ICalculableContainer icc, ITaxInfo iti) {
+		return super.getTotalRetentionQuota(icc, iti);
+	}
+	
+	@Override
+	public double getTotalPrice(ICalculableContainer icc, ITaxInfo iti) {
+		Invoice invoice = (Invoice)icc;
+		return (invoice.getTotal() != 0) ? invoice.getTotal() : super.getTotalPrice(icc, iti);
+	}
+
+	@SuppressWarnings("unchecked")
+	public double getVatPercent(ICalculableContainer icc, ITaxInfo iti) {
+		double percent = 0;
 		Iterator iter = getTaxBreakDowns(icc, iti).iterator();
 		while(iter.hasNext()){
 			TaxBreakDown taxBreakDown = (TaxBreakDown)iter.next();
 			if(taxBreakDown.getTaxType().equals(TaxType.VAT)){
-				total += taxBreakDown.getTaxQuota();
-				total += taxBreakDown.getSurchargeQuota();
+				percent = taxBreakDown.getTaxPercent();
+				break;
 			}
 		}
-		return CommonUtil.round(total);
+		return CommonUtil.round(percent);
 	}
-	
-	@SuppressWarnings("unchecked")
-	public double getTotalRetentionQuota(ICalculableContainer icc, ITaxInfo iti) {
-		double total = 0;
-		Iterator iter = getTaxBreakDowns(icc, iti).iterator();
-		while(iter.hasNext()){
-			TaxBreakDown taxBreakDown = (TaxBreakDown)iter.next();
-			if(taxBreakDown.getTaxType().equals(TaxType.RETENTION)){
-				total = total - taxBreakDown.getTaxQuota();
-			}
-		}
-		return CommonUtil.round(total);
-	}
-	
+
 	@SuppressWarnings("unchecked")
 	public double getRetentionPercent(ICalculableContainer icc, ITaxInfo iti) {
 		double percent = 0;
@@ -126,4 +145,5 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 		}
 		return CommonUtil.round(percent);
 	}
+
 }

@@ -17,21 +17,10 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.ql.Criteria;
 
-/**
- * The InvoiceBeanListener. VetoListener to be added to InvoiceDetail.class
- */
 public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	
-	/** The LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceDetailBeanVetoListener.class.getName());
 
-	/**
-	 * Bean removed. Removes the related InvoiceTax before updating the InvoiceDetail
-	 * 
-	 * @param evt the evt
-	 * 
-	 * @throws ManagerBeanVetoListenerException the manager bean veto listener exception
-	 */
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
@@ -44,13 +33,6 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 		}
 	}
 
-	/**
-	 * Bean removed. Removes the related InvoiceTax before removing the InvoiceDetail
-	 * 
-	 * @param evt the evt
-	 * 
-	 * @throws ManagerBeanVetoListenerException the manager bean veto listener exception
-	 */
 	@Override
 	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();

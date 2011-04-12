@@ -10,34 +10,26 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.InvoicingException;
+import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.finance.invoicing.remover.IInvoiceDetailRemover;
 import com.code.aon.finance.invoicing.remover.InvoiceRemoverFactory;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionUtilities;
 
-/**
- * The InvoiceDetailBeanListener. Listener to be added to InvoiceDetail.class
- */
 public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	
 	private boolean updating = false;
 
-	/**
-	 * Bean inserted. Inserts the related InvoiceTax when an InvoiceDetail is added.
-	 * 
-	 * @param evt the evt
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
@@ -54,7 +46,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean detailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), detail.getInvoice().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ID), detail.getId()));
+		criteria.addNotEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ID), detail.getId());
 		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE), detail.getLine());
 		criteria.addOrder(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
@@ -67,15 +59,10 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				++index;
 			}
 		}
+
+		updateInvoiceTotals((Invoice)BeanManager.getManagerBean(Invoice.class).get(detail.getInvoice().getId()));
 	}
 	
-	/**
-	 * Bean updated. Inserts the related InvoiceTax when an InvoiceDetail is updated.
-	 * 
-	 * @param evt the evt
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
 	@Override
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
@@ -91,16 +78,15 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 
 		if (!updating) {
 			updating = true;
-
 			IManagerBean detailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), detail.getInvoice().getId());
-			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ID), detail.getId()));
+			criteria.addNotEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ID), detail.getId());
 			criteria.addEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE), detail.getLine());
 			if (detailBean.getCount(criteria) > 0) {
 				criteria = new Criteria();
 				criteria.addEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), detail.getInvoice().getId());
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ID), detail.getId()));
+				criteria.addNotEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ID), detail.getId());
 				criteria.addOrder(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
 				List<ITransferObject> list = detailBean.getList(criteria);
 				int index = 1;
@@ -114,8 +100,9 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 					++index;
 				}
 			}
-
 			updating = false;
+
+			updateInvoiceTotals(detail.getInvoice());
 		}
 	}
 	
@@ -132,7 +119,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		IManagerBean detailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), detail.getInvoice().getId());
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ID), detail.getId()));
+		criteria.addNotEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_ID), detail.getId());
 		criteria.addGreaterThanOrEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE), detail.getLine());
 		criteria.addOrder(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_LINE));
 		List<ITransferObject> list = detailBean.getList(criteria);
@@ -145,16 +132,26 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 				++ index;
 			}
 		}
+
+		updateInvoiceTotals(detail.getInvoice());
 	}
 
-	/**
-	 * Gets the invoiceTax related with the parameter invoiceDetail and completes its surchage and percentage.
-	 * 
-	 * @param invoiceDetail the invoice detail
-	 * @param dataBase if the invoiceDetail has to be retrieved from the database
-	 * 
-	 * @return the invoice tax
-	 */
+	private void updateInvoiceTotals(Invoice invoice) throws ManagerBeanException {
+		InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
+		double taxableBase = priceStrategy.getCalculatedTaxableBase(invoice);
+		double vatQuota = priceStrategy.getCalculatedTotalVatQuota(invoice, invoice);
+		double retentionQuota = CommonUtil.round(0 - priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice));
+
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		invoice.setUpdateEnabled(false);
+		invoice.setTaxableBase(taxableBase);
+		invoice.setVatQuota(vatQuota);
+		invoice.setRetentionQuota(retentionQuota);
+		invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
+		invoiceBean.update(invoice);
+		invoice.setUpdateEnabled(true);
+	}
+
 	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax) throws ManagerBeanException {
 		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(invoiceDetail);
@@ -186,14 +183,6 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		return invoiceTax;
 	}
 
-	/**
-	 * Gets the Tax with id equals to the parameter id, and valid with the date passed as parameter.
-	 * 
-	 * @param date the date
-	 * @param id the id
-	 * 
-	 * @return the tax
-	 */
 	@SuppressWarnings("unchecked")
 	private Tax obtainTax(Integer id, Date date) throws ManagerBeanException {
 		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
