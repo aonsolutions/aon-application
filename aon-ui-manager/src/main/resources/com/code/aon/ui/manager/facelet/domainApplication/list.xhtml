@@ -30,9 +30,11 @@
 			
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{domainApplication}" />
+					<ui:param name="rows" value="20" />					
 					<ui:define name="columns">
 
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn"
+							alias="cn" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_name}" />
 							</f:facet>
@@ -40,7 +42,8 @@
 						</aon:column>
 
 						<c:if test="#{manager.config.showDomainApplicationDBConnection}">
-							<aon:column styleClass="aon-editDataTable-textColumn">
+							<aon:column styleClass="aon-editDataTable-textColumn"
+								alias="dataSource" >
 								<f:facet name="header">
 									<aon:outputText value="#{managerBundle.manager_db_connection}" />
 								</f:facet>
@@ -48,8 +51,9 @@
 							</aon:column>
 						</c:if>
 	
-						<c:if test="#{manager.config.showDomainApplicationStatus}">	
-							<aon:column styleClass="aon-width-80 aon-editDataTable-textColumn">
+						<c:if test="#{manager.config.showDomainApplicationStatus}">
+							<aon:column styleClass="aon-width-80 aon-editDataTable-textColumn"
+								alias="status" >
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_status}" />
 								</f:facet>

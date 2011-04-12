@@ -6,10 +6,11 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-		<ui:param name="controller" value="#{workGroup}" />
+		<ui:param name="rows" value="15" />
 		<ui:define name="columns">
 	
-			<aon:column styleClass="aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-editDataTable-textColumn"
+				alias="WorkGroup.description" >
 				<f:facet name="header">
 					<aon:outputLabel for="WorkGroup_description" value="#{bundle.aon_description}" />
 				</f:facet>
@@ -24,9 +25,10 @@
 				</f:facet>
 			</aon:column>
 	
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150"
+				alias="WorkGroup.status" >
 				<f:facet name="header">
-					<aon:outputLabel for="WorkGroup_status" value="#{bundle.aon_description}" />
+					<aon:outputLabel for="WorkGroup_status" value="#{bundle.aon_status}" />
 				</f:facet>
 				<aon:outputText value="#{to.status}" rendered="#{formList}" />
 				<aon:selectOneMenu id="WorkGroup_status"

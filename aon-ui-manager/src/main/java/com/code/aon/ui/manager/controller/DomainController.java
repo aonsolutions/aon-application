@@ -2,6 +2,7 @@ package com.code.aon.ui.manager.controller;
 
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -398,5 +399,13 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		}
 		return false;
 	}
+
+	public void addDomainEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null) {
+			Domain domain = (Domain) event.getNewValue();
+			String fieldName = resolveAlias(event.getComponent().getId());
+			getCriteria().addEqualExpression(fieldName, domain.getId());
+		}
+	}		
 	
 }

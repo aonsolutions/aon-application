@@ -364,7 +364,7 @@
 		</managed-property>								
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>DomainUser_name</value>
+			<value>DomainUser_uid</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

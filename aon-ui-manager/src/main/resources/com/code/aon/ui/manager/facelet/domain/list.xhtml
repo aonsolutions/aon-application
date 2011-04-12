@@ -13,6 +13,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{managerBundle.manager_domains}" />
 				<ui:param name="controller" value="#{domain}" />
+				<ui:param name="rows" value="20" />
 				<ui:param name="skipResetButton" value="#{!manager.domainManagement}" />
 				<ui:param name="skipSearchButton" value="#{!manager.domainManagement}" />
 			</ui:include>
@@ -24,21 +25,23 @@
 					<ui:param name="controller" value="#{domain}" />
 					<ui:define name="columns">
 
-						<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn"
+							alias="cn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_name}" />
 							</f:facet>
 							<aon:outputText value="#{to.commonName}"/>
 						</aon:column>
 	
-						<aon:column>
+						<aon:column alias="o">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_description}" />
 							</f:facet>
 							<aon:outputText value="#{to.organizationName}"/>
 						</aon:column>
 	
-						<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn"
+							alias="parentDomain">
 							<f:facet name="header">
 								<aon:outputText value="#{managerBundle.manager_domain_parent}" />
 							</f:facet>

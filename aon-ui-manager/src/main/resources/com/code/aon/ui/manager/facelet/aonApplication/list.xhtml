@@ -21,30 +21,35 @@
 			
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{aonApplication}" />
+					<ui:param name="rows" value="20" />					
 					<ui:define name="columns">
 
-						<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn"
+							alias="cn" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_name}" />
 							</f:facet>
 							<aon:outputText value="#{to.commonName}"/>
 						</aon:column>
 	
-						<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn"
+							alias="serverId" >
 							<f:facet name="header">
 								<aon:outputText value="#{managerBundle.manager_application_serverId}" />
 							</f:facet>
 							<aon:outputText value="#{to.serverId}"/>
 						</aon:column>
 
-						<aon:column styleClass="aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-editDataTable-textColumn"
+							alias="description" >
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_description}" />
 							</f:facet>
 							<aon:outputText value="#{to.description}"/>
 						</aon:column>
 
-						<aon:column styleClass="aon-width-50 aon-editDataTable-textColumn">
+						<aon:column styleClass="aon-width-50 aon-editDataTable-textColumn"
+							alias="contratable" >
 							<f:facet name="header">
 								<aon:outputText value="#{managerBundle.manager_application_contratable}" />
 							</f:facet>

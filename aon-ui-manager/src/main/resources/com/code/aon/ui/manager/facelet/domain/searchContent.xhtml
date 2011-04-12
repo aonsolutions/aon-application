@@ -18,6 +18,14 @@
 			<aon:inputText id="Domain_organizationName" size="80"
 				valueChangeListener="#{domain.addExpression}" />
 
+			<aon:outputLabel for="Domain_parentDomain"
+				value="#{managerBundle.manager_domain_parent}" />
+			<aon:selectOneMenu id="Domain_parentDomain"
+				converter="#{domain.converter}"
+				valueChangeListener="#{domain.addDomainEqualExpression}" >
+				<f:selectItem itemLabel="-" value="#{null}"/>
+				<f:selectItems value="#{domain.parentDomains}" />
+			</aon:selectOneMenu>
 		</ui:define>
 	</ui:decorate>
 

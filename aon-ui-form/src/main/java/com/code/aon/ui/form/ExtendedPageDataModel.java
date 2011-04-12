@@ -275,13 +275,18 @@ public class ExtendedPageDataModel extends ExtendedDataModel implements Serializ
 		_rowIndex = (key == null) ? -1 : (Integer) key;
 	}
 
+	private int getRows(SequenceRange range) {
+		if ( range.getRows() > 0 ) {
+			return Math.min( range.getRows(), this.rowCount );
+		}
+		return this.rowCount;
+	}
+	
 	private boolean areEqualRanges(SequenceRange range1, SequenceRange range2) {
 		if (range1 == null || range2 == null) {
 			return range1 == null && range2 == null;
 		} else if ( range1.getFirstRow() == range2.getFirstRow() ) {
-			int rows1 = ( range1.getRows() > 0 ) ? range1.getRows() : this.rowCount;
-			int rows2 = ( range2.getRows() > 0 ) ? range2.getRows() : this.rowCount;
-			return  rows1 == rows2;
+			return  getRows(range1) == getRows(range2);
 		}
 		return false;
 	}

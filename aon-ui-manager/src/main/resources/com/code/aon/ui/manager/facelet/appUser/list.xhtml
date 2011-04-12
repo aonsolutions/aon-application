@@ -12,9 +12,11 @@
 	<aon:div styleClass="aon-scroll-area">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 			<ui:param name="showNote" value="#{false}" />
+			<ui:param name="rows" value="15" />
 			<ui:define name="columns">
 		
-				<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn">
+				<aon:column styleClass="aon-width-180 aon-editDataTable-textColumn"
+					alias="cn" >
 					<f:facet name="header">
 						<aon:outputText value="#{bundle.aon_name}" />
 					</f:facet>
