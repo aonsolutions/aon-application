@@ -31,6 +31,9 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.IAccountingConstants;
+import com.code.aon.ui.accounting.check.IAccountCheck;
+import com.code.aon.ui.accounting.check.ICheckEntry;
+import com.code.aon.ui.accounting.controller.AccountCheckController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -169,12 +172,14 @@ public class EndPeriodEntriesController {
 						throw new AbortProcessingException(msg);
 					}
 				}
+				checkPeriod(getPeriod());
 			} else if (accountEntryType == AccountEntryType.CLOSING) {
 				if (!util.existsEntry(getPeriod(), AccountEntryType.OPERATING, getSecurityLevel())) {
 					String msg = "No existe el asiento de explotación en el ejercicio " + getPeriod().getId() + ".";
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				}
+				checkPeriod(getPeriod());
 			}
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -494,8 +499,10 @@ public class EndPeriodEntriesController {
 	private List<?> getUnbalancedAccounts(Period period, AccountEntryType accountEntryType, SecurityLevel securityLevel) {
 		String sessionName = HibernateUtil.getSessionFactoryName();
 		Session session = HibernateUtil.getSession(sessionName);
-		StringWriter sw = new StringWriter();
-		sw.append("SELECT account.id,SUM(debit),SUM(credit) FROM AccountSummary WHERE accountPeriod = '");
+		StringBuilder sw = new StringBuilder();
+		sw.append("SELECT account.id,SUM(debit),SUM(credit)");
+		sw.append(" FROM AccountEntryDetail ");
+		sw.append("WHERE accountEntry.accountPeriod = '");
 		sw.append(period.getId());
 		sw.append("'");
 		if (accountEntryType == AccountEntryType.OPERATING) {
@@ -504,7 +511,7 @@ public class EndPeriodEntriesController {
 		if (securityLevel == null) {
 			securityLevel = SecurityLevel.OFFICIAL;
 		}
-		sw.append(" AND securityLevel =");
+		sw.append(" AND accountEntry.securityLevel =");
 		sw.append(Integer.toString(securityLevel.ordinal()));
 		
 		sw.append(" GROUP BY account.id HAVING SUM(debit) != SUM(credit)");
@@ -521,4 +528,23 @@ public class EndPeriodEntriesController {
 		entryController.getModel().setRowIndex(0);
 		entryController.onSelect(null);
 	}
+
+	private void checkPeriod(Period period) {
+		AccountCheckController acc = (AccountCheckController) AonUtil.getRegisteredBean(IAccountingConstants.ACCOUNT_CHECK_CONTROLLER);
+		acc.onInitialize(null);
+		acc.checkUnbalancedAccountEntry();
+		acc.getParams().setPeriod(period);
+		acc.onExecute(null);
+		List<ICheckEntry> checks = acc.getCheckEntryList();
+		if (checks != null && checks.size()> 0) {
+			String msg = "Existen apuntes descuadrados. No se puede generar el apunte.";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(" ");
+			for (ICheckEntry check:checks) {
+				AonUtil.addErrorMessage(check.getMessage());
+			}
+			throw new AbortProcessingException(msg); 
+		}
+	}
+	
 }

@@ -18,6 +18,7 @@ public interface IAccountingConstants {
 	
 	// CONTROLLERS
 	String ACCOUNT_APP_PARAM_CONTROLLER_NAME = "accAppParams";
+	String ACCOUNT_CHECK_CONTROLLER = "accountCheck";
 	String ACCOUNT_COLLECTIONS_CONTROLLER_NAME = "accountCollections";
 	String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
 	String AMORTIZATION_DETAIL_CONTROLLER = "amortizationDetail";	

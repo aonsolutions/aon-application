@@ -49,6 +49,12 @@ public class AccountCheckController {
 		return accountChecks;
 	}
 
+	public void checkUnbalancedAccountEntry() {
+		for (IAccountCheck accountCheck: getAccountChecks()) {
+			accountCheck.setEnabled((accountCheck instanceof UnbalancedAccountEntryCheck));
+		}
+	}
+	
 	public void setAccountChecks(List<IAccountCheck> accountChecks) {
 		this.accountChecks = accountChecks;
 	}
