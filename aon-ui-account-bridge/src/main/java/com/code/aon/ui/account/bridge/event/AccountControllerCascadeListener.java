@@ -13,14 +13,12 @@ import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountConstants;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntryDetail;
-import com.code.aon.accounting.AccountSummary;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -38,10 +36,7 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 				throw new ControllerListenerException("Imposible borrar cuenta. Cuenta necesaria para el sistema.");
 			}else if(obtainAccountEntryDetailCount(account) != 0){
 				throw new ControllerListenerException("Imposible borrar cuenta. Hay apuntes contables asociados.");
-			}else if(!accountSummaryRemovable(account)){
-				throw new ControllerListenerException("Imposible borrar cuenta. Hay apuntes contables asociados.");
 			}else {
-				removeAccountRelatedAccountSummary(account);
 				removeRelatedLinkTable(account);
 			}
 		} catch (ManagerBeanException e) {
@@ -73,27 +68,6 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 		return accountEntryDetailBean.getCount(criteria); 
 	}
 	
-	private boolean accountSummaryRemovable(Account account) throws ManagerBeanException {
-		IManagerBean accountSummaryBean = BeanManager.getManagerBean(AccountSummary.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_ACCOUNT_ID), account.getId());
-		Expression creditExpression = ExpressionUtilities.getGreaterThanExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_CREDIT), new Double(0.0));
-		Expression debitExpression = ExpressionUtilities.getGreaterThanExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_DEBIT), new Double(0.0));
-		criteria.addExpression(ExpressionUtilities.getOrExpression(creditExpression, debitExpression));
-		return accountSummaryBean.getCount(criteria) == 0;
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void removeAccountRelatedAccountSummary(Account account) throws ManagerBeanException {
-		IManagerBean accountSummaryBean = BeanManager.getManagerBean(AccountSummary.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountingAlias.ACCOUNT_SUMMARY_ACCOUNT_ID), account.getId());
-		Iterator iter = accountSummaryBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			accountSummaryBean.remove((AccountSummary)iter.next());
-		}
-	}
-	
 	private void removeRelatedLinkTable(Account account) throws ManagerBeanException {
 		if(account.getId().length() >= 5){
 			String prefix = account.getId().substring(0, 5);
@@ -121,11 +95,10 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void deleteLink(IManagerBean bean, String alias, String accountId) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(alias), accountId);
-		Iterator iter = bean.getList(criteria, 0, 1).iterator();
+		Iterator<?> iter = bean.getList(criteria, 0, 1).iterator();
 		if(iter.hasNext()){
 			ITransferObject to = (ITransferObject) iter.next();
 			bean.remove(to);
