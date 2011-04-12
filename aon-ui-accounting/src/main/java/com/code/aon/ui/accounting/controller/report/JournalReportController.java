@@ -28,7 +28,8 @@ public class JournalReportController extends BasicController implements IAccount
 	private Date fromDate;
 	private Date toDate;
 	private Date date;
-	private boolean journal;
+	private int order;
+	//private boolean journal;
 	private boolean journalCorrect;
 	private Integer previousAccountEntryDetail;
 	private Integer previousAccountEntry;
@@ -101,12 +102,15 @@ public class JournalReportController extends BasicController implements IAccount
 		super.onReset(event);
 	}
 
-	public boolean isJournal() {
-		return journal;
+	public int getOrder() {
+		return order;
+	}
+	public void setOrder(int order) {
+		this.order = order;
 	}
 
-	public void setJournal(boolean journal) {
-		this.journal = journal;
+	public boolean isJournal() {
+		return (order == 2);
 	}
 
 	public boolean isJournalCorrect() {
@@ -126,7 +130,7 @@ public class JournalReportController extends BasicController implements IAccount
 		setToDate(null);
 		setDate(new Date());
 		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);
-		setJournal(false);
+		setOrder(1);
 		setJournalCorrect(true);
 		setPageCounter(0);
 		setCounterVisible(false);
@@ -157,20 +161,20 @@ public class JournalReportController extends BasicController implements IAccount
 								getFromDate());
 			}
 			if (getToDate() != null) {
-				criteria
-						.addLessThanOrEqualExpression(
+				criteria.addLessThanOrEqualExpression(
 								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),
 								getToDate());
 			}
 			if (getSecurityLevel() != null) {
-				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL),
-						getSecurityLevel());
+				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL), getSecurityLevel());
 			}
 			getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD));
-			if (isJournal()) {
-				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
-			} else {
+			if (getOrder() == 0 ) {
 				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
+			} else if (getOrder() == 1) {
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE));
+			} else {
+				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_JOURNAL));
 			}
 			super.onSearch(event);
 		} catch (ManagerBeanException e) {
@@ -233,7 +237,7 @@ public class JournalReportController extends BasicController implements IAccount
 	
 	public void onChangeOrder(ActionEvent event) {
 		try {
-			if (journal) {
+			if (isJournal()) {
 				IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
 				Criteria c = new Criteria();
 				if (getPeriod() != null) {

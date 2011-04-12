@@ -450,7 +450,7 @@ public class AccountingBookController implements ICollectionProvider{
         t.setCounterVisible(true);
         t.setPageCounter(getGeneratedPages());
         t.setPeriod(getPeriod());
-        t.setJournal(true);
+        t.setOrder(2);
         t.onSearch(null);
 		String out = manager.execute(zout, "journalBook");
 		int i = 0;
