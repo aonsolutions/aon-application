@@ -11,6 +11,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.finance.controller.InvoiceDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -54,6 +55,11 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	}
 
 	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		refreshInvoiceTotals((InvoiceDetailController)event.getController());
+	}
+
+	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
 		obtainTaxableBase(event, invoiceDetail);
@@ -62,6 +68,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		event.getController().initializeModel();
+		refreshInvoiceTotals((InvoiceDetailController)event.getController());
 	}
 
 	@Override
@@ -69,6 +76,11 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		if (!event.getController().isNew()) {
 			event.getController().initializeModel();
 		}
+	}
+
+	@Override
+	public void afterBeanRemoved(ControllerEvent event)	throws ControllerListenerException {
+		refreshInvoiceTotals((InvoiceDetailController)event.getController());
 	}
 
 	private	Integer calculateNextLine(Invoice invoice) throws ManagerBeanException {
@@ -83,6 +95,15 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	private void obtainTaxableBase(ControllerEvent event, InvoiceDetail invoiceDetail) {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		invoiceDetail.setTaxableBase(controller.getPriceStrategy().getBasePrice(invoiceDetail));
+	}
+
+	private void refreshInvoiceTotals(InvoiceDetailController controller) {
+		InvoiceController invoiceController = (InvoiceController)controller.getMasterController();
+		Invoice invoice = (Invoice)invoiceController.getTo();
+		invoice.setTaxableBase(((InvoiceDetail)controller.getTo()).getInvoice().getTaxableBase());
+		invoice.setVatQuota(((InvoiceDetail)controller.getTo()).getInvoice().getVatQuota());
+		invoice.setRetentionQuota(((InvoiceDetail)controller.getTo()).getInvoice().getRetentionQuota());
+		invoice.setTotal(((InvoiceDetail)controller.getTo()).getInvoice().getTotal());
 	}
 
 }
