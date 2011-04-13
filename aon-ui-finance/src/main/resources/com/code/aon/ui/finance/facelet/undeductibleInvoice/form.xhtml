@@ -159,21 +159,21 @@
 						
 					<aon:outputLabel for="Creditor_id"
 						value="#{financeBundle.finance_creditor}" />
-					<aon:div styleClass="aon-lookup">
+					<aon:div id="Creditor_lookup" styleClass="aon-lookup">
 						<a4j:region>
 							<aon:lookupInputText id="Creditor_id"
 								value="#{undeductibleInvoice.to.registry.id}"
 								disabled="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" size="5"
 								lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{undeductibleInvoice.creditorData}"
-								reRender="Creditor_full_name,Creditor_document,InvoiceAddress"
+								reRender="Creditor_full_name,Creditor_lookup_document,InvoiceAddress"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{financeBundle.finance_creditor_selection}"
 								disabled="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" minHeight="460" minWidth="650" 
 								property="#{undeductibleInvoice.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{undeductibleInvoice.creditorData}"
-								selectReRender="Creditor_id,Creditor_full_name,Creditor_document,InvoiceAddress"
+								selectReRender="Creditor_lookup,Creditor_lookup_document,InvoiceAddress"
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton 
@@ -181,7 +181,7 @@
 								disabled="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" minWidth="650" minHeight="650"
 								property="#{undeductibleInvoice.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{undeductibleInvoice.creditorData}"
-								selectReRender="Creditor_id,Creditor_full_name,Creditor_document,InvoiceAddress"
+								selectReRender="Creditor_lookup,Creditor_lookup_document,InvoiceAddress"
 								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Creditor_full_name" disabled="#{undeductibleInvoice.readOnly}"
@@ -189,9 +189,9 @@
 						</a4j:region>
 					</aon:div>
 
-					<aon:outputLabel for="Creditor_document"
+					<aon:outputLabel for="Creditor_registry_document"
 						value="#{bundle.aon_company_document}" />
-					<aon:panelGroup id="Creditor_document">
+					<aon:panelGroup id="Creditor_lookup_document">
 						<aon:selectOneMenu id="Creditor_registry_document_type" 
 							disabled="#{undeductibleInvoice.readOnly}"
 							value="#{undeductibleInvoice.to.registryDocumentType}"

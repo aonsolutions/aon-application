@@ -199,21 +199,21 @@
 
 					<aon:outputLabel for="Customer_id"
 						value="#{customerBundle.customer_customer}" />
-					<aon:div styleClass="aon-lookup">
+					<aon:div id="Customer_lookup" styleClass="aon-lookup">
 						<a4j:region>
 							<aon:lookupInputText id="Customer_id"
 								value="#{saleInvoice.to.registry.id}"
 								disabled="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" size="5"
 								lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{saleInvoice.customerData}"
-								reRender="Customer_full_name,Customer_document,InvoiceAddress"
+								reRender="Customer_full_name,Customer_lookup_document,InvoiceAddress"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{customerBundle.customer_selection}"
 								disabled="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" minHeight="460" minWidth="650" 
 								property="#{saleInvoice.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{saleInvoice.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_document,InvoiceAddress"
+								selectReRender="Customer_lookup,Customer_lookup_document,InvoiceAddress"
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton 
@@ -221,7 +221,7 @@
 								disabled="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" minWidth="650" minHeight="650"
 								property="#{saleInvoice.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{saleInvoice.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_document,InvoiceAddress"
+								selectReRender="Customer_lookup,Customer_lookup_document,InvoiceAddress"
 								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name" disabled="#{saleInvoice.readOnly}"
@@ -229,9 +229,9 @@
 						</a4j:region>
 					</aon:div>
 
-					<aon:outputLabel for="Customer_document"
+					<aon:outputLabel for="Customer_registry_document"
 						value="#{bundle.aon_company_document}" />
-					<aon:panelGroup id="Customer_document">
+					<aon:panelGroup id="Customer_lookup_document">
 						<aon:selectOneMenu id="Customer_registry_document_type"
 							disabled="#{saleInvoice.readOnly}" 
 							value="#{saleInvoice.to.registryDocumentType}" 

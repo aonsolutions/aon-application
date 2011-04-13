@@ -159,21 +159,21 @@
 
 					<aon:outputLabel for="Creditor_id"
 						value="#{financeBundle.finance_creditor}" />
-					<aon:div styleClass="aon-lookup">
+					<aon:div id="Creditor_lookup" styleClass="aon-lookup">
 						<a4j:region>
 							<aon:lookupInputText id="Creditor_id"
 								value="#{expenseInvoice.to.registry.id}"
 								disabled="#{expenseInvoice.readOnly or !expenseInvoiceFinance.allPending}" size="5"
 								lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{expenseInvoice.creditorData}"
-								reRender="Creditor_full_name,Creditor_document,InvoiceAddress"
+								reRender="Creditor_full_name,Creditor_lookup_document,InvoiceAddress"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{financeBundle.finance_creditor_selection}"
 								disabled="#{expenseInvoice.readOnly or !expenseInvoiceFinance.allPending}" minHeight="460" minWidth="650" 
 								property="#{expenseInvoice.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{expenseInvoice.creditorData}"
-								selectReRender="Creditor_id,Creditor_full_name,Creditor_document,InvoiceAddress"
+								selectReRender="Creditor_lookup,Creditor_lookup_document,InvoiceAddress"
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton 
@@ -181,7 +181,7 @@
 								disabled="#{expenseInvoice.readOnly or !expenseInvoiceFinance.allPending}" minWidth="650" minHeight="650"
 								property="#{expenseInvoice.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 								lookupChangeListener="#{expenseInvoice.creditorData}"
-								selectReRender="Creditor_id,Creditor_full_name,Creditor_document,InvoiceAddress"
+								selectReRender="Creditor_lookup,Creditor_lookup_document,InvoiceAddress"
 								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Creditor_full_name" disabled="#{expenseInvoice.readOnly}"
@@ -189,9 +189,9 @@
 						</a4j:region>
 					</aon:div>
 
-					<aon:outputLabel for="Creditor_document"
+					<aon:outputLabel for="Creditor_registry_document"
 						value="#{bundle.aon_company_document}" />
-					<aon:panelGroup id="Creditor_document">
+					<aon:panelGroup id="Creditor_lookup_document">
 						<aon:selectOneMenu id="Creditor_registry_document_type" 
 							disabled="#{expenseInvoice.readOnly}"
 							value="#{expenseInvoice.to.registryDocumentType}"
