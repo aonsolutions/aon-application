@@ -8,6 +8,8 @@
 
 BEGIN;
 
+UPDATE `registry` SET `type` = 0 WHERE `document` = 0 and `type` is null;
+
 UPDATE `rpaymethod` SET `number_of_pymnts` = 1 WHERE `number_of_pymnts` = 0;
 
 UPDATE `offer` SET `number_of_pymnts` = 1 WHERE `number_of_pymnts` = 0;
