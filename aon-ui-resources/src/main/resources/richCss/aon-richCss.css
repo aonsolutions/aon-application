@@ -1973,6 +1973,15 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	background:transparent url(images/aon-icon/aon-icon-attach-file-disabled.png) scroll 13px center no-repeat;		
 	}
 
+/*************************/
+/*****  MODAL PANEL  *****/
+/*************************/
+.rich-mpnl-body{
+	font: 12px/1.333 "arial","lucida Grande","Trebuchet MS",sans-serif;
+	color:#4b4b4b;
+	font-size:12px;
+}
+
 /****************************/
 /*****  SPIN CONTROL    *****/
 /****************************/
