@@ -3,9 +3,11 @@ package com.code.aon.ui.company.event;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -19,18 +21,19 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class EnterpriseControllerListener extends ControllerAdapter {
 
 	@Override
-	public void afterBeanCreated(ControllerEvent event)
-			throws ControllerListenerException {
+	public void afterBeanCreated(ControllerEvent event)	throws ControllerListenerException {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		Enterprise enterprise = (Enterprise) controller.getTo();
 		enterprise.getRegistry().setType(RegistryType.LEGAL);
-		controller.initDocument();
+		enterprise.getRegistry().setNationality(Country.ES);
+		enterprise.getRegistry().setDocumentCountry(Country.ES);
+		enterprise.getRegistry().setDocumentType(DocumentType.CIF);
+
 		controller.reset();
 	}
 
 	@Override
-	public void afterBeanSelected(ControllerEvent event)
-			throws ControllerListenerException {
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		try {
 			controller.reset();
@@ -45,8 +48,7 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 	}
 
 	@Override
-	public void afterBeanAdded(ControllerEvent event)
-			throws ControllerListenerException {
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		Enterprise enterprise = (Enterprise) controller.getTo();
 		try {
@@ -59,8 +61,7 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 	}
 
 	@Override
-	public void afterBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		try {
 			controller.saveMainAddress();
