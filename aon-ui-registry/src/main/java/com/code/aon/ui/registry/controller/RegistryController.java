@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Country;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
@@ -28,9 +27,6 @@ import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 
-/**
- * Controller used in the registry maintenance.
- */
 public class RegistryController extends BasicController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(RegistryController.class);
@@ -63,14 +59,6 @@ public class RegistryController extends BasicController {
 		}
 	}
 
-	public void initDocument() {
-		Registry registry = ((IRegistry) getTo()).getRegistry();
-		registry.setType(RegistryType.LEGAL);
-		registry.setNationality(Country.ES);
-		registry.setDocumentCountry(Country.ES);
-		registry.setDocumentType(DocumentType.CIF);		
-	}	
-	
 	public void onChangeRegistryType(ActionEvent event) {
 		IRegistry iRegistry = (IRegistry) getTo();
 		iRegistry.getRegistry().setDocumentType(iRegistry.getRegistry().getType() == RegistryType.LEGAL ? DocumentType.CIF : DocumentType.NIF);

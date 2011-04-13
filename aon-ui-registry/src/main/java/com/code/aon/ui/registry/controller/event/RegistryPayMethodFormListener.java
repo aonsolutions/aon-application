@@ -19,9 +19,7 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class RegistryPayMethodFormListener extends RegistryFormListener {
 	
 	private RegistryPayMethod registryPayMethod;
-	
 	private boolean customerMode;
-
 
 	public RegistryPayMethod getRegistryPayMethod() {
 		return registryPayMethod;
@@ -36,7 +34,7 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 	}
 
 	public void setRegistryBank(RegistryBank registryBank) {
-		this.registryPayMethod.setRegistryBank( registryBank );
+		this.registryPayMethod.setRegistryBank(registryBank);
 	}
 	
 	public boolean isCustomerMode() {
@@ -48,44 +46,29 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 	}
 
 	@Override
-	public void afterBeanCreated(ControllerEvent event)
-			throws ControllerListenerException {
+	public void afterBeanCreated(ControllerEvent event)	throws ControllerListenerException {
 		super.afterBeanCreated(event);
 		this.registryPayMethod = new RegistryPayMethod();
-		this.registryPayMethod.setPayment( new PayMethod() );
+		this.registryPayMethod.setPayment(new PayMethod());
 		resetRegistryBank();
 	}
 	
-	private void resetRegistryBank() {
-		this.registryPayMethod.setRegistryBank( new RegistryBank() );
-		this.registryPayMethod.getRegistryBank().setBank( new Bank() );
-		this.registryPayMethod.getRegistryBank().setBankAccount( new BankAccount() );		
-	}
-
-	private boolean isEmpty( RegistryPayMethod payMethod ) {
-		return (registryPayMethod.getPayment() == null) || (this.registryPayMethod.getPayment().getType() == null);
+	@Override
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		super.beforeBeanAdded(event);
+		checkRegistryBank();
 	}
 	
-	protected void updateRegistryPayMethod( Registry registry ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryPayMethod.class);
-		if (registryPayMethod != null) {
-			if (! isEmpty(registryPayMethod) ) {
-				registryPayMethod.setRegistry(registry);
-				bean.insertOrUpdate(registryPayMethod);
-			} else if ( registryPayMethod.getId() != null ) {
-				bean.remove(registryPayMethod);
-			}
-		}
+	private void resetRegistryBank() {
+		this.registryPayMethod.setRegistryBank(new RegistryBank());
+		this.registryPayMethod.getRegistryBank().setBank(new Bank());
+		this.registryPayMethod.getRegistryBank().setBankAccount(new BankAccount());		
 	}
 
-	protected void updateRegistryBank( Registry registry ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
-		if (registryPayMethod != null) {
-			if ( (! isEmpty(registryPayMethod)) && (! isShowCompanyBanks())  ) {
-				getRegistryBank().setRegistry(registry);
-				bean.insertOrUpdate(getRegistryBank());
-			}
-		}
+	public void checkRegistryBank() throws ControllerListenerException {
+		if ((!isEmpty(registryPayMethod)) && (!isShowCompanyBanks())) {		
+			BankAccountValidationListener.checkBankAccount(getRegistryBank(), true);
+		}		
 	}
 	
 	@Override
@@ -95,10 +78,35 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		updateRegistryPayMethod(registry);
 	}	
 	
-	public void checkRegistryBank() throws ControllerListenerException {
-		if ( (! isEmpty(registryPayMethod)) && (! isShowCompanyBanks())  ) {		
-			BankAccountValidationListener.checkBankAccount(getRegistryBank(), true);
-		}		
+	protected void updateRegistryBank(Registry registry) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryBank.class);
+		if (registryPayMethod != null) {
+			if ((!isEmpty(registryPayMethod)) && (!isShowCompanyBanks())) {
+				getRegistryBank().setRegistry(registry);
+				bean.insertOrUpdate(getRegistryBank());
+			}
+		}
+	}
+	
+	public boolean isShowCompanyBanks() {
+		PayMethodType type = (registryPayMethod.getPayment() != null) ? registryPayMethod.getPayment().getType() : null;
+		return (isCustomerMode() && type != PayMethodType.NEGOTIABLE_DOCUMENT) || (!isCustomerMode() && type != PayMethodType.BANK_TRANSFER);
+	}
+
+	protected void updateRegistryPayMethod(Registry registry) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryPayMethod.class);
+		if (registryPayMethod != null) {
+			if (! isEmpty(registryPayMethod)) {
+				registryPayMethod.setRegistry(registry);
+				bean.insertOrUpdate(registryPayMethod);
+			} else if (registryPayMethod.getId() != null) {
+				bean.remove(registryPayMethod);
+			}
+		}
+	}
+
+	private boolean isEmpty(RegistryPayMethod payMethod) {
+		return (registryPayMethod.getPayment() == null) || (this.registryPayMethod.getPayment().getType() == null);
 	}
 	
 	public void onPayMethodChanged(ValueChangeEvent event) {
@@ -110,20 +118,8 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		}
 	}
 	
-	public boolean isShowCompanyBanks() {
-		PayMethodType type = (registryPayMethod.getPayment() != null) ? registryPayMethod.getPayment().getType() : null;
-		return (isCustomerMode() && type != PayMethodType.NEGOTIABLE_DOCUMENT) || (!isCustomerMode() && type != PayMethodType.BANK_TRANSFER);
-	}
-
 	public boolean isCash() {
 		return (registryPayMethod.getPayment() != null) && (registryPayMethod.getPayment().getType() == PayMethodType.CASH_BASIS);
 	}
-
-	@Override
-	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		super.beforeBeanAdded(event);
-		checkRegistryBank();
-	}
-	
 	
 }
