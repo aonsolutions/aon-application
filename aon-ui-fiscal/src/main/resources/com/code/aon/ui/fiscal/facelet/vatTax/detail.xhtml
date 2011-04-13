@@ -60,7 +60,7 @@
 			<f:facet name="header">
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
-			<aon:outputText value="#{to.taxableBaseAccumulated}" rendered="#{to.key.detailed}">
+			<aon:outputText value="#{to.taxableBaseAccumulated}" rendered="#{to.key.taxableBaseVisible}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:column>
@@ -69,9 +69,9 @@
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_fee}" />
 			</f:facet>
-			<aon:outputText value="&#160;" rendered="#{to.key.blank}"/>  
+			<aon:outputText value="&#160;" rendered="#{!to.key.quotaVisible}"/>  
 			
-			<aon:outputText value="#{to.quotaAccumulated}" rendered="#{!to.key.blank}"  
+			<aon:outputText value="#{to.quotaAccumulated}" rendered="#{to.key.quotaVisible}"  
 				style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
@@ -86,7 +86,7 @@
 				tabindex="50000" 
 				onmouseover="this.style.textDecoration='underline';"
 				onmouseout="this.style.textDecoration='inherit';">
-				<aon:outputText value="#{to.taxableBaseDeclared}" rendered="#{to.key.detailed}">
+				<aon:outputText value="#{to.taxableBaseDeclared}" rendered="#{to.key.taxableBaseVisible}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
    			</aon:commandLink>
@@ -101,7 +101,7 @@
 				tabindex="50000" 
 				onmouseover="this.style.textDecoration='underline';"
 				onmouseout="this.style.textDecoration='inherit';">
-				<aon:outputText value="#{to.quotaDeclared}" rendered="#{!to.key.blank}"   
+				<aon:outputText value="#{to.quotaDeclared}" rendered="#{to.key.quotaVisible}"   
 					style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
@@ -112,7 +112,7 @@
 			<f:facet name="header">
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
-			<aon:outputText value="#{to.taxableBaseResult}" rendered="#{to.key.detailed}">
+			<aon:outputText value="#{to.taxableBaseResult}" rendered="#{to.key.taxableBaseVisible}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:column>
@@ -121,7 +121,7 @@
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_fee}" />
 			</f:facet>
-			<aon:outputText value="#{to.quotaResult}" rendered="#{!to.key.blank}"   
+			<aon:outputText value="#{to.quotaResult}" rendered="#{to.key.quotaVisible}"   
 				style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
@@ -131,10 +131,11 @@
 			<f:facet name="header">
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
-			<aon:outputText value="#{to.taxableBaseAdjust}" rendered="#{to.key.detailed and vatTax.to.finished}">
+			<aon:outputText value="#{to.taxableBaseAdjust}" rendered="#{to.key.taxableBaseVisible and (to.key.total or to.key.subtotal or vatTax.to.finished)}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
-			<aon:inputText id="taxableBaseAdjust" value="#{to.taxableBaseAdjust}" rendered="#{to.key.detailed and !vatTax.to.finished}" 
+			<aon:inputText id="taxableBaseAdjust" value="#{to.taxableBaseAdjust}" 
+			rendered="#{to.key.taxableBaseVisible and !to.key.total and !to.key.subtotal and !vatTax.to.finished}" 
 				required="true" size="8">
 				<a4j:support event="onchange"
 					ajaxSingle="true" limitToList="true"
@@ -148,14 +149,16 @@
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_fee}" />
 			</f:facet>
-			<aon:outputText id="ajusteQuota" value="#{to.quotaAdjust}" rendered="#{(to.key.total or to.key.subtotal or vatTax.to.finished) and !to.key.blank}"   
+			<aon:outputText id="ajusteQuota" value="#{to.quotaAdjust}"
+				rendered="#{to.key.quotaVisible and (to.key.total or to.key.subtotal or vatTax.to.finished)}"   
 				style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
-			<aon:inputText id="quotaAdjust" value="#{to.quotaAdjust}" rendered="#{!to.key.total and !to.key.subtotal and !vatTax.to.finished and !to.key.blank}" 
+			<aon:inputText id="quotaAdjust" value="#{to.quotaAdjust}" 
+				rendered="#{to.key.quotaVisible and !to.key.total and !to.key.subtotal and !vatTax.to.finished}" 
 				required="true" size="8">
 				<a4j:support event="onchange"	
-					rendered="#{to.key.detailed}"
+					rendered="#{to.key.taxableBaseVisible}"
 					ajaxSingle="true" limitToList="true"
 					actionListener="#{vatTax.onChangeQuotaAdjust}"
 					reRender="taxableBaseAdjust"/>
@@ -166,7 +169,7 @@
 			<f:facet name="header">
 				<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 			</f:facet>
-			<aon:outputText value="#{to.taxableBase}" rendered="#{to.key.detailed}">
+			<aon:outputText value="#{to.taxableBase}" rendered="#{to.key.taxableBaseVisible}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:column>
@@ -175,7 +178,7 @@
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_fee}" />
 			</f:facet>
-			<aon:outputText value="#{to.quota}" rendered="#{!to.key.blank}"   
+			<aon:outputText value="#{to.quota}" rendered="#{to.key.quotaVisible}"   
 				style="#{to.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{to.key.total?'font-size: 1.1em;':''}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>

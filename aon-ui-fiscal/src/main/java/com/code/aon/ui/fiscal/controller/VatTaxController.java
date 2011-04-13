@@ -398,7 +398,7 @@ public class VatTaxController extends BasicController {
 	}
 	public void onChangeQuotaAdjust(ActionEvent event) {
 		VatTaxDetail detail = (VatTaxDetail) getVatTaxModel().getRowData();
-		if (detail.getKey().isDetailed() && detail.getTaxableBaseAdjust() == 0 && detail.getPercent() != 0) {
+		if (detail.getKey().isTaxableBaseVisible() && detail.getTaxableBaseAdjust() == 0 && detail.getPercent() != 0) {
 			detail.setTaxableBaseAdjust(CommonUtil.round(detail.getQuotaAdjust() *  100 / detail.getPercent()));
 		}
 	}

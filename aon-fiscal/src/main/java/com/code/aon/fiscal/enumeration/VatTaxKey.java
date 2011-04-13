@@ -7,99 +7,100 @@ import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.enumeration.IStringEnum;
 
 public enum VatTaxKey implements IResourceable, IStringEnum   {
-
-	// key,detailed,percentVisible,deductibleQuotaVisible,subtotal,total
+	// ***************************************************************
+	// NO DESORDENAR LA LISTA, ESTA TABULADA AUNQUE PAREZCA QUE NO!!
+	// ***************************************************************
 	
+	// ---------------------------------------------------------------------
+	// key		,T.B.	,Prct.	,Quota	,Ded.Q.	,SubT	,Total
+	// ---------------------------------------------------------------------
 	// A1=REGIMEN GENERAL
-	A1("A1", true, true, true, false, false),
+	A1	("A1"	,true	,true	,true	,true	,false	,false	,null,null),
 	// A2=RECARGO EQUIVALENCIA
-	A2("A2", true, true, true, false, false),
+	A2	("A2"	,true	,true	,true	,true	,false	,false	,null,null),
 	// A3=ADQUISIONES INTRACOMUNITARIAS
-	A3("A3", true, true, false, false, false),
+	A3	("A3"	,true	,true	,true	,false	,false	,false	,null,null),
 	// A4=INVERSION DE SUJETO PASIVO
-	A4("A4", false, false, false, true, false),
+	A4	("A4"	,false	,false	,true	,false	,true	,false	,null,null),
 	// A5=MODIFICACION BASES Y CUOTAS
-	A5("A5", false, false, false, true, false),
+	A5	("A5"	,false	,false	,true	,false	,true	,false	,null,null),
 	// AT=TOTAL DEVENGADO
-	AT("AT", false, false, false, true, true,new VatTaxKey[]{VatTaxKey.A1,VatTaxKey.A2,VatTaxKey.A3,VatTaxKey.A4,VatTaxKey.A5}),
+	AT	("AT"	,false	,false	,true	,false	,true	,true	,new VatTaxKey[]{VatTaxKey.A1,VatTaxKey.A2,VatTaxKey.A3,VatTaxKey.A4,VatTaxKey.A5},null),
 	// B1=OP. INTERIORES DE BIENES CORRIENTES
-	B1("B1", false, false, false, false, false),
+	B1	("B1"	,false	,false	,true	,false	,false	,false	,null,null),
 	// B2=OP. INTERIORES DE BIENES DE INVERSION
-	B2("B2", false, false, false, false, false),
+	B2	("B2"	,false	,false	,true	,false	,false	,false	,null,null),
 	// B3=OP. INTERIORES DE GASTOS
-	B3("B3", false, false, false, false, false),
+	B3	("B3"	,false	,false	,true	,false	,false	,false	,null,null),
 	// BT=TOTAL OP. INTERIORES
-	BT("BT", false, false, false, true, false,new VatTaxKey[]{VatTaxKey.B1,VatTaxKey.B2,VatTaxKey.B3}),
+	BT	("BT"	,false	,false	,true	,false	,true	,false	,new VatTaxKey[]{VatTaxKey.B1,VatTaxKey.B2,VatTaxKey.B3},null),
 	// C1=IMPORTACIONES DE BIENES CORRIENTES
-	C1("C1", false, false, false, false, false),
+	C1	("C1"	,false	,false	,true	,false	,false	,false	,null,null),
 	// C2=IMPORTACIONES DE BIENES DE INVERSION
-	C2("C2", false, false, false, false, false),
+	C2	("C2"	,false	,false	,true	,false	,false	,false	,null,null),
 	// CT=TOTAL IMPORTACIONES
-	CT("CT", false, false, false, true, false,new VatTaxKey[]{VatTaxKey.C1,VatTaxKey.C2}),
+	CT	("CT"	,false	,false	,true	,false	,true	,false	,new VatTaxKey[]{VatTaxKey.C1,VatTaxKey.C2},null),
 	// D1=ADQ. INTRACOM. DE BIENES CORRIENTES
-	D1("D1", false, false, false, false, false),
+	D1	("D1"	,false	,false	,true	,false	,false	,false	,null,null),
 	// D2=ADQ. INTRACOM. DE BIENES DE INVERSION
-	D2("D2", false, false, false, false, false),
+	D2	("D2"	,false	,false	,true	,false	,false	,false	,null,null),
 	// D3=TOTAL ADQ. INTRACOM. DE GASTOS
-	D3("D3", false, false, false, false, false),
+	D3	("D3"	,false	,false	,true	,false	,false	,false	,null,null),
 	// DT=TOTAL ADQ. INTRACOM.
-	DT("DT", false, false, false, true, false,new VatTaxKey[]{VatTaxKey.D1,VatTaxKey.D2,VatTaxKey.D3}),
+	DT	("DT"	,false	,false	,true	,false	,true	,false	,new VatTaxKey[]{VatTaxKey.D1,VatTaxKey.D2,VatTaxKey.D3},null),
 	// ET=COMPENSACION REGIMEN ESPECIAL A,G Y P.
-	ET("ET", false, false, false, false, false),
+	ET	("ET"	,false	,false	,true	,false	,false	,false	,null,null),
 	// FT=TOTAL A DEDUCIR
-	FT("FT", false, false, false, true, true,new VatTaxKey[]{VatTaxKey.BT,VatTaxKey.CT,VatTaxKey.DT,VatTaxKey.ET}),
+	FT	("FT"	,false	,false	,true	,false	,true	,true	,new VatTaxKey[]{VatTaxKey.BT,VatTaxKey.CT,VatTaxKey.DT,VatTaxKey.ET},null),
 	// DF=DIFERENCIA
-	DF("DF", false, false, false, true, true,new VatTaxKey[]{VatTaxKey.AT},new VatTaxKey[]{VatTaxKey.FT}),
+	DF	("DF"	,false	,false	,true	,false	,true	,true	,new VatTaxKey[]{VatTaxKey.AT},new VatTaxKey[]{VatTaxKey.FT}),
 	// SP=LINEA EN BLANCO
-	SP("SP", false, false, false, false, false,new VatTaxKey[]{}),
+	SP	("SP"	,false	,false	,false	,false	,false	,false	,null,null),
 	// CP=COMPRAS DE BIENES CORRIENTES
-	CP("CP", true, true, true, false, false,new VatTaxKey[]{}),
+	CP	("CP"	,true	,true	,true	,true	,false	,false	,null,null),
 	// GT=GASTOS
-	GT("GT", true, true, true, false, false,new VatTaxKey[]{}),
+	GT	("GT"	,true	,true	,true	,true	,false	,false	,null,null),
 	// BI=BIENES DE INVERSION
-	BI("BI", true, true, true, false, false,new VatTaxKey[]{}),
+	BI	("BI"	,true	,true	,true	,true	,false	,false	,null,null),
 	// TD=TOTAL CUOTA DEDUCIBLE
-	TD("TD", true, false, false, true, false,new VatTaxKey[]{VatTaxKey.CP,VatTaxKey.GT,VatTaxKey.BI}),
+	TD	("TD"	,true	,false	,true	,false	,true	,false	,new VatTaxKey[]{VatTaxKey.CP,VatTaxKey.GT,VatTaxKey.BI},null),
 	// SP2=LINEA EN BLANCO
-	SP2("SP2", false, false, false, false, false,new VatTaxKey[]{}),
+	SP2	("SP2"	,false	,false	,false	,false	,false	,false	,null,null),
 	// Entregas Intracomunitarias
-	EI("EI", false, false, false, true, false,new VatTaxKey[]{}),
+	EI	("EI"	,true	,false	,false	,false	,false	,false	,null,null),
 	// Exportaciones Definitivas
-	EX1("EX1", false, false, false, true, false,new VatTaxKey[]{}),
+	EX1	("EX1"	,true	,false	,false	,false	,false	,false	,null,null),
 	// Exportaciones Envios Definitivos a Canarias,Ceuta y Melilla
-	EX2("EX2", false, false, false, true, false,new VatTaxKey[]{}),
+	EX2	("EX2"	,true	,false	,false	,false	,false	,false	,null,null),
 	// Otras Operaciones no sujetas con derecho a deducción
-	OO("OO", false, false, false, true, false,new VatTaxKey[]{}),
+	OO	("OO"	,true	,false	,false	,false	,false	,false	,null,null),
 	// Otras Op. no sujetas sin drcho. a deducción
-	OS("OS", false, false, false, true, false,new VatTaxKey[]{}),
+	OS	("OS"	,true	,false	,false	,false	,false	,false	,null,null),
 	// Operaciones por inversión de sujet pasivo no incluídas.
-	OI("OI", false, false, false, true, false,new VatTaxKey[]{});
+	OI	("OI"	,true	,false	,false	,false	,false	,false	,null,null);
 
 	private String key;
-	private boolean detailed;
+	private boolean taxableBaseVisible;
 	private boolean percentVisible;
+	private boolean quotaVisible;
 	private boolean deductibleQuotaVisible;
 	private boolean subtotal;
 	private boolean total;
 	private VatTaxKey[] positiveAffectedKeys;
 	private VatTaxKey[] negativeAffectedKeys;
 
-	private VatTaxKey( String key, boolean detailed,boolean percentVisible,boolean deductibleQuotaVisible,boolean subtotal,boolean total,VatTaxKey[] positiveAffectedKeys,VatTaxKey[] negativeAffectedKeys) {
+	private VatTaxKey( String key, boolean taxableBaseVisible, boolean percentVisible,
+			boolean  quotaVisible, boolean deductibleQuotaVisible,boolean subtotal,
+			boolean total,VatTaxKey[] positiveAffectedKeys,VatTaxKey[] negativeAffectedKeys) {
 		this.key = key;
-		this.detailed = detailed;
+		this.taxableBaseVisible = taxableBaseVisible;
 		this.percentVisible = percentVisible;
+		this.quotaVisible = quotaVisible;
 		this.deductibleQuotaVisible = deductibleQuotaVisible;
 		this.subtotal = subtotal;
 		this.total = total;
 		this.positiveAffectedKeys = positiveAffectedKeys;
 		this.negativeAffectedKeys = negativeAffectedKeys;
-	}
-	
-	private VatTaxKey( String key, boolean detailed,boolean percentVisible,boolean deductibleQuotaVisible,boolean subtotal,boolean total,VatTaxKey[] affectedKeys) {
-		this(key, detailed, percentVisible, deductibleQuotaVisible, subtotal, total,affectedKeys,null);
-	}
-	private VatTaxKey( String key, boolean detailed,boolean percentVisible,boolean deductibleQuotaVisible,boolean subtotal,boolean total) {
-		this(key, detailed, percentVisible, deductibleQuotaVisible, subtotal, total,null,null);
 	}
 	
 	public String getKey() {
@@ -109,11 +110,14 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	public String getValue() {
 		return getKey();
 	}
-	public boolean isDetailed() {
-		return detailed;
+	public boolean isTaxableBaseVisible() {
+		return taxableBaseVisible;
 	}
 	public boolean isPercentVisible() {
 		return percentVisible;
+	}
+	public boolean isQuotaVisible() {
+		return quotaVisible;
 	}
 	public boolean isDeductibleQuotaVisible() {
 		return deductibleQuotaVisible;
@@ -129,9 +133,6 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	}
 	public VatTaxKey[] getNegativeAffectedKeys() {
 		return negativeAffectedKeys;
-	}
-	public boolean isBlank() {
-		return (this == VatTaxKey.SP || this == VatTaxKey.SP2); 
 	}
 
 	/** Message file base path. */

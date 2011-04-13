@@ -50,12 +50,12 @@
 									<f:facet name="header">
 										<aon:outputText value="#{fiscalBundle.fiscal_tax_base}" />
 									</f:facet>
-									<aon:outputText value="#{dec.taxableBase}" rendered="#{dec.key.detailed}">
+									<aon:outputText value="#{dec.taxableBase}" rendered="#{dec.key.taxableBaseVisible}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
 									<f:facet name="footer">
 										<aon:div styleClass="aon-text-right">		
-											<aon:outputText value="#{vatTax.detail.taxableBaseDeclared}" rendered="#{vatTax.detail.key.detailed}">
+											<aon:outputText value="#{vatTax.detail.taxableBaseDeclared}" rendered="#{vatTax.detail.key.taxableBaseVisible}">
 												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 											</aon:outputText>
 										</aon:div>		

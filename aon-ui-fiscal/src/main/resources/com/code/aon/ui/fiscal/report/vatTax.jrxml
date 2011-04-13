@@ -3,7 +3,7 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="97"/>
 	<property name="ireport.y" value="96"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
@@ -358,7 +358,9 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{descriptionDisabled}?"":$F{key}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="460" y="0" width="75" height="10"/>
+				<reportElement x="460" y="0" width="75" height="10">
+					<printWhenExpression><![CDATA[$F{key}.isQuotaVisible()]]></printWhenExpression>
+				</reportElement>
 				<box rightPadding="2">
 					<bottomPen lineWidth="0.5" lineColor="#A8A8A8"/>
 				</box>
@@ -368,24 +370,64 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{quota}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement x="388" y="0" width="72" height="10"/>
+				<reportElement x="388" y="0" width="72" height="10">
+					<printWhenExpression><![CDATA[$F{key}.isTaxableBaseVisible()]]></printWhenExpression>
+				</reportElement>
 				<box rightPadding="2">
 					<bottomPen lineWidth="0.5" lineColor="#A8A8A8"/>
 				</box>
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{key}.isDetailed()?$F{taxableBase}:null]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{taxableBase}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
-				<reportElement x="336" y="0" width="52" height="10"/>
+				<reportElement x="336" y="0" width="52" height="10">
+					<printWhenExpression><![CDATA[$F{key}.isPercentVisible()]]></printWhenExpression>
+				</reportElement>
 				<box rightPadding="2">
 					<bottomPen lineWidth="0.5" lineColor="#A8A8A8"/>
 				</box>
 				<textElement textAlignment="Right">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{key}.isPercentVisible()?($F{percent}/100):null]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[($F{percent}/100)]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="460" y="0" width="75" height="10">
+					<printWhenExpression><![CDATA[!$F{key}.isQuotaVisible()]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="2">
+					<bottomPen lineWidth="0.5" lineColor="#A8A8A8"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="388" y="0" width="72" height="10">
+					<printWhenExpression><![CDATA[!$F{key}.isTaxableBaseVisible()]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="2">
+					<bottomPen lineWidth="0.5" lineColor="#A8A8A8"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 %" isBlankWhenNull="true">
+				<reportElement x="336" y="0" width="52" height="10">
+					<printWhenExpression><![CDATA[!$F{key}.isPercentVisible()]]></printWhenExpression>
+				</reportElement>
+				<box rightPadding="2">
+					<bottomPen lineWidth="0.5" lineColor="#A8A8A8"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="10">
