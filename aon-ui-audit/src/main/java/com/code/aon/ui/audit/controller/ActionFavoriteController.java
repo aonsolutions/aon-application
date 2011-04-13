@@ -44,6 +44,10 @@ public class ActionFavoriteController implements IAuditConstants {
 		this.favorites = loadFavorites();
 	}
 
+	private AuditController getAuditController() {
+		return (AuditController) AonUtil.getRegisteredBean(AUDIT_CONTROLLER_NAME);
+	}
+	
 	private ApplicationOptionController getOptionController() {
 		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 	}
@@ -56,7 +60,7 @@ public class ActionFavoriteController implements IAuditConstants {
 		Criteria criteria = new Criteria();
 		User user = UserUtils.getInstance().getLoggedUser();
 		criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_USER_ID), user.getId());
-		Integer appId = getOptionController().getApplication().getId();
+		Integer appId = getAuditController().getApplication().getId();
 		criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_ACTION_APPLICATION_ID), appId);
 		criteria.addOrder(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_POSITION));
 		List<ITransferObject> list = bean.getList(criteria);
@@ -89,7 +93,7 @@ public class ActionFavoriteController implements IAuditConstants {
 			int i = 0;
 			for( ApplicationOption option : this.favorites ) {
 				ActionFavorite af = (ActionFavorite) list.get(i++);
-				Action action = getOptionController().getAction(option.getAction());
+				Action action = getAuditController().getAction(option.getAction());
 				if ( (af.getAction() == null) || (! af.getAction().equals(action)) ) {
 					af.setAction(action);
 					bean.insertOrUpdate(af);
@@ -127,7 +131,7 @@ public class ActionFavoriteController implements IAuditConstants {
 			Criteria criteria = new Criteria();
 			User user = UserUtils.getInstance().getLoggedUser();
 			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_USER_ID), user.getId());
-			Integer appId = getOptionController().getApplication().getId();
+			Integer appId = getAuditController().getApplication().getId();
 			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_ACTION_APPLICATION_ID), appId);
 			criteria.addOrder(bean.getFieldName(IAuditAlias.ACTION_FAVORITE_POSITION));
 			List<ITransferObject> actionFavorites = bean.getList(criteria);

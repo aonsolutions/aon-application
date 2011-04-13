@@ -62,7 +62,8 @@ public class ActionMoreUsedController implements IAuditConstants {
 		List<ActionMoreUsed> list = new LinkedList<ActionMoreUsed>();
 		try {
 			Integer userId = UserUtils.getInstance().getLoggedUser().getId();
-			Integer appId = getOptionController().getApplication().getId();
+			AuditController ac = (AuditController) AonUtil.getRegisteredBean(AUDIT_CONTROLLER_NAME);
+			Integer appId = ac.getApplication().getId();
 	    	String name = HibernateUtil.getSessionFactoryName();
 	        Session session = HibernateUtil.getSession(name);
 	        Criteria criteria = session.createCriteria(ActionEntry.class);

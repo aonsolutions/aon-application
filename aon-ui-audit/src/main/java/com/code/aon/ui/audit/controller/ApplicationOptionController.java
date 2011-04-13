@@ -6,20 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.context.FacesContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.audit.Action;
-import com.code.aon.audit.Application;
 import com.code.aon.common.AonException;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.velocity.TemplateHelper;
 import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.ui.audit.ApplicationCategory;
 import com.code.aon.ui.audit.ApplicationOption;
-import com.code.aon.ui.audit.AuditManager;
 import com.code.aon.ui.audit.OptionGroup;
 
 /**
@@ -38,8 +32,6 @@ public class ApplicationOptionController {
 	
 	private List<ApplicationCategory> categories;
 	
-	private Application application;
-		
 	private VelocityHelper velocityHelper;
 	
 	/**
@@ -82,25 +74,11 @@ public class ApplicationOptionController {
 		}
 		return list;
 	}		
-
-	public Application getApplication() {
-		return application;
-	}
-
-	public Action getAction( String name ) throws ManagerBeanException {
-		return AuditManager.getAction(name, application);		
-	}
 	
 	private void init() {
 		this.optionMap = new HashMap<String, ApplicationOption>();
 		this.groupMap = new HashMap<String, OptionGroup>();
 		this.categories = new ArrayList<ApplicationCategory>();
-		String context = FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
-		try {
-			this.application = AuditManager.getApplication(context);
-		} catch (ManagerBeanException e) {
-			LOGGER.error( "Error getting application", e );
-		}		
 		new MenuParser().parse(this);
 	}
 

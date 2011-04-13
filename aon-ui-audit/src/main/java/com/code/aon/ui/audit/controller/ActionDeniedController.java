@@ -57,6 +57,10 @@ public class ActionDeniedController implements IAuditConstants {
 		}
 	}
 
+	private AuditController getAuditController() {
+		return (AuditController) AonUtil.getRegisteredBean(AUDIT_CONTROLLER_NAME);
+	}
+	
 	private ApplicationOptionController getOptionController() {
 		return (ApplicationOptionController) AonUtil.getRegisteredBean(APPLICATION_OPTION_CONTROLLER_NAME);
 	}
@@ -110,7 +114,7 @@ public class ActionDeniedController implements IAuditConstants {
 			}
 			for( ApplicationOption option : map.values() ) {
 				ActionDenied actionDenied = new ActionDenied();
-				Action action = getOptionController().getAction(option.getAction());
+				Action action = getAuditController().getAction(option.getAction());
 				actionDenied.setAction(action);
 				actionDenied.setUser(user);
 				bean.insert(actionDenied);
@@ -128,7 +132,7 @@ public class ActionDeniedController implements IAuditConstants {
 			IManagerBean bean = BeanManager.getManagerBean(ActionDenied.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_DENIED_USER_ID), user.getId());
-			Application application = getOptionController().getApplication();
+			Application application = getAuditController().getApplication();
 			criteria.addEqualExpression(bean.getFieldName(IAuditAlias.ACTION_DENIED_ACTION_APPLICATION_ID), application.getId());			
 			return (List) bean.getList(criteria);
 		} catch (ManagerBeanException e) {

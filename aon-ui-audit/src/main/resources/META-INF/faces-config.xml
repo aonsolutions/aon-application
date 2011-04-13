@@ -214,6 +214,15 @@
 		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ APPLICATION OPTION CONTROLLER **************** -->
+	<managed-bean>
+		<managed-bean-name>audit</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.AuditController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************ ACTION FAVORITE CONTROLLER **************** -->
 	<managed-bean>
 		<managed-bean-name>actionFavorite</managed-bean-name>
@@ -254,7 +263,7 @@
 			<map-entries>
 				<map-entry>
 					<key>ActionEntry_session_application_id</key>
-                    <value>#{appOption.application.id}</value>
+                    <value>#{audit.application.id}</value>
 				</map-entry>
 				<map-entry>
 					<key>ActionEntry_session_user_id</key>
