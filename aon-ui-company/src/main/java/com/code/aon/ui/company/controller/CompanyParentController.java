@@ -1,8 +1,5 @@
 package com.code.aon.ui.company.controller;
 
-import static com.code.aon.ldap.IAonObjectClasses.DOMAIN;
-import static com.code.aon.ldap.ILdapConstants.DOCUMENT_MANAGEMENT_ATTRIBUTE;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,12 +9,10 @@ import java.util.Map;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.naming.Name;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -25,9 +20,6 @@ import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.geozone.GeoZone;
-import com.code.aon.ldap.BasicLdap;
-import com.code.aon.ldap.Entry;
-import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
