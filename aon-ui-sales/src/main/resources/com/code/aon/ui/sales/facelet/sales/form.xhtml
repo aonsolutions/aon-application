@@ -129,23 +129,23 @@
 
 					<aon:outputLabel for="Customer_id" 
 						value="#{customerBundle.customer_customer}" />
-					<aon:div styleClass="aon-lookup">
+					<aon:div id="Customer_lookup" styleClass="aon-lookup">
 						<a4j:region>
 							<aon:lookupInputText id="Customer_id" 
 								value="#{sales.to.customer.registry.id}"
 								disabled="#{!sales.pending}" size="5"
 								lookupProperty="registry" lookup="#{customerLookup}" 
 								lookupChangeListener="#{sales.customerData}" 
-								reRender="Customer_full_name,Customer_registry_document,SalesAddress,
-									Sales_scope,Sales_defaultPayMethod,payMethodDiv"
+								reRender="Customer_full_name,Customer_registry_document,SalesAddress,Sales_scope,
+									Sales_defaultPayMethod,payMethodDiv"
 								ajaxSingle="true" required="true"  />
 							<aon:lookupButton
 								windowTitle="#{customerBundle.customer_selection}"
 								disabled="#{!sales.pending}" minHeight="460" minWidth="650" 
 								property="#{sales.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}" 
 								lookupChangeListener="#{sales.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,SalesAddress,
-									Sales_scope,Sales_defaultPayMethod,payMethodDiv"								
+								selectReRender="Customer_lookup,Customer_registry_document,SalesAddress,Sales_scope,
+									Sales_defaultPayMethod,payMethodDiv"								
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton 
@@ -153,8 +153,8 @@
 								disabled="#{!sales.pending}" minWidth="650" minHeight="650"
 								property="#{sales.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{sales.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,SalesAddress,
-									Sales_scope,Sales_defaultPayMethod,payMethodDiv"
+								selectReRender="Customer_lookup,Customer_registry_document,SalesAddress,Sales_scope,
+									Sales_defaultPayMethod,payMethodDiv"
 								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name" 

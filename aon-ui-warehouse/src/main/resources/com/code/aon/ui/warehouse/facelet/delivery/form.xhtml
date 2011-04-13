@@ -123,23 +123,23 @@
 
 					<aon:outputLabel for="Customer_id" 
 						value="#{customerBundle.customer_customer}" />
-					<aon:div styleClass="aon-lookup">
+					<aon:div id="Customer_lookup" styleClass="aon-lookup">
 						<a4j:region>
 							<aon:lookupInputText id="Customer_id" 
 								value="#{delivery.to.customer.registry.id}"
 								disabled="#{!delivery.pending}" size="5" 
 								lookupProperty="registry" lookup="#{customerLookup}" 
 								lookupChangeListener="#{delivery.customerData}" 
-								reRender="Customer_full_name,Customer_registry_document,DeliveryAddress,
-									Delivery_scope,Delivery_defaultPayMethod,payMethodDiv"
+								reRender="Customer_full_name,Customer_registry_document,DeliveryAddress,Delivery_scope,
+									Delivery_defaultPayMethod,payMethodDiv"
 								ajaxSingle="true" required="true" />
 							<aon:lookupButton
 								windowTitle="#{customerBundle.customer_selection}"
 								disabled="#{!delivery.pending}" minHeight="460" minWidth="650"
 								property="#{delivery.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}" 
 								lookupChangeListener="#{delivery.customerData}" 
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,DeliveryAddress,
-									Delivery_scope,Delivery_defaultPayMethod,payMethodDiv"
+								selectReRender="Customer_lookup,Customer_registry_document,DeliveryAddress,Delivery_scope,
+									Delivery_defaultPayMethod,payMethodDiv"
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton 
@@ -147,8 +147,8 @@
 								disabled="#{!delivery.pending}" minWidth="650" minHeight="650"
 								property="#{delivery.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{delivery.customerData}"
-								selectReRender="Customer_id,Customer_full_name,Customer_registry_document,DeliveryAddress,
-									Delivery_scope,Delivery_defaultPayMethod,payMethodDiv"
+								selectReRender="Customer_lookup,Customer_registry_document,DeliveryAddress,Delivery_scope,
+									Delivery_defaultPayMethod,payMethodDiv"
 								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name" 

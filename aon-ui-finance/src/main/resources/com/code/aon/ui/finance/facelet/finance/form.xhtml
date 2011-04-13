@@ -122,7 +122,7 @@
 					<aon:outputLabel for="Customer_id"
 						value="#{financeBundle.finance_debtor}"
 						rendered="#{!finance.to.payment}" />
-					<aon:div id="customerLookupDiv" styleClass="aon-lookup" rendered="#{!finance.to.payment}">
+					<aon:div id="Customer_lookup" styleClass="aon-lookup" rendered="#{!finance.to.payment}">
 						<a4j:region>
 							<aon:lookupInputText id="Customer_id"
 								value="#{finance.to.registry.id}"
@@ -136,7 +136,7 @@
 								disabled="#{!finance.new}" minHeight="460" minWidth="650" 
 								property="#{finance.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{finance.registryData}"
-								selectReRender="Customer_id,Customer_full_name,Finance_holder_document"
+								selectReRender="Customer_lookup,Finance_holder_document"
 								actionType="search">
 							</aon:lookupButton>
 							<aon:lookupButton
@@ -144,7 +144,7 @@
 								disabled="#{!finance.new}" minWidth="650" minHeight="650"
 								property="#{finance.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
 								lookupChangeListener="#{finance.registryData}"
-								selectReRender="Customer_id,Customer_full_name,Finance_holder_document"
+								selectReRender="Customer_lookup,Finance_holder_document"
 								actionType="new">
 							</aon:lookupButton>
 							<aon:inputText id="Customer_full_name"
@@ -170,7 +170,7 @@
 						</aon:selectOneRadio>				
 					</aon:div>
 					<aon:div id="paymentTypeDiv" rendered="#{finance.to.payment}">
-						<aon:div styleClass="aon-lookup" rendered="#{finance.to.payment and finance.purchase}">
+						<aon:div id="Supplier_lookup" styleClass="aon-lookup" rendered="#{finance.to.payment and finance.purchase}">
 							<a4j:region>
 								<aon:lookupInputText id="Supplier_id"
 									value="#{finance.to.registry.id}"
@@ -184,7 +184,7 @@
 									disabled="#{!finance.new}" minHeight="460" minWidth="650" 
 									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
 									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Supplier_id,Supplier_full_name,Finance_holder_document"
+									selectReRender="Supplier_lookup,Finance_holder_document"
 									actionType="search">
 								</aon:lookupButton>
 								<aon:lookupButton
@@ -192,7 +192,7 @@
 									disabled="#{!finance.new}" minWidth="650" minHeight="650"
 									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
 									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Supplier_id,Supplier_full_name,Finance_holder_document"
+									selectReRender="Supplier_lookup,Finance_holder_document"
 									actionType="new">
 								</aon:lookupButton>
 								<aon:inputText id="Supplier_full_name"
@@ -200,7 +200,7 @@
 									disabled="#{!finance.new}" size="50" />
 							</a4j:region>
 						</aon:div>
-						<aon:div id="creditorLookupDiv" styleClass="aon-lookup" rendered="#{finance.to.payment and !finance.purchase}">
+						<aon:div id="Creditor_lookup" styleClass="aon-lookup" rendered="#{finance.to.payment and !finance.purchase}">
 							<a4j:region>
 								<aon:lookupInputText id="Creditor_id"
 									value="#{finance.to.registry.id}"
@@ -214,7 +214,7 @@
 									disabled="#{!finance.new}" minHeight="460" minWidth="650" 
 									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Creditor_id,Creditor_full_name,Finance_holder_document"
+									selectReRender="Creditor_lookup,Finance_holder_document"
 									actionType="search">
 								</aon:lookupButton>
 								<aon:lookupButton
@@ -222,7 +222,7 @@
 									disabled="#{!finance.new}" minWidth="650" minHeight="650"
 									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
 									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Creditor_id,Creditor_full_name,Finance_holder_document"
+									selectReRender="Creditor_lookup,Finance_holder_document"
 									actionType="new">
 								</aon:lookupButton>
 								<aon:inputText id="Creditor_full_name"
@@ -232,7 +232,7 @@
 						</aon:div>
 					</aon:div>
 
-					<aon:outputLabel for="Finance_holder_document"
+					<aon:outputLabel for="Finance_registry_document"
 						value="#{bundle.aon_company_document}" />
 					<aon:panelGroup id="Finance_holder_document">
 						<aon:selectOneMenu id="Finance_registry_document_type" 
