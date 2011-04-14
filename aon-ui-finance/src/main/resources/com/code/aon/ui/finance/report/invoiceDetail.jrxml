@@ -168,7 +168,7 @@
 			</textField>
 			<textField pattern="#,##0.00##" isBlankWhenNull="true">
 				<reportElement key="textField-5" x="461" y="0" width="74" height="14">
-					<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{taxableBase}.doubleValue() != 0)]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -198,7 +198,7 @@
 			</textField>
 			<textField pattern="#,##0.###" isBlankWhenNull="true">
 				<reportElement key="textField-2" x="317" y="0" width="55" height="14">
-					<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{quantity}.doubleValue() != 0)]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
