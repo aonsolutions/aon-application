@@ -79,7 +79,11 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	
 	private static final String AON_CONFIG_XML = "/WEB-INF/aon-config.xml";
 	
-	private static final String CONFIG_SHCHEMA = "config.xsd";		
+	private static final String CONFIG_SHCHEMA = "config.xsd";
+	
+	private static final String AON_DESKTOP = "aon-desktop";
+	
+	private static final String HELP_SEARCH = "help_search";
 
 	/** The all style sheets. */
 	private List<String> styleSheets;
@@ -385,21 +389,34 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 		this.currentAction = currentAction;
 	}
 
+	private String getURL( String application, String action ) {
+		StringBuffer url = new StringBuffer();
+		url.append("http://help.aonsolutions.es/ayuda/resumen.php?application=");
+		url.append( application );
+		if ( action != null ) {
+			url.append("&action_id=").append(action);
+		}
+		return url.toString();		
+	}
+	
 	/**
 	 * Gets the help url.
 	 *
 	 * @return the help url
 	 */
 	public String getHelpURL() {
-		StringBuffer url = new StringBuffer();
-		url.append("http://help.aonsolutions.es/ayuda/resumen.php?application=");
-		url.append( this.application );
-		if ( this.currentAction != null ) {
-			url.append("&action_id=").append(this.currentAction);
-		}
-		return url.toString();
+		return getURL(this.application, this.currentAction);
 	}
 
+	/**
+	 * Gets the search help url.
+	 *
+	 * @return the search help url
+	 */
+	public String getSearchHelpURL() {
+		return getURL(AON_DESKTOP, HELP_SEARCH);
+	}
+	
 	private class LogErrorHandler implements ErrorHandler {
 		
 		private boolean validationError;

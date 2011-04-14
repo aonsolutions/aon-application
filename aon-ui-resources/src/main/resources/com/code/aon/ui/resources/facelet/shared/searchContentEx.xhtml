@@ -12,6 +12,11 @@
 		<aon:div styleClass="aon-panelGrid-search">
 			<aon:div styleClass="aon-panelGrid-search-info">
 				<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+				<h:outputLink style="font-size:1em;font-weight:bold;float:right;"
+					value="#{aonConfiguration.searchHelpURL}"
+					target="_blank" >
+					<aon:outputText value="#{bundle.aon_help}" />
+				</h:outputLink>				
 			</aon:div>			
 			
 			<aon:panelGrid id="#{searchContentID}" columns="2">
