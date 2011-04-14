@@ -88,6 +88,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 
 	@Override
 	protected void init() throws ManagerBeanException {
+		super.init();
 		setCustomer(new Customer());
 		setSupplier(new Supplier());
 		setCreditor(new Creditor());
