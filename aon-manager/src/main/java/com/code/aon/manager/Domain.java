@@ -6,6 +6,9 @@ import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.IAonObjectClasses.TOP;
 import static com.code.aon.ldap.IAonObjectClasses.USER;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.naming.Name;
 import javax.persistence.Id;
 
@@ -24,6 +27,7 @@ import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.manager.enumeration.DomainCapability;
 import com.code.aon.manager.enumeration.DomainType;
 
 @EntryObject(baseDN="ou=domains",mainObjectClass=DOMAIN, objectClasses={TOP})
@@ -205,7 +209,27 @@ public class Domain implements ILdapTransferObject {
 	public void setAdministrator(DomainUser administrator) {
 		this.administrator = administrator;
 	}
+	
+	public List<DomainCapability> getCapabilities() {
+		List<DomainCapability> list = new LinkedList<DomainCapability>();
+		if ( isDocumentManagement() ) {
+			list.add(DomainCapability.DOCUMENTAL);
+		}
+		if ( getUserManagement() ) {
+			list.add(DomainCapability.MULTI_USER);
+		}
+		if ( getDomainManagement() ) {
+			list.add(DomainCapability.MULTI_DOMAIN);
+		}
+		return list;
+	}
 
+	public void setCapabilities( List<DomainCapability> list ) {
+		setDocumentManagement( list.contains(DomainCapability.DOCUMENTAL) );
+		setUserManagement( list.contains(DomainCapability.MULTI_USER) );
+		setDomainManagement( list.contains(DomainCapability.MULTI_DOMAIN) );
+	}
+	
 	public static void delete( BasicLdap ldap, Name dn ) {
 		String domain = NameResolver.getFirstValue(dn);
 		Name usersDN = NameResolver.getUsersDN(domain);

@@ -5,10 +5,12 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 				
+	<aon:valueParam name="serviceAcceptedReRender" default="#{controller.beanName}Toolbar" />				
+				
 	<c:if test="#{controller.new and (!manager.administrator)}" >
 		<aon:div styleClass="aon-margin-top">
 			<aon:selectBooleanCheckbox id="termsOfService"
-				reRender="#{controller.beanName}Toolbar" ajaxSingle="true"
+				reRender="#{serviceAcceptedReRender}" ajaxSingle="true"
 				value="#{manager.termsOfServiceAccepted}">
 			</aon:selectBooleanCheckbox>				
 			<aon:outputLabel for="termsOfService" styleClass="aon-italic"

@@ -382,6 +382,19 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>					
+	
+	<!-- ************* DOMAIN CAPABILITIES ***************** -->
+	<managed-bean>
+		<managed-bean-name>domainCapabilities</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.manager.controller.DomainCapabilitiesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>domainCapabilities</value>
+		</managed-property>								
+	</managed-bean>		
 
 	<!-- ************ USER SCOPE ************** -->
 	<managed-bean>
@@ -508,6 +521,10 @@
 		<navigation-case>
 			<from-outcome>domain_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/manager/facelet/domain/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>domainCapabilities</from-outcome>
+			<to-view-id>/com/code/aon/ui/manager/facelet/domain/capabilities.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 

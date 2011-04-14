@@ -2,7 +2,6 @@ package com.code.aon.ui.manager.controller;
 
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 
-import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,12 +66,6 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	private List<SelectItem> domainTypes;
 	
 	private Converter converter;
-	
-	private boolean userManagementChanged;
-	
-	private boolean domainManagementChanged;
-	
-	private boolean documentManagementChanged;
 	
 	private boolean showCompanyWindow;
 	
@@ -153,9 +146,6 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	}
 
 	public void init() throws ManagerBeanException {
-		this.documentManagementChanged = false;
-		this.userManagementChanged = false;
-		this.domainManagementChanged = false;	
 		initAccessPolicy();
 	}
 	
@@ -275,30 +265,6 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		}
 		return domainTypes;
 	}	
-	
-	public boolean isUserManagementChanged() {
-		return userManagementChanged;
-	}
-
-	public boolean isDomainManagementChanged() {
-		return domainManagementChanged;
-	}
-
-	public boolean isDocumentManagementChanged() {
-		return documentManagementChanged;
-	}
-
-	public void documentManagementChanged( ValueChangeEvent event ) {
-		this.documentManagementChanged = true;
-	}
-
-	public void userManagementChanged( ValueChangeEvent event ) {
-		this.userManagementChanged = true;
-	}
-
-	public void domainManagementChanged( ValueChangeEvent event ) {
-		this.domainManagementChanged = true;
-	}
 
 	public boolean isAddDomainSuffix() {
 		return (!getManager().isAdministrator()) &&

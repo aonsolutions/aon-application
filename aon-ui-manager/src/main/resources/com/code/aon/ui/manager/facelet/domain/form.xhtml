@@ -29,6 +29,11 @@
 						value="#{managerBundle.manager_users}"
 						action="domainUser_list" actionListener="#{domainUser.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-user"/>
+					<aon:commandButton id="domainCapabilities"
+						rendered="#{!domain.new and manager.config.showDomainCapabilities}"
+						value="#{managerBundle.manager_capabilities}"
+						action="domainCapabilities" actionListener="#{domainCapabilities.onInit}"
+						styleClass="aon-finding-toolbar-item aon-icon-account-entry-close"/>
 					<aon:commandButton id="domainDBConnection" rendered="#{!domain.new and manager.config.showDBConnections}"
 						value="#{managerBundle.manager_db_connections}"
 						action="domainDBConnection_list" actionListener="#{domainDBConnection.onSearch}"
@@ -144,9 +149,25 @@
 						</c:if>
 					</c:if>								
 					
+					<c:if test="#{domain.to.documentManagement}" >
+						<aon:outputLabel for="Config_maxDocumentSize"
+							value="#{managerBundle.manager_domain_maxDocumentSize}" />
+						<aon:inputText id="Config_maxDocumentSize" size="10" 
+							maxlength="20" value="#{domain.to.maxDocumentSize}" >
+							<f:validateLongRange minimum="1" maximum="16" />
+						</aon:inputText>
+	
+						<aon:outputLabel for="Config_maxTotalDocumentSize"
+							value="#{managerBundle.manager_domain_maxTotalDocumentSize}" />
+						<aon:inputText id="Config_maxTotalDocumentSize" size="10"  
+							maxlength="20" value="#{domain.to.maxTotalDocumentSize}" >
+							<f:validateLongRange minimum="1" />
+						</aon:inputText>	
+					</c:if>								
+					
 				</aon:panelGrid>
 				
-				<c:if test="#{!domain.new or manager.config.showDomainManagementTab or manager.config.showDomainAccessPolicy}" >
+				<c:if test="#{!domain.new or manager.config.showDomainAccessPolicy}" >
 					<aon:panelTabSet selectedTab="#{domain.selectedTab}" >
 					
 						<c:if test="#{!domain.new}" >
@@ -171,51 +192,6 @@
 			                    </aon:panelTab>
 							</c:if>
 						</c:if>
-
-						<aon:panelTab name="domainManagament" rendered="#{manager.config.showDomainManagementTab}"
-							label="#{managerBundle.manager_domain_management}">
-							
-							<aon:panelGrid columns="2">
-	
-								<aon:outputLabel for="Domain_documentManagement"
-									value="#{managerBundle.manager_domain_documentManagement}" />
-				                <aon:selectBooleanCheckbox id="Domain_documentManagement"
-				                	valueChangeListener="#{domain.documentManagementChanged}"
-									value="#{domain.to.documentManagement}"/>
-									
-								<c:if test="#{domain.to.documentManagement}" >
-									<aon:outputLabel for="Config_maxDocumentSize"
-										value="#{managerBundle.manager_domain_maxDocumentSize}" />
-									<aon:inputText id="Config_maxDocumentSize" size="10" 
-										maxlength="20" value="#{domain.to.maxDocumentSize}" >
-										<f:validateLongRange minimum="1" maximum="16" />
-									</aon:inputText>
-				
-									<aon:outputLabel for="Config_maxTotalDocumentSize"
-										value="#{managerBundle.manager_domain_maxTotalDocumentSize}" />
-									<aon:inputText id="Config_maxTotalDocumentSize" size="10"  
-										maxlength="20" value="#{domain.to.maxTotalDocumentSize}" >
-										<f:validateLongRange minimum="1" />
-									</aon:inputText>	
-								</c:if>								
-				
-								<aon:outputLabel for="Domain_userManagement"
-									value="#{managerBundle.manager_domain_userManagement}" />
-				                <aon:selectBooleanCheckbox id="Domain_userManagement"
-				                	valueChangeListener="#{domain.userManagementChanged}"
-									value="#{domain.to.userManagement}"/>
-			
-								<c:if test="#{manager.config.showDomainManagement}" >			
-									<aon:outputLabel for="Domain_domainManagement"
-										value="#{managerBundle.manager_domain_domainManagement}" />
-					                <aon:selectBooleanCheckbox id="Domain_domainManagement"
-					                	valueChangeListener="#{domain.domainManagementChanged}"
-										value="#{domain.to.domainManagement}"/>
-								</c:if>
-
-							</aon:panelGrid>
-							
-	                    </aon:panelTab>
 	
 						<aon:panelTab name="accessPolicy" rendered="#{manager.config.showDomainAccessPolicy}"
 							label="#{managerBundle.manager_access_policy}">

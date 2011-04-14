@@ -56,9 +56,9 @@ public interface IManagerConstants {
 	String ADVANCED_MODE_USER = "advancedMode_user";
 	String ADVANCED_MODE_PASSWORD = "advancedMode_password";
 	String NOTIFICATION_EMAIL = "notification_email";
-	String NEW_DOMAIN_APPLICATION_URL = "newDomainApplicationURL";
 	String MAIL_ACCOUNT_CREATE_SCRIPT = "MailAccount_create_script";
 	String MAIL_ACCOUNT_DELETE_SCRIPT = "MailAccount_delete_script";
+	String SHOW_DOMAIN_MANAGEMENT = "showDomainManagement";
 	
 	String DOMAIN_LIST = "domain_list";
 	String DOMAIN_FORM_TEMPLATE = "/com/code/aon/ui/manager/facelet/domain/form.xhtml";

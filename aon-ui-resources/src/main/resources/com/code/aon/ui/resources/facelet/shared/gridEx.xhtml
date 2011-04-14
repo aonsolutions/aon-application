@@ -92,7 +92,7 @@
 							<aon:commandButton
 								id="#{dataTableId}-new-save" title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
 								action="#{newSaveAction}" actionListener="#{newSaveActionListener}"
-								rendered="#{formNew}"
+								rendered="#{newSaveButtonRendered}"
 								reRender="#{dataTableId}Div#{(newSaveButtonReRender != null)?',':''}#{newSaveButtonReRender}"
 								styleClass="aon-editDataTable-button aon-icon-accept"
 								accesskey="#{bundle.aon_key_save_line}" />
