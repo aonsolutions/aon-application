@@ -67,6 +67,11 @@ public abstract class AbstractFileFiller implements FileFiller {
 		return exceptions;
 	}
 
+	
+	public LinesOutput getOutput() {
+		return output;
+	}
+
 	/**
 	 * Gets a print writer
 	 * 

@@ -42,6 +42,11 @@ public class LinesOutput implements LinesFillerListener {
 		++numLines;
 	}
 
+	
+	public PrintWriter getOut() {
+		return out;
+	}
+
 	/**
 	 * Returns lines number
 	 * 

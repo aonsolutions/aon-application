@@ -183,9 +183,8 @@ public class VatTaxDeclarationController extends LinesController {
 	private VatTax getPreviousVatTax(VatTax vatTax) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(VatTax.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression( ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_ID), vatTax.getId()));
+		criteria.addNotEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_ID), vatTax.getId());
 		criteria.addLessThanOrEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_YEAR), vatTax.getYear());
-		criteria.addLessThanOrEqualExpression(bean.getFieldName(IFiscalAlias.VAT_TAX_PERIOD), vatTax.getPeriod());
 		criteria.addOrder(bean.getFieldName(IFiscalAlias.VAT_TAX_YEAR), false);
 		criteria.addOrder(bean.getFieldName(IFiscalAlias.VAT_TAX_PERIOD), false);
 		List<ITransferObject> list = bean.getList(criteria);
@@ -211,6 +210,11 @@ public class VatTaxDeclarationController extends LinesController {
         if (getFileOutput() != null) {
         	if (getFileOutput().getErrors().size() > 0) {
         		AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_DISK_ERROR);
+        		AonUtil.addErrorMessage("");
+        		int i = 0;
+        		for (Exception ex:getFileOutput().getErrors()) {
+        			AonUtil.addErrorMessage(++i + ") " + ex.getLocalizedMessage());
+        		}
             }
         }
 	}
@@ -229,13 +233,15 @@ public class VatTaxDeclarationController extends LinesController {
 			setFileOutput(null);
 			throw new AbortProcessingException(msg);
 		}
-		if (vatTaxDeclaration.getAdministration() != Administration.ALAVA) {
-			String msg = "La generación de archivos para la administracion "+ vatTaxDeclaration.getAdministration() +" no está aún implementada."; 
-			AonUtil.addErrorMessage(msg);
-			setFileOutput(null);
-			throw new AbortProcessingException(msg);
+		for (MOD303Format format:MOD303Format.values()) {
+			if (format.getAdministration() ==  vatTaxDeclaration.getAdministration() && year >= format.getYear()) {
+				return format;
+			}
 		}
-		return MOD303Format.ALAVA_2010;
+		String msg = "La generación de archivos para la administracion "+ vatTaxDeclaration.getAdministration() +" no está aún implementada."; 
+		AonUtil.addErrorMessage(msg);
+		setFileOutput(null);
+		throw new AbortProcessingException(msg);
 	}
 
 	public void downloadDisk(ActionEvent event) throws ManagerBeanException {
@@ -243,10 +249,11 @@ public class VatTaxDeclarationController extends LinesController {
     		FacesContext faces = FacesContext.getCurrentInstance();
             HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
             VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
-
-        	String fileName = "MOD303" + dec.getVatTax().getYear() + dec.getVatTax().getPeriod();
 	        response.setContentType(MimeType.MIME_TXT.getName());
-	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".txt\";");
+			String fileName = "MOD303"+ dec.getVatTax().getYear()
+				+dec.getVatTax().getPeriod()+"."
+				+getFormat(dec).getMimeType().getExtension();
+	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
 
 	        ServletOutputStream output = response.getOutputStream();
 	        InputStream input = new FileInputStream(getFileOutput().getFile());

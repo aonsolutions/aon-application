@@ -50,8 +50,10 @@ public enum VatTaxKey implements IResourceable, IStringEnum   {
 	DT	("DT"	,false	,false	,true	,false	,true	,false	,new VatTaxKey[]{VatTaxKey.D1,VatTaxKey.D2,VatTaxKey.D3},null),
 	// ET=COMPENSACION REGIMEN ESPECIAL A,G Y P.
 	ET	("ET"	,false	,false	,true	,false	,false	,false	,null,null),
+	// RI=REGULARIZACION DE INVERSIONES
+	RI	("RI"	,false	,false	,true	,false	,false	,false	,null,null),
 	// FT=TOTAL A DEDUCIR
-	FT	("FT"	,false	,false	,true	,false	,true	,true	,new VatTaxKey[]{VatTaxKey.BT,VatTaxKey.CT,VatTaxKey.DT,VatTaxKey.ET},null),
+	FT	("FT"	,false	,false	,true	,false	,true	,true	,new VatTaxKey[]{VatTaxKey.BT,VatTaxKey.CT,VatTaxKey.DT,VatTaxKey.ET,VatTaxKey.RI},null),
 	// DF=DIFERENCIA
 	DF	("DF"	,false	,false	,true	,false	,true	,true	,new VatTaxKey[]{VatTaxKey.AT},new VatTaxKey[]{VatTaxKey.FT}),
 	// SP=LINEA EN BLANCO
