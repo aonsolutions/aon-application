@@ -12,7 +12,6 @@ import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemAlternative;
 import com.code.aon.product.ItemAttachment;
-import com.code.aon.product.ItemPos;
 import com.code.aon.product.ItemSupplier;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
@@ -40,7 +39,6 @@ public class ProductAliasWriter {
 			Item.class.getName(),
 			ItemAlternative.class.getName(),
 			ItemAttachment.class.getName(),
-			ItemPos.class.getName(),
 			ItemSupplier.class.getName(),
 			Product.class.getName(),
 			ProductCategory.class.getName(),
