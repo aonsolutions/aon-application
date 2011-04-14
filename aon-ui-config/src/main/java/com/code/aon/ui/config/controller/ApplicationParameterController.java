@@ -136,7 +136,6 @@ public class ApplicationParameterController {
 	 * 
 	 * @param event the event
 	 */
-	@SuppressWarnings("unused")
 	public void onAccept(ActionEvent event) {
 		try {
 			if (newName != null && !"".equals(newName)) {
@@ -174,7 +173,6 @@ public class ApplicationParameterController {
 	 * 
 	 * @param event the event
 	 */
-	@SuppressWarnings("unused")
 	public void onReset(ActionEvent event) {
 		try {
 			Set<String> keys = defaultParameters.keySet();
@@ -198,7 +196,6 @@ public class ApplicationParameterController {
 	 * 
 	 * @param event the event
 	 */
-	@SuppressWarnings("unused")
 	public void onRemove(ActionEvent event) {
 		try {
 			for (ApplicationParameter param : checkList) {
@@ -216,7 +213,6 @@ public class ApplicationParameterController {
 	 * 
 	 * @param event the event
 	 */
-	@SuppressWarnings("unused")
 	public void rowSelected(ValueChangeEvent event) {
 		Boolean b = (Boolean) event.getNewValue();
 		if (b.booleanValue()) {
