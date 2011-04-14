@@ -15,6 +15,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.product.Brand;
 import com.code.aon.product.Catalogue;
+import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductCategoryGroup;
 import com.code.aon.product.dao.IProductAlias;
@@ -188,5 +189,19 @@ public class ProductCollectionsController {
 		}
 		return catalogues;
 	}
-	
+
+	public List<SelectItem> getExpenseItems() throws ManagerBeanException {
+		List<SelectItem> expenseItems = new LinkedList<SelectItem>();
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_TYPE), ProductType.EXPENSE);
+		criteria.addOrder(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_NAME));
+		for (ITransferObject ito : itemBean.getList(criteria)) {
+			Item item = (Item)ito;
+			SelectItem selectItem = new SelectItem(item, item.getProduct().getName());
+			expenseItems.add(selectItem);
+		}
+		return expenseItems;
+	}
+
 }
