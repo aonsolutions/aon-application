@@ -19,6 +19,7 @@
  <field name="arrendamiento" value="bean" bean="DECLARED" property="renting" format="Alphabetic" pattern="X(1)" /> 
  <field name="importe_metalico" value="0" format="Numeric" pattern="9(13)V99" />
  <field name="importe_inmuebles_iva" value="0" format="Numeric" pattern="9(13)V99" /> 
- <field name="free2" value=" " format="Alphabetic" pattern="X(371)" />
+ <field name="free2" value="0" format="Numeric" pattern="9(4)" />
+ <field name="free3" value=" " format="Alphabetic" pattern="X(367)" />
  
 </register>
