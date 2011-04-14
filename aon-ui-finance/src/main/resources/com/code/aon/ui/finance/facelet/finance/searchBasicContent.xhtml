@@ -19,15 +19,15 @@
 	<aon:div id="Customer_lookup" styleClass="aon-lookup" rendered="#{!controller.payment}">
 		<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
 			reRender="Customer_full_name"
-			value="#{financeSearch.customer.id}" size="5" />
+			value="#{searchController.customer.id}" size="5" />
 		<aon:lookupButton 
 			windowTitle="#{customerBundle.customer_selection}"
 			selectReRender="Customer_id,Customer_full_name" actionType="search"
 			lookup="#{customerLookup}" minHeight="460" minWidth="650"
-			property="#{financeSearch.customer}">
+			property="#{searchController.customer}">
 		</aon:lookupButton>
 		<aon:inputText id="Customer_full_name"
-			value="#{(financeSearch.customer.registry.fullName!=null)?(financeSearch.customer.registry.fullName):('')}"
+			value="#{(searchController.customer.registry.fullName!=null)?(searchController.customer.registry.fullName):('')}"
 			size="50" disabled="true" />							
 	</aon:div>
 
@@ -37,15 +37,15 @@
 	<aon:div id="Supplier_lookup" styleClass="aon-lookup" rendered="#{controller.payment}">
 		<aon:lookupInputText id="Supplier_id" lookup="#{supplierLookup}"
 			reRender="Supplier_full_name"
-			value="#{financeSearch.supplier.id}" size="5" />
+			value="#{searchController.supplier.id}" size="5" />
 		<aon:lookupButton 
 			windowTitle="#{supplierBundle.supplier_selection}"
 			selectReRender="Supplier_id,Supplier_full_name" actionType="search"
 			lookup="#{supplierLookup}" minHeight="460" minWidth="650"
-			property="#{financeSearch.supplier}">
+			property="#{searchController.supplier}">
 		</aon:lookupButton>
 		<aon:inputText id="Supplier_full_name"
-			value="#{(financeSearch.supplier.registry.fullName!=null)?(financeSearch.supplier.registry.fullName):('')}"
+			value="#{(searchController.supplier.registry.fullName!=null)?(searchController.supplier.registry.fullName):('')}"
 			size="50" disabled="true" />							
 	</aon:div>
 
@@ -55,15 +55,15 @@
 	<aon:div id="Creditor_lookup" styleClass="aon-lookup" rendered="#{controller.payment}">
 		<aon:lookupInputText id="Creditor_id" lookup="#{creditorLookup}"
 			reRender="Creditor_full_name"
-			value="#{financeSearch.creditor.id}" size="5" />
+			value="#{searchController.creditor.id}" size="5" />
 		<aon:lookupButton 
 			windowTitle="#{financeBundle.finance_creditor_selection}"
 			selectReRender="Creditor_id,Creditor_full_name" actionType="search"
 			lookup="#{creditorLookup}" minHeight="460" minWidth="650"
-			property="#{financeSearch.creditor}">
+			property="#{searchController.creditor}">
 		</aon:lookupButton>
 		<aon:inputText id="Creditor_full_name"
-			value="#{(financeSearch.creditor.registry.fullName!=null)?(financeSearch.creditor.registry.fullName):('')}"
+			value="#{(searchController.creditor.registry.fullName!=null)?(searchController.creditor.registry.fullName):('')}"
 			size="50" disabled="true" />							
 	</aon:div>
 
@@ -128,22 +128,22 @@
 	<aon:outputLabel for="Finance_payMethod_id"
 		value="#{configBundle.config_pay_method}" />
 	<aon:div id="payMethodDiv">
-		<a4j:repeat value="#{financeSearch.payMethods}" rowKeyVar="index" var="payMth">
+		<a4j:repeat value="#{searchController.payMethods}" rowKeyVar="index" var="payMth">
 			<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
 				<aon:selectOneMenu id="Finance_payMethod_id"
-					value="#{financeSearch.payMethods[index]}">
-					<f:selectItem itemLabel="-" itemValue="#{financeSearch.emptyPayMethod}"/>
+					value="#{searchController.payMethods[index]}">
+					<f:selectItem itemLabel="-" itemValue="#{searchController.emptyPayMethod}"/>
 					<f:selectItems value="#{configCollections.payMethods}" />
 				 	<a4j:support event="onchange" reRender="payMethodDiv"/>
 				</aon:selectOneMenu>
 				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="payMethodDiv"
-					actionListener="#{financeSearch.onRemovePayMethod}"
+					actionListener="#{searchController.onRemovePayMethod}"
 					rendered="#{payMth.id != null}">
 					<f:param name="index" value="#{index}" />
 				</aon:commandButton>
 				<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="payMethodDiv"
-					actionListener="#{financeSearch.onAddPayMethod}"
-					rendered="#{(payMth.id != null) and (index == (financeSearch.payMethodsSize-1))}"/>					
+					actionListener="#{searchController.onAddPayMethod}"
+					rendered="#{(payMth.id != null) and (index == (searchController.payMethodsSize-1))}"/>					
 			</aon:div>						
 		</a4j:repeat>
 	</aon:div>
@@ -151,7 +151,7 @@
 	<aon:outputLabel for="Finance_registryBank_id"
 		value="#{configBundle.config_bank}" />
 	<aon:selectOneMenu id="Finance_registryBank_id"
-		value="#{financeSearch.registryBank}">
+		value="#{searchController.registryBank}">
 		<f:selectItem itemLabel="-" value="#{null}" />
 		<f:selectItems value="#{companyCollections.companyBanks}" />
 	</aon:selectOneMenu>
@@ -167,7 +167,7 @@
 	</c:if>
 
 	<aon:outputText value="#{bundle.aon_status}"/>
-	<aon:selectManyCheckbox value="#{financeSearch.financeStatuses}">
+	<aon:selectManyCheckbox value="#{searchController.financeStatuses}">
 		<f:selectItems value="#{financeCollections.financeStatuses}"/>
 	</aon:selectManyCheckbox>							
 
