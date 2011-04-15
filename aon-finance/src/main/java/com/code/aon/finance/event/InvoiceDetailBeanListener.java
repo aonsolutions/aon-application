@@ -55,6 +55,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)to;
 			if (index == invoiceDetail.getLine()) {
 				invoiceDetail.setLine(index + 1);
+				invoiceDetail.getInvoice().setUpdateEnabled(false);
 				detailBean.update(invoiceDetail);
 				++index;
 			}
@@ -96,6 +97,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 						++index;
 					}
 					invoiceDetail.setLine(index);
+					invoiceDetail.getInvoice().setUpdateEnabled(false);
 					detailBean.update(invoiceDetail);
 					++index;
 				}
@@ -128,6 +130,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)to;
 			if (index == invoiceDetail.getLine()) {
 				invoiceDetail.setLine(index - 1);
+				invoiceDetail.getInvoice().setUpdateEnabled(false);
 				detailBean.update(invoiceDetail);
 				++ index;
 			}
@@ -137,19 +140,21 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	}
 
 	private void updateInvoiceTotals(Invoice invoice) throws ManagerBeanException {
-		InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
-		double taxableBase = priceStrategy.getCalculatedTaxableBase(invoice);
-		double vatQuota = priceStrategy.getCalculatedTotalVatQuota(invoice, invoice);
-		double retentionQuota = CommonUtil.round(0 - priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice));
+		if (invoice.isUpdateEnabled()) {
+			InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
+			double taxableBase = priceStrategy.getCalculatedTaxableBase(invoice);
+			double vatQuota = priceStrategy.getCalculatedTotalVatQuota(invoice, invoice);
+			double retentionQuota = CommonUtil.round(0 - priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice));
 
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		invoice.setUpdateEnabled(false);
-		invoice.setTaxableBase(taxableBase);
-		invoice.setVatQuota(vatQuota);
-		invoice.setRetentionQuota(retentionQuota);
-		invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
-		invoiceBean.update(invoice);
-		invoice.setUpdateEnabled(true);
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			invoice.setUpdateEnabled(false);
+			invoice.setTaxableBase(taxableBase);
+			invoice.setVatQuota(vatQuota);
+			invoice.setRetentionQuota(retentionQuota);
+			invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
+			invoiceBean.update(invoice);
+			invoice.setUpdateEnabled(true);
+		}
 	}
 
 	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax) throws ManagerBeanException {
