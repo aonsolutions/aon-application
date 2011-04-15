@@ -11,6 +11,7 @@
 
 	<ui:define name="content">
 
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<aon:form id="bankStatementList">
 			<aon:div ajaxRendered="true" layout="none">
 				<ui:decorate
@@ -753,7 +754,6 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalLink.xhtml">
 			<ui:param name="linkManager" value="#{bankStatement.bankStatementLinkManager}" />
 		</ui:include>
-		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 
 	</ui:define>
 </ui:composition>
