@@ -14,54 +14,31 @@ import com.esferalia.aon.salary.enumeration.PaymentType;
 public class Payments {
 
 	private Map<PaymentType, IPayment> map;
+	private BaseSalary baseSalary;
 	private SalarySupplements salarySupplements;
+	private SalaryInKind salaryInKind;
 	private CompensationOrPrepaidExpenses compensationOrPrepaidExpenses;
+	private SpecialSecurityBenefits specialSecurityBenefits;
+	private SpecialBonuses specialBonuses;
+	private MovingCompensation movingCompensation;
+	private OvertimeHours overtimeHours;
 	private OtherNonWages otherNonWages;
 
 	public Payments() {
 		map = new HashMap<PaymentType, IPayment>();	
 	}
 
-	public IPayment getBaseSalary() {
-		return map.get(PaymentType.BASE_SALARY);
+	public BaseSalary getBaseSalary() {
+		if (baseSalary == null) {
+			setBaseSalary( new BaseSalary() );
+		}
+		return baseSalary;
 	}
-	public void setBaseSalary(IPayment p) {
-		put(PaymentType.BASE_SALARY, p);
+	public void setBaseSalary(BaseSalary p) {
+		this.baseSalary = p;
 	}
-
-	public IPayment getOvertimeHours() {
-		return map.get(PaymentType.NON_STRUCTURAL_HOURS);
-	}
-	public void setOvertimeHours(IPayment p) {
-		put(PaymentType.NON_STRUCTURAL_HOURS, p);
-	}
-
-	public IPayment getSpecialBonuses() {
-		return map.get(PaymentType.SPECIAL_BONUSES);
-	}
-	public void setSpecialBonuses(IPayment p) {
-		put(PaymentType.SPECIAL_BONUSES, p);
-	}
-
-	public IPayment getSalaryInKind() {
-		return map.get(PaymentType.SALARY_IN_KIND);
-	}
-	public void setSalaryInKind(IPayment p) {
-		put(PaymentType.SALARY_IN_KIND, p);
-	}
-
-	public IPayment getSpecialSecurityBenefits() {
-		return map.get(PaymentType.SOCIAL_SECURITY_BENEFITS);
-	}
-	public void setSpecialSecurityBenefits(IPayment p) {
-		put(PaymentType.SOCIAL_SECURITY_BENEFITS, p);
-	}
-	
-	public IPayment getMovingCompensation() {
-		return map.get(PaymentType.MOVING_COMPENSATION);
-	}
-	public void setMovingCompensation(IPayment p) {
-		put(PaymentType.MOVING_COMPENSATION, p);
+	public void addBaseSalary(IPayment p) {
+		getBaseSalary().addPayment(p);
 	}
 	
 	public SalarySupplements getSalarySupplements() {
@@ -76,6 +53,45 @@ public class Payments {
 	public void addSalarySupplements(IPayment p) {
 		getSalarySupplements().addPayment(p);
 	}
+
+	public OvertimeHours getOvertimeHours() {
+		if (overtimeHours == null) {
+			setOvertimeHours( new OvertimeHours() );
+		}
+		return overtimeHours;
+	}
+	public void setOvertimeHours(OvertimeHours p) {
+		this.overtimeHours = p;
+	}
+	public void addOvertimeHours(IPayment p) {
+		getOvertimeHours().addPayment(p);
+	}
+
+	public SpecialBonuses getSpecialBonuses() {
+		if (specialBonuses == null) {
+			setSpecialBonuses( new SpecialBonuses() );
+		}
+		return specialBonuses;
+	}
+	public void setSpecialBonuses(SpecialBonuses p) {
+		this.specialBonuses = p;
+	}
+	public void addSpecialBonuses(IPayment p) {
+		getSpecialBonuses().addPayment(p);
+	}
+
+	public SalaryInKind getSalaryInKind() {
+		if (salaryInKind == null) {
+			setSalaryInKind( new SalaryInKind() );
+		}
+		return salaryInKind;
+	}
+	public void setSalaryInKind(SalaryInKind p) {
+		this.salaryInKind = p;
+	}
+	public void addSalaryInKind(IPayment p) {
+		getSalaryInKind().addPayment(p);
+	}
 	
 	public CompensationOrPrepaidExpenses getCompensationOrPrepaidExpenses() {
 		if (compensationOrPrepaidExpenses == null) {
@@ -89,7 +105,33 @@ public class Payments {
 	public void addCompensationOrPrepaidExpenses(IPayment p) {
 		getCompensationOrPrepaidExpenses().addPayment(p);
 	}
+
+	public SpecialSecurityBenefits getSpecialSecurityBenefits() {
+		if (specialSecurityBenefits == null) {
+			setSpecialSecurityBenefits(new SpecialSecurityBenefits());
+		}
+		return specialSecurityBenefits;
+	}
+	public void setSpecialSecurityBenefits(SpecialSecurityBenefits p) {
+		this.specialSecurityBenefits = p;
+	}
+	public void addSpecialSecurityBenefits(IPayment p) {
+		getSpecialSecurityBenefits().addPayment(p);
+	}
 	
+	public MovingCompensation getMovingCompensation() {
+		if (movingCompensation == null) {
+			setMovingCompensation(new MovingCompensation());
+		}
+		return movingCompensation;
+	}
+	public void setMovingCompensation(MovingCompensation p) {
+		this.movingCompensation = p;
+	}
+	public void addMovingCompensation(IPayment p) {
+		getMovingCompensation().addPayment(p);
+	}
+
 	public OtherNonWages getOtherNonWages() {
 		if (otherNonWages == null) {
 			setOtherNonWages( new OtherNonWages() );
@@ -107,18 +149,83 @@ public class Payments {
 		map.put(type,p);
 	}
 
-	public Double getTotal() {
+	/**
+	 * amounts group by PaymentType
+	 * @return
+	 */
+	public Double getBaseSalaryAmount() {
 		double total = 0;
-		for (IPayment d: map.values()) {
+		for (IPayment d: getBaseSalary().getValues()) {
 			total = CommonUtil.round( total + d.getAmount());	
 		}
+		return total;  
+	}
+	public Double getSalarySupplementsAmount() {
+		double total = 0;
 		for (IPayment d: getSalarySupplements().getValues()) {
 			total = CommonUtil.round( total + d.getAmount());	
 		}
+		return total;  
+	}
+	public Double getSalaryInKindAmount() {
+		double total = 0;
+		for (IPayment d: getSalaryInKind().getValues()) {
+			total = CommonUtil.round( total + d.getAmount());	
+		}
+		return total;  
+	}
+	public Double getCompensationOrPrepaidExpensesAmount() {
+		double total = 0;
 		for (IPayment d: getCompensationOrPrepaidExpenses().getValues()) {
 			total = CommonUtil.round( total + d.getAmount());	
 		}
 		return total;  
+	}
+	public Double getSpecialSecurityBenefitsAmount() {
+		double total = 0;
+		for (IPayment d: getSpecialSecurityBenefits().getValues()) {
+			total = CommonUtil.round( total + d.getAmount());	
+		}
+		return total;  
+	}
+	public Double getSpecialBonusesAmount() {
+		double total = 0;
+		for (IPayment d: getSpecialBonuses().getValues()) {
+			total = CommonUtil.round( total + d.getAmount());	
+		}
+		return total;  
+	}
+	public Double getMovingCompensationAmount() {
+		double total = 0;
+		for (IPayment d: getMovingCompensation().getValues()) {
+			total = CommonUtil.round( total + d.getAmount());	
+		}
+		return total;  
+	}
+	public Double getOvertimeHoursAmount() {
+		double total = 0;
+		for (IPayment d: getOvertimeHours().getValues()) {
+			total = CommonUtil.round( total + d.getAmount());	
+		}
+		return total;  
+	}
+	public Double getOtherNonWagesAmount() {
+		double total = 0;
+		for (IPayment d: getOtherNonWages().getValues()) {
+			total = CommonUtil.round( total + d.getAmount());	
+		}
+		return total;  
+	}
+	public Double getTotal() {
+		return CommonUtil.round( getBaseSalaryAmount() +
+		getSalarySupplementsAmount() + 
+		getSalaryInKindAmount() +
+		getCompensationOrPrepaidExpensesAmount() + 
+		getSpecialSecurityBenefitsAmount() + 
+		getSpecialBonusesAmount() +
+		getMovingCompensationAmount() + 
+		getOvertimeHoursAmount() +
+		getOtherNonWagesAmount());
 	}
 	
 	/**

@@ -61,22 +61,22 @@ public class SalaryPaymentsFactory implements IPaymentsFactory {
 
 	private void managePayment(Payments payments, SalaryPayment sp) {
 		if (sp.getType() == PaymentType.BASE_SALARY) {
-			payments.setBaseSalary(sp);
+			payments.addBaseSalary(sp);
 		} else if (sp.getType() == PaymentType.SALARY_SUPPLEMENTS) {
 			payments.addSalarySupplements(sp);
 		} else if (sp.getType() == PaymentType.STRUCTURAL_HOURS) {
 		} else if (sp.getType() == PaymentType.NON_STRUCTURAL_HOURS) {
-			payments.setOvertimeHours(sp);
+			payments.addOvertimeHours(sp);
 		} else if (sp.getType() == PaymentType.SPECIAL_BONUSES) {
-			payments.setSpecialBonuses(sp);
+			payments.addSpecialBonuses(sp);
 		} else if (sp.getType() == PaymentType.SALARY_IN_KIND) {
-			payments.setSalaryInKind(sp);
+			payments.addSalaryInKind(sp);
 		} else if (sp.getType() == PaymentType.COMPENSATION_OR_PREPAID_EXPENSES) {
 			payments.addCompensationOrPrepaidExpenses(sp);
 		} else if (sp.getType() == PaymentType.SOCIAL_SECURITY_BENEFITS) {
-			payments.setSpecialSecurityBenefits(sp);
+			payments.addSpecialSecurityBenefits(sp);
 		} else if (sp.getType() == PaymentType.MOVING_COMPENSATION) {
-			payments.setMovingCompensation(sp);
+			payments.addMovingCompensation(sp);
 		} else if (sp.getType() == PaymentType.OTHER_NON_WAGE) {
 			payments.addOtherNonWages(sp);
 		}

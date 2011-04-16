@@ -36,17 +36,21 @@
 
 			<aon:outputText value="&#160;"/>
 			
-			<aon:div style="border-bottom: solid #CCCCCC 1px;">
-				<aon:outputText value="&#160;"/>
-				<aon:outputText rendered="#{!payments.baseSalary.showAmount}" 
-					value="#{payments.baseSalary.textValue}"
-					styleClass="#{payments.baseSalary.style}" />
-				<aon:outputText rendered="#{payments.baseSalary.showAmount}"
-					value="#{payments.baseSalary.doubleValue}"
-					styleClass="#{payments.baseSalary.style}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div>
+			<aon:outputText value="&#160;"/>
+		
+			<c:forEach items="#{payments.baseSalary}" var="to">
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+					<aon:outputText rendered="#{!to.showAmount}"
+						styleClass="#{to.style}" 
+						value="#{to.textValue}"/>
+					<aon:outputText value="#{to.doubleValue}"
+						rendered="#{to.showAmount}"
+						styleClass="#{to.style}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div>
+			</c:forEach>
 			
 			<aon:outputText value="&#160;"/>
 		
@@ -64,41 +68,53 @@
 				</aon:div>
 			</c:forEach>
 
-			<aon:div style="border-bottom: solid #CCCCCC 1px;">
-				<aon:outputText value="&#160;"/>
-				<aon:outputText rendered="#{!payments.overtimeHours.showAmount}" 
-					value="#{payments.overtimeHours.textValue}"
-					styleClass="#{payments.overtimeHours.style}" />
-				<aon:outputText rendered="#{payments.overtimeHours.showAmount}"
-					value="#{payments.overtimeHours.doubleValue}"
-					styleClass="#{payments.overtimeHours.style}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div>
+			<aon:outputText value="&#160;"/>
+			
+			<c:forEach items="#{payments.overtimeHours}" var="to">
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+					<aon:outputText rendered="#{!to.showAmount}"
+						styleClass="#{to.style}" 
+						value="#{to.textValue}"/>
+					<aon:outputText value="#{to.doubleValue}"
+						rendered="#{to.showAmount}"
+						styleClass="#{to.style}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div>
+			</c:forEach>
 
-			<aon:div style="border-bottom: solid #CCCCCC 1px;">
-				<aon:outputText value="&#160;"/>
-				<aon:outputText rendered="#{!payments.specialBonuses.showAmount}" 
-					value="#{payments.specialBonuses.textValue}"
-					styleClass="#{payments.specialBonuses.style}" />
-				<aon:outputText rendered="#{payments.specialBonuses.showAmount}"
-					value="#{payments.specialBonuses.doubleValue}"
-					styleClass="#{payments.specialBonuses.style}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div>
+			<aon:outputText value="&#160;"/>
+			
+			<c:forEach items="#{payments.specialBonuses}" var="to">
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+					<aon:outputText rendered="#{!to.showAmount}"
+						styleClass="#{to.style}" 
+						value="#{to.textValue}"/>
+					<aon:outputText value="#{to.doubleValue}"
+						rendered="#{to.showAmount}"
+						styleClass="#{to.style}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div>
+			</c:forEach>
 
-			<aon:div style="border-bottom: solid #CCCCCC 1px;">
-				<aon:outputText value="&#160;"/>
-				<aon:outputText rendered="#{!payments.salaryInKind.showAmount}" 
-					value="#{payments.salaryInKind.textValue}"
-					styleClass="#{payments.salaryInKind.style}" />
-				<aon:outputText rendered="#{payments.salaryInKind.showAmount}"
-					value="#{payments.salaryInKind.doubleValue}"
-					styleClass="#{payments.salaryInKind.style}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div>
+			<aon:outputText value="&#160;"/>
+			
+			<c:forEach items="#{payments.salaryInKind}" var="to">
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+					<aon:outputText rendered="#{!to.showAmount}"
+						styleClass="#{to.style}" 
+						value="#{to.textValue}"/>
+					<aon:outputText value="#{to.doubleValue}"
+						rendered="#{to.showAmount}"
+						styleClass="#{to.style}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div>
+			</c:forEach>
 			
 			<aon:outputText value="&#160;"/>
 			
@@ -118,29 +134,37 @@
 				</aon:div>
 			</c:forEach>
 
-			<aon:div style="border-bottom: solid #CCCCCC 1px;">
-				<aon:outputText value="&#160;"/>
-				<aon:outputText rendered="#{!payments.specialSecurityBenefits.showAmount}" 
-					value="#{payments.specialSecurityBenefits.textValue}"
-					styleClass="#{payments.specialSecurityBenefits.style}" />
-				<aon:outputText rendered="#{payments.specialSecurityBenefits.showAmount}"
-					value="#{payments.specialSecurityBenefits.doubleValue}"
-					styleClass="#{payments.specialSecurityBenefits.style}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div>
+			<aon:outputText value="&#160;"/>
+			
+			<c:forEach items="#{payments.specialSecurityBenefits}" var="to">
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+					<aon:outputText rendered="#{!to.showAmount}"
+						styleClass="#{to.style}" 
+						value="#{to.textValue}"/>
+					<aon:outputText value="#{to.doubleValue}"
+						rendered="#{to.showAmount}"
+						styleClass="#{to.style}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div>
+			</c:forEach>
 
-			<aon:div style="border-bottom: solid #CCCCCC 1px;">
-				<aon:outputText value="&#160;"/>
-				<aon:outputText rendered="#{!payments.movingCompensation.showAmount}" 
-					value="#{payments.movingCompensation.textValue}"
-					styleClass="#{payments.movingCompensation.style}" />
-				<aon:outputText rendered="#{payments.movingCompensation.showAmount}"
-					value="#{payments.movingCompensation.doubleValue}"
-					styleClass="#{payments.movingCompensation.style}">
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div>
+			<aon:outputText value="&#160;"/>
+			
+			<c:forEach items="#{payments.movingCompensation}" var="to">
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+					<aon:outputText rendered="#{!to.showAmount}"
+						styleClass="#{to.style}" 
+						value="#{to.textValue}"/>
+					<aon:outputText value="#{to.doubleValue}"
+						rendered="#{to.showAmount}"
+						styleClass="#{to.style}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div>
+			</c:forEach>
 
 			<aon:outputText value="&#160;"/>
 

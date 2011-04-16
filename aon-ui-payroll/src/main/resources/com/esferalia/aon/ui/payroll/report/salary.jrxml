@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="425"/>
 	<property name="ireport.y" value="48"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
@@ -64,6 +64,9 @@
 		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
 	</parameter>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
+	<parameter name="zero_value" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[0.0]]></defaultValueExpression>
+	</parameter>
 	<field name="salary" class="com.esferalia.aon.salary.ISalary"/>
 	<variable name="formatter" class="java.text.SimpleDateFormat">
 		<initialValueExpression><![CDATA[new SimpleDateFormat("dd' de 'MMMMMMMMMMM' de 'yyyy")]]></initialValueExpression>
@@ -75,6 +78,33 @@
 		<variableExpression><![CDATA[($F{salary}.getPayments().getSalarySupplements().getValues().size()+
 $F{salary}.getPayments().getCompensationOrPrepaidExpenses().getValues().size()+
 $F{salary}.getPayments().getOtherNonWages().getValues().size())>13]]></variableExpression>
+	</variable>
+	<variable name="baseSalaryAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getBaseSalary().getAmount()]]></variableExpression>
+	</variable>
+	<variable name="salarySupplementsAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getSalarySupplements().getAmount()]]></variableExpression>
+	</variable>
+	<variable name="salaryInKindAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getSalaryInKind().getAmount()]]></variableExpression>
+	</variable>
+	<variable name="compensationOrPrepaidExpensesAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getCompensationOrPrepaidExpenses().getAmount()]]></variableExpression>
+	</variable>
+	<variable name="specialSecurityBenefitsAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getSpecialSecurityBenefits().getAmount()]]></variableExpression>
+	</variable>
+	<variable name="specialBonusesAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getSpecialBonuses().getAmount()]]></variableExpression>
+	</variable>
+	<variable name="movingCompensationAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getMovingCompensation().getAmount()]]></variableExpression>
+	</variable>
+	<variable name="overtimeHoursAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getOvertimeHours().getAmount()]]></variableExpression>
+	</variable>
+	<variable name="otherNonWagesAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{salary}.getPayments().getOtherNonWages().getAmount()]]></variableExpression>
 	</variable>
 	<group name="salary_GROUP" isStartNewPage="true">
 		<groupExpression><![CDATA[$F{salary}]]></groupExpression>
@@ -382,14 +412,16 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_salary_base_salary}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="480" y="22" width="70" height="11"/>
+				<reportElement positionType="Float" x="480" y="22" width="70" height="11">
+					<printWhenExpression><![CDATA[!$V{baseSalaryAmount}.equals($P{zero_value})]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<bottomPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Right">
 					<font isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getPayments().getBaseSalary().getAmount()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$V{baseSalaryAmount}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement positionType="Float" x="20" y="34" width="530" height="11"/>
@@ -405,7 +437,9 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_salary_overtime_hours}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="479" y="57" width="70" height="11"/>
+				<reportElement positionType="Float" x="479" y="57" width="70" height="11">
+					<printWhenExpression><![CDATA[!$V{overtimeHoursAmount}.equals($P{zero_value})]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<bottomPen lineWidth="1.0"/>
 				</box>
@@ -423,7 +457,9 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_salary_special_bonuses}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="479" y="69" width="70" height="11"/>
+				<reportElement positionType="Float" x="479" y="69" width="70" height="11">
+					<printWhenExpression><![CDATA[!$V{specialBonusesAmount}.equals($P{zero_value})]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<bottomPen lineWidth="1.0"/>
 				</box>
@@ -441,7 +477,9 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{payroll_salary_salary_in_kind}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="479" y="81" width="70" height="11"/>
+				<reportElement positionType="Float" x="479" y="81" width="70" height="11">
+					<printWhenExpression><![CDATA[!$V{salaryInKindAmount}.equals($P{zero_value})]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<bottomPen lineWidth="1.0"/>
 				</box>
@@ -802,7 +840,9 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getTotalLiquid()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="480" y="136" width="70" height="11"/>
+				<reportElement positionType="Float" x="480" y="136" width="70" height="11">
+					<printWhenExpression><![CDATA[!$V{specialSecurityBenefitsAmount}.equals($P{zero_value})]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<bottomPen lineWidth="1.0"/>
 				</box>
@@ -812,7 +852,9 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{salary}.getPayments().getSpecialSecurityBenefits().getAmount()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement positionType="Float" x="480" y="160" width="70" height="11"/>
+				<reportElement positionType="Float" x="480" y="160" width="70" height="11">
+					<printWhenExpression><![CDATA[!$V{movingCompensationAmount}.equals($P{zero_value})]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<bottomPen lineWidth="1.0"/>
 				</box>

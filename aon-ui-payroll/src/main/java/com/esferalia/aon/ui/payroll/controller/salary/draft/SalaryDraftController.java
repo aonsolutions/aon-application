@@ -22,6 +22,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.Salary;
@@ -47,6 +48,23 @@ public class SalaryDraftController extends BasicController {
 	private ISalary salary;
 	private DataModel paymentsModel;
 	private DataModel deductionsModel;
+	
+	private boolean showSalaryDifference;
+	private ISalary bdSalary;
+	private SalaryDraftComparatorPrinter printer;
+	
+	public boolean isShowSalaryDifference() {
+		return showSalaryDifference;
+	}
+	public void setShowSalaryDifference(boolean showSalaryDifference) {
+		this.showSalaryDifference = showSalaryDifference;
+	}
+	public ISalary getBdSalary() {
+		return bdSalary;
+	}
+	public void setBdSalary(ISalary bdSalary) {
+		this.bdSalary = bdSalary;
+	}
 
 	public Date getIssueDate() {
 		if (issueDate == null) {
@@ -159,8 +177,9 @@ public class SalaryDraftController extends BasicController {
 			}
 			return salary;
 		} catch (SalaryException e) {
-			e.printStackTrace();
-			throw new AbortProcessingException("Imposible mostrar el borrador de la nómina");
+			String msg = "Imposible mostrar el borrador de la nómina";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 	public void setSalary(ISalary salary) {
@@ -239,30 +258,12 @@ public class SalaryDraftController extends BasicController {
 			}
 			paymentsList = ss.getValues();
 		} catch (SalaryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// TODO como tratar esto?
+			AonUtil.addErrorMessage(e.getMessage());
 		} catch (AonException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// TODO como tratar esto?
+			AonUtil.addErrorMessage(e.getMessage());
 		}
-		
-	}
-	
-	private boolean showSalaryDifference;
-	private ISalary bdSalary;
-	private SalaryDraftComparatorPrinter printer;
-	
-	public boolean isShowSalaryDifference() {
-		return showSalaryDifference;
-	}
-	public void setShowSalaryDifference(boolean showSalaryDifference) {
-		this.showSalaryDifference = showSalaryDifference;
-	}
-	public ISalary getBdSalary() {
-		return bdSalary;
-	}
-	public void setBdSalary(ISalary bdSalary) {
-		this.bdSalary = bdSalary;
 	}
 	
 	public SalaryDraftComparatorPrinter getPrinter() {
@@ -271,7 +272,7 @@ public class SalaryDraftController extends BasicController {
 			Date startDate = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate(); 
 			Date endDate = (contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate(); 
 			Date issueDate = getIssueDate(); 
-			printer = new SalaryDraftComparatorPrinter(contract, getBdSalary(), getPaymentsList(), startDate, endDate, issueDate);
+			printer = new SalaryDraftComparatorPrinter(contract, getBdSalary(), startDate, endDate, issueDate);
 			contract.setSalaryCalculatorContext(null); 
 		}
 		return printer;
@@ -298,8 +299,10 @@ public class SalaryDraftController extends BasicController {
 				setShowSalaryDifference(false);
 			}
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			setBdSalary(null);
+			setShowSalaryDifference(false);
+			String msg = "Fallo en la obtención de la nómina calculada";
+			AonUtil.addErrorMessage(msg);
 		}
 	}
 }
