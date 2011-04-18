@@ -293,7 +293,7 @@ public class SummaryProviderParameters implements Cloneable{
 		cloned.setFromDate(getFromDate());
 		cloned.setLowerLevelVisible(isLowerLevelVisible());
 		cloned.setMonthlyGrouping(isMonthlyGrouping());
-		cloned.setExcludeOpeningEntry(isExcludeOperatingEntry());
+		cloned.setExcludeOpeningEntry(isExcludeOpeningEntry());
 		cloned.setExcludeOperatingEntry(isExcludeOperatingEntry());
 		cloned.setExcludeClosingEntry(isExcludeClosingEntry());
 		cloned.setExcludeBalancedAccounts(isExcludeBalancedAccounts());
