@@ -18,9 +18,10 @@ public enum MOD303Format {
 //	,NAVARRA_2010(2010
 //			,Administration.NAVARRA
 //			,"/com/code/aon/file/tax/model/MOD303/xml/2010_ALAVA_Declaration.xml")
-//	,AEAT_2010(2010
-//			,Administration.COMMON_TERRITORY
-//			,"/com/code/aon/file/tax/model/MOD303/xml/2010_ALAVA_Declaration.xml")
+	,AEAT_2010(2010
+			,Administration.COMMON_TERRITORY
+			,MimeType.MIME_TXT
+			,"/com/code/aon/file/tax/model/MOD303/xml/2010_AEAT_Declaration.xml")
 	;
 
 	private Integer year;

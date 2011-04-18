@@ -13,30 +13,32 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum Period implements IResourceable {
 	
-	M01(0,0),
-	M02(1,1),
-	M03(2,2),
-	M04(3,3),
-	M05(4,4),
-	M06(5,5),
-	M07(6,6),
-	M08(7,7),
-	M09(8,8),
-	M10(9,9),
-	M11(10,10),
-	M12(11,11),
-	T1(0,2),	//12
-	T2(3,5),	//13
-	T3(6,8),	//14
-	T4(9,11),	//15
-	YEAR(0,11); //16
+	M01(0,0,"01"),
+	M02(1,1,"02"),
+	M03(2,2,"03"),
+	M04(3,3,"04"),
+	M05(4,4,"05"),
+	M06(5,5,"06"),
+	M07(6,6,"07"),
+	M08(7,7,"08"),
+	M09(8,8,"09"),
+	M10(9,9,"10"),
+	M11(10,10,"11"),
+	M12(11,11,"12"),
+	T1(0,2,"T1"),	//12
+	T2(3,5,"T2"),	//13
+	T3(6,8,"T3"),	//14
+	T4(9,11,"T4"),	//15
+	YEAR(0,11,"An"); //16
 
 	private int startMonth;
 	private int dueMonth;
+	private String name;
 	
-	private Period(int startMonth,int dueMonth) {
+	private Period(int startMonth,int dueMonth,String name) {
 		this.startMonth= startMonth;
 		this.dueMonth= dueMonth;
+		this.name = name;
 	}
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.fiscal.i18n.messages";
@@ -56,7 +58,9 @@ public enum Period implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
-    
+    public String getName() {
+    	return name;
+    }
 	public int getStartMonth() {
 		return startMonth;
 	}

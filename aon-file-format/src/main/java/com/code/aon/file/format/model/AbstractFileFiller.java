@@ -134,6 +134,7 @@ public abstract class AbstractFileFiller implements FileFiller {
 			linesFiller.fillLine(register, properties);
 			return linesFiller;
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			if ( ex instanceof Fd0Exception ) {
 				exceptions.add (ex);
 			} 

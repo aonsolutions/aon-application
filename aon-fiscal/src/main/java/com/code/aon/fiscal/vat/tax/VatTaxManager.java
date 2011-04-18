@@ -300,7 +300,7 @@ public class VatTaxManager {
 				boolean found = false;
 				for (VatTaxDetail model: summary) {
 					if (key == model.getKey() && (!key.isPercentVisible() || key.isPercentVisible() && model.getPercent() == percent)) {
-						model.setTaxableBaseDeclared( CommonUtil.round( model.getQuotaDeclared() + detail.getTaxableBase() ));
+						model.setTaxableBaseDeclared( CommonUtil.round( model.getTaxableBaseDeclared() + detail.getTaxableBase() ));
 						model.setQuotaDeclared( CommonUtil.round( model.getQuotaDeclared() + detail.getQuota() ));
 						model.setDeductibleQuotaDeclared( CommonUtil.round( model.getDeductibleQuotaDeclared() + detail.getDeductibleQuota() ));
 						found = true; 

@@ -87,15 +87,15 @@
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_fee}" />
 									</f:facet>
-									<aon:outputText value="&#160;" rendered="#{dec.key.blank}"/>  
-									<aon:outputText value="#{dec.quota}" rendered="#{!dec.key.blank}"  
+									<aon:outputText value="&#160;" rendered="#{!dec.key.quotaVisible}"/>  
+									<aon:outputText value="#{dec.quota}" rendered="#{dec.key.quotaVisible}"  
 										style="#{dec.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{dec.key.total?'font-size: 1.1em;':''}">
 										<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 									</aon:outputText>
 									<f:facet name="footer">
 										<aon:div styleClass="aon-text-right">		
-											<aon:outputText value="&#160;" rendered="#{vatTax.detail.key.blank}"/>  
-											<aon:outputText value="#{vatTax.detail.quotaDeclared}" rendered="#{!vatTax.detail.key.blank}"  
+											<aon:outputText value="&#160;" rendered="#{!vatTax.detail.key.quotaVisible}"/>  
+											<aon:outputText value="#{vatTax.detail.quotaDeclared}" rendered="#{vatTax.detail.key.quotaVisible}"  
 												style="#{vatTax.detail.key.subtotal?'font-weight: bold;font-size: 1em;':''}#{vatTax.detail.key.total?'font-size: 1.1em;':''}">
 												<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 											</aon:outputText>

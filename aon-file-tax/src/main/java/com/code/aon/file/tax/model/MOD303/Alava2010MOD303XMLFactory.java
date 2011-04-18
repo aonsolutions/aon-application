@@ -110,7 +110,7 @@ public class Alava2010MOD303XMLFactory implements IMOD303XMLFactory {
 
 	private void fillDatosDec(Element datos, Declaration declaration) {
 		datos.addElement(DATO).addAttribute(NOMBRE,MODELO_ATT).addAttribute(VALOR, MODEL);
-		datos.addElement(DATO).addAttribute(NOMBRE,EJERCICIO).addAttribute(VALOR, declaration.getPeriod().toString());
+		datos.addElement(DATO).addAttribute(NOMBRE,EJERCICIO).addAttribute(VALOR, declaration.getYear().toString());
 		datos.addElement(DATO).addAttribute(NOMBRE,RESULTADO).addAttribute(VALOR, formatNumber( declaration.getResult() ));
 		datos.addElement(DATO).addAttribute(NOMBRE,CCC1).addAttribute(VALOR, declaration.getCcc1());
 		datos.addElement(DATO).addAttribute(NOMBRE,CCC2).addAttribute(VALOR, declaration.getCcc2());
@@ -216,12 +216,12 @@ public class Alava2010MOD303XMLFactory implements IMOD303XMLFactory {
 		
 		addClave(mod,"028",declaration.getOutputTotal());
 		
-		addClave(mod,"030",declaration.getInnerCommonOperations() + declaration.getInnerExpensesOperations() );
-		addClave(mod,"031",declaration.getInnerInvestmentOperations());
-		addClave(mod,"032",declaration.getImportedCommonOperations());
-		addClave(mod,"033",declaration.getImportedInvestmentOperations());
-		addClave(mod,"034",declaration.getIntracommunitaryCommonOperations());
-		addClave(mod,"035",declaration.getInvestmentCommonOperations());
+		addClave(mod,"030",declaration.getInnerCommonOperationsQuota() + declaration.getInnerExpensesOperationsQuota() );
+		addClave(mod,"031",declaration.getInnerInvestmentOperationsQuota());
+		addClave(mod,"032",declaration.getImportedCommonOperationsQuota());
+		addClave(mod,"033",declaration.getImportedInvestmentOperationsQuota());
+		addClave(mod,"034",declaration.getIntracommunitaryCommonOperationsQuota());
+		addClave(mod,"035",declaration.getInvestmentCommonOperationsQuota());
 		addClave(mod,"036",declaration.getAgriculturalRegimeCompensation());
 		addClave(mod,"037",declaration.getInvestmentNormalization());
 		addClave(mod,"038",declaration.getDeductTotal());
@@ -248,18 +248,33 @@ public class Alava2010MOD303XMLFactory implements IMOD303XMLFactory {
 		addClave(mod,"080",declaration.getDeposit());
 		addClave(mod,"081",declaration.getPayBack());
 		addClave(mod,"082",declaration.getCompensate());
-		
-		if (StringUtils.isNotBlank( declaration.getBankEntity())) {
-			mod.addElement(CLAVE).addAttribute(NUMERO,"301").addAttribute(VALOR, declaration.getBankEntity() );	
+		if (declaration.getDeposit() > 0) {
+			if (StringUtils.isNotBlank( declaration.getDepositBankEntity())) {
+				mod.addElement(CLAVE).addAttribute(NUMERO,"301").addAttribute(VALOR, declaration.getDepositBankEntity() );	
+			}
+			if (StringUtils.isNotBlank( declaration.getDepositBankOffice())) {
+				mod.addElement(CLAVE).addAttribute(NUMERO,"302").addAttribute(VALOR, declaration.getDepositBankOffice() );	
+			}
+			if (StringUtils.isNotBlank( declaration.getDepositBankControl())) {
+				mod.addElement(CLAVE).addAttribute(NUMERO,"303").addAttribute(VALOR, declaration.getDepositBankControl() );	
+			}
+			if (StringUtils.isNotBlank( declaration.getDepositBankAccount())) {
+				mod.addElement(CLAVE).addAttribute(NUMERO,"304").addAttribute(VALOR, declaration.getDepositBankAccount() );	
+			}
 		}
-		if (StringUtils.isNotBlank( declaration.getBankOffice())) {
-			mod.addElement(CLAVE).addAttribute(NUMERO,"302").addAttribute(VALOR, declaration.getBankOffice() );	
-		}
-		if (StringUtils.isNotBlank( declaration.getBankControl())) {
-			mod.addElement(CLAVE).addAttribute(NUMERO,"303").addAttribute(VALOR, declaration.getBankControl() );	
-		}
-		if (StringUtils.isNotBlank( declaration.getBankAccount())) {
-			mod.addElement(CLAVE).addAttribute(NUMERO,"304").addAttribute(VALOR, declaration.getBankAccount() );	
+		if (declaration.getPayBack() > 0) {
+			if (StringUtils.isNotBlank( declaration.getPayBackBankEntity())) {
+				mod.addElement(CLAVE).addAttribute(NUMERO,"301").addAttribute(VALOR, declaration.getPayBackBankEntity() );	
+			}
+			if (StringUtils.isNotBlank( declaration.getPayBackBankOffice())) {
+				mod.addElement(CLAVE).addAttribute(NUMERO,"302").addAttribute(VALOR, declaration.getPayBackBankOffice() );	
+			}
+			if (StringUtils.isNotBlank( declaration.getPayBackBankControl())) {
+				mod.addElement(CLAVE).addAttribute(NUMERO,"303").addAttribute(VALOR, declaration.getPayBackBankControl() );	
+			}
+			if (StringUtils.isNotBlank( declaration.getPayBackBankAccount())) {
+				mod.addElement(CLAVE).addAttribute(NUMERO,"304").addAttribute(VALOR, declaration.getPayBackBankAccount() );	
+			}
 		}
 	}
 

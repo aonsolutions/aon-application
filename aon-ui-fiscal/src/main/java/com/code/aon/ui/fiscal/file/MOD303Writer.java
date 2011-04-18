@@ -13,7 +13,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.enumeration.Administration;
@@ -78,7 +77,8 @@ public class MOD303Writer implements IFinanceConstants{
 	private Declaration getDeclaration(VatTaxDeclaration vatTaxDeclaration) throws ManagerBeanException {
 			SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
 			Declaration declaration = new  Declaration();
-			declaration.setPeriod(vatTaxDeclaration.getVatTax().getYear());
+			declaration.setYear(vatTaxDeclaration.getVatTax().getYear());
+			declaration.setPeriod(vatTaxDeclaration.getVatTax().getPeriod().getName());
 			if (vatTaxDeclaration.getRegistryBank() != null && vatTaxDeclaration.getRegistryBank().getBankAccount() != null) {
 				BankAccount ba = vatTaxDeclaration.getRegistryBank().getBankAccount();
 				declaration.setCcc1(ba.getEntity());
@@ -206,19 +206,26 @@ public class MOD303Writer implements IFinanceConstants{
 		} else if (key == VatTaxKey.AT) {
 			declaration.setOutputTotal( detail.getQuota() );
 		} else if (key == VatTaxKey.B1) {
-			declaration.setInnerCommonOperations( detail.getQuota() );
+			declaration.setInnerCommonOperationsQuota( detail.getQuota() );
+			declaration.setInnerCommonOperationsBase( detail.getTaxableBase() );
 		} else if (key == VatTaxKey.B2) {
-			declaration.setInnerInvestmentOperations( detail.getQuota() );
+			declaration.setInnerInvestmentOperationsQuota( detail.getQuota() );
+			declaration.setInnerInvestmentOperationsBase( detail.getTaxableBase() );
 		} else if (key == VatTaxKey.B3) {
-			declaration.setInnerExpensesOperations( detail.getQuota() );
+			declaration.setInnerExpensesOperationsQuota( detail.getQuota() );
+			declaration.setInnerExpensesOperationsBase( detail.getTaxableBase() );
 		} else if (key == VatTaxKey.C1) {
-			declaration.setImportedCommonOperations( detail.getQuota() );
+			declaration.setImportedCommonOperationsQuota( detail.getQuota() );
+			declaration.setImportedCommonOperationsBase( detail.getTaxableBase() );
 		} else if (key == VatTaxKey.C2) {
-			declaration.setImportedInvestmentOperations( detail.getQuota() );
+			declaration.setImportedInvestmentOperationsQuota( detail.getQuota() );
+			declaration.setImportedInvestmentOperationsBase( detail.getTaxableBase() );
 		} else if (key == VatTaxKey.D1) {
-			declaration.setIntracommunitaryCommonOperations( detail.getQuota() );
+			declaration.setIntracommunitaryCommonOperationsQuota( detail.getQuota() );
+			declaration.setIntracommunitaryCommonOperationsBase( detail.getTaxableBase() );
 		} else if (key == VatTaxKey.D2) {
-			declaration.setInvestmentCommonOperations( detail.getQuota() );
+			declaration.setInvestmentCommonOperationsQuota( detail.getQuota() );
+			declaration.setInvestmentCommonOperationsBase( detail.getTaxableBase() );
 		} else if (key == VatTaxKey.ET) {
 			declaration.setAgriculturalRegimeCompensation( detail.getQuota() );
 		} else if (key == VatTaxKey.RI) {
@@ -279,10 +286,18 @@ public class MOD303Writer implements IFinanceConstants{
 		declaration.setWithoutActivity(dec.isWithoutActivity());
 		if ( dec.getRegistryBank() != null && dec.getRegistryBank().getId() != null && dec.getRegistryBank().getBankAccount() != null) {
 			BankAccount bankAccount = dec.getRegistryBank().getBankAccount();
-			declaration.setBankEntity(bankAccount.getEntity());
-			declaration.setBankOffice(bankAccount.getOffice());
-			declaration.setBankControl(bankAccount.getControl());
-			declaration.setBankAccount(bankAccount.getAccount());
+			if (dec.getDeposit() > 0) {
+				declaration.setDepositBankEntity(bankAccount.getEntity());
+				declaration.setDepositBankOffice(bankAccount.getOffice());
+				declaration.setDepositBankControl(bankAccount.getControl());
+				declaration.setDepositBankAccount(bankAccount.getAccount());
+			}
+			if (dec.getPayBack() > 0) {
+				declaration.setPayBackBankEntity(bankAccount.getEntity());
+				declaration.setPayBackBankOffice(bankAccount.getOffice());
+				declaration.setPayBackBankControl(bankAccount.getControl());
+				declaration.setPayBackBankAccount(bankAccount.getAccount());
+			}
 		}
 		
 	}

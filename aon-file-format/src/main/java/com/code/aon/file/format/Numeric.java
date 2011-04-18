@@ -60,6 +60,10 @@ public class Numeric implements Format {
 		decimalFormat.setMinimumFractionDigits(this.scale);
 	}
 
+	protected boolean isSigned() {
+		return sign;
+	}
+	
 	/**
 	 * Returns the fill pattern
 	 * 
@@ -90,7 +94,7 @@ public class Numeric implements Format {
 
 		String tmp = value.trim();
 		boolean positive = (tmp.indexOf("-") == -1) ? true : false;
-		String signValue = (sign) ? (positive) ? BLANK : "N" : "";
+		String signValue = getSignValue(positive);
 		tmp = (!positive) ? tmp.substring(1, tmp.length()) : tmp;
 		String precision = "";
 		String scale = "";
@@ -108,6 +112,10 @@ public class Numeric implements Format {
 		}
 		String result = this.fillPrecision(precision.length()) + precision + scale;
 		return signValue + result;
+	}
+
+	protected String getSignValue(boolean positive) {
+		return isSigned() ? (positive) ? BLANK : "N" : "";
 	}
 
 	/**
@@ -238,7 +246,7 @@ public class Numeric implements Format {
 
 	static public void main(String[] args) {
 	  Numeric num = new Numeric();
-	  num.applyPattern("9(8)V99");
+	  num.applyPattern("S9(8)V99");
 	  Object str = new Double("-316.5457");
 	  System.out.println (num.format(str));
 	}

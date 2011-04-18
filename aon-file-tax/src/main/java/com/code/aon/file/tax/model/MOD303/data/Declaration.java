@@ -3,7 +3,8 @@ package com.code.aon.file.tax.model.MOD303.data;
 
 public class Declaration {
 
-	private Integer period;
+	private Integer year;
+	private String period;
 	private boolean replacement;
 	private boolean complementary;
 	private boolean taxRefundRegistry;
@@ -66,16 +67,26 @@ public class Declaration {
 	private double baseIntracommunitary16;
 	private double percentIntracommunitary16;
 	private double quotaIntracommunitary16;
+	private double baseIntracommunitary;
+	private double quotaIntracommunitary;
 	private double outputTotal;
-	private double innerCommonOperations;
-	private double innerInvestmentOperations;
-	private double innerExpensesOperations;
-	private double importedCommonOperations;
-	private double importedInvestmentOperations;
-	private double intracommunitaryCommonOperations;
-	private double investmentCommonOperations;
+	private double innerCommonOperationsBase;
+	private double innerCommonOperationsQuota;
+	private double innerInvestmentOperationsBase;
+	private double innerInvestmentOperationsQuota;
+	private double innerExpensesOperationsBase;
+	private double innerExpensesOperationsQuota;
+	private double importedCommonOperationsBase;
+	private double importedCommonOperationsQuota;
+	private double importedInvestmentOperationsBase;
+	private double importedInvestmentOperationsQuota;
+	private double intracommunitaryCommonOperationsBase;
+	private double intracommunitaryCommonOperationsQuota;
+	private double investmentCommonOperationsBase;
+	private double investmentCommonOperationsQuota;
 	private double agriculturalRegimeCompensation;
 	private double investmentNormalization;
+	private double prorataNormalization;
 	private double deductTotal;
 	private double difference;
 	private double intracommunitaryDeliveries;
@@ -95,15 +106,25 @@ public class Declaration {
 	private double compensate;
 	private double payBack;
 	private boolean withoutActivity;
-	private String bankEntity;
-	private String bankOffice;
-	private String bankControl;
-	private String bankAccount;
-	
-	public Integer getPeriod() {
+	private String depositBankEntity;
+	private String depositBankOffice;
+	private String depositBankControl;
+	private String depositBankAccount;
+	private String payBackBankEntity;
+	private String payBackBankOffice;
+	private String payBackBankControl;
+	private String payBackBankAccount;
+
+	public Integer getYear() {
+		return year;
+	}
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+	public String getPeriod() {
 		return period;
 	}
-	public void setPeriod(Integer period) {
+	public void setPeriod(String period) {
 		this.period = period;
 	}
 	public boolean isReplacement() {
@@ -118,12 +139,21 @@ public class Declaration {
 	public void setComplementary(boolean complementary) {
 		this.complementary = complementary;
 	}
+	public int getComplementaryNumber() {
+		return isComplementary()?1:0;
+	}
+
 	public boolean isTaxRefundRegistry() {
 		return taxRefundRegistry;
 	}
 	public void setTaxRefundRegistry(boolean taxRefundRegistry) {
 		this.taxRefundRegistry = taxRefundRegistry;
 	}
+	
+	public int getTaxRefundRegistryNumber() {
+		return isTaxRefundRegistry()?1:2;
+	}
+	
 	public String getDocument() {
 		return document;
 	}
@@ -145,6 +175,22 @@ public class Declaration {
 		this.endPeriod = endPeriod;
 	}
 
+	public String getDeclarationType() {
+		if (getResult() == 0  ) {
+			return "N";
+		} else if (getResult() > 0  ) {
+			return "I";
+		} else if (getResult() < 0  ) {
+			if (getPayBack() > 0  ) {
+				return "D";
+			} 
+			if (getCompensate() > 0  ) {
+				return "C";
+			}
+		}
+		return " ";
+	}
+	
 	public Double getResult() {
 		return result;
 	}
@@ -478,53 +524,114 @@ public class Declaration {
 	public void setQuotaIntracommunitary16(double quotaIntracommunitary16) {
 		this.quotaIntracommunitary16 = quotaIntracommunitary16;
 	}
+	
+	public double getBaseIntracommunitary() {
+		return baseIntracommunitary;
+	}
+	public void setBaseIntracommunitary(double baseIntracommunitary) {
+		this.baseIntracommunitary = baseIntracommunitary;
+	}
+	public double getQuotaIntracommunitary() {
+		return quotaIntracommunitary;
+	}
+	public void setQuotaIntracommunitary(double quotaIntracommunitary) {
+		this.quotaIntracommunitary = quotaIntracommunitary;
+	}
 	public double getOutputTotal() {
 		return outputTotal;
 	}
 	public void setOutputTotal(double outputTotal) {
 		this.outputTotal = outputTotal;
 	}
-	public double getInnerCommonOperations() {
-		return innerCommonOperations;
+	public double getInnerOperationsBase() {
+		return innerCommonOperationsBase + innerExpensesOperationsBase;
 	}
-	public void setInnerCommonOperations(double innerCommonOperations) {
-		this.innerCommonOperations = innerCommonOperations;
+	public double getInnerOperationsQuota() {
+		return innerCommonOperationsQuota + innerExpensesOperationsQuota;
 	}
-	public double getInnerInvestmentOperations() {
-		return innerInvestmentOperations;
+	public double getInnerCommonOperationsBase() {
+		return innerCommonOperationsBase;
 	}
-	public void setInnerInvestmentOperations(double innerInvestmentOperations) {
-		this.innerInvestmentOperations = innerInvestmentOperations;
+	public void setInnerCommonOperationsBase(double innerCommonOperationsBase) {
+		this.innerCommonOperationsBase = innerCommonOperationsBase;
 	}
-	public double getInnerExpensesOperations() {
-		return innerExpensesOperations;
+	public double getInnerCommonOperationsQuota() {
+		return innerCommonOperationsQuota;
 	}
-	public void setInnerExpensesOperations(double innerExpensesOperations) {
-		this.innerExpensesOperations = innerExpensesOperations;
+	public void setInnerCommonOperationsQuota(double innerCommonOperationsQuota) {
+		this.innerCommonOperationsQuota = innerCommonOperationsQuota;
 	}
-	public double getImportedCommonOperations() {
-		return importedCommonOperations;
+	public double getInnerInvestmentOperationsBase() {
+		return innerInvestmentOperationsBase;
 	}
-	public void setImportedCommonOperations(double importedCommonOperations) {
-		this.importedCommonOperations = importedCommonOperations;
+	public void setInnerInvestmentOperationsBase(double innerInvestmentOperationsBase) {
+		this.innerInvestmentOperationsBase = innerInvestmentOperationsBase;
 	}
-	public double getImportedInvestmentOperations() {
-		return importedInvestmentOperations;
+	public double getInnerInvestmentOperationsQuota() {
+		return innerInvestmentOperationsQuota;
 	}
-	public void setImportedInvestmentOperations(double importedInvestmentOperations) {
-		this.importedInvestmentOperations = importedInvestmentOperations;
+	public void setInnerInvestmentOperationsQuota(double innerInvestmentOperationsQuota) {
+		this.innerInvestmentOperationsQuota = innerInvestmentOperationsQuota;
 	}
-	public double getIntracommunitaryCommonOperations() {
-		return intracommunitaryCommonOperations;
+	public double getInnerExpensesOperationsBase() {
+		return innerExpensesOperationsBase;
 	}
-	public void setIntracommunitaryCommonOperations(double intracommunitaryCommonOperations) {
-		this.intracommunitaryCommonOperations = intracommunitaryCommonOperations;
+	public void setInnerExpensesOperationsBase(double innerExpensesOperationsBase) {
+		this.innerExpensesOperationsBase = innerExpensesOperationsBase;
 	}
-	public double getInvestmentCommonOperations() {
-		return investmentCommonOperations;
+	public double getInnerExpensesOperationsQuota() {
+		return innerExpensesOperationsQuota;
 	}
-	public void setInvestmentCommonOperations(double investmentCommonOperations) {
-		this.investmentCommonOperations = investmentCommonOperations;
+	public void setInnerExpensesOperationsQuota(double innerExpensesOperationsQuota) {
+		this.innerExpensesOperationsQuota = innerExpensesOperationsQuota;
+	}
+	public double getImportedCommonOperationsBase() {
+		return importedCommonOperationsBase;
+	}
+	public void setImportedCommonOperationsBase(double importedCommonOperationsBase) {
+		this.importedCommonOperationsBase = importedCommonOperationsBase;
+	}
+	public double getImportedCommonOperationsQuota() {
+		return importedCommonOperationsQuota;
+	}
+	public void setImportedCommonOperationsQuota(double importedCommonOperationsQuota) {
+		this.importedCommonOperationsQuota = importedCommonOperationsQuota;
+	}
+	public double getImportedInvestmentOperationsBase() {
+		return importedInvestmentOperationsBase;
+	}
+	public void setImportedInvestmentOperationsBase(double importedInvestmentOperationsBase) {
+		this.importedInvestmentOperationsBase = importedInvestmentOperationsBase;
+	}
+	public double getImportedInvestmentOperationsQuota() {
+		return importedInvestmentOperationsQuota;
+	}
+	public void setImportedInvestmentOperationsQuota(double importedInvestmentOperationsQuota) {
+		this.importedInvestmentOperationsQuota = importedInvestmentOperationsQuota;
+	}
+	public double getIntracommunitaryCommonOperationsBase() {
+		return intracommunitaryCommonOperationsBase;
+	}
+	public void setIntracommunitaryCommonOperationsBase(double intracommunitaryCommonOperationsBase) {
+		this.intracommunitaryCommonOperationsBase = intracommunitaryCommonOperationsBase;
+	}
+	public double getIntracommunitaryCommonOperationsQuota() {
+		return intracommunitaryCommonOperationsQuota;
+	}
+	public void setIntracommunitaryCommonOperationsQuota(double intracommunitaryCommonOperationsQuota) {
+		this.intracommunitaryCommonOperationsQuota = intracommunitaryCommonOperationsQuota;
+	}
+	public double getInvestmentCommonOperationsBase() {
+		return investmentCommonOperationsBase;
+	}
+	public void setInvestmentCommonOperationsBase(double investmentCommonOperationsBase) {
+		this.investmentCommonOperationsBase = investmentCommonOperationsBase;
+	}
+	public double getInvestmentCommonOperationsQuota() {
+		return investmentCommonOperationsQuota;
+	}
+	public void setInvestmentCommonOperationsQuota(double investmentCommonOperationsQuota) {
+		this.investmentCommonOperationsQuota = investmentCommonOperationsQuota;
 	}
 	public double getAgriculturalRegimeCompensation() {
 		return agriculturalRegimeCompensation;
@@ -537,6 +644,12 @@ public class Declaration {
 	}
 	public void setInvestmentNormalization(double investmentNormalization) {
 		this.investmentNormalization = investmentNormalization;
+	}
+	public double getProrataNormalization() {
+		return prorataNormalization;
+	}
+	public void setProrataNormalization(double prorataNormalization) {
+		this.prorataNormalization = prorataNormalization;
 	}
 	public double getDeductTotal() {
 		return deductTotal;
@@ -647,29 +760,58 @@ public class Declaration {
 	public void setWithoutActivity(boolean withoutActivity) {
 		this.withoutActivity = withoutActivity;
 	}
-	public String getBankEntity() {
-		return bankEntity;
+	public int getWithoutActivityNumber() {
+		return isWithoutActivity()?1:0;
 	}
-	public void setBankEntity(String bankEntity) {
-		this.bankEntity = bankEntity;
+	
+	public String getDepositBankEntity() {
+		return depositBankEntity;
 	}
-	public String getBankOffice() {
-		return bankOffice;
+	public void setDepositBankEntity(String depositBankEntity) {
+		this.depositBankEntity = depositBankEntity;
 	}
-	public void setBankOffice(String bankOffice) {
-		this.bankOffice = bankOffice;
+	public String getDepositBankOffice() {
+		return depositBankOffice;
 	}
-	public String getBankControl() {
-		return bankControl;
+	public void setDepositBankOffice(String depositBankOffice) {
+		this.depositBankOffice = depositBankOffice;
 	}
-	public void setBankControl(String bankControl) {
-		this.bankControl = bankControl;
+	public String getDepositBankControl() {
+		return depositBankControl;
 	}
-	public String getBankAccount() {
-		return bankAccount;
+	public void setDepositBankControl(String depositBankControl) {
+		this.depositBankControl = depositBankControl;
 	}
-	public void setBankAccount(String bankAccount) {
-		this.bankAccount = bankAccount;
+	public String getDepositBankAccount() {
+		return depositBankAccount;
+	}
+	public void setDepositBankAccount(String depositBankAccount) {
+		this.depositBankAccount = depositBankAccount;
+	}
+
+	public String getPayBackBankEntity() {
+		return payBackBankEntity;
+	}
+	public void setPayBackBankEntity(String payBackBankEntity) {
+		this.payBackBankEntity = payBackBankEntity;
+	}
+	public String getPayBackBankOffice() {
+		return payBackBankOffice;
+	}
+	public void setPayBackBankOffice(String payBackBankOffice) {
+		this.payBackBankOffice = payBackBankOffice;
+	}
+	public String getPayBackBankControl() {
+		return payBackBankControl;
+	}
+	public void setPayBackBankControl(String payBackBankControl) {
+		this.payBackBankControl = payBackBankControl;
+	}
+	public String getPayBackBankAccount() {
+		return payBackBankAccount;
+	}
+	public void setPayBackBankAccount(String payBackBankAccount) {
+		this.payBackBankAccount = payBackBankAccount;
 	}
 	@Override
 	public String toString() {

@@ -57,6 +57,8 @@ public class MOD303 extends AbstractFileFiller{
 				}
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
+			
 			if ( ex instanceof Fd0Exception ) {
 				exceptions.add (ex);
 			} 
