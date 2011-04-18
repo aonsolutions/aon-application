@@ -20,6 +20,7 @@ public interface IPayrollConstants {
 	String AGREEMENT_LEVEL_CONTROLLER_NAME = "agreementLevel";
 	String AGREEMENT_TREE_CONTROLLER_NAME = "agreementTree";
 	String CONTRACT_CONTROLLER = "contract";
+	String CONTRACT_ATTACH_CONTROLLER = "contractAttach";
 	String CONTRACT_PAYMENT_CONTROLLER = "contractPayment";
 	String CONTRACT_DEDUCTION_CONTROLLER = "contractDeduction";
 	String CONTRACT_DATA_CONTROLLER = "contractData";
@@ -30,11 +31,12 @@ public interface IPayrollConstants {
 	String SALARY_DRAFT_CONTROLLER = "salaryDraft";
 	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
 	String SALARY_TEST_LAUNCHER_NAME = "salaryTestLauncher";
+	String CERTIFICATE_FILE_WIZARD = "certifica2FileWizard";
 
 	// ************************************************************
 	// CONFIGURATION
 	// ************************************************************
-	String MODEL_PATH = "com/code/aon/ui/employee/contractModel/";
+	String MODEL_PATH = "com/esferalia/aon/ui/payroll/contractModel/";
 	String SHOW_ENTERPRISE_IN_SEARCH = "showEnterpriseInSearch";
 	String SHOW_PERSON_COLUMN = "showPersonColumn";
 
@@ -49,4 +51,6 @@ public interface IPayrollConstants {
 	// ************************************************************
 	String AGREEMENT_FORM = "agreement_form";
 	String AGREEMENT_LEVEL_FORM = "agreement_level_form";
+	String SALARY_TESTER_LAUNCHER_FORM = "salaryTestLauncher_form";
+	
 }
