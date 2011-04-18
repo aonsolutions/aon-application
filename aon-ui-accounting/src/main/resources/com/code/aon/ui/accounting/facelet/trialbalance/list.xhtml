@@ -128,7 +128,9 @@
 						</aon:outputText>
 						<f:facet name="footer">
 							<aon:div styleClass="aon-text-right">
-								<aon:outputText value="#{trialBalance.summaryCollection.unpaidBalance}">
+								<aon:outputText rendered="#{trialBalance.summaryCollection.unpaidBalance!=0}" 
+									value="#{trialBalance.summaryCollection.unpaidBalance}"
+									style="color:red">
 									<f:convertNumber pattern="#,##0.00" />
 								</aon:outputText>
 							</aon:div>
@@ -145,7 +147,9 @@
 						</aon:outputText>
 						<f:facet name="footer">
 							<aon:div styleClass="aon-text-right">
-								<aon:outputText value="#{trialBalance.summaryCollection.creditBalance}">
+								<aon:outputText rendered="#{trialBalance.summaryCollection.creditBalance!=0}" 
+									value="#{trialBalance.summaryCollection.creditBalance}"
+									style="color:red">
 									<f:convertNumber pattern="#,##0.00" />
 								</aon:outputText>
 							</aon:div>
