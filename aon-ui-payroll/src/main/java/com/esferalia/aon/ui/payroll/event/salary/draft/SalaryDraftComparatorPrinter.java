@@ -15,15 +15,21 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.deduction.IDeduction;
+import com.esferalia.aon.salary.payment.BaseSalary;
 import com.esferalia.aon.salary.payment.CompensationOrPrepaidExpenses;
 import com.esferalia.aon.salary.payment.IPayment;
+import com.esferalia.aon.salary.payment.MovingCompensation;
 import com.esferalia.aon.salary.payment.OtherNonWages;
+import com.esferalia.aon.salary.payment.OvertimeHours;
+import com.esferalia.aon.salary.payment.SalaryInKind;
 import com.esferalia.aon.salary.payment.SalarySupplements;
+import com.esferalia.aon.salary.payment.SpecialBonuses;
+import com.esferalia.aon.salary.payment.SpecialSecurityBenefits;
 
 public class SalaryDraftComparatorPrinter {
 	
 	private final String BLANK_TEXT = "";
-	private final String NO_ELEMENT_TEXT = "ND";
+	private final String NO_ELEMENT_TEXT = "n/d";
 	private final String RED_STYLE = "aon-label-error";
 	private final String NORMAL_STYLE = "aon-outputText";
 
@@ -32,12 +38,9 @@ public class SalaryDraftComparatorPrinter {
 	private Payments payments;
 	private Deductions deductions;
 	private Bases bases;
-	private List<IPayment> supplementsList;
 	
-	public SalaryDraftComparatorPrinter(Contract contract, ISalary dbSalary, List<IPayment> list,Date startDate, Date endDate, Date issueDate) {
+	public SalaryDraftComparatorPrinter(Contract contract, ISalary dbSalary, Date startDate, Date endDate, Date issueDate) {
 		this.salary = dbSalary;
-		this.supplementsList = list;
-		
 		Contract c = null;
 		try {
 			c = (Contract) BeanManager.getManagerBean(Contract.class).get(contract.getId());
@@ -116,7 +119,8 @@ public class SalaryDraftComparatorPrinter {
 		payments.setSpecialSecurityBenefits(getSalary().getPayments().getSpecialSecurityBenefits(), getDraft().getPayments().getSpecialSecurityBenefits());
 		payments.setMovingCompensation(getSalary().getPayments().getMovingCompensation(), getDraft().getPayments().getMovingCompensation());
 		payments.setTotalPayment(getSalary().getTotalPayment(), getDraft().getTotalPayment());
-		payments.setSalarySupplements(getSalary().getPayments().getSalarySupplements(), supplementsList);
+//		payments.setSalarySupplements(getSalary().getPayments().getSalarySupplements(), supplementsList);
+		payments.setSalarySupplements(getSalary().getPayments().getSalarySupplements(), getDraft().getPayments().getSalarySupplements());
 		payments.setCompensationOrPrepaidExpenses(getSalary().getPayments().getCompensationOrPrepaidExpenses(), getDraft().getPayments().getCompensationOrPrepaidExpenses());
 		payments.setOtherNonWages(getSalary().getPayments().getOtherNonWages(), getDraft().getPayments().getOtherNonWages());
 		setPayments(payments);
@@ -155,21 +159,21 @@ public class SalaryDraftComparatorPrinter {
 	 */
 	public class Payments{
 		
-		private DecorableAmount baseSalary;
+		private List<DecorableAmount> baseSalary;
 		private List<DecorableAmount> salarySupplements;
-		private DecorableAmount overtimeHours;
-		private DecorableAmount specialBonuses;
-		private DecorableAmount salaryInKind;
+		private List<DecorableAmount> overtimeHours;
+		private List<DecorableAmount> specialBonuses;
+		private List<DecorableAmount> salaryInKind;
 		private List<DecorableAmount> compensationOrPrepaidExpenses;
-		private DecorableAmount specialSecurityBenefits;
-		private DecorableAmount movingCompensation;
+		private List<DecorableAmount> specialSecurityBenefits;
+		private List<DecorableAmount> movingCompensation;
 		private List<DecorableAmount> otherNonWages;
 		private DecorableAmount totalPayment;
 		
-		public DecorableAmount getBaseSalary() {
+		public List<DecorableAmount> getBaseSalary() {
 			return baseSalary;
 		}
-		public void setBaseSalary(DecorableAmount baseSalary) {
+		public void setBaseSalary(List<DecorableAmount> baseSalary) {
 			this.baseSalary = baseSalary;
 		}
 		public List<DecorableAmount> getSalarySupplements() {
@@ -178,22 +182,22 @@ public class SalaryDraftComparatorPrinter {
 		public void setSalarySupplements(List<DecorableAmount> salarySupplements) {
 			this.salarySupplements = salarySupplements;
 		}
-		public DecorableAmount getOvertimeHours() {
+		public List<DecorableAmount> getOvertimeHours() {
 			return overtimeHours;
 		}
-		public void setOvertimeHours(DecorableAmount overtimeHours) {
+		public void setOvertimeHours(List<DecorableAmount> overtimeHours) {
 			this.overtimeHours = overtimeHours;
 		}
-		public DecorableAmount getSpecialBonuses() {
+		public List<DecorableAmount> getSpecialBonuses() {
 			return specialBonuses;
 		}
-		public void setSpecialBonuses(DecorableAmount specialBonuses) {
+		public void setSpecialBonuses(List<DecorableAmount> specialBonuses) {
 			this.specialBonuses = specialBonuses;
 		}
-		public DecorableAmount getSalaryInKind() {
+		public List<DecorableAmount> getSalaryInKind() {
 			return salaryInKind;
 		}
-		public void setSalaryInKind(DecorableAmount salaryInKind) {
+		public void setSalaryInKind(List<DecorableAmount> salaryInKind) {
 			this.salaryInKind = salaryInKind;
 		}
 		public List<DecorableAmount> getCompensationOrPrepaidExpenses() {
@@ -203,16 +207,16 @@ public class SalaryDraftComparatorPrinter {
 				List<DecorableAmount> compensationOrPrepaidExpenses) {
 			this.compensationOrPrepaidExpenses = compensationOrPrepaidExpenses;
 		}
-		public DecorableAmount getSpecialSecurityBenefits() {
+		public List<DecorableAmount> getSpecialSecurityBenefits() {
 			return specialSecurityBenefits;
 		}
-		public void setSpecialSecurityBenefits(DecorableAmount specialSecurityBenefits) {
+		public void setSpecialSecurityBenefits(List<DecorableAmount> specialSecurityBenefits) {
 			this.specialSecurityBenefits = specialSecurityBenefits;
 		}
-		public DecorableAmount getMovingCompensation() {
+		public List<DecorableAmount> getMovingCompensation() {
 			return movingCompensation;
 		}
-		public void setMovingCompensation(DecorableAmount movingCompensation) {
+		public void setMovingCompensation(List<DecorableAmount> movingCompensation) {
 			this.movingCompensation = movingCompensation;
 		}
 		public List<DecorableAmount> getOtherNonWages() {
@@ -231,33 +235,52 @@ public class SalaryDraftComparatorPrinter {
 		public void setTotalPayment(Double totalPayment2, Double totalPayment3) {
 			setTotalPayment(getDecorableAmount(totalPayment2, totalPayment3));
 		}
-		public void setMovingCompensation(IPayment movingCompensation2,
-				IPayment movingCompensation3) {
-			setMovingCompensation(getDecorableAmount(getDoubleValue(movingCompensation2), getDoubleValue(movingCompensation3)));
+		public void setMovingCompensation(MovingCompensation salaryMovingCompensation, MovingCompensation draftMovingCompensation) {
+			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
+			for(IPayment p: draftMovingCompensation.getValues()){
+				list.add(getDecorableAmount(getDoubleValue(getSameMovingCompensation(p, salaryMovingCompensation)), getDoubleValue(p)));
+			}
+			setMovingCompensation(list);
 		}
-		public void setSpecialSecurityBenefits(
-				IPayment specialSecurityBenefits2,
-				IPayment specialSecurityBenefits3) {
-			setSpecialSecurityBenefits(getDecorableAmount(getDoubleValue(specialSecurityBenefits2), getDoubleValue(specialSecurityBenefits3)));
+		public void setSpecialSecurityBenefits(SpecialSecurityBenefits salarySpecialSecurityBenefits, 
+				SpecialSecurityBenefits draftSpecialSecurityBenefits) {
+			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
+			for(IPayment p: draftSpecialSecurityBenefits.getValues()){
+				list.add(getDecorableAmount(getDoubleValue(getSameSpecialSecurityBenefits(p, salarySpecialSecurityBenefits)), getDoubleValue(p)));
+			}
+			setSpecialSecurityBenefits(list);
 		}
-		public void setSalaryInKind(IPayment salaryInKind2,
-				IPayment salaryInKind3) {
-			setSalaryInKind(getDecorableAmount(getDoubleValue(salaryInKind2), getDoubleValue(salaryInKind3)));
+		public void setSalaryInKind(SalaryInKind salaryInKind, SalaryInKind draftInKind) {
+			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
+			for(IPayment p: draftInKind.getValues()){
+				list.add(getDecorableAmount(getDoubleValue(getSameSalaryInKind(p, salaryInKind)), getDoubleValue(p)));
+			}
+			setSalaryInKind(list);
 		}
-		public void setSpecialBonuses(IPayment specialBonuses2,
-				IPayment specialBonuses3) {
-			setSpecialBonuses(getDecorableAmount(getDoubleValue(specialBonuses2), getDoubleValue(specialBonuses3)));
+		public void setSpecialBonuses(SpecialBonuses salarySpecialBonuses, SpecialBonuses draftSpecialBonuses) {
+			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
+			for(IPayment p: draftSpecialBonuses.getValues()){
+				list.add(getDecorableAmount(getDoubleValue(getSameSpecialBonuses(p, salarySpecialBonuses)), getDoubleValue(p)));
+			}
+			setSpecialBonuses(list);
 		}
-		public void setOvertimeHours(IPayment overtimeHours2,
-				IPayment overtimeHours3) {
-			setOvertimeHours(getDecorableAmount(getDoubleValue(overtimeHours2), getDoubleValue(overtimeHours3)));
+		public void setOvertimeHours(OvertimeHours salaryOvertimeHours, OvertimeHours draftOvertimeHours) {
+			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
+			for(IPayment p: draftOvertimeHours.getValues()){
+				list.add(getDecorableAmount(getDoubleValue(getSameOvertimeHours(p, salaryOvertimeHours)), getDoubleValue(p)));
+			}
+			setOtherNonWages(list);
 		}
-		public void setBaseSalary(IPayment baseSalary2, IPayment baseSalary3) {
-			setBaseSalary(getDecorableAmount(getDoubleValue(baseSalary2), getDoubleValue(baseSalary3)));
+		public void setBaseSalary(BaseSalary salaryBaseSalary, BaseSalary draftBaseSalary) {
+//			setBaseSalary(getDecorableAmount(getDoubleValue(baseSalary2), getDoubleValue(baseSalary3)));
+			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
+			for(IPayment p: draftBaseSalary.getValues()){
+				list.add(getDecorableAmount(getDoubleValue(getSameBaseSalary(p, salaryBaseSalary)), getDoubleValue(p)));
+			}
+			setBaseSalary(list);
 		}
 		
-		public void setOtherNonWages(OtherNonWages salaryOtherNonWages,
-				OtherNonWages draftOtherNonWages) {
+		public void setOtherNonWages(OtherNonWages salaryOtherNonWages, OtherNonWages draftOtherNonWages) {
 			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
 			for(IPayment p: draftOtherNonWages.getValues()){
 				list.add(getDecorableAmount(getDoubleValue(getSameOtherNonWage(p, salaryOtherNonWages)), getDoubleValue(p)));
@@ -273,38 +296,94 @@ public class SalaryDraftComparatorPrinter {
 			}
 			setCompensationOrPrepaidExpenses(list);
 		}
+//		public void setSalarySupplements(SalarySupplements salarySalarySupplements,
+//				List<IPayment> draftSalarySupplements) {
 		public void setSalarySupplements(SalarySupplements salarySalarySupplements,
-				List<IPayment> draftSalarySupplements) {
+				SalarySupplements draftSalarySupplements) {
 			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
-			for(IPayment p: draftSalarySupplements){
+			for(IPayment p: draftSalarySupplements.getValues()){
 				list.add(getDecorableAmount(getDoubleValue(getSameSalarySupplement(p, salarySalarySupplements)), getDoubleValue(p)));
 			}
 			setSalarySupplements(list);
 		}
 		
 		
-		private IPayment getSameOtherNonWage(IPayment draftPayment,
-				OtherNonWages list) {
+		private IPayment getSameBaseSalary(IPayment draftPayment, BaseSalary list) {
 			for(IPayment p: list.getValues()){
-				if(draftPayment.getDescription().equals(p.getDescription()) && draftPayment.getAmount()==p.getAmount()){
+				if(draftPayment.getDescription().equals(p.getDescription()) 
+						&& CommonUtil.round(draftPayment.getAmount()) == CommonUtil.round(p.getAmount())) {
 					return p;
 				}
 			}
 			return null;
 		}
-		private IPayment getSameCompensationOrPrepaidExpense(IPayment draftPayment,
-				CompensationOrPrepaidExpenses list) {
+		private IPayment getSameOvertimeHours(IPayment draftPayment, OvertimeHours list) {
 			for(IPayment p: list.getValues()){
-				if(draftPayment.getDescription().equals(p.getDescription()) && draftPayment.getAmount()==p.getAmount()){
+				if(draftPayment.getDescription().equals(p.getDescription()) 
+						&& CommonUtil.round(draftPayment.getAmount()) == CommonUtil.round(p.getAmount())) {
 					return p;
 				}
 			}
 			return null;
 		}
-		private IPayment getSameSalarySupplement(IPayment draftPayment,
-				SalarySupplements list) {
+		private IPayment getSameSpecialBonuses(IPayment draftPayment, SpecialBonuses list) {
 			for(IPayment p: list.getValues()){
-				if(draftPayment.getDescription().equals(p.getDescription()) && CommonUtil.round(draftPayment.getAmount())==CommonUtil.round(p.getAmount())){
+				if(draftPayment.getDescription().equals(p.getDescription()) 
+						&& CommonUtil.round(draftPayment.getAmount()) == CommonUtil.round(p.getAmount())) {
+					return p;
+				}
+			}
+			return null;
+		}
+		private IPayment getSameOtherNonWage(IPayment draftPayment, OtherNonWages list) {
+			for(IPayment p: list.getValues()){
+				if(draftPayment.getDescription().equals(p.getDescription()) 
+						&& CommonUtil.round(draftPayment.getAmount()) == CommonUtil.round(p.getAmount())) {
+					return p;
+				}
+			}
+			return null;
+		}
+		private IPayment getSameCompensationOrPrepaidExpense(IPayment draftPayment, CompensationOrPrepaidExpenses list) {
+			for(IPayment p: list.getValues()){
+				if(draftPayment.getDescription().equals(p.getDescription()) 
+						&& CommonUtil.round(draftPayment.getAmount()) == CommonUtil.round(p.getAmount())) {
+					return p;
+				}
+			}
+			return null;
+		}
+		private IPayment getSameSalarySupplement(IPayment draftPayment, SalarySupplements list) {
+			for (IPayment p : list.getValues()) {
+				if (draftPayment.getDescription().equals(p.getDescription())
+						&& CommonUtil.round(draftPayment.getAmount()) == CommonUtil.round(p.getAmount())) {
+					return p;
+				}
+			}
+			return null;
+		}
+		private IPayment getSameMovingCompensation(IPayment draftPayment, MovingCompensation list) {
+			for(IPayment p: list.getValues()){
+				if(draftPayment.getDescription().equals(p.getDescription()) 
+						&& CommonUtil.round(draftPayment.getAmount())==CommonUtil.round(p.getAmount())){
+					return p;
+				}
+			}
+			return null;
+		}
+		private IPayment getSameSpecialSecurityBenefits(IPayment draftPayment, SpecialSecurityBenefits list) {
+			for(IPayment p: list.getValues()){
+				if(draftPayment.getDescription().equals(p.getDescription()) 
+						&& CommonUtil.round(draftPayment.getAmount())==CommonUtil.round(p.getAmount())){
+					return p;
+				}
+			}
+			return null;
+		}
+		private IPayment getSameSalaryInKind(IPayment draftPayment, SalaryInKind list) {
+			for(IPayment p: list.getValues()){
+				if(draftPayment.getDescription().equals(p.getDescription()) 
+						&& CommonUtil.round(draftPayment.getAmount())==CommonUtil.round(p.getAmount())){
 					return p;
 				}
 			}

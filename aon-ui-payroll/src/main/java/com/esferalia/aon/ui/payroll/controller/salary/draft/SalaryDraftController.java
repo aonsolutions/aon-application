@@ -230,9 +230,9 @@ public class SalaryDraftController extends BasicController {
 		}
 	}
 	
-	// ****************************************
-	// OBTENCION DE LA DIFERENCIA DE LA NOMINA
-	// ****************************************
+	// *****************************************************
+	// OBTENCION DE LA DIFERENCIA DEL BORRADOR CON SU NOMINA
+	// *****************************************************
 	private List<IPayment> paymentsList;
 	public List<IPayment> getPaymentsList(){
 		if (paymentsList == null) {
@@ -258,9 +258,6 @@ public class SalaryDraftController extends BasicController {
 			}
 			paymentsList = ss.getValues();
 		} catch (SalaryException e) {
-			// TODO como tratar esto?
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (AonException e) {
 			// TODO como tratar esto?
 			AonUtil.addErrorMessage(e.getMessage());
 		}

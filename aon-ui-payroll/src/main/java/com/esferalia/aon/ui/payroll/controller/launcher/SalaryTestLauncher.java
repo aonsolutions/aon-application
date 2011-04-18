@@ -57,7 +57,14 @@ public class SalaryTestLauncher {
 	private boolean testTotalPayment;
 	private boolean testBaseIRPF;
 	private boolean testBaseCGC;
+	private Integer contractId;
 	
+	public Integer getContractId() {
+		return contractId;
+	}
+	public void setContractId(Integer contractId) {
+		this.contractId = contractId;
+	}	
 	
 	public boolean isPollEnabled() {
 		return pollEnabled;
@@ -279,14 +286,6 @@ public class SalaryTestLauncher {
 		}
 	}
 	
-	private Integer contractId;
-	public Integer getContractId() {
-		return contractId;
-	}
-	public void setContractId(Integer contractId) {
-		this.contractId = contractId;
-	}
-
 	public void onSalaryDraft(ActionEvent event) {
 		try {
 			SalaryDraftController controller = (SalaryDraftController) FormUtil.getController("salaryDraft");
@@ -296,13 +295,15 @@ public class SalaryTestLauncher {
 			c.set(Calendar.MONTH, getParams().getIssueMonth().ordinal());
 			c.set(Calendar.DAY_OF_MONTH, 1);
 			controller.setIssueDate(c.getTime());
+			controller.setStartDate(getParams().getStartDate());
+			controller.setEndDate(getParams().getEndDate());
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IPayrollAlias.CONTRACT_ID), getContractId());
 			controller.setCriteria(criteria);
 			controller.onSearch(null);
 			controller.getModel().setRowIndex(0);
 			controller.onSelect(null);
-			controller.setBackAction("salaryTestLauncher_form");
+			controller.setBackAction(IPayrollConstants.SALARY_TESTER_LAUNCHER_FORM);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al el borrador de la nómina.";
 			AonUtil.addErrorMessage(msg);
