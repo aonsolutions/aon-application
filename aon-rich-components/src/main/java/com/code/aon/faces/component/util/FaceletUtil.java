@@ -21,6 +21,7 @@ import javax.faces.event.ValueChangeEvent;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.richfaces.event.NodeSelectedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,8 @@ public class FaceletUtil {
 	public final static Class[] COMPONENT_GROUP_SIG = new Class[] { UIComponent.class, UIComponent.class };
 	
 	public final static Class[] VALIDATOR_SIG = new Class[] { FacesContext.class, UIComponent.class, Object.class };
+	
+	public final static Class[] NODE_SELECT_LISTENER_SIG = new Class[] { NodeSelectedEvent.class };
 	
     public final static FaceletHandler LEAF_HANDLER = new FaceletHandler() {
         public void apply(FaceletContext ctx, UIComponent parent)

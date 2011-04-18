@@ -28,12 +28,14 @@ public class MailAccountControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		updateFolderTree(event);
 		updateSignatureList();
 	}
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		updateSignature( (MailAccount) event.getController().getTo() );
+		updateFolderTree(event);
 	}
 
 	@Override
@@ -47,6 +49,7 @@ public class MailAccountControllerListener extends ControllerAdapter {
 				wmc.getServer().setAccount(mailAccount);
 			}
 		}
+		updateFolderTree(event);
 	}
 
 	private void updateSignatureList() throws ControllerListenerException {
@@ -81,6 +84,11 @@ public class MailAccountControllerListener extends ControllerAdapter {
 				throw new ControllerListenerException( e.getMessage(), e );
 			}
 		}
+	}
+	
+	private void updateFolderTree(ControllerEvent event) {
+		MailAccountController controller = (MailAccountController) event.getController();
+		controller.loadFolders();
 	}
 	
 }

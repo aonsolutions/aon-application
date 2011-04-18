@@ -59,6 +59,9 @@ public class MethodParamHandler extends TagHandler implements IRichFacesTags {
 		} else if ( VALIDATOR.equals(type) ) {
 			this.returnType = null;
 			this.paramTypes = FaceletUtil.VALIDATOR_SIG;			
+		} else if ( NODE_SELECT_LISTENER.equals(type) ) {
+			this.returnType = null;
+			this.paramTypes = FaceletUtil.NODE_SELECT_LISTENER_SIG;			
 		}
 	}
 	

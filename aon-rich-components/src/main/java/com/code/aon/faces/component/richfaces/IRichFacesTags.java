@@ -41,6 +41,8 @@ public interface IRichFacesTags {
 	String VALUE_CHANGE_LISTENER = "valueChangeListener";
 	
 	String VALIDATOR = "validator";
+	
+	String NODE_SELECT_LISTENER = "nodeSelectListener";
 		
 	String MIN_WIDTH = "minWidth";
 	

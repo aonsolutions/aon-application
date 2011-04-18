@@ -2,27 +2,36 @@ package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.FacesException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
 import javax.naming.Name;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.richfaces.component.UITree;
+import org.richfaces.event.NodeSelectedEvent;
+import org.richfaces.model.TreeNode;
+import org.richfaces.model.TreeNodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.WebmailException;
+import com.code.aon.webmail.bean.AonFolder;
+import com.code.aon.webmail.bean.AonServer;
 
 public class MailAccountController extends LdapBasicController implements IWebMailConstants {
 
@@ -32,7 +41,11 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 	
 	private boolean showMailAccountList;
 	
+	private TreeNode<AonFolder> rootNode;
+	
 	private List<SelectItem> mailAccounts;
+	
+	private String selectedFolder;
 	
 	@Override
 	public void updateBaseDN(Name parent) {
@@ -137,12 +150,10 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 		return mailAccounts;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void updateMailAccountList() throws ManagerBeanException {
 		this.mailAccounts = new LinkedList<SelectItem>();
-		Iterator iter = getManagerBean().getList(getCriteria()).iterator();
-		while(iter.hasNext()){
-			MailAccount mailAccount = (MailAccount)iter.next();
+		for( ITransferObject to : getManagerBean().getList(getCriteria()) ) {
+			MailAccount mailAccount = (MailAccount) to;
 			SelectItem item = new SelectItem(mailAccount.getId(),mailAccount.getEmail());
 			this.mailAccounts.add(item);
 		}
@@ -210,6 +221,65 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 			}
 		}
 		return true;
+	}
+
+	public void loadFolders() {
+		MailAccount account = (MailAccount) getTo();
+		this.rootNode = null;
+		AonServer server = new AonServer(account);
+		try {
+			server.connect();
+			loadTree(server);
+		} catch (MessagingException e) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			server.disconnect();
+		}
+	}
+
+	public void loadTree( AonServer server ) {
+		AonFolder folder = new AonFolder(server.getRoot(), server);
+		rootNode = new TreeNodeImpl<AonFolder>();
+		rootNode.setData(folder);
+		addNodes(rootNode);
+	}
+	
+	private void addNodes(TreeNode<AonFolder> parent) {
+		AonFolder folder = parent.getData();
+		try {
+			for( AonFolder aonFolder : folder.getFolderList() ) {
+				TreeNode<AonFolder> node = new TreeNodeImpl<AonFolder>();
+				node.setData(aonFolder);
+				parent.addChild(aonFolder.getName(), node);
+				if ( aonFolder.isHoldFolders() ) {
+					addNodes( node );
+				}
+			}
+		} catch (WebmailException e) {
+			throw new FacesException(e.getMessage(), e);
+		}
+	}	
+	
+	public TreeNode<AonFolder> getTreeNode() {
+		return rootNode;
+	}	
+	
+	public String getSelectedFolder() {
+		return selectedFolder;
+	}
+
+	public void setSelectedFolder(String selectedFolder) {
+		this.selectedFolder = selectedFolder;
+	}	
+
+	public void selectFolder(NodeSelectedEvent event) {
+		UITree tree = (UITree) event.getComponent();
+		AonFolder folder = (AonFolder) tree.getRowData();
+		try {
+			BeanUtils.setProperty( getTo(), selectedFolder, folder.getFullName() );
+		} catch (Throwable e) {
+			LOGGER.error( e.getMessage(), e );
+		}
 	}
 	
 }
