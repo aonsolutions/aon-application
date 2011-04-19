@@ -24,20 +24,20 @@
 				<ui:param name="removeOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="domainApplications" rendered="#{!domain.new}"
-						value="#{managerBundle.manager_applications}"
+						value="#{managerBundle.manager_applications}" immediate="true"
 						action="domainApplication_list" actionListener="#{domainApplication.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-utilities"/>
 					<aon:commandButton id="domainUsers" rendered="#{!domain.new}"
-						value="#{managerBundle.manager_users}"
+						value="#{managerBundle.manager_users}" immediate="true"
 						action="domainUser_list" actionListener="#{domainUser.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-user"/>
 					<aon:commandButton id="domainCapabilities"
 						rendered="#{!domain.new and manager.config.showDomainCapabilities}"
-						value="#{managerBundle.manager_capabilities}"
+						value="#{managerBundle.manager_capabilities}" immediate="true"
 						action="domainCapabilities" actionListener="#{domainCapabilities.onInit}"
 						styleClass="aon-finding-toolbar-item aon-icon-account-entry-close"/>
 					<aon:commandButton id="domainDBConnection" rendered="#{!domain.new and manager.config.showDBConnections}"
-						value="#{managerBundle.manager_db_connections}"
+						value="#{managerBundle.manager_db_connections}" immediate="true"
 						action="domainDBConnection_list" actionListener="#{domainDBConnection.onSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-master"/>
 				</ui:define>				
@@ -131,7 +131,7 @@
 						<aon:outputLabel for="Domain_subDomainSuffix"
 							value="#{managerBundle.manager_domain_subDomainSuffix}" />
 						<aon:inputText id="Domain_subDomainSuffix" size="60" maxlength="256"
-							value="#{domain.to.subDomainSuffix}" />
+							required="true" value="#{domain.to.subDomainSuffix}" />
 					</c:if>
 
 					<c:if test="#{manager.administrator or (domain.to.parentDomain.id != null)}" >

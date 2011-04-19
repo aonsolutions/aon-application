@@ -21,6 +21,7 @@ public interface IManagerConstants {
 	String USER_SCOPE_CONTROLLER_NAME = "userScopeEx";
 	String COMPANY_BASIC_CONTROLLER_NAME = "companyBasic";
 	String ALIAS_CONTROLLER_NAME = "alias";
+	String CONFIG_CONTROLLER_NAME = "aonConfig";
 	
 	// Applications
 	String AON_DESKTOP = "aon-desktop";
@@ -28,6 +29,7 @@ public interface IManagerConstants {
 	String AON_MANAGER = "aon-manager";
 	String AON_CMS = "aon-cms";
 	String AON_PUBLISHER = "aon-publisher";
+	String DEFAULT_SUBDOMAIN_SUFFIX = "aonsolutions.es";
 	
 	String USUARIO_PROFILE = "Usuario";
 	String ADMINISTRADOR_PROFILE = "Administrador";

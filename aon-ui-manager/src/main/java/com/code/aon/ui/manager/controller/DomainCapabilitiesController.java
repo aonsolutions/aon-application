@@ -1,5 +1,8 @@
 package com.code.aon.ui.manager.controller;
 
+import static com.code.aon.ui.manager.controller.DomainController.DEFAULT_MAX_DOCUMENT_SIZE;
+import static com.code.aon.ui.manager.controller.DomainController.DEFAULT_MAX_TOTAL_DOCUMENT_SIZE;
+import static com.code.aon.ui.manager.controller.IManagerConstants.DEFAULT_SUBDOMAIN_SUFFIX;
 import static com.code.aon.ui.manager.controller.IManagerConstants.DOMAIN_CONTROLLER_NAME;
 import static com.code.aon.ui.manager.controller.IManagerConstants.DOMAIN_USER_CONTROLLER_NAME;
 import static com.code.aon.ui.manager.controller.IManagerConstants.MANAGER_CONTROLLER_NAME;
@@ -16,6 +19,7 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,8 +145,8 @@ public class DomainCapabilitiesController {
 		list.add( getTo() );
 		domain.setCapabilities( list );
 		try {
+			capabilityChanged(domain, getTo(), false);			
 			dc.getManagerBean().update( domain );
-			capabilityChanged(domain, getTo(), false);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onAccept exception ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -161,8 +165,8 @@ public class DomainCapabilitiesController {
 		list.remove( capability );
 		domain.setCapabilities( list );
 		try {
-			dc.getManagerBean().update( domain );
 			capabilityChanged(domain, capability, true);
+			dc.getManagerBean().update( domain );
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onRemove exception ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -177,8 +181,13 @@ public class DomainCapabilitiesController {
 	private void capabilityChanged( Domain domain, DomainCapability capability, boolean removed ) throws ManagerBeanException {
 		if ( DomainCapability.DOCUMENTAL == capability ) {
 			getManager().getLogger().documental(domain);
+			domain.setMaxDocumentSize(removed?null:DEFAULT_MAX_DOCUMENT_SIZE);
+			domain.setMaxTotalDocumentSize(removed?null:DEFAULT_MAX_TOTAL_DOCUMENT_SIZE);
 		} else if ( DomainCapability.MULTI_DOMAIN == capability ) {
 			getManager().getLogger().multiDomain(domain);
+			if ( StringUtils.isEmpty(domain.getSubDomainSuffix()) ) {
+				domain.setSubDomainSuffix(DEFAULT_SUBDOMAIN_SUFFIX);
+			}
 		} else if ( DomainCapability.MULTI_USER == capability ) {
 			if ( removed ) {
 				DomainUserController duc = (DomainUserController) AonUtil.getRegisteredBean(DOMAIN_USER_CONTROLLER_NAME);

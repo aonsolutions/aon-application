@@ -2,6 +2,8 @@ package com.code.aon.ui.manager.event;
 
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
+import static com.code.aon.ui.manager.controller.DomainController.DEFAULT_MAX_DOCUMENT_SIZE;
+import static com.code.aon.ui.manager.controller.DomainController.DEFAULT_MAX_TOTAL_DOCUMENT_SIZE;
 
 import javax.naming.Name;
 
@@ -123,7 +125,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			throws ControllerListenerException {
 		DomainController dc = (DomainController) event.getController();
 		try {
-			ensureAliases(dc);
+			ensureDomainValues(dc);
 			updateDomain(dc.getDomain());
 			dc.init();
 			dc.updateParentDomains();
@@ -191,11 +193,29 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		dc.setAonDB( ddbcc.updateAonDBConnection(dbc) );
 	}		
 	
-	private void ensureAliases( DomainController dc ) throws DAOException {
-		String domain = dc.getDomain().getCommonName();
-		Name aliasesDN = NameResolver.getAliasesDN(domain);
+	private void ensureDomainValues( DomainController dc ) throws DAOException, ManagerBeanException {
+		Domain domain = dc.getDomain();
+		Name aliasesDN = NameResolver.getAliasesDN(domain.getCommonName());
 		if (! dc.getLdapDAO().exists(aliasesDN, ORGANIZATIONAL_UNIT) ) {
 			dc.getLdapDAO().addOrganizationUnit(aliasesDN);
+		}
+		boolean updated = false;		
+		if ( domain.getDomainManagement() && StringUtils.isEmpty(domain.getSubDomainSuffix()) ) {
+			domain.setSubDomainSuffix(DEFAULT_SUBDOMAIN_SUFFIX);
+			updated = true;
+		}
+		if ( domain.isDocumentManagement() ) {
+			if ( domain.getMaxDocumentSize() == null ) {
+				domain.setMaxDocumentSize(DEFAULT_MAX_DOCUMENT_SIZE);
+				updated = true;
+			}
+			if ( domain.getMaxTotalDocumentSize() == null ) {
+				domain.setMaxTotalDocumentSize(DEFAULT_MAX_TOTAL_DOCUMENT_SIZE);
+				updated = true;
+			}
+		}
+		if ( updated ) {
+			dc.getManagerBean().update(domain);			
 		}
 	}
 	

@@ -55,6 +55,10 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	
 	private final static int DEFAULT_DOMAIN_NAME_MAX_LENGTH = 128;
 	
+	public final static int DEFAULT_MAX_DOCUMENT_SIZE = 1;
+	
+	public final static int DEFAULT_MAX_TOTAL_DOCUMENT_SIZE = 100;
+	
 	private AccessPolicy accessPolicy;
 	
 	private List<SelectItem> accessPolicies;

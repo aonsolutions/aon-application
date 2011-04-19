@@ -45,8 +45,8 @@ public class Config implements ILdapTransferObject {
 	private Integer maxTotalDocumentSize;
 	
 	public Config() {
-		this.maxDocumentSize = 1024;
-		this.maxTotalDocumentSize = 10240;
+		this.maxDocumentSize = 1;
+		this.maxTotalDocumentSize = 10;
 		this.commonName = COMMON_NAME;
 	}
 
