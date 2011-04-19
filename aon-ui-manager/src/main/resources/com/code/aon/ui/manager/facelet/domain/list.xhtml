@@ -13,7 +13,6 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{managerBundle.manager_domains}" />
 				<ui:param name="controller" value="#{domain}" />
-				<ui:param name="rows" value="20" />
 				<ui:param name="skipResetButton" value="#{!manager.domainManagement}" />
 				<ui:param name="skipSearchButton" value="#{!manager.domainManagement}" />
 			</ui:include>
@@ -23,6 +22,7 @@
 			
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{domain}" />
+					<ui:param name="rows" value="20" />					
 					<ui:define name="columns">
 
 						<aon:column styleClass="aon-width-150 aon-editDataTable-textColumn"
