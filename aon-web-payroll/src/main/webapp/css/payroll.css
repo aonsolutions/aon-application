@@ -94,6 +94,9 @@
 .aon-icon-redtrabaja{
 	background:transparent url(images/aon-icon/aon-icon-redtrabaja.png) no-repeat scroll center left;
 }
+.aon-icon-contrata{
+	background:transparent url(images/aon-icon/aon-icon-contrata.png) no-repeat scroll center left;
+}
 .aon-icon-pdf-disabled{
 	background:transparent url(images/aon-icon/aon-icon-pdf-disabled.png) no-repeat scroll center left;
 }
@@ -109,8 +112,17 @@
 .aon-icon-contract-calendar{
 	background:transparent url(images/aon-icon/aon-icon-contract-calendar.png) scroll left center no-repeat;	
 }
+.aon-icon-file-generic{
+	background:transparent url(../images/aon-icon/aon-icon-file.png) scroll left center no-repeat;	
+ }
 .aon-background-shadow{
 	height:100%;
 	background-image:url(images/background-shadow.jpg);
 	background-repeat: repeat-x;
 }
+
+.lst {margin-left: 20px; font-family: Courier; white-space: nowrap;}
+.lst_ERROR {color:red; font-weight: bold;}
+.lst_WARNING {color:red;}
+.lst_INFO {color:black;}
+.lst_DEBUG {color: blue;}
