@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,13 +22,11 @@ public class Certificate {
 	private Integer fecha;
 	private Integer hour;
 	private String file;
-	private Locale locale;
 	private ArrayList<Integer> errors;// = new ArrayList<Integer>();
 
 	private List<CuentaCotizacion> cuentaCotizacion;
 
-	public Certificate(String cif) {
-		Date date = new Date();
+	public Certificate(String cif, Date date) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		String f = formatter.format(date);
 		fecha = Integer.parseInt(f);
@@ -63,14 +60,6 @@ public class Certificate {
 		this.file = file;
 	}
 	
-	public Locale getLocale() {
-		return locale;
-	}
-
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-
 	public ArrayList<Integer> getErrors() {
 		return errors;
 	}
@@ -248,7 +237,7 @@ public class Certificate {
 	
 	public String getErrorMessage(Integer i){
 		final String ERROR_TAG = " - ERROR: ";
-		String errorMsg = ResourceBundle.getBundle("com.esferalia.aon.payroll.core.impl.messages").getString("aon_payroll_certificate_error_" + i);
+		String errorMsg = ResourceBundle.getBundle("com.esferalia.aon.payroll.i18n.messages").getString("aon_payroll_certificate_error_" + i);
 		return ERROR_TAG + errorMsg;
 	}
 	
