@@ -29,6 +29,60 @@
 									actionListener="#{leaveBatchWizard.onStart}"
 									value="#{payrollBundle.payroll_leaveBatchWizard_module}" />
 							</aon:div>
+						
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="contractBatchWizard" 
+									action="contractBatchWizard_step0"
+									actionListener="#{contractBatchWizard.onStart}"
+									value="#{payrollBundle.payroll_contractBatchWizard_module}" />
+							</aon:div>
+							
+						</aon:div>
+					</aon:panelGrid>
+					
+					<aon:panelGrid id="contrata_wizard"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-contrata aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.contrata_menu_group}" />
+						</f:facet>					
+						<aon:div styleClass="aon-direct-access-list">
+														
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="contractGenerationWizard" 
+									action="contractGenerationWizard_search"
+									value="#{payrollBundle.payroll_contractGenerationWizard_module}" >
+									<aon:actionListener method="#{contractGenerationWizard.onEditSearch}" />
+									<aon:actionListener method="#{contractGenerationWizard.onStart}" />
+								</aon:commandLink>
+							</aon:div>
+							
+						</aon:div>
+					</aon:panelGrid>
+					
+					<aon:panelGrid id="certificate_wizard"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-redtrabaja aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.certificate_menu_group}" />
+						</f:facet>					
+						<aon:div styleClass="aon-direct-access-list">
+
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="certifica2BatchWizard"
+									action="certifica2BatchWizard_step0"
+									value="#{payrollBundle.certifica2BatchWizard_module}" >
+									<aon:actionListener method="#{certifica2BatchWizard.onStart}" />
+									<aon:actionListener method="#{contract.onEditSearch}" />
+								</aon:commandLink>
+							</aon:div>
+							
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="certifica2FileWizard"
+									action="certifica2FileWizard_step0"
+									actionListener="#{certifica2FileWizard.onStart}"
+									value="#{payrollBundle.certifica2FileWizard_module}" />
+							</aon:div>
 								
 						</aon:div>
 					</aon:panelGrid>
