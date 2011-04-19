@@ -12,6 +12,9 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.registry.enumeration.StreetType;
+import com.esferalia.aon.payroll.enumeration.AgeGroup;
+import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
+import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractCalendarEventType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
@@ -19,12 +22,21 @@ import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
+import com.esferalia.aon.payroll.enumeration.DisabilityCode;
 import com.esferalia.aon.payroll.enumeration.DischargeCause;
+import com.esferalia.aon.payroll.enumeration.DismissalCollective;
+import com.esferalia.aon.payroll.enumeration.EducationalLevel;
+import com.esferalia.aon.payroll.enumeration.EmployeeType;
+import com.esferalia.aon.payroll.enumeration.EmploymentProgram;
+import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.enumeration.OtherLaws;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.SalaryTemplate;
+import com.esferalia.aon.payroll.enumeration.SchoolWorkshop;
+import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -51,6 +63,18 @@ public class PayrollCollectionsController {
 	private List<SelectItem> leaveReportTypes;
 	private List<SelectItem> leaveTypes;
 	private List<SelectItem> dischargeCauses;
+	private List<SelectItem> suspensionCauses;
+	private List<SelectItem> fileStatus;
+	private List<SelectItem> cnoList;
+	private List<SelectItem> employmentProgramList;
+	private List<SelectItem> otherLawsList;
+	private List<SelectItem> educationalLevelList;
+	private List<SelectItem> disabilityCodeList;
+	private List<SelectItem> dismissalCollectiveList;
+	private List<SelectItem> employeeTypeList;
+	private List<SelectItem> schoolWorkshopList;
+	private List<SelectItem> basicCopySignatureTypeList;
+	private List<SelectItem> ageGroupList;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -136,9 +160,11 @@ public class PayrollCollectionsController {
 			contractOptions = new LinkedList<SelectItem>();
 			ContractOption[] options = ContractOption.values();
 			for (ContractOption o : options) {
-				String name = o.getName(locale);
-				SelectItem item = new SelectItem(o, name);
-				contractOptions.add(item);
+				if(o==ContractOption.INDEFINITE){
+					String name = o.getName(locale);
+					SelectItem item = new SelectItem(o, name);
+					contractOptions.add(item);
+				}
 			}
 		}
 		return contractOptions;
@@ -151,9 +177,11 @@ public class PayrollCollectionsController {
 			contractCodes = new LinkedList<SelectItem>();
 			ContractCode[] codes = ContractCode.values();
 			for (ContractCode cc : codes) {
-				String name = cc.getName(locale);
-				SelectItem item = new SelectItem(cc, name);
-				contractCodes.add(item);
+				if(cc==ContractCode.C100){
+					String name = cc.getName(locale);
+					SelectItem item = new SelectItem(cc, name);
+					contractCodes.add(item);
+				}
 			}
 		}
 		return contractCodes;
@@ -166,9 +194,11 @@ public class PayrollCollectionsController {
 			contractModels = new LinkedList<SelectItem>();
 			ContractModel[] models = ContractModel.values();
 			for (ContractModel cm : models) {
-				String name = cm.getDescription(locale);
-				SelectItem item = new SelectItem(cm, name);
-				contractModels.add(item);
+				if(cm==ContractModel.PE170){
+					String name = cm.getDescription(locale);
+					SelectItem item = new SelectItem(cm, name);
+					contractModels.add(item);
+				}
 			}
 		}
 		return contractModels;
@@ -320,6 +350,174 @@ public class PayrollCollectionsController {
 			}
 		}
 		return dischargeCauses;
+	}
+	
+	public List<SelectItem> getSuspensionCauses() {
+		if (suspensionCauses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			suspensionCauses = new LinkedList<SelectItem>();
+			SuspensionCause[] causes = SuspensionCause.values();
+			for (SuspensionCause c : causes) {
+				String name = c.getFullName(locale);
+				SelectItem item = new SelectItem(c, name);
+				suspensionCauses.add(item);
+			}
+		}
+		return suspensionCauses;
+	}
+	
+	public List<SelectItem> getFileStatus() {
+		if (fileStatus == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			fileStatus = new LinkedList<SelectItem>();
+			FileStatus[] estados = FileStatus.values();
+			for (FileStatus c : estados) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				fileStatus.add(item);
+			}
+		}
+		return fileStatus;
+	}
+	
+	public List<SelectItem> getCnoList() {
+		if (cnoList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			cnoList = new LinkedList<SelectItem>();
+			CNO[] cno = CNO.values();
+			for (CNO c : cno) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				cnoList.add(item);
+			}
+		}
+		return cnoList;
+	}
+	
+	public List<SelectItem> getEmploymentProgramList() {
+		if (employmentProgramList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			employmentProgramList = new LinkedList<SelectItem>();
+			EmploymentProgram[] ep = EmploymentProgram.values();
+			for (EmploymentProgram c : ep) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				employmentProgramList.add(item);
+			}
+		}
+		return employmentProgramList;
+	}
+	
+	public List<SelectItem> getOtherLawsList() {
+		if (otherLawsList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			otherLawsList = new LinkedList<SelectItem>();
+			OtherLaws[] ol = OtherLaws.values();
+			for (OtherLaws c : ol) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				otherLawsList.add(item);
+			}
+		}
+		return otherLawsList;
+	}
+	
+	public List<SelectItem> getEducationalLevelList() {
+		if (educationalLevelList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			educationalLevelList = new LinkedList<SelectItem>();
+			EducationalLevel[] el = EducationalLevel.values();
+			for (EducationalLevel c : el) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, StringUtils.abbreviate(name, 50));
+				educationalLevelList.add(item);
+			}
+		}
+		return educationalLevelList;
+	}
+	
+	public List<SelectItem> getDisabilityCodeList() {
+		if (disabilityCodeList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			disabilityCodeList = new LinkedList<SelectItem>();
+			DisabilityCode[] el = DisabilityCode.values();
+			for (DisabilityCode c : el) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				disabilityCodeList.add(item);
+			}
+		}
+		return disabilityCodeList;
+	}
+	
+	public List<SelectItem> getDismissalCollectiveList() {
+		if (dismissalCollectiveList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			dismissalCollectiveList = new LinkedList<SelectItem>();
+			DismissalCollective[] el = DismissalCollective.values();
+			for (DismissalCollective c : el) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				dismissalCollectiveList.add(item);
+			}
+		}
+		return dismissalCollectiveList;
+	}
+	
+	public List<SelectItem> getEmployeeTypeList() {
+		if (employeeTypeList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			employeeTypeList = new LinkedList<SelectItem>();
+			EmployeeType[] el = EmployeeType.values();
+			for (EmployeeType c : el) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				employeeTypeList.add(item);
+			}
+		}
+		return employeeTypeList;
+	}
+	
+	public List<SelectItem> getSchoolWorkshopList() {
+		if (schoolWorkshopList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			schoolWorkshopList = new LinkedList<SelectItem>();
+			SchoolWorkshop[] el = SchoolWorkshop.values();
+			for (SchoolWorkshop c : el) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				schoolWorkshopList.add(item);
+			}
+		}
+		return schoolWorkshopList;
+	}
+	
+	public List<SelectItem> getBasicCopySignatureTypeList() {
+		if (basicCopySignatureTypeList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			basicCopySignatureTypeList = new LinkedList<SelectItem>();
+			BasicCopySignatureType[] el = BasicCopySignatureType.values();
+			for (BasicCopySignatureType c : el) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				basicCopySignatureTypeList.add(item);
+			}
+		}
+		return basicCopySignatureTypeList;
+	}
+	
+	public List<SelectItem> getAgeGroupList() {
+		if (ageGroupList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			ageGroupList = new LinkedList<SelectItem>();
+			AgeGroup[] el = AgeGroup.values();
+			for (AgeGroup c : el) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				ageGroupList.add(item);
+			}
+		}
+		return ageGroupList;
 	}
 		
 }
