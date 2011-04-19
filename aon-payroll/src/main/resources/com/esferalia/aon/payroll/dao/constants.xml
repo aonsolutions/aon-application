@@ -8,7 +8,7 @@
 		<alias     names="ccc_id,contractType_id,endDate,id,person_id,person_registry_document,person_registry_name,person_firstSurname,person_secondSurname,startDate,status,workPlace_id,workPlace_enterprise_id,workPlace_enterprise_registry_name,registration,seniorityDate"/>
 		<hibernate names="ccc.id,contractType.id,endDate,id,person.id,person.registry.document,person.registry.name,person.firstSurname,person.secondSurname,startDate,status,workPlace.id,workPlace.enterprise.id,workPlace.enterprise.registry.name,registration,seniorityDate"/>
 	</bean>
-	<bean class="com.esferalia.aon.payroll.EnterpriseCertificate" sqlName="enterprise_certificate">
+	<bean class="com.esferalia.aon.payroll.Certifica2Batch" sqlName="certifica2_batch">
 		<alias 	   names="date,enterprise_id,enterprise_registry_name,id,sign,status" />
 		<hibernate names="date,enterprise.id,enterprise.registry.name,id,sign,status" />
 	</bean>

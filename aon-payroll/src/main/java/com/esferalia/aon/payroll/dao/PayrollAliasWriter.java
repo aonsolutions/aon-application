@@ -10,7 +10,12 @@ import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementLevelPayment;
+import com.esferalia.aon.payroll.CNO;
+import com.esferalia.aon.payroll.Certifica2Batch;
+import com.esferalia.aon.payroll.Certifica2BatchData;
+import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractCalendarEvent;
@@ -21,8 +26,6 @@ import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.EnterpriseAgreement;
-import com.esferalia.aon.payroll.EnterpriseCertificate;
-import com.esferalia.aon.payroll.EnterpriseCertificateDetail;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PaymentConcept;
@@ -44,14 +47,19 @@ public class PayrollAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/home/ecastellano/AON-6.0.0/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
+		File file = new File("/AON-TRUNK/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] { 
 				Agreement.class.getName(),
 				AgreementLevel.class.getName(),
 				AgreementLevelCategory.class.getName(),
 				AgreementLevelData.class.getName(),
 				AgreementLevelPayment.class.getName(),
+				Certifica2Batch.class.getName(),
+				Certifica2BatchData.class.getName(),
+				Certifica2BatchDetail.class.getName(),
+				CNO.class.getName(),
 				Contract.class.getName(),
+				ContractAttachment.class.getName(),
 				ContractBatch.class.getName(),
 				ContractBatchDetail.class.getName(),
 				ContractCalendarEvent.class.getName(),
@@ -62,8 +70,6 @@ public class PayrollAliasWriter {
 				ContractPayment.class.getName(),
 				DeductionConcept.class.getName(),
 				EnterpriseAgreement.class.getName(),
-				EnterpriseCertificate.class.getName(),
-				EnterpriseCertificateDetail.class.getName(),
 				LeaveBatch.class.getName(),
 				LeaveBatchDetail.class.getName(),
 				PaymentConcept.class.getName(),

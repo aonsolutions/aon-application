@@ -56,7 +56,7 @@ public class ContractLeaveDetail implements ITransferObject {
 	
 	@ManyToOne
     @JoinColumn( name="contract_leave", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_LEAVE_DETAIL_CONTRACT_LEAVE")
+	@ForeignKey(name = "FK_CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE")
 	public ContractLeave getContractLeave() {
 		return contractLeave;
 	}

@@ -13,13 +13,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.Enterprise;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 
 @Entity
-@Table(name = "enterprise_certificate")
-public class EnterpriseCertificate implements ITransferObject {
+@Table(name = "certifica2_batch")
+public class Certifica2Batch implements ITransferObject {
 
 	private static final long serialVersionUID = -5948322093046943029L;
 
@@ -72,6 +77,40 @@ public class EnterpriseCertificate implements ITransferObject {
 	public void setSign(String sign) {
 		this.sign = sign;
 	}
+	
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final Certifica2Batch o = (Certifica2Batch) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.enterprise, o.enterprise)	
+				.append(this.date, o.date)
+				.append(this.status, o.status)
+				.append(this.sign, o.sign)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+				.append(id)
+				.append(this.enterprise)
+				.append(this.date)
+				.append(this.status)
+				.append(this.sign)
+				.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}	
 
 	
 	
