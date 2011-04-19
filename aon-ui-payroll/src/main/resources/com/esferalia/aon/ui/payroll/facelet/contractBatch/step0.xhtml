@@ -54,7 +54,7 @@
 						value="#{(contractSearch.enterprise.registry.fullName!=null)?(contractSearch.enterprise.registry.fullName):('')}"
 						size="50" disabled="true" />							
 				</aon:div>
-									
+<!--  
 				<aon:outputLabel for="ContractType_id"
 					value="#{payrollBundle.payroll_contractType}" />
 				<aon:div styleClass="aon-lookup">
@@ -71,6 +71,7 @@
 						value="#{contractSearch.contractType.description}"
 						size="50" disabled="true" />							
 				</aon:div>					
+-->									
 								
 				<aon:outputLabel value="#{bundle.aon_start_date}" />
 				<aon:div>
@@ -112,7 +113,9 @@
 	<ui:define name="after_form">
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+<!--  
 		<aon:lookupButtonPopup lookup="#{contractTypeLookup}" />
+-->
 	</ui:define>
 
 </ui:composition>

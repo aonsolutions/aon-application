@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="contractForm">
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contractGenerationWizard_module}" />
+				<ui:param name="controller" value="#{contractGenerationWizard}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton id="pdf" 
+						action="contractPdf_form"
+						value="EDITAR PDF"
+						rendered="#{!contractGenerationWizard.new and contractGenerationWizard.code!=null}"
+						actionListener="#{contractGenerationWizard.onContractDetailShow}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf" />
+				</ui:define>
+<!--  
+-->				
+				
+			</ui:decorate>
+<!--  
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/formToolbar.xhtml" />
+-->
+			
+			<aon:div styleClass="aon-scroll-area">
+				<c:if test="#{contractGenerationWizard.new}">
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/form_new.xhtml" />
+				</c:if>
+			
+				<c:if test="#{!contractGenerationWizard.new}">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/form_header.xhtml" />
+				
+				<aon:panelGrid columns="4" style="width: 100%; margin-top:10px;"
+					rendered="#{!contractGenerationWizard.new}"
+					columnClasses="aon-panelGrid-even aon-width-200
+								  ,aon-panelGrid-even aon-width-200
+								  ,aon-panelGrid-even aon-width-200
+								  ,aon-panelGrid-even aon-width-auto">
+				
+					<aon:div>
+						<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-info"/>
+						<aon:commandLink 
+							actionListener="#{contractGenerationWizard.onShowExtraTab}"
+							action="contractExtra_tab"
+							styleClass="aon-dataTable-link"
+							value="Datos generales" />
+					</aon:div>	
+			
+					<aon:div>
+						<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-contrata"/>
+						<aon:commandLink 
+							actionListener="#{contractGenerationWizard.onShowContrataTab}"
+							action="contractContrata_tab"
+							styleClass="aon-dataTable-link"
+							value="Datos contrat@" />
+					</aon:div>	
+			
+					<aon:div>
+						<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-file-generic"/>
+						<aon:commandLink 
+							actionListener="#{contractGenerationWizard.onShowContrataTab}"
+							action="contractAttach_tab"
+							styleClass="aon-dataTable-link"
+							value="Documentos" />
+					</aon:div>	
+<!--  
+					<aon:div>
+						<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
+						<aon:commandLink 
+							disabled="true"
+							actionListener="#{contract.onShowVariables}"
+							action="contractData_list"
+							styleClass="aon-dataTable-link"
+							value="Variables del Contrato" />
+					</aon:div>	
+			
+					<aon:div>
+						<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-fraction"/>
+						<aon:commandLink 
+							disabled="true"
+							actionListener="#{contract.onShowPayments}"
+							styleClass="aon-dataTable-link"
+							action="contractPayment_list"
+							value="Percepciones" />
+					</aon:div>	
+			
+					<aon:div>
+						<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-settle"/>
+						<aon:commandLink 
+							disabled="true"
+							actionListener="#{contract.onShowDeductions}"
+							styleClass="aon-dataTable-link"
+							action="contractDeduction_list"
+							value="Deducciones" />
+					</aon:div>	
+-->			
+			
+					<aon:outputText value="&#160;" />
+				</aon:panelGrid>
+				</c:if>
+			
+			</aon:div>
+			
+		<ui:insert name="contractDetail" />
+			
+		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		
+		
+	</ui:define>
+</ui:composition>

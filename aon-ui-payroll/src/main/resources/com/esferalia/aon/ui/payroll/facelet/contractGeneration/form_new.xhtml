@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:panel>
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_contract_header}" />
+		</f:facet>
+		<aon:panelGrid columns="2" dir="true" width="100%">
+			
+			<aon:outputLabel for="Person_id"
+				value="#{registryBundle.registry_person}" />
+			<aon:div styleClass="aon-lookup">
+				<aon:lookupInputText id="Person_id" lookup="#{personLookup}"
+					reRender="Person_full_name"
+					value="#{contractGenerationWizard.to.person.id}" size="5" />
+				<aon:lookupButton 
+					windowTitle="#{registryBundle.registry_person_selection}"
+					selectReRender="Person_id,Person_full_name" actionType="search"
+					lookup="#{personLookup}" minHeight="460" minWidth="650"
+					property="#{contractGenerationWizard.to.person}">
+				</aon:lookupButton>
+				<aon:inputText id="Person_full_name"
+					value="#{(contractGenerationWizard.to.person.registry.fullName!=null)?(contractGenerationWizard.to.person.registry.fullName):('')}"
+					size="50" disabled="true" />							
+			</aon:div>
+
+			<aon:outputLabel for="Enterprise_id"
+				value="#{companyBundle.company_enterprise}" />
+			<aon:div styleClass="aon-lookup">
+				<aon:lookupInputText id="Enterprise_id" lookup="#{enterpriseLookup}"
+					lookupChangeListener="#{contractGenerationWizard.onEnterpriseChanged}"
+					reRender="Enterprise_full_name,workPlace"
+					value="#{contractGenerationWizard.enterprise.id}" size="5" />
+				<aon:lookupButton 
+					windowTitle="#{companyBundle.company_enterprise_selection}"
+					lookupChangeListener="#{contractGenerationWizard.onEnterpriseChanged}"
+					selectReRender="Enterprise_id,Enterprise_full_name,workPlace" actionType="search"
+					lookup="#{enterpriseLookup}" minHeight="460" minWidth="650"
+					property="#{contractGenerationWizard.enterprise}">
+				</aon:lookupButton>
+				<aon:inputText id="Enterprise_full_name"
+					value="#{(contractGenerationWizard.enterprise.registry.fullName!=null)?(contractGenerationWizard.enterprise.registry.fullName):('')}"
+					size="50" disabled="true" />							
+			</aon:div>
+			
+			<aon:outputLabel for="workPlace" styleClass="aon-italic aon-margin-left"
+				style="font-size: 0.9em" value="#{companyBundle.company_workplace}" />
+			<aon:selectOneMenu id="workPlace" required="true"
+				disabled="#{contractGenerationWizard.enterprise==null or contractGenerationWizard.enterprise.id==null}"
+				value="#{contractGenerationWizard.to.workPlace}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contractGenerationWizard.workPlaces}" />
+			</aon:selectOneMenu>
+			
+			<aon:outputLabel 
+				value="#{payrollBundle.payroll_contract_period}" />
+			<aon:div>
+				<aon:outputLabel for="startDate" styleClass="aon-italic aon-margin-right"
+					value="#{bundle.aon_start_date}:" />
+				<aon:selectInputDate id="startDate" required="true"
+					value="#{contractGenerationWizard.to.startDate}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+				<aon:outputLabel for="endDate" styleClass="aon-italic aon-margin-right"
+					value="#{bundle.aon_end_date}:" />
+				<aon:selectInputDate id="endDate" 
+					value="#{contractGenerationWizard.to.endDate}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+			</aon:div>
+			
+			<aon:outputLabel for="ssRegime"
+				value="#{payrollBundle.payroll_contract_regime}" />
+			<aon:selectOneMenu id="ssRegime" required="true"
+				value="#{contractGenerationWizard.to.regimeType}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.ssRegimes}" />
+			</aon:selectOneMenu>
+			
+			<aon:outputLabel for="registration" value="#{payrollBundle.payroll_salary_registration}" />
+			<aon:inputText id="registration" size="10" required="true" 
+				value="#{contractGenerationWizard.to.registration}">
+				<f:validateDoubleRange />
+			</aon:inputText>
+
+		</aon:panelGrid>
+
+	</aon:panel>
+
+</ui:composition>

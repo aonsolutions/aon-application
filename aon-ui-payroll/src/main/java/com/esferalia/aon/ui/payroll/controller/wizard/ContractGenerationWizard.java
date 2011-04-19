@@ -1,11 +1,12 @@
 package com.esferalia.aon.ui.payroll.controller.wizard;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,26 +17,41 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+import javax.xml.bind.ValidationEventHandler;
+import javax.xml.bind.ValidationEventLocator;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.richfaces.event.UploadEvent;
+import org.richfaces.model.UploadItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.AonFile;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
+import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.EnterpriseController;
-import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
@@ -43,9 +59,11 @@ import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelPayment;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
@@ -54,18 +72,28 @@ import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.utils.ContractBuilder;
+import com.esferalia.aon.ui.payroll.utils.ContractXmlReader;
+import com.esferalia.aon.ui.payroll.utils.ContractXmlWriter;
+import com.esferalia.aon.ui.payroll.utils.contractMojo.CONTRATOS;
+import com.esferalia.aon.ui.payroll.utils.contractMojo.ObjectFactory;
 import com.lowagie.text.DocumentException;
 
-public class ContractGenerationWizard implements Serializable, ICollectionProvider{
+public class ContractGenerationWizard extends BasicController{
 
 	private static final long serialVersionUID = 3733409240562499848L;
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractGenerationWizard.class.getName());
-
-	private final String ENTERPRISE_CONTROLLER="enterprise";
-	private final String ENTERPRISE_WORKPLACE_CONTROLLER="enterpriseWorkplace";
-	private final String PERSON_CONTROLLER="person";
+	private static final String IMAGE_URL_PREFIX0 = ".contractImage";
+	private static final String IMAGE_URL_PREFIX1 = "?model=";
+	private static final String IMAGE_URL_PREFIX2 = "&width=";
+	private static final String IMAGE_URL_PREFIX3 = "&height=";
+	private static final int MAX_FILE_SIZE_MB = 3;
+	private static final int MAX_FILE_SIZE = MAX_FILE_SIZE_MB*1024*1024;
+	private static final String CONTRACT_XML_CONTEXT_PATH = "com.esferalia.aon.ui.payroll.utils.contractMojo";
+	
 	private int currentStep;
 	private static final String[] STEPS = {
 			"contractGenerationWizard_step0",
@@ -73,6 +101,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			"contractGenerationWizard_step2",
 			"contractGenerationWizard_step3",
 			"contractGenerationWizard_step4" };
+
 	private Contract contract;
 	private ContractData contractData;
 	private Enterprise enterprise;
@@ -82,13 +111,12 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	private boolean showNewEnterpriseWindow;
 	private ContractBuilder contractBuilder;
 	private String imageUrl;
-	private boolean agreementSalary;
-	private List<SelectItem> workplaces;
+	private List<SelectItem> workPlaces;
 
 	
 	private ContractOption contractOption;
 	private ContractType contractType;
-	private ContractModel model;
+	private ContractModel contractModel;
 	private ContractCode code;
 	private ContractWorkingDay workingDay;
 	private Double salary;
@@ -97,7 +125,31 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	private AgreementLevel agreementLevel;
 	private AgreementLevelCategory category;
 	private AgreementLevelPayment payment;
+	private AonFile aonFile;
+	private boolean agreementSalary;
+	private ContractXmlWriter xmlWriter;
 	
+	private ContrataParams params;
+	
+	
+	public ContractXmlWriter getXmlWriter() {
+		return xmlWriter;
+	}
+	public void setXmlWriter(ContractXmlWriter xmlWriter) {
+		this.xmlWriter = xmlWriter;
+	}
+	public ContrataParams getParams() {
+		return params;
+	}
+	public void setParams(ContrataParams params) {
+		this.params = params;
+	}
+	public AonFile getAonFile() {
+		return this.aonFile;
+	}
+	public void setAonFile(AonFile aonFile) {
+		this.aonFile = aonFile;
+	}
 	
 	public Agreement getAgreement() {
 		return agreement;
@@ -187,11 +239,14 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		this.salary = salary;
 	}
 	
-	public List<SelectItem> getWorkplaces() {
-		return workplaces;
+	public List<SelectItem> getWorkPlaces() {
+		if(workPlaces==null){
+			loadWorkPlaces();
+		}
+		return workPlaces;
 	}
-	public void setWorkplaces(List<SelectItem> workplaces) {
-		this.workplaces = workplaces;
+	public void setWorkPlaces(List<SelectItem> workPlaces) {
+		this.workPlaces = workPlaces;
 	}
 
 	public ContractWorkingDay getWorkingDay() {
@@ -202,11 +257,15 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	}
 	
 	public String getImageUrl() {
-		imageUrl = getContractBuilder().getContractPage().toString();
-		imageUrl += ".contractImage";
-		imageUrl += "?model="+getModel();
-		imageUrl += "&width="+getContractBuilder().getContractWidth();
-		imageUrl += "&height="+getContractBuilder().getContractHeight();
+		StringBuilder builder = new StringBuilder(getContractBuilder().getContractPage().toString());
+		builder.append(IMAGE_URL_PREFIX0);
+		builder.append(IMAGE_URL_PREFIX1);
+		builder.append(getContractModel());
+		builder.append(IMAGE_URL_PREFIX2);
+		builder.append(getContractBuilder().getContractWidth());
+		builder.append(IMAGE_URL_PREFIX3);
+		builder.append(getContractBuilder().getContractHeight());
+		imageUrl = builder.toString();
 		return imageUrl;
 	}
 	public void setImageUrl(String imageUrl) {
@@ -245,11 +304,11 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	public void setShowNewEnterpriseWindow(boolean showNewEnterpriseWindow) {
 		this.showNewEnterpriseWindow = showNewEnterpriseWindow;
 	}
-	public ContractModel getModel() {
-		return model;
+	public ContractModel getContractModel() {
+		return contractModel;
 	}
-	public void setModel(ContractModel model) {
-		this.model = model;
+	public void setContractModel(ContractModel contractModel) {
+		this.contractModel = contractModel;
 	}
 	public ContractCode getCode() {
 		return code;
@@ -282,7 +341,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	public void setContractType(ContractType contractType) {
 		this.contractType = contractType;
 		if(contractType!=null){
-			setModel(contractType.getModel());
+			setContractModel(contractType.getModel());
 		}
 	}
 	public List<SelectItem> getContractTypes() {
@@ -319,6 +378,7 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 
 	public void setEnterprise(Enterprise enterprise) {
 		this.enterprise = enterprise;
+		loadWorkPlaces();
 	}
 
 	public int getCurrentStep() {
@@ -437,6 +497,36 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 	public boolean isLast() {
 		return (getCurrentStep() == STEPS.length-1);
 	}
+	
+	/*
+	 * ATTACH
+	 */
+	public void onFileUploaded( ActionEvent event ) {
+		if(getAonFile().getSize()>MAX_FILE_SIZE){
+			setAonFile(null);
+			String msg = "El tamaño del archivo excede de lo permitido ("+MAX_FILE_SIZE_MB+" Mb)";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
+	public void fileUploaded(UploadEvent event) {
+		try {
+			UploadItem item = event.getUploadItem();
+			AonFile f = new AonFile();
+			File file = item.getFile();
+			if (file != null) {
+				FileInputStream in = new FileInputStream(file);
+				byte[] data = IOUtils.toByteArray(in);
+				f.setData(data);
+			}
+			f.setFileName( item.getFileName() );
+			f.setMimeType( MimeType.get(item.getContentType()) );
+			setAonFile(f);
+		} catch (IOException e) {
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
 
 	/*
 	 * ActionListeners
@@ -447,9 +537,10 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		setContract(new Contract());
 		getContract().setStartDate(new Date());
 		setContractData(new ContractData());
+		setParams(new ContrataParams());
 		
 		
-		setWorkplaces(null);
+		setWorkPlaces(null);
 		setContractOption(null);
 		setContractType(null);
 		setCode(null);
@@ -463,103 +554,21 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		setCurrentStep(0);
 	}
 	
-	public void onSelect(ActionEvent event) {
-		setCurrentStep(1);
-	}
-	public void onSelectEnterprise(ActionEvent event) {
-		EnterpriseController enterpriseC = (EnterpriseController)AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER);
-		enterpriseC.onSelect(event);
-		setEnterprise((Enterprise) enterpriseC.getTo());
-		// TODO a la espera del company-payroll-bridge
-//		setAgreement(getEnterprise().getAgreement());
-		if(enterpriseC.getCcc()==null){
-			String msg = "La empresa no dispone de ninguna cuenta de cotizacion";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+	public void onEnterpriseChanged( LookupChangeEvent event ) {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			setEnterprise((Enterprise)event.getNewValue());
+		} else {
+			setEnterprise(null);
 		}
-		getContract().setEnterpriseCCC(enterpriseC.getCcc());
-		this.workplaces = loadWorkPlaces();
-		setEnterpriseListEnabled(false);
-		setCurrentStep(1);
+		loadWorkPlaces();
+		setWorkPlaces(null);
+//		setActivities(null);
 	}
 	
-	public List<SelectItem> loadWorkPlaces(){
-		LinesController wpc = (LinesController)AonUtil.getRegisteredBean(ENTERPRISE_WORKPLACE_CONTROLLER);
-		wpc.onSearch(null);
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		for(ITransferObject to: wpc.getWrappedList()){
-			WorkPlace wp = (WorkPlace)to;
-			SelectItem item = new SelectItem(wp, wp.getDescription());
-			list.add(item);	
-		}
-		return list;
-	}
-	public void onSelectPerson(ActionEvent event) {
-		RegistryController person = (RegistryController)AonUtil.getRegisteredBean(PERSON_CONTROLLER);
-		try {
-			getContract().setPerson((Person)person.getModel().getRowData());
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining person", e);
-		}
-		setPersonListEnabled(false);
-		onSearchContract(event);
-		setCurrentStep(2);
-	}
-
-	public void onSearchEnterprise(ActionEvent event) {
-		((EnterpriseController)AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER)).onSearch(event);
-		setEnterpriseListEnabled(true);
-	}
-	
-	public void onSearchPerson(ActionEvent event) {
-		((RegistryController)AonUtil.getRegisteredBean(PERSON_CONTROLLER)).onSearch(event);
-		try {
-			((RegistryController)AonUtil.getRegisteredBean(PERSON_CONTROLLER)).clearCriteria();
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining person", e);
-		}
-		setPersonListEnabled(true);
-	}
-
-	public void onResetEnterpriseSearch(ActionEvent event) {
-		setEnterpriseListEnabled(false);
-	}
-	public void onResetPersonSearch(ActionEvent event) {
-		setPersonListEnabled(false);
-	}
-
-	private void onSearchContract(ActionEvent event) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_PERSON_ID), getContract().getPerson().getId());
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				setContract((Contract)list.get(0));
-				IManagerBean dataBean = BeanManager.getManagerBean(ContractData.class);
-				criteria = new Criteria();
-				criteria.addEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), getContract().getId());
-				Expression expr1;
-		    	Expression expr2;
-				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), new Date());
-		    	expr2 = ExpressionUtilities.getNullExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
-		    	criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));	
-				List<ITransferObject> dataList = dataBean.getList(criteria);
-				if(dataList.size()>1){
-					String msg = "Existen varios contratos activos para esta persona";
-					AonUtil.addErrorMessage(msg);
-					throw new AbortProcessingException(msg);
-				} else if(dataList.size()==1){
-					setContractData((ContractData)dataList.get(0));
-				} else {
-					setContractData(new ContractData());
-				}
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-	}
-	
+//	public void onSelect(ActionEvent event) {
+//		setCurrentStep(1);
+//	}
+		
 	private void onValidate(ActionEvent event) {
 		if(getContractOption()==null){
 			String msg = "Debe seleccionar la modalidad de contrato";
@@ -588,18 +597,19 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			acceptContractPayment();
 		}
 	}
-	public void onSave(ActionEvent event) {
+	public void onDocumentSave(ActionEvent event) {
 		onContractGenerate(event);
 		getContract().setStatus(ContractStatus.PENDING);
-		accept();
-		acceptContractData();
-		if(!isAgreementSalary()){
-			acceptContractPayment();
-		}
+//		accept();
+//		acceptContractData();
+//		if(!isAgreementSalary()){
+//			acceptContractPayment();
+//		}
+		saveDocument();
 	}
 	public void onContractGenerate( ActionEvent event ) {
 		try {
-			getContract().setDocument(getContractBuilder().buildPdf(getModel()));
+			getContract().setDocument(getContractBuilder().buildPdf(getContractModel()));
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new AbortProcessingException(e);
@@ -608,20 +618,36 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 			throw new AbortProcessingException(e);
 		}
 	}
+	private void saveDocument() {
+//		try {
+//			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+//			getContractBuilder().buildPdf(getContractModel());
+//			
+//		} catch (IOException e) {
+//			LOGGER.error(e.getMessage(), e);
+//			throw new AbortProcessingException(e);
+//		} catch (DocumentException e) {
+//			LOGGER.error(e.getMessage(), e);
+//			throw new AbortProcessingException(e);
+//		} catch (ManagerBeanException e) {
+//			LOGGER.error(e.getMessage(), e);
+//			throw new AbortProcessingException(e);
+//		}
+	}
 
-	public void onNewPersonShow( ActionEvent event ) {
-		((RegistryController)AonUtil.getRegisteredBean(PERSON_CONTROLLER)).onReset(event);
-	}
-	public void onAcceptPerson( ActionEvent event ) {
-		((RegistryController)AonUtil.getRegisteredBean(PERSON_CONTROLLER)).accept(event);
-		setPersonListEnabled(true);
-	}
+//	public void onNewPersonShow( ActionEvent event ) {
+//		((RegistryController)AonUtil.getRegisteredBean(IRegistryConstants.PERSON_CONTROLLER_NAME)).onReset(event);
+//	}
+//	public void onAcceptPerson( ActionEvent event ) {
+//		((RegistryController)AonUtil.getRegisteredBean(IRegistryConstants.PERSON_CONTROLLER_NAME)).accept(event);
+//		setPersonListEnabled(true);
+//	}
 	
 	public void onContractDetailShow( ActionEvent event ) {
 		try {
 			if(getContractBuilder().getContractFields()==null || getContractBuilder().getContractFields().size()==0 ){
 				getContractBuilder().setZoomFactor(2);
-				getContractBuilder().readPdfFields(getContract().getDocument(),getModel());
+				getContractBuilder().readPdfFields(getContract().getDocument(),getContractModel());
 				getContractBuilder().loadDefaultFields(getContract());
 				getContractBuilder().setContractPage(1);
 			}
@@ -663,13 +689,13 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		return getContractBuilder().getContractPage().equals(getContractBuilder().getNumberOfContractPages());
 	}
 	
-	private void accept(){
-		try {
-			setContract((Contract)BeanManager.getManagerBean(Contract.class).insertOrUpdate(getContract()));
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-		}
-	}
+//	private void accept(){
+//		try {
+//			setContract((Contract)BeanManager.getManagerBean(Contract.class).insertOrUpdate(getContract()));
+//		} catch (ManagerBeanException e) {
+//			LOGGER.error(e.getMessage(), e);
+//		}
+//	}
 	
 	private void acceptContractData(){
 		//TODO REASIGNAR
@@ -728,22 +754,232 @@ public class ContractGenerationWizard implements Serializable, ICollectionProvid
 		getList().add(getContract());
 	}
 
-	@Override
-	public Collection<?> getCollection() {
-		try {
-			loadList();
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+//	@Override
+//	public Collection<?> getCollection() {
+//		try {
+//			loadList();
+//		} catch (ManagerBeanException e) {
+//			e.printStackTrace();
+//		}
+//		return getList();
+//	}
+//
+//	@Override
+//	public Collection<?> getCollection(boolean forceRefresh)
+//			throws ManagerBeanException {
+//		return getCollection();
+//	}
+	
+//	public String getBeanName(){
+//		return "contractGenerationWizard";
+//	}
+
+//	public List<SelectItem> loadWorkPlaces() throws ManagerBeanException{
+//		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
+//		Criteria criteria = new Criteria();
+//		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ACTIVE), true);
+//		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
+//		criteria.addOrder(bean.getFieldName(ICompanyAlias.WORK_PLACE_DESCRIPTION));
+//		List<SelectItem> list = new LinkedList<SelectItem>();
+//		for(ITransferObject to: bean.getList(criteria)){
+//			WorkPlace wp = (WorkPlace)to;
+//			list.add(new SelectItem(wp, wp.getDescription()));	
+//		}
+//		setWorkPlaces(list);
+//		return list;
+//	}
+	private void loadWorkPlaces() {
+		setWorkPlaces(new LinkedList<SelectItem>());
+		if (getEnterprise() != null) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
+				List<ITransferObject> list = bean.getList(criteria);
+				for (ITransferObject to : list) {
+					WorkPlace w = (WorkPlace)to; 
+					String name = w.getDescription();
+					SelectItem item = new SelectItem(w, name);
+					getWorkPlaces().add(item);
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "Imposible cargar los Centros de Trabajo de la empresa. (" + e.getMessage() +")";
+				LOGGER.error(msg);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg,e);
+			}						
 		}
-		return getList();
+	}
+	
+	
+	
+	
+	public List<SelectItem> getCCCs() throws ManagerBeanException {
+		LinkedList<SelectItem> cccs = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), getContract().getWorkPlace().getEnterprise().getId());
+		criteria.addOrder(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_CCC));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to : list) {
+			EnterpriseCCC ccc = (EnterpriseCCC)to;
+			cccs.add(new SelectItem(ccc, ccc.getCcc()));
+		}
+    	return cccs;
+    }
+	
+	
+	public void onShowExtraTab(ActionEvent event){
+		
 	}
 
-	@Override
-	public Collection<?> getCollection(boolean forceRefresh)
-			throws ManagerBeanException {
-		return getCollection();
+	public void onShowContrataTab(ActionEvent event){
+		
 	}
 	
+	private CONTRATOS contratos;
 	
+	public CONTRATOS getContratos() {
+		return contratos;
+	}
+	public void setContratos(CONTRATOS contratos) {
+		this.contratos = contratos;
+	}
+	
+	public void readXml() throws JAXBException, IOException {
+		searchContrataAttach();
+		if(getContrataAttach()!=null){
+			byte[] f = getContrataAttach().getData();
+			if(f!=null && f.length>0){
+				File file = File.createTempFile("aon-temp", ".XML");
+				FileOutputStream fos = new FileOutputStream(file);
+				fos.write(f);
+				fos.close();
+				JAXBContext jaxbContext = JAXBContext.newInstance(CONTRACT_XML_CONTEXT_PATH);
+				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+				setContratos((CONTRATOS) unmarshaller.unmarshal(file));
+				ContractXmlReader reader = new ContractXmlReader();
+				reader.completeContrataParams(getContratos(), getParams());
+				unmarshaller.setEventHandler(new ContractValidationEventHandler());
+			}
+		}
+	}
+	
+	private ContractAttachment contrataAttach;
+	
+	public void setContrataAttach(ContractAttachment contrataAttach) {
+		this.contrataAttach = contrataAttach;
+	}
+	public ContractAttachment getContrataAttach(){
+		return contrataAttach;
+	}
+	
+	private void searchContrataAttach(){
+		setContrataAttach(null);
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), ((Contract)getTo()).getId());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.SPEE_CONTRATA);
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				setContrataAttach((ContractAttachment) list.get(0));
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+	
+	public void generateXml() throws JAXBException, ManagerBeanException, IOException{
+		JAXBContext jaxbContext = JAXBContext.newInstance(CONTRACT_XML_CONTEXT_PATH);
+		
+		ObjectFactory factory = new ObjectFactory();
+		setContratos(factory.createCONTRATOS());
+		setXmlWriter(new ContractXmlWriter());
+		getXmlWriter().setContract(getContract());
+		getXmlWriter().setParams(getParams());
+		
+		getContratos().getCONTRATO100AndCONTRATO130AndCONTRATO150().add(getXmlWriter().execute());
+		
+		Marshaller marshaller = jaxbContext.createMarshaller();
+//		JAXBElement<CONTRATOS> element = (new ObjectFactory()).createBooking(booking);
+//		JAXBElement<CONTRATOS> element = new JAXBElement<CONTRATOS>(); 
+		
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		File file = File.createTempFile("aon-temp", ".XML"); 
+//		marshaller.marshal( getContratos(), System.out );
+		marshaller.marshal( getContratos(), file );
+		
+		FileInputStream fin = new FileInputStream(file);
+		byte fileContent[] = new byte[(int)file.length()];
+		fin.read(fileContent);
+		if(getContrataAttach()==null){
+			setContrataAttach(new ContractAttachment());
+		}
+		getContrataAttach().setContract((Contract) getTo());
+		getContrataAttach().setData(fileContent);
+		getContrataAttach().setAttachmentType(ContractAttachmentType.SPEE_CONTRATA);
+		getContrataAttach().setMimeType(MimeType.MIME_XML);
+		getContrataAttach().setDescription("fichero_contrata");
+		fin.close();
+	}
+	
+	public class ContractValidationEventHandler implements
+			ValidationEventHandler {
+		public boolean handleEvent(ValidationEvent ve) {
+			if (ve.getSeverity() == ValidationEvent.FATAL_ERROR
+					|| ve.getSeverity() == ValidationEvent.ERROR) {
+				ValidationEventLocator locator = ve.getLocator();
+				// Print message from valdation event
+				System.out.println("Invalid booking document: "
+						+ locator.getURL());
+				System.out.println("Error: " + ve.getMessage());
+				// Output line and column number
+				System.out.println("Error at column "
+						+ locator.getColumnNumber() + ", line "
+						+ locator.getLineNumber());
+			}
+			return true;
+		}
+	}
+	
+//	private File file;
+//	
+//	public File getFile() {
+//		return file;
+//	}
+//	public void setFile(File file) {
+//		this.file = file;
+//	}
+//	public void onGenerateXml(ActionEvent event){
+//		try {
+//			generateXml();
+//			FacesContext faces = FacesContext.getCurrentInstance();
+//			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
+//			String fileName = "aon-out";
+//			response.setContentType(MimeType.MIME_XML.getName());
+//			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xml\";");
+//
+//			ServletOutputStream output = response.getOutputStream();
+//			InputStream input = new FileInputStream(file);
+//			int size = IOUtils.copy(input, output);
+//			if (size > 0) {
+//				response.setHeader("Content-Length", String.valueOf(size));
+//			}
+//			output.close();
+//			input.close();
+//			response.flushBuffer();
+//			faces.responseComplete();
+//		} catch (IOException e) {
+//			AonUtil.addErrorMessage(e.getMessage());
+//			throw new AbortProcessingException(e);
+//		} catch (ManagerBeanException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (JAXBException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
 }

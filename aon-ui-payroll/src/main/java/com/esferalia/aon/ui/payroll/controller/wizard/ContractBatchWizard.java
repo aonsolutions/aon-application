@@ -34,6 +34,7 @@ import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.file.AFIWriter;
 
@@ -86,7 +87,7 @@ public class ContractBatchWizard {
 	}
 
 	private void initializeModel() {
-		ContractController c = (ContractController)AonUtil.getRegisteredBean("contract");
+		ContractController c = (ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
 		List<RemesableContract> list = transformList(c.getWrappedList());
 		setModel(new ListDataModel(list));
 	}
@@ -157,7 +158,7 @@ public class ContractBatchWizard {
 	 */
 	public void onStart(ActionEvent event) {
 		setCurrentStep(0);
-		((ContractController)AonUtil.getRegisteredBean("contract")).onEditSearch(event);
+		((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER)).onEditSearch(event);
 	}
 	
 	public void onSelect(ActionEvent event) {
@@ -186,7 +187,7 @@ public class ContractBatchWizard {
 	}
 	
 	private void onContractSelect(ActionEvent event) {
-		ContractController c = (ContractController)AonUtil.getRegisteredBean("contract");
+		ContractController c = (ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER);
 		try {
 			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_STATUS), ContractStatus.PENDING);
 			c.onSearch(event);

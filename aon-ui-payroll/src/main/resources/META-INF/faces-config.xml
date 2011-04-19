@@ -330,6 +330,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{contractGenerationControllerListener}</value>
+				<value>#{contractSearch}</value>
 				<value>#{contractAttachChildListener}</value>
 			</list-entries>
 		</managed-property>

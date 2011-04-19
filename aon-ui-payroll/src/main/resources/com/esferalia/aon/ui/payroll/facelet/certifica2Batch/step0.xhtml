@@ -4,27 +4,29 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	template="/com/esferalia/aon/ui/payroll/facelet/leaveBatch/step_template.xhtml">
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/esferalia/aon/ui/payroll/facelet/certifica2Batch/step_template.xhtml">
 
 	<ui:define name="step_name">
-		<aon:outputText value="#{payrollBundle.leaveBatch_step0}"/>
+		<aon:outputText value="#{payrollBundle.certifica2Batch_step0}" />
 	</ui:define>
 
 	<ui:define name="step_content">
 		<ui:decorate
 			template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+			<ui:param name="controller" value="#{contract}" />
 			<ui:param name="skipSearchButton" value="true" />
 
 			<ui:define name="searchContent">
-			
-				<aon:outputText
-					value="#{payrollBundle.payroll_leaveBatch_pending_report_type}" />
-				<aon:selectManyCheckbox layout="pageDirection"
-					value="#{leaveBatchWizard.reportTypes}" >
-					<f:selectItems value="#{leaveBatchWizard.reportTypesList}" />
-				</aon:selectManyCheckbox>
-			
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/searchContent.xhtml" />					
 			</ui:define>
-		</ui:decorate>
+			
+		</ui:decorate>		
+	</ui:define>
+	<ui:define name="after_form">
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 	</ui:define>
 </ui:composition>

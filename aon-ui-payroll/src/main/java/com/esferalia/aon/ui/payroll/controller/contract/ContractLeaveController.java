@@ -201,7 +201,7 @@ public class ContractLeaveController extends BasicController {
 
 	public void buildLeaveReport(boolean newReport) {
 		if(newReport){
-			if(getLeaveList().isEmpty()){
+			if(getLeaveList()==null || getLeaveList().isEmpty()){
 				setReport(new ContractLeaveDetail());
 			} else {
 				ContractLeaveDetail detail = new ContractLeaveDetail();

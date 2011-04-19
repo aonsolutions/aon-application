@@ -30,7 +30,7 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 
 
-public class ContractBuilder implements IPayrollConstants {
+public class ContractBuilder {
 	
 	private static ContractBuilder instance;
 	private List<ContractField> contractFields;
@@ -103,7 +103,7 @@ public class ContractBuilder implements IPayrollConstants {
 	private URL getContractModelUrl(String file) throws IOException {
 		if(getContractModelUrl()==null){
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
-			URL[] urls = Classpath.search(cl, MODEL_PATH, file);
+			URL[] urls = Classpath.search(cl, IPayrollConstants.MODEL_PATH, file);
 			contractModelUrl = urls[0];
 		}
 		return contractModelUrl;
@@ -179,7 +179,7 @@ public class ContractBuilder implements IPayrollConstants {
 	
 	public void loadDefaultFields(Contract contract) throws ManagerBeanException {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		RegistryDirStaffLinesController rDirStaff = (RegistryDirStaffLinesController)AonUtil.getRegisteredBean(ENTERPRISE_DIR_STAFF_CONTROLLER);
+		RegistryDirStaffLinesController rDirStaff = (RegistryDirStaffLinesController)AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_DIR_STAFF_CONTROLLER);
 		rDirStaff.getCriteria().addGreaterThanOrEqualExpression(rDirStaff.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DUE_DATE), contract.getStartDate());
 		rDirStaff.onSearch(null);
 		RegistryDirStaff dir = null; 

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/esferalia/aon/ui/payroll/facelet/certifica2File/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{payrollBundle.certifica2File_step0}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+			<ui:param name="skipSearchButton" value="true" />
+
+			<ui:define name="searchContent">
+<!--  
+				<aon:outputLabel value="#{payrollBundle.payroll_empresa}: " />
+				<aon:inputText size="20" maxlength="25"
+					value="#{certifica2FileWizard.params.empresa}" />
+-->
+
+<!--  
+				<aon:outputLabel value="#{payrollBundle.payroll_numeroCcc}" />
+				<aon:outputText value="#{certifica2FileWizard.remesa.numeroCcc}" />
+-->
+
+				<aon:outputLabel for="date"
+					value="#{payrollBundle.certifica2File_batch_date}: " />
+				<aon:selectInputDate id="date" required="true"
+					value="#{certifica2FileWizard.date}" inputSize="10"
+					renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				</aon:selectInputDate>
+
+				<aon:outputLabel for="status"
+					value="#{payrollBundle.certifica2File_batch_status}: " />
+				<aon:selectManyCheckbox id="status"
+					value="#{certifica2FileWizard.status}">
+					<f:selectItems value="#{payrollCollections.fileStatus}" />
+				</aon:selectManyCheckbox>
+			</ui:define>
+		</ui:decorate>
+	</ui:define>
+
+</ui:composition>

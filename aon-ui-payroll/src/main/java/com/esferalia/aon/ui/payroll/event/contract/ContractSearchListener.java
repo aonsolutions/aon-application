@@ -57,9 +57,9 @@ public class ContractSearchListener extends ControllerSearchListener {
 		if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());			
 		}
-		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE), new Date());
-		Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE));
-		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
+//		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE), new Date());
+//		Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE));
+//		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
 	}
 
 }
