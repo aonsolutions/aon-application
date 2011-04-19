@@ -57,7 +57,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Contract_person_firstSurname,Contract_person_registry_name</value>
+			<value>Contract_workPlace_enterprise_registry_name,Contract_person_firstSurname,Contract_person_registry_name</value>
 		</managed-property>
 		<managed-property> 
 			<property-name>listenerClasses</property-name>
@@ -85,6 +85,24 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>		
+	
+	<managed-bean>
+		<managed-bean-name>contractAttachControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.event.contract.ContractAttachControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>contractAttachScopeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>aliasName</property-name>
+			<value>ContractAttachment_scope_id</value>
+		</managed-property>
+	</managed-bean>
 	
 	<!-- ************ CONTRACT LEAVE ************** -->
 	<managed-bean>
@@ -289,11 +307,116 @@
 	<!-- ************ Proceso de creacion de contratos **************** -->
 	<managed-bean>
 		<managed-bean-name>contractGenerationWizard</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.Contract</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractGenerationWizard</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Contract_workPlace_enterprise_registry_name,Contract_person_firstSurname,Contract_person_registry_name</value>
+		</managed-property>
+		<managed-property> 
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractGenerationControllerListener}</value>
+				<value>#{contractAttachChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>contractAttachChildListener</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>contractAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ContractAttachment_contract_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>	
+	
+	<!-- **** CONTRACT DOCUMENTS **** --> 
+	<managed-bean>
+		<managed-bean-name>contractAttach</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.contract.ContractAttachController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.ContractAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>10</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractAttachment_attachDate</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>contractGenerationWizard</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>contract.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractAttachControllerListener}</value> 
+				<value>#{contractAttachScopeListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>contractGenerationControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.event.contract.ContractGenerationControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
 	
 	<!-- ************ Proceso de creacion del fichero AFI **************** -->
 	<managed-bean>
@@ -309,6 +432,24 @@
 		<managed-bean-name>leaveBatchWizard</managed-bean-name>
 		<managed-bean-class>
 			com.esferalia.aon.ui.payroll.controller.wizard.LeaveBatchWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************ Remesa Certificado Empresa Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>certifica2BatchWizard</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.wizard.Certifica2BatchWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ Remesa Certificado Empresa Generation Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>certifica2FileWizard</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.controller.wizard.Certifica2FileWizard
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -438,6 +579,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+	
 	<managed-bean>
 		<managed-bean-name>contractCalendarEvent</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractCalendarEventController</managed-bean-class>
@@ -472,7 +614,6 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
 	
 	<!-- ************ AGREEMENT ************** -->
 	<managed-bean>
@@ -581,6 +722,7 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.agreement.AgreementLevelTreeControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
+	
 	<!-- ************ AGREEMENT LEVEL CATEGORY LISTENER ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementLevelCategoryChildListener</managed-bean-name>
@@ -632,6 +774,7 @@
 			</map-entries>
 		</managed-property>		
 	</managed-bean>
+	
 	<!-- ************ AGREEMENT LEVEL DATA LISTENER ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementLevelDataChildListener</managed-bean-name>
@@ -749,16 +892,68 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.launcher.SalaryLauncher</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<!-- ************ SALARY LAUNCHER  ************** -->
+	<!-- ************ SALARY TEST LAUNCHER  ************** -->
 	<managed-bean>
 		<managed-bean-name>salaryTestLauncher</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.launcher.SalaryTestLauncher</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<!-- ************ SALARY REMOVER ************** -->
+	<managed-bean>
+		<managed-bean-name>salaryRemover</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.launcher.SalaryRemoverController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************ CNO ************** -->
+	<managed-bean>
+		<managed-bean-name>cno</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.CNO</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cno</value>
+		</managed-property>
+	</managed-bean>	
 	
 	<!-- ========================================================== -->
 	<!-- ======================= LOOKUPS ========================== -->
 	<!-- ========================================================== -->
+	
+	<!-- ************ CNO LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>cnoLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnoLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.esferalia.aon.payroll.CNO</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CNO_code</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/cno/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/cno/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
 	
 	<!-- ************ CONTRACT LOOKUP ************** -->
 	<managed-bean>
@@ -962,54 +1157,6 @@
 	    </navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== Contract Generation ========================== -->
-	<navigation-rule id="contractGenerationWizard">
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step0</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step0.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step1</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step1.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step2</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step2.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step3</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step3.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step4</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step4.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractGenerationWizard_step5</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step5.xhtml</to-view-id>
-	    </navigation-case>
-	</navigation-rule>
-	
-	<!-- =================== Contract Batch ========================== -->
-	<navigation-rule id="contractBatchWizard">
-	    <navigation-case>
-    	  	<from-outcome>contractBatchWizard_step0</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step0.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractBatchWizard_step1</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step1.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractBatchWizard_step2</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step2.xhtml</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-    	  	<from-outcome>contractBatchWizard_step3</from-outcome>
-    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step3.xhtml</to-view-id>
-	    </navigation-case>
-	</navigation-rule>
-	
 	<!-- =================== Contract Tracking Management========================== -->
 	<navigation-rule id="contractOptions">
 	    <navigation-case>
@@ -1125,11 +1272,27 @@
 	    </navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== SALARY TEST LAUNCHER ========================== -->
+	<!-- =================== SALARY LAUNCHER ========================== -->
 	<navigation-rule>
 	    <navigation-case>
     	  	<from-outcome>salaryLauncher_form</from-outcome>
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== SALARY REMOVER ========================== -->
+	<navigation-rule>
+	    <navigation-case>
+    	  	<from-outcome>salaryRemover_search</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryRemover/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>salaryRemover_list</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryRemover/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>salaryRemover_form</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryRemover/form.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	
@@ -1171,6 +1334,131 @@
     	  	<from-outcome>leaveBatchWizard_step4</from-outcome>
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/leaveBatch/step4.xhtml</to-view-id>
 	    </navigation-case>
+	</navigation-rule>
+
+	<navigation-rule id="certifica2BatchWizard">
+	    <navigation-case>
+    	  	<from-outcome>certifica2BatchWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certifica2Batch/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>certifica2BatchWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certifica2Batch/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>certifica2BatchWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certifica2Batch/step2.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule id="certifica2FileWizard">
+	    <navigation-case>
+    	  	<from-outcome>certifica2FileWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certifica2File/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>certifica2FileWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certifica2File/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>certifica2FileWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certifica2File/step2.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>certifica2FileWizard_step3</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certifica2File/step3.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Contract Generation ========================== -->
+	<navigation-rule id="contractGenerationWizard">
+	    <navigation-case>
+    	  	<from-outcome>contractGenerationWizard_search</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractGenerationWizard_list</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractGenerationWizard_form</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/form.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractExtra_tab</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/tab_extra.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractContrata_tab</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/tab_contrata.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractAttach_tab</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/tab_document.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractPdf_form</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/pdf_form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule id="contractGenerationWizard2">
+	    <navigation-case>
+    	  	<from-outcome>contractGenerationWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractGenerationWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractGenerationWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step2.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractGenerationWizard_step3</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step3.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractGenerationWizard_step4</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step4.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractGenerationWizard_step5</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step5.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Contract Batch ========================== -->
+	<navigation-rule id="contractBatchWizard">
+	    <navigation-case>
+    	  	<from-outcome>contractBatchWizard_step0</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step0.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractBatchWizard_step1</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step1.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractBatchWizard_step2</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step2.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>contractBatchWizard_step3</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step3.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== CNO ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>cno_grid</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/cno/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>cno_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/cno/list.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 		
 </faces-config>

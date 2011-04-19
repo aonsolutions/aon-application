@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form>
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{payrollBundle.payroll_salary_remover_module}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="salaryRemover-search" 
+							title="#{bundle.aon_key_cancel_accelerator}"
+							value="#{bundle.aon_search}"
+							action="salaryRemover_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search" immediate="true"
+							accesskey="#{bundle.aon_key_search}" >
+							<aon:actionListener method="#{salary.onEditSearch}" />
+							<aon:actionListener method="#{salaryRemover.onInitialize}" />
+						</aon:commandButton>		
+						<aon:commandButton id="remove_selected"
+							value="#{payrollBundle.payroll_remove_selected}"
+							rendered="#{salaryRemover.model.rowCount > 0}"
+							reRender="salaryRemoverDataDiv"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							actionListener="#{salaryRemover.onRemoveSelected}"
+							onclick="Richfaces.showModalPanel('waitProccess')" 
+				     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>		
+
+			<aon:div styleClass="aon-scroll-area" id="salaryRemoverDataDiv">
+					
+				<aon:dataTable id="salaryRemoverDataTable" value="#{salaryRemover.model}"
+					var="to" rows="20" >
+					<aon:column>
+						<f:facet name="header">
+							<aon:div layout="none">
+								<aon:commandButton id="selectButton" 
+									actionListener="#{salaryRemover.onSelectAll}"
+									onclick="if (!confirm('Desea marcar #{salaryRemover.model.rowCount} filas?')) {return false;}"
+									value="&#160;" style="margin-right: 0px;"
+									styleClass="aon-editDataTable-button aon-icon-checkAll aon-vertical-align-top" />
+								<aon:commandButton id="deselectButton" 	
+									actionListener="#{salaryRemover.onDeselectAll}"
+									onclick="if (!confirm('Desea desmarcar #{salaryRemover.model.rowCount} filas?')) {return false;}"
+									value="&#160;" style="margin-right: 0px;"
+									styleClass="aon-editDataTable-button aon-icon-checkNone aon-vertical-align-top" />
+							</aon:div>
+						</f:facet>
+						<aon:selectBooleanCheckbox id="checkMessage" value="#{to.selected}"
+							style="cursor: default;" styleClass="aon-vertical-align-middle">
+							<a4j:support event="onclick"
+								reRender="checkMessage"  />
+						</aon:selectBooleanCheckbox>
+					</aon:column>
+				
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryRemover/listContent.xhtml"  />
+				</aon:dataTable>
+				<aon:dataScroller2 for="salaryRemoverDataTable" showNote="true" />
+				
+			</aon:div>
+
+		</aon:form>
+		
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		
+	</ui:define>
+</ui:composition>

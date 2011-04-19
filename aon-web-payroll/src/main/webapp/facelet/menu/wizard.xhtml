@@ -37,9 +37,17 @@
 						styleClass="aon-width-all" columnClasses="aon-padding"
 						headerClass="aon-icon-reservation aon-direct-access-panel">
 						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_launchers}" />
+							<aon:outputText value="#{payrollBundle.payroll_salary_launchers}" />
 						</f:facet>					
 						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="salaryLauncher"
+									action="salaryLauncher_form"
+									actionListener="#{salaryLauncher.onStart}"
+									value="#{payrollBundle.payroll_salary_launcher_module}">
+								</aon:commandLink>
+							</aon:div>
+							
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="salaryTestLauncher"
 									action="salaryTestLauncher_form"
@@ -49,12 +57,14 @@
 							</aon:div>
 
 							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="salaryLauncher"
-									action="salaryLauncher_form"
-									actionListener="#{salaryLauncher.onStart}"
-									value="#{payrollBundle.payroll_salary_launcher_module}">
+								<aon:commandLink id="salaryRemover"
+									action="salaryRemover_search"
+									value="#{payrollBundle.payroll_salary_remover_module}">
+									<aon:actionListener method="#{salary.onEditSearch}" />
+									<aon:actionListener method="#{salaryRemover.onInitialize}" />
 								</aon:commandLink>
 							</aon:div>
+							
 						</aon:div>
 					</aon:panelGrid>
 
