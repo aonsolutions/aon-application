@@ -148,5 +148,10 @@ public class ManagerLogger {
 		String subject = "Domain " + domain.getCommonName() + " Documental: " + domain.isDocumentManagement();
 		sendEmail( subject, getContent() );		
 	}
+
+	public void maxTotalDocumentSizeChanged( Domain domain, Integer previous, Integer current ) {
+		String subject = "Domain " + domain.getCommonName() + " Documental Storage Changed from " + previous + "MB to " + current + "MB";
+		sendEmail( subject, getContent() );		
+	}
 	
 }

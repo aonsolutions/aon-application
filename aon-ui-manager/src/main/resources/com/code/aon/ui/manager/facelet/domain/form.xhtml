@@ -4,6 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -150,19 +152,24 @@
 					</c:if>								
 					
 					<c:if test="#{domain.to.documentManagement}" >
-						<aon:outputLabel for="Config_maxDocumentSize"
+						<aon:outputLabel for="Domain_maxDocumentSize"
 							value="#{managerBundle.manager_domain_maxDocumentSize}" />
-						<aon:inputText id="Config_maxDocumentSize" size="10" 
-							maxlength="20" value="#{domain.to.maxDocumentSize}" >
-							<f:validateLongRange minimum="1" maximum="16" />
-						</aon:inputText>
-	
+						<rich:inputNumberSlider id="Domain_maxDocumentSize"
+							value="#{domain.to.maxDocumentSize}"
+							minValue="1" maxValue="16"/>
+							
 						<aon:outputLabel for="Config_maxTotalDocumentSize"
 							value="#{managerBundle.manager_domain_maxTotalDocumentSize}" />
-						<aon:inputText id="Config_maxTotalDocumentSize" size="10"  
-							maxlength="20" value="#{domain.to.maxTotalDocumentSize}" >
-							<f:validateLongRange minimum="1" />
-						</aon:inputText>	
+						<h:panelGrid columns="2">
+							<rich:inputNumberSlider id="Config_maxTotalDocumentSize"
+								valueChangeListener="#{domain.maxTotalDocumentSizeChanged}"
+								value="#{domain.to.maxTotalDocumentSize}"
+								minValue="100" maxValue="1500" step="100"/>
+							<aon:outputLink target="_blank"
+								styleClass="aon-margin-left" value="#{manager.config.documentalStorageURL}">
+								<aon:outputText value="#{managerBundle.manager_service_terms}" />
+							</aon:outputLink>	
+						</h:panelGrid>							
 					</c:if>								
 					
 				</aon:panelGrid>

@@ -137,10 +137,15 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	@Override
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
-		DomainController domainController = (DomainController) event.getController();
+		DomainController dc = (DomainController) event.getController();
+		Domain domain = dc.getDomain();
 		try {
-			domainController.insertOrUpdateAccessPolicy();
-			updateCurrentDomain(domainController.getDomain());
+			dc.insertOrUpdateAccessPolicy();
+			updateCurrentDomain(domain);
+			if ( dc.getPreviousMaxTotalDocumentSize() != null ) {
+				getManager().getLogger().maxTotalDocumentSizeChanged( domain,
+					dc.getPreviousMaxTotalDocumentSize(), domain.getMaxTotalDocumentSize() );
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new ControllerListenerException( e.getMessage(), e );
@@ -193,5 +198,5 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			dc.getLdapDAO().addOrganizationUnit(aliasesDN);
 		}
 	}
-
+	
 }

@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -28,17 +29,15 @@
 
 					<aon:outputLabel for="Config_maxDocumentSize"
 						value="#{managerBundle.manager_domain_maxDocumentSize}" />
-					<aon:inputText id="Config_maxDocumentSize" required="true"
-						size="10" maxlength="20" value="#{aonConfig.to.maxDocumentSize}" >
-						<f:validateLongRange minimum="1" maximum="16" />
-					</aon:inputText>
+					<rich:inputNumberSlider id="Config_maxDocumentSize"
+						value="#{aonConfig.to.maxDocumentSize}" required="true"
+						minValue="1" maxValue="16"/>					
 
 					<aon:outputLabel for="Config_maxTotalDocumentSize"
 						value="#{managerBundle.manager_domain_maxTotalDocumentSize}" />
-					<aon:inputText id="Config_maxTotalDocumentSize" required="true"
-						size="10" maxlength="20" value="#{aonConfig.to.maxTotalDocumentSize}" >
-						<f:validateLongRange minimum="1" />
-					</aon:inputText>
+					<rich:inputNumberSlider id="Config_maxTotalDocumentSize" required="true"
+						value="#{aonConfig.to.maxTotalDocumentSize}"
+						minValue="100" maxValue="1500" step="100"/>
 
 				</aon:panelGrid>
 								

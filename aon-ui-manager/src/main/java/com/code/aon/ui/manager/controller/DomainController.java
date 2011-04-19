@@ -75,6 +75,8 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 	
 	private boolean aonDB;
 	
+	private Integer previousMaxTotalDocumentSize;
+	
 	public String getSelectedTab() {
 		return selectedTab;
 	}
@@ -147,6 +149,7 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 
 	public void init() throws ManagerBeanException {
 		initAccessPolicy();
+		this.previousMaxTotalDocumentSize = null;
 	}
 	
 	private void initAccessPolicy() throws ManagerBeanException {
@@ -373,5 +376,13 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 			getCriteria().addEqualExpression(fieldName, domain.getId());
 		}
 	}		
+
+	public void maxTotalDocumentSizeChanged( ValueChangeEvent event ) {
+		this.previousMaxTotalDocumentSize = (Integer) event.getOldValue();
+	}
+
+	public Integer getPreviousMaxTotalDocumentSize() {
+		return previousMaxTotalDocumentSize;
+	}
 	
 }
