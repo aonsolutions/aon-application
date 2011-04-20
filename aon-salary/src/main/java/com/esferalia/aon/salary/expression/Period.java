@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.util.CommonUtil;
+
 public class Period implements Comparable<Period>{
 
 	private final Date start;
@@ -32,8 +34,8 @@ public class Period implements Comparable<Period>{
      * @throws IllegalArgumentException cuando start >= end
      */
 	public Period(Date start, Date end ) {
-		Date a = DateUtils.truncate(start, Calendar.DAY_OF_MONTH);
-		Date b = DateUtils.truncate(end, Calendar.DAY_OF_MONTH);
+		Date a = start != null ? DateUtils.truncate(start, Calendar.DAY_OF_MONTH) : null;
+		Date b = end != null ? DateUtils.truncate(end, Calendar.DAY_OF_MONTH) : null;
 	   	if (compare(a, b) > 0) {
     		throw new IllegalArgumentException(
     			"start : " + start + " must be <= than end : " + end
@@ -51,6 +53,7 @@ public class Period implements Comparable<Period>{
 		return end;
 	}
 	
+	
 	public boolean contains(Date date) {
 		return compare(this.start, date ) <= 0 &&  
 			compare(this.end, date ) >= 0 ;
@@ -61,6 +64,12 @@ public class Period implements Comparable<Period>{
 			compare(this.end, p.end ) >= 0 ;
 	}
 	
+	public boolean intersects(Period p) {
+    	Date maxStart = max ( this.start, p.start );
+    	Date minEnd = min ( this.end, p.end );
+    	return compare( maxStart, minEnd) <= 0; 
+	}
+
 	public Period intersect(Period p) {
     	Date maxStart = max ( this.start, p.start );
     	Date minEnd = min ( this.end, p.end );

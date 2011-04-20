@@ -1,6 +1,7 @@
 package com.esferalia.aon.salary.expression;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,18 +13,25 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.code.aon.common.util.CommonUtil;
 
-public class Variables implements Comparator<ITimedObject<?>> {
+
+public class Variables implements Comparator<ITimedVariable<?>> {
 
 	
-	private Map<String, List<ITimedObject<?>>> vars;
 	
-	private class PeriodMap implements Map<String, Object> {
+	private Map<String, List<ITimedVariable<?>>> vars;
+	
+	public class PeriodMap implements Map<String, Object> {
 		
 		private Period period;
 		
 		public PeriodMap(Period period) {
 			this.period = period;
+		}
+		
+		public Period getPeriod() {
+			return period;
 		}
 		
 		@Override
@@ -63,7 +71,10 @@ public class Variables implements Comparator<ITimedObject<?>> {
 
 		@Override
 		public Object put(String key, Object value) {
-			throw new UnsupportedOperationException();
+			ITimedVariable<Object> timedObject = 
+				new TimedObject<Object>(value, this.period);
+			Variables.this.put((String)key, timedObject);
+			return null;
 		}
 
 		@Override
@@ -85,18 +96,28 @@ public class Variables implements Comparator<ITimedObject<?>> {
 		public Collection<Object> values() {
 			throw new UnsupportedOperationException();
 		}
+		
+		@Override
+		protected void finalize() throws Throwable {
+			period = null;
+			super.finalize();
+		}
 
 	}
 	
 	public Variables() {
-		 vars = new HashMap<String, List<ITimedObject<?>>>();
+		 vars = new HashMap<String, List<ITimedVariable<?>>>();
+	}
+	
+	public void clear() {
+		vars.clear();
 	}
 	
 	public Variables(Variables variables) {
 		// TODO:  Delegate Map	
-		vars = new HashMap<String, List<ITimedObject<?>>>();
-		for (Entry<String, List<ITimedObject<?>>> var : variables.vars.entrySet()) {
-			 vars.put(var.getKey(), new ArrayList<ITimedObject<?>>(var.getValue()));
+		vars = new HashMap<String, List<ITimedVariable<?>>>();
+		for (Entry<String, List<ITimedVariable<?>>> var : variables.vars.entrySet()) {
+			 vars.put(var.getKey(), new ArrayList<ITimedVariable<?>>(var.getValue()));
 		}
 	}
 
@@ -104,38 +125,58 @@ public class Variables implements Comparator<ITimedObject<?>> {
 		return vars.keySet();
 	}
 
-	public void put ( String name, ITimedObject<?> timedObject ){
-		List<ITimedObject<?>> values =  
+	public void put ( String name, ITimedVariable<?> var ){
+		List<ITimedVariable<?>> values =  
 			vars.get(name);
 		if ( values == null ) {
-			values = new ArrayList<ITimedObject<?>>();
-			values.add(timedObject);
+			values = new ArrayList<ITimedVariable<?>>();
+			values.add(var);
 			vars.put(name, values);
 		}
 		else {
-			int index = Collections.binarySearch(values, timedObject, this);
+			int index = Collections.binarySearch(values, var, this);
 			if ( index >= 0  ) {
-				values.set(index, timedObject);
+				values.set(index, var);
 			}
 			else {
 				int position = -(index + 1);
-				values.add(position, timedObject);
+				values.add(position, var);
 				if ( values.size() == 1 ){
 					return;
 				} // Es el único valor para esta variable
 				
 				// TODO : cuidado con los que se superponen
 				if ( position + 1 < values.size() ){
-					ITimedObject<?> next = values.get(position+1);
-					if ( intersects(timedObject, next )) {
-						values.remove(position+1);
-					} // Eliminamos 
+					ITimedVariable<?> next = values.get(position+1);
+					if ( intersects(var, next )) {
+						Date start = var.getPeriod().getEnd();
+						Date end = next.getPeriod().getEnd();
+						if ( Period.compare(start, end ) >= 0 ){
+							values.remove(position+1);
+						} // La nueva variable sobreescribe totalmente el antiguo valor.
+						else {
+							start = Variables.add(start, 1 );
+							ITimedVariable<?> wrapNext = 
+								new WrapTimedVariable<Object>(start, end, next);
+							values.set(position+1, wrapNext);
+						} // La nueva variable sobreescribe parcialmente el antiguo valor.
+					} 
 				}
 				
 				if ( position - 1 >= 0  ){
-					ITimedObject<?> previous = values.get(position-1);
-					if ( intersects(timedObject, previous )) {
-						values.remove(position-1);
+					ITimedVariable<?> prev = values.get(position-1);
+					if ( intersects(var, prev )) {
+						Date end = var.getPeriod().getStart();
+						Date start = prev.getPeriod().getStart();
+						if ( Period.compare(start, end ) >= 0 ){
+							values.remove(position-1);
+						} // La nueva variable sobreescribe totalmente el antiguo valor.
+						else {
+							end = Variables.add(end, -1 );
+							ITimedVariable<?> wrapPrev = 
+								new WrapTimedVariable<Object>(start, end, prev);
+							values.set(position-1, wrapPrev);
+						} // La nueva variable sobreescribe parcialmente el antiguo valor.
 					} // Eliminamos 
 				}
 				
@@ -143,17 +184,18 @@ public class Variables implements Comparator<ITimedObject<?>> {
 		}
 		
 	}
+	
 
 	public List<Period> getPeriods(String var ) {
 		
-		List<ITimedObject<?>> values =  vars.get(var);
+		List<ITimedVariable<?>> values =  vars.get(var);
 		if ( values == null ) {
 			return null;
 		}
 		
 		List<Period> periods = 
 			new LinkedList<Period>();
-		for (ITimedObject<?> timedObject : values) {
+		for (ITimedVariable<?> timedObject : values) {
 			periods.add(timedObject.getPeriod());
 		}
 		
@@ -161,30 +203,32 @@ public class Variables implements Comparator<ITimedObject<?>> {
 	}
 	
 	public Object get(String var, Period p){
-		List<ITimedObject<?>> values =  vars.get(var);
+		List<ITimedVariable<?>> values =  vars.get(var);
 		if ( values == null ) {
 			return null;
 		}
 		
-		for (ITimedObject<?> timedObject : values) {
-			if ( timedObject.getPeriod().contains(p)) {
-				return timedObject.getValue();
+		Object value = null;
+		
+		for (ITimedVariable<?> timedObject : values) {
+			if ( timedObject.getPeriod().intersects(p)) {
+				value = timedObject.getValue(p);
 			}
 		}
 		
-		return null;
+		return value;
 		
 	}
 	
 	public boolean containsKey(Object key, Period p){
-		List<ITimedObject<?>> values =  vars.get(key);
+		List<ITimedVariable<?>> values =  vars.get(key);
 		if ( values == null ) {
 			return false;
 		}
 		
-		for (ITimedObject<?> timedObject : values) {
+		for (ITimedVariable<?> timedObject : values) {
 			
-			if ( timedObject.getPeriod().contains(p)) {
+			if ( timedObject.getPeriod().intersects(p)) {
 				return true;
 			}
 		}
@@ -193,11 +237,11 @@ public class Variables implements Comparator<ITimedObject<?>> {
 		
 	}
 
-	public List<Map<String, Object>> getBindings(Set<String> vars, Date start, Date end) 
+	public List<PeriodMap> getBindings(Set<String> vars, Date start, Date end) 
 		throws UndefinedVariableException
 	{
-		List<Map<String, Object>> list =
-			new LinkedList<Map<String,Object>>();
+		List<PeriodMap> list =
+			new LinkedList<PeriodMap>();
 		
 		List<Period> periods = new LinkedList<Period>();
 		periods.add(new Period(start, end ));
@@ -205,7 +249,7 @@ public class Variables implements Comparator<ITimedObject<?>> {
 		for (String var : vars) {
 			List<Period> varPeriods = getPeriods(var);
 			if ( varPeriods == null ) {
-				throw new UndefinedVariableException(var);
+				continue;//throw new UndefinedVariableException(var);
 			}
 			periods = Period.intersect(periods, varPeriods);
 		}
@@ -218,13 +262,13 @@ public class Variables implements Comparator<ITimedObject<?>> {
 	}
 
 	@Override
-	public int compare(ITimedObject<?> o1, ITimedObject<?> o2) {
+	public int compare(ITimedVariable<?> o1, ITimedVariable<?> o2) {
 		Period p1 = o1.getPeriod();
 		Period p2 = o2.getPeriod();
 		return p1.compareTo(p2);
 	}
 	
-	public boolean intersects(ITimedObject<?> o1, ITimedObject<?> o2) {
+	public boolean intersects(ITimedVariable<?> o1, ITimedVariable<?> o2) {
 		Period p1 = o1.getPeriod();
 		Period p2 = o2.getPeriod();
 		return p1.intersect(p2) != null;
@@ -234,5 +278,68 @@ public class Variables implements Comparator<ITimedObject<?>> {
 		return new PeriodMap(new Period(start, end)); 
 	}
 	
+	@Override
+	protected void finalize() throws Throwable {
+		clear();
+		super.finalize();
+	}
+	
+	// ------------------------------------------
+	private void traceRemove ( String name, ITimedVariable<?> cur, ITimedVariable<?> old ){
+		System.out.printf("Eliminada %1$s=%2$s (%4$tF..%5$tF) %1$s=%3$s (%6$tF..%7$tF) \r\n", 
+			name , 
+			old.getValue(old.getPeriod()),
+			cur.getValue(cur.getPeriod()),
+			old.getPeriod().getStart(),
+			old.getPeriod().getEnd(),
+			cur.getPeriod().getStart(),
+			cur.getPeriod().getEnd());
+	}
 
+	private void traceUpdate ( String name, ITimedVariable<?> cur, ITimedVariable<?> old ){
+		System.out.printf("Modificada %1$s=%2$s (%4$tF..%5$tF) %1$s=%3$s (%6$tF..%7$tF) \r\n", 
+			name , 
+			old.getValue(old.getPeriod()),
+			cur.getValue(cur.getPeriod()),
+			old.getPeriod().getStart(),
+			old.getPeriod().getEnd(),
+			cur.getPeriod().getStart(),
+			cur.getPeriod().getEnd());
+	}
+	
+	private static Date add( Date date, int days ) {
+		Calendar calendar = 
+			Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add( Calendar.DAY_OF_MONTH, days);
+		return calendar.getTime();
+	}
+
+	private static class WrapTimedVariable<T>
+	implements ITimedVariable<T> {
+
+		private Period period ;
+		private ITimedVariable<? extends T> timedVariable;
+		
+		public WrapTimedVariable(Period period, ITimedVariable<? extends T> timedVariable) {
+			this.period = period;
+			this.timedVariable = timedVariable;
+		}
+		
+		public WrapTimedVariable(Date start, Date end, ITimedVariable<? extends T> timedVariable) {
+			this( new Period(start, end), timedVariable );
+		}
+
+		@Override
+		public Period getPeriod() {
+			return period;
+		}
+
+		@Override
+		public T getValue(Period period) {
+			return timedVariable.getValue(period);
+		}
+		
+		
+	}
 }

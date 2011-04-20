@@ -5,17 +5,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.print.attribute.HashAttributeSet;
-
-import org.hibernate.dialect.function.VarArgsSQLFunction;
 import org.mvel2.MVEL;
-import org.mvel2.ParserContext;
+import org.mvel2.PropertyAccessException;
+import org.mvel2.UnresolveablePropertyException;
 import org.mvel2.templates.TemplateRuntime;
+
+import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
 
 public class ExpressionContext {
@@ -39,16 +42,20 @@ public class ExpressionContext {
 		throw new UnsupportedOperationException();
 	}
 
-	public void addVariable(Object name, ITimedObject<?> timedObject) {
-		variables.put(name.toString(), timedObject);
+	public void addVariable(Object name, ITimedVariable<?> timedVariable) {
+		variables.put(name.toString(), timedVariable);
 	}
 
 	public void addVariable(Object name, Object value, Date start, Date end) {
-		ITimedObject<Object> timedObject = 
+		ITimedVariable<Object> timedObject = 
 			new TimedObject<Object>(value, start, end );
 		this.addVariable(name.toString(), timedObject);
 	}
 	
+	public boolean containsVariable(Object name, Date start, Date end) {
+		return variables.containsKey(name.toString(), new Period(start, end));
+	}
+
 	public <T> T getVariable(Object name, Date start, Date end,Class<T> toType   ) {
 		return ( T ) variables.get(name.toString(), new Period(start, end));
 	}
@@ -59,14 +66,14 @@ public class ExpressionContext {
 	}
 
 	public <T> List<ITimedObject<T>> addExpression(IExpression expression, Date start, Date end, Class<T> toType ) 
-		throws ExpressionException 
+	throws ExpressionException 
 	{
 		String name = expression.getName();
 		String script = expression.getExpression();
 		List<ITimedObject<T>> values = this.eval(script, start, end, toType );
 		if ( name != null ) {
 			for (ITimedObject<T> timedObject : values) {
-				this.addVariable(name, timedObject );
+				this.addVariable(name, ( TimedObject<T> ) timedObject );
 			}
 		}
 		return values;
@@ -78,24 +85,28 @@ public class ExpressionContext {
 		return eval(script, start, end, Object.class );
 	}
 	
+
 	public <T> List<ITimedObject<T>>  eval(String script, Date start, Date end, Class<T> toType) 
 		throws ExpressionException 
 	{
 		if ( script == null ) {
 			return Collections.emptyList();
 		}
-
-		ParserContext pCtx = new ParserContext();
-		Serializable compiledExpression = 
-			MVEL.compileExpression(script, pCtx);
-		Set<String> inputs = pCtx.getInputs().keySet();
-		List<Map<String, Object>> bindingsList = 
+		
+		Set<String> inputs = getVariables(script);
+		List<PeriodMap> bindingsList = 
 			variables.getBindings(inputs, start, end);
 		List<ITimedObject<T>> values = 
 			new LinkedList<ITimedObject<T>>();
-		for (Map<String, Object> bindings : bindingsList) {
-			T value = MVEL.executeExpression(compiledExpression, bindings, toType);
-			values.add(new TimedObject<T>(value, start, end ));
+		for (PeriodMap bindings : bindingsList) {
+			try {
+				T value = MVEL.eval(script, bindings, toType);
+				values.add(new TimedObject<T>(value, bindings.getPeriod()));
+			} catch ( UnresolveablePropertyException e ) {
+				throw new UndefinedVariableException(e.getName(), e.getLocalizedMessage());
+			} catch ( PropertyAccessException e ) {
+				throw new UndefinedVariableException("", e.getLocalizedMessage());
+			}
 		}
 		
 		return values;
@@ -103,7 +114,8 @@ public class ExpressionContext {
 	
 	public String evalTemplate(String template, Date start, Date end ) {
 		Map<String, Object> vars = variables.getPeriodMap(start, end);
-		return ( String ) TemplateRuntime.eval(template, vars);
+		Object result = TemplateRuntime.eval(template, vars);
+		return result != null ? result.toString() : null;
 	}
 
 	public List<IExpression> getExpressionVariables()  {
@@ -115,12 +127,43 @@ public class ExpressionContext {
 		return variables.varsSet();
 	}
 	
+	
+	public void clear() {
+		variables.clear();
+	}
+	
 	// ------------------------------------------
 	//
 	// ------------------------------------------
 	
-	public static void main(String[] args) {
-		System.out.println(MVEL.eval("'52' contains '501'[0]"));
+	@Override
+	protected void finalize() throws Throwable {
+		clear();
+		super.finalize();
+	}
+	
+	
+	//Pattern pattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*");
+	private static final Pattern VARIABLE_PATTERN = 
+		Pattern.compile("[A-Z_][A-Z0-9_]*");
+	
+	private static Set<String> getVariables(String script) {
+		Set<String> names = new HashSet<String>(); 
+		Matcher matcher = VARIABLE_PATTERN.matcher(script);
+		while ( matcher.find() ) {
+			names.add(matcher.group());
+		}
+		return names;
+	}
+	
+	public static void main(String[] args) throws SecurityException, NoSuchMethodException {
+		
+		Map<String, Object> vars = 
+			new HashMap<String, Object>();
+		vars.put("EXCESO_IPREM", 190.00);
+		
+		System.out.println(MVEL.eval("EXCESO_IPREM - EXCESO_IPREM = 110", vars));
+		System.out.println(vars);
 	}
 	
 }

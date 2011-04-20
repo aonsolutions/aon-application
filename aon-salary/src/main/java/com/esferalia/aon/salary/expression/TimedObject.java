@@ -2,7 +2,7 @@ package com.esferalia.aon.salary.expression;
 
 import java.util.Date;
 
-public class TimedObject<V> implements ITimedObject<V> {
+public class TimedObject<V> implements ITimedObject<V> , ITimedVariable<V> {
 
 	private V value;
 	private Period period;
@@ -26,6 +26,9 @@ public class TimedObject<V> implements ITimedObject<V> {
 		return period;
 	}
 	
-	
+	@Override
+	public V getValue(Period period) {
+		return getValue();
+	}
 
 }
