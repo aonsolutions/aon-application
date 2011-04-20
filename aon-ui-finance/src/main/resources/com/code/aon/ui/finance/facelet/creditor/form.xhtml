@@ -23,7 +23,7 @@
 				</c:if>							
 				<c:if test="#{!creditor.new}">			
 					<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
-						columnClasses="aon-panelGrid-odd aon-width-150,
+						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto,
 							aon-panelGrid-odd aon-width-120,
 							aon-panelGrid-even aon-width-auto">
@@ -34,13 +34,13 @@
 						</ui:include>
 					</aon:panelGrid>
 				
-					<aon:panelGrid id="infoDataTable" styleClass="aon-margin-top"
-						columns="2" style="width: 100%;"
-						columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+					<c:if test="#{!creditor.new and aonRole.accountingOperator and aonConfiguration.bean.creditor.showAccount}">
+						<aon:panelGrid id="infoDataTable" styleClass="aon-margin-top"
+							columns="2" style="width: 100%;"
+							columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
 	
-						<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.creditor.showAccount and !creditor.new}">
 							<aon:outputLabel for="Creditor_account" value="#{accountBundle.account_accounting}" />
-							<aon:panelGrid columns="2" id="accountContainer">
+							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include
 									src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
 									<ui:param name="id" value="Creditor_account" />
@@ -70,10 +70,10 @@
 									</aon:commandButton>
 								</aon:div>
 							</aon:panelGrid>
-						</c:if>
-					</aon:panelGrid>
+						</aon:panelGrid>
+					</c:if>
 
-					<aon:panelTabSet selectedTab="#{creditor.selectedTab}">
+					<aon:panelTabSet id="creditorTab" selectedTab="#{creditor.selectedTab}">
 						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controller" value="#{creditorAddress}" />
@@ -91,8 +91,7 @@
 								label="#{registryBundle.registry_finance_data_module}">
 								<aon:panel>
 									<f:facet name="header">
-										<aon:outputText
-											value="#{registryBundle.registry_banks_module}" />
+										<aon:outputText	value="#{registryBundle.registry_banks_module}" />
 									</f:facet>
 									<ui:include
 										src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">

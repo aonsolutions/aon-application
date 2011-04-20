@@ -23,7 +23,7 @@
 				</c:if>							
 				<c:if test="#{!supplier.new}">
 					<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
-						columnClasses="aon-panelGrid-odd aon-width-150,
+						columnClasses="aon-panelGrid-odd aon-width-140,
 							aon-panelGrid-even aon-width-auto,
 							aon-panelGrid-odd aon-width-120,
 							aon-panelGrid-even aon-width-auto">
@@ -33,13 +33,14 @@
 							<ui:param name="controller" value="#{supplier}" />
 						</ui:include>
 					</aon:panelGrid>				
-					<c:if test="#{aonRole.accountingOperator and aonConfiguration.bean.supplier.showAccount and !supplier.new}">				
+
+					<c:if test="#{!supplier.new and aonRole.accountingOperator and aonConfiguration.bean.supplier.showAccount}">				
 						<aon:panelGrid id="infoDataTable" styleClass="aon-margin-top"
 							columns="2" style="width: 100%;"
-							columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
+							columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even aon-width-auto">
 	
 							<aon:outputLabel for="Supplier_account" value="#{accountBundle.account_accounting}" />
-							<h:panelGrid columns="2" id="accountContainer">
+							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
 								<ui:include
 									src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
 									<ui:param name="id" value="Supplier_account" />
@@ -68,11 +69,11 @@
 										actionListener="#{supplierAccount.onNewAccount}">
 									</aon:commandButton>
 								</aon:div>
-							</h:panelGrid>
+							</aon:panelGrid>
 						</aon:panelGrid>
 					</c:if>
 				
-					<aon:panelTabSet selectedTab="#{supplier.selectedTab}">
+					<aon:panelTabSet id="supplierTab" selectedTab="#{supplier.selectedTab}">
 						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">
 							<ui:include	src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controller" value="#{supplierAddress}" />
@@ -90,8 +91,7 @@
 								label="#{registryBundle.registry_finance_data_module}">
 								<aon:panel>
 									<f:facet name="header">
-										<aon:outputText
-											value="#{registryBundle.registry_banks_module}" />
+										<aon:outputText	value="#{registryBundle.registry_banks_module}" />
 									</f:facet>
 									<ui:include
 										src="/com/code/aon/ui/registry/facelet/rbank/tab_grid.xhtml">
@@ -113,22 +113,18 @@
 						<c:if test="#{aonConfiguration.bean.supplier.showSegment}">
 							<aon:panelTab id="segment"
 								label="#{registryBundle.registry_segment_module}">
-								<aon:div rendered="#{true}">
-									<ui:include	src="/com/code/aon/ui/registry/facelet/rsegment/tab_grid.xhtml">
-										<ui:param name="controller" value="#{supplierSegment}" />
-									</ui:include>
-								</aon:div>
+								<ui:include	src="/com/code/aon/ui/registry/facelet/rsegment/tab_grid.xhtml">
+									<ui:param name="controller" value="#{supplierSegment}" />
+								</ui:include>
 							</aon:panelTab>
 						</c:if>
 
 						<c:if test="#{aonConfiguration.bean.supplier.showAddInfo}">
 							<aon:panelTab id="addInfo"
 								label="#{registryBundle.registry_addInfo}">
-								<aon:div rendered="#{true}">
-									<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
-										<ui:param name="controller" value="#{supplierAddInfo}" />
-									</ui:include>
-								</aon:div>
+								<ui:include	src="/com/code/aon/ui/registry/facelet/raddinfo/tab_grid.xhtml">
+									<ui:param name="controller" value="#{supplierAddInfo}" />
+								</ui:include>
 							</aon:panelTab>
 						</c:if>
 						
@@ -141,7 +137,6 @@
 								</ui:include>								
 							</aon:panelTab>
 						</c:if>
-						
 					</aon:panelTabSet>
 				</c:if>
 			</aon:div>
