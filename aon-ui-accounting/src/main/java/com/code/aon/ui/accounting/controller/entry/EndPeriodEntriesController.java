@@ -1,6 +1,5 @@
 package com.code.aon.ui.accounting.controller.entry;
 
-import java.io.StringWriter;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +30,6 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.accounting.IAccountingConstants;
-import com.code.aon.ui.accounting.check.IAccountCheck;
 import com.code.aon.ui.accounting.check.ICheckEntry;
 import com.code.aon.ui.accounting.controller.AccountCheckController;
 import com.code.aon.ui.accounting.util.AccountingPeriodUtil;
@@ -508,12 +506,14 @@ public class EndPeriodEntriesController {
 		if (accountEntryType == AccountEntryType.OPERATING) {
 			sw.append(" AND (account.id LIKE '6%' OR account.id LIKE '7%')");
 		}
-		if (securityLevel == null) {
-			securityLevel = SecurityLevel.OFFICIAL;
+		if (securityLevel == SecurityLevel.CONFIDENTIAL) {
+			sw.append(" AND accountEntry.securityLevel = ");;
+			sw.append(Integer.toString(securityLevel.ordinal()));
+		} else {
+			sw.append(" AND (accountEntry.securityLevel = ");;
+			sw.append(Integer.toString(securityLevel.ordinal()));
+			sw.append(" OR accountEntry.securityLevel IS NULL) ");;
 		}
-		sw.append(" AND accountEntry.securityLevel =");
-		sw.append(Integer.toString(securityLevel.ordinal()));
-		
 		sw.append(" GROUP BY account.id HAVING SUM(debit) != SUM(credit)");
 		Query query = session.createQuery(sw.toString());
 		return query.list();

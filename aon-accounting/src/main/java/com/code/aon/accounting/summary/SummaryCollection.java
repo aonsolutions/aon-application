@@ -87,22 +87,39 @@ public class SummaryCollection {
 		}
 	}
 
-	/**
-	 * Saldo Deudor
-	 */
 	public double getUnpaidBalance() {
+		if (CommonUtil.round(getInitialDebit() + getDebit()) > CommonUtil.round(getInitialCredit() + getCredit())) {
+			return CommonUtil.round(getInitialDebit() + getDebit() - getInitialCredit() - getCredit());
+		}
+		return 0;
+	}
+	public double getCreditBalance() {
+		if (CommonUtil.round(getInitialCredit() + getCredit()) > CommonUtil.round(getInitialDebit() + getDebit())) {
+			return CommonUtil.round(getInitialCredit() + getCredit() - getInitialDebit() - getDebit());
+		}
+		return 0;
+	}
+	public double getPeriodUnpaidBalance() {
 		if (getDebit() > getCredit()) {
 			return CommonUtil.round(getDebit() - getCredit());
 		}
 		return 0;
 	}
-
-	/**
-	 * Saldo Acreedor
-	 */
-	public double getCreditBalance() {
+	public double getPeriodCreditBalance() {
 		if (getCredit() > getDebit()) {
 			return CommonUtil.round(getCredit() - getDebit());
+		}
+		return 0;
+	}
+	public double getInitialUnpaidBalance() {
+		if (getInitialDebit() > getInitialCredit()) {
+			return CommonUtil.round(getInitialDebit() - getInitialCredit());
+		}
+		return 0;
+	}
+	public double getInitialCreditBalance() {
+		if (getInitialCredit() > getInitialDebit()) {
+			return CommonUtil.round(getInitialCredit() - getInitialDebit());
 		}
 		return 0;
 	}

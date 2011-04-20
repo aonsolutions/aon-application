@@ -67,10 +67,9 @@
 
 					<aon:outputLabel for="reportDate"
 						value="#{accountingBundle.accounting_report_date}" />
-					<aon:outputText id="reportDate"
-						value="#{journalReport.date}"
-						timeZone="#{timeZoneController.timeZone}">
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
+					<aon:outputText id="reportDate" value="#{journalReport.date}">
+						<f:convertDateTime type="date" pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
 					
 					<aon:outputLabel 
@@ -80,18 +79,16 @@
 					
 					<aon:outputLabel
 						value="#{bundle.aon_date_from}" />
-					<aon:outputText 
-						value="#{journalReport.fromDate}"
-						timeZone="#{timeZoneController.timeZone}">
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
+					<aon:outputText value="#{journalReport.fromDate}">
+						<f:convertDateTime type="date" pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
 
 					<aon:outputLabel
 						value="#{bundle.aon_date_to}" />
-					<aon:outputText 
-						value="#{journalReport.toDate}"
-						timeZone="#{timeZoneController.timeZone}">
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"/>
+					<aon:outputText  value="#{journalReport.toDate}">
+						<f:convertDateTime type="date" pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
 				</aon:panelGrid>
 				

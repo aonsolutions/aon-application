@@ -1,9 +1,7 @@
 package com.code.aon.ui.accounting.controller.report;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 
@@ -37,21 +35,18 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			gmTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_gross_margin"));
 			gmTotal.setCredit(grossMargin.getCredit());
 			gmTotal.setDebit(grossMargin.getDebit());
-			List<Double> months = new ArrayList<Double>(12);
-			for (int i = 0; i < 12; i++) {
-				months.add(new Double(0));
-			}
+			Double[] months0 = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 			for (Summary s : grossMargin.getSortedSummaryList()) {
 				SummaryMonthly sm = (SummaryMonthly) s;
-				for (int i = 0; i < sm.getMonths().size(); i++) {
+				for (int i = 0; i < sm.getMonths().length; i++) {
 					if (sm.getId().startsWith("7")) {
-						months.set(i, CommonUtil.round(months.get(i) + sm.getMonths().get(i)));
+						months0[i] = CommonUtil.round(months0[i] + sm.getMonths()[i]);
 					} else {
-						months.set(i, CommonUtil.round(months.get(i) - sm.getMonths().get(i)));
+						months0[i] = CommonUtil.round(months0[i] - sm.getMonths()[i]);
 					}
 				}
 			}
-			gmTotal.setMonths(months);
+			gmTotal.setMonths(months0);
 			list.add(gmTotal);
 
 			SummaryCollection totalExpenses = sp.getTotalExpensesSummaryCollection(params);
@@ -60,29 +55,22 @@ public class ProfitAndLossMonthlyReportController implements ICollectionProvider
 			teTotal.setDescription(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_expenses"));
 			teTotal.setCredit(totalExpenses.getCredit());
 			teTotal.setDebit(totalExpenses.getDebit());
-			months = new ArrayList<Double>(12);
-			for (int i = 0; i < 12; i++) {
-				months.add(new Double(0));
-			}
+			Double[] months1 = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 			for (Summary s : totalExpenses.getSortedSummaryList()) {
 				SummaryMonthly sm = (SummaryMonthly) s;
-				for (int i = 0; i < sm.getMonths().size(); i++) {
-					months.set(i, CommonUtil.round(months.get(i) + sm.getMonths().get(i)));
+				for (int i = 0; i < sm.getMonths().length; i++) {
+					months1[i] = CommonUtil.round(months1[i] + sm.getMonths()[i]);
 				}
 			}
-			teTotal.setMonths(months);
+			teTotal.setMonths(months1);
 			list.add(teTotal);
 
 			SummaryMonthly result = new SummaryMonthly();
-
-			months = new ArrayList<Double>(12);
-			for (int i = 0; i < 12; i++) {
-				months.add(new Double(0));
+			Double[] months2 = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+			for (int i = 0; i < months2.length; i++) {
+				months2[i] = CommonUtil.round(gmTotal.getMonths()[i] - teTotal.getMonths()[i]);
 			}
-			for (int i = 0; i < months.size(); i++) {
-				months.set(i, CommonUtil.round(gmTotal.getMonths().get(i) - teTotal.getMonths().get(i)));
-			}
-			result.setMonths(months);
+			result.setMonths(months2);
 
 			StringBuilder r = new StringBuilder();
 			r.append(AonUtil.getMessage(ACCOUNTING_BUNDLE, "accounting_total_result"));

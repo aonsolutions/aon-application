@@ -39,7 +39,7 @@
 		<!--  BALANCE DE PERDIDAS Y GANACIAS GRÁFICOS GASTOS -->
 	<report id="profitAndLossTotalExpenses" description="ProfitAndLoss graphics">
 		<template path="/com/code/aon/ui/accounting/report/profitAndLossGraph.jasper"/>
-		<collection provider="#{profitAndLossReport.totalExpenses.summaryList}"/>
+		<collection provider="#{profitAndLossReport.sortedTotalExpenses}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
@@ -101,8 +101,8 @@
 		</params>
 	</report>
 	
-<!--  	  BALANCE MESUAL DE PERDIDAS Y GANACIAS GRAFICO
-	<report id="profitAndLossMonthlyGraph" description="ProfitAndLossMonthly">
+<!--  	  BALANCE MESUAL DE PERDIDAS Y GANACIAS GRAFICO -->
+	<report id="profitAndLossMonthlyGraph" description="ProfitAndLossMonthlyGraph">
 		<template path="/com/code/aon/ui/accounting/report/profitAndLossMonthlyGraph.jasper"/>
 		<collection provider="#{profitAndLossMonthly}"/>
 		<params>
@@ -111,7 +111,6 @@
 			<param id="params" value="#{profitAndLossReport.getParameters}" />
 		</params>
 	</report>
--->
 
 	
 	<!--  EXTRACTO DE CUENTA -->

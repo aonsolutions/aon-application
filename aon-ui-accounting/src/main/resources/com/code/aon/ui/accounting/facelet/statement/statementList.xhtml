@@ -268,7 +268,7 @@
 							</rich:columnGroup>
 						</f:facet>
 
-						<aon:column styleClass="aon-width-100">
+						<aon:column styleClass="aon-width-60">
 							<f:facet name="header">
 								<aon:outputText
 									value="#{accountingBundle.accounting_account_entry}" />
@@ -282,7 +282,7 @@
 							</aon:commandLink>
 						</aon:column>
 
-						<aon:column styleClass="aon-width-100">
+						<aon:column styleClass="aon-width-80">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
@@ -292,11 +292,11 @@
 							</aon:outputText>
 						</aon:column>
 
-						<aon:column>
+						<aon:column styleClass="aon-width-auto">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_concept}" />
 							</f:facet>
-							<aon:outputText value="#{to.concept}" />
+							<aon:outputText value="#{to.concept}" style="font-size: 0.9em;"/>
 						</aon:column>
 
 						<aon:column

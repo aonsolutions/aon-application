@@ -40,7 +40,6 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TrialBalanceController.class);
-	
 	private SummaryProviderParameters parameters;
 	private SummaryCollection summaryCollection;
 	private DataModel model;
@@ -98,6 +97,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 				}	
 			}
 			p.setExcludeOperatingEntry(excludeOperating);
+			p.setExcludeOpeningEntry(true);
 			p.setExcludeBalancedAccounts(false);
 			p.setRowsPerPage(20);
 			p.setAccountLevel(5);
@@ -108,11 +108,9 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 		}
 		return parameters;
 	}
-
 	public void setParameters(SummaryProviderParameters parameters) {
 		this.parameters = parameters;
 	}
-
 
 	public boolean isCoverVisible() {
 		return getParameters().isCoverVisible();
@@ -149,7 +147,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 		try {
 			if (getParameters().getPeriod() == null) {
 				getParameters().setPeriod(new Period());
-			}
+			} 
 			if (getParameters().getFromDate() == null && getParameters().getPeriod().getInitiationDate() != null) {
 				getParameters().setFromDate(getParameters().getPeriod().getInitiationDate());
 			}
@@ -268,9 +266,14 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 	public void onPeriodChanged(ValueChangeEvent event) {
 		try {
 			Period period = (Period) event.getNewValue();
-			if (period == null && getParameters().getFromDate() == null) {
-				Date first = getAccountingUtil().getFirstPeriodInitialionDate();
-				getParameters().setFromDate(first);
+			if (period == null) {
+				if (getParameters().getFromDate() == null) {
+					Date first = getAccountingUtil().getFirstPeriodInitialionDate();
+					getParameters().setFromDate(first);
+				}
+			} else {
+				getParameters().setFromDate(period.getInitiationDate());
+				getParameters().setToDate(period.getDeadline());
 			}
 		} catch (ManagerBeanException e) {
 			// Nothing.

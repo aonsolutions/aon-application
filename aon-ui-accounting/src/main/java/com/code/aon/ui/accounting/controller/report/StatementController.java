@@ -10,6 +10,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.account.Account;
@@ -149,7 +150,7 @@ public class StatementController extends BasicController {
 				balance.setBalancingAccount(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getId());
 				balance.setBalancingAccountDescription(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getDescription());
 				if (previous != null) {
-					balance.addBalance(previous);
+					balance.dragBalance(previous);
 				} else {
 					double b = CommonUtil.round(d.getDebit() - d.getCredit());
 					if (b > 0) {
@@ -180,32 +181,42 @@ public class StatementController extends BasicController {
 
 */	
 		Account account = getAccount();
-		Date from = params.getFromDate();
-		if (from == null && params.getPeriod() != null) {
-			from = params.getPeriod().getInitiationDate();
-		}
-		setOpeningEntry(sp.getOpeningEntryBalance(from, account.getId(),params.getSecurityLevel()));
-		
-		if (isOpeningEntryPresent()) {
-			if (!DateUtils.isSameDay(getOpeningEntry().getFromDate(), params.getFromDate())) {
-				Date to = DateUtils.addDays(getParams().getFromDate(), -1);
-				setFromOpeningEntry(sp.getPeriodBalance(getOpeningEntry().getFromDate(), to,
-						account.getId(),params.getSecurityLevel(),true,getParams().isExcludeClosingEntry()));
-			}
-		} else {
-			if (params.getPeriod() != null && params.getPeriod().getId() != null) {
-				if (!DateUtils.isSameDay(from, params.getPeriod().getInitiationDate())) {
-					from = params.getPeriod().getInitiationDate();
-					Date to = DateUtils.addDays(getParams().getFromDate(), -1);
-					setFromOpeningEntry(sp.getPeriodBalance(from, to, account.getId(),params.getSecurityLevel(),true,getParams().isExcludeClosingEntry()));
+		if (!StringUtils.startsWith(account.getId(), "6") && !StringUtils.startsWith(account.getId(), "7") ) {
+			Date from = params.getFromDate()==null?params.isPeriodNull()?new Date(0):params.getPeriod().getInitiationDate():params.getFromDate();
+			setOpeningEntry(sp.getOpeningEntryBalance(from, account.getId(),params.getSecurityLevel()));
+			setFromOpeningEntry(null);
+			Date to = DateUtils.addDays(from, -1);
+			from = null;
+			if (isOpeningEntryPresent()) {
+				if (!DateUtils.isSameDay(getOpeningEntry().getFromDate(), params.getFromDate())) {
+					from = getOpeningEntry().getFromDate();
+					setFromOpeningEntry(sp.getPeriodBalance(from, to,account.getId(),params.getSecurityLevel(),false,false));
 				}
-			} 
+			} else {
+				setFromOpeningEntry( sp.getPeriodBalance(from, to, account.getId(),params.getSecurityLevel(),false,false));
+			}
 		}
-		setPeriodBalance(sp.getPeriodBalance(params.getFromDate(), params.getToDate(), account
-				.getId(),params.getSecurityLevel(),isOpeningEntryPresent(),getParams().isExcludeClosingEntry()));
+		
+		setPeriodBalance(sp.getPeriodBalance(params.getFromDate(), params.getToDate(), account.getId(),params.getSecurityLevel(),false,false));
+		
 		if (isFromOpeningEntryPresent()) {
-			getPeriodBalance().addBalance(getFromOpeningEntry());
-		} 
+			if (isOpeningEntryPresent()) {
+				// Si exiten acumulados anteriores y asiento de apertura, éste se decuenta de los acumulados anteriores.
+				getFromOpeningEntry().substractBalance(getOpeningEntry());
+				getFromOpeningEntry().dragBalance(getOpeningEntry());
+			}
+		}
+		
+		if (isFromOpeningEntryPresent()) {
+			getPeriodBalance().dragBalance(getFromOpeningEntry());
+		} else {
+			if (isOpeningEntryPresent()) {
+				if ( !getPeriodBalance().getFromDate().after(getOpeningEntry().getFromDate()) ) {
+					getPeriodBalance().substractBalance(getOpeningEntry());	
+				}
+				getPeriodBalance().dragBalance(getOpeningEntry());	
+			}
+		}
 	}
 
 	private Account getAccount() {

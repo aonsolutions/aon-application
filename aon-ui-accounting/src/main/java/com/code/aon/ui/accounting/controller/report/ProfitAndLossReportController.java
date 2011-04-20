@@ -33,8 +33,7 @@ import com.code.aon.ui.util.AonUtil;
 public class ProfitAndLossReportController implements ICollectionProvider {
 
 	
-	private final static Logger LOGGER = LoggerFactory
-			.getLogger(ProfitAndLossReportController.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(ProfitAndLossReportController.class);
 	
 	private static final String TRIAL_BALANCE_CONTROLLER_NAME = "trialBalance";
 	private static final String ACCOUNTING_BUNDLE = "accountingBundle";
@@ -71,7 +70,18 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 	public SummaryCollection getTotalExpenses() {
 		return totalExpenses;
 	}
-
+	public Collection<Summary> getSortedTotalExpenses() {
+		List<Summary> sortedTotalExpenses = new LinkedList<Summary>();
+		sortedTotalExpenses.addAll(getTotalExpenses().getSummaryList());
+		Collections.sort(sortedTotalExpenses,new Comparator<Summary>( ) {
+			@Override
+			public int compare(Summary o1, Summary o2) {
+				return NumberUtils.compare(o1.getPeriodUnpaidBalance(), o2.getPeriodUnpaidBalance()) * -1;
+			}
+		});
+		return sortedTotalExpenses; 		
+	}
+	
 	public void setTotalExpenses(SummaryCollection totalExpenses) {
 		this.totalExpenses = totalExpenses;
 	}
@@ -131,6 +141,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		spp.setNoTouchedAccountVisible(getParameters().isNoTouchedAccountVisible());
 		spp.setPeriod(getParameters().getPeriod());
 		spp.setSecurityLevel(getParameters().getSecurityLevel());
+		spp.setExcludeOperatingEntry(getParameters().isExcludeOperatingEntry());
 		c.setParameters(spp);		
 		c.onSearch(event);
 	}
@@ -178,7 +189,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 			
 			@Override
 			public int compare(Summary o1, Summary o2) {
-				return NumberUtils.compare(o1.getUnpaidBalance(), o2.getUnpaidBalance()) * -1;
+				return NumberUtils.compare(o1.getPeriodUnpaidBalance(), o2.getPeriodUnpaidBalance()) * -1;
 			}
 			
 		});
@@ -199,7 +210,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		for (Summary summary: summaryList) {
 			if (summary.getId().substring(0, 1).equals("7")) {
 				salesList.add(summary);
-				amount += summary.getCreditBalance();
+				amount += summary.getPeriodCreditBalance();
 			}
 		}
 		setTotalSales(amount);
@@ -219,7 +230,7 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		for (Summary summary: summaryList) {
 			if (summary.getId().substring(0, 2).equals("60")) {
 				purchaseList.add(summary);
-				amount += summary.getUnpaidBalance();
+				amount += summary.getPeriodUnpaidBalance();
 			}
 		}
 		setTotalPurchases(amount);
@@ -365,6 +376,16 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 				Date first = getAccountingUtil().getFirstPeriodInitialionDate();
 				getParameters().setFromDate(first);
 			}
+			boolean excludeOperating = getParameters().isExcludeOperatingEntry();
+			if (period != null) {
+				try {
+					excludeOperating = getAccountingUtil().existsEntry(period, AccountEntryType.OPERATING, getParameters().getSecurityLevel());
+				} catch (ManagerBeanException e) {
+					LOGGER.warn("No se pudo saber si existe asiento de explotacion",e);					
+				}	
+			}
+			getParameters().setExcludeOperatingEntry(excludeOperating);
+			
 		} catch (ManagerBeanException e) {
 			// Nothing.
 		}
@@ -384,4 +405,27 @@ public class ProfitAndLossReportController implements ICollectionProvider {
 		}
 		return true;
 	}
+	
+	
+	
+	
+	
+//	8.800,70	
+//	Reparaciones y conservación.	2.737,64	
+//	Servicios de profesionales independientes.	7.566,77	
+//	Transportes.	23,24	
+//	Primas de seguros.	398,06	
+//	6260	Servicios bancarios y similares.	1.306,90	
+//	6270	Publicidad, propaganda y relaciones públicas.	2.683,00	
+//	6280	Suministro ELECTRICO	3.296,49	
+//	6281	Suministros de TELEFONIA	2.186,11	
+//	6282	Suministros de INTERNET	118,92	
+//	6283	Suministro de AGUA	28,32	
+//	6290	Otros gastos/servicios.	211,72	
+//	6292	Gastos por Viajes y desplazamientos	2.153,22	
+//	6400	Sueldos y Salarios.	37.986,05	
+//	6420	Seguridad Social a cargo de la empresa.	9.854,30	
+//	6623	Intereses de deudas con entidades de crédito	846,53	
+//	TOTAL GASTOS	80.197,97	
+//	RESULTADO ( Pérdidas )	11.953,54		
 }

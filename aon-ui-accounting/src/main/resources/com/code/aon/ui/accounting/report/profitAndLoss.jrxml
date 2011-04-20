@@ -2,9 +2,9 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="profitAndLoss" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isTitleNewPage="true">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="1.6105100000000008"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="387"/>
+	<property name="ireport.y" value="999"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -14,8 +14,8 @@
 	<parameter name="reportTitle" class="java.lang.String" isForPrompting="false"/>
 	<field name="id" class="java.lang.String"/>
 	<field name="description" class="java.lang.String"/>
-	<field name="unpaidBalance" class="java.lang.Double"/>
-	<field name="creditBalance" class="java.lang.Double"/>
+	<field name="periodUnpaidBalance" class="java.lang.Double"/>
+	<field name="periodCreditBalance" class="java.lang.Double"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -37,7 +37,7 @@
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-28" x="10" y="265" width="535" height="83">
-					<printWhenExpression><![CDATA[ $P{params}.getPeriod() != null &&  $P{params}.getPeriod().getId() != null]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$P{params}.getPeriod() != null &&  $P{params}.getPeriod().getId() != null]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -194,7 +194,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{reportTitle}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-38" x="448" y="0" width="100" height="13">
+				<reportElement key="textField-38" x="448" y="0" width="107" height="13">
 					<printWhenExpression><![CDATA[new Boolean($P{params}.getPeriod() != null)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -222,7 +222,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_date} + ":"]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-				<reportElement key="textField-40" x="498" y="17" width="50" height="13"/>
+				<reportElement key="textField-40" x="498" y="17" width="57" height="13"/>
 				<box leftPadding="2">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -383,7 +383,7 @@
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-21" x="368" y="0" width="93" height="11">
-					<printWhenExpression><![CDATA[$F{unpaidBalance} != 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{periodUnpaidBalance} != 0]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -394,11 +394,11 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{unpaidBalance}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{periodUnpaidBalance}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-22" x="461" y="0" width="94" height="11">
-					<printWhenExpression><![CDATA[$F{creditBalance} != 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{periodCreditBalance} != 0]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -409,7 +409,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{creditBalance}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{periodCreditBalance}]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="12">
@@ -442,7 +442,7 @@
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-47" mode="Opaque" x="368" y="0" width="93" height="12" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$F{unpaidBalance} != 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{periodUnpaidBalance} != 0]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -453,11 +453,11 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{unpaidBalance}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{periodUnpaidBalance}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-48" mode="Opaque" x="461" y="0" width="94" height="12" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$F{creditBalance} != 0]]></printWhenExpression>
+					<printWhenExpression><![CDATA[$F{periodCreditBalance} != 0]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -468,7 +468,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[$F{creditBalance}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$F{periodCreditBalance}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

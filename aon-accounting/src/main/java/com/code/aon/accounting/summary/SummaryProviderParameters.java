@@ -1,6 +1,9 @@
 package com.code.aon.accounting.summary;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.Quarter;
@@ -8,6 +11,9 @@ import com.code.aon.common.enumeration.SecurityLevel;
 
 public class SummaryProviderParameters implements Cloneable{
 
+	private static final String SEMICOLON = "; ";
+	private static final String EMPTY = "";
+	private static final Date START_DATE = new Date(0);
 	/**
 	 * Literal AON-QL válido ej: 430*|400*
 	 */
@@ -176,6 +182,16 @@ public class SummaryProviderParameters implements Cloneable{
 		this.fromDate = fromDate;
 	}
 
+	public Date getStartDate() {
+		if (getFromDate() != null) {
+			return getFromDate();
+		}
+		if (getPeriod() != null && getPeriod().getInitiationDate() != null) {
+			return getPeriod().getInitiationDate();
+		}
+		return START_DATE;
+	}
+	
 	public Date getToDate() {
 		return toDate;
 	}
@@ -190,7 +206,13 @@ public class SummaryProviderParameters implements Cloneable{
 	public void setPeriod(Period period) {
 		this.period = period;
 	}
-
+	public boolean isPeriodNull() {
+		return (getPeriod() == null || getPeriod().getId() == null);
+	}
+	public boolean isPeriodNotNull() {
+		return (getPeriod() != null && getPeriod().getId() != null); 
+	}
+	
 	public Date getDate() {
 		return date;
 	}
@@ -281,6 +303,19 @@ public class SummaryProviderParameters implements Cloneable{
 		this.pageCounter = pageCounter;
 	}
 
+	public boolean isConfidential() {
+		return getSecurityLevel() == SecurityLevel.CONFIDENTIAL;
+	}
+	public boolean isNotEmptyAccountExpression(){
+		return StringUtils.isNotEmpty(getAccountExpression());
+	}
+	public boolean isNotEmptyAccountDescription(){
+		return StringUtils.isNotEmpty(getAccountDescription());
+	}
+	public boolean isNotEmptyAccountAlias(){
+		return StringUtils.isNotEmpty(getAccountAlias());
+	}
+	
 	@Override
 	public SummaryProviderParameters clone() throws CloneNotSupportedException {
 		SummaryProviderParameters cloned = new SummaryProviderParameters();
@@ -307,5 +342,19 @@ public class SummaryProviderParameters implements Cloneable{
 		cloned.setCounterVisible(isCounterVisible());
 		cloned.setCoverVisible(isCoverVisible());
 		return cloned;
+	}
+	
+	
+	@Override
+	public String toString() {
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		StringBuffer buf = new StringBuffer();
+		buf.append( isPeriodNotNull()?getPeriod().getId() + SEMICOLON: EMPTY);
+		buf.append( getFromDate()!=null?formatter.format(getFromDate()) + SEMICOLON: EMPTY);
+		buf.append( getToDate()!=null?formatter.format(getToDate()) + SEMICOLON: EMPTY);
+		buf.append( StringUtils.isNotBlank(getAccountExpression())?getAccountExpression() + SEMICOLON: EMPTY);
+		buf.append( StringUtils.isNotBlank(getAccountDescription())?getAccountDescription() + SEMICOLON: EMPTY);
+		buf.append( buf.length()>0?".... ": EMPTY);
+		return buf.toString();
 	}
 }

@@ -89,43 +89,60 @@ public class Balance implements Serializable {
 		this.creditBalance = creditBalance;
 	}
 	
-	public void addBalance( Balance balance) {
-		double d =  CommonUtil.round(balance.getUnpaidBalance() + getDebit());
-		double c =  CommonUtil.round(balance.getCreditBalance() + getCredit());
+	public void dragBalance(Balance balance) {
+		double d = CommonUtil.round(balance.getUnpaidBalance() + getDebit());
+		double c = CommonUtil.round(balance.getCreditBalance() + getCredit());
 		double b = CommonUtil.round(d - c);
-		if ( b > 0 ) {
+		if (b > 0) {
 			setUnpaidBalance(b);
 			setCreditBalance(0);
 		} else {
-			setCreditBalance(CommonUtil.round(b*(-1)));
+			setCreditBalance(CommonUtil.round(b * (-1)));
 			setUnpaidBalance(0);
 		}
+	}
+
+	public void set(double debit, double credit) {
+		setDebit( CommonUtil.round(debit + getDebit()));
+		setCredit( CommonUtil.round(credit + getCredit()));
+		changeBalance();
+	}
+
+	public void addBalance(Balance balance) {
+		setDebit( CommonUtil.round(balance.getUnpaidBalance() + getDebit()));
+		setCredit( CommonUtil.round(balance.getCreditBalance() + getCredit()));
+		changeBalance();
+	}
+
+	public void substractBalance(Balance balance) {
+		setDebit( CommonUtil.round(getDebit() - balance.getDebit()) );
+		setCredit( CommonUtil.round(getCredit() - balance.getCredit()) );
+		changeBalance();
 	}
 
 	public void addBalance( AccountEntryDetail detail) {
 		setDebit( CommonUtil.round(detail.getDebit() + getDebit()) );
 		setCredit( CommonUtil.round(detail.getCredit() + getCredit()) );
-		double b = CommonUtil.round(getDebit() - getCredit());
-		if ( b > 0 ) {
-			setUnpaidBalance(b);
-			setCreditBalance(0);
-		} else {
-			setUnpaidBalance(0);
-			setCreditBalance(CommonUtil.round(b*(-1)));
-		}
+		changeBalance();
 	}
+	
 	public void substractBalance( AccountEntryDetail detail) {
 		setDebit( CommonUtil.round(getDebit() - detail.getDebit()) );
 		setCredit( CommonUtil.round(getCredit() - detail.getCredit()) );
+		changeBalance();
+	}
+
+	private void changeBalance() {
 		double b = CommonUtil.round(getDebit() - getCredit());
-		if ( b > 0 ) {
+		if (b > 0) {
 			setUnpaidBalance(b);
 			setCreditBalance(0);
 		} else {
+			setCreditBalance(CommonUtil.round(b * (-1)));
 			setUnpaidBalance(0);
-			setCreditBalance(CommonUtil.round(b*(-1)));
 		}
 	}
+
 
 	public String getBalancingAccount() {
 		return balancingAccount;
