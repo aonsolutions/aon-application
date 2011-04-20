@@ -4,8 +4,13 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
+
+import org.hibernate.cfg.search.CollectionSearchConfiguration;
+import org.richfaces.util.CollectionsUtils;
 
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester;
 import com.esferalia.aon.payroll.sql.AbstractSQL.ISalary;
@@ -16,7 +21,7 @@ public class ListSQLSalaryBuilderTesterListener extends
 
 	
 	private SQLSalaryBuilderTester sqlSalaryBuilderTester;
-	private LinkedList<TestLogMessage> list; // Usado como una pila FIFO.
+	private List<TestLogMessage> list; // Usado como una pila FIFO.
 	
 	public ListSQLSalaryBuilderTesterListener( SQLSalaryBuilderTester sqlSalaryBuilderTester) {
 		super();
@@ -31,17 +36,17 @@ public class ListSQLSalaryBuilderTesterListener extends
 		return sqlSalaryBuilderTester.getDBSalary();
 	}
 	
-	public LinkedList<TestLogMessage> getTestList() {
+	public List<TestLogMessage> getTestList() {
 		if (list == null) {
-			list = new LinkedList<TestLogMessage>();
+			list = Collections.synchronizedList(new LinkedList<TestLogMessage>());
 		}
 		return list;
 	}
 	
 	@Override
 	protected void addMessage(SalaryBuilderListenerLevel level, String msg ) {
-		if (getTestList().size() > 256 ) {
-			getTestList().pop();
+		if (list.size() > 256 ) {
+			list.remove(0);
 		}
 		
 		buf = new StringBuffer(PREFIX0);

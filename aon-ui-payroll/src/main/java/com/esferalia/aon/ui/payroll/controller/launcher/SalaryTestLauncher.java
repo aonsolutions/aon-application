@@ -36,6 +36,7 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
+import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryBuilderListenerLevel;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -140,7 +141,8 @@ public class SalaryTestLauncher {
 	
 	public void onExecute(ActionEvent event) {
 		pollEnabled = true;
-		(new TestThread()).start();
+		Thread testThread = new TestThread(); 
+		testThread.start();
 	}
 	
 	private class TestThread extends Thread {
