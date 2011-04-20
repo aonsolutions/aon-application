@@ -436,7 +436,7 @@ public class FinanceController extends FinanceListController implements IFinance
 	}
 
 	public int getPayMethodTypeDetailsSize() {
-		return getPayMethodTypeDetailList().size();
+		return (getPayMethodTypeDetailList() == null) ? 0 : getPayMethodTypeDetailList().size();
 	}
 
 	public void onDepositChanged(ValueChangeEvent event) throws ManagerBeanException {
