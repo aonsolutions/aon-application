@@ -153,6 +153,13 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		
 	}
+	
+	@Override
+	public void afterEditSearch(ControllerEvent event)
+			throws ControllerListenerException {
+		DomainController dc = (DomainController) event.getController();
+		dc.updateParentDomains();
+	}
 
 	private void updateCurrentDomain( Domain selectedDomain ) {
 		Domain currentDomain = getManager().getCurrentDomain();

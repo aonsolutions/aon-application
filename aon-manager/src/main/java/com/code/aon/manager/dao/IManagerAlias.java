@@ -78,6 +78,12 @@ public interface IManagerAlias {
 	*/
 	String  DOMAIN_JPEG_LOGO = "Domain_jpegLogo";
 
+	/** 
+	* Alias value: Domain_type
+	* Hibernate value: Domain.type
+	*/
+	String  DOMAIN_TYPE = "Domain_type";
+	
 
 	/** 
 	* Alias value: AccessPolicy_id

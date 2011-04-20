@@ -2,6 +2,8 @@ package com.code.aon.dao.ldap;
 
 import java.util.Date;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.ldap.Entry;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
@@ -100,6 +102,9 @@ public class LdapRenderer implements CriterionVisitor {
 			out.append( Entry.convertToString((Boolean) data) );	
 		} else if ( data instanceof Date ) {
 			out.append( Entry.convertToString((Date) data) );
+		} else if ( data.getClass().isEnum() ) {
+			Object[] values = data.getClass().getEnumConstants();
+			out.append( ArrayUtils.indexOf(values, data) );
 		} else {
 			String value = expression.getData().toString();
 			if ( value.indexOf("_") != -1 ) {

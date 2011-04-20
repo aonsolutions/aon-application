@@ -42,6 +42,8 @@ import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.manager.enumeration.AccessPolicyType;
 import com.code.aon.manager.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.event.BankAccountValidationListener;
@@ -238,7 +240,11 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		this.parentDomains = new LinkedList<SelectItem>();
 		try {
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IManagerAlias.DOMAIN_DOMAIN_MANAGEMENT), Boolean.TRUE);
+			String domainManagement = getFieldName(IManagerAlias.DOMAIN_DOMAIN_MANAGEMENT);
+			Expression expr1 = ExpressionUtilities.getEqualExpression(domainManagement, Boolean.TRUE);
+			String type = getFieldName(IManagerAlias.DOMAIN_TYPE);
+			Expression expr2 = ExpressionUtilities.getEqualExpression(type, DomainType.CONSULTANCY);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 			List<Domain> list = (List) getManagerBean().getList(criteria);
 			for (Domain domain : list) {
 				SelectItem item = new SelectItem(domain, domain.getCommonName() );

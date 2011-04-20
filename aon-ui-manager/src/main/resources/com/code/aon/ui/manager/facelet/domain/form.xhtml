@@ -94,15 +94,17 @@
 						</aon:div>					
 					</c:if>
 
-					<c:if test="#{manager.administrator}">
+					<c:if test="#{manager.config.showDomainStatus}" >
 						<aon:outputLabel for="Domain_status"
 							value="#{bundle.aon_status}" />
 						<aon:selectOneMenu id="Domain_status"
 							value="#{domain.to.status}">
 							<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="0" />
 							<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="11" />
-						</aon:selectOneMenu>								
+						</aon:selectOneMenu>				
+					</c:if>				
 
+					<c:if test="#{manager.administrator}">
 						<aon:outputLabel for="Domain_type"
 							value="#{bundle.aon_type}" />
 						<aon:selectOneMenu id="Domain_type" 
@@ -158,10 +160,10 @@
 							value="#{domain.to.maxDocumentSize}"
 							minValue="1" maxValue="16"/>
 							
-						<aon:outputLabel for="Config_maxTotalDocumentSize"
+						<aon:outputLabel for="Domain_maxTotalDocumentSize"
 							value="#{managerBundle.manager_domain_maxTotalDocumentSize}" />
 						<h:panelGrid columns="2">
-							<rich:inputNumberSlider id="Config_maxTotalDocumentSize"
+							<rich:inputNumberSlider id="Domain_maxTotalDocumentSize"
 								valueChangeListener="#{domain.maxTotalDocumentSizeChanged}"
 								value="#{domain.to.maxTotalDocumentSize}"
 								minValue="100" maxValue="1500" step="100"/>

@@ -48,6 +48,17 @@
 							<aon:outputText value="#{to.parentDomain.commonName}"/>
 						</aon:column>
 
+						<c:if test="#{manager.config.showDomainStatus}" >
+							<aon:column styleClass="aon-editDataTable-iconColumn"
+								alias="active" >
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_status}" />
+								</f:facet>
+								<aon:outputText value="&#160;"
+									styleClass="aon-icon #{(to.status==11)?'aon-icon-check':'aon-icon-checked'}" />							
+							</aon:column>
+						</c:if>
+
 					</ui:define>
 				</ui:decorate>
 

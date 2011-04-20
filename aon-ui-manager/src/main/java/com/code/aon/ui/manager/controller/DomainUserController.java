@@ -484,7 +484,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		resetPassword(user);
 		getManagerBean().insert(user);
 		registerUserInApplication(user, AON_DESKTOP, ADMINISTRADOR_PROFILE);
-		registerUserInApplication(user, AON_MANAGER, ADMINISTRADOR_PROFILE);
+		registerUserInApplication(user, AON_MANAGER, INVITADO_PROFILE);
 		registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
 		registerInDB( dbc, user.getUid(), GENERAL_SCOPE);
 		createMailAccount(user);

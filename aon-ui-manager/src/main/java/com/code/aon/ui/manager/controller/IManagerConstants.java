@@ -33,6 +33,7 @@ public interface IManagerConstants {
 	
 	String USUARIO_PROFILE = "Usuario";
 	String ADMINISTRADOR_PROFILE = "Administrador";
+	String INVITADO_PROFILE = "Invitado";
 	String ADMIN_USER = "admin";
 	String GENERAL_SCOPE = "GENERAL";
 	
