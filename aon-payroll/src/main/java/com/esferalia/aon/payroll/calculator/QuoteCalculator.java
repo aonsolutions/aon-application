@@ -369,23 +369,19 @@ public abstract class QuoteCalculator {
 		if ( expression == null )
 			return null;
 		
-		List<ITimedObject<Double>> results = null;
+		List<ITimedObject<Double>> limits = null;
 		try {
-			results = expressionContext.eval(expression, start, end, Double.class );
+			limits = expressionContext.eval(expression, start, end, Double.class );
 		} catch (ExpressionException e) {
 		}
 		
-		if ( results == null || results.size() == 0 ) {
+		if ( limits == null || limits.size() == 0 ) {
 			return null;
 		}
 		
-		double total = 0.00;
+		Double limit = limits.get(limits.size()-1).getValue(); // TODO: summarize????
 		
-		for (ITimedObject<Double> timedObject : results) {
-			total += timedObject.getValue();
-		};
-		
-		return total;
+		return limit ;
 	}
 	
 

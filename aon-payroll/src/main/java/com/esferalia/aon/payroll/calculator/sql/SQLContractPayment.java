@@ -73,7 +73,7 @@ public class SQLContractPayment extends SQLCollection<IContractPayment> implemen
 	@Override
 	public Month getMonth() {
 		Integer month = getInt(ContractPaymentColumns.MONTH);
-		return  month == null ? null :Month.values()[month];
+		return  month == null ? null :Month.getMonthByValue(month);
 	}
 	
 	@Override

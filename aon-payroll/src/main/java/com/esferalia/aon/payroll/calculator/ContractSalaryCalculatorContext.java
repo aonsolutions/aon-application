@@ -138,4 +138,9 @@ public class ContractSalaryCalculatorContext implements IContractSalaryCalculato
 		return ctx.getContractDeductions();
 	}
 	
+	@Override
+	public Collection<IContractDeduction> getContractEmbargos()throws AonException {
+		return ctx.getContractEmbargos();
+	}
+	
 }

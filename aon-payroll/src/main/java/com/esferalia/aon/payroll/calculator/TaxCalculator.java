@@ -9,6 +9,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.PaymentTypeVisitor;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ITimedObject;
 
@@ -40,11 +41,12 @@ public abstract class TaxCalculator {
 
 	private static class DefaultTaxCalculator extends TaxCalculator {
 		
-		private ExpressionContext context;
+		private IContractSalaryCalculatorContext context;
 		
-		public DefaultTaxCalculator(ExpressionContext context) {
+		public DefaultTaxCalculator(IContractSalaryCalculatorContext context) {
 			this.context = context;
 		}
+		
 		
 		private double getTax(IContractPayment payment, Date start, Date end, double amount ) 
 		throws AonException 
@@ -58,8 +60,9 @@ public abstract class TaxCalculator {
 				return amount;
 			}
 			
+			ExpressionContext expressionContext = context.getExpressionContext();
 			List<ITimedObject<Double>> taxes;
-			taxes = context.eval(irpfExpr, start, end, Double.class);
+			taxes = expressionContext.eval(irpfExpr, start, end, Double.class);
 			double total = 0.00;
 			for (ITimedObject<Double> quote : taxes) {
 				total += quote.getValue();
@@ -73,6 +76,12 @@ public abstract class TaxCalculator {
 			
 			SalaryType salaryType = contractPayment.getSalaryType();
 			if ( salaryType != SalaryType.SALARY ) {
+				return 0.00;
+			}
+			
+			Month salaryMonth =  getMonth(start);
+			Month paymentMonth = contractPayment.getMonth();
+			if ( paymentMonth != null && paymentMonth != salaryMonth ) {
 				return 0.00;
 			}
 			
@@ -149,7 +158,10 @@ public abstract class TaxCalculator {
 //					|| (  month != null && month != issueMonth ) ) {
 //				continue;
 //			}
+			
+			
 //				
+			
 			
 			final double  payment = amount;
 			return payment;
@@ -157,7 +169,7 @@ public abstract class TaxCalculator {
 	}
 	
 	public static TaxCalculator getTaxCalculator(IContractSalaryCalculatorContext ctx) {
-		return new DefaultTaxCalculator(ctx.getExpressionContext());
+		return new DefaultTaxCalculator(ctx);
 	}
 
 	protected static Month getMonth(Date date ) {
@@ -166,6 +178,8 @@ public abstract class TaxCalculator {
 		int monthValue = CommonUtil.getMonth(date);
 		return Month.getMonthByValue(monthValue);
 	}
+	
+	
 	
 
 }

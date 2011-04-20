@@ -88,7 +88,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	public ISalary getSalary() {
 
 		try {
-			if (listener.isDebugEnabled()) {
+			if (listener != null && listener.isDebugEnabled()) {
 				String msg = String.format(FORMAT, 
 						salary.getEmployeeDocument(),
 						salary.getEnterpriseName(),

@@ -52,6 +52,7 @@ public class SQLContractLeaveLoader  {
 	}
 	
 	
+	
 	private static final DaysRange RANGES [] = {
 		new DaysRange(1,3),
 		new DaysRange(4,15),
@@ -95,6 +96,19 @@ public class SQLContractLeaveLoader  {
 				return true;
 		}
 		return false;
+	}
+
+	public Long getLeavesDays(Period p) {
+		long days = 0;
+		for (Period leave : leaves) {
+			Period intersect = leave.intersect(p);
+			if ( intersect != null ) {
+				Date start = intersect.getStart();
+				Date end = intersect.getEnd();
+				days += CommonUtil.getDaysBetweenDates(start, end) +1;
+			}
+		}
+		return days;
 	}
 	
 	public void loadContractLevae(ResultSet rs, final ExpressionContext exprCtx)
@@ -142,7 +156,7 @@ public class SQLContractLeaveLoader  {
 						return 0L;
 					exprCtx.addVariable(ContractVariables.OCCUPATIONAL_DISEASE_DAYS, days, start, end );
 					exprCtx.addVariable(ContractVariables.REGULATORY_BASE, regBase, start, end );
-					addProfessionalDiseaseDays(leaveDays);
+					addProfessionalDiseaseDays(days);
 					return days;
 				}
 

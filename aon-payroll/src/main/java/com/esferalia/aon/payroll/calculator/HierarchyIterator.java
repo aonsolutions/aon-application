@@ -6,14 +6,14 @@ public abstract class HierarchyIterator<E> extends AbstractIterator<E> {
 
 	
 	private E next; 
-	private int cur; 
+	private int level; 
 	
 	private Iterator<E> childs [];
 	
 
 	public HierarchyIterator(Iterator<E> ... childs) {
 		this.childs = childs;
-		this.cur = 0;
+		this.level = 0;
 		this.next = null;
 	}
 	
@@ -26,7 +26,7 @@ public abstract class HierarchyIterator<E> extends AbstractIterator<E> {
 			return false;
 		}
 		if ( ! childHasNext() ){
-			cur++;
+			level++;
 		} 
 		else {
 			next = childNext();
@@ -42,15 +42,19 @@ public abstract class HierarchyIterator<E> extends AbstractIterator<E> {
 	}
 	
 	private E childNext() {
-		return next(childs[cur].next()); 
+		return next(childs[level].next()); 
 	}
 	
 	private boolean childHasNext() {
-		return childs[cur].hasNext() ;
+		return childs[level].hasNext() ;
 	}
 
 	private boolean isAfterLast() {
-		return cur >= childs.length ;
+		return level >= childs.length ;
+	}
+	
+	protected int getLevel() {
+		return level;
 	}
 	
 	/**

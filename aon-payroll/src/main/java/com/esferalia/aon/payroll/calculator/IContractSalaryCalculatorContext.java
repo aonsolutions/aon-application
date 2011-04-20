@@ -40,4 +40,5 @@ public interface IContractSalaryCalculatorContext extends ISalaryCalculatorConte
 
 	public Collection<IContractDeduction> getContractDeductions() throws AonException;
 
+	public Collection<IContractDeduction> getContractEmbargos() throws AonException;
 }
