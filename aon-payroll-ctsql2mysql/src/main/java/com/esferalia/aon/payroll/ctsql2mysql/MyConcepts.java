@@ -1,13 +1,7 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.ACTUAL_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.HOLIDAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.SENIOR_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.SPECIAL_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.WORKED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.YEAR_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -16,6 +10,7 @@ import java.util.Map;
 
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percep;
+import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 
 public class MyConcepts extends DefaultCtsqlDBVisitor {
@@ -48,7 +43,7 @@ public class MyConcepts extends DefaultCtsqlDBVisitor {
 		{
 			put ( "1", "%1$s" );
 			put ( "2", "0.00" );
-			put ( "3", " %1$s > (IPREM * 0.20) ? %1$s - (IPREM * 0.20) : 0" );
+			put ( "3", "(" + IPREM_BASE +" += %1$s) > ("+ FREE_IPREM +" = " + IPREM +" * " + SALARY_DAYS +"/"+ MONTH_DAYS +" * 0.20) ? "+ IPREM_BASE +" - ("+ IPREM_BASE + " = " + FREE_IPREM + ") : 0.00" );
 			put ( "4", "0.00" );
 			put ( "5", "%1$s");
 			put ( "6", "%1$s" );
@@ -78,12 +73,15 @@ public class MyConcepts extends DefaultCtsqlDBVisitor {
 		return month.shortValue();
 	}
 	
-	public static String getIrpfExprFormat(String tipoCot ) {
-		return IRPF_EXPRESSIONS.get(tipoCot);
-	}
 
 	public static String getQuoteExprFormat(String tipoCot ) {
 		return QUOTE_EXPRESSIONS.get(tipoCot);
+	}
+
+	public static String getIrpfExprFormat(String tipoCot, String dinEsp ) {
+		String irpfExpr = IRPF_EXPRESSIONS.get(tipoCot);
+		return "D".equals(dinEsp) ? irpfExpr : String.format(" %s ? 0.00 : %s ", 
+				ENTRY_BY_COMPANY_ACCOUNT,  irpfExpr);
 	}
 	
 	
@@ -129,9 +127,10 @@ public class MyConcepts extends DefaultCtsqlDBVisitor {
 					concept );
 		}else if (calculo.equals("6")) {
 			if ("V".equals(indCom)) { 
-				return String.format("%%1$s * %s / %s", 
-						HOLIDAYS, MONTH_DAYS );
+				return String.format("%%1$s * %s / 30", 
+						HOLIDAYS ); // Jodete
 			}
+			
 		}else if (calculo.equals("7")) {
 			return String.format("%s * %%1$s / 100 ", 
 					SENIOR_BASE);
@@ -147,7 +146,7 @@ public class MyConcepts extends DefaultCtsqlDBVisitor {
 					String.format("%%1$s * %.2f", gtzdo );
 		}else if (calculo.equals("2")) {
 			return gtzdo == 1.00 ? 
-					String.format("%%1$s * %s ",MONTH_DAYS ) : 
+					String.format("%%1$s * %s",MONTH_DAYS ) : 
 					String.format("%%1$s * %s * %.2f",MONTH_DAYS, gtzdo );
 		}	
 		return null;
@@ -159,10 +158,24 @@ public class MyConcepts extends DefaultCtsqlDBVisitor {
 		return DefaultMysqlDB.format(format, String.format("%.3f", importe ) );
 	}
 	
-	public static String getPorQuote(String porCot , String expr) {
-		return "M".equalsIgnoreCase(porCot) ? 
-				"( " +  expr + " ) / 12 * " + WORKED_DAYS + "/" + MONTH_DAYS : 
-				expr + "/" + YEAR_DAYS + " *" + WORKED_DAYS ;
+	public String getExprFormat(String calculo, String variable, String indCom, String comApl) 
+	throws SQLException {
+		String format = getExprFormat(calculo, indCom, comApl);
+		return DefaultMysqlDB.format(format, variable );
+	}
+
+	public String getPorQuote(String porCot , String expr) {
+		String porQuote = "M".equalsIgnoreCase(porCot) ? 
+				"( " +  expr + " ) / 12 * " + QUOTE_DAYS + "/" + MONTH_DAYS : 
+				"( " +  expr + " ) /" + YEAR_DAYS + " *" + QUOTE_DAYS ;
+		if ( porQuote.length() > 128 ) {
+			mysqlDB.info("porCot{}: Quote expression too long {}", porCot, porQuote );
+			porQuote = porQuote.replaceAll(" ", "");
+			porQuote = porQuote.replaceAll(IPREM_BASE.getName(), IPREM_BASE_SHORT.getName());
+			porQuote = porQuote.replaceAll(FREE_IPREM.getName(), FREE_IPREM_SHORT.getName());
+			mysqlDB.info("porCot{}: Quote expression shorted {}", porCot, porQuote );
+		}
+		return porQuote;
 	}
 
 	@Override
@@ -182,7 +195,8 @@ public class MyConcepts extends DefaultCtsqlDBVisitor {
 				complemento.getDinesp(), complemento.getTipcot());
 		
 		String tipoCot = complemento.getTipcot();
-		String irpfExpr = getIrpfExprFormat(tipoCot);
+		String dinEsp = complemento.getDinesp();
+		String irpfExpr = getIrpfExprFormat(tipoCot, dinEsp );
 		String quoteExpr = getQuoteExprFormat(tipoCot);
 		
 		Integer paymentConcept = 

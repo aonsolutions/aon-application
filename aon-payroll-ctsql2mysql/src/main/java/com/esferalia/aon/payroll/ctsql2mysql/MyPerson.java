@@ -13,6 +13,7 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,11 +42,13 @@ public class MyPerson extends DefaultCtsqlDBVisitor {
 		private Integer id;
 		private String numDoc;
 		private String name;
+		private Date fecNac;
 		
-		private Person ( Integer id, String numdoc, String name ) {
+		private Person ( Integer id, String numdoc, String name, Date fecNac ) {
 			this.id = id;
 			this.numDoc = numdoc;
 			this.name = name;
+			this.fecNac = fecNac;
 		}
 	}
 	
@@ -77,6 +80,11 @@ public class MyPerson extends DefaultCtsqlDBVisitor {
 		return person == null ? null: person.name;
 	}
 
+	public Date getFecNac(Integer oldCdg) {
+		Person person = persons.get(oldCdg);
+		return person == null ? null: person.fecNac;
+	}
+
 	@Override
 	public void visit(AbstractCtsqlDB ctsqlDB) throws SQLException {
 		ctsqlDB.visitPersona(this);
@@ -89,7 +97,7 @@ public class MyPerson extends DefaultCtsqlDBVisitor {
 		
 		Integer registry = cifs.get(numDoc);
 		if ( registry != null  ) {
-			persons.put(persona.getCdg(), new Person ( registry, numDoc, persona.getNombre()));
+			persons.put(persona.getCdg(), new Person ( registry, numDoc, persona.getNombre(), persona.getFecnac()));
 			return;
 		}
 		
@@ -162,7 +170,7 @@ public class MyPerson extends DefaultCtsqlDBVisitor {
 					persona.getCdg(), persona.getTelefono());
 		}
 
-		persons.put(persona.getCdg(), new Person ( registry, numDoc, persona.getNombre()));
+		persons.put(persona.getCdg(), new Person ( registry, numDoc, persona.getNombre(), persona.getFecnac()));
 	}
 	
 	

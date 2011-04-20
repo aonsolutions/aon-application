@@ -67,7 +67,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 	public static class $table {
 #foreach ($column in $table.columns)
-		private $column.javaClass $column.name; 
+		protected $column.javaClass $column.name; 
 #end
 	}
 	

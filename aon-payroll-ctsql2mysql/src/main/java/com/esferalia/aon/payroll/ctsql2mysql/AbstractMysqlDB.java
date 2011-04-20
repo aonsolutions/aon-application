@@ -65,19 +65,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement leasingStmt = null;
 
 	public static class Leasing {
-		private Integer id; 
-		private Date leasing_date; 
-		private String supplier_name; 
-		private String supplier_document; 
-		private String description; 
-		private String term; 
-		private String interest_percent; 
-		private String review; 
-		private Double amount; 
-		private Integer rbank; 
-		private Short security_level; 
-		private String fixed_asset_account; 
-		private Integer vat; 
+		protected Integer id; 
+		protected Date leasing_date; 
+		protected String supplier_name; 
+		protected String supplier_document; 
+		protected String description; 
+		protected String term; 
+		protected String interest_percent; 
+		protected String review; 
+		protected Double amount; 
+		protected Integer rbank; 
+		protected Short security_level; 
+		protected String fixed_asset_account; 
+		protected Integer vat; 
 	}
 	
 	private void insertLeasing( List<Leasing> leasings )
@@ -310,7 +310,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement db_versionStmt = null;
 
 	public static class Db_version {
-		private String version_number; 
+		protected String version_number; 
 	}
 	
 	private void insertDb_version( List<Db_version> db_versions )
@@ -394,12 +394,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement composition_detailStmt = null;
 
 	public static class Composition_detail {
-		private Integer id; 
-		private Integer composition; 
-		private Integer item; 
-		private String description; 
-		private Double quantity; 
-		private Double price; 
+		protected Integer id; 
+		protected Integer composition; 
+		protected Integer item; 
+		protected String description; 
+		protected Double quantity; 
+		protected Double price; 
 	}
 	
 	private void insertComposition_detail( List<Composition_detail> composition_details )
@@ -576,8 +576,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement cv_evaluate_typeStmt = null;
 
 	public static class Cv_evaluate_type {
-		private Integer id; 
-		private String name; 
+		protected Integer id; 
+		protected String name; 
 	}
 	
 	private void insertCv_evaluate_type( List<Cv_evaluate_type> cv_evaluate_types )
@@ -722,10 +722,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement pcategoryStmt = null;
 
 	public static class Pcategory {
-		private Integer id; 
-		private String name; 
-		private String detail_pattern; 
-		private Integer pcategory_group; 
+		protected Integer id; 
+		protected String name; 
+		protected String detail_pattern; 
+		protected Integer pcategory_group; 
 	}
 	
 	private void insertPcategory( List<Pcategory> pcategorys )
@@ -886,8 +886,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement warehouseStmt = null;
 
 	public static class Warehouse {
-		private Integer id; 
-		private String name; 
+		protected Integer id; 
+		protected String name; 
 	}
 	
 	private void insertWarehouse( List<Warehouse> warehouses )
@@ -1032,18 +1032,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement customerStmt = null;
 
 	public static class Customer {
-		private Integer registry; 
-		private Integer tariff; 
-		private Boolean taxfree; 
-		private Boolean surcharge; 
-		private Boolean withholding; 
-		private Short transaction; 
-		private Short status; 
-		private Integer segment; 
-		private Integer scope; 
-		private Boolean e_invoice; 
-		private Boolean delivery_grouped; 
-		private Boolean delivery_valuated; 
+		protected Integer registry; 
+		protected Integer tariff; 
+		protected Boolean taxfree; 
+		protected Boolean surcharge; 
+		protected Boolean withholding; 
+		protected Short transaction; 
+		protected Short status; 
+		protected Integer segment; 
+		protected Integer scope; 
+		protected Boolean e_invoice; 
+		protected Boolean delivery_grouped; 
+		protected Boolean delivery_valuated; 
 	}
 	
 	private void insertCustomer( List<Customer> customers )
@@ -1193,14 +1193,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement productionStmt = null;
 
 	public static class Production {
-		private Integer id; 
-		private String description; 
-		private String lot_code; 
-		private Date production_date; 
-		private Integer item; 
-		private Double initial_quantity; 
-		private Double quantity; 
-		private Double price; 
+		protected Integer id; 
+		protected String description; 
+		protected String lot_code; 
+		protected Date production_date; 
+		protected Integer item; 
+		protected Double initial_quantity; 
+		protected Double quantity; 
+		protected Double price; 
 	}
 	
 	private void insertProduction( List<Production> productions )
@@ -1393,9 +1393,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement posStmt = null;
 
 	public static class Pos {
-		private Integer id; 
-		private String description; 
-		private Integer raddress; 
+		protected Integer id; 
+		protected String description; 
+		protected Integer raddress; 
 	}
 	
 	private void insertPos( List<Pos> poss )
@@ -1548,8 +1548,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement message_contentStmt = null;
 
 	public static class Message_content {
-		private Integer id; 
-		private String content; 
+		protected Integer id; 
+		protected String content; 
 	}
 	
 	private void insertMessage_content( List<Message_content> message_contents )
@@ -1694,16 +1694,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement invoice_taxStmt = null;
 
 	public static class Invoice_tax {
-		private Integer id; 
-		private Integer invoice_detail; 
-		private Short tax_type; 
-		private Double percentage; 
-		private Double surcharge; 
-		private Double quota; 
-		private Double surcharge_quota; 
-		private Short vat_deduction_type; 
-		private Short withholding_type; 
-		private Double deductible_quota; 
+		protected Integer id; 
+		protected Integer invoice_detail; 
+		protected Short tax_type; 
+		protected Double percentage; 
+		protected Double surcharge; 
+		protected Double quota; 
+		protected Double surcharge_quota; 
+		protected Short vat_deduction_type; 
+		protected Short withholding_type; 
+		protected Double deductible_quota; 
 	}
 	
 	private void insertInvoice_tax( List<Invoice_tax> invoice_taxs )
@@ -1912,12 +1912,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement iattachStmt = null;
 
 	public static class Iattach {
-		private Integer id; 
-		private Integer item; 
-		private Short mimeType; 
-		private String description; 
-		private InputStream data; 
-		private Short type; 
+		protected Integer id; 
+		protected Integer item; 
+		protected Short mimeType; 
+		protected String description; 
+		protected InputStream data; 
+		protected Short type; 
 	}
 	
 	private void insertIattach( List<Iattach> iattachs )
@@ -2094,12 +2094,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement tas_itemStmt = null;
 
 	public static class Tas_item {
-		private Integer id; 
-		private Integer model; 
-		private String publicCode; 
-		private String privateCode; 
-		private String description; 
-		private String add_info; 
+		protected Integer id; 
+		protected Integer model; 
+		protected String publicCode; 
+		protected String privateCode; 
+		protected String description; 
+		protected String add_info; 
 	}
 	
 	private void insertTas_item( List<Tas_item> tas_items )
@@ -2276,14 +2276,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement payment_conceptStmt = null;
 
 	public static class Payment_concept {
-		private Integer id; 
-		private String code; 
-		private String description; 
-		private Short type; 
-		private Short description_decorable; 
-		private String expression; 
-		private String irpf_expression; 
-		private String quote_expression; 
+		protected Integer id; 
+		protected String code; 
+		protected String description; 
+		protected Short type; 
+		protected Short description_decorable; 
+		protected String expression; 
+		protected String irpf_expression; 
+		protected String quote_expression; 
 	}
 	
 	private void insertPayment_concept( List<Payment_concept> payment_concepts )
@@ -2476,9 +2476,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement tas_offerStmt = null;
 
 	public static class Tas_offer {
-		private Integer id; 
-		private Integer support_order; 
-		private Integer offer; 
+		protected Integer id; 
+		protected Integer support_order; 
+		protected Integer offer; 
 	}
 	
 	private void insertTas_offer( List<Tas_offer> tas_offers )
@@ -2631,40 +2631,40 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement salaryStmt = null;
 
 	public static class Salary {
-		private Integer id; 
-		private Short type; 
-		private Integer contract; 
-		private Date start_date; 
-		private Date end_date; 
-		private String enterprise_name; 
-		private String enterprise_address; 
-		private String enterprise_document; 
-		private String ccc; 
-		private String employee_name; 
-		private String social_security_number; 
-		private String employee_document; 
-		private Date seniority_date; 
-		private String quote_group; 
-		private String category; 
-		private Integer registration; 
-		private Integer time_units; 
-		private Double total_payment; 
-		private Double total_deduction; 
-		private Double total_liquid; 
-		private Double total_enterprise; 
-		private Date issue_date; 
-		private Double remuneration; 
-		private Double pro_ext_base; 
-		private Double it_base; 
-		private Double raw_cgc_base; 
-		private Double cgc_base; 
-		private Double hextra_base; 
-		private Double non_hextra_base; 
-		private Double cgp_base; 
-		private Double money_irpf_base; 
-		private Double inkind_irpf_base; 
-		private Double irpf_base; 
-		private Double social_security_contributions; 
+		protected Integer id; 
+		protected Short type; 
+		protected Integer contract; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected String enterprise_name; 
+		protected String enterprise_address; 
+		protected String enterprise_document; 
+		protected String ccc; 
+		protected String employee_name; 
+		protected String social_security_number; 
+		protected String employee_document; 
+		protected Date seniority_date; 
+		protected String quote_group; 
+		protected String category; 
+		protected Integer registration; 
+		protected Integer time_units; 
+		protected Double total_payment; 
+		protected Double total_deduction; 
+		protected Double total_liquid; 
+		protected Double total_enterprise; 
+		protected Date issue_date; 
+		protected Double remuneration; 
+		protected Double pro_ext_base; 
+		protected Double it_base; 
+		protected Double raw_cgc_base; 
+		protected Double cgc_base; 
+		protected Double hextra_base; 
+		protected Double non_hextra_base; 
+		protected Double cgp_base; 
+		protected Double money_irpf_base; 
+		protected Double inkind_irpf_base; 
+		protected Double irpf_base; 
+		protected Double social_security_contributions; 
 	}
 	
 	private void insertSalary( List<Salary> salarys )
@@ -3065,10 +3065,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement commissionStmt = null;
 
 	public static class Commission {
-		private Integer id; 
-		private String name; 
-		private Date start_date; 
-		private Date end_date; 
+		protected Integer id; 
+		protected String name; 
+		protected Date start_date; 
+		protected Date end_date; 
 	}
 	
 	private void insertCommission( List<Commission> commissions )
@@ -3229,13 +3229,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement support_order_insuranceStmt = null;
 
 	public static class Support_order_insurance {
-		private Integer id; 
-		private Integer support_order; 
-		private Integer insurance; 
-		private Integer appraiser; 
-		private String claim_number; 
-		private String policy_type; 
-		private String franchise; 
+		protected Integer id; 
+		protected Integer support_order; 
+		protected Integer insurance; 
+		protected Integer appraiser; 
+		protected String claim_number; 
+		protected String policy_type; 
+		protected String franchise; 
 	}
 	
 	private void insertSupport_order_insurance( List<Support_order_insurance> support_order_insurances )
@@ -3420,12 +3420,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement supplierStmt = null;
 
 	public static class Supplier {
-		private Integer registry; 
-		private Boolean withholding; 
-		private Short transaction; 
-		private Short status; 
-		private Integer segment; 
-		private Integer scope; 
+		protected Integer registry; 
+		protected Boolean withholding; 
+		protected Short transaction; 
+		protected Short status; 
+		protected Integer segment; 
+		protected Integer scope; 
 	}
 	
 	private void insertSupplier( List<Supplier> suppliers )
@@ -3539,9 +3539,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement user_scopeStmt = null;
 
 	public static class User_scope {
-		private Integer id; 
-		private Integer user_id; 
-		private Integer scope; 
+		protected Integer id; 
+		protected Integer user_id; 
+		protected Integer scope; 
 	}
 	
 	private void insertUser_scope( List<User_scope> user_scopes )
@@ -3694,9 +3694,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement assetStmt = null;
 
 	public static class Asset {
-		private Integer id; 
-		private String description; 
-		private String name; 
+		protected Integer id; 
+		protected String description; 
+		protected String name; 
 	}
 	
 	private void insertAsset( List<Asset> assets )
@@ -3849,12 +3849,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement item_warehouseStmt = null;
 
 	public static class Item_warehouse {
-		private Integer id; 
-		private Integer item; 
-		private Integer warehouse; 
-		private Double stock_max; 
-		private Double stock_min; 
-		private String location; 
+		protected Integer id; 
+		protected Integer item; 
+		protected Integer warehouse; 
+		protected Double stock_max; 
+		protected Double stock_min; 
+		protected String location; 
 	}
 	
 	private void insertItem_warehouse( List<Item_warehouse> item_warehouses )
@@ -4031,13 +4031,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement rnoteStmt = null;
 
 	public static class Rnote {
-		private Integer id; 
-		private Integer registry; 
-		private String description; 
-		private Date note_date; 
-		private String comments; 
-		private Short note_type; 
-		private Short security_level; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected String description; 
+		protected Date note_date; 
+		protected String comments; 
+		protected Short note_type; 
+		protected Short security_level; 
 	}
 	
 	private void insertRnote( List<Rnote> rnotes )
@@ -4222,11 +4222,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement favoriteStmt = null;
 
 	public static class Favorite {
-		private Integer id; 
-		private Integer favorite_category; 
-		private String description; 
-		private String url; 
-		private Integer user_id; 
+		protected Integer id; 
+		protected Integer favorite_category; 
+		protected String description; 
+		protected String url; 
+		protected Integer user_id; 
 	}
 	
 	private void insertFavorite( List<Favorite> favorites )
@@ -4395,15 +4395,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement daily_trackingStmt = null;
 
 	public static class Daily_tracking {
-		private Integer id; 
-		private Integer user_id; 
-		private Date tracking_date; 
-		private Double tracking_duration; 
-		private Integer job_type; 
-		private Integer customer; 
-		private Integer dossier; 
-		private Integer activity; 
-		private String comments; 
+		protected Integer id; 
+		protected Integer user_id; 
+		protected Date tracking_date; 
+		protected Double tracking_duration; 
+		protected Integer job_type; 
+		protected Integer customer; 
+		protected Integer dossier; 
+		protected Integer activity; 
+		protected String comments; 
 	}
 	
 	private void insertDaily_tracking( List<Daily_tracking> daily_trackings )
@@ -4604,20 +4604,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement loanStmt = null;
 
 	public static class Loan {
-		private Integer id; 
-		private String description; 
-		private Date loan_date; 
-		private String term; 
-		private String interest; 
-		private String review; 
-		private Double amount; 
-		private Double expenses; 
-		private Integer rbank; 
-		private Short security_level; 
-		private Double fee_amount; 
-		private Integer recurrence; 
-		private Integer pay_day; 
-		private Short status; 
+		protected Integer id; 
+		protected String description; 
+		protected Date loan_date; 
+		protected String term; 
+		protected String interest; 
+		protected String review; 
+		protected Double amount; 
+		protected Double expenses; 
+		protected Integer rbank; 
+		protected Short security_level; 
+		protected Double fee_amount; 
+		protected Integer recurrence; 
+		protected Integer pay_day; 
+		protected Short status; 
 	}
 	
 	private void insertLoan( List<Loan> loans )
@@ -4858,10 +4858,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement tas_deliveryStmt = null;
 
 	public static class Tas_delivery {
-		private Integer id; 
-		private Integer support_order; 
-		private Integer delivery; 
-		private Integer offer; 
+		protected Integer id; 
+		protected Integer support_order; 
+		protected Integer delivery; 
+		protected Integer offer; 
 	}
 	
 	private void insertTas_delivery( List<Tas_delivery> tas_deliverys )
@@ -5022,11 +5022,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement question_valueStmt = null;
 
 	public static class Question_value {
-		private Integer id; 
-		private Integer question; 
-		private String value_text; 
-		private Double value_number; 
-		private Timestamp value_date; 
+		protected Integer id; 
+		protected Integer question; 
+		protected String value_text; 
+		protected Double value_number; 
+		protected Timestamp value_date; 
 	}
 	
 	private void insertQuestion_value( List<Question_value> question_values )
@@ -5195,15 +5195,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement fs_mod347_detailStmt = null;
 
 	public static class Fs_mod347_detail {
-		private Integer id; 
-		private Integer fs_mod347; 
-		private String type; 
-		private String document; 
-		private Integer registry; 
-		private String name; 
-		private Integer province; 
-		private String country; 
-		private Double amount; 
+		protected Integer id; 
+		protected Integer fs_mod347; 
+		protected String type; 
+		protected String document; 
+		protected Integer registry; 
+		protected String name; 
+		protected Integer province; 
+		protected String country; 
+		protected Double amount; 
 	}
 	
 	private void insertFs_mod347_detail( List<Fs_mod347_detail> fs_mod347_details )
@@ -5404,9 +5404,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement web_info_styleStmt = null;
 
 	public static class Web_info_style {
-		private Integer id; 
-		private String variable; 
-		private String value; 
+		protected Integer id; 
+		protected String variable; 
+		protected String value; 
 	}
 	
 	private void insertWeb_info_style( List<Web_info_style> web_info_styles )
@@ -5559,13 +5559,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement salary_paymentStmt = null;
 
 	public static class Salary_payment {
-		private Integer id; 
-		private Integer salary; 
-		private Short type; 
-		private String payment_concept; 
-		private String description; 
-		private String expression; 
-		private Double amount; 
+		protected Integer id; 
+		protected Integer salary; 
+		protected Short type; 
+		protected String payment_concept; 
+		protected String description; 
+		protected String expression; 
+		protected Double amount; 
 	}
 	
 	private void insertSalary_payment( List<Salary_payment> salary_payments )
@@ -5750,12 +5750,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement contract_dataStmt = null;
 
 	public static class Contract_data {
-		private Integer id; 
-		private String name; 
-		private Integer contract; 
-		private String expression; 
-		private Date start_date; 
-		private Date end_date; 
+		protected Integer id; 
+		protected String name; 
+		protected Integer contract; 
+		protected String expression; 
+		protected Date start_date; 
+		protected Date end_date; 
 	}
 	
 	private void insertContract_data( List<Contract_data> contract_datas )
@@ -5881,7 +5881,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int contract_dataCount = contract_datas.size();
 		
-		if ( 184 * contract_dataCount >=  this.maxAllowedPacket ){
+		if ( 200 * contract_dataCount >=  this.maxAllowedPacket ){
 			insertContract_data(contract_datas);
 			contract_datas.clear();
 		} 
@@ -5914,7 +5914,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int contract_dataCount = contract_datas.size();
 		
-		if ( 184 * contract_dataCount >=  this.maxAllowedPacket ){
+		if ( 200 * contract_dataCount >=  this.maxAllowedPacket ){
 			insertContract_data(contract_datas);
 			contract_datas.clear();
 		} 
@@ -5932,12 +5932,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement cv_workexperienceStmt = null;
 
 	public static class Cv_workexperience {
-		private Integer id; 
-		private Date startingdate; 
-		private Date endingdate; 
-		private String job; 
-		private String company; 
-		private Integer curriculum; 
+		protected Integer id; 
+		protected Date startingdate; 
+		protected Date endingdate; 
+		protected String job; 
+		protected String company; 
+		protected Integer curriculum; 
 	}
 	
 	private void insertCv_workexperience( List<Cv_workexperience> cv_workexperiences )
@@ -6114,10 +6114,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement incidence_typeStmt = null;
 
 	public static class Incidence_type {
-		private Integer id; 
-		private String alias; 
-		private String description; 
-		private Boolean compute; 
+		protected Integer id; 
+		protected String alias; 
+		protected String description; 
+		protected Boolean compute; 
 	}
 	
 	private void insertIncidence_type( List<Incidence_type> incidence_types )
@@ -6278,12 +6278,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement item_posStmt = null;
 
 	public static class Item_pos {
-		private Integer id; 
-		private Integer item; 
-		private String plu; 
-		private String barcode; 
-		private String desc_short; 
-		private Short plu_product_type; 
+		protected Integer id; 
+		protected Integer item; 
+		protected String plu; 
+		protected String barcode; 
+		protected String desc_short; 
+		protected Short plu_product_type; 
 	}
 	
 	private void insertItem_pos( List<Item_pos> item_poss )
@@ -6460,19 +6460,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement agreement_level_paymentStmt = null;
 
 	public static class Agreement_level_payment {
-		private Integer id; 
-		private Integer agreement_level; 
-		private Short type; 
-		private String expression; 
-		private String description; 
-		private Date start_date; 
-		private Date end_date; 
-		private Short month; 
-		private Integer payment_concept; 
-		private Short salary_type; 
-		private Short description_decorable; 
-		private String irpf_expression; 
-		private String quote_expression; 
+		protected Integer id; 
+		protected Integer agreement_level; 
+		protected Short type; 
+		protected String expression; 
+		protected String description; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Short month; 
+		protected Integer payment_concept; 
+		protected Short salary_type; 
+		protected Short description_decorable; 
+		protected String irpf_expression; 
+		protected String quote_expression; 
 	}
 	
 	private void insertAgreement_level_payment( List<Agreement_level_payment> agreement_level_payments )
@@ -6705,11 +6705,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement ec_paymethodStmt = null;
 
 	public static class Ec_paymethod {
-		private Integer id; 
-		private Integer pay_method; 
-		private String user_name; 
-		private String password; 
-		private String signature; 
+		protected Integer id; 
+		protected Integer pay_method; 
+		protected String user_name; 
+		protected String password; 
+		protected String signature; 
 	}
 	
 	private void insertEc_paymethod( List<Ec_paymethod> ec_paymethods )
@@ -6878,18 +6878,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement fs_renting_detailStmt = null;
 
 	public static class Fs_renting_detail {
-		private Integer id; 
-		private Integer fs_renting; 
-		private Short type; 
-		private String document; 
-		private String name; 
-		private Double paid_returns; 
-		private Double percent; 
-		private Double account_deposit; 
-		private Integer accrual_period; 
-		private String address; 
-		private String city; 
-		private String province; 
+		protected Integer id; 
+		protected Integer fs_renting; 
+		protected Short type; 
+		protected String document; 
+		protected String name; 
+		protected Double paid_returns; 
+		protected Double percent; 
+		protected Double account_deposit; 
+		protected Integer accrual_period; 
+		protected String address; 
+		protected String city; 
+		protected String province; 
 	}
 	
 	private void insertFs_renting_detail( List<Fs_renting_detail> fs_renting_details )
@@ -7114,12 +7114,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement mk_actionStmt = null;
 
 	public static class Mk_action {
-		private Integer id; 
-		private Integer campaign; 
-		private Integer media_type; 
-		private Timestamp start_date; 
-		private Timestamp end_date; 
-		private Integer survey; 
+		protected Integer id; 
+		protected Integer campaign; 
+		protected Integer media_type; 
+		protected Timestamp start_date; 
+		protected Timestamp end_date; 
+		protected Integer survey; 
 	}
 	
 	private void insertMk_action( List<Mk_action> mk_actions )
@@ -7296,25 +7296,25 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement fs_vat_detailStmt = null;
 
 	public static class Fs_vat_detail {
-		private Integer id; 
-		private Integer fs_vat; 
-		private String vat_key; 
-		private Double percent; 
-		private Double taxable_base; 
-		private Double quota; 
-		private Double deductible_quota; 
-		private Double adj_taxable_base; 
-		private Double adj_quota; 
-		private Double adj_deductible_quota; 
-		private Double acu_taxable_base; 
-		private Double acu_quota; 
-		private Double acu_deductible_quota; 
-		private Double dec_taxable_base; 
-		private Double dec_quota; 
-		private Double dec_deductible_quota; 
-		private Double res_taxable_base; 
-		private Double res_quota; 
-		private Double res_deductible_quota; 
+		protected Integer id; 
+		protected Integer fs_vat; 
+		protected String vat_key; 
+		protected Double percent; 
+		protected Double taxable_base; 
+		protected Double quota; 
+		protected Double deductible_quota; 
+		protected Double adj_taxable_base; 
+		protected Double adj_quota; 
+		protected Double adj_deductible_quota; 
+		protected Double acu_taxable_base; 
+		protected Double acu_quota; 
+		protected Double acu_deductible_quota; 
+		protected Double dec_taxable_base; 
+		protected Double dec_quota; 
+		protected Double dec_deductible_quota; 
+		protected Double res_taxable_base; 
+		protected Double res_quota; 
+		protected Double res_deductible_quota; 
 	}
 	
 	private void insertFs_vat_detail( List<Fs_vat_detail> fs_vat_details )
@@ -7585,188 +7585,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int offer_detail_commissionStmtSize = 0;
-
-	private int offer_detail_commissionInserted = 0;
-
-	private List<Offer_detail_commission> offer_detail_commissions = 
-		new LinkedList<Offer_detail_commission>();
-
-	private PreparedStatement offer_detail_commissionStmt = null;
-
-	public static class Offer_detail_commission {
-		private Integer id; 
-		private Integer offer_detail; 
-		private Double commission; 
-		private Double amount; 
-		private Short status; 
-		private Date pay_date; 
-	}
-	
-	private void insertOffer_detail_commission( List<Offer_detail_commission> offer_detail_commissions )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = offer_detail_commissions.size();
-		if ( offer_detail_commissionStmtSize != size ) {
-			if ( offer_detail_commissionStmt != null ) {
-				offer_detail_commissionStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			offer_detail_commissionStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO offer_detail_commission (id,offer_detail,commission,amount,status,pay_date)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			offer_detail_commissionStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Offer_detail_commission offer_detail_commission : offer_detail_commissions) {
-			if ( offer_detail_commission.id == null )
-				offer_detail_commissionStmt.setNull(offset++, 4);
-			else
-				offer_detail_commissionStmt.setInt(offset++, offer_detail_commission.id);
-			if ( offer_detail_commission.offer_detail == null )
-				offer_detail_commissionStmt.setNull(offset++, 4);
-			else
-				offer_detail_commissionStmt.setInt(offset++, offer_detail_commission.offer_detail);
-			if ( offer_detail_commission.commission == null )
-				offer_detail_commissionStmt.setNull(offset++, 8);
-			else
-				offer_detail_commissionStmt.setDouble(offset++, offer_detail_commission.commission);
-			if ( offer_detail_commission.amount == null )
-				offer_detail_commissionStmt.setNull(offset++, 8);
-			else
-				offer_detail_commissionStmt.setDouble(offset++, offer_detail_commission.amount);
-			if ( offer_detail_commission.status == null )
-				offer_detail_commissionStmt.setNull(offset++, -6);
-			else
-				offer_detail_commissionStmt.setShort(offset++, offer_detail_commission.status);
-			if ( offer_detail_commission.pay_date == null )
-				offer_detail_commissionStmt.setNull(offset++, 91);
-			else
-				offer_detail_commissionStmt.setDate(offset++, offer_detail_commission.pay_date);
-		}
-		offer_detail_commissionStmt.executeUpdate();
-		offer_detail_commissionInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Offer_detail_commissions in {} milliseconds.", size, offer_detail_commissionInserted, elapsed );		
-	}
-		
-		private int offer_detail_commissionId = -1;
-		
-		private void initOffer_detail_commissionId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `offer_detail_commission`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.offer_detail_commissionId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextOffer_detail_commissionId() {
-			return ++this.offer_detail_commissionId;
-		} 
-
-		public void setOffer_detail_commissionId(Integer offer_detail_commissionId) {
-			this.offer_detail_commissionId = offer_detail_commissionId;
-		} 
-	
-	private void flushOffer_detail_commission(  )
-	throws SQLException {
-		if ( ! offer_detail_commissions.isEmpty() )
-			insertOffer_detail_commission(offer_detail_commissions);
-		if ( offer_detail_commissionStmt != null )
-			offer_detail_commissionStmt.close();
-	}	
-
-	/**
-	 * Offer_detail_commission
-	 * @param id Identificador unico
-	 * @param offer_detail Identificador de la Linea de Presupuesto
-	 * @param commission Porcentaje de Comision
-	 * @param amount Importe de la Comision
-	 * @param status Estado de la Comision
-	 * @param pay_date Fecha de liquidacion
-	 * @throws SQLException
-	*/
-	protected void insertOffer_detail_commission(Integer id, Integer offer_detail, Double commission, Double amount, Short status, Date pay_date)
-	throws SQLException {
-
-		Offer_detail_commission offer_detail_commission_ = new Offer_detail_commission();
-		offer_detail_commission_.id = id;
-		offer_detail_commission_.offer_detail = offer_detail;
-		offer_detail_commission_.commission = commission;
-		offer_detail_commission_.amount = amount;
-		offer_detail_commission_.status = status;
-		offer_detail_commission_.pay_date = pay_date;
-
-		offer_detail_commissions.add(offer_detail_commission_);
-		
-		int offer_detail_commissionCount = offer_detail_commissions.size();
-		
-		if ( 77 * offer_detail_commissionCount >=  this.maxAllowedPacket ){
-			insertOffer_detail_commission(offer_detail_commissions);
-			offer_detail_commissions.clear();
-		} 
-	}
-
-
-	/**
-	 * Offer_detail_commission
-	 * @param offer_detail Identificador de la Linea de Presupuesto
-	 * @param commission Porcentaje de Comision
-	 * @param amount Importe de la Comision
-	 * @param status Estado de la Comision
-	 * @param pay_date Fecha de liquidacion
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertOffer_detail_commission(Integer offer_detail, Double commission, Double amount, Short status, Date pay_date)
-	throws SQLException {
-		int id = nextOffer_detail_commissionId();
-
-		Offer_detail_commission offer_detail_commission_ = new Offer_detail_commission();
-		offer_detail_commission_.id = id;
-		offer_detail_commission_.offer_detail = offer_detail;
-		offer_detail_commission_.commission = commission;
-		offer_detail_commission_.amount = amount;
-		offer_detail_commission_.status = status;
-		offer_detail_commission_.pay_date = pay_date;
-
-		offer_detail_commissions.add(offer_detail_commission_);
-		
-		int offer_detail_commissionCount = offer_detail_commissions.size();
-		
-		if ( 77 * offer_detail_commissionCount >=  this.maxAllowedPacket ){
-			insertOffer_detail_commission(offer_detail_commissions);
-			offer_detail_commissions.clear();
-		} 
-		return id;
-	}
-
-
 	private int cv_languagesStmtSize = 0;
 
 	private int cv_languagesInserted = 0;
@@ -7777,12 +7595,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement cv_languagesStmt = null;
 
 	public static class Cv_languages {
-		private Integer id; 
-		private Short language; 
-		private Short spoken; 
-		private Short wrote; 
-		private Short read_level; 
-		private Integer curriculum; 
+		protected Integer id; 
+		protected Short language; 
+		protected Short spoken; 
+		protected Short wrote; 
+		protected Short read_level; 
+		protected Integer curriculum; 
 	}
 	
 	private void insertCv_languages( List<Cv_languages> cv_languagess )
@@ -7949,6 +7767,188 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int offer_detail_commissionStmtSize = 0;
+
+	private int offer_detail_commissionInserted = 0;
+
+	private List<Offer_detail_commission> offer_detail_commissions = 
+		new LinkedList<Offer_detail_commission>();
+
+	private PreparedStatement offer_detail_commissionStmt = null;
+
+	public static class Offer_detail_commission {
+		protected Integer id; 
+		protected Integer offer_detail; 
+		protected Double commission; 
+		protected Double amount; 
+		protected Short status; 
+		protected Date pay_date; 
+	}
+	
+	private void insertOffer_detail_commission( List<Offer_detail_commission> offer_detail_commissions )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = offer_detail_commissions.size();
+		if ( offer_detail_commissionStmtSize != size ) {
+			if ( offer_detail_commissionStmt != null ) {
+				offer_detail_commissionStmt.close();
+			}
+			String values = "(?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			offer_detail_commissionStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO offer_detail_commission (id,offer_detail,commission,amount,status,pay_date)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			offer_detail_commissionStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Offer_detail_commission offer_detail_commission : offer_detail_commissions) {
+			if ( offer_detail_commission.id == null )
+				offer_detail_commissionStmt.setNull(offset++, 4);
+			else
+				offer_detail_commissionStmt.setInt(offset++, offer_detail_commission.id);
+			if ( offer_detail_commission.offer_detail == null )
+				offer_detail_commissionStmt.setNull(offset++, 4);
+			else
+				offer_detail_commissionStmt.setInt(offset++, offer_detail_commission.offer_detail);
+			if ( offer_detail_commission.commission == null )
+				offer_detail_commissionStmt.setNull(offset++, 8);
+			else
+				offer_detail_commissionStmt.setDouble(offset++, offer_detail_commission.commission);
+			if ( offer_detail_commission.amount == null )
+				offer_detail_commissionStmt.setNull(offset++, 8);
+			else
+				offer_detail_commissionStmt.setDouble(offset++, offer_detail_commission.amount);
+			if ( offer_detail_commission.status == null )
+				offer_detail_commissionStmt.setNull(offset++, -6);
+			else
+				offer_detail_commissionStmt.setShort(offset++, offer_detail_commission.status);
+			if ( offer_detail_commission.pay_date == null )
+				offer_detail_commissionStmt.setNull(offset++, 91);
+			else
+				offer_detail_commissionStmt.setDate(offset++, offer_detail_commission.pay_date);
+		}
+		offer_detail_commissionStmt.executeUpdate();
+		offer_detail_commissionInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Offer_detail_commissions in {} milliseconds.", size, offer_detail_commissionInserted, elapsed );		
+	}
+		
+		private int offer_detail_commissionId = -1;
+		
+		private void initOffer_detail_commissionId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `offer_detail_commission`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.offer_detail_commissionId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextOffer_detail_commissionId() {
+			return ++this.offer_detail_commissionId;
+		} 
+
+		public void setOffer_detail_commissionId(Integer offer_detail_commissionId) {
+			this.offer_detail_commissionId = offer_detail_commissionId;
+		} 
+	
+	private void flushOffer_detail_commission(  )
+	throws SQLException {
+		if ( ! offer_detail_commissions.isEmpty() )
+			insertOffer_detail_commission(offer_detail_commissions);
+		if ( offer_detail_commissionStmt != null )
+			offer_detail_commissionStmt.close();
+	}	
+
+	/**
+	 * Offer_detail_commission
+	 * @param id Identificador unico
+	 * @param offer_detail Identificador de la Linea de Presupuesto
+	 * @param commission Porcentaje de Comision
+	 * @param amount Importe de la Comision
+	 * @param status Estado de la Comision
+	 * @param pay_date Fecha de liquidacion
+	 * @throws SQLException
+	*/
+	protected void insertOffer_detail_commission(Integer id, Integer offer_detail, Double commission, Double amount, Short status, Date pay_date)
+	throws SQLException {
+
+		Offer_detail_commission offer_detail_commission_ = new Offer_detail_commission();
+		offer_detail_commission_.id = id;
+		offer_detail_commission_.offer_detail = offer_detail;
+		offer_detail_commission_.commission = commission;
+		offer_detail_commission_.amount = amount;
+		offer_detail_commission_.status = status;
+		offer_detail_commission_.pay_date = pay_date;
+
+		offer_detail_commissions.add(offer_detail_commission_);
+		
+		int offer_detail_commissionCount = offer_detail_commissions.size();
+		
+		if ( 77 * offer_detail_commissionCount >=  this.maxAllowedPacket ){
+			insertOffer_detail_commission(offer_detail_commissions);
+			offer_detail_commissions.clear();
+		} 
+	}
+
+
+	/**
+	 * Offer_detail_commission
+	 * @param offer_detail Identificador de la Linea de Presupuesto
+	 * @param commission Porcentaje de Comision
+	 * @param amount Importe de la Comision
+	 * @param status Estado de la Comision
+	 * @param pay_date Fecha de liquidacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertOffer_detail_commission(Integer offer_detail, Double commission, Double amount, Short status, Date pay_date)
+	throws SQLException {
+		int id = nextOffer_detail_commissionId();
+
+		Offer_detail_commission offer_detail_commission_ = new Offer_detail_commission();
+		offer_detail_commission_.id = id;
+		offer_detail_commission_.offer_detail = offer_detail;
+		offer_detail_commission_.commission = commission;
+		offer_detail_commission_.amount = amount;
+		offer_detail_commission_.status = status;
+		offer_detail_commission_.pay_date = pay_date;
+
+		offer_detail_commissions.add(offer_detail_commission_);
+		
+		int offer_detail_commissionCount = offer_detail_commissions.size();
+		
+		if ( 77 * offer_detail_commissionCount >=  this.maxAllowedPacket ){
+			insertOffer_detail_commission(offer_detail_commissions);
+			offer_detail_commissions.clear();
+		} 
+		return id;
+	}
+
+
 	private int favorite_categoryStmtSize = 0;
 
 	private int favorite_categoryInserted = 0;
@@ -7959,9 +7959,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement favorite_categoryStmt = null;
 
 	public static class Favorite_category {
-		private Integer id; 
-		private String description; 
-		private Integer user_id; 
+		protected Integer id; 
+		protected String description; 
+		protected Integer user_id; 
 	}
 	
 	private void insertFavorite_category( List<Favorite_category> favorite_categorys )
@@ -8114,17 +8114,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement balance_detailStmt = null;
 
 	public static class Balance_detail {
-		private Integer id; 
-		private Integer balance; 
-		private String code; 
-		private String description; 
-		private String accounts; 
-		private Integer sortKey; 
-		private Boolean title; 
-		private Boolean internal_calculation; 
-		private Boolean visible; 
-		private Boolean zeroFlag; 
-		private Boolean creditNature; 
+		protected Integer id; 
+		protected Integer balance; 
+		protected String code; 
+		protected String description; 
+		protected String accounts; 
+		protected Integer sortKey; 
+		protected Boolean title; 
+		protected Boolean internal_calculation; 
+		protected Boolean visible; 
+		protected Boolean zeroFlag; 
+		protected Boolean creditNature; 
 	}
 	
 	private void insertBalance_detail( List<Balance_detail> balance_details )
@@ -8343,9 +8343,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement invoice_tax_accountStmt = null;
 
 	public static class Invoice_tax_account {
-		private Integer id; 
-		private Integer invoice_tax; 
-		private String account; 
+		protected Integer id; 
+		protected Integer invoice_tax; 
+		protected String account; 
 	}
 	
 	private void insertInvoice_tax_account( List<Invoice_tax_account> invoice_tax_accounts )
@@ -8498,16 +8498,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement fs_mod347Stmt = null;
 
 	public static class Fs_mod347 {
-		private Integer id; 
-		private Integer year; 
-		private Short administration; 
-		private String comments; 
-		private Short status; 
-		private Short security_level; 
-		private Boolean complementary; 
-		private Boolean replacement; 
-		private Integer number; 
-		private Integer replaced_number; 
+		protected Integer id; 
+		protected Integer year; 
+		protected Short administration; 
+		protected String comments; 
+		protected Short status; 
+		protected Short security_level; 
+		protected Boolean complementary; 
+		protected Boolean replacement; 
+		protected Integer number; 
+		protected Integer replaced_number; 
 	}
 	
 	private void insertFs_mod347( List<Fs_mod347> fs_mod347s )
@@ -8716,10 +8716,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement product_accountStmt = null;
 
 	public static class Product_account {
-		private Integer id; 
-		private Integer product; 
-		private String account; 
-		private Short type; 
+		protected Integer id; 
+		protected Integer product; 
+		protected String account; 
+		protected Short type; 
 	}
 	
 	private void insertProduct_account( List<Product_account> product_accounts )
@@ -8880,9 +8880,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement pcategory_treeStmt = null;
 
 	public static class Pcategory_tree {
-		private Integer id; 
-		private Integer parent; 
-		private Integer child; 
+		protected Integer id; 
+		protected Integer parent; 
+		protected Integer child; 
 	}
 	
 	private void insertPcategory_tree( List<Pcategory_tree> pcategory_trees )
@@ -9035,15 +9035,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement account_entry_detailStmt = null;
 
 	public static class Account_entry_detail {
-		private Integer id; 
-		private Integer account_entry; 
-		private Integer line; 
-		private String account; 
-		private String concept; 
-		private String balancing_account; 
-		private Double debit; 
-		private Double credit; 
-		private String document_number; 
+		protected Integer id; 
+		protected Integer account_entry; 
+		protected Integer line; 
+		protected String account; 
+		protected String concept; 
+		protected String balancing_account; 
+		protected Double debit; 
+		protected Double credit; 
+		protected String document_number; 
 	}
 	
 	private void insertAccount_entry_detail( List<Account_entry_detail> account_entry_details )
@@ -9244,9 +9244,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement tariff_catalogueStmt = null;
 
 	public static class Tariff_catalogue {
-		private Integer id; 
-		private Integer tariff; 
-		private Integer catalogue; 
+		protected Integer id; 
+		protected Integer tariff; 
+		protected Integer catalogue; 
 	}
 	
 	private void insertTariff_catalogue( List<Tariff_catalogue> tariff_catalogues )
@@ -9399,8 +9399,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement supplier_segmentStmt = null;
 
 	public static class Supplier_segment {
-		private Integer id; 
-		private String description; 
+		protected Integer id; 
+		protected String description; 
 	}
 	
 	private void insertSupplier_segment( List<Supplier_segment> supplier_segments )
@@ -9545,15 +9545,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement amortization_detailStmt = null;
 
 	public static class Amortization_detail {
-		private Integer id; 
-		private Integer amortization; 
-		private Date from_date; 
-		private Date to_date; 
-		private Double coefficient; 
-		private Double allocation; 
-		private Short status; 
-		private Integer account_entry; 
-		private Double fiscal_allocation; 
+		protected Integer id; 
+		protected Integer amortization; 
+		protected Date from_date; 
+		protected Date to_date; 
+		protected Double coefficient; 
+		protected Double allocation; 
+		protected Short status; 
+		protected Integer account_entry; 
+		protected Double fiscal_allocation; 
 	}
 	
 	private void insertAmortization_detail( List<Amortization_detail> amortization_details )
@@ -9754,18 +9754,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement noticeStmt = null;
 
 	public static class Notice {
-		private Integer id; 
-		private Timestamp date; 
-		private Integer sender; 
-		private Integer work_group; 
-		private Integer recipient; 
-		private String source; 
-		private String company; 
-		private String phone; 
-		private String subject; 
-		private Short status; 
-		private Short type; 
-		private Short priority; 
+		protected Integer id; 
+		protected Timestamp date; 
+		protected Integer sender; 
+		protected Integer work_group; 
+		protected Integer recipient; 
+		protected String source; 
+		protected String company; 
+		protected String phone; 
+		protected String subject; 
+		protected Short status; 
+		protected Short type; 
+		protected Short priority; 
 	}
 	
 	private void insertNotice( List<Notice> notices )
@@ -9990,13 +9990,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement production_detailStmt = null;
 
 	public static class Production_detail {
-		private Integer id; 
-		private Integer production; 
-		private Integer item; 
-		private String description; 
-		private Double initial_quantity; 
-		private Double quantity; 
-		private Double price; 
+		protected Integer id; 
+		protected Integer production; 
+		protected Integer item; 
+		protected String description; 
+		protected Double initial_quantity; 
+		protected Double quantity; 
+		protected Double price; 
 	}
 	
 	private void insertProduction_detail( List<Production_detail> production_details )
@@ -10181,12 +10181,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement amortization_typeStmt = null;
 
 	public static class Amortization_type {
-		private Integer id; 
-		private String fixed_asset_account; 
-		private String accumulated_account; 
-		private String allocation_account; 
-		private Double percentage; 
-		private String description; 
+		protected Integer id; 
+		protected String fixed_asset_account; 
+		protected String accumulated_account; 
+		protected String allocation_account; 
+		protected Double percentage; 
+		protected String description; 
 	}
 	
 	private void insertAmortization_type( List<Amortization_type> amortization_types )
@@ -10363,18 +10363,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement delivery_detailStmt = null;
 
 	public static class Delivery_detail {
-		private Integer id; 
-		private Integer delivery; 
-		private Integer line; 
-		private Integer item; 
-		private String description; 
-		private Integer warehouse; 
-		private Double quantity; 
-		private Double price; 
-		private String discount_expr; 
-		private Short type; 
-		private Short source; 
-		private Integer sales_detail; 
+		protected Integer id; 
+		protected Integer delivery; 
+		protected Integer line; 
+		protected Integer item; 
+		protected String description; 
+		protected Integer warehouse; 
+		protected Double quantity; 
+		protected Double price; 
+		protected String discount_expr; 
+		protected Short type; 
+		protected Short source; 
+		protected Integer sales_detail; 
 	}
 	
 	private void insertDelivery_detail( List<Delivery_detail> delivery_details )
@@ -10536,7 +10536,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int delivery_detailCount = delivery_details.size();
 		
-		if ( 1147 * delivery_detailCount >=  this.maxAllowedPacket ){
+		if ( 1154 * delivery_detailCount >=  this.maxAllowedPacket ){
 			insertDelivery_detail(delivery_details);
 			delivery_details.clear();
 		} 
@@ -10581,7 +10581,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int delivery_detailCount = delivery_details.size();
 		
-		if ( 1147 * delivery_detailCount >=  this.maxAllowedPacket ){
+		if ( 1154 * delivery_detailCount >=  this.maxAllowedPacket ){
 			insertDelivery_detail(delivery_details);
 			delivery_details.clear();
 		} 
@@ -10599,10 +10599,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement catalogueStmt = null;
 
 	public static class Catalogue {
-		private Integer id; 
-		private String name; 
-		private Date start_date; 
-		private Date end_date; 
+		protected Integer id; 
+		protected String name; 
+		protected Date start_date; 
+		protected Date end_date; 
 	}
 	
 	private void insertCatalogue( List<Catalogue> catalogues )
@@ -10763,10 +10763,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement action_entryStmt = null;
 
 	public static class Action_entry {
-		private Integer id; 
-		private Timestamp executionDate; 
-		private Integer action_id; 
-		private Integer session_id; 
+		protected Integer id; 
+		protected Timestamp executionDate; 
+		protected Integer action_id; 
+		protected Integer session_id; 
 	}
 	
 	private void insertAction_entry( List<Action_entry> action_entrys )
@@ -10927,11 +10927,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement absenceStmt = null;
 
 	public static class Absence {
-		private Integer id; 
-		private Integer course_alumn; 
-		private Date absence_date; 
-		private String comments; 
-		private Short evaluation; 
+		protected Integer id; 
+		protected Integer course_alumn; 
+		protected Date absence_date; 
+		protected String comments; 
+		protected Short evaluation; 
 	}
 	
 	private void insertAbsence( List<Absence> absences )
@@ -11100,18 +11100,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement system_paymentStmt = null;
 
 	public static class System_payment {
-		private Integer id; 
-		private Short type; 
-		private Integer payment_concept; 
-		private String description; 
-		private Short description_decorable; 
-		private String expression; 
-		private String irpf_expression; 
-		private String quote_expression; 
-		private Date start_date; 
-		private Short month; 
-		private Date end_date; 
-		private Short salary_type; 
+		protected Integer id; 
+		protected Short type; 
+		protected Integer payment_concept; 
+		protected String description; 
+		protected Short description_decorable; 
+		protected String expression; 
+		protected String irpf_expression; 
+		protected String quote_expression; 
+		protected Date start_date; 
+		protected Short month; 
+		protected Date end_date; 
+		protected Short salary_type; 
 	}
 	
 	private void insertSystem_payment( List<System_payment> system_payments )
@@ -11336,10 +11336,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement item_tariffStmt = null;
 
 	public static class Item_tariff {
-		private Integer id; 
-		private Integer item; 
-		private Integer tariff; 
-		private Double percentage; 
+		protected Integer id; 
+		protected Integer item; 
+		protected Integer tariff; 
+		protected Double percentage; 
 	}
 	
 	private void insertItem_tariff( List<Item_tariff> item_tariffs )
@@ -11500,9 +11500,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement account_entry_fbatchStmt = null;
 
 	public static class Account_entry_fbatch {
-		private Integer id; 
-		private Integer account_entry; 
-		private Integer fbatch; 
+		protected Integer id; 
+		protected Integer account_entry; 
+		protected Integer fbatch; 
 	}
 	
 	private void insertAccount_entry_fbatch( List<Account_entry_fbatch> account_entry_fbatchs )
@@ -11655,9 +11655,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement sellerStmt = null;
 
 	public static class Seller {
-		private Integer registry; 
-		private Integer commission_type; 
-		private Short status; 
+		protected Integer registry; 
+		protected Integer commission_type; 
+		protected Short status; 
 	}
 	
 	private void insertSeller( List<Seller> sellers )
@@ -11753,11 +11753,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement offer_attachStmt = null;
 
 	public static class Offer_attach {
-		private Integer id; 
-		private Integer offer; 
-		private Short mimeType; 
-		private String description; 
-		private InputStream data; 
+		protected Integer id; 
+		protected Integer offer; 
+		protected Short mimeType; 
+		protected String description; 
+		protected InputStream data; 
 	}
 	
 	private void insertOffer_attach( List<Offer_attach> offer_attachs )
@@ -11926,17 +11926,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement process_detailStmt = null;
 
 	public static class Process_detail {
-		private Integer id; 
-		private Integer process; 
-		private String description; 
-		private Integer position; 
-		private Short date_reference; 
-		private Integer days; 
-		private Integer alert_days; 
-		private Integer workgroup; 
-		private Short priority; 
-		private Short status; 
-		private String comments; 
+		protected Integer id; 
+		protected Integer process; 
+		protected String description; 
+		protected Integer position; 
+		protected Short date_reference; 
+		protected Integer days; 
+		protected Integer alert_days; 
+		protected Integer workgroup; 
+		protected Short priority; 
+		protected Short status; 
+		protected String comments; 
 	}
 	
 	private void insertProcess_detail( List<Process_detail> process_details )
@@ -12153,8 +12153,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement relationshipStmt = null;
 
 	public static class Relationship {
-		private Integer id; 
-		private String description; 
+		protected Integer id; 
+		protected String description; 
 	}
 	
 	private void insertRelationship( List<Relationship> relationships )
@@ -12289,206 +12289,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int account_budget_detailStmtSize = 0;
-
-	private int account_budget_detailInserted = 0;
-
-	private List<Account_budget_detail> account_budget_details = 
-		new LinkedList<Account_budget_detail>();
-
-	private PreparedStatement account_budget_detailStmt = null;
-
-	public static class Account_budget_detail {
-		private Integer id; 
-		private Integer account_budget; 
-		private String account_period; 
-		private String account; 
-		private Short security_level; 
-		private Date entry_date; 
-		private Double debit; 
-		private Double credit; 
-	}
-	
-	private void insertAccount_budget_detail( List<Account_budget_detail> account_budget_details )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = account_budget_details.size();
-		if ( account_budget_detailStmtSize != size ) {
-			if ( account_budget_detailStmt != null ) {
-				account_budget_detailStmt.close();
-			}
-			String values = "(?,?,?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			account_budget_detailStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO account_budget_detail (id,account_budget,account_period,account,security_level,entry_date,debit,credit)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			account_budget_detailStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Account_budget_detail account_budget_detail : account_budget_details) {
-			if ( account_budget_detail.id == null )
-				account_budget_detailStmt.setNull(offset++, 4);
-			else
-				account_budget_detailStmt.setInt(offset++, account_budget_detail.id);
-			if ( account_budget_detail.account_budget == null )
-				account_budget_detailStmt.setNull(offset++, 4);
-			else
-				account_budget_detailStmt.setInt(offset++, account_budget_detail.account_budget);
-			if ( account_budget_detail.account_period == null )
-				account_budget_detailStmt.setNull(offset++, 1);
-			else
-				account_budget_detailStmt.setString(offset++, account_budget_detail.account_period);
-			if ( account_budget_detail.account == null )
-				account_budget_detailStmt.setNull(offset++, 1);
-			else
-				account_budget_detailStmt.setString(offset++, account_budget_detail.account);
-			if ( account_budget_detail.security_level == null )
-				account_budget_detailStmt.setNull(offset++, -6);
-			else
-				account_budget_detailStmt.setShort(offset++, account_budget_detail.security_level);
-			if ( account_budget_detail.entry_date == null )
-				account_budget_detailStmt.setNull(offset++, 91);
-			else
-				account_budget_detailStmt.setDate(offset++, account_budget_detail.entry_date);
-			if ( account_budget_detail.debit == null )
-				account_budget_detailStmt.setNull(offset++, 8);
-			else
-				account_budget_detailStmt.setDouble(offset++, account_budget_detail.debit);
-			if ( account_budget_detail.credit == null )
-				account_budget_detailStmt.setNull(offset++, 8);
-			else
-				account_budget_detailStmt.setDouble(offset++, account_budget_detail.credit);
-		}
-		account_budget_detailStmt.executeUpdate();
-		account_budget_detailInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Account_budget_details in {} milliseconds.", size, account_budget_detailInserted, elapsed );		
-	}
-		
-		private int account_budget_detailId = -1;
-		
-		private void initAccount_budget_detailId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `account_budget_detail`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.account_budget_detailId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextAccount_budget_detailId() {
-			return ++this.account_budget_detailId;
-		} 
-
-		public void setAccount_budget_detailId(Integer account_budget_detailId) {
-			this.account_budget_detailId = account_budget_detailId;
-		} 
-	
-	private void flushAccount_budget_detail(  )
-	throws SQLException {
-		if ( ! account_budget_details.isEmpty() )
-			insertAccount_budget_detail(account_budget_details);
-		if ( account_budget_detailStmt != null )
-			account_budget_detailStmt.close();
-	}	
-
-	/**
-	 * Account_budget_detail
-	 * @param id Identificador unico
-	 * @param account_budget Identificador del Presupuesto
-	 * @param account_period Ejercicio Contable del Presupuesto
-	 * @param account Cuenta Contable del Presupuesto
-	 * @param security_level Nivel de seguridad del Presupuesto
-	 * @param entry_date Fecha del Presupuesto
-	 * @param debit Debe del Presupuesto
-	 * @param credit Haber del Presupuesto
-	 * @throws SQLException
-	*/
-	protected void insertAccount_budget_detail(Integer id, Integer account_budget, String account_period, String account, Short security_level, Date entry_date, Double debit, Double credit)
-	throws SQLException {
-
-		Account_budget_detail account_budget_detail_ = new Account_budget_detail();
-		account_budget_detail_.id = id;
-		account_budget_detail_.account_budget = account_budget;
-		account_budget_detail_.account_period = account_period;
-		account_budget_detail_.account = account;
-		account_budget_detail_.security_level = security_level;
-		account_budget_detail_.entry_date = entry_date;
-		account_budget_detail_.debit = debit;
-		account_budget_detail_.credit = credit;
-
-		account_budget_details.add(account_budget_detail_);
-		
-		int account_budget_detailCount = account_budget_details.size();
-		
-		if ( 93 * account_budget_detailCount >=  this.maxAllowedPacket ){
-			insertAccount_budget_detail(account_budget_details);
-			account_budget_details.clear();
-		} 
-	}
-
-
-	/**
-	 * Account_budget_detail
-	 * @param account_budget Identificador del Presupuesto
-	 * @param account_period Ejercicio Contable del Presupuesto
-	 * @param account Cuenta Contable del Presupuesto
-	 * @param security_level Nivel de seguridad del Presupuesto
-	 * @param entry_date Fecha del Presupuesto
-	 * @param debit Debe del Presupuesto
-	 * @param credit Haber del Presupuesto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertAccount_budget_detail(Integer account_budget, String account_period, String account, Short security_level, Date entry_date, Double debit, Double credit)
-	throws SQLException {
-		int id = nextAccount_budget_detailId();
-
-		Account_budget_detail account_budget_detail_ = new Account_budget_detail();
-		account_budget_detail_.id = id;
-		account_budget_detail_.account_budget = account_budget;
-		account_budget_detail_.account_period = account_period;
-		account_budget_detail_.account = account;
-		account_budget_detail_.security_level = security_level;
-		account_budget_detail_.entry_date = entry_date;
-		account_budget_detail_.debit = debit;
-		account_budget_detail_.credit = credit;
-
-		account_budget_details.add(account_budget_detail_);
-		
-		int account_budget_detailCount = account_budget_details.size();
-		
-		if ( 93 * account_budget_detailCount >=  this.maxAllowedPacket ){
-			insertAccount_budget_detail(account_budget_details);
-			account_budget_details.clear();
-		} 
-		return id;
-	}
-
-
 	private int account_entry_invoiceStmtSize = 0;
 
 	private int account_entry_invoiceInserted = 0;
@@ -12499,9 +12299,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement account_entry_invoiceStmt = null;
 
 	public static class Account_entry_invoice {
-		private Integer id; 
-		private Integer account_entry; 
-		private Integer invoice; 
+		protected Integer id; 
+		protected Integer account_entry; 
+		protected Integer invoice; 
 	}
 	
 	private void insertAccount_entry_invoice( List<Account_entry_invoice> account_entry_invoices )
@@ -12654,10 +12454,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement tax_accountStmt = null;
 
 	public static class Tax_account {
-		private Integer id; 
-		private Integer tax; 
-		private String account; 
-		private Short type; 
+		protected Integer id; 
+		protected Integer tax; 
+		protected String account; 
+		protected Short type; 
 	}
 	
 	private void insertTax_account( List<Tax_account> tax_accounts )
@@ -12818,9 +12618,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement expenseStmt = null;
 
 	public static class Expense {
-		private Integer id; 
-		private String description; 
-		private Double unit_price; 
+		protected Integer id; 
+		protected String description; 
+		protected Double unit_price; 
 	}
 	
 	private void insertExpense( List<Expense> expenses )
@@ -12973,10 +12773,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement inventoryStmt = null;
 
 	public static class Inventory {
-		private Integer id; 
-		private Date inventory_date; 
-		private Integer warehouse; 
-		private String description; 
+		protected Integer id; 
+		protected Date inventory_date; 
+		protected Integer warehouse; 
+		protected String description; 
 	}
 	
 	private void insertInventory( List<Inventory> inventorys )
@@ -13137,11 +12937,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement commercial_termStmt = null;
 
 	public static class Commercial_term {
-		private Integer id; 
-		private Integer line; 
-		private String name; 
-		private String description; 
-		private Boolean term_general; 
+		protected Integer id; 
+		protected Integer line; 
+		protected String name; 
+		protected String description; 
+		protected Boolean term_general; 
 	}
 	
 	private void insertCommercial_term( List<Commercial_term> commercial_terms )
@@ -13310,11 +13110,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement production_expenseStmt = null;
 
 	public static class Production_expense {
-		private Integer id; 
-		private Integer production; 
-		private String description; 
-		private Double quantity; 
-		private Double price; 
+		protected Integer id; 
+		protected Integer production; 
+		protected String description; 
+		protected Double quantity; 
+		protected Double price; 
 	}
 	
 	private void insertProduction_expense( List<Production_expense> production_expenses )
@@ -13483,12 +13283,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement offer_termStmt = null;
 
 	public static class Offer_term {
-		private Integer id; 
-		private Integer offer; 
-		private Integer line; 
-		private String name; 
-		private String description; 
-		private Boolean term_general; 
+		protected Integer id; 
+		protected Integer offer; 
+		protected Integer line; 
+		protected String name; 
+		protected String description; 
+		protected Boolean term_general; 
 	}
 	
 	private void insertOffer_term( List<Offer_term> offer_terms )
@@ -13665,8 +13465,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement commercial_activityStmt = null;
 
 	public static class Commercial_activity {
-		private Integer id; 
-		private String name; 
+		protected Integer id; 
+		protected String name; 
 	}
 	
 	private void insertCommercial_activity( List<Commercial_activity> commercial_activitys )
@@ -13811,9 +13611,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement rsegmentStmt = null;
 
 	public static class Rsegment {
-		private Integer id; 
-		private Integer registry; 
-		private Integer segment; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected Integer segment; 
 	}
 	
 	private void insertRsegment( List<Rsegment> rsegments )
@@ -13966,10 +13766,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement delivery_detail_labourStmt = null;
 
 	public static class Delivery_detail_labour {
-		private Integer id; 
-		private Integer delivery_detail; 
-		private Integer employee; 
-		private Double quantity; 
+		protected Integer id; 
+		protected Integer delivery_detail; 
+		protected Integer employee; 
+		protected Double quantity; 
 	}
 	
 	private void insertDelivery_detail_labour( List<Delivery_detail_labour> delivery_detail_labours )
@@ -14130,8 +13930,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement process_transition_typeStmt = null;
 
 	public static class Process_transition_type {
-		private Integer id; 
-		private String description; 
+		protected Integer id; 
+		protected String description; 
 	}
 	
 	private void insertProcess_transition_type( List<Process_transition_type> process_transition_types )
@@ -14276,12 +14076,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement deduction_conceptStmt = null;
 
 	public static class Deduction_concept {
-		private Integer id; 
-		private String code; 
-		private String description; 
-		private Short type; 
-		private Short description_decorable; 
-		private String expression; 
+		protected Integer id; 
+		protected String code; 
+		protected String description; 
+		protected Short type; 
+		protected Short description_decorable; 
+		protected String expression; 
 	}
 	
 	private void insertDeduction_concept( List<Deduction_concept> deduction_concepts )
@@ -14458,9 +14258,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement leasing_accountStmt = null;
 
 	public static class Leasing_account {
-		private Integer id; 
-		private Integer leasing; 
-		private String account; 
+		protected Integer id; 
+		protected Integer leasing; 
+		protected String account; 
 	}
 	
 	private void insertLeasing_account( List<Leasing_account> leasing_accounts )
@@ -14613,12 +14413,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement contract_batchStmt = null;
 
 	public static class Contract_batch {
-		private Integer id; 
-		private Date date; 
-		private Date red_notify_date; 
-		private Date red_notify_id; 
-		private Date red_response_date; 
-		private Date red_response_id; 
+		protected Integer id; 
+		protected Date date; 
+		protected Date red_notify_date; 
+		protected Date red_notify_id; 
+		protected Date red_response_date; 
+		protected Date red_response_id; 
 	}
 	
 	private void insertContract_batch( List<Contract_batch> contract_batchs )
@@ -14795,12 +14595,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement cv_knowledgeStmt = null;
 
 	public static class Cv_knowledge {
-		private Integer id; 
-		private String name; 
-		private Short level; 
-		private Short experience; 
-		private Short lastuse; 
-		private Integer curriculum; 
+		protected Integer id; 
+		protected String name; 
+		protected Short level; 
+		protected Short experience; 
+		protected Short lastuse; 
+		protected Integer curriculum; 
 	}
 	
 	private void insertCv_knowledge( List<Cv_knowledge> cv_knowledges )
@@ -14977,9 +14777,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement quality_skillStmt = null;
 
 	public static class Quality_skill {
-		private Integer id; 
-		private String code; 
-		private String description; 
+		protected Integer id; 
+		protected String code; 
+		protected String description; 
 	}
 	
 	private void insertQuality_skill( List<Quality_skill> quality_skills )
@@ -15132,12 +14932,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement ec_targetStmt = null;
 
 	public static class Ec_target {
-		private Integer id; 
-		private Integer target; 
-		private String login; 
-		private String password; 
-		private Short type; 
-		private Date last_access; 
+		protected Integer id; 
+		protected Integer target; 
+		protected String login; 
+		protected String password; 
+		protected Short type; 
+		protected Date last_access; 
 	}
 	
 	private void insertEc_target( List<Ec_target> ec_targets )
@@ -15314,10 +15114,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement balanceStmt = null;
 
 	public static class Balance {
-		private Integer id; 
-		private String name; 
-		private Boolean removable; 
-		private Short type; 
+		protected Integer id; 
+		protected String name; 
+		protected Boolean removable; 
+		protected Short type; 
 	}
 	
 	private void insertBalance( List<Balance> balances )
@@ -15478,11 +15278,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement qualificationStmt = null;
 
 	public static class Qualification {
-		private Integer id; 
-		private String code; 
-		private String description; 
-		private Double min_value; 
-		private Double max_value; 
+		protected Integer id; 
+		protected String code; 
+		protected String description; 
+		protected Double min_value; 
+		protected Double max_value; 
 	}
 	
 	private void insertQualification( List<Qualification> qualifications )
@@ -15651,12 +15451,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement tax_detailStmt = null;
 
 	public static class Tax_detail {
-		private Integer id; 
-		private Integer tax; 
-		private Date start_date; 
-		private Date end_date; 
-		private Double value; 
-		private Double surcharge; 
+		protected Integer id; 
+		protected Integer tax; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Double value; 
+		protected Double surcharge; 
 	}
 	
 	private void insertTax_detail( List<Tax_detail> tax_details )
@@ -15833,9 +15633,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement supplier_accountStmt = null;
 
 	public static class Supplier_account {
-		private Integer id; 
-		private Integer supplier; 
-		private String account; 
+		protected Integer id; 
+		protected Integer supplier; 
+		protected String account; 
 	}
 	
 	private void insertSupplier_account( List<Supplier_account> supplier_accounts )
@@ -15988,15 +15788,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement compositionStmt = null;
 
 	public static class Composition {
-		private Integer id; 
-		private Short type; 
-		private String description; 
-		private Integer item; 
-		private Double quantity; 
-		private Double price; 
-		private Double expenses_percent; 
-		private Double expenses_fixed; 
-		private Boolean price_in_details; 
+		protected Integer id; 
+		protected Short type; 
+		protected String description; 
+		protected Integer item; 
+		protected Double quantity; 
+		protected Double price; 
+		protected Double expenses_percent; 
+		protected Double expenses_fixed; 
+		protected Boolean price_in_details; 
 	}
 	
 	private void insertComposition( List<Composition> compositions )
@@ -16197,9 +15997,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement bankStmt = null;
 
 	public static class Bank {
-		private Integer id; 
-		private String name; 
-		private String code; 
+		protected Integer id; 
+		protected String name; 
+		protected String code; 
 	}
 	
 	private void insertBank( List<Bank> banks )
@@ -16352,9 +16152,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement activity_typeStmt = null;
 
 	public static class Activity_type {
-		private Integer id; 
-		private String description; 
-		private Integer dossier_type; 
+		protected Integer id; 
+		protected String description; 
+		protected Integer dossier_type; 
 	}
 	
 	private void insertActivity_type( List<Activity_type> activity_types )
@@ -16507,11 +16307,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement course_evaluationStmt = null;
 
 	public static class Course_evaluation {
-		private Integer id; 
-		private Integer course; 
-		private Integer quality_skill; 
-		private Double evaluation; 
-		private Integer quantity; 
+		protected Integer id; 
+		protected Integer course; 
+		protected Integer quality_skill; 
+		protected Double evaluation; 
+		protected Integer quantity; 
 	}
 	
 	private void insertCourse_evaluation( List<Course_evaluation> course_evaluations )
@@ -16670,161 +16470,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int account_entry_linkStmtSize = 0;
-
-	private int account_entry_linkInserted = 0;
-
-	private List<Account_entry_link> account_entry_links = 
-		new LinkedList<Account_entry_link>();
-
-	private PreparedStatement account_entry_linkStmt = null;
-
-	public static class Account_entry_link {
-		private Integer id; 
-		private Integer account_entry_from; 
-		private Integer account_entry_to; 
-	}
-	
-	private void insertAccount_entry_link( List<Account_entry_link> account_entry_links )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = account_entry_links.size();
-		if ( account_entry_linkStmtSize != size ) {
-			if ( account_entry_linkStmt != null ) {
-				account_entry_linkStmt.close();
-			}
-			String values = "(?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			account_entry_linkStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO account_entry_link (id,account_entry_from,account_entry_to)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			account_entry_linkStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Account_entry_link account_entry_link : account_entry_links) {
-			if ( account_entry_link.id == null )
-				account_entry_linkStmt.setNull(offset++, 4);
-			else
-				account_entry_linkStmt.setInt(offset++, account_entry_link.id);
-			if ( account_entry_link.account_entry_from == null )
-				account_entry_linkStmt.setNull(offset++, 4);
-			else
-				account_entry_linkStmt.setInt(offset++, account_entry_link.account_entry_from);
-			if ( account_entry_link.account_entry_to == null )
-				account_entry_linkStmt.setNull(offset++, 4);
-			else
-				account_entry_linkStmt.setInt(offset++, account_entry_link.account_entry_to);
-		}
-		account_entry_linkStmt.executeUpdate();
-		account_entry_linkInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Account_entry_links in {} milliseconds.", size, account_entry_linkInserted, elapsed );		
-	}
-		
-		private int account_entry_linkId = -1;
-		
-		private void initAccount_entry_linkId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `account_entry_link`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.account_entry_linkId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextAccount_entry_linkId() {
-			return ++this.account_entry_linkId;
-		} 
-
-		public void setAccount_entry_linkId(Integer account_entry_linkId) {
-			this.account_entry_linkId = account_entry_linkId;
-		} 
-	
-	private void flushAccount_entry_link(  )
-	throws SQLException {
-		if ( ! account_entry_links.isEmpty() )
-			insertAccount_entry_link(account_entry_links);
-		if ( account_entry_linkStmt != null )
-			account_entry_linkStmt.close();
-	}	
-
-	/**
-	 * Account_entry_link
-	 * @param id Identificador unico
-	 * @param account_entry_from Asiento original
-	 * @param account_entry_to Asiento vinculado
-	 * @throws SQLException
-	*/
-	protected void insertAccount_entry_link(Integer id, Integer account_entry_from, Integer account_entry_to)
-	throws SQLException {
-
-		Account_entry_link account_entry_link_ = new Account_entry_link();
-		account_entry_link_.id = id;
-		account_entry_link_.account_entry_from = account_entry_from;
-		account_entry_link_.account_entry_to = account_entry_to;
-
-		account_entry_links.add(account_entry_link_);
-		
-		int account_entry_linkCount = account_entry_links.size();
-		
-		if ( 30 * account_entry_linkCount >=  this.maxAllowedPacket ){
-			insertAccount_entry_link(account_entry_links);
-			account_entry_links.clear();
-		} 
-	}
-
-
-	/**
-	 * Account_entry_link
-	 * @param account_entry_from Asiento original
-	 * @param account_entry_to Asiento vinculado
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertAccount_entry_link(Integer account_entry_from, Integer account_entry_to)
-	throws SQLException {
-		int id = nextAccount_entry_linkId();
-
-		Account_entry_link account_entry_link_ = new Account_entry_link();
-		account_entry_link_.id = id;
-		account_entry_link_.account_entry_from = account_entry_from;
-		account_entry_link_.account_entry_to = account_entry_to;
-
-		account_entry_links.add(account_entry_link_);
-		
-		int account_entry_linkCount = account_entry_links.size();
-		
-		if ( 30 * account_entry_linkCount >=  this.maxAllowedPacket ){
-			insertAccount_entry_link(account_entry_links);
-			account_entry_links.clear();
-		} 
-		return id;
-	}
-
-
 	private int support_orderStmtSize = 0;
 
 	private int support_orderInserted = 0;
@@ -16835,20 +16480,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement support_orderStmt = null;
 
 	public static class Support_order {
-		private Integer id; 
-		private Integer tas_item; 
-		private Integer target; 
-		private String series; 
-		private Integer number; 
-		private String description; 
-		private Date final_date; 
-		private Short status; 
-		private Date start_date; 
-		private Integer employee; 
-		private Double counterti; 
-		private String levelti; 
-		private Short operation; 
-		private Integer workplace; 
+		protected Integer id; 
+		protected Integer tas_item; 
+		protected Integer target; 
+		protected String series; 
+		protected Integer number; 
+		protected String description; 
+		protected Date final_date; 
+		protected Short status; 
+		protected Date start_date; 
+		protected Integer employee; 
+		protected Double counterti; 
+		protected String levelti; 
+		protected Short operation; 
+		protected Integer workplace; 
 	}
 	
 	private void insertSupport_order( List<Support_order> support_orders )
@@ -17089,10 +16734,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement process_detail_transitionStmt = null;
 
 	public static class Process_detail_transition {
-		private Integer id; 
-		private Integer process_detail; 
-		private Integer process_transition_type; 
-		private Integer next_process_detail; 
+		protected Integer id; 
+		protected Integer process_detail; 
+		protected Integer process_transition_type; 
+		protected Integer next_process_detail; 
 	}
 	
 	private void insertProcess_detail_transition( List<Process_detail_transition> process_detail_transitions )
@@ -17253,20 +16898,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement customer_feeStmt = null;
 
 	public static class Customer_fee {
-		private Integer id; 
-		private Integer customer; 
-		private Integer line; 
-		private Integer item; 
-		private String description; 
-		private Double quantity; 
-		private Double price; 
-		private String discount_expr; 
-		private Date initial_date; 
-		private Date final_date; 
-		private Date billing_date; 
-		private Integer period; 
-		private Short security_level; 
-		private Integer workplace; 
+		protected Integer id; 
+		protected Integer customer; 
+		protected Integer line; 
+		protected Integer item; 
+		protected String description; 
+		protected Double quantity; 
+		protected Double price; 
+		protected String discount_expr; 
+		protected Date initial_date; 
+		protected Date final_date; 
+		protected Date billing_date; 
+		protected Integer period; 
+		protected Short security_level; 
+		protected Integer workplace; 
 	}
 	
 	private void insertCustomer_fee( List<Customer_fee> customer_fees )
@@ -17440,7 +17085,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int customer_feeCount = customer_fees.size();
 		
-		if ( 1169 * customer_feeCount >=  this.maxAllowedPacket ){
+		if ( 1176 * customer_feeCount >=  this.maxAllowedPacket ){
 			insertCustomer_fee(customer_fees);
 			customer_fees.clear();
 		} 
@@ -17489,7 +17134,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int customer_feeCount = customer_fees.size();
 		
-		if ( 1169 * customer_feeCount >=  this.maxAllowedPacket ){
+		if ( 1176 * customer_feeCount >=  this.maxAllowedPacket ){
 			insertCustomer_fee(customer_fees);
 			customer_fees.clear();
 		} 
@@ -17507,17 +17152,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement purchase_detailStmt = null;
 
 	public static class Purchase_detail {
-		private Integer id; 
-		private Integer purchase; 
-		private Integer line; 
-		private Integer item; 
-		private String description; 
-		private Double quantity; 
-		private Double price; 
-		private String discount_expr; 
-		private Double taxes; 
-		private Short status; 
-		private Double delivered; 
+		protected Integer id; 
+		protected Integer purchase; 
+		protected Integer line; 
+		protected Integer item; 
+		protected String description; 
+		protected Double quantity; 
+		protected Double price; 
+		protected String discount_expr; 
+		protected Double taxes; 
+		protected Short status; 
+		protected Double delivered; 
 	}
 	
 	private void insertPurchase_detail( List<Purchase_detail> purchase_details )
@@ -17673,7 +17318,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int purchase_detailCount = purchase_details.size();
 		
-		if ( 1175 * purchase_detailCount >=  this.maxAllowedPacket ){
+		if ( 1168 * purchase_detailCount >=  this.maxAllowedPacket ){
 			insertPurchase_detail(purchase_details);
 			purchase_details.clear();
 		} 
@@ -17716,7 +17361,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int purchase_detailCount = purchase_details.size();
 		
-		if ( 1175 * purchase_detailCount >=  this.maxAllowedPacket ){
+		if ( 1168 * purchase_detailCount >=  this.maxAllowedPacket ){
 			insertPurchase_detail(purchase_details);
 			purchase_details.clear();
 		} 
@@ -17734,9 +17379,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement pm_type_detailStmt = null;
 
 	public static class Pm_type_detail {
-		private Integer id; 
-		private Short type; 
-		private String description; 
+		protected Integer id; 
+		protected Short type; 
+		protected String description; 
 	}
 	
 	private void insertPm_type_detail( List<Pm_type_detail> pm_type_details )
@@ -17889,10 +17534,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement holiday_detailStmt = null;
 
 	public static class Holiday_detail {
-		private Integer id; 
-		private Integer holiday; 
-		private Date date; 
-		private String description; 
+		protected Integer id; 
+		protected Integer holiday; 
+		protected Date date; 
+		protected String description; 
 	}
 	
 	private void insertHoliday_detail( List<Holiday_detail> holiday_details )
@@ -18053,10 +17698,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement target_itemStmt = null;
 
 	public static class Target_item {
-		private Integer id; 
-		private Integer target; 
-		private Integer item; 
-		private Short status; 
+		protected Integer id; 
+		protected Integer target; 
+		protected Integer item; 
+		protected Short status; 
 	}
 	
 	private void insertTarget_item( List<Target_item> target_items )
@@ -18217,9 +17862,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement agreement_level_categoryStmt = null;
 
 	public static class Agreement_level_category {
-		private Integer id; 
-		private Integer agreement_level; 
-		private String description; 
+		protected Integer id; 
+		protected Integer agreement_level; 
+		protected String description; 
 	}
 	
 	private void insertAgreement_level_category( List<Agreement_level_category> agreement_level_categorys )
@@ -18372,10 +18017,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement holidayStmt = null;
 
 	public static class Holiday {
-		private Integer id; 
-		private String description; 
-		private Integer holiday; 
-		private Boolean editable; 
+		protected Integer id; 
+		protected String description; 
+		protected Integer holiday; 
+		protected Boolean editable; 
 	}
 	
 	private void insertHoliday( List<Holiday> holidays )
@@ -18536,9 +18181,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement pm_type_detail_accountStmt = null;
 
 	public static class Pm_type_detail_account {
-		private Integer id; 
-		private Integer pm_type_detail; 
-		private String account; 
+		protected Integer id; 
+		protected Integer pm_type_detail; 
+		protected String account; 
 	}
 	
 	private void insertPm_type_detail_account( List<Pm_type_detail_account> pm_type_detail_accounts )
@@ -18691,11 +18336,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement commission_categoryStmt = null;
 
 	public static class Commission_category {
-		private Integer id; 
-		private Integer commission; 
-		private Integer category; 
-		private Double quantity; 
-		private Double rate; 
+		protected Integer id; 
+		protected Integer commission; 
+		protected Integer category; 
+		protected Double quantity; 
+		protected Double rate; 
 	}
 	
 	private void insertCommission_category( List<Commission_category> commission_categorys )
@@ -18864,8 +18509,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement academic_yearStmt = null;
 
 	public static class Academic_year {
-		private Integer id; 
-		private String description; 
+		protected Integer id; 
+		protected String description; 
 	}
 	
 	private void insertAcademic_year( List<Academic_year> academic_years )
@@ -19010,9 +18655,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement bank_concept_accountStmt = null;
 
 	public static class Bank_concept_account {
-		private Integer id; 
-		private Integer bank_concept; 
-		private String account; 
+		protected Integer id; 
+		protected Integer bank_concept; 
+		protected String account; 
 	}
 	
 	private void insertBank_concept_account( List<Bank_concept_account> bank_concept_accounts )
@@ -19165,9 +18810,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement creditor_accountStmt = null;
 
 	public static class Creditor_account {
-		private Integer id; 
-		private Integer creditor; 
-		private String account; 
+		protected Integer id; 
+		protected Integer creditor; 
+		protected String account; 
 	}
 	
 	private void insertCreditor_account( List<Creditor_account> creditor_accounts )
@@ -19320,16 +18965,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement finance_trackingStmt = null;
 
 	public static class Finance_tracking {
-		private Integer id; 
-		private Integer finance; 
-		private Date tracking_date; 
-		private Short type; 
-		private String description; 
-		private Integer pm_type_detail; 
-		private Integer rbank; 
-		private Integer bank_statement_link; 
-		private Double amount; 
-		private Boolean recorded; 
+		protected Integer id; 
+		protected Integer finance; 
+		protected Date tracking_date; 
+		protected Short type; 
+		protected String description; 
+		protected Integer pm_type_detail; 
+		protected Integer rbank; 
+		protected Integer bank_statement_link; 
+		protected Double amount; 
+		protected Boolean recorded; 
 	}
 	
 	private void insertFinance_tracking( List<Finance_tracking> finance_trackings )
@@ -19538,16 +19183,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement rattachStmt = null;
 
 	public static class Rattach {
-		private Integer id; 
-		private Integer registry; 
-		private Integer category; 
-		private Short mimeType; 
-		private String description; 
-		private InputStream data; 
-		private Short type; 
-		private Integer scope; 
-		private Short security_level; 
-		private Date attach_date; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected Integer category; 
+		protected Short mimeType; 
+		protected String description; 
+		protected InputStream data; 
+		protected Short type; 
+		protected Integer scope; 
+		protected Short security_level; 
+		protected Date attach_date; 
 	}
 	
 	private void insertRattach( List<Rattach> rattachs )
@@ -19756,9 +19401,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement leave_batch_detailStmt = null;
 
 	public static class Leave_batch_detail {
-		private Integer id; 
-		private Integer leave_batch; 
-		private Integer contract_leave_detail; 
+		protected Integer id; 
+		protected Integer leave_batch; 
+		protected Integer contract_leave_detail; 
 	}
 	
 	private void insertLeave_batch_detail( List<Leave_batch_detail> leave_batch_details )
@@ -19911,19 +19556,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement sales_detailStmt = null;
 
 	public static class Sales_detail {
-		private Integer id; 
-		private Integer sales; 
-		private Integer line; 
-		private Integer item; 
-		private String description; 
-		private Double quantity; 
-		private Double price; 
-		private String discount_expr; 
-		private Double taxes; 
-		private Short status; 
-		private Short source; 
-		private Integer offer_detail; 
-		private Double delivered; 
+		protected Integer id; 
+		protected Integer sales; 
+		protected Integer line; 
+		protected Integer item; 
+		protected String description; 
+		protected Double quantity; 
+		protected Double price; 
+		protected String discount_expr; 
+		protected Double taxes; 
+		protected Short status; 
+		protected Short source; 
+		protected Integer offer_detail; 
+		protected Double delivered; 
 	}
 	
 	private void insertSales_detail( List<Sales_detail> sales_details )
@@ -20091,7 +19736,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int sales_detailCount = sales_details.size();
 		
-		if ( 1188 * sales_detailCount >=  this.maxAllowedPacket ){
+		if ( 1181 * sales_detailCount >=  this.maxAllowedPacket ){
 			insertSales_detail(sales_details);
 			sales_details.clear();
 		} 
@@ -20138,7 +19783,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int sales_detailCount = sales_details.size();
 		
-		if ( 1188 * sales_detailCount >=  this.maxAllowedPacket ){
+		if ( 1181 * sales_detailCount >=  this.maxAllowedPacket ){
 			insertSales_detail(sales_details);
 			sales_details.clear();
 		} 
@@ -20156,15 +19801,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement system_deductionStmt = null;
 
 	public static class System_deduction {
-		private Integer id; 
-		private Short type; 
-		private Integer deduction_concept; 
-		private String description; 
-		private Short description_decorable; 
-		private String expression; 
-		private Date start_date; 
-		private Date end_date; 
-		private Short month; 
+		protected Integer id; 
+		protected Short type; 
+		protected Integer deduction_concept; 
+		protected String description; 
+		protected Short description_decorable; 
+		protected String expression; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Short month; 
 	}
 	
 	private void insertSystem_deduction( List<System_deduction> system_deductions )
@@ -20365,20 +20010,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement curriculumStmt = null;
 
 	public static class Curriculum {
-		private Integer registry; 
-		private Date entrydate; 
-		private Date birthdate; 
-		private String birthplace; 
-		private String residenceplace; 
-		private Integer geozone; 
-		private String city; 
-		private String zip; 
-		private String address; 
-		private String phone; 
-		private String driver_licenses; 
-		private Date driver_license_date; 
-		private Short gender; 
-		private Short postcategory; 
+		protected Integer registry; 
+		protected Date entrydate; 
+		protected Date birthdate; 
+		protected String birthplace; 
+		protected String residenceplace; 
+		protected Integer geozone; 
+		protected String city; 
+		protected String zip; 
+		protected String address; 
+		protected String phone; 
+		protected String driver_licenses; 
+		protected Date driver_license_date; 
+		protected Short gender; 
+		protected Short postcategory; 
 	}
 	
 	private void insertCurriculum( List<Curriculum> curriculums )
@@ -20540,8 +20185,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement makeStmt = null;
 
 	public static class Make {
-		private Integer id; 
-		private String name; 
+		protected Integer id; 
+		protected String name; 
 	}
 	
 	private void insertMake( List<Make> makes )
@@ -20686,9 +20331,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement rbank_accountStmt = null;
 
 	public static class Rbank_account {
-		private Integer id; 
-		private Integer rbank; 
-		private String account; 
+		protected Integer id; 
+		protected Integer rbank; 
+		protected String account; 
 	}
 	
 	private void insertRbank_account( List<Rbank_account> rbank_accounts )
@@ -20841,9 +20486,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement modelStmt = null;
 
 	public static class Model {
-		private Integer id; 
-		private Integer make; 
-		private String name; 
+		protected Integer id; 
+		protected Integer make; 
+		protected String name; 
 	}
 	
 	private void insertModel( List<Model> models )
@@ -20996,9 +20641,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement cnaeStmt = null;
 
 	public static class Cnae {
-		private Integer id; 
-		private String code; 
-		private String title; 
+		protected Integer id; 
+		protected String code; 
+		protected String title; 
 	}
 	
 	private void insertCnae( List<Cnae> cnaes )
@@ -21151,9 +20796,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement departmentStmt = null;
 
 	public static class Department {
-		private Integer id; 
-		private Integer parent; 
-		private String description; 
+		protected Integer id; 
+		protected Integer parent; 
+		protected String description; 
 	}
 	
 	private void insertDepartment( List<Department> departments )
@@ -21306,13 +20951,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement target_profileStmt = null;
 
 	public static class Target_profile {
-		private Integer id; 
-		private Integer target; 
-		private Timestamp last_update; 
-		private Integer question; 
-		private String value_text; 
-		private Double value_number; 
-		private Timestamp value_date; 
+		protected Integer id; 
+		protected Integer target; 
+		protected Timestamp last_update; 
+		protected Integer question; 
+		protected String value_text; 
+		protected Double value_number; 
+		protected Timestamp value_date; 
 	}
 	
 	private void insertTarget_profile( List<Target_profile> target_profiles )
@@ -21497,25 +21142,25 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement purchaseStmt = null;
 
 	public static class Purchase {
-		private Integer id; 
-		private Integer supplier; 
-		private String series; 
-		private Integer number; 
-		private Integer address; 
-		private String discount_expr; 
-		private Date issue_date; 
-		private Integer pay_method; 
-		private Short document_type; 
-		private Short security_level; 
-		private Short status; 
-		private Integer workplace; 
-		private Integer scope; 
-		private Integer number_of_pymnts; 
-		private Integer days_to_first_pymnt; 
-		private Integer days_between_pymnts; 
-		private String pymnt_days; 
-		private Integer bank; 
-		private String bank_account; 
+		protected Integer id; 
+		protected Integer supplier; 
+		protected String series; 
+		protected Integer number; 
+		protected Integer address; 
+		protected String discount_expr; 
+		protected Date issue_date; 
+		protected Integer pay_method; 
+		protected Short document_type; 
+		protected Short security_level; 
+		protected Short status; 
+		protected Integer workplace; 
+		protected Integer scope; 
+		protected Integer number_of_pymnts; 
+		protected Integer days_to_first_pymnt; 
+		protected Integer days_between_pymnts; 
+		protected String pymnt_days; 
+		protected Integer bank; 
+		protected String bank_account; 
 	}
 	
 	private void insertPurchase( List<Purchase> purchases )
@@ -21796,11 +21441,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement web_infoStmt = null;
 
 	public static class Web_info {
-		private Integer id; 
-		private Integer company; 
-		private String commercial_description; 
-		private String schedule; 
-		private String slogan; 
+		protected Integer id; 
+		protected Integer company; 
+		protected String commercial_description; 
+		protected String schedule; 
+		protected String slogan; 
 	}
 	
 	private void insertWeb_info( List<Web_info> web_infos )
@@ -21969,14 +21614,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement lh_positionStmt = null;
 
 	public static class Lh_position {
-		private Integer id; 
-		private Integer employee; 
-		private Date startingdate; 
-		private Date endingdate; 
-		private String description; 
-		private Integer workplace; 
-		private Integer workactivity; 
-		private Integer calendar; 
+		protected Integer id; 
+		protected Integer employee; 
+		protected Date startingdate; 
+		protected Date endingdate; 
+		protected String description; 
+		protected Integer workplace; 
+		protected Integer workactivity; 
+		protected Integer calendar; 
 	}
 	
 	private void insertLh_position( List<Lh_position> lh_positions )
@@ -22159,6 +21804,170 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int cv_evaluateStmtSize = 0;
+
+	private int cv_evaluateInserted = 0;
+
+	private List<Cv_evaluate> cv_evaluates = 
+		new LinkedList<Cv_evaluate>();
+
+	private PreparedStatement cv_evaluateStmt = null;
+
+	public static class Cv_evaluate {
+		protected Integer id; 
+		protected Integer type; 
+		protected Short value; 
+		protected Integer curriculum; 
+	}
+	
+	private void insertCv_evaluate( List<Cv_evaluate> cv_evaluates )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = cv_evaluates.size();
+		if ( cv_evaluateStmtSize != size ) {
+			if ( cv_evaluateStmt != null ) {
+				cv_evaluateStmt.close();
+			}
+			String values = "(?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			cv_evaluateStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO cv_evaluate (id,type,value,curriculum)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			cv_evaluateStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Cv_evaluate cv_evaluate : cv_evaluates) {
+			if ( cv_evaluate.id == null )
+				cv_evaluateStmt.setNull(offset++, 4);
+			else
+				cv_evaluateStmt.setInt(offset++, cv_evaluate.id);
+			if ( cv_evaluate.type == null )
+				cv_evaluateStmt.setNull(offset++, 4);
+			else
+				cv_evaluateStmt.setInt(offset++, cv_evaluate.type);
+			if ( cv_evaluate.value == null )
+				cv_evaluateStmt.setNull(offset++, -6);
+			else
+				cv_evaluateStmt.setShort(offset++, cv_evaluate.value);
+			if ( cv_evaluate.curriculum == null )
+				cv_evaluateStmt.setNull(offset++, 4);
+			else
+				cv_evaluateStmt.setInt(offset++, cv_evaluate.curriculum);
+		}
+		cv_evaluateStmt.executeUpdate();
+		cv_evaluateInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Cv_evaluates in {} milliseconds.", size, cv_evaluateInserted, elapsed );		
+	}
+		
+		private int cv_evaluateId = -1;
+		
+		private void initCv_evaluateId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `cv_evaluate`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.cv_evaluateId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCv_evaluateId() {
+			return ++this.cv_evaluateId;
+		} 
+
+		public void setCv_evaluateId(Integer cv_evaluateId) {
+			this.cv_evaluateId = cv_evaluateId;
+		} 
+	
+	private void flushCv_evaluate(  )
+	throws SQLException {
+		if ( ! cv_evaluates.isEmpty() )
+			insertCv_evaluate(cv_evaluates);
+		if ( cv_evaluateStmt != null )
+			cv_evaluateStmt.close();
+	}	
+
+	/**
+	 * Cv_evaluate
+	 * @param id Identificador unico de la Evaluacion
+	 * @param type Tipo de Evaluacion
+	 * @param value Valor de la Evaluacion
+	 * @param curriculum Identificador del Curriculum Vitae
+	 * @throws SQLException
+	*/
+	protected void insertCv_evaluate(Integer id, Integer type, Short value, Integer curriculum)
+	throws SQLException {
+
+		Cv_evaluate cv_evaluate_ = new Cv_evaluate();
+		cv_evaluate_.id = id;
+		cv_evaluate_.type = type;
+		cv_evaluate_.value = value;
+		cv_evaluate_.curriculum = curriculum;
+
+		cv_evaluates.add(cv_evaluate_);
+		
+		int cv_evaluateCount = cv_evaluates.size();
+		
+		if ( 33 * cv_evaluateCount >=  this.maxAllowedPacket ){
+			insertCv_evaluate(cv_evaluates);
+			cv_evaluates.clear();
+		} 
+	}
+
+
+	/**
+	 * Cv_evaluate
+	 * @param type Tipo de Evaluacion
+	 * @param value Valor de la Evaluacion
+	 * @param curriculum Identificador del Curriculum Vitae
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCv_evaluate(Integer type, Short value, Integer curriculum)
+	throws SQLException {
+		int id = nextCv_evaluateId();
+
+		Cv_evaluate cv_evaluate_ = new Cv_evaluate();
+		cv_evaluate_.id = id;
+		cv_evaluate_.type = type;
+		cv_evaluate_.value = value;
+		cv_evaluate_.curriculum = curriculum;
+
+		cv_evaluates.add(cv_evaluate_);
+		
+		int cv_evaluateCount = cv_evaluates.size();
+		
+		if ( 33 * cv_evaluateCount >=  this.maxAllowedPacket ){
+			insertCv_evaluate(cv_evaluates);
+			cv_evaluates.clear();
+		} 
+		return id;
+	}
+
+
 	private int bank_statement_linkStmtSize = 0;
 
 	private int bank_statement_linkInserted = 0;
@@ -22169,14 +21978,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement bank_statement_linkStmt = null;
 
 	public static class Bank_statement_link {
-		private Integer id; 
-		private Integer bank_statement; 
-		private Short source; 
-		private Integer source_id; 
-		private Date source_date; 
-		private Double amount; 
-		private Short status; 
-		private Integer linked_bank_statement_link; 
+		protected Integer id; 
+		protected Integer bank_statement; 
+		protected Short source; 
+		protected Integer source_id; 
+		protected Date source_date; 
+		protected Double amount; 
+		protected Short status; 
+		protected Integer linked_bank_statement_link; 
 	}
 	
 	private void insertBank_statement_link( List<Bank_statement_link> bank_statement_links )
@@ -22359,170 +22168,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int cv_evaluateStmtSize = 0;
-
-	private int cv_evaluateInserted = 0;
-
-	private List<Cv_evaluate> cv_evaluates = 
-		new LinkedList<Cv_evaluate>();
-
-	private PreparedStatement cv_evaluateStmt = null;
-
-	public static class Cv_evaluate {
-		private Integer id; 
-		private Integer type; 
-		private Short value; 
-		private Integer curriculum; 
-	}
-	
-	private void insertCv_evaluate( List<Cv_evaluate> cv_evaluates )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = cv_evaluates.size();
-		if ( cv_evaluateStmtSize != size ) {
-			if ( cv_evaluateStmt != null ) {
-				cv_evaluateStmt.close();
-			}
-			String values = "(?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			cv_evaluateStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO cv_evaluate (id,type,value,curriculum)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			cv_evaluateStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Cv_evaluate cv_evaluate : cv_evaluates) {
-			if ( cv_evaluate.id == null )
-				cv_evaluateStmt.setNull(offset++, 4);
-			else
-				cv_evaluateStmt.setInt(offset++, cv_evaluate.id);
-			if ( cv_evaluate.type == null )
-				cv_evaluateStmt.setNull(offset++, 4);
-			else
-				cv_evaluateStmt.setInt(offset++, cv_evaluate.type);
-			if ( cv_evaluate.value == null )
-				cv_evaluateStmt.setNull(offset++, -6);
-			else
-				cv_evaluateStmt.setShort(offset++, cv_evaluate.value);
-			if ( cv_evaluate.curriculum == null )
-				cv_evaluateStmt.setNull(offset++, 4);
-			else
-				cv_evaluateStmt.setInt(offset++, cv_evaluate.curriculum);
-		}
-		cv_evaluateStmt.executeUpdate();
-		cv_evaluateInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Cv_evaluates in {} milliseconds.", size, cv_evaluateInserted, elapsed );		
-	}
-		
-		private int cv_evaluateId = -1;
-		
-		private void initCv_evaluateId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `cv_evaluate`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.cv_evaluateId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCv_evaluateId() {
-			return ++this.cv_evaluateId;
-		} 
-
-		public void setCv_evaluateId(Integer cv_evaluateId) {
-			this.cv_evaluateId = cv_evaluateId;
-		} 
-	
-	private void flushCv_evaluate(  )
-	throws SQLException {
-		if ( ! cv_evaluates.isEmpty() )
-			insertCv_evaluate(cv_evaluates);
-		if ( cv_evaluateStmt != null )
-			cv_evaluateStmt.close();
-	}	
-
-	/**
-	 * Cv_evaluate
-	 * @param id Identificador unico de la Evaluacion
-	 * @param type Tipo de Evaluacion
-	 * @param value Valor de la Evaluacion
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @throws SQLException
-	*/
-	protected void insertCv_evaluate(Integer id, Integer type, Short value, Integer curriculum)
-	throws SQLException {
-
-		Cv_evaluate cv_evaluate_ = new Cv_evaluate();
-		cv_evaluate_.id = id;
-		cv_evaluate_.type = type;
-		cv_evaluate_.value = value;
-		cv_evaluate_.curriculum = curriculum;
-
-		cv_evaluates.add(cv_evaluate_);
-		
-		int cv_evaluateCount = cv_evaluates.size();
-		
-		if ( 33 * cv_evaluateCount >=  this.maxAllowedPacket ){
-			insertCv_evaluate(cv_evaluates);
-			cv_evaluates.clear();
-		} 
-	}
-
-
-	/**
-	 * Cv_evaluate
-	 * @param type Tipo de Evaluacion
-	 * @param value Valor de la Evaluacion
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCv_evaluate(Integer type, Short value, Integer curriculum)
-	throws SQLException {
-		int id = nextCv_evaluateId();
-
-		Cv_evaluate cv_evaluate_ = new Cv_evaluate();
-		cv_evaluate_.id = id;
-		cv_evaluate_.type = type;
-		cv_evaluate_.value = value;
-		cv_evaluate_.curriculum = curriculum;
-
-		cv_evaluates.add(cv_evaluate_);
-		
-		int cv_evaluateCount = cv_evaluates.size();
-		
-		if ( 33 * cv_evaluateCount >=  this.maxAllowedPacket ){
-			insertCv_evaluate(cv_evaluates);
-			cv_evaluates.clear();
-		} 
-		return id;
-	}
-
-
 	private int course_alumnStmtSize = 0;
 
 	private int course_alumnInserted = 0;
@@ -22533,10 +22178,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement course_alumnStmt = null;
 
 	public static class Course_alumn {
-		private Integer id; 
-		private Integer course; 
-		private Integer customer; 
-		private Short status; 
+		protected Integer id; 
+		protected Integer course; 
+		protected Integer customer; 
+		protected Short status; 
 	}
 	
 	private void insertCourse_alumn( List<Course_alumn> course_alumns )
@@ -22697,49 +22342,49 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement fs_rentingStmt = null;
 
 	public static class Fs_renting {
-		private Integer id; 
-		private Integer year; 
-		private Short period; 
-		private Short administration; 
-		private String comments; 
-		private Short status; 
-		private Short security_level; 
-		private Boolean complementary; 
-		private Boolean replacement; 
-		private Double lessor_count_accumulated; 
-		private Double lessor_count_declared; 
-		private Double lessor_count_result; 
-		private Double lessor_count_adjust; 
-		private Double lessor_count; 
-		private Double renting_amount_accumulated; 
-		private Double renting_amount_declared; 
-		private Double renting_amount_result; 
-		private Double renting_amount_adjust; 
-		private Double renting_amount; 
-		private Double retention_accumulated; 
-		private Double retention_declared; 
-		private Double retention_result; 
-		private Double retention_adjust; 
-		private Double retention; 
-		private Double lessor_count_in_kind_accumulated; 
-		private Double lessor_count_in_kind_declared; 
-		private Double lessor_count_in_kind_result; 
-		private Double lessor_count_in_kind_adjust; 
-		private Double lessor_count_in_kind; 
-		private Double remuneration_in_kind_accumulated; 
-		private Double remuneration_in_kind_declared; 
-		private Double remuneration_in_kind_result; 
-		private Double remuneration_in_kind_adjust; 
-		private Double remuneration_in_kind; 
-		private Double account_deposit_accumulated; 
-		private Double account_deposit_declared; 
-		private Double account_deposit_result; 
-		private Double account_deposit_adjust; 
-		private Double account_deposit; 
-		private Double extra_charge; 
-		private Double delay_interest; 
-		private Double total_tax_debt; 
-		private Integer rbank; 
+		protected Integer id; 
+		protected Integer year; 
+		protected Short period; 
+		protected Short administration; 
+		protected String comments; 
+		protected Short status; 
+		protected Short security_level; 
+		protected Boolean complementary; 
+		protected Boolean replacement; 
+		protected Double lessor_count_accumulated; 
+		protected Double lessor_count_declared; 
+		protected Double lessor_count_result; 
+		protected Double lessor_count_adjust; 
+		protected Double lessor_count; 
+		protected Double renting_amount_accumulated; 
+		protected Double renting_amount_declared; 
+		protected Double renting_amount_result; 
+		protected Double renting_amount_adjust; 
+		protected Double renting_amount; 
+		protected Double retention_accumulated; 
+		protected Double retention_declared; 
+		protected Double retention_result; 
+		protected Double retention_adjust; 
+		protected Double retention; 
+		protected Double lessor_count_in_kind_accumulated; 
+		protected Double lessor_count_in_kind_declared; 
+		protected Double lessor_count_in_kind_result; 
+		protected Double lessor_count_in_kind_adjust; 
+		protected Double lessor_count_in_kind; 
+		protected Double remuneration_in_kind_accumulated; 
+		protected Double remuneration_in_kind_declared; 
+		protected Double remuneration_in_kind_result; 
+		protected Double remuneration_in_kind_adjust; 
+		protected Double remuneration_in_kind; 
+		protected Double account_deposit_accumulated; 
+		protected Double account_deposit_declared; 
+		protected Double account_deposit_result; 
+		protected Double account_deposit_adjust; 
+		protected Double account_deposit; 
+		protected Double extra_charge; 
+		protected Double delay_interest; 
+		protected Double total_tax_debt; 
+		protected Integer rbank; 
 	}
 	
 	private void insertFs_renting( List<Fs_renting> fs_rentings )
@@ -23212,11 +22857,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement questionStmt = null;
 
 	public static class Question {
-		private Integer id; 
-		private Boolean active; 
-		private String question_text; 
-		private Short type; 
-		private String argument; 
+		protected Integer id; 
+		protected Boolean active; 
+		protected String question_text; 
+		protected Short type; 
+		protected String argument; 
 	}
 	
 	private void insertQuestion( List<Question> questions )
@@ -23385,19 +23030,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement record_dataStmt = null;
 
 	public static class Record_data {
-		private Integer id; 
-		private Integer registry; 
-		private Date creation_date; 
-		private String description; 
-		private String notary; 
-		private String number; 
-		private Date record_date; 
-		private String volume; 
-		private String section; 
-		private String page; 
-		private String sheet; 
-		private String registration; 
-		private Integer attach; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected Date creation_date; 
+		protected String description; 
+		protected String notary; 
+		protected String number; 
+		protected Date record_date; 
+		protected String volume; 
+		protected String section; 
+		protected String page; 
+		protected String sheet; 
+		protected String registration; 
+		protected Integer attach; 
 	}
 	
 	private void insertRecord_data( List<Record_data> record_datas )
@@ -23630,11 +23275,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement employeeStmt = null;
 
 	public static class Employee {
-		private Integer registry; 
-		private Integer workactivity; 
-		private String social_security_num; 
-		private Integer agreement_time; 
-		private Boolean active; 
+		protected Integer registry; 
+		protected Integer workactivity; 
+		protected String social_security_num; 
+		protected Integer agreement_time; 
+		protected Boolean active; 
 	}
 	
 	private void insertEmployee( List<Employee> employees )
@@ -23742,12 +23387,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement alumn_loanStmt = null;
 
 	public static class Alumn_loan {
-		private Integer id; 
-		private Integer customer; 
-		private String material; 
-		private Date loan_date; 
-		private Date end_date; 
-		private String comments; 
+		protected Integer id; 
+		protected Integer customer; 
+		protected String material; 
+		protected Date loan_date; 
+		protected Date end_date; 
+		protected String comments; 
 	}
 	
 	private void insertAlumn_loan( List<Alumn_loan> alumn_loans )
@@ -23924,10 +23569,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement activityStmt = null;
 
 	public static class Activity {
-		private Integer id; 
-		private Integer dossier; 
-		private Integer activity_type; 
-		private Integer workgroup; 
+		protected Integer id; 
+		protected Integer dossier; 
+		protected Integer activity_type; 
+		protected Integer workgroup; 
 	}
 	
 	private void insertActivity( List<Activity> activitys )
@@ -24088,27 +23733,27 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement calendarStmt = null;
 
 	public static class Calendar {
-		private Integer id; 
-		private Integer holiday; 
-		private Double anual_hours; 
-		private String description; 
-		private String comments; 
-		private Short monday; 
-		private Double monday_hours; 
-		private Short tuesday; 
-		private Double tuesday_hours; 
-		private Short wednesday; 
-		private Double wednesday_hours; 
-		private Short thursday; 
-		private Double thursday_hours; 
-		private Short friday; 
-		private Double friday_hours; 
-		private Short saturday; 
-		private Double saturday_hours; 
-		private Short sunday; 
-		private Double sunday_hours; 
-		private Boolean generic; 
-		private Integer calendar; 
+		protected Integer id; 
+		protected Integer holiday; 
+		protected Double anual_hours; 
+		protected String description; 
+		protected String comments; 
+		protected Short monday; 
+		protected Double monday_hours; 
+		protected Short tuesday; 
+		protected Double tuesday_hours; 
+		protected Short wednesday; 
+		protected Double wednesday_hours; 
+		protected Short thursday; 
+		protected Double thursday_hours; 
+		protected Short friday; 
+		protected Double friday_hours; 
+		protected Short saturday; 
+		protected Double saturday_hours; 
+		protected Short sunday; 
+		protected Double sunday_hours; 
+		protected Boolean generic; 
+		protected Integer calendar; 
 	}
 	
 	private void insertCalendar( List<Calendar> calendars )
@@ -24405,10 +24050,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement ec_offer_pay_infoStmt = null;
 
 	public static class Ec_offer_pay_info {
-		private Integer id; 
-		private Integer offer; 
-		private Short payment_status; 
-		private Integer authorization_number; 
+		protected Integer id; 
+		protected Integer offer; 
+		protected Short payment_status; 
+		protected Integer authorization_number; 
 	}
 	
 	private void insertEc_offer_pay_info( List<Ec_offer_pay_info> ec_offer_pay_infos )
@@ -24569,14 +24214,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement asset_activityStmt = null;
 
 	public static class Asset_activity {
-		private Integer id; 
-		private Integer asset; 
-		private Date date; 
-		private Timestamp from_time; 
-		private Timestamp to_time; 
-		private String who; 
-		private String why; 
-		private Short status; 
+		protected Integer id; 
+		protected Integer asset; 
+		protected Date date; 
+		protected Timestamp from_time; 
+		protected Timestamp to_time; 
+		protected String who; 
+		protected String why; 
+		protected Short status; 
 	}
 	
 	private void insertAsset_activity( List<Asset_activity> asset_activitys )
@@ -24769,26 +24414,26 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement calendar_periodStmt = null;
 
 	public static class Calendar_period {
-		private Integer id; 
-		private Integer calendar; 
-		private String description; 
-		private Short month; 
-		private Short start_day; 
-		private Short end_day; 
-		private Short monday; 
-		private Double monday_hours; 
-		private Short tuesday; 
-		private Double tuesday_hours; 
-		private Short wednesday; 
-		private Double wednesday_hours; 
-		private Short thursday; 
-		private Double thursday_hours; 
-		private Short friday; 
-		private Double friday_hours; 
-		private Short saturday; 
-		private Double saturday_hours; 
-		private Short sunday; 
-		private Double sunday_hours; 
+		protected Integer id; 
+		protected Integer calendar; 
+		protected String description; 
+		protected Short month; 
+		protected Short start_day; 
+		protected Short end_day; 
+		protected Short monday; 
+		protected Double monday_hours; 
+		protected Short tuesday; 
+		protected Double tuesday_hours; 
+		protected Short wednesday; 
+		protected Double wednesday_hours; 
+		protected Short thursday; 
+		protected Double thursday_hours; 
+		protected Short friday; 
+		protected Double friday_hours; 
+		protected Short saturday; 
+		protected Double saturday_hours; 
+		protected Short sunday; 
+		protected Double sunday_hours; 
 	}
 	
 	private void insertCalendar_period( List<Calendar_period> calendar_periods )
@@ -25067,6 +24712,179 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int system_costStmtSize = 0;
+
+	private int system_costInserted = 0;
+
+	private List<System_cost> system_costs = 
+		new LinkedList<System_cost>();
+
+	private PreparedStatement system_costStmt = null;
+
+	public static class System_cost {
+		protected Integer id; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected String description; 
+		protected String expression; 
+	}
+	
+	private void insertSystem_cost( List<System_cost> system_costs )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = system_costs.size();
+		if ( system_costStmtSize != size ) {
+			if ( system_costStmt != null ) {
+				system_costStmt.close();
+			}
+			String values = "(?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			system_costStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO system_cost (id,start_date,end_date,description,expression)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			system_costStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (System_cost system_cost : system_costs) {
+			if ( system_cost.id == null )
+				system_costStmt.setNull(offset++, 4);
+			else
+				system_costStmt.setInt(offset++, system_cost.id);
+			if ( system_cost.start_date == null )
+				system_costStmt.setNull(offset++, 91);
+			else
+				system_costStmt.setDate(offset++, system_cost.start_date);
+			if ( system_cost.end_date == null )
+				system_costStmt.setNull(offset++, 91);
+			else
+				system_costStmt.setDate(offset++, system_cost.end_date);
+			if ( system_cost.description == null )
+				system_costStmt.setNull(offset++, 12);
+			else
+				system_costStmt.setString(offset++, system_cost.description);
+			if ( system_cost.expression == null )
+				system_costStmt.setNull(offset++, 12);
+			else
+				system_costStmt.setString(offset++, system_cost.expression);
+		}
+		system_costStmt.executeUpdate();
+		system_costInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} System_costs in {} milliseconds.", size, system_costInserted, elapsed );		
+	}
+		
+		private int system_costId = -1;
+		
+		private void initSystem_costId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `system_cost`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.system_costId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextSystem_costId() {
+			return ++this.system_costId;
+		} 
+
+		public void setSystem_costId(Integer system_costId) {
+			this.system_costId = system_costId;
+		} 
+	
+	private void flushSystem_cost(  )
+	throws SQLException {
+		if ( ! system_costs.isEmpty() )
+			insertSystem_cost(system_costs);
+		if ( system_costStmt != null )
+			system_costStmt.close();
+	}	
+
+	/**
+	 * System_cost
+	 * @param id Identificador unico
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param description Descripcion
+	 * @param expression Formula
+	 * @throws SQLException
+	*/
+	protected void insertSystem_cost(Integer id, Date start_date, Date end_date, String description, String expression)
+	throws SQLException {
+
+		System_cost system_cost_ = new System_cost();
+		system_cost_.id = id;
+		system_cost_.start_date = start_date;
+		system_cost_.end_date = end_date;
+		system_cost_.description = description;
+		system_cost_.expression = expression;
+
+		system_costs.add(system_cost_);
+		
+		int system_costCount = system_costs.size();
+		
+		if ( 222 * system_costCount >=  this.maxAllowedPacket ){
+			insertSystem_cost(system_costs);
+			system_costs.clear();
+		} 
+	}
+
+
+	/**
+	 * System_cost
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param description Descripcion
+	 * @param expression Formula
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertSystem_cost(Date start_date, Date end_date, String description, String expression)
+	throws SQLException {
+		int id = nextSystem_costId();
+
+		System_cost system_cost_ = new System_cost();
+		system_cost_.id = id;
+		system_cost_.start_date = start_date;
+		system_cost_.end_date = end_date;
+		system_cost_.description = description;
+		system_cost_.expression = expression;
+
+		system_costs.add(system_cost_);
+		
+		int system_costCount = system_costs.size();
+		
+		if ( 222 * system_costCount >=  this.maxAllowedPacket ){
+			insertSystem_cost(system_costs);
+			system_costs.clear();
+		} 
+		return id;
+	}
+
+
 	private int fbatchStmtSize = 0;
 
 	private int fbatchInserted = 0;
@@ -25077,15 +24895,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement fbatchStmt = null;
 
 	public static class Fbatch {
-		private Integer id; 
-		private String description; 
-		private Date issue_date; 
-		private Short type; 
-		private Short status; 
-		private Integer rbank; 
-		private Integer bank_statement_link; 
-		private Boolean payment; 
-		private Short security_level; 
+		protected Integer id; 
+		protected String description; 
+		protected Date issue_date; 
+		protected Short type; 
+		protected Short status; 
+		protected Integer rbank; 
+		protected Integer bank_statement_link; 
+		protected Boolean payment; 
+		protected Short security_level; 
 	}
 	
 	private void insertFbatch( List<Fbatch> fbatchs )
@@ -25286,9 +25104,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement invoice_detail_accountStmt = null;
 
 	public static class Invoice_detail_account {
-		private Integer id; 
-		private Integer invoice_detail; 
-		private String account; 
+		protected Integer id; 
+		protected Integer invoice_detail; 
+		protected String account; 
 	}
 	
 	private void insertInvoice_detail_account( List<Invoice_detail_account> invoice_detail_accounts )
@@ -25441,9 +25259,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement commission_typeStmt = null;
 
 	public static class Commission_type {
-		private Integer id; 
-		private String name; 
-		private Double rate; 
+		protected Integer id; 
+		protected String name; 
+		protected Double rate; 
 	}
 	
 	private void insertCommission_type( List<Commission_type> commission_types )
@@ -25596,11 +25414,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement enterprise_certificate_detailStmt = null;
 
 	public static class Enterprise_certificate_detail {
-		private Integer id; 
-		private Integer enterprise_certificate; 
-		private Integer contract; 
-		private Date expire_date; 
-		private String suspension_cause; 
+		protected Integer id; 
+		protected Integer enterprise_certificate; 
+		protected Integer contract; 
+		protected Date expire_date; 
+		protected String suspension_cause; 
 	}
 	
 	private void insertEnterprise_certificate_detail( List<Enterprise_certificate_detail> enterprise_certificate_details )
@@ -25769,14 +25587,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement alarmStmt = null;
 
 	public static class Alarm {
-		private Integer id; 
-		private String description; 
-		private Timestamp alarm_date; 
-		private Short status; 
-		private Short source; 
-		private Integer source_id; 
-		private Integer user_id; 
-		private Short priority; 
+		protected Integer id; 
+		protected String description; 
+		protected Timestamp alarm_date; 
+		protected Short status; 
+		protected Short source; 
+		protected Integer source_id; 
+		protected Integer user_id; 
+		protected Short priority; 
 	}
 	
 	private void insertAlarm( List<Alarm> alarms )
@@ -25969,9 +25787,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement pay_methodStmt = null;
 
 	public static class Pay_method {
-		private Integer id; 
-		private String name; 
-		private Short type; 
+		protected Integer id; 
+		protected String name; 
+		protected Short type; 
 	}
 	
 	private void insertPay_method( List<Pay_method> pay_methods )
@@ -26124,12 +25942,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement ec_catalogueStmt = null;
 
 	public static class Ec_catalogue {
-		private Integer id; 
-		private Integer catalogue; 
-		private InputStream catalogue_img; 
-		private InputStream catalogue_icon; 
-		private Short type; 
-		private Boolean visible; 
+		protected Integer id; 
+		protected Integer catalogue; 
+		protected InputStream catalogue_img; 
+		protected InputStream catalogue_icon; 
+		protected Short type; 
+		protected Boolean visible; 
 	}
 	
 	private void insertEc_catalogue( List<Ec_catalogue> ec_catalogues )
@@ -26306,11 +26124,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement workactivityStmt = null;
 
 	public static class Workactivity {
-		private Integer id; 
-		private String description; 
-		private Integer workplace; 
-		private Integer enterpriseCCC; 
-		private Boolean active; 
+		protected Integer id; 
+		protected String description; 
+		protected Integer workplace; 
+		protected Integer enterpriseCCC; 
+		protected Boolean active; 
 	}
 	
 	private void insertWorkactivity( List<Workactivity> workactivitys )
@@ -26479,39 +26297,39 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement ec_configStmt = null;
 
 	public static class Ec_config {
-		private Integer id; 
-		private Boolean active; 
-		private String name; 
-		private Short skin; 
-		private InputStream header_img; 
-		private String series; 
-		private Boolean commerce; 
-		private Short show_login; 
-		private Short price; 
-		private Short tax_in_price; 
-		private Short discount; 
-		private Integer bank_transfer; 
-		private Integer cash_on_delivery; 
-		private Integer visa; 
-		private Integer paypal; 
-		private Integer bank_draft; 
-		private String legal_note1; 
-		private String legal_note2; 
-		private String legal_note3; 
-		private Integer tariff; 
-		private String header_color; 
-		private String telephone; 
-		private Short row_items; 
-		private InputStream left_banner; 
-		private InputStream right_banner; 
-		private InputStream welcome_banner; 
-		private Short ecommerce_status; 
-		private Double shipping_costs; 
-		private Double free_shipping; 
-		private String title_note1; 
-		private String title_note2; 
-		private String title_note3; 
-		private String email; 
+		protected Integer id; 
+		protected Boolean active; 
+		protected String name; 
+		protected Short skin; 
+		protected InputStream header_img; 
+		protected String series; 
+		protected Boolean commerce; 
+		protected Short show_login; 
+		protected Short price; 
+		protected Short tax_in_price; 
+		protected Short discount; 
+		protected Integer bank_transfer; 
+		protected Integer cash_on_delivery; 
+		protected Integer visa; 
+		protected Integer paypal; 
+		protected Integer bank_draft; 
+		protected String legal_note1; 
+		protected String legal_note2; 
+		protected String legal_note3; 
+		protected Integer tariff; 
+		protected String header_color; 
+		protected String telephone; 
+		protected Short row_items; 
+		protected InputStream left_banner; 
+		protected InputStream right_banner; 
+		protected InputStream welcome_banner; 
+		protected Short ecommerce_status; 
+		protected Double shipping_costs; 
+		protected Double free_shipping; 
+		protected String title_note1; 
+		protected String title_note2; 
+		protected String title_note3; 
+		protected String email; 
 	}
 	
 	private void insertEc_config( List<Ec_config> ec_configs )
@@ -26894,170 +26712,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int account_budgetStmtSize = 0;
-
-	private int account_budgetInserted = 0;
-
-	private List<Account_budget> account_budgets = 
-		new LinkedList<Account_budget>();
-
-	private PreparedStatement account_budgetStmt = null;
-
-	public static class Account_budget {
-		private Integer id; 
-		private String account_period; 
-		private String account; 
-		private Short security_level; 
-	}
-	
-	private void insertAccount_budget( List<Account_budget> account_budgets )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = account_budgets.size();
-		if ( account_budgetStmtSize != size ) {
-			if ( account_budgetStmt != null ) {
-				account_budgetStmt.close();
-			}
-			String values = "(?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			account_budgetStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO account_budget (id,account_period,account,security_level)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			account_budgetStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Account_budget account_budget : account_budgets) {
-			if ( account_budget.id == null )
-				account_budgetStmt.setNull(offset++, 4);
-			else
-				account_budgetStmt.setInt(offset++, account_budget.id);
-			if ( account_budget.account_period == null )
-				account_budgetStmt.setNull(offset++, 1);
-			else
-				account_budgetStmt.setString(offset++, account_budget.account_period);
-			if ( account_budget.account == null )
-				account_budgetStmt.setNull(offset++, 1);
-			else
-				account_budgetStmt.setString(offset++, account_budget.account);
-			if ( account_budget.security_level == null )
-				account_budgetStmt.setNull(offset++, -6);
-			else
-				account_budgetStmt.setShort(offset++, account_budget.security_level);
-		}
-		account_budgetStmt.executeUpdate();
-		account_budgetInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Account_budgets in {} milliseconds.", size, account_budgetInserted, elapsed );		
-	}
-		
-		private int account_budgetId = -1;
-		
-		private void initAccount_budgetId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `account_budget`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.account_budgetId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextAccount_budgetId() {
-			return ++this.account_budgetId;
-		} 
-
-		public void setAccount_budgetId(Integer account_budgetId) {
-			this.account_budgetId = account_budgetId;
-		} 
-	
-	private void flushAccount_budget(  )
-	throws SQLException {
-		if ( ! account_budgets.isEmpty() )
-			insertAccount_budget(account_budgets);
-		if ( account_budgetStmt != null )
-			account_budgetStmt.close();
-	}	
-
-	/**
-	 * Account_budget
-	 * @param id Identificador unico
-	 * @param account_period Ejercicio Contable del Presupuesto
-	 * @param account Cuenta Contable del Presupuesto
-	 * @param security_level Nivel de seguridad del Presupuesto
-	 * @throws SQLException
-	*/
-	protected void insertAccount_budget(Integer id, String account_period, String account, Short security_level)
-	throws SQLException {
-
-		Account_budget account_budget_ = new Account_budget();
-		account_budget_.id = id;
-		account_budget_.account_period = account_period;
-		account_budget_.account = account;
-		account_budget_.security_level = security_level;
-
-		account_budgets.add(account_budget_);
-		
-		int account_budgetCount = account_budgets.size();
-		
-		if ( 29 * account_budgetCount >=  this.maxAllowedPacket ){
-			insertAccount_budget(account_budgets);
-			account_budgets.clear();
-		} 
-	}
-
-
-	/**
-	 * Account_budget
-	 * @param account_period Ejercicio Contable del Presupuesto
-	 * @param account Cuenta Contable del Presupuesto
-	 * @param security_level Nivel de seguridad del Presupuesto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertAccount_budget(String account_period, String account, Short security_level)
-	throws SQLException {
-		int id = nextAccount_budgetId();
-
-		Account_budget account_budget_ = new Account_budget();
-		account_budget_.id = id;
-		account_budget_.account_period = account_period;
-		account_budget_.account = account;
-		account_budget_.security_level = security_level;
-
-		account_budgets.add(account_budget_);
-		
-		int account_budgetCount = account_budgets.size();
-		
-		if ( 29 * account_budgetCount >=  this.maxAllowedPacket ){
-			insertAccount_budget(account_budgets);
-			account_budgets.clear();
-		} 
-		return id;
-	}
-
-
 	private int course_observationStmtSize = 0;
 
 	private int course_observationInserted = 0;
@@ -27068,9 +26722,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement course_observationStmt = null;
 
 	public static class Course_observation {
-		private Integer id; 
-		private Integer course; 
-		private String observation; 
+		protected Integer id; 
+		protected Integer course; 
+		protected String observation; 
 	}
 	
 	private void insertCourse_observation( List<Course_observation> course_observations )
@@ -27223,13 +26877,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement survey_responseStmt = null;
 
 	public static class Survey_response {
-		private Integer id; 
-		private Timestamp creationDate; 
-		private Timestamp response_date; 
-		private Integer survey; 
-		private Integer target; 
-		private Integer user; 
-		private Integer campaign_action; 
+		protected Integer id; 
+		protected Timestamp creationDate; 
+		protected Timestamp response_date; 
+		protected Integer survey; 
+		protected Integer target; 
+		protected Integer user; 
+		protected Integer campaign_action; 
 	}
 	
 	private void insertSurvey_response( List<Survey_response> survey_responses )
@@ -27414,10 +27068,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement evaluation_observationStmt = null;
 
 	public static class Evaluation_observation {
-		private Integer id; 
-		private Integer alumn; 
-		private Short evaluation; 
-		private String comments; 
+		protected Integer id; 
+		protected Integer alumn; 
+		protected Short evaluation; 
+		protected String comments; 
 	}
 	
 	private void insertEvaluation_observation( List<Evaluation_observation> evaluation_observations )
@@ -27578,14 +27232,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement personStmt = null;
 
 	public static class Person {
-		private Integer registry; 
-		private Date birth_date; 
-		private Short gender; 
-		private Short marital_status; 
-		private String social_security_num; 
-		private String name; 
-		private String first_surname; 
-		private String second_surname; 
+		protected Integer registry; 
+		protected Date birth_date; 
+		protected Short gender; 
+		protected Short marital_status; 
+		protected String social_security_num; 
+		protected String name; 
+		protected String first_surname; 
+		protected String second_surname; 
 	}
 	
 	private void insertPerson( List<Person> persons )
@@ -27711,19 +27365,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement contract_paymentStmt = null;
 
 	public static class Contract_payment {
-		private Integer id; 
-		private Short type; 
-		private Integer contract; 
-		private Integer payment_concept; 
-		private String description; 
-		private Short description_decorable; 
-		private String expression; 
-		private String irpf_expression; 
-		private String quote_expression; 
-		private Date start_date; 
-		private Short month; 
-		private Date end_date; 
-		private Short salary_type; 
+		protected Integer id; 
+		protected Short type; 
+		protected Integer contract; 
+		protected Integer payment_concept; 
+		protected String description; 
+		protected Short description_decorable; 
+		protected String expression; 
+		protected String irpf_expression; 
+		protected String quote_expression; 
+		protected Date start_date; 
+		protected Short month; 
+		protected Date end_date; 
+		protected Short salary_type; 
 	}
 	
 	private void insertContract_payment( List<Contract_payment> contract_payments )
@@ -27956,26 +27610,26 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement cashflow_forecastStmt = null;
 
 	public static class Cashflow_forecast {
-		private Integer id; 
-		private Boolean payment; 
-		private String description; 
-		private Date start_date; 
-		private Date due_date; 
-		private Integer rbank; 
-		private Double amount; 
-		private Double payment_day; 
-		private Boolean january; 
-		private Boolean february; 
-		private Boolean march; 
-		private Boolean april; 
-		private Boolean may; 
-		private Boolean june; 
-		private Boolean july; 
-		private Boolean august; 
-		private Boolean september; 
-		private Boolean october; 
-		private Boolean november; 
-		private Boolean december; 
+		protected Integer id; 
+		protected Boolean payment; 
+		protected String description; 
+		protected Date start_date; 
+		protected Date due_date; 
+		protected Integer rbank; 
+		protected Double amount; 
+		protected Double payment_day; 
+		protected Boolean january; 
+		protected Boolean february; 
+		protected Boolean march; 
+		protected Boolean april; 
+		protected Boolean may; 
+		protected Boolean june; 
+		protected Boolean july; 
+		protected Boolean august; 
+		protected Boolean september; 
+		protected Boolean october; 
+		protected Boolean november; 
+		protected Boolean december; 
 	}
 	
 	private void insertCashflow_forecast( List<Cashflow_forecast> cashflow_forecasts )
@@ -28264,13 +27918,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement account_entryStmt = null;
 
 	public static class Account_entry {
-		private Integer id; 
-		private String account_period; 
-		private Date entry_date; 
-		private Short entry_type; 
-		private Integer journal; 
-		private Short security_level; 
-		private String comments; 
+		protected Integer id; 
+		protected String account_period; 
+		protected Date entry_date; 
+		protected Short entry_type; 
+		protected Integer journal; 
+		protected Short security_level; 
+		protected String comments; 
 	}
 	
 	private void insertAccount_entry( List<Account_entry> account_entrys )
@@ -28455,9 +28109,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement geotreeStmt = null;
 
 	public static class Geotree {
-		private Integer id; 
-		private Integer parent; 
-		private Integer child; 
+		protected Integer id; 
+		protected Integer parent; 
+		protected Integer child; 
 	}
 	
 	private void insertGeotree( List<Geotree> geotrees )
@@ -28610,9 +28264,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement sales_purchaseStmt = null;
 
 	public static class Sales_purchase {
-		private Integer id; 
-		private Integer sales_detail; 
-		private Integer purchase_detail; 
+		protected Integer id; 
+		protected Integer sales_detail; 
+		protected Integer purchase_detail; 
 	}
 	
 	private void insertSales_purchase( List<Sales_purchase> sales_purchases )
@@ -28765,11 +28419,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement item_supplierStmt = null;
 
 	public static class Item_supplier {
-		private Integer id; 
-		private Integer item; 
-		private Integer supplier; 
-		private String code; 
-		private Short priority; 
+		protected Integer id; 
+		protected Integer item; 
+		protected Integer supplier; 
+		protected String code; 
+		protected Short priority; 
 	}
 	
 	private void insertItem_supplier( List<Item_supplier> item_suppliers )
@@ -28938,9 +28592,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement customer_accountStmt = null;
 
 	public static class Customer_account {
-		private Integer id; 
-		private Integer customer; 
-		private String account; 
+		protected Integer id; 
+		protected Integer customer; 
+		protected String account; 
 	}
 	
 	private void insertCustomer_account( List<Customer_account> customer_accounts )
@@ -29093,12 +28747,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement dossierStmt = null;
 
 	public static class Dossier {
-		private Integer id; 
-		private Integer customer; 
-		private Integer dossier_type; 
-		private String number; 
-		private String location; 
-		private Short status; 
+		protected Integer id; 
+		protected Integer customer; 
+		protected Integer dossier_type; 
+		protected String number; 
+		protected String location; 
+		protected Short status; 
 	}
 	
 	private void insertDossier( List<Dossier> dossiers )
@@ -29275,10 +28929,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement survey_questionStmt = null;
 
 	public static class Survey_question {
-		private Integer id; 
-		private Integer survey; 
-		private Integer question; 
-		private Integer position; 
+		protected Integer id; 
+		protected Integer survey; 
+		protected Integer question; 
+		protected Integer position; 
 	}
 	
 	private void insertSurvey_question( List<Survey_question> survey_questions )
@@ -29439,12 +29093,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement cv_evaluate_summaryStmt = null;
 
 	public static class Cv_evaluate_summary {
-		private Integer id; 
-		private String strengths; 
-		private String weaknesses; 
-		private Short profile; 
-		private String comments; 
-		private Integer curriculum; 
+		protected Integer id; 
+		protected String strengths; 
+		protected String weaknesses; 
+		protected Short profile; 
+		protected String comments; 
+		protected Integer curriculum; 
 	}
 	
 	private void insertCv_evaluate_summary( List<Cv_evaluate_summary> cv_evaluate_summarys )
@@ -29621,18 +29275,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement courseStmt = null;
 
 	public static class Course {
-		private Integer id; 
-		private String code; 
-		private String description; 
-		private Date start_date; 
-		private Date end_date; 
-		private Integer academic_year; 
-		private Integer subject; 
-		private Integer level; 
-		private Integer workplace; 
-		private Integer alumn_limit; 
-		private Short status; 
-		private String comments; 
+		protected Integer id; 
+		protected String code; 
+		protected String description; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Integer academic_year; 
+		protected Integer subject; 
+		protected Integer level; 
+		protected Integer workplace; 
+		protected Integer alumn_limit; 
+		protected Short status; 
+		protected String comments; 
 	}
 	
 	private void insertCourse( List<Course> courses )
@@ -29857,10 +29511,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement stockStmt = null;
 
 	public static class Stock {
-		private Integer id; 
-		private Integer warehouse; 
-		private Integer item; 
-		private Double quantity; 
+		protected Integer id; 
+		protected Integer warehouse; 
+		protected Integer item; 
+		protected Double quantity; 
 	}
 	
 	private void insertStock( List<Stock> stocks )
@@ -30021,11 +29675,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement rbankStmt = null;
 
 	public static class Rbank {
-		private Integer id; 
-		private Integer registry; 
-		private Integer bank; 
-		private String bank_account; 
-		private String sufix; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected Integer bank; 
+		protected String bank_account; 
+		protected String sufix; 
 	}
 	
 	private void insertRbank( List<Rbank> rbanks )
@@ -30194,14 +29848,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement rpaymethodStmt = null;
 
 	public static class Rpaymethod {
-		private Integer id; 
-		private Integer registry; 
-		private Integer pay_method; 
-		private Integer rbank; 
-		private Integer number_of_pymnts; 
-		private Integer days_to_first_pymnt; 
-		private Integer days_between_pymnts; 
-		private String pymnt_days; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected Integer pay_method; 
+		protected Integer rbank; 
+		protected Integer number_of_pymnts; 
+		protected Integer days_to_first_pymnt; 
+		protected Integer days_between_pymnts; 
+		protected String pymnt_days; 
 	}
 	
 	private void insertRpaymethod( List<Rpaymethod> rpaymethods )
@@ -30394,27 +30048,27 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement salesStmt = null;
 
 	public static class Sales {
-		private Integer id; 
-		private Integer customer; 
-		private String series; 
-		private Integer number; 
-		private Integer shipping_address; 
-		private Integer seller; 
-		private String discount_expr; 
-		private Date issue_date; 
-		private Integer pay_method; 
-		private Short document_type; 
-		private Short security_level; 
-		private Short status; 
-		private Integer pos; 
-		private Integer workplace; 
-		private Integer scope; 
-		private Integer number_of_pymnts; 
-		private Integer days_to_first_pymnt; 
-		private Integer days_between_pymnts; 
-		private String pymnt_days; 
-		private Integer bank; 
-		private String bank_account; 
+		protected Integer id; 
+		protected Integer customer; 
+		protected String series; 
+		protected Integer number; 
+		protected Integer shipping_address; 
+		protected Integer seller; 
+		protected String discount_expr; 
+		protected Date issue_date; 
+		protected Integer pay_method; 
+		protected Short document_type; 
+		protected Short security_level; 
+		protected Short status; 
+		protected Integer pos; 
+		protected Integer workplace; 
+		protected Integer scope; 
+		protected Integer number_of_pymnts; 
+		protected Integer days_to_first_pymnt; 
+		protected Integer days_between_pymnts; 
+		protected String pymnt_days; 
+		protected Integer bank; 
+		protected String bank_account; 
 	}
 	
 	private void insertSales( List<Sales> saless )
@@ -30711,23 +30365,23 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement incomeStmt = null;
 
 	public static class Income {
-		private Integer id; 
-		private String series; 
-		private Integer number; 
-		private Integer supplier; 
-		private Integer address; 
-		private Date issue_time; 
-		private Integer pay_method; 
-		private Short security_level; 
-		private Short status; 
-		private Integer workplace; 
-		private Integer scope; 
-		private Integer number_of_pymnts; 
-		private Integer days_to_first_pymnt; 
-		private Integer days_between_pymnts; 
-		private String pymnt_days; 
-		private Integer bank; 
-		private String bank_account; 
+		protected Integer id; 
+		protected String series; 
+		protected Integer number; 
+		protected Integer supplier; 
+		protected Integer address; 
+		protected Date issue_time; 
+		protected Integer pay_method; 
+		protected Short security_level; 
+		protected Short status; 
+		protected Integer workplace; 
+		protected Integer scope; 
+		protected Integer number_of_pymnts; 
+		protected Integer days_to_first_pymnt; 
+		protected Integer days_between_pymnts; 
+		protected String pymnt_days; 
+		protected Integer bank; 
+		protected String bank_account; 
 	}
 	
 	private void insertIncome( List<Income> incomes )
@@ -30992,11 +30646,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement enterprise_activityStmt = null;
 
 	public static class Enterprise_activity {
-		private Integer id; 
-		private String description; 
-		private Integer enterprise; 
-		private Integer cnae; 
-		private Short type; 
+		protected Integer id; 
+		protected String description; 
+		protected Integer enterprise; 
+		protected Integer cnae; 
+		protected Short type; 
 	}
 	
 	private void insertEnterprise_activity( List<Enterprise_activity> enterprise_activitys )
@@ -31165,10 +30819,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement web_info_page_resourceStmt = null;
 
 	public static class Web_info_page_resource {
-		private Integer id; 
-		private Integer web_info_page; 
-		private Integer rattach; 
-		private String content; 
+		protected Integer id; 
+		protected Integer web_info_page; 
+		protected Integer rattach; 
+		protected String content; 
 	}
 	
 	private void insertWeb_info_page_resource( List<Web_info_page_resource> web_info_page_resources )
@@ -31329,11 +30983,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement fbatch_detailStmt = null;
 
 	public static class Fbatch_detail {
-		private Integer id; 
-		private Integer fbatch; 
-		private Integer finance; 
-		private Double amount; 
-		private Short status; 
+		protected Integer id; 
+		protected Integer fbatch; 
+		protected Integer finance; 
+		protected Double amount; 
+		protected Short status; 
 	}
 	
 	private void insertFbatch_detail( List<Fbatch_detail> fbatch_details )
@@ -31502,17 +31156,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement contract_leaveStmt = null;
 
 	public static class Contract_leave {
-		private Integer id; 
-		private Short type; 
-		private Integer contract; 
-		private String description; 
-		private Date start_date; 
-		private Date end_date; 
-		private Double daily_cgc_base; 
-		private Double daily_cgp_base; 
-		private Integer parent; 
-		private Double daily_reg_base; 
-		private Short discharge_cause; 
+		protected Integer id; 
+		protected Short type; 
+		protected Integer contract; 
+		protected String description; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Double daily_cgc_base; 
+		protected Double daily_cgp_base; 
+		protected Integer parent; 
+		protected Double daily_reg_base; 
+		protected Short discharge_cause; 
 	}
 	
 	private void insertContract_leave( List<Contract_leave> contract_leaves )
@@ -31729,12 +31383,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement calendar_holidayStmt = null;
 
 	public static class Calendar_holiday {
-		private Integer id; 
-		private Integer calendar; 
-		private String description; 
-		private Date date; 
-		private Short day_type; 
-		private Double hours; 
+		protected Integer id; 
+		protected Integer calendar; 
+		protected String description; 
+		protected Date date; 
+		protected Short day_type; 
+		protected Double hours; 
 	}
 	
 	private void insertCalendar_holiday( List<Calendar_holiday> calendar_holidays )
@@ -31911,9 +31565,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement workgroupStmt = null;
 
 	public static class Workgroup {
-		private Integer id; 
-		private String description; 
-		private Short status; 
+		protected Integer id; 
+		protected String description; 
+		protected Short status; 
 	}
 	
 	private void insertWorkgroup( List<Workgroup> workgroups )
@@ -32066,8 +31720,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement categoryStmt = null;
 
 	public static class Category {
-		private Integer id; 
-		private String name; 
+		protected Integer id; 
+		protected String name; 
 	}
 	
 	private void insertCategory( List<Category> categorys )
@@ -32212,11 +31866,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement mk_action_targetStmt = null;
 
 	public static class Mk_action_target {
-		private Integer id; 
-		private Integer action; 
-		private Integer target; 
-		private Short status; 
-		private Integer survey_response; 
+		protected Integer id; 
+		protected Integer action; 
+		protected Integer target; 
+		protected Short status; 
+		protected Integer survey_response; 
 	}
 	
 	private void insertMk_action_target( List<Mk_action_target> mk_action_targets )
@@ -32385,14 +32039,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement taxStmt = null;
 
 	public static class Tax {
-		private Integer id; 
-		private String name; 
-		private Short tax_type; 
-		private Double percentage; 
-		private Double surcharge; 
-		private Date start_date; 
-		private Short vat_deduction_type; 
-		private Short withholding_type; 
+		protected Integer id; 
+		protected String name; 
+		protected Short tax_type; 
+		protected Double percentage; 
+		protected Double surcharge; 
+		protected Date start_date; 
+		protected Short vat_deduction_type; 
+		protected Short withholding_type; 
 	}
 	
 	private void insertTax( List<Tax> taxs )
@@ -32585,14 +32239,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement sessionStmt = null;
 
 	public static class Session {
-		private Integer id; 
-		private Timestamp endDate; 
-		private String remote_address; 
-		private String remote_host; 
-		private String session_id; 
-		private Timestamp startDate; 
-		private Integer application_id; 
-		private Integer user_id; 
+		protected Integer id; 
+		protected Timestamp endDate; 
+		protected String remote_address; 
+		protected String remote_host; 
+		protected String session_id; 
+		protected Timestamp startDate; 
+		protected Integer application_id; 
+		protected Integer user_id; 
 	}
 	
 	private void insertSession( List<Session> sessions )
@@ -32785,13 +32439,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement cv_studiesStmt = null;
 
 	public static class Cv_studies {
-		private Integer id; 
-		private Date startingdate; 
-		private Date endingdate; 
-		private Short degree; 
-		private String speciality; 
-		private String centre; 
-		private Integer curriculum; 
+		protected Integer id; 
+		protected Date startingdate; 
+		protected Date endingdate; 
+		protected Short degree; 
+		protected String speciality; 
+		protected String centre; 
+		protected Integer curriculum; 
 	}
 	
 	private void insertCv_studies( List<Cv_studies> cv_studiess )
@@ -32976,8 +32630,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement invoicing_groupStmt = null;
 
 	public static class Invoicing_group {
-		private Integer id; 
-		private Integer parent; 
+		protected Integer id; 
+		protected Integer parent; 
 	}
 	
 	private void insertInvoicing_group( List<Invoicing_group> invoicing_groups )
@@ -33122,14 +32776,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement registryStmt = null;
 
 	public static class Registry {
-		private Integer id; 
-		private String document; 
-		private Short document_type; 
-		private String document_country; 
-		private String name; 
-		private String alias; 
-		private Short type; 
-		private String nationality; 
+		protected Integer id; 
+		protected String document; 
+		protected Short document_type; 
+		protected String document_country; 
+		protected String name; 
+		protected String alias; 
+		protected Short type; 
+		protected String nationality; 
 	}
 	
 	private void insertRegistry( List<Registry> registrys )
@@ -33322,11 +32976,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement creditorStmt = null;
 
 	public static class Creditor {
-		private Integer registry; 
-		private Boolean withholding; 
-		private Short transaction; 
-		private Short status; 
-		private Integer scope; 
+		protected Integer registry; 
+		protected Boolean withholding; 
+		protected Short transaction; 
+		protected Short status; 
+		protected Integer scope; 
 	}
 	
 	private void insertCreditor( List<Creditor> creditors )
@@ -33434,23 +33088,23 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement deliveryStmt = null;
 
 	public static class Delivery {
-		private Integer id; 
-		private String series; 
-		private Integer number; 
-		private Integer customer; 
-		private Integer address; 
-		private Timestamp issue_time; 
-		private Integer pay_method; 
-		private Short security_level; 
-		private Short status; 
-		private Integer workplace; 
-		private Integer scope; 
-		private Integer number_of_pymnts; 
-		private Integer days_to_first_pymnt; 
-		private Integer days_between_pymnts; 
-		private String pymnt_days; 
-		private Integer bank; 
-		private String bank_account; 
+		protected Integer id; 
+		protected String series; 
+		protected Integer number; 
+		protected Integer customer; 
+		protected Integer address; 
+		protected Timestamp issue_time; 
+		protected Integer pay_method; 
+		protected Short security_level; 
+		protected Short status; 
+		protected Integer workplace; 
+		protected Integer scope; 
+		protected Integer number_of_pymnts; 
+		protected Integer days_to_first_pymnt; 
+		protected Integer days_between_pymnts; 
+		protected String pymnt_days; 
+		protected Integer bank; 
+		protected String bank_account; 
 	}
 	
 	private void insertDelivery( List<Delivery> deliverys )
@@ -33715,10 +33369,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement account_periodStmt = null;
 
 	public static class Account_period {
-		private String id; 
-		private Date initiation_date; 
-		private Date deadline; 
-		private Short status; 
+		protected String id; 
+		protected Date initiation_date; 
+		protected Date deadline; 
+		protected Short status; 
 	}
 	
 	private void insertAccount_period( List<Account_period> account_periods )
@@ -33820,11 +33474,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement seriesStmt = null;
 
 	public static class Series {
-		private String id; 
-		private String description; 
-		private Integer workplace; 
-		private Short security_level; 
-		private Boolean active; 
+		protected String id; 
+		protected String description; 
+		protected Integer workplace; 
+		protected Short security_level; 
+		protected Boolean active; 
 	}
 	
 	private void insertSeries( List<Series> seriess )
@@ -33932,27 +33586,27 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement fs_vat_declarationStmt = null;
 
 	public static class Fs_vat_declaration {
-		private Integer id; 
-		private Integer fs_vat; 
-		private Boolean without_activity; 
-		private Short administration; 
-		private Double percent; 
-		private Double operations_volume; 
-		private Double quota; 
-		private Double prev_year_compensate_quota; 
-		private Double done_deposits; 
-		private Double done_refunds; 
-		private Double extra_charge; 
-		private Double delay_interest; 
-		private Double compensate; 
-		private Double pay_back; 
-		private Double deposit; 
-		private Double prev_deposit; 
-		private Double prev_pay_back; 
-		private Double total_tax_debt; 
-		private Integer rbank; 
-		private Boolean compensable; 
-		private Short status; 
+		protected Integer id; 
+		protected Integer fs_vat; 
+		protected Boolean without_activity; 
+		protected Short administration; 
+		protected Double percent; 
+		protected Double operations_volume; 
+		protected Double quota; 
+		protected Double prev_year_compensate_quota; 
+		protected Double done_deposits; 
+		protected Double done_refunds; 
+		protected Double extra_charge; 
+		protected Double delay_interest; 
+		protected Double compensate; 
+		protected Double pay_back; 
+		protected Double deposit; 
+		protected Double prev_deposit; 
+		protected Double prev_pay_back; 
+		protected Double total_tax_debt; 
+		protected Integer rbank; 
+		protected Boolean compensable; 
+		protected Short status; 
 	}
 	
 	private void insertFs_vat_declaration( List<Fs_vat_declaration> fs_vat_declarations )
@@ -34249,8 +33903,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement course_levelStmt = null;
 
 	public static class Course_level {
-		private Integer id; 
-		private String description; 
+		protected Integer id; 
+		protected String description; 
 	}
 	
 	private void insertCourse_level( List<Course_level> course_levels )
@@ -34395,15 +34049,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement workplaceStmt = null;
 
 	public static class Workplace {
-		private Integer id; 
-		private Integer enterprise; 
-		private String description; 
-		private Integer address; 
-		private Short economicAgreement; 
-		private Boolean active; 
-		private Integer calendar; 
-		private Integer enterprise_activity; 
-		private Integer agreement; 
+		protected Integer id; 
+		protected Integer enterprise; 
+		protected String description; 
+		protected Integer address; 
+		protected Short economicAgreement; 
+		protected Boolean active; 
+		protected Integer calendar; 
+		protected Integer enterprise_activity; 
+		protected Integer agreement; 
 	}
 	
 	private void insertWorkplace( List<Workplace> workplaces )
@@ -34604,9 +34258,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement action_deniedStmt = null;
 
 	public static class Action_denied {
-		private Integer id; 
-		private Integer action_id; 
-		private Integer user_id; 
+		protected Integer id; 
+		protected Integer action_id; 
+		protected Integer user_id; 
 	}
 	
 	private void insertAction_denied( List<Action_denied> action_denieds )
@@ -34759,9 +34413,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement agreement_levelStmt = null;
 
 	public static class Agreement_level {
-		private Integer id; 
-		private Integer agreement; 
-		private String description; 
+		protected Integer id; 
+		protected Integer agreement; 
+		protected String description; 
 	}
 	
 	private void insertAgreement_level( List<Agreement_level> agreement_levels )
@@ -34914,16 +34568,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement contactStmt = null;
 
 	public static class Contact {
-		private Integer id; 
-		private Integer user; 
-		private String name; 
-		private String organization; 
-		private String phone; 
-		private String cellular_phone; 
-		private String fax; 
-		private String email; 
-		private String address; 
-		private String note; 
+		protected Integer id; 
+		protected Integer user; 
+		protected String name; 
+		protected String organization; 
+		protected String phone; 
+		protected String cellular_phone; 
+		protected String fax; 
+		protected String email; 
+		protected String address; 
+		protected String note; 
 	}
 	
 	private void insertContact( List<Contact> contacts )
@@ -35132,9 +34786,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement user_workgroupStmt = null;
 
 	public static class User_workgroup {
-		private Integer id; 
-		private Integer user_id; 
-		private Integer workgroup; 
+		protected Integer id; 
+		protected Integer user_id; 
+		protected Integer workgroup; 
 	}
 	
 	private void insertUser_workgroup( List<User_workgroup> user_workgroups )
@@ -35287,11 +34941,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement course_scheduleStmt = null;
 
 	public static class Course_schedule {
-		private Integer id; 
-		private Integer course; 
-		private Short day_of_week; 
-		private Time start_time; 
-		private Time end_time; 
+		protected Integer id; 
+		protected Integer course; 
+		protected Short day_of_week; 
+		protected Time start_time; 
+		protected Time end_time; 
 	}
 	
 	private void insertCourse_schedule( List<Course_schedule> course_schedules )
@@ -35460,11 +35114,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement rrelationshipStmt = null;
 
 	public static class Rrelationship {
-		private Integer id; 
-		private Integer registry; 
-		private Integer related_registry; 
-		private Integer relationship; 
-		private String comments; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected Integer related_registry; 
+		protected Integer relationship; 
+		protected String comments; 
 	}
 	
 	private void insertRrelationship( List<Rrelationship> rrelationships )
@@ -35623,179 +35277,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int annual_report_detailStmtSize = 0;
-
-	private int annual_report_detailInserted = 0;
-
-	private List<Annual_report_detail> annual_report_details = 
-		new LinkedList<Annual_report_detail>();
-
-	private PreparedStatement annual_report_detailStmt = null;
-
-	public static class Annual_report_detail {
-		private Integer id; 
-		private Integer annual_report; 
-		private Integer sortKey; 
-		private String content; 
-		private Short style; 
-	}
-	
-	private void insertAnnual_report_detail( List<Annual_report_detail> annual_report_details )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = annual_report_details.size();
-		if ( annual_report_detailStmtSize != size ) {
-			if ( annual_report_detailStmt != null ) {
-				annual_report_detailStmt.close();
-			}
-			String values = "(?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			annual_report_detailStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO annual_report_detail (id,annual_report,sortKey,content,style)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			annual_report_detailStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Annual_report_detail annual_report_detail : annual_report_details) {
-			if ( annual_report_detail.id == null )
-				annual_report_detailStmt.setNull(offset++, 4);
-			else
-				annual_report_detailStmt.setInt(offset++, annual_report_detail.id);
-			if ( annual_report_detail.annual_report == null )
-				annual_report_detailStmt.setNull(offset++, 4);
-			else
-				annual_report_detailStmt.setInt(offset++, annual_report_detail.annual_report);
-			if ( annual_report_detail.sortKey == null )
-				annual_report_detailStmt.setNull(offset++, 4);
-			else
-				annual_report_detailStmt.setInt(offset++, annual_report_detail.sortKey);
-			if ( annual_report_detail.content == null )
-				annual_report_detailStmt.setNull(offset++, -1);
-			else
-				annual_report_detailStmt.setString(offset++, annual_report_detail.content);
-			if ( annual_report_detail.style == null )
-				annual_report_detailStmt.setNull(offset++, -6);
-			else
-				annual_report_detailStmt.setShort(offset++, annual_report_detail.style);
-		}
-		annual_report_detailStmt.executeUpdate();
-		annual_report_detailInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Annual_report_details in {} milliseconds.", size, annual_report_detailInserted, elapsed );		
-	}
-		
-		private int annual_report_detailId = -1;
-		
-		private void initAnnual_report_detailId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `annual_report_detail`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.annual_report_detailId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextAnnual_report_detailId() {
-			return ++this.annual_report_detailId;
-		} 
-
-		public void setAnnual_report_detailId(Integer annual_report_detailId) {
-			this.annual_report_detailId = annual_report_detailId;
-		} 
-	
-	private void flushAnnual_report_detail(  )
-	throws SQLException {
-		if ( ! annual_report_details.isEmpty() )
-			insertAnnual_report_detail(annual_report_details);
-		if ( annual_report_detailStmt != null )
-			annual_report_detailStmt.close();
-	}	
-
-	/**
-	 * Annual_report_detail
-	 * @param id Identificador unico
-	 * @param annual_report Identificador de la Memoria
-	 * @param sortKey Orden el que aparecera en el listado
-	 * @param content Contenido del parrafo
-	 * @param style Estilo
-	 * @throws SQLException
-	*/
-	protected void insertAnnual_report_detail(Integer id, Integer annual_report, Integer sortKey, String content, Short style)
-	throws SQLException {
-
-		Annual_report_detail annual_report_detail_ = new Annual_report_detail();
-		annual_report_detail_.id = id;
-		annual_report_detail_.annual_report = annual_report;
-		annual_report_detail_.sortKey = sortKey;
-		annual_report_detail_.content = content;
-		annual_report_detail_.style = style;
-
-		annual_report_details.add(annual_report_detail_);
-		
-		int annual_report_detailCount = annual_report_details.size();
-		
-		if ( 33 * annual_report_detailCount >=  this.maxAllowedPacket ){
-			insertAnnual_report_detail(annual_report_details);
-			annual_report_details.clear();
-		} 
-	}
-
-
-	/**
-	 * Annual_report_detail
-	 * @param annual_report Identificador de la Memoria
-	 * @param sortKey Orden el que aparecera en el listado
-	 * @param content Contenido del parrafo
-	 * @param style Estilo
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertAnnual_report_detail(Integer annual_report, Integer sortKey, String content, Short style)
-	throws SQLException {
-		int id = nextAnnual_report_detailId();
-
-		Annual_report_detail annual_report_detail_ = new Annual_report_detail();
-		annual_report_detail_.id = id;
-		annual_report_detail_.annual_report = annual_report;
-		annual_report_detail_.sortKey = sortKey;
-		annual_report_detail_.content = content;
-		annual_report_detail_.style = style;
-
-		annual_report_details.add(annual_report_detail_);
-		
-		int annual_report_detailCount = annual_report_details.size();
-		
-		if ( 33 * annual_report_detailCount >=  this.maxAllowedPacket ){
-			insertAnnual_report_detail(annual_report_details);
-			annual_report_details.clear();
-		} 
-		return id;
-	}
-
-
 	private int web_info_pageStmtSize = 0;
 
 	private int web_info_pageInserted = 0;
@@ -35806,11 +35287,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement web_info_pageStmt = null;
 
 	public static class Web_info_page {
-		private Integer id; 
-		private String name; 
-		private Short type; 
-		private Short position; 
-		private Boolean active; 
+		protected Integer id; 
+		protected String name; 
+		protected Short type; 
+		protected Short position; 
+		protected Boolean active; 
 	}
 	
 	private void insertWeb_info_page( List<Web_info_page> web_info_pages )
@@ -35979,11 +35460,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement enterprise_certificateStmt = null;
 
 	public static class Enterprise_certificate {
-		private Integer id; 
-		private Integer enterprise; 
-		private Date date; 
-		private Integer status; 
-		private String sign; 
+		protected Integer id; 
+		protected Integer enterprise; 
+		protected Date date; 
+		protected Integer status; 
+		protected String sign; 
 	}
 	
 	private void insertEnterprise_certificate( List<Enterprise_certificate> enterprise_certificates )
@@ -36152,15 +35633,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement campaignStmt = null;
 
 	public static class Campaign {
-		private Integer id; 
-		private String description; 
-		private Integer process; 
-		private Integer activity_type; 
-		private Date start_date; 
-		private Date end_date; 
-		private Integer workgroup; 
-		private Short type; 
-		private Short status; 
+		protected Integer id; 
+		protected String description; 
+		protected Integer process; 
+		protected Integer activity_type; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Integer workgroup; 
+		protected Short type; 
+		protected Short status; 
 	}
 	
 	private void insertCampaign( List<Campaign> campaigns )
@@ -36361,16 +35842,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement fs_vatStmt = null;
 
 	public static class Fs_vat {
-		private Integer id; 
-		private Integer year; 
-		private Short period; 
-		private String comments; 
-		private Short status; 
-		private Short security_level; 
-		private Boolean complementary; 
-		private Boolean replacement; 
-		private Boolean tax_refund_registry; 
-		private Integer number; 
+		protected Integer id; 
+		protected Integer year; 
+		protected Short period; 
+		protected String comments; 
+		protected Short status; 
+		protected Short security_level; 
+		protected Boolean complementary; 
+		protected Boolean replacement; 
+		protected Boolean tax_refund_registry; 
+		protected Integer number; 
 	}
 	
 	private void insertFs_vat( List<Fs_vat> fs_vats )
@@ -36579,16 +36060,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement contract_deductionStmt = null;
 
 	public static class Contract_deduction {
-		private Integer id; 
-		private Short type; 
-		private Integer deduction_concept; 
-		private Integer contract; 
-		private String description; 
-		private Short description_decorable; 
-		private String expression; 
-		private Date start_date; 
-		private Date end_date; 
-		private Short month; 
+		protected Integer id; 
+		protected Short type; 
+		protected Integer deduction_concept; 
+		protected Integer contract; 
+		protected String description; 
+		protected Short description_decorable; 
+		protected String expression; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Short month; 
 	}
 	
 	private void insertContract_deduction( List<Contract_deduction> contract_deductions )
@@ -36797,11 +36278,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement noteStmt = null;
 
 	public static class Note {
-		private Integer id; 
-		private String subject; 
-		private Timestamp date; 
-		private Integer owner; 
-		private String note; 
+		protected Integer id; 
+		protected String subject; 
+		protected Timestamp date; 
+		protected Integer owner; 
+		protected String note; 
 	}
 	
 	private void insertNote( List<Note> notes )
@@ -36970,8 +36451,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement course_subjectStmt = null;
 
 	public static class Course_subject {
-		private Integer id; 
-		private String description; 
+		protected Integer id; 
+		protected String description; 
 	}
 	
 	private void insertCourse_subject( List<Course_subject> course_subjects )
@@ -37116,8 +36597,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement observationStmt = null;
 
 	public static class Observation {
-		private Integer id; 
-		private String description; 
+		protected Integer id; 
+		protected String description; 
 	}
 	
 	private void insertObservation( List<Observation> observations )
@@ -37262,10 +36743,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement action_favoriteStmt = null;
 
 	public static class Action_favorite {
-		private Integer id; 
-		private Integer position; 
-		private Integer action_id; 
-		private Integer user_id; 
+		protected Integer id; 
+		protected Integer position; 
+		protected Integer action_id; 
+		protected Integer user_id; 
 	}
 	
 	private void insertAction_favorite( List<Action_favorite> action_favorites )
@@ -37426,9 +36907,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement loan_accountStmt = null;
 
 	public static class Loan_account {
-		private Integer id; 
-		private Integer loan; 
-		private String account; 
+		protected Integer id; 
+		protected Integer loan; 
+		protected String account; 
 	}
 	
 	private void insertLoan_account( List<Loan_account> loan_accounts )
@@ -37571,6 +37052,179 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int salary_embargoStmtSize = 0;
+
+	private int salary_embargoInserted = 0;
+
+	private List<Salary_embargo> salary_embargos = 
+		new LinkedList<Salary_embargo>();
+
+	private PreparedStatement salary_embargoStmt = null;
+
+	public static class Salary_embargo {
+		protected Integer id; 
+		protected Integer salary; 
+		protected Integer contract_embargo; 
+		protected Double amount; 
+		protected String description; 
+	}
+	
+	private void insertSalary_embargo( List<Salary_embargo> salary_embargos )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = salary_embargos.size();
+		if ( salary_embargoStmtSize != size ) {
+			if ( salary_embargoStmt != null ) {
+				salary_embargoStmt.close();
+			}
+			String values = "(?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			salary_embargoStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO salary_embargo (id,salary,contract_embargo,amount,description)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			salary_embargoStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Salary_embargo salary_embargo : salary_embargos) {
+			if ( salary_embargo.id == null )
+				salary_embargoStmt.setNull(offset++, 4);
+			else
+				salary_embargoStmt.setInt(offset++, salary_embargo.id);
+			if ( salary_embargo.salary == null )
+				salary_embargoStmt.setNull(offset++, 4);
+			else
+				salary_embargoStmt.setInt(offset++, salary_embargo.salary);
+			if ( salary_embargo.contract_embargo == null )
+				salary_embargoStmt.setNull(offset++, 4);
+			else
+				salary_embargoStmt.setInt(offset++, salary_embargo.contract_embargo);
+			if ( salary_embargo.amount == null )
+				salary_embargoStmt.setNull(offset++, 8);
+			else
+				salary_embargoStmt.setDouble(offset++, salary_embargo.amount);
+			if ( salary_embargo.description == null )
+				salary_embargoStmt.setNull(offset++, 12);
+			else
+				salary_embargoStmt.setString(offset++, salary_embargo.description);
+		}
+		salary_embargoStmt.executeUpdate();
+		salary_embargoInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Salary_embargos in {} milliseconds.", size, salary_embargoInserted, elapsed );		
+	}
+		
+		private int salary_embargoId = -1;
+		
+		private void initSalary_embargoId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `salary_embargo`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.salary_embargoId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextSalary_embargoId() {
+			return ++this.salary_embargoId;
+		} 
+
+		public void setSalary_embargoId(Integer salary_embargoId) {
+			this.salary_embargoId = salary_embargoId;
+		} 
+	
+	private void flushSalary_embargo(  )
+	throws SQLException {
+		if ( ! salary_embargos.isEmpty() )
+			insertSalary_embargo(salary_embargos);
+		if ( salary_embargoStmt != null )
+			salary_embargoStmt.close();
+	}	
+
+	/**
+	 * Salary_embargo
+	 * @param id Identificador unico
+	 * @param salary Recibo del pago de salarios
+	 * @param contract_embargo Embargo
+	 * @param amount Importe
+	 * @param description Descripcion
+	 * @throws SQLException
+	*/
+	protected void insertSalary_embargo(Integer id, Integer salary, Integer contract_embargo, Double amount, String description)
+	throws SQLException {
+
+		Salary_embargo salary_embargo_ = new Salary_embargo();
+		salary_embargo_.id = id;
+		salary_embargo_.salary = salary;
+		salary_embargo_.contract_embargo = contract_embargo;
+		salary_embargo_.amount = amount;
+		salary_embargo_.description = description;
+
+		salary_embargos.add(salary_embargo_);
+		
+		int salary_embargoCount = salary_embargos.size();
+		
+		if ( 109 * salary_embargoCount >=  this.maxAllowedPacket ){
+			insertSalary_embargo(salary_embargos);
+			salary_embargos.clear();
+		} 
+	}
+
+
+	/**
+	 * Salary_embargo
+	 * @param salary Recibo del pago de salarios
+	 * @param contract_embargo Embargo
+	 * @param amount Importe
+	 * @param description Descripcion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertSalary_embargo(Integer salary, Integer contract_embargo, Double amount, String description)
+	throws SQLException {
+		int id = nextSalary_embargoId();
+
+		Salary_embargo salary_embargo_ = new Salary_embargo();
+		salary_embargo_.id = id;
+		salary_embargo_.salary = salary;
+		salary_embargo_.contract_embargo = contract_embargo;
+		salary_embargo_.amount = amount;
+		salary_embargo_.description = description;
+
+		salary_embargos.add(salary_embargo_);
+		
+		int salary_embargoCount = salary_embargos.size();
+		
+		if ( 109 * salary_embargoCount >=  this.maxAllowedPacket ){
+			insertSalary_embargo(salary_embargos);
+			salary_embargos.clear();
+		} 
+		return id;
+	}
+
+
 	private int survey_workflowStmtSize = 0;
 
 	private int survey_workflowInserted = 0;
@@ -37581,14 +37235,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement survey_workflowStmt = null;
 
 	public static class Survey_workflow {
-		private Integer id; 
-		private Integer questionValue; 
-		private Integer surveyQuestion; 
-		private Integer nextSurveyQuestion; 
-		private Short operator; 
-		private String value_text; 
-		private Double value_number; 
-		private Timestamp value_date; 
+		protected Integer id; 
+		protected Integer questionValue; 
+		protected Integer surveyQuestion; 
+		protected Integer nextSurveyQuestion; 
+		protected Short operator; 
+		protected String value_text; 
+		protected Double value_number; 
+		protected Timestamp value_date; 
 	}
 	
 	private void insertSurvey_workflow( List<Survey_workflow> survey_workflows )
@@ -37781,17 +37435,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement productStmt = null;
 
 	public static class Product {
-		private Integer id; 
-		private String name; 
-		private String code; 
-		private Integer brand; 
-		private Integer category; 
-		private Boolean inventoriable; 
-		private Short status; 
-		private Integer vat; 
-		private Integer retention; 
-		private Short type; 
-		private Boolean composition; 
+		protected Integer id; 
+		protected String name; 
+		protected String code; 
+		protected Integer brand; 
+		protected Integer category; 
+		protected Boolean inventoriable; 
+		protected Short status; 
+		protected Integer vat; 
+		protected Integer retention; 
+		protected Short type; 
+		protected Boolean composition; 
 	}
 	
 	private void insertProduct( List<Product> products )
@@ -38008,9 +37662,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement processStmt = null;
 
 	public static class Process {
-		private Integer id; 
-		private String description; 
-		private Short status; 
+		protected Integer id; 
+		protected String description; 
+		protected Short status; 
 	}
 	
 	private void insertProcess( List<Process> processs )
@@ -38163,14 +37817,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement contract_leave_detailStmt = null;
 
 	public static class Contract_leave_detail {
-		private Integer id; 
-		private Short type; 
-		private Integer contract_leave; 
-		private String college_number; 
-		private Short confirm_order; 
-		private String cias; 
-		private Date date; 
-		private Boolean processed; 
+		protected Integer id; 
+		protected Short type; 
+		protected Integer contract_leave; 
+		protected String college_number; 
+		protected Short confirm_order; 
+		protected String cias; 
+		protected Date date; 
+		protected Boolean processed; 
 	}
 	
 	private void insertContract_leave_detail( List<Contract_leave_detail> contract_leave_details )
@@ -38363,18 +38017,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement itemStmt = null;
 
 	public static class Item {
-		private Integer id; 
-		private Integer product; 
-		private String detail; 
-		private String description; 
-		private Double price; 
-		private Short status; 
-		private Double expenses_percent; 
-		private Double expenses_fixed; 
-		private Double profit_percent; 
-		private Double purchase_price; 
-		private Boolean internet; 
-		private String barcode; 
+		protected Integer id; 
+		protected Integer product; 
+		protected String detail; 
+		protected String description; 
+		protected Double price; 
+		protected Short status; 
+		protected Double expenses_percent; 
+		protected Double expenses_fixed; 
+		protected Double profit_percent; 
+		protected Double purchase_price; 
+		protected Boolean internet; 
+		protected String barcode; 
 	}
 	
 	private void insertItem( List<Item> items )
@@ -38599,11 +38253,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement accountStmt = null;
 
 	public static class Account {
-		private String id; 
-		private String description; 
-		private String alias; 
-		private Short entryEnabled; 
-		private Short level; 
+		protected String id; 
+		protected String description; 
+		protected String alias; 
+		protected Short entryEnabled; 
+		protected Short level; 
 	}
 	
 	private void insertAccount( List<Account> accounts )
@@ -38711,8 +38365,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement brandStmt = null;
 
 	public static class Brand {
-		private Integer id; 
-		private String name; 
+		protected Integer id; 
+		protected String name; 
 	}
 	
 	private void insertBrand( List<Brand> brands )
@@ -38857,12 +38511,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement target_sellerStmt = null;
 
 	public static class Target_seller {
-		private Integer id; 
-		private Integer target; 
-		private Integer seller; 
-		private Date start_date; 
-		private Date end_date; 
-		private Short status; 
+		protected Integer id; 
+		protected Integer target; 
+		protected Integer seller; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Short status; 
 	}
 	
 	private void insertTarget_seller( List<Target_seller> target_sellers )
@@ -39039,12 +38693,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement contract_bonusStmt = null;
 
 	public static class Contract_bonus {
-		private Integer id; 
-		private Integer contract; 
-		private String description; 
-		private String expression; 
-		private Date start_date; 
-		private Date end_date; 
+		protected Integer id; 
+		protected Integer contract; 
+		protected String description; 
+		protected String expression; 
+		protected Date start_date; 
+		protected Date end_date; 
 	}
 	
 	private void insertContract_bonus( List<Contract_bonus> contract_bonuss )
@@ -39221,24 +38875,24 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement financeStmt = null;
 
 	public static class Finance {
-		private Integer id; 
-		private Boolean payment; 
-		private Integer registry; 
-		private String rdocument; 
-		private Short rdocument_type; 
-		private String rdocument_country; 
-		private String rname; 
-		private Double amount; 
-		private Double expenses; 
-		private String concept; 
-		private Integer invoice; 
-		private Date due_date; 
-		private Integer pay_method; 
-		private Integer bank; 
-		private String bank_account; 
-		private Short status; 
-		private Short security_level; 
-		private Integer scope; 
+		protected Integer id; 
+		protected Boolean payment; 
+		protected Integer registry; 
+		protected String rdocument; 
+		protected Short rdocument_type; 
+		protected String rdocument_country; 
+		protected String rname; 
+		protected Double amount; 
+		protected Double expenses; 
+		protected String concept; 
+		protected Integer invoice; 
+		protected Date due_date; 
+		protected Integer pay_method; 
+		protected Integer bank; 
+		protected String bank_account; 
+		protected Short status; 
+		protected Short security_level; 
+		protected Integer scope; 
 	}
 	
 	private void insertFinance( List<Finance> finances )
@@ -39511,8 +39165,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement dossier_typeStmt = null;
 
 	public static class Dossier_type {
-		private Integer id; 
-		private String description; 
+		protected Integer id; 
+		protected String description; 
 	}
 	
 	private void insertDossier_type( List<Dossier_type> dossier_types )
@@ -39657,10 +39311,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement geozoneStmt = null;
 
 	public static class Geozone {
-		private Integer id; 
-		private String name; 
-		private String code; 
-		private Boolean system; 
+		protected Integer id; 
+		protected String name; 
+		protected String code; 
+		protected Boolean system; 
 	}
 	
 	private void insertGeozone( List<Geozone> geozones )
@@ -39821,8 +39475,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement pcategory_groupStmt = null;
 
 	public static class Pcategory_group {
-		private Integer id; 
-		private String name; 
+		protected Integer id; 
+		protected String name; 
 	}
 	
 	private void insertPcategory_group( List<Pcategory_group> pcategory_groups )
@@ -39967,8 +39621,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement segmentStmt = null;
 
 	public static class Segment {
-		private Integer id; 
-		private String name; 
+		protected Integer id; 
+		protected String name; 
 	}
 	
 	private void insertSegment( List<Segment> segments )
@@ -40113,13 +39767,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement salary_deductionStmt = null;
 
 	public static class Salary_deduction {
-		private Integer id; 
-		private Integer salary; 
-		private Short type; 
-		private Integer deduction_concept; 
-		private String description; 
-		private String expression; 
-		private Double amount; 
+		protected Integer id; 
+		protected Integer salary; 
+		protected Short type; 
+		protected Integer deduction_concept; 
+		protected String description; 
+		protected String expression; 
+		protected Double amount; 
 	}
 	
 	private void insertSalary_deduction( List<Salary_deduction> salary_deductions )
@@ -40304,29 +39958,33 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement invoiceStmt = null;
 
 	public static class Invoice {
-		private Integer id; 
-		private String series; 
-		private Integer number; 
-		private String reference_code; 
-		private Integer registry; 
-		private String rdocument; 
-		private Short rdocument_type; 
-		private String rdocument_country; 
-		private String rname; 
-		private Integer raddress; 
-		private Date issue_date; 
-		private Date tax_date; 
-		private Short security_level; 
-		private Short status; 
-		private Short type; 
-		private Boolean taxFree; 
-		private Boolean surcharge; 
-		private Boolean withholding; 
-		private String comments; 
-		private Boolean investment; 
-		private Short transaction; 
-		private Boolean signed; 
-		private Integer scope; 
+		protected Integer id; 
+		protected String series; 
+		protected Integer number; 
+		protected String reference_code; 
+		protected Integer registry; 
+		protected String rdocument; 
+		protected Short rdocument_type; 
+		protected String rdocument_country; 
+		protected String rname; 
+		protected Integer raddress; 
+		protected Date issue_date; 
+		protected Date tax_date; 
+		protected Short security_level; 
+		protected Short status; 
+		protected Short type; 
+		protected Boolean taxFree; 
+		protected Boolean surcharge; 
+		protected Boolean withholding; 
+		protected String comments; 
+		protected Boolean investment; 
+		protected Short transaction; 
+		protected Boolean signed; 
+		protected Integer scope; 
+		protected Double taxable_base; 
+		protected Double vat_quota; 
+		protected Double retention_quota; 
+		protected Double total; 
 	}
 	
 	private void insertInvoice( List<Invoice> invoices )
@@ -40337,7 +39995,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			if ( invoiceStmt != null ) {
 				invoiceStmt.close();
 			}
-			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			StringBuffer valuesList = new StringBuffer(values);
 			for ( int i = 1; i < size; i++ ) {
 				valuesList.append(",");
@@ -40346,7 +40004,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	
 			invoiceStmt = 
 				mysqlConnection.prepareStatement(
-				"INSERT INTO invoice (id,series,number,reference_code,registry,rdocument,rdocument_type,rdocument_country,rname,raddress,issue_date,tax_date,security_level,status,type,taxFree,surcharge,withholding,comments,investment,transaction,signed,scope)"  
+				"INSERT INTO invoice (id,series,number,reference_code,registry,rdocument,rdocument_type,rdocument_country,rname,raddress,issue_date,tax_date,security_level,status,type,taxFree,surcharge,withholding,comments,investment,transaction,signed,scope,taxable_base,vat_quota,retention_quota,total)"  
 				+" VALUES " + valuesList.toString()  );
 			
 			invoiceStmtSize = size;
@@ -40447,6 +40105,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 				invoiceStmt.setNull(offset++, 4);
 			else
 				invoiceStmt.setInt(offset++, invoice.scope);
+			if ( invoice.taxable_base == null )
+				invoiceStmt.setNull(offset++, 8);
+			else
+				invoiceStmt.setDouble(offset++, invoice.taxable_base);
+			if ( invoice.vat_quota == null )
+				invoiceStmt.setNull(offset++, 8);
+			else
+				invoiceStmt.setDouble(offset++, invoice.vat_quota);
+			if ( invoice.retention_quota == null )
+				invoiceStmt.setNull(offset++, 8);
+			else
+				invoiceStmt.setDouble(offset++, invoice.retention_quota);
+			if ( invoice.total == null )
+				invoiceStmt.setNull(offset++, 8);
+			else
+				invoiceStmt.setDouble(offset++, invoice.total);
 		}
 		invoiceStmt.executeUpdate();
 		invoiceInserted += size;
@@ -40520,9 +40194,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param transaction Tipo de transaccion
 	 * @param signed Indica si la Factura esta firmada electronicamente
 	 * @param scope Ambito de la Factura
+	 * @param taxable_base Base Imponible de la Factura
+	 * @param vat_quota Cuota de IVA de la Factura
+	 * @param retention_quota Cuota de IRPF de la Factura
+	 * @param total Total Factura
 	 * @throws SQLException
 	*/
-	protected void insertInvoice(Integer id, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, Boolean investment, Short transaction, Boolean signed, Integer scope)
+	protected void insertInvoice(Integer id, String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, Boolean investment, Short transaction, Boolean signed, Integer scope, Double taxable_base, Double vat_quota, Double retention_quota, Double total)
 	throws SQLException {
 
 		Invoice invoice_ = new Invoice();
@@ -40549,12 +40227,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_.transaction = transaction;
 		invoice_.signed = signed;
 		invoice_.scope = scope;
+		invoice_.taxable_base = taxable_base;
+		invoice_.vat_quota = vat_quota;
+		invoice_.retention_quota = retention_quota;
+		invoice_.total = total;
 
 		invoices.add(invoice_);
 		
 		int invoiceCount = invoices.size();
 		
-		if ( 268 * invoiceCount >=  this.maxAllowedPacket ){
+		if ( 356 * invoiceCount >=  this.maxAllowedPacket ){
 			insertInvoice(invoices);
 			invoices.clear();
 		} 
@@ -40585,10 +40267,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	 * @param transaction Tipo de transaccion
 	 * @param signed Indica si la Factura esta firmada electronicamente
 	 * @param scope Ambito de la Factura
+	 * @param taxable_base Base Imponible de la Factura
+	 * @param vat_quota Cuota de IVA de la Factura
+	 * @param retention_quota Cuota de IRPF de la Factura
+	 * @param total Total Factura
 	 * @returns auto-generated key
 	 * @throws SQLException
 	*/
-	public int insertInvoice(String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, Boolean investment, Short transaction, Boolean signed, Integer scope)
+	public int insertInvoice(String series, Integer number, String reference_code, Integer registry, String rdocument, Short rdocument_type, String rdocument_country, String rname, Integer raddress, Date issue_date, Date tax_date, Short security_level, Short status, Short type, Boolean taxFree, Boolean surcharge, Boolean withholding, String comments, Boolean investment, Short transaction, Boolean signed, Integer scope, Double taxable_base, Double vat_quota, Double retention_quota, Double total)
 	throws SQLException {
 		int id = nextInvoiceId();
 
@@ -40616,12 +40302,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		invoice_.transaction = transaction;
 		invoice_.signed = signed;
 		invoice_.scope = scope;
+		invoice_.taxable_base = taxable_base;
+		invoice_.vat_quota = vat_quota;
+		invoice_.retention_quota = retention_quota;
+		invoice_.total = total;
 
 		invoices.add(invoice_);
 		
 		int invoiceCount = invoices.size();
 		
-		if ( 268 * invoiceCount >=  this.maxAllowedPacket ){
+		if ( 356 * invoiceCount >=  this.maxAllowedPacket ){
 			insertInvoice(invoices);
 			invoices.clear();
 		} 
@@ -40639,11 +40329,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement invoice_attachStmt = null;
 
 	public static class Invoice_attach {
-		private Integer id; 
-		private Integer invoice; 
-		private Short mimeType; 
-		private String description; 
-		private InputStream data; 
+		protected Integer id; 
+		protected Integer invoice; 
+		protected Short mimeType; 
+		protected String description; 
+		protected InputStream data; 
 	}
 	
 	private void insertInvoice_attach( List<Invoice_attach> invoice_attachs )
@@ -40812,19 +40502,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement invoice_detailStmt = null;
 
 	public static class Invoice_detail {
-		private Integer id; 
-		private Integer invoice; 
-		private Integer line; 
-		private Integer item; 
-		private String description; 
-		private Double quantity; 
-		private Double price; 
-		private String discount_expr; 
-		private Short source; 
-		private Integer source_id; 
-		private Double taxable_base; 
-		private Double taxes; 
-		private Integer workplace; 
+		protected Integer id; 
+		protected Integer invoice; 
+		protected Integer line; 
+		protected Integer item; 
+		protected String description; 
+		protected Double quantity; 
+		protected Double price; 
+		protected String discount_expr; 
+		protected Short source; 
+		protected Integer source_id; 
+		protected Double taxable_base; 
+		protected Double taxes; 
+		protected Integer workplace; 
 	}
 	
 	private void insertInvoice_detail( List<Invoice_detail> invoice_details )
@@ -40992,7 +40682,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int invoice_detailCount = invoice_details.size();
 		
-		if ( 1188 * invoice_detailCount >=  this.maxAllowedPacket ){
+		if ( 1181 * invoice_detailCount >=  this.maxAllowedPacket ){
 			insertInvoice_detail(invoice_details);
 			invoice_details.clear();
 		} 
@@ -41039,7 +40729,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int invoice_detailCount = invoice_details.size();
 		
-		if ( 1188 * invoice_detailCount >=  this.maxAllowedPacket ){
+		if ( 1181 * invoice_detailCount >=  this.maxAllowedPacket ){
 			insertInvoice_detail(invoice_details);
 			invoice_details.clear();
 		} 
@@ -41057,8 +40747,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement leave_batchStmt = null;
 
 	public static class Leave_batch {
-		private Integer id; 
-		private Timestamp date; 
+		protected Integer id; 
+		protected Timestamp date; 
 	}
 	
 	private void insertLeave_batch( List<Leave_batch> leave_batchs )
@@ -41193,152 +40883,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int annual_reportStmtSize = 0;
-
-	private int annual_reportInserted = 0;
-
-	private List<Annual_report> annual_reports = 
-		new LinkedList<Annual_report>();
-
-	private PreparedStatement annual_reportStmt = null;
-
-	public static class Annual_report {
-		private Integer id; 
-		private String name; 
-	}
-	
-	private void insertAnnual_report( List<Annual_report> annual_reports )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = annual_reports.size();
-		if ( annual_reportStmtSize != size ) {
-			if ( annual_reportStmt != null ) {
-				annual_reportStmt.close();
-			}
-			String values = "(?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			annual_reportStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO annual_report (id,name)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			annual_reportStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Annual_report annual_report : annual_reports) {
-			if ( annual_report.id == null )
-				annual_reportStmt.setNull(offset++, 4);
-			else
-				annual_reportStmt.setInt(offset++, annual_report.id);
-			if ( annual_report.name == null )
-				annual_reportStmt.setNull(offset++, 12);
-			else
-				annual_reportStmt.setString(offset++, annual_report.name);
-		}
-		annual_reportStmt.executeUpdate();
-		annual_reportInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Annual_reports in {} milliseconds.", size, annual_reportInserted, elapsed );		
-	}
-		
-		private int annual_reportId = -1;
-		
-		private void initAnnual_reportId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `annual_report`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.annual_reportId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextAnnual_reportId() {
-			return ++this.annual_reportId;
-		} 
-
-		public void setAnnual_reportId(Integer annual_reportId) {
-			this.annual_reportId = annual_reportId;
-		} 
-	
-	private void flushAnnual_report(  )
-	throws SQLException {
-		if ( ! annual_reports.isEmpty() )
-			insertAnnual_report(annual_reports);
-		if ( annual_reportStmt != null )
-			annual_reportStmt.close();
-	}	
-
-	/**
-	 * Annual_report
-	 * @param id Identificador unico
-	 * @param name Nombre de la Memoria
-	 * @throws SQLException
-	*/
-	protected void insertAnnual_report(Integer id, String name)
-	throws SQLException {
-
-		Annual_report annual_report_ = new Annual_report();
-		annual_report_.id = id;
-		annual_report_.name = name;
-
-		annual_reports.add(annual_report_);
-		
-		int annual_reportCount = annual_reports.size();
-		
-		if ( 74 * annual_reportCount >=  this.maxAllowedPacket ){
-			insertAnnual_report(annual_reports);
-			annual_reports.clear();
-		} 
-	}
-
-
-	/**
-	 * Annual_report
-	 * @param name Nombre de la Memoria
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertAnnual_report(String name)
-	throws SQLException {
-		int id = nextAnnual_reportId();
-
-		Annual_report annual_report_ = new Annual_report();
-		annual_report_.id = id;
-		annual_report_.name = name;
-
-		annual_reports.add(annual_report_);
-		
-		int annual_reportCount = annual_reports.size();
-		
-		if ( 74 * annual_reportCount >=  this.maxAllowedPacket ){
-			insertAnnual_report(annual_reports);
-			annual_reports.clear();
-		} 
-		return id;
-	}
-
-
 	private int course_instructorStmtSize = 0;
 
 	private int course_instructorInserted = 0;
@@ -41349,10 +40893,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement course_instructorStmt = null;
 
 	public static class Course_instructor {
-		private Integer id; 
-		private Integer course; 
-		private Integer employee; 
-		private Short type; 
+		protected Integer id; 
+		protected Integer course; 
+		protected Integer employee; 
+		protected Short type; 
 	}
 	
 	private void insertCourse_instructor( List<Course_instructor> course_instructors )
@@ -41513,9 +41057,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement account_entry_finance_trackingStmt = null;
 
 	public static class Account_entry_finance_tracking {
-		private Integer id; 
-		private Integer account_entry; 
-		private Integer finance_tracking; 
+		protected Integer id; 
+		protected Integer account_entry; 
+		protected Integer finance_tracking; 
 	}
 	
 	private void insertAccount_entry_finance_tracking( List<Account_entry_finance_tracking> account_entry_finance_trackings )
@@ -41668,12 +41212,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement agreement_level_dataStmt = null;
 
 	public static class Agreement_level_data {
-		private Integer id; 
-		private String name; 
-		private Integer agreement_level; 
-		private String expression; 
-		private Date start_date; 
-		private Date end_date; 
+		protected Integer id; 
+		protected String name; 
+		protected Integer agreement_level; 
+		protected String expression; 
+		protected Date start_date; 
+		protected Date end_date; 
 	}
 	
 	private void insertAgreement_level_data( List<Agreement_level_data> agreement_level_datas )
@@ -41799,7 +41343,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int agreement_level_dataCount = agreement_level_datas.size();
 		
-		if ( 184 * agreement_level_dataCount >=  this.maxAllowedPacket ){
+		if ( 200 * agreement_level_dataCount >=  this.maxAllowedPacket ){
 			insertAgreement_level_data(agreement_level_datas);
 			agreement_level_datas.clear();
 		} 
@@ -41832,7 +41376,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int agreement_level_dataCount = agreement_level_datas.size();
 		
-		if ( 184 * agreement_level_dataCount >=  this.maxAllowedPacket ){
+		if ( 200 * agreement_level_dataCount >=  this.maxAllowedPacket ){
 			insertAgreement_level_data(agreement_level_datas);
 			agreement_level_datas.clear();
 		} 
@@ -41850,18 +41394,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement income_detailStmt = null;
 
 	public static class Income_detail {
-		private Integer id; 
-		private Integer income; 
-		private Integer line; 
-		private Integer item; 
-		private String description; 
-		private Integer warehouse; 
-		private Double quantity; 
-		private Double price; 
-		private String discount_expr; 
-		private Short type; 
-		private Short source; 
-		private Integer purchase_detail; 
+		protected Integer id; 
+		protected Integer income; 
+		protected Integer line; 
+		protected Integer item; 
+		protected String description; 
+		protected Integer warehouse; 
+		protected Double quantity; 
+		protected Double price; 
+		protected String discount_expr; 
+		protected Short type; 
+		protected Short source; 
+		protected Integer purchase_detail; 
 	}
 	
 	private void insertIncome_detail( List<Income_detail> income_details )
@@ -42023,7 +41567,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int income_detailCount = income_details.size();
 		
-		if ( 1147 * income_detailCount >=  this.maxAllowedPacket ){
+		if ( 1154 * income_detailCount >=  this.maxAllowedPacket ){
 			insertIncome_detail(income_details);
 			income_details.clear();
 		} 
@@ -42068,7 +41612,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int income_detailCount = income_details.size();
 		
-		if ( 1147 * income_detailCount >=  this.maxAllowedPacket ){
+		if ( 1154 * income_detailCount >=  this.maxAllowedPacket ){
 			insertIncome_detail(income_details);
 			income_details.clear();
 		} 
@@ -42086,15 +41630,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement rmediaStmt = null;
 
 	public static class Rmedia {
-		private Integer id; 
-		private Integer registry; 
-		private Short media; 
-		private String value; 
-		private String comment; 
-		private Boolean administrative; 
-		private Boolean commercial; 
-		private Boolean technical; 
-		private Integer raddress; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected Short media; 
+		protected String value; 
+		protected String comment; 
+		protected Boolean administrative; 
+		protected Boolean commercial; 
+		protected Boolean technical; 
+		protected Integer raddress; 
 	}
 	
 	private void insertRmedia( List<Rmedia> rmedias )
@@ -42295,16 +41839,16 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement commercial_trackingStmt = null;
 
 	public static class Commercial_tracking {
-		private Integer id; 
-		private Date date; 
-		private Integer seller; 
-		private Integer target; 
-		private Integer activity; 
-		private String comments; 
-		private Short status; 
-		private Integer next_commercial_tracking; 
-		private Date end_date; 
-		private Integer offer; 
+		protected Integer id; 
+		protected Date date; 
+		protected Integer seller; 
+		protected Integer target; 
+		protected Integer activity; 
+		protected String comments; 
+		protected Short status; 
+		protected Integer next_commercial_tracking; 
+		protected Date end_date; 
+		protected Integer offer; 
 	}
 	
 	private void insertCommercial_tracking( List<Commercial_tracking> commercial_trackings )
@@ -42513,19 +42057,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement raddressStmt = null;
 
 	public static class Raddress {
-		private Integer id; 
-		private Integer registry; 
-		private Short type; 
-		private String recipient; 
-		private String street_type; 
-		private String address; 
-		private String number; 
-		private String address2; 
-		private String address3; 
-		private String zip; 
-		private String city; 
-		private Integer geozone; 
-		private String alias; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected Short type; 
+		protected String recipient; 
+		protected String street_type; 
+		protected String address; 
+		protected String number; 
+		protected String address2; 
+		protected String address3; 
+		protected String zip; 
+		protected String city; 
+		protected Integer geozone; 
+		protected String alias; 
 	}
 	
 	private void insertRaddress( List<Raddress> raddresss )
@@ -42758,10 +42302,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement actionStmt = null;
 
 	public static class Action {
-		private Integer id; 
-		private Boolean menu; 
-		private String name; 
-		private Integer application_id; 
+		protected Integer id; 
+		protected Boolean menu; 
+		protected String name; 
+		protected Integer application_id; 
 	}
 	
 	private void insertAction( List<Action> actions )
@@ -42922,10 +42466,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement surveyStmt = null;
 
 	public static class Survey {
-		private Integer id; 
-		private Boolean active; 
-		private Timestamp creationDate; 
-		private String description; 
+		protected Integer id; 
+		protected Boolean active; 
+		protected Timestamp creationDate; 
+		protected String description; 
 	}
 	
 	private void insertSurvey( List<Survey> surveys )
@@ -43086,12 +42630,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement survey_response_detailStmt = null;
 
 	public static class Survey_response_detail {
-		private Integer id; 
-		private String value_text; 
-		private Double value_number; 
-		private Timestamp value_date; 
-		private Integer question; 
-		private Integer surveyResponse; 
+		protected Integer id; 
+		protected String value_text; 
+		protected Double value_number; 
+		protected Timestamp value_date; 
+		protected Integer question; 
+		protected Integer surveyResponse; 
 	}
 	
 	private void insertSurvey_response_detail( List<Survey_response_detail> survey_response_details )
@@ -43268,11 +42812,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement raddinfoStmt = null;
 
 	public static class Raddinfo {
-		private Integer id; 
-		private Integer registry; 
-		private String attribute; 
-		private String value; 
-		private Date value_date; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected String attribute; 
+		protected String value; 
+		protected Date value_date; 
 	}
 	
 	private void insertRaddinfo( List<Raddinfo> raddinfos )
@@ -43441,10 +42985,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement invoicing_group_detailStmt = null;
 
 	public static class Invoicing_group_detail {
-		private Integer id; 
-		private Integer invoicing_group; 
-		private Integer child; 
-		private Boolean grouped; 
+		protected Integer id; 
+		protected Integer invoicing_group; 
+		protected Integer child; 
+		protected Boolean grouped; 
 	}
 	
 	private void insertInvoicing_group_detail( List<Invoicing_group_detail> invoicing_group_details )
@@ -43605,12 +43149,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement commission_itemStmt = null;
 
 	public static class Commission_item {
-		private Integer id; 
-		private Integer commission; 
-		private Integer item; 
-		private Double quantity; 
-		private Double amount; 
-		private Double rate; 
+		protected Integer id; 
+		protected Integer commission; 
+		protected Integer item; 
+		protected Double quantity; 
+		protected Double amount; 
+		protected Double rate; 
 	}
 	
 	private void insertCommission_item( List<Commission_item> commission_items )
@@ -43787,12 +43331,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement catalogue_itemStmt = null;
 
 	public static class Catalogue_item {
-		private Integer id; 
-		private Integer catalogue; 
-		private Integer item; 
-		private Double quantity; 
-		private Double price; 
-		private Double discount; 
+		protected Integer id; 
+		protected Integer catalogue; 
+		protected Integer item; 
+		protected Double quantity; 
+		protected Double price; 
+		protected Double discount; 
 	}
 	
 	private void insertCatalogue_item( List<Catalogue_item> catalogue_items )
@@ -43969,9 +43513,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement academic_skillStmt = null;
 
 	public static class Academic_skill {
-		private Integer id; 
-		private String code; 
-		private String description; 
+		protected Integer id; 
+		protected String code; 
+		protected String description; 
 	}
 	
 	private void insertAcademic_skill( List<Academic_skill> academic_skills )
@@ -44124,7 +43668,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement appraiserStmt = null;
 
 	public static class Appraiser {
-		private Integer registry; 
+		protected Integer registry; 
 	}
 	
 	private void insertAppraiser( List<Appraiser> appraisers )
@@ -44198,215 +43742,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 
 
 
-	private int offer_detailStmtSize = 0;
-
-	private int offer_detailInserted = 0;
-
-	private List<Offer_detail> offer_details = 
-		new LinkedList<Offer_detail>();
-
-	private PreparedStatement offer_detailStmt = null;
-
-	public static class Offer_detail {
-		private Integer id; 
-		private Integer offer; 
-		private Integer line; 
-		private Integer item; 
-		private String description; 
-		private Double quantity; 
-		private Double price; 
-		private String discount_expr; 
-		private Short status; 
-	}
-	
-	private void insertOffer_detail( List<Offer_detail> offer_details )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = offer_details.size();
-		if ( offer_detailStmtSize != size ) {
-			if ( offer_detailStmt != null ) {
-				offer_detailStmt.close();
-			}
-			String values = "(?,?,?,?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			offer_detailStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO offer_detail (id,offer,line,item,description,quantity,price,discount_expr,status)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			offer_detailStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Offer_detail offer_detail : offer_details) {
-			if ( offer_detail.id == null )
-				offer_detailStmt.setNull(offset++, 4);
-			else
-				offer_detailStmt.setInt(offset++, offer_detail.id);
-			if ( offer_detail.offer == null )
-				offer_detailStmt.setNull(offset++, 4);
-			else
-				offer_detailStmt.setInt(offset++, offer_detail.offer);
-			if ( offer_detail.line == null )
-				offer_detailStmt.setNull(offset++, 5);
-			else
-				offer_detailStmt.setInt(offset++, offer_detail.line);
-			if ( offer_detail.item == null )
-				offer_detailStmt.setNull(offset++, 4);
-			else
-				offer_detailStmt.setInt(offset++, offer_detail.item);
-			if ( offer_detail.description == null )
-				offer_detailStmt.setNull(offset++, 12);
-			else
-				offer_detailStmt.setString(offset++, offer_detail.description);
-			if ( offer_detail.quantity == null )
-				offer_detailStmt.setNull(offset++, 8);
-			else
-				offer_detailStmt.setDouble(offset++, offer_detail.quantity);
-			if ( offer_detail.price == null )
-				offer_detailStmt.setNull(offset++, 8);
-			else
-				offer_detailStmt.setDouble(offset++, offer_detail.price);
-			if ( offer_detail.discount_expr == null )
-				offer_detailStmt.setNull(offset++, 12);
-			else
-				offer_detailStmt.setString(offset++, offer_detail.discount_expr);
-			if ( offer_detail.status == null )
-				offer_detailStmt.setNull(offset++, -6);
-			else
-				offer_detailStmt.setShort(offset++, offer_detail.status);
-		}
-		offer_detailStmt.executeUpdate();
-		offer_detailInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Offer_details in {} milliseconds.", size, offer_detailInserted, elapsed );		
-	}
-		
-		private int offer_detailId = -1;
-		
-		private void initOffer_detailId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `offer_detail`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.offer_detailId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextOffer_detailId() {
-			return ++this.offer_detailId;
-		} 
-
-		public void setOffer_detailId(Integer offer_detailId) {
-			this.offer_detailId = offer_detailId;
-		} 
-	
-	private void flushOffer_detail(  )
-	throws SQLException {
-		if ( ! offer_details.isEmpty() )
-			insertOffer_detail(offer_details);
-		if ( offer_detailStmt != null )
-			offer_detailStmt.close();
-	}	
-
-	/**
-	 * Offer_detail
-	 * @param id Identificador unico del Detalle de Presupuesto
-	 * @param offer Identificador del Presupuesto
-	 * @param line Numero de lnea del Detalle dentro del Presupuesto
-	 * @param item Identificador del Articulo
-	 * @param description Descripcin del Articulo
-	 * @param quantity Cantidad del Articulo
-	 * @param price Precio del Articulo
-	 * @param discount_expr Descuentos del Articulo
-	 * @param status Estado del Detalle del Presupuesto
-	 * @throws SQLException
-	*/
-	protected void insertOffer_detail(Integer id, Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
-	throws SQLException {
-
-		Offer_detail offer_detail_ = new Offer_detail();
-		offer_detail_.id = id;
-		offer_detail_.offer = offer;
-		offer_detail_.line = line;
-		offer_detail_.item = item;
-		offer_detail_.description = description;
-		offer_detail_.quantity = quantity;
-		offer_detail_.price = price;
-		offer_detail_.discount_expr = discount_expr;
-		offer_detail_.status = status;
-
-		offer_details.add(offer_detail_);
-		
-		int offer_detailCount = offer_details.size();
-		
-		if ( 1124 * offer_detailCount >=  this.maxAllowedPacket ){
-			insertOffer_detail(offer_details);
-			offer_details.clear();
-		} 
-	}
-
-
-	/**
-	 * Offer_detail
-	 * @param offer Identificador del Presupuesto
-	 * @param line Numero de lnea del Detalle dentro del Presupuesto
-	 * @param item Identificador del Articulo
-	 * @param description Descripcin del Articulo
-	 * @param quantity Cantidad del Articulo
-	 * @param price Precio del Articulo
-	 * @param discount_expr Descuentos del Articulo
-	 * @param status Estado del Detalle del Presupuesto
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertOffer_detail(Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
-	throws SQLException {
-		int id = nextOffer_detailId();
-
-		Offer_detail offer_detail_ = new Offer_detail();
-		offer_detail_.id = id;
-		offer_detail_.offer = offer;
-		offer_detail_.line = line;
-		offer_detail_.item = item;
-		offer_detail_.description = description;
-		offer_detail_.quantity = quantity;
-		offer_detail_.price = price;
-		offer_detail_.discount_expr = discount_expr;
-		offer_detail_.status = status;
-
-		offer_details.add(offer_detail_);
-		
-		int offer_detailCount = offer_details.size();
-		
-		if ( 1124 * offer_detailCount >=  this.maxAllowedPacket ){
-			insertOffer_detail(offer_details);
-			offer_details.clear();
-		} 
-		return id;
-	}
-
-
 	private int contractStmtSize = 0;
 
 	private int contractInserted = 0;
@@ -44417,21 +43752,21 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement contractStmt = null;
 
 	public static class Contract {
-		private Integer id; 
-		private Integer person; 
-		private Integer workplace; 
-		private Integer enterprise_ccc; 
-		private Date start_date; 
-		private Date end_date; 
-		private Integer calendar; 
-		private InputStream document; 
-		private String description; 
-		private Short status; 
-		private Integer registration; 
-		private Date seniority_date; 
-		private Integer enterprise_activity; 
-		private Short ss_regime; 
-		private Integer agreement_level_category; 
+		protected Integer id; 
+		protected Integer person; 
+		protected Integer workplace; 
+		protected Integer enterprise_ccc; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Integer calendar; 
+		protected InputStream document; 
+		protected String description; 
+		protected Short status; 
+		protected Integer registration; 
+		protected Date seniority_date; 
+		protected Integer enterprise_activity; 
+		protected Short ss_regime; 
+		protected Integer agreement_level_category; 
 	}
 	
 	private void insertContract( List<Contract> contracts )
@@ -44670,6 +44005,215 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int offer_detailStmtSize = 0;
+
+	private int offer_detailInserted = 0;
+
+	private List<Offer_detail> offer_details = 
+		new LinkedList<Offer_detail>();
+
+	private PreparedStatement offer_detailStmt = null;
+
+	public static class Offer_detail {
+		protected Integer id; 
+		protected Integer offer; 
+		protected Integer line; 
+		protected Integer item; 
+		protected String description; 
+		protected Double quantity; 
+		protected Double price; 
+		protected String discount_expr; 
+		protected Short status; 
+	}
+	
+	private void insertOffer_detail( List<Offer_detail> offer_details )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = offer_details.size();
+		if ( offer_detailStmtSize != size ) {
+			if ( offer_detailStmt != null ) {
+				offer_detailStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			offer_detailStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO offer_detail (id,offer,line,item,description,quantity,price,discount_expr,status)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			offer_detailStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Offer_detail offer_detail : offer_details) {
+			if ( offer_detail.id == null )
+				offer_detailStmt.setNull(offset++, 4);
+			else
+				offer_detailStmt.setInt(offset++, offer_detail.id);
+			if ( offer_detail.offer == null )
+				offer_detailStmt.setNull(offset++, 4);
+			else
+				offer_detailStmt.setInt(offset++, offer_detail.offer);
+			if ( offer_detail.line == null )
+				offer_detailStmt.setNull(offset++, 5);
+			else
+				offer_detailStmt.setInt(offset++, offer_detail.line);
+			if ( offer_detail.item == null )
+				offer_detailStmt.setNull(offset++, 4);
+			else
+				offer_detailStmt.setInt(offset++, offer_detail.item);
+			if ( offer_detail.description == null )
+				offer_detailStmt.setNull(offset++, 12);
+			else
+				offer_detailStmt.setString(offset++, offer_detail.description);
+			if ( offer_detail.quantity == null )
+				offer_detailStmt.setNull(offset++, 8);
+			else
+				offer_detailStmt.setDouble(offset++, offer_detail.quantity);
+			if ( offer_detail.price == null )
+				offer_detailStmt.setNull(offset++, 8);
+			else
+				offer_detailStmt.setDouble(offset++, offer_detail.price);
+			if ( offer_detail.discount_expr == null )
+				offer_detailStmt.setNull(offset++, 12);
+			else
+				offer_detailStmt.setString(offset++, offer_detail.discount_expr);
+			if ( offer_detail.status == null )
+				offer_detailStmt.setNull(offset++, -6);
+			else
+				offer_detailStmt.setShort(offset++, offer_detail.status);
+		}
+		offer_detailStmt.executeUpdate();
+		offer_detailInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Offer_details in {} milliseconds.", size, offer_detailInserted, elapsed );		
+	}
+		
+		private int offer_detailId = -1;
+		
+		private void initOffer_detailId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `offer_detail`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.offer_detailId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextOffer_detailId() {
+			return ++this.offer_detailId;
+		} 
+
+		public void setOffer_detailId(Integer offer_detailId) {
+			this.offer_detailId = offer_detailId;
+		} 
+	
+	private void flushOffer_detail(  )
+	throws SQLException {
+		if ( ! offer_details.isEmpty() )
+			insertOffer_detail(offer_details);
+		if ( offer_detailStmt != null )
+			offer_detailStmt.close();
+	}	
+
+	/**
+	 * Offer_detail
+	 * @param id Identificador unico del Detalle de Presupuesto
+	 * @param offer Identificador del Presupuesto
+	 * @param line Numero de lnea del Detalle dentro del Presupuesto
+	 * @param item Identificador del Articulo
+	 * @param description Descripcin del Articulo
+	 * @param quantity Cantidad del Articulo
+	 * @param price Precio del Articulo
+	 * @param discount_expr Descuentos del Articulo
+	 * @param status Estado del Detalle del Presupuesto
+	 * @throws SQLException
+	*/
+	protected void insertOffer_detail(Integer id, Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
+	throws SQLException {
+
+		Offer_detail offer_detail_ = new Offer_detail();
+		offer_detail_.id = id;
+		offer_detail_.offer = offer;
+		offer_detail_.line = line;
+		offer_detail_.item = item;
+		offer_detail_.description = description;
+		offer_detail_.quantity = quantity;
+		offer_detail_.price = price;
+		offer_detail_.discount_expr = discount_expr;
+		offer_detail_.status = status;
+
+		offer_details.add(offer_detail_);
+		
+		int offer_detailCount = offer_details.size();
+		
+		if ( 1131 * offer_detailCount >=  this.maxAllowedPacket ){
+			insertOffer_detail(offer_details);
+			offer_details.clear();
+		} 
+	}
+
+
+	/**
+	 * Offer_detail
+	 * @param offer Identificador del Presupuesto
+	 * @param line Numero de lnea del Detalle dentro del Presupuesto
+	 * @param item Identificador del Articulo
+	 * @param description Descripcin del Articulo
+	 * @param quantity Cantidad del Articulo
+	 * @param price Precio del Articulo
+	 * @param discount_expr Descuentos del Articulo
+	 * @param status Estado del Detalle del Presupuesto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertOffer_detail(Integer offer, Integer line, Integer item, String description, Double quantity, Double price, String discount_expr, Short status)
+	throws SQLException {
+		int id = nextOffer_detailId();
+
+		Offer_detail offer_detail_ = new Offer_detail();
+		offer_detail_.id = id;
+		offer_detail_.offer = offer;
+		offer_detail_.line = line;
+		offer_detail_.item = item;
+		offer_detail_.description = description;
+		offer_detail_.quantity = quantity;
+		offer_detail_.price = price;
+		offer_detail_.discount_expr = discount_expr;
+		offer_detail_.status = status;
+
+		offer_details.add(offer_detail_);
+		
+		int offer_detailCount = offer_details.size();
+		
+		if ( 1131 * offer_detailCount >=  this.maxAllowedPacket ){
+			insertOffer_detail(offer_details);
+			offer_details.clear();
+		} 
+		return id;
+	}
+
+
 	private int expendituresStmtSize = 0;
 
 	private int expendituresInserted = 0;
@@ -44680,11 +44224,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement expendituresStmt = null;
 
 	public static class Expenditures {
-		private Integer id; 
-		private Integer resource; 
-		private Integer expenditures_item; 
-		private Date date; 
-		private Double amount; 
+		protected Integer id; 
+		protected Integer resource; 
+		protected Integer expenditures_item; 
+		protected Date date; 
+		protected Double amount; 
 	}
 	
 	private void insertExpenditures( List<Expenditures> expendituress )
@@ -44853,20 +44397,20 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement amortizationStmt = null;
 
 	public static class Amortization {
-		private Integer id; 
-		private String description; 
-		private Integer amortization_type; 
-		private Date initial_date; 
-		private Date deadline; 
-		private Double amount; 
-		private Short fee_period; 
-		private Double sale_amount; 
-		private String comments; 
-		private String fixed_asset_account; 
-		private String accumulated_account; 
-		private String allocation_account; 
-		private Double percentage; 
-		private Short security_level; 
+		protected Integer id; 
+		protected String description; 
+		protected Integer amortization_type; 
+		protected Date initial_date; 
+		protected Date deadline; 
+		protected Double amount; 
+		protected Short fee_period; 
+		protected Double sale_amount; 
+		protected String comments; 
+		protected String fixed_asset_account; 
+		protected String accumulated_account; 
+		protected String allocation_account; 
+		protected Double percentage; 
+		protected Short security_level; 
 	}
 	
 	private void insertAmortization( List<Amortization> amortizations )
@@ -45107,9 +44651,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement enterpriseStmt = null;
 
 	public static class Enterprise {
-		private Integer registry; 
-		private Integer scope; 
-		private Integer calendar; 
+		protected Integer registry; 
+		protected Integer scope; 
+		protected Integer calendar; 
 	}
 	
 	private void insertEnterprise( List<Enterprise> enterprises )
@@ -45205,11 +44749,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement markStmt = null;
 
 	public static class Mark {
-		private Integer id; 
-		private Integer subject; 
-		private Integer alumn; 
-		private Short evaluation; 
-		private Double mark; 
+		protected Integer id; 
+		protected Integer subject; 
+		protected Integer alumn; 
+		protected Short evaluation; 
+		protected Double mark; 
 	}
 	
 	private void insertMark( List<Mark> marks )
@@ -45378,13 +44922,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement expense_accountStmt = null;
 
 	public static class Expense_account {
-		private Integer id; 
-		private Integer registry; 
-		private Short expense_holder_type; 
-		private Short status; 
-		private Date issue_date; 
-		private String description; 
-		private String comments; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected Short expense_holder_type; 
+		protected Short status; 
+		protected Date issue_date; 
+		protected String description; 
+		protected String comments; 
 	}
 	
 	private void insertExpense_account( List<Expense_account> expense_accounts )
@@ -45569,11 +45113,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement catalogue_categoryStmt = null;
 
 	public static class Catalogue_category {
-		private Integer id; 
-		private Integer catalogue; 
-		private Integer category; 
-		private Double quantity; 
-		private Double discount; 
+		protected Integer id; 
+		protected Integer catalogue; 
+		protected Integer category; 
+		protected Double quantity; 
+		protected Double discount; 
 	}
 	
 	private void insertCatalogue_category( List<Catalogue_category> catalogue_categorys )
@@ -45742,12 +45286,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement lh_contractStmt = null;
 
 	public static class Lh_contract {
-		private Integer id; 
-		private Integer employee; 
-		private Date startingdate; 
-		private Date endingdate; 
-		private Short contract_type; 
-		private Double gross_salary; 
+		protected Integer id; 
+		protected Integer employee; 
+		protected Date startingdate; 
+		protected Date endingdate; 
+		protected Short contract_type; 
+		protected Double gross_salary; 
 	}
 	
 	private void insertLh_contract( List<Lh_contract> lh_contracts )
@@ -45924,13 +45468,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement account_summaryStmt = null;
 
 	public static class Account_summary {
-		private Integer id; 
-		private String account_period; 
-		private String account; 
-		private Short security_level; 
-		private Date entry_date; 
-		private Double debit; 
-		private Double credit; 
+		protected Integer id; 
+		protected String account_period; 
+		protected String account; 
+		protected Short security_level; 
+		protected Date entry_date; 
+		protected Double debit; 
+		protected Double credit; 
 	}
 	
 	private void insertAccount_summary( List<Account_summary> account_summarys )
@@ -46115,11 +45659,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement lh_courseStmt = null;
 
 	public static class Lh_course {
-		private Integer id; 
-		private Integer employee; 
-		private Date startingdate; 
-		private Date endingdate; 
-		private String description; 
+		protected Integer id; 
+		protected Integer employee; 
+		protected Date startingdate; 
+		protected Date endingdate; 
+		protected String description; 
 	}
 	
 	private void insertLh_course( List<Lh_course> lh_courses )
@@ -46288,11 +45832,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement companyStmt = null;
 
 	public static class Company {
-		private Integer registry; 
-		private Boolean active; 
-		private Boolean surcharge; 
-		private Boolean withholding; 
-		private Boolean e_invoice; 
+		protected Integer registry; 
+		protected Boolean active; 
+		protected Boolean surcharge; 
+		protected Boolean withholding; 
+		protected Boolean e_invoice; 
 	}
 	
 	private void insertCompany( List<Company> companys )
@@ -46400,9 +45944,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement account_entry_bank_statementStmt = null;
 
 	public static class Account_entry_bank_statement {
-		private Integer id; 
-		private Integer account_entry; 
-		private Integer bank_statement; 
+		protected Integer id; 
+		protected Integer account_entry; 
+		protected Integer bank_statement; 
 	}
 	
 	private void insertAccount_entry_bank_statement( List<Account_entry_bank_statement> account_entry_bank_statements )
@@ -46545,6 +46089,170 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int salary_costStmtSize = 0;
+
+	private int salary_costInserted = 0;
+
+	private List<Salary_cost> salary_costs = 
+		new LinkedList<Salary_cost>();
+
+	private PreparedStatement salary_costStmt = null;
+
+	public static class Salary_cost {
+		protected Integer id; 
+		protected Integer salary; 
+		protected Double amount; 
+		protected String description; 
+	}
+	
+	private void insertSalary_cost( List<Salary_cost> salary_costs )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = salary_costs.size();
+		if ( salary_costStmtSize != size ) {
+			if ( salary_costStmt != null ) {
+				salary_costStmt.close();
+			}
+			String values = "(?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			salary_costStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO salary_cost (id,salary,amount,description)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			salary_costStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Salary_cost salary_cost : salary_costs) {
+			if ( salary_cost.id == null )
+				salary_costStmt.setNull(offset++, 4);
+			else
+				salary_costStmt.setInt(offset++, salary_cost.id);
+			if ( salary_cost.salary == null )
+				salary_costStmt.setNull(offset++, 4);
+			else
+				salary_costStmt.setInt(offset++, salary_cost.salary);
+			if ( salary_cost.amount == null )
+				salary_costStmt.setNull(offset++, 8);
+			else
+				salary_costStmt.setDouble(offset++, salary_cost.amount);
+			if ( salary_cost.description == null )
+				salary_costStmt.setNull(offset++, 12);
+			else
+				salary_costStmt.setString(offset++, salary_cost.description);
+		}
+		salary_costStmt.executeUpdate();
+		salary_costInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Salary_costs in {} milliseconds.", size, salary_costInserted, elapsed );		
+	}
+		
+		private int salary_costId = -1;
+		
+		private void initSalary_costId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `salary_cost`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.salary_costId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextSalary_costId() {
+			return ++this.salary_costId;
+		} 
+
+		public void setSalary_costId(Integer salary_costId) {
+			this.salary_costId = salary_costId;
+		} 
+	
+	private void flushSalary_cost(  )
+	throws SQLException {
+		if ( ! salary_costs.isEmpty() )
+			insertSalary_cost(salary_costs);
+		if ( salary_costStmt != null )
+			salary_costStmt.close();
+	}	
+
+	/**
+	 * Salary_cost
+	 * @param id Identificador unico
+	 * @param salary Recibo del pago de salarios
+	 * @param amount Importe
+	 * @param description Descripcion
+	 * @throws SQLException
+	*/
+	protected void insertSalary_cost(Integer id, Integer salary, Double amount, String description)
+	throws SQLException {
+
+		Salary_cost salary_cost_ = new Salary_cost();
+		salary_cost_.id = id;
+		salary_cost_.salary = salary;
+		salary_cost_.amount = amount;
+		salary_cost_.description = description;
+
+		salary_costs.add(salary_cost_);
+		
+		int salary_costCount = salary_costs.size();
+		
+		if ( 99 * salary_costCount >=  this.maxAllowedPacket ){
+			insertSalary_cost(salary_costs);
+			salary_costs.clear();
+		} 
+	}
+
+
+	/**
+	 * Salary_cost
+	 * @param salary Recibo del pago de salarios
+	 * @param amount Importe
+	 * @param description Descripcion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertSalary_cost(Integer salary, Double amount, String description)
+	throws SQLException {
+		int id = nextSalary_costId();
+
+		Salary_cost salary_cost_ = new Salary_cost();
+		salary_cost_.id = id;
+		salary_cost_.salary = salary;
+		salary_cost_.amount = amount;
+		salary_cost_.description = description;
+
+		salary_costs.add(salary_cost_);
+		
+		int salary_costCount = salary_costs.size();
+		
+		if ( 99 * salary_costCount >=  this.maxAllowedPacket ){
+			insertSalary_cost(salary_costs);
+			salary_costs.clear();
+		} 
+		return id;
+	}
+
+
 	private int lh_workStmtSize = 0;
 
 	private int lh_workInserted = 0;
@@ -46555,11 +46263,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement lh_workStmt = null;
 
 	public static class Lh_work {
-		private Integer id; 
-		private Integer employee; 
-		private Date startingdate; 
-		private Date endingdate; 
-		private String description; 
+		protected Integer id; 
+		protected Integer employee; 
+		protected Date startingdate; 
+		protected Date endingdate; 
+		protected String description; 
 	}
 	
 	private void insertLh_work( List<Lh_work> lh_works )
@@ -46728,18 +46436,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement scaleStmt = null;
 
 	public static class Scale {
-		private Integer id; 
-		private Short scale_model; 
-		private String program_path; 
-		private Date inidate; 
-		private Date enddate; 
-		private String serie; 
-		private String code1; 
-		private String code2; 
-		private String code3; 
-		private String code4; 
-		private String code5; 
-		private Boolean verified; 
+		protected Integer id; 
+		protected Short scale_model; 
+		protected String program_path; 
+		protected Date inidate; 
+		protected Date enddate; 
+		protected String serie; 
+		protected String code1; 
+		protected String code2; 
+		protected String code3; 
+		protected String code4; 
+		protected String code5; 
+		protected Boolean verified; 
 	}
 	
 	private void insertScale( List<Scale> scales )
@@ -46964,9 +46672,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement commission_type_commissionStmt = null;
 
 	public static class Commission_type_commission {
-		private Integer id; 
-		private Integer commission_type; 
-		private Integer commission; 
+		protected Integer id; 
+		protected Integer commission_type; 
+		protected Integer commission; 
 	}
 	
 	private void insertCommission_type_commission( List<Commission_type_commission> commission_type_commissions )
@@ -47119,12 +46827,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement inventory_detailStmt = null;
 
 	public static class Inventory_detail {
-		private Integer id; 
-		private Integer inventory; 
-		private Integer item; 
-		private Double actual_quantity; 
-		private Double real_quantity; 
-		private Double cost; 
+		protected Integer id; 
+		protected Integer inventory; 
+		protected Integer item; 
+		protected Double actual_quantity; 
+		protected Double real_quantity; 
+		protected Double cost; 
 	}
 	
 	private void insertInventory_detail( List<Inventory_detail> inventory_details )
@@ -47301,8 +47009,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement scopeStmt = null;
 
 	public static class Scope {
-		private Integer id; 
-		private String description; 
+		protected Integer id; 
+		protected String description; 
 	}
 	
 	private void insertScope( List<Scope> scopes )
@@ -47447,18 +47155,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement target_supplierStmt = null;
 
 	public static class Target_supplier {
-		private Integer id; 
-		private Integer target; 
-		private Integer supplier; 
-		private String target_external_code; 
-		private Integer tariff; 
-		private Integer pay_method; 
-		private Integer number_of_pymnts; 
-		private Integer days_to_first_pymnt; 
-		private Integer days_between_pymnts; 
-		private String pymnt_days; 
-		private Integer bank; 
-		private String bank_account; 
+		protected Integer id; 
+		protected Integer target; 
+		protected Integer supplier; 
+		protected String target_external_code; 
+		protected Integer tariff; 
+		protected Integer pay_method; 
+		protected Integer number_of_pymnts; 
+		protected Integer days_to_first_pymnt; 
+		protected Integer days_between_pymnts; 
+		protected String pymnt_days; 
+		protected Integer bank; 
+		protected String bank_account; 
 	}
 	
 	private void insertTarget_supplier( List<Target_supplier> target_suppliers )
@@ -47673,6 +47381,152 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int customer_segmentStmtSize = 0;
+
+	private int customer_segmentInserted = 0;
+
+	private List<Customer_segment> customer_segments = 
+		new LinkedList<Customer_segment>();
+
+	private PreparedStatement customer_segmentStmt = null;
+
+	public static class Customer_segment {
+		protected Integer id; 
+		protected String description; 
+	}
+	
+	private void insertCustomer_segment( List<Customer_segment> customer_segments )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = customer_segments.size();
+		if ( customer_segmentStmtSize != size ) {
+			if ( customer_segmentStmt != null ) {
+				customer_segmentStmt.close();
+			}
+			String values = "(?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			customer_segmentStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO customer_segment (id,description)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			customer_segmentStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Customer_segment customer_segment : customer_segments) {
+			if ( customer_segment.id == null )
+				customer_segmentStmt.setNull(offset++, 4);
+			else
+				customer_segmentStmt.setInt(offset++, customer_segment.id);
+			if ( customer_segment.description == null )
+				customer_segmentStmt.setNull(offset++, 12);
+			else
+				customer_segmentStmt.setString(offset++, customer_segment.description);
+		}
+		customer_segmentStmt.executeUpdate();
+		customer_segmentInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Customer_segments in {} milliseconds.", size, customer_segmentInserted, elapsed );		
+	}
+		
+		private int customer_segmentId = -1;
+		
+		private void initCustomer_segmentId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `customer_segment`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.customer_segmentId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCustomer_segmentId() {
+			return ++this.customer_segmentId;
+		} 
+
+		public void setCustomer_segmentId(Integer customer_segmentId) {
+			this.customer_segmentId = customer_segmentId;
+		} 
+	
+	private void flushCustomer_segment(  )
+	throws SQLException {
+		if ( ! customer_segments.isEmpty() )
+			insertCustomer_segment(customer_segments);
+		if ( customer_segmentStmt != null )
+			customer_segmentStmt.close();
+	}	
+
+	/**
+	 * Customer_segment
+	 * @param id Identificador unico del Segmento
+	 * @param description Descripcion del Segmento
+	 * @throws SQLException
+	*/
+	protected void insertCustomer_segment(Integer id, String description)
+	throws SQLException {
+
+		Customer_segment customer_segment_ = new Customer_segment();
+		customer_segment_.id = id;
+		customer_segment_.description = description;
+
+		customer_segments.add(customer_segment_);
+		
+		int customer_segmentCount = customer_segments.size();
+		
+		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
+			insertCustomer_segment(customer_segments);
+			customer_segments.clear();
+		} 
+	}
+
+
+	/**
+	 * Customer_segment
+	 * @param description Descripcion del Segmento
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCustomer_segment(String description)
+	throws SQLException {
+		int id = nextCustomer_segmentId();
+
+		Customer_segment customer_segment_ = new Customer_segment();
+		customer_segment_.id = id;
+		customer_segment_.description = description;
+
+		customer_segments.add(customer_segment_);
+		
+		int customer_segmentCount = customer_segments.size();
+		
+		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
+			insertCustomer_segment(customer_segments);
+			customer_segments.clear();
+		} 
+		return id;
+	}
+
+
 	private int contract_batch_detailStmtSize = 0;
 
 	private int contract_batch_detailInserted = 0;
@@ -47683,9 +47537,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement contract_batch_detailStmt = null;
 
 	public static class Contract_batch_detail {
-		private Integer id; 
-		private Integer contract_batch; 
-		private Integer contract; 
+		protected Integer id; 
+		protected Integer contract_batch; 
+		protected Integer contract; 
 	}
 	
 	private void insertContract_batch_detail( List<Contract_batch_detail> contract_batch_details )
@@ -47828,152 +47682,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int customer_segmentStmtSize = 0;
-
-	private int customer_segmentInserted = 0;
-
-	private List<Customer_segment> customer_segments = 
-		new LinkedList<Customer_segment>();
-
-	private PreparedStatement customer_segmentStmt = null;
-
-	public static class Customer_segment {
-		private Integer id; 
-		private String description; 
-	}
-	
-	private void insertCustomer_segment( List<Customer_segment> customer_segments )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = customer_segments.size();
-		if ( customer_segmentStmtSize != size ) {
-			if ( customer_segmentStmt != null ) {
-				customer_segmentStmt.close();
-			}
-			String values = "(?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			customer_segmentStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO customer_segment (id,description)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			customer_segmentStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Customer_segment customer_segment : customer_segments) {
-			if ( customer_segment.id == null )
-				customer_segmentStmt.setNull(offset++, 4);
-			else
-				customer_segmentStmt.setInt(offset++, customer_segment.id);
-			if ( customer_segment.description == null )
-				customer_segmentStmt.setNull(offset++, 12);
-			else
-				customer_segmentStmt.setString(offset++, customer_segment.description);
-		}
-		customer_segmentStmt.executeUpdate();
-		customer_segmentInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Customer_segments in {} milliseconds.", size, customer_segmentInserted, elapsed );		
-	}
-		
-		private int customer_segmentId = -1;
-		
-		private void initCustomer_segmentId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `customer_segment`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.customer_segmentId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCustomer_segmentId() {
-			return ++this.customer_segmentId;
-		} 
-
-		public void setCustomer_segmentId(Integer customer_segmentId) {
-			this.customer_segmentId = customer_segmentId;
-		} 
-	
-	private void flushCustomer_segment(  )
-	throws SQLException {
-		if ( ! customer_segments.isEmpty() )
-			insertCustomer_segment(customer_segments);
-		if ( customer_segmentStmt != null )
-			customer_segmentStmt.close();
-	}	
-
-	/**
-	 * Customer_segment
-	 * @param id Identificador unico del Segmento
-	 * @param description Descripcion del Segmento
-	 * @throws SQLException
-	*/
-	protected void insertCustomer_segment(Integer id, String description)
-	throws SQLException {
-
-		Customer_segment customer_segment_ = new Customer_segment();
-		customer_segment_.id = id;
-		customer_segment_.description = description;
-
-		customer_segments.add(customer_segment_);
-		
-		int customer_segmentCount = customer_segments.size();
-		
-		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
-			insertCustomer_segment(customer_segments);
-			customer_segments.clear();
-		} 
-	}
-
-
-	/**
-	 * Customer_segment
-	 * @param description Descripcion del Segmento
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCustomer_segment(String description)
-	throws SQLException {
-		int id = nextCustomer_segmentId();
-
-		Customer_segment customer_segment_ = new Customer_segment();
-		customer_segment_.id = id;
-		customer_segment_.description = description;
-
-		customer_segments.add(customer_segment_);
-		
-		int customer_segmentCount = customer_segments.size();
-		
-		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
-			insertCustomer_segment(customer_segments);
-			customer_segments.clear();
-		} 
-		return id;
-	}
-
-
 	private int auto_conceptStmtSize = 0;
 
 	private int auto_conceptInserted = 0;
@@ -47984,8 +47692,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement auto_conceptStmt = null;
 
 	public static class Auto_concept {
-		private Integer id; 
-		private String description; 
+		protected Integer id; 
+		protected String description; 
 	}
 	
 	private void insertAuto_concept( List<Auto_concept> auto_concepts )
@@ -48130,12 +47838,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement web_info_page_detailStmt = null;
 
 	public static class Web_info_page_detail {
-		private Integer id; 
-		private Integer web_info_page; 
-		private String title; 
-		private Integer layout; 
-		private String content; 
-		private String extra; 
+		protected Integer id; 
+		protected Integer web_info_page; 
+		protected String title; 
+		protected Integer layout; 
+		protected String content; 
+		protected String extra; 
 	}
 	
 	private void insertWeb_info_page_detail( List<Web_info_page_detail> web_info_page_details )
@@ -48312,8 +48020,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement job_typeStmt = null;
 
 	public static class Job_type {
-		private Integer id; 
-		private String description; 
+		protected Integer id; 
+		protected String description; 
 	}
 	
 	private void insertJob_type( List<Job_type> job_types )
@@ -48458,12 +48166,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement scale_relationStmt = null;
 
 	public static class Scale_relation {
-		private Integer id; 
-		private Integer aon_id; 
-		private String scale_id1; 
-		private String scale_id2; 
-		private String type; 
-		private Short scale_model; 
+		protected Integer id; 
+		protected Integer aon_id; 
+		protected String scale_id1; 
+		protected String scale_id2; 
+		protected String type; 
+		protected Short scale_model; 
 	}
 	
 	private void insertScale_relation( List<Scale_relation> scale_relations )
@@ -48640,9 +48348,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement campaign_dossierStmt = null;
 
 	public static class Campaign_dossier {
-		private Integer id; 
-		private Integer campaign; 
-		private Integer dossier; 
+		protected Integer id; 
+		protected Integer campaign; 
+		protected Integer dossier; 
 	}
 	
 	private void insertCampaign_dossier( List<Campaign_dossier> campaign_dossiers )
@@ -48795,8 +48503,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement tariffStmt = null;
 
 	public static class Tariff {
-		private Integer id; 
-		private String name; 
+		protected Integer id; 
+		protected String name; 
 	}
 	
 	private void insertTariff( List<Tariff> tariffs )
@@ -48941,9 +48649,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement enterprise_agreementStmt = null;
 
 	public static class Enterprise_agreement {
-		private Integer id; 
-		private Integer enterprise; 
-		private Integer agreement; 
+		protected Integer id; 
+		protected Integer enterprise; 
+		protected Integer agreement; 
 	}
 	
 	private void insertEnterprise_agreement( List<Enterprise_agreement> enterprise_agreements )
@@ -49096,15 +48804,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement invoice_addressStmt = null;
 
 	public static class Invoice_address {
-		private Integer id; 
-		private Integer invoice; 
-		private String street_type; 
-		private String address; 
-		private String number; 
-		private String address2; 
-		private String zip; 
-		private String city; 
-		private Integer geozone; 
+		protected Integer id; 
+		protected Integer invoice; 
+		protected String street_type; 
+		protected String address; 
+		protected String number; 
+		protected String address2; 
+		protected String zip; 
+		protected String city; 
+		protected Integer geozone; 
 	}
 	
 	private void insertInvoice_address( List<Invoice_address> invoice_addresss )
@@ -49305,14 +49013,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement message_logStmt = null;
 
 	public static class Message_log {
-		private Integer id; 
-		private String message_id; 
-		private Integer message_content; 
-		private String recipient; 
-		private String type; 
-		private Timestamp sent_date; 
-		private Short message_parts; 
-		private String username; 
+		protected Integer id; 
+		protected String message_id; 
+		protected Integer message_content; 
+		protected String recipient; 
+		protected String type; 
+		protected Timestamp sent_date; 
+		protected Short message_parts; 
+		protected String username; 
 	}
 	
 	private void insertMessage_log( List<Message_log> message_logs )
@@ -49505,9 +49213,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement applicationStmt = null;
 
 	public static class Application {
-		private Integer id; 
-		private Short audit_level; 
-		private String name; 
+		protected Integer id; 
+		protected Short audit_level; 
+		protected String name; 
 	}
 	
 	private void insertApplication( List<Application> applications )
@@ -49660,11 +49368,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement contract_calendar_eventStmt = null;
 
 	public static class Contract_calendar_event {
-		private Integer id; 
-		private Integer contract; 
-		private Date date; 
-		private Short type; 
-		private Double duration; 
+		protected Integer id; 
+		protected Integer contract; 
+		protected Date date; 
+		protected Short type; 
+		protected Double duration; 
 	}
 	
 	private void insertContract_calendar_event( List<Contract_calendar_event> contract_calendar_events )
@@ -49833,18 +49541,18 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement rdir_staffStmt = null;
 
 	public static class Rdir_staff {
-		private Integer id; 
-		private Integer registry; 
-		private String document; 
-		private String name; 
-		private Boolean shareholder; 
-		private Boolean representative; 
-		private Boolean director; 
-		private Double percent_share; 
-		private Integer share_number; 
-		private Double nominal_value; 
-		private Date due_date; 
-		private Boolean representative_labor; 
+		protected Integer id; 
+		protected Integer registry; 
+		protected String document; 
+		protected String name; 
+		protected Boolean shareholder; 
+		protected Boolean representative; 
+		protected Boolean director; 
+		protected Double percent_share; 
+		protected Integer share_number; 
+		protected Double nominal_value; 
+		protected Date due_date; 
+		protected Boolean representative_labor; 
 	}
 	
 	private void insertRdir_staff( List<Rdir_staff> rdir_staffs )
@@ -50069,22 +49777,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement taskStmt = null;
 
 	public static class Task {
-		private Integer id; 
-		private String description; 
-		private Date start_date; 
-		private Date end_date; 
-		private Date due_date; 
-		private Short priority; 
-		private Short status; 
-		private Short percent; 
-		private Integer user_id; 
-		private Integer workgroup; 
-		private Short source; 
-		private Integer dossier; 
-		private Integer activity; 
-		private Integer sender; 
-		private String comments; 
-		private Short repeat_period; 
+		protected Integer id; 
+		protected String description; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Date due_date; 
+		protected Short priority; 
+		protected Short status; 
+		protected Short percent; 
+		protected Integer user_id; 
+		protected Integer workgroup; 
+		protected Short source; 
+		protected Integer dossier; 
+		protected Integer activity; 
+		protected Integer sender; 
+		protected String comments; 
+		protected Short repeat_period; 
 	}
 	
 	private void insertTask( List<Task> tasks )
@@ -50341,12 +50049,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement resourceStmt = null;
 
 	public static class Resource {
-		private Integer id; 
-		private Integer employee; 
-		private Integer workplace; 
-		private Integer workactivity; 
-		private Date startingdate; 
-		private Date endingdate; 
+		protected Integer id; 
+		protected Integer employee; 
+		protected Integer workplace; 
+		protected Integer workactivity; 
+		protected Date startingdate; 
+		protected Date endingdate; 
 	}
 	
 	private void insertResource( List<Resource> resources )
@@ -50523,9 +50231,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement agreementStmt = null;
 
 	public static class Agreement {
-		private Integer id; 
-		private Integer calendar; 
-		private String description; 
+		protected Integer id; 
+		protected Integer calendar; 
+		protected String description; 
 	}
 	
 	private void insertAgreement( List<Agreement> agreements )
@@ -50678,31 +50386,31 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement offerStmt = null;
 
 	public static class Offer {
-		private Integer id; 
-		private Integer target; 
-		private String series; 
-		private Integer number; 
-		private Integer version; 
-		private Integer address; 
-		private Integer tariff; 
-		private Integer seller; 
-		private Integer supplier; 
-		private String discount_expr; 
-		private Date issue_date; 
-		private Integer pay_method; 
-		private Short security_level; 
-		private Short status; 
-		private Short type; 
-		private Integer workplace; 
-		private Integer scope; 
-		private Integer number_of_pymnts; 
-		private Integer days_to_first_pymnt; 
-		private Integer days_between_pymnts; 
-		private String pymnt_days; 
-		private Integer bank; 
-		private String bank_account; 
-		private Boolean signed; 
-		private String comments; 
+		protected Integer id; 
+		protected Integer target; 
+		protected String series; 
+		protected Integer number; 
+		protected Integer version; 
+		protected Integer address; 
+		protected Integer tariff; 
+		protected Integer seller; 
+		protected Integer supplier; 
+		protected String discount_expr; 
+		protected Date issue_date; 
+		protected Integer pay_method; 
+		protected Short security_level; 
+		protected Short status; 
+		protected Short type; 
+		protected Integer workplace; 
+		protected Integer scope; 
+		protected Integer number_of_pymnts; 
+		protected Integer days_to_first_pymnt; 
+		protected Integer days_between_pymnts; 
+		protected String pymnt_days; 
+		protected Integer bank; 
+		protected String bank_account; 
+		protected Boolean signed; 
+		protected String comments; 
 	}
 	
 	private void insertOffer( List<Offer> offers )
@@ -51021,6 +50729,197 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int contract_embargoStmtSize = 0;
+
+	private int contract_embargoInserted = 0;
+
+	private List<Contract_embargo> contract_embargos = 
+		new LinkedList<Contract_embargo>();
+
+	private PreparedStatement contract_embargoStmt = null;
+
+	public static class Contract_embargo {
+		protected Integer id; 
+		protected Integer contract; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Double amount; 
+		protected String expression; 
+		protected String description; 
+	}
+	
+	private void insertContract_embargo( List<Contract_embargo> contract_embargos )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = contract_embargos.size();
+		if ( contract_embargoStmtSize != size ) {
+			if ( contract_embargoStmt != null ) {
+				contract_embargoStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			contract_embargoStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO contract_embargo (id,contract,start_date,end_date,amount,expression,description)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			contract_embargoStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Contract_embargo contract_embargo : contract_embargos) {
+			if ( contract_embargo.id == null )
+				contract_embargoStmt.setNull(offset++, 4);
+			else
+				contract_embargoStmt.setInt(offset++, contract_embargo.id);
+			if ( contract_embargo.contract == null )
+				contract_embargoStmt.setNull(offset++, 4);
+			else
+				contract_embargoStmt.setInt(offset++, contract_embargo.contract);
+			if ( contract_embargo.start_date == null )
+				contract_embargoStmt.setNull(offset++, 91);
+			else
+				contract_embargoStmt.setDate(offset++, contract_embargo.start_date);
+			if ( contract_embargo.end_date == null )
+				contract_embargoStmt.setNull(offset++, 91);
+			else
+				contract_embargoStmt.setDate(offset++, contract_embargo.end_date);
+			if ( contract_embargo.amount == null )
+				contract_embargoStmt.setNull(offset++, 8);
+			else
+				contract_embargoStmt.setDouble(offset++, contract_embargo.amount);
+			if ( contract_embargo.expression == null )
+				contract_embargoStmt.setNull(offset++, 12);
+			else
+				contract_embargoStmt.setString(offset++, contract_embargo.expression);
+			if ( contract_embargo.description == null )
+				contract_embargoStmt.setNull(offset++, 12);
+			else
+				contract_embargoStmt.setString(offset++, contract_embargo.description);
+		}
+		contract_embargoStmt.executeUpdate();
+		contract_embargoInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Contract_embargos in {} milliseconds.", size, contract_embargoInserted, elapsed );		
+	}
+		
+		private int contract_embargoId = -1;
+		
+		private void initContract_embargoId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `contract_embargo`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.contract_embargoId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextContract_embargoId() {
+			return ++this.contract_embargoId;
+		} 
+
+		public void setContract_embargoId(Integer contract_embargoId) {
+			this.contract_embargoId = contract_embargoId;
+		} 
+	
+	private void flushContract_embargo(  )
+	throws SQLException {
+		if ( ! contract_embargos.isEmpty() )
+			insertContract_embargo(contract_embargos);
+		if ( contract_embargoStmt != null )
+			contract_embargoStmt.close();
+	}	
+
+	/**
+	 * Contract_embargo
+	 * @param id Identificador unico
+	 * @param contract Contrato
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param amount Importe
+	 * @param expression Formula
+	 * @param description Descripcion
+	 * @throws SQLException
+	*/
+	protected void insertContract_embargo(Integer id, Integer contract, Date start_date, Date end_date, Double amount, String expression, String description)
+	throws SQLException {
+
+		Contract_embargo contract_embargo_ = new Contract_embargo();
+		contract_embargo_.id = id;
+		contract_embargo_.contract = contract;
+		contract_embargo_.start_date = start_date;
+		contract_embargo_.end_date = end_date;
+		contract_embargo_.amount = amount;
+		contract_embargo_.expression = expression;
+		contract_embargo_.description = description;
+
+		contract_embargos.add(contract_embargo_);
+		
+		int contract_embargoCount = contract_embargos.size();
+		
+		if ( 247 * contract_embargoCount >=  this.maxAllowedPacket ){
+			insertContract_embargo(contract_embargos);
+			contract_embargos.clear();
+		} 
+	}
+
+
+	/**
+	 * Contract_embargo
+	 * @param contract Contrato
+	 * @param start_date Fecha de inicio 
+	 * @param end_date Fecha de finalizacion
+	 * @param amount Importe
+	 * @param expression Formula
+	 * @param description Descripcion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertContract_embargo(Integer contract, Date start_date, Date end_date, Double amount, String expression, String description)
+	throws SQLException {
+		int id = nextContract_embargoId();
+
+		Contract_embargo contract_embargo_ = new Contract_embargo();
+		contract_embargo_.id = id;
+		contract_embargo_.contract = contract;
+		contract_embargo_.start_date = start_date;
+		contract_embargo_.end_date = end_date;
+		contract_embargo_.amount = amount;
+		contract_embargo_.expression = expression;
+		contract_embargo_.description = description;
+
+		contract_embargos.add(contract_embargo_);
+		
+		int contract_embargoCount = contract_embargos.size();
+		
+		if ( 247 * contract_embargoCount >=  this.maxAllowedPacket ){
+			insertContract_embargo(contract_embargos);
+			contract_embargos.clear();
+		} 
+		return id;
+	}
+
+
 	private int composition_expenseStmtSize = 0;
 
 	private int composition_expenseInserted = 0;
@@ -51031,11 +50930,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement composition_expenseStmt = null;
 
 	public static class Composition_expense {
-		private Integer id; 
-		private Integer composition; 
-		private String description; 
-		private Double quantity; 
-		private Double price; 
+		protected Integer id; 
+		protected Integer composition; 
+		protected String description; 
+		protected Double quantity; 
+		protected Double price; 
 	}
 	
 	private void insertComposition_expense( List<Composition_expense> composition_expenses )
@@ -51204,10 +51103,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement account_helperStmt = null;
 
 	public static class Account_helper {
-		private Integer id; 
-		private Integer counter; 
-		private String account; 
-		private String balancing_account; 
+		protected Integer id; 
+		protected Integer counter; 
+		protected String account; 
+		protected String balancing_account; 
 	}
 	
 	private void insertAccount_helper( List<Account_helper> account_helpers )
@@ -51368,13 +51267,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement system_dataStmt = null;
 
 	public static class System_data {
-		private Integer id; 
-		private String name; 
-		private String expression; 
-		private Date start_date; 
-		private Date end_date; 
-		private Boolean read_only; 
-		private String comments; 
+		protected Integer id; 
+		protected String name; 
+		protected String expression; 
+		protected Date start_date; 
+		protected Date end_date; 
+		protected Boolean read_only; 
+		protected String comments; 
 	}
 	
 	private void insertSystem_data( List<System_data> system_datas )
@@ -51412,7 +51311,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 			else
 				system_dataStmt.setString(offset++, system_data.name);
 			if ( system_data.expression == null )
-				system_dataStmt.setNull(offset++, 12);
+				system_dataStmt.setNull(offset++, -1);
 			else
 				system_dataStmt.setString(offset++, system_data.expression);
 			if ( system_data.start_date == null )
@@ -51506,7 +51405,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int system_dataCount = system_datas.size();
 		
-		if ( 686 * system_dataCount >=  this.maxAllowedPacket ){
+		if ( 190 * system_dataCount >=  this.maxAllowedPacket ){
 			insertSystem_data(system_datas);
 			system_datas.clear();
 		} 
@@ -51541,7 +51440,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int system_dataCount = system_datas.size();
 		
-		if ( 686 * system_dataCount >=  this.maxAllowedPacket ){
+		if ( 190 * system_dataCount >=  this.maxAllowedPacket ){
 			insertSystem_data(system_datas);
 			system_datas.clear();
 		} 
@@ -51559,8 +51458,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement bank_conceptStmt = null;
 
 	public static class Bank_concept {
-		private Integer id; 
-		private String name; 
+		protected Integer id; 
+		protected String name; 
 	}
 	
 	private void insertBank_concept( List<Bank_concept> bank_concepts )
@@ -51705,10 +51604,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement course_academicskillStmt = null;
 
 	public static class Course_academicskill {
-		private Integer id; 
-		private Integer course; 
-		private Integer academic_skill; 
-		private Integer weight; 
+		protected Integer id; 
+		protected Integer course; 
+		protected Integer academic_skill; 
+		protected Integer weight; 
 	}
 	
 	private void insertCourse_academicskill( List<Course_academicskill> course_academicskills )
@@ -51869,11 +51768,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement enterprise_cccStmt = null;
 
 	public static class Enterprise_ccc {
-		private Integer id; 
-		private String ccc; 
-		private Short type; 
-		private Integer enterprise_activity; 
-		private Integer geozone; 
+		protected Integer id; 
+		protected String ccc; 
+		protected Short type; 
+		protected Integer enterprise_activity; 
+		protected Integer geozone; 
 	}
 	
 	private void insertEnterprise_ccc( List<Enterprise_ccc> enterprise_cccs )
@@ -52042,13 +51941,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement targetStmt = null;
 
 	public static class Target {
-		private Integer registry; 
-		private Integer tariff; 
-		private Short advertising; 
-		private Boolean surcharge; 
-		private Boolean withholding; 
-		private Short transaction; 
-		private Short status; 
+		protected Integer registry; 
+		protected Integer tariff; 
+		protected Short advertising; 
+		protected Boolean surcharge; 
+		protected Boolean withholding; 
+		protected Short transaction; 
+		protected Short status; 
 	}
 	
 	private void insertTarget( List<Target> targets )
@@ -52168,9 +52067,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement mk_campaignStmt = null;
 
 	public static class Mk_campaign {
-		private Integer id; 
-		private Boolean active; 
-		private String description; 
+		protected Integer id; 
+		protected Boolean active; 
+		protected String description; 
 	}
 	
 	private void insertMk_campaign( List<Mk_campaign> mk_campaigns )
@@ -52323,11 +52222,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement activity_processStmt = null;
 
 	public static class Activity_process {
-		private Integer id; 
-		private Integer campaign; 
-		private Integer activity; 
-		private Integer process_detail; 
-		private Integer task; 
+		protected Integer id; 
+		protected Integer campaign; 
+		protected Integer activity; 
+		protected Integer process_detail; 
+		protected Integer task; 
 	}
 	
 	private void insertActivity_process( List<Activity_process> activity_processs )
@@ -52496,22 +52395,22 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement bank_statementStmt = null;
 
 	public static class Bank_statement {
-		private Integer id; 
-		private Integer rbank; 
-		private Integer lot_number; 
-		private Date operation_date; 
-		private Short common_concept; 
-		private String own_concept; 
-		private Boolean payment; 
-		private Double amount; 
-		private Integer document; 
-		private String reference1; 
-		private String reference2; 
-		private String description; 
-		private Short reliability; 
-		private Short security_level; 
-		private Short status; 
-		private String comments; 
+		protected Integer id; 
+		protected Integer rbank; 
+		protected Integer lot_number; 
+		protected Date operation_date; 
+		protected Short common_concept; 
+		protected String own_concept; 
+		protected Boolean payment; 
+		protected Double amount; 
+		protected Integer document; 
+		protected String reference1; 
+		protected String reference2; 
+		protected String description; 
+		protected Short reliability; 
+		protected Short security_level; 
+		protected Short status; 
+		protected String comments; 
 	}
 	
 	private void insertBank_statement( List<Bank_statement> bank_statements )
@@ -52768,10 +52667,10 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement item_alternativeStmt = null;
 
 	public static class Item_alternative {
-		private Integer id; 
-		private Integer item; 
-		private Integer alternative_item; 
-		private Short priority; 
+		protected Integer id; 
+		protected Integer item; 
+		protected Integer alternative_item; 
+		protected Short priority; 
 	}
 	
 	private void insertItem_alternative( List<Item_alternative> item_alternatives )
@@ -52932,13 +52831,13 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement userStmt = null;
 
 	public static class User {
-		private Integer id; 
-		private String name; 
-		private String login; 
-		private Integer enterprise; 
-		private Integer registry; 
-		private Boolean active; 
-		private String password; 
+		protected Integer id; 
+		protected String name; 
+		protected String login; 
+		protected Integer enterprise; 
+		protected Integer registry; 
+		protected Boolean active; 
+		protected String password; 
 	}
 	
 	private void insertUser( List<User> users )
@@ -53123,12 +53022,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement expense_account_detailStmt = null;
 
 	public static class Expense_account_detail {
-		private Integer id; 
-		private Integer expense_account; 
-		private Integer expense; 
-		private Double quantity; 
-		private Double price; 
-		private Double amount; 
+		protected Integer id; 
+		protected Integer expense_account; 
+		protected Integer expense; 
+		protected Double quantity; 
+		protected Double price; 
+		protected Double amount; 
 	}
 	
 	private void insertExpense_account_detail( List<Expense_account_detail> expense_account_details )
@@ -53305,8 +53204,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement app_paramStmt = null;
 
 	public static class App_param {
-		private String name; 
-		private String value; 
+		protected String name; 
+		protected String value; 
 	}
 	
 	private void insertApp_param( List<App_param> app_params )
@@ -53396,8 +53295,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	private PreparedStatement expenditures_itemsStmt = null;
 
 	public static class Expenditures_items {
-		private Integer id; 
-		private String name; 
+		protected Integer id; 
+		protected String name; 
 	}
 	
 	private void insertExpenditures_items( List<Expenditures_items> expenditures_itemss )
@@ -53574,8 +53473,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushFs_renting_detail();
 		flushMk_action();
 		flushFs_vat_detail();
-		flushOffer_detail_commission();
 		flushCv_languages();
+		flushOffer_detail_commission();
 		flushFavorite_category();
 		flushBalance_detail();
 		flushInvoice_tax_account();
@@ -53600,7 +53499,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushOffer_attach();
 		flushProcess_detail();
 		flushRelationship();
-		flushAccount_budget_detail();
 		flushAccount_entry_invoice();
 		flushTax_account();
 		flushExpense();
@@ -53626,7 +53524,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushBank();
 		flushActivity_type();
 		flushCourse_evaluation();
-		flushAccount_entry_link();
 		flushSupport_order();
 		flushProcess_detail_transition();
 		flushCustomer_fee();
@@ -53656,8 +53553,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushPurchase();
 		flushWeb_info();
 		flushLh_position();
-		flushBank_statement_link();
 		flushCv_evaluate();
+		flushBank_statement_link();
 		flushCourse_alumn();
 		flushFs_renting();
 		flushQuestion();
@@ -53669,6 +53566,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushEc_offer_pay_info();
 		flushAsset_activity();
 		flushCalendar_period();
+		flushSystem_cost();
 		flushFbatch();
 		flushInvoice_detail_account();
 		flushCommission_type();
@@ -53678,7 +53576,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushEc_catalogue();
 		flushWorkactivity();
 		flushEc_config();
-		flushAccount_budget();
 		flushCourse_observation();
 		flushSurvey_response();
 		flushEvaluation_observation();
@@ -53725,7 +53622,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushUser_workgroup();
 		flushCourse_schedule();
 		flushRrelationship();
-		flushAnnual_report_detail();
 		flushWeb_info_page();
 		flushEnterprise_certificate();
 		flushCampaign();
@@ -53736,6 +53632,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushObservation();
 		flushAction_favorite();
 		flushLoan_account();
+		flushSalary_embargo();
 		flushSurvey_workflow();
 		flushProduct();
 		flushProcess();
@@ -53755,7 +53652,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushInvoice_attach();
 		flushInvoice_detail();
 		flushLeave_batch();
-		flushAnnual_report();
 		flushCourse_instructor();
 		flushAccount_entry_finance_tracking();
 		flushAgreement_level_data();
@@ -53772,8 +53668,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushCatalogue_item();
 		flushAcademic_skill();
 		flushAppraiser();
-		flushOffer_detail();
 		flushContract();
+		flushOffer_detail();
 		flushExpenditures();
 		flushAmortization();
 		flushEnterprise();
@@ -53785,14 +53681,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushLh_course();
 		flushCompany();
 		flushAccount_entry_bank_statement();
+		flushSalary_cost();
 		flushLh_work();
 		flushScale();
 		flushCommission_type_commission();
 		flushInventory_detail();
 		flushScope();
 		flushTarget_supplier();
-		flushContract_batch_detail();
 		flushCustomer_segment();
+		flushContract_batch_detail();
 		flushAuto_concept();
 		flushWeb_info_page_detail();
 		flushJob_type();
@@ -53809,6 +53706,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushResource();
 		flushAgreement();
 		flushOffer();
+		flushContract_embargo();
 		flushComposition_expense();
 		flushAccount_helper();
 		flushSystem_data();
@@ -53959,9 +53857,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initFs_vat_detailId();
 		initMaxAllowedPacket();
-		initOffer_detail_commissionId();
-		initMaxAllowedPacket();
 		initCv_languagesId();
+		initMaxAllowedPacket();
+		initOffer_detail_commissionId();
 		initMaxAllowedPacket();
 		initFavorite_categoryId();
 		initMaxAllowedPacket();
@@ -54009,8 +53907,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initProcess_detailId();
 		initMaxAllowedPacket();
 		initRelationshipId();
-		initMaxAllowedPacket();
-		initAccount_budget_detailId();
 		initMaxAllowedPacket();
 		initAccount_entry_invoiceId();
 		initMaxAllowedPacket();
@@ -54061,8 +53957,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initActivity_typeId();
 		initMaxAllowedPacket();
 		initCourse_evaluationId();
-		initMaxAllowedPacket();
-		initAccount_entry_linkId();
 		initMaxAllowedPacket();
 		initSupport_orderId();
 		initMaxAllowedPacket();
@@ -54121,9 +54015,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initLh_positionId();
 		initMaxAllowedPacket();
-		initBank_statement_linkId();
-		initMaxAllowedPacket();
 		initCv_evaluateId();
+		initMaxAllowedPacket();
+		initBank_statement_linkId();
 		initMaxAllowedPacket();
 		initCourse_alumnId();
 		initMaxAllowedPacket();
@@ -54146,6 +54040,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initCalendar_periodId();
 		initMaxAllowedPacket();
+		initSystem_costId();
+		initMaxAllowedPacket();
 		initFbatchId();
 		initMaxAllowedPacket();
 		initInvoice_detail_accountId();
@@ -54163,8 +54059,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initWorkactivityId();
 		initMaxAllowedPacket();
 		initEc_configId();
-		initMaxAllowedPacket();
-		initAccount_budgetId();
 		initMaxAllowedPacket();
 		initCourse_observationId();
 		initMaxAllowedPacket();
@@ -54254,8 +54148,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initRrelationshipId();
 		initMaxAllowedPacket();
-		initAnnual_report_detailId();
-		initMaxAllowedPacket();
 		initWeb_info_pageId();
 		initMaxAllowedPacket();
 		initEnterprise_certificateId();
@@ -54275,6 +54167,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initAction_favoriteId();
 		initMaxAllowedPacket();
 		initLoan_accountId();
+		initMaxAllowedPacket();
+		initSalary_embargoId();
 		initMaxAllowedPacket();
 		initSurvey_workflowId();
 		initMaxAllowedPacket();
@@ -54313,8 +54207,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initLeave_batchId();
 		initMaxAllowedPacket();
-		initAnnual_reportId();
-		initMaxAllowedPacket();
 		initCourse_instructorId();
 		initMaxAllowedPacket();
 		initAccount_entry_finance_trackingId();
@@ -54346,9 +54238,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initAcademic_skillId();
 		initMaxAllowedPacket();
 		initMaxAllowedPacket();
-		initOffer_detailId();
-		initMaxAllowedPacket();
 		initContractId();
+		initMaxAllowedPacket();
+		initOffer_detailId();
 		initMaxAllowedPacket();
 		initExpendituresId();
 		initMaxAllowedPacket();
@@ -54370,6 +54262,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initAccount_entry_bank_statementId();
 		initMaxAllowedPacket();
+		initSalary_costId();
+		initMaxAllowedPacket();
 		initLh_workId();
 		initMaxAllowedPacket();
 		initScaleId();
@@ -54382,9 +54276,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initTarget_supplierId();
 		initMaxAllowedPacket();
-		initContract_batch_detailId();
-		initMaxAllowedPacket();
 		initCustomer_segmentId();
+		initMaxAllowedPacket();
+		initContract_batch_detailId();
 		initMaxAllowedPacket();
 		initAuto_conceptId();
 		initMaxAllowedPacket();
@@ -54417,6 +54311,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initAgreementId();
 		initMaxAllowedPacket();
 		initOfferId();
+		initMaxAllowedPacket();
+		initContract_embargoId();
 		initMaxAllowedPacket();
 		initComposition_expenseId();
 		initMaxAllowedPacket();
