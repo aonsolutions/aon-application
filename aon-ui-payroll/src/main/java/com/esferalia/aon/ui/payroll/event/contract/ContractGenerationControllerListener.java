@@ -4,6 +4,7 @@ package com.esferalia.aon.ui.payroll.event.contract;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
@@ -127,7 +128,12 @@ public class ContractGenerationControllerListener extends ControllerAdapter{
 	
 	private void updateContractData() throws ManagerBeanException {
 		ContractGenerationWizard controller = (ContractGenerationWizard) this.getController();
-		ContractData data = new ContractData();
+		if(controller.getCode()!=ContractCode.C100){
+			String msg = "Implementación hecha sólo para contratos de código 100";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		ContractData data = getContractData();
 		Contract contract = (Contract) controller.getTo();
 		data.setContract(contract);
 		data.setStartDate(contract.getStartDate());
@@ -135,9 +141,31 @@ public class ContractGenerationControllerListener extends ControllerAdapter{
 		data.setName(ContractVariables.TC2.getName());
 		data.setExpression(controller.getCode().getValue());
 		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-		bean.insert(data);
+		bean.insertOrUpdate(data);
 	}
 	
+	private ContractData getContractData(){
+		Contract contract = (Contract)this.getController().getTo();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), ContractVariables.TC2.getName());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
+			if(contract.getEndDate()!=null){
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());
+			} else {
+				criteria.addNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
+			}
+			List<ITransferObject>  list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				return (ContractData) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, se devuelve una nueva instancia
+		}
+		return new ContractData();
+	}
 	
 	private Map<String, String> contractDataMap;
 	
@@ -154,7 +182,7 @@ public class ContractGenerationControllerListener extends ControllerAdapter{
 					contractDataMap.put(data.getName(), data.getExpression().replace('"', ' ').trim());
 				}
 			} catch (ManagerBeanException e) {
-				// NADA, que siga generando el fichero
+				// NADA, se devuelve un mapa vacio
 			}
 		}
 		return contractDataMap;

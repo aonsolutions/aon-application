@@ -69,10 +69,12 @@ import com.esferalia.aon.payroll.enumeration.ContractModel;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.ContractType;
+import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractAttachController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.utils.ContractBuilder;
 import com.esferalia.aon.ui.payroll.utils.ContractXmlReader;
@@ -455,10 +457,10 @@ public class ContractGenerationWizard extends BasicController{
 			onValidate(event);
 			getContractBuilder().setContractModelUrl(null);
 			getContractBuilder().setContractFields(null);
-			onContractDetailShow(event);
+//			onContractDocumentShow(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 3) {
-			onContractGenerate(event);
+//			onContractGenerate(event);
 			setCurrentStep(getCurrentStep() + 1);
 		} else if (getCurrentStep() == 4) {
 			onFinish(event);
@@ -598,25 +600,56 @@ public class ContractGenerationWizard extends BasicController{
 		}
 	}
 	public void onDocumentSave(ActionEvent event) {
-		onContractGenerate(event);
-		getContract().setStatus(ContractStatus.PENDING);
-//		accept();
-//		acceptContractData();
-//		if(!isAgreementSalary()){
-//			acceptContractPayment();
-//		}
-		saveDocument();
-	}
-	public void onContractGenerate( ActionEvent event ) {
 		try {
-			getContract().setDocument(getContractBuilder().buildPdf(getContractModel()));
+			ContractAttachment attach = getContractAttachDocument();
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			attach.setContract((Contract) this.getTo());
+			attach.setData(getContractBuilder().buildPdf(getContractModel()));
+			attach.setAttachDate(new Date());
+			attach.setAttachmentType(ContractAttachmentType.PDF_DOCUMENT);
+			attach.setMimeType(MimeType.MIME_PDF);
+			attach.setDescription("documento_contrato");
+			bean.insertOrUpdate(attach);
+			ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
+			attachController.initializeModel();
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new AbortProcessingException(e);
 		} catch (DocumentException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new AbortProcessingException(e);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new AbortProcessingException(e);
 		}
+	}
+	
+	private ContractAttachment getContractAttachDocument() {
+		Contract contract = (Contract)getTo();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.PDF_DOCUMENT);
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				return (ContractAttachment) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, se devuelve una nueva instancia
+		}
+		return new ContractAttachment();
+	}
+	public void onContractGenerate( ActionEvent event ) {
+//		try {
+//			getContract().setDocument(getContractBuilder().buildPdf(getContractModel()));
+//		} catch (IOException e) {
+//			LOGGER.error(e.getMessage(), e);
+//			throw new AbortProcessingException(e);
+//		} catch (DocumentException e) {
+//			LOGGER.error(e.getMessage(), e);
+//			throw new AbortProcessingException(e);
+//		}
 	}
 	private void saveDocument() {
 //		try {
@@ -634,23 +667,18 @@ public class ContractGenerationWizard extends BasicController{
 //			throw new AbortProcessingException(e);
 //		}
 	}
-
-//	public void onNewPersonShow( ActionEvent event ) {
-//		((RegistryController)AonUtil.getRegisteredBean(IRegistryConstants.PERSON_CONTROLLER_NAME)).onReset(event);
-//	}
-//	public void onAcceptPerson( ActionEvent event ) {
-//		((RegistryController)AonUtil.getRegisteredBean(IRegistryConstants.PERSON_CONTROLLER_NAME)).accept(event);
-//		setPersonListEnabled(true);
-//	}
 	
-	public void onContractDetailShow( ActionEvent event ) {
+	public void onContractDocumentShow( ActionEvent event ) {
 		try {
-			if(getContractBuilder().getContractFields()==null || getContractBuilder().getContractFields().size()==0 ){
+//			if(getContractBuilder().getContractFields()==null || getContractBuilder().getContractFields().size()==0 ){
 				getContractBuilder().setZoomFactor(2);
-				getContractBuilder().readPdfFields(getContract().getDocument(),getContractModel());
-				getContractBuilder().loadDefaultFields(getContract());
+//				getContractBuilder().readPdfFields(getContract().getDocument(),getContractModel());
+				getContractBuilder().readPdfFields(getContractAttachDocument().getData(),getContractModel());
+				if(getContractAttachDocument()==null || getContractAttachDocument().getId()==null){
+					getContractBuilder().loadDefaultFields(getContract());
+				}
 				getContractBuilder().setContractPage(1);
-			}
+//			}
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage(), e);
 			throw new IllegalArgumentException(e);
@@ -688,14 +716,6 @@ public class ContractGenerationWizard extends BasicController{
 	public boolean isLastContractPage() {
 		return getContractBuilder().getContractPage().equals(getContractBuilder().getNumberOfContractPages());
 	}
-	
-//	private void accept(){
-//		try {
-//			setContract((Contract)BeanManager.getManagerBean(Contract.class).insertOrUpdate(getContract()));
-//		} catch (ManagerBeanException e) {
-//			LOGGER.error(e.getMessage(), e);
-//		}
-//	}
 	
 	private void acceptContractData(){
 		//TODO REASIGNAR
@@ -774,20 +794,6 @@ public class ContractGenerationWizard extends BasicController{
 //		return "contractGenerationWizard";
 //	}
 
-//	public List<SelectItem> loadWorkPlaces() throws ManagerBeanException{
-//		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
-//		Criteria criteria = new Criteria();
-//		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ACTIVE), true);
-//		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID), getEnterprise().getId());
-//		criteria.addOrder(bean.getFieldName(ICompanyAlias.WORK_PLACE_DESCRIPTION));
-//		List<SelectItem> list = new LinkedList<SelectItem>();
-//		for(ITransferObject to: bean.getList(criteria)){
-//			WorkPlace wp = (WorkPlace)to;
-//			list.add(new SelectItem(wp, wp.getDescription()));	
-//		}
-//		setWorkPlaces(list);
-//		return list;
-//	}
 	private void loadWorkPlaces() {
 		setWorkPlaces(new LinkedList<SelectItem>());
 		if (getEnterprise() != null) {
@@ -810,9 +816,6 @@ public class ContractGenerationWizard extends BasicController{
 			}						
 		}
 	}
-	
-	
-	
 	
 	public List<SelectItem> getCCCs() throws ManagerBeanException {
 		LinkedList<SelectItem> cccs = new LinkedList<SelectItem>();
@@ -903,11 +906,9 @@ public class ContractGenerationWizard extends BasicController{
 		
 		Marshaller marshaller = jaxbContext.createMarshaller();
 //		JAXBElement<CONTRATOS> element = (new ObjectFactory()).createBooking(booking);
-//		JAXBElement<CONTRATOS> element = new JAXBElement<CONTRATOS>(); 
 		
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		File file = File.createTempFile("aon-temp", ".XML"); 
-//		marshaller.marshal( getContratos(), System.out );
 		marshaller.marshal( getContratos(), file );
 		
 		FileInputStream fin = new FileInputStream(file);
@@ -942,44 +943,5 @@ public class ContractGenerationWizard extends BasicController{
 			return true;
 		}
 	}
-	
-//	private File file;
-//	
-//	public File getFile() {
-//		return file;
-//	}
-//	public void setFile(File file) {
-//		this.file = file;
-//	}
-//	public void onGenerateXml(ActionEvent event){
-//		try {
-//			generateXml();
-//			FacesContext faces = FacesContext.getCurrentInstance();
-//			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
-//			String fileName = "aon-out";
-//			response.setContentType(MimeType.MIME_XML.getName());
-//			response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + ".xml\";");
-//
-//			ServletOutputStream output = response.getOutputStream();
-//			InputStream input = new FileInputStream(file);
-//			int size = IOUtils.copy(input, output);
-//			if (size > 0) {
-//				response.setHeader("Content-Length", String.valueOf(size));
-//			}
-//			output.close();
-//			input.close();
-//			response.flushBuffer();
-//			faces.responseComplete();
-//		} catch (IOException e) {
-//			AonUtil.addErrorMessage(e.getMessage());
-//			throw new AbortProcessingException(e);
-//		} catch (ManagerBeanException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (JAXBException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
 	
 }

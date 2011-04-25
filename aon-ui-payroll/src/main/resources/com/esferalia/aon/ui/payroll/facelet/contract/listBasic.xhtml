@@ -77,11 +77,19 @@
 				<aon:outputText value="&#160;" />
 			</f:facet>
 			<h:commandLink target="_blank" 
+				disabled="#{!contract.existDocument}"
+				title="#{(contract.existDocument)?('pdf'):('no pdf')}"
+				actionListener="#{contract.onDownloadContract}"
+				styleClass="aon-editDataTable-button #{(contract.existDocument)?('aon-icon-pdf'):('aon-icon-pdf-disabled')}"
+				value="&#160;" />
+<!--  
+			<h:commandLink target="_blank" 
 				disabled="#{to.document==null}"
 				title="#{(to.document!=null)?('pdf'):('no pdf')}"
 				actionListener="#{contract.onDownloadContract}"
 				styleClass="aon-editDataTable-button #{(to.document!=null)?('aon-icon-pdf'):('aon-icon-pdf-disabled')}"
 				value="&#160;" />
+-->
 		</aon:column>
 	</c:if>
 

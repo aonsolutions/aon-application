@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,10 +41,14 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
+import com.esferalia.aon.payroll.enumeration.ContractDuration;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
+import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
@@ -66,6 +71,29 @@ public class ContractController extends BasicController {
 	private Double irpf;
 	private AonFile aonFile;
 	
+	private ContractDuration contractDuration;
+	private ContractWorkingDay contractWorkingDay;
+	private String tc2Code;
+	
+	
+	public String getTc2Code() {
+		return tc2Code;
+	}
+	public void setTc2Code(String tc2Code) {
+		this.tc2Code = tc2Code;
+	}
+	public ContractDuration getContractDuration() {
+		return contractDuration;
+	}
+	public void setContractDuration(ContractDuration contractDuration) {
+		this.contractDuration = contractDuration;
+	}
+	public ContractWorkingDay getContractWorkingDay() {
+		return contractWorkingDay;
+	}
+	public void setContractWorkingDay(ContractWorkingDay contractWorkingDay) {
+		this.contractWorkingDay = contractWorkingDay;
+	}
 	public AonFile getAonFile() {
 		return this.aonFile;
 	}
@@ -310,7 +338,8 @@ public class ContractController extends BasicController {
 	private void download(Contract c) throws IOException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-		byte[] buffer = c.getDocument();
+		searchContractAttachDocument(c);
+		byte[] buffer = getAonFile().getData();
 		InputStream in = new ByteArrayInputStream(buffer);
 		int bytes = in.read(buffer);
 		while (bytes != -1) {
@@ -329,6 +358,61 @@ public class ContractController extends BasicController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+		saveContractAttach(getAonFile().getData());
+	}
+	
+	private void saveContractAttach(byte[] data) {
+		try {
+			ContractAttachment attach = new ContractAttachment();
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			attach.setContract((Contract) this.getTo());
+			attach.setData(data);
+			attach.setAttachDate(new Date());
+			attach.setAttachmentType(ContractAttachmentType.PDF_DOCUMENT);
+			attach.setMimeType(MimeType.MIME_PDF);
+			attach.setDescription("documento_contrato");
+			bean.insertOrUpdate(attach);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+			// NADA, no se guarda el documento
+		}
+	}
+	
+	public void searchContractAttachDocument(Contract contract) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_ATTACHMENT_ATTACHMENT_TYPE), ContractAttachmentType.PDF_DOCUMENT);
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				ContractAttachment attach = (ContractAttachment) list.get(0);
+				AonFile f = new AonFile();
+				f.setData(attach.getData());
+				f.setFileName( attach.getDescription() );
+				f.setMimeType( attach.getMimeType() );
+				setAonFile(f);
+			} else {
+				setAonFile(null);
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, el documento se queda vacio
+		}
+	}
+	
+	public boolean getExistDocument(){
+		try {
+			Contract c = (Contract)this.getModel().getRowData();
+			setAonFile(null);
+			searchContractAttachDocument(c);
+			if(getAonFile()!=null){
+				return true;
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible obtener el documento. (" +e.getMessage() + ")"; 
+			LOGGER.error(msg, e);
+		}
+		return false;
 	}
 	
 	public void fileUploaded(UploadEvent event) {

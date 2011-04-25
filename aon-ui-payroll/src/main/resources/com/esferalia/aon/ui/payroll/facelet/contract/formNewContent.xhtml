@@ -121,6 +121,7 @@
 					rendered="#{contract.to.seniorityDateDifferent}" />
 			</aon:panelGroup>
 
+<!--  
 			<aon:outputLabel for="contractOption"
 				value="#{payrollBundle.payroll_contract_contract_option}" />
 			<aon:selectOneMenu id="contractOption"
@@ -154,6 +155,24 @@
 					<f:selectItems value="#{payrollCollections.contractCodesMap[contract.contractType]}" />
 				</c:if>
 			</aon:selectOneMenu>
+-->
+			
+			<aon:outputLabel for="Contract_contractDuration" value="#{payrollBundle.payroll_contract_contract_type}" />
+			<aon:selectOneRadio id="Contract_contractDuration" value="#{contract.contractDuration}">
+				<f:selectItems value="#{payrollCollections.contractDurations}" />
+			</aon:selectOneRadio>
+			
+			<aon:outputLabel for="Contract_contractWorkingDay" value="#{payrollBundle.payroll_contract_work_time}" />
+			<aon:selectOneRadio id="Contract_contractWorkingDay" value="#{contract.contractWorkingDay}">
+				<f:selectItems value="#{payrollCollections.contractWorkingDays}" />
+			</aon:selectOneRadio>
+
+			<aon:outputLabel for="Contract_tc2Code"
+				value="#{payrollBundle.payroll_contract_contract_code}" />
+			<aon:inputText id="Contract_tc2Code" size="10" 
+				value="#{contract.tc2Code}" >
+				<f:validateDoubleRange />
+			</aon:inputText>
 			
 			<aon:outputLabel for="registration" value="#{payrollBundle.payroll_salary_registration}" />
 			<aon:inputText id="registration" size="10" required="true" value="#{contract.to.registration}">
@@ -182,7 +201,8 @@
 				value="#{contract.irpf}" >
 				<f:validateDoubleRange />
 			</aon:inputText>
-			
+
+<!--  
 			<aon:outputLabel
 				value="#{payrollBundle.payroll_file_attach}" />
 			<aon:panelGrid columns="2" style="width:100%;"
@@ -209,6 +229,7 @@
 				<aon:outputText value="#{contract.aonFile.fileName}"
 					rendered="#{contract.aonFile.size > 0}" />
 			</aon:panelGrid>
+-->			
 
 		</aon:panelGrid>
 		

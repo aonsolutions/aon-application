@@ -15,13 +15,22 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.enumeration.ContractDuration;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 
 public class ContractControllerListener extends ControllerAdapter{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractControllerListener.class.getName());
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		ContractController controller = (ContractController) this.getController();
+		controller.searchContractAttachDocument((Contract) controller.getTo());
+	}
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -36,6 +45,9 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setContractCode(null);
 		controller.setQuoteGroup(null);
 		controller.setIrpf(null);
+		controller.setContractDuration(null);
+		controller.setContractWorkingDay(null);
+		controller.setTc2Code(null);
 		contract.setStartDate(new Date());
 		contract.setSeniorityDate(contract.getStartDate());
 	}
@@ -75,11 +87,32 @@ public class ContractControllerListener extends ControllerAdapter{
 			data.setExpression("\"" + controller.getQuoteGroup().getValue() + "\"");
 			bean.insert(data);
 		
+//			data = new ContractData();
+//			data.setContract(contract);
+//			data.setStartDate(contract.getStartDate());
+//			data.setName( ContractVariables.TC2.getName() );
+//			data.setExpression("\"" + controller.getContractCode().getValue() + "\"");
+//			bean.insert(data);
+
+			data = new ContractData();
+			data.setContract(contract);
+			data.setStartDate(contract.getStartDate());
+			data.setName( ContractVariables.FULL_TIME.getName() );
+			data.setExpression("\"" + (controller.getContractWorkingDay()==ContractWorkingDay.FULL_TIME?true:false) + "\"");
+			bean.insert(data);
+			
+			data = new ContractData();
+			data.setContract(contract);
+			data.setStartDate(contract.getStartDate());
+			data.setName( ContractVariables.INDEFINITE.getName() );
+			data.setExpression("\"" + (controller.getContractDuration()==ContractDuration.UNSPECIFIED?true:false) + "\"");
+			bean.insert(data);
+			
 			data = new ContractData();
 			data.setContract(contract);
 			data.setStartDate(contract.getStartDate());
 			data.setName( ContractVariables.TC2.getName() );
-			data.setExpression("\"" + controller.getContractCode().getValue() + "\"");
+			data.setExpression("\"" + controller.getTc2Code() + "\"");
 			bean.insert(data);
 
 		} catch (ManagerBeanException e) {
