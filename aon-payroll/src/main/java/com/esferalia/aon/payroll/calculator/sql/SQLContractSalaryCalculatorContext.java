@@ -681,6 +681,12 @@ public class SQLContractSalaryCalculatorContext implements
 			this.contractExpressionContext.getVariable(HOLIDAYS, date, date, Object.class);
 		return holidays != null ;
 	}
+	
+	private boolean isSaturday(Calendar day) {
+		return day.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY;
+	}
+	
+	
 	/* 
 	 * Calcula los 'DIAS_EFECTIVOS' para el contrato (trabajador), 
 	 * según su calendario y/o bajas. 
@@ -695,9 +701,9 @@ public class SQLContractSalaryCalculatorContext implements
 		day.setTime(contractStartDate);
 		while  (end.after(day) || end.equals(day)) {
 			DayType type = calendar.getDayType(day);
-			if ( isActualDay(type) &&  
+			if ( isActualDay(type) &&
 					!leaveLoader.isLeaveDay(day) &&
-					!isHoliday(day)) {
+					!isHoliday(day) ) {
 				days++;
 			} 
 			day.add(Calendar.DATE, 1);
@@ -830,7 +836,8 @@ public class SQLContractSalaryCalculatorContext implements
 				return getWorkDays(p);
 			}
 		};
-
+		
+		
 		this.contractExpressionContext.addVariable(WORKED_DAYS, 
 				workedDays
 		);
@@ -894,7 +901,6 @@ public class SQLContractSalaryCalculatorContext implements
 		);
 
 		
-
 		loadContractLeave(this.contractExpressionContext);
 		loadContractData(this.contractExpressionContext);
 		

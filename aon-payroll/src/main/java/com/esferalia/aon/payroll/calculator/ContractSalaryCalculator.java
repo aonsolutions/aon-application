@@ -150,35 +150,40 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				Date paymentStart = Period.max(contractPayment.getStartDate(), start);
 				Date paymentEnd= Period.min(contractPayment.getEndDate(), end );
 				try {
+
 					List<ITimedObject<Double>> amounts = 
 						expressionContext.addExpression(contractPayment, paymentStart, paymentEnd, Double.class ) ;
 					
-					
 					String concept = contractPayment.getName(); 
 					PaymentType type = contractPayment.getType();
-
+					
+					double total = 0.00;
+					
 					for (ITimedObject<Double> amount : amounts) {
-
+						
+						Date amountStart = amount.getPeriod().getStart();
+						Date amountEnd = amount.getPeriod().getEnd();
+						
 						String description  = null;
 
 						Double value = amount.getValue();
-
-						quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, value);
 						
-						Double payment = taxCalculator.tax(contractPayment, paymentStart, paymentEnd, value);
+						Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, value);
 						
 						
 						//System.out.printf("%s=%s %.3f \r\n", concept, contractPayment.getExpression(), payment);
 
 						try  {
-							Period period = amount.getPeriod();
-							description = expressionContext.evalTemplate(contractPayment.getDescription(), period.getStart(), period.getEnd());
+							description = expressionContext.evalTemplate(contractPayment.getDescription(), amountStart, amountEnd);
 						} catch (Exception e ) {
 							//TODO : Log ???
 						}
 						salaryBuilder.addPayment(type, concept, payment, description, null);
+						total += value;
 					}
 				
+					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, total);
+
 				} catch ( UndefinedVariableException e ) {
 					// TODO : notificar ??? 
 				}

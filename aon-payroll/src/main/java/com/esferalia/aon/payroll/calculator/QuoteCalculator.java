@@ -143,6 +143,7 @@ public abstract class QuoteCalculator {
 			}
 			String name = payment.getName();
 			if ( name != null && quoteExpr.equals(name)) {
+				//System.out.println("QUOTE:" + payment.getName() + ", " + payment.getDescription()+ " = " + amount);
 				return amount;
 			}
 			
@@ -151,7 +152,9 @@ public abstract class QuoteCalculator {
 			double total = 0.00;
 			for (ITimedObject<Double> quote : quotes) {
 				total += quote.getValue();
+				//System.out.println("QUOTE:" + payment.getName() + ", " + payment.getDescription()+ " = " + total + " " + payment.getQuoteExpression());
 			}
+
 			return total;
 		}
 		
