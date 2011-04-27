@@ -24,14 +24,14 @@
 				columnClasses="aon-width-150 aon-panelGrid-odd,aon-panelGrid-even">
 				<aon:outputLabel for="MailAccount_name"
 					value="#{webmailBundle.webmail_mailAccount_name}" />
-				<aon:inputText id="MailAccount_name" disabled="#{controller.to.default}"
+				<aon:inputText id="MailAccount_name" disabled="#{!controller.editable}"
 					validator="#{controller.idCheck}"
 					size="60" maxlength="45" required="true"
 					value="#{controller.to.name}" />
 
 				<aon:outputLabel for="MailAccount_email"
 					value="#{webmailBundle.webmail_mailAccount_email}" />
-				<aon:inputText id="MailAccount_email" disabled="#{controller.to.default}"
+				<aon:inputText id="MailAccount_email" disabled="#{!controller.editable}"
 					size="60" maxlength="45" required="true"
 					value="#{controller.to.email}" />
 					
@@ -68,25 +68,25 @@
 				<aon:outputLabel for="MailAccount_host"
 					value="#{webmailBundle.webmail_mailAccount_host}" />
 				<aon:inputText id="MailAccount_host"
-					size="60" maxlength="45" disabled="#{controller.to.default}"
+					size="60" maxlength="45" disabled="#{!controller.editable}"
 					value="#{controller.to.host}" />
 
 				<aon:outputLabel for="MailAccount_incomingHost"
 					value="#{webmailBundle.webmail_mailAccount_incomingHost}" />
 				<aon:inputText id="MailAccount_incomingHost"
-					size="60" maxlength="45" disabled="#{controller.to.default}"
+					size="60" maxlength="45" disabled="#{!controller.editable}"
 					value="#{controller.to.incomingHost}" />
 
 				<aon:outputLabel for="MailAccount_incomingPort"
 					value="#{webmailBundle.webmail_mailAccount_incomingPort}" />
 				<aon:inputText id="MailAccount_incomingPort"
-					size="60" maxlength="45" disabled="#{controller.to.default}"
+					size="60" maxlength="45" disabled="#{!controller.editable}"
 					value="#{controller.to.incomingPort}" />
 
 				<aon:outputLabel for="MailAccount_incomingSsl"
 					value="#{webmailBundle.webmail_mailAccount_incomingSsl}" />
                 <aon:selectBooleanCheckbox id="MailAccount_incomingSsl"
-					disabled="#{controller.to.default}"
+					disabled="#{!controller.editable}"
 					value="#{controller.to.incomingSsl}"/>
 			</aon:panelGrid>
 	   </aon:div>
@@ -101,37 +101,37 @@
 				<aon:outputLabel for="MailAccount_outgoingVerification"
 					value="#{webmailBundle.webmail_mailAccount_outgoingVerification}" />
                 <aon:selectBooleanCheckbox id="MailAccount_outgoingVerification"
-					disabled="#{controller.to.default}"
+					disabled="#{!controller.editable}"
 					value="#{controller.to.outgoingVerification}"/>
 
 				<aon:outputLabel for="MailAccount_outgoingHost"
 					value="#{webmailBundle.webmail_mailAccount_outgoingHost}" />
 				<aon:inputText id="MailAccount_outgoingHost"
-					size="60" maxlength="45" disabled="#{controller.to.default}"
+					size="60" maxlength="45" disabled="#{!controller.editable}"
 					value="#{controller.to.outgoingHost}" />
 
 				<aon:outputLabel for="MailAccount_outgoingPort"
 					value="#{webmailBundle.webmail_mailAccount_outgoingPort}" />
 				<aon:inputText id="MailAccount_outgoingPort"
-					size="60" maxlength="45" disabled="#{controller.to.default}"
+					size="60" maxlength="45" disabled="#{!controller.editable}"
 					value="#{controller.to.outgoingPort}" />
 
 				<aon:outputLabel for="MailAccount_outgoingSsl"
 					value="#{webmailBundle.webmail_mailAccount_outgoingSsl}" />
                 <aon:selectBooleanCheckbox id="MailAccount_outgoingSsl"
-                 	disabled="#{controller.to.default}"
+                 	disabled="#{!controller.editable}"
 					value="#{controller.to.outgoingSsl}"/>
 
 				<aon:outputLabel for="MailAccount_mailUsername"
 					value="#{webmailBundle.webmail_mailAccount_mailUsername}" />
 				<aon:inputText id="MailAccount_mailUsername"
-					size="60" maxlength="45" disabled="#{controller.to.default}"
+					size="60" maxlength="45" disabled="#{!controller.editable}"
 					value="#{controller.to.mailUsername}" />
 
 				<aon:outputLabel for="MailAccount_password"
 					value="#{webmailBundle.webmail_mailAccount_password}" />
 				<aon:inputSecret id="MailAccount_password" redisplay="true"
-					size="60" maxlength="45" disabled="#{controller.to.default}"
+					size="60" maxlength="45" disabled="#{!controller.editable}"
 					value="#{controller.to.passwordString}" />							
 					
 			</aon:panelGrid>

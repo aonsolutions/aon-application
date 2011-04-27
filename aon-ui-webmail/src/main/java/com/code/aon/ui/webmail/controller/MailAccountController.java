@@ -47,6 +47,8 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 	
 	private String selectedFolder;
 	
+	private boolean systemAccountEditable;
+	
 	@Override
 	public void updateBaseDN(Name parent) {
 		String user = NameResolver.getFirstValue(parent);
@@ -130,10 +132,10 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 		return account.isDefault();
 	}
 
-	public boolean isCurrentToDefaultAccount() throws ManagerBeanException {
+	public boolean isCurrentEditable() throws ManagerBeanException {
 		if ( getModel().isRowAvailable() ) {
 			MailAccount account = (MailAccount)getSelectedTO();
-			return account.isDefault();
+			return isSystemAccountEditable() || (!account.isDefault());
 		}
 		return false;
 	}
@@ -222,6 +224,14 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 		}
 		return true;
 	}
+	
+	public boolean isEditable() {
+		MailAccount account = (MailAccount)getTo();
+		if ( account.isDefault() ) {
+			return isSystemAccountEditable();
+		}
+		return true;
+	}
 
 	public void loadFolders() {
 		MailAccount account = (MailAccount) getTo();
@@ -280,6 +290,14 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 		} catch (Throwable e) {
 			LOGGER.error( e.getMessage(), e );
 		}
+	}
+
+	public boolean isSystemAccountEditable() {
+		return systemAccountEditable;
+	}
+
+	public void setSystemAccountEditable(boolean systemAccountEditable) {
+		this.systemAccountEditable = systemAccountEditable;
 	}
 	
 }

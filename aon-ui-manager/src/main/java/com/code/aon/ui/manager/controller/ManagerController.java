@@ -1,5 +1,7 @@
 package com.code.aon.ui.manager.controller;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -38,6 +40,7 @@ import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.manager.util.ManagerLogger;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
+import com.code.aon.ui.webmail.controller.MailAccountController;
 
 public class ManagerController implements IManagerConstants {
 	
@@ -251,6 +254,8 @@ public class ManagerController implements IManagerConstants {
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}				
+		MailAccountController mac = (MailAccountController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT);
+		mac.setSystemAccountEditable(true);
 	}
 
 	private void initNormalUser() {

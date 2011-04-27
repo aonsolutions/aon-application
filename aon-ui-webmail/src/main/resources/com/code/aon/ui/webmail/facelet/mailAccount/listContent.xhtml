@@ -46,11 +46,11 @@
 					</f:facet>
 					<aon:outputText
 						value="#{webmailBundle.webmail_mailAccount_user_account}"
-						rendered="#{!controller.currentToDefaultAccount}">
+						rendered="#{controller.currentEditable}">
 					</aon:outputText>
 					<aon:outputText
 						value="#{webmailBundle.webmail_mailAccount_default_account}"
-						rendered="#{controller.currentToDefaultAccount}" />
+						rendered="#{!controller.currentEditable}" />
 				</aon:column>
 
 				<c:if test="#{aonConfiguration.bean.webmail.connect}">
