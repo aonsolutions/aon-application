@@ -1,5 +1,8 @@
 package com.code.aon.ui.desktop.applications;
 
+import static com.code.aon.ldap.ILdapConstants.COMMON_NAME_ATTRIBUTE;
+import static com.code.aon.ldap.ILdapConstants.DESCRIPTION_ATTRIBUTE;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -12,12 +15,11 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import com.code.aon.desktop.IDesktopConstants;
-import com.code.aon.desktop.controller.AonDomainController;
 import com.code.aon.desktop.controller.AonUserController;
+import com.code.aon.desktop.controller.DomainController;
 import com.code.aon.jaas.auth.util.Util;
-import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.deployment.DeploymentException;
-import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ldap.Entry;
 import com.code.aon.ui.util.AonUtil;
 
 public class ApplicationsManager implements IDesktopConstants {
@@ -37,29 +39,30 @@ public class ApplicationsManager implements IDesktopConstants {
 		
 		String thisIp = InetAddress.getLocalHost().getHostAddress();
 		
-		AonDomainController domainController = (AonDomainController) AonUtil.getRegisteredBean(CURRENT_DOMAIN_CONTROLLER_NAME);
-		boolean showDomainList = domainController.isDomainManagement();
+		DomainController domainController = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		boolean showDomainList = domainController.getCurrentDomain().getDomainManagement();
 		
-		AonUserController aonUserController = (AonUserController) FormUtil.getController( "currentUser" );
-		List<?> list = aonUserController.getUserManager().getUserApplications();
-        for (int i = 0; i < list.size(); i++) {
-			IApplication app = (IApplication) list.get(i);
-			String context = app.getContext() + "/?aonDesktop=true";
-			String ip = Util.findStoredApplicationIp( thisIp, app.getContext() );
+		AonUserController aonUserController = (AonUserController) AonUtil.getRegisteredBean(CURRENT_USER_CONTROLLER_NAME);
+        for ( Entry app : aonUserController.getUserApplications() ) {
+			String appId = app.getAsString(COMMON_NAME_ATTRIBUTE);
+			String appContext = "/" + appId;
+			String appDescription = app.getAsString(DESCRIPTION_ATTRIBUTE);
+			String context = appContext + "/?aonDesktop=true";
+			String ip = Util.findStoredApplicationIp( thisIp, appContext );
 			if ( !thisIp.equals( ip ) ) {
-				context = ec.getRequestContextPath() + app.getContext() + ".auth?aonDesktop=true";
+				context = ec.getRequestContextPath() + appContext + ".auth?aonDesktop=true";
 			}
-			String property = services.getProperty( app.getId() );
+			String property = services.getProperty( appId );
 			App application;
 			if ( property != null ) {
 				char[] bar = property.substring( 0, property.indexOf( ';' ) ).toCharArray();
 				String role = property.substring( property.indexOf( ';' ) + 1 , property.length() );
 				boolean isUserInRole = role.equals("") || ec.isUserInRole( role );
-				application = new App( app.getId(), app.getDescription(), context, bar, isUserInRole );
+				application = new App( appId, appDescription, context, bar, isUserInRole );
 			} else {
-				application = new App( app.getId(), app.getDescription(), context, new char[] {'1','0','0'}, true );
+				application = new App( appId, appDescription, context, new char[] {'1','0','0'}, true );
 			}
-			application.setShowDomainList(showDomainList && (!AON_MANAGER.equals(app.getId())) );
+			application.setShowDomainList(showDomainList && (!AON_MANAGER.equals(appId)) );
 			applicationList.add(application);
         }
         Collections.sort( applicationList );

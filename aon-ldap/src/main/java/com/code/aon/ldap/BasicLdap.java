@@ -3,6 +3,7 @@ package com.code.aon.ldap;
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.IAonObjectClasses.TOP;
 
+import java.security.MessageDigest;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -12,10 +13,13 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 import javax.naming.Name;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BasicLdap {
+
+	private static final String SHA_ALGORITHM = "SHA";
 
 	/**
 	 * Obtain a suitable <code>Logger</code>.
@@ -187,6 +191,21 @@ public class BasicLdap {
 			closeSession();
 		}
 		return list;		
+	}
+
+	public static String encode( String value, String algorithm ) {
+		String shaPassword = null;
+		try {
+			byte[] hash = MessageDigest.getInstance(algorithm).digest(value.getBytes());
+			shaPassword = "{" + algorithm + "}" + new String(Base64.encodeBase64(hash));
+		} catch (Throwable e) {
+			LOGGER.error(e.getMessage(), e);
+		}        		
+		return shaPassword;
+	}	
+	
+	public static String encodeSHA( String value ) {
+		return encode(value, SHA_ALGORITHM);
 	}
 	
 }

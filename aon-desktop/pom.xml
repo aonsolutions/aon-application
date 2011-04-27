@@ -56,18 +56,6 @@
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>		
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.db.manager</artifactId>
-			<version>${pom.version}</version>
-			<scope>compile</scope>
-		</dependency>		
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.dbutils</artifactId>
-			<version>${pom.version}</version>
-			<scope>compile</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
@@ -135,17 +123,5 @@
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		<dependency>
-		    <groupId>commons-dbutils</groupId>
-		    <artifactId>commons-dbutils</artifactId>
-		    <version>1.3</version>
-		    <scope>provided</scope>
-		</dependency> 
-		<dependency>
-		    <groupId>javax.faces</groupId>
-		    <artifactId>jsf-impl</artifactId>
-		    <version>1.2_14</version>
-		    <scope>provided</scope>
-		</dependency> 				
 	</dependencies>
 </project>

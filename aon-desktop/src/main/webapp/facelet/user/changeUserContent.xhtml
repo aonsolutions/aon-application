@@ -11,41 +11,28 @@
 	<ui:define name="content">
 		
 		<aon:form id="userForm">
-
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_user_data}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{user.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="save" value="#{bundle.aon_save}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							actionListener="#{currentUser.accept}"
-							accesskey="#{bundle.aon_key_save}" />
-						<aon:commandButton id="back"
-							title="#{bundle.aon_key_cancel_accelerator}"
-							value="#{bundle.aon_back}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="true" 
-							actionListener="#{currentUser.cancel}"
-							action="#{currentUser.returnAction}"
-							accesskey="#{bundle.aon_key_cancel}" />
-						<aon:commandButton id="changePassword"
-							value="#{appBundle.aon_change_password}"
-							immediate="true"
-							action="changepassword_form"
-							styleClass="aon-finding-toolbar-item aon-icon-user-change-password" />						
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_user_data}" />
+				<ui:param name="toolbarDescription"	value="#{bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="save" value="#{bundle.aon_save}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						actionListener="#{currentUser.accept}"
+						accesskey="#{bundle.aon_key_save}" />
+					<aon:commandButton id="back"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{bundle.aon_back}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						immediate="true" action="home"
+						accesskey="#{bundle.aon_key_cancel}" />
+					<aon:commandButton id="changePassword"
+						value="#{appBundle.aon_change_password}"
+						immediate="true"
+						action="changepassword_form"
+						styleClass="aon-finding-toolbar-item aon-icon-user-change-password" />						
+				</ui:define>				
+			</ui:decorate>				
 
 			<aon:div styleClass="aon-scroll-area">
 
@@ -58,7 +45,7 @@
 						maxlength="64" value="#{currentUser.name}" />
 
 					<aon:outputLabel for="User_surname" style="width:200px"
-						value="#{configBundle.config_user_surname}" />
+						value="#{bundle.aon_name}" />
 					<aon:inputText id="User_surname"
 						required="true" size="80"
 						maxlength="64" value="#{currentUser.surname}" />

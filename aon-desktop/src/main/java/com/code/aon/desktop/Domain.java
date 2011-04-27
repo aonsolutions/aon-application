@@ -5,8 +5,6 @@ import static com.code.aon.ldap.IAonObjectClasses.TOP;
 import static com.code.aon.ldap.ILdapConstants.COMMON_NAME_ATTRIBUTE;
 import static com.code.aon.ldap.ILdapConstants.DOMAIN_MANAGEMENT_ATTRIBUTE;
 import static com.code.aon.ldap.ILdapConstants.ORGANIZATION_NAME_ATTRIBUTE;
-import static com.code.aon.ldap.ILdapConstants.STATUS_ATTRIBUTE;
-import static com.code.aon.ldap.ILdapConstants.USER_MANAGEMENT_ATTRIBUTE;
 
 import javax.naming.Name;
 import javax.persistence.Column;
@@ -21,6 +19,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.BaseDN;
 import com.code.aon.dao.ldap.annotations.EntryObject;
@@ -31,26 +30,18 @@ public class Domain implements ITransferObject {
 
 	private static final long serialVersionUID = -4808900608917312113L;
 
+	public static final String  DOMAIN_PARENT_DOMAIN = "Domain_parentDomain";
+	
 	private Name id;
 	
 	private String commonName;
 	
 	private String organizationName;
 	
-	private Integer status;
-	
 	private Domain parentDomain;
-	
-	private boolean userManagement;
 	
 	private boolean domainManagement;
 	
-	private byte[] jpegLogo;
-	
-	public Domain() {
-		this.status = 0;
-	}
-
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
@@ -81,24 +72,6 @@ public class Domain implements ITransferObject {
 		this.organizationName = organizationName;
 	}
 
-	@Attribute(name=STATUS_ATTRIBUTE)
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
-
-	@Attribute(name=USER_MANAGEMENT_ATTRIBUTE)
-	public Boolean getUserManagement() {
-		return userManagement;
-	}
-
-	public void setUserManagement(Boolean userManagement) {
-		this.userManagement = userManagement;
-	}
-	
 	@Attribute(name=DOMAIN_MANAGEMENT_ATTRIBUTE)	
 	public Boolean getDomainManagement() {
 		return domainManagement;
@@ -118,15 +91,6 @@ public class Domain implements ITransferObject {
 	public void setParentDomain(Domain parentDomain) {
 		this.parentDomain = parentDomain;
 	}	
-	
-	@Attribute(name="jpegLogo")
-	public byte[] getJpegLogo() {
-		return jpegLogo;
-	}
-
-	public void setJpegLogo(byte[] jpegLogo) {
-		this.jpegLogo = jpegLogo;
-	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -137,12 +101,9 @@ public class Domain implements ITransferObject {
 		if (o.getCommonName() == null && getCommonName() == null) {
 			return new EqualsBuilder()
 				.append(this.commonName, o.commonName)
-				.append(this.domainManagement, o.domainManagement)							
-				.append(this.jpegLogo, o.jpegLogo)				
+				.append(this.domainManagement, o.domainManagement)									
 				.append(this.organizationName, o.organizationName)				
 				.append(this.parentDomain, o.parentDomain)				
-				.append(this.status, o.status)
-				.append(this.userManagement, o.userManagement)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getCommonName(), o.getCommonName());		
@@ -153,24 +114,14 @@ public class Domain implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(commonName)
 			.append(domainManagement)
-			.append(jpegLogo)
 			.append(organizationName)
 			.append(parentDomain)
-			.append(status)
-			.append(userManagement)
 			.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).
-			append("commonName", commonName ).
-			append("domainManagement", domainManagement ).
-			append("organizationName", organizationName).
-			append("parentDomain", (parentDomain != null) ? parentDomain.getCommonName() : "null" ).
-			append("status", status).
-			append("userManagement", userManagement).
-			toString();
+		return new PojoToStringBuilder(this).toString();
 	}
 	
 }

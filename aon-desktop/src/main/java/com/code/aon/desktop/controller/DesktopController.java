@@ -62,7 +62,6 @@ public class DesktopController extends BasicController implements IDesktopConsta
 	private final static Logger LOGGER = LoggerFactory.getLogger(DesktopController.class);
     
     private ListDataModel recentNoteModel;
-    private ListDataModel nextAlarmModel;
     private ListDataModel todayAlarmModel;
     private ListDataModel recentAlarmModel;
     private ListDataModel ancientAlarmModel;
@@ -126,22 +125,6 @@ public class DesktopController extends BasicController implements IDesktopConsta
         } catch (ManagerBeanException e) {
             throw new ManagerBeanException("Error obtaining recentNoteModel", e);
         }
-    }
-
-    public ListDataModel getNextAlarmModel() throws ManagerBeanException{
-        Calendar from = new GregorianCalendar();
-        from.add(Calendar.DATE, 1);
-        from.set(Calendar.HOUR_OF_DAY, 0);
-        from.set(Calendar.MINUTE, 0);
-        from.set(Calendar.SECOND, 0);
-        Calendar to = new GregorianCalendar();
-        to.add(Calendar.DATE, 6);
-        to.set(Calendar.HOUR_OF_DAY, 23);
-        to.set(Calendar.MINUTE, 59);
-        to.set(Calendar.SECOND, 59);
-
-        this.nextAlarmModel = new ListDataModel(this.createQuery(getUserAlarmSentence(from.getTime(), to.getTime())));
-        return this.nextAlarmModel;
     }
 
     public ListDataModel getTodayAlarmModel() throws ManagerBeanException{
@@ -226,10 +209,6 @@ public class DesktopController extends BasicController implements IDesktopConsta
         DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         Calendar date = new GregorianCalendar();
         return formatter.format(date);
-    }
-    
-    public void onSelectNextAlarm(ActionEvent event) throws ManagerBeanException{
-        onSelectAlarm(nextAlarmModel);
     }
 
     public void onSelectTodayAlarm(ActionEvent event) throws ManagerBeanException{

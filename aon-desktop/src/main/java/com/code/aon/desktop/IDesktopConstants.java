@@ -22,8 +22,6 @@ public interface IDesktopConstants {
 	
 	String CURRENT_USER_CONTROLLER_NAME = "currentUser";
 	
-	String CURRENT_DOMAIN_CONTROLLER_NAME = "currentDomain";
-	
 	String DOMAIN_CONTROLLER_NAME = "domain";
 	
 	String NOTE_CONTROLLER_NAME = "note";

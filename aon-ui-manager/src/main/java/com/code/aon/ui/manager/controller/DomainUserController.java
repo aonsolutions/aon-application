@@ -14,7 +14,6 @@ import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_OUTGOING_VERIF
 import static com.code.aon.webmail.dao.IWebMailAlias.MAIL_ACCOUNT_PROTOCOL;
 import static com.code.aon.webmail.dao.IWebMailAlias.SIGNATURE_SIGNATURE;
 
-import java.security.MessageDigest;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.LinkedList;
@@ -45,7 +44,6 @@ import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.LdapException;
@@ -205,17 +203,6 @@ public class DomainUserController extends LdapBasicController implements IManage
 		setNewPassword(null);
 		setConfirmPassword(null);
 	}
-
-	private String getSHAPassword( String value ) {
-		String shaPassword = null;
-		try {
-			byte[] hash = MessageDigest.getInstance("SHA").digest(value.getBytes());
-			shaPassword = "{SHA}" + Util.encodeBase64(hash);
-		} catch (Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-		}        		
-		return shaPassword;
-	}
 	
 	public void onChangePassword( ActionEvent event ) {
 		if (! StringUtils.equals(newPassword, confirmPassword)) {
@@ -225,7 +212,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 		DomainUser user = getDomainUser();
 		BasicLdap ldap = new BasicLdap();
 		try {
-	        String passwordHash = getSHAPassword(newPassword);
+	        String passwordHash = BasicLdap.encodeSHA(newPassword);
 			ldap.getLdapSession().replaceAttribute(user.getId(), USER_PASSWORD_ATTRIBUTE, passwordHash);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
@@ -241,7 +228,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 	
 	public void resetPassword( DomainUser user ) {
 		user.setPasswordExpirationTimestamp( DateUtils.addDays(new Date(), -1) );
-		String newPassword = getSHAPassword(user.getUid());
+		String newPassword = BasicLdap.encodeSHA(user.getUid());
 		user.setPasswordString( newPassword );
 	}		
 	
