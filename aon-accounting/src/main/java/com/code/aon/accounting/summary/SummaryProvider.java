@@ -120,11 +120,7 @@ public class SummaryProvider {
 					} else {
 						s = getSummaryMonthly(sumSet,account.getId(),debit,credit,authomaticBalance);
 					}
-					if (!params.isNoTouchedAccountVisible() && 
-							(CommonUtil.round(s.getDebit()) == 0 && CommonUtil.round(s.getCredit()) == 0)) {
-							add = false;
-						}
-					if (add && params.isExcludeBalancedAccounts() && CommonUtil.round(debit - credit) == 0) {
+					if (params.isExcludeBalancedAccounts() && CommonUtil.round(debit - credit) == 0) {
 						add = false;
 					}
 					if (add) {
@@ -141,6 +137,8 @@ public class SummaryProvider {
 							if (openingBalance!=null) {
 								s.setInitialDebit(openingBalance.getDebit());
 								s.setInitialCredit(openingBalance.getCredit());
+								s.setOpeningDebit(openingBalance.getDebit());
+								s.setOpeningCredit(openingBalance.getCredit());
 								// Si existe un asiento de apertura que sirva como punto de partida, se calcula el acumulado 
 								// desde el asiento de apertura hasta el inicio del periodo solicitado, en el caso de no ser el mismo dia. 
 								if (!DateUtils.isSameDay(openingBalance.getFromDate(), params.getStartDate())) {
@@ -160,8 +158,20 @@ public class SummaryProvider {
 								s.setInitialCredit(s.getInitialCredit() + fromOpeningBalance.getCredit());
 							}
 						}
+					}
+					if (add 
+							&& !params.isNoTouchedAccountVisible() 
+							&& CommonUtil.round(s.getDebit()) == 0 
+							&& CommonUtil.round(s.getCredit()) == 0
+							&& CommonUtil.round(s.getOpeningDebit()) == 0 
+							&& CommonUtil.round(s.getOpeningCredit()) == 0									
+						) {
+							add = false;
+						}
+					if (add) {
 						sc.add(s);
 					}
+					
 					sumSet.close();
 				}
 			}

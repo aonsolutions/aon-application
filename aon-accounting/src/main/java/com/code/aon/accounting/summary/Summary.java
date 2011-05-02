@@ -14,6 +14,8 @@ public class Summary {
 	private double credit;
 	private double initialDebit;
 	private double initialCredit;
+	private double openingDebit;
+	private double openingCredit;
 
 	public String getId() {
 		return id;
@@ -83,6 +85,18 @@ public class Summary {
 		this.initialCredit = initialCredit;
 	}
 
+	public double getOpeningDebit() {
+		return openingDebit;
+	}
+	public void setOpeningDebit(double openingDebit) {
+		this.openingDebit = openingDebit;
+	}
+	public double getOpeningCredit() {
+		return openingCredit;
+	}
+	public void setOpeningCredit(double openingCredit) {
+		this.openingCredit = openingCredit;
+	}
 	public double getTotalDebit() {
 		return CommonUtil.round(getInitialDebit() + getDebit());
 	}
