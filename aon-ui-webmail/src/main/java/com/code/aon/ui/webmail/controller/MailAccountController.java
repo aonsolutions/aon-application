@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.FacesException;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
@@ -300,4 +301,25 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 		this.systemAccountEditable = systemAccountEditable;
 	}
 	
+	private void resetDefaults() throws ManagerBeanException {
+		List<ITransferObject> list = (List<ITransferObject>) getModel().getWrappedData();
+		for (ITransferObject to : list) {
+			((MailAccount) to).setDefaultAccount(false);
+			getManagerBean().update(to);
+		}
+	}
+
+	public void onSetDefault(ActionEvent event) {
+		try {
+			resetDefaults();
+			MailAccount account = (MailAccount) getModel().getRowData();
+			account.setDefaultAccount(true);
+			getManagerBean().update(account);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSetDefault exception: ",e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);			
+		}
+	}
+		
 }

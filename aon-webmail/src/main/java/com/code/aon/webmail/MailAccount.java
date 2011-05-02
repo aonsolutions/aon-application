@@ -82,6 +82,8 @@ public class MailAccount implements ILdapTransferObject {
     
     private String trashFolder;
     
+    private boolean defaultAccount;
+    
 	/**
 	 * Gets the name.
 	 * 
@@ -366,6 +368,15 @@ public class MailAccount implements ILdapTransferObject {
 		this.trashFolder = trashFolder;
 	}
 
+	@Attribute(name=DEFAULT_ACCOUNT_ATTRIBUTE)
+	public boolean isDefaultAccount() {
+		return defaultAccount;
+	}
+
+	public void setDefaultAccount(boolean defaultAccount) {
+		this.defaultAccount = defaultAccount;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -374,6 +385,7 @@ public class MailAccount implements ILdapTransferObject {
 		final MailAccount o = (MailAccount) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+				.append(this.defaultAccount, o.defaultAccount)
 				.append(this.draftFolder, o.draftFolder)
 				.append(this.email, o.email)				
 				.append(this.host, o.host)
@@ -401,6 +413,7 @@ public class MailAccount implements ILdapTransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(defaultAccount)
 			.append(draftFolder)
 			.append(email)
 			.append(host)

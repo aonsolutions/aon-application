@@ -96,6 +96,11 @@ public interface IWebMailAlias {
 	*/
 	String  MAIL_ACCOUNT_SIGNATURE_ID = "MailAccount_signature";
 
+	/** 
+	* Alias value: MailAccount_defaultAccount
+	* Hibernate value: MailAccount.defaultAccount
+	*/
+	String  MAIL_ACCOUNT_DEFAULT_ACCOUNT = "MailAccount_defaultAccount";
 	
 	/** 
 	* Alias value: Signature_id

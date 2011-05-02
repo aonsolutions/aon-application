@@ -79,6 +79,8 @@ public interface ILdapConstants {
 	String DATA_BASE_ID_ATTRIBUTE = "dataBaseId";
 	
 	String ADMINISTRATOR_ATTRIBUTE = "administrator";
+	
+	String DEFAULT_ACCOUNT_ATTRIBUTE = "defaultAccount";
 
 	String[] DN_ATTRIBUTES = new String[] {
 		MEMBER_ATTRIBUTE, DATA_SOURCE_ATTRIBUTE, SIGNATURE_MEMBER_ATTRIBUTE

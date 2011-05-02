@@ -25,6 +25,7 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
+import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class WebmailUtil {
 
@@ -73,17 +74,26 @@ public class WebmailUtil {
     }        
     
     private static MailAccount getDefaultAccount( LdapDAO dao, boolean first ) throws ManagerBeanException {
-		IManagerBean beanAccount = new BasicManagerBean(dao);
-		Criteria criteriaAccount = new Criteria();
-		criteriaAccount.addEqualExpression(beanAccount.getFieldName(MAIL_ACCOUNT_NAME), DEFAULT_MAIL_ACCOUNT_NAME);
-		List<ITransferObject> list = beanAccount.getList(criteriaAccount);
+		IManagerBean bean = new BasicManagerBean(dao);
+		Criteria defaultCriteria = new Criteria();
+		defaultCriteria.addEqualExpression(bean.getFieldName(IWebMailAlias.MAIL_ACCOUNT_DEFAULT_ACCOUNT), Boolean.TRUE);
+		List<ITransferObject> defautList = bean.getList(defaultCriteria);
+		if (! defautList.isEmpty() ) {
+			return (MailAccount) defautList.get(0);
+		}
+		Criteria systemCriteria = new Criteria();
+		systemCriteria.addEqualExpression(bean.getFieldName(MAIL_ACCOUNT_NAME), DEFAULT_MAIL_ACCOUNT_NAME);
+		List<ITransferObject> list = bean.getList(systemCriteria);
 		if (! list.isEmpty() ) {
-			return (MailAccount) list.get(0);
+			MailAccount account = (MailAccount) list.get(0);
+			account.setDefaultAccount(true);
+			bean.update(account);
+			return account;
 		}
 		if ( first ) {
 			Criteria criteria = new Criteria();
-			criteria.addOrder( beanAccount.getFieldName(MAIL_ACCOUNT_NAME) );
-			List<ITransferObject> fullList = beanAccount.getList(criteria);
+			criteria.addOrder( bean.getFieldName(MAIL_ACCOUNT_NAME) );
+			List<ITransferObject> fullList = bean.getList(criteria);
 			if (! fullList.isEmpty() ) {
 				return (MailAccount) fullList.get(0);
 			}
