@@ -589,7 +589,6 @@ public class BasicController extends AbstractPojoController implements IControll
 	@Override
 	public void onSelect(ActionEvent event) {
 		try {
-			resetBackProccess();
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireBeforeBeanSelected(evt);
 			selectedIndex = getSelectedTOIndex();
