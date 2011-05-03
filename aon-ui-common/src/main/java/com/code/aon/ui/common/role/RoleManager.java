@@ -139,8 +139,8 @@ public class RoleManager {
 	/**
 	 * @return TRUE if user has IAonRole.SUPER_USER role, false otherwise.
 	 */
-	public boolean isSuperUser() {
-		return isUserInRole(IAonRole.SUPER_USER);
+	public boolean isSisAdmin() {
+		return isUserInRole(IAonRole.SIS_ADMIN);
 	}
 	
 	/**

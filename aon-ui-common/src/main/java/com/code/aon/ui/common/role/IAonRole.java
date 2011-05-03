@@ -92,5 +92,5 @@ public interface IAonRole {
 	/**
 	 * Role para dar capacidad de modificar las expresiones de las percepciones y deducciones.
 	 */
-	String SUPER_USER = "SuperUser";
+	String SIS_ADMIN = "SisAdmin";
 }
