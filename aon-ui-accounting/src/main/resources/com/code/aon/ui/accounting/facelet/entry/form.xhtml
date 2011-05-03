@@ -45,7 +45,7 @@
 							title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save})"
 							accesskey="#{bundle.aon_key_save}"
 							actionListener="#{accountEntry.accept}"
-							rendered="#{!accountEntry.new and accountEntry.manual and (accountEntry.model.rowCount > 0 or accountEntry.new)}"
+							rendered="#{!accountEntry.new and accountEntry.updatable and (accountEntry.model.rowCount > 0 or accountEntry.new)}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 						</aon:commandButton>
 	
@@ -150,11 +150,11 @@
 							<aon:selectOneMenu id="AccountEntry_accountPeriod"
 								styleClass="aon-form-selectOneMenu-field"
 								value="#{accountEntry.to.accountPeriod}"
-								rendered="#{accountEntry.manual}">
+								rendered="#{accountEntry.manual and accountEntry.periodActive}">
 								<f:selectItems value="#{accountingCollections.enabledAccountPeriodKeys}" />
 							</aon:selectOneMenu>
 							<aon:outputText value="#{accountEntry.to.accountPeriod}"
-								rendered="#{!accountEntry.manual}" />
+								rendered="#{!accountEntry.manual or !accountEntry.periodActive}" />
 						</aon:div>
 
 						<aon:outputText value="#{accountingBundle.accounting_journal}: " />
@@ -184,11 +184,11 @@
 						<aon:div>
 							<aon:selectInputDate required="true"
 								id="AccountEntry_entryDate" value="#{accountEntry.to.entryDate}"
-								rendered="#{accountEntry.manual}"
+								rendered="#{accountEntry.manual and accountEntry.periodActive}"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}"/>
 							<aon:outputText value="#{accountEntry.to.entryDate}"
-								rendered="#{!accountEntry.manual}">
+								rendered="#{!accountEntry.manual or !accountEntry.periodActive}">
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>

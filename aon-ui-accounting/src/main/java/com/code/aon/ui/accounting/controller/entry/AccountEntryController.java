@@ -42,6 +42,7 @@ public class AccountEntryController extends BasicController {
 	
 	private SpecialEntryControllerManager controllerManager;
 	
+	private boolean periodActive;
 	private boolean updatable;
 	private boolean updatableViaWizard;
 	private boolean aonInvoice;
@@ -68,6 +69,13 @@ public class AccountEntryController extends BasicController {
 		return controllerManager;
 	}
 	
+	public boolean isPeriodActive() {
+		return periodActive;
+	}
+	public void setPeriodActive(boolean periodActive) {
+		this.periodActive = periodActive;
+	}
+
 	public boolean isUpdatable() {
 		return updatable;
 	}
@@ -92,7 +100,7 @@ public class AccountEntryController extends BasicController {
 		AccountEntry entry = (AccountEntry) this.getTo();
 		AccountEntryType type = entry.getType();
 		setAonInvoice(false);
-		boolean periodActive = true;
+		setPeriodActive(true);
 		boolean flag = false;
 		try {
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
@@ -105,7 +113,7 @@ public class AccountEntryController extends BasicController {
 			}
 			AccountPeriodStatus st = period.getStatus(); 
             if (st == AccountPeriodStatus.INACTIVE || st == AccountPeriodStatus.CLOSED) {
-            	periodActive = false;
+            	setPeriodActive(false);
             } else {
     			flag = isManual();
     			if (!flag && isInvoice()) {
@@ -118,8 +126,8 @@ public class AccountEntryController extends BasicController {
             AonUtil.addErrorMessage(msg);
             flag = false;
 		}
-		setUpdatable(periodActive && flag);
-		setUpdatableViaWizard(periodActive && (type == AccountEntryType.COLLECTION || type == AccountEntryType.PAYMENT || isAccountInvoice()));
+		setUpdatable(isPeriodActive() && flag);
+		setUpdatableViaWizard(isPeriodActive() && (type == AccountEntryType.COLLECTION || type == AccountEntryType.PAYMENT || isAccountInvoice()));
 	}
 	
 	private boolean isAccountInvoice() {
@@ -177,7 +185,7 @@ public class AccountEntryController extends BasicController {
     	if (isNew()) {
     		return false;
     	}
-    	if (isManual()) {
+    	if (isManual() && isPeriodActive()) {
     		return true;
     	}
     	AccountEntry entry = (AccountEntry) this.getTo();
