@@ -137,6 +137,13 @@ public class RoleManager {
 	}
 	
 	/**
+	 * @return TRUE if user has IAonRole.SUPER_USER role, false otherwise.
+	 */
+	public boolean isSuperUser() {
+		return isUserInRole(IAonRole.SUPER_USER);
+	}
+	
+	/**
 	 * Rendered command.
 	 * 
 	 * @param component the component

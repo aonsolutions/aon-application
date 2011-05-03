@@ -88,5 +88,9 @@ public interface IAonRole {
 	 * Role para dar capacidad de firmar documentos electrónicos.
 	 */
 	String E_SIGNATURE = "eSignature";
-
+	
+	/**
+	 * Role para dar capacidad de modificar las expresiones de las percepciones y deducciones.
+	 */
+	String SUPER_USER = "SuperUser";
 }
