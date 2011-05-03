@@ -381,7 +381,7 @@ public class SummaryProvider {
 			if (securityLevel != null ) {
 				stmt.append(" AND a.security_level = ?");
 			}
-	 		stmt.append(" AND d.account = ?");
+	 		stmt.append(" AND d.account LIKE ?");
 			stmt.append(" GROUP BY a.id,a.entry_date");
 	 		stmt.append(" ORDER BY a.entry_date desc");
 			String sessionName = HibernateUtil.getSessionFactoryName(AccountEntry.class.getName());
@@ -392,7 +392,8 @@ public class SummaryProvider {
 			if (securityLevel != null ) {
 				entryStmt.setInt(++i, securityLevel.ordinal() );
 			}
-			entryStmt.setString(++i, accountId);
+			
+			entryStmt.setString(++i, accountId + PERCENT);
 			entrySet = entryStmt.executeQuery();
 			Balance b = null;
 			if (entrySet.next()) {
