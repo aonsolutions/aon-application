@@ -120,9 +120,6 @@ public class SummaryProvider {
 					} else {
 						s = getSummaryMonthly(sumSet,account.getId(),debit,credit,authomaticBalance);
 					}
-					if (params.isExcludeBalancedAccounts() && CommonUtil.round(debit - credit) == 0) {
-						add = false;
-					}
 					if (add) {
 						s.setId(account.getId());
 						s.setDescription(account.getDescription());
@@ -137,8 +134,16 @@ public class SummaryProvider {
 							if (openingBalance!=null) {
 								s.setInitialDebit(openingBalance.getDebit());
 								s.setInitialCredit(openingBalance.getCredit());
-								s.setOpeningDebit(openingBalance.getDebit());
-								s.setOpeningCredit(openingBalance.getCredit());
+
+								// Si la fecha del asiento de apertura encontrado esta en el rango de fechas pedidas, se asume que el 
+								// importe del asiento de apertura pertenece al ejercicio.
+								long op = openingBalance.getFromDate().getTime();
+								long pa = params.getStartDate().getTime();
+								if (op >= pa) {
+									s.setOpeningDebit(openingBalance.getDebit());
+									s.setOpeningCredit(openingBalance.getCredit());
+								}
+								
 								// Si existe un asiento de apertura que sirva como punto de partida, se calcula el acumulado 
 								// desde el asiento de apertura hasta el inicio del periodo solicitado, en el caso de no ser el mismo dia. 
 								if (!DateUtils.isSameDay(openingBalance.getFromDate(), params.getStartDate())) {
@@ -158,6 +163,11 @@ public class SummaryProvider {
 								s.setInitialCredit(s.getInitialCredit() + fromOpeningBalance.getCredit());
 							}
 						}
+					}
+					if (params.isExcludeBalancedAccounts() && CommonUtil.round(
+							(s.getDebit() + s.getOpeningDebit()) - 
+							(s.getCredit() + s.getOpeningCredit())) == 0) {
+						add = false;
 					}
 					if (add 
 							&& !params.isNoTouchedAccountVisible() 

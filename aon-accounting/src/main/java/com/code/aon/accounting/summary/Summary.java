@@ -130,6 +130,14 @@ public class Summary {
 		return ZERO;
 	}
 
+	public double getPeriodDebit() {
+		return CommonUtil.round(getDebit() + getOpeningDebit());
+	}
+	
+	public double getPeriodCredit() {
+		return CommonUtil.round(getCredit() + getOpeningCredit());
+	}
+	
 	public double getPeriodUnpaidBalance() {
 		if (getDebit() > getCredit()) {
 			return CommonUtil.round(getDebit() - getCredit());

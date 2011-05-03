@@ -758,9 +758,17 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ********** ACCOUNT STATEMENT REPORT CONTROLLER ********* -->
+	<!-- ********** TRIAL BALANCE REPORT CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>trialBalance</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.accounting.controller.report.TrialBalanceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ********** OFFICIAL TRIAL BALANCE REPORT CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>officialTrialBalance</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.accounting.controller.report.TrialBalanceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
@@ -1228,9 +1236,20 @@
 				/com/code/aon/ui/accounting/facelet/trialbalance/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!--
-		**************** PROFIT AND LOSS BALANCE **************************
-	-->
+	<!-- **************** OFFICIAL TRIAL BALANCE ************************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>officialTrialBalance_search</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/accounting/facelet/officialtrialbalance/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>officialTrialBalance_list</from-outcome>
+			<to-view-id>
+				/com/code/aon/ui/accounting/facelet/officialtrialbalance/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- ************ PROFIT AND LOSS BALANCE *******************	-->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>profit_and_loss_list</from-outcome>

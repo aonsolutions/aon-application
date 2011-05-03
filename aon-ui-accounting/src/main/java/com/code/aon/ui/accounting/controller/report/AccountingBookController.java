@@ -493,7 +493,7 @@ public class AccountingBookController implements ICollectionProvider{
 		ZipEntry ze = new ZipEntry(book.getName());
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
-        TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("trialBalance");
+        TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("officialTrialBalance");
         t.getParameters().setFromDate(getPeriod().getInitiationDate());
         Calendar c = Calendar.getInstance();
         c.setTime(getPeriod().getInitiationDate());
@@ -507,7 +507,7 @@ public class AccountingBookController implements ICollectionProvider{
         t.getParameters().setExcludeOperatingEntry(true);
         t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
-		String out = manager.execute(zout, "trialBalance");
+		String out = manager.execute(zout, "officialTrialBalance");
 		int i = 0;
 		try {
 			i = Integer.parseInt(out);
@@ -522,7 +522,7 @@ public class AccountingBookController implements ICollectionProvider{
 		ZipEntry ze = new ZipEntry(book.getName());
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
-        TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("trialBalance");
+        TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("officialTrialBalance");
         t.getParameters().setFromDate(getPeriod().getInitiationDate());
         Calendar c = Calendar.getInstance();
         c.setTime(getPeriod().getInitiationDate());
@@ -536,7 +536,7 @@ public class AccountingBookController implements ICollectionProvider{
         t.getParameters().setExcludeOperatingEntry(true);
         t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
-		String out = manager.execute(zout, "trialBalance");
+		String out = manager.execute(zout, "officialTrialBalance");
 		int i = 0;
 		try {
 			i = Integer.parseInt(out);
@@ -551,7 +551,7 @@ public class AccountingBookController implements ICollectionProvider{
 		ZipEntry ze = new ZipEntry(book.getName());
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
-        TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("trialBalance");
+        TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("officialTrialBalance");
         t.getParameters().setFromDate(getPeriod().getInitiationDate());
         Calendar c = Calendar.getInstance();
         c.setTime(getPeriod().getInitiationDate());
@@ -565,7 +565,7 @@ public class AccountingBookController implements ICollectionProvider{
         t.getParameters().setExcludeOperatingEntry(true);
         t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
-		String out = manager.execute(zout, "trialBalance");
+		String out = manager.execute(zout, "officialTrialBalance");
 		int i = 0;
 		try {
 			i = Integer.parseInt(out);
@@ -580,7 +580,7 @@ public class AccountingBookController implements ICollectionProvider{
 		ZipEntry ze = new ZipEntry(book.getName());
 	    ReportManager manager = (ReportManager) AonUtil.getRegisteredBean("report");
 	    zout.putNextEntry(ze);
-        TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("trialBalance");
+        TrialBalanceController t = (TrialBalanceController) AonUtil.getRegisteredBean("officialTrialBalance");
         t.getParameters().setPeriod(getPeriod());
         t.getParameters().setFromDate(getPeriod().getInitiationDate());
         t.getParameters().setToDate(getPeriod().getDeadline());
@@ -590,7 +590,7 @@ public class AccountingBookController implements ICollectionProvider{
         t.getParameters().setExcludeOperatingEntry(true);
         t.getParameters().setPageCounter(getGeneratedPages());
         t.onSearch(null);
-		String out = manager.execute(zout, "trialBalance");
+		String out = manager.execute(zout, "officialTrialBalance");
 		int i = 0;
 		try {
 			i = Integer.parseInt(out);

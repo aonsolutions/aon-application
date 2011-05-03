@@ -14,6 +14,9 @@ public class SummaryCollection {
 	private double initialDebit;
 	private double initialCredit;
 
+	private double openingDebit;
+	private double openingCredit;
+
 	private double debit;
 	private double credit;
 
@@ -21,6 +24,8 @@ public class SummaryCollection {
 		summaryList = new LinkedList<Summary>();
 		initialDebit = 0.0;
 		initialCredit = 0.0;
+		openingDebit = 0.0;
+		openingCredit = 0.0;
 		debit = 0.0;
 		credit = 0.0;
 	}
@@ -29,6 +34,9 @@ public class SummaryCollection {
 		summaryList.add(summary);
 		setInitialDebit(CommonUtil.round(getInitialDebit() + summary.getInitialDebit()));
 		setInitialCredit(CommonUtil.round(getInitialCredit() + summary.getInitialCredit()));
+		
+		setOpeningDebit(CommonUtil.round(getOpeningDebit() + summary.getOpeningDebit()));
+		setOpeningCredit(CommonUtil.round(getOpeningCredit() + summary.getOpeningCredit()));
 		if (summary.isLastLevel()) {
 			setDebit(CommonUtil.round(getDebit() + summary.getDebit()));
 			setCredit(CommonUtil.round(getCredit() + summary.getCredit()));
@@ -49,6 +57,20 @@ public class SummaryCollection {
 
 	public void setInitialCredit(double initialCredit) {
 		this.initialCredit = initialCredit;
+	}
+
+	public double getOpeningDebit() {
+		return openingDebit;
+	}
+	public void setOpeningDebit(double openingDebit) {
+		this.openingDebit = openingDebit;
+	}
+
+	public double getOpeningCredit() {
+		return openingCredit;
+	}
+	public void setOpeningCredit(double openingCredit) {
+		this.openingCredit = openingCredit;
 	}
 
 	public double getDebit() {
@@ -100,14 +122,14 @@ public class SummaryCollection {
 		return 0;
 	}
 	public double getPeriodUnpaidBalance() {
-		if (getDebit() > getCredit()) {
-			return CommonUtil.round(getDebit() - getCredit());
+		if (CommonUtil.round(getOpeningDebit() + getDebit()) > CommonUtil.round(getOpeningCredit() + getCredit())) {
+			return CommonUtil.round(getOpeningDebit() + getDebit() - getOpeningCredit() - getCredit());
 		}
 		return 0;
 	}
 	public double getPeriodCreditBalance() {
-		if (getCredit() > getDebit()) {
-			return CommonUtil.round(getCredit() - getDebit());
+		if (CommonUtil.round(getOpeningCredit() + getCredit()) > CommonUtil.round(getOpeningDebit() + getDebit())) {
+			return CommonUtil.round(getOpeningCredit() + getCredit() - getOpeningDebit() - getDebit());
 		}
 		return 0;
 	}

@@ -139,6 +139,18 @@
 		</params>
 	</report>
 
+	<!--  BALANCE DE SUMAS Y SALDOS OFICIAL-->
+	<report id="officialTrialBalance" description="officialTrialBalance">
+		<template path="/com/code/aon/ui/accounting/report/officialTrialBalance.jasper"/>
+		<collection provider="#{officialTrialBalance}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="summaryCollection" value="#{officialTrialBalance.getSummaryCollection}" />
+			<param id="params" value="#{officialTrialBalance.getParameters}" />
+		</params>
+	</report>
+
 	<!--  LISTADO DIARIO DE APUNTES -->
 	<report id="journalBook" description="Listado Diario de Apuntes">
 		<template path="/com/code/aon/ui/accounting/report/journalBook.jasper"/>
