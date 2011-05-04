@@ -20,7 +20,6 @@
 						value="#{accountEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 	
 					<ui:define name="additionalToolbarContent">
-	
 						<aon:commandButton id="reset" 
 							value="#{bundle.aon_reset}"
 							accesskey="#{bundle.aon_key_new}"
@@ -40,15 +39,15 @@
 							focus="accountId-NEW">
 							<aon:actionListener method="#{accountEntryDetail.onReset}" />
 						</aon:commandButton>
-	
+
 						<aon:commandButton id="save-update" value="#{bundle.aon_save}"
 							title="#{bundle.aon_save} (ALT+#{bundle.aon_key_save})"
 							accesskey="#{bundle.aon_key_save}"
 							actionListener="#{accountEntry.accept}"
-							rendered="#{!accountEntry.new and accountEntry.updatable and (accountEntry.model.rowCount > 0 or accountEntry.new)}"
+							rendered="#{!accountEntry.new and accountEntry.updatable}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 						</aon:commandButton>
-	
+
 						<aon:commandButton id="remove" value="#{bundle.aon_remove}"
 							title="#{bundle.aon_remove} (ALT+#{bundle.aon_key_remove})"
 							accesskey="#{bundle.aon_key_remove}" 
@@ -58,7 +57,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							immediate="true"
 							onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
-	
+
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							title="#{bundle.aon_search} (ALT+#{bundle.aon_key_search})"
 							accesskey="#{bundle.aon_key_search}" action="accountEntry_search"
@@ -66,14 +65,14 @@
 							rendered="#{!accountEntry.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							immediate="true" />
-							
+
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							title="#{bundle.aon_cancel} (ALT+#{bundle.aon_key_cancel})"
 							accesskey="#{bundle.aon_key_cancel}" rendered="#{accountEntry.new}"
 							actionListener="#{accountEntry.onCancel}" action="accountEntry_search"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="true" />
-	
+
 						<aon:commandButton id="update" value="#{bundle.aon_update}"
 							accesskey="Q" title="#{bundle.aon_update} Alt+Q"
 							action="#{accountEntry.onNavigate}"
@@ -81,7 +80,7 @@
 							rendered="#{!accountEntry.new and accountEntry.updatableViaWizard}"
 							styleClass="aon-finding-toolbar-item aon-icon-refresh"
 							immediate="true" />
-							
+
 						<aon:commandButton id="viewInvoice" 
 							value="#{financeBundle.finance_invoice}"
 							accesskey="I" title="#{financeBundle.finance_invoice} Alt+I"
@@ -96,7 +95,7 @@
 							rendered="#{accountEntry.backActionEnabled}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="true" />
-	
+
 						<c:if test="#{aonRole.confidentiality}">
 							<aon:commandButton id="updateSecurityLevel" 
 								value="#{bundle.aon_update} #{bundle.aon_security}"
@@ -108,9 +107,15 @@
 								onclick="if (!confirm('#{accountingBundle.accounting_change_security}')) return false;" />
 						</c:if>
 
-						<aon:spin controller="#{accountEntry}" action="accountEntry_form"
-							rendered="#{!accountEntry.new}" />
-	
+						<aon:commandButton id="duplicate" value="#{accountingBundle.accounting_duplicate}"
+							title="#{accountingBundle.accounting_duplicate}"
+							actionListener="#{accountEntry.onDuplicate}"
+							rendered="#{!accountEntry.new and accountEntry.updatable}"
+							styleClass="aon-finding-toolbar-item aon-icon-copy"
+							onclick="if (!confirm('#{accountingBundle.accounting_duplicate_confirm}')) return false;"
+							immediate="true" />
+							
+						<aon:spin controller="#{accountEntry}" action="accountEntry_form" rendered="#{!accountEntry.new}" />
 					</ui:define>
 				</ui:decorate>
 		

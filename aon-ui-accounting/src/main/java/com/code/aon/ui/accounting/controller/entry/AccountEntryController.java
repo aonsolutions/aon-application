@@ -117,7 +117,7 @@ public class AccountEntryController extends BasicController {
             } else {
     			flag = isManual();
     			if (!flag && isInvoice()) {
-    				flag = !isAccountInvoice(entry);
+    				flag = isAccountInvoice(entry);
     			}
             }
 		} catch (ManagerBeanException e) {
@@ -236,6 +236,7 @@ public class AccountEntryController extends BasicController {
     		throw new AbortProcessingException(e.getMessage(),e);
     	}
 	}
+    
     public void onChangeSecurityLevel(ActionEvent event)  {
    		AccountEntry entry = (AccountEntry) getTo();
 		entry.setSecurityLevel(entry.getSecurityLevel()==SecurityLevel.OFFICIAL?SecurityLevel.CONFIDENTIAL:SecurityLevel.OFFICIAL);
@@ -342,7 +343,7 @@ public class AccountEntryController extends BasicController {
 		this.commentPanelVisible = commentPanelVisible;
 	}
 
-	public void showCommentPanel(ActionEvent event  ) {
+  	public void showCommentPanel(ActionEvent event  ) {
 		setCommentPanelVisible(true);
 	}
 	public void hideCommentPanel(ActionEvent event  ) {
@@ -378,4 +379,48 @@ public class AccountEntryController extends BasicController {
 		return invoiceViewer;
 	}
 	
+	public void onDuplicate(ActionEvent event) {
+    	try {
+    		AccountEntry entry = (AccountEntry) this.getModel().getRowData();
+    		AccountEntry dup = new AccountEntry();
+    		
+    		dup.setAccountPeriod(entry.getAccountPeriod());
+    		dup.setEntryDate(entry.getEntryDate());
+    		dup.setType(entry.getType());
+    		dup.setSecurityLevel(entry.getSecurityLevel());
+    		dup = (AccountEntry) getManagerBean().insert(dup);
+    		
+    		IManagerBean linesBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+    		Criteria criteria = new Criteria();
+    		criteria.addEqualExpression(linesBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+    		List<ITransferObject> list = linesBean.getList(criteria);
+    		for (ITransferObject to: list) {
+    			AccountEntryDetail detail = (AccountEntryDetail) to;
+    			AccountEntryDetail dupDetail = new AccountEntryDetail();
+    			
+    			dupDetail.setAccountEntry(dup);
+    			dupDetail.setLine(detail.getLine());
+    			dupDetail.setAccount(detail.getAccount());
+    			dupDetail.setConcept(detail.getConcept());
+    			dupDetail.setBalancingAccount(detail.getBalancingAccount());
+    			dupDetail.setDebit(detail.getDebit());
+    			dupDetail.setCredit(detail.getCredit());
+    			dupDetail.setDocumentNumber(detail.getDocumentNumber());
+    			
+    			linesBean.insert(dupDetail);
+    		}
+
+			criteria = new Criteria();
+			criteria.addEqualExpression(getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), dup.getId());
+			setCriteria(criteria);
+			onSearch(null);
+			getModel().setRowIndex(0);
+			onSelect(null);
+
+    	} catch (ManagerBeanException e) {
+    		String msg = "Imposible duplicar el apunte. " +e.getMessage(); 
+    		AonUtil.addErrorMessage( msg );
+    		throw new AbortProcessingException(msg,e);
+    	}
+	}
 }
