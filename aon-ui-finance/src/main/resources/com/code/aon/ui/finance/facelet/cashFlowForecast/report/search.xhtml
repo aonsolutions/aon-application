@@ -9,12 +9,21 @@
 
 	<ui:define name="content">
 		<aon:form id="cashFlowForecastReportForm">
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_cashflow_forecast_report_module}" />
 				<ui:param name="controller" value="#{cashFlowForecastReport}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 				<ui:param name="skipBackButton" value="#{true}" />
-			</ui:include>
+				<ui:param name="skipClearButton" value="true" />
+				
+				<ui:define name="beforeToolbarContent">
+					<aon:commandButton id="#{toolbarID}-clear"
+							value="#{bundle.aon_clear}"
+							actionListener="#{cashFlowForecastReport.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+				</ui:define>
+			</ui:decorate>
+			
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{cashFlowForecastReport}" />

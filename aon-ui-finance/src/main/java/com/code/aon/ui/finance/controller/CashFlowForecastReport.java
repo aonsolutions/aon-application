@@ -100,6 +100,9 @@ public class CashFlowForecastReport {
 	}
 
 	public DataModel getBankModel() {
+		if (bankModel == null) {
+			setBankModel( new ListDataModel(getBankList()));	
+		}
 		return bankModel;
 	}
 	public void setBankModel(DataModel bankModel) {
@@ -168,6 +171,12 @@ public class CashFlowForecastReport {
 		this.total = total;
 	}
 
+	public void onReset(ActionEvent event) {
+		setBanks(null);
+		setModel(null);
+		setTotal(0.0);
+	}
+
 	public void onEditSearch(ActionEvent event) {
 		try {
 			setFromDate( new Date() ); 
@@ -216,12 +225,10 @@ public class CashFlowForecastReport {
 			bank.setBalance(0.0);
 			getBankList().add(bank);
 		}
-		setBankModel( new ListDataModel(getBankList()));
 	}
 
 	public void onSearch(ActionEvent event) {
 		checkDates();
-//		checkBanks();
 		try {
 			List<CashFlowReport> list = new LinkedList<CashFlowReport>();
 			list.add( getInitialBalance() );

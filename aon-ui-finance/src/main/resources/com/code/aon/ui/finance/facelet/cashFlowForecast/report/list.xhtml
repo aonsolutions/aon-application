@@ -10,13 +10,14 @@
 
 	<ui:define name="content">
 		<aon:form>
+			<aon:methodParam name="searchActionListener" default="#{cashFlowForecastReport.onReset}" type="actionListener" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{financeBundle.finance_cashflow_forecast_report_module}" />
 				<ui:param name="controller" value="#{cashFlowForecastReport}" />
 				<ui:param name="skipResetButton" value="#{true}" />
-
+				
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="update" value="#{financeBundle.finance_cashflow_refresh}"
 						accesskey="Q" title="#{financeBundle.finance_cashflow_refresh}"
