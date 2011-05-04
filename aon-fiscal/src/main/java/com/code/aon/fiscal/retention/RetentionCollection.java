@@ -86,7 +86,7 @@ public class RetentionCollection {
 				ret.setWithholdingType(WithholdingType.values()[rs.getInt(1)]);
 				ret.setPercent(rs.getDouble(2));
 				ret.setBase(rs.getDouble(3));
-				ret.setQuota(rs.getDouble(3));
+				ret.setQuota(rs.getDouble(4));
 				retentions.add(ret);
 			}
 			return retentions;
