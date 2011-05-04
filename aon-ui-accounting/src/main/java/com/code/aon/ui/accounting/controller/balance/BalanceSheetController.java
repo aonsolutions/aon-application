@@ -60,10 +60,14 @@ public class BalanceSheetController implements ICollectionProvider {
 		onReset(event);
 	}
 
-	public void onReset(ActionEvent event) {
+	public void onBack(ActionEvent event) {
 		list = null;
 		balanceModel = null;
 		previousPeriod = null;
+	}
+
+	public void onReset(ActionEvent event) {
+		onBack(event);
 		parameters = new SummaryProviderParameters();
 		try {
 			parameters.setPeriod(AccountingPeriodUtil.getDefaultPeriod());
@@ -88,6 +92,7 @@ public class BalanceSheetController implements ICollectionProvider {
 
 	public void onBalance(ActionEvent event) {
 		try {
+			setPreviousPeriod(null);
 			BalanceManager balanceManager = new BalanceManager();
 			list = balanceManager.getBalanceCollection(getParameters(), getBalance());
 		} catch (Throwable e) {
@@ -184,30 +189,8 @@ public class BalanceSheetController implements ICollectionProvider {
 			TrialBalanceController c = (TrialBalanceController) AonUtil
 					.getRegisteredBean(IAccountingConstants.TRIAL_BALANCE_CONTROLLER_NAME);
 			c.onReset(event);
-			SummaryProviderParameters spp = getParameters().clone();
-
-			BalanceDetail bd = item.getDetail();
-			String[] tokens = StringUtils.split(bd.getAccounts(), IAccountingConstants.COMMA);
-			StringBuilder exp = new StringBuilder();
-			for (String token : tokens) {
-				token = token.trim();
-				if (StringUtils.isNotBlank(token)) {
-					exp.append(exp.length() > 0 ? IAccountingConstants.PIPE : IAccountingConstants.EMPTY);
-					if (token.startsWith(IAccountingConstants.OPEN_BRACKET) && token.endsWith(IAccountingConstants.CLOSE_BRACKET)) {
-						token = token.replace(IAccountingConstants.OPEN_BRACKET, IAccountingConstants.EMPTY).replace(IAccountingConstants.CLOSE_BRACKET, IAccountingConstants.EMPTY);
-					}
-					exp.append(token);
-					exp.append(IAccountingConstants.ASTERISK);
-				}
-			}
-			spp.setAccountExpression(exp.toString());
-			if (spp.getFromDate() == null) {
-				spp.setFromDate(spp.getPeriod().getInitiationDate());
-			}
-			if (spp.getToDate() == null) {
-				spp.setToDate(spp.getPeriod().getDeadline());
-			}
 			c.onResetStatement(event);
+			SummaryProviderParameters spp = getStatementParameters(item);
 			c.setParameters(spp);
 			c.onSearch(event);
 			c.setBackAction(IAccountingConstants.BALANCE_SHEET_LIST_NAVKEY);
@@ -221,6 +204,57 @@ public class BalanceSheetController implements ICollectionProvider {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg, e);
 		}
+	}
+	public void onAccountPreviousStatement(ActionEvent event) {
+		try {
+			BalanceItem item = (BalanceItem) getBalanceModel().getRowData();
+			TrialBalanceController c = (TrialBalanceController) AonUtil
+					.getRegisteredBean(IAccountingConstants.TRIAL_BALANCE_CONTROLLER_NAME);
+			c.onReset(event);
+			c.onResetStatement(event);
+			SummaryProviderParameters spp = getStatementParameters(item);
+			spp.setPeriod(getPreviousPeriod());
+			spp.setFromDate(getPreviousPeriod().getInitiationDate());
+			spp.setToDate(getPreviousPeriod().getDeadline());
+			c.setParameters(spp);
+			c.onSearch(event);
+			c.setBackAction(IAccountingConstants.BALANCE_SHEET_LIST_NAVKEY);
+			if (c.getModel().getRowCount() == 0) {
+				String msg = "No existen cuentas contables para la cuenta.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+			}
+		} catch (CloneNotSupportedException e) {
+			String msg = "No se pudo realizar el acceso al extracto.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+
+	private SummaryProviderParameters getStatementParameters(BalanceItem item) throws CloneNotSupportedException {
+		SummaryProviderParameters spp = getParameters().clone();
+		BalanceDetail bd = item.getDetail();
+		String[] tokens = StringUtils.split(bd.getAccounts(), IAccountingConstants.COMMA);
+		StringBuilder exp = new StringBuilder();
+		for (String token : tokens) {
+			token = token.trim();
+			if (StringUtils.isNotBlank(token)) {
+				exp.append(exp.length() > 0 ? IAccountingConstants.PIPE : IAccountingConstants.EMPTY);
+				if (token.startsWith(IAccountingConstants.OPEN_BRACKET) && token.endsWith(IAccountingConstants.CLOSE_BRACKET)) {
+					token = token.replace(IAccountingConstants.OPEN_BRACKET, IAccountingConstants.EMPTY).replace(IAccountingConstants.CLOSE_BRACKET, IAccountingConstants.EMPTY);
+				}
+				exp.append(token);
+				exp.append(IAccountingConstants.ASTERISK);
+			}
+		}
+		spp.setAccountExpression(exp.toString());
+		if (spp.getFromDate() == null) {
+			spp.setFromDate(spp.getPeriod().getInitiationDate());
+		}
+		if (spp.getToDate() == null) {
+			spp.setToDate(spp.getPeriod().getDeadline());
+		}
+		return spp;
 	}
 
 }
