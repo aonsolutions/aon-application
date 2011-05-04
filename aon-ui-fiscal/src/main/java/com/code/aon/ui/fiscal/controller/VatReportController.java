@@ -213,6 +213,8 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		setPeriod( Period.getQuarterlyPeriod( c.get(Calendar.MONTH )) );
 		setFromDate(getPeriod().getStartDate(getYear()));	
 		setToDate(getPeriod().getDueDate(getYear()));
+		setFromInvoiceDate(null);
+		setToInvoiceDate(null);
 		setFromSeries(null);
 		setFromNumber(null);
 		setToSeries(null);
@@ -241,7 +243,7 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 		vcp.setFromDate(getFromDate());
 		vcp.setToDate(getToDate());
 		
-		vcp.setFromInvoiceDate(getToInvoiceDate());
+		vcp.setFromInvoiceDate(getFromInvoiceDate());
 		vcp.setToInvoiceDate(getToInvoiceDate());
 		vcp.setFromSeries(StringUtils.isBlank(getFromSeries())?null:getFromSeries());
 		vcp.setToSeries(StringUtils.isBlank(getToSeries())?null:getToSeries());

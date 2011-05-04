@@ -139,6 +139,10 @@ public class JournalReportController extends BasicController implements IAccount
 		previousAccountEntryDetail = null;
 		odd = true;
 	}
+	public void onBack(ActionEvent event) {
+		super.onEditSearch(event);
+		setModel(null);
+	}
 
 	public void onEditSearch(ActionEvent event) {
 		initialize();
