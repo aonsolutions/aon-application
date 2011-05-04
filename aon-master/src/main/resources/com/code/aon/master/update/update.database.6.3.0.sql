@@ -238,14 +238,14 @@ VALUES
 INSERT INTO system_data 
 ( name			, expression	, start_date	, end_date	, read_only	,comments ) 
 VALUES 
-('BASE_IPREM'	, '0.00'       	,'2011-01-01' 	, null 		,1 			,'Base para los conceptos exentos de cotizacion (IPREM) ');
+('BASE_IPREM'	, '0.00'       	,'2000-01-01' 	, null 		,1 			,'Base para los conceptos exentos de cotizacion (IPREM) ');
 
 INSERT INTO system_data 
 ( name			, expression	, start_date	, end_date	, read_only	,comments ) 
 VALUES 
-('BIPREM'		, '0.00'       	,'2011-01-01' 	, null 		,1 			,'Base para los conceptos exentos de cotizacion (IPREM) ');
+('BIPREM'		, '0.00'       	,'2000-01-01' 	, null 		,1 			,'Base para los conceptos exentos de cotizacion (IPREM) ');
 
-UPDATE  deduction_concept SET expression='(TIEMPO_COMPLETO && ASIMILADO_REGIMEN_GRAL ) ? 0 : BASE_CGP * (INDEFINIDO ? 1.55 : 1.60 )/100' WHERE id=3;
+UPDATE  deduction_concept SET expression='( TIEMPO_COMPLETO && ASIMILADO_REGIMEN_GRAL ) ? 0 : BASE_CGP * (INDEFINIDO ? 1.55 : 1.60 )/100' WHERE id=3;
 
 CREATE TABLE `cno` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
