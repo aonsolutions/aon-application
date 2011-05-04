@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.UserWorkGroup;
@@ -128,7 +129,6 @@ public class NoticeControllerListener extends ControllerAdapter {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private List<User> getUsers(Integer workGroupId) throws ManagerBeanException {
 		List<User> users = new ArrayList<User>();
     	if (workGroupId == null) {
@@ -136,7 +136,7 @@ public class NoticeControllerListener extends ControllerAdapter {
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_ACTIVE), true);
             criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_NAME));
-            Iterator iterator = managerBean.getList(criteria).iterator();
+            Iterator<ITransferObject> iterator = managerBean.getList(criteria).iterator();
             while (iterator.hasNext()) {
                 User user = (User)iterator.next();
                 users.add(user);
@@ -147,7 +147,7 @@ public class NoticeControllerListener extends ControllerAdapter {
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroupId);
             criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_NAME));
-            Iterator iterator = managerBean.getList(criteria).iterator();
+            Iterator<ITransferObject> iterator = managerBean.getList(criteria).iterator();
             while (iterator.hasNext()) {
                 UserWorkGroup userWorkGroup = (UserWorkGroup)iterator.next();
                 User user = userWorkGroup.getUser();
@@ -171,8 +171,8 @@ public class NoticeControllerListener extends ControllerAdapter {
 			MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
 			AonServer server = new AonServer(mailAccount);
 			server.createBasicFolders();
-			AonMessage aonMessage = server.createAonMessage(from, username);
 			InternetAddress iafrom = new InternetAddress(from, username);
+			AonMessage aonMessage = server.createAonMessage(iafrom);
 			aonMessage.setSender(iafrom);
 			aonMessage.setRecipientsTo(to);
 			aonMessage.setSubject(subject);
