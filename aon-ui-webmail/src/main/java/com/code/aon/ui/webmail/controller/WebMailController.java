@@ -250,15 +250,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 	}
 	
 	public static boolean isConnectable() {
-		ConfigurationController cc = AonUtil.getConfigurationController();
-		if ( cc.getBean() != null ) {
-			Map<String,Object> map = cc.getBean().get(BEAN_WEBMAIL);
-			if ( map != null ) {
-				Object value = map.get(CONNECT_PROPERTY);
-				return BooleanUtils.toBoolean(value.toString());
-			}			
-		}
-		return true;
+		return AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_PROPERTY);
 	}	
 	
 	public void poll( ActionEvent event ) {

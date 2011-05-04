@@ -76,7 +76,8 @@
 			<h:panelGrid columns="2" rendered="#{mailAccount.showMailAccountList}">
 				<aon:selectOneMenu 			
 					valueChangeListener="#{mailAccount.onChangeMailAccount}"
-					value="#{mailAccount.accountId}" >
+					converter="#{mailAccount.converter}"
+					value="#{mailAccount.currentAccount}" >
 					<f:selectItems value="#{mailAccount.mailAccounts}" />
 					<a4j:support ajaxSingle="true" event="onchange" reRender="aonContent"
 						onsubmit="Richfaces.showModalPanel('waitProccess')" />	

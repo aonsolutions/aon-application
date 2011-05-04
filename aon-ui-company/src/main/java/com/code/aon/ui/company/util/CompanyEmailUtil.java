@@ -121,7 +121,8 @@ public class CompanyEmailUtil implements ICompanyConstants {
 
 	protected void initMessageController( MessageController messageController, String[] emails, String body  )  {
 		initMessageController(messageController, emails);
-		messageController.setContent( getEmailContent(body) );
+		messageController.setAppendSignature(true);
+		messageController.updateMessageBody( getEmailContent(body) );
 	}
 
 	public String getEmailContent( String text ) {

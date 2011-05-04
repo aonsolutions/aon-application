@@ -53,22 +53,24 @@
 						rendered="#{!controller.currentEditable}" />
 				</aon:column>
 
-				<aon:column styleClass="aon-editDataTable-iconColumn">
-					<f:facet name="header">
-						<aon:outputText value="#{webmailBundle.webmail_mailAccount_default_account}" />
-					</f:facet>
-					<aon:div rendered="#{!to.defaultAccount}"
-						onmouseover="disableRowSelector();"
-						onmouseout="enableRowSelector();" >
-						<aon:commandLink 
-							actionListener="#{controller.onSetDefault}" >
-							<aon:outputText value="&#160;"
-								styleClass="aon-icon aon-icon-check" />							
-						</aon:commandLink>
-					</aon:div>
-					<aon:outputText value="&#160;" rendered="#{to.defaultAccount}"
-						styleClass="aon-icon aon-icon-checked" />					
-				</aon:column>
+				<c:if test="#{!skipDefaultAccountColumn}">	
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{webmailBundle.webmail_mailAccount_default_account}" />
+						</f:facet>
+						<aon:div rendered="#{!to.defaultAccount}"
+							onmouseover="disableRowSelector();"
+							onmouseout="enableRowSelector();" >
+							<aon:commandLink 
+								actionListener="#{controller.onSetDefault}" >
+								<aon:outputText value="&#160;"
+									styleClass="aon-icon aon-icon-check" />							
+							</aon:commandLink>
+						</aon:div>
+						<aon:outputText value="&#160;" rendered="#{to.defaultAccount}"
+							styleClass="aon-icon aon-icon-checked" />					
+					</aon:column>
+				</c:if>
 						
 				<c:if test="#{aonConfiguration.bean.webmail.connect}">
 					<aon:column>

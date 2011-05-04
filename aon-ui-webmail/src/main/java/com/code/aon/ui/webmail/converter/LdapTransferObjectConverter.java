@@ -1,4 +1,4 @@
-package com.code.aon.ui.manager.converter;
+package com.code.aon.ui.webmail.converter;
 
 import java.io.Serializable;
 
@@ -18,15 +18,15 @@ import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ui.form.IController;
 
-public class TransferObjectConverter implements Converter {
+public class LdapTransferObjectConverter implements Converter {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(TransferObjectConverter.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(LdapTransferObjectConverter.class);
 	
 	private IController controller;
 	
 	private boolean ldapTransferObject;
 	
-	public TransferObjectConverter(IController controller) {
+	public LdapTransferObjectConverter(IController controller) {
 		this.controller = controller;
 		try {
 			this.ldapTransferObject = ILdapTransferObject.class.isAssignableFrom(controller.getManagerBean().getPOJOClass());

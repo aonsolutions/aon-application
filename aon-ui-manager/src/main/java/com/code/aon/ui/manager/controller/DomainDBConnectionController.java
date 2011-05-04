@@ -25,9 +25,9 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
+import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
 
 public class DomainDBConnectionController extends LdapBasicController implements IManagerConstants {
 
@@ -136,7 +136,7 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	public Converter getConverter() {
 		if ( converter == null ) {
 			IController controller = (IController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
-			this.converter = new TransferObjectConverter(controller);			
+			this.converter = new LdapTransferObjectConverter(controller);			
 		}
 		return converter;
 	}	

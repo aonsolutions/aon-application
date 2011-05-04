@@ -55,12 +55,12 @@ import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
 import com.code.aon.ui.webmail.controller.MailAccountController;
 import com.code.aon.ui.webmail.controller.SignatureController;
+import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 
@@ -503,7 +503,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 
 	public Converter getConverter() {
 		if ( converter == null ) {
-			this.converter = new TransferObjectConverter(this);			
+			this.converter = new LdapTransferObjectConverter(this);			
 		}
 		return converter;
 	}

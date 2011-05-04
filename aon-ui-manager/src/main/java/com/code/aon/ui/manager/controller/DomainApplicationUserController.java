@@ -17,9 +17,9 @@ import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
+import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
 
 public class DomainApplicationUserController extends LdapBasicController {
 	
@@ -67,7 +67,7 @@ public class DomainApplicationUserController extends LdapBasicController {
 	public Converter getScopeConverter() {
 		if ( scopeConverter == null ) {
 			IController scopeController = (IController) AonUtil.getRegisteredBean(ConfigConstants.SCOPE);
-			this.scopeConverter = new TransferObjectConverter(scopeController);			
+			this.scopeConverter = new LdapTransferObjectConverter(scopeController);			
 		}
 		return scopeConverter;
 	}
@@ -75,7 +75,7 @@ public class DomainApplicationUserController extends LdapBasicController {
 	public Converter getWorkgroupConverter() {
 		if ( workgroupConverter == null ) {
 			IController wgController = (IController) AonUtil.getRegisteredBean(ConfigConstants.WORK_GROUP);
-			this.workgroupConverter = new TransferObjectConverter(wgController);			
+			this.workgroupConverter = new LdapTransferObjectConverter(wgController);			
 		}
 		return workgroupConverter;
 	}

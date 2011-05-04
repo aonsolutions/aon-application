@@ -4,7 +4,6 @@ import static javax.mail.Folder.HOLDS_MESSAGES;
 import static javax.mail.Folder.READ_WRITE;
 
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
 
@@ -17,7 +16,6 @@ import javax.mail.SendFailedException;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -198,10 +196,6 @@ public class AonServer implements IMailConstants {
 
     public String toString() {
         return this.account.toString();
-    }
-        
-    public AonMessage createAonMessage( String address, String personal ) throws UnsupportedEncodingException, WebmailException {
-    	return createAonMessage(new InternetAddress(address, personal));
     }
 
     public AonMessage createAonMessage( Address from ) throws WebmailException {

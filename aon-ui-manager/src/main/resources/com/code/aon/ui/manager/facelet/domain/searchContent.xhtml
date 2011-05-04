@@ -30,14 +30,16 @@
 				</aon:selectOneMenu>
 			</c:if>				
 
-			<aon:outputLabel for="Domain_parentDomain"
-				value="#{managerBundle.manager_domain_parent}" />
-			<aon:selectOneMenu id="Domain_parentDomain"
-				converter="#{controller.converter}"
-				valueChangeListener="#{controller.addDomainEqualExpression}" >
-				<f:selectItem itemLabel="-" value="#{null}"/>
-				<f:selectItems value="#{controller.parentDomains}" />
-			</aon:selectOneMenu>
+			<c:if test="#{manager.administrator}">
+				<aon:outputLabel for="Domain_parentDomain"
+					value="#{managerBundle.manager_domain_parent}" />
+				<aon:selectOneMenu id="Domain_parentDomain"
+					converter="#{controller.converter}"
+					valueChangeListener="#{controller.addDomainEqualExpression}" >
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{controller.parentDomains}" />
+				</aon:selectOneMenu>
+			</c:if>
 			
 			<aon:outputLabel for="Domain_subDomainSuffix"
 				value="#{managerBundle.manager_domain_subDomainSuffix}" />

@@ -14,7 +14,7 @@
 				<ui:param name="toolbarTitle" value="#{managerBundle.manager_domains}" />
 				<ui:param name="controller" value="#{domain}" />
 				<ui:param name="skipResetButton" value="#{!manager.domainManagement}" />
-				<ui:param name="skipSearchButton" value="#{!manager.domainManagement}" />
+				<ui:param name="skipSearchButton" value="#{!manager.config.showDomainSearch}" />
 			</ui:include>
 
 			<!--  aon-region-body -->

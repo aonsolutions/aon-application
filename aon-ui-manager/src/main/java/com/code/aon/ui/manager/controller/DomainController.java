@@ -47,9 +47,9 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.event.BankAccountValidationListener;
-import com.code.aon.ui.manager.converter.TransferObjectConverter;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
+import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
 
 public class DomainController extends LdapBasicController implements IAonObjectClasses, IManagerConstants {
 
@@ -261,7 +261,7 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 
 	public Converter getConverter() {
 		if ( converter == null ) {
-			this.converter = new TransferObjectConverter(this);			
+			this.converter = new LdapTransferObjectConverter(this);			
 		}
 		return converter;
 	}

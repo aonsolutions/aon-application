@@ -7,12 +7,13 @@
 		    <xs:sequence>
 		      <xs:element ref="webmail" />
 		    </xs:sequence>				
-			<xs:attribute name="version" type="xs:string" use="required" fixed="1.1"/>		    
+			<xs:attribute name="version" type="xs:string" use="required" fixed="1.2"/>		    
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="webmail">
 		<xs:complexType>
 			<xs:attribute name="connect" type="xs:boolean" use="required"/>
+			<xs:attribute name="showDomainMailAccounts" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

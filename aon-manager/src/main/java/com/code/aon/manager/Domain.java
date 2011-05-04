@@ -250,6 +250,14 @@ public class Domain implements ILdapTransferObject {
 		if ( ldap.exists(bdsDN, ORGANIZATIONAL_UNIT) ) {
 			ldap.deleteDepth(bdsDN, true);
 		}
+		Name accountsDN = NameResolver.getDomainAccountsDN(domain);
+		if ( ldap.exists(accountsDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.deleteDepth(accountsDN, true);
+		}
+		Name signaturesDN = NameResolver.getDomainSignaturesDN(domain);
+		if ( ldap.exists(signaturesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.deleteDepth(signaturesDN, true);
+		}		
 		ldap.deleteDepth(dn, true);
 	}		
 	
@@ -269,6 +277,14 @@ public class Domain implements ILdapTransferObject {
 		Name aliasesDN = NameResolver.getAliasesDN(getCommonName());
 		if (! ldap.exists(aliasesDN, ORGANIZATIONAL_UNIT) ) {
 			ldap.addOrganizationUnit(aliasesDN);
+		}
+		Name accountsDN = NameResolver.getDomainAccountsDN(getCommonName());
+		if (! ldap.exists(accountsDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(accountsDN);
+		}
+		Name signaturesDN = NameResolver.getDomainSignaturesDN(getCommonName());
+		if (! ldap.exists(signaturesDN, ORGANIZATIONAL_UNIT) ) {
+			ldap.addOrganizationUnit(signaturesDN);
 		}
 	}
 	

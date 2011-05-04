@@ -32,9 +32,10 @@ import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
-import javax.naming.Name;
+import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
@@ -67,6 +68,7 @@ import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.EmailSecurity;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.SecurityInfo;
+import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonAttachment;
@@ -98,8 +100,6 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	
 	private Long draftMessageUID;
 
-	private String sender;
-
 	private String recipientsTo;
 	
 	private String recipientsCc;
@@ -114,7 +114,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
     private String returnAction = NAVIGATION_FOLDER;
     
-    private Name senderMailAccountId;
+    private MailAccount senderMailAccount;
     
     private String messageBody;
     
@@ -133,6 +133,8 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     private SecurityInfo securityInfo;
     
     private WebMailController webMailController;
+    
+    private boolean appendSignature;
     
 	/**
 	 * @return the message
@@ -232,7 +234,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			}
 			for( int i = addresses.size()-1; i >= 0; i-- ) {
 				String email = AonMessage.getDisplayEmail(addresses.get(i));
-				if ( StringUtils.equalsIgnoreCase(sender, email) ) {
+				if ( StringUtils.equalsIgnoreCase(senderMailAccount.getEmail(), email) ) {
 					addresses.remove(i);
 				}
 			}
@@ -489,13 +491,19 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     }
     
     //*******************************************************************************************
+    
+    private String getPersonal() throws UnsupportedEncodingException {
+    	LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);
+    	String personal = loggedUser.getLoggedUserName();    	
+    	return MimeUtility.encodeText(personal);
+    }
+    
 	/**
 	* Method for compounding the message.
 	 * @throws WebmailException 
 	 * @throws UnsupportedEncodingException 
 	*/
 	private AonMessage compoundMessage(
-			String sender,
 			String recipientsTo,
 			String recipientsCC, 
 			String recipientsBCC,
@@ -504,9 +512,13 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			AonMessage parentAonMsg,
 			List<AonFile> fileList) 
 			throws MessagingException, WebmailException, UnsupportedEncodingException {
-    	LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);
-    	String personal = loggedUser.getLoggedUserName();    	
-    	AonMessage newMessage = getWebMailController().getServer().createAonMessage(sender, personal);
+		String personal = getPersonal();
+		Address from = new InternetAddress(senderMailAccount.getEmail(), personal);
+    	AonMessage newMessage = getWebMailController().getServer().createAonMessage( from );
+    	if (! StringUtils.isEmpty(senderMailAccount.getReplyToMail())) {
+    		Address replyTo = new InternetAddress(senderMailAccount.getReplyToMail(), personal);
+    		newMessage.getMessage().setReplyTo(new Address[]{replyTo});
+    	}
        	if (! StringUtils.isEmpty(recipientsTo)) {
        		newMessage.setRecipientsTo(recipientsTo);
        	}
@@ -519,7 +531,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
        	if (! StringUtils.isEmpty(subject)) {       	
        		newMessage.setSubject(subject);
        	}
-       	newMessage.getMessage().setHeader("X-Mailer", "OfficeWeb - AonWebMail 1.0");
+       	newMessage.getMessage().setHeader("X-Mailer", WEBMAIL_HEADER_NAME);
 
        	MimeMultipart mainPart = new MimeMultipart();
        	MimeBodyPart part = new MimeBodyPart();
@@ -542,11 +554,8 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		return newMessage; 
 	}
 
-	public AonMessage compoundMessage() throws ManagerBeanException, UnsupportedEncodingException, MessagingException, WebmailException {
-		IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
-		MailAccount mailAccount = (MailAccount) mailAccountBean.get( senderMailAccountId );   		
+	public AonMessage compoundMessage() throws ManagerBeanException, UnsupportedEncodingException, MessagingException, WebmailException {		
     	AonMessage aonMessage = compoundMessage(
-    			mailAccount.getEmail(),
     			recipientsTo,
     			recipientsCc, 
     			recipientsBcc,
@@ -559,14 +568,13 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	}
 	
 	public void initNewMessage(){
-    	MailAccount account = getWebMailController().getServer().getAccount();
-		sender = account.getEmail();
-		senderMailAccountId = account.getId();
+		senderMailAccount = getWebMailController().getServer().getAccount();
 		recipientsTo = null;
 		recipientsCc = null;
 		recipientsBcc = null;
 		subject = null;		
-		content = (account.getSignature()!=null)?account.getSignature().getSignature():"";
+		Signature signature = senderMailAccount.getSignature();
+		content = (signature!=null)?signature.getSignature():"";
     	newMsgFileList = new ArrayList<AonFile>();
 		draftMessageUID = null;
 		parentMessage = null;
@@ -574,21 +582,6 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		messageBody = null;
 		loadContacts = true;
 		setErrorMessage(null);
-	}
-	//********************************************************************************************
-
-	/**
-	 * @return the sender
-	 */
-	public String getSender() {
-		return sender;
-	}
-
-	/**
-	 * @param sender the sender to set
-	 */
-	public void setSender(String sender) {
-		this.sender = sender;
 	}
 
 	/**
@@ -653,6 +646,11 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
     public void setContent(String content){
     	this.content = content;
+    }
+    
+    public void updateMessageBody(String messageBody) {
+    	this.messageBody = messageBody;
+    	updateContent( senderMailAccount );    	
     }
 
 	//********************************************************************************************
@@ -947,7 +945,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		this.contactName = contactName;
 	}
 
-	public void initContactName() {
+	private void initContactName() {
 		this.contactName = "";
 		try {
 			if ( this.message != null ) {
@@ -990,25 +988,31 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		}
     }
 	
-	public Name getSenderMailAccountId() {
-		return senderMailAccountId;
+	public MailAccount getSenderMailAccount() {
+		return senderMailAccount;
 	}
 
-	public void setSenderMailAccountId(Name senderMailAccountId) {
-		this.senderMailAccountId = senderMailAccountId;
+	public void setSenderMailAccount(MailAccount senderMailAccount) {
+		this.senderMailAccount = senderMailAccount;
 	}
 	
 	public void onMailAccountChanged(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue() != null) {
-			IManagerBean mailAccountBean = FormUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
-			MailAccount mailAccount = (MailAccount) mailAccountBean.get( (Name) event.getNewValue() );
-			if ( mailAccount.getSignature() != null ) {
-				content = mailAccount.getSignature().getSignature() + StringUtils.defaultString(messageBody);
-			} else {
-				content = StringUtils.defaultString(messageBody);	
-			}
+			updateContent( (MailAccount) event.getNewValue() );
 		}
 	}	
+	
+	private void updateContent( MailAccount mailAccount ) {
+		if ( mailAccount.getSignature() != null ) {
+			if ( isAppendSignature() ) {
+				content = StringUtils.defaultString(messageBody) + mailAccount.getSignature().getSignature();
+			} else {
+				content = mailAccount.getSignature().getSignature() + StringUtils.defaultString(messageBody);	
+			}
+		} else {
+			content = StringUtils.defaultString(messageBody);	
+		}		
+	}
 	
 	private VelocityHelper getVelocityHelper() {
 		if ( this.velocityHelper == null ) {
@@ -1147,6 +1151,14 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
 	public void setSecurityInfo(SecurityInfo securityInfo) {
 		this.securityInfo = securityInfo;
+	}
+
+	public boolean isAppendSignature() {
+		return appendSignature;
+	}
+
+	public void setAppendSignature(boolean appendSignature) {
+		this.appendSignature = appendSignature;
 	}
 	
 }

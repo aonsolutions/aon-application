@@ -4,6 +4,8 @@ public interface IWebMailConstants {
 
 	String BUNDLE_NAME = "webmailBundle";	
 	
+	String WEBMAIL_HEADER_NAME = "OfficeWeb - AonWebMail 2.0";
+	
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
@@ -41,6 +43,7 @@ public interface IWebMailConstants {
 	// CONFIG
 	// ************************************************************
 	String CONNECT_PROPERTY = "connect";
+	String SHOW_DOMAIN_MAIL_ACCOUNTS_PROPERTY = "showDomainMailAccounts";
 	
 	// ************************************************************
 	// LDAP

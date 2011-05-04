@@ -65,6 +65,7 @@ public class MailAccountControllerListener extends ControllerAdapter {
 		MailAccountController controller = (MailAccountController) event.getController();
 		try {
 			controller.updateMailAccountList();
+			controller.updateCurrentMailAccount();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException( e.getMessage(), e );
 		}		

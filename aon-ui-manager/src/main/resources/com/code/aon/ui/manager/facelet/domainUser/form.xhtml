@@ -108,18 +108,18 @@
 									<ui:param name="controller" value="#{contact}" />
 								</ui:include>						
 		                    </aon:panelTab>
-		
-							<aon:panelTab name="signature"
-								label="#{webmailBundle.webmail_signature}">
-								<ui:include src="/com/code/aon/ui/webmail/facelet/signature/grid.xhtml" >
-									<ui:param name="controller" value="#{signature}" />
-								</ui:include>						
-		                    </aon:panelTab>
-		
+				
 							<aon:panelTab name="mailAccount"
 								label="#{webmailBundle.webmail_mailAccount}">
 								<ui:include src="/com/code/aon/ui/webmail/facelet/mailAccount/grid.xhtml" >
 									<ui:param name="controller" value="#{mailAccount}" />
+								</ui:include>						
+		                    </aon:panelTab>
+
+							<aon:panelTab name="signature"
+								label="#{webmailBundle.webmail_signature}">
+								<ui:include src="/com/code/aon/ui/webmail/facelet/signature/grid.xhtml" >
+									<ui:param name="controller" value="#{signature}" />
 								</ui:include>						
 		                    </aon:panelTab>
 						</c:if>

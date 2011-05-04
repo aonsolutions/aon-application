@@ -1,11 +1,8 @@
 package com.code.aon.ui.manager.event;
 
-import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ui.company.controller.ICompanyConstants.COMPANY_CONTROLLER_NAME;
 import static com.code.aon.ui.manager.controller.DomainController.DEFAULT_MAX_DOCUMENT_SIZE;
 import static com.code.aon.ui.manager.controller.DomainController.DEFAULT_MAX_TOTAL_DOCUMENT_SIZE;
-
-import javax.naming.Name;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -16,7 +13,6 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.ldap.LdapException;
-import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainUser;
@@ -33,6 +29,7 @@ import com.code.aon.ui.manager.controller.DomainUserController;
 import com.code.aon.ui.manager.controller.IManagerConstants;
 import com.code.aon.ui.manager.controller.ManagerController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 
 public class DomainControllerListener extends ControllerAdapter implements IManagerConstants {
 
@@ -176,6 +173,8 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 		DomainDBConnectionController ddbc = (DomainDBConnectionController) AonUtil.getRegisteredBean(DOMAIN_DB_CONNECTION_CONTROLLER_NAME);
 		ddbc.updateBaseDN(domain.getId());		
 		ManagerController.updateController(ALIAS_CONTROLLER_NAME, domain.getId());
+		ManagerController.updateController(IWebMailConstants.BEAN_SIGNATURE, domain.getId());
+		ManagerController.updateController(IWebMailConstants.BEAN_MAIL_ACCOUNT, domain.getId());		
 	}
 	
 	private void initCompanyData( DomainController dc) {
@@ -202,10 +201,7 @@ public class DomainControllerListener extends ControllerAdapter implements IMana
 	
 	private void ensureDomainValues( DomainController dc ) throws DAOException, ManagerBeanException {
 		Domain domain = dc.getDomain();
-		Name aliasesDN = NameResolver.getAliasesDN(domain.getCommonName());
-		if (! dc.getLdapDAO().exists(aliasesDN, ORGANIZATIONAL_UNIT) ) {
-			dc.getLdapDAO().addOrganizationUnit(aliasesDN);
-		}
+		domain.construct( dc.getLdapDAO() );
 		boolean updated = false;		
 		if ( domain.getDomainManagement() && StringUtils.isEmpty(domain.getSubDomainSuffix()) ) {
 			domain.setSubDomainSuffix(DEFAULT_SUBDOMAIN_SUFFIX);

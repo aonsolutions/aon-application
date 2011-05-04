@@ -1,6 +1,7 @@
 package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
+import static com.code.aon.ldap.NameResolver.DOMAINS;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -10,6 +11,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.naming.Name;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,29 +50,35 @@ public class SignatureController extends LdapBasicController implements IWebMail
 
 	@Override
 	public void updateBaseDN(Name parent) {
-		String user = NameResolver.getFirstValue(parent);
-		String domain = NameResolver.getValue(parent, 2);
-		updateBaseDN(domain, user);
+		String container = NameResolver.getValue(parent, 1);
+		if ( StringUtils.equals(container, DOMAINS) ) {
+			String domain = NameResolver.getFirstValue(parent);
+			updateBaseDN( domain );
+		} else {
+			String user = NameResolver.getFirstValue(parent);
+			String domain = NameResolver.getValue(parent, 2);
+			updateBaseDN(domain, user);					}		
 	}
+	
+	private void updateBaseDN( String domain )  {
+		Name baseDN = NameResolver.getDomainSignaturesDN(domain);
+		if ( getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
+			getLdapDAO().setBaseDN( baseDN );
+		}
+	}	
+	
+	private void updateBaseDN( String domain, String user )  {
+		Name baseDN = NameResolver.getUserSignaturesDN(domain, user);
+		if ( getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
+			getLdapDAO().setBaseDN( baseDN );	
+		}
+	}			
 	
 	@Override
 	protected void initDAO() {
 		AuthPrincipal auth = Utils.getAuthPrincipal();
 		updateBaseDN(auth.getDomain(), auth.getShortName());
 	}
-	
-
-	private void updateBaseDN( String domain, String user )  {
-		Name baseDN = NameResolver.getUserSignaturesDN(domain, user);
-		if ( getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
-			getLdapDAO().setBaseDN( baseDN );	
-		} else {
-			baseDN = NameResolver.getDomainSignaturesDN(domain);
-			if ( getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
-				getLdapDAO().setBaseDN( baseDN );
-			}
-		}		
-	}	
 
 	public List<SelectItem> getSignatures() {
 		return signatures;
