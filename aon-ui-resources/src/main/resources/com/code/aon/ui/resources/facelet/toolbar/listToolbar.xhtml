@@ -5,7 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml" >
-		<aon:valueParam name="toolbarDescription" default="#{bundle.aon_listing}" />
+		<aon:valueParam name="toolbarDescription" default="#{bundle.aon_list}" />
 		<aon:valueParam name="toolbarID" default="#{controller.beanName}Toolbar" />	
 		<aon:methodParam name="searchActionListener" default="#{controller.onEditSearch}" type="actionListener" />
 		<aon:methodParam name="searchAction" default="#{controller.beanName}_search" resolve="true" />
