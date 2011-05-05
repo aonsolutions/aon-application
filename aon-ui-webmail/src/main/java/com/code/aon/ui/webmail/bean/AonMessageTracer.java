@@ -9,6 +9,7 @@ import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.Part;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.bean.AonMessage;
 import com.code.aon.webmail.bean.AonMessageUtils;
 import com.code.aon.webmail.bean.IMimeType;
-import com.sun.mail.util.BASE64DecoderStream;
 
 /**
  * Used to store message information.
@@ -29,7 +29,7 @@ public class AonMessageTracer implements IMimeType {
 	private final static Logger LOGGER = LoggerFactory.getLogger(BeanManager.class);
 
 	private static final Pattern CID_PATTERN = Pattern.compile(
-			"=\\s*[\"\'](cid:[^\"\']+)[\"\']", Pattern.CASE_INSENSITIVE);
+			"=\\s*[\"\']?(cid:[^ >\"\']+)", Pattern.CASE_INSENSITIVE);
 	
 	private Message message;
 	
@@ -37,15 +37,28 @@ public class AonMessageTracer implements IMimeType {
 		this.message = message;
 	}
 
-	private String traceText(Object mimepart) throws MessagingException, IOException {
-		String value = parseCids((String) mimepart);
-		value = AonMessageUtils.parse_tags(value);
-		value = AonMessageUtils.parse_cr(value);
-		return value;
+	private boolean isContentText(Part part) throws MessagingException {
+		return part.isMimeType(TEXT_ANY) && (part.getFileName() == null);
 	}
-
-	private String traceHTML(Object mimepart) throws MessagingException, IOException {
-		return parseCids((String) mimepart);
+	
+	private String traceText(Part part) throws MessagingException, IOException {
+		return traceText(part, part.getContent());
+	}
+	
+	private String traceText(Part part, Object content) throws MessagingException {
+		if (content instanceof String) {
+			String data = (String) content; 
+			if (part.isMimeType(TEXT_PLAIN)) {
+				data = AonMessageUtils.parse_tags(data);
+				data = AonMessageUtils.parse_cr(data);
+			} else if (part.isMimeType(TEXT_HTML)) {
+				data = parseCids( data );
+			}
+			return data;
+		} else {
+			LOGGER.warn( "Text/* String content expected: {}", part );
+		}
+		return null;
 	}
 
 	private String trace_alternative(Object mimepart)
@@ -55,16 +68,10 @@ public class AonMessageTracer implements IMimeType {
 			Multipart multipart = (Multipart) mimepart;
 			for (int i = 0; i < multipart.getCount(); i++) {
 				BodyPart bodyPart = multipart.getBodyPart(i);
-				Object content = bodyPart.getContent();
-				if (content instanceof Multipart) {
-					data = traceAll((Multipart) content).toString();
-				} else if (content instanceof String) {
-					data = (String) content;
-					if (bodyPart.isMimeType(TEXT_PLAIN)) {
-						data = AonMessageUtils.parse_tags(data);
-						data = AonMessageUtils.parse_cr(data);
-					}
-					data = parseCids(data);
+				if (bodyPart.isMimeType(MULTIPART_ANY)) {
+					data = traceAll( (Multipart) bodyPart.getContent() );
+				} else if ( isContentText(bodyPart) ) {
+					data = traceText(bodyPart);
 				} else {
 					LOGGER.warn( "Multipart/alternative unexpected content: {}", bodyPart.getContentType() );					
 				}
@@ -73,11 +80,12 @@ public class AonMessageTracer implements IMimeType {
 		return data;
 	}
 
-	private String trace_mixed(Object mimepart) throws MessagingException,
+	private String trace_mixed(Part part) throws MessagingException,
 			IOException {
 		String data = "";
-		if (mimepart instanceof Multipart) {
-			Multipart multipart = (Multipart) mimepart;
+		Object content = part.getContent();
+		if (content instanceof Multipart) {
+			Multipart multipart = (Multipart) content;
 			for (int i = 0; i < multipart.getCount(); i++) {
 				BodyPart bodyPart = multipart.getBodyPart(i);
 				if (bodyPart.isMimeType(MULTIPART_ALTERNATIVE)) {
@@ -85,48 +93,30 @@ public class AonMessageTracer implements IMimeType {
 					if (multipart2.getBodyPart(i).isMimeType(TEXT_ANY)) {
 						int numPartsAltRel = multipart2.getCount();
 						for (int j = 0; j < numPartsAltRel; ++j) {
-							data = (String) multipart2.getBodyPart(j)
-									.getContent();
-							if (multipart2.getBodyPart(i)
-									.isMimeType(TEXT_PLAIN)) {
-							}
+							data = (String) multipart2.getBodyPart(j).getContent();
 						}
 						data = parseCids(data);
-					} else {
-						if (bodyPart.isMimeType(APPLICATION_ANY)) {
-							BASE64DecoderStream b64ds = (BASE64DecoderStream) bodyPart
-									.getContent();
-						}
 					}
-				} else if (bodyPart.isMimeType(TEXT_HTML) || bodyPart.isMimeType(TEXT_PLAIN)) {
-					String tmpdata = (String) bodyPart.getContent();
-					if (bodyPart.isMimeType(TEXT_PLAIN)) {
-						tmpdata = AonMessageUtils.parse_tags(tmpdata);
-						tmpdata = AonMessageUtils.parse_cr(tmpdata);
-					}
-					if (bodyPart.getFileName() == null) {
-						data = tmpdata;
-					}
-					return data;
+				} else if ( isContentText(bodyPart) ) {
+					return traceText(bodyPart);
 				} else {
 					LOGGER.warn( "Multipart/mixed unexpected content: {}", bodyPart.getContentType() );					
 				}
 			}
-		} else if (mimepart instanceof String) {
-			data = parseCids((String) mimepart);
-			data = AonMessageUtils.parse_tags(data);
-			data = AonMessageUtils.parse_cr(data);
+		} else if ( isContentText(part) ) {
+			return traceText(part, content);
 		} else {
-			LOGGER.warn( "Multipart/mixed unexpected content: {}", mimepart );
+			LOGGER.error( "Multipart/mixed unexpected content: {}", part );
 		}
 		return data;
 	}
 
-	private String trace_related(Object mimepart) throws MessagingException,
+	private String trace_related(Part part) throws MessagingException,
 			IOException {
 		String data = "";
-		if (mimepart instanceof Multipart) {
-			Multipart multipart = (Multipart) mimepart;
+		Object content = part.getContent();
+		if (content instanceof Multipart) {
+			Multipart multipart = (Multipart) content;
 			for (int i = 0; i < multipart.getCount(); i++) {
 				BodyPart bodyPart = multipart.getBodyPart(i);
 				if (bodyPart.isMimeType(MULTIPART_ALTERNATIVE)) {
@@ -134,35 +124,20 @@ public class AonMessageTracer implements IMimeType {
 					if (multipart2.getBodyPart(i).isMimeType(TEXT_ANY)) {
 						int numPartsAltRel = multipart2.getCount();
 						for (int j = 0; j < numPartsAltRel; ++j) {
-							data = (String) multipart2.getBodyPart(j)
-									.getContent();
-							if (multipart2.getBodyPart(i)
-									.isMimeType(TEXT_PLAIN)) {
-							}
+							data = (String) multipart2.getBodyPart(j).getContent();
 						}
 						data = parseCids(data);
 					}
-				} else if (bodyPart.isMimeType(TEXT_HTML) || bodyPart.isMimeType(TEXT_PLAIN)) {
-					String tmpdata = (String) bodyPart.getContent();
-					tmpdata = parseCids(tmpdata);
-					if (bodyPart.isMimeType(TEXT_PLAIN)) {
-						tmpdata = AonMessageUtils.parse_tags(tmpdata);
-						tmpdata = AonMessageUtils.parse_cr(tmpdata);
-					}
-					if (bodyPart.getFileName() == null) {
-						data = tmpdata;
-					}
-					return data;
+				} else if ( isContentText(bodyPart) ) {
+					return traceText(bodyPart);
 				} else {
 					LOGGER.warn( "Multipart/related unexpected content: {}", bodyPart.getContentType() );										
 				}
 			}
-		} else if (mimepart instanceof String) {
-			data = parseCids((String) mimepart);
-			data = AonMessageUtils.parse_tags(data);
-			data = AonMessageUtils.parse_cr(data);
+		} else if ( isContentText(part) ) {
+			return traceText(part, content);
 		} else {
-			LOGGER.warn( "Multipart/related unexpected content: {}", mimepart );
+			LOGGER.error( "Multipart/related unexpected content: {}", part );
 		}
 		return data;
 	}
@@ -172,23 +147,15 @@ public class AonMessageTracer implements IMimeType {
 		for (int i = 0; i < multipart.getCount(); i++) {
 			BodyPart bodyPart = multipart.getBodyPart(i);
 			if (bodyPart.isMimeType(MULTIPART_MIXED)) {
-				data.append( trace_mixed(bodyPart.getContent()) );
+				data.append( trace_mixed(bodyPart) );
 			} else if (bodyPart.isMimeType(MULTIPART_ALTERNATIVE)) {
 				data.append( trace_alternative(bodyPart.getContent()) );
 			} else if (bodyPart.isMimeType(MULTIPART_RELATED)) {
-				data.append( trace_related(bodyPart.getContent()) );
+				data.append( trace_related(bodyPart) );
 			} else if (bodyPart.isMimeType(MESSAGE_RFC822)) {
 				data.append( traceMessage((Message) bodyPart.getContent()) );
-			} else if (bodyPart.isMimeType(TEXT_HTML) || bodyPart.isMimeType(TEXT_PLAIN)) {
-				String tmpdata = (String) bodyPart.getContent();
-				tmpdata = parseCids(tmpdata);
-				if (bodyPart.isMimeType(TEXT_PLAIN)) {
-					tmpdata = AonMessageUtils.parse_tags(tmpdata);
-					tmpdata = AonMessageUtils.parse_cr(tmpdata);
-				}
-				if (bodyPart.getFileName() == null) {
-					data = new StringBuffer( tmpdata );
-				}
+			} else if ( isContentText(bodyPart) ) {
+				data = new StringBuffer( traceText(bodyPart) );
 			} else {
 				LOGGER.warn( "Multipart/* unexpected content: {}", bodyPart.getContentType() );
 			}
@@ -196,37 +163,19 @@ public class AonMessageTracer implements IMimeType {
 		return data.toString();
 	}
 
-	private String trace(Object mimepart) throws MessagingException, IOException {
-		String value = null;
-		if (mimepart instanceof Multipart) {
-			value = traceAll( (Multipart) mimepart);
-		} else if (mimepart instanceof String) {
-			value = parseCids((String) mimepart);
-			value = AonMessageUtils.parse_tags(value);
-			value = AonMessageUtils.parse_cr(value);
-			return value;
-		} else {
-			LOGGER.warn( "Unexpected content: {}", mimepart );
-		}
-		return value;
-	}
-	
 	private String traceMessage( Message message ) throws IOException, MessagingException {
 		String content = AonMessageUtils.extractBodyInnerHTML(traceContent(message));
 		return AonMessage.getMessageEnvelope(message, content, null, AonUtil.getCurrentLocale());
 	}
-
+		
 	private String traceContent( Message message ) throws IOException, MessagingException {
 		String value = null;
-		Object content = message.getContent();
-		if (message.isMimeType(TEXT_HTML)) {
-			if (message.getFileName() == null) {
-				value = traceHTML(content);
-			}
-		} else if (message.isMimeType(TEXT_PLAIN)) {
-			value = traceText(content);
+		if (message.isMimeType(MULTIPART_ANY)) {
+			value = traceAll( (Multipart) message.getContent() );
+		} else if (message.isMimeType(TEXT_ANY)) {
+			value = traceText( message );
 		} else {
-			value = trace(content);
+			LOGGER.error( "Unexpected content: {}", message.getContentType() );
 		}		
 		return value;
 	}
