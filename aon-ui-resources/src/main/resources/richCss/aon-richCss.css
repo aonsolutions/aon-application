@@ -790,16 +790,16 @@ color:#000;
 }
 
 /******* GROUP  **********/
-#aon-content  .aon-form-group{
+.aon-form-group{
 	margin:1em 0;
  }
-#aon-content .aon-form-group-title{	
+.aon-form-group-title{	
 	border-bottom:#c4c4c4 1px solid;
 	clear:both;
 	margin-bottom:0.5em;
 	padding-bottom:1px;
  }
- #aon-content .aon-form-group-title-internal{
+.aon-form-group-title-internal{
  	padding:3px 40px 2px 1em;
 	background:transparent url(images/aon-content/aon-form-group-title.png) scroll right top no-repeat;
 	display:inline;	

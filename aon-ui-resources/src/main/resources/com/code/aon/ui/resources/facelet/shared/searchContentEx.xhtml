@@ -12,10 +12,9 @@
 		<aon:div styleClass="aon-panelGrid-search">
 			<aon:div styleClass="aon-panelGrid-search-info">
 				<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
-				<h:outputLink style="font-size:1em;font-weight:bold;float:right;"
-					value="#{aonConfiguration.searchHelpURL}"
-					target="_blank" >
-					<aon:outputText value="#{bundle.aon_help}" />
+				<h:outputLink style="font-size:1em;font-weight:bold;float:right;" value="#" >
+					<aon:outputText value="[?]" />
+					<rich:componentControl for="searchHelp" event="onclick" operation="show"/>													
 				</h:outputLink>				
 			</aon:div>			
 			
@@ -46,5 +45,9 @@
 			
 		</aon:div>		
 	</aon:div>
+	
+	<c:if test="#{!skipHelpWindow}">
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/searchHelp.xhtml" />
+	</c:if>
 	
 </ui:composition>
