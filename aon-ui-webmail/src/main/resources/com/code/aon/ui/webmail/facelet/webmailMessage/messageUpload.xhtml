@@ -33,7 +33,8 @@
 					<f:facet name="label">
 						<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 					</f:facet>
-					<a4j:support event="onuploadcomplete" reRender="file_upload,fileManagerList"
+					<a4j:support event="onuploadcomplete" reRender="aonContent"
+						actionListener="#{webmailFolder.refresh}"
 						oncomplete="Richfaces.hideModalPanel('messageUploadModalPanel');" />
 				</aon:fileUpload>
 			</aon:form>	

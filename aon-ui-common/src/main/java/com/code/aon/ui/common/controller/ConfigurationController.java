@@ -80,10 +80,6 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	private static final String AON_CONFIG_XML = "/WEB-INF/aon-config.xml";
 	
 	private static final String CONFIG_SHCHEMA = "config.xsd";
-	
-	private static final String AON_DESKTOP = "aon-desktop";
-	
-	private static final String HELP_SEARCH = "help_search";
 
 	/** The all style sheets. */
 	private List<String> styleSheets;
@@ -406,15 +402,6 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
 	 */
 	public String getHelpURL() {
 		return getURL(this.application, this.currentAction);
-	}
-
-	/**
-	 * Gets the search help url.
-	 *
-	 * @return the search help url
-	 */
-	public String getSearchHelpURL() {
-		return getURL(AON_DESKTOP, HELP_SEARCH);
 	}
 	
 	private class LogErrorHandler implements ErrorHandler {

@@ -661,13 +661,10 @@ public class AonMessage implements IMimeType, BundleConstants {
 	}
 
 	private boolean isInline( Part part ) throws MessagingException {
-		String disposition = part.getDisposition();
-		if (! StringUtils.isEmpty(disposition) ) {
-			return StringUtils.endsWithIgnoreCase(disposition, Part.INLINE);
-		}
-		if (part.getFileName() != null) {
+		if ( part.isMimeType(IMAGE_ANY) || part.isMimeType(TEXT_ANY) ) {
 			String contentId = WebmailUtil.getContentId(part);
 			if (! StringUtils.isEmpty(contentId) ) {
+				LOGGER.info( "Inline file name: " + part.getFileName() );
 				return true;
 			}
 		}
