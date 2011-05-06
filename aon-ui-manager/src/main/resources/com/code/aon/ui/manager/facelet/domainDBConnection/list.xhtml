@@ -19,7 +19,7 @@
 						title="#{bundle.aon_key_cancel_accelerator}"
 						value="#{bundle.aon_back}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						action="domain_form"
+						action="domain_form" actionListener="#{domain.onBackToDomain}"
 						accesskey="#{bundle.aon_key_cancel}" />
 				</ui:define>
 			</ui:decorate>

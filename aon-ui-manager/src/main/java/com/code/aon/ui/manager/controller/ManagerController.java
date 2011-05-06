@@ -19,6 +19,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.naming.Name;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.enumeration.WorkGroupStatus;
+import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.ql.Criteria;
@@ -327,12 +329,20 @@ public class ManagerController implements IManagerConstants {
         }		
         return exitVal;
 	}
-
 	
 	public static void updateController( String name, Name parent ) {
+		updateController(name, parent, true);
+	}
+
+	public static void updateController( String name, Name parent, boolean force ) {
 		LdapBasicController controller = (LdapBasicController) AonUtil.getRegisteredBean(name);
+		LdapDAO dao = controller.getLdapDAO();
+		Name oldDN = dao.getBaseDN();
 		controller.updateBaseDN(parent);
-		controller.onSearch(null);				
+		Name currentDN = dao.getBaseDN();
+		if ( force || (! ObjectUtils.equals(oldDN, currentDN)) ) {
+			controller.onSearch(null);	
+		}				
 	}
 	
 }

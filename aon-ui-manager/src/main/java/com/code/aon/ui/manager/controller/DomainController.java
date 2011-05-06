@@ -48,6 +48,7 @@ import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.event.BankAccountValidationListener;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
 import com.code.aon.ui.webmail.converter.LdapTransferObjectConverter;
 
@@ -393,6 +394,12 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 
 	public Integer getPreviousMaxTotalDocumentSize() {
 		return previousMaxTotalDocumentSize;
+	}
+
+	public void onBackToDomain( ActionEvent event ) {
+		Domain domain = getDomain();
+		ManagerController.updateController(IWebMailConstants.BEAN_SIGNATURE, domain.getId(), false);
+		ManagerController.updateController(IWebMailConstants.BEAN_MAIL_ACCOUNT, domain.getId(), false);				
 	}
 	
 }
