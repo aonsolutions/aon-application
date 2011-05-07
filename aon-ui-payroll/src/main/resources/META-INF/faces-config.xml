@@ -66,7 +66,7 @@
 				<value>#{contractSearch}</value>
 				<value>#{contractControllerListener}</value>
 				<value>#{contractCalendarEventLinesListener}</value>
- 			</list-entries>
+			</list-entries>
 		</managed-property>
 	</managed-bean>
 	
@@ -158,7 +158,21 @@
 			<property-name>beanName</property-name>
 			<value>contractPayment</value>
 		</managed-property>
+		<managed-property> 
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractPaymentSearchListener}</value>
+			</list-entries>
+		</managed-property>	
 	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>contractPaymentSearchListener</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.event.contract.ContractPaymentSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
 	
 	<!-- ************ CONTRACT DEDUCTION ************** -->
 	<managed-bean>
@@ -178,7 +192,7 @@
 	<!-- ************ CONTRACT DATA ************** -->
 	<managed-bean>
 		<managed-bean-name>contractData</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractDataController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -193,6 +207,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{contractDataControllerListener}</value>
+				<value>#{contractDataSearchListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -201,6 +216,12 @@
 		<managed-bean-name>contractDataControllerListener</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.ContractDataControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>contractDataSearchListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.ContractDataSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
 	<!-- ************ PAYMENT UPDATE ************** -->
@@ -236,6 +257,8 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{salarySearch}</value>
+				<value>#{salaryEmbargoLinesListener}</value>
+				<value>#{salaryCostLinesListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -247,6 +270,120 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>salaryCostLinesListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>salaryCost</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>SalaryCost_salary_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** SALARY COST **** -->
+	<managed-bean>
+		<managed-bean-name>salaryCost</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.salary.SalaryCostController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.SalaryCost</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>salaryCost</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>SalaryCost_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>salary</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>salary.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>salaryEmbargoLinesListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>salaryEmbargo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>SalaryEmbargo_salary_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** SALARY EMBARGO **** -->
+	<managed-bean>
+		<managed-bean-name>salaryEmbargo</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.salary.SalaryEmbargoController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.SalaryEmbargo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>salaryEmbargo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>SalaryEmbargo_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>salary</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>salary.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ************ SALARY DRAFT ************** -->
 	<managed-bean>
@@ -616,6 +753,93 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!--  **** CONTRACT EMBARGO **** -->
+	<managed-bean>
+		<managed-bean-name>contractEmbargo</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractEmbargoController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.ContractEmbargo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractEmbargo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractEmbargo_startDate desc</value>
+		</managed-property>
+		<managed-property> 
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractSalaryEmbargoLinesListener}</value>
+ 			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!--  **** SALARY EMBARGO **** -->
+	<managed-bean>
+		<managed-bean-name>contractSalaryEmbargoLinesListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>contractSalaryEmbargo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>SalaryEmbargo_contractEmbargo_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>contractSalaryEmbargo</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.SalaryEmbargo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>salaryEmbargo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>SalaryEmbargo_salary_startDate desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>contractEmbargo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>contractEmbargo.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ************ AGREEMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>agreement</managed-bean-name>
@@ -799,7 +1023,7 @@
 	<!-- ************ AGREEMENT LEVEL DATA ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementLevelData</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.agreement.AgreementLevelDataController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -826,8 +1050,23 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>		
+		<managed-property> 
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{agreementLevelDataSearch}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>agreementLevelDataSearch</managed-bean-name>
+		<managed-bean-class>
+			com.esferalia.aon.ui.payroll.event.agreement.AgreementLevelDataSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
 	<!-- ************ AGREEMENT LEVEL Payment LISTENER ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementLevelPaymentChildListener</managed-bean-name>
@@ -932,7 +1171,7 @@
 	<!-- ************ CNO LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>cnoLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -959,7 +1198,7 @@
 	<!-- ************ CONTRACT LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>contractLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -998,7 +1237,7 @@
 	<!-- ************ AGREEMENT LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementLookup</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -1021,6 +1260,33 @@
 			<value>/com/esferalia/aon/ui/payroll/facelet/agreement/searchLookupContent.xhtml</value>
 		</managed-property>
 	</managed-bean>	
+	
+		<!-- ************ PaymentConcept LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>paymentConceptLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>paymentConceptLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.esferalia.aon.payroll.PaymentConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>PaymentConcept_code</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/paymentConcept/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/paymentConcept/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ============================================= -->
 	<!-- ==============  NAVIGATION ================== -->
@@ -1095,6 +1361,14 @@
 		<navigation-case>
 			<from-outcome>contractData_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/data/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Contract Embargo ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contractEmbargo_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/embargo/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 

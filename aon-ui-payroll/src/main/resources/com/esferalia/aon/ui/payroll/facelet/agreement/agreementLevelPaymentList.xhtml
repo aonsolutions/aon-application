@@ -19,7 +19,14 @@
 		
 		<ui:define name="columns">
 
-			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+				<f:facet name="header">
+					<aon:outputText	value="#{payrollBundle.payroll_agreementLevel_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.salaryType}" />
+			</aon:column>
+			
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-100">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_start_date}" />
 				</f:facet>
@@ -29,7 +36,7 @@
 				</aon:outputText>
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-100">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_end_date}" />
 				</f:facet>
@@ -39,11 +46,18 @@
 				</aon:outputText>		
 			</aon:column>
 
-			<aon:column styleClass="aon-editDataTable-textColumn aon-width-250">
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 				<f:facet name="header">
-					<aon:outputText	value="#{payrollBundle.payroll_agreementLevel_type}" />
+					<aon:outputText value="#{payrollBundle.payroll_salary_payment_month}" />
 				</f:facet>
-				<aon:outputText value="#{to.type}" />
+				<aon:outputText value="#{to.month}" />
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+				<f:facet name="header">
+					<aon:outputText	value="#{bundle.aon_concept}" />
+				</f:facet>
+				<aon:outputText value="#{to.paymentConcept.code}" />
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">

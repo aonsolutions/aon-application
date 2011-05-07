@@ -21,6 +21,7 @@ import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractCalendarEvent;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.ContractPayment;
@@ -30,7 +31,9 @@ import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryDeduction;
+import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.SystemDeduction;
@@ -65,6 +68,7 @@ public class PayrollAliasWriter {
 				ContractCalendarEvent.class.getName(),
 				ContractData.class.getName(),
 				ContractDeduction.class.getName(),
+				ContractEmbargo.class.getName(),
 				ContractLeave.class.getName(),
 				ContractLeaveDetail.class.getName(),
 				ContractPayment.class.getName(),
@@ -74,7 +78,9 @@ public class PayrollAliasWriter {
 				LeaveBatchDetail.class.getName(),
 				PaymentConcept.class.getName(),
 				Salary.class.getName(),
+				SalaryCost.class.getName(),
 				SalaryDeduction.class.getName(),
+				SalaryEmbargo.class.getName(),
 				SalaryPayment.class.getName(),
 				SystemData.class.getName(),
 				SystemDeduction.class.getName(),

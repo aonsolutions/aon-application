@@ -30,7 +30,7 @@
 		<aon:selectInputDate id="AgreementLevelPayment_endDate" value="#{agreementLevelPayment.to.endDate}"
 			timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
 	
-		<aon:outputLabel for="AgreementLevelPayment_PaymentConcept" value="#{bundle.aon_concept}" />
+		<aon:outputLabel value="#{bundle.aon_concept}" />
 		<aon:div styleClass="aon-lookup">
 			<aon:lookupInputText id="PaymentConcept_code" lookup="#{paymentConceptLookup}"
 				reRender="PaymentConcept_description"

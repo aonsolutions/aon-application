@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:decorate	
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{contractData}" />
+		<ui:define name="columns">
+			
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractData_name"
+						value="#{bundle.aon_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.name}" rendered="#{formList}" />
+				<aon:inputText id="ContractData_name" required="true"
+					rendered="#{formEdit}" size="16"
+					value="#{controller.to.name}" maxlength="16" >
+					<f:validateLength maximum="16"/>
+					<a4j:region>
+						<rich:suggestionbox id="ContractData_name_suggestion"
+							for="ContractData_name"
+							onselect="suggestionBoxActive=false;"
+							suggestionAction="#{controller.expressionContext}" var="exp"
+							similarityGroupingId=""
+							tokens=" +-/*%()"
+							fetchValue="#{exp}"
+							immediate="true" limitToList="true" ajaxSingle="true"
+							eventsQueue="ContractData_nameSug" ignoreDupResponses="true"
+							requestDelay="100" width="500" height="200"
+							nothingLabel="#{bundle.aon_search_no_results}">
+							<aon:column>
+								<aon:outputText value="#{exp}"/>
+							</aon:column>
+						</rich:suggestionbox>
+					</a4j:region>
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText id="ContractData_name-New" required="true"
+						rendered="#{formNew}" size="16"
+						value="#{controller.to.name}" maxlength="16" >
+						<f:validateLength maximum="16"/>
+						<a4j:region>
+							<rich:suggestionbox id="ContractData_name-New_suggestion"
+								for="ContractData_name-New"
+								onselect="suggestionBoxActive=false;"
+								suggestionAction="#{controller.expressionContext}" var="exp"
+								similarityGroupingId=""
+								tokens=" +-/*%()"
+								fetchValue="#{exp}"
+								immediate="true" limitToList="true" ajaxSingle="true"
+								eventsQueue="ContractData_name-NewSug" ignoreDupResponses="true"
+								requestDelay="100" width="500" height="200"
+								nothingLabel="#{bundle.aon_search_no_results}">
+								<aon:column>
+									<aon:outputText value="#{exp}"/>
+								</aon:column>
+							</rich:suggestionbox>
+						</a4j:region>
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+		
+			<aon:column styleClass="aon-editDataTable-textColumn">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractData_expression"
+						value="#{payrollBundle.payroll_salary_expression}" />
+				</f:facet>
+				<aon:outputText value="#{to.expression}" rendered="#{formList}" />
+				<aon:inputText id="ContractData_expression" required="true"
+					rendered="#{formEdit}" size="20"
+					value="#{controller.to.name}" maxlength="64" >
+					<f:validateLength maximum="64"/>
+					<a4j:region>
+						<rich:suggestionbox id="ContractData_expression_suggestion"
+							for="ContractData_expression"
+							onselect="suggestionBoxActive=false;"
+							suggestionAction="#{controller.expressionContext}" var="exp"
+							similarityGroupingId=""
+							tokens=" +-/*%()"
+							fetchValue="#{exp}"
+							immediate="true" limitToList="true" ajaxSingle="true"
+							eventsQueue="ContractData_expressionSug" ignoreDupResponses="true"
+							requestDelay="100" width="500" height="200"
+							nothingLabel="#{bundle.aon_search_no_results}">
+							<aon:column>
+								<aon:outputText value="#{exp}"/>
+							</aon:column>
+						</rich:suggestionbox>
+					</a4j:region>
+				</aon:inputText>
+				<f:facet name="footer">
+					<aon:inputText id="ContractData_expression-New" required="true"
+						rendered="#{formNew}" size="20"
+						value="#{controller.to.name}" maxlength="64" >
+						<f:validateLength maximum="64"/>
+						<a4j:region>
+							<rich:suggestionbox id="ContractData_expression-New_suggestion"
+								for="ContractData_expression-New"
+								onselect="suggestionBoxActive=false;"
+								suggestionAction="#{controller.expressionContext}" var="exp"
+								similarityGroupingId=""
+								tokens=" +-/*%()"
+								fetchValue="#{exp}"
+								immediate="true" limitToList="true" ajaxSingle="true"
+								eventsQueue="ContractData_expression-NewSug" ignoreDupResponses="true"
+								requestDelay="100" width="500" height="200"
+								nothingLabel="#{bundle.aon_search_no_results}">
+								<aon:column>
+									<aon:outputText value="#{exp}"/>
+								</aon:column>
+							</rich:suggestionbox>
+						</a4j:region>
+					</aon:inputText>
+				</f:facet>
+			</aon:column>
+			
+			<aon:column alias="contractData.startDate" styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractData_startDate" value="#{bundle.aon_start_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.startDate}" rendered="#{formList}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
+				<aon:selectInputDate id="ContractData_startDate" rendered="#{formEdit}"
+					value="#{controller.to.startDate}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
+				<f:facet name="footer">
+					<aon:selectInputDate id="ContractData_startDate-New" rendered="#{formNew}"
+						value="#{controller.to.startDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</f:facet>
+			</aon:column>
+		
+			<aon:column alias="contractData.endDate" styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+				<f:facet name="header">
+					<aon:outputLabel for="ContractData_endDate" value="#{bundle.aon_end_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.endDate}" rendered="#{formList}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
+				<aon:selectInputDate id="ContractData_endDate" rendered="#{formEdit}"
+					value="#{controller.to.endDate}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}"/>
+				<f:facet name="footer">
+					<aon:selectInputDate id="ContractData_endDate-New" rendered="#{formNew}"
+						value="#{controller.to.endDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+				</f:facet>	
+			</aon:column>
+		
+		</ui:define>
+	</ui:decorate>
+
+</ui:composition>

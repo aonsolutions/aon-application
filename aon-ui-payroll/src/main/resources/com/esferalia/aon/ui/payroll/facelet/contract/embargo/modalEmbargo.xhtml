@@ -8,59 +8,58 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="paymentModalContainer">
+	<aon:panelGroup id="embargoModalContainer">
 		<c:if test="#{controller.modalPanelVisible}">
-			<rich:modalPanel id="paymentModalPanel" minHeight="600"
+			<rich:modalPanel id="embargoModalPanel" minHeight="600"
 				minWidth="900" showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{payrollBundle.payroll_salary_payment}" />
+						<aon:outputText value="#{payrollBundle.payroll_salary_embargos_tab}" />
 					</aon:div>
 				</f:facet>
-				<aon:form id="paymentModalForm">
+				<aon:form id="embargoModalForm">
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div style="width:100%">
 							<aon:div styleClass="aon-popupWindow-content-internal">
 								<aon:div style="width:99%">
 									<aon:div styleClass="aon-toolbar">
-										<aon:commandButton id="paymentSave"
+										<aon:commandButton id="embargoSave"
 											value="#{bundle.aon_accept}"
-											reRender="paymentModalContainer,#{container}"
+											reRender="embargoModalContainer,#{container}"
 											actionListener="#{controller.onSave}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 										</aon:commandButton>
-										<aon:commandButton id="paymentCancel"
+										<aon:commandButton id="embargoCancel"
 											value="#{bundle.aon_cancel}"
-											reRender="paymentModalContainer,#{container}"
+											reRender="embargoModalContainer,#{container}"
 											actionListener="#{controller.onCancel}"
 											immediate="true"
 											styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										</aon:commandButton>
-										<aon:commandButton id="paymentRemove"
+										<aon:commandButton id="embargoRemove"
 											value="#{bundle.aon_remove}"
-											reRender="paymentModalContainer,#{container}"
+											reRender="embargoModalContainer,#{container}"
 											actionListener="#{controller.onRemove}"
 											immediate="true"
 											styleClass="aon-finding-toolbar-item aon-icon-delete"
 											onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;">
 										</aon:commandButton>
 									</aon:div>
+
 									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 										<aon:panelGrid id="paymentMenuGrid" columns="2" dir="true" style="width: 80%;">
-											<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/formContent.xhtml">
+											<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/formContent.xhtml">
 												<ui:param name="controller" value="#{controller}" />
-												<ui:param name="containerID" value="paymentMenuGrid" />
-												<ui:param name="skipCurrentMonth" value="#{skipCurrentMonth}" />
-												<ui:param name="contextDisabled" value="#{contextDisabled}" />
 											</ui:include>
 										</aon:panelGrid>
 									</aon:div>
 									
 									<aon:div styleClass="aon-scroll-area" >
-										<aon:outputText value="#{payrollBundle.payroll_contract_variables}" />
+										<aon:outputText value="#{payrollBundle.payroll_salary_embargos_detail}" />
 										<ui:include 
-											src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" />
+											src="/com/esferalia/aon/ui/payroll/facelet/salary/embargo/list_detail.xhtml" />
 									</aon:div>
+
 								</aon:div>
 							</aon:div>
 						</aon:div>

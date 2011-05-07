@@ -218,6 +218,20 @@ public class ContractController extends BasicController {
 			throw new AbortProcessingException(msg,e);
 		}						
 	}
+	public void onShowEmbargos( ActionEvent event ) {
+		try {
+			Contract to = (Contract) getTo();
+			ContractEmbargoController c = (ContractEmbargoController) FormUtil.getController(IPayrollConstants.CONTRACT_EMBARGO_CONTROLLER);
+			c.onEditSearch(event);
+			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_EMBARGO_CONTRACT_ID), to.getId());
+			c.onSearch(event);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible mostrar los embargos del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}						
+	}
 	
 	public void onEnterpriseChanged( LookupChangeEvent event ) {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {

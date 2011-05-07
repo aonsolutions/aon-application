@@ -32,6 +32,7 @@
 				</ui:include>
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/gridContent.xhtml" >
 					<ui:param name="controller" value="#{salary.to.deductions}" />
+					<ui:param name="embargo" value="#{salary.embargo}" />
 					<ui:param name="totalDeduction" value="#{salary.to.totalDeduction}" />
 				</ui:include>
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formBases.xhtml" >

@@ -39,12 +39,15 @@ import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class SalaryController extends BasicController implements IPayrollConstants {
@@ -199,6 +202,20 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		Iterator<?> iter = registryAttachBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAttachment)iter.next();
+		}
+		return null;
+	}
+	
+	//TODO los embargos los debe dar el propio salary
+	//     al implementar esto, borrar este metodo que alimenta tanto a la pantalla como a la impresion 
+	@SuppressWarnings("unchecked")
+	public List<SalaryEmbargo> getEmbargo(){
+		IController controller = FormUtil.getController(IPayrollConstants.SALARY_EMBARGO_CONTROLLER);
+		try {
+			return (List<SalaryEmbargo>) controller.getModel().getWrappedData();
+		} catch (ManagerBeanException e) {
+			String msg = "Error al buscar los embargos";
+			LOGGER.error(msg);
 		}
 		return null;
 	}

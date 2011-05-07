@@ -78,8 +78,6 @@
 								<c:if test="#{salaryDraft.showSalaryDifference}" >
 									<aon:div style="width: 840px; margin-top: 10px;">
 										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/savedDraftDeduction.xhtml" >
-<!--  
--->											
 											<ui:param name="controller" value="#{salaryDraft.savedSalaryDraft.deductions}" />
 											<ui:param name="totalDeduction" value="#{salaryDraft.savedSalaryDraft.totalDeduction}" />
 											<ui:param name="deductions" value="#{salaryDraft.printer.deductions}" />

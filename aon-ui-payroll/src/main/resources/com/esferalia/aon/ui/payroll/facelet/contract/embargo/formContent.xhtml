@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+		<aon:outputLabel for="ContractEmbargo_embargableType" value="#{bundle.aon_type}" />
+		<aon:selectOneMenu id="ContractEmbargo_embargableType"
+			value="#{controller.to.embargableType}">
+			<f:selectItem value="#{null}" itemLabel=" - " />
+			<f:selectItems value="#{payrollCollections.embargableTypeList}"  />
+		</aon:selectOneMenu>	
+	
+		<aon:outputLabel for="ContractEmbargo_startDate" value="#{bundle.aon_start_date}" />
+		<aon:selectInputDate id="ContractEmbargo_startDate"
+			value="#{controller.to.startDate}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+			
+		<aon:outputText value="#{payrollBundle.payroll_salary_embargos_end_date_estimated}"
+			rendered="#{controller.to.endDate==null}" />
+		<aon:div rendered="#{controller.to.endDate==null}">
+			<aon:outputText value="#{controller.estimatedEndDate}" >
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>  
+			<aon:outputText value="&#63;" style="color: red"
+				styleClass="aon-italic" />
+		</aon:div>
+	
+		<aon:outputText value="#{bundle.aon_end_date}" 
+			rendered="#{controller.to.endDate!=null}" />
+		<aon:outputText value="#{controller.to.endDate}"
+			rendered="#{controller.to.endDate!=null}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>  
+		
+		<aon:outputLabel for="ContractEmbargo_amount" value="#{bundle.aon_amount}" />
+		<aon:div>
+			<aon:inputText id="ContractEmbargo_amount" required="true"
+				size="20" maxlength="18"
+				value="#{controller.to.amount}" />
+			<aon:outputText styleClass="aon-italic aon-margin-left"	
+				value="#{payrollBundle.payroll_salary_embargos_solded}:" />
+			<aon:outputText value="#{controller.embargedAmount}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+			<aon:outputText	styleClass="aon-italic aon-margin-left"
+				value="#{payrollBundle.payroll_salary_embargos_pending}:" />
+			<aon:outputText	value="#{controller.pendingAmount}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:div>
+	
+		<aon:outputLabel for="ContractEmbargo_description" value="#{bundle.aon_description}" />
+		<aon:inputText id="ContractEmbargo_description" required="true"
+			size="64" maxlength="64"
+			value="#{controller.to.description}" />
+	
+</ui:composition>

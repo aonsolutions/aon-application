@@ -28,6 +28,13 @@
 				</aon:div>
 			</f:facet>
 		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputText	value="#{bundle.aon_type}" />
+			</f:facet>
+			<aon:outputText value="#{to.salaryType}" />
+		</aon:column>
 
 		<c:if test="#{!skipStartDateColumn}">
 			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
@@ -53,26 +60,50 @@
 			</aon:column>
 		</c:if>
 		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_salary_payment_month}" />
+			</f:facet>
+			<aon:outputText value="#{to.month}" />
+		</aon:column>
+
+<!--  
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_type}" />
 			</f:facet>
 			<aon:outputText value="#{to.type}"/>
 		</aon:column>
+-->
+		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
+			<f:facet name="header">
+				<aon:outputText	value="#{bundle.aon_concept}" />
+			</f:facet>
+			<aon:outputText value="#{to.paymentConcept.code}" />
+		</aon:column>
 
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_description}" />
 			</f:facet>
-			<aon:outputText value="#{to.fullDescription}" />
+			<aon:outputText value="#{to.paymentConcept.description}" />
+			<aon:outputText value="#{to.description}" rendered="#{to.paymentConcept.description == null}"/>
+		</aon:column>
+
 <!-- 			
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_description}" />
+			</f:facet>
+			<aon:outputText value="#{to.fullDescription}" />
 			<aon:panelGroup styleClass="aon-italic">
 				<aon:outputText value="&#160;(" />	
 				<aon:outputText value="#{to.expression}" />	
 				<aon:outputText value=")" />	
 			</aon:panelGroup>
- -->
 		</aon:column>
+ -->
 	</aon:dataTable>
 	
 </ui:composition>

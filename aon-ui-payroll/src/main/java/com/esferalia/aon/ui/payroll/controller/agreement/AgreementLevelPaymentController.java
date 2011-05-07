@@ -26,6 +26,7 @@ public class AgreementLevelPaymentController extends LinesController {
 
 	private List<SelectItem> concepts;
 	private List<String> systemDataVariables;
+	private List<String> paymentConcepts;
 
 	public void onTypeChange(ActionEvent event) {
 		setConcepts(null);
@@ -60,7 +61,6 @@ public class AgreementLevelPaymentController extends LinesController {
 		this.concepts = concepts;
 	}
 	
-	
 	public List<String> getSystemDataVariables() {
 		if (systemDataVariables == null) {
 			systemDataVariables = new LinkedList<String>();
@@ -90,6 +90,24 @@ public class AgreementLevelPaymentController extends LinesController {
 	public void setSystemDataVariables(List<String> systemDataVariables) {
 		this.systemDataVariables = systemDataVariables;
 	}
+	
+	private List<String> getPaymentConcetps() {
+		if (paymentConcepts == null) {
+			paymentConcepts = new LinkedList<String>();
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
+				Criteria criteria = new Criteria();
+				List<ITransferObject> list = bean.getList(criteria);
+				for (ITransferObject to:list) {
+					PaymentConcept pc = (PaymentConcept) to;
+					paymentConcepts.add(pc.getDescription());					
+				}
+			} catch (ManagerBeanException e) {
+				
+			}
+		}
+		return paymentConcepts;
+	}
 
 	public List<?> expressionContext(Object suggest) {
 		List<String> list = new LinkedList<String>();
@@ -107,4 +125,25 @@ public class AgreementLevelPaymentController extends LinesController {
 		Collections.sort(list);
 		return list;
 	}
+	
+	public List<?> conceptContext(Object suggest) {
+		List<String> list = new LinkedList<String>();
+		String filter = (String) suggest;
+		for (String concept :getPaymentConcetps()){
+			if (concept.startsWith(filter)) {
+				list.add(concept);
+			}
+		}
+		Collections.sort(list);
+		return list;
+	}
+	
+	public void onConceptCodeChange(ActionEvent event){
+		((AgreementLevelPayment)this.getTo()).getPaymentConcept();
+	}
+
+	public void onConceptDescriptionChange(ActionEvent event){
+		
+	}
+	
 }

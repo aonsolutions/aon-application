@@ -18,6 +18,7 @@ import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractCalendarEvent;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.ContractPayment;
@@ -27,7 +28,9 @@ import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryDeduction;
+import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.SystemDeduction;
@@ -933,6 +936,55 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for ContractEmbargo entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_EMBARGO_ENTRY = DAOConstants.getDAOConstant(ContractEmbargo.class);
+
+	/** 
+	* Alias value: ContractEmbargo_amount
+	* Hibernate value: ContractEmbargo.amount
+	*/
+	String  CONTRACT_EMBARGO_AMOUNT = CONTRACT_EMBARGO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractEmbargo_contract_id
+	* Hibernate value: ContractEmbargo.contract.id
+	*/
+	String  CONTRACT_EMBARGO_CONTRACT_ID = CONTRACT_EMBARGO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractEmbargo_description
+	* Hibernate value: ContractEmbargo.description
+	*/
+	String  CONTRACT_EMBARGO_DESCRIPTION = CONTRACT_EMBARGO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractEmbargo_endDate
+	* Hibernate value: ContractEmbargo.endDate
+	*/
+	String  CONTRACT_EMBARGO_END_DATE = CONTRACT_EMBARGO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractEmbargo_expression
+	* Hibernate value: ContractEmbargo.expression
+	*/
+	String  CONTRACT_EMBARGO_EXPRESSION = CONTRACT_EMBARGO_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContractEmbargo_id
+	* Hibernate value: ContractEmbargo.id
+	*/
+	String  CONTRACT_EMBARGO_ID = CONTRACT_EMBARGO_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ContractEmbargo_startDate
+	* Hibernate value: ContractEmbargo.startDate
+	*/
+	String  CONTRACT_EMBARGO_START_DATE = CONTRACT_EMBARGO_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
 	* DAOConstantsEntry for ContractLeave entity.
 	*/ 
 	DAOConstantsEntry CONTRACT_LEAVE_ENTRY = DAOConstants.getDAOConstant(ContractLeave.class);
@@ -1464,6 +1516,37 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for SalaryCost entity.
+	*/ 
+	DAOConstantsEntry SALARY_COST_ENTRY = DAOConstants.getDAOConstant(SalaryCost.class);
+
+	/** 
+	* Alias value: SalaryCost_amount
+	* Hibernate value: SalaryCost.amount
+	*/
+	String  SALARY_COST_AMOUNT = SALARY_COST_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SalaryCost_description
+	* Hibernate value: SalaryCost.description
+	*/
+	String  SALARY_COST_DESCRIPTION = SALARY_COST_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SalaryCost_id
+	* Hibernate value: SalaryCost.id
+	*/
+	String  SALARY_COST_ID = SALARY_COST_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SalaryCost_salary_id
+	* Hibernate value: SalaryCost.salary.id
+	*/
+	String  SALARY_COST_SALARY_ID = SALARY_COST_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
 	* DAOConstantsEntry for SalaryDeduction entity.
 	*/ 
 	DAOConstantsEntry SALARY_DEDUCTION_ENTRY = DAOConstants.getDAOConstant(SalaryDeduction.class);
@@ -1503,6 +1586,43 @@ public interface IPayrollAlias {
 	* Hibernate value: SalaryDeduction.type
 	*/
 	String  SALARY_DEDUCTION_TYPE = SALARY_DEDUCTION_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for SalaryEmbargo entity.
+	*/ 
+	DAOConstantsEntry SALARY_EMBARGO_ENTRY = DAOConstants.getDAOConstant(SalaryEmbargo.class);
+
+	/** 
+	* Alias value: SalaryEmbargo_amount
+	* Hibernate value: SalaryEmbargo.amount
+	*/
+	String  SALARY_EMBARGO_AMOUNT = SALARY_EMBARGO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SalaryEmbargo_contractEmbargo_id
+	* Hibernate value: SalaryEmbargo.contractEmbargo.id
+	*/
+	String  SALARY_EMBARGO_CONTRACT_EMBARGO_ID = SALARY_EMBARGO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SalaryEmbargo_description
+	* Hibernate value: SalaryEmbargo.description
+	*/
+	String  SALARY_EMBARGO_DESCRIPTION = SALARY_EMBARGO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SalaryEmbargo_id
+	* Hibernate value: SalaryEmbargo.id
+	*/
+	String  SALARY_EMBARGO_ID = SALARY_EMBARGO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SalaryEmbargo_salary_id
+	* Hibernate value: SalaryEmbargo.salary.id
+	*/
+	String  SALARY_EMBARGO_SALARY_ID = SALARY_EMBARGO_ENTRY.getAliasNames()[4];
 
 
 

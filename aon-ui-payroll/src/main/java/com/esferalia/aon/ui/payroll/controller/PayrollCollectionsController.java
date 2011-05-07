@@ -26,6 +26,7 @@ import com.esferalia.aon.payroll.enumeration.DisabilityCode;
 import com.esferalia.aon.payroll.enumeration.DischargeCause;
 import com.esferalia.aon.payroll.enumeration.DismissalCollective;
 import com.esferalia.aon.payroll.enumeration.EducationalLevel;
+import com.esferalia.aon.payroll.enumeration.EmbargableType;
 import com.esferalia.aon.payroll.enumeration.EmployeeType;
 import com.esferalia.aon.payroll.enumeration.EmploymentProgram;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
@@ -75,6 +76,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> schoolWorkshopList;
 	private List<SelectItem> basicCopySignatureTypeList;
 	private List<SelectItem> ageGroupList;
+	private List<SelectItem> embargableTypeList;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -518,6 +520,20 @@ public class PayrollCollectionsController {
 			}
 		}
 		return ageGroupList;
+	}
+	
+	public List<SelectItem> getEmbargableTypeList() {
+		if (embargableTypeList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			embargableTypeList = new LinkedList<SelectItem>();
+			EmbargableType[] el = EmbargableType.values();
+			for (EmbargableType c : el) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				embargableTypeList.add(item);
+			}
+		}
+		return embargableTypeList;
 	}
 		
 }

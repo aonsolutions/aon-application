@@ -106,6 +106,7 @@
 		<mapping class="com.esferalia.aon.payroll.ContractCalendarEvent"/>
 		<mapping class="com.esferalia.aon.payroll.ContractData"/>
 		<mapping class="com.esferalia.aon.payroll.ContractDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.ContractEmbargo"/>
 		<mapping class="com.esferalia.aon.payroll.ContractLeave"/>
 		<mapping class="com.esferalia.aon.payroll.ContractLeaveDetail"/>
 		<mapping class="com.esferalia.aon.payroll.ContractPayment"/>
@@ -115,7 +116,9 @@
 		<mapping class="com.esferalia.aon.payroll.LeaveBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>
 		<mapping class="com.esferalia.aon.payroll.Salary"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryCost"/>
 		<mapping class="com.esferalia.aon.payroll.SalaryDeduction"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryEmbargo"/>
 		<mapping class="com.esferalia.aon.payroll.SalaryPayment"/>
 		<mapping class="com.esferalia.aon.payroll.SystemData"/>
 		<mapping class="com.esferalia.aon.payroll.SystemDeduction"/>
