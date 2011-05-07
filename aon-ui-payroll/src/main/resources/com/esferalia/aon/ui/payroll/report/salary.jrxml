@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="425"/>
+	<property name="ireport.x" value="19"/>
 	<property name="ireport.y" value="48"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
@@ -67,6 +67,7 @@
 	<parameter name="zero_value" class="java.lang.Double">
 		<defaultValueExpression><![CDATA[0.0]]></defaultValueExpression>
 	</parameter>
+	<parameter name="embargo" class="java.util.List"/>
 	<field name="salary" class="com.esferalia.aon.salary.ISalary"/>
 	<variable name="formatter" class="java.text.SimpleDateFormat">
 		<initialValueExpression><![CDATA[new SimpleDateFormat("dd' de 'MMMMMMMMMMM' de 'yyyy")]]></initialValueExpression>
