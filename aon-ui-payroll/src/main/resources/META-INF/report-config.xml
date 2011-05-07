@@ -43,6 +43,7 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{salary.getAttachAsInputStream}" />
+			<param id="embargo" value="#{salary.getEmbargo}" />
 		</params>
 	</report>
 	
@@ -58,6 +59,7 @@
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{salary.getAttachAsInputStream}" />
+			<param id="embargo" value="#{salary.getEmbargo}" />
 		</params>
 	</report>
 	
