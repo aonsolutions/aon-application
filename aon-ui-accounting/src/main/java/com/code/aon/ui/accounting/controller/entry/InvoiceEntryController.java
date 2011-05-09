@@ -1341,19 +1341,23 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 					getHeader().setWithholding(company.isWithholding() && customer.isWithholding());
 					getHeader().setSurcharge(customer.isSurcharge());
 					getHeader().setTaxFree(customer.isTaxFree());
+					getHeader().setTransaction( customer.getTransaction() );
 				} else if (isPurchase()) {
 					Supplier supplier = (Supplier) event.getNewValue();
 					getHeader().setRegistry( supplier.getRegistry());
 					getHeader().setWithholding(supplier.isWithholding());
 					getHeader().setSurcharge(company.isSurcharge());
 					getHeader().setTaxFree(supplier.isTaxFree());
+					getHeader().setTransaction( supplier.getTransaction() );
 				} else if (isExpense()) {
 					Creditor creditor = (Creditor) event.getNewValue();
 					getHeader().setRegistry(creditor.getRegistry());
 					getHeader().setWithholding(creditor.isWithholding());
 					getHeader().setSurcharge(false);
 					getHeader().setTaxFree(creditor.isTaxFree());
+					getHeader().setTransaction( creditor.getTransaction() );
 				}
+				
 				getHeader().setDocumentCountry(getHeader().getRegistry().getDocumentCountry());
 				getHeader().setDocumentType(getHeader().getRegistry().getDocumentType());
 				getHeader().setDocument(getHeader().getRegistry().getDocument());

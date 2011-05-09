@@ -249,7 +249,7 @@
 								<a4j:region>
 									<aon:lookupInputText id="Supplier_id"
 										lookup="#{supplierLookup}"
-										reRender="invoiceContainer,invoiceDetails"
+										reRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
 										lookupProperty="registry" ajaxSingle="false"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										focus="Registry_name"
@@ -257,7 +257,7 @@
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{supplierBundle.supplier_selection}"
-										selectReRender="invoiceContainer,invoiceDetails"
+										selectReRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										disabled="#{invoiceEntry.newDetail}"
 										actionType="search" lookup="#{supplierLookup}" minHeight="460"
@@ -310,7 +310,7 @@
 							<aon:panelGroup>
 								<aon:inputText id="Registry_name"
 									value="#{invoiceEntry.header.name}"
-									disabled="#{invoiceEntry.newDetail}" size="60" />
+									disabled="#{invoiceEntry.newDetail}" size="50" />
 							</aon:panelGroup>
 						</aon:div>
 
@@ -367,7 +367,7 @@
 
 						<aon:outputLabel for="Account_invoiceVatDeductionType"
 							value="#{accountingBundle.accounting_vat_type}" />
-						<aon:panelGroup>
+						<aon:panelGroup id="taxInfoPanel">
 							<aon:selectOneMenu id="Account_invoiceVatDeductionType"
 								disabled="#{invoiceEntry.newDetail}"
 								value="#{invoiceEntry.header.vatDeductionType}" style="width: 200px;">
