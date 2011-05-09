@@ -218,7 +218,7 @@
 								<a4j:region>
 									<aon:lookupInputText id="Customer_id"
 										lookup="#{customerLookup}"
-										reRender="invoiceContainer,invoiceDetails"
+										reRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
 										lookupProperty="registry" ajaxSingle="false"
 										disabled="#{invoiceEntry.newDetail}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
@@ -226,7 +226,7 @@
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{customerBundle.customer_selection}"
-										selectReRender="invoiceContainer,invoiceDetails"
+										selectReRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										disabled="#{invoiceEntry.newDetail}"
 										actionType="search" lookup="#{customerLookup}" minHeight="460"
@@ -280,7 +280,7 @@
 								<a4j:region>
 									<aon:lookupInputText id="Creditor_id"
 										lookup="#{creditorLookup}"
-										reRender="invoiceContainer,invoiceDetails"
+										reRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
 										lookupProperty="registry" ajaxSingle="false"
 										disabled="#{invoiceEntry.newDetail}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
@@ -288,7 +288,7 @@
 										value="#{invoiceEntry.header.registry.id}" size="5" />
 									<aon:lookupButton
 										windowTitle="#{financeBundle.finance_creditor_selection}"
-										selectReRender="invoiceContainer,invoiceDetails"
+										selectReRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
 										disabled="#{invoiceEntry.newDetail}"
 										lookupChangeListener="#{invoiceEntry.registryChanged}"
 										actionType="search" lookup="#{creditorLookup}" minHeight="460"
