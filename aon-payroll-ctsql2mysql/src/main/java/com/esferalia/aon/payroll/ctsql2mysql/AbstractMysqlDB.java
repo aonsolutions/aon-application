@@ -566,152 +566,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int cv_evaluate_typeStmtSize = 0;
-
-	private int cv_evaluate_typeInserted = 0;
-
-	private List<Cv_evaluate_type> cv_evaluate_types = 
-		new LinkedList<Cv_evaluate_type>();
-
-	private PreparedStatement cv_evaluate_typeStmt = null;
-
-	public static class Cv_evaluate_type {
-		protected Integer id; 
-		protected String name; 
-	}
-	
-	private void insertCv_evaluate_type( List<Cv_evaluate_type> cv_evaluate_types )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = cv_evaluate_types.size();
-		if ( cv_evaluate_typeStmtSize != size ) {
-			if ( cv_evaluate_typeStmt != null ) {
-				cv_evaluate_typeStmt.close();
-			}
-			String values = "(?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			cv_evaluate_typeStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO cv_evaluate_type (id,name)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			cv_evaluate_typeStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Cv_evaluate_type cv_evaluate_type : cv_evaluate_types) {
-			if ( cv_evaluate_type.id == null )
-				cv_evaluate_typeStmt.setNull(offset++, 4);
-			else
-				cv_evaluate_typeStmt.setInt(offset++, cv_evaluate_type.id);
-			if ( cv_evaluate_type.name == null )
-				cv_evaluate_typeStmt.setNull(offset++, 12);
-			else
-				cv_evaluate_typeStmt.setString(offset++, cv_evaluate_type.name);
-		}
-		cv_evaluate_typeStmt.executeUpdate();
-		cv_evaluate_typeInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Cv_evaluate_types in {} milliseconds.", size, cv_evaluate_typeInserted, elapsed );		
-	}
-		
-		private int cv_evaluate_typeId = -1;
-		
-		private void initCv_evaluate_typeId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `cv_evaluate_type`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.cv_evaluate_typeId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCv_evaluate_typeId() {
-			return ++this.cv_evaluate_typeId;
-		} 
-
-		public void setCv_evaluate_typeId(Integer cv_evaluate_typeId) {
-			this.cv_evaluate_typeId = cv_evaluate_typeId;
-		} 
-	
-	private void flushCv_evaluate_type(  )
-	throws SQLException {
-		if ( ! cv_evaluate_types.isEmpty() )
-			insertCv_evaluate_type(cv_evaluate_types);
-		if ( cv_evaluate_typeStmt != null )
-			cv_evaluate_typeStmt.close();
-	}	
-
-	/**
-	 * Cv_evaluate_type
-	 * @param id Identificador unico del Tipo de Evaluacion
-	 * @param name Nombre del Tipo de Evaluacion
-	 * @throws SQLException
-	*/
-	protected void insertCv_evaluate_type(Integer id, String name)
-	throws SQLException {
-
-		Cv_evaluate_type cv_evaluate_type_ = new Cv_evaluate_type();
-		cv_evaluate_type_.id = id;
-		cv_evaluate_type_.name = name;
-
-		cv_evaluate_types.add(cv_evaluate_type_);
-		
-		int cv_evaluate_typeCount = cv_evaluate_types.size();
-		
-		if ( 74 * cv_evaluate_typeCount >=  this.maxAllowedPacket ){
-			insertCv_evaluate_type(cv_evaluate_types);
-			cv_evaluate_types.clear();
-		} 
-	}
-
-
-	/**
-	 * Cv_evaluate_type
-	 * @param name Nombre del Tipo de Evaluacion
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCv_evaluate_type(String name)
-	throws SQLException {
-		int id = nextCv_evaluate_typeId();
-
-		Cv_evaluate_type cv_evaluate_type_ = new Cv_evaluate_type();
-		cv_evaluate_type_.id = id;
-		cv_evaluate_type_.name = name;
-
-		cv_evaluate_types.add(cv_evaluate_type_);
-		
-		int cv_evaluate_typeCount = cv_evaluate_types.size();
-		
-		if ( 74 * cv_evaluate_typeCount >=  this.maxAllowedPacket ){
-			insertCv_evaluate_type(cv_evaluate_types);
-			cv_evaluate_types.clear();
-		} 
-		return id;
-	}
-
-
 	private int pcategoryStmtSize = 0;
 
 	private int pcategoryInserted = 0;
@@ -1897,6 +1751,215 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 125 * invoice_taxCount >=  this.maxAllowedPacket ){
 			insertInvoice_tax(invoice_taxs);
 			invoice_taxs.clear();
+		} 
+		return id;
+	}
+
+
+	private int contract_attachStmtSize = 0;
+
+	private int contract_attachInserted = 0;
+
+	private List<Contract_attach> contract_attachs = 
+		new LinkedList<Contract_attach>();
+
+	private PreparedStatement contract_attachStmt = null;
+
+	public static class Contract_attach {
+		protected Integer id; 
+		protected Integer contract; 
+		protected Short mimeType; 
+		protected String description; 
+		protected InputStream data; 
+		protected Short type; 
+		protected Integer scope; 
+		protected Short security_level; 
+		protected Date attach_date; 
+	}
+	
+	private void insertContract_attach( List<Contract_attach> contract_attachs )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = contract_attachs.size();
+		if ( contract_attachStmtSize != size ) {
+			if ( contract_attachStmt != null ) {
+				contract_attachStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			contract_attachStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO contract_attach (id,contract,mimeType,description,data,type,scope,security_level,attach_date)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			contract_attachStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Contract_attach contract_attach : contract_attachs) {
+			if ( contract_attach.id == null )
+				contract_attachStmt.setNull(offset++, 4);
+			else
+				contract_attachStmt.setInt(offset++, contract_attach.id);
+			if ( contract_attach.contract == null )
+				contract_attachStmt.setNull(offset++, 4);
+			else
+				contract_attachStmt.setInt(offset++, contract_attach.contract);
+			if ( contract_attach.mimeType == null )
+				contract_attachStmt.setNull(offset++, -6);
+			else
+				contract_attachStmt.setShort(offset++, contract_attach.mimeType);
+			if ( contract_attach.description == null )
+				contract_attachStmt.setNull(offset++, 12);
+			else
+				contract_attachStmt.setString(offset++, contract_attach.description);
+			if ( contract_attach.data == null )
+				contract_attachStmt.setNull(offset++, -4);
+			else
+				contract_attachStmt.setBinaryStream(offset++, contract_attach.data);
+			if ( contract_attach.type == null )
+				contract_attachStmt.setNull(offset++, -6);
+			else
+				contract_attachStmt.setShort(offset++, contract_attach.type);
+			if ( contract_attach.scope == null )
+				contract_attachStmt.setNull(offset++, 4);
+			else
+				contract_attachStmt.setInt(offset++, contract_attach.scope);
+			if ( contract_attach.security_level == null )
+				contract_attachStmt.setNull(offset++, -6);
+			else
+				contract_attachStmt.setShort(offset++, contract_attach.security_level);
+			if ( contract_attach.attach_date == null )
+				contract_attachStmt.setNull(offset++, 91);
+			else
+				contract_attachStmt.setDate(offset++, contract_attach.attach_date);
+		}
+		contract_attachStmt.executeUpdate();
+		contract_attachInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Contract_attachs in {} milliseconds.", size, contract_attachInserted, elapsed );		
+	}
+		
+		private int contract_attachId = -1;
+		
+		private void initContract_attachId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `contract_attach`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.contract_attachId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextContract_attachId() {
+			return ++this.contract_attachId;
+		} 
+
+		public void setContract_attachId(Integer contract_attachId) {
+			this.contract_attachId = contract_attachId;
+		} 
+	
+	private void flushContract_attach(  )
+	throws SQLException {
+		if ( ! contract_attachs.isEmpty() )
+			insertContract_attach(contract_attachs);
+		if ( contract_attachStmt != null )
+			contract_attachStmt.close();
+	}	
+
+	/**
+	 * Contract_attach
+	 * @param id Identificador unico del Archivo Adjunto del contrato
+	 * @param contract Identificador del Registro del contrato
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @param type Tipo de Archivo Adjunto
+	 * @param scope Ambito del Archivo Adjunto
+	 * @param security_level Nivel de seguridad del Archivo Adjunto
+	 * @param attach_date Fecha del Archivo Adjunto
+	 * @throws SQLException
+	*/
+	protected void insertContract_attach(Integer id, Integer contract, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
+	throws SQLException {
+
+		Contract_attach contract_attach_ = new Contract_attach();
+		contract_attach_.id = id;
+		contract_attach_.contract = contract;
+		contract_attach_.mimeType = mimeType;
+		contract_attach_.description = description;
+		contract_attach_.data = data;
+		contract_attach_.type = type;
+		contract_attach_.scope = scope;
+		contract_attach_.security_level = security_level;
+		contract_attach_.attach_date = attach_date;
+
+		contract_attachs.add(contract_attach_);
+		
+		int contract_attachCount = contract_attachs.size();
+		
+		if ( 113 * contract_attachCount >=  this.maxAllowedPacket ){
+			insertContract_attach(contract_attachs);
+			contract_attachs.clear();
+		} 
+	}
+
+
+	/**
+	 * Contract_attach
+	 * @param contract Identificador del Registro del contrato
+	 * @param mimeType Mime Type del Archivo Adjunto
+	 * @param description Descripcion del Archivo Adjunto
+	 * @param data Archivo Adjunto en binario
+	 * @param type Tipo de Archivo Adjunto
+	 * @param scope Ambito del Archivo Adjunto
+	 * @param security_level Nivel de seguridad del Archivo Adjunto
+	 * @param attach_date Fecha del Archivo Adjunto
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertContract_attach(Integer contract, Short mimeType, String description, InputStream data, Short type, Integer scope, Short security_level, Date attach_date)
+	throws SQLException {
+		int id = nextContract_attachId();
+
+		Contract_attach contract_attach_ = new Contract_attach();
+		contract_attach_.id = id;
+		contract_attach_.contract = contract;
+		contract_attach_.mimeType = mimeType;
+		contract_attach_.description = description;
+		contract_attach_.data = data;
+		contract_attach_.type = type;
+		contract_attach_.scope = scope;
+		contract_attach_.security_level = security_level;
+		contract_attach_.attach_date = attach_date;
+
+		contract_attachs.add(contract_attach_);
+		
+		int contract_attachCount = contract_attachs.size();
+		
+		if ( 113 * contract_attachCount >=  this.maxAllowedPacket ){
+			insertContract_attach(contract_attachs);
+			contract_attachs.clear();
 		} 
 		return id;
 	}
@@ -5922,188 +5985,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int cv_workexperienceStmtSize = 0;
-
-	private int cv_workexperienceInserted = 0;
-
-	private List<Cv_workexperience> cv_workexperiences = 
-		new LinkedList<Cv_workexperience>();
-
-	private PreparedStatement cv_workexperienceStmt = null;
-
-	public static class Cv_workexperience {
-		protected Integer id; 
-		protected Date startingdate; 
-		protected Date endingdate; 
-		protected String job; 
-		protected String company; 
-		protected Integer curriculum; 
-	}
-	
-	private void insertCv_workexperience( List<Cv_workexperience> cv_workexperiences )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = cv_workexperiences.size();
-		if ( cv_workexperienceStmtSize != size ) {
-			if ( cv_workexperienceStmt != null ) {
-				cv_workexperienceStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			cv_workexperienceStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO cv_workexperience (id,startingdate,endingdate,job,company,curriculum)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			cv_workexperienceStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Cv_workexperience cv_workexperience : cv_workexperiences) {
-			if ( cv_workexperience.id == null )
-				cv_workexperienceStmt.setNull(offset++, 4);
-			else
-				cv_workexperienceStmt.setInt(offset++, cv_workexperience.id);
-			if ( cv_workexperience.startingdate == null )
-				cv_workexperienceStmt.setNull(offset++, 91);
-			else
-				cv_workexperienceStmt.setDate(offset++, cv_workexperience.startingdate);
-			if ( cv_workexperience.endingdate == null )
-				cv_workexperienceStmt.setNull(offset++, 91);
-			else
-				cv_workexperienceStmt.setDate(offset++, cv_workexperience.endingdate);
-			if ( cv_workexperience.job == null )
-				cv_workexperienceStmt.setNull(offset++, 12);
-			else
-				cv_workexperienceStmt.setString(offset++, cv_workexperience.job);
-			if ( cv_workexperience.company == null )
-				cv_workexperienceStmt.setNull(offset++, 12);
-			else
-				cv_workexperienceStmt.setString(offset++, cv_workexperience.company);
-			if ( cv_workexperience.curriculum == null )
-				cv_workexperienceStmt.setNull(offset++, 4);
-			else
-				cv_workexperienceStmt.setInt(offset++, cv_workexperience.curriculum);
-		}
-		cv_workexperienceStmt.executeUpdate();
-		cv_workexperienceInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Cv_workexperiences in {} milliseconds.", size, cv_workexperienceInserted, elapsed );		
-	}
-		
-		private int cv_workexperienceId = -1;
-		
-		private void initCv_workexperienceId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `cv_workexperience`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.cv_workexperienceId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCv_workexperienceId() {
-			return ++this.cv_workexperienceId;
-		} 
-
-		public void setCv_workexperienceId(Integer cv_workexperienceId) {
-			this.cv_workexperienceId = cv_workexperienceId;
-		} 
-	
-	private void flushCv_workexperience(  )
-	throws SQLException {
-		if ( ! cv_workexperiences.isEmpty() )
-			insertCv_workexperience(cv_workexperiences);
-		if ( cv_workexperienceStmt != null )
-			cv_workexperienceStmt.close();
-	}	
-
-	/**
-	 * Cv_workexperience
-	 * @param id Identifador nico de la Experiencia Laboral
-	 * @param startingdate Fecha de inicio de la Experiencia Laboral
-	 * @param endingdate Fecha de finalizacin de la Experiencia Laboral
-	 * @param job Trabajo desempeado en la Experiencia Laboral
-	 * @param company Compaa donde se desempe la Experiencia Laboral
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @throws SQLException
-	*/
-	protected void insertCv_workexperience(Integer id, Date startingdate, Date endingdate, String job, String company, Integer curriculum)
-	throws SQLException {
-
-		Cv_workexperience cv_workexperience_ = new Cv_workexperience();
-		cv_workexperience_.id = id;
-		cv_workexperience_.startingdate = startingdate;
-		cv_workexperience_.endingdate = endingdate;
-		cv_workexperience_.job = job;
-		cv_workexperience_.company = company;
-		cv_workexperience_.curriculum = curriculum;
-
-		cv_workexperiences.add(cv_workexperience_);
-		
-		int cv_workexperienceCount = cv_workexperiences.size();
-		
-		if ( 168 * cv_workexperienceCount >=  this.maxAllowedPacket ){
-			insertCv_workexperience(cv_workexperiences);
-			cv_workexperiences.clear();
-		} 
-	}
-
-
-	/**
-	 * Cv_workexperience
-	 * @param startingdate Fecha de inicio de la Experiencia Laboral
-	 * @param endingdate Fecha de finalizacin de la Experiencia Laboral
-	 * @param job Trabajo desempeado en la Experiencia Laboral
-	 * @param company Compaa donde se desempe la Experiencia Laboral
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCv_workexperience(Date startingdate, Date endingdate, String job, String company, Integer curriculum)
-	throws SQLException {
-		int id = nextCv_workexperienceId();
-
-		Cv_workexperience cv_workexperience_ = new Cv_workexperience();
-		cv_workexperience_.id = id;
-		cv_workexperience_.startingdate = startingdate;
-		cv_workexperience_.endingdate = endingdate;
-		cv_workexperience_.job = job;
-		cv_workexperience_.company = company;
-		cv_workexperience_.curriculum = curriculum;
-
-		cv_workexperiences.add(cv_workexperience_);
-		
-		int cv_workexperienceCount = cv_workexperiences.size();
-		
-		if ( 168 * cv_workexperienceCount >=  this.maxAllowedPacket ){
-			insertCv_workexperience(cv_workexperiences);
-			cv_workexperiences.clear();
-		} 
-		return id;
-	}
-
-
 	private int incidence_typeStmtSize = 0;
 
 	private int incidence_typeInserted = 0;
@@ -7585,188 +7466,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int cv_languagesStmtSize = 0;
-
-	private int cv_languagesInserted = 0;
-
-	private List<Cv_languages> cv_languagess = 
-		new LinkedList<Cv_languages>();
-
-	private PreparedStatement cv_languagesStmt = null;
-
-	public static class Cv_languages {
-		protected Integer id; 
-		protected Short language; 
-		protected Short spoken; 
-		protected Short wrote; 
-		protected Short read_level; 
-		protected Integer curriculum; 
-	}
-	
-	private void insertCv_languages( List<Cv_languages> cv_languagess )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = cv_languagess.size();
-		if ( cv_languagesStmtSize != size ) {
-			if ( cv_languagesStmt != null ) {
-				cv_languagesStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			cv_languagesStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO cv_languages (id,language,spoken,wrote,read_level,curriculum)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			cv_languagesStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Cv_languages cv_languages : cv_languagess) {
-			if ( cv_languages.id == null )
-				cv_languagesStmt.setNull(offset++, 4);
-			else
-				cv_languagesStmt.setInt(offset++, cv_languages.id);
-			if ( cv_languages.language == null )
-				cv_languagesStmt.setNull(offset++, -6);
-			else
-				cv_languagesStmt.setShort(offset++, cv_languages.language);
-			if ( cv_languages.spoken == null )
-				cv_languagesStmt.setNull(offset++, -6);
-			else
-				cv_languagesStmt.setShort(offset++, cv_languages.spoken);
-			if ( cv_languages.wrote == null )
-				cv_languagesStmt.setNull(offset++, -6);
-			else
-				cv_languagesStmt.setShort(offset++, cv_languages.wrote);
-			if ( cv_languages.read_level == null )
-				cv_languagesStmt.setNull(offset++, -6);
-			else
-				cv_languagesStmt.setShort(offset++, cv_languages.read_level);
-			if ( cv_languages.curriculum == null )
-				cv_languagesStmt.setNull(offset++, 4);
-			else
-				cv_languagesStmt.setInt(offset++, cv_languages.curriculum);
-		}
-		cv_languagesStmt.executeUpdate();
-		cv_languagesInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Cv_languagess in {} milliseconds.", size, cv_languagesInserted, elapsed );		
-	}
-		
-		private int cv_languagesId = -1;
-		
-		private void initCv_languagesId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `cv_languages`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.cv_languagesId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCv_languagesId() {
-			return ++this.cv_languagesId;
-		} 
-
-		public void setCv_languagesId(Integer cv_languagesId) {
-			this.cv_languagesId = cv_languagesId;
-		} 
-	
-	private void flushCv_languages(  )
-	throws SQLException {
-		if ( ! cv_languagess.isEmpty() )
-			insertCv_languages(cv_languagess);
-		if ( cv_languagesStmt != null )
-			cv_languagesStmt.close();
-	}	
-
-	/**
-	 * Cv_languages
-	 * @param id Identificador nico del Idioma
-	 * @param language Idioma
-	 * @param spoken Nivel oral del Idioma
-	 * @param wrote Nivel escrito del Idioma
-	 * @param read_level Nivel ledo del Idioma
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @throws SQLException
-	*/
-	protected void insertCv_languages(Integer id, Short language, Short spoken, Short wrote, Short read_level, Integer curriculum)
-	throws SQLException {
-
-		Cv_languages cv_languages_ = new Cv_languages();
-		cv_languages_.id = id;
-		cv_languages_.language = language;
-		cv_languages_.spoken = spoken;
-		cv_languages_.wrote = wrote;
-		cv_languages_.read_level = read_level;
-		cv_languages_.curriculum = curriculum;
-
-		cv_languagess.add(cv_languages_);
-		
-		int cv_languagesCount = cv_languagess.size();
-		
-		if ( 32 * cv_languagesCount >=  this.maxAllowedPacket ){
-			insertCv_languages(cv_languagess);
-			cv_languagess.clear();
-		} 
-	}
-
-
-	/**
-	 * Cv_languages
-	 * @param language Idioma
-	 * @param spoken Nivel oral del Idioma
-	 * @param wrote Nivel escrito del Idioma
-	 * @param read_level Nivel ledo del Idioma
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCv_languages(Short language, Short spoken, Short wrote, Short read_level, Integer curriculum)
-	throws SQLException {
-		int id = nextCv_languagesId();
-
-		Cv_languages cv_languages_ = new Cv_languages();
-		cv_languages_.id = id;
-		cv_languages_.language = language;
-		cv_languages_.spoken = spoken;
-		cv_languages_.wrote = wrote;
-		cv_languages_.read_level = read_level;
-		cv_languages_.curriculum = curriculum;
-
-		cv_languagess.add(cv_languages_);
-		
-		int cv_languagesCount = cv_languagess.size();
-		
-		if ( 32 * cv_languagesCount >=  this.maxAllowedPacket ){
-			insertCv_languages(cv_languagess);
-			cv_languagess.clear();
-		} 
-		return id;
-	}
-
-
 	private int offer_detail_commissionStmtSize = 0;
 
 	private int offer_detail_commissionInserted = 0;
@@ -8870,161 +8569,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int pcategory_treeStmtSize = 0;
-
-	private int pcategory_treeInserted = 0;
-
-	private List<Pcategory_tree> pcategory_trees = 
-		new LinkedList<Pcategory_tree>();
-
-	private PreparedStatement pcategory_treeStmt = null;
-
-	public static class Pcategory_tree {
-		protected Integer id; 
-		protected Integer parent; 
-		protected Integer child; 
-	}
-	
-	private void insertPcategory_tree( List<Pcategory_tree> pcategory_trees )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = pcategory_trees.size();
-		if ( pcategory_treeStmtSize != size ) {
-			if ( pcategory_treeStmt != null ) {
-				pcategory_treeStmt.close();
-			}
-			String values = "(?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			pcategory_treeStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO pcategory_tree (id,parent,child)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			pcategory_treeStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Pcategory_tree pcategory_tree : pcategory_trees) {
-			if ( pcategory_tree.id == null )
-				pcategory_treeStmt.setNull(offset++, 4);
-			else
-				pcategory_treeStmt.setInt(offset++, pcategory_tree.id);
-			if ( pcategory_tree.parent == null )
-				pcategory_treeStmt.setNull(offset++, 4);
-			else
-				pcategory_treeStmt.setInt(offset++, pcategory_tree.parent);
-			if ( pcategory_tree.child == null )
-				pcategory_treeStmt.setNull(offset++, 4);
-			else
-				pcategory_treeStmt.setInt(offset++, pcategory_tree.child);
-		}
-		pcategory_treeStmt.executeUpdate();
-		pcategory_treeInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Pcategory_trees in {} milliseconds.", size, pcategory_treeInserted, elapsed );		
-	}
-		
-		private int pcategory_treeId = -1;
-		
-		private void initPcategory_treeId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `pcategory_tree`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.pcategory_treeId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextPcategory_treeId() {
-			return ++this.pcategory_treeId;
-		} 
-
-		public void setPcategory_treeId(Integer pcategory_treeId) {
-			this.pcategory_treeId = pcategory_treeId;
-		} 
-	
-	private void flushPcategory_tree(  )
-	throws SQLException {
-		if ( ! pcategory_trees.isEmpty() )
-			insertPcategory_tree(pcategory_trees);
-		if ( pcategory_treeStmt != null )
-			pcategory_treeStmt.close();
-	}	
-
-	/**
-	 * Pcategory_tree
-	 * @param id Identificador unico del Nodo del Arbol de Categorias
-	 * @param parent Identificador de la Categoria padre
-	 * @param child Identificador de la Categoria hijo
-	 * @throws SQLException
-	*/
-	protected void insertPcategory_tree(Integer id, Integer parent, Integer child)
-	throws SQLException {
-
-		Pcategory_tree pcategory_tree_ = new Pcategory_tree();
-		pcategory_tree_.id = id;
-		pcategory_tree_.parent = parent;
-		pcategory_tree_.child = child;
-
-		pcategory_trees.add(pcategory_tree_);
-		
-		int pcategory_treeCount = pcategory_trees.size();
-		
-		if ( 30 * pcategory_treeCount >=  this.maxAllowedPacket ){
-			insertPcategory_tree(pcategory_trees);
-			pcategory_trees.clear();
-		} 
-	}
-
-
-	/**
-	 * Pcategory_tree
-	 * @param parent Identificador de la Categoria padre
-	 * @param child Identificador de la Categoria hijo
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertPcategory_tree(Integer parent, Integer child)
-	throws SQLException {
-		int id = nextPcategory_treeId();
-
-		Pcategory_tree pcategory_tree_ = new Pcategory_tree();
-		pcategory_tree_.id = id;
-		pcategory_tree_.parent = parent;
-		pcategory_tree_.child = child;
-
-		pcategory_trees.add(pcategory_tree_);
-		
-		int pcategory_treeCount = pcategory_trees.size();
-		
-		if ( 30 * pcategory_treeCount >=  this.maxAllowedPacket ){
-			insertPcategory_tree(pcategory_trees);
-			pcategory_trees.clear();
-		} 
-		return id;
-	}
-
-
 	private int account_entry_detailStmtSize = 0;
 
 	private int account_entry_detailInserted = 0;
@@ -9229,6 +8773,161 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 162 * account_entry_detailCount >=  this.maxAllowedPacket ){
 			insertAccount_entry_detail(account_entry_details);
 			account_entry_details.clear();
+		} 
+		return id;
+	}
+
+
+	private int pcategory_treeStmtSize = 0;
+
+	private int pcategory_treeInserted = 0;
+
+	private List<Pcategory_tree> pcategory_trees = 
+		new LinkedList<Pcategory_tree>();
+
+	private PreparedStatement pcategory_treeStmt = null;
+
+	public static class Pcategory_tree {
+		protected Integer id; 
+		protected Integer parent; 
+		protected Integer child; 
+	}
+	
+	private void insertPcategory_tree( List<Pcategory_tree> pcategory_trees )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = pcategory_trees.size();
+		if ( pcategory_treeStmtSize != size ) {
+			if ( pcategory_treeStmt != null ) {
+				pcategory_treeStmt.close();
+			}
+			String values = "(?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			pcategory_treeStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO pcategory_tree (id,parent,child)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			pcategory_treeStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Pcategory_tree pcategory_tree : pcategory_trees) {
+			if ( pcategory_tree.id == null )
+				pcategory_treeStmt.setNull(offset++, 4);
+			else
+				pcategory_treeStmt.setInt(offset++, pcategory_tree.id);
+			if ( pcategory_tree.parent == null )
+				pcategory_treeStmt.setNull(offset++, 4);
+			else
+				pcategory_treeStmt.setInt(offset++, pcategory_tree.parent);
+			if ( pcategory_tree.child == null )
+				pcategory_treeStmt.setNull(offset++, 4);
+			else
+				pcategory_treeStmt.setInt(offset++, pcategory_tree.child);
+		}
+		pcategory_treeStmt.executeUpdate();
+		pcategory_treeInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Pcategory_trees in {} milliseconds.", size, pcategory_treeInserted, elapsed );		
+	}
+		
+		private int pcategory_treeId = -1;
+		
+		private void initPcategory_treeId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `pcategory_tree`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.pcategory_treeId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextPcategory_treeId() {
+			return ++this.pcategory_treeId;
+		} 
+
+		public void setPcategory_treeId(Integer pcategory_treeId) {
+			this.pcategory_treeId = pcategory_treeId;
+		} 
+	
+	private void flushPcategory_tree(  )
+	throws SQLException {
+		if ( ! pcategory_trees.isEmpty() )
+			insertPcategory_tree(pcategory_trees);
+		if ( pcategory_treeStmt != null )
+			pcategory_treeStmt.close();
+	}	
+
+	/**
+	 * Pcategory_tree
+	 * @param id Identificador unico del Nodo del Arbol de Categorias
+	 * @param parent Identificador de la Categoria padre
+	 * @param child Identificador de la Categoria hijo
+	 * @throws SQLException
+	*/
+	protected void insertPcategory_tree(Integer id, Integer parent, Integer child)
+	throws SQLException {
+
+		Pcategory_tree pcategory_tree_ = new Pcategory_tree();
+		pcategory_tree_.id = id;
+		pcategory_tree_.parent = parent;
+		pcategory_tree_.child = child;
+
+		pcategory_trees.add(pcategory_tree_);
+		
+		int pcategory_treeCount = pcategory_trees.size();
+		
+		if ( 30 * pcategory_treeCount >=  this.maxAllowedPacket ){
+			insertPcategory_tree(pcategory_trees);
+			pcategory_trees.clear();
+		} 
+	}
+
+
+	/**
+	 * Pcategory_tree
+	 * @param parent Identificador de la Categoria padre
+	 * @param child Identificador de la Categoria hijo
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertPcategory_tree(Integer parent, Integer child)
+	throws SQLException {
+		int id = nextPcategory_treeId();
+
+		Pcategory_tree pcategory_tree_ = new Pcategory_tree();
+		pcategory_tree_.id = id;
+		pcategory_tree_.parent = parent;
+		pcategory_tree_.child = child;
+
+		pcategory_trees.add(pcategory_tree_);
+		
+		int pcategory_treeCount = pcategory_trees.size();
+		
+		if ( 30 * pcategory_treeCount >=  this.maxAllowedPacket ){
+			insertPcategory_tree(pcategory_trees);
+			pcategory_trees.clear();
 		} 
 		return id;
 	}
@@ -11490,6 +11189,161 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int cnoStmtSize = 0;
+
+	private int cnoInserted = 0;
+
+	private List<Cno> cnos = 
+		new LinkedList<Cno>();
+
+	private PreparedStatement cnoStmt = null;
+
+	public static class Cno {
+		protected Integer id; 
+		protected String code; 
+		protected String title; 
+	}
+	
+	private void insertCno( List<Cno> cnos )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = cnos.size();
+		if ( cnoStmtSize != size ) {
+			if ( cnoStmt != null ) {
+				cnoStmt.close();
+			}
+			String values = "(?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			cnoStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO cno (id,code,title)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			cnoStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Cno cno : cnos) {
+			if ( cno.id == null )
+				cnoStmt.setNull(offset++, 4);
+			else
+				cnoStmt.setInt(offset++, cno.id);
+			if ( cno.code == null )
+				cnoStmt.setNull(offset++, 12);
+			else
+				cnoStmt.setString(offset++, cno.code);
+			if ( cno.title == null )
+				cnoStmt.setNull(offset++, 12);
+			else
+				cnoStmt.setString(offset++, cno.title);
+		}
+		cnoStmt.executeUpdate();
+		cnoInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Cnos in {} milliseconds.", size, cnoInserted, elapsed );		
+	}
+		
+		private int cnoId = -1;
+		
+		private void initCnoId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `cno`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.cnoId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCnoId() {
+			return ++this.cnoId;
+		} 
+
+		public void setCnoId(Integer cnoId) {
+			this.cnoId = cnoId;
+		} 
+	
+	private void flushCno(  )
+	throws SQLException {
+		if ( ! cnos.isEmpty() )
+			insertCno(cnos);
+		if ( cnoStmt != null )
+			cnoStmt.close();
+	}	
+
+	/**
+	 * Cno
+	 * @param id Identificador unico
+	 * @param code Codigo del CNO
+	 * @param title Titulo del CNO
+	 * @throws SQLException
+	*/
+	protected void insertCno(Integer id, String code, String title)
+	throws SQLException {
+
+		Cno cno_ = new Cno();
+		cno_.id = id;
+		cno_.code = code;
+		cno_.title = title;
+
+		cnos.add(cno_);
+		
+		int cnoCount = cnos.size();
+		
+		if ( 270 * cnoCount >=  this.maxAllowedPacket ){
+			insertCno(cnos);
+			cnos.clear();
+		} 
+	}
+
+
+	/**
+	 * Cno
+	 * @param code Codigo del CNO
+	 * @param title Titulo del CNO
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCno(String code, String title)
+	throws SQLException {
+		int id = nextCnoId();
+
+		Cno cno_ = new Cno();
+		cno_.id = id;
+		cno_.code = code;
+		cno_.title = title;
+
+		cnos.add(cno_);
+		
+		int cnoCount = cnos.size();
+		
+		if ( 270 * cnoCount >=  this.maxAllowedPacket ){
+			insertCno(cnos);
+			cnos.clear();
+		} 
+		return id;
+	}
+
+
 	private int account_entry_fbatchStmtSize = 0;
 
 	private int account_entry_fbatchInserted = 0;
@@ -13273,6 +13127,152 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int commercial_activityStmtSize = 0;
+
+	private int commercial_activityInserted = 0;
+
+	private List<Commercial_activity> commercial_activitys = 
+		new LinkedList<Commercial_activity>();
+
+	private PreparedStatement commercial_activityStmt = null;
+
+	public static class Commercial_activity {
+		protected Integer id; 
+		protected String name; 
+	}
+	
+	private void insertCommercial_activity( List<Commercial_activity> commercial_activitys )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = commercial_activitys.size();
+		if ( commercial_activityStmtSize != size ) {
+			if ( commercial_activityStmt != null ) {
+				commercial_activityStmt.close();
+			}
+			String values = "(?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			commercial_activityStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO commercial_activity (id,name)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			commercial_activityStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Commercial_activity commercial_activity : commercial_activitys) {
+			if ( commercial_activity.id == null )
+				commercial_activityStmt.setNull(offset++, 4);
+			else
+				commercial_activityStmt.setInt(offset++, commercial_activity.id);
+			if ( commercial_activity.name == null )
+				commercial_activityStmt.setNull(offset++, 12);
+			else
+				commercial_activityStmt.setString(offset++, commercial_activity.name);
+		}
+		commercial_activityStmt.executeUpdate();
+		commercial_activityInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Commercial_activitys in {} milliseconds.", size, commercial_activityInserted, elapsed );		
+	}
+		
+		private int commercial_activityId = -1;
+		
+		private void initCommercial_activityId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `commercial_activity`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.commercial_activityId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCommercial_activityId() {
+			return ++this.commercial_activityId;
+		} 
+
+		public void setCommercial_activityId(Integer commercial_activityId) {
+			this.commercial_activityId = commercial_activityId;
+		} 
+	
+	private void flushCommercial_activity(  )
+	throws SQLException {
+		if ( ! commercial_activitys.isEmpty() )
+			insertCommercial_activity(commercial_activitys);
+		if ( commercial_activityStmt != null )
+			commercial_activityStmt.close();
+	}	
+
+	/**
+	 * Commercial_activity
+	 * @param id Identificador unico
+	 * @param name Nombre de la Actividad Comercial
+	 * @throws SQLException
+	*/
+	protected void insertCommercial_activity(Integer id, String name)
+	throws SQLException {
+
+		Commercial_activity commercial_activity_ = new Commercial_activity();
+		commercial_activity_.id = id;
+		commercial_activity_.name = name;
+
+		commercial_activitys.add(commercial_activity_);
+		
+		int commercial_activityCount = commercial_activitys.size();
+		
+		if ( 42 * commercial_activityCount >=  this.maxAllowedPacket ){
+			insertCommercial_activity(commercial_activitys);
+			commercial_activitys.clear();
+		} 
+	}
+
+
+	/**
+	 * Commercial_activity
+	 * @param name Nombre de la Actividad Comercial
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCommercial_activity(String name)
+	throws SQLException {
+		int id = nextCommercial_activityId();
+
+		Commercial_activity commercial_activity_ = new Commercial_activity();
+		commercial_activity_.id = id;
+		commercial_activity_.name = name;
+
+		commercial_activitys.add(commercial_activity_);
+		
+		int commercial_activityCount = commercial_activitys.size();
+		
+		if ( 42 * commercial_activityCount >=  this.maxAllowedPacket ){
+			insertCommercial_activity(commercial_activitys);
+			commercial_activitys.clear();
+		} 
+		return id;
+	}
+
+
 	private int offer_termStmtSize = 0;
 
 	private int offer_termInserted = 0;
@@ -13450,152 +13450,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 89 * offer_termCount >=  this.maxAllowedPacket ){
 			insertOffer_term(offer_terms);
 			offer_terms.clear();
-		} 
-		return id;
-	}
-
-
-	private int commercial_activityStmtSize = 0;
-
-	private int commercial_activityInserted = 0;
-
-	private List<Commercial_activity> commercial_activitys = 
-		new LinkedList<Commercial_activity>();
-
-	private PreparedStatement commercial_activityStmt = null;
-
-	public static class Commercial_activity {
-		protected Integer id; 
-		protected String name; 
-	}
-	
-	private void insertCommercial_activity( List<Commercial_activity> commercial_activitys )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = commercial_activitys.size();
-		if ( commercial_activityStmtSize != size ) {
-			if ( commercial_activityStmt != null ) {
-				commercial_activityStmt.close();
-			}
-			String values = "(?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			commercial_activityStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO commercial_activity (id,name)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			commercial_activityStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Commercial_activity commercial_activity : commercial_activitys) {
-			if ( commercial_activity.id == null )
-				commercial_activityStmt.setNull(offset++, 4);
-			else
-				commercial_activityStmt.setInt(offset++, commercial_activity.id);
-			if ( commercial_activity.name == null )
-				commercial_activityStmt.setNull(offset++, 12);
-			else
-				commercial_activityStmt.setString(offset++, commercial_activity.name);
-		}
-		commercial_activityStmt.executeUpdate();
-		commercial_activityInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Commercial_activitys in {} milliseconds.", size, commercial_activityInserted, elapsed );		
-	}
-		
-		private int commercial_activityId = -1;
-		
-		private void initCommercial_activityId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `commercial_activity`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.commercial_activityId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCommercial_activityId() {
-			return ++this.commercial_activityId;
-		} 
-
-		public void setCommercial_activityId(Integer commercial_activityId) {
-			this.commercial_activityId = commercial_activityId;
-		} 
-	
-	private void flushCommercial_activity(  )
-	throws SQLException {
-		if ( ! commercial_activitys.isEmpty() )
-			insertCommercial_activity(commercial_activitys);
-		if ( commercial_activityStmt != null )
-			commercial_activityStmt.close();
-	}	
-
-	/**
-	 * Commercial_activity
-	 * @param id Identificador unico
-	 * @param name Nombre de la Actividad Comercial
-	 * @throws SQLException
-	*/
-	protected void insertCommercial_activity(Integer id, String name)
-	throws SQLException {
-
-		Commercial_activity commercial_activity_ = new Commercial_activity();
-		commercial_activity_.id = id;
-		commercial_activity_.name = name;
-
-		commercial_activitys.add(commercial_activity_);
-		
-		int commercial_activityCount = commercial_activitys.size();
-		
-		if ( 42 * commercial_activityCount >=  this.maxAllowedPacket ){
-			insertCommercial_activity(commercial_activitys);
-			commercial_activitys.clear();
-		} 
-	}
-
-
-	/**
-	 * Commercial_activity
-	 * @param name Nombre de la Actividad Comercial
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCommercial_activity(String name)
-	throws SQLException {
-		int id = nextCommercial_activityId();
-
-		Commercial_activity commercial_activity_ = new Commercial_activity();
-		commercial_activity_.id = id;
-		commercial_activity_.name = name;
-
-		commercial_activitys.add(commercial_activity_);
-		
-		int commercial_activityCount = commercial_activitys.size();
-		
-		if ( 42 * commercial_activityCount >=  this.maxAllowedPacket ){
-			insertCommercial_activity(commercial_activitys);
-			commercial_activitys.clear();
 		} 
 		return id;
 	}
@@ -14248,6 +14102,386 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int certifica2_batch_detailStmtSize = 0;
+
+	private int certifica2_batch_detailInserted = 0;
+
+	private List<Certifica2_batch_detail> certifica2_batch_details = 
+		new LinkedList<Certifica2_batch_detail>();
+
+	private PreparedStatement certifica2_batch_detailStmt = null;
+
+	public static class Certifica2_batch_detail {
+		protected Integer id; 
+		protected Integer certifica2_batch; 
+		protected Integer contract; 
+		protected String enterprise_nif; 
+		protected String ccc; 
+		protected String document; 
+		protected String name; 
+		protected String first_surname; 
+		protected String second_surname; 
+		protected String ss_number; 
+		protected String quote_group; 
+		protected String contract_type; 
+		protected String contract_duration; 
+		protected String contract_duration_indicator; 
+		protected String occupation_code; 
+		protected String public_association_charge; 
+		protected String dedication_percent; 
+		protected Date enterprise_start_date; 
+		protected String suspension_cause_code; 
+		protected Date expire_date; 
+		protected Date expire_end_date; 
+		protected String ere; 
+		protected String ere_reduction_percent; 
+		protected String other_reduction_percent; 
+		protected String reduction_cause_code; 
+		protected Date salary_period_start_date; 
+		protected Date salary_period_end_date; 
+		protected String salary_processing_days; 
+	}
+	
+	private void insertCertifica2_batch_detail( List<Certifica2_batch_detail> certifica2_batch_details )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = certifica2_batch_details.size();
+		if ( certifica2_batch_detailStmtSize != size ) {
+			if ( certifica2_batch_detailStmt != null ) {
+				certifica2_batch_detailStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			certifica2_batch_detailStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO certifica2_batch_detail (id,certifica2_batch,contract,enterprise_nif,ccc,document,name,first_surname,second_surname,ss_number,quote_group,contract_type,contract_duration,contract_duration_indicator,occupation_code,public_association_charge,dedication_percent,enterprise_start_date,suspension_cause_code,expire_date,expire_end_date,ere,ere_reduction_percent,other_reduction_percent,reduction_cause_code,salary_period_start_date,salary_period_end_date,salary_processing_days)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			certifica2_batch_detailStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Certifica2_batch_detail certifica2_batch_detail : certifica2_batch_details) {
+			if ( certifica2_batch_detail.id == null )
+				certifica2_batch_detailStmt.setNull(offset++, 4);
+			else
+				certifica2_batch_detailStmt.setInt(offset++, certifica2_batch_detail.id);
+			if ( certifica2_batch_detail.certifica2_batch == null )
+				certifica2_batch_detailStmt.setNull(offset++, 4);
+			else
+				certifica2_batch_detailStmt.setInt(offset++, certifica2_batch_detail.certifica2_batch);
+			if ( certifica2_batch_detail.contract == null )
+				certifica2_batch_detailStmt.setNull(offset++, 4);
+			else
+				certifica2_batch_detailStmt.setInt(offset++, certifica2_batch_detail.contract);
+			if ( certifica2_batch_detail.enterprise_nif == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.enterprise_nif);
+			if ( certifica2_batch_detail.ccc == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.ccc);
+			if ( certifica2_batch_detail.document == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.document);
+			if ( certifica2_batch_detail.name == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.name);
+			if ( certifica2_batch_detail.first_surname == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.first_surname);
+			if ( certifica2_batch_detail.second_surname == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.second_surname);
+			if ( certifica2_batch_detail.ss_number == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.ss_number);
+			if ( certifica2_batch_detail.quote_group == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.quote_group);
+			if ( certifica2_batch_detail.contract_type == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.contract_type);
+			if ( certifica2_batch_detail.contract_duration == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.contract_duration);
+			if ( certifica2_batch_detail.contract_duration_indicator == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.contract_duration_indicator);
+			if ( certifica2_batch_detail.occupation_code == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.occupation_code);
+			if ( certifica2_batch_detail.public_association_charge == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.public_association_charge);
+			if ( certifica2_batch_detail.dedication_percent == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.dedication_percent);
+			if ( certifica2_batch_detail.enterprise_start_date == null )
+				certifica2_batch_detailStmt.setNull(offset++, 91);
+			else
+				certifica2_batch_detailStmt.setDate(offset++, certifica2_batch_detail.enterprise_start_date);
+			if ( certifica2_batch_detail.suspension_cause_code == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.suspension_cause_code);
+			if ( certifica2_batch_detail.expire_date == null )
+				certifica2_batch_detailStmt.setNull(offset++, 91);
+			else
+				certifica2_batch_detailStmt.setDate(offset++, certifica2_batch_detail.expire_date);
+			if ( certifica2_batch_detail.expire_end_date == null )
+				certifica2_batch_detailStmt.setNull(offset++, 91);
+			else
+				certifica2_batch_detailStmt.setDate(offset++, certifica2_batch_detail.expire_end_date);
+			if ( certifica2_batch_detail.ere == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.ere);
+			if ( certifica2_batch_detail.ere_reduction_percent == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.ere_reduction_percent);
+			if ( certifica2_batch_detail.other_reduction_percent == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.other_reduction_percent);
+			if ( certifica2_batch_detail.reduction_cause_code == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.reduction_cause_code);
+			if ( certifica2_batch_detail.salary_period_start_date == null )
+				certifica2_batch_detailStmt.setNull(offset++, 91);
+			else
+				certifica2_batch_detailStmt.setDate(offset++, certifica2_batch_detail.salary_period_start_date);
+			if ( certifica2_batch_detail.salary_period_end_date == null )
+				certifica2_batch_detailStmt.setNull(offset++, 91);
+			else
+				certifica2_batch_detailStmt.setDate(offset++, certifica2_batch_detail.salary_period_end_date);
+			if ( certifica2_batch_detail.salary_processing_days == null )
+				certifica2_batch_detailStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_detailStmt.setString(offset++, certifica2_batch_detail.salary_processing_days);
+		}
+		certifica2_batch_detailStmt.executeUpdate();
+		certifica2_batch_detailInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Certifica2_batch_details in {} milliseconds.", size, certifica2_batch_detailInserted, elapsed );		
+	}
+		
+		private int certifica2_batch_detailId = -1;
+		
+		private void initCertifica2_batch_detailId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `certifica2_batch_detail`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.certifica2_batch_detailId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCertifica2_batch_detailId() {
+			return ++this.certifica2_batch_detailId;
+		} 
+
+		public void setCertifica2_batch_detailId(Integer certifica2_batch_detailId) {
+			this.certifica2_batch_detailId = certifica2_batch_detailId;
+		} 
+	
+	private void flushCertifica2_batch_detail(  )
+	throws SQLException {
+		if ( ! certifica2_batch_details.isEmpty() )
+			insertCertifica2_batch_detail(certifica2_batch_details);
+		if ( certifica2_batch_detailStmt != null )
+			certifica2_batch_detailStmt.close();
+	}	
+
+	/**
+	 * Certifica2_batch_detail
+	 * @param id Identificador unico del certificado de empresa de la remesa
+	 * @param certifica2_batch Identificador unico del certificado de empresa
+	 * @param contract Identificador unico del contrato de empleado
+	 * @param enterprise_nif NIF de la empresa
+	 * @param ccc Codigo cuenta cotizacion
+	 * @param document Documento de identidad
+	 * @param name Nombre del trabajador
+	 * @param first_surname Primer apellido
+	 * @param second_surname Segundo apellido
+	 * @param ss_number Numero seguridad social
+	 * @param quote_group Grupo de Cotización
+	 * @param contract_type Tipo de contrato
+	 * @param contract_duration Duracion contrato
+	 * @param contract_duration_indicator Indicador duracion contrato
+	 * @param occupation_code Codidgo de profesion
+	 * @param public_association_charge Cargo publico sindical
+	 * @param dedication_percent Porcentual dedicacion
+	 * @param enterprise_start_date Fecha alta empresa
+	 * @param suspension_cause_code Codigo causa suspension
+	 * @param expire_date Fecha suspension extincion
+	 * @param expire_end_date Fecha suspension extincion
+	 * @param ere ERE
+	 * @param ere_reduction_percent Porcentual reduccion ERE
+	 * @param other_reduction_percent Porcentual reduccion otros
+	 * @param reduction_cause_code Codigo causa porcentaje reduccion
+	 * @param salary_period_start_date Fecha desde periodo salarios
+	 * @param salary_period_end_date Fecha hasta periodo salarios
+	 * @param salary_processing_days Dias salario tramitacion
+	 * @throws SQLException
+	*/
+	protected void insertCertifica2_batch_detail(Integer id, Integer certifica2_batch, Integer contract, String enterprise_nif, String ccc, String document, String name, String first_surname, String second_surname, String ss_number, String quote_group, String contract_type, String contract_duration, String contract_duration_indicator, String occupation_code, String public_association_charge, String dedication_percent, Date enterprise_start_date, String suspension_cause_code, Date expire_date, Date expire_end_date, String ere, String ere_reduction_percent, String other_reduction_percent, String reduction_cause_code, Date salary_period_start_date, Date salary_period_end_date, String salary_processing_days)
+	throws SQLException {
+
+		Certifica2_batch_detail certifica2_batch_detail_ = new Certifica2_batch_detail();
+		certifica2_batch_detail_.id = id;
+		certifica2_batch_detail_.certifica2_batch = certifica2_batch;
+		certifica2_batch_detail_.contract = contract;
+		certifica2_batch_detail_.enterprise_nif = enterprise_nif;
+		certifica2_batch_detail_.ccc = ccc;
+		certifica2_batch_detail_.document = document;
+		certifica2_batch_detail_.name = name;
+		certifica2_batch_detail_.first_surname = first_surname;
+		certifica2_batch_detail_.second_surname = second_surname;
+		certifica2_batch_detail_.ss_number = ss_number;
+		certifica2_batch_detail_.quote_group = quote_group;
+		certifica2_batch_detail_.contract_type = contract_type;
+		certifica2_batch_detail_.contract_duration = contract_duration;
+		certifica2_batch_detail_.contract_duration_indicator = contract_duration_indicator;
+		certifica2_batch_detail_.occupation_code = occupation_code;
+		certifica2_batch_detail_.public_association_charge = public_association_charge;
+		certifica2_batch_detail_.dedication_percent = dedication_percent;
+		certifica2_batch_detail_.enterprise_start_date = enterprise_start_date;
+		certifica2_batch_detail_.suspension_cause_code = suspension_cause_code;
+		certifica2_batch_detail_.expire_date = expire_date;
+		certifica2_batch_detail_.expire_end_date = expire_end_date;
+		certifica2_batch_detail_.ere = ere;
+		certifica2_batch_detail_.ere_reduction_percent = ere_reduction_percent;
+		certifica2_batch_detail_.other_reduction_percent = other_reduction_percent;
+		certifica2_batch_detail_.reduction_cause_code = reduction_cause_code;
+		certifica2_batch_detail_.salary_period_start_date = salary_period_start_date;
+		certifica2_batch_detail_.salary_period_end_date = salary_period_end_date;
+		certifica2_batch_detail_.salary_processing_days = salary_processing_days;
+
+		certifica2_batch_details.add(certifica2_batch_detail_);
+		
+		int certifica2_batch_detailCount = certifica2_batch_details.size();
+		
+		if ( 250 * certifica2_batch_detailCount >=  this.maxAllowedPacket ){
+			insertCertifica2_batch_detail(certifica2_batch_details);
+			certifica2_batch_details.clear();
+		} 
+	}
+
+
+	/**
+	 * Certifica2_batch_detail
+	 * @param certifica2_batch Identificador unico del certificado de empresa
+	 * @param contract Identificador unico del contrato de empleado
+	 * @param enterprise_nif NIF de la empresa
+	 * @param ccc Codigo cuenta cotizacion
+	 * @param document Documento de identidad
+	 * @param name Nombre del trabajador
+	 * @param first_surname Primer apellido
+	 * @param second_surname Segundo apellido
+	 * @param ss_number Numero seguridad social
+	 * @param quote_group Grupo de Cotización
+	 * @param contract_type Tipo de contrato
+	 * @param contract_duration Duracion contrato
+	 * @param contract_duration_indicator Indicador duracion contrato
+	 * @param occupation_code Codidgo de profesion
+	 * @param public_association_charge Cargo publico sindical
+	 * @param dedication_percent Porcentual dedicacion
+	 * @param enterprise_start_date Fecha alta empresa
+	 * @param suspension_cause_code Codigo causa suspension
+	 * @param expire_date Fecha suspension extincion
+	 * @param expire_end_date Fecha suspension extincion
+	 * @param ere ERE
+	 * @param ere_reduction_percent Porcentual reduccion ERE
+	 * @param other_reduction_percent Porcentual reduccion otros
+	 * @param reduction_cause_code Codigo causa porcentaje reduccion
+	 * @param salary_period_start_date Fecha desde periodo salarios
+	 * @param salary_period_end_date Fecha hasta periodo salarios
+	 * @param salary_processing_days Dias salario tramitacion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCertifica2_batch_detail(Integer certifica2_batch, Integer contract, String enterprise_nif, String ccc, String document, String name, String first_surname, String second_surname, String ss_number, String quote_group, String contract_type, String contract_duration, String contract_duration_indicator, String occupation_code, String public_association_charge, String dedication_percent, Date enterprise_start_date, String suspension_cause_code, Date expire_date, Date expire_end_date, String ere, String ere_reduction_percent, String other_reduction_percent, String reduction_cause_code, Date salary_period_start_date, Date salary_period_end_date, String salary_processing_days)
+	throws SQLException {
+		int id = nextCertifica2_batch_detailId();
+
+		Certifica2_batch_detail certifica2_batch_detail_ = new Certifica2_batch_detail();
+		certifica2_batch_detail_.id = id;
+		certifica2_batch_detail_.certifica2_batch = certifica2_batch;
+		certifica2_batch_detail_.contract = contract;
+		certifica2_batch_detail_.enterprise_nif = enterprise_nif;
+		certifica2_batch_detail_.ccc = ccc;
+		certifica2_batch_detail_.document = document;
+		certifica2_batch_detail_.name = name;
+		certifica2_batch_detail_.first_surname = first_surname;
+		certifica2_batch_detail_.second_surname = second_surname;
+		certifica2_batch_detail_.ss_number = ss_number;
+		certifica2_batch_detail_.quote_group = quote_group;
+		certifica2_batch_detail_.contract_type = contract_type;
+		certifica2_batch_detail_.contract_duration = contract_duration;
+		certifica2_batch_detail_.contract_duration_indicator = contract_duration_indicator;
+		certifica2_batch_detail_.occupation_code = occupation_code;
+		certifica2_batch_detail_.public_association_charge = public_association_charge;
+		certifica2_batch_detail_.dedication_percent = dedication_percent;
+		certifica2_batch_detail_.enterprise_start_date = enterprise_start_date;
+		certifica2_batch_detail_.suspension_cause_code = suspension_cause_code;
+		certifica2_batch_detail_.expire_date = expire_date;
+		certifica2_batch_detail_.expire_end_date = expire_end_date;
+		certifica2_batch_detail_.ere = ere;
+		certifica2_batch_detail_.ere_reduction_percent = ere_reduction_percent;
+		certifica2_batch_detail_.other_reduction_percent = other_reduction_percent;
+		certifica2_batch_detail_.reduction_cause_code = reduction_cause_code;
+		certifica2_batch_detail_.salary_period_start_date = salary_period_start_date;
+		certifica2_batch_detail_.salary_period_end_date = salary_period_end_date;
+		certifica2_batch_detail_.salary_processing_days = salary_processing_days;
+
+		certifica2_batch_details.add(certifica2_batch_detail_);
+		
+		int certifica2_batch_detailCount = certifica2_batch_details.size();
+		
+		if ( 250 * certifica2_batch_detailCount >=  this.maxAllowedPacket ){
+			insertCertifica2_batch_detail(certifica2_batch_details);
+			certifica2_batch_details.clear();
+		} 
+		return id;
+	}
+
+
 	private int leasing_accountStmtSize = 0;
 
 	private int leasing_accountInserted = 0;
@@ -14580,188 +14814,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 60 * contract_batchCount >=  this.maxAllowedPacket ){
 			insertContract_batch(contract_batchs);
 			contract_batchs.clear();
-		} 
-		return id;
-	}
-
-
-	private int cv_knowledgeStmtSize = 0;
-
-	private int cv_knowledgeInserted = 0;
-
-	private List<Cv_knowledge> cv_knowledges = 
-		new LinkedList<Cv_knowledge>();
-
-	private PreparedStatement cv_knowledgeStmt = null;
-
-	public static class Cv_knowledge {
-		protected Integer id; 
-		protected String name; 
-		protected Short level; 
-		protected Short experience; 
-		protected Short lastuse; 
-		protected Integer curriculum; 
-	}
-	
-	private void insertCv_knowledge( List<Cv_knowledge> cv_knowledges )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = cv_knowledges.size();
-		if ( cv_knowledgeStmtSize != size ) {
-			if ( cv_knowledgeStmt != null ) {
-				cv_knowledgeStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			cv_knowledgeStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO cv_knowledge (id,name,level,experience,lastuse,curriculum)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			cv_knowledgeStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Cv_knowledge cv_knowledge : cv_knowledges) {
-			if ( cv_knowledge.id == null )
-				cv_knowledgeStmt.setNull(offset++, 4);
-			else
-				cv_knowledgeStmt.setInt(offset++, cv_knowledge.id);
-			if ( cv_knowledge.name == null )
-				cv_knowledgeStmt.setNull(offset++, 12);
-			else
-				cv_knowledgeStmt.setString(offset++, cv_knowledge.name);
-			if ( cv_knowledge.level == null )
-				cv_knowledgeStmt.setNull(offset++, -6);
-			else
-				cv_knowledgeStmt.setShort(offset++, cv_knowledge.level);
-			if ( cv_knowledge.experience == null )
-				cv_knowledgeStmt.setNull(offset++, -6);
-			else
-				cv_knowledgeStmt.setShort(offset++, cv_knowledge.experience);
-			if ( cv_knowledge.lastuse == null )
-				cv_knowledgeStmt.setNull(offset++, -6);
-			else
-				cv_knowledgeStmt.setShort(offset++, cv_knowledge.lastuse);
-			if ( cv_knowledge.curriculum == null )
-				cv_knowledgeStmt.setNull(offset++, 4);
-			else
-				cv_knowledgeStmt.setInt(offset++, cv_knowledge.curriculum);
-		}
-		cv_knowledgeStmt.executeUpdate();
-		cv_knowledgeInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Cv_knowledges in {} milliseconds.", size, cv_knowledgeInserted, elapsed );		
-	}
-		
-		private int cv_knowledgeId = -1;
-		
-		private void initCv_knowledgeId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `cv_knowledge`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.cv_knowledgeId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCv_knowledgeId() {
-			return ++this.cv_knowledgeId;
-		} 
-
-		public void setCv_knowledgeId(Integer cv_knowledgeId) {
-			this.cv_knowledgeId = cv_knowledgeId;
-		} 
-	
-	private void flushCv_knowledge(  )
-	throws SQLException {
-		if ( ! cv_knowledges.isEmpty() )
-			insertCv_knowledge(cv_knowledges);
-		if ( cv_knowledgeStmt != null )
-			cv_knowledgeStmt.close();
-	}	
-
-	/**
-	 * Cv_knowledge
-	 * @param id Identificador unico del Conocimiento
-	 * @param name Nombre o descripcion del Conocimiento
-	 * @param level Nivel del Conocimiento
-	 * @param experience Experiencia en el Conocimiento
-	 * @param lastuse Ultimo uso del Conocimiento
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @throws SQLException
-	*/
-	protected void insertCv_knowledge(Integer id, String name, Short level, Short experience, Short lastuse, Integer curriculum)
-	throws SQLException {
-
-		Cv_knowledge cv_knowledge_ = new Cv_knowledge();
-		cv_knowledge_.id = id;
-		cv_knowledge_.name = name;
-		cv_knowledge_.level = level;
-		cv_knowledge_.experience = experience;
-		cv_knowledge_.lastuse = lastuse;
-		cv_knowledge_.curriculum = curriculum;
-
-		cv_knowledges.add(cv_knowledge_);
-		
-		int cv_knowledgeCount = cv_knowledges.size();
-		
-		if ( 93 * cv_knowledgeCount >=  this.maxAllowedPacket ){
-			insertCv_knowledge(cv_knowledges);
-			cv_knowledges.clear();
-		} 
-	}
-
-
-	/**
-	 * Cv_knowledge
-	 * @param name Nombre o descripcion del Conocimiento
-	 * @param level Nivel del Conocimiento
-	 * @param experience Experiencia en el Conocimiento
-	 * @param lastuse Ultimo uso del Conocimiento
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCv_knowledge(String name, Short level, Short experience, Short lastuse, Integer curriculum)
-	throws SQLException {
-		int id = nextCv_knowledgeId();
-
-		Cv_knowledge cv_knowledge_ = new Cv_knowledge();
-		cv_knowledge_.id = id;
-		cv_knowledge_.name = name;
-		cv_knowledge_.level = level;
-		cv_knowledge_.experience = experience;
-		cv_knowledge_.lastuse = lastuse;
-		cv_knowledge_.curriculum = curriculum;
-
-		cv_knowledges.add(cv_knowledge_);
-		
-		int cv_knowledgeCount = cv_knowledges.size();
-		
-		if ( 93 * cv_knowledgeCount >=  this.maxAllowedPacket ){
-			insertCv_knowledge(cv_knowledges);
-			cv_knowledges.clear();
 		} 
 		return id;
 	}
@@ -17369,161 +17421,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int pm_type_detailStmtSize = 0;
-
-	private int pm_type_detailInserted = 0;
-
-	private List<Pm_type_detail> pm_type_details = 
-		new LinkedList<Pm_type_detail>();
-
-	private PreparedStatement pm_type_detailStmt = null;
-
-	public static class Pm_type_detail {
-		protected Integer id; 
-		protected Short type; 
-		protected String description; 
-	}
-	
-	private void insertPm_type_detail( List<Pm_type_detail> pm_type_details )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = pm_type_details.size();
-		if ( pm_type_detailStmtSize != size ) {
-			if ( pm_type_detailStmt != null ) {
-				pm_type_detailStmt.close();
-			}
-			String values = "(?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			pm_type_detailStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO pm_type_detail (id,type,description)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			pm_type_detailStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Pm_type_detail pm_type_detail : pm_type_details) {
-			if ( pm_type_detail.id == null )
-				pm_type_detailStmt.setNull(offset++, 4);
-			else
-				pm_type_detailStmt.setInt(offset++, pm_type_detail.id);
-			if ( pm_type_detail.type == null )
-				pm_type_detailStmt.setNull(offset++, -6);
-			else
-				pm_type_detailStmt.setShort(offset++, pm_type_detail.type);
-			if ( pm_type_detail.description == null )
-				pm_type_detailStmt.setNull(offset++, 12);
-			else
-				pm_type_detailStmt.setString(offset++, pm_type_detail.description);
-		}
-		pm_type_detailStmt.executeUpdate();
-		pm_type_detailInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Pm_type_details in {} milliseconds.", size, pm_type_detailInserted, elapsed );		
-	}
-		
-		private int pm_type_detailId = -1;
-		
-		private void initPm_type_detailId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `pm_type_detail`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.pm_type_detailId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextPm_type_detailId() {
-			return ++this.pm_type_detailId;
-		} 
-
-		public void setPm_type_detailId(Integer pm_type_detailId) {
-			this.pm_type_detailId = pm_type_detailId;
-		} 
-	
-	private void flushPm_type_detail(  )
-	throws SQLException {
-		if ( ! pm_type_details.isEmpty() )
-			insertPm_type_detail(pm_type_details);
-		if ( pm_type_detailStmt != null )
-			pm_type_detailStmt.close();
-	}	
-
-	/**
-	 * Pm_type_detail
-	 * @param id Identificador unico
-	 * @param type Tipo de Forma de Pago
-	 * @param description Descripcion del detalle
-	 * @throws SQLException
-	*/
-	protected void insertPm_type_detail(Integer id, Short type, String description)
-	throws SQLException {
-
-		Pm_type_detail pm_type_detail_ = new Pm_type_detail();
-		pm_type_detail_.id = id;
-		pm_type_detail_.type = type;
-		pm_type_detail_.description = description;
-
-		pm_type_details.add(pm_type_detail_);
-		
-		int pm_type_detailCount = pm_type_details.size();
-		
-		if ( 45 * pm_type_detailCount >=  this.maxAllowedPacket ){
-			insertPm_type_detail(pm_type_details);
-			pm_type_details.clear();
-		} 
-	}
-
-
-	/**
-	 * Pm_type_detail
-	 * @param type Tipo de Forma de Pago
-	 * @param description Descripcion del detalle
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertPm_type_detail(Short type, String description)
-	throws SQLException {
-		int id = nextPm_type_detailId();
-
-		Pm_type_detail pm_type_detail_ = new Pm_type_detail();
-		pm_type_detail_.id = id;
-		pm_type_detail_.type = type;
-		pm_type_detail_.description = description;
-
-		pm_type_details.add(pm_type_detail_);
-		
-		int pm_type_detailCount = pm_type_details.size();
-		
-		if ( 45 * pm_type_detailCount >=  this.maxAllowedPacket ){
-			insertPm_type_detail(pm_type_details);
-			pm_type_details.clear();
-		} 
-		return id;
-	}
-
-
 	private int holiday_detailStmtSize = 0;
 
 	private int holiday_detailInserted = 0;
@@ -17683,6 +17580,161 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 94 * holiday_detailCount >=  this.maxAllowedPacket ){
 			insertHoliday_detail(holiday_details);
 			holiday_details.clear();
+		} 
+		return id;
+	}
+
+
+	private int pm_type_detailStmtSize = 0;
+
+	private int pm_type_detailInserted = 0;
+
+	private List<Pm_type_detail> pm_type_details = 
+		new LinkedList<Pm_type_detail>();
+
+	private PreparedStatement pm_type_detailStmt = null;
+
+	public static class Pm_type_detail {
+		protected Integer id; 
+		protected Short type; 
+		protected String description; 
+	}
+	
+	private void insertPm_type_detail( List<Pm_type_detail> pm_type_details )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = pm_type_details.size();
+		if ( pm_type_detailStmtSize != size ) {
+			if ( pm_type_detailStmt != null ) {
+				pm_type_detailStmt.close();
+			}
+			String values = "(?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			pm_type_detailStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO pm_type_detail (id,type,description)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			pm_type_detailStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Pm_type_detail pm_type_detail : pm_type_details) {
+			if ( pm_type_detail.id == null )
+				pm_type_detailStmt.setNull(offset++, 4);
+			else
+				pm_type_detailStmt.setInt(offset++, pm_type_detail.id);
+			if ( pm_type_detail.type == null )
+				pm_type_detailStmt.setNull(offset++, -6);
+			else
+				pm_type_detailStmt.setShort(offset++, pm_type_detail.type);
+			if ( pm_type_detail.description == null )
+				pm_type_detailStmt.setNull(offset++, 12);
+			else
+				pm_type_detailStmt.setString(offset++, pm_type_detail.description);
+		}
+		pm_type_detailStmt.executeUpdate();
+		pm_type_detailInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Pm_type_details in {} milliseconds.", size, pm_type_detailInserted, elapsed );		
+	}
+		
+		private int pm_type_detailId = -1;
+		
+		private void initPm_type_detailId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `pm_type_detail`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.pm_type_detailId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextPm_type_detailId() {
+			return ++this.pm_type_detailId;
+		} 
+
+		public void setPm_type_detailId(Integer pm_type_detailId) {
+			this.pm_type_detailId = pm_type_detailId;
+		} 
+	
+	private void flushPm_type_detail(  )
+	throws SQLException {
+		if ( ! pm_type_details.isEmpty() )
+			insertPm_type_detail(pm_type_details);
+		if ( pm_type_detailStmt != null )
+			pm_type_detailStmt.close();
+	}	
+
+	/**
+	 * Pm_type_detail
+	 * @param id Identificador unico
+	 * @param type Tipo de Forma de Pago
+	 * @param description Descripcion del detalle
+	 * @throws SQLException
+	*/
+	protected void insertPm_type_detail(Integer id, Short type, String description)
+	throws SQLException {
+
+		Pm_type_detail pm_type_detail_ = new Pm_type_detail();
+		pm_type_detail_.id = id;
+		pm_type_detail_.type = type;
+		pm_type_detail_.description = description;
+
+		pm_type_details.add(pm_type_detail_);
+		
+		int pm_type_detailCount = pm_type_details.size();
+		
+		if ( 45 * pm_type_detailCount >=  this.maxAllowedPacket ){
+			insertPm_type_detail(pm_type_details);
+			pm_type_details.clear();
+		} 
+	}
+
+
+	/**
+	 * Pm_type_detail
+	 * @param type Tipo de Forma de Pago
+	 * @param description Descripcion del detalle
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertPm_type_detail(Short type, String description)
+	throws SQLException {
+		int id = nextPm_type_detailId();
+
+		Pm_type_detail pm_type_detail_ = new Pm_type_detail();
+		pm_type_detail_.id = id;
+		pm_type_detail_.type = type;
+		pm_type_detail_.description = description;
+
+		pm_type_details.add(pm_type_detail_);
+		
+		int pm_type_detailCount = pm_type_details.size();
+		
+		if ( 45 * pm_type_detailCount >=  this.maxAllowedPacket ){
+			insertPm_type_detail(pm_type_details);
+			pm_type_details.clear();
 		} 
 		return id;
 	}
@@ -21604,370 +21656,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int lh_positionStmtSize = 0;
-
-	private int lh_positionInserted = 0;
-
-	private List<Lh_position> lh_positions = 
-		new LinkedList<Lh_position>();
-
-	private PreparedStatement lh_positionStmt = null;
-
-	public static class Lh_position {
-		protected Integer id; 
-		protected Integer employee; 
-		protected Date startingdate; 
-		protected Date endingdate; 
-		protected String description; 
-		protected Integer workplace; 
-		protected Integer workactivity; 
-		protected Integer calendar; 
-	}
-	
-	private void insertLh_position( List<Lh_position> lh_positions )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = lh_positions.size();
-		if ( lh_positionStmtSize != size ) {
-			if ( lh_positionStmt != null ) {
-				lh_positionStmt.close();
-			}
-			String values = "(?,?,?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			lh_positionStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO lh_position (id,employee,startingdate,endingdate,description,workplace,workactivity,calendar)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			lh_positionStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Lh_position lh_position : lh_positions) {
-			if ( lh_position.id == null )
-				lh_positionStmt.setNull(offset++, 4);
-			else
-				lh_positionStmt.setInt(offset++, lh_position.id);
-			if ( lh_position.employee == null )
-				lh_positionStmt.setNull(offset++, 4);
-			else
-				lh_positionStmt.setInt(offset++, lh_position.employee);
-			if ( lh_position.startingdate == null )
-				lh_positionStmt.setNull(offset++, 91);
-			else
-				lh_positionStmt.setDate(offset++, lh_position.startingdate);
-			if ( lh_position.endingdate == null )
-				lh_positionStmt.setNull(offset++, 91);
-			else
-				lh_positionStmt.setDate(offset++, lh_position.endingdate);
-			if ( lh_position.description == null )
-				lh_positionStmt.setNull(offset++, 12);
-			else
-				lh_positionStmt.setString(offset++, lh_position.description);
-			if ( lh_position.workplace == null )
-				lh_positionStmt.setNull(offset++, 4);
-			else
-				lh_positionStmt.setInt(offset++, lh_position.workplace);
-			if ( lh_position.workactivity == null )
-				lh_positionStmt.setNull(offset++, 4);
-			else
-				lh_positionStmt.setInt(offset++, lh_position.workactivity);
-			if ( lh_position.calendar == null )
-				lh_positionStmt.setNull(offset++, 4);
-			else
-				lh_positionStmt.setInt(offset++, lh_position.calendar);
-		}
-		lh_positionStmt.executeUpdate();
-		lh_positionInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Lh_positions in {} milliseconds.", size, lh_positionInserted, elapsed );		
-	}
-		
-		private int lh_positionId = -1;
-		
-		private void initLh_positionId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `lh_position`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.lh_positionId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextLh_positionId() {
-			return ++this.lh_positionId;
-		} 
-
-		public void setLh_positionId(Integer lh_positionId) {
-			this.lh_positionId = lh_positionId;
-		} 
-	
-	private void flushLh_position(  )
-	throws SQLException {
-		if ( ! lh_positions.isEmpty() )
-			insertLh_position(lh_positions);
-		if ( lh_positionStmt != null )
-			lh_positionStmt.close();
-	}	
-
-	/**
-	 * Lh_position
-	 * @param id Identificador unico del Cargo
-	 * @param employee Identificador del Empleado
-	 * @param startingdate Fecha de inicio del Cargo
-	 * @param endingdate Fecha de finalizacion del Cargo
-	 * @param description Descripcion del Cargo
-	 * @param workplace Identificador del Centro de Trabajo
-	 * @param workactivity Identificador de la Actividad
-	 * @param calendar Identificador del Calendario Laboral
-	 * @throws SQLException
-	*/
-	protected void insertLh_position(Integer id, Integer employee, Date startingdate, Date endingdate, String description, Integer workplace, Integer workactivity, Integer calendar)
-	throws SQLException {
-
-		Lh_position lh_position_ = new Lh_position();
-		lh_position_.id = id;
-		lh_position_.employee = employee;
-		lh_position_.startingdate = startingdate;
-		lh_position_.endingdate = endingdate;
-		lh_position_.description = description;
-		lh_position_.workplace = workplace;
-		lh_position_.workactivity = workactivity;
-		lh_position_.calendar = calendar;
-
-		lh_positions.add(lh_position_);
-		
-		int lh_positionCount = lh_positions.size();
-		
-		if ( 134 * lh_positionCount >=  this.maxAllowedPacket ){
-			insertLh_position(lh_positions);
-			lh_positions.clear();
-		} 
-	}
-
-
-	/**
-	 * Lh_position
-	 * @param employee Identificador del Empleado
-	 * @param startingdate Fecha de inicio del Cargo
-	 * @param endingdate Fecha de finalizacion del Cargo
-	 * @param description Descripcion del Cargo
-	 * @param workplace Identificador del Centro de Trabajo
-	 * @param workactivity Identificador de la Actividad
-	 * @param calendar Identificador del Calendario Laboral
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertLh_position(Integer employee, Date startingdate, Date endingdate, String description, Integer workplace, Integer workactivity, Integer calendar)
-	throws SQLException {
-		int id = nextLh_positionId();
-
-		Lh_position lh_position_ = new Lh_position();
-		lh_position_.id = id;
-		lh_position_.employee = employee;
-		lh_position_.startingdate = startingdate;
-		lh_position_.endingdate = endingdate;
-		lh_position_.description = description;
-		lh_position_.workplace = workplace;
-		lh_position_.workactivity = workactivity;
-		lh_position_.calendar = calendar;
-
-		lh_positions.add(lh_position_);
-		
-		int lh_positionCount = lh_positions.size();
-		
-		if ( 134 * lh_positionCount >=  this.maxAllowedPacket ){
-			insertLh_position(lh_positions);
-			lh_positions.clear();
-		} 
-		return id;
-	}
-
-
-	private int cv_evaluateStmtSize = 0;
-
-	private int cv_evaluateInserted = 0;
-
-	private List<Cv_evaluate> cv_evaluates = 
-		new LinkedList<Cv_evaluate>();
-
-	private PreparedStatement cv_evaluateStmt = null;
-
-	public static class Cv_evaluate {
-		protected Integer id; 
-		protected Integer type; 
-		protected Short value; 
-		protected Integer curriculum; 
-	}
-	
-	private void insertCv_evaluate( List<Cv_evaluate> cv_evaluates )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = cv_evaluates.size();
-		if ( cv_evaluateStmtSize != size ) {
-			if ( cv_evaluateStmt != null ) {
-				cv_evaluateStmt.close();
-			}
-			String values = "(?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			cv_evaluateStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO cv_evaluate (id,type,value,curriculum)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			cv_evaluateStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Cv_evaluate cv_evaluate : cv_evaluates) {
-			if ( cv_evaluate.id == null )
-				cv_evaluateStmt.setNull(offset++, 4);
-			else
-				cv_evaluateStmt.setInt(offset++, cv_evaluate.id);
-			if ( cv_evaluate.type == null )
-				cv_evaluateStmt.setNull(offset++, 4);
-			else
-				cv_evaluateStmt.setInt(offset++, cv_evaluate.type);
-			if ( cv_evaluate.value == null )
-				cv_evaluateStmt.setNull(offset++, -6);
-			else
-				cv_evaluateStmt.setShort(offset++, cv_evaluate.value);
-			if ( cv_evaluate.curriculum == null )
-				cv_evaluateStmt.setNull(offset++, 4);
-			else
-				cv_evaluateStmt.setInt(offset++, cv_evaluate.curriculum);
-		}
-		cv_evaluateStmt.executeUpdate();
-		cv_evaluateInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Cv_evaluates in {} milliseconds.", size, cv_evaluateInserted, elapsed );		
-	}
-		
-		private int cv_evaluateId = -1;
-		
-		private void initCv_evaluateId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `cv_evaluate`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.cv_evaluateId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCv_evaluateId() {
-			return ++this.cv_evaluateId;
-		} 
-
-		public void setCv_evaluateId(Integer cv_evaluateId) {
-			this.cv_evaluateId = cv_evaluateId;
-		} 
-	
-	private void flushCv_evaluate(  )
-	throws SQLException {
-		if ( ! cv_evaluates.isEmpty() )
-			insertCv_evaluate(cv_evaluates);
-		if ( cv_evaluateStmt != null )
-			cv_evaluateStmt.close();
-	}	
-
-	/**
-	 * Cv_evaluate
-	 * @param id Identificador unico de la Evaluacion
-	 * @param type Tipo de Evaluacion
-	 * @param value Valor de la Evaluacion
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @throws SQLException
-	*/
-	protected void insertCv_evaluate(Integer id, Integer type, Short value, Integer curriculum)
-	throws SQLException {
-
-		Cv_evaluate cv_evaluate_ = new Cv_evaluate();
-		cv_evaluate_.id = id;
-		cv_evaluate_.type = type;
-		cv_evaluate_.value = value;
-		cv_evaluate_.curriculum = curriculum;
-
-		cv_evaluates.add(cv_evaluate_);
-		
-		int cv_evaluateCount = cv_evaluates.size();
-		
-		if ( 33 * cv_evaluateCount >=  this.maxAllowedPacket ){
-			insertCv_evaluate(cv_evaluates);
-			cv_evaluates.clear();
-		} 
-	}
-
-
-	/**
-	 * Cv_evaluate
-	 * @param type Tipo de Evaluacion
-	 * @param value Valor de la Evaluacion
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCv_evaluate(Integer type, Short value, Integer curriculum)
-	throws SQLException {
-		int id = nextCv_evaluateId();
-
-		Cv_evaluate cv_evaluate_ = new Cv_evaluate();
-		cv_evaluate_.id = id;
-		cv_evaluate_.type = type;
-		cv_evaluate_.value = value;
-		cv_evaluate_.curriculum = curriculum;
-
-		cv_evaluates.add(cv_evaluate_);
-		
-		int cv_evaluateCount = cv_evaluates.size();
-		
-		if ( 33 * cv_evaluateCount >=  this.maxAllowedPacket ){
-			insertCv_evaluate(cv_evaluates);
-			cv_evaluates.clear();
-		} 
-		return id;
-	}
-
-
 	private int bank_statement_linkStmtSize = 0;
 
 	private int bank_statement_linkInserted = 0;
@@ -25094,6 +24782,179 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int certifica2_batchStmtSize = 0;
+
+	private int certifica2_batchInserted = 0;
+
+	private List<Certifica2_batch> certifica2_batchs = 
+		new LinkedList<Certifica2_batch>();
+
+	private PreparedStatement certifica2_batchStmt = null;
+
+	public static class Certifica2_batch {
+		protected Integer id; 
+		protected Integer enterprise; 
+		protected Date date; 
+		protected Integer status; 
+		protected String sign; 
+	}
+	
+	private void insertCertifica2_batch( List<Certifica2_batch> certifica2_batchs )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = certifica2_batchs.size();
+		if ( certifica2_batchStmtSize != size ) {
+			if ( certifica2_batchStmt != null ) {
+				certifica2_batchStmt.close();
+			}
+			String values = "(?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			certifica2_batchStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO certifica2_batch (id,enterprise,date,status,sign)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			certifica2_batchStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Certifica2_batch certifica2_batch : certifica2_batchs) {
+			if ( certifica2_batch.id == null )
+				certifica2_batchStmt.setNull(offset++, 4);
+			else
+				certifica2_batchStmt.setInt(offset++, certifica2_batch.id);
+			if ( certifica2_batch.enterprise == null )
+				certifica2_batchStmt.setNull(offset++, 4);
+			else
+				certifica2_batchStmt.setInt(offset++, certifica2_batch.enterprise);
+			if ( certifica2_batch.date == null )
+				certifica2_batchStmt.setNull(offset++, 91);
+			else
+				certifica2_batchStmt.setDate(offset++, certifica2_batch.date);
+			if ( certifica2_batch.status == null )
+				certifica2_batchStmt.setNull(offset++, 4);
+			else
+				certifica2_batchStmt.setInt(offset++, certifica2_batch.status);
+			if ( certifica2_batch.sign == null )
+				certifica2_batchStmt.setNull(offset++, 12);
+			else
+				certifica2_batchStmt.setString(offset++, certifica2_batch.sign);
+		}
+		certifica2_batchStmt.executeUpdate();
+		certifica2_batchInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Certifica2_batchs in {} milliseconds.", size, certifica2_batchInserted, elapsed );		
+	}
+		
+		private int certifica2_batchId = -1;
+		
+		private void initCertifica2_batchId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `certifica2_batch`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.certifica2_batchId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCertifica2_batchId() {
+			return ++this.certifica2_batchId;
+		} 
+
+		public void setCertifica2_batchId(Integer certifica2_batchId) {
+			this.certifica2_batchId = certifica2_batchId;
+		} 
+	
+	private void flushCertifica2_batch(  )
+	throws SQLException {
+		if ( ! certifica2_batchs.isEmpty() )
+			insertCertifica2_batch(certifica2_batchs);
+		if ( certifica2_batchStmt != null )
+			certifica2_batchStmt.close();
+	}	
+
+	/**
+	 * Certifica2_batch
+	 * @param id Identificador unico del certificado de empresa de la remesa
+	 * @param enterprise Identificador unico del certificado de empresa de la empresa
+	 * @param date Fecha de la ultima remesa en la que fue incluido
+	 * @param status Estado del certificado correspondiente a la ultima respuesta
+	 * @param sign Estado del certificado correspondiente a la ultima respuesta
+	 * @throws SQLException
+	*/
+	protected void insertCertifica2_batch(Integer id, Integer enterprise, Date date, Integer status, String sign)
+	throws SQLException {
+
+		Certifica2_batch certifica2_batch_ = new Certifica2_batch();
+		certifica2_batch_.id = id;
+		certifica2_batch_.enterprise = enterprise;
+		certifica2_batch_.date = date;
+		certifica2_batch_.status = status;
+		certifica2_batch_.sign = sign;
+
+		certifica2_batchs.add(certifica2_batch_);
+		
+		int certifica2_batchCount = certifica2_batchs.size();
+		
+		if ( 72 * certifica2_batchCount >=  this.maxAllowedPacket ){
+			insertCertifica2_batch(certifica2_batchs);
+			certifica2_batchs.clear();
+		} 
+	}
+
+
+	/**
+	 * Certifica2_batch
+	 * @param enterprise Identificador unico del certificado de empresa de la empresa
+	 * @param date Fecha de la ultima remesa en la que fue incluido
+	 * @param status Estado del certificado correspondiente a la ultima respuesta
+	 * @param sign Estado del certificado correspondiente a la ultima respuesta
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCertifica2_batch(Integer enterprise, Date date, Integer status, String sign)
+	throws SQLException {
+		int id = nextCertifica2_batchId();
+
+		Certifica2_batch certifica2_batch_ = new Certifica2_batch();
+		certifica2_batch_.id = id;
+		certifica2_batch_.enterprise = enterprise;
+		certifica2_batch_.date = date;
+		certifica2_batch_.status = status;
+		certifica2_batch_.sign = sign;
+
+		certifica2_batchs.add(certifica2_batch_);
+		
+		int certifica2_batchCount = certifica2_batchs.size();
+		
+		if ( 72 * certifica2_batchCount >=  this.maxAllowedPacket ){
+			insertCertifica2_batch(certifica2_batchs);
+			certifica2_batchs.clear();
+		} 
+		return id;
+	}
+
+
 	private int invoice_detail_accountStmtSize = 0;
 
 	private int invoice_detail_accountInserted = 0;
@@ -25399,179 +25260,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 48 * commission_typeCount >=  this.maxAllowedPacket ){
 			insertCommission_type(commission_types);
 			commission_types.clear();
-		} 
-		return id;
-	}
-
-
-	private int enterprise_certificate_detailStmtSize = 0;
-
-	private int enterprise_certificate_detailInserted = 0;
-
-	private List<Enterprise_certificate_detail> enterprise_certificate_details = 
-		new LinkedList<Enterprise_certificate_detail>();
-
-	private PreparedStatement enterprise_certificate_detailStmt = null;
-
-	public static class Enterprise_certificate_detail {
-		protected Integer id; 
-		protected Integer enterprise_certificate; 
-		protected Integer contract; 
-		protected Date expire_date; 
-		protected String suspension_cause; 
-	}
-	
-	private void insertEnterprise_certificate_detail( List<Enterprise_certificate_detail> enterprise_certificate_details )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = enterprise_certificate_details.size();
-		if ( enterprise_certificate_detailStmtSize != size ) {
-			if ( enterprise_certificate_detailStmt != null ) {
-				enterprise_certificate_detailStmt.close();
-			}
-			String values = "(?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			enterprise_certificate_detailStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO enterprise_certificate_detail (id,enterprise_certificate,contract,expire_date,suspension_cause)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			enterprise_certificate_detailStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Enterprise_certificate_detail enterprise_certificate_detail : enterprise_certificate_details) {
-			if ( enterprise_certificate_detail.id == null )
-				enterprise_certificate_detailStmt.setNull(offset++, 4);
-			else
-				enterprise_certificate_detailStmt.setInt(offset++, enterprise_certificate_detail.id);
-			if ( enterprise_certificate_detail.enterprise_certificate == null )
-				enterprise_certificate_detailStmt.setNull(offset++, 4);
-			else
-				enterprise_certificate_detailStmt.setInt(offset++, enterprise_certificate_detail.enterprise_certificate);
-			if ( enterprise_certificate_detail.contract == null )
-				enterprise_certificate_detailStmt.setNull(offset++, 4);
-			else
-				enterprise_certificate_detailStmt.setInt(offset++, enterprise_certificate_detail.contract);
-			if ( enterprise_certificate_detail.expire_date == null )
-				enterprise_certificate_detailStmt.setNull(offset++, 91);
-			else
-				enterprise_certificate_detailStmt.setDate(offset++, enterprise_certificate_detail.expire_date);
-			if ( enterprise_certificate_detail.suspension_cause == null )
-				enterprise_certificate_detailStmt.setNull(offset++, 12);
-			else
-				enterprise_certificate_detailStmt.setString(offset++, enterprise_certificate_detail.suspension_cause);
-		}
-		enterprise_certificate_detailStmt.executeUpdate();
-		enterprise_certificate_detailInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Enterprise_certificate_details in {} milliseconds.", size, enterprise_certificate_detailInserted, elapsed );		
-	}
-		
-		private int enterprise_certificate_detailId = -1;
-		
-		private void initEnterprise_certificate_detailId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `enterprise_certificate_detail`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.enterprise_certificate_detailId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextEnterprise_certificate_detailId() {
-			return ++this.enterprise_certificate_detailId;
-		} 
-
-		public void setEnterprise_certificate_detailId(Integer enterprise_certificate_detailId) {
-			this.enterprise_certificate_detailId = enterprise_certificate_detailId;
-		} 
-	
-	private void flushEnterprise_certificate_detail(  )
-	throws SQLException {
-		if ( ! enterprise_certificate_details.isEmpty() )
-			insertEnterprise_certificate_detail(enterprise_certificate_details);
-		if ( enterprise_certificate_detailStmt != null )
-			enterprise_certificate_detailStmt.close();
-	}	
-
-	/**
-	 * Enterprise_certificate_detail
-	 * @param id Identificador unico del certificado de empresa de la remesa
-	 * @param enterprise_certificate Identificador unico del certificado de empresa
-	 * @param contract Identificador unico del contrato de empleado
-	 * @param expire_date Fecha de baja del empleado
-	 * @param suspension_cause Causa de la suspension del empleado
-	 * @throws SQLException
-	*/
-	protected void insertEnterprise_certificate_detail(Integer id, Integer enterprise_certificate, Integer contract, Date expire_date, String suspension_cause)
-	throws SQLException {
-
-		Enterprise_certificate_detail enterprise_certificate_detail_ = new Enterprise_certificate_detail();
-		enterprise_certificate_detail_.id = id;
-		enterprise_certificate_detail_.enterprise_certificate = enterprise_certificate;
-		enterprise_certificate_detail_.contract = contract;
-		enterprise_certificate_detail_.expire_date = expire_date;
-		enterprise_certificate_detail_.suspension_cause = suspension_cause;
-
-		enterprise_certificate_details.add(enterprise_certificate_detail_);
-		
-		int enterprise_certificate_detailCount = enterprise_certificate_details.size();
-		
-		if ( 42 * enterprise_certificate_detailCount >=  this.maxAllowedPacket ){
-			insertEnterprise_certificate_detail(enterprise_certificate_details);
-			enterprise_certificate_details.clear();
-		} 
-	}
-
-
-	/**
-	 * Enterprise_certificate_detail
-	 * @param enterprise_certificate Identificador unico del certificado de empresa
-	 * @param contract Identificador unico del contrato de empleado
-	 * @param expire_date Fecha de baja del empleado
-	 * @param suspension_cause Causa de la suspension del empleado
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertEnterprise_certificate_detail(Integer enterprise_certificate, Integer contract, Date expire_date, String suspension_cause)
-	throws SQLException {
-		int id = nextEnterprise_certificate_detailId();
-
-		Enterprise_certificate_detail enterprise_certificate_detail_ = new Enterprise_certificate_detail();
-		enterprise_certificate_detail_.id = id;
-		enterprise_certificate_detail_.enterprise_certificate = enterprise_certificate;
-		enterprise_certificate_detail_.contract = contract;
-		enterprise_certificate_detail_.expire_date = expire_date;
-		enterprise_certificate_detail_.suspension_cause = suspension_cause;
-
-		enterprise_certificate_details.add(enterprise_certificate_detail_);
-		
-		int enterprise_certificate_detailCount = enterprise_certificate_details.size();
-		
-		if ( 42 * enterprise_certificate_detailCount >=  this.maxAllowedPacket ){
-			insertEnterprise_certificate_detail(enterprise_certificate_details);
-			enterprise_certificate_details.clear();
 		} 
 		return id;
 	}
@@ -29083,188 +28771,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int cv_evaluate_summaryStmtSize = 0;
-
-	private int cv_evaluate_summaryInserted = 0;
-
-	private List<Cv_evaluate_summary> cv_evaluate_summarys = 
-		new LinkedList<Cv_evaluate_summary>();
-
-	private PreparedStatement cv_evaluate_summaryStmt = null;
-
-	public static class Cv_evaluate_summary {
-		protected Integer id; 
-		protected String strengths; 
-		protected String weaknesses; 
-		protected Short profile; 
-		protected String comments; 
-		protected Integer curriculum; 
-	}
-	
-	private void insertCv_evaluate_summary( List<Cv_evaluate_summary> cv_evaluate_summarys )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = cv_evaluate_summarys.size();
-		if ( cv_evaluate_summaryStmtSize != size ) {
-			if ( cv_evaluate_summaryStmt != null ) {
-				cv_evaluate_summaryStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			cv_evaluate_summaryStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO cv_evaluate_summary (id,strengths,weaknesses,profile,comments,curriculum)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			cv_evaluate_summaryStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Cv_evaluate_summary cv_evaluate_summary : cv_evaluate_summarys) {
-			if ( cv_evaluate_summary.id == null )
-				cv_evaluate_summaryStmt.setNull(offset++, 4);
-			else
-				cv_evaluate_summaryStmt.setInt(offset++, cv_evaluate_summary.id);
-			if ( cv_evaluate_summary.strengths == null )
-				cv_evaluate_summaryStmt.setNull(offset++, 12);
-			else
-				cv_evaluate_summaryStmt.setString(offset++, cv_evaluate_summary.strengths);
-			if ( cv_evaluate_summary.weaknesses == null )
-				cv_evaluate_summaryStmt.setNull(offset++, 12);
-			else
-				cv_evaluate_summaryStmt.setString(offset++, cv_evaluate_summary.weaknesses);
-			if ( cv_evaluate_summary.profile == null )
-				cv_evaluate_summaryStmt.setNull(offset++, -6);
-			else
-				cv_evaluate_summaryStmt.setShort(offset++, cv_evaluate_summary.profile);
-			if ( cv_evaluate_summary.comments == null )
-				cv_evaluate_summaryStmt.setNull(offset++, 12);
-			else
-				cv_evaluate_summaryStmt.setString(offset++, cv_evaluate_summary.comments);
-			if ( cv_evaluate_summary.curriculum == null )
-				cv_evaluate_summaryStmt.setNull(offset++, 4);
-			else
-				cv_evaluate_summaryStmt.setInt(offset++, cv_evaluate_summary.curriculum);
-		}
-		cv_evaluate_summaryStmt.executeUpdate();
-		cv_evaluate_summaryInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Cv_evaluate_summarys in {} milliseconds.", size, cv_evaluate_summaryInserted, elapsed );		
-	}
-		
-		private int cv_evaluate_summaryId = -1;
-		
-		private void initCv_evaluate_summaryId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `cv_evaluate_summary`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.cv_evaluate_summaryId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCv_evaluate_summaryId() {
-			return ++this.cv_evaluate_summaryId;
-		} 
-
-		public void setCv_evaluate_summaryId(Integer cv_evaluate_summaryId) {
-			this.cv_evaluate_summaryId = cv_evaluate_summaryId;
-		} 
-	
-	private void flushCv_evaluate_summary(  )
-	throws SQLException {
-		if ( ! cv_evaluate_summarys.isEmpty() )
-			insertCv_evaluate_summary(cv_evaluate_summarys);
-		if ( cv_evaluate_summaryStmt != null )
-			cv_evaluate_summaryStmt.close();
-	}	
-
-	/**
-	 * Cv_evaluate_summary
-	 * @param id Identificador unico del Resumen
-	 * @param strengths Fortalezas
-	 * @param weaknesses Debilidades
-	 * @param profile Perfil
-	 * @param comments Comentarios
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @throws SQLException
-	*/
-	protected void insertCv_evaluate_summary(Integer id, String strengths, String weaknesses, Short profile, String comments, Integer curriculum)
-	throws SQLException {
-
-		Cv_evaluate_summary cv_evaluate_summary_ = new Cv_evaluate_summary();
-		cv_evaluate_summary_.id = id;
-		cv_evaluate_summary_.strengths = strengths;
-		cv_evaluate_summary_.weaknesses = weaknesses;
-		cv_evaluate_summary_.profile = profile;
-		cv_evaluate_summary_.comments = comments;
-		cv_evaluate_summary_.curriculum = curriculum;
-
-		cv_evaluate_summarys.add(cv_evaluate_summary_);
-		
-		int cv_evaluate_summaryCount = cv_evaluate_summarys.size();
-		
-		if ( 791 * cv_evaluate_summaryCount >=  this.maxAllowedPacket ){
-			insertCv_evaluate_summary(cv_evaluate_summarys);
-			cv_evaluate_summarys.clear();
-		} 
-	}
-
-
-	/**
-	 * Cv_evaluate_summary
-	 * @param strengths Fortalezas
-	 * @param weaknesses Debilidades
-	 * @param profile Perfil
-	 * @param comments Comentarios
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCv_evaluate_summary(String strengths, String weaknesses, Short profile, String comments, Integer curriculum)
-	throws SQLException {
-		int id = nextCv_evaluate_summaryId();
-
-		Cv_evaluate_summary cv_evaluate_summary_ = new Cv_evaluate_summary();
-		cv_evaluate_summary_.id = id;
-		cv_evaluate_summary_.strengths = strengths;
-		cv_evaluate_summary_.weaknesses = weaknesses;
-		cv_evaluate_summary_.profile = profile;
-		cv_evaluate_summary_.comments = comments;
-		cv_evaluate_summary_.curriculum = curriculum;
-
-		cv_evaluate_summarys.add(cv_evaluate_summary_);
-		
-		int cv_evaluate_summaryCount = cv_evaluate_summarys.size();
-		
-		if ( 791 * cv_evaluate_summaryCount >=  this.maxAllowedPacket ){
-			insertCv_evaluate_summary(cv_evaluate_summarys);
-			cv_evaluate_summarys.clear();
-		} 
-		return id;
-	}
-
-
 	private int courseStmtSize = 0;
 
 	private int courseInserted = 0;
@@ -30804,6 +30310,206 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 97 * enterprise_activityCount >=  this.maxAllowedPacket ){
 			insertEnterprise_activity(enterprise_activitys);
 			enterprise_activitys.clear();
+		} 
+		return id;
+	}
+
+
+	private int certifica2_batch_dataStmtSize = 0;
+
+	private int certifica2_batch_dataInserted = 0;
+
+	private List<Certifica2_batch_data> certifica2_batch_datas = 
+		new LinkedList<Certifica2_batch_data>();
+
+	private PreparedStatement certifica2_batch_dataStmt = null;
+
+	public static class Certifica2_batch_data {
+		protected Integer id; 
+		protected Integer certifica2_batch_detail; 
+		protected Integer year; 
+		protected Integer month; 
+		protected Integer contribution_days; 
+		protected Double cgc_contribution_base; 
+		protected Double unemployment_contribution_base; 
+		protected String comments; 
+	}
+	
+	private void insertCertifica2_batch_data( List<Certifica2_batch_data> certifica2_batch_datas )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = certifica2_batch_datas.size();
+		if ( certifica2_batch_dataStmtSize != size ) {
+			if ( certifica2_batch_dataStmt != null ) {
+				certifica2_batch_dataStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			certifica2_batch_dataStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO certifica2_batch_data (id,certifica2_batch_detail,year,month,contribution_days,cgc_contribution_base,unemployment_contribution_base,comments)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			certifica2_batch_dataStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Certifica2_batch_data certifica2_batch_data : certifica2_batch_datas) {
+			if ( certifica2_batch_data.id == null )
+				certifica2_batch_dataStmt.setNull(offset++, 4);
+			else
+				certifica2_batch_dataStmt.setInt(offset++, certifica2_batch_data.id);
+			if ( certifica2_batch_data.certifica2_batch_detail == null )
+				certifica2_batch_dataStmt.setNull(offset++, 4);
+			else
+				certifica2_batch_dataStmt.setInt(offset++, certifica2_batch_data.certifica2_batch_detail);
+			if ( certifica2_batch_data.year == null )
+				certifica2_batch_dataStmt.setNull(offset++, 4);
+			else
+				certifica2_batch_dataStmt.setInt(offset++, certifica2_batch_data.year);
+			if ( certifica2_batch_data.month == null )
+				certifica2_batch_dataStmt.setNull(offset++, 4);
+			else
+				certifica2_batch_dataStmt.setInt(offset++, certifica2_batch_data.month);
+			if ( certifica2_batch_data.contribution_days == null )
+				certifica2_batch_dataStmt.setNull(offset++, 4);
+			else
+				certifica2_batch_dataStmt.setInt(offset++, certifica2_batch_data.contribution_days);
+			if ( certifica2_batch_data.cgc_contribution_base == null )
+				certifica2_batch_dataStmt.setNull(offset++, 8);
+			else
+				certifica2_batch_dataStmt.setDouble(offset++, certifica2_batch_data.cgc_contribution_base);
+			if ( certifica2_batch_data.unemployment_contribution_base == null )
+				certifica2_batch_dataStmt.setNull(offset++, 8);
+			else
+				certifica2_batch_dataStmt.setDouble(offset++, certifica2_batch_data.unemployment_contribution_base);
+			if ( certifica2_batch_data.comments == null )
+				certifica2_batch_dataStmt.setNull(offset++, 12);
+			else
+				certifica2_batch_dataStmt.setString(offset++, certifica2_batch_data.comments);
+		}
+		certifica2_batch_dataStmt.executeUpdate();
+		certifica2_batch_dataInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Certifica2_batch_datas in {} milliseconds.", size, certifica2_batch_dataInserted, elapsed );		
+	}
+		
+		private int certifica2_batch_dataId = -1;
+		
+		private void initCertifica2_batch_dataId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `certifica2_batch_data`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.certifica2_batch_dataId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCertifica2_batch_dataId() {
+			return ++this.certifica2_batch_dataId;
+		} 
+
+		public void setCertifica2_batch_dataId(Integer certifica2_batch_dataId) {
+			this.certifica2_batch_dataId = certifica2_batch_dataId;
+		} 
+	
+	private void flushCertifica2_batch_data(  )
+	throws SQLException {
+		if ( ! certifica2_batch_datas.isEmpty() )
+			insertCertifica2_batch_data(certifica2_batch_datas);
+		if ( certifica2_batch_dataStmt != null )
+			certifica2_batch_dataStmt.close();
+	}	
+
+	/**
+	 * Certifica2_batch_data
+	 * @param id Identificador unico de los datos de cotizacion del certificado
+	 * @param certifica2_batch_detail Identificador unico del certificado de empresa de la remesa
+	 * @param year Anio
+	 * @param month Mes
+	 * @param contribution_days Numero de dias cotizados
+	 * @param cgc_contribution_base Base de cotizacion de contingencias comunes
+	 * @param unemployment_contribution_base Base de cotizacion por desempleo
+	 * @param comments Observaciones
+	 * @throws SQLException
+	*/
+	protected void insertCertifica2_batch_data(Integer id, Integer certifica2_batch_detail, Integer year, Integer month, Integer contribution_days, Double cgc_contribution_base, Double unemployment_contribution_base, String comments)
+	throws SQLException {
+
+		Certifica2_batch_data certifica2_batch_data_ = new Certifica2_batch_data();
+		certifica2_batch_data_.id = id;
+		certifica2_batch_data_.certifica2_batch_detail = certifica2_batch_detail;
+		certifica2_batch_data_.year = year;
+		certifica2_batch_data_.month = month;
+		certifica2_batch_data_.contribution_days = contribution_days;
+		certifica2_batch_data_.cgc_contribution_base = cgc_contribution_base;
+		certifica2_batch_data_.unemployment_contribution_base = unemployment_contribution_base;
+		certifica2_batch_data_.comments = comments;
+
+		certifica2_batch_datas.add(certifica2_batch_data_);
+		
+		int certifica2_batch_dataCount = certifica2_batch_datas.size();
+		
+		if ( 130 * certifica2_batch_dataCount >=  this.maxAllowedPacket ){
+			insertCertifica2_batch_data(certifica2_batch_datas);
+			certifica2_batch_datas.clear();
+		} 
+	}
+
+
+	/**
+	 * Certifica2_batch_data
+	 * @param certifica2_batch_detail Identificador unico del certificado de empresa de la remesa
+	 * @param year Anio
+	 * @param month Mes
+	 * @param contribution_days Numero de dias cotizados
+	 * @param cgc_contribution_base Base de cotizacion de contingencias comunes
+	 * @param unemployment_contribution_base Base de cotizacion por desempleo
+	 * @param comments Observaciones
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCertifica2_batch_data(Integer certifica2_batch_detail, Integer year, Integer month, Integer contribution_days, Double cgc_contribution_base, Double unemployment_contribution_base, String comments)
+	throws SQLException {
+		int id = nextCertifica2_batch_dataId();
+
+		Certifica2_batch_data certifica2_batch_data_ = new Certifica2_batch_data();
+		certifica2_batch_data_.id = id;
+		certifica2_batch_data_.certifica2_batch_detail = certifica2_batch_detail;
+		certifica2_batch_data_.year = year;
+		certifica2_batch_data_.month = month;
+		certifica2_batch_data_.contribution_days = contribution_days;
+		certifica2_batch_data_.cgc_contribution_base = cgc_contribution_base;
+		certifica2_batch_data_.unemployment_contribution_base = unemployment_contribution_base;
+		certifica2_batch_data_.comments = comments;
+
+		certifica2_batch_datas.add(certifica2_batch_data_);
+		
+		int certifica2_batch_dataCount = certifica2_batch_datas.size();
+		
+		if ( 130 * certifica2_batch_dataCount >=  this.maxAllowedPacket ){
+			insertCertifica2_batch_data(certifica2_batch_datas);
+			certifica2_batch_datas.clear();
 		} 
 		return id;
 	}
@@ -32424,197 +32130,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 275 * sessionCount >=  this.maxAllowedPacket ){
 			insertSession(sessions);
 			sessions.clear();
-		} 
-		return id;
-	}
-
-
-	private int cv_studiesStmtSize = 0;
-
-	private int cv_studiesInserted = 0;
-
-	private List<Cv_studies> cv_studiess = 
-		new LinkedList<Cv_studies>();
-
-	private PreparedStatement cv_studiesStmt = null;
-
-	public static class Cv_studies {
-		protected Integer id; 
-		protected Date startingdate; 
-		protected Date endingdate; 
-		protected Short degree; 
-		protected String speciality; 
-		protected String centre; 
-		protected Integer curriculum; 
-	}
-	
-	private void insertCv_studies( List<Cv_studies> cv_studiess )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = cv_studiess.size();
-		if ( cv_studiesStmtSize != size ) {
-			if ( cv_studiesStmt != null ) {
-				cv_studiesStmt.close();
-			}
-			String values = "(?,?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			cv_studiesStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO cv_studies (id,startingdate,endingdate,degree,speciality,centre,curriculum)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			cv_studiesStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Cv_studies cv_studies : cv_studiess) {
-			if ( cv_studies.id == null )
-				cv_studiesStmt.setNull(offset++, 4);
-			else
-				cv_studiesStmt.setInt(offset++, cv_studies.id);
-			if ( cv_studies.startingdate == null )
-				cv_studiesStmt.setNull(offset++, 91);
-			else
-				cv_studiesStmt.setDate(offset++, cv_studies.startingdate);
-			if ( cv_studies.endingdate == null )
-				cv_studiesStmt.setNull(offset++, 91);
-			else
-				cv_studiesStmt.setDate(offset++, cv_studies.endingdate);
-			if ( cv_studies.degree == null )
-				cv_studiesStmt.setNull(offset++, -6);
-			else
-				cv_studiesStmt.setShort(offset++, cv_studies.degree);
-			if ( cv_studies.speciality == null )
-				cv_studiesStmt.setNull(offset++, 12);
-			else
-				cv_studiesStmt.setString(offset++, cv_studies.speciality);
-			if ( cv_studies.centre == null )
-				cv_studiesStmt.setNull(offset++, 12);
-			else
-				cv_studiesStmt.setString(offset++, cv_studies.centre);
-			if ( cv_studies.curriculum == null )
-				cv_studiesStmt.setNull(offset++, 4);
-			else
-				cv_studiesStmt.setInt(offset++, cv_studies.curriculum);
-		}
-		cv_studiesStmt.executeUpdate();
-		cv_studiesInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Cv_studiess in {} milliseconds.", size, cv_studiesInserted, elapsed );		
-	}
-		
-		private int cv_studiesId = -1;
-		
-		private void initCv_studiesId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `cv_studies`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.cv_studiesId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCv_studiesId() {
-			return ++this.cv_studiesId;
-		} 
-
-		public void setCv_studiesId(Integer cv_studiesId) {
-			this.cv_studiesId = cv_studiesId;
-		} 
-	
-	private void flushCv_studies(  )
-	throws SQLException {
-		if ( ! cv_studiess.isEmpty() )
-			insertCv_studies(cv_studiess);
-		if ( cv_studiesStmt != null )
-			cv_studiesStmt.close();
-	}	
-
-	/**
-	 * Cv_studies
-	 * @param id Identificador nico del Estudio
-	 * @param startingdate Fecha de inicio del Estudio
-	 * @param endingdate Fecha de finalizacin del Estudio
-	 * @param degree Nivel de Estudios
-	 * @param speciality Especialidad de Estudios
-	 * @param centre Centro de Estudios
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @throws SQLException
-	*/
-	protected void insertCv_studies(Integer id, Date startingdate, Date endingdate, Short degree, String speciality, String centre, Integer curriculum)
-	throws SQLException {
-
-		Cv_studies cv_studies_ = new Cv_studies();
-		cv_studies_.id = id;
-		cv_studies_.startingdate = startingdate;
-		cv_studies_.endingdate = endingdate;
-		cv_studies_.degree = degree;
-		cv_studies_.speciality = speciality;
-		cv_studies_.centre = centre;
-		cv_studies_.curriculum = curriculum;
-
-		cv_studiess.add(cv_studies_);
-		
-		int cv_studiesCount = cv_studiess.size();
-		
-		if ( 171 * cv_studiesCount >=  this.maxAllowedPacket ){
-			insertCv_studies(cv_studiess);
-			cv_studiess.clear();
-		} 
-	}
-
-
-	/**
-	 * Cv_studies
-	 * @param startingdate Fecha de inicio del Estudio
-	 * @param endingdate Fecha de finalizacin del Estudio
-	 * @param degree Nivel de Estudios
-	 * @param speciality Especialidad de Estudios
-	 * @param centre Centro de Estudios
-	 * @param curriculum Identificador del Curriculum Vitae
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCv_studies(Date startingdate, Date endingdate, Short degree, String speciality, String centre, Integer curriculum)
-	throws SQLException {
-		int id = nextCv_studiesId();
-
-		Cv_studies cv_studies_ = new Cv_studies();
-		cv_studies_.id = id;
-		cv_studies_.startingdate = startingdate;
-		cv_studies_.endingdate = endingdate;
-		cv_studies_.degree = degree;
-		cv_studies_.speciality = speciality;
-		cv_studies_.centre = centre;
-		cv_studies_.curriculum = curriculum;
-
-		cv_studiess.add(cv_studies_);
-		
-		int cv_studiesCount = cv_studiess.size();
-		
-		if ( 171 * cv_studiesCount >=  this.maxAllowedPacket ){
-			insertCv_studies(cv_studiess);
-			cv_studiess.clear();
 		} 
 		return id;
 	}
@@ -35445,179 +34960,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 80 * web_info_pageCount >=  this.maxAllowedPacket ){
 			insertWeb_info_page(web_info_pages);
 			web_info_pages.clear();
-		} 
-		return id;
-	}
-
-
-	private int enterprise_certificateStmtSize = 0;
-
-	private int enterprise_certificateInserted = 0;
-
-	private List<Enterprise_certificate> enterprise_certificates = 
-		new LinkedList<Enterprise_certificate>();
-
-	private PreparedStatement enterprise_certificateStmt = null;
-
-	public static class Enterprise_certificate {
-		protected Integer id; 
-		protected Integer enterprise; 
-		protected Date date; 
-		protected Integer status; 
-		protected String sign; 
-	}
-	
-	private void insertEnterprise_certificate( List<Enterprise_certificate> enterprise_certificates )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = enterprise_certificates.size();
-		if ( enterprise_certificateStmtSize != size ) {
-			if ( enterprise_certificateStmt != null ) {
-				enterprise_certificateStmt.close();
-			}
-			String values = "(?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			enterprise_certificateStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO enterprise_certificate (id,enterprise,date,status,sign)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			enterprise_certificateStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Enterprise_certificate enterprise_certificate : enterprise_certificates) {
-			if ( enterprise_certificate.id == null )
-				enterprise_certificateStmt.setNull(offset++, 4);
-			else
-				enterprise_certificateStmt.setInt(offset++, enterprise_certificate.id);
-			if ( enterprise_certificate.enterprise == null )
-				enterprise_certificateStmt.setNull(offset++, 4);
-			else
-				enterprise_certificateStmt.setInt(offset++, enterprise_certificate.enterprise);
-			if ( enterprise_certificate.date == null )
-				enterprise_certificateStmt.setNull(offset++, 91);
-			else
-				enterprise_certificateStmt.setDate(offset++, enterprise_certificate.date);
-			if ( enterprise_certificate.status == null )
-				enterprise_certificateStmt.setNull(offset++, 4);
-			else
-				enterprise_certificateStmt.setInt(offset++, enterprise_certificate.status);
-			if ( enterprise_certificate.sign == null )
-				enterprise_certificateStmt.setNull(offset++, 12);
-			else
-				enterprise_certificateStmt.setString(offset++, enterprise_certificate.sign);
-		}
-		enterprise_certificateStmt.executeUpdate();
-		enterprise_certificateInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Enterprise_certificates in {} milliseconds.", size, enterprise_certificateInserted, elapsed );		
-	}
-		
-		private int enterprise_certificateId = -1;
-		
-		private void initEnterprise_certificateId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `enterprise_certificate`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.enterprise_certificateId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextEnterprise_certificateId() {
-			return ++this.enterprise_certificateId;
-		} 
-
-		public void setEnterprise_certificateId(Integer enterprise_certificateId) {
-			this.enterprise_certificateId = enterprise_certificateId;
-		} 
-	
-	private void flushEnterprise_certificate(  )
-	throws SQLException {
-		if ( ! enterprise_certificates.isEmpty() )
-			insertEnterprise_certificate(enterprise_certificates);
-		if ( enterprise_certificateStmt != null )
-			enterprise_certificateStmt.close();
-	}	
-
-	/**
-	 * Enterprise_certificate
-	 * @param id Identificador unico del certificado de empresa de la remesa
-	 * @param enterprise Identificador unico de la empresa
-	 * @param date Fecha de la ultima remesa en la que fue incluido
-	 * @param status Estado del certificado correspondiente a la ultima respuesta
-	 * @param sign Estado del certificado correspondiente a la ultima respuesta
-	 * @throws SQLException
-	*/
-	protected void insertEnterprise_certificate(Integer id, Integer enterprise, Date date, Integer status, String sign)
-	throws SQLException {
-
-		Enterprise_certificate enterprise_certificate_ = new Enterprise_certificate();
-		enterprise_certificate_.id = id;
-		enterprise_certificate_.enterprise = enterprise;
-		enterprise_certificate_.date = date;
-		enterprise_certificate_.status = status;
-		enterprise_certificate_.sign = sign;
-
-		enterprise_certificates.add(enterprise_certificate_);
-		
-		int enterprise_certificateCount = enterprise_certificates.size();
-		
-		if ( 72 * enterprise_certificateCount >=  this.maxAllowedPacket ){
-			insertEnterprise_certificate(enterprise_certificates);
-			enterprise_certificates.clear();
-		} 
-	}
-
-
-	/**
-	 * Enterprise_certificate
-	 * @param enterprise Identificador unico de la empresa
-	 * @param date Fecha de la ultima remesa en la que fue incluido
-	 * @param status Estado del certificado correspondiente a la ultima respuesta
-	 * @param sign Estado del certificado correspondiente a la ultima respuesta
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertEnterprise_certificate(Integer enterprise, Date date, Integer status, String sign)
-	throws SQLException {
-		int id = nextEnterprise_certificateId();
-
-		Enterprise_certificate enterprise_certificate_ = new Enterprise_certificate();
-		enterprise_certificate_.id = id;
-		enterprise_certificate_.enterprise = enterprise;
-		enterprise_certificate_.date = date;
-		enterprise_certificate_.status = status;
-		enterprise_certificate_.sign = sign;
-
-		enterprise_certificates.add(enterprise_certificate_);
-		
-		int enterprise_certificateCount = enterprise_certificates.size();
-		
-		if ( 72 * enterprise_certificateCount >=  this.maxAllowedPacket ){
-			insertEnterprise_certificate(enterprise_certificates);
-			enterprise_certificates.clear();
 		} 
 		return id;
 	}
@@ -45276,188 +44618,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int lh_contractStmtSize = 0;
-
-	private int lh_contractInserted = 0;
-
-	private List<Lh_contract> lh_contracts = 
-		new LinkedList<Lh_contract>();
-
-	private PreparedStatement lh_contractStmt = null;
-
-	public static class Lh_contract {
-		protected Integer id; 
-		protected Integer employee; 
-		protected Date startingdate; 
-		protected Date endingdate; 
-		protected Short contract_type; 
-		protected Double gross_salary; 
-	}
-	
-	private void insertLh_contract( List<Lh_contract> lh_contracts )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = lh_contracts.size();
-		if ( lh_contractStmtSize != size ) {
-			if ( lh_contractStmt != null ) {
-				lh_contractStmt.close();
-			}
-			String values = "(?,?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			lh_contractStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO lh_contract (id,employee,startingdate,endingdate,contract_type,gross_salary)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			lh_contractStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Lh_contract lh_contract : lh_contracts) {
-			if ( lh_contract.id == null )
-				lh_contractStmt.setNull(offset++, 4);
-			else
-				lh_contractStmt.setInt(offset++, lh_contract.id);
-			if ( lh_contract.employee == null )
-				lh_contractStmt.setNull(offset++, 4);
-			else
-				lh_contractStmt.setInt(offset++, lh_contract.employee);
-			if ( lh_contract.startingdate == null )
-				lh_contractStmt.setNull(offset++, 91);
-			else
-				lh_contractStmt.setDate(offset++, lh_contract.startingdate);
-			if ( lh_contract.endingdate == null )
-				lh_contractStmt.setNull(offset++, 91);
-			else
-				lh_contractStmt.setDate(offset++, lh_contract.endingdate);
-			if ( lh_contract.contract_type == null )
-				lh_contractStmt.setNull(offset++, -6);
-			else
-				lh_contractStmt.setShort(offset++, lh_contract.contract_type);
-			if ( lh_contract.gross_salary == null )
-				lh_contractStmt.setNull(offset++, 8);
-			else
-				lh_contractStmt.setDouble(offset++, lh_contract.gross_salary);
-		}
-		lh_contractStmt.executeUpdate();
-		lh_contractInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Lh_contracts in {} milliseconds.", size, lh_contractInserted, elapsed );		
-	}
-		
-		private int lh_contractId = -1;
-		
-		private void initLh_contractId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `lh_contract`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.lh_contractId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextLh_contractId() {
-			return ++this.lh_contractId;
-		} 
-
-		public void setLh_contractId(Integer lh_contractId) {
-			this.lh_contractId = lh_contractId;
-		} 
-	
-	private void flushLh_contract(  )
-	throws SQLException {
-		if ( ! lh_contracts.isEmpty() )
-			insertLh_contract(lh_contracts);
-		if ( lh_contractStmt != null )
-			lh_contractStmt.close();
-	}	
-
-	/**
-	 * Lh_contract
-	 * @param id Identificador unico del Contrato
-	 * @param employee Identificador del Empleado
-	 * @param startingdate Fecha de inicio del Contrato
-	 * @param endingdate Fecha de finalizacion del Contrato
-	 * @param contract_type Tipo de Contrato
-	 * @param gross_salary Salario bruto del Contrato
-	 * @throws SQLException
-	*/
-	protected void insertLh_contract(Integer id, Integer employee, Date startingdate, Date endingdate, Short contract_type, Double gross_salary)
-	throws SQLException {
-
-		Lh_contract lh_contract_ = new Lh_contract();
-		lh_contract_.id = id;
-		lh_contract_.employee = employee;
-		lh_contract_.startingdate = startingdate;
-		lh_contract_.endingdate = endingdate;
-		lh_contract_.contract_type = contract_type;
-		lh_contract_.gross_salary = gross_salary;
-
-		lh_contracts.add(lh_contract_);
-		
-		int lh_contractCount = lh_contracts.size();
-		
-		if ( 58 * lh_contractCount >=  this.maxAllowedPacket ){
-			insertLh_contract(lh_contracts);
-			lh_contracts.clear();
-		} 
-	}
-
-
-	/**
-	 * Lh_contract
-	 * @param employee Identificador del Empleado
-	 * @param startingdate Fecha de inicio del Contrato
-	 * @param endingdate Fecha de finalizacion del Contrato
-	 * @param contract_type Tipo de Contrato
-	 * @param gross_salary Salario bruto del Contrato
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertLh_contract(Integer employee, Date startingdate, Date endingdate, Short contract_type, Double gross_salary)
-	throws SQLException {
-		int id = nextLh_contractId();
-
-		Lh_contract lh_contract_ = new Lh_contract();
-		lh_contract_.id = id;
-		lh_contract_.employee = employee;
-		lh_contract_.startingdate = startingdate;
-		lh_contract_.endingdate = endingdate;
-		lh_contract_.contract_type = contract_type;
-		lh_contract_.gross_salary = gross_salary;
-
-		lh_contracts.add(lh_contract_);
-		
-		int lh_contractCount = lh_contracts.size();
-		
-		if ( 58 * lh_contractCount >=  this.maxAllowedPacket ){
-			insertLh_contract(lh_contracts);
-			lh_contracts.clear();
-		} 
-		return id;
-	}
-
-
 	private int account_summaryStmtSize = 0;
 
 	private int account_summaryInserted = 0;
@@ -45644,179 +44804,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 83 * account_summaryCount >=  this.maxAllowedPacket ){
 			insertAccount_summary(account_summarys);
 			account_summarys.clear();
-		} 
-		return id;
-	}
-
-
-	private int lh_courseStmtSize = 0;
-
-	private int lh_courseInserted = 0;
-
-	private List<Lh_course> lh_courses = 
-		new LinkedList<Lh_course>();
-
-	private PreparedStatement lh_courseStmt = null;
-
-	public static class Lh_course {
-		protected Integer id; 
-		protected Integer employee; 
-		protected Date startingdate; 
-		protected Date endingdate; 
-		protected String description; 
-	}
-	
-	private void insertLh_course( List<Lh_course> lh_courses )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = lh_courses.size();
-		if ( lh_courseStmtSize != size ) {
-			if ( lh_courseStmt != null ) {
-				lh_courseStmt.close();
-			}
-			String values = "(?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			lh_courseStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO lh_course (id,employee,startingdate,endingdate,description)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			lh_courseStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Lh_course lh_course : lh_courses) {
-			if ( lh_course.id == null )
-				lh_courseStmt.setNull(offset++, 4);
-			else
-				lh_courseStmt.setInt(offset++, lh_course.id);
-			if ( lh_course.employee == null )
-				lh_courseStmt.setNull(offset++, 4);
-			else
-				lh_courseStmt.setInt(offset++, lh_course.employee);
-			if ( lh_course.startingdate == null )
-				lh_courseStmt.setNull(offset++, 91);
-			else
-				lh_courseStmt.setDate(offset++, lh_course.startingdate);
-			if ( lh_course.endingdate == null )
-				lh_courseStmt.setNull(offset++, 91);
-			else
-				lh_courseStmt.setDate(offset++, lh_course.endingdate);
-			if ( lh_course.description == null )
-				lh_courseStmt.setNull(offset++, 12);
-			else
-				lh_courseStmt.setString(offset++, lh_course.description);
-		}
-		lh_courseStmt.executeUpdate();
-		lh_courseInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Lh_courses in {} milliseconds.", size, lh_courseInserted, elapsed );		
-	}
-		
-		private int lh_courseId = -1;
-		
-		private void initLh_courseId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `lh_course`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.lh_courseId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextLh_courseId() {
-			return ++this.lh_courseId;
-		} 
-
-		public void setLh_courseId(Integer lh_courseId) {
-			this.lh_courseId = lh_courseId;
-		} 
-	
-	private void flushLh_course(  )
-	throws SQLException {
-		if ( ! lh_courses.isEmpty() )
-			insertLh_course(lh_courses);
-		if ( lh_courseStmt != null )
-			lh_courseStmt.close();
-	}	
-
-	/**
-	 * Lh_course
-	 * @param id Identificador unico del Curso
-	 * @param employee Identificador del Empleado
-	 * @param startingdate Fecha de inicio del Curso
-	 * @param endingdate Fecha de finalizacion del Curso
-	 * @param description Descripcion del Curso
-	 * @throws SQLException
-	*/
-	protected void insertLh_course(Integer id, Integer employee, Date startingdate, Date endingdate, String description)
-	throws SQLException {
-
-		Lh_course lh_course_ = new Lh_course();
-		lh_course_.id = id;
-		lh_course_.employee = employee;
-		lh_course_.startingdate = startingdate;
-		lh_course_.endingdate = endingdate;
-		lh_course_.description = description;
-
-		lh_courses.add(lh_course_);
-		
-		int lh_courseCount = lh_courses.size();
-		
-		if ( 104 * lh_courseCount >=  this.maxAllowedPacket ){
-			insertLh_course(lh_courses);
-			lh_courses.clear();
-		} 
-	}
-
-
-	/**
-	 * Lh_course
-	 * @param employee Identificador del Empleado
-	 * @param startingdate Fecha de inicio del Curso
-	 * @param endingdate Fecha de finalizacion del Curso
-	 * @param description Descripcion del Curso
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertLh_course(Integer employee, Date startingdate, Date endingdate, String description)
-	throws SQLException {
-		int id = nextLh_courseId();
-
-		Lh_course lh_course_ = new Lh_course();
-		lh_course_.id = id;
-		lh_course_.employee = employee;
-		lh_course_.startingdate = startingdate;
-		lh_course_.endingdate = endingdate;
-		lh_course_.description = description;
-
-		lh_courses.add(lh_course_);
-		
-		int lh_courseCount = lh_courses.size();
-		
-		if ( 104 * lh_courseCount >=  this.maxAllowedPacket ){
-			insertLh_course(lh_courses);
-			lh_courses.clear();
 		} 
 		return id;
 	}
@@ -46248,179 +45235,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 99 * salary_costCount >=  this.maxAllowedPacket ){
 			insertSalary_cost(salary_costs);
 			salary_costs.clear();
-		} 
-		return id;
-	}
-
-
-	private int lh_workStmtSize = 0;
-
-	private int lh_workInserted = 0;
-
-	private List<Lh_work> lh_works = 
-		new LinkedList<Lh_work>();
-
-	private PreparedStatement lh_workStmt = null;
-
-	public static class Lh_work {
-		protected Integer id; 
-		protected Integer employee; 
-		protected Date startingdate; 
-		protected Date endingdate; 
-		protected String description; 
-	}
-	
-	private void insertLh_work( List<Lh_work> lh_works )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = lh_works.size();
-		if ( lh_workStmtSize != size ) {
-			if ( lh_workStmt != null ) {
-				lh_workStmt.close();
-			}
-			String values = "(?,?,?,?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			lh_workStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO lh_work (id,employee,startingdate,endingdate,description)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			lh_workStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Lh_work lh_work : lh_works) {
-			if ( lh_work.id == null )
-				lh_workStmt.setNull(offset++, 4);
-			else
-				lh_workStmt.setInt(offset++, lh_work.id);
-			if ( lh_work.employee == null )
-				lh_workStmt.setNull(offset++, 4);
-			else
-				lh_workStmt.setInt(offset++, lh_work.employee);
-			if ( lh_work.startingdate == null )
-				lh_workStmt.setNull(offset++, 91);
-			else
-				lh_workStmt.setDate(offset++, lh_work.startingdate);
-			if ( lh_work.endingdate == null )
-				lh_workStmt.setNull(offset++, 91);
-			else
-				lh_workStmt.setDate(offset++, lh_work.endingdate);
-			if ( lh_work.description == null )
-				lh_workStmt.setNull(offset++, 12);
-			else
-				lh_workStmt.setString(offset++, lh_work.description);
-		}
-		lh_workStmt.executeUpdate();
-		lh_workInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Lh_works in {} milliseconds.", size, lh_workInserted, elapsed );		
-	}
-		
-		private int lh_workId = -1;
-		
-		private void initLh_workId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `lh_work`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.lh_workId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextLh_workId() {
-			return ++this.lh_workId;
-		} 
-
-		public void setLh_workId(Integer lh_workId) {
-			this.lh_workId = lh_workId;
-		} 
-	
-	private void flushLh_work(  )
-	throws SQLException {
-		if ( ! lh_works.isEmpty() )
-			insertLh_work(lh_works);
-		if ( lh_workStmt != null )
-			lh_workStmt.close();
-	}	
-
-	/**
-	 * Lh_work
-	 * @param id Identificador unico del Trabajo
-	 * @param employee Identificador del Empleado
-	 * @param startingdate Fecha de inicio del Trabajo
-	 * @param endingdate Fecha de finalizacion del Trabajo
-	 * @param description Descripcion del Trabajo
-	 * @throws SQLException
-	*/
-	protected void insertLh_work(Integer id, Integer employee, Date startingdate, Date endingdate, String description)
-	throws SQLException {
-
-		Lh_work lh_work_ = new Lh_work();
-		lh_work_.id = id;
-		lh_work_.employee = employee;
-		lh_work_.startingdate = startingdate;
-		lh_work_.endingdate = endingdate;
-		lh_work_.description = description;
-
-		lh_works.add(lh_work_);
-		
-		int lh_workCount = lh_works.size();
-		
-		if ( 104 * lh_workCount >=  this.maxAllowedPacket ){
-			insertLh_work(lh_works);
-			lh_works.clear();
-		} 
-	}
-
-
-	/**
-	 * Lh_work
-	 * @param employee Identificador del Empleado
-	 * @param startingdate Fecha de inicio del Trabajo
-	 * @param endingdate Fecha de finalizacion del Trabajo
-	 * @param description Descripcion del Trabajo
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertLh_work(Integer employee, Date startingdate, Date endingdate, String description)
-	throws SQLException {
-		int id = nextLh_workId();
-
-		Lh_work lh_work_ = new Lh_work();
-		lh_work_.id = id;
-		lh_work_.employee = employee;
-		lh_work_.startingdate = startingdate;
-		lh_work_.endingdate = endingdate;
-		lh_work_.description = description;
-
-		lh_works.add(lh_work_);
-		
-		int lh_workCount = lh_works.size();
-		
-		if ( 104 * lh_workCount >=  this.maxAllowedPacket ){
-			insertLh_work(lh_works);
-			lh_works.clear();
 		} 
 		return id;
 	}
@@ -47381,152 +46195,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
-	private int customer_segmentStmtSize = 0;
-
-	private int customer_segmentInserted = 0;
-
-	private List<Customer_segment> customer_segments = 
-		new LinkedList<Customer_segment>();
-
-	private PreparedStatement customer_segmentStmt = null;
-
-	public static class Customer_segment {
-		protected Integer id; 
-		protected String description; 
-	}
-	
-	private void insertCustomer_segment( List<Customer_segment> customer_segments )
-	throws SQLException {
-		long start = System.currentTimeMillis();
-		int size = customer_segments.size();
-		if ( customer_segmentStmtSize != size ) {
-			if ( customer_segmentStmt != null ) {
-				customer_segmentStmt.close();
-			}
-			String values = "(?,?)";
-			StringBuffer valuesList = new StringBuffer(values);
-			for ( int i = 1; i < size; i++ ) {
-				valuesList.append(",");
-				valuesList.append(values);
-			}
-	
-			customer_segmentStmt = 
-				mysqlConnection.prepareStatement(
-				"INSERT INTO customer_segment (id,description)"  
-				+" VALUES " + valuesList.toString()  );
-			
-			customer_segmentStmtSize = size;
-		}
-
-		int offset = 1;
-			
-		for (Customer_segment customer_segment : customer_segments) {
-			if ( customer_segment.id == null )
-				customer_segmentStmt.setNull(offset++, 4);
-			else
-				customer_segmentStmt.setInt(offset++, customer_segment.id);
-			if ( customer_segment.description == null )
-				customer_segmentStmt.setNull(offset++, 12);
-			else
-				customer_segmentStmt.setString(offset++, customer_segment.description);
-		}
-		customer_segmentStmt.executeUpdate();
-		customer_segmentInserted += size;
-
-		// elapsed time in milliseconds
-		long elapsed = System.currentTimeMillis() - start;
-		info("Inserted {}/{} Customer_segments in {} milliseconds.", size, customer_segmentInserted, elapsed );		
-	}
-		
-		private int customer_segmentId = -1;
-		
-		private void initCustomer_segmentId() 
-		throws SQLException  {
-			ResultSet rs = null;
-			Statement stmt = null;
-			try {
-				stmt = mysqlConnection.createStatement();
-				rs = stmt.executeQuery("SELECT max(id) FROM `customer_segment`" );
-				Integer max = null;
-				if ( rs.next() ) {		
-					max = rs.getInt(1);
-				}
-				this.customer_segmentId = max == null ? 0 : max;
-			}
-			finally {
-				if ( rs != null )
-					rs.close(); 
-				if ( stmt != null )
-					stmt.close(); 
-			}
-		}
-
-		public int nextCustomer_segmentId() {
-			return ++this.customer_segmentId;
-		} 
-
-		public void setCustomer_segmentId(Integer customer_segmentId) {
-			this.customer_segmentId = customer_segmentId;
-		} 
-	
-	private void flushCustomer_segment(  )
-	throws SQLException {
-		if ( ! customer_segments.isEmpty() )
-			insertCustomer_segment(customer_segments);
-		if ( customer_segmentStmt != null )
-			customer_segmentStmt.close();
-	}	
-
-	/**
-	 * Customer_segment
-	 * @param id Identificador unico del Segmento
-	 * @param description Descripcion del Segmento
-	 * @throws SQLException
-	*/
-	protected void insertCustomer_segment(Integer id, String description)
-	throws SQLException {
-
-		Customer_segment customer_segment_ = new Customer_segment();
-		customer_segment_.id = id;
-		customer_segment_.description = description;
-
-		customer_segments.add(customer_segment_);
-		
-		int customer_segmentCount = customer_segments.size();
-		
-		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
-			insertCustomer_segment(customer_segments);
-			customer_segments.clear();
-		} 
-	}
-
-
-	/**
-	 * Customer_segment
-	 * @param description Descripcion del Segmento
-	 * @returns auto-generated key
-	 * @throws SQLException
-	*/
-	public int insertCustomer_segment(String description)
-	throws SQLException {
-		int id = nextCustomer_segmentId();
-
-		Customer_segment customer_segment_ = new Customer_segment();
-		customer_segment_.id = id;
-		customer_segment_.description = description;
-
-		customer_segments.add(customer_segment_);
-		
-		int customer_segmentCount = customer_segments.size();
-		
-		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
-			insertCustomer_segment(customer_segments);
-			customer_segments.clear();
-		} 
-		return id;
-	}
-
-
 	private int contract_batch_detailStmtSize = 0;
 
 	private int contract_batch_detailInserted = 0;
@@ -47677,6 +46345,152 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		if ( 30 * contract_batch_detailCount >=  this.maxAllowedPacket ){
 			insertContract_batch_detail(contract_batch_details);
 			contract_batch_details.clear();
+		} 
+		return id;
+	}
+
+
+	private int customer_segmentStmtSize = 0;
+
+	private int customer_segmentInserted = 0;
+
+	private List<Customer_segment> customer_segments = 
+		new LinkedList<Customer_segment>();
+
+	private PreparedStatement customer_segmentStmt = null;
+
+	public static class Customer_segment {
+		protected Integer id; 
+		protected String description; 
+	}
+	
+	private void insertCustomer_segment( List<Customer_segment> customer_segments )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = customer_segments.size();
+		if ( customer_segmentStmtSize != size ) {
+			if ( customer_segmentStmt != null ) {
+				customer_segmentStmt.close();
+			}
+			String values = "(?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			customer_segmentStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO customer_segment (id,description)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			customer_segmentStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Customer_segment customer_segment : customer_segments) {
+			if ( customer_segment.id == null )
+				customer_segmentStmt.setNull(offset++, 4);
+			else
+				customer_segmentStmt.setInt(offset++, customer_segment.id);
+			if ( customer_segment.description == null )
+				customer_segmentStmt.setNull(offset++, 12);
+			else
+				customer_segmentStmt.setString(offset++, customer_segment.description);
+		}
+		customer_segmentStmt.executeUpdate();
+		customer_segmentInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Customer_segments in {} milliseconds.", size, customer_segmentInserted, elapsed );		
+	}
+		
+		private int customer_segmentId = -1;
+		
+		private void initCustomer_segmentId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `customer_segment`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.customer_segmentId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextCustomer_segmentId() {
+			return ++this.customer_segmentId;
+		} 
+
+		public void setCustomer_segmentId(Integer customer_segmentId) {
+			this.customer_segmentId = customer_segmentId;
+		} 
+	
+	private void flushCustomer_segment(  )
+	throws SQLException {
+		if ( ! customer_segments.isEmpty() )
+			insertCustomer_segment(customer_segments);
+		if ( customer_segmentStmt != null )
+			customer_segmentStmt.close();
+	}	
+
+	/**
+	 * Customer_segment
+	 * @param id Identificador unico del Segmento
+	 * @param description Descripcion del Segmento
+	 * @throws SQLException
+	*/
+	protected void insertCustomer_segment(Integer id, String description)
+	throws SQLException {
+
+		Customer_segment customer_segment_ = new Customer_segment();
+		customer_segment_.id = id;
+		customer_segment_.description = description;
+
+		customer_segments.add(customer_segment_);
+		
+		int customer_segmentCount = customer_segments.size();
+		
+		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
+			insertCustomer_segment(customer_segments);
+			customer_segments.clear();
+		} 
+	}
+
+
+	/**
+	 * Customer_segment
+	 * @param description Descripcion del Segmento
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertCustomer_segment(String description)
+	throws SQLException {
+		int id = nextCustomer_segmentId();
+
+		Customer_segment customer_segment_ = new Customer_segment();
+		customer_segment_.id = id;
+		customer_segment_.description = description;
+
+		customer_segments.add(customer_segment_);
+		
+		int customer_segmentCount = customer_segments.size();
+		
+		if ( 74 * customer_segmentCount >=  this.maxAllowedPacket ){
+			insertCustomer_segment(customer_segments);
+			customer_segments.clear();
 		} 
 		return id;
 	}
@@ -53436,7 +52250,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushLeasing();
 		flushDb_version();
 		flushComposition_detail();
-		flushCv_evaluate_type();
 		flushPcategory();
 		flushWarehouse();
 		flushCustomer();
@@ -53444,6 +52257,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushPos();
 		flushMessage_content();
 		flushInvoice_tax();
+		flushContract_attach();
 		flushIattach();
 		flushTas_item();
 		flushPayment_concept();
@@ -53465,7 +52279,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushWeb_info_style();
 		flushSalary_payment();
 		flushContract_data();
-		flushCv_workexperience();
 		flushIncidence_type();
 		flushItem_pos();
 		flushAgreement_level_payment();
@@ -53473,15 +52286,14 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushFs_renting_detail();
 		flushMk_action();
 		flushFs_vat_detail();
-		flushCv_languages();
 		flushOffer_detail_commission();
 		flushFavorite_category();
 		flushBalance_detail();
 		flushInvoice_tax_account();
 		flushFs_mod347();
 		flushProduct_account();
-		flushPcategory_tree();
 		flushAccount_entry_detail();
+		flushPcategory_tree();
 		flushTariff_catalogue();
 		flushSupplier_segment();
 		flushAmortization_detail();
@@ -53494,6 +52306,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushAbsence();
 		flushSystem_payment();
 		flushItem_tariff();
+		flushCno();
 		flushAccount_entry_fbatch();
 		flushSeller();
 		flushOffer_attach();
@@ -53505,15 +52318,15 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushInventory();
 		flushCommercial_term();
 		flushProduction_expense();
-		flushOffer_term();
 		flushCommercial_activity();
+		flushOffer_term();
 		flushRsegment();
 		flushDelivery_detail_labour();
 		flushProcess_transition_type();
 		flushDeduction_concept();
+		flushCertifica2_batch_detail();
 		flushLeasing_account();
 		flushContract_batch();
-		flushCv_knowledge();
 		flushQuality_skill();
 		flushEc_target();
 		flushBalance();
@@ -53528,8 +52341,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushProcess_detail_transition();
 		flushCustomer_fee();
 		flushPurchase_detail();
-		flushPm_type_detail();
 		flushHoliday_detail();
+		flushPm_type_detail();
 		flushTarget_item();
 		flushAgreement_level_category();
 		flushHoliday();
@@ -53552,8 +52365,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushTarget_profile();
 		flushPurchase();
 		flushWeb_info();
-		flushLh_position();
-		flushCv_evaluate();
 		flushBank_statement_link();
 		flushCourse_alumn();
 		flushFs_renting();
@@ -53568,9 +52379,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushCalendar_period();
 		flushSystem_cost();
 		flushFbatch();
+		flushCertifica2_batch();
 		flushInvoice_detail_account();
 		flushCommission_type();
-		flushEnterprise_certificate_detail();
 		flushAlarm();
 		flushPay_method();
 		flushEc_catalogue();
@@ -53589,7 +52400,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushCustomer_account();
 		flushDossier();
 		flushSurvey_question();
-		flushCv_evaluate_summary();
 		flushCourse();
 		flushStock();
 		flushRbank();
@@ -53597,6 +52407,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushSales();
 		flushIncome();
 		flushEnterprise_activity();
+		flushCertifica2_batch_data();
 		flushWeb_info_page_resource();
 		flushFbatch_detail();
 		flushContract_leave();
@@ -53606,7 +52417,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushMk_action_target();
 		flushTax();
 		flushSession();
-		flushCv_studies();
 		flushInvoicing_group();
 		flushRegistry();
 		flushCreditor();
@@ -53623,7 +52433,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushCourse_schedule();
 		flushRrelationship();
 		flushWeb_info_page();
-		flushEnterprise_certificate();
 		flushCampaign();
 		flushFs_vat();
 		flushContract_deduction();
@@ -53676,20 +52485,17 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushMark();
 		flushExpense_account();
 		flushCatalogue_category();
-		flushLh_contract();
 		flushAccount_summary();
-		flushLh_course();
 		flushCompany();
 		flushAccount_entry_bank_statement();
 		flushSalary_cost();
-		flushLh_work();
 		flushScale();
 		flushCommission_type_commission();
 		flushInventory_detail();
 		flushScope();
 		flushTarget_supplier();
-		flushCustomer_segment();
 		flushContract_batch_detail();
+		flushCustomer_segment();
 		flushAuto_concept();
 		flushWeb_info_page_detail();
 		flushJob_type();
@@ -53785,8 +52591,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initComposition_detailId();
 		initMaxAllowedPacket();
-		initCv_evaluate_typeId();
-		initMaxAllowedPacket();
 		initPcategoryId();
 		initMaxAllowedPacket();
 		initWarehouseId();
@@ -53799,6 +52603,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMessage_contentId();
 		initMaxAllowedPacket();
 		initInvoice_taxId();
+		initMaxAllowedPacket();
+		initContract_attachId();
 		initMaxAllowedPacket();
 		initIattachId();
 		initMaxAllowedPacket();
@@ -53841,8 +52647,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initContract_dataId();
 		initMaxAllowedPacket();
-		initCv_workexperienceId();
-		initMaxAllowedPacket();
 		initIncidence_typeId();
 		initMaxAllowedPacket();
 		initItem_posId();
@@ -53857,8 +52661,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initFs_vat_detailId();
 		initMaxAllowedPacket();
-		initCv_languagesId();
-		initMaxAllowedPacket();
 		initOffer_detail_commissionId();
 		initMaxAllowedPacket();
 		initFavorite_categoryId();
@@ -53871,9 +52673,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initProduct_accountId();
 		initMaxAllowedPacket();
-		initPcategory_treeId();
-		initMaxAllowedPacket();
 		initAccount_entry_detailId();
+		initMaxAllowedPacket();
+		initPcategory_treeId();
 		initMaxAllowedPacket();
 		initTariff_catalogueId();
 		initMaxAllowedPacket();
@@ -53899,6 +52701,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initItem_tariffId();
 		initMaxAllowedPacket();
+		initCnoId();
+		initMaxAllowedPacket();
 		initAccount_entry_fbatchId();
 		initMaxAllowedPacket();
 		initMaxAllowedPacket();
@@ -53920,9 +52724,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initProduction_expenseId();
 		initMaxAllowedPacket();
-		initOffer_termId();
-		initMaxAllowedPacket();
 		initCommercial_activityId();
+		initMaxAllowedPacket();
+		initOffer_termId();
 		initMaxAllowedPacket();
 		initRsegmentId();
 		initMaxAllowedPacket();
@@ -53932,11 +52736,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initDeduction_conceptId();
 		initMaxAllowedPacket();
+		initCertifica2_batch_detailId();
+		initMaxAllowedPacket();
 		initLeasing_accountId();
 		initMaxAllowedPacket();
 		initContract_batchId();
-		initMaxAllowedPacket();
-		initCv_knowledgeId();
 		initMaxAllowedPacket();
 		initQuality_skillId();
 		initMaxAllowedPacket();
@@ -53966,9 +52770,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initPurchase_detailId();
 		initMaxAllowedPacket();
-		initPm_type_detailId();
-		initMaxAllowedPacket();
 		initHoliday_detailId();
+		initMaxAllowedPacket();
+		initPm_type_detailId();
 		initMaxAllowedPacket();
 		initTarget_itemId();
 		initMaxAllowedPacket();
@@ -54013,10 +52817,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initWeb_infoId();
 		initMaxAllowedPacket();
-		initLh_positionId();
-		initMaxAllowedPacket();
-		initCv_evaluateId();
-		initMaxAllowedPacket();
 		initBank_statement_linkId();
 		initMaxAllowedPacket();
 		initCourse_alumnId();
@@ -54044,11 +52844,11 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initFbatchId();
 		initMaxAllowedPacket();
+		initCertifica2_batchId();
+		initMaxAllowedPacket();
 		initInvoice_detail_accountId();
 		initMaxAllowedPacket();
 		initCommission_typeId();
-		initMaxAllowedPacket();
-		initEnterprise_certificate_detailId();
 		initMaxAllowedPacket();
 		initAlarmId();
 		initMaxAllowedPacket();
@@ -54085,8 +52885,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initSurvey_questionId();
 		initMaxAllowedPacket();
-		initCv_evaluate_summaryId();
-		initMaxAllowedPacket();
 		initCourseId();
 		initMaxAllowedPacket();
 		initStockId();
@@ -54100,6 +52898,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initIncomeId();
 		initMaxAllowedPacket();
 		initEnterprise_activityId();
+		initMaxAllowedPacket();
+		initCertifica2_batch_dataId();
 		initMaxAllowedPacket();
 		initWeb_info_page_resourceId();
 		initMaxAllowedPacket();
@@ -54118,8 +52918,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initTaxId();
 		initMaxAllowedPacket();
 		initSessionId();
-		initMaxAllowedPacket();
-		initCv_studiesId();
 		initMaxAllowedPacket();
 		initInvoicing_groupId();
 		initMaxAllowedPacket();
@@ -54149,8 +52947,6 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initRrelationshipId();
 		initMaxAllowedPacket();
 		initWeb_info_pageId();
-		initMaxAllowedPacket();
-		initEnterprise_certificateId();
 		initMaxAllowedPacket();
 		initCampaignId();
 		initMaxAllowedPacket();
@@ -54253,18 +53049,12 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initCatalogue_categoryId();
 		initMaxAllowedPacket();
-		initLh_contractId();
-		initMaxAllowedPacket();
 		initAccount_summaryId();
-		initMaxAllowedPacket();
-		initLh_courseId();
 		initMaxAllowedPacket();
 		initMaxAllowedPacket();
 		initAccount_entry_bank_statementId();
 		initMaxAllowedPacket();
 		initSalary_costId();
-		initMaxAllowedPacket();
-		initLh_workId();
 		initMaxAllowedPacket();
 		initScaleId();
 		initMaxAllowedPacket();
@@ -54276,9 +53066,9 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 		initTarget_supplierId();
 		initMaxAllowedPacket();
-		initCustomer_segmentId();
-		initMaxAllowedPacket();
 		initContract_batch_detailId();
+		initMaxAllowedPacket();
+		initCustomer_segmentId();
 		initMaxAllowedPacket();
 		initAuto_conceptId();
 		initMaxAllowedPacket();
@@ -54344,19 +53134,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initMaxAllowedPacket();
 	}
 	
-	protected void debug(String format, Object ... args){
+	protected static void debug(String format, Object ... args){
 		LOGGER.debug(format, args);
 	}
 
-	protected void info(String format, Object ... args){
+	protected static void info(String format, Object ... args){
 		LOGGER.info(format, args);
 	}
 
-	protected void warn(String format, Object ... args){
+	protected static void warn(String format, Object ... args){
 		LOGGER.warn(format, args);
 	}
 
-	protected void error(String format, Object ... args){
+	protected static void error(String format, Object ... args){
 		LOGGER.error(format, args);
 	}
 	

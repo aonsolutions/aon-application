@@ -32,7 +32,7 @@ public class AbstractCtsqlDB {
 	
 	
 
-	private Connection ctsqlConnection;
+	protected Connection ctsqlConnection;
 
 
 	public AbstractCtsqlDB( Connection ctsqlConnection) {
@@ -106,7 +106,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private $table (ResultSet rs) 
+		protected $table (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}

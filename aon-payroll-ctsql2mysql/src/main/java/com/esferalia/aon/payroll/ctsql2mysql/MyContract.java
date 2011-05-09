@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
+
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
+import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.toDouble;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.ACTUAL_DAYS;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.CATEGORY;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.ENTRY_BY_COMPANY_ACCOUNT;
@@ -16,6 +18,8 @@ import static com.esferalia.aon.payroll.enumeration.ContractVariables.WEEK_HOURS
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.WORKED_DAYS;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,30 +47,29 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabinci;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Contract_embargo;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Salary_embargo;
 import com.esferalia.aon.payroll.ctsql2mysql.MyAgreement.PercepPercnivComparator;
-import com.esferalia.aon.payroll.ctsql2mysql.MyConcepts.Concept;
+import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Concept;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.sql.AbstractSQL.ISalary;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
-public class MyContract extends DefaultCtsqlDBVisitor {
+public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
+	
+	private String DELAY_SQL = "SELECT nomina.*"  
+		+ " FROM nomina, nominadev" 
+		+ " WHERE nomina.cdg = nominadev.cdg" 
+		+ " AND nomina.numero=?"
+		+ " AND nominadev.codcom=?" 
+		+ " AND nomina.tipo='N'"
+		+ " AND fecini >= ?"
+		+ " AND fecfin <= ?";
 	
 	final static String PASSWORD  			= "demo";
 	
 
-	private static class FullEmbargo {
-		
-		Contract_embargo contractEmbargo;
-		List<Salary_embargo> salaryEmbargos; 
-
-		public FullEmbargo() {
-			contractEmbargo = new Contract_embargo();
-			salaryEmbargos = new LinkedList<Salary_embargo>();
-		}
-		
-	}
 	
 	private static class Percents {
 		private java.sql.Date startDate;
@@ -110,12 +113,12 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 				MyContract.this.codCon = trabajo.getCodcon();
 				MyContract.this.nivel = trabajo.getNivel();
 				MyContract.this.agreementCategoryId = 
-					MyContract.this.myAgreement.getAgreementCategory(trabajo.getCodcon(), trabajo.getNivel(), trabajo.getCodcat());
+					MyContract.this.agreements.getAgreementCategory(trabajo.getCodcon(), trabajo.getNivel(), trabajo.getCodcat());
 				if ( MyContract.this.agreementCategoryId == null ) {
-					mysqlDB.error("trabajo[{}] : Unknow category  {}/{}/{}", 
+					MysqlDB.error("trabajo[{}] : Unknow category  {}/{}/{}", 
 							trabajo.getCdg(), trabajo.getCodcon(), trabajo.getNivel(), trabajo.getCodcat() );
 					MyContract.this.agreementCategoryId = 
-						MyContract.this.myAgreement.insertAgreementCategory(trabajo.getCodcon(), trabajo.getNivel(), trabajo.getCodcat());
+						MyContract.this.agreements.insertAgreementCategory(trabajo.getCodcon(), trabajo.getNivel(), trabajo.getCodcat());
 					
 				}
 			}
@@ -123,20 +126,39 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 	}
 	
 	
+	protected static boolean before ( java.sql.Date oneDate, java.sql.Date anotherDate ) {
+		if ( anotherDate == null ) 
+			return true;
+		if ( oneDate == null ) 
+			return false;
+		return oneDate.compareTo(anotherDate) <= 0;
+	}
+
+	protected static boolean after( java.sql.Date oneDate, java.sql.Date anotherDate ) {
+		if ( oneDate == null ) 
+			return true;
+		if ( anotherDate == null ) 
+			return false;
+		return oneDate.compareTo(anotherDate) >= 0;
+	}
 	
-	private Integer 		salaryId;
 	private Integer 		contractId;
 	private Integer 		agreementCategoryId;
 	private String			codCon;
 	private String			nivel;
 	
 	private Date 			fromDate;
-	private MyPerson 		myPerson;
-	private MyConcepts 		myConcepts;
-	private MyEnterprise 	myEnterprise;
-	private MyAgreement 	myAgreement;
-	private MyCalendar 		myCalendar;
+	
+	private IPersons 		persons;
+	private IConcepts 		concepts;
+	private IEnterprises 	enterprises;
+	private IAgreements 	agreements;
+	private ICalendars 		calendars;
+
+	private MySalary		mySalary;
+	
 	private DefaultMysqlDB 	mysqlDB;
+	private AbstractCtsqlDB ctsqlDB;
 	
 	private Integer 		irpfConceptId;
 
@@ -148,28 +170,37 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 	private Integer registration ;
 	private java.sql.Date seniorityDate ;
 	
+	
+	private PreparedStatement	delayStmt = null;
 
 	
-	public MyContract(DefaultMysqlDB mysqlDB, MyEnterprise myEnterprise, MyPerson myPerson, MyConcepts myConcepts, MyAgreement myAgreement, MyCalendar myCalendar) {
-		this ( mysqlDB, myEnterprise, myPerson, myConcepts, myAgreement, myCalendar, null );
+	public MyContract(DefaultMysqlDB mysqlDB, IEnterprises enterprises, IPersons persons, IConcepts concepts, IAgreements agreements, ICalendars calendars) {
+		this ( mysqlDB, enterprises, persons, concepts, agreements, calendars, null );
 	}
 
-	public MyContract(DefaultMysqlDB mysqlDB, MyEnterprise myEnterprise, MyPerson myPerson,  MyConcepts myConcepts, MyAgreement myAgreement, MyCalendar myCalendar, Date fromDate) {
+	public MyContract(DefaultMysqlDB mysqlDB, IEnterprises enterprises, IPersons persons,  IConcepts concepts, IAgreements agreements, ICalendars calendars, Date fromDate) {
 		this.mysqlDB = mysqlDB;
 		this.fromDate = fromDate;
-		this.myPerson = myPerson;
-		this.myConcepts = myConcepts;
-		this.myAgreement = myAgreement;
-		this.myEnterprise = myEnterprise;
-		this.myCalendar = myCalendar;
+		this.persons = persons;
+		this.concepts = concepts;
+		this.agreements = agreements;
+		this.enterprises = enterprises;
+		this.calendars = calendars;
 		this.contractDatas = new LinkedList<ContractData>();
 		this.parteIts = new HashMap<Date, Integer>();
 		this.quotePercents = new HashMap<String, List<Percents>>();
 		this.embargos = new HashMap<String, FullEmbargo>();
+		this.mySalary = new MySalary(mysqlDB, this, concepts);
 		
 	}
-
-	private boolean outOfDate ( Date date ) {
+	
+	@Override
+	public Integer getContractId(Integer oldCdg) {
+		return this.contractId;
+	}
+	
+	@Override
+	public boolean outOfDate ( Date date ) {
 		if ( date == null )
 			return false;
 		if ( fromDate == null )
@@ -177,7 +208,15 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		return fromDate.compareTo(date) > 0 ; 
 	}
 	
-
+	@Override
+	public boolean hasEmbargo(String embargoConcept) {
+		return this.embargos.containsKey(embargoConcept);
+	}
+	
+	@Override
+	public FullEmbargo getEmbargo(String concepto) {
+		return this.embargos.get(concepto);
+	}
 	
 	private java.sql.Date getEndDate(java.sql.Date fecFin, Emprper emprper) throws SQLException{
 		return DefaultMysqlDB.is9999(fecFin)? emprper.getFecbaj(): fecFin;
@@ -192,12 +231,12 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		return today.compareTo(fecbaj ) < 0;
 	}
 	
-	private Pattern kindPattern = 
+	private static Pattern kindPattern = 
 		Pattern.compile("ESPECIE", Pattern.CASE_INSENSITIVE);
-	private Pattern advancePattern = 
+	private static Pattern advancePattern = 
 		Pattern.compile("ANTICIPO", Pattern.CASE_INSENSITIVE);
 	
-	private DeductionType getDeductionType(String description) {
+	protected static DeductionType getDeductionType(String description) {
 
 		DeductionType deductionType = null;
 		
@@ -218,21 +257,25 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 	private SalaryType getSalaryType(Percep percep, Emprper emprper) 
 	throws SQLException {
 
-		SalaryType salaryType = null;
-		
 		String codcom = percep.getCodcom();
 		
-		if ("61".equals(codcom)) {
-			salaryType = salaryType.DELAY;
-		}else {
-			salaryType = SalaryType.SALARY;
+		if ("61".equals(codcom) ) {
+			if ( !inSalary(percep)) {
+				return SalaryType.DELAY;
+			}
+			else {
+				MysqlDB.error("percep[{}]: Delay {} {} at standard salary for {},{}", 
+						percep.getCdg(),
+						percep.getDesabr(),
+						percep.getImporte(),
+						emprper.getCdg(),
+						emprper.getCodper());
+			}
 		}
 		
-		return salaryType;
-	}
-
-	private double toDouble(BigDecimal bigDecimal) {
-		return bigDecimal != null  ? bigDecimal.doubleValue() : 0 ;
+		
+		return SalaryType.SALARY;
+		
 	}
 
 	
@@ -240,21 +283,6 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		contractDatas.add(contractData);
 	}
 	
-	private boolean before ( java.sql.Date oneDate, java.sql.Date anotherDate ) {
-		if ( anotherDate == null ) 
-			return true;
-		if ( oneDate == null ) 
-			return false;
-		return oneDate.compareTo(anotherDate) <= 0;
-	}
-
-	private boolean after( java.sql.Date oneDate, java.sql.Date anotherDate ) {
-		if ( oneDate == null ) 
-			return true;
-		if ( anotherDate == null ) 
-			return false;
-		return oneDate.compareTo(anotherDate) >= 0;
-	}
 	
 	private java.sql.Date earlier ( java.sql.Date oneDate, java.sql.Date anotherDate ) {
 		return before(oneDate, anotherDate) ? oneDate: anotherDate;
@@ -320,8 +348,11 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 	public void visit(AbstractCtsqlDB ctsqlDB) throws SQLException {
 		this.irpfConceptId = 
 			mysqlDB.getDeductionConceptId("IRPF");
+		this.ctsqlDB = ctsqlDB;
+		
 		ctsqlDB.visitLinporco(this);
 		ctsqlDB.visitEmprper(this);
+		
 	}
 	
 	private void insertEmbargos() throws SQLException{
@@ -349,7 +380,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 				left -= salaryEmbargo.amount;
 			}
 
-			mysqlDB.info("embargo{}: {} {} ", 
+			MysqlDB.info("embargo{}: {} {} ", 
 					embargo.contractEmbargo.start_date , 
 					embargo.contractEmbargo.description, 
 					embargo.contractEmbargo.end_date == null ? "pendiente " + left :  embargo.contractEmbargo.end_date );
@@ -369,14 +400,28 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		return startDate;
 	}
 	
-	private void checkEmbargoLeft(FullEmbargo embargo, java.sql.Date endDate) {
-		double  left = embargo.contractEmbargo.amount;  
-		for (Salary_embargo salary_embargo : embargo.salaryEmbargos) {
-			left -= salary_embargo.amount;
+	
+
+	private boolean inSalary(Percep percep) throws SQLException{
+		ResultSet rs  = null;
+		try {
+			if ( delayStmt == null ){
+				delayStmt = 
+					ctsqlDB.ctsqlConnection.prepareStatement(DELAY_SQL);
+			}
+	
+			delayStmt.setInt(1, percep.getNumero());
+			delayStmt.setString(2, percep.getCodcom());
+			delayStmt.setDate(3, percep.getFecini());
+			delayStmt.setDate(4, percep.getFecfin());
+			
+			rs = delayStmt.executeQuery();
+			return rs.next();
 		}
-		
-		if ( left < 1.00 ) {
-			embargo.contractEmbargo.end_date = endDate;
+		finally{
+			if ( rs != null ) {
+				rs.close();
+			}
 		}
 	}
 	
@@ -412,27 +457,27 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 			return ;
 		
 		Integer workplace = 
-			myEnterprise.getWorkplace(emprper.getCodemp(), emprper.getDomicilio());
+			enterprises.getWorkplace(emprper.getCodemp(), emprper.getDomicilio());
 		if ( workplace == null ){
-			mysqlDB.error("emprper[{}] : Not found workplace for {}/{}", 
+			MysqlDB.error("emprper[{}] : Not found workplace for {}/{}", 
 					emprper.getCdg(), emprper.getCodemp(), emprper.getDomicilio());
 			return ;
 		}
 		Integer person =
-			myPerson.getPerson( emprper.getCodper() );
+			persons.getPerson( emprper.getCodper() );
 		if ( person == null ){
-			mysqlDB.error("emprper[{}] : Not found person {}", 
+			MysqlDB.error("emprper[{}] : Not found person {}", 
 					emprper.getCdg(), emprper.getCodper());
 			return ;
 		}
 		Integer ccc = 
-			myEnterprise.getCCC(emprper.getCodact(), emprper.getCodccc());
+			enterprises.getCCC(emprper.getCodact(), emprper.getCodccc());
 		if ( ccc == null ){
-			mysqlDB.debug("emprper[{}] : Without CCC {}/{}", 
+			MysqlDB.debug("emprper[{}] : Without CCC {}/{}", 
 					emprper.getCdg(), emprper.getCodact(), emprper.getCodccc());
 		}
 		
-		Integer activityId = myEnterprise.getActivityId(emprper.getCodact());
+		Integer activityId = enterprises.getActivityId(emprper.getCodact());
 		
 		
 		registration = null;
@@ -453,7 +498,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		if ( ccc == null && "A".equalsIgnoreCase(codCCC) ) {
 			ssRegimeType = SSRegimeType.SELF_EMPLOYED;
 		} else {
-			String indRegimen = myEnterprise.getIndRegimen(emprper.getCodact());
+			String indRegimen = enterprises.getIndRegimen(emprper.getCodact());
 			if ( "A".equalsIgnoreCase(indRegimen)) {
 				ssRegimeType = SSRegimeType.AGRICULTURAL;
 			}else if ( "M".equalsIgnoreCase(indRegimen)) {
@@ -468,21 +513,21 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		this.agreementCategoryId = null; 
 		emprper.visitTrabajo_emprper(new TrabajoAggregate());
 		
-		if ( !myAgreement.inherits(emprper, this.codCon, this.nivel) ) {
+		if ( !agreements.inherits(emprper, this.codCon, this.nivel) ) {
 			this.agreementCategoryId = null;
 		}
 		
-		Integer wcalendar = myEnterprise.getCalendar(workplace);
-		Integer calendar = myCalendar.getCalendar(emprper.getCodemp(), emprper.getDomicilio(), emprper.getCodact());
+		Integer wcalendar = enterprises.getCalendar(workplace);
+		Integer calendar = calendars.getCalendar(emprper.getCodemp(), emprper.getDomicilio(), emprper.getCodact());
 		if ( calendar == wcalendar ) {
 			calendar = null;
 		}
 		else {
-			mysqlDB.info("emprper{}: Has diferent calendar {} {} ", emprper.getCdg(), calendar, wcalendar );
+			MysqlDB.info("emprper{}: Has diferent calendar {} {} ", emprper.getCdg(), calendar, wcalendar );
 		}
 		
 		if ( this.agreementCategoryId != null ) {
-			mysqlDB.info("emprper[{}]: [{}:{}] Inherits payments from {}-{}", 
+			MysqlDB.info("emprper[{}]: [{}:{}] Inherits payments from {}-{}", 
 					emprper.getCdg(), emprper.getCodper(), this.contractId, this.codCon, this.nivel);
 			
 		}
@@ -504,7 +549,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					this.agreementCategoryId);
 		
 		String ingEspEmp = 
-			myEnterprise.getIngEspEmp(emprper.getCodact());
+			enterprises.getIngEspEmp(emprper.getCodact());
 		if ( "S".equalsIgnoreCase(ingEspEmp ) ){
 			mysqlDB.insertContract_data(ENTRY_BY_COMPANY_ACCOUNT.getName(), 
 					this.contractId, 
@@ -520,19 +565,19 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					Boolean.TRUE.toString(), 
 					emprper.getFecalt(), 
 					emprper.getFecbaj());
-			mysqlDB.info("emprper[{}]: [{}:{}] Older than 65 ", 
+			MysqlDB.info("emprper[{}]: [{}:{}] Older than 65 ", 
 					emprper.getCdg(), emprper.getCodper(), this.contractId );
 		}
 		
 		
 		String numDoc = 
-			myPerson.getNumDoc(emprper.getCodper());
+			persons.getNumDoc(emprper.getCodper());
 		
 		Integer enterprise = 
-			myEnterprise.getEnterprise(emprper.getCodemp());
+			enterprises.getEnterprise(emprper.getCodemp());
 		
 		if ( isActive( emprper )) {
-			mysqlDB.insertUser(myPerson.getName(emprper.getCodper()), 
+			mysqlDB.insertUser(persons.getName(emprper.getCodper()), 
 					numDoc, 
 					enterprise, 
 					person, 
@@ -555,12 +600,12 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 			&& embargoStartDate != null 
 			&& embargoStartDate.before(fromDate)){
 			fromDate = embargoStartDate;
-			mysqlDB.info("emprper[{}]: [{}:{}] Import salalrys from {} due embargos", 
+			MysqlDB.info("emprper[{}]: [{}:{}] Import salalrys from {} due embargos", 
 					emprper.getCdg(), emprper.getCodper(), this.contractId,  fromDate);
 		}// 
 		
-		emprper.visitRel_nom_per(this);
-		emprper.visitRel_pex_per(this);
+		emprper.visitRel_nom_per(mySalary);
+		emprper.visitRel_pex_per(mySalary);
 		emprper.visitRel_fin_epp(this);
 		fromDate = savedDate;
 		
@@ -580,17 +625,17 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		if ( outOfDate( trabajo.getFecfin()))
 			return ;
 
-		Integer person = myPerson.getPerson(emprper.getCodper());
+		Integer person = persons.getPerson(emprper.getCodper());
 
 		if ( person == null ){
-			mysqlDB.error("emprper[{}] : Not found person {}", 
+			MysqlDB.error("emprper[{}] : Not found person {}", 
 					emprper.getCdg(), emprper.getCodper());
 			return ;
 		}
 		
 		String tc2 = trabajo.getCodtc2();
 		if ( tc2 == null ){
-			mysqlDB.error("emprper[{}] : Not found TC2 {}", 
+			MysqlDB.error("emprper[{}] : Not found TC2 {}", 
 					emprper.getCdg(), tc2);
 			return ;
 		}
@@ -616,7 +661,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 			startCalendar.setTime(startDate);
 			if (  startCalendar.get(Calendar.DAY_OF_MONTH) != 1 ){
 				startCalendar.set(Calendar.DAY_OF_MONTH, 1);
-				mysqlDB.error("trabajo[{}/{}] : Overlapped trabajo {}", 
+				MysqlDB.error("trabajo[{}/{}] : Overlapped trabajo {}", 
 						emprper.getCdg(), trabajo.getCdg(), startDate );
 				startDate = new java.sql.Date ( startCalendar.getTimeInMillis() );
 				
@@ -674,7 +719,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					String.format("%b", fulltime), 
 					startDate, 
 					endDate);
-			mysqlDB.error("emprper[{}] : Ambigous TC2 {} , {}", 
+			MysqlDB.error("emprper[{}] : Ambigous TC2 {} , {}", 
 					emprper.getCdg(), tc2 , fulltime);
 		} // No coindice con el código del TC2 ???? 
 		
@@ -686,7 +731,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 						String.format("%d", semana / 60), 
 						startDate, 
 						endDate);
-				mysqlDB.error("emprper[{}] :Week hours {}", 
+				MysqlDB.error("emprper[{}] :Week hours {}", 
 						emprper.getCdg(), semana / 60 );
 			} // Si existe sobreescribimos lashoras semanales ....
 		} // Contrato a tiempo parcial 
@@ -706,7 +751,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					startDate, 
 					endDate, 
 					null);
-			mysqlDB.error("emprper[{}] :Bad quote percentage TC2:{}, {}%", 
+			MysqlDB.error("emprper[{}] :Bad quote percentage TC2:{}, {}%", 
 					emprper.getCdg(), tc2, oldPercents.employee  );
 		}
 		
@@ -766,191 +811,6 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 				(short) 0 );
 	}
 
-	@Override
-	public void visitRel_nom_per(Nomina nomina, Emprper emprper) throws SQLException {
-		
-		if ( outOfDate( nomina.getFecfin()))
-			return ;
-		
-		
-		Double totalPayment = toDouble(nomina.getTotal_devengos()); 
-
-		Double itBase = toDouble(nomina.getBase_it());
-		Double proExtBase = toDouble(nomina.getBase_proext());
-		Double renumeration = toDouble(nomina.getRemuneracion());
-		Double rawCgcBase = toDouble(nomina.getTotal_1());
-		Double cgcBase = toDouble(nomina.getBase_cg());
-
-		Double hextraBase = toDouble(nomina.getBase_hextras() );
-		Double nonHextraBase = toDouble(nomina.getBase_hextras_no() );
-
-		Double cgpBase = toDouble(nomina.getBase_acc());
-		
-		Double ssContributions = toDouble(nomina.getImporte_cuotas());
-
-		Double moneyIrpfBase = toDouble(nomina.getBase_irpf());
-		Double kindIrpfBase = toDouble(nomina.getBase_especie());
-		Double irpfBase = moneyIrpfBase + kindIrpfBase;
-		
-		Double totalDeduction = toDouble(nomina.getTotal_deducir());
-
-		Double totalLiquid = toDouble(nomina.getTotal_liquido());
-		Double totalEnterprise = toDouble(nomina.getCuota_empresa());
-		
-		Rel_epp_per  rel_epp_per = new Rel_epp_per(); 
-		emprper.visitRel_epp_per(rel_epp_per);
-		
-		Rel_epp_emp rel_epp_emp = new Rel_epp_emp();
-		emprper.visitRel_epp_emp(rel_epp_emp);
-		
-		Rel_epp_ccc rel_epp_ccc = new Rel_epp_ccc();
-		emprper.visitRel_epp_ccc(rel_epp_ccc);
-		
-		
-		SalaryType type = SalaryType.SALARY;
-		
-		if ( "A".equals(nomina.getTipo() ) ) {
-			type = SalaryType.DELAY;
-		}
-		
-		this.salaryId= 
-			mysqlDB.insertSalary(
-					enum2short(type),
-					this.contractId, 
-					nomina.getFecini(), 
-					nomina.getFecfin(),
-					rel_epp_emp.getEmprnif_Descripcion(),
-					nomina.getLocalidad(),
-					rel_epp_emp.getEmprnif_Numdoc(),
-					rel_epp_ccc.getEmprccc_Descripcion(),
-					nomina.getNomper(),
-					rel_epp_per.getPersona_Numss(),
-					rel_epp_per.getPersona_Numdoc(),
-					nomina.getFecant(),
-					nomina.getCodbas(),
-					nomina.getDescat(), 
-					nomina.getNummat(), 
-					nomina.getDiasnomina(), // TODO: Dias efectivos .. 
-					totalPayment, 
-					totalDeduction, 
-					totalLiquid,
-					totalEnterprise, 
-					nomina.getFecemi(), 
-					renumeration, 
-					proExtBase, 
-					itBase,
-					rawCgcBase,
-					cgcBase,
-					hextraBase,
-					nonHextraBase,
-					cgpBase,
-					moneyIrpfBase,
-					kindIrpfBase,
-					irpfBase,
-					ssContributions);
-		
-		Double importeCg = toDouble(nomina.getImporte_cg());
-		if ( importeCg > 0 ) {
-			BigDecimal cgPercentage = 
-				nomina.getPrc_cg();
-			String cgFunction = String.format("%.2f%%", 
-					cgPercentage != null ? cgPercentage : 0);
-			mysqlDB.insertSalary_deduction(this.salaryId, 
-					enum2short(DeductionType.COMMON_CONTINGENCY), 
-					null,
-					null, 
-					cgFunction, 
-					importeCg);
-		}
-
-		Double importeAcc = toDouble(nomina.getImporte_acc());
-		
-		if ( importeAcc > 0  ){ 
-			
-			double accPercentage = toDouble(nomina.getPrc_acc());
-			
-			if ( accPercentage == 1.65 ||  accPercentage == 1.70 ) {
-				double jobPercentage = 0.10;
-				double uePercentage = accPercentage - jobPercentage; 
-				
-				double importeJob = jobPercentage * importeAcc / accPercentage;
-				String jobFunction = String.format("%.2f%%", jobPercentage);
-				mysqlDB.insertSalary_deduction(this.salaryId, 
-						enum2short(DeductionType.JOB_TRAINING),
-						null,
-						null, 
-						jobFunction, 
-						importeJob);
-
-				String ueFunction = String.format("%.2f%%", uePercentage);
-				mysqlDB.insertSalary_deduction(this.salaryId, 
-						enum2short(DeductionType.UNEMPLOYMENT),
-						null,
-						null, 
-						ueFunction, 
-						importeAcc - importeJob);
-			}
-			else {
-				String accFunction = String.format("%.2f%%", accPercentage);
-				mysqlDB.insertSalary_deduction(this.salaryId, 
-						enum2short(DeductionType.PROFESSIONAL_CONTINGENCY),
-						null,
-						null, 
-						accFunction, 
-						importeAcc);
-			}
-		}
-		
-		Double importeHex = toDouble(nomina.getImporte_hex());
-		if ( importeHex > 0 ) {
-			BigDecimal hexPercentage = 
-				nomina.getPrc_hex();
-			String hexFunction = String.format("%.2f%%", 
-					hexPercentage != null ? hexPercentage : 0);
-			mysqlDB.insertSalary_deduction(this.salaryId, 
-					enum2short(DeductionType.STRUCTURAL_OVERTIME), 
-					null, 
-					null,
-					hexFunction, 
-					importeHex);
-		}
-
-		Double importeHexNo = toDouble(nomina.getImporte_hexno());
-		if ( importeHexNo > 0 ) {
-			BigDecimal hexNoPercentage = 
-				nomina.getPrc_hexno();
-			String hexNoFunction = String.format("%.2f%%", 
-					hexNoPercentage != null ? hexNoPercentage : 0);
-			mysqlDB.insertSalary_deduction(this.salaryId, 
-					enum2short(DeductionType.NON_STRUCTURAL_OVERTIME), 
-					null,
-					null,
-					hexNoFunction, 
-					importeHexNo);
-		}
-
-
-		Double importeIrpf = toDouble(nomina.getImporte_irpf());
-		
-		if ( importeIrpf > 0 ){ 
-			BigDecimal irpfPercentage = 
-				nomina.getPrc_irpf();
-			String irpfFunction = String.format("%.2f%%", 
-					irpfPercentage != null ? irpfPercentage : 0);
-			mysqlDB.insertSalary_deduction(this.salaryId, 
-					enum2short(DeductionType.IRPF), 
-					null,
-					null,
-					irpfFunction, 
-					importeIrpf);
-		}
-		
-		
-		
-		nomina.visitRel_nmd_nom(this);
-		nomina.visitRel_dto_nom(this);
-	}
-	
 	
 	
 	
@@ -963,7 +823,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		String indCom = percep.getIndcom();
 		String comApl = percep.getComapl();
 		
-		return myConcepts.getExprFormat(calculo, importe, indCom, comApl);
+		return MyConcept.getExprFormat(calculo, importe, indCom, comApl);
 	}
 	
 	private String getVariableExpression(Percep percep, String variable) 
@@ -973,7 +833,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		String indCom = percep.getIndcom();
 		String comApl = percep.getComapl();
 		
-		return myConcepts.getExprFormat(calculo, variable, indCom, comApl);
+		return MyConcept.getExprFormat(calculo, variable, indCom, comApl);
 	}
 
 
@@ -986,26 +846,25 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 
 
 		Concept<PaymentType> concept = 
-			myConcepts.getConcept(percep.getCodcom());
+			concepts.getConcept(percep.getCodcom());
 		
 		if ( concept == null ){
-			mysqlDB.error("precep[{}] : Not found concept {} ", percep.getCdg(), percep.getCodcom());
+			MysqlDB.error("precep[{}] : Not found concept {} ", percep.getCdg(), percep.getCodcom());
 			return ;
 		}
 			
 		
-		Short month = MyConcepts.getMonth(percep.getMes()) ;
+		Short month = MyConcept.getMonth(percep.getMes()) ;
 
 		java.sql.Date endDate = 
 			getEndDate(percep.getFecfin(), emprper);
-		
 		
 		String tipcot = percep.getTipcot();
 		String dinesp = percep.getDinesp();
 
 		String irpf = null;
 		if ( ! tipcot.equals(concept.quote )) {
-			irpf = MyConcepts.getIrpfExprFormat(tipcot, dinesp);
+			irpf = MyConcept.getIrpfExprFormat(tipcot, dinesp);
 		}
 		
 		String description = percep.getDescom();
@@ -1028,7 +887,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 				type = null;
 			}
 			
-			String quote = MyConcepts.getQuoteExprFormat(tipcot);
+			String quote = MyConcept.getQuoteExprFormat(tipcot);
 			
 			String porCot = null;
 			String porQuote  = null;
@@ -1043,8 +902,8 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 				if ( !inheritFromAgreement(percep, endDate) || 
 					!percep.getRedext().replace('S','D').equals(porCot) )
 				{ 
-					porQuote = myConcepts.getPorQuote(porCot, 
-							MyConcepts.getQuoteExprFormat(tipcot));
+					porQuote = MyConcept.getPorQuote(porCot, 
+							MyConcept.getQuoteExprFormat(tipcot));
 					mysqlDB.insertContract_payment(
 							enum2short(type),
 							this.contractId, 
@@ -1061,13 +920,14 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 				} // end-if: Si el prorrateo no es mensual y la percepción es diferente.
 				
 				porCot = data.porCot;
+				endDate = data.endDate;
 				startDate = data.startDate;
 			}
 
 			if ( !inheritFromAgreement(percep, endDate) || 
 				!percep.getRedext().replace('S','D').equals(porCot) )
 			{ 
-				porQuote = myConcepts.getPorQuote(porCot, quote);
+				porQuote = MyConcept.getPorQuote(porCot, quote);
 				mysqlDB.insertContract_payment(
 						enum2short(type),
 						this.contractId, 
@@ -1105,7 +965,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 			
 			String quote = null;
 			if ( ! tipcot.equals(concept.quote )) {
-				quote = MyConcepts.getQuoteExprFormat(tipcot);
+				quote = MyConcept.getQuoteExprFormat(tipcot);
 			} //end-if: La cotización es igual a la del concepto
 			
 			SalaryType salaryType = getSalaryType(percep, emprper);
@@ -1118,7 +978,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 			double garilt = toDouble(percep.getGarilt());
 			if ( garilt > 0.00 ) {
 				grtzdo = 
-					myConcepts.getGrtzdoExprFormat(percep.getCalculo(), garilt/100 );
+					MyConcept.getGrtzdoExprFormat(percep.getCalculo(), garilt/100 );
 			}
 			
 			if ( grtzdo != null  ){
@@ -1138,7 +998,42 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 			else {
 					script = getInlineExpression(percep);
 			}
+			
+			java.sql.Date startDate = 
+				percep.getFecini();
+			
+			if ( month != null && endDate != null ) {
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(startDate);
 
+				if ( month != calendar.get(Calendar.MONTH) ) {
+					calendar.set(Calendar.MONTH, month);
+					calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+					if ( startDate.after(calendar.getTime())) {
+						calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) + 1);
+					}
+					startDate = new java.sql.Date(calendar.getTimeInMillis());
+					
+					MysqlDB.error("percep [{}-{}]: Start Bad dates for month {} {}..{} must be {}..{}",
+							percep.getCdg(), percep.getNumero(), month, percep.getFecini(), endDate, startDate , endDate );
+				}
+				
+				calendar.setTime(endDate);			
+				if ( month != calendar.get(Calendar.MONTH) ) {
+					Date _endDate = endDate;
+					calendar.set(Calendar.MONTH, month);
+					calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+					if ( endDate.before(calendar.getTime())) {
+						calendar.set(Calendar.YEAR, calendar.get(Calendar.YEAR) - 1);
+					}
+					endDate = new java.sql.Date(calendar.getTimeInMillis());
+					MysqlDB.error("percep [{}-{}]: End Bad dates for month {} {}..{} must be {}..{}",
+							percep.getCdg(), percep.getNumero(), month, startDate, _endDate, startDate , endDate );
+				}
+				
+
+			}
+			
 			mysqlDB.insertContract_payment(
 					enum2short(type), 
 					this.contractId, 
@@ -1148,7 +1043,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 					script, 
 					DefaultMysqlDB.format ( irpf, concept.code ),
 					DefaultMysqlDB.format ( quote, concept.code ),
-					percep.getFecini(), 
+					startDate, 
 					month,
 					endDate,
 					enum2short(salaryType));
@@ -1158,215 +1053,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 	
 	
 
-	@Override
-	public void visitRel_nmd_nom(Nominadev nominadev, Nomina nomina)
-			throws SQLException {
-		
-		String description = 
-			nominadev.getDescom();
-		String codCom = 
-			nominadev.getCodcom();
-		String dinEsp = 
-			nominadev.getDinesp();
 
-		Concept<PaymentType> concept = 
-			myConcepts.getConcept(codCom);
-		
-		String paymentConcept = concept != null ? 
-				concept.code : MyConcepts.formatCode(codCom);
-		
-		PaymentType type = concept != null ? 
-				concept.type : mysqlDB.getPaymentType(description, dinEsp, null ) ;
-		
-		BigDecimal importe = nominadev.getImporte();
-		BigDecimal impuni = nominadev.getImpuni();
-		BigDecimal unidades = nominadev.getUnidades();
-		
-		String function = mysqlDB.getFunction(importe, impuni, unidades);
-		
-		mysqlDB.insertSalary_payment(this.salaryId, 
-				enum2short(type ), 
-				paymentConcept,
-				description, 
-				function,
-				importe != null ? importe.doubleValue() : 0.00 );
-		
-	}
-	
-	
-	@Override
-	public void visitRel_dto_nom(Nomdto nomdto, Nomina nomina) throws SQLException {
-
-		String concepto = nomdto.getConcepto();
-		
-		DeductionType type = getDeductionType(concepto);
-
-		Double importe = toDouble(nomdto.getImporte());
-
-		String function = String.format("%.3f", 
-				importe != null ? importe : 0);
-		
-		
-		if ( !embargos.containsKey(concepto )){
-			mysqlDB.insertSalary_deduction(
-					this.salaryId, 
-					enum2short(type),
-					null,
-					concepto, 
-					function, 
-					importe);
-		}
-		else {
-			FullEmbargo embargo = embargos.get(concepto);
-			
-			Salary_embargo salaryEmbargo =
-				new Salary_embargo();
-			salaryEmbargo.amount = importe;
-			salaryEmbargo.description = concepto;
-			salaryEmbargo.salary = this.salaryId;
-			
-			embargo.salaryEmbargos.add(salaryEmbargo);
-			checkEmbargoLeft(embargo, nomina.getFecfin());
-			
-		} // Es un embargo
-	}
-	
-
-	@Override
-	public void visitRel_pex_per(Nominaex nominaex, Emprper emprper) throws SQLException {
-		
-		if ( outOfDate( nominaex.getFecfin()))
-			return ;
-		
-		Double totalPayment = toDouble(nominaex.getImporte()); 
-		Double totalDeduction = toDouble(nominaex.getTotal_deducir());
-		Double totalLiquid = toDouble(nominaex.getLiquido());
-		
-		Double baseIRPF = totalPayment;
-		
-
-		Rel_epp_per  rel_epp_per = new Rel_epp_per(); 
-		emprper.visitRel_epp_per(rel_epp_per);
-		
-		Rel_epp_emp rel_epp_emp = new Rel_epp_emp();
-		emprper.visitRel_epp_emp(rel_epp_emp);
-		
-		Rel_epp_ccc rel_epp_ccc = new Rel_epp_ccc();
-		emprper.visitRel_epp_ccc(rel_epp_ccc);
-
-		this.salaryId= 
-			mysqlDB.insertSalary(
-					enum2short(SalaryType.EXTRA),
-					this.contractId, 
-					nominaex.getFecini(), 
-					nominaex.getFecfin(), 
-					rel_epp_emp.getEmprnif_Descripcion(),
-					nominaex.getLocalidad(), 
-					rel_epp_emp.getEmprnif_Numdoc(),
-					rel_epp_ccc.getEmprccc_Descripcion(),
-					nominaex.getNomper(),
-					rel_epp_per.getPersona_Numss(),
-					rel_epp_per.getPersona_Numdoc(),
-					nominaex.getFecant(),
-					null,
-					nominaex.getDescat(), 
-					nominaex.getNummat(), 
-					0, 					// TODO: Dias efectivos .. 
-					totalPayment, 
-					totalDeduction, 
-					totalLiquid,
-					0.00,
-					nominaex.getFecemi(), 
-					0.00, 
-					0.00, 
-					0.00, 
-					0.00, 
-					0.00,
-					0.00, 
-					0.00, 
-					0.00, 
-					baseIRPF, 
-					0.00, 
-					baseIRPF,
-					0.00);
-		
-		String function = String.format("%.2f%%", 
-				totalPayment != null ? totalPayment : 0);
-		
-		Concept<PaymentType> concept = 
-			myConcepts.getConcept(nominaex.getCodcom());
-		
-		String paymentConcept = concept != null ? 
-				concept.code : MyConcepts.formatCode(nominaex.getCodcom());
-		
-		PaymentType type = concept != null ? 
-				concept.type : mysqlDB.getPaymentType(nominaex.getDescom(), "D", null ) ;
-		
-		mysqlDB.insertSalary_payment(this.salaryId, 
-				enum2short(type), 
-				paymentConcept,
-				nominaex.getDescom(),
-				function, 
-				totalPayment);
-		
-		Double importeIrpf = toDouble(nominaex.getImpirpf());
-		
-		if ( importeIrpf > 0 ){ 
-			BigDecimal irpfPercentage = 
-				nominaex.getIrpf();
-			String irpfFunction = String.format("%.2f%%", 
-					irpfPercentage != null ? irpfPercentage : 0);
-			mysqlDB.insertSalary_deduction(this.salaryId, 
-					enum2short(DeductionType.IRPF), 
-					null, 
-					null,
-					irpfFunction, 
-					importeIrpf);
-			
-		}
-
-		
-		nominaex.visitNomdtoex_nominaex(this);
-		
-		return ;
-	}
-	
-	
-	@Override
-	public void visitNomdtoex_nominaex(Nomdtoex nomdtoex, Nominaex nominaex)
-			throws SQLException {
-		String concepto = nomdtoex.getConcepto();
-		
-		DeductionType type = getDeductionType(concepto);
-
-		Double importe = toDouble(nomdtoex.getImporte());
-
-		String function = String.format("%.3f", 
-				importe != null ? importe : 0);
-		
-		if ( !embargos.containsKey(concepto)) {
-			mysqlDB.insertSalary_deduction(
-					this.salaryId, 
-					enum2short(type),
-					null,
-					concepto, 
-					function, 
-					importe);
-		}
-		else {
-			FullEmbargo embargo = embargos.get(concepto);
-			
-			Salary_embargo salaryEmbargo =
-				new Salary_embargo();
-			salaryEmbargo.amount = importe;
-			salaryEmbargo.description = concepto;
-			salaryEmbargo.salary = this.salaryId;
-			
-			embargo.salaryEmbargos.add(salaryEmbargo);
-			checkEmbargoLeft(embargo, nominaex.getFecfin());
-		}
-	}
-	
 	
 	@Override
 	public void visitRel_fin_epp(Finiquito finiquito, Emprper emprper)
@@ -1535,24 +1222,26 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 		} // end-if : 
 
 		int compare = 
-			myAgreement.hasPayment(this.codCon, 
+			agreements.hasPayment(this.codCon, 
 					this.nivel,
 					percep.getCodcom(), 
 					percep);
 		
 		if (compare == PercepPercnivComparator.NOT_FOUND ) {
-			mysqlDB.debug("percep[{},{}]: Perception Not found ON {},{},{}", 
+			MysqlDB.debug("percep[{},{}]: Perception Not found ON {},{},{}", 
 					percep.getCdg(), percep.getNumero(), this.codCon,  this.nivel, percep.getCodcom()); 
 			return false;
 		} // Esta percepcion no existe en el convenio
 
 		if (compare == PercepPercnivComparator.NOT_EQUALS ) {
-			mysqlDB.debug("percep[{},{}]: Perception Not equals ON {},{},{}", 
+			MysqlDB.debug("percep[{},{}]: Perception Not equals ON {},{},{}", 
 					percep.getCdg(), percep.getNumero(), this.codCon,  this.nivel, percep.getCodcom()); 
 			return false;
 		} // Existe pero es diferente
 		
 		if ( compare == PercepPercnivComparator.EQUALS ) {
+			MysqlDB.debug("percep[{},{}]: Perception equals ON {},{},{}", 
+					percep.getCdg(), percep.getNumero(), this.codCon,  this.nivel, percep.getCodcom()); 
 			return true ;
 		} // end-if : Son exactamante iguales
 
@@ -1576,7 +1265,7 @@ public class MyContract extends DefaultCtsqlDBVisitor {
 			String variableGtzdo = 
 				MyAgreement.getGtzdoVariable(percep.getCodcom());
 			String grtzdo = 
-				myConcepts.getGrtzdoExprFormat(percep.getCalculo(), garilt/100 );
+				MyConcept.getGrtzdoExprFormat(percep.getCalculo(), garilt/100 );
 			mysqlDB.insertContract_data(
 						variableGtzdo, 
 						this.contractId, 

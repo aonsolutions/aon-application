@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Categoria;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Convenio;
@@ -19,31 +18,30 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nivel;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percniv;
-import com.esferalia.aon.payroll.ctsql2mysql.MyConcepts.Concept;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Concept;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 
-public class MyAgreement extends DefaultCtsqlDBVisitor {
+public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 	
 	
 	private static java.sql.Date START_DATE = 
 		new java.sql.Date(110,01,01) ; 
 
 	public static String getAmountVariable(String code) {
-		return  MyConcepts.formatCode(code) + "_IMPORTE";
+		return  MyConcept.formatCode(code) + "_IMPORTE";
 	}
 	
 	public static String getGtzdoVariable(String code) {
-		return  MyConcepts.formatCode(code) + "_GARANTIZADO";
+		return  MyConcept.formatCode(code) + "_GARANTIZADO";
 	}
 
 	private  int 	level;
 	private int 	agreement;
 	java.sql.Date 	startDate ;
 	
-	private MyConcepts myConcepts;
+	private IConcepts concepts;
 	private DefaultMysqlDB mysqlDB;
 	
 	private AbstractCtsqlDB ctsqlDB;
@@ -55,12 +53,12 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 	
 	private Map<String,Map<String,List<String>>> agreementPayments;
 
-	public MyAgreement(DefaultMysqlDB mysqlDB, MyConcepts myConcepts) {
+	public MyAgreement(DefaultMysqlDB mysqlDB, IConcepts myConcepts) {
 		this(mysqlDB, myConcepts, null);
 	}
-	public MyAgreement(DefaultMysqlDB mysqlDB, MyConcepts myConcepts, Date startDate ) {
+	public MyAgreement(DefaultMysqlDB mysqlDB, IConcepts concepts, Date startDate ) {
 		this.mysqlDB = mysqlDB;
-		this.myConcepts = myConcepts;
+		this.concepts = concepts;
 		this.startDate = startDate == null ? START_DATE : new java.sql.Date(startDate.getTime());
 		this.levels = new HashMap<String, Map<String,Integer>>();
 		this.categories = new HashMap<String, Map<String,Map<String,Integer>>>();
@@ -76,7 +74,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 		ctsqlDB.visitConvenio(this);
 	}
 	
-
+	@Override
 	public Integer getAgreement(String oldCdg) {
 		return agreements.get(oldCdg);
 	}
@@ -84,11 +82,13 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 	public Integer getAgreementLevel(String codCon, String oldCdg) {
 		return DefaultMysqlDB.get(levels, codCon, oldCdg);
 	}
-
+	
+	@Override
 	public Integer getAgreementCategory(String codCon, String nivel, String oldCdg) {
 		return DefaultMysqlDB.get(categories, codCon, nivel, oldCdg);
 	}
 
+	@Override
 	public Integer insertAgreementCategory(String codCon, String nivel, String oldCdg) 
 	throws SQLException {
 		Integer agreementLevel =getAgreementLevel(codCon, nivel) ;
@@ -203,6 +203,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 	
 	}
 	
+	@Override
 	public int hasPayment(String cdg, String nivel, String codcom,  Percep percep) 
 	throws SQLException {
 		PercepPercnivComparator comparator = 
@@ -212,7 +213,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 		return comparator.compare;
 	}
 	
-	
+	@Override
 	public boolean inherits(Emprper emprper, String codcon, String nivel  ) throws SQLException {
 		List<String> codcoms = 
 			DefaultMysqlDB.get(agreementPayments, codcon, nivel);
@@ -263,7 +264,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 			DefaultMysqlDB.get(levels, categoria.getCodcon(), categoria.getNivel());
 
 		if ( level == null ) {
-			mysqlDB.error("categoria[{}]: Not found nivel retributivo {} ", 
+			MysqlDB.error("categoria[{}]: Not found nivel retributivo {} ", 
 					categoria.getCdg(), categoria.getNivel() );
 			return;
 		}
@@ -286,12 +287,12 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 								percniv.getTipcot());
 		
 		Concept<PaymentType> concept = 
-			myConcepts.getConcept(percniv.getCodcom());
+			concepts.getConcept(percniv.getCodcom());
 		
 		String exprFormat = getExprFormat(percniv);
 
 		if ( concept == null ){
-			mysqlDB.error("percniv[{}] : Not found concept {} ", percniv.getCdg(), percniv.getCodcom());
+			MysqlDB.error("percniv[{}] : Not found concept {} ", percniv.getCdg(), percniv.getCodcom());
 			return ;
 		}
 		
@@ -308,8 +309,8 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 		String quote = null;
 		if ( !tipCot.equals(concept.quote) ){
 			String dinEsp = percniv.getDinesp();
-			irpf = MyConcepts.getIrpfExprFormat(tipCot, dinEsp);
-			quote = MyConcepts.getQuoteExprFormat(tipCot);
+			irpf = MyConcept.getIrpfExprFormat(tipCot, dinEsp);
+			quote = MyConcept.getQuoteExprFormat(tipCot);
 		}
 		String variable = getAmountVariable ( percniv.getCodcom() );
 		String amount = DefaultMysqlDB.format(exprFormat, variable );
@@ -322,10 +323,10 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 			salaryType = SalaryType.EXTRA;
 		}
 		
-		Short month = MyConcepts.getMonth(percniv.getMes());
+		Short month = MyConcept.getMonth(percniv.getMes());
 		if ( month != null ) {
-			quote = myConcepts.getPorQuote(percniv.getRedext(), 
-					MyConcepts.getQuoteExprFormat(tipCot) );
+			quote = MyConcept.getPorQuote(percniv.getRedext(), 
+					MyConcept.getQuoteExprFormat(tipCot) );
 		}
 		
 
@@ -361,7 +362,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 			
 			if ( garilt > 0.00 ) {
 				String grtzdo = 
-					myConcepts.getGrtzdoExprFormat(percniv.getCalculo(), garilt/100 );
+					MyConcept.getGrtzdoExprFormat(percniv.getCalculo(), garilt/100 );
 				if ( grtzdo  != null ){
 					mysqlDB.insertAgreement_level_data(
 							getGtzdoVariable( percniv.getCodcom() ), 
@@ -382,7 +383,8 @@ public class MyAgreement extends DefaultCtsqlDBVisitor {
 		String indCom = percniv.getIndcom();
 		String comApl = percniv.getCodcomapl();
 		
-		return myConcepts.getExprFormat(calculo, indCom, comApl);
+		
+		return MyConcept.getExprFormat(calculo, indCom, comApl);
 	}
 	
 	

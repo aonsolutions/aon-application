@@ -12,7 +12,6 @@
 */
 package com.esferalia.aon.payroll.ctsql2mysql;
 
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -35,7 +34,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.NullMaritalStatusExc
  * @author rtrepiana
  *
  */
-public class MyPerson extends DefaultCtsqlDBVisitor {
+public class MyPerson extends DefaultCtsqlDBVisitor implements IPersons{
 
 	
 	private static class Person {
@@ -65,24 +64,22 @@ public class MyPerson extends DefaultCtsqlDBVisitor {
 		this.mysqlDB = defaultMysqlDB;
 	}
 	
+	@Override
 	public Integer getPerson(Integer oldCdg) {
 		Person person = persons.get(oldCdg);
 		return person == null ? null: person.id;
 	}
 	
+	@Override
 	public String getNumDoc(Integer oldCdg) {
 		Person person = persons.get(oldCdg);
 		return person == null ? null: person.numDoc;
 	}
 
+	@Override
 	public String getName(Integer oldCdg) {
 		Person person = persons.get(oldCdg);
 		return person == null ? null: person.name;
-	}
-
-	public Date getFecNac(Integer oldCdg) {
-		Person person = persons.get(oldCdg);
-		return person == null ? null: person.fecNac;
 	}
 
 	@Override
@@ -105,18 +102,18 @@ public class MyPerson extends DefaultCtsqlDBVisitor {
 		try {
 			gender = mysqlDB.getGender(persona.getSexo());
 		} catch (NullGenderException e1) {
-			mysqlDB.debug("persona[{}]: Null gender.", persona.getCdg());
+			MysqlDB.debug("persona[{}]: Null gender.", persona.getCdg());
 		} catch (GenderNotFoundException e1) {
-			mysqlDB.debug("persona[{}]: Not found gender {}", persona.getCdg(), persona.getSexo());
+			MysqlDB.debug("persona[{}]: Not found gender {}", persona.getCdg(), persona.getSexo());
 		}
 		
 		MaritalStatus maritalStatus = MaritalStatus.UNKNOWN;
 		try {
 			maritalStatus = mysqlDB.getMaritalStatus(persona.getEstciv());
 		} catch (NullMaritalStatusException e1) {
-			mysqlDB.debug("persona[{}]: Null marital status", persona.getCdg());
+			MysqlDB.debug("persona[{}]: Null marital status", persona.getCdg());
 		} catch (MaritalStatusNotFoundException e1) {
-			mysqlDB.debug("persona[{}]: Not found marital status {}", persona.getCdg(), persona.getEstciv());
+			MysqlDB.debug("persona[{}]: Not found marital status {}", persona.getCdg(), persona.getEstciv());
 		}
 		
 		
@@ -160,13 +157,13 @@ public class MyPerson extends DefaultCtsqlDBVisitor {
 		try {
 			mysqlDB.insertEmail(registry, raddress, persona.getEmail()) ;
 		} catch (InvalidEmailException e) {
-			mysqlDB.debug("persona[{}] : Invalid email {}", 
+			MysqlDB.debug("persona[{}] : Invalid email {}", 
 					persona.getCdg(), persona.getEmail());
 		}
 		try {
 			mysqlDB.insertTelephone (registry, raddress, persona.getTelefono() );
 		} catch (InvalidTelephoneException e) {
-			mysqlDB.debug("persona[{}] : Invalid telephone {}", 
+			MysqlDB.debug("persona[{}] : Invalid telephone {}", 
 					persona.getCdg(), persona.getTelefono());
 		}
 

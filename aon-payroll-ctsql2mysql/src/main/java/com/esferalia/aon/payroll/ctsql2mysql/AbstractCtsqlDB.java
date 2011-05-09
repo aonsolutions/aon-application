@@ -32,7 +32,7 @@ public class AbstractCtsqlDB {
 	
 	
 
-	private Connection ctsqlConnection;
+	protected Connection ctsqlConnection;
 
 
 	public AbstractCtsqlDB( Connection ctsqlConnection) {
@@ -122,7 +122,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finipextnu (ResultSet rs) 
+		protected Finipextnu (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -245,7 +245,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Db_version (ResultSet rs) 
+		protected Db_version (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -321,7 +321,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finindem (ResultSet rs) 
+		protected Finindem (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -411,7 +411,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Cuota (ResultSet rs) 
+		protected Cuota (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -495,7 +495,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Sincomun (ResultSet rs) 
+		protected Sincomun (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -534,7 +534,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Unidades (ResultSet rs) 
+		protected Unidades (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -591,7 +591,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Detalle (ResultSet rs) 
+		protected Detalle (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -639,7 +639,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Minor_01 (ResultSet rs) 
+		protected Minor_01 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -815,6 +815,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -924,7 +925,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Avisos (ResultSet rs) 
+		protected Avisos (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -1113,7 +1114,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszavis (ResultSet rs) 
+		protected Nszavis (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -1498,7 +1499,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tipovia (ResultSet rs) 
+		protected Tipovia (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -1810,7 +1811,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Lintc2 (ResultSet rs) 
+		protected Lintc2 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -2072,7 +2073,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Variables (ResultSet rs) 
+		protected Variables (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -2182,7 +2183,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Lintc2epi (ResultSet rs) 
+		protected Lintc2epi (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -2339,7 +2340,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Remesa_inss (ResultSet rs) 
+		protected Remesa_inss (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -2431,7 +2432,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linprestacion (ResultSet rs) 
+		protected Linprestacion (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -2530,7 +2531,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tipocnae2009 (ResultSet rs) 
+		protected Tipocnae2009 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -2608,6 +2609,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " codcli = ?  " 			); 
@@ -3001,7 +3003,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Cliente (ResultSet rs) 
+		protected Cliente (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -3705,7 +3707,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nsztrab (ResultSet rs) 
+		protected Nsztrab (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -4392,7 +4394,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Autonomos (ResultSet rs) 
+		protected Autonomos (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -4961,7 +4963,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tipreg (ResultSet rs) 
+		protected Tipreg (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -5111,7 +5113,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Comunica (ResultSet rs) 
+		protected Comunica (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -5656,7 +5658,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Epigrafe (ResultSet rs) 
+		protected Epigrafe (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -5900,7 +5902,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Httincidencia (ResultSet rs) 
+		protected Httincidencia (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -6008,7 +6010,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Minora (ResultSet rs) 
+		protected Minora (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -6092,7 +6094,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszpeop (ResultSet rs) 
+		protected Nszpeop (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -6213,7 +6215,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finidtonu (ResultSet rs) 
+		protected Finidtonu (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -6318,7 +6320,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Pluses (ResultSet rs) 
+		protected Pluses (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -6462,7 +6464,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Httaviso (ResultSet rs) 
+		protected Httaviso (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -6552,7 +6554,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszanex (ResultSet rs) 
+		protected Nszanex (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -6639,7 +6641,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Action_entry (ResultSet rs) 
+		protected Action_entry (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -7027,7 +7029,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Basecoti (ResultSet rs) 
+		protected Basecoti (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -7221,7 +7223,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Lincnae2009 (ResultSet rs) 
+		protected Lincnae2009 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -7388,7 +7390,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Percniv (ResultSet rs) 
+		protected Percniv (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -7732,7 +7734,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nominaexdf (ResultSet rs) 
+		protected Nominaexdf (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -8189,7 +8191,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Mutua (ResultSet rs) 
+		protected Mutua (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -8536,6 +8538,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " divisa = ?  " 			); 
@@ -9016,7 +9019,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Divisa (ResultSet rs) 
+		protected Divisa (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -9515,7 +9518,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nominadev (ResultSet rs) 
+		protected Nominadev (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -9695,7 +9698,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszrece (ResultSet rs) 
+		protected Nszrece (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -9807,7 +9810,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Lincomun (ResultSet rs) 
+		protected Lincomun (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -10093,7 +10096,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tipcotc2 (ResultSet rs) 
+		protected Tipcotc2 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -10200,7 +10203,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszunco (ResultSet rs) 
+		protected Nszunco (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -10275,7 +10278,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszotpe (ResultSet rs) 
+		protected Nszotpe (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -10423,6 +10426,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -10444,7 +10448,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Otrperc (ResultSet rs) 
+		protected Otrperc (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -10648,7 +10652,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Lincalcu (ResultSet rs) 
+		protected Lincalcu (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -10898,7 +10902,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Emprban (ResultSet rs) 
+		protected Emprban (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -11149,7 +11153,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Colectivos (ResultSet rs) 
+		protected Colectivos (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -11222,7 +11226,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Trabajadores (ResultSet rs) 
+		protected Trabajadores (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -11387,7 +11391,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finipext (ResultSet rs) 
+		protected Finipext (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -12657,6 +12661,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -12811,7 +12816,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Emprper (ResultSet rs) 
+		protected Emprper (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -13732,7 +13737,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszfini (ResultSet rs) 
+		protected Nszfini (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -13945,7 +13950,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Pagaext (ResultSet rs) 
+		protected Pagaext (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -14086,7 +14091,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszcoco (ResultSet rs) 
+		protected Nszcoco (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -14182,7 +14187,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linporco (ResultSet rs) 
+		protected Linporco (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -14707,7 +14712,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Httrabajador (ResultSet rs) 
+		protected Httrabajador (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -15879,7 +15884,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tipocont (ResultSet rs) 
+		protected Tipocont (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -16076,7 +16081,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linbasec (ResultSet rs) 
+		protected Linbasec (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -16220,7 +16225,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszcatg (ResultSet rs) 
+		protected Nszcatg (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -16316,7 +16321,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linocupacion (ResultSet rs) 
+		protected Linocupacion (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -16415,7 +16420,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Remesainss (ResultSet rs) 
+		protected Remesainss (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -16556,7 +16561,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Lincnae (ResultSet rs) 
+		protected Lincnae (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -16701,7 +16706,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finindemdf (ResultSet rs) 
+		protected Finindemdf (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -17056,7 +17061,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Entidad (ResultSet rs) 
+		protected Entidad (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -17328,7 +17333,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nomdto (ResultSet rs) 
+		protected Nomdto (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -17445,7 +17450,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszreac (ResultSet rs) 
+		protected Nszreac (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -17680,7 +17685,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Cnae (ResultSet rs) 
+		protected Cnae (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -17862,6 +17867,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -17954,6 +17960,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  "  + "AND" 				+ " cdg = ?  " 			); 
@@ -17998,7 +18005,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Impr190 (ResultSet rs) 
+		protected Impr190 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -18381,7 +18388,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Usuario (ResultSet rs) 
+		protected Usuario (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -18673,7 +18680,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finiquitonu (ResultSet rs) 
+		protected Finiquitonu (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -19115,7 +19122,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linplus (ResultSet rs) 
+		protected Linplus (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -19283,6 +19290,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -19304,7 +19312,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Rem_cert_empr (ResultSet rs) 
+		protected Rem_cert_empr (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -19457,7 +19465,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Embargo (ResultSet rs) 
+		protected Embargo (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -19701,7 +19709,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nomdfdev (ResultSet rs) 
+		protected Nomdfdev (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -19884,7 +19892,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Automat (ResultSet rs) 
+		protected Automat (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -19957,7 +19965,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszcopa (ResultSet rs) 
+		protected Nszcopa (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -20088,7 +20096,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Parteitnu (ResultSet rs) 
+		protected Parteitnu (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -20340,7 +20348,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Categoria (ResultSet rs) 
+		protected Categoria (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -20585,7 +20593,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Emprccos (ResultSet rs) 
+		protected Emprccos (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -20881,7 +20889,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Porcoti (ResultSet rs) 
+		protected Porcoti (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -21150,6 +21158,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -21241,7 +21250,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Regidocu (ResultSet rs) 
+		protected Regidocu (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -21570,7 +21579,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Calendar (ResultSet rs) 
+		protected Calendar (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -21724,7 +21733,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nacion (ResultSet rs) 
+		protected Nacion (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -21812,7 +21821,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Elemirpf (ResultSet rs) 
+		protected Elemirpf (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -21923,7 +21932,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Trabdto (ResultSet rs) 
+		protected Trabdto (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -22423,7 +22432,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Domicilio (ResultSet rs) 
+		protected Domicilio (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -22837,7 +22846,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Masivo (ResultSet rs) 
+		protected Masivo (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -22948,7 +22957,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Complevar (ResultSet rs) 
+		protected Complevar (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -23005,7 +23014,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszcere (ResultSet rs) 
+		protected Nszcere (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -23089,7 +23098,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Cuota_01 (ResultSet rs) 
+		protected Cuota_01 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -23264,7 +23273,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finidto (ResultSet rs) 
+		protected Finidto (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -23345,7 +23354,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszrari (ResultSet rs) 
+		protected Nszrari (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -23672,7 +23681,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszdomi (ResultSet rs) 
+		protected Nszdomi (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -23781,7 +23790,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Ocupacion (ResultSet rs) 
+		protected Ocupacion (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -24109,7 +24118,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Trabajo (ResultSet rs) 
+		protected Trabajo (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -24926,7 +24935,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszconv (ResultSet rs) 
+		protected Nszconv (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -25064,7 +25073,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Empresa (ResultSet rs) 
+		protected Empresa (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -25175,7 +25184,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszcont (ResultSet rs) 
+		protected Nszcont (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -25257,7 +25266,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Cnae2009 (ResultSet rs) 
+		protected Cnae2009 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -25463,7 +25472,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Emprccc (ResultSet rs) 
+		protected Emprccc (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -25647,7 +25656,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszepig (ResultSet rs) 
+		protected Nszepig (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -25992,7 +26001,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Persona (ResultSet rs) 
+		protected Persona (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -26647,6 +26656,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -26755,7 +26765,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Variaciones (ResultSet rs) 
+		protected Variaciones (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -27088,7 +27098,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nsztido (ResultSet rs) 
+		protected Nsztido (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -27127,7 +27137,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Opercepciones (ResultSet rs) 
+		protected Opercepciones (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -27915,7 +27925,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Emprnif (ResultSet rs) 
+		protected Emprnif (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -28216,6 +28226,15 @@ public class AbstractCtsqlDB {
 		public String getModimpuesto()
 		throws SQLException {
 			return rs.getString(33);
+		}
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getMod190()
+		throws SQLException {
+			return rs.getString(34);
 		}
 
 		/**
@@ -28802,7 +28821,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tipboni (ResultSet rs) 
+		protected Tipboni (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -28938,7 +28957,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Config (ResultSet rs) 
+		protected Config (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -29016,6 +29035,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -29177,7 +29197,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Emprdom (ResultSet rs) 
+		protected Emprdom (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -29396,7 +29416,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nomdtoex (ResultSet rs) 
+		protected Nomdtoex (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -29590,7 +29610,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Lbonifica (ResultSet rs) 
+		protected Lbonifica (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -29763,7 +29783,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Parteit (ResultSet rs) 
+		protected Parteit (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -30050,7 +30070,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Calen (ResultSet rs) 
+		protected Calen (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -30276,7 +30296,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Formcont (ResultSet rs) 
+		protected Formcont (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -30447,7 +30467,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Httcomplemento (ResultSet rs) 
+		protected Httcomplemento (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -30693,7 +30713,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nominadf (ResultSet rs) 
+		protected Nominadf (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -31776,7 +31796,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nomina (ResultSet rs) 
+		protected Nomina (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -32730,7 +32750,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Exclusion (ResultSet rs) 
+		protected Exclusion (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -32796,7 +32816,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszpaga (ResultSet rs) 
+		protected Nszpaga (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -32962,7 +32982,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nomdfdto (ResultSet rs) 
+		protected Nomdfdto (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -33079,7 +33099,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszmupa (ResultSet rs) 
+		protected Nszmupa (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -33118,7 +33138,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tiposdoc (ResultSet rs) 
+		protected Tiposdoc (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -33157,7 +33177,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszbolc (ResultSet rs) 
+		protected Nszbolc (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -33556,7 +33576,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszpoco (ResultSet rs) 
+		protected Nszpoco (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -33660,7 +33680,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tipinc (ResultSet rs) 
+		protected Tipinc (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -33811,7 +33831,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Session (ResultSet rs) 
+		protected Session (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -34044,7 +34064,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Lcomunica (ResultSet rs) 
+		protected Lcomunica (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -34183,7 +34203,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linautom (ResultSet rs) 
+		protected Linautom (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -34246,7 +34266,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Cuota_20 (ResultSet rs) 
+		protected Cuota_20 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -34416,7 +34436,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Opfile (ResultSet rs) 
+		protected Opfile (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -34684,7 +34704,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tc2 (ResultSet rs) 
+		protected Tc2 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -35007,7 +35027,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tc1 (ResultSet rs) 
+		protected Tc1 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -35871,7 +35891,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tipaut (ResultSet rs) 
+		protected Tipaut (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -36030,7 +36050,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Delegacion (ResultSet rs) 
+		protected Delegacion (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -36475,7 +36495,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Sucursal (ResultSet rs) 
+		protected Sucursal (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -36775,6 +36795,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " paiemi = ?  " 			); 
@@ -36827,6 +36848,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " paidocrep = ?  " 			); 
@@ -37036,7 +37058,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Pais (ResultSet rs) 
+		protected Pais (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -37530,7 +37552,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Convenio (ResultSet rs) 
+		protected Convenio (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -37809,7 +37831,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Action_denied (ResultSet rs) 
+		protected Action_denied (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -37935,6 +37957,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " codadm = ?  " 			); 
@@ -38055,7 +38078,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Admon (ResultSet rs) 
+		protected Admon (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -38189,7 +38212,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linelem (ResultSet rs) 
+		protected Linelem (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -38279,7 +38302,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszmest (ResultSet rs) 
+		protected Nszmest (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -38615,7 +38638,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Calfiniquito (ResultSet rs) 
+		protected Calfiniquito (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -38717,7 +38740,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Cuota_31 (ResultSet rs) 
+		protected Cuota_31 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -38907,7 +38930,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Percepcion (ResultSet rs) 
+		protected Percepcion (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -39001,7 +39024,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linpercepcion (ResultSet rs) 
+		protected Linpercepcion (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -39100,7 +39123,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Perfil (ResultSet rs) 
+		protected Perfil (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -39247,7 +39270,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszinci (ResultSet rs) 
+		protected Nszinci (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -39385,7 +39408,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszcdtr (ResultSet rs) 
+		protected Nszcdtr (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -39823,7 +39846,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Complemento (ResultSet rs) 
+		protected Complemento (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -40166,7 +40189,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszadmh (ResultSet rs) 
+		protected Nszadmh (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -40205,7 +40228,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszbase (ResultSet rs) 
+		protected Nszbase (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -40422,7 +40445,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finiquito (ResultSet rs) 
+		protected Finiquito (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -40865,7 +40888,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Action_favorite (ResultSet rs) 
+		protected Action_favorite (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -40970,7 +40993,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tipocnae (ResultSet rs) 
+		protected Tipocnae (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -41117,7 +41140,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Prcdivnom (ResultSet rs) 
+		protected Prcdivnom (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -41198,7 +41221,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszilte (ResultSet rs) 
+		protected Nszilte (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -41424,7 +41447,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nominaex (ResultSet rs) 
+		protected Nominaex (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -41813,7 +41836,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Cuota_48 (ResultSet rs) 
+		protected Cuota_48 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -41980,7 +42003,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nominaitnu (ResultSet rs) 
+		protected Nominaitnu (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -42247,7 +42270,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Parteconf (ResultSet rs) 
+		protected Parteconf (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -42440,6 +42463,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " inddoc = ?  " 			); 
@@ -42492,6 +42516,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " tipdocrep = ?  " 			); 
@@ -42686,7 +42711,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tipdoc (ResultSet rs) 
+		protected Tipdoc (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -42899,7 +42924,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Elemcoti (ResultSet rs) 
+		protected Elemcoti (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -42963,7 +42988,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Remesaafi (ResultSet rs) 
+		protected Remesaafi (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -43172,6 +43197,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -43216,7 +43242,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Impr11x (ResultSet rs) 
+		protected Impr11x (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -43767,7 +43793,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nominait (ResultSet rs) 
+		protected Nominait (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -44072,7 +44098,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Httbonificacion (ResultSet rs) 
+		protected Httbonificacion (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -44242,7 +44268,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Prestaciones (ResultSet rs) 
+		protected Prestaciones (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -44377,7 +44403,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Autbases (ResultSet rs) 
+		protected Autbases (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -44528,7 +44554,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Rem_cert_empr_det (ResultSet rs) 
+		protected Rem_cert_empr_det (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -44769,6 +44795,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -44827,7 +44854,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Emprctra (ResultSet rs) 
+		protected Emprctra (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -45124,7 +45151,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszprov (ResultSet rs) 
+		protected Nszprov (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -45229,7 +45256,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Bonifica (ResultSet rs) 
+		protected Bonifica (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -45370,7 +45397,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Minor_48 (ResultSet rs) 
+		protected Minor_48 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -45527,7 +45554,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Percep (ResultSet rs) 
+		protected Percep (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -45860,7 +45887,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Calculo (ResultSet rs) 
+		protected Calculo (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -46462,7 +46489,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Action (ResultSet rs) 
+		protected Action (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -46618,7 +46645,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszdcpr (ResultSet rs) 
+		protected Nszdcpr (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -47404,7 +47431,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nivel (ResultSet rs) 
+		protected Nivel (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -47493,7 +47520,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszodet (ResultSet rs) 
+		protected Nszodet (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -47541,7 +47568,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Procesos (ResultSet rs) 
+		protected Procesos (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -47657,7 +47684,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Remesa_parte_it (ResultSet rs) 
+		protected Remesa_parte_it (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -47935,7 +47962,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linepigr (ResultSet rs) 
+		protected Linepigr (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -48077,7 +48104,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Lin190 (ResultSet rs) 
+		protected Lin190 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -48662,7 +48689,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Ajustes (ResultSet rs) 
+		protected Ajustes (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -48809,7 +48836,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finipextdf (ResultSet rs) 
+		protected Finipextdf (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -49016,6 +49043,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " tipempr = ?  " 			); 
@@ -49038,7 +49066,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Tipempr (ResultSet rs) 
+		protected Tipempr (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -49210,6 +49238,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -49305,7 +49334,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Emprlban (ResultSet rs) 
+		protected Emprlban (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -49609,7 +49638,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finiquitodf (ResultSet rs) 
+		protected Finiquitodf (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -50005,7 +50034,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszbanc (ResultSet rs) 
+		protected Nszbanc (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -50067,7 +50096,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Lin_divisa (ResultSet rs) 
+		protected Lin_divisa (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -50167,7 +50196,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszempr (ResultSet rs) 
+		protected Nszempr (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -50820,7 +50849,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linmutua (ResultSet rs) 
+		protected Linmutua (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -51509,7 +51538,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Provincia (ResultSet rs) 
+		protected Provincia (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -51856,7 +51885,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Minor_20 (ResultSet rs) 
+		protected Minor_20 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -51949,7 +51978,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Printers (ResultSet rs) 
+		protected Printers (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -52030,7 +52059,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Comunidad (ResultSet rs) 
+		protected Comunidad (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -52127,7 +52156,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszcala (ResultSet rs) 
+		protected Nszcala (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -52235,7 +52264,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Trabinci (ResultSet rs) 
+		protected Trabinci (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -52443,7 +52472,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nomdfdtoex (ResultSet rs) 
+		protected Nomdfdtoex (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -52620,7 +52649,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Application (ResultSet rs) 
+		protected Application (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -52718,7 +52747,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszboni (ResultSet rs) 
+		protected Nszboni (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -52829,7 +52858,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszregi (ResultSet rs) 
+		protected Nszregi (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -52983,7 +53012,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Costes (ResultSet rs) 
+		protected Costes (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -53607,7 +53636,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Prcdivtrab (ResultSet rs) 
+		protected Prcdivtrab (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -53752,7 +53781,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finidtodf (ResultSet rs) 
+		protected Finidtodf (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -53833,7 +53862,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Datosafi (ResultSet rs) 
+		protected Datosafi (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -54838,6 +54867,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif"
 				+ " WHERE" 
 				+ " cdg = ?  " 			); 
@@ -54881,7 +54911,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Empract (ResultSet rs) 
+		protected Empract (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -55488,7 +55518,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Minor_31 (ResultSet rs) 
+		protected Minor_31 (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -55618,7 +55648,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Finindemnu (ResultSet rs) 
+		protected Finindemnu (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -55728,7 +55758,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linvariables (ResultSet rs) 
+		protected Linvariables (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -55881,7 +55911,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Nszcomp (ResultSet rs) 
+		protected Nszcomp (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -55959,7 +55989,7 @@ public class AbstractCtsqlDB {
 		
 		private ResultSet rs;
 		
-		private Linirpf (ResultSet rs) 
+		protected Linirpf (ResultSet rs) 
 		throws SQLException {
 			this.rs =rs;
 		}
@@ -63630,6 +63660,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif");
 			Emprnif emprnif = new Emprnif(rs); 
 			while ( rs.next() ) {
@@ -63688,6 +63719,7 @@ public class AbstractCtsqlDB {
 				+ ",envioss" 
 				+ ",cecon" 
 				+ ",modimpuesto" 
+				+ ",mod190" 
 				+ " FROM emprnif" 
 				+ " WHERE" 
 				+ " cdg = ?  " 				  

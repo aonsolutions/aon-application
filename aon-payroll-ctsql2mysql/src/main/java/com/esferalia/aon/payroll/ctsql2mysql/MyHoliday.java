@@ -5,7 +5,7 @@ import java.sql.Date;
 
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calendar;
 
-public class MyHoliday extends DefaultCtsqlDBVisitor {
+public class MyHoliday extends DefaultCtsqlDBVisitor implements IHolidays{
 	
 	
 
@@ -19,7 +19,7 @@ public class MyHoliday extends DefaultCtsqlDBVisitor {
 		this.mysqlDB = mysqlDB;	
 		this.description = description;
 	}
-	
+	@Override
 	public int getHoliday() {
 		return this.holidayId;
 	}

@@ -1,22 +1,16 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.company.enumeration.EnterpriseActivityType;
 import com.code.aon.customer.enumeration.CustomerStatus;
-import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.RegistryType;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calendar;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Cliente;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Delegacion;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Domicilio;
@@ -32,7 +26,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.InvalidFaxException;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.InvalidTelephoneException;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.NullCNAEException;
 
-public class MyEnterprise extends DefaultCtsqlDBVisitor {
+public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises {
 	
 	public static class Activity {
 		Integer	id;
@@ -40,6 +34,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		String	indregimen;
 	}
 	
+	@SuppressWarnings("serial")
 	private static class InterruptedVisit extends Error{
 		public InterruptedVisit() {
 		}
@@ -91,8 +86,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 	private Integer 							scopeId;
 	
 	private DefaultMysqlDB 						mysqlDB;
-	private MyCalendar							myCalendar;
-	private MyAgreement							myAgreement;
+	private ICalendars							calendars;
+	private IAgreements							agreements;
 
 	private Map<Integer, Map<String, Integer>> 	cccs;
 
@@ -106,14 +101,14 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 	private Map<Integer, Map<Integer, Integer>> raddresses ;
 
 	private Map<Integer, Map<Integer,Integer>> 	workplaces ;
-	private Map<Integer, Integer> 				calendars;
+	private Map<Integer, Integer> 				calendarsMap;
 	
 	private Map<Integer, Map<Integer,String>> workplaces_old_agreements ;
 
-	public MyEnterprise(DefaultMysqlDB mysqlDB, MyAgreement myAgreement, MyCalendar myCalendar) {
+	public MyEnterprise(DefaultMysqlDB mysqlDB, IAgreements agreements, ICalendars calendars) {
 		this.mysqlDB = mysqlDB;
-		this.myAgreement = myAgreement;
-		this.myCalendar = myCalendar;
+		this.agreements = agreements;
+		this.calendars = calendars;
 		this.activities = new HashMap<Integer, Activity>();
 		this.cifs= new HashMap<String, Integer>();
 		this.enterprises = new HashMap<Integer, Integer>();
@@ -123,7 +118,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		this.workplaces = new HashMap<Integer, Map<Integer,Integer>>();
 		this.workplaces_old_agreements = new HashMap<Integer, Map<Integer,String>>();
 		this.customerChilds = new HashMap<String,Integer>();
-		this.calendars = new HashMap<Integer, Integer>();
+		this.calendarsMap = new HashMap<Integer, Integer>();
 	}
 	
 
@@ -144,7 +139,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		{
 			
 			String truncated = description.substring(0,15);
-			mysqlDB.warn("delegacion[{}]: Too long '{}' . Scope '{}'.", 
+			MysqlDB.warn("delegacion[{}]: Too long '{}' . Scope '{}'.", 
 					delegacion.getCdg(), description, truncated );
 			description = truncated;
 		}
@@ -175,7 +170,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		try {
 			mysqlDB.insertTelephone (COMPANY_REGISTRY, raddress, delegacion.getTelefono() );
 		} catch (InvalidTelephoneException e) {
-			mysqlDB.debug("delegacion[{}] : Invalid telephone {}", 
+			MysqlDB.debug("delegacion[{}] : Invalid telephone {}", 
 					delegacion.getCdg(), delegacion.getTelefono());
 		}
 	}
@@ -281,7 +276,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 				bankId = mysqlDB.insertBank(emprbanc_entidad.getEntidad_Descripcion(), emprban.getCodent());
 			}
 			else {
-				mysqlDB.error("emprban[{}]: Entidad {} without name ", emprban.getCdg() , emprban.getCodent());
+				MysqlDB.error("emprban[{}]: Entidad {} without name ", emprban.getCdg() , emprban.getCodent());
 				return;
 			}
 		}
@@ -315,10 +310,10 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		try {
 			cnae = mysqlDB.getCnae2009Id(empract.getCnae2009());
 		} catch (NullCNAEException e) {
-			mysqlDB.error("empreact[{}]: Null CNAE (2009)", empract.getCdg());
+			MysqlDB.error("empreact[{}]: Null CNAE (2009)", empract.getCdg());
 			return ;
 		} catch (CNAENotFoundException e) {
-			mysqlDB.error("empreact[{}]: Not found CNAE (2009) {} {} ", 
+			MysqlDB.error("empreact[{}]: Not found CNAE (2009) {} {} ", 
 					empract.getCdg(), empract.getCnae2009(), empract.getActeco());
 			return ;
 		}
@@ -360,7 +355,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 			try { 
 				geozone = Integer.parseInt(provincia);
 			} catch (NumberFormatException e) {
-				mysqlDB.error("emprecc[{}] : Invalid CCC {}", emprccc.getCdg(), ccc);
+				MysqlDB.error("emprecc[{}] : Invalid CCC {}", emprccc.getCdg(), ccc);
 				return ;
 			}
 		}
@@ -368,7 +363,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 			if ( "A".equals(tipccc) ) // Altos cargos
 				return;
 			
-			mysqlDB.debug("emprecc[{}] : Null CCC", emprccc.getCdg() );
+			MysqlDB.debug("emprecc[{}] : Null CCC", emprccc.getCdg() );
 		}
 		
 
@@ -405,7 +400,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		
 		if ( enterprise == null )
 		{
-			mysqlDB.debug("domicilio[{}] : Not found enterprise {} .", 
+			MysqlDB.debug("domicilio[{}] : Not found enterprise {} .", 
 					emprdom.getCdg(),emprdom.getCodemp());
 			return;
 		}
@@ -432,25 +427,25 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 			try {
 				mysqlDB.insertTelephone (enterprise, raddress, domicilio.getTelefono() );
 			} catch (InvalidTelephoneException e) {
-				mysqlDB.error("domicilio[{}] : Invalid telephone {}", 
+				MysqlDB.error("domicilio[{}] : Invalid telephone {}", 
 						domicilio.getCdg(), domicilio.getTelefono());
 			}
 			try {
 				mysqlDB.insertTelephone (enterprise, raddress, domicilio.getTelefono2() );
 			} catch (InvalidTelephoneException e) {
-				mysqlDB.error("domicilio[{}] : Invalid telephone {}", 
+				MysqlDB.error("domicilio[{}] : Invalid telephone {}", 
 						domicilio.getCdg(), domicilio.getTelefono2());
 			}
 			try {
 				mysqlDB.insertTelephone (enterprise, raddress, domicilio.getTelefono3() );
 			} catch (InvalidTelephoneException e) {
-				mysqlDB.error("domicilio[{}] : Invalid telephone {}", 
+				MysqlDB.error("domicilio[{}] : Invalid telephone {}", 
 						domicilio.getCdg(), domicilio.getTelefono3());
 			}
 			try {
 				mysqlDB.insertFax(enterprise, raddress, domicilio.getFax() );
 			} catch (InvalidFaxException e) {
-				mysqlDB.error("domicilio[{}] : Invalid fax {}", 
+				MysqlDB.error("domicilio[{}] : Invalid fax {}", 
 						domicilio.getCdg(), domicilio.getFax());
 			}
 			DefaultMysqlDB.save(raddresses, enterprise, domicilio.getCdg(), raddress);
@@ -472,13 +467,13 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 				EmprCtra emprCtra = new EmprCtra(domicilio);
 				
 				Integer agreement = emprCtra.codCon != null ? 
-					myAgreement.getAgreement(emprCtra.codCon) : null;
+					agreements.getAgreement(emprCtra.codCon) : null;
 				
 					
 				Integer calendar = 
-					myCalendar.getCalendar(emprdom.getCodemp(), emprdom.getCoddom(), emprCtra.codAct);	
+					calendars.getCalendar(emprdom.getCodemp(), emprdom.getCoddom(), emprCtra.codAct);	
 				if ( calendar == null ) {
-					mysqlDB.info("emprdom[{}]: Calendar not found for {}/{}/{}", 
+					MysqlDB.info("emprdom[{}]: Calendar not found for {}/{}/{}", 
 							emprdom.getCdg(), emprdom.getCodemp(), emprdom.getCoddom(), emprCtra.codAct);
 					
 				} 
@@ -493,7 +488,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 						null,
 						agreement);
 				if ( calendar != null ) {
-					calendars.put(workplace, calendar);
+					calendarsMap.put(workplace, calendar);
 				}
 				DefaultMysqlDB.save(workplaces, emprdom.getCodemp(), emprdom.getCoddom(),workplace);
 				DefaultMysqlDB.save(workplaces_old_agreements, emprdom.getCodemp(), emprdom.getCoddom(),emprCtra.codCon);
@@ -501,10 +496,12 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		}
 	}
 	
+	@Override
 	public Integer getCalendar(Integer workplace) {
-		return calendars.get(workplace);
+		return calendarsMap.get(workplace);
 	}
 
+	@Override
 	public Integer getEnterprise(Integer oldCdg) {
 		return enterprises.get(oldCdg);
 	}
@@ -513,25 +510,30 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor {
 		return this.activities.get(oldCdgAct);
 	}
 
+	@Override
 	public Integer getActivityId( Integer oldCdgAct) {
 		Activity activity = this.activities.get(oldCdgAct);
 		return activity != null ? activity.id: null ;
 	}
 
+	@Override
 	public String getIngEspEmp( Integer oldCdgAct) {
 		Activity activity = this.activities.get(oldCdgAct);
 		return activity != null ? activity.ingespemp : null ;
 	}
 
+	@Override
 	public String getIndRegimen( Integer oldCdgAct) {
 		Activity activity = this.activities.get(oldCdgAct);
 		return activity != null ? activity.indregimen: null ;
 	}
 
+	@Override
 	public Integer getCCC( Integer oldCdgAct, String oldCdgCCC) {
 		return DefaultMysqlDB.get(cccs, oldCdgAct, oldCdgCCC);
 	}
 	
+	@Override
 	public Integer getWorkplace(Integer oldCdgEmp, Integer oldCdgDomicilio) {
 		return DefaultMysqlDB.get( workplaces, oldCdgEmp, oldCdgDomicilio);
 	}

@@ -55,11 +55,11 @@ public class MysqlDB extends DefaultMysqlDB{
 
 		MyPerson myPerson = 
 			new MyPerson(this);
-		MyConcepts myConcepts = 
-			new MyConcepts(this);
+		MyConcept myConcept = 
+			new MyConcept(this);
 		MyAgreement myAgreement = 
 			new MyAgreement(this, 
-					myConcepts, fromDate); 
+					myConcept, fromDate); 
 		MyHoliday myHoliday =
 			new MyHoliday(this, 
 						"Aplicación Total");
@@ -74,7 +74,7 @@ public class MysqlDB extends DefaultMysqlDB{
 			new MyContract(this, 
 					myEnterprise, 
 					myPerson,
-					myConcepts,
+					myConcept,
 					myAgreement,
 					myCalendar,
 					fromDate);
@@ -84,7 +84,7 @@ public class MysqlDB extends DefaultMysqlDB{
 		ctsqlReader.visit(myHoliday);
 		
 		ctsqlReader.visit(myPerson);
-		ctsqlReader.visit(myConcepts);
+		ctsqlReader.visit(myConcept);
 		ctsqlReader.visit(myAgreement);
 		ctsqlReader.visit(myCalendar);
 		ctsqlReader.visit(myEnterprise);

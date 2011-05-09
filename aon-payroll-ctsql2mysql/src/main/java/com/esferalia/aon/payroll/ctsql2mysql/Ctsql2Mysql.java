@@ -41,14 +41,37 @@ import org.apache.commons.cli.PosixParser;
 public class Ctsql2Mysql 
 {
 	
+	{
+			// first of all load JDBC drivers
+	    try {
+			Class.forName("org.gjt.mm.mysql.Driver");
+		    Class.forName("com.transtools.jdbc.CtsqlJdbcDriver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private String ctsqlURL;
+	private String ctsqlUser;
+	private String ctsqlPasswd;
+	private String mysqlURL;
+	private String mysqlUser;
+	private String mysqlPasswd;
+	private boolean dryRun;
+	
+	private Date fromDate;
+	
 
-	public static void main( String[] args ) throws SQLException, ClassNotFoundException, java.text.ParseException
-    {
-		
-		// create the command line parser
-    	CommandLineParser parser = new PosixParser();   
+	public Ctsql2Mysql(String args [] ) {
+		parseArgs(args);
+	}
+	
+	protected String getCtsqlURL() {
+		return ctsqlURL;
+	}
+
+	protected boolean parseArgs(String[] args ) {
     	
-    	// create the Options
     	Options options = new Options();
 
     	OptionBuilder.isRequired(false);
@@ -107,7 +130,7 @@ public class Ctsql2Mysql
     	OptionBuilder.hasArg(true);
     	OptionBuilder.withArgName( "date" );
     	OptionBuilder.withType(String.class);
-    	OptionBuilder.withDescription(  "trapasar los datos a partir de esta fecha" );
+    	OptionBuilder.withDescription(  "trapasar los datos a partir de esta fecha M/d/Y" );
     	Option fromDateOption = OptionBuilder.create( "from" );
 
     	options.addOption(helpOption);
@@ -120,65 +143,91 @@ public class Ctsql2Mysql
     	options.addOption(mysqlPasswdOption);
     	options.addOption(fromDateOption);
     	
-    	
+    	CommandLineParser parser = new PosixParser();   
+
     	HelpFormatter helpFormatter = new HelpFormatter();
-    	
 
-    	try {
-    		// first of all load JDBC drivers
-            Class.forName("org.gjt.mm.mysql.Driver");
-            Class.forName("com.transtools.jdbc.CtsqlJdbcDriver");
+		try {
+			 CommandLine line= parser.parse( options, args );
 
-            // parse the command line arguments
-            CommandLine line = parser.parse( options, args );
+			if ( line.hasOption(helpOption.getOpt()) ) {
+	        	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
+	        	return false;
+	        }
+
+            ctsqlURL = line.getOptionValue(ctsqlURLOption.getOpt());
+            ctsqlUser = line.getOptionValue(ctsqlUserOption.getOpt(), "ctl");
+            ctsqlPasswd = line.getOptionValue(ctsqlPasswdOption.getOpt(), "ctl");
             
-            if ( line.hasOption(helpOption.getOpt()) )
-            	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
+            mysqlURL = line.getOptionValue(mysqlURLOption.getOpt());
+            mysqlUser = line.getOptionValue(mysqlUserOption.getOpt(),"dbuser");
+            mysqlPasswd = line.getOptionValue(mysqlPasswdOption.getOpt(),"serubd2000");
             
-            String ctsqlURL = line.getOptionValue(ctsqlURLOption.getOpt());
-            String ctsqlUser = line.getOptionValue(ctsqlUserOption.getOpt(), "ctl");
-            String ctsqlPasswd = line.getOptionValue(ctsqlPasswdOption.getOpt(), "ctl");
-            Connection ctsqlConnection =  
-            	DriverManager.getConnection(ctsqlURL, ctsqlUser, ctsqlPasswd);
-            
-            String mysqlURL = line.getOptionValue(mysqlURLOption.getOpt());
-            String mysqlUser = line.getOptionValue(mysqlUserOption.getOpt(), "dbuser");
-            String mysqlPasswd = line.getOptionValue(mysqlPasswdOption.getOpt(),"serubd2000");
-            Connection mysqlConnection =  
-            	DriverManager.getConnection(mysqlURL, mysqlUser, mysqlPasswd);
-            
-            boolean dryRun=  line.hasOption(dryRunOption.getOpt());
-            
-            
-            mysqlConnection.setAutoCommit(false);
-            
-            MysqlDB mysqlWriter = new MysqlDB(mysqlConnection);
-          
+            dryRun=  line.hasOption(dryRunOption.getOpt());
+			
             String fromString = line.getOptionValue(fromDateOption.getOpt());
             if ( fromString != null ) {
-            	
-            	Date fromDate = DateFormat.getDateInstance(DateFormat.SHORT).parse(fromString);
-            	mysqlWriter.setFromDate(fromDate);
-            }
-            
-            CtsqlDB ctsqlReader = new CtsqlDB(ctsqlConnection);
-            mysqlWriter.writeAll(ctsqlReader);
-            
-            if ( !dryRun ) {
-            	mysqlConnection.commit(); 
-            }
-            
-            mysqlConnection.close();
-            ctsqlConnection.close();
-    	
-    	}
-        catch( ParseException exp ) {
-            // oops, something went wrong
-            System.err.println( "Error : " + exp.getMessage() );
-        	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
-        } 
-    }
-	
+	        	fromDate = DateFormat.getDateInstance(DateFormat.SHORT).parse(fromString);
+	        }
 
+		} catch (Exception e) {
+        	helpFormatter.printHelp(HelpFormatter.DEFAULT_SYNTAX_PREFIX, options, true);
+		}
+
+		return true;
+	}
+	
+	protected Connection getCtsqlConnection() throws SQLException {
+		return DriverManager.getConnection(ctsqlURL, ctsqlUser, ctsqlPasswd);
+	}
+	
+	protected Connection getMysqlConnection() throws SQLException {
+		return DriverManager.getConnection(mysqlURL, mysqlUser, mysqlPasswd);
+	}
+
+	protected void transfer() throws ClassNotFoundException, SQLException, java.text.ParseException {
+		if ( ctsqlURL == null ){
+			return;
+		}
+
+        Connection ctsqlConnection = null;
+        Connection mysqlConnection = null;
+        
+        try {
+	        ctsqlConnection = getCtsqlConnection();  
+	        	
+	        mysqlConnection =  getMysqlConnection();
+	
+	        mysqlConnection.setAutoCommit(false);
+	        
+	        MysqlDB mysqlWriter = new MysqlDB(mysqlConnection);
+	        
+	        mysqlWriter.setFromDate(fromDate);
+	        
+	        CtsqlDB ctsqlReader = new CtsqlDB(ctsqlConnection);
+	        mysqlWriter.writeAll(ctsqlReader);
+	        
+	        if ( !dryRun ) {
+	        	mysqlConnection.commit(); 
+	        }
+        }
+        finally {
+        	if ( ctsqlConnection != null )
+        		ctsqlConnection.close();
+	        if ( mysqlConnection != null )
+	        	mysqlConnection.close();
+        }
+	}
+	
+	public static void main( String[] args ) throws SQLException, ClassNotFoundException, java.text.ParseException
+    {
+		new Ctsql2Mysql(args).transfer();
+    }
+
+	public boolean isDryRun() {
+		return dryRun;
+	}
+
+	
 }
 

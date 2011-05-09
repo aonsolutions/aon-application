@@ -133,6 +133,11 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		return format != null ? String.format(format, args) : null;
 	}
 	
+	public  static double toDouble(BigDecimal bigDecimal) {
+		return bigDecimal != null  ? bigDecimal.doubleValue() : 0 ;
+	}
+
+
 	protected static <K,V> boolean save( Map<K, Set<V>> map, K key, V value){
 		Set<V> set ; 
 		set = map.get(key);
@@ -312,6 +317,7 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 	protected static Short enum2short(Enum<?> type) {
 		return type == null ? null : (short ) type.ordinal();
 	}
+
 
 	protected Gender getGender(String gender) 
 	throws NullGenderException, GenderNotFoundException{

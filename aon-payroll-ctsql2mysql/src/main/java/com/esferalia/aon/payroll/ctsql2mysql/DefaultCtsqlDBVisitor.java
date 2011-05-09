@@ -1888,6 +1888,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitAvisos_codemp(Avisos avisos, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -1923,6 +1934,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -9810,6 +9822,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitOtrperc_emprnif(Otrperc otrperc, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -9845,6 +9868,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -11731,6 +11755,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitRel_epp_emp(Emprper emprper, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -11766,6 +11801,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -16066,6 +16102,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitImpr190_codemp(Impr190 impr190, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -16101,6 +16148,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -16552,6 +16600,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitImpr190_repres(Impr190 impr190, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -16587,6 +16646,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -17533,6 +17593,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitFk_cert_rem_empr(Rem_cert_empr rem_cert_empr, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -17568,6 +17639,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -20825,6 +20897,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitRegidocu_emprnif(Regidocu regidocu, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -20860,6 +20943,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -25027,6 +25111,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitRel_var_emp(Variaciones variaciones, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -25062,6 +25157,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -26850,6 +26946,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitEmprdom_emprnif(Emprdom emprdom, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -26885,6 +26992,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -36447,6 +36555,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitImpr11x_emprnif(Impr11x impr11x, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -36482,6 +36601,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -39445,6 +39565,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitEmprctra_emprnif(Emprctra emprctra, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -39480,6 +39611,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -42713,6 +42845,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitEmprlban_emprnif(Emprlban emprlban, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -42748,6 +42891,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}
@@ -45718,6 +45862,17 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 		public String getEmprnif_Modimpuesto() {
 			return emprnifModimpuesto;
 		}
+		
+		private String emprnifMod190;  
+		
+		/**
+		 * Modelo 190
+		 * @return the column 'mod190' value; if the value is SQL NULL, the value returned is null
+		 * @throws SQLException
+		 */
+		public String getEmprnif_Mod190() {
+			return emprnifMod190;
+		}
 		public void visitEmpract_emprnif(Empract empract, Emprnif emprnif)
 		throws SQLException {
 			emprnifCdg = emprnif.getCdg();  
@@ -45753,6 +45908,7 @@ public class DefaultCtsqlDBVisitor implements CtsqlDBVisitor {
 			emprnifEnvioss = emprnif.getEnvioss();  
 			emprnifCecon = emprnif.getCecon();  
 			emprnifModimpuesto = emprnif.getModimpuesto();  
+			emprnifMod190 = emprnif.getMod190();  
 		}
 	
 	}

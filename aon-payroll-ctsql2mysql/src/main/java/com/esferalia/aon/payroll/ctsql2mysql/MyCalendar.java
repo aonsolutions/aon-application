@@ -1,30 +1,25 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
-import java.io.InputStream;
-import java.io.StringBufferInputStream;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
-
-import com.esferalia.aon.calendar.enumeration.CalendarSource;
 import com.esferalia.aon.calendar.enumeration.DayType;
-import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.*;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Calendar;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprctra;
 
-public class MyCalendar extends DefaultCtsqlDBVisitor {
+public class MyCalendar extends DefaultCtsqlDBVisitor implements ICalendars{
 
 
-	private MyHoliday myHoliday;
+	private IHolidays holidays;
 	private DefaultMysqlDB mysqlDB;
 	
 	
 	
-	public MyCalendar(DefaultMysqlDB mysqlDB, MyHoliday myHoliday) {
+	public MyCalendar(DefaultMysqlDB mysqlDB, IHolidays holidays) {
 		this.mysqlDB = mysqlDB;
-		this.myHoliday = myHoliday;
+		this.holidays = holidays;
 	}
 	
 	@Override
@@ -46,6 +41,7 @@ public class MyCalendar extends DefaultCtsqlDBVisitor {
 		return MysqlDB.get(calendars, 0, 0, 0);
 	}
 
+	@Override
 	public Integer getCalendar(Integer codemp, Integer domicilio, Integer codact ) {
 		Integer calendarId = MysqlDB.get(calendars, codemp, domicilio, codact);
 		return calendarId != null ? calendarId : getDefaultCalendar();
@@ -61,7 +57,7 @@ public class MyCalendar extends DefaultCtsqlDBVisitor {
 		if ( calendarId == null ) {
 			
 			
-			Integer holiday = myHoliday.getHoliday();
+			Integer holiday = holidays.getHoliday();
 			
 			double dayHours = 
 				emprctra.getJornada() / ( 60.00 * 5.00);
@@ -106,7 +102,7 @@ public class MyCalendar extends DefaultCtsqlDBVisitor {
 					parent);
 			
 			MysqlDB.save(calendars, emprctra.getCdg(), emprctra.getDomicilio(), emprctra.getCodact(), calendarId );
-			mysqlDB.info("emprctra[{}]: Calendar saved for {}/{}/{}/{} => {} ", 
+			MysqlDB.info("emprctra[{}]: Calendar saved for {}/{}/{}/{} => {} ", 
 					emprctra.getCdg(), emprctra.getCdg(), emprctra.getDomicilio(), emprctra.getCodact(), parent, 
 					MysqlDB.get(calendars, emprctra.getCdg(), emprctra.getDomicilio(), emprctra.getCodact()));
 		}
@@ -144,7 +140,7 @@ public class MyCalendar extends DefaultCtsqlDBVisitor {
 		if ( calendarId == null ) {
 			
 			
-			Integer holiday = myHoliday.getHoliday();
+			Integer holiday = holidays.getHoliday();
 			
 			Rel_cal_ctra rel_cal_ctra = 
 				new Rel_cal_ctra();
@@ -193,7 +189,7 @@ public class MyCalendar extends DefaultCtsqlDBVisitor {
 					parent);
 			
 			MysqlDB.save(calendars,  calendar.getCodemp(), calendar.getDomicilio(), calendar.getCodact(), calendarId );
-			mysqlDB.info("calendar[{}]: Calendar saved for {}/{}/{} = {} ", 
+			MysqlDB.info("calendar[{}]: Calendar saved for {}/{}/{} = {} ", 
 					calendar.getCdg(),  calendar.getCodemp(), calendar.getDomicilio(), calendar.getCodact(),
 					MysqlDB.get(calendars, calendar.getCodemp(), calendar.getDomicilio(), calendar.getCodact()));
 		}

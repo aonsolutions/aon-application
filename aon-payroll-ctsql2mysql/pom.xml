@@ -92,6 +92,14 @@
 			<scope>compile</scope>
 			<optional>false</optional>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.den_4</groupId>
+			<artifactId>inotify_java</artifactId>
+			<version>2.0.2</version>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
 		<dependency>
 			<groupId>com.esferalia.aon</groupId>
 			<artifactId>aon.payroll</artifactId>
@@ -171,6 +179,7 @@
 							<copyright>2010, esferalia Networks S.A</copyright>
 							<requires>
 								<require>slf4j</require>
+								<require>inotify-java</require>
 								<require>jakarta-commons-cli</require>
 								<require>jakarta-commons-logging</require>
 								<require>mysql-connector-java</require>
@@ -240,11 +249,35 @@
 								<mapping>
 									<sources>
 										<source>
-											<location>src/main/scripts</location>
+											<location>src/main/scripts/aon-payroll-ctsql2mysql</location>
+										</source>
+										<source>
+											<location>src/main/scripts/aon-payroll-ctsql2mysqld</location>
 										</source>
 									</sources>
 									<filemode>755</filemode>
 									<directory>/usr/bin</directory>
+								</mapping>
+
+								<mapping>
+									<sources>
+										<source>
+											<location>src/main/scripts/ctsql2mysqld</location>
+										</source>
+									</sources>
+									<filemode>755</filemode>
+									<directory>/etc/init.d</directory>
+								</mapping>
+
+								<mapping>
+									<sources>
+										<source>
+											<location>src/main/scripts/aon-payroll-ctsql2mysqld.conf</location>
+										</source>
+									</sources>
+									<filemode>644</filemode>
+									<directory>/etc</directory>
+									<configuration>noreplace</configuration>
 								</mapping>
 
 							</mappings>

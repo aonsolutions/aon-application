@@ -302,19 +302,19 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 #end
 	}
 	
-	protected void debug(String format, Object ... args){
+	protected static void debug(String format, Object ... args){
 		LOGGER.debug(format, args);
 	}
 
-	protected void info(String format, Object ... args){
+	protected static void info(String format, Object ... args){
 		LOGGER.info(format, args);
 	}
 
-	protected void warn(String format, Object ... args){
+	protected static void warn(String format, Object ... args){
 		LOGGER.warn(format, args);
 	}
 
-	protected void error(String format, Object ... args){
+	protected static void error(String format, Object ... args){
 		LOGGER.error(format, args);
 	}
 	
