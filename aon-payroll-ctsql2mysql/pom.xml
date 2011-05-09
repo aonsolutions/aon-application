@@ -267,6 +267,7 @@
 									</sources>
 									<filemode>755</filemode>
 									<directory>/etc/init.d</directory>
+									<directoryIncluded>false</directoryIncluded>
 								</mapping>
 
 								<mapping>
