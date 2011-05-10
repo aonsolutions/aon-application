@@ -15,6 +15,7 @@
 			<xs:attribute name="showOfferData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSalesData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showDeliveryData" type="xs:boolean" use="required"/>
+			<xs:attribute name="showInvoiceData" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
