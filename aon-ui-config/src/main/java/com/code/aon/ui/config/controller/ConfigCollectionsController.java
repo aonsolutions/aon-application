@@ -202,18 +202,51 @@ public class ConfigCollectionsController {
 		return retentionTaxes;
 	}
 
-	public List<SelectItem> getSeries() throws ManagerBeanException{
-		return getSeries(false);		
+	public List<SelectItem> getOfferSeries() throws ManagerBeanException{
+		return getSeries(false, IConfigAlias.SERIES_OFFER);
 	}
 
-	public List<SelectItem> getSeriesIds() throws ManagerBeanException {
-		return getSeries(true);
+	public List<SelectItem> getOfferSeriesIds() throws ManagerBeanException {
+		return getSeries(true, IConfigAlias.SERIES_OFFER);
 	}	
 
-	public List<SelectItem> getSeries(boolean onlyId) throws ManagerBeanException{
+	public List<SelectItem> getSalesSeries() throws ManagerBeanException{
+		return getSeries(false, IConfigAlias.SERIES_SALES);
+	}
+
+	public List<SelectItem> getSalesSeriesIds() throws ManagerBeanException {
+		return getSeries(true, IConfigAlias.SERIES_SALES);
+	}	
+
+	public List<SelectItem> getDeliverySeries() throws ManagerBeanException{
+		return getSeries(false, IConfigAlias.SERIES_DELIVERY);
+	}
+
+	public List<SelectItem> getDeliverySeriesIds() throws ManagerBeanException {
+		return getSeries(true, IConfigAlias.SERIES_DELIVERY);
+	}	
+
+	public List<SelectItem> getInvoiceSeries() throws ManagerBeanException{
+		return getSeries(false, IConfigAlias.SERIES_INVOICE);
+	}
+
+	public List<SelectItem> getInvoiceSeriesIds() throws ManagerBeanException {
+		return getSeries(true, IConfigAlias.SERIES_INVOICE);
+	}	
+
+	public List<SelectItem> getRectificationSeries() throws ManagerBeanException{
+		return getSeries(false, IConfigAlias.SERIES_RECTIFICATION);
+	}
+
+	public List<SelectItem> getRectificationSeriesIds() throws ManagerBeanException {
+		return getSeries(true, IConfigAlias.SERIES_RECTIFICATION);
+	}	
+
+	public List<SelectItem> getSeries(boolean onlyId, String typeAlias) throws ManagerBeanException {
 		List<SelectItem> series = new LinkedList<SelectItem>();
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(seriesBean.getFieldName(typeAlias), new Boolean(true));
 		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ACTIVE), new Boolean(true));
 		if (!AonUtil.getRoleManager().isConfidentiality()) {
 			criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
