@@ -85,7 +85,7 @@
 								disabled="#{vatRegenerator.validated}"
 								value="#{vatRegenerator.params.fromSeries}">
 								<f:selectItem itemLabel="-" value="#{null}" />
-								<f:selectItems value="#{configCollections.series}" />
+								<f:selectItems value="#{configCollections.invoiceSeries}" />
 							</aon:selectOneMenu>
 							<aon:inputText id="From_Number" value="#{vatRegenerator.params.fromNumber}" size="10"
 								disabled="#{vatRegenerator.validated}"
@@ -97,7 +97,7 @@
 								disabled="#{vatRegenerator.validated}"
 								value="#{vatRegenerator.params.toSeries}">
 								<f:selectItem itemLabel="-" value="#{null}" />
-								<f:selectItems value="#{configCollections.series}" />
+								<f:selectItems value="#{configCollections.invoiceSeries}" />
 							</aon:selectOneMenu>
 							<aon:inputText id="To_Number" value="#{vatRegenerator.params.toNumber}" size="10"
 								disabled="#{vatRegenerator.validated}"
@@ -119,7 +119,7 @@
 					<aon:selectOneMenu id="AccountEntryDetail_input_series"
 						disabled="#{vatRegenerator.validated}"
 						value="#{vatRegenerator.params.series}">
-						<f:selectItems value="#{configCollections.series}" />
+						<f:selectItems value="#{configCollections.invoiceSeries}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="AccountEntryDetail_first_number"
