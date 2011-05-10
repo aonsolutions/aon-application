@@ -596,7 +596,7 @@ public class CashFlowForecastReport {
 				}
 			}
 			DynaReportManager drm = new DynaReportManager();
-			drm.toExcel(report, getStrippedCollection());
+			drm.toExcel(report,"PrevisionTesoreria", getStrippedCollection());
 		} catch (ReportException e) {
 			e.printStackTrace();
 			String msg = "No se pudo generar el listado";

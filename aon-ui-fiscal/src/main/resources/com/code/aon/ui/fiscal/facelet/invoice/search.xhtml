@@ -79,11 +79,9 @@
 					
 					<aon:outputText value="" />
 					<aon:div>
-						<aon:htmlCommandLink id="vatBook-excel-report" value="#{bundle.aon_search}" 
-							target="_blank" action="#{report.onExecute}"
+						<aon:htmlCommandLink id="vatBook-excel-report"
+							value="&#160;" target="_blank" action="#{invoiceReport.onExcelReport}"
 							styleClass="aon-search-lookup-button">
-							<f:param name="reportKey" value="invoiceReportExcel" />
-							<f:param name="outputFormat" value="MS Excel" />
 						</aon:htmlCommandLink>
 					</aon:div>	
 

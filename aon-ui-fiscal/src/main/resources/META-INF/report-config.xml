@@ -48,17 +48,6 @@
 		</params>
 	</report>
 
-	<report id="invoiceReportExcel" description="Listado de Facturas Excel">
-		<template path="/com/code/aon/ui/fiscal/report/invoiceReportExcel.jasper"/>
-		<collection provider="#{invoiceReport.invoices}"/>
-		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="params" value="#{invoiceReport.getParams}" />
-		</params>
-	</report>
-
 	<!--  *********  Modelo 347 ********* -->
 	<report id="mod347List" description="Model 347List">
 		<template path="/com/code/aon/ui/fiscal/report/mod347.jasper"/>

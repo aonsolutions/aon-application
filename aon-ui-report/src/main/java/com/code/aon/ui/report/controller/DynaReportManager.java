@@ -30,12 +30,12 @@ import com.code.aon.ui.util.DownloadUtil;
 public class DynaReportManager {
 
 	@SuppressWarnings("unchecked")
-	public void toExcel(DynaReport dynaReport,Collection<?> c) {
+	public void toExcel(DynaReport dynaReport,String filename, Collection<?> c) {
 		HttpServletResponse response = null;
 		OutputStream out = null;
 		try {
 			response = DownloadUtil.getResponse();
-			out = DownloadUtil.initDownload(response, "CashFlowForecast", MimeType.MIME_MS_EXCEL);
+			out = DownloadUtil.initDownload(response, filename, MimeType.MIME_MS_EXCEL);
 			dynaReport.getReport().setPrintColumnNames(true)
 				.setIgnorePagination(true)
 				.setMargins(0, 0, 0, 0);

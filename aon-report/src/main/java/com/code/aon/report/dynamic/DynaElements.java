@@ -25,6 +25,7 @@ public class DynaElements {
 	public static final int HEADER_FONT_SIZE = 8;
 	public static final String DATE_PATTERN = "dd/MM/yyyy";
 	public static final String NUMBER_PATTERN = "#,##0.00";
+	public static final String INTEGER_PATTERN = "#,###";
 	public static final int DATE_DEFAULT_WIDTH = 50;
 	public static final int NUMBER_DEFAULT_WIDTH = 78;
 	
@@ -74,6 +75,13 @@ public class DynaElements {
 		DETAIL_DATE_STYLE.setPattern(DATE_PATTERN);
 	}
 	
+	public static final Style DETAIL_INTEGER_STYLE = new Style();
+	static {
+		DETAIL_INTEGER_STYLE.setFont(DETAIL_FONT);
+		DETAIL_INTEGER_STYLE.setHorizontalAlign(HorizontalAlign.RIGHT);
+		DETAIL_INTEGER_STYLE.setPattern(INTEGER_PATTERN);
+	}
+
 	public static final Style DETAIL_NUMBER_STYLE = new Style();
 	static {
 		DETAIL_NUMBER_STYLE.setFont(DETAIL_FONT);
@@ -175,6 +183,19 @@ public class DynaElements {
 				.setTitle(header)
 				.setWidth(NUMBER_DEFAULT_WIDTH)
 				.setStyle(DETAIL_NUMBER_STYLE)
+				.setHeaderStyle(COLUMN_HEADER_STYLE)
+				.build();
+		} catch (ColumnBuilderException e) {
+			throw new ReportException(e.getMessage(),e);
+		}
+	}
+	public AbstractColumn getIntegerColumn( String property, String header) throws ReportException {
+		try {
+			return ColumnBuilder.getNew()
+				.setColumnProperty(property, Integer.class.getName())
+				.setTitle(header)
+				.setWidth(NUMBER_DEFAULT_WIDTH)
+				.setStyle(DETAIL_INTEGER_STYLE)
 				.setHeaderStyle(COLUMN_HEADER_STYLE)
 				.build();
 		} catch (ColumnBuilderException e) {

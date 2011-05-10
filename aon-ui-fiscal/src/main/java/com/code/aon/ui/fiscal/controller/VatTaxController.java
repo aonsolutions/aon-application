@@ -1,6 +1,7 @@
 package com.code.aon.ui.fiscal.controller;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +21,14 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
+import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
@@ -29,6 +37,7 @@ import com.code.aon.fiscal.enumeration.Period;
 import com.code.aon.fiscal.enumeration.VatTaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
+import com.code.aon.fiscal.vat.tax.VatTaxKeyEx;
 import com.code.aon.fiscal.vat.tax.VatTaxManager;
 import com.code.aon.fiscal.vat.tax.VatTaxParameters;
 import com.code.aon.ql.Criteria;
@@ -37,6 +46,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.sun.awt.AWTUtilities.Translucency;
 
 public class VatTaxController extends BasicController {
 
@@ -390,6 +400,17 @@ public class VatTaxController extends BasicController {
 		}
 	}
 	
+	public String onListAccummulated() {
+		VatTaxDetail detail = (VatTaxDetail) getVatTaxModel().getRowData();
+		InvoiceReportController irc = (InvoiceReportController) AonUtil.getRegisteredBean("invoiceReport");
+		InvoiceReportParams params = getInvoiceReportParams(detail);
+		params.setTaxType( TaxType.VAT );
+		params.setFromInvoiceDate(null);
+		params.setToInvoiceDate(null);
+		irc.setParams(params);
+		return irc.onExcelReport();
+	}
+
 	public void onChangeTaxableBaseAdjust(ActionEvent event) {
 		VatTaxDetail detail = (VatTaxDetail) getVatTaxModel().getRowData();
 		if ( detail.getQuotaAdjust() == 0 ) {
@@ -419,5 +440,125 @@ public class VatTaxController extends BasicController {
 		}
 		return null;
 		
+	}
+	
+	private InvoiceReportParams getInvoiceReportParams(VatTaxDetail detail) {
+		InvoiceReportParams params = new InvoiceReportParams();
+		params.reset();
+		int year = detail.getVatTax().getYear();
+		params.setFromTaxDate(CommonUtil.getYearFirstDay(year));
+		params.setToTaxDate(detail.getVatTax().getPeriod().getDueDate(year));
+		
+		VatTaxKey key = detail.getKey();
+		if (key == VatTaxKey.A1 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.NATIONAL});
+			params.setType(new InvoiceType[]{InvoiceType.SALES});
+			params.setRectificationTypeSpecial(false);
+	    	params.setPercent(detail.getPercent());	
+		}
+		if (key == VatTaxKey.A2 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.NATIONAL});
+			params.setType(new InvoiceType[]{InvoiceType.SALES});
+			params.setRectificationTypeSpecial(false);
+	    	params.setPercent(detail.getPercent());
+	    	params.setSurcharge(true);
+		}
+		if (key == VatTaxKey.A3 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY});
+			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
+	    	params.setPercent(detail.getPercent());
+		}
+		if (key == VatTaxKey.A4 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY,InvoiceTransactionType.EXTRACOMMUNITY});
+			params.setType(new InvoiceType[]{InvoiceType.EXPENSES});
+		}
+		if (key == VatTaxKey.A5 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.NATIONAL});
+			params.setType(new InvoiceType[]{InvoiceType.SALES});
+			params.setRectificationTypeSpecial(true);
+		}
+		if (key == VatTaxKey.B1 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.NATIONAL});
+			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
+			params.setInvestment(false);
+		}
+		if (key == VatTaxKey.B2 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.NATIONAL});
+			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
+			params.setInvestment(true);
+		}
+		if (key == VatTaxKey.B3 ) {
+			params.setType(new InvoiceType[]{InvoiceType.EXPENSES});
+		}
+		if (key == VatTaxKey.C1 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.EXTRACOMMUNITY});
+			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
+			params.setInvestment(false);
+		}
+		if (key == VatTaxKey.C2 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.EXTRACOMMUNITY});
+			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
+			params.setInvestment(true);
+		}
+		if (key == VatTaxKey.D1 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY});
+			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
+			params.setInvestment(false);
+		}
+		if (key == VatTaxKey.D2 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY});
+			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
+			params.setInvestment(true);
+		}
+//		D3	("D3"	,false	,false	,true	,false	,false	,false	,null,null),
+//		ET	("ET"	,false	,false	,true	,false	,false	,false	,null,null),
+//		RI	("RI"	,false	,false	,true	,false	,false	,false	,null,null),
+		if (key == VatTaxKey.CP ) {
+			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
+			params.setInvestment(false);
+			params.setPercent(detail.getPercent());
+		}
+		if (key == VatTaxKey.GT ) {
+			params.setType(new InvoiceType[]{InvoiceType.EXPENSES,InvoiceType.UNDEDUCTIBLE});
+			params.setPercent(detail.getPercent());
+		}
+		if (key == VatTaxKey.BI ) {
+			params.setType(new InvoiceType[]{InvoiceType.PURCHASE});
+			params.setInvestment(true);
+			params.setPercent(detail.getPercent());
+		}
+		if (key == VatTaxKey.EI ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY});
+			params.setType(new InvoiceType[]{InvoiceType.SALES});
+			params.setService(false);
+		}
+		if (key == VatTaxKey.EX1 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.EXTRACOMMUNITY});
+			params.setType(new InvoiceType[]{InvoiceType.SALES});
+			params.setService(false);
+		}
+		if (key == VatTaxKey.EX2 ) {
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.CAN_CEU_MEL});
+			params.setType(new InvoiceType[]{InvoiceType.SALES});
+			params.setService(false);
+		}
+		if (key == VatTaxKey.OO ) {
+			params.setType(new InvoiceType[]{InvoiceType.SALES});
+			params.setService(true);
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.EXTRACOMMUNITY});
+			params.setVatDeductionTypeWithoutRight(false);
+		}
+		if (key == VatTaxKey.OS ) {
+			params.setType(new InvoiceType[]{InvoiceType.SALES});
+			params.setService(true);
+			params.setVatDeductionTypeWithoutRight(true);
+		}
+		if (key == VatTaxKey.OI ) {
+			params.setType(new InvoiceType[]{InvoiceType.SALES});
+			params.setService(true);
+			params.setTransaction(new InvoiceTransactionType[]{InvoiceTransactionType.INTRACOMMUNITY,InvoiceTransactionType.CAN_CEU_MEL});
+			params.setVatDeductionTypeWithoutRight(false);
+		}
+		return params;
 	}
 }

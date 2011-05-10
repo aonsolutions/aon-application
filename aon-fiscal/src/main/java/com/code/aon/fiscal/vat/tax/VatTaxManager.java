@@ -19,8 +19,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
+import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.dao.IFiscalAlias;
@@ -45,7 +47,7 @@ public class VatTaxManager {
 		try {
 			StringWriter stmt = new StringWriter();
 			String quotaStmt = "IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) )";
-			stmt.append("SELECT i.type,it.percentage,it.surcharge,i.transaction,i.investment,");
+			stmt.append("SELECT i.type,i.rectification_type,i.service,it.percentage,it.surcharge,it.vat_deduction_type,i.transaction,i.investment,");
 			stmt.append(" SUM( id.taxable_base),");
 			stmt.append(" SUM( ");
 			stmt.append(quotaStmt);
@@ -63,7 +65,7 @@ public class VatTaxManager {
 			if (params.getInvoiceStatus() == InvoiceStatus.SCORED) {
 				stmt.append(" AND i.status = 1 ");
 			}
-			stmt.append(" GROUP BY i.type,it.percentage,it.surcharge,i.transaction,i.investment");
+			stmt.append(" GROUP BY i.type,i.rectification_type,i.service,it.percentage,it.surcharge,it.vat_deduction_type,i.transaction,i.investment");
 			String sessionName = HibernateUtil.getSessionFactoryName();
 			ps = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString(),
 					ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
@@ -74,16 +76,13 @@ public class VatTaxManager {
 			List<VatTaxDetail> list = new LinkedList<VatTaxDetail>();
 			initializeList(list);
 			while (rs.next()) {
-				InvoiceType invoiceType = InvoiceType.values()[rs.getInt(1)];
-				InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(4)];
-				boolean investment = rs.getBoolean(5);
-				double percent = rs.getDouble(2);
-				VatTaxKeyEx[] keyExs = obtainModelAffectedKeys(invoiceType,transaction,investment,percent);
-				double surchargePercent = rs.getDouble(3);
-				double taxableBase = rs.getDouble(6);
-				double quota = rs.getDouble(7);
-				double surchargeQuota = rs.getDouble(8);
-				double deductibleQuota = rs.getDouble(9);
+				double surchargePercent = rs.getDouble(5);
+				double taxableBase = rs.getDouble(9);
+				double quota = rs.getDouble(10);
+				double surchargeQuota = rs.getDouble(11);
+				double deductibleQuota = rs.getDouble(12);
+				
+				VatTaxKeyEx[] keyExs = obtainModelAffectedKeys(rs);
 				VatTaxAmount amount = new VatTaxAmount();
 				amount.setTaxableBase(taxableBase);
 				amount.setQuota(quota);
@@ -183,23 +182,47 @@ public class VatTaxManager {
 		detail.add(column,amount);
 	}
 
-	private VatTaxKeyEx[] obtainModelAffectedKeys(InvoiceType invoiceType, InvoiceTransactionType transaction, boolean investment,double percent) {
+	private VatTaxKeyEx[] obtainModelAffectedKeys(ResultSet rs) throws SQLException {
+		InvoiceType invoiceType = InvoiceType.values()[rs.getInt(1)];
+		boolean rectification = rs.getInt(2) == RectificationType.SPECIAL.ordinal();
+		boolean service = rs.getInt(3) == 1;
+		double percent = rs.getDouble(4);
+		VatDeductionType vatDeductionType = VatDeductionType.values()[rs.getInt(6)];
+		InvoiceTransactionType transaction = InvoiceTransactionType.values()[rs.getInt(7)];
+		boolean investment = rs.getBoolean(8);
+
+		
 		if (invoiceType == InvoiceType.SALES) {
+			List<VatTaxKeyEx> list = new LinkedList<VatTaxKeyEx>();
 			if (transaction == InvoiceTransactionType.NATIONAL) {
-				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A1,percent)};
+				if (rectification) {
+					return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A5,percent)};	
+				} else {
+					return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A1,percent)};	
+				}
+			} else {
+				if (!service) {
+					if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
+						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.EI)};
+					}
+					if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
+						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.EX1)};
+					}
+					if (transaction == InvoiceTransactionType.CAN_CEU_MEL) {
+						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.EX2)};
+					}
+				} else {
+					if (vatDeductionType == VatDeductionType.WITHOUT_RIGHT) {
+						return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.OS)};
+					} else {
+						if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
+							return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.OO)};
+						} else if (transaction != InvoiceTransactionType.NATIONAL) {
+							return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.OI)};
+						}
+					}
+				}
 			}
-			if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
-				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.EI)};
-			}
-			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
-				// TODO tener en cuenta solo los PRODUCTOS.
-				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.EX1)};
-			}
-			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
-				// TODO tener en cuenta solo los PRODUCTOS.
-				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.EX2)};
-			}
-			// TODO A5 --> Ventas Rectificativas Desglosado por porcentaje y totalizado, crear A5T ( total ).
 		} else if (invoiceType == InvoiceType.PURCHASE) {
 			
 			if (transaction == InvoiceTransactionType.NATIONAL ) {
@@ -214,23 +237,29 @@ public class VatTaxManager {
 			}
 			if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
 				return investment?
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3),new VatTaxKeyEx(VatTaxKey.D2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3),new VatTaxKeyEx(VatTaxKey.D1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3,percent),new VatTaxKeyEx(VatTaxKey.D2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A3,percent),new VatTaxKeyEx(VatTaxKey.D1),new VatTaxKeyEx(VatTaxKey.CP,percent)};
 			}
 		} else if (invoiceType == InvoiceType.EXPENSES) {
-			if (transaction == InvoiceTransactionType.NATIONAL ) {
-				return investment?
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)};
+			if (transaction == InvoiceTransactionType.NATIONAL || transaction == InvoiceTransactionType.CAN_CEU_MEL) {
+				//TODO	A la espera de saber si los gastos pueden ser Inversiones
+				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)}; 
+//				return investment?
+//					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
+//					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)};
 			}
 			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
-				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A4)};
+				//TODO	A la espera de saber si los gastos pueden ser Inversiones
+				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent),new VatTaxKeyEx(VatTaxKey.A4)};
+//				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.A4)};
 			}
 			
 			if (transaction == InvoiceTransactionType.INTRACOMMUNITY) {
-				return investment?
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.D2),new VatTaxKeyEx(VatTaxKey.BI,percent),new VatTaxKeyEx(VatTaxKey.A4)}:
-					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.D3),new VatTaxKeyEx(VatTaxKey.CP,percent),new VatTaxKeyEx(VatTaxKey.A4)};
+				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent),new VatTaxKeyEx(VatTaxKey.A4)};
+				//TODO	A la espera de saber si los gastos pueden ser Inversiones					
+//				return investment?
+//					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent),new VatTaxKeyEx(VatTaxKey.A4)}:
+//					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.D3),new VatTaxKeyEx(VatTaxKey.CP,percent),new VatTaxKeyEx(VatTaxKey.A4)};
 			}
 			
 		}
