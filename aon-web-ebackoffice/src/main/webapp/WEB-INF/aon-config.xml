@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.esferalia.com/config">
+	xmlns="http://www.esferalia.com/common">
+
+	<config:config version="1.0" xmlns:config="http://www.esferalia.com/config" >
+		<config:series
+			showOfferData="false"
+			showSalesData="false"
+			showDeliveryData="false"
+		/>
+	</config:config>	
 
 	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
 		<product:catalogue
