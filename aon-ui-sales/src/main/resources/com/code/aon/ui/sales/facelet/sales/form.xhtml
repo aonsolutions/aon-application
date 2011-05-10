@@ -79,7 +79,7 @@
 									valueChangeListener="#{sales.onSeriesChanged}" 
 									reRender="Sales_number,Sales_securityLevel">
 									<f:selectItem itemLabel=" " itemValue="#{null}" />
-									<f:selectItems value="#{configCollections.seriesIds}" />
+									<f:selectItems value="#{configCollections.salesSeriesIds}" />
 								</aon:selectOneMenu>
 								<aon:inputText id="Sales_number" styleClass="aon-margin-left" 
 									value="#{sales.to.number}" rendered="#{sales.new}" 
