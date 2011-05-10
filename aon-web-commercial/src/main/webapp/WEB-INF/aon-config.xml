@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.esferalia.com/config" >
+	xmlns="http://www.esferalia.com/common" >
 
 	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
 		<registry:rmedia 
@@ -16,6 +16,14 @@
 		/>
 	</webmail:config>
 		
+	<config:config version="1.0" xmlns:config="http://www.esferalia.com/config" >
+		<config:series
+			showOfferData="false"
+			showSalesData="false"
+			showDeliveryData="false"
+		/>
+	</config:config>	
+
 	<company:config version="1.2" xmlns:company="http://www.esferalia.com/company">
 		<company:company 
 			showRegistryBank="true" 
