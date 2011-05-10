@@ -18,10 +18,15 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryCost;
+import com.esferalia.aon.payroll.SalaryDeduction;
+import com.esferalia.aon.payroll.SalaryEmbargo;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -120,6 +125,10 @@ public class SalaryRemoverController {
 					getModel().setRowIndex(i);
 					SelectableSalary r = (SelectableSalary) getModel().getRowData();
 					if(r.isSelected()){
+						removePayment(r.getSalary());
+						removeDeduction(r.getSalary());
+						removeCost(r.getSalary());
+						removeEmbargo(r.getSalary());
 						bean.remove(r.getSalary());
 					}
 				}
@@ -143,6 +152,42 @@ public class SalaryRemoverController {
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
 		onSearch(event);
+	}
+	
+	private void removePayment(Salary salary) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(SalaryPayment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			bean.remove(to);
+		}
+	}
+	
+	private void removeDeduction(Salary salary) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(SalaryDeduction.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_DEDUCTION_SALARY_ID), salary.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			bean.remove(to);
+		}
+	}
+	
+	private void removeCost(Salary salary) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(SalaryCost.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_COST_SALARY_ID), salary.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			bean.remove(to);
+		}
+	}
+	
+	private void removeEmbargo(Salary salary) throws ManagerBeanException{
+		IManagerBean bean = BeanManager.getManagerBean(SalaryEmbargo.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_EMBARGO_SALARY_ID), salary.getId());
+		for(ITransferObject to: bean.getList(criteria)){
+			bean.remove(to);
+		}
 	}
 	
 	
