@@ -77,7 +77,7 @@
 									valueChangeListener="#{delivery.onSeriesChanged}" 
 									reRender="Delivery_number,Delivery_securityLevel">
 									<f:selectItem itemLabel=" " itemValue="#{null}" />
-									<f:selectItems value="#{configCollections.seriesIds}" />
+									<f:selectItems value="#{configCollections.deliverySeriesIds}" />
 								</aon:selectOneMenu>
 								<aon:inputText id="Delivery_number" styleClass="aon-margin-left" 
 									value="#{delivery.to.number}" rendered="#{delivery.new}" 
