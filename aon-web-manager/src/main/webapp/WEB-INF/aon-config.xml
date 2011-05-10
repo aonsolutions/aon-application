@@ -14,9 +14,10 @@
 
 	<config:config version="1.0" xmlns:config="http://www.esferalia.com/config" >
 		<config:series
-			showOfferData="true"
-			showSalesData="true"
-			showDeliveryData="true"
+			showOfferData="false"
+			showSalesData="false"
+			showDeliveryData="false"
+			showInvoiceData="false"
 		/>
 	</config:config>	
 

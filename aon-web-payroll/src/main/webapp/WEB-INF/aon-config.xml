@@ -11,6 +11,7 @@
 			showOfferData="false"
 			showSalesData="false"
 			showDeliveryData="false"
+			showInvoiceData="false"
 		/>
 	</config:config>	
 
