@@ -35,14 +35,12 @@ public class CreditorAccountBeanVetoListener extends ManagerBeanVetoListenerAdap
 				throw new ManagerBeanVetoListenerException("El acreedor es un dato requerido.");	
 			}
 			IManagerBean bean = BeanManager.getManagerBean(CreditorAccount.class);
-			Integer id = creditorAccount.getCreditor().getId();
-			String alias = bean.getFieldName( IAccountBridgeAlias.CREDITOR_ACCOUNT_CREDITOR_ID);
 			Criteria c = new Criteria();
-			c.addEqualExpression(alias, id);
+			c.addEqualExpression(bean.getFieldName(IAccountBridgeAlias.CREDITOR_ACCOUNT_CREDITOR_ID), creditorAccount.getCreditor().getId());
 			if ( creditorAccount.getId() != null ) {
-				String idAlias = bean.getFieldName( IAccountBridgeAlias.CREDITOR_ACCOUNT_ID);
+				String idAlias = bean.getFieldName(IAccountBridgeAlias.CREDITOR_ACCOUNT_ID);
 				Expression exp = ExpressionUtilities.getNotEqualExpression(idAlias, creditorAccount.getId());
-				c.addExpression( exp );	
+				c.addExpression(exp);	
 			}
 			List<ITransferObject> list = bean.getList(c);
 			if (list.size() > 0 ) {
@@ -57,13 +55,9 @@ public class CreditorAccountBeanVetoListener extends ManagerBeanVetoListenerAdap
 				sb.append(".");
 				throw new ManagerBeanVetoListenerException(sb.toString()); 
 			}
-			
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(),e); 
 		}
-		
-		
-		
 	}
 
 }
