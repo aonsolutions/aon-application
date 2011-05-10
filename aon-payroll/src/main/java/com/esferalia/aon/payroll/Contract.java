@@ -70,6 +70,7 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	private Date seniorityDate;	
 	private EnterpriseActivity activity;
 	private SSRegimeType regimeType;
+	private AgreementLevelCategory agreementLevelCategory;
 
 	private Set<ContractPayment> contractPayments = new HashSet<ContractPayment>();
 	private Set<ContractDeduction> contractDeductions = new HashSet<ContractDeduction>();
@@ -228,6 +229,17 @@ public class Contract implements ITransferObject, ISalaryProxy {
 	}
 	public void setRegimeType(SSRegimeType regimeType) {
 		this.regimeType = regimeType;
+	}
+	
+	@ManyToOne
+    @JoinColumn( name="agreement_level_category")	
+	@ForeignKey(name = "FK_CONTRACT_AGREEMENT_LEVEL_CATEGORY")
+	@Index(name = "IDX_CONTRACT_AGREEMENT_LEVEL_CATEGORY")
+	public AgreementLevelCategory getAgreementLevelCategory() {
+		return agreementLevelCategory;
+	}
+	public void setAgreementLevelCategory(AgreementLevelCategory agreementLevelCategory) {
+		this.agreementLevelCategory = agreementLevelCategory;
 	}
 
 	@Override

@@ -58,18 +58,21 @@ public class ContractEmbargoController extends BasicController {
 	}
 	
 	private void searchEmbargo(){
-		//TODO buscar lo relacionado con los embargos: saldado, pendiente, estimacion fecha final
+		// TODO buscar lo relacionado con los embargos: saldado, pendiente, estimacion fecha final
 	}
 	
 	public double getEmbargedAmount(){
+		// TODO
 		return 0.0;
 	}
 	
 	public double getPendingAmount(){
+		// TODO
 		return 0.0;
 	}
 	
 	public Date getEstimatedEndDate(){
+		// TODO
 		return null;
 	}
 }

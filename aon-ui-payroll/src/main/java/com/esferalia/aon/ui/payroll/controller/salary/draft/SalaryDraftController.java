@@ -11,7 +11,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import com.code.aon.common.AonException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -20,13 +22,15 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.AgreementLevelPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.ISalary;
@@ -35,9 +39,12 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.SalarySupplements;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.event.salary.draft.SalaryDraftComparatorPrinter;
 
 public class SalaryDraftController extends BasicController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryDraftController.class.getName());
 
 	private Month month;
 	private int year;
@@ -140,6 +147,22 @@ public class SalaryDraftController extends BasicController {
 			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
 		}
 	}
+	
+	public void onShowPayments( ActionEvent event ) {
+		try {
+			Contract to = (Contract) getTo();
+			SalaryDraftPaymentController c = (SalaryDraftPaymentController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_PAYMENT_CONTROLLER);
+			c.reset(false);
+			c.onEditSearch(event);
+			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), to.getId());
+			c.onSearch(event);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible mostrar las percepciones del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}						
+	}
 
 	// *********
 	// IMPRESION
@@ -198,41 +221,40 @@ public class SalaryDraftController extends BasicController {
 		}
 		return paymentsModel;
 	}
+	public void setPaymentsModel(DataModel paymentsModel) {
+		this.paymentsModel = paymentsModel;
+	}
+	
+	@SuppressWarnings("unchecked")
 	private void initializePaymentModel() {
 		try {
+			IManagerBean aBean = BeanManager.getManagerBean(AgreementLevelPayment.class);
+			IManagerBean cBean = BeanManager.getManagerBean(ContractPayment.class);
 			Contract contract = (Contract) getTo();
-			ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext();
-			Collection<IContractPayment> payments = ctx.getContractPayments();
-			List<ContractPayment> list = new LinkedList<ContractPayment>();
+			Criteria aCriteria = new Criteria();
+			aCriteria.addEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_PAYMENT_LEVEL_ID), contract.getAgreementLevelCategory().getLevel().getId());
+			aCriteria.addOrder(aBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_PAYMENT_START_DATE), false);
+			Criteria cCriteria = new Criteria();
+			cCriteria.addEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+			cCriteria.addOrder(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_START_DATE), false);
+			List<?> al = aBean.getList(aCriteria);
+			List<?> cl = cBean.getList(cCriteria);
+			HierarchyPayments payments = new HierarchyPayments( ((List<IContractPayment>) cl).iterator(), ((List<IContractPayment>) al).iterator());
+			List<IContractPayment> list = new LinkedList<IContractPayment>();
 			for (IContractPayment payment: payments) {
-				ContractPayment cp = new ContractPayment();
-				cp.setContract(contract);
-				cp.setStartDate(getStartDate());
-				cp.setEndDate(getEndDate());
-				cp.setType(payment.getType());
-				cp.setDescription(payment.getDescription());
-				cp.setExpression(payment.getExpression());
-//				cp.setPaymentConcept(payment.getPaymentConcept());
-				cp.setIrpfExpression(payment.getIrpfExpression());
-				cp.setQuoteExpression(payment.getQuoteExpression());
-				cp.setMonth(payment.getMonth());
-				cp.setSalaryType(payment.getSalaryType());
-				cp.setDescriptionDecorable(payment.isDescriptionDecorable());
-				list.add(cp);
+				list.add(payment);
 			}
 			paymentsModel = new ListDataModel(list);
-		} catch (SalaryException e) {
-			e.printStackTrace();
-			throw new AbortProcessingException("Imposible mostrar los devengos de la nómina");
-		} catch (AonException e) {
-			e.printStackTrace();
-			throw new AbortProcessingException("Imposible mostrar los devengos de la nómina");
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible inicializar lar percepciones";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 	
-	// *****************************************************
-	// OBTENCION DE LA DIFERENCIA DEL BORRADOR CON SU NOMINA
-	// *****************************************************
+	// *********************************************************************
+	// OBTENCION DE LA DIFERENCIA DEL BORRADOR CON SU CORRESPONDIENTE NOMINA
+	// *********************************************************************
 	private List<IPayment> paymentsList;
 	public List<IPayment> getPaymentsList(){
 		if (paymentsList == null) {

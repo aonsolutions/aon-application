@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -22,12 +23,14 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.Month;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 
 @Entity
 @Table(name="agreement_level_payment")
-public class AgreementLevelPayment implements ITransferObject {
+public class AgreementLevelPayment implements ITransferObject, IContractPayment  {
 
 	private static final long serialVersionUID = 2714371281487806164L;
 
@@ -197,6 +200,28 @@ public class AgreementLevelPayment implements ITransferObject {
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
+	}
+	
+	
+	@Override
+	@Transient
+	public double getAmount() {
+		throw new UnsupportedOperationException();
+	}
+	@Override
+	@Transient
+	public String getName() {
+		return getPaymentConcept()==null?null:getPaymentConcept().getCode();
+	}
+	@Override
+	@Transient
+	public ExpressionScope getScope() {
+		return ExpressionScope.AGREEMENT;
+	}
+	@Override
+	@Transient
+	public boolean isReadOnly() {
+		return false;
 	}
 
 }

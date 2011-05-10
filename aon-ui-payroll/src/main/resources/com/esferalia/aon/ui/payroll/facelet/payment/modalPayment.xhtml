@@ -38,6 +38,7 @@
 										</aon:commandButton>
 										<aon:commandButton id="paymentRemove"
 											value="#{bundle.aon_remove}"
+											rendered="#{!controller.new}"
 											reRender="paymentModalContainer,#{container}"
 											actionListener="#{controller.onRemove}"
 											immediate="true"
@@ -56,7 +57,7 @@
 										</aon:panelGrid>
 									</aon:div>
 									
-									<aon:div styleClass="aon-scroll-area" >
+									<aon:div styleClass="aon-scroll-area" rendered="#{!controller.new}">
 										<aon:outputText value="#{payrollBundle.payroll_contract_variables}" />
 										<ui:include 
 											src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" />

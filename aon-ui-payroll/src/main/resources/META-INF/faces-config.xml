@@ -431,7 +431,29 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
-
+	
+	<!-- ************ SALARY DRAFT PAYMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>salaryDraftPayment</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftPaymentController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.ContractPayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>salaryDraftPayment</value>
+		</managed-property>
+		<managed-property> 
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contractPaymentSearchListener}</value>
+			</list-entries>
+		</managed-property>	
+	</managed-bean>
+	
 	<!--  **** SALARY PRINT **** -->
 	<managed-bean>
 		<managed-bean-name>salaryPrint</managed-bean-name>

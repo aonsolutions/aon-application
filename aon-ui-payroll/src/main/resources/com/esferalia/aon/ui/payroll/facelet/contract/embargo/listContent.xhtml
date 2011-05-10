@@ -56,11 +56,13 @@
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
 			<aon:outputText value="#{controller.estimatedEndDate}"
+				title="#{payrollBundle.payroll_salary_embargos_end_date_estimated}"
 				rendered="#{to.endDate==null}" styleClass="aon-italic" >
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</aon:outputText>
-			<aon:outputText value="&#63;" style="color: red"
+			<aon:outputText value="&#63;" style="color: red" 
+				title="#{payrollBundle.payroll_salary_embargos_end_date_estimated}"
 				rendered="#{to.endDate==null}" styleClass="aon-italic" />
 		</aon:column>
 		

@@ -31,6 +31,7 @@ public interface IPayrollConstants {
 	String SALARY_CONTROLLER = "salary";
 	String SALARY_DRAFT_CONTROLLER = "salaryDraft";
 	String SALARY_EMBARGO_CONTROLLER = "salaryEmbargo";
+	String SALARY_DRAFT_PAYMENT_CONTROLLER = "salaryDraftPayment";
 	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
 	String SALARY_TEST_LAUNCHER_NAME = "salaryTestLauncher";
 	String CERTIFICATE_FILE_WIZARD = "certifica2FileWizard";

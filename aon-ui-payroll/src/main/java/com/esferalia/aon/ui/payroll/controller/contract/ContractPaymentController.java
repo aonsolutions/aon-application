@@ -26,7 +26,9 @@ import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
@@ -85,6 +87,12 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 		Contract contract = (Contract) master.getTo();
 		ContractPayment cp = (ContractPayment) getTo();
 		try {
+			
+			
+			ExpressionContext ec = contract.getSalaryCalculatorContext().getExpressionContext();
+			ec.getExpressionVariables();
+			
+			
 			Date startDate = cp.getStartDate();
 			Date endDate = cp.getEndDate()!=null?cp.getEndDate():null;
 			if(endDate==null){
