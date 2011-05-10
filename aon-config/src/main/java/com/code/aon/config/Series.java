@@ -21,11 +21,13 @@ import com.code.aon.common.enumeration.SecurityLevel;
 public class Series implements ITransferObject, IConfidentialable {
 
 	private String id;
-	
 	private String description;
-	
+	private boolean offer;
+	private boolean sales;
+	private boolean delivery;
+	private boolean invoice;
+	private boolean rectification;
 	private SecurityLevel securityLevel;
-	
 	private boolean active;
 
 	@Id
@@ -45,6 +47,46 @@ public class Series implements ITransferObject, IConfidentialable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public boolean isOffer() {
+		return offer;
+	}
+
+	public void setOffer(boolean offer) {
+		this.offer = offer;
+	}
+
+	public boolean isSales() {
+		return sales;
+	}
+
+	public void setSales(boolean sales) {
+		this.sales = sales;
+	}
+
+	public boolean isDelivery() {
+		return delivery;
+	}
+
+	public void setDelivery(boolean delivery) {
+		this.delivery = delivery;
+	}
+
+	public boolean isInvoice() {
+		return invoice;
+	}
+
+	public void setInvoice(boolean invoice) {
+		this.invoice = invoice;
+	}
+
+	public boolean isRectification() {
+		return rectification;
+	}
+
+	public void setRectification(boolean rectification) {
+		this.rectification = rectification;
 	}
 
 	@Column(name="security_level", nullable = false)
@@ -83,7 +125,12 @@ public class Series implements ITransferObject, IConfidentialable {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.active, o.active)			
+				.append(this.delivery, o.delivery)
 				.append(this.description, o.description)
+				.append(this.invoice, o.invoice)
+				.append(this.offer, o.offer)
+				.append(this.rectification, o.rectification)
+				.append(this.sales, o.sales)
 				.append(this.securityLevel, o.securityLevel)				
 				.isEquals();
 		}
@@ -94,7 +141,12 @@ public class Series implements ITransferObject, IConfidentialable {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(active)
+			.append(delivery)		
 			.append(description)		
+			.append(invoice)		
+			.append(offer)		
+			.append(rectification)		
+			.append(sales)		
 			.append(id)
 			.append(securityLevel)
 			.toHashCode();

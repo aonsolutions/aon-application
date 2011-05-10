@@ -174,22 +174,52 @@ public interface IConfigAlias {
 	String  SERIES_ACTIVE = SERIES_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Series_delivery
+	* Hibernate value: Series.delivery
+	*/
+	String  SERIES_DELIVERY = SERIES_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Series_description
 	* Hibernate value: Series.description
 	*/
-	String  SERIES_DESCRIPTION = SERIES_ENTRY.getAliasNames()[1];
+	String  SERIES_DESCRIPTION = SERIES_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Series_id
 	* Hibernate value: Series.id
 	*/
-	String  SERIES_ID = SERIES_ENTRY.getAliasNames()[2];
+	String  SERIES_ID = SERIES_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Series_invoice
+	* Hibernate value: Series.invoice
+	*/
+	String  SERIES_INVOICE = SERIES_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Series_offer
+	* Hibernate value: Series.offer
+	*/
+	String  SERIES_OFFER = SERIES_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Series_rectification
+	* Hibernate value: Series.rectification
+	*/
+	String  SERIES_RECTIFICATION = SERIES_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Series_sales
+	* Hibernate value: Series.sales
+	*/
+	String  SERIES_SALES = SERIES_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Series_securityLevel
 	* Hibernate value: Series.securityLevel
 	*/
-	String  SERIES_SECURITY_LEVEL = SERIES_ENTRY.getAliasNames()[3];
+	String  SERIES_SECURITY_LEVEL = SERIES_ENTRY.getAliasNames()[8];
 
 
 
