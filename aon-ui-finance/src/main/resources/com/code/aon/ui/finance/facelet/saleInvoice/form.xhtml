@@ -105,7 +105,7 @@
 									valueChangeListener="#{saleInvoice.onSeriesChanged}"
 									reRender="Invoice_number,Invoice_securityLevel">
 									<f:selectItem itemLabel=" " value="#{null}" />
-									<f:selectItems value="#{configCollections.seriesIds}" />
+									<f:selectItems value="#{configCollections.invoiceSeriesIds}" />
 								</aon:selectOneMenu>
 								<aon:inputText id="Invoice_series-input"
 									value="#{saleInvoice.to.series}" 

@@ -74,7 +74,7 @@
 						<aon:selectOneMenu id="Invoicing_series"
 							value="#{deliveryInvoicing.params.series}">
 							<f:selectItem itemLabel=" " value="#{null}"/>
-							<f:selectItems value="#{configCollections.series}" />
+							<f:selectItems value="#{configCollections.deliverySeries}" />
 						</aon:selectOneMenu>
 	
 						<aon:outputLabel value="#{financeBundle.finance_delivery_number}" />
@@ -125,7 +125,7 @@
 								valueChangeListener="#{deliveryInvoicing.onInvoiceSeriesChanged}"
 								reRender="Invoice_number,Invoicing_Confidential">
 								<f:selectItem itemLabel=" " value="#{null}"/>
-								<f:selectItems value="#{configCollections.series}" />
+								<f:selectItems value="#{configCollections.invoiceSeries}" />
 							</aon:selectOneMenu>
 							<aon:inputText id="Invoice_number" required="true"
 								 styleClass="aon-margin-left"
