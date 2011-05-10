@@ -47,6 +47,7 @@ import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
@@ -61,7 +62,7 @@ import com.code.aon.registry.enumeration.DocumentType;
 @Entity
 @Table(name = "invoice")
 @org.hibernate.annotations.Table( appliesTo = "invoice", indexes =
-	{ @Index(name="IDX_SERIES", columnNames={"series","number","type"}),
+	{@Index(name="IDX_SERIES", columnNames={"series","number","type"}),
 		@Index(name="IDX_SERIES_NUMBER", columnNames={"series","number"})})
 public class Invoice implements ITransferObject, IHeaderObject, ICalculableContainer, ITaxInfo, IConfidentialable, IScopable {
 	
@@ -92,6 +93,9 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     private InvoiceTransactionType transaction;
     private boolean signed;    
     private Scope scope;
+    private boolean service;    
+    private RectificationType rectificationType;
+    private Invoice rectificationInvoice;
     private double taxableBase;
     private double vatQuota;
     private double retentionQuota;
@@ -230,7 +234,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
         this.securityLevel = securityLevel;
     }
 
-    @Column(name="status")
     public InvoiceStatus getStatus() {
         return status;
     }
@@ -238,7 +241,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
         this.status = status;
     }
     
-    @Column(name = "type")
     public InvoiceType getType() {
 		return type;
 	}
@@ -246,7 +248,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.type = type;
 	}
 	
-    @Column(name = "taxFree")
 	public boolean isTaxFree() {
 		return taxFree;
 	}
@@ -262,7 +263,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.surcharge = surcharge;
 	}
 
-	@Column(name = "withholding")
 	public boolean isWithholding() {
 		return withholding;
 	}
@@ -270,7 +270,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.withholding = withholding;
 	}
 	
-	@Column(name="comments")
 	@Lob
 	public String getComments() {
 		return comments;
@@ -279,7 +278,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.comments = comments;
 	}
 
-	@Column(name = "investment")
 	public boolean isInvestment() {
 		return investment;
 	}
@@ -287,7 +285,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.investment = investment;
 	}
 	
-	@Column(name = "transaction")
 	public InvoiceTransactionType getTransaction() {
 		return transaction;
 	}
@@ -312,6 +309,33 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     }
     public void setScope(Scope scope) {
         this.scope = scope;
+    }
+
+	@Column(nullable = false)
+	public boolean isService() {
+		return service;
+	}
+	public void setService(boolean service) {
+		this.service = service;
+	}
+
+    @Column(name = "rectification_type")
+    public RectificationType getRectificationType() {
+		return rectificationType;
+	}
+	public void setRectificationType(RectificationType type) {
+		this.rectificationType = type;
+	}
+	
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="rectification_invoice")
+    @ForeignKey(name="FK_INVOICE_INVOICE")
+    @Index(name="IDX_INVOICE_INVOICE") 
+    public Invoice getRectificationInvoice() {
+        return rectificationInvoice;
+    }
+    public void setRectificationInvoice(Invoice invoice) {
+        this.rectificationInvoice = invoice;
     }
 
     @Column(name="taxable_base")
@@ -537,6 +561,14 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	public boolean isCanCeuMel() {
 		return getTransaction() == InvoiceTransactionType.CAN_CEU_MEL;
 	}
+	@Transient
+	public boolean isRectificative() {
+		return (getRectificationType() != RectificationType.NONE);
+	}
+	@Transient
+	public boolean isRectified() {
+		return (!isRectificative() && getRectificationInvoice() != null && getRectificationInvoice().getId() != null);
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -560,7 +592,10 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(this.retentionQuota,o.retentionQuota)
 			.append(this.securityLevel,o.securityLevel)
 			.append(this.scope,o.scope)
+			.append(this.rectificationType,o.rectificationType)
+			.append(this.rectificationInvoice,o.rectificationInvoice)
 			.append(this.series,o.series)
+			.append(this.service,o.service)
 			.append(this.signed,o.signed)
 			.append(this.status,o.status)
 			.append(this.surcharge,o.surcharge)
@@ -595,7 +630,10 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(this.retentionQuota)
 			.append(this.securityLevel)
 			.append(this.scope)
+			.append(this.rectificationType)
+			.append(this.rectificationInvoice)
 			.append(this.series)
+			.append(this.service)
 			.append(this.signed)
 			.append(this.status)
 			.append(this.surcharge)
