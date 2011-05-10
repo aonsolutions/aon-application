@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://www.esferalia.com/config" >
+	xmlns="http://www.esferalia.com/common" >
 	
 	<webmail:config version="1.2" xmlns:webmail="http://www.esferalia.com/webmail" >
 		<webmail:webmail
