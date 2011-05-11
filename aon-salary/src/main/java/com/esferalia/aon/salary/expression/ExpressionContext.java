@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import org.mvel2.MVEL;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
+import org.mvel2.compiler.CompiledAccExpression;
 import org.mvel2.templates.TemplateRuntime;
 
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
@@ -25,6 +26,17 @@ public class ExpressionContext {
 	
 	
 	Variables variables;
+	
+	
+	public  static Set<String> getVariables(String script) {
+		Set<String> names = new HashSet<String>(); 
+		Matcher matcher = VARIABLE_PATTERN.matcher(script);
+		while ( matcher.find() ) {
+			names.add(matcher.group());
+		}
+		return names;
+	}
+
 
 	public ExpressionContext() {
 		variables = new Variables();
@@ -147,23 +159,14 @@ public class ExpressionContext {
 	private static final Pattern VARIABLE_PATTERN = 
 		Pattern.compile("[A-Z_][A-Z0-9_]*");
 	
-	private static Set<String> getVariables(String script) {
-		Set<String> names = new HashSet<String>(); 
-		Matcher matcher = VARIABLE_PATTERN.matcher(script);
-		while ( matcher.find() ) {
-			names.add(matcher.group());
-		}
-		return names;
-	}
 	
 	public static void main(String[] args) throws SecurityException, NoSuchMethodException {
+		org.mvel2.compiler.CompiledAccExpression expr;
 		
-		Map<String, Object> vars = 
-			new HashMap<String, Object>();
-		vars.put("EXCESO_IPREM", 190.00);
+		System.out.println( MVEL.compileGetExpression("A + B +C +F(1000) + ( X='G'?:100:0.00)") );
 		
-		System.out.println(MVEL.eval("EXCESO_IPREM - EXCESO_IPREM = 110", vars));
-		System.out.println(vars);
+		System.out.println( getVariables("A + B +C +F(1000) + ( X='G'?:100:0.00)") );
+
 	}
 	
 }
