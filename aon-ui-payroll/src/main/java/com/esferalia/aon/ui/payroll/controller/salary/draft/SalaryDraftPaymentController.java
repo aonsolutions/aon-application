@@ -29,24 +29,6 @@ public class SalaryDraftPaymentController extends BasicController{
 		this.modalPanelVisible = modalPanelVisible;
 	}
 	
-//	protected void initialiceConcepts() {
-//		setConcepts(new LinkedList<SelectItem>());
-//		try {
-//			ContractPayment cp = (ContractPayment) getTo();
-//			IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_TYPE), cp.getType());
-//			criteria.addOrder(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_CODE));
-//			List<ITransferObject> list = bean.getList(criteria);
-//			for (ITransferObject to: list) {
-//				PaymentConcept pc = (PaymentConcept) to;
-//				getConcepts().add(new SelectItem(pc, pc.getCode() + " - "+pc.getDescription()));
-//			}
-//		} catch (ManagerBeanException e) {
-//			// Se devuelve la lista vacia.
-//		} 
-//	}
-	
 	public void onPaymentConceptChange(ActionEvent event) {
 		ContractPayment cp = (ContractPayment) getTo();
 		if (cp.getType() != null && StringUtils.isEmpty(cp.getDescription())) {
@@ -60,54 +42,23 @@ public class SalaryDraftPaymentController extends BasicController{
 		BasicController controller = (BasicController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_DATA_CONTROLLER);
 		try {
 			// TODO ainadir al criteria el id de las variables de este payment
-			controller.getCriteria().addNullExpression(controller.getFieldName(IPayrollAlias.CONTRACT_DATA_ID));
+			Contract contract = ((ContractPayment)this.getTo()).getContract();
+			controller.clearCriteria();
+			controller.getCriteria().addEqualExpression(controller.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
 			controller.onSearch(event);
 		} catch (ManagerBeanException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
-////			SQLContractSalaryCalculatorContext context = new
-//		IController master = FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
-//		Contract contract = (Contract) master.getTo();
-//		ContractPayment cp = (ContractPayment) getTo();
-//		try {
-//			Date startDate = cp.getStartDate();
-//			Date endDate = cp.getEndDate()!=null?cp.getEndDate():null;
-//			if(endDate==null){
-//				Calendar cal = new GregorianCalendar();
-//				cal.setTime(new Date());
-//				cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-////					endDate = new Date(startDate.getTime());
-//				endDate = cal.getTime();
-//			}
-//			ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate, endDate, new Date());
-//			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(cp.getExpression(), startDate, endDate);//.addExpression(cp.getExpression(), cp.getStartDate(),cp.getEndDate());
-//			ctx.getExpressionContext().getExpressionVariables();
-//			for(ITimedObject<Object> o: list){
-//				o.getClass();
-//			}
-//		} catch (SalaryException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (ExpressionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 	}
 	
 	public void onEdit(ActionEvent event) {
-//		super.onSelect(event);
 		reset(true);
 		setSelectedPayment(event);
 		initializeVariables(event);
 	}
 
 	public void onSave(ActionEvent event) {
-//		IController master = FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
-//		Contract contract = (Contract) master.getTo();
-//		ContractPayment cd  = (ContractPayment) getTo();
-//		cd.setContract(contract);
 		ContractPayment cp = (ContractPayment) this.getTo();
 		if(cp.getDescription().isEmpty()){
 			cp.setDescription(null);
@@ -138,7 +89,6 @@ public class SalaryDraftPaymentController extends BasicController{
 	
 	public void reset(boolean panelVisible) {
 		setModalPanelVisible(panelVisible);
-//		setConcepts(null);
 	}
 	
 	private void setSelectedPayment(ActionEvent event){

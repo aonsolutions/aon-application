@@ -46,6 +46,7 @@
 											onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;">
 										</aon:commandButton>
 									</aon:div>
+									
 									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 										<aon:panelGrid id="paymentMenuGrid" columns="2" dir="true" style="width: 80%;">
 											<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/formContent.xhtml">
@@ -58,10 +59,18 @@
 									</aon:div>
 									
 									<aon:div styleClass="aon-scroll-area" rendered="#{!controller.new}">
-										<aon:outputText value="#{payrollBundle.payroll_contract_variables}" />
+										<aon:panelGrid columns="1" style="width: 100%; margin-top:10px;"
+											columnClasses="aon-panelGrid-even  aon-width-auto">
+											<aon:div>
+												<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
+												<aon:outputText value="#{payrollBundle.payroll_contract_variables}" 
+													styleClass="aon-bold"/>
+											</aon:div>
+										</aon:panelGrid>	
 										<ui:include 
 											src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" />
 									</aon:div>
+									
 								</aon:div>
 							</aon:div>
 						</aon:div>

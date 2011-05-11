@@ -7,9 +7,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 

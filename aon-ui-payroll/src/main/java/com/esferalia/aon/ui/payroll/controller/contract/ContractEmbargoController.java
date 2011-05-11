@@ -1,19 +1,27 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractEmbargo;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
-import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.payroll.SalaryEmbargo;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class ContractEmbargoController extends BasicController {
 
@@ -39,7 +47,7 @@ public class ContractEmbargoController extends BasicController {
 	}
 	
 	public void onSave(ActionEvent event) {
-		IController master = FormUtil.getController("contract");
+		IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		Contract contract = (Contract) master.getTo();
 		ContractEmbargo ce  = (ContractEmbargo) getTo();
 		ce.setContract(contract);
@@ -57,22 +65,63 @@ public class ContractEmbargoController extends BasicController {
 		setModalPanelVisible(panelVisible);
 	}
 	
-	private void searchEmbargo(){
-		// TODO buscar lo relacionado con los embargos: saldado, pendiente, estimacion fecha final
-	}
-	
 	public double getEmbargedAmount(){
-		// TODO
-		return 0.0;
+		Double amount = new Double(0);
+		try {
+			ContractEmbargo embargo = (ContractEmbargo) this.getTo();
+			if(embargo==null){
+				embargo = (ContractEmbargo) this.getModel().getRowData();
+			}
+			IManagerBean bean = BeanManager.getManagerBean(SalaryEmbargo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_EMBARGO_CONTRACT_EMBARGO_ID), embargo.getId());
+			List<ITransferObject> list = bean.getList(criteria);
+			for(ITransferObject to: list){
+				SalaryEmbargo se = (SalaryEmbargo) to;
+				amount += se.getAmount();
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible calcular el importe descontado del embargo (" + e.getMessage() +")";
+			LOGGER.error(msg);
+		}
+		
+		return amount;
 	}
 	
 	public double getPendingAmount(){
-		// TODO
-		return 0.0;
+		ContractEmbargo embargo = null;
+		try {
+			embargo = (ContractEmbargo) this.getTo();
+			if(embargo==null){
+				embargo = (ContractEmbargo) this.getModel().getRowData();
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible calcular el importe pendiente del embargo (" + e.getMessage() +")";
+			LOGGER.error(msg);
+		}
+		return embargo.getAmount()-getEmbargedAmount();
 	}
 	
 	public Date getEstimatedEndDate(){
-		// TODO
+		try {
+			ContractEmbargo embargo = (ContractEmbargo) this.getTo();
+			if(embargo==null){
+				embargo = (ContractEmbargo) this.getModel().getRowData();
+			}
+			IManagerBean bean = BeanManager.getManagerBean(SalaryEmbargo.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_EMBARGO_CONTRACT_EMBARGO_ID), embargo.getId());
+			List<ITransferObject> list = bean.getList(criteria);
+			Double media = getEmbargedAmount()/list.size();
+			Double month = getPendingAmount()/media;
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(embargo.getStartDate());
+			cal.add(Calendar.MONTH, cal.get(Calendar.MONTH)+(int) (Math.floor(month)));
+			return cal.getTime();
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible calcular la fecha final estimada del embargo (" + e.getMessage() +")";
+			LOGGER.error(msg);
+		}
 		return null;
 	}
 }

@@ -75,45 +75,13 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 		BasicController controller = (BasicController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_DATA_CONTROLLER);
 		try {
 			// TODO ainadir al criteria el id de las variables de este payment
-			controller.getCriteria().addNullExpression(controller.getFieldName(IPayrollAlias.CONTRACT_DATA_ID));
+			Contract contract = ((ContractPayment)this.getTo()).getContract();
+			controller.clearCriteria();
+			controller.getCriteria().addEqualExpression(controller.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
 			controller.onSearch(event);
 		} catch (ManagerBeanException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		}
-		
-//		SQLContractSalaryCalculatorContext context = new
-		IController master = FormUtil.getController("contract");
-		Contract contract = (Contract) master.getTo();
-		ContractPayment cp = (ContractPayment) getTo();
-		try {
-			
-			
-			ExpressionContext ec = contract.getSalaryCalculatorContext().getExpressionContext();
-			ec.getExpressionVariables();
-			
-			
-			Date startDate = cp.getStartDate();
-			Date endDate = cp.getEndDate()!=null?cp.getEndDate():null;
-			if(endDate==null){
-				Calendar cal = new GregorianCalendar();
-				cal.setTime(new Date());
-				cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-//				endDate = new Date(startDate.getTime());
-				endDate = cal.getTime();
-			}
-			ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate, endDate, new Date());
-			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(cp.getExpression(), startDate, endDate);//.addExpression(cp.getExpression(), cp.getStartDate(),cp.getEndDate());
-			ctx.getExpressionContext().getExpressionVariables();
-			for(ITimedObject<Object> o: list){
-				o.getClass();
-			}
-		} catch (SalaryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	

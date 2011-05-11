@@ -75,7 +75,7 @@
 				<aon:outputText value="#{to.expression}" rendered="#{formList}" />
 				<aon:inputText id="ContractData_expression" required="true"
 					rendered="#{formEdit}" size="20"
-					value="#{controller.to.name}" maxlength="64" >
+					value="#{controller.to.expression}" maxlength="64" >
 					<f:validateLength maximum="64"/>
 					<a4j:region>
 						<rich:suggestionbox id="ContractData_expression_suggestion"
@@ -98,7 +98,7 @@
 				<f:facet name="footer">
 					<aon:inputText id="ContractData_expression-New" required="true"
 						rendered="#{formNew}" size="20"
-						value="#{controller.to.name}" maxlength="64" >
+						value="#{controller.to.expression}" maxlength="64" >
 						<f:validateLength maximum="64"/>
 						<a4j:region>
 							<rich:suggestionbox id="ContractData_expression-New_suggestion"

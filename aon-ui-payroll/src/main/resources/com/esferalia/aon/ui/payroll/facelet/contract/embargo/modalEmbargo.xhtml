@@ -38,6 +38,7 @@
 										</aon:commandButton>
 										<aon:commandButton id="embargoRemove"
 											value="#{bundle.aon_remove}"
+											rendered="#{!controller.new}"
 											reRender="embargoModalContainer,#{container}"
 											actionListener="#{controller.onRemove}"
 											immediate="true"
@@ -54,8 +55,15 @@
 										</aon:panelGrid>
 									</aon:div>
 									
-									<aon:div styleClass="aon-scroll-area" >
-										<aon:outputText value="#{payrollBundle.payroll_salary_embargos_detail}" />
+									<aon:div styleClass="aon-scroll-area" rendered="#{!controller.new}">
+										<aon:panelGrid columns="1" style="width: 100%; margin-top:10px;"
+											columnClasses="aon-panelGrid-even  aon-width-auto">
+											<aon:div>
+												<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
+												<aon:outputText value="#{payrollBundle.payroll_salary_embargos_detail}" 
+													styleClass="aon-bold"/>
+											</aon:div>
+										</aon:panelGrid>
 										<ui:include 
 											src="/com/esferalia/aon/ui/payroll/facelet/salary/embargo/list_detail.xhtml" />
 									</aon:div>
