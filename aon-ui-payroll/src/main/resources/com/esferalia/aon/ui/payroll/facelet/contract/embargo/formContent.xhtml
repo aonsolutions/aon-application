@@ -22,8 +22,8 @@
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 			
 		<aon:outputText value="#{payrollBundle.payroll_salary_embargos_end_date_estimated}"
-			rendered="#{controller.to.endDate==null}" />
-		<aon:div rendered="#{controller.to.endDate==null}">
+			rendered="#{!controller.new and controller.to.endDate==null}" />
+		<aon:div rendered="#{!controller.new and controller.to.endDate==null}">
 			<aon:outputText value="#{controller.estimatedEndDate}" >
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
@@ -46,13 +46,17 @@
 				size="20" maxlength="18"
 				value="#{controller.to.amount}" />
 			<aon:outputText styleClass="aon-italic aon-margin-left"	
+				rendered="#{!controller.new}"
 				value="#{payrollBundle.payroll_salary_embargos_solded}:" />
-			<aon:outputText value="#{controller.embargedAmount}" >
+			<aon:outputText value="#{controller.embargedAmount}" 
+				rendered="#{!controller.new}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 			<aon:outputText	styleClass="aon-italic aon-margin-left"
+				rendered="#{!controller.new}"
 				value="#{payrollBundle.payroll_salary_embargos_pending}:" />
-			<aon:outputText	value="#{controller.pendingAmount}" >
+			<aon:outputText	value="#{controller.pendingAmount}" 
+				rendered="#{!controller.new}" >
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:div>
