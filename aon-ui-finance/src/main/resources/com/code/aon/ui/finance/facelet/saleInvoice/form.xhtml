@@ -39,7 +39,10 @@
 							actionListener="#{saleInvoice.generateFinances}"
 							rendered="#{saleInvoiceDetail.model.rowCount > 0 and (!saleInvoice.recorded or saleInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-finding-toolbar-item aon-icon-tree"
+							reRender="menuExt"
 							accesskey="#{bundle.aon_key_finance}">
+							<f:setPropertyActionListener target="#{saleInvoice.backActionListener}"
+								value="#{null}" />
 							<f:setPropertyActionListener target="#{saleInvoice.backAction}"
 								value="#{null}" />
 						</aon:commandButton>

@@ -28,7 +28,10 @@
 							actionListener="#{expenseInvoice.generateFinances}"
 							rendered="#{expenseInvoiceDetail.model.rowCount > 0 and (!expenseInvoice.recorded or expenseInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-finding-toolbar-item aon-icon-tree"
+							reRender="menuExt"
 							accesskey="#{bundle.aon_key_finance}">
+							<f:setPropertyActionListener target="#{expenseInvoice.backActionListener}"
+								value="#{null}" />
 							<f:setPropertyActionListener target="#{expenseInvoice.backAction}"
 								value="#{null}" />
 						</aon:commandButton>
