@@ -4,6 +4,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.enumeration.InvoiceStatus;
+import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -20,6 +21,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			InvoiceController invoiceController = (InvoiceController)this.getController(); 
 			Invoice invoice = (Invoice) invoiceController.getTo();
 			invoice.setStatus(InvoiceStatus.PENDING);
+			invoice.setRectificationType(RectificationType.NONE);
 			invoice.setSecurityLevel(SecurityLevel.OFFICIAL);
 			invoice.setTaxDate(AonUtil.getRoleManager().isAccountingOperator() ? invoice.getIssueDate() : null);
 

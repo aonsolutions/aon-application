@@ -34,6 +34,7 @@ import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
@@ -76,6 +77,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (invoice.getScope() == null || invoice.getScope().getId() == null) {
 			invoice.setScope(obtainInvoiceScope(invoice.getType(), invoice.getRegistry()));
 		}
+		if (invoice.getRectificationType() == null) {
+			invoice.setRectificationType(RectificationType.NONE);
+		}
 		invoice.setTaxableBase(0);
 		invoice.setVatQuota(0);
 		invoice.setRetentionQuota(0);
@@ -110,6 +114,9 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				removeFinances(invoice);
 				removeInvoiceDetails(invoice);
 				removeInvoiceAddress(invoice);
+				if (invoice.isRectifier()) {
+					updateRectifiedInvoices(invoice);
+				}
 			} else {
 				throw new ManagerBeanVetoListenerException("La factura " + invoice.getReferenceCode() + " no se puede borrar. " +
 															"Tiene vencimientos con movimientos.");
@@ -294,6 +301,28 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		Iterator iter = invoiceAddressBean.getList(criteria, 0, 1).iterator();
 		if (iter.hasNext()) {
 			invoiceAddressBean.remove((InvoiceAddress) iter.next());
+		}
+	}
+
+	public void updateRectifiedInvoices(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Invoice rectified = invoice.getRectificationInvoice();
+		if (rectified.getRectificationInvoice() != null && rectified.getRectificationInvoice().getId() == invoice.getId()) {
+			rectified.setRectificationType(RectificationType.NONE);
+			rectified.setRectificationInvoice(null);
+			invoiceBean.update(rectified);
+		} else {
+			Criteria criteria = new Criteria();
+			criteria.addNotEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
+			criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_RECTIFICATION_INVOICE_ID), rectified.getId());
+			if (invoiceBean.getCount(criteria) <= 1) {
+				rectified.setRectificationType(RectificationType.NONE);
+				for (ITransferObject ito : invoiceBean.getList(criteria)) {
+					rectified.setRectificationType(RectificationType.RECTIFIED);
+					rectified.setRectificationInvoice((Invoice)ito);
+				}
+				invoiceBean.update(rectified);
+			}
 		}
 	}
 

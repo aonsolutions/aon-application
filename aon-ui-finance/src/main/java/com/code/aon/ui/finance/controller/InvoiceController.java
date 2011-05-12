@@ -1,15 +1,18 @@
 package com.code.aon.ui.finance.controller;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +27,15 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Series;
+import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.bridge.invoicing.RectificationInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
@@ -70,6 +76,11 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private AccountEntryInvoiceWriter accountWriter;
 	private List<SelectItem> addresses;
 	private boolean showInvoiceAddressWindow;
+	private boolean showRectificationWindow;
+	private String rectificationSeries;
+	private int rectificationNumber;
+	private Date rectificationDate;
+	private String rectificationCause;
 	private FinanceEmailUtil emailController;
 
 	public InvoiceController() {
@@ -190,6 +201,83 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		if (to == null) {
 			addressController.onReset(event);
 		}
+	}
+
+	public boolean isShowRectificationWindow() {
+		return showRectificationWindow;
+	}
+
+	public void setShowRectificationWindow(boolean value) {
+		this.showRectificationWindow = value;
+	}
+
+	public String getRectificationSeries() {
+		return rectificationSeries;
+	}
+
+	public void setRectificationSeries(String rectificationSeries) {
+		this.rectificationSeries = rectificationSeries;
+	}
+
+	public int getRectificationNumber() {
+		return rectificationNumber;
+	}
+
+	public void setRectificationNumber(int rectificationNumber) {
+		this.rectificationNumber = rectificationNumber;
+	}
+
+	public Date getRectificationDate() {
+		return rectificationDate;
+	}
+
+	public void setRectificationDate(Date rectificationDate) {
+		this.rectificationDate = rectificationDate;
+	}
+	
+	public String getRectificationCause() {
+		return rectificationCause;
+	}
+
+	public void setRectificationCause(String rectificationCause) {
+		this.rectificationCause = rectificationCause;
+	}
+
+	public void onRectificationShow(ActionEvent event) throws ManagerBeanException {
+		setRectificationSeries(obtainRectificationSeries(getInvoice().getSeries()));
+		setRectificationNumber(obtainMaxRectificationNumber(getRectificationSeries()));
+		setRectificationDate(new Date());
+	}
+
+	private String obtainRectificationSeries(String seriesId) throws ManagerBeanException {
+		if (StringUtils.isNotEmpty(seriesId)) {
+			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
+			if (series != null && series.isRectification()) {
+				return series.getId();
+			}
+		}
+		return null;
+	}
+
+	public void onRectificationSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		setRectificationNumber(obtainMaxRectificationNumber((String)event.getNewValue()));
+	}
+
+	private int obtainMaxRectificationNumber(String seriesId) {
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression("invoice.type", InvoiceType.SALES.ordinal());
+		return SeriesNumberUtil.obtainNumber(seriesId, "Invoice", criteria);
+	}
+
+	public void onRectify(ActionEvent event) throws ManagerBeanException {
+		RectificationInvoicingManager rectificationManager = new RectificationInvoicingManager();
+		Invoice rectifier = rectificationManager.rectifyInvoice(getInvoice(), getRectificationSeries(), getRectificationNumber(), getRectificationDate(), getRectificationCause());
+
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(IFinanceAlias.INVOICE_ID), rectifier.getId());
+		onSearch(event);
+		getModel().setRowIndex(0);
+		onSelect(event);
 	}
 
 	public void onDateChanged(ActionEvent event) {
@@ -410,14 +498,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 
+	public boolean isReadOnly() {
+		return (getInvoice().isRecorded() || getInvoice().isSigned() || (getInvoice().isRectified()));
+	}
+	
 	public boolean isRecorded() {
 		return getInvoice().isRecorded();
 	}
 
-	public boolean isReadOnly() {
-		return (getInvoice().isRecorded() || getInvoice().isSigned());
-	}
-	
 	public Integer getAccountEntryId() throws ManagerBeanException {
     	Invoice invoice = getInvoice();
 		if (invoice != null && invoice.getId() != null) {
@@ -432,7 +520,15 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
     	return null;
 	}
-	
+
+	public boolean isRectifier() {
+		return getInvoice().isRectifier();
+	}
+
+	public boolean isRectified() {
+		return getInvoice().isRectified();
+	}
+
 	@Override
 	public IManagerBean getAttachmentBean() {
 		try {

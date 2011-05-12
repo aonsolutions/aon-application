@@ -2,6 +2,7 @@ package com.code.aon.finance;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -562,12 +563,43 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		return getTransaction() == InvoiceTransactionType.CAN_CEU_MEL;
 	}
 	@Transient
-	public boolean isRectificative() {
-		return (getRectificationType() != RectificationType.NONE);
+	public boolean isRectifier() {
+		return (getRectificationType() == RectificationType.NORMAL_RECTIFIER || getRectificationType() == RectificationType.SPECIAL_RECTIFIER);
 	}
 	@Transient
 	public boolean isRectified() {
-		return (!isRectificative() && getRectificationInvoice() != null && getRectificationInvoice().getId() != null);
+		return (getRectificationType() == RectificationType.RECTIFIED);
+	}
+	@Transient
+	public List<Invoice> getRectificationInvoices() throws ManagerBeanException {
+		if (isRectified()) {
+			List<Invoice> rectificationInvoices = new LinkedList<Invoice>();
+			if (getRectificationInvoice() != null && getRectificationInvoice().getId() != null) {
+				rectificationInvoices.add(getRectificationInvoice());
+			} else {
+				IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_RECTIFICATION_INVOICE_ID), getId());
+				for (ITransferObject ito : invoiceBean.getList(criteria)) {
+					Invoice rectifier = (Invoice)ito;
+					rectificationInvoices.add(rectifier);
+				}
+			}
+			return rectificationInvoices;
+		} else {
+			return null;
+		}
+	}
+	@Transient
+	public String getRectificationInvoicesString() throws ManagerBeanException {
+		String rectificationInvoiceStr = "";
+		if (isRectified()) {
+			for (Invoice rectifier : getRectificationInvoices()) {
+				rectificationInvoiceStr += rectificationInvoiceStr.equals("") ? "" : " - ";
+				rectificationInvoiceStr += rectifier.getReferenceCode();
+			}
+		}
+		return rectificationInvoiceStr;
 	}
 
 	@Override
@@ -631,7 +663,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(this.securityLevel)
 			.append(this.scope)
 			.append(this.rectificationType)
-			.append(this.rectificationInvoice)
 			.append(this.series)
 			.append(this.service)
 			.append(this.signed)

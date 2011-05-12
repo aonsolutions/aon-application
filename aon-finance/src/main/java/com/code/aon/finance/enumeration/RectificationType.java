@@ -8,8 +8,9 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum RectificationType implements IResourceable {
 
 	NONE,
-	NORMAL,
-	SPECIAL;
+	NORMAL_RECTIFIER,
+	SPECIAL_RECTIFIER,
+	RECTIFIED;
 
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
