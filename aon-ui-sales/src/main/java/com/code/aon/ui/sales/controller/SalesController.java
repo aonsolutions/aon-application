@@ -356,10 +356,20 @@ public class SalesController extends BasicController {
 
 	public void onDeliveryShow(ActionEvent event) throws ManagerBeanException {
 		Sales to = (Sales)this.getTo();
-		setDeliverySeries(to.getSeries());
-		setDeliveryNumber(obtainMaxDeliveryNumber(to.getSeries()));
+		setDeliverySeries(obtainDeliverySeries(to.getSeries()));
+		setDeliveryNumber(obtainMaxDeliveryNumber(getDeliverySeries()));
 		setDeliveryDate(new Date());
 		setDeliveryWarehouse(null);
+	}
+
+	private String obtainDeliverySeries(String seriesId) throws ManagerBeanException {
+		if (StringUtils.isNotEmpty(seriesId)) {
+			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
+			if (series != null && series.isDelivery()) {
+				return series.getId();
+			}
+		}
+		return null;
 	}
 
 	public void onDeliverySeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -385,10 +395,20 @@ public class SalesController extends BasicController {
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Sales to = (Sales)this.getTo();
-		setInvoiceSeries(to.getSeries());
-		setInvoiceNumber(obtainMaxInvoiceNumber(to.getSeries()));
+		setInvoiceSeries(obtainInvoiceSeries(to.getSeries()));
+		setInvoiceNumber(obtainMaxInvoiceNumber(getInvoiceSeries()));
 		setInvoiceDate(new Date());
 		setInvoiceWarehouse(null);
+	}
+
+	private String obtainInvoiceSeries(String seriesId) throws ManagerBeanException {
+		if (StringUtils.isNotEmpty(seriesId)) {
+			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
+			if (series != null && series.isInvoice()) {
+				return series.getId();
+			}
+		}
+		return null;
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {

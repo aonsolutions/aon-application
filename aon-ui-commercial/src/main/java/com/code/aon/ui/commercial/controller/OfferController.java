@@ -540,9 +540,19 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	public void onSalesShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
-		setSalesSeries(to.getSeries());
-		setSalesNumber(obtainMaxSalesNumber(to.getSeries()));
+		setSalesSeries(obtainSalesSeries(to.getSeries()));
+		setSalesNumber(obtainMaxSalesNumber(getSalesSeries()));
 		setSalesDate(new Date());
+	}
+
+	private String obtainSalesSeries(String seriesId) throws ManagerBeanException {
+		if (StringUtils.isNotEmpty(seriesId)) {
+			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
+			if (series != null && series.isSales()) {
+				return series.getId();
+			}
+		}
+		return null;
 	}
 
 	public void onSalesSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -568,9 +578,19 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
-		setInvoiceSeries(to.getSeries());
-		setInvoiceNumber(obtainMaxInvoiceNumber(to.getSeries()));
+		setInvoiceSeries(obtainInvoiceSeries(to.getSeries()));
+		setInvoiceNumber(obtainMaxInvoiceNumber(getInvoiceSeries()));
 		setInvoiceDate(new Date());
+	}
+
+	private String obtainInvoiceSeries(String seriesId) throws ManagerBeanException {
+		if (StringUtils.isNotEmpty(seriesId)) {
+			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
+			if (series != null && series.isInvoice()) {
+				return series.getId();
+			}
+		}
+		return null;
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {

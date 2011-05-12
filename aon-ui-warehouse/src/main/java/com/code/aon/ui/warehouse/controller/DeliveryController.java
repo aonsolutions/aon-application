@@ -368,9 +368,19 @@ public class DeliveryController extends BasicController {
 
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		Delivery to = (Delivery)this.getTo();
-		setInvoiceSeries(to.getSeries());
-		setInvoiceNumber(obtainMaxInvoiceNumber(to.getSeries()));
+		setInvoiceSeries(obtainInvoiceSeries(to.getSeries()));
+		setInvoiceNumber(obtainMaxInvoiceNumber(getInvoiceSeries()));
 		setInvoiceDate(new Date());
+	}
+
+	private String obtainInvoiceSeries(String seriesId) throws ManagerBeanException {
+		if (StringUtils.isNotEmpty(seriesId)) {
+			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
+			if (series != null && series.isInvoice()) {
+				return series.getId();
+			}
+		}
+		return null;
 	}
 
 	public void onInvoiceSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
