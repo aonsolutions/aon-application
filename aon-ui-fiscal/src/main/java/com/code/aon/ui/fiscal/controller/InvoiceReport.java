@@ -129,9 +129,9 @@ public class InvoiceReport {
 	}
 	
 	public String getRectificationTypeDesc() {
-		if (getRectificationType() == RectificationType.NORMAL) {
+		if (getRectificationType() == RectificationType.NORMAL_RECTIFIER) {
 			return RECT_NORMAL;
-		} else if (getRectificationType() == RectificationType.SPECIAL) {
+		} else if (getRectificationType() == RectificationType.SPECIAL_RECTIFIER) {
 			return RECT_SPECIAL;
 		}
 		return "";
