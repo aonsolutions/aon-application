@@ -11,8 +11,18 @@
 	<ui:define name="contractDetail">
 		<aon:form id="contractDataForm">
 			<aon:div id="dataGrid" styleClass="aon-scroll-area">
-				<ui:include 
-					src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" />
+				<ui:decorate	
+					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+					<ui:param name="controller" value="#{contractData}" />
+					<ui:define name="columns">
+				
+						<ui:include 
+							src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" >
+							<ui:param name="controller" value="#{contractData}" />
+						</ui:include>
+							
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 		</aon:form>
 	</ui:define>

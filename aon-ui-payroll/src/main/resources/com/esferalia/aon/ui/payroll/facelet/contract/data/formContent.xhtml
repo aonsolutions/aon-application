@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+	
+	<aon:div styleClass="aon-toolbar">
+		<aon:commandButton id="paymentVarSave"
+			value="#{bundle.aon_accept}"
+			reRender="#{container}"
+			actionListener="#{controller.onSaveVariable}"
+			styleClass="aon-finding-toolbar-item aon-icon-accept" />
+		<aon:commandButton id="paymentVarCancel"
+			value="#{bundle.aon_cancel}"
+			reRender="#{container}"
+			actionListener="#{controller.onCancelVariable}"
+			immediate="true"
+			styleClass="aon-finding-toolbar-item aon-icon-cancel" />
+		<aon:commandButton id="paymentVarRemove"
+			value="#{bundle.aon_remove}"
+			rendered="#{controller.contractData.id!=null}"
+			reRender="#{container}"
+			actionListener="#{controller.onRemoveVariable}"
+			styleClass="aon-finding-toolbar-item aon-icon-delete"
+			onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
+	</aon:div>
+
+	<aon:panelGrid columns="2" style="width: 100%;"
+		columnClasses="aon-panelGrid-odd aon-width-100 ,aon-panelGrid-even aon-width-auto">
+		
+		<aon:outputLabel for="ContractData_name" 
+			value="#{bundle.aon_name}" />
+		<aon:inputText id="ContractData_name" required="true"
+			value="#{controller.contractData.name}" maxlength="16" size="16" >
+			<f:validateLength maximum="16"/>
+			<a4j:region>
+				<rich:suggestionbox id="ContractData_name_suggestion"
+					for="ContractData_name"
+					onselect="suggestionBoxActive=false;"
+					suggestionAction="#{controller.expressionContext}" var="exp"
+					similarityGroupingId=""
+					tokens=" +-/*%()"
+					fetchValue="#{exp}"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					eventsQueue="ContractData_nameSug" ignoreDupResponses="true"
+					requestDelay="100" width="500" height="200"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{exp}"/>
+					</aon:column>
+				</rich:suggestionbox>
+			</a4j:region>
+		</aon:inputText>
+
+		<aon:outputLabel for="ContractData_expression"
+			value="#{payrollBundle.payroll_salary_expression}" />
+		<aon:inputText id="ContractData_expression" required="true"
+			value="#{controller.contractData.expression}" maxlength="64" size="64">
+			<f:validateLength maximum="64"/>
+			<a4j:region>
+				<rich:suggestionbox id="ContractData_expression_suggestion"
+					for="ContractData_expression"
+					onselect="suggestionBoxActive=false;"
+					suggestionAction="#{controller.expressionContext}" var="exp"
+					similarityGroupingId=""
+					tokens=" +-/*%()"
+					fetchValue="#{exp}"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					eventsQueue="ContractData_expressionSug" ignoreDupResponses="true"
+					requestDelay="100" width="500" height="200"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{exp}"/>
+					</aon:column>
+				</rich:suggestionbox>
+			</a4j:region>
+		</aon:inputText>
+		
+		<aon:outputLabel for="ContractData_startDate" 
+			value="#{bundle.aon_start_date}" />
+		<aon:selectInputDate id="ContractData_startDate" 
+			value="#{controller.contractData.startDate}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+		<aon:outputLabel for="ContractData_endDate" 
+			value="#{bundle.aon_end_date}" />
+		<aon:selectInputDate id="ContractData_endDate" 
+			value="#{controller.contractData.endDate}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+		
+	</aon:panelGrid>
+
+</ui:composition>

@@ -2,37 +2,71 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.AgreementLevelPayment;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
+import com.esferalia.aon.payroll.SystemPayment;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.HierarchyPayments;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.IExpression;
-import com.esferalia.aon.salary.expression.ITimedObject;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 
 public class ContractPaymentController extends ContractDetailAbstractController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContractPaymentController.class.getName());
+	
+	private DataModel paymentsModel;
+	private DataModel variablesModel;
+	private ContractData contractData;
+	
+	public DataModel getPaymentsModel() {
+		if (paymentsModel == null) {
+			initializePaymentModel();
+		}
+		return paymentsModel;
+	}
+	public void setPaymentsModel(DataModel paymentsModel) {
+		this.paymentsModel = paymentsModel;
+	}
+	
+	public DataModel getVariablesModel() {
+		return variablesModel;
+	}
+	public ContractData getContractData() {
+		return contractData;
+	}
+	public void setContractData(ContractData contractData) {
+		this.contractData = contractData;
+	}
+
 
 	@Override
 	public void onSave(ActionEvent event) {
@@ -41,6 +75,7 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 		ContractPayment cd  = (ContractPayment) getTo();
 		cd.setContract(contract);
 		super.onSave(event);
+		initializePaymentModel();
 	}
 	
 	@Override
@@ -69,32 +104,192 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 		}
 	}
 	
-	private void initializeVariables(ActionEvent event) {
-		// TODO a la espera de obtener del contexto del contrato las
-		// variables asociadas a un payment en concreto
-		BasicController controller = (BasicController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_DATA_CONTROLLER);
-		try {
-			// TODO ainadir al criteria el id de las variables de este payment
-			Contract contract = ((ContractPayment)this.getTo()).getContract();
-			controller.clearCriteria();
-			controller.getCriteria().addEqualExpression(controller.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			controller.onSearch(event);
-		} catch (ManagerBeanException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-	}
 	
 	@Override
 	public void onEdit(ActionEvent event) {
-		super.onEdit(event);
-		initializeVariables(event);
+//		super.onEdit(event);
+		IContractPayment row = (IContractPayment) getPaymentsModel().getRowData();
+		try {
+			if(row.getScope()==ExpressionScope.CONTRACT){
+				this.select(event, (ITransferObject) row);
+				initializeVariables(event);
+			} else {
+				super.onReset(event);
+				IController master = FormUtil.getController("contract");
+				Contract contract = (Contract) master.getTo();
+				ContractPayment payment = (ContractPayment) this.getTo();
+				payment.setContract(contract);
+				payment.setType(row.getType());
+				payment.setDescription(row.getDescription());
+				payment.setExpression(row.getExpression());
+				payment.setIrpfExpression(row.getIrpfExpression());
+				payment.setQuoteExpression(row.getQuoteExpression());
+				payment.setStartDate(row.getStartDate());
+				payment.setEndDate(row.getEndDate());
+				payment.setMonth(row.getMonth());
+				payment.setDescriptionDecorable(row.isDescriptionDecorable());
+				payment.setSalaryType(row.getSalaryType());
+				if(row.getScope()==ExpressionScope.AGREEMENT){
+					AgreementLevelPayment alp = (AgreementLevelPayment) row;
+					payment.setPaymentConcept(alp.getPaymentConcept());
+				} else if(row.getScope()==ExpressionScope.SYSTEM){
+					SystemPayment sp = (SystemPayment) row;
+					payment.setPaymentConcept(sp.getPaymentConcept());
+				}
+			}
+			reset(true);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible seleccionar la percepcion";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 	
 	@Override
 	public void onReset(ActionEvent event) {
 		super.onReset(event);
+	}
+	
+	@Override
+	public void onRemove(ActionEvent event) {
+		super.onRemove(event);
+		initializePaymentModel();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void initializePaymentModel() {
+		try {
+			IManagerBean sBean = BeanManager.getManagerBean(SystemPayment.class);
+			IManagerBean aBean = BeanManager.getManagerBean(AgreementLevelPayment.class);
+			IManagerBean cBean = BeanManager.getManagerBean(ContractPayment.class);
+			IController master = FormUtil.getController("contract");
+			Contract contract = (Contract) master.getTo();
+			Criteria sCriteria = new Criteria();
+//			sCriteria.addEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_PAYMENT_LEVEL_ID), contract.getAgreementLevelCategory().getLevel().getId());
+			sCriteria.addOrder(sBean.getFieldName(IPayrollAlias.SYSTEM_PAYMENT_START_DATE), false);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(sBean.getFieldName(IPayrollAlias.SYSTEM_PAYMENT_END_DATE), new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(sBean.getFieldName(IPayrollAlias.SYSTEM_PAYMENT_END_DATE));
+			sCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			Criteria aCriteria = new Criteria();
+			aCriteria.addEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_PAYMENT_LEVEL_ID), contract.getAgreementLevelCategory().getLevel().getId());
+			aCriteria.addOrder(aBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_PAYMENT_START_DATE), false);
+			expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_PAYMENT_END_DATE), new Date());
+			expr2 = ExpressionUtilities.getNullExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_PAYMENT_END_DATE));
+			aCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			Criteria cCriteria = new Criteria();
+			cCriteria.addEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+			cCriteria.addOrder(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_START_DATE), false);
+			expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE), new Date());
+			expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE));
+			cCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			List<?> sl = sBean.getList(sCriteria);
+			List<?> al = aBean.getList(aCriteria);
+			List<?> cl = cBean.getList(cCriteria);
+			HierarchyPayments payments = new HierarchyPayments( ((List<IContractPayment>) cl).iterator(), ((List<IContractPayment>) al).iterator(), ((List<IContractPayment>) sl).iterator());
+			List<IContractPayment> list = new LinkedList<IContractPayment>();
+			for (IContractPayment p: payments) {
+				list.add(p);
+			}
+			paymentsModel = new ListDataModel(list);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible inicializar lar percepciones";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+	
+	//**********************************************
+	// VARIABLES
+	//**********************************************
+	
+	private void initializeVariables(ActionEvent event) {
+		ContractPayment payment = (ContractPayment)this.getTo();
+		Contract contract = payment.getContract();
+		ContractSalaryCalculatorContext ctx;
+		List<ContractData> varList;
+		try {
+			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
+			varList = new LinkedList<ContractData>();
+			if(payment.getExpression()==null && payment.getPaymentConcept().getExpression()==null){
+				String msg = "No hay expresion definida para esta percepcion ni para su concepto";
+				LOGGER.error(msg);
+				AonUtil.addErrorMessage(msg);
+			} else {
+				Calendar startCal = Calendar.getInstance();
+				Calendar endCal = Calendar.getInstance();
+				startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+				endCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+				for(String s: ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression())){
+					ContractData data = findContractData(s, contract);
+					if(data==null){
+						data = new ContractData();
+						data.setContract(contract);
+						data.setName(s);
+						data.setStartDate(startCal.getTime());
+						data.setEndDate(endCal.getTime());
+						Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
+						data.setExpression(o.toString());
+					}
+					varList.add(data);
+				}
+			}
+			variablesModel = new ListDataModel(varList);
+		} catch (SalaryException e) {
+			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+	
+	private ContractData findContractData(String name, Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), name);
+		List<ITransferObject> list = bean.getList(criteria);
+		return list.size()<=0?null:(ContractData) bean.getList(criteria).get(0);
+	}
+	
+	public void onResetVariable(ActionEvent event) {
+		setContractData(new ContractData());
+		getContractData().setContract(((ContractPayment)this.getTo()).getContract());
+	}
+	public void onSelectVariable(ActionEvent event) {
+		setContractData((ContractData) getVariablesModel().getRowData());
+	}
+	public void onSaveVariable(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			bean.insertOrUpdate(getContractData());
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible guardar la variable del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+		setContractData(null);
 		initializeVariables(event);
 	}
-
+	public void onCancelVariable(ActionEvent event) {
+		setContractData(null);
+	}
+	public void onRemoveVariable(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			bean.remove(getContractData());
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible borrar la variable del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+		setContractData(null);
+		initializeVariables(event);
+	}
 }
