@@ -37,7 +37,10 @@ import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.salary.expression.UndefinedVariableException;
 
 public class ContractPaymentController extends ContractDetailAbstractController {
 	
@@ -66,7 +69,14 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 	public void setContractData(ContractData contractData) {
 		this.contractData = contractData;
 	}
-
+	
+	public void initialize(){
+		initializePaymentModel();
+	}
+	
+	public boolean isContractScope(){
+		return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()==ExpressionScope.CONTRACT;
+	}
 
 	@Override
 	public void onSave(ActionEvent event) {
@@ -188,7 +198,9 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 			HierarchyPayments payments = new HierarchyPayments( ((List<IContractPayment>) cl).iterator(), ((List<IContractPayment>) al).iterator(), ((List<IContractPayment>) sl).iterator());
 			List<IContractPayment> list = new LinkedList<IContractPayment>();
 			for (IContractPayment p: payments) {
-				list.add(p);
+				if(p.getScope()!=ExpressionScope.SYSTEM || (p.getScope()==ExpressionScope.SYSTEM && isSystemPaymentVisible(p))){
+					list.add(p);
+				}
 			}
 			paymentsModel = new ListDataModel(list);
 		} catch (ManagerBeanException e) {
@@ -196,6 +208,34 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
+	
+	private boolean isSystemPaymentVisible(IContractPayment p) {
+		SystemPayment sp = (SystemPayment) p;
+		IController master = FormUtil.getController("contract");
+		Contract contract = (Contract) master.getTo();
+		ContractSalaryCalculatorContext ctx;
+		try {
+			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
+			Calendar startCal = Calendar.getInstance();
+			Calendar endCal = Calendar.getInstance();
+			startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+			endCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(sp.getPaymentConcept().getExpression(), startCal.getTime(), endCal.getTime());
+			for(ITimedObject<Object> o: list){
+				if(((Number)o.getValue()).intValue()>0){
+					return true;
+				}
+			}
+		} catch (UndefinedVariableException uve) {
+			return false;
+		} catch (ExpressionException e) {
+			return false;
+		} catch (SalaryException e) {
+			String msg = "Imposible evaluar lar percepciones de sistema";
+			AonUtil.addErrorMessage(msg);
+		}
+		return false;
 	}
 	
 	//**********************************************
@@ -220,17 +260,21 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 				startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
 				endCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 				for(String s: ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression())){
-					ContractData data = findContractData(s, contract);
-					if(data==null){
-						data = new ContractData();
+					List<ITransferObject> list = existingContractData(s, contract);
+					if(!list.isEmpty()){
+						for(ITransferObject to: list){
+							varList.add((ContractData) to);
+						}
+					} else {
+						ContractData data = new ContractData();
 						data.setContract(contract);
 						data.setName(s);
 						data.setStartDate(startCal.getTime());
 						data.setEndDate(endCal.getTime());
 						Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 						data.setExpression(o.toString());
+						varList.add(data);
 					}
-					varList.add(data);
 				}
 			}
 			variablesModel = new ListDataModel(varList);
@@ -247,13 +291,12 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 		}
 	}
 	
-	private ContractData findContractData(String name, Contract contract) throws ManagerBeanException {
+	private List<ITransferObject> existingContractData(String name, Contract contract) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
 		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), name);
-		List<ITransferObject> list = bean.getList(criteria);
-		return list.size()<=0?null:(ContractData) bean.getList(criteria).get(0);
+		return bean.getList(criteria);
 	}
 	
 	public void onResetVariable(ActionEvent event) {

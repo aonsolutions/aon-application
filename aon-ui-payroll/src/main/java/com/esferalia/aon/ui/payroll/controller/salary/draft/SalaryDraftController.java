@@ -39,6 +39,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.SalarySupplements;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -121,6 +122,10 @@ public class SalaryDraftController extends BasicController {
 	}
 	public void setYear(int year) {
 		this.year = year;
+	}
+	
+	public boolean isContractScope(){
+		return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()==ExpressionScope.CONTRACT;
 	}
 
 	public void onChangeMonth(ActionEvent event) {

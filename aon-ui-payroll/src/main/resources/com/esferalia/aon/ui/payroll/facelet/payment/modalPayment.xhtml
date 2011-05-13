@@ -11,7 +11,7 @@
 	<aon:panelGroup id="paymentModalContainer">
 		<c:if test="#{controller.modalPanelVisible}">
 			<rich:modalPanel id="paymentModalPanel" minHeight="600"
-				minWidth="900" showWhenRendered="true" zindex="10">
+				minWidth="900" showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{payrollBundle.payroll_salary_payment}" />
@@ -127,6 +127,9 @@
 						</aon:div>
 					</aon:div>
 				</aon:form>
+				
+				<aon:lookupButtonPopup lookup="#{paymentConceptLookup}" />
+				
 			</rich:modalPanel>
 		</c:if>
 	</aon:panelGroup>

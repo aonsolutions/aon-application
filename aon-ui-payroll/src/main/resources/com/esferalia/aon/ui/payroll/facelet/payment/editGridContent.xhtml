@@ -12,10 +12,10 @@
 				<aon:outputText value="&#160;" />
 			</f:facet>
 			<aon:commandButton id="ContractPayment-select"
-				title="#{bundle.aon_update}" 
+				title="#{(controller.contractScope)?(bundle.aon_update):(payrollBundle.payroll_overwrite)}" 
 				actionListener="#{controller.onEdit}"
 				reRender="paymentModalContainer"
-				styleClass="aon-editDataTable-button aon-icon-rowSelector"/>
+				styleClass="aon-editDataTable-button #{(controller.contractScope)?('aon-icon-rowSelector'):('aon-icon-go')}"/>
 			<f:facet name="footer">
 				<aon:div>
 					<aon:commandButton

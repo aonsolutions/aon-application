@@ -189,20 +189,22 @@ public class ContractController extends BasicController {
 	}
 	
 	public void onShowPayments( ActionEvent event ) {
-		try {
+//		try {
 			Contract to = (Contract) getTo();
 			ContractPaymentController c = (ContractPaymentController) FormUtil.getController(IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER);
 			c.reset(false);
-			c.onEditSearch(event);
-			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), to.getId());
-			c.onSearch(event);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible mostrar las percepciones del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}						
+//			c.onEditSearch(event);
+//			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), to.getId());
+//			c.onSearch(event);
+			c.initialize();
+//		} catch (ManagerBeanException e) {
+//			String msg = "Imposible mostrar las percepciones del contrato (" + e.getMessage() +")";
+//			LOGGER.error(msg);
+//			AonUtil.addErrorMessage(msg);
+//			throw new AbortProcessingException(msg,e);
+//		}						
 	}
+	
 	public void onShowDeductions( ActionEvent event ) {
 		try {
 			Contract to = (Contract) getTo();

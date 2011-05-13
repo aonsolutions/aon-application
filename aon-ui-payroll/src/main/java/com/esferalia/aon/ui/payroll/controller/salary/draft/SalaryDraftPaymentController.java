@@ -77,9 +77,10 @@ public class SalaryDraftPaymentController extends BasicController{
 		if(cp.getDescription().isEmpty()){
 			cp.setDescription(null);
 		}
+		SalaryDraftController master = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
+		cp.setContract((Contract) master.getTo());
 		super.onAccept(event);
 		reset(false);
-		SalaryDraftController master = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 		master.setPaymentsModel(null);
 	}
 
@@ -149,17 +150,21 @@ public class SalaryDraftPaymentController extends BasicController{
 				startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
 				endCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 				for(String s: ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression())){
-					ContractData data = findContractData(s, contract);
-					if(data==null){
-						data = new ContractData();
+					List<ITransferObject> list = existingContractData(s, contract);
+					if(!list.isEmpty()){
+						for(ITransferObject to: list){
+							varList.add((ContractData) to);
+						}
+					} else {
+						ContractData data = new ContractData();
 						data.setContract(contract);
 						data.setName(s);
 						data.setStartDate(startCal.getTime());
 						data.setEndDate(endCal.getTime());
 						Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 						data.setExpression(o.toString());
+						varList.add(data);
 					}
-					varList.add(data);
 				}
 			}
 			variablesModel = new ListDataModel(varList);
@@ -176,13 +181,12 @@ public class SalaryDraftPaymentController extends BasicController{
 		}
 	}
 	
-	private ContractData findContractData(String name, Contract contract) throws ManagerBeanException {
+	private List<ITransferObject> existingContractData(String name, Contract contract) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
 		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), name);
-		List<ITransferObject> list = bean.getList(criteria);
-		return list.size()<=0?null:(ContractData) bean.getList(criteria).get(0);
+		return bean.getList(criteria);
 	}
 	
 	public void onSelectVariable(ActionEvent event) {
