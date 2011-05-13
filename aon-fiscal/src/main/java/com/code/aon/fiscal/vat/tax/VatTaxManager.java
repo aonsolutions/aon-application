@@ -184,7 +184,7 @@ public class VatTaxManager {
 
 	private VatTaxKeyEx[] obtainModelAffectedKeys(ResultSet rs) throws SQLException {
 		InvoiceType invoiceType = InvoiceType.values()[rs.getInt(1)];
-		boolean rectification = rs.getInt(2) == RectificationType.SPECIAL.ordinal();
+		boolean rectification = rs.getInt(2) == RectificationType.SPECIAL_RECTIFIER.ordinal();
 		boolean service = rs.getInt(3) == 1;
 		double percent = rs.getDouble(4);
 		VatDeductionType vatDeductionType = VatDeductionType.values()[rs.getInt(6)];
