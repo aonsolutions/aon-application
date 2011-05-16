@@ -113,31 +113,31 @@
 							<aon:div id="invoiceReferenceCodeDiv">
 								<aon:selectOneMenu id="Invoice_series"
 									value="#{saleInvoice.to.series}" 
-									rendered="#{saleInvoice.seriesActive and !saleInvoice.recorded and saleInvoiceFinance.model.rowCount == 0}"
+									rendered="#{saleInvoice.seriesActive and !saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
 									valueChangeListener="#{saleInvoice.onSeriesChanged}"
 									reRender="Invoice_number,Invoice_securityLevel">
 									<f:selectItem itemLabel=" " value="#{null}" />
-									<f:selectItems value="#{configCollections.invoiceSeriesIds}" />
+									<f:selectItems value="#{saleInvoice.rectifier ? configCollections.rectificationSeriesIds : configCollections.invoiceSeriesIds}" />
 								</aon:selectOneMenu>
 								<aon:inputText id="Invoice_series-input"
 									value="#{saleInvoice.to.series}" 
-									rendered="#{!saleInvoice.seriesActive and !saleInvoice.recorded and saleInvoiceFinance.model.rowCount == 0}"
+									rendered="#{!saleInvoice.seriesActive and !saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
 									size="5" />
 								<aon:inputText id="Invoice_number" styleClass="aon-margin-left"
 									value="#{saleInvoice.to.number}" 
-									rendered="#{!saleInvoice.recorded and saleInvoiceFinance.model.rowCount == 0}"
+									rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
 									required="true" size="7" />
 								<aon:commandButton value="&#160;"
 									title="#{financeBundle.finance_invoice_find_next_number}"
 									styleClass="aon-finding-toolbar-item aon-icon-ambito aon-finding-toolbar-item-no-border"
 		 							style="aon-margin-left aon-margin-right" 
-									rendered="#{!saleInvoice.recorded and saleInvoiceFinance.model.rowCount == 0}"
+									rendered="#{!saleInvoice.readOnly and saleInvoiceFinance.model.rowCount == 0}"
 									actionListener="#{saleInvoice.onFindNextFreeNumber}"
 									reRender="Invoice_number" ajaxSingle="true" process="Invoice_number">
 								</aon:commandButton>															
 								<aon:outputText styleClass="aon-bold aon-margin-right"
 									value="#{saleInvoice.to.referenceCode}"
-									rendered="#{saleInvoice.recorded or saleInvoiceFinance.model.rowCount > 0}" />
+									rendered="#{saleInvoice.readOnly or saleInvoiceFinance.model.rowCount > 0}" />
 							</aon:div>
 							<aon:div>
 								<c:if test="#{aonRole.confidentiality}">
