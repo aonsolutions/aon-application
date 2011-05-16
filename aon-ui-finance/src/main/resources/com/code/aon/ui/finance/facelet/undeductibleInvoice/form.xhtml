@@ -28,7 +28,6 @@
 							actionListener="#{undeductibleInvoice.generateFinances}"
 							rendered="#{undeductibleInvoiceDetail.model.rowCount > 0 and (!undeductibleInvoice.recorded or undeductibleInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-finding-toolbar-item aon-icon-tree"
-							reRender="menuExt"
 							accesskey="#{bundle.aon_key_finance}">
 							<f:setPropertyActionListener target="#{undeductibleInvoice.backActionListener}"
 								value="#{null}" />
