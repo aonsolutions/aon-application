@@ -659,7 +659,11 @@
 
 											<aon:column colspan="2" 
 												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
-												<aon:outputText value="&#160;" />
+												<aon:outputText value="#{financeBundle.finance_finance_date_abbrv}: " />
+												<aon:outputText value="#{statementLink.dueDate}">
+													<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+														timeZone="#{timeZoneController.timeZoneId}" />
+												</aon:outputText>
 											</aon:column>
 										</rich:subTable>
 
@@ -668,12 +672,11 @@
 											value="#{controller.accountEntryDetails}" var="entryDetail"
 											headerClass="aon-editDataTable-textColumn aon-subTable-green-header aon-italic aon-bold">
 
-											<aon:column colspan="3" 
-												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
+											<aon:column styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
 												<aon:outputText value="&#160;" />
 											</aon:column>
 
-											<aon:column colspan="2" 
+											<aon:column colspan="4" 
 												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-green-column">
 												<f:facet name="header">
 													<aon:div>

@@ -161,13 +161,20 @@ public class BankStatementLink implements ITransferObject {
 	@Transient
 	public Date getDate() throws ManagerBeanException {
 		if (isFinanceTracking()) {
-			return ((FinanceTracking)getSourceTo()).getFinance().getDueDate();
+			return (getBankStatement().isExact() ? ((FinanceTracking)getSourceTo()).getTrackingDate() : getSourceDate());
 		} else if (isFinanceBatch()) {
 			return ((FinanceBatch)getSourceTo()).getIssueDate();
 		} else if (isBankConcept()) {
 			return (getLinkedBankStatementLink() == null) ? getBankStatement().getOperationDate() : getLinkedBankStatementLink().getSourceDate();
 		} else if (isAccount()) {
 			return (getLinkedBankStatementLink() == null) ? getBankStatement().getOperationDate() : getLinkedBankStatementLink().getSourceDate();
+		}
+		return null;
+	}
+	@Transient
+	public Date getDueDate() throws ManagerBeanException {
+		if (isFinanceTracking()) {
+			return ((FinanceTracking)getSourceTo()).getFinance().getDueDate();
 		}
 		return null;
 	}
