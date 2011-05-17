@@ -71,6 +71,12 @@
 										action="undeductibleInvoice_search" actionListener="#{undeductibleInvoice.onEditSearch}"
 										value="#{financeBundle.finance_undeductible_invoice_management_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="rectifiedInvoiceManagement"
+										action="rectifiedInvoice_search" actionListener="#{rectifiedInvoice.onReset}"
+										value="#{financeBundle.finance_special_rectified_invoice_module}" />
+								</aon:div>
+								
 							</aon:div>
 						</aon:panelGrid>
 						

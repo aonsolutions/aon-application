@@ -38,6 +38,7 @@ public interface IFinanceMessages {
 	String FINANCE_UNRECORD_INVOICE_WARNING ="finance_unrecord_invoice_warning";
 	String FINANCE_EXPENSE_INVOICE_QUOTA_WARNING = "finance_expense_invoice_quota_warning";
 	String FINANCE_EXPENSE_INVOICE_CHECK_WARNING = "finance_expense_invoice_check_warning";
-
+	String FINANCE_CUSTOMER_REQUIRED_ERROR = "finance_customer_required_error";
+	
 }
 
