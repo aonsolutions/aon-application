@@ -73,6 +73,7 @@ public class BankConcept implements ITransferObject {
 		final BankConcept o = (BankConcept) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+				.append(this.account,o.account)
 				.append(this.name,o.name)
 				.isEquals();
 		}
@@ -83,6 +84,7 @@ public class BankConcept implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)		
+			.append(this.account)		
 			.append(this.name)		
 			.toHashCode();
 	}	
