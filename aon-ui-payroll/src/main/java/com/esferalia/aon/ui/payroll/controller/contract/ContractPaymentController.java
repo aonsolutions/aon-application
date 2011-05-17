@@ -114,10 +114,8 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 		}
 	}
 	
-	
 	@Override
 	public void onEdit(ActionEvent event) {
-//		super.onEdit(event);
 		IContractPayment row = (IContractPayment) getPaymentsModel().getRowData();
 		try {
 			if(row.getScope()==ExpressionScope.CONTRACT){
@@ -175,7 +173,6 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 			IController master = FormUtil.getController("contract");
 			Contract contract = (Contract) master.getTo();
 			Criteria sCriteria = new Criteria();
-//			sCriteria.addEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_PAYMENT_LEVEL_ID), contract.getAgreementLevelCategory().getLevel().getId());
 			sCriteria.addOrder(sBean.getFieldName(IPayrollAlias.SYSTEM_PAYMENT_START_DATE), false);
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(sBean.getFieldName(IPayrollAlias.SYSTEM_PAYMENT_END_DATE), new Date());
 			Expression expr2 = ExpressionUtilities.getNullExpression(sBean.getFieldName(IPayrollAlias.SYSTEM_PAYMENT_END_DATE));

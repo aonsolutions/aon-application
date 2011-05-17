@@ -1283,7 +1283,7 @@
 		</managed-property>
 	</managed-bean>	
 	
-		<!-- ************ PaymentConcept LOOKUP ************** -->
+	<!-- ************ PaymentConcept LOOKUP ************** -->
 	<managed-bean>
 		<managed-bean-name>paymentConceptLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
@@ -1307,6 +1307,33 @@
 		<managed-property>
 			<property-name>searchPagePath</property-name>
 			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/paymentConcept/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ DeductionConcept LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>deductionConceptLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>deductionConceptLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.esferalia.aon.payroll.DeductionConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>DeductionConcept_code</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/deductionConcept/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/deductionConcept/search.xhtml</value>
 		</managed-property>
 	</managed-bean>
 

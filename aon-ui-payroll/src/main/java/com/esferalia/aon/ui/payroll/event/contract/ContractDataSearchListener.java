@@ -19,8 +19,8 @@ public class ContractDataSearchListener extends ControllerSearchListener {
 		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, new Date());
 		Expression expr2 = ExpressionUtilities.getNullExpression(alias);
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
-		alias = getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE);
-		criteria.addLessThanOrEqualExpression(alias, new Date());
+//		alias = getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE);
+//		criteria.addLessThanOrEqualExpression(alias, new Date());
 		criteria.addOrder(alias, false);
 		alias = getFieldName(IPayrollAlias.CONTRACT_DATA_NAME);
 		criteria.addOrder(alias);

@@ -63,7 +63,7 @@
 	</aon:selectOneMenu>
 -->	
 
-	<aon:outputLabel for="ContractPayment_salaryType" value="#{bundle.aon_type}" />
+	<aon:outputLabel for="ContractPayment_salaryType" value="#{payrollBundle.payroll_salary_type}" />
 	<aon:selectOneMenu id="ContractPayment_salaryType" value="#{controller.to.salaryType}">
 		<f:selectItems value="#{payrollCollections.salaryTypes}" />
 	</aon:selectOneMenu>

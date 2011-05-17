@@ -10,8 +10,8 @@
 
 	<aon:panelGroup id="deductionModalContainer">
 		<c:if test="#{controller.modalPanelVisible}">
-			<rich:modalPanel id="deductionModalPanel" minHeight="450"
-				minWidth="600" showWhenRendered="true" zindex="90">
+			<rich:modalPanel id="deductionModalPanel" minHeight="600"
+				minWidth="900" showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{payrollBundle.payroll_salary_deduction}" />
@@ -45,6 +45,7 @@
 											onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;">
 										</aon:commandButton>
 									</aon:div>
+									
 									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
 										<aon:panelGrid id="deductionMenuGrid" columns="2" dir="true" style="width: 80%;">
 											<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/formContent.xhtml">
@@ -53,11 +54,79 @@
 											</ui:include>
 										</aon:panelGrid>
 									</aon:div>
+									
+									<aon:div id="deductionVarContainer" styleClass="aon-scroll-area" 
+										rendered="#{!controller.new and controller.variablesModel!=null}">
+										<aon:panelGrid columns="1" style="width: 100%; margin-top:10px;"
+											columnClasses="aon-panelGrid-even  aon-width-auto">
+											<aon:div>
+												<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
+												<aon:outputText value="#{payrollBundle.payroll_contract_variables}" 
+													styleClass="aon-bold"/>
+											</aon:div>
+										</aon:panelGrid>	
+										
+										<c:if test="#{controller.contractData==null}" >
+											<aon:editDataTable id="deductionVariablesList"
+												rendered="#{controller.variablesModel.rowCount > 0}" 
+												value="#{controller.variablesModel}" var="to" rows="20" >
+												
+												<aon:column 
+													styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<aon:commandButton id="ContractDeduction-edit"
+														rendered="#{to.id!=null}"
+														title="#{bundle.aon_update}" 
+														actionListener="#{controller.onSelectVariable}"
+														reRender="deductionVarContainer"
+														styleClass="aon-editDataTable-button aon-icon-rowSelector" />
+													<aon:commandButton id="ContractDeduction-overwrite"
+														rendered="#{to.id==null}"
+														title="#{payrollBundle.payroll_overwrite}" 
+														actionListener="#{controller.onSelectVariable}"
+														reRender="deductionVarContainer"
+														styleClass="aon-editDataTable-button aon-icon-go" />
+													<f:facet name="footer">
+														<aon:commandButton
+															id="ContractDeduction-reset" 
+															title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+															actionListener="#{controller.onResetVariable}"
+															reRender="deductionVarContainer"
+															styleClass="aon-editDataTable-button aon-icon-reset"
+															accesskey="#{bundle.aon_key_new_line}"/>
+													</f:facet>
+												</aon:column>
+												
+												<ui:include 
+													src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" >
+													<ui:param name="controller" value="#{controller}" />
+													<aon:valueParam name="formList" value="true" />
+												</ui:include>
+												
+											</aon:editDataTable>
+											<aon:dataScroller2 for="deductionVariablesList" showNote="true" />
+										</c:if>
+													
+										<c:if test="#{controller.contractData!=null}" >
+											<ui:include 
+												src="/com/esferalia/aon/ui/payroll/facelet/contract/data/formContent.xhtml" >
+												<ui:param name="controller" value="#{controller}" />
+												<aon:valueParam name="container" value="deductionVarContainer" />
+											</ui:include>
+										</c:if>
+										
+									</aon:div>
+									
 								</aon:div>
 							</aon:div>
 						</aon:div>
 					</aon:div>
 				</aon:form>
+				
+				<aon:lookupButtonPopup lookup="#{deductionConceptLookup}" />
+				
 			</rich:modalPanel>
 		</c:if>
 	</aon:panelGroup>
