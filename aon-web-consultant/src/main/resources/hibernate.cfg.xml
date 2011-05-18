@@ -162,6 +162,7 @@
 		<mapping class="com.code.aon.product.Item"/>
 		<mapping class="com.code.aon.product.ItemAlternative"/>
 		<mapping class="com.code.aon.product.ItemAttachment"/>
+		<mapping class="com.code.aon.product.ItemComposition"/>
 		<mapping class="com.code.aon.product.ItemSupplier"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
