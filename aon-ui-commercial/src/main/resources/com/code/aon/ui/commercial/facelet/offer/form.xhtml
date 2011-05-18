@@ -198,7 +198,8 @@
 						<ui:param name="lookupTo" value="#{offer.to.target.registry}" />
 						<ui:param name="lookupForRegistry" value="#{true}" />
 						<ui:param name="lookupDisabled" value="#{offer.readOnly}" />
-						<ui:param name="lookupReRender" value="Target_registry_document,OfferAddress,Seller_lookup,Offer_tariff,Offer_defaultPayMethod,payMethodDiv" />
+						<ui:param name="lookupReRender" 
+							value="Target_registry_document,OfferAddress,lookupSeller,Offer_tariff,Offer_defaultPayMethod,payMethodDiv" />
 						<ui:param name="idRequired" value="#{true}" />						
 						<aon:methodParam name="lookupChangeListener"
 							value="#{offer.targetData}" type="lookupChangeListener" />
