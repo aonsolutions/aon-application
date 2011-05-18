@@ -2,6 +2,8 @@ package com.code.aon.ui.marketing.event;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.Question;
 import com.code.aon.ql.Criteria;
@@ -35,7 +37,8 @@ public class MarketingTargetSearchListener extends TargetSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
-		setQuestion( new Question() );
+		IManagerBean questionBean = BeanManager.getManagerBean(Question.class);
+		setQuestion( (Question) questionBean.createNewTo() );
 		setQuestionText(null);
 	}
 

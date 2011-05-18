@@ -44,7 +44,7 @@
 			lookupProperty="#{lookupProperty}"
 			lookupChangeListener="#{lookupChangeListener}"
 			controllerListener="#{lookupControllerListener}"
-			selectReRender="lookup#{pojoName}#{lookupSuffix}" />			
+			selectReRender="#{lookup_reRender}" />			
 		<c:if test="#{!skipNewButton}">
 			<aon:lookupButton 
 				windowTitle="#{newButtonTitle}"

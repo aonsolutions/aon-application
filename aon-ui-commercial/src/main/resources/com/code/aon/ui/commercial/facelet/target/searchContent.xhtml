@@ -173,24 +173,12 @@
 							valueChangeListener="#{target.addLessThanOrEqualExpression}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
-					</aon:div>							
-					<aon:outputLabel for="MarketingTarget_profiles_question_id"
-						value="#{marketingBundle.marketing_question}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="MarketingTarget_profiles_question_id"
-							lookup="#{questionLookup}"
-							reRender="MarketingTarget_profiles_question_detail"
-							value="#{targetSearch.question.id}" size="5">
-						</aon:lookupInputText>
-						<aon:lookupButton windowTitle="#{marketingBundle.marketing_question_selection}" 
-							selectReRender="MarketingTarget_profiles_question_id,MarketingTarget_profiles_question_detail"
-							lookup="#{questionLookup}" minHeight="460" minWidth="650"
-							property="#{targetSearch.question}">
-						</aon:lookupButton>
-						<aon:inputText id="MarketingTarget_profiles_question_detail"
-							value="#{targetSearch.question.text}"
-							size="44" disabled="true" />
-					</aon:div>
+					</aon:div>					
+
+					<ui:include src="/com/code/aon/ui/marketing/facelet/question/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{targetSearch.question}" />
+					</ui:include>
+					
 					<aon:div styleClass="aon-padding-top">				
 						<aon:outputText value="#{bundle.aon_value}" />
 					</aon:div>

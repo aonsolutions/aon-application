@@ -34,25 +34,17 @@
 	
 				<aon:column>
 					<f:facet name="header">
-						<aon:outputLabel for="TargetProfile_question_id" value="#{marketingBundle.marketing_question}" />
+						<aon:outputLabel for="Question_id" value="#{marketingBundle.marketing_question}" />
 					</f:facet>
 					<aon:outputText value="#{to.question.text}" />
 					<f:facet name="footer">
-						<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-							<aon:lookupInputText id="TargetProfile_question_id"
-								lookup="#{questionLookup}" required="true"
-								reRender="TargetProfile_question_detail-New,TargetProfile_response-New"
-								value="#{targetProfile.to.question.id}" size="5">
-							</aon:lookupInputText>
-							<aon:lookupButton windowTitle="#{marketingBundle.marketing_question_selection}" 
-								selectReRender="TargetProfile_question_id,TargetProfile_question_detail-New,TargetProfile_response-New"
-								lookup="#{questionLookup}" minHeight="460" minWidth="650"
-								property="#{targetProfile.to.question}">
-							</aon:lookupButton>
-							<aon:inputText id="TargetProfile_question_detail-New"
-								value="#{controller.to.question.text}"
-								size="60" disabled="true" />
-						</aon:div>
+						<ui:include src="/com/code/aon/ui/marketing/facelet/question/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{targetProfile.to.question}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupReRender" value="TargetProfile_response-New" />
+						</ui:include>
 					</f:facet>
 				</aon:column>
 				

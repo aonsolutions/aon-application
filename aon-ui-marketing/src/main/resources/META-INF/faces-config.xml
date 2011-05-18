@@ -65,6 +65,10 @@
 			<value>question</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Question_text</value>
+		</managed-property>						
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -160,6 +164,10 @@
 					<value>#{true}</value>
 				</map-entry>
 			</map-entries>
+		</managed-property>				
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Question_text</value>
 		</managed-property>				
 		<managed-property>
 			<property-name>listPagePath</property-name>
