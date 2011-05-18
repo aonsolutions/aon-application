@@ -175,7 +175,7 @@
 						required="true"
 						valueChangeListener="#{task.dossierChange}"
 						rendered="#{task.monitor or task.new}"
-						reRender="customerIdContainer,Task_activity,Task_dossier">
+						reRender="lookupCustomer,Task_activity,Task_dossier">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{task.availableFormDossiers}" />
 					</aon:selectOneMenu>
@@ -184,30 +184,20 @@
 						size="60" disabled="true"
 						rendered="#{!task.new and !task.monitor}" />
 
-					<aon:outputLabel for="Customer_id"
-						value="#{customerBundle.customer_customer}" />
-					<aon:div id="customerIdContainer" styleClass="aon-lookup" 
-						rendered="#{(task.new or task.monitor) and task.to.dossier != null}">
-						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-							reRender="Customer_full_name,Task_activity,Task_dossier"
-							lookupChangeListener="#{task.customerChanged}" 
-							value="#{task.to.dossier.customer.id}" size="5" />
-						<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
-							property="#{task.to.dossier.customer}"
-							selectReRender="Customer_id,Customer_full_name,Task_activity,Task_dossier" 
-							actionType="search"
-							lookupChangeListener="#{task.customerChanged}"
-							lookup="#{customerLookup}" minHeight="460" minWidth="650">
-						</aon:lookupButton>
-						<aon:inputText id="Customer_full_name"
-							value="#{(task.to.dossier.customer.registry.name!=null)?(task.to.dossier.customer.registry.fullName):('')}"
-							size="50" disabled="true" />
-					</aon:div>
+ 					<aon:outputLabel for="Customer_id" value="#{customerBundle.customer_customer}" />
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupTo" value="#{task.to.dossier.customer}" />
+						<ui:param name="lookupRendered" value="#{(task.new or task.monitor) and task.to.dossier != null}" />				
+						<ui:param name="lookupReRender" value="Task_activity,Task_dossier" />				
+						<aon:methodParam name="lookupChangeListener"
+							value="#{task.customerChanged}" type="lookupChangeListener" />
+					</ui:include>
 					<aon:inputText id="Task_customer"
 						value="#{(task.to.dossier != null and task.to.dossier.id != null)?(task.to.dossier.customer.registry.fullName):('')}"
 						size="60" disabled="true"
 						rendered="#{!task.new and !task.monitor}" />
-
+ 
 					<aon:outputLabel for="Task_activity"
 						value="#{projectBundle.activity_activity}" />
 					<aon:selectOneMenu id="Task_activity"

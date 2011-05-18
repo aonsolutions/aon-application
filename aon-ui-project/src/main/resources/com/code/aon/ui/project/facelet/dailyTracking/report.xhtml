@@ -85,31 +85,18 @@
 						value="#{projectBundle.aon_daily_tracking_dossier}"/>
 					<aon:selectOneMenu id="dossier"
 						valueChangeListener="#{dailyTrackingReport.dossierChange}"
-						reRender="customerIdContainer,activity,dossier,dossier_type,activity_type"
+						reRender="lookupCustomer,activity,dossier,dossier_type,activity_type"
 						value="#{dailyTrackingReport.dossier}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{dailyTrackingReport.availableDossiers}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Customer_id"
-						value="#{customerBundle.customer_customer}"/>
-					<aon:div id="customerIdContainer" styleClass="aon-lookup">
-						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-							reRender="Customer_id,Customer_full_name,dossier,activity"
-							lookupChangeListener="#{dailyTrackingReport.reloadDossiers}" 
-							value="#{dailyTrackingReport.customer.id}" size="5" />
-						<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
-							property="#{dailyTrackingReport.customer}"
-							selectReRender="Customer_id,Customer_full_name,dossier,activity" 
-							actionType="search"
-							lookupChangeListener="#{dailyTrackingReport.reloadDossiers}"
-							lookup="#{customerLookup}" minHeight="460" minWidth="650">
-						</aon:lookupButton>
-						<aon:inputText id="Customer_full_name"
-							value="#{(dailyTrackingReport.customer.registry.name!=null)?(dailyTrackingReport.customer.registry.fullName):('')}"
-							size="50" disabled="true" />
-					</aon:div>
-
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{dailyTrackingReport.customer}" />
+						<ui:param name="lookupReRender" value="dossier,activity" />				
+						<aon:methodParam name="lookupChangeListener" value="#{dailyTrackingReport.reloadDossiers}" type="lookupChangeListener" />
+					</ui:include>
+ 
 					<aon:outputLabel for="activity"
 						value="#{projectBundle.aon_daily_tracking_activity}"/>
 					<aon:selectOneMenu id="activity"

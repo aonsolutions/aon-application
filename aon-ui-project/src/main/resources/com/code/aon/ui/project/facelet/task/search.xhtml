@@ -124,30 +124,18 @@
 						value="#{projectBundle.dossier_dossier}" />
 					<aon:selectOneMenu id="Task_dossier" value="#{task.dossier}"
 						valueChangeListener="#{task.dossierSearchChange}"
-						ajaxSingle="true" reRender="customerIdContainer,Task_activity,Task_dossier">
+						ajaxSingle="true" reRender="lookupCustomer,Task_activity,Task_dossier">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{task.availableSearchDossiers}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Customer_id"
-						value="#{customerBundle.customer_customer}" />
-					<aon:div id="customerIdContainer" styleClass="aon-lookup">
-						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-							reRender="Customer_full_name,Task_activity,Task_dossier"
-							lookupChangeListener="#{task.customerChanged}" 
-							value="#{task.customer.id}" size="5" />
-						<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
-							property="#{task.customer}"
-							selectReRender="Customer_id,Customer_full_name,Task_activity,Task_dossier" 
-							actionType="search"
-							lookupChangeListener="#{task.customerChanged}"
-							lookup="#{customerLookup}" minHeight="460" minWidth="650">
-						</aon:lookupButton>
-						<aon:inputText id="Customer_full_name"
-							value="#{(task.customer.registry.name!=null)?(task.customer.registry.fullName):('')}"
-							size="50" disabled="true" />
-					</aon:div>
- 
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{task.customer}" />
+						<ui:param name="lookupReRender" value="Task_activity,Task_dossier" />				
+						<aon:methodParam name="lookupChangeListener"
+							value="#{task.customerChanged}" type="lookupChangeListener" />
+					</ui:include>
+  
 					<aon:outputLabel for="Task_activity"
 						value="#{projectBundle.activity_activity}" />
 					<aon:selectOneMenu id="Task_activity" value="#{task.activity}">

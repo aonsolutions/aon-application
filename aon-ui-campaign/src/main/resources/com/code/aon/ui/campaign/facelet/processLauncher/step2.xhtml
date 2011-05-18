@@ -49,30 +49,17 @@
 				<aon:div id="existingContainer">
 					<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
 	
-						<aon:outputLabel for="customerIdEx"
-							value="#{customerBundle.customer_customer}" />
-						<aon:div id="customerIdContainerEx" styleClass="aon-lookup">
-							<aon:lookupInputText id="customerIdEx" lookup="#{customerLookup}"
-								reRender="Customer_full_nameEx,process_dossier"
-								lookupChangeListener="#{processWizard.customerChanged}" 
-								value="#{processWizard.customer.id}" size="5" />
-							<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
-								property="#{processWizard.customer}"
-								selectReRender="customerIdEx,Customer_full_nameEx,process_dossier" 
-								actionType="search"
-								lookupChangeListener="#{processWizard.customerChanged}"
-								lookup="#{customerLookup}" minHeight="460" minWidth="650">
-							</aon:lookupButton>
-							<aon:inputText id="Customer_full_nameEx"
-								value="#{(processWizard.customer.registry.name!=null)?(processWizard.customer.registry.fullName):('')}"
-								size="50" disabled="true" />
-						</aon:div>
-	
+						<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{processWizard.customer}" />
+							<ui:param name="lookupReRender" value="process_dossier" />				
+							<aon:methodParam name="lookupChangeListener" value="#{processWizard.customerChanged}" type="lookupChangeListener" />
+						</ui:include>
+ 	
 						<aon:outputLabel for="process_dossier"
 							value="#{projectBundle.dossier_dossier}" />
 						<aon:selectOneMenu id="process_dossier"
 							value="#{processWizard.dossier}"
-							reRender="customerIdExContainer,process_dossier"
+							reRender="lookupCustomer,process_dossier"
 							valueChangeListener="#{processWizard.dossierChanged}">
 							<f:selectItem value="#{nullSelectItem.value}" />
 							<f:selectItems value="#{processWizard.availableDossiers}" />
@@ -99,7 +86,7 @@
 						<aon:outputText value="&#160;" />
 						<aon:commandButton value="#{campaignBundle.campaign_add_dossier}"
 							actionListener="#{processWizard.addExistingDossier}"
-							focus="customerIdEx"
+							focus="Customer_Id"
 							styleClass="aon-commandButton aon-icon-new"
 							reRender="existingContainer, dossiersTable" />
 					</aon:panelGrid>
@@ -110,25 +97,12 @@
 				<aon:div id="newContainer">
 					<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
 	
-						<aon:outputLabel for="customerIdNew"
-							value="#{customerBundle.customer_customer}" />
-						<aon:div id="customerIdContainerNew" styleClass="aon-lookup">
-							<aon:lookupInputText id="customerIdNew" lookup="#{customerLookup}"
-								reRender="Customer_full_nameNew"
-								lookupChangeListener="#{processWizard.customerChanged}" 
-								value="#{processWizard.customer.id}" size="5" />
-							<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
-								property="#{processWizard.customer}"
-								selectReRender="customerIdNew,Customer_full_nameNew" 
-								actionType="search"
-								lookupChangeListener="#{processWizard.customerChanged}"
-								lookup="#{customerLookup}" minHeight="460" minWidth="650">
-							</aon:lookupButton>
-							<aon:inputText id="Customer_full_nameNew"
-								value="#{(processWizard.customer.registry.name!=null)?(processWizard.customer.registry.fullName):('')}"
-								size="50" disabled="true" />
-						</aon:div>
-	
+						<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{processWizard.customer}" />
+							<ui:param name="lookupSuffix" value="New" />				
+							<aon:methodParam name="lookupChangeListener" value="#{processWizard.customerChanged}" type="lookupChangeListener" />
+						</ui:include>
+
 						<aon:outputLabel for="Dossier_dossierType_id"
 							value="#{bundle.aon_type}" />
 						<aon:selectOneMenu id="Dossier_dossierType_id" 
@@ -145,7 +119,7 @@
 						<aon:outputText value="&#160;" />
 						<aon:commandButton value="#{campaignBundle.campaign_add_dossier}"
 							actionListener="#{processWizard.addNewDossier}"
-							focus="customerIdNew"
+							focus="Customer_IdNew"
 							styleClass="aon-commandButton aon-icon-new"
 							reRender="newContainer, dossiersTable" />
 					</aon:panelGrid>
@@ -154,121 +128,6 @@
 		 	</aon:panelTab>
 		</aon:panelTabSet>
 
-<!-- 
-		<aon:panelGrid id="creationTable" columns="2" dir="true"
-			columnClasses="none, none" style="margin-top: 5px;width: 90%;">
-			<aon:div>
-				<aon:selectBooleanCheckbox id="radio1"
-					value="#{processWizard.existingDossier}">
-					<a4j:support event="onclick"
-						reRender="radio2,existingContainer,newContainer" ajaxSingle="true" />
-				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="radio1"
-					value="#{campaignBundle.process_wizard_add_dossier}" />
-			</aon:div>
-
-			<aon:div>
-				<aon:selectBooleanCheckbox id="radio2"
-					value="#{processWizard.newDossier}">
-					<a4j:support event="onclick"
-						reRender="radio1,existingContainer,newContainer" ajaxSingle="true" />
-				</aon:selectBooleanCheckbox>
-				<aon:outputLabel for="radio2"
-					value="#{campaignBundle.process_wizard_add_new_dossier}" />
-			</aon:div>
-
-			<aon:div id="existingContainer">
-				<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
-
-					<aon:outputLabel for="customerIdEx"
-						value="#{customerBundle.customer_customer}" />
-					<aon:div id="customerIdContainerEx" styleClass="aon-lookup">
-						<aon:lookupInputText id="customerIdEx" lookup="#{customerLookup}"
-							reRender="Customer_full_nameEx,process_dossier"
-							disabled="#{processWizard.newDossier}"
-							lookupChangeListener="#{processWizard.customerChanged}" 
-							value="#{processWizard.customer.id}" size="5" />
-						<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
-							property="#{processWizard.customer}"
-							selectReRender="customerIdEx,Customer_full_nameEx,process_dossier" 
-							actionType="search"
-							disabled="#{processWizard.newDossier}"
-							lookupChangeListener="#{processWizard.customerChanged}"
-							lookup="#{customerLookup}" minHeight="460" minWidth="650">
-						</aon:lookupButton>
-						<aon:inputText id="Customer_full_nameEx"
-							value="#{(processWizard.customer.registry.name!=null)?(processWizard.customer.registry.fullName):('')}"
-							size="50" disabled="true" />
-					</aon:div>
-
-					<aon:outputLabel for="process_dossier"
-						value="#{projectBundle.dossier_dossier}" />
-					<aon:selectOneMenu id="process_dossier"
-						value="#{processWizard.dossier}"
-						disabled="#{processWizard.newDossier}"
-						reRender="customerIdExContainer,process_dossier"
-						valueChangeListener="#{processWizard.dossierChanged}">
-						<f:selectItem value="#{nullSelectItem.value}" />
-						<f:selectItems value="#{processWizard.availableDossiers}" />
-					</aon:selectOneMenu>
-
-					<aon:outputText value="&#160;" />
-					<aon:commandButton value="#{campaignBundle.campaign_add_dossier}"
-						actionListener="#{processWizard.addExistingDossier}"
-						disabled="#{processWizard.newDossier}" focus="customerIdEx"
-						styleClass="aon-commandButton aon-icon-new"
-						reRender="creationTable, dossiersTable" />
-				</aon:panelGrid>
-			</aon:div>
-
-			<aon:div id="newContainer">
-				<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
-
-					<aon:outputLabel for="customerIdNew"
-						value="#{customerBundle.customer_customer}" />
-					<aon:div id="customerIdContainerNew" styleClass="aon-lookup">
-						<aon:lookupInputText id="customerIdNew" lookup="#{customerLookup}"
-							reRender="Customer_full_nameNew"
-							disabled="#{processWizard.existingDossier}"
-							lookupChangeListener="#{processWizard.customerChanged}" 
-							value="#{processWizard.customer.id}" size="5" />
-						<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
-							property="#{processWizard.customer}"
-							selectReRender="customerIdNew,Customer_full_nameNew" 
-							actionType="search"
-							disabled="#{processWizard.existingDossier}"
-							lookupChangeListener="#{processWizard.customerChanged}"
-							lookup="#{customerLookup}" minHeight="460" minWidth="650">
-						</aon:lookupButton>
-						<aon:inputText id="Customer_full_nameNew"
-							value="#{(processWizard.customer.registry.name!=null)?(processWizard.customer.registry.fullName):('')}"
-							size="50" disabled="true" />
-					</aon:div>
-
-					<aon:outputLabel for="Dossier_dossierType_id"
-						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Dossier_dossierType_id" 
-						value="#{processWizard.dossier.dossierType}"
-						disabled="#{processWizard.existingDossier}">
-						<f:selectItem value="#{nullSelectItem.value}" />
-						<f:selectItems value="#{projectCollections.dossierTypes}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Dossier_number"
-						value="#{projectBundle.dossier_dossier}" />
-					<aon:inputText id="Dossier_number" size="18" value="#{processWizard.dossier.number}"
-						disabled="#{processWizard.existingDossier}" maxlength="15"/>
-
-					<aon:outputText value="&#160;" />
-					<aon:commandButton value="#{campaignBundle.campaign_add_dossier}"
-						actionListener="#{processWizard.addNewDossier}"
-						disabled="#{processWizard.existingDossier}" focus="customerIdNew"
-						styleClass="aon-commandButton aon-icon-new"
-						reRender="creationTable, dossiersTable" />
-				</aon:panelGrid>
-			</aon:div>
-		</aon:panelGrid>
- -->
 		<aon:div id="dossiersTable" style="margin-top: 5px;width: 90%;">
 			<aon:dataTable id="dossierDataList"
 				value="#{processWizard.dossiersModel}" var="to">

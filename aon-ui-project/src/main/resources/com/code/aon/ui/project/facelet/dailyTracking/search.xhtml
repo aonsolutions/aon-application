@@ -43,23 +43,9 @@
 							<f:selectItems value="#{dailyTracking.users}" />
 						</aon:selectOneMenu>
 
-						<aon:outputLabel for="Customer_id"
-							value="#{customerBundle.customer_customer}" />
-						<aon:div id="customerIdContainer" styleClass="aon-lookup">
-							<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-								reRender="Customer_full_name"
-								value="#{dailyTracking.customer.id}" size="5" />
-							<aon:lookupButton
-								windowTitle="#{customerBundle.customer_selection}"
-								property="#{dailyTracking.customer}"
-								selectReRender="Customer_id,Customer_full_name"
-								actionType="search" lookup="#{customerLookup}" minHeight="460"
-								minWidth="650">
-							</aon:lookupButton>
-							<aon:inputText id="Customer_full_name"
-								value="#{(dailyTracking.customer.registry.name!=null)?(dailyTracking.customer.registry.fullName):('')}"
-								size="50" disabled="true" />
-						</aon:div>
+						<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{dailyTracking.customer}" />
+						</ui:include>
 
 						<aon:outputLabel for="DailyTracking_trackingDate-From"
 							value="#{bundle.aon_date_from}" />

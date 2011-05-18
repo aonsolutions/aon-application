@@ -41,31 +41,18 @@
 						value="#{projectBundle.aon_daily_tracking_dossier}"/>
 					<aon:selectOneMenu id="DailyTracking_dossier"
 						value="#{dailyTracking.to.dossier}"
-						reRender="customerIdContainer,DailyTracking_activity,DailyTracking_dossier"
+						reRender="lookupCustomer,DailyTracking_activity,DailyTracking_dossier"
 						valueChangeListener="#{dailyTracking.dossierChange}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{dailyTracking.availableDossiers}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Customer_id"
-						value="#{customerBundle.customer_customer}"/>
-					<aon:div id="customerIdContainer" styleClass="aon-lookup">
-						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-							reRender="Customer_full_name,DailyTracking_dossier, DailyTracking_activity"
-							lookupChangeListener="#{dailyTracking.customerPojoChange}" 
-							value="#{dailyTracking.to.customer.id}" size="5" />
-						<aon:lookupButton windowTitle="#{customerBundle.customer_selection}"
-							property="#{dailyTracking.to.customer}"
-							selectReRender="Customer_id,Customer_full_name,DailyTracking_dossier, DailyTracking_activity" 
-							actionType="search"
-							lookupChangeListener="#{dailyTracking.customerPojoChange}"
-							lookup="#{customerLookup}" minHeight="460" minWidth="650">
-						</aon:lookupButton>
-						<aon:inputText id="Customer_full_name"
-							value="#{(dailyTracking.to.customer.registry.name!=null)?(dailyTracking.to.customer.registry.fullName):('')}"
-							size="50" disabled="true" />
-					</aon:div>
-						
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{dailyTracking.to.customer}" />
+						<ui:param name="lookupReRender" value="DailyTracking_dossier, DailyTracking_activity" />				
+						<aon:methodParam name="lookupChangeListener"
+							value="#{dailyTracking.customerPojoChange}" type="lookupChangeListener" />
+					</ui:include>
 
 					<aon:outputLabel for="DailyTracking_activity"
 						value="#{projectBundle.aon_daily_tracking_activity}"/>

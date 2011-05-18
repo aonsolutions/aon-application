@@ -10,7 +10,7 @@
 	<aon:form>
 	<rich:modalPanel id="addPanel" top="100" left="100"
 		showWhenRendered="true" minHeight="100" minWidth="100" height="600"
-		width="650" zindex="10">
+		width="750" zindex="10">
 		<f:facet name="header">
 			<aon:div styleClass="aon-popupWindow-title">
 				<aon:outputText value="#{campaignBundle.campaign_add_dossier}" />
@@ -38,26 +38,13 @@
 				</aon:div>
 				
 				<aon:panelGrid columns="2" dir="true" style="width: 100%;margin-top: 5px;">
-					<aon:outputLabel for="customerIdEx"
-						value="#{customerBundle.customer_customer}" />
-					<aon:div id="customerIdContainerEx" styleClass="aon-lookup">
-						<aon:lookupInputText id="customerIdEx" lookup="#{customerLookup}"
-							reRender="Customer_full_nameEx,process_dossier"
-							lookupChangeListener="#{addCampaignDossier.customerChanged}"
-							value="#{addCampaignDossier.customer.id}" size="5" />
-						<aon:lookupButton
-							windowTitle="#{customerBundle.customer_selection}"
-							property="#{addCampaignDossier.customer}"
-							selectReRender="customerIdEx,Customer_full_nameEx,process_dossier"
-							actionType="search"
-							lookupChangeListener="#{addCampaignDossier.customerChanged}"
-							lookup="#{customerLookup}" minHeight="460" minWidth="650">
-						</aon:lookupButton>
-						<aon:inputText id="Customer_full_nameEx"
-							value="#{(addCampaignDossier.customer.registry.name!=null)?(addCampaignDossier.customer.registry.fullName):('')}"
-							size="50" disabled="true" />
-					</aon:div>
 
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{addCampaignDossier.customer}" />
+						<ui:param name="lookupReRender" value="process_dossier" />				
+						<aon:methodParam name="lookupChangeListener" value="#{addCampaignDossier.customerChanged}" type="lookupChangeListener" />
+					</ui:include>
+ 
 					<aon:outputLabel for="process_dossier"
 						value="#{projectBundle.dossier_dossier}" />
 					<aon:selectOneMenu id="process_dossier"

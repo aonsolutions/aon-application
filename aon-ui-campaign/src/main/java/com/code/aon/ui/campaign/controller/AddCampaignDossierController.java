@@ -107,15 +107,21 @@ public class AddCampaignDossierController {
 	}
 	
 	private void initialize() {
-		setDossiers(null);
-		setChecked(null);
-		setModel(null);
-		setCustomer( new Customer() );
-		setDossier(null);
-		setDossierType(null);
-		setActivityType(null);
-		setDossierNumber(null);
-		setAvailableDossiers(null);
+		try {
+			setDossiers(null);
+			setChecked(null);
+			setModel(null);
+			setCustomer( (Customer) BeanManager.getManagerBean(Customer.class).createNewTo() );
+			setDossier(null);
+			setDossierType(null);
+			setActivityType(null);
+			setDossierNumber(null);
+			setAvailableDossiers(null);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible inicializar el objeto 'Customer'";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 	public boolean getRowChecked() {
     	CampaignDossier to = (CampaignDossier) model.getRowData();
