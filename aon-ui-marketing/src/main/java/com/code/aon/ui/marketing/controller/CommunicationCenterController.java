@@ -13,6 +13,8 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.common.BeanManager;
@@ -49,6 +51,8 @@ import com.code.aon.ui.mailing.MailingManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class CommunicationCenterController implements IMarketingConstants {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CommunicationCenterController.class.getName());
 	
 	private Date date;
 	
@@ -119,8 +123,13 @@ public class CommunicationCenterController implements IMarketingConstants {
 		return action;
 	}
 
-	public void setAction(MarketingAction action) {
-		this.action = ( action != null ) ? action : new MarketingAction();
+	public void setAction(MarketingAction action) throws ManagerBeanException {
+		if ( action != null ) {
+			this.action = action;
+		} else {
+			IManagerBean maBean = BeanManager.getManagerBean(MarketingAction.class);
+			this.action = (MarketingAction) maBean.createNewTo();
+		}
 		this.actionSelected = (this.action.getId() != null);
 	}
 
@@ -128,8 +137,13 @@ public class CommunicationCenterController implements IMarketingConstants {
 		return survey;
 	}
 
-	public void setSurvey(Survey survey) {
-		this.survey = ( survey != null ) ? survey : new Survey();
+	public void setSurvey(Survey survey) throws ManagerBeanException {
+		if ( survey != null ) {
+			this.survey = survey;
+		} else {
+			IManagerBean surveyBean = BeanManager.getManagerBean(Survey.class);
+			this.survey = (Survey) surveyBean.createNewTo();
+		}
 		this.surveySelected = (this.survey.getId() != null);
 	}
 
@@ -137,8 +151,13 @@ public class CommunicationCenterController implements IMarketingConstants {
 		return target;
 	}
 
-	public void setTarget(Target target) {
-		this.target = ( target != null ) ? target : new Target();
+	public void setTarget(Target target) throws ManagerBeanException {
+		if ( target != null ) {
+			this.target = target;
+		} else {
+			IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
+			this.target = (Target) targetBean.createNewTo();
+		}
 		this.targetSelected = (this.target.getId() != null);
 	}
 	
@@ -222,9 +241,13 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 
 	public void onInit( ActionEvent event ) {
-		setAction(null);
-		setTarget(null);
-		setSurvey(null);
+		try {
+			setAction(null);
+			setTarget(null);
+			setSurvey(null);
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
 		setMailingModel(null);
 		this.surveyResponse = null;
 		this.actionTarget = null;
@@ -478,7 +501,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		onNextTarget(event);
 	}
 
-	public void onActionLookupChange(LookupChangeEvent event) {
+	public void onActionLookupChange(LookupChangeEvent event) throws ManagerBeanException {
 		this.actionSelected = (event.getNewValue() != null);	
 		if (this.actionSelected) {
 			MarketingAction action = (MarketingAction) event.getNewValue();

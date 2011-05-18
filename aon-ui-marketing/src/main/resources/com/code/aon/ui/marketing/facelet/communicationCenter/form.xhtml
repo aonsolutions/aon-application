@@ -115,59 +115,31 @@
 					</aon:div>
 					
 					<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
-						<aon:outputLabel for="CommunicationCenter_survey_id" 
-							value="#{marketingBundle.marketing_survey}" />
-						<aon:div styleClass="aon-lookup" id="CommunicationCenter_survey">
-							<aon:lookupInputText id="CommunicationCenter_survey_id"
-								lookup="#{surveyLookup}" required="true"
-								lookupChangeListener="#{communicationCenter.onSurveyLookupChange}"
-								disabled="#{communicationCenter.actionSelected}" 
-								reRender="CommunicationCenter_survey_detail,aonToolbar"
-								value="#{communicationCenter.survey.id}" size="5">
-							</aon:lookupInputText>
-							<aon:lookupButton 
-								windowTitle="#{marketingBundle.marketing_survey_selection}"
-								selectReRender="CommunicationCenter_survey_id,CommunicationCenter_survey_detail,aonToolbar"
-								lookupChangeListener="#{communicationCenter.onSurveyLookupChange}"
-								disabled="#{communicationCenter.actionSelected}"
-								lookup="#{surveyLookup}" minHeight="440"
-								property="#{communicationCenter.survey}">
-							</aon:lookupButton>
-							<aon:inputText id="CommunicationCenter_survey_detail"
-								value="#{communicationCenter.survey.description}"
-								size="64" disabled="true" />
-						</aon:div>
+						<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{communicationCenter.survey}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="lookupDisabled" value="#{communicationCenter.actionSelected}" />
+							<ui:param name="lookupReRender" value="aonToolbar" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{communicationCenter.onSurveyLookupChange}" type="lookupChangeListener" />
+							
+						</ui:include>					
 					</c:if>
 
 					<c:if test="#{aonConfiguration.bean.communicationCenter.showTarget}" >
-						<aon:outputLabel for="CommunicationCenter_target_id"
+						<aon:outputLabel for="Target_id"
 							value="#{target.bundle.commercial_target}" />
 						<aon:div id="CommunicationCenter_target">
-							<aon:div styleClass="aon-lookup" id="CommunicationCenter_target_lookup">
-								<aon:lookupInputText id="CommunicationCenter_target_id"
-									lookup="#{targetLookup}" required="true"
-									lookupChangeListener="#{communicationCenter.onTargetLookupChange}"
-									disabled="#{communicationCenter.actionSelected}"
-									reRender="CommunicationCenter_target_detail,aonToolbar"
-									value="#{communicationCenter.target.id}" size="5">
-								</aon:lookupInputText>
-								<aon:lookupButton 
-									windowTitle="#{target.bundle.commercial_target_selection}" actionType="search"
-									selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
-									disabled="#{communicationCenter.actionSelected}"
-									lookup="#{targetLookup}" minHeight="510" minWidth="650"
-									lookupChangeListener="#{communicationCenter.onTargetLookupChange}"
-									property="#{communicationCenter.target}">
-								</aon:lookupButton>
-								<aon:lookupButton 
-									windowTitle="#{target.bundle.commercial_target_new}"
-									selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
-									lookup="#{targetLookup}" actionType="new" minWidth="650" minHeight="490"
-									lookupChangeListener="#{communicationCenter.onTargetLookupChange}"
-									disabled="#{communicationCenter.actionSelected}"
-									property="#{communicationCenter.target}">
-								</aon:lookupButton>
-							</aon:div>
+							<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{communicationCenter.target}" />
+								<ui:param name="idRequired" value="#{true}" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipSuggestText" value="#{true}" />
+								<ui:param name="lookupDisabled" value="#{communicationCenter.actionSelected}" />
+								<ui:param name="lookupReRender" value="CommunicationCenter_target_detail,aonToolbar" />					
+								<aon:methodParam name="lookupChangeListener"
+									value="#{communicationCenter.onTargetLookupChange}" type="lookupChangeListener" />
+							</ui:include>						
 							<aon:div id="CommunicationCenter_target_detail" layout="inline">
 								<c:if test="#{communicationCenter.targetSelected}" >
 									<aon:panelGrid columns="2">		
