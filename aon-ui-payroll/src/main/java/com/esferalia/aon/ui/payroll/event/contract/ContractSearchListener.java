@@ -3,6 +3,8 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 import java.util.Date;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
@@ -43,8 +45,10 @@ public class ContractSearchListener extends ControllerSearchListener {
 
 	@Override
 	protected void init() throws ManagerBeanException {
-		setPerson(new Person());
-		setEnterprise(new Enterprise());
+		IManagerBean personBean = BeanManager.getManagerBean(Person.class);
+		setPerson((Person) personBean.createNewTo());
+		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
+		setEnterprise((Enterprise) enterpriseBean.createNewTo());
 	}
 	
 	@Override

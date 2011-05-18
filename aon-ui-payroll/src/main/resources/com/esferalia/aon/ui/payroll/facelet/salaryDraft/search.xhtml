@@ -19,46 +19,25 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{salaryDraft}" />
 				<ui:define name="searchContent">
-				
-					<aon:outputLabel for="Person_id"
-						value="#{registryBundle.registry_person}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Person_id" lookup="#{personLookup}"
-							reRender="Person_full_name"
-							value="#{salaryDraftSearch.person.id}" size="5" />
-						<aon:lookupButton 
-							windowTitle="#{registryBundle.registry_person_selection}"
-							selectReRender="Person_id,Person_full_name" actionType="search"
-							lookup="#{personLookup}" minHeight="460" minWidth="650"
-							property="#{salaryDraftSearch.person}">
-						</aon:lookupButton>
-						<aon:inputText id="Person_full_name"
-							value="#{(salaryDraftSearch.person.registry.fullName!=null)?(salaryDraftSearch.person.registry.fullName):('')}"
-							size="50" disabled="true" />							
-					</aon:div>
+
+					<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{salaryDraftSearch.person}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
 
 					<c:if test="#{aonConfiguration.bean.salaryDraft.showEnterpriseInSearch}">
-						<aon:outputLabel for="Enterprise_id"
-							value="#{companyBundle.company_enterprise}" />
-						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="Enterprise_id" lookup="#{enterpriseLookup}"
-								reRender="Enterprise_full_name"
-								value="#{salaryDraftSearch.enterprise.id}" size="5" />
-							<aon:lookupButton 
-								windowTitle="#{companyBundle.company_enterprise_selection}"
-								selectReRender="Enterprise_id,Enterprise_full_name" actionType="search"
-								lookup="#{enterpriseLookup}" minHeight="460" minWidth="650"
-								property="#{salaryDraftSearch.enterprise}">
-							</aon:lookupButton>
-							<aon:inputText id="Enterprise_full_name"
-								value="#{(salaryDraftSearch.enterprise.registry.fullName!=null)?(salaryDraftSearch.enterprise.registry.fullName):('')}"
-								size="50" disabled="true" />							
-						</aon:div>
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{salaryDraftSearch.enterprise}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
 					</c:if>
 				</ui:define>
+
 			</ui:decorate>
 		</aon:form>
+
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		
 	</ui:define>
 </ui:composition>
