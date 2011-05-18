@@ -9,14 +9,12 @@ import javax.faces.event.ActionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxComponentHandler;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.util.FaceletUtil;
+import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.sun.facelets.FaceletContext;
@@ -101,15 +99,7 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 
 	private boolean isResolved( FaceletContext ctx ) {
 		Object to = getTo(ctx).getValue(ctx);
-		if ( to != null ) {
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(to.getClass());
-				return bean.getId( (ITransferObject) to) != null;
-			} catch (ManagerBeanException e) {
-				LOGGER.error( "Error getting id", e );
-			}
-		}
-		return false;
+		return RichLookupBean.isResolved( (ITransferObject) to );
 	}	
 	
 	@Override

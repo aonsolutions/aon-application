@@ -787,23 +787,22 @@ public class RichLookupBean {
 	public boolean isResolved( ILookupComponent lookupComponent ) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		Object to = lookupComponent.getProperty().getValue(ctx.getELContext());
+		return isResolved( (ITransferObject) to );
+	}	
+
+	public static boolean isResolved( ITransferObject to ) {
 		if ( to != null ) {
 			try {
-				IManagerBean bean = null;
-				if ( StringUtils.isEmpty(lookupComponent.getLookupProperty()) ) {
-					bean = getController().getManagerBean();
-				} else {
-					bean = BeanManager.getManagerBean(to.getClass());
-				}
-				Serializable id = bean.getId( (ITransferObject) to); 
+				IManagerBean bean = BeanManager.getManagerBean(to.getClass());
+				Serializable id = bean.getId(to); 
 				return (id != null);
 			} catch (ManagerBeanException e) {
 				LOGGER.error( "Error getting id", e );
 			}
 		}
-		return false;
-	}	
-
+		return false;		
+	}
+	
 	public void onClear( ActionEvent event ) {
 		setBindings(event.getComponent());
 		onReset(null);

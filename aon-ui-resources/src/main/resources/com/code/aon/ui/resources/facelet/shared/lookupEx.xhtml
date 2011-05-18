@@ -23,7 +23,7 @@
 				controllerListener="#{lookupControllerListener}"
 				required="#{idRequired}" disabled="#{lookupDisabled}"
 				size="#{lookupInputSize}" maxlength="#{lookupInputMaxLength}"  
-				reRender="#{lookup_reRender}" >
+				onblur="#{lookupInputOnBlur}" reRender="#{lookup_reRender}" >
 				<ui:insert name="lookupInputTextContent"/>
 			</aon:lookupInputText>
 		</c:if>

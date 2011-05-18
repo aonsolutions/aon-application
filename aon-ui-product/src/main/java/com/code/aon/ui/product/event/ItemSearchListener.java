@@ -2,6 +2,8 @@ package com.code.aon.ui.product.event;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.ProductStatus;
@@ -44,8 +46,13 @@ public class ItemSearchListener extends RegistrySearchListener {
 	protected void init() throws ManagerBeanException {
 		ProductStatus[] defaultItemStatus = {ProductStatus.ACTIVE};
 		setItemStatuses(defaultItemStatus);
-		setSupplier((getSupplierParam() != null && getSupplierParam().getId() != null) ? getSupplierParam() : new Supplier());
-		setSupplierParam(new Supplier());
+		IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
+		if ( (getSupplierParam() != null) && (getSupplierParam().getId() != null) ) {
+			setSupplier( getSupplierParam() );
+		} else {
+			setSupplier((Supplier) supplierBean.createNewTo());
+		}
+		setSupplierParam((Supplier) supplierBean.createNewTo());
 		super.init();
 	}
 	

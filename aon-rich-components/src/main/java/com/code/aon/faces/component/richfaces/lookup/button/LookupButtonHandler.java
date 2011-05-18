@@ -12,7 +12,6 @@ import javax.faces.event.MethodExpressionActionListener;
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxComponentHandler;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
-import com.code.aon.faces.component.richfaces.lookup.HtmlLookupBasicInput;
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.ILookupConstants;
 import com.code.aon.faces.component.util.FaceletUtil;
@@ -116,14 +115,14 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 	private void updateRendered( FaceletContext ctx, HtmlLookupButton button) {
 		TagAttribute renderedTag = getAttribute(RENDERED);
 		if ( renderedTag == null ) {
-			LookupButtonType type = button.getButtonType();
-			if ( type == LookupButtonType.CLEAR ) {
-				String rendered = Boolean.toString(button.isResolved());
-				UIComponentTagUtils.setBooleanProperty(ctx.getFacesContext(), button, RENDERED, rendered);
-			} else if ( (type == LookupButtonType.SEARCH) || (type == LookupButtonType.LIST) ) {
-				String rendered = Boolean.toString(!button.isResolved());
-				UIComponentTagUtils.setBooleanProperty(ctx.getFacesContext(), button, RENDERED, rendered);
+			boolean resolved = button.isResolved();
+			String rendered = null;
+			if ( button.getButtonType() == LookupButtonType.CLEAR ) {
+				rendered = Boolean.toString(resolved);
+			} else {
+				rendered = Boolean.toString(!resolved);
 			}
+			UIComponentTagUtils.setBooleanProperty(ctx.getFacesContext(), button, RENDERED, rendered);
 		}
 	}	
 

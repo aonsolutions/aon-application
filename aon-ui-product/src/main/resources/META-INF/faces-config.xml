@@ -432,6 +432,10 @@
 			<value>Item_product_category_name,Item_product_name,Item_product_code</value>
 		</managed-property>
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Item_product_name</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/product/facelet/lookup/item/list.xhtml</value>
 		</managed-property>
