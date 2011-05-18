@@ -47,17 +47,17 @@ public class ItemSearchListener extends RegistrySearchListener {
 		ProductStatus[] defaultItemStatus = {ProductStatus.ACTIVE};
 		setItemStatuses(defaultItemStatus);
 		IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
-		if ( (getSupplierParam() != null) && (getSupplierParam().getId() != null) ) {
-			setSupplier( getSupplierParam() );
+		if ((getSupplierParam() != null) && (getSupplierParam().getId() != null)) {
+			setSupplier(getSupplierParam());
 		} else {
-			setSupplier((Supplier) supplierBean.createNewTo());
+			setSupplier((Supplier)supplierBean.createNewTo());
 		}
-		setSupplierParam((Supplier) supplierBean.createNewTo());
+		setSupplierParam((Supplier)supplierBean.createNewTo());
 		super.init();
 	}
 	
 	@Override
-	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if (!ArrayUtils.isEmpty(getItemStatuses())) {
 			String status = getController().resolveAlias(IProductAlias.ITEM_STATUS);
 			addEnumToCriteria(criteria, status, getItemStatuses());

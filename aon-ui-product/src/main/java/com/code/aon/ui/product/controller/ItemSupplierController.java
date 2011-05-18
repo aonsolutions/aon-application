@@ -7,7 +7,7 @@ import com.code.aon.ui.form.LinesController;
 
 public class ItemSupplierController extends LinesController {
 
-	public void onSupplierChanged( LookupChangeEvent event) {
+	public void onSupplierChanged(LookupChangeEvent event) {
 		Supplier supplier = (Supplier) event.getNewValue();
 		ItemSupplier itemSupplier = (ItemSupplier) getTo();
 		itemSupplier.setSupplier(supplier);
