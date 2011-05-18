@@ -7,9 +7,10 @@
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{customerLookup}" />
 		<ui:param name="controller" value="#{customer}" />
-		<aon:valueParam name="lookupLabel" default="#{customerBundle.customer_customer}"/>
+		<ui:param name="lookupLabel" value="#{customerBundle.customer_customer}"/>
 		<ui:param name="searchButtonTitle" value="#{customerBundle.customer_selection}" />
 		<ui:param name="newButtonTitle" value="#{customerBundle.customer_new}" />
+		<ui:param name="newButtonHeight" value="650"/>
 	</ui:include>
 
 </ui:composition>
