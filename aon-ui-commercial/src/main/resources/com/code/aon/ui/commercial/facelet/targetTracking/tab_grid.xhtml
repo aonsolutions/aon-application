@@ -39,17 +39,17 @@
 					<aon:outputLabel for="Seller_id" value="#{salesBundle.sales_seller}" />
 				</f:facet>
 				<aon:outputText value="#{to.seller.registry.fullName}" rendered="#{formList}"/>
-				<ui:include src="/com/code/aon/ui/sales/facelet/sales/lookup.xhtml" >
+				<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{targetTracking.to.seller}" />
 					<ui:param name="skipLabel" value="#{true}" />
-					<ui:param name="lookupInputSize" value="40" />
+					<ui:param name="lookupInputSuggestSize" value="40" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 				</ui:include>
 				<f:facet name="footer" >
-					<ui:include src="/com/code/aon/ui/sales/facelet/sales/lookup.xhtml" >
+					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{targetTracking.to.seller}" />
 						<ui:param name="skipLabel" value="#{true}" />
-						<ui:param name="lookupInputSize" value="40" />
+						<ui:param name="lookupInputSuggestSize" value="40" />
 						<ui:param name="lookupRendered" value="#{formNew}" />
 						<ui:param name="lookupSuffix" value="-New" />
 					</ui:include>

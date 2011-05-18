@@ -198,7 +198,7 @@
 						<ui:param name="lookupTo" value="#{offer.to.target.registry}" />
 						<ui:param name="lookupForRegistry" value="#{true}" />
 						<ui:param name="lookupDisabled" value="#{offer.readOnly}" />
-						<ui:param name="lookupReRender" value="OfferAddress,Seller_lookup,Offer_tariff,Offer_defaultPayMethod,payMethodDiv" />
+						<ui:param name="lookupReRender" value="Target_registry_document,OfferAddress,Seller_lookup,Offer_tariff,Offer_defaultPayMethod,payMethodDiv" />
 						<ui:param name="idRequired" value="#{true}" />						
 						<aon:methodParam name="lookupChangeListener"
 							value="#{offer.targetData}" type="lookupChangeListener" />
@@ -237,7 +237,7 @@
 						<ui:param name="lookupForRegistry" value="#{true}" />
 						<ui:param name="lookupDisabled" value="#{offer.readOnly}" />
 						<ui:param name="lookupRendered" value="#{offer.dealership}" />
-						<ui:param name="lookupReRender" value="Offer_tariff,Offer_defaultPayMethod,payMethodDiv" />				
+						<ui:param name="lookupReRender" value="Supplier_registry_document,Offer_tariff,Offer_defaultPayMethod,payMethodDiv" />				
 						<aon:methodParam name="lookupChangeListener"
 							value="#{offer.supplierData}" type="lookupChangeListener" />
 					</ui:include>
@@ -251,7 +251,7 @@
 						disabled="true" size="10" />
 
 					<c:if test="#{aonConfiguration.bean.offer.showSeller}">
-						<ui:include src="/com/code/aon/ui/sales/facelet/sales/lookup.xhtml" >
+						<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{offer.to.seller.registry}" />
 							<ui:param name="lookupForRegistry" value="#{true}" />
 							<ui:param name="lookupDisabled" value="#{offer.readOnly}" />

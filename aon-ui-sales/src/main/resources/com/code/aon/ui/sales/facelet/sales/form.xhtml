@@ -190,7 +190,7 @@
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
-					<ui:include src="/com/code/aon/ui/sales/facelet/sales/lookup.xhtml" >
+					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{sales.to.seller.registry}" />
 						<ui:param name="lookupForRegistry" value="#{true}" />
 						<ui:param name="lookupDisabled" value="#{!sales.pending}" />

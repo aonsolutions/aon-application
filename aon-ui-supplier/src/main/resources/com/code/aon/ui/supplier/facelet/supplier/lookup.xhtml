@@ -7,9 +7,10 @@
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{supplierLookup}" />
 		<ui:param name="controller" value="#{supplier}" />
-		<aon:valueParam name="lookupLabel" default="#{supplierBundle.supplier_supplier}"/>
+		<ui:param name="lookupLabel" value="#{supplierBundle.supplier_supplier}"/>
 		<ui:param name="searchButtonTitle" value="#{supplierBundle.supplier_selection}" />
 		<ui:param name="newButtonTitle" value="#{supplierBundle.supplier_new}" />
+		<ui:param name="newButtonHeight" value="600"/>
 	</ui:include>
 
 </ui:composition>
