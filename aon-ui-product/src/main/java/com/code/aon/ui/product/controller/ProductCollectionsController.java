@@ -103,6 +103,10 @@ public class ProductCollectionsController {
 		return brands;
 	}
 
+	public int getBrandsCount() throws ManagerBeanException {
+		return BeanManager.getManagerBean(Brand.class).getCount(null);
+	}
+
 	public ProductCategory getCategory() {
 		return null;
 	}

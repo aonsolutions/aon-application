@@ -9,7 +9,7 @@
 		      <xs:element ref="product" />
 		      <xs:element ref="productCategory" />
 		    </xs:sequence>		
-			<xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>		    
+			<xs:attribute name="version" type="xs:string" use="required" fixed="1.1"/>		    
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="catalogue">
@@ -23,6 +23,8 @@
 			<xs:attribute name="showType" type="xs:boolean" use="required"/>
 			<xs:attribute name="showBrand" type="xs:boolean" use="required"/>
 			<xs:attribute name="showStock" type="xs:boolean" use="required"/>
+			<xs:attribute name="showTariff" type="xs:boolean" use="required"/>
+			<xs:attribute name="showComposition" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAlternatives" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSuppliers" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAccount" type="xs:boolean" use="required"/>
