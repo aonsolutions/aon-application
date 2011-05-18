@@ -6,66 +6,34 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 		<ui:param name="controller" value="#{targetSeller}" />
-		<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-			aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
 		
 		<ui:define name="columns">
 
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="TargetSeller_seller_id" value="#{salesBundle.sales_seller}" />
+					<aon:outputLabel for="Seller_id" value="#{salesBundle.sales_seller}" />
 				</f:facet>
-				<aon:outputText value="#{to.seller.registry.fullName}"
+				<aon:outputText value="#{to.seller.registry.name}"
 					rendered="#{formList}" />
-				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-					<aon:lookupInputText id="TargetSeller_seller_id"
-						lookup="#{sellerLookup}" required="true"
-						reRender="TargetSeller_seller_detail"
-						value="#{targetSeller.to.seller.id}" size="5">
-					</aon:lookupInputText>
-					<aon:lookupButton
-						windowTitle="#{salesBundle.sales_seller_selection}"
-						selectReRender="TargetSeller_seller_id,TargetSeller_seller_detail"
-						lookup="#{sellerLookup}" minHeight="440"
-						property="#{targetSeller.to.seller}">
-					</aon:lookupButton>
-					<aon:lookupButton 
-						windowTitle="#{salesBundle.sales_seller_new}"
-						selectReRender="TargetSeller_seller_id,TargetSeller_seller_detail"
-						lookup="#{sellerLookup}" minHeight="520" minWidth="650"
-						property="#{targetSeller.to.seller}" actionType="new">
-					</aon:lookupButton>																			
-					<aon:inputText id="TargetSeller_seller_detail"
-						value="#{(to.seller.registry.name!=null)?(to.seller.registry.fullName):('')}"
-						size="60" disabled="true" />
-				</aon:div>
-				<f:facet name="footer">
-					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-						<aon:lookupInputText id="TargetSeller_seller_id-New"
-							lookup="#{sellerLookup}" required="true"
-							reRender="TargetSeller_seller_detail-New"
-							value="#{targetSeller.to.seller.id}" size="5">
-						</aon:lookupInputText>
-						<aon:lookupButton
-							windowTitle="#{salesBundle.sales_seller_selection}"
-							selectReRender="TargetSeller_seller_id-New,TargetSeller_seller_detail-New"
-							lookup="#{sellerLookup}" minHeight="440"
-							property="#{targetSeller.to.seller}">
-						</aon:lookupButton>
-						<aon:lookupButton 
-							windowTitle="#{salesBundle.sales_seller_new}"
-							selectReRender="TargetSeller_seller_id-New,TargetSeller_seller_detail-New"
-							lookup="#{sellerLookup}" minHeight="520" minWidth="650"
-							property="#{targetSeller.to.seller}" actionType="new">
-						</aon:lookupButton>																									
-						<aon:inputText id="TargetSeller_seller_detail-New"
-							value="#{(controller.to.seller.registry.name!=null)?(controller.to.seller.registry.fullName):('')}"
-							size="60" disabled="true" />
-					</aon:div>
+					
+				<ui:include src="/com/code/aon/ui/sales/facelet/sales/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{targetSeller.to.seller}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupInputSize" value="40" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
+				</ui:include>
+				<f:facet name="footer" >
+					<ui:include src="/com/code/aon/ui/sales/facelet/sales/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{targetSeller.to.seller}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupInputSize" value="40" />
+						<ui:param name="lookupRendered" value="#{formNew}" />
+						<ui:param name="lookupSuffix" value="-New" />
+					</ui:include>
 				</f:facet>
 			</aon:column>
 
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="TargetSeller_startDate" value="#{bundle.aon_start_date}" />
 				</f:facet>
@@ -85,7 +53,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="TargetSeller_endDate" value="#{bundle.aon_end_date}" />
 				</f:facet>
@@ -105,7 +73,7 @@
 				</f:facet>
 			</aon:column>
 					
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
 					<aon:outputLabel for="TargetSeller_status" value="#{bundle.aon_status}" />
 				</f:facet>

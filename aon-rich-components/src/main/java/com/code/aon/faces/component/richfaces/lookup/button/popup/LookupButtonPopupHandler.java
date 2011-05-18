@@ -11,7 +11,7 @@ import javax.faces.component.UIViewRoot;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
-import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
+import com.code.aon.faces.component.richfaces.lookup.ILookupConstants;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonHandler;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonType;
 import com.code.aon.faces.component.util.FaceletUtil;
@@ -27,7 +27,7 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
  * 
  * @author atellitu
  */
-public class LookupButtonPopupHandler extends TagHandler implements ILookupTags, IRichFacesTags {
+public class LookupButtonPopupHandler extends TagHandler implements ILookupConstants, IRichFacesTags {
 
 	private static final String LOOKUP_MODAL_PANEL_MAP = "com.code.aon.faces.LookupButtonPopup.map";
 	

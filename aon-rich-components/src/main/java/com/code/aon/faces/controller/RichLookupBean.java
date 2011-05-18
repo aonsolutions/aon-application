@@ -1,5 +1,6 @@
 package com.code.aon.faces.controller;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map.Entry;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
@@ -18,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -26,9 +29,13 @@ import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonType;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.OrderByList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.util.AonUtil;
 
 
 /**
@@ -90,6 +97,10 @@ public class RichLookupBean {
 	private String windowCloseFocus;
 	
 	private IControllerListener controllerListener;
+
+	private ITransferObject suggestedTo;
+	
+	private String suggestAlias;
 
 	/**
 	 * The Constructor.
@@ -507,14 +518,6 @@ public class RichLookupBean {
 		}
 		return criteria;
 	}
-
-	private void restoreValues(Map<String, ValueExpression> joinBindingsMap, Map<String, Object> valuesMap) {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		for (Entry<String, ValueExpression> entry : joinBindingsMap.entrySet()) {
-			Object value = valuesMap.get(entry.getKey());
-			entry.getValue().setValue(ctx.getELContext(), value);
-		}
-	}
 	
 	private void fireLookupChangeListener(UIComponent component, boolean resolved) {
 		if ( getComponent().getLookupChangeListener() != null ) {
@@ -539,7 +542,7 @@ public class RichLookupBean {
 
 	private Object getLookupValue() {
 		Object value = getController().getTo();
-		if ( getComponent().getLookupProperty() != null ) {
+		if (! StringUtils.isEmpty(getComponent().getLookupProperty()) ) {		
 			try {
 				value = PropertyUtils.getProperty( value, getComponent().getLookupProperty() );
 			} catch (Throwable e) {
@@ -568,7 +571,7 @@ public class RichLookupBean {
 	}
 	
 	public void lookupChanged( UIComponent component ) throws ManagerBeanException {
-		boolean restoreValues = false;
+		boolean resolved = false;
 		setBindings( component );
 		Map<String, ValueExpression> joinBindingsMap = getJoinBindingsMap(component);
 		Map<String, Object> valuesMap = getValuesMap(joinBindingsMap);
@@ -578,17 +581,16 @@ public class RichLookupBean {
 		if (getModel().getRowCount() == 1) {
 			getController().getModel().setRowIndex(0);
 			onSelect(null);
+			resolved = true;
 		} else {
 			onReset(null);
-			restoreValues = true;
+			AonUtil.addErrorMessageFromBundle(IRichConstants.SEARCH_NO_RESULTS);
 		}
-		fireLookupChangeListener(component, !restoreValues);
+		fireLookupChangeListener(component, resolved);
 		updateSourcePojo();
-		if (restoreValues) {
-			restoreValues(joinBindingsMap, valuesMap);
-		}
 		removeControllerListener();
 	}	
+
 	private void setBindings(UIComponent component) {
 		if (component instanceof ILookupComponent) {
 			this.component = (ILookupComponent) component;
@@ -779,6 +781,89 @@ public class RichLookupBean {
 	private void beforeCloseWindow() {
 		setShowWindow(false);
 		clearModel();
+		removeControllerListener();
+	}
+	
+	public boolean isResolved( ILookupComponent lookupComponent ) {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		Object to = lookupComponent.getProperty().getValue(ctx.getELContext());
+		if ( to != null ) {
+			try {
+				IManagerBean bean = null;
+				if ( StringUtils.isEmpty(lookupComponent.getLookupProperty()) ) {
+					bean = getController().getManagerBean();
+				} else {
+					bean = BeanManager.getManagerBean(to.getClass());
+				}
+				Serializable id = bean.getId( (ITransferObject) to); 
+				return (id != null);
+			} catch (ManagerBeanException e) {
+				LOGGER.error( "Error getting id", e );
+			}
+		}
+		return false;
+	}	
+
+	public void onClear( ActionEvent event ) {
+		setBindings(event.getComponent());
+		onReset(null);
+		fireLookupChangeListener(event.getComponent(), false);
+		updateSourcePojo();
+		removeControllerListener();
+	}
+
+	public String getSuggestAlias() {
+		if ( suggestAlias == null ) {
+			OrderByList list = getController().getOrderList();
+			if ( (list != null) && (!list.getOrders().isEmpty()) ) {
+				this.suggestAlias = list.getOrders().get(0).getExpression().getName();
+			}
+		}
+		return suggestAlias;
+	}
+
+	public void setSuggestAlias(String alias) {
+		this.suggestAlias = getController().resolveAlias(alias);
+	}
+
+	public List<ITransferObject> autocomplete( Object value ) {
+		if ( value != null ) {
+			String text = value.toString();
+			if (! StringUtils.isBlank(text) ) {
+				try {
+					getController().clearCriteria();
+					Criteria criteria = getController().getCriteria();
+					Expression exp = ExpressionUtilities.getLikeExpression(getSuggestAlias(), "%" + text + "%");
+					criteria.addExpression(exp);
+					return getController().getManagerBean().getList(criteria);
+		    	} catch (ManagerBeanException e) {
+		    		LOGGER.error( "Error getting suggestion objects", e );
+				}				
+			}
+		}
+    	return Collections.emptyList();
+    }	
+	
+	public ITransferObject getSuggestedTo() {
+		return suggestedTo;
+	}
+
+	public void setSuggestedTo(ITransferObject suggestedTo) {
+		this.suggestedTo = suggestedTo;
+	}
+
+	public void onSuggestSelect( ActionEvent event ) {
+		UIComponent component = event.getComponent().getParent().getParent();
+		setBindings( component );
+		try {
+			getController().select(event, this.suggestedTo);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSuggestSelect ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);			
+		}
+		fireLookupChangeListener(component, true);
+		updateSourcePojo();
 		removeControllerListener();
 	}
 	

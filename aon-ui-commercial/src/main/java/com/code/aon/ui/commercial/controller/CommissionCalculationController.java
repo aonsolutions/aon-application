@@ -45,6 +45,7 @@ public class CommissionCalculationController {
 	private WorkPlace workPlace;
 	private ICommissionStrategy commissionStrategy;
 	private IPriceStrategy priceStrategy;
+	private String beanName;
 	
 	public Seller getSeller() {
 		return seller;
@@ -109,9 +110,11 @@ public class CommissionCalculationController {
 		this.workPlace = workPlace;
 	}
 
-	public void onInitialize(ActionEvent event) {
-		setSeller(new Seller());
-		setTarget(new Target());
+	public void onInitialize(ActionEvent event) throws ManagerBeanException {
+		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
+		setSeller( (Seller) sellerBean.createNewTo() );
+		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
+		setTarget( (Target) targetBean.createNewTo() );
 		setConfidential(false);
 	}
 
@@ -255,4 +258,12 @@ public class CommissionCalculationController {
 		return priceStrategy;
 	}
 
+	public String getBeanName() {
+		return beanName;
+	}
+
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
+	}
+	
 }

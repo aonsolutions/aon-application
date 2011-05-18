@@ -189,6 +189,9 @@ color:#000;
 .aon-width-500{
 	width:500px;
 }	
+.aon-width-600{
+	width:600px;
+}	
 
 /************  REGIONES DE CONTENIDO *****************/
 /* tama�o inicial de la aplicacion*/
@@ -1731,6 +1734,42 @@ color:#000;
 	margin:0 2px 0 2px;
 	vertical-align: top;
 	}
+.aon-lookupButton-clear{	
+	background:#fff url(images/aon-icon/aon-icon-rubber.png) center center no-repeat;
+	border:#808080 1px solid;
+	width:18px;
+	height:20px;
+	margin:0 2px 0 2px;
+	vertical-align: top;
+	}
+	
+.aon-button-goto{	
+	background:#fff url(images/aon-icon/aon-icon-file-entrance.png) center center no-repeat;	
+	border:#808080 1px solid;
+	width:18px;
+	height:20px;
+	margin:0 2px 0 2px;
+	vertical-align: top;
+	}
+/*
+.aon-lookupButton-clear{	
+	background:transparent url(images/aon-icon/aon-icon-rubber.png) scroll left center no-repeat;
+	margin:0 2px;
+	width: 14px;
+	height:18px;
+	border:0;
+	vertical-align: top;
+	}
+	
+.aon-button-goto{	
+	background:transparent url(images/aon-icon/aon-icon-file-entrance.png) scroll left center no-repeat;	
+	margin:0 2px;
+	width: 14px;
+	height:18px;
+	border:0;
+	vertical-align: top;
+	}
+*/
 
 /**********************************************/
 /************   POPUP WINDOW  *************/

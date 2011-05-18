@@ -190,38 +190,13 @@
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Seller_id" 
-						value="#{salesBundle.sales_seller}" />
-					<aon:div styleClass="aon-lookup">
-						<a4j:region>
-							<aon:lookupInputText id="Seller_id" 
-								value="#{sales.to.seller.registry.id}"
-								disabled="#{!sales.pending}" size="5" 
-								lookupProperty="registry" lookup="#{sellerLookup}" 
-								lookupChangeListener="#{sales.sellerData}" 
-								reRender="Seller_full_name"
-								ajaxSingle="true" />
-							<aon:lookupButton
-								windowTitle="#{salesBundle.sales_seller_selection}"
-								disabled="#{!sales.pending}" minHeight="460" minWidth="650" 
-								property="#{sales.to.seller.registry}" lookupProperty="registry" lookup="#{sellerLookup}"
-								lookupChangeListener="#{sales.sellerData}"
-								selectReRender="Seller_id,Seller_full_name"								
-								actionType="search">
-							</aon:lookupButton>
-							<aon:lookupButton 
-								windowTitle="#{salesBundle.sales_seller_new}"
-								disabled="#{!sales.pending}" minWidth="650" minHeight="650"
-								property="#{sales.to.seller.registry}" lookupProperty="registry" lookup="#{sellerLookup}"
-								lookupChangeListener="#{sales.sellerData}"
-								selectReRender="Seller_id,Seller_full_name"
-								actionType="new">
-							</aon:lookupButton>														
-							<aon:inputText id="Seller_full_name" 
-								value="#{(sales.to.seller.registry.fullName!=null)?(sales.to.seller.registry.fullName):('')}"
-								disabled="true" size="50" />
-						</a4j:region>
-					</aon:div>
+					<ui:include src="/com/code/aon/ui/sales/facelet/sales/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{sales.to.seller.registry}" />
+						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupDisabled" value="#{!sales.pending}" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{sales.sellerData}" type="lookupChangeListener" />
+					</ui:include>
 
 					<aon:outputLabel for="Sales_workPlace" 
 						value="#{companyBundle.company_workplace}" />
@@ -296,27 +271,10 @@
 							<aon:inputText id="Sales_paymentDays"
 								value="#{sales.to.paymentDays}" 
 								disabled="#{!sales.pending}" size="5" />
-							<aon:div styleClass="aon-lookup">
-								<a4j:region>
-									<aon:lookupInputText id="Sales_bank_code"
-										value="#{sales.to.bank.code}"
-										disabled="#{!sales.pending}" size="5"
-										property="#{sales.to.bank}" lookup="#{bankLookup}"
-										reRender="Sales_bank_name">
-										<aon:joinProperty alias="Bank_code" value="#{sales.to.bank.code}" />
-									</aon:lookupInputText>
-									<aon:lookupButton 
-										windowTitle="#{configBundle.config_bank_selection}"
-										disabled="#{!sales.pending}" minHeight="460" minWidth="650"
-										property="#{sales.to.bank}" lookup="#{bankLookup}"
-										selectReRender="Sales_bank_code,Sales_bank_name"
-										actionType="search">
-									</aon:lookupButton>
-									<aon:inputText id="Sales_bank_name"
-										value="#{sales.to.bank.name}"
-										disabled="true" size="40" />							
-								</a4j:region>
-							</aon:div>
+							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{sales.to.bank}" />
+								<ui:param name="lookupDisabled" value="#{!sales.pending}" />
+							</ui:include>								
 							<aon:div>
 								<aon:inputText id="Sales_bank_office"
 									value="#{sales.to.bankAccount.office}"

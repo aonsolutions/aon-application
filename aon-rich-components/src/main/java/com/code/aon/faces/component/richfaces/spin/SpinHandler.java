@@ -26,11 +26,7 @@ public class SpinHandler extends TagHandler implements IRichFacesTags {
 
 	private static final String TEMPLATE = TEMPLATE_PATH + "spin.xhtml";
 	
-	private static final String CONTROLLER = "controller";
-	
 	private static final String SPIN_ID = "spinId";
-	
-   	private static final String ACTION = "action";
    	
    	private TagAttribute controllerTag;
 

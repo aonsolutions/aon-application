@@ -39,43 +39,15 @@
 						</aon:selectInputDate>
 					</aon:div>
 			
-					<aon:outputLabel for="CommercialTracking_seller_id"
-						value="#{salesBundle.sales_seller}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="CommercialTracking_seller_id"
-							lookup="#{sellerLookup}"
-							reRender="CommercialTracking_seller_name"
-							value="#{commercialTrackingSearch.seller.id}" size="5">
-						</aon:lookupInputText>
-						<aon:lookupButton id="CommercialTracking_seller_lookup"
-							windowTitle="#{salesBundle.sales_seller_selection}"
-							selectReRender="CommercialTracking_seller_id,CommercialTracking_seller_name"
-							lookup="#{sellerLookup}" minHeight="440"
-							property="#{commercialTrackingSearch.seller}">
-						</aon:lookupButton>
-						<aon:inputText id="CommercialTracking_seller_name"
-							value="#{(commercialTrackingSearch.seller.registry.name!=null)?(commercialTrackingSearch.seller.registry.fullName):('')}"
-							size="60" disabled="true" />
-					</aon:div>
-			
-					<aon:outputLabel for="CommercialTracking_target_id"
-						value="#{commercialBundle.commercial_target}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="CommercialTracking_target_id"
-							lookup="#{targetLookup}"
-							reRender="CommercialTracking_target_name"
-							value="#{commercialTrackingSearch.target.id}" size="5">
-						</aon:lookupInputText>
-						<aon:lookupButton id="CommercialTracking_target_lookup"
-							windowTitle="#{commercialBundle.commercial_target_selection}" actionType="search"
-							selectReRender="CommercialTracking_target_id,CommercialTracking_target_name"
-							lookup="#{targetLookup}" minHeight="460" minWidth="650"
-							property="#{commercialTrackingSearch.target}">
-						</aon:lookupButton>
-						<aon:inputText id="CommercialTracking_target_name"
-							value="#{(commercialTrackingSearch.target.registry.name!=null)?(commercialTrackingSearch.target.registry.fullName):('')}"
-							size="60" disabled="true" />
-					</aon:div>
+					<ui:include src="/com/code/aon/ui/sales/facelet/sales/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{commercialTrackingSearch.seller}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
+
+					<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{commercialTrackingSearch.target}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
 			
 					<aon:outputLabel for="CommercialTracking_activity_id"
 						value="#{commercialBundle.commercial_tracking_activity}" />

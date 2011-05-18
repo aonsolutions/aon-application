@@ -13,6 +13,8 @@ import com.code.aon.commercial.Target;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.TargetStatus;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
@@ -82,7 +84,8 @@ public class TargetSearchListener extends RegistrySearchListener implements ICom
 		setActivity(null);
 		setUserName(null);
 		setTrackingStatuses( new CommercialTrackingStatus[0] );
-		setSeller( new Seller() );
+		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
+		setSeller( (Seller) sellerBean.createNewTo() );
     	CommercialCollectionsController collections = (CommercialCollectionsController) AonUtil.getRegisteredBean(ICommercialConstants.COLLECTIONS_CONTROLLER_NAME);
 		collections.refreshActivities();
 		super.init();

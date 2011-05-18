@@ -5,6 +5,8 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.commercial.Expense;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.ExpenseStatus;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -44,7 +46,8 @@ public class ExpenseSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		setRegistry(new Registry());
-		setExpense(new Expense());
+		IManagerBean expenseBean = BeanManager.getManagerBean(Expense.class);
+		setExpense( (Expense) expenseBean.createNewTo() );		
 		ExpenseStatus[] defaultExpenseStatus = {ExpenseStatus.PENDING};
 		setExpenseStatuses(defaultExpenseStatus);		
 	}

@@ -33,50 +33,27 @@
 						<aon:outputLabel for="OfferTerm_name" value="#{bundle.aon_name}" />
 					</f:facet>
 					<aon:outputText value="#{to.name}" rendered="#{formList}" />
-					<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-						<aon:inputText id="OfferTerm_name"
-							value="#{controller.to.name}" required="true"
-							size="40" maxlength="64" />
-						<aon:lookupButton
-							windowTitle="#{commercialBundle.commercial_commercialTerm_selection}"
-							selectReRender="OfferTerm_name,OfferTerm_description"
-							lookup="#{commercialTermLookup}"
-							lookupChangeListener="#{controller.onTermChanged}"
-							controllerListener="#{controller.lookupListener}"
-							property="#{controller.commercialTerm}">
-						</aon:lookupButton>
-						<aon:lookupButton 
-							windowTitle="#{commercialBundle.commercial_commercialTerm_new}"
-							selectReRender="OfferTerm_name,OfferTerm_description"
-							lookup="#{commercialTermLookup}" minHeight="220" minWidth="520"
-							lookupChangeListener="#{controller.onTermChanged}"
-							controllerListener="#{controller.lookupListener}"
-							property="#{controller.commercialTerm}" actionType="new">
-						</aon:lookupButton>																								
-					</aon:div>
-					<f:facet name="footer">
-						<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-							<aon:inputText id="OfferTerm_name-New"
-								value="#{controller.to.name}" required="true"
-								size="40" maxlength="64" />
-							<aon:lookupButton
-								windowTitle="#{commercialBundle.commercial_commercialTerm_selection}"
-								selectReRender="OfferTerm_name-New,OfferTerm_description-New"
-								lookup="#{commercialTermLookup}"
-								lookupChangeListener="#{controller.onTermChanged}"
-								controllerListener="#{controller.lookupListener}"
-								property="#{controller.commercialTerm}">
-							</aon:lookupButton>
-							<aon:lookupButton 
-								windowTitle="#{commercialBundle.commercial_commercialTerm_new}"
-								selectReRender="OfferTerm_name-New,OfferTerm_description-New"
-								lookup="#{commercialTermLookup}" minHeight="220" minWidth="520"
-								lookupChangeListener="#{controller.onTermChanged}"
-								controllerListener="#{controller.lookupListener}"
-								property="#{controller.commercialTerm}" actionType="new">
-							</aon:lookupButton>						
-						</aon:div>
-					</f:facet>
+					<ui:include src="/com/code/aon/ui/commercial/facelet/commercialTerm/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{controller.commercialTerm}" />
+						<ui:param name="lookupControllerListener" value="#{controller.lookupListener}"/>
+						<ui:param name="lookupRendered" value="#{formEdit}" />
+						<ui:param name="lookupReRender" value="OfferTerm_description" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{controller.onTermChanged}" type="lookupChangeListener" />							
+					</ui:include>
+					<f:facet name="footer" >
+						<ui:include src="/com/code/aon/ui/commercial/facelet/commercialTerm/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{controller.commercialTerm}" />
+							<ui:param name="lookupControllerListener" value="#{controller.lookupListener}"/>
+							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupReRender" value="OfferTerm_description-New" />
+							<ui:param name="lookupSuffix" value="-New" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{controller.onTermChanged}" type="lookupChangeListener" />							
+						</ui:include>
+					</f:facet>						
 				</aon:column>
 	
 				<aon:column styleClass="aon-editDataTable-textColumn">

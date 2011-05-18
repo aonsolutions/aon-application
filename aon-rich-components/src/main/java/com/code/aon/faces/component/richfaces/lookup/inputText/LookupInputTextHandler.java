@@ -4,22 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.el.ExpressionFactory;
-import javax.el.MethodExpression;
 import javax.el.ValueExpression;
-import javax.faces.component.UIComponent;
-
-import org.apache.commons.beanutils.PropertyUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.AliasEntry;
 import com.code.aon.common.dao.DAOConstantsResolver;
-import com.code.aon.faces.component.richfaces.AonAjaxInputHandler;
-import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
+import com.code.aon.faces.component.richfaces.lookup.HtmlLookupBasicInput;
+import com.code.aon.faces.component.richfaces.lookup.LookupBasicInputHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.ui.form.BasicController;
 import com.sun.facelets.FaceletContext;
-import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 
 /**
@@ -27,10 +20,8 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
  * 
  * @author atellitu
  */
-public class LookupInputTextHandler extends AonAjaxInputHandler implements ILookupTags {
+public class LookupInputTextHandler extends LookupBasicInputHandler {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(LookupInputTextHandler.class);
-	
    	/**
 	 * The Constructor.
 	 * 
@@ -38,65 +29,9 @@ public class LookupInputTextHandler extends AonAjaxInputHandler implements ILook
 	 */
 	public LookupInputTextHandler(ComponentConfig config) {
 		super( new LookupInputTextConfig(config) );
-		setAjaxNeeded( true );
+		setAjaxNeeded( true );		
 	}
 
-	private void setLookupChangeListener( FaceletContext ctx, HtmlLookupInputText text ) {	
-		TagAttribute vcl = getAttribute(LOOKUP_CHANGE_LISTENER);
-		if ( vcl != null ) {
-			MethodExpression me = vcl.getMethodExpression(ctx, null, FaceletUtil.LOOKUP_CHANGE_LISTENER_SIG);
-			text.setLookupChangeListener( me );
-		}
-	}
-	
-	private String getPropertyClassName( FaceletContext ctx, HtmlLookupInputText text ) {
-		String className = null;		
-		BasicController controller = text.getLookup().getController();
-		if ( text.getLookupProperty() != null ) {
-			try {
-				Object value = controller.getManagerBean().createNewTo();
-				Class<?> _class = PropertyUtils.getPropertyType( value, text.getLookupProperty() );
-				if ( _class != null ) {
-					className = _class.getName();
-				}
-			} catch (Throwable e) {
-				// LOGGER.severe( e.getMessage() );
-			}
-		} else {
-			className = controller.getPojo();	
-		}			
-		return className;
-	}
-	
-	private ValueExpression getParentBinding( FaceletContext ctx, ValueExpression ve ) {
-		String parentExpression = ve.getExpressionString();
-		int pos = parentExpression.lastIndexOf('.');
-		if (pos != -1) {
-			String expression = parentExpression.substring(0, pos) + "}";
-			return ctx.getExpressionFactory().createValueExpression(ctx,expression, Object.class);
-		}
-		return null;
-	}		
-	
-	private ValueExpression getPropertyExpression( FaceletContext ctx, HtmlLookupInputText text ) {
-		ValueExpression ve = text.getValueExpression(VALUE);
-		String propertyClassName = getPropertyClassName(ctx, text);
-		while (ve != null) {
-			Class<?> type = null;
-			try {
-				type = ve.getType(ctx);
-			} catch ( Throwable th ) {
-				LOGGER.debug("Type no found for " + ve, th);
-				return null;
-			}
-			if (type.getName().equals(propertyClassName)) {
-				return ve;
-			} 
-			ve = getParentBinding(ctx, ve);
-		}
-		return null;
-	}	
-	
 	private Map<String, ValueExpression> calculateJoinBindings( FaceletContext ctx, HtmlLookupInputText text ) {
 		Map<String, ValueExpression> joinBindingsMap = new HashMap<String, ValueExpression>();
 		if ( text.getProperty() != null ) {
@@ -111,33 +46,14 @@ public class LookupInputTextHandler extends AonAjaxInputHandler implements ILook
 		}
 		return joinBindingsMap;
 	}
-	
-	/**
-	 * Sets the attributes.
-	 * 
-	 * @param instance the instance
-	 * @param ctx the ctx
-	 */
+
 	@Override
-	protected void setAttributes(FaceletContext ctx, Object instance) {
-		super.setAttributes(ctx, instance);
-		HtmlLookupInputText text = (HtmlLookupInputText) instance;
-		setLookupChangeListener(ctx, text);
-	}
-	
-	@Override
-	protected void onComponentPopulated(FaceletContext ctx, UIComponent c, UIComponent parent) {
-		HtmlLookupInputText text = (HtmlLookupInputText) c;		
-		if ( c.isRendered() && parent.isRendered() ) {
-			if ( text.getProperty() == null ) {
-				ValueExpression ve = getPropertyExpression(ctx, text);
-				text.setProperty(ve);
-			}					
-			Map<String, ValueExpression> joinBindingsMap = text.getJoinBindingsMap(); 
-			if (joinBindingsMap.isEmpty()) {
-				joinBindingsMap = calculateJoinBindings(ctx, text);
-				text.setJoinBindingsMap(joinBindingsMap);
-			}
+	protected void onComponentPopulated(FaceletContext ctx, HtmlLookupBasicInput component) {
+		HtmlLookupInputText text = (HtmlLookupInputText) component;
+		Map<String, ValueExpression> joinBindingsMap = text.getJoinBindingsMap(); 
+		if (joinBindingsMap.isEmpty()) {
+			joinBindingsMap = calculateJoinBindings(ctx, text);
+			text.setJoinBindingsMap(joinBindingsMap);
 		}
 	}
 	

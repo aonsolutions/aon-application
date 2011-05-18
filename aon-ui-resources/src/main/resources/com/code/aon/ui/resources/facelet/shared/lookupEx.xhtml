@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:param name="lookup_reRender" value="lookup#{pojoName}#{lookupSuffix}#{(lookupReRender != null)?',':''}#{lookupReRender}"/>
+
+	<c:if test="#{(!skipLabel) and lookupRendered}">
+		<aon:outputLabel for="#{pojoName}_id#{lookupSuffix}"
+			value="#{lookupLabel}" />			
+	</c:if>
+	<aon:div id="lookup#{pojoName}#{lookupSuffix}"
+		styleClass="aon-lookup" rendered="#{lookupRendered}" >
+		
+		<ui:insert name="beforeLookupContent"/>
+		
+		<c:if test="#{!skipInputText}">
+			<aon:lookupInputText id="#{pojoName}_id#{lookupSuffix}"
+				value="#{lookupInputValue}" property="#{lookupTo}" 
+				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}" 
+				lookupChangeListener="#{lookupChangeListener}"
+				controllerListener="#{lookupControllerListener}"
+				required="#{idRequired}" disabled="#{lookupDisabled}"
+				size="#{lookupInputSize}" maxlength="#{lookupInputMaxLength}"  
+				reRender="#{lookup_reRender}" >
+				<ui:insert name="lookupInputTextContent"/>
+			</aon:lookupInputText>
+		</c:if>
+		<c:if test="#{!skipGoToButton}">
+			<aon:goToButton controller="#{controller}" property="#{lookupTo}" />
+		</c:if>
+		<aon:lookupButton
+			windowTitle="#{searchButtonTitle}" property="#{lookupTo}"
+			minHeight="#{searchButtonHeight}" minWidth="#{searchButtonWidth}"
+			disabled="#{lookupDisabled}" actionType="#{lookupSelectType}"
+			lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
+			lookupChangeListener="#{lookupChangeListener}"
+			controllerListener="#{lookupControllerListener}"
+			selectReRender="#{lookup_reRender}" />
+		<aon:lookupButton
+			actionType="clear" disabled="#{lookupDisabled}" 
+			lookup="#{lookupBean}" property="#{lookupTo}"
+			lookupProperty="#{lookupProperty}"
+			lookupChangeListener="#{lookupChangeListener}"
+			controllerListener="#{lookupControllerListener}"
+			selectReRender="lookup#{pojoName}#{lookupSuffix}" />			
+		<c:if test="#{!skipNewButton}">
+			<aon:lookupButton 
+				windowTitle="#{newButtonTitle}"
+				disabled="#{lookupDisabled}" actionType="new"
+				minHeight="#{newButtonHeight}" minWidth="#{newButtonWidth}"
+				property="#{lookupTo}" lookup="#{lookupBean}"
+				lookupChangeListener="#{lookupChangeListener}"
+				controllerListener="#{lookupControllerListener}"
+				selectReRender="#{lookup_reRender}" />
+		</c:if>
+		<c:if test="#{!skipSuggestText}">																		
+			<aon:lookupSuggestText id="#{pojoName}_name#{lookupSuffix}"
+				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
+				lookupChangeListener="#{lookupChangeListener}"
+				controllerListener="#{lookupControllerListener}"
+				value="#{lookupInputSuggestValue}" property="#{lookupTo}" 
+				columnExpression="#{lookupInputSuggestExpression}"
+				disabled="#{lookupDisabled}" size="#{lookupInputSuggestSize}"
+				selectReRender="#{lookup_reRender}" />
+		</c:if>
+	</aon:div>
+
+</ui:composition>

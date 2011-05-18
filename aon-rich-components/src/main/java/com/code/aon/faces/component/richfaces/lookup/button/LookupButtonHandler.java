@@ -7,15 +7,19 @@ import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
+import javax.faces.event.MethodExpressionActionListener;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxComponentHandler;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
-import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
+import com.code.aon.faces.component.richfaces.lookup.HtmlLookupBasicInput;
+import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
+import com.code.aon.faces.component.richfaces.lookup.ILookupConstants;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.MetaRuleset;
+import com.sun.facelets.tag.Tag;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 
@@ -24,26 +28,8 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
  * 
  * @author atellitu
  */
-public class LookupButtonHandler extends AonAjaxComponentHandler implements ILookupTags, IRichFacesTags {
+public class LookupButtonHandler extends AonAjaxComponentHandler implements ILookupConstants, IRichFacesTags {
 
-   	private static final String LIST_STYLE_CLASS = "aon-lookupButton";
-   	
-   	private static final String LIST_DISABLED_STYLE_CLASS = "aon-lookupButton-disabled";
-
-   	private static final String NEW_STYLE_CLASS = "aon-lookupButton-new";
-   	
-   	private static final String NEW_DISABLED_STYLE_CLASS = "aon-lookupButton-new-disabled";
-
-   	private static final String LIST_TITLE = "#{bundle.aon_open_select_window}";
-   	
-   	private static final String NEW_TITLE = "#{bundle.aon_open_new_window}";
-   	
-    private static final String LIST_ACTION_LISTENER = "onShowListWindow";
-	
-   	private static final String SEARCH_ACTION_LISTENER = "onShowSearchWindow";
-   	
-   	private static final String NEW_ACTION_LISTENER = "onShowNewWindow";
-   	
    	private TagAttribute lookup;
    	
    	/**
@@ -63,54 +49,27 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		return mrs;
 	}
 
-	private LookupButtonType getType(FaceletContext ctx) {
+	private void updateType(FaceletContext ctx, HtmlLookupButton button) {
 		LookupButtonType type = LookupButtonType.LIST;
 		TagAttribute typeTag = getAttribute(ACTION_TYPE);
 		if ( typeTag != null ) {
 			String value = typeTag.getValue(ctx);
 			type = LookupButtonType.get(value);
 		}
-		return type;
+		button.setButtonType(type);
 	}
 	
-	private String getStyleClass( HtmlLookupButton button, LookupButtonType type ) {
-		String styleClass = LIST_STYLE_CLASS;
+	private String getStyleClass( HtmlLookupButton button ) {
 		if ( button.isDisabled() ) {
-			if ( type == LookupButtonType.NEW ) {
-				styleClass = NEW_DISABLED_STYLE_CLASS;
-			} else {
-				styleClass = LIST_DISABLED_STYLE_CLASS;
-			}
-		} else {
-			if ( type == LookupButtonType.NEW ) {
-				styleClass = NEW_STYLE_CLASS;
-			}
+			return button.getButtonType().getDisabledStyleClass();
 		}
-		return styleClass;
-	}
-
-	private String getTitle( LookupButtonType type ) {
-		if ( type == LookupButtonType.NEW ) {
-			return NEW_TITLE;
-		}
-		return LIST_TITLE;
+		return button.getButtonType().getStyleClass();
 	}
 	
 	private void setActionListener( FaceletContext ctx, HtmlLookupButton button ) {
-		String actionListener = null;
-		String value = lookup.getValue();
-		switch ( button.getActionType() ) {
-			case LIST:
-				actionListener = FaceletUtil.appendExpression( value, LIST_ACTION_LISTENER);
-				break;
-			case NEW:
-				actionListener = FaceletUtil.appendExpression( value, NEW_ACTION_LISTENER);				
-				break;
-			case SEARCH:
-				actionListener = FaceletUtil.appendExpression( value, SEARCH_ACTION_LISTENER);				
-				break;
-		}
-		UIComponentTagUtils.setActionListenerProperty( ctx.getFacesContext(), button, actionListener);
+		String actionListener = button.getButtonType().getActionListener(lookup.getValue());
+		MethodExpression me = FaceletUtil.getMethodExpression(ctx, actionListener, null, FaceletUtil.ACTION_LISTENER_SIG);
+		button.addActionListener( new MethodExpressionActionListener(me) );
 	}
 
 	public static String getLookupBeanName(FaceletContext ctx, TagAttribute lookupTag) {
@@ -124,6 +83,65 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		return getLookupBeanName(ctx, lookupTag) + "ModalPanel";
 	}
 	
+	public static void updateProperty( FaceletContext ctx, Tag tag, ILookupComponent component ) {
+		TagAttribute tagProperty = FaceletUtil.getAttribute(tag, PROPERTY);
+		if ( tagProperty != null ) {
+			ValueExpression ve = tagProperty.getValueExpression(ctx, Object.class);
+			component.setProperty( ve );
+		}		
+	}
+
+	public static void setLookupChangeListener( FaceletContext ctx, Tag tag, ILookupComponent component ) {	
+		TagAttribute vcl = FaceletUtil.getAttribute(tag, LOOKUP_CHANGE_LISTENER);
+		if ( vcl != null ) {
+			MethodExpression me = vcl.getMethodExpression(ctx, null, FaceletUtil.LOOKUP_CHANGE_LISTENER_SIG);
+			component.setLookupChangeListener( me );
+		}
+	}
+	
+	private void setReRender( FaceletContext ctx, HtmlLookupButton button) {
+		if ( button.getButtonType() == LookupButtonType.CLEAR ) {
+			TagAttribute tagSRR = getAttribute(SELECT_RE_RENDER);
+			if ( tagSRR != null ) {
+				String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), tagSRR.getValue(ctx));
+				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, RERENDER, value);							
+			}
+		} else {
+			String id = getModalPanelId(ctx, lookup) + "ReRender";
+			String reRender = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, RERENDER, reRender);
+		}
+	}
+	
+	private void updateRendered( FaceletContext ctx, HtmlLookupButton button) {
+		TagAttribute renderedTag = getAttribute(RENDERED);
+		if ( renderedTag == null ) {
+			LookupButtonType type = button.getButtonType();
+			if ( type == LookupButtonType.CLEAR ) {
+				String rendered = Boolean.toString(button.isResolved());
+				UIComponentTagUtils.setBooleanProperty(ctx.getFacesContext(), button, RENDERED, rendered);
+			} else if ( (type == LookupButtonType.SEARCH) || (type == LookupButtonType.LIST) ) {
+				String rendered = Boolean.toString(!button.isResolved());
+				UIComponentTagUtils.setBooleanProperty(ctx.getFacesContext(), button, RENDERED, rendered);
+			}
+		}
+	}	
+
+	private void updateStyleClass( FaceletContext ctx, HtmlLookupButton button) {
+		if (! FaceletUtil.hasValue(ctx, tag, HTML.STYLE_CLASS_ATTR) ) {
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.STYLE_CLASS_ATTR, getStyleClass(button) );
+		}
+	}	
+	
+	private void configureButton( FaceletContext ctx, HtmlLookupButton button) {
+		setActionListener(ctx, button);		
+		if (! FaceletUtil.hasValue(ctx, tag, HTML.TITLE_ATTR) ) {
+			String title = button.getButtonType().getTitle();
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.TITLE_ATTR, title );			
+		}		
+		setReRender(ctx, button);
+	}
+	
 	/**
 	 * Sets the attributes.
 	 * 
@@ -134,35 +152,21 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 	protected void setAttributes(FaceletContext ctx, Object instance) {
 		super.setAttributes(ctx, instance);
 		HtmlLookupButton button = (HtmlLookupButton) instance;
-		button.setValue("");
-		LookupButtonType type = getType(ctx); 
-		button.setActionType( type );
-		if (! FaceletUtil.hasValue(ctx, tag, HTML.TITLE_ATTR) ) {
-			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.TITLE_ATTR, getTitle(type) );			
-		}
-		TagAttribute vcl = getAttribute(LOOKUP_CHANGE_LISTENER);
-		if ( vcl != null ) {
-			MethodExpression me = vcl.getMethodExpression(ctx, null, FaceletUtil.LOOKUP_CHANGE_LISTENER_SIG);
-			button.setLookupChangeListener( me );
-		}
-		setActionListener(ctx, button);
-		String id = getModalPanelId(ctx, lookup) + "ReRender";
-		String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
-		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, RERENDER, value);
+		updateProperty(ctx, tag, button);
+		setLookupChangeListener(ctx, tag, button);
+		updateType(ctx, button); 
+		configureButton(ctx, button);
 	}
 
 	@Override
 	protected void applyNextHandler(FaceletContext ctx, UIComponent c)
 			throws IOException, FacesException, ELException {
 		HtmlLookupButton button = (HtmlLookupButton) c;
-		LookupButtonType type = getType(ctx); 
-		if (! FaceletUtil.hasValue(ctx, tag, HTML.STYLE_CLASS_ATTR) ) {
-			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.STYLE_CLASS_ATTR, getStyleClass(button, type) );
-		}
 		String buttonId = button.getClientId(ctx.getFacesContext());
 		button.setWindowCloseFocus( buttonId );
+		updateRendered(ctx, button);
+		updateStyleClass(ctx, button);
 		super.applyNextHandler(ctx, c);
 	}
-
 	
 }

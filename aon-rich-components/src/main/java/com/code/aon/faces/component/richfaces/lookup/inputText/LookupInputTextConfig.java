@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.code.aon.faces.component.AttributeInfo;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
-import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
+import com.code.aon.faces.component.richfaces.lookup.ILookupConstants;
 import com.code.aon.faces.component.util.AonComponentConfig;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.tag.TagAttribute;
@@ -17,7 +17,7 @@ public class LookupInputTextConfig extends AonComponentConfig {
 		
 	public LookupInputTextConfig(ComponentConfig config) {
 		super(config);
-    	TagAttribute lookupTag = config.getTag().getAttributes().get(ILookupTags.LOOKUP);
+    	TagAttribute lookupTag = config.getTag().getAttributes().get(ILookupConstants.LOOKUP);
     	if ( lookupTag != null ) {
         	String value = FaceletUtil.appendExpression( lookupTag.getValue(), VALUE_CHANGE_LISTENER );
         	List<AttributeInfo> extraAttributes = new LinkedList<AttributeInfo>();

@@ -6,6 +6,8 @@ import com.code.aon.commercial.Target;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -72,9 +74,12 @@ public class OfferSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		setOfferType(null);
-		setTarget(new Target());
-		setSupplier(new Supplier());
-		setSeller(new Seller());
+		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
+		setSeller( (Seller) sellerBean.createNewTo() );
+		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
+		setTarget( (Target) targetBean.createNewTo() );
+		IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
+		setSupplier( (Supplier) supplierBean.createNewTo() );
 		OfferStatus[] defaultOfferStatus = {OfferStatus.PENDING};
 		setOfferStatuses(defaultOfferStatus);
 	}

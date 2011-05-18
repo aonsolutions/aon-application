@@ -453,6 +453,10 @@
 			<value>com.code.aon.config.Bank</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Bank_name</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/config/facelet/lookup/bank/list.xhtml</value>
 		</managed-property>

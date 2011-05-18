@@ -7,7 +7,6 @@ import javax.el.VariableMapper;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
-import org.richfaces.component.UIDatascroller;
 import org.richfaces.taglib.DataScrollerTagHandler;
 
 import com.code.aon.faces.component.ComponentManager;
@@ -25,8 +24,6 @@ public class DataPaginatorHandler extends DataScrollerTagHandler {
 	private static final String TEMPLATE = TEMPLATE_PATH + "dataPaginator.xhtml";
 	
 	private static final String PAGINATOR_ATTRIBUTE = "paginator";
-	
-	private static final String FOR_ATTRIBUTE = "for";
 	
 	private static final String SHOW_VALUE = "show";
 	

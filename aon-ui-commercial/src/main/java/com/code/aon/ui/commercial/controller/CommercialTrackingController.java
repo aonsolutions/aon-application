@@ -111,7 +111,7 @@ public class CommercialTrackingController extends BasicController {
 	
 	public void onPreviousAction( ActionEvent event ) {
 		try {
-			select( event, getPrevious() );
+			select( event, getPrevious().getId() );
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onPreviousAction exception: ", e);
 			addMessage(e.getMessage());
@@ -121,7 +121,7 @@ public class CommercialTrackingController extends BasicController {
 	
 	public void onNextAction( ActionEvent event ) {
 		try {
-			select( event, ((CommercialTracking) getTo()).getNext() );
+			select( event, ((CommercialTracking) getTo()).getNext().getId() );
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onNextAction exception: ", e);
 			addMessage(e.getMessage());
@@ -182,7 +182,7 @@ public class CommercialTrackingController extends BasicController {
 		Offer offer = ct.getOffer();
 		OfferController controller = (OfferController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_CONTROLLER_NAME);
 		try {
-			controller.select(event, offer);
+			controller.select(event, offer.getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectOffer exception: ", e);
 			addMessage(e.getMessage());

@@ -108,6 +108,17 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>goToButton</tag-name>
+		<component>
+			<component-type>
+				com.code.aon.faces.CommandButton
+			</component-type>
+			<handler-class>
+				com.code.aon.faces.component.richfaces.goToButton.GoToButtonHandler
+			</handler-class>
+		</component>
+	</tag>	
+	<tag>
 		<tag-name>htmlCommandLink</tag-name>
 		<component>
 			<component-type>
@@ -447,6 +458,17 @@
 			</handler-class>
 		</component>
 	</tag>
+	<tag>
+		<tag-name>lookupSuggestText</tag-name>
+		<component>
+			<component-type>
+				com.code.aon.faces.HtmlLookupSuggestText
+			</component-type>
+			<handler-class>
+				com.code.aon.faces.component.richfaces.lookup.suggestText.LookupSuggestTextHandler
+			</handler-class>
+		</component>
+	</tag>	
 	<tag>
 		<tag-name>lookupButtonPopup</tag-name>
 		<handler-class>

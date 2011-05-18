@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.richfaces.column;
 
+import static com.code.aon.faces.component.richfaces.lookup.ILookupConstants.ALIAS;
+
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 
@@ -21,13 +23,11 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
 
 public class ColumnHandler extends ColumnTagHandler implements IRichFacesTags {
 
-	private static final String ALIAS = "alias";
-	
 	public ColumnHandler(ComponentConfig config) {
 		super(config);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected MetaRuleset createMetaRuleset(Class type) {
 		MetaRuleset set = super.createMetaRuleset(type);

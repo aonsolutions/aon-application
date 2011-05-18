@@ -64,8 +64,6 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 
 	private static final String CONFIRM_MESSAGE = "confirmMessage";
 
-	private static final String IMMEDIATE = "immediate";
-	
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/confirmButton/";
 
 	private static final String TEMPLATE = TEMPLATE_PATH + "template.xhtml";

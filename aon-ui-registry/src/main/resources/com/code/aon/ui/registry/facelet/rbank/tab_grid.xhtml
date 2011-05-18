@@ -12,20 +12,20 @@
 		<ui:define name="columns">
 			<aon:column width="300" styleClass="aon-nowrap aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputLabel for="RegistryBank_code" value="#{configBundle.config_bank}" />
+					<aon:outputLabel for="Bank_id" value="#{configBundle.config_bank}" />
 				</f:facet>
 				<aon:outputText value="#{to.bank.name}" rendered="#{formList}" />
-				<ui:include src="bankLookup.xhtml">
-					<ui:param name="bankTo" value="#{controller.to.bank}" />
-					<ui:param name="renderBankLookup" value="#{formEdit}" />
+				<ui:include src="lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{controller.to.bank}" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
 				</ui:include>
-				<f:facet name="footer">
-					<ui:include src="bankLookup.xhtml">
-						<ui:param name="bankTo" value="#{controller.to.bank}" />
-						<ui:param name="renderBankLookup" value="#{formNew}" />
-						<ui:param name="bankSuffix" value="-New" />
+				<f:facet name="footer" >
+					<ui:include src="lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{controller.to.bank}" />
+						<ui:param name="lookupRendered" value="#{formNew}" />
+						<ui:param name="lookupSuffix" value="-New" />
 					</ui:include>
-				</f:facet>
+				</f:facet>				
 			</aon:column>
 
 			<aon:column>

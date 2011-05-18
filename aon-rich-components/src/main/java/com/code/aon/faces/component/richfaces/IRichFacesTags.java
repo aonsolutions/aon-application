@@ -49,4 +49,13 @@ public interface IRichFacesTags {
 	String MIN_HEIGHT = "minHeight";
 	
 	String STATUS = "status";
+	
+	String MIN_CHARS = "minChars";
+	
+	String CONTROLLER = "controller";
+
+	String PROPERTY = "property";
+
+	String IMMEDIATE = "immediate";
+	
 }

@@ -2,6 +2,7 @@ package com.code.aon.faces.component.richfaces.lookup.button;
 
 import static com.code.aon.faces.component.richfaces.IRichFacesTags.MIN_HEIGHT;
 import static com.code.aon.faces.component.richfaces.IRichFacesTags.MIN_WIDTH;
+import static com.code.aon.faces.component.richfaces.IRichFacesTags.PROPERTY;
 
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
@@ -10,11 +11,11 @@ import javax.faces.context.FacesContext;
 import org.ajax4jsf.component.html.HtmlAjaxCommandButton;
 
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
-import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
+import com.code.aon.faces.component.richfaces.lookup.ILookupConstants;
 import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.ui.form.event.IControllerListener;
 
-public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTags, ILookupComponent {
+public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupConstants, ILookupComponent {
 
     /**
      * String constant component type
@@ -25,8 +26,8 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
 	private static final String DEFAULT_MIN_WIDTH = "500";
 	
 	private static final String DEFAULT_MIN_HEIGHT = "300";    
-   	
-    private LookupButtonType actionType;
+    
+    private LookupButtonType buttonType;
     
     private ValueExpression property;
     
@@ -49,19 +50,15 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
     private String windowCloseFocus;
     
 	private Object[] _state;    
-    
-    public void setActionType(LookupButtonType type) {
-    	this.actionType = type;
+	
+	public LookupButtonType getButtonType() {
+		return buttonType;
 	}
 
-	public LookupButtonType getActionType() {
-    	if (null != this.actionType) {
-            return this.actionType;
-        }
-    	ValueExpression _vb = getValueExpression(ACTION_TYPE);
-        return (_vb != null) ? (LookupButtonType) _vb.getValue(getFacesContext().getELContext()) : null;
-    }
-	
+	public void setButtonType(LookupButtonType buttonType) {
+		this.buttonType = buttonType;
+	}
+
 	public RichLookupBean getLookup() {
     	if (null != this.lookup) {
             return this.lookup;
@@ -176,7 +173,24 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
 	public void setWindowCloseFocus(String windowCloseFocus) {
 		this.windowCloseFocus = windowCloseFocus;
 	}
+	
+	public boolean isResolved() {
+		return getLookup().isResolved( this );
+	}
 
+	public boolean isDisabled() {
+		switch ( buttonType ) {
+			case CLEAR:
+			case NEW:
+				return super.isDisabled();
+			default:
+				if ( super.isDisabled() ) {
+					return true;
+				}
+				return isResolved();
+		}
+	}
+	
 	/**
      * <p>Gets the state of the instance as a <code>Serializable</code>
      * Object.</p>
@@ -188,16 +202,16 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
   		this._state = (Object[]) value;  
   		super.restoreState(context, this._state[0]);  
   		lookup = (RichLookupBean) this._state[1];
-  		property = (ValueExpression) this._state[2];  
-  		actionType = (LookupButtonType) this._state[3];  		
-  		lookupChangeListener = (MethodExpression) this._state[4];  	
-  		windowTitle = (String) this._state[5];
-  		selectReRender = (String) this._state[6];
-  		minWidth = (String) this._state[7];
-  		minHeight = (String) this._state[8];
-  		lookupProperty = (String) this._state[9];
-  		controllerListener = (IControllerListener) this._state[10];
-  		windowCloseFocus = (String) this._state[11];
+  		property = (ValueExpression) this._state[2];   		
+  		lookupChangeListener = (MethodExpression) this._state[3];  	
+  		windowTitle = (String) this._state[4];
+  		selectReRender = (String) this._state[5];
+  		minWidth = (String) this._state[6];
+  		minHeight = (String) this._state[7];
+  		lookupProperty = (String) this._state[8];
+  		controllerListener = (IControllerListener) this._state[9];
+  		windowCloseFocus = (String) this._state[10];
+  		buttonType = (LookupButtonType) this._state[11];
   	}  
    
     /**
@@ -214,15 +228,15 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
   		_state[0] = super.saveState(_context);  
   		_state[1] = lookup;
   		_state[2] = property;
-  		_state[3] = actionType;  
-  		_state[4] = lookupChangeListener;  
-  		_state[5] = windowTitle;
-  		_state[6] = selectReRender;
-  		_state[7] = minWidth;
-  		_state[8] = minHeight;
-  		_state[9] = lookupProperty;
-  		_state[10] = controllerListener;
-  		_state[11] = windowCloseFocus;
+  		_state[3] = lookupChangeListener;  
+  		_state[4] = windowTitle;
+  		_state[5] = selectReRender;
+  		_state[6] = minWidth;
+  		_state[7] = minHeight;
+  		_state[8] = lookupProperty;
+  		_state[9] = controllerListener;
+  		_state[10] = windowCloseFocus;
+  		_state[11] = buttonType;
   		return _state;  
   	}
 	

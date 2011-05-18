@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.methodParam;
 
+import static com.code.aon.faces.component.richfaces.lookup.ILookupConstants.LOOKUP_CHANGE_LISTENER;
+
 import java.io.IOException;
 
 import javax.el.ELException;
@@ -62,6 +64,9 @@ public class MethodParamHandler extends TagHandler implements IRichFacesTags {
 		} else if ( NODE_SELECT_LISTENER.equals(type) ) {
 			this.returnType = null;
 			this.paramTypes = FaceletUtil.NODE_SELECT_LISTENER_SIG;			
+		} else if ( LOOKUP_CHANGE_LISTENER.equals(type) ) {
+			this.returnType = null;
+			this.paramTypes = FaceletUtil.LOOKUP_CHANGE_LISTENER_SIG;			
 		}
 	}
 	

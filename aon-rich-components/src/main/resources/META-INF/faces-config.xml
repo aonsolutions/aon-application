@@ -151,6 +151,10 @@
         <component-class>com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText</component-class>
     </component>
     <component>
+        <component-type>com.code.aon.faces.HtmlLookupSuggestText</component-type>
+        <component-class>com.code.aon.faces.component.richfaces.lookup.suggestText.HtmlLookupSuggestText</component-class>
+    </component>
+    <component>
         <component-type>com.code.aon.faces.MenuBar</component-type>
         <component-class>org.richfaces.component.html.HtmlToolBar</component-class>
     </component>

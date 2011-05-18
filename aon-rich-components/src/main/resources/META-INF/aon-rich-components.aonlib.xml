@@ -4,13 +4,26 @@
 	<component localName="lookupInputText">
     	<attribute name="styleClass" value="aon-lookupInputText" />
 	</component>
+
+	<component localName="lookupSuggestText">
+    	<attribute name="styleClass" value="aon-lookupInputText" />
+	</component>
 	
 	<component localName="lookupButton">
+		<attribute name="value" value="&#160;" />
     	<attribute name="immediate" value="true" type="1" />
 	</component>
 	
 	<component localName="lookupButtonPopup">
     	<attribute name="styleClass" value="aon-lookupButtonPopup" />
+	</component>
+
+	<component localName="goToButton">
+    	<attribute name="title" value="#{bundle.aon_go}" />
+    	<attribute name="value" value="&#160;" />
+    	<attribute name="reRender" value="aonContent" />
+    	<attribute name="styleClass" value="aon-button-goto" />
+    	<attribute name="immediate" value="true" type="1" />
 	</component>
 	
 	<component localName="confirmButton">

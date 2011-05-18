@@ -125,7 +125,7 @@
 
 	<aon:outputLabel for="RegistryPayMethod_payment" value="#{configBundle.config_pay_method}" />
 	<aon:selectOneMenu id="RegistryPayMethod_payment" 
-		reRender="personForm" focus="RegistryPayMethod_bank"
+		reRender="personForm" focus="Bank_id"
 		value="#{personPayMethodForm.registryPayMethod.payment}">
 		<f:selectItem value="#{null}" />
 		<f:selectItems value="#{configCollections.payMethods}" />
@@ -133,27 +133,19 @@
 
 	<c:if test="#{personPayMethodForm.registryPayMethod.payment.type != null}">
 		<c:if test="#{personPayMethodForm.showCompanyBanks}">
-			<aon:outputLabel for="RegistryPayMethod_bank" value="#{configBundle.config_bank}" />
-			<aon:selectOneMenu id="RegistryPayMethod_bank"
+			<aon:outputLabel for="Bank_id" value="#{configBundle.config_bank}" />
+			<aon:selectOneMenu id="Bank_id"
 				value="#{personPayMethodForm.registryBank}">
 				<f:selectItem value="#{null}" />
 				<f:selectItems value="#{companyCollections.companyBanks}" />
 			</aon:selectOneMenu>
 		</c:if>					
 		<c:if test="#{!personPayMethodForm.showCompanyBanks and !personPayMethodForm.cash}">
-			<aon:outputLabel for="RegistryPayMethod_bank" value="#{configBundle.config_bank}" />
+			<aon:outputLabel for="Bank_id" value="#{configBundle.config_bank}" />
 			<aon:panelGroup>
-				<aon:lookupInputText id="RegistryPayMethod_bank" property="#{personPayMethodForm.registryBank.bank}"
-					reRender="RegistryBank_name" lookup="#{bankLookup}"
-					value="#{personPayMethodForm.registryBank.bank.code}" size="5">
-					<aon:joinProperty alias="Bank_code" value="#{personPayMethodForm.registryBank.bank.code}" />
-				</aon:lookupInputText>
-				<aon:lookupButton 
-					windowTitle="#{configBundle.config_bank_selection}"
-					selectReRender="RegistryPayMethod_bank,RegistryBank_name" actionType="search"
-					lookup="#{bankLookup}" minHeight="460" minWidth="650"
-					property="#{personPayMethodForm.registryBank.bank}">
-				</aon:lookupButton>
+				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{personPayMethodForm.registryBank.bank}" />
+				</ui:include>						
 				<aon:inputText id="RegistryBank_name"
 					value="#{personPayMethodForm.registryBank.bank.name}"
 					size="20" disabled="true" />

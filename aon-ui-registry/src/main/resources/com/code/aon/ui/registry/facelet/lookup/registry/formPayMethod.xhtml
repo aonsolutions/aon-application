@@ -15,16 +15,16 @@
 			<aon:selectOneMenu id="RegistryPayMethod_payment"
 				valueChangeListener="#{controllerLookupListener.onPayMethodChanged}"
 				reRender="Registry-PayMethodDiv,Registry-PayMethodDiv2"
-				focus="RegistryPayMethod_bank"
+				focus="Bank_id"
 				value="#{controllerLookupListener.registryPayMethod.payment}">
 				<f:selectItem value="#{null}" />
 				<f:selectItems value="#{configCollections.payMethods}" />
 			</aon:selectOneMenu>				
 			
 			<c:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">
-				<aon:outputLabel for="RegistryPayMethod_bank" value="#{configBundle.config_bank}" />
+				<aon:outputLabel for="Bank_id" value="#{configBundle.config_bank}" />
 				<c:if test="#{controllerLookupListener.showCompanyBanks}">
-					<aon:selectOneMenu id="RegistryPayMethod_bank"
+					<aon:selectOneMenu id="Bank_id"
 						value="#{controllerLookupListener.registryBank}">
 						<f:selectItem value="#{null}" />
 						<f:selectItems value="#{companyCollections.companyBanks}" />
@@ -32,17 +32,9 @@
 				</c:if>					
 				<c:if test="#{!controllerLookupListener.showCompanyBanks}">
 					<aon:panelGroup>
-						<aon:lookupInputText id="RegistryPayMethod_bank" property="#{controllerLookupListener.registryBank.bank}"
-							reRender="RegistryBank_name" lookup="#{bankLookup}"
-							value="#{controllerLookupListener.registryBank.bank.code}" size="5">
-							<aon:joinProperty alias="Bank_code" value="#{controllerLookupListener.registryBank.bank.code}" />
-						</aon:lookupInputText>
-						<aon:lookupButton 
-							windowTitle="#{configBundle.config_bank_selection}"
-							selectReRender="RegistryPayMethod_bank,RegistryBank_name" actionType="search"
-							lookup="#{bankLookup}" minHeight="460" minWidth="650"
-							property="#{controllerLookupListener.registryBank.bank}">
-						</aon:lookupButton>
+						<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{controllerLookupListener.registryBank.bank}" />
+						</ui:include>						
 						<aon:inputText id="RegistryBank_name"
 							value="#{controllerLookupListener.registryBank.bank.name}"
 							size="50" disabled="true" />

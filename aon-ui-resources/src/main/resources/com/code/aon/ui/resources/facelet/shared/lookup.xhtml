@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/resources/facelet/shared/lookupEx.xhtml" >
+		<aon:valueParam name="lookupRendered" default="#{true}"/>
+		<aon:valueParam name="pojoName" default="#{lookupBean.controller.pojoShortName}"/>
+		<aon:valueParam name="lookupSelectType" default="search"/>
+		<aon:valueParam name="lookupInputSize" default="5"/>
+		<aon:valueParam name="lookupInputMaxLength" default="10"/>
+		<aon:valueParam name="lookupInputValue" default="#{lookupTo.id}"/>
+		<aon:valueParam name="lookupInputSuggestSize" default="60"/>
+		<aon:valueParam name="lookupInputSuggestValue" default="#{lookupTo.name}"/>
+		<aon:valueParam name="lookupInputSuggestExpression" default="#{lto.name} (#{lto.id})"/>
+		
+		<aon:valueParam name="searchButtonWidth" default="650"/>
+		<aon:valueParam name="searchButtonHeight" default="480"/>
+
+		<aon:valueParam name="newButtonWidth" default="650"/>
+		<aon:valueParam name="newButtonHeight" default="520"/>
+		
+		<aon:methodParam name="lookupChangeListener" default="" type="lookupChangeListener" />
+		
+	</ui:include>
+	
+</ui:composition>
