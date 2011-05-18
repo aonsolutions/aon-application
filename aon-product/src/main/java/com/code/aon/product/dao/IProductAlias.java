@@ -9,6 +9,7 @@ import com.code.aon.product.CatalogueItem;
 import com.code.aon.product.Item;
 import com.code.aon.product.ItemAlternative;
 import com.code.aon.product.ItemAttachment;
+import com.code.aon.product.ItemComposition;
 import com.code.aon.product.ItemSupplier;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
@@ -367,6 +368,55 @@ public interface IProductAlias {
 
 
 	/** 
+	* DAOConstantsEntry for ItemComposition entity.
+	*/ 
+	DAOConstantsEntry ITEM_COMPOSITION_ENTRY = DAOConstants.getDAOConstant(ItemComposition.class);
+
+	/** 
+	* Alias value: ItemComposition_compositionItem_id
+	* Hibernate value: ItemComposition.compositionItem.id
+	*/
+	String  ITEM_COMPOSITION_COMPOSITION_ITEM_ID = ITEM_COMPOSITION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ItemComposition_description
+	* Hibernate value: ItemComposition.description
+	*/
+	String  ITEM_COMPOSITION_DESCRIPTION = ITEM_COMPOSITION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ItemComposition_discountExpression
+	* Hibernate value: ItemComposition.discountExpression
+	*/
+	String  ITEM_COMPOSITION_DISCOUNT_EXPRESSION = ITEM_COMPOSITION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ItemComposition_id
+	* Hibernate value: ItemComposition.id
+	*/
+	String  ITEM_COMPOSITION_ID = ITEM_COMPOSITION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ItemComposition_item_id
+	* Hibernate value: ItemComposition.item.id
+	*/
+	String  ITEM_COMPOSITION_ITEM_ID = ITEM_COMPOSITION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ItemComposition_price
+	* Hibernate value: ItemComposition.price
+	*/
+	String  ITEM_COMPOSITION_PRICE = ITEM_COMPOSITION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ItemComposition_quantity
+	* Hibernate value: ItemComposition.quantity
+	*/
+	String  ITEM_COMPOSITION_QUANTITY = ITEM_COMPOSITION_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
 	* DAOConstantsEntry for ItemSupplier entity.
 	*/ 
 	DAOConstantsEntry ITEM_SUPPLIER_ENTRY = DAOConstants.getDAOConstant(ItemSupplier.class);
@@ -433,46 +483,52 @@ public interface IProductAlias {
 	String  PRODUCT_COMPOSITION = PRODUCT_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: Product_compositionPrice
+	* Hibernate value: Product.compositionPrice
+	*/
+	String  PRODUCT_COMPOSITION_PRICE = PRODUCT_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: Product_id
 	* Hibernate value: Product.id
 	*/
-	String  PRODUCT_ID = PRODUCT_ENTRY.getAliasNames()[4];
+	String  PRODUCT_ID = PRODUCT_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Product_inventoriable
 	* Hibernate value: Product.inventoriable
 	*/
-	String  PRODUCT_INVENTORIABLE = PRODUCT_ENTRY.getAliasNames()[5];
+	String  PRODUCT_INVENTORIABLE = PRODUCT_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Product_name
 	* Hibernate value: Product.name
 	*/
-	String  PRODUCT_NAME = PRODUCT_ENTRY.getAliasNames()[6];
+	String  PRODUCT_NAME = PRODUCT_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Product_retention_id
 	* Hibernate value: Product.retention.id
 	*/
-	String  PRODUCT_RETENTION_ID = PRODUCT_ENTRY.getAliasNames()[7];
+	String  PRODUCT_RETENTION_ID = PRODUCT_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Product_status
 	* Hibernate value: Product.status
 	*/
-	String  PRODUCT_STATUS = PRODUCT_ENTRY.getAliasNames()[8];
+	String  PRODUCT_STATUS = PRODUCT_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Product_type
 	* Hibernate value: Product.type
 	*/
-	String  PRODUCT_TYPE = PRODUCT_ENTRY.getAliasNames()[9];
+	String  PRODUCT_TYPE = PRODUCT_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Product_vat_id
 	* Hibernate value: Product.vat.id
 	*/
-	String  PRODUCT_VAT_ID = PRODUCT_ENTRY.getAliasNames()[10];
+	String  PRODUCT_VAT_ID = PRODUCT_ENTRY.getAliasNames()[11];
 
 
 

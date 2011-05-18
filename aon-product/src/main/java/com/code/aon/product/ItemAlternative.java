@@ -57,7 +57,6 @@ public class ItemAlternative implements ITransferObject{
     public Item getAlternativeItem() {
         return alternativeItem;
     }
-
     public void setAlternativeItem(Item alternativeItem) {
         this.alternativeItem = alternativeItem;
     }
@@ -77,8 +76,8 @@ public class ItemAlternative implements ITransferObject{
 		final ItemAlternative o = (ItemAlternative) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.item, o.item)
 				.append(this.alternativeItem, o.alternativeItem)
+				.append(this.item, o.item)
 				.append(this.priority, o.priority)
 				.isEquals();
 		}
@@ -89,9 +88,9 @@ public class ItemAlternative implements ITransferObject{
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)	
-			.append(item)			
-			.append(alternativeItem)
-			.append(priority)
+			.append(this.alternativeItem)
+			.append(this.item)			
+			.append(this.priority)
 			.toHashCode();
 	}
 

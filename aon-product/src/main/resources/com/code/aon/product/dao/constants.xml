@@ -17,8 +17,8 @@
 	</bean>
 
 	<bean class="com.code.aon.product.Product" sqlName="product">
-		<alias names="brand_id,product_category_id,code,composition,id,inventoriable,name,retention_id,status,type,vat_id" />
-		<hibernate names="brand.id,category.id,code,composition,id,inventoriable,name,retention.id,status,type,vat.id" />
+		<alias names="brand_id,product_category_id,code,composition,compositionPrice,id,inventoriable,name,retention_id,status,type,vat_id" />
+		<hibernate names="brand.id,category.id,code,composition,compositionPrice,id,inventoriable,name,retention.id,status,type,vat.id" />
 	</bean>
 	
 	<bean class="com.code.aon.product.ProductCategory" sqlName="pcategory">

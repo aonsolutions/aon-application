@@ -17,76 +17,32 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
-/**
- * Transfer Object that represents a node between categories.
- * 
- * @author Consulting & Development. Eugenio Castellano - 31-ene-2005
- * @since 1.0
- * @version 1.0
- */
 @Entity
 @Table(name="pcategory_tree")
 public class ProductCategoryTree implements ITransferObject {
 
 	private static final long serialVersionUID = 4085534951360322369L;
 
-	/**
-     * Unique key.
-     */
     private Integer id;
-
-    /**
-     * Parent category.
-     */
     private ProductCategory parent;
-
-    /**
-     * Child category.
-     */
     private ProductCategory child;
 
-    /**
-     * Constructor for this node.
-     * 
-     * @param pk
-     *            unique key.
-     * @param parent
-     *            Parent category.
-     * @param child
-     *            Child category.
-     */
     public ProductCategoryTree(Integer pk, ProductCategory parent, ProductCategory child) {
         this.id = pk;
         this.parent = parent;
         this.child = child;
     }
 
-    /**
-     * Returns the unique key.
-     * 
-     * @return unique key.
-     */
     @Id
     @GeneratedValue
     public Integer getId() {
         return id;
     }
 
-    /**
-     * Assigns the unique key.
-     * 
-     * @param id
-     *            unique key.
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * Returns the child category of this node.
-     * 
-     * @return child category.
-     */
     @ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "child")
     @ForeignKey(name = "FK_PCATEGORY_TREE_CHILD")
@@ -95,21 +51,10 @@ public class ProductCategoryTree implements ITransferObject {
         return child;
     }
 
-    /**
-     * Assigns the child category of this node.
-     * 
-     * @param child
-     *            child category.
-     */
     public void setChild(ProductCategory child) {
         this.child = child;
     }
 
-    /**
-     * Returns the parent category of this node.
-     * 
-     * @return parent category.
-     */
     @ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "parent")
     @ForeignKey(name = "FK_PCATEGORY_TREE_PARENT")
@@ -118,12 +63,6 @@ public class ProductCategoryTree implements ITransferObject {
         return parent;
     }
 
-    /**
-     * Assigns the parent category of this node.
-     * 
-     * @param parent
-     *            parent category.
-     */
     public void setParent(ProductCategory parent) {
         this.parent = parent;
     }
@@ -146,9 +85,9 @@ public class ProductCategoryTree implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(child)		
 			.append(id)								
-			.append(parent)						
+			.append(this.child)		
+			.append(this.parent)						
 			.toHashCode();
 	}
 

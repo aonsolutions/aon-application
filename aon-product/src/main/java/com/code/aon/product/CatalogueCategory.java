@@ -92,8 +92,8 @@ public class CatalogueCategory implements ITransferObject {
 			return new EqualsBuilder()
 				.append(this.catalogue, o.catalogue)
 				.append(this.category, o.category)				
-				.append(this.quantity, o.quantity)								
 				.append(this.discount, o.discount)				
+				.append(this.quantity, o.quantity)								
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -103,10 +103,10 @@ public class CatalogueCategory implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)			
-			.append(catalogue)
-			.append(category)
-			.append(quantity)						
-			.append(discount)
+			.append(this.catalogue)
+			.append(this.category)
+			.append(this.discount)
+			.append(this.quantity)						
 			.toHashCode();
 	}
 

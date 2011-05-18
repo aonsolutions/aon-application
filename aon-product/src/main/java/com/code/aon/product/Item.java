@@ -142,7 +142,7 @@ public class Item implements ITransferObject {
 	}
 
 	public void setProfitPercent(double profitPercent) {
-		this.profitPercent = profitPercent;
+		this.profitPercent = CommonUtil.round(profitPercent, 3);
 	}
 
 	@Column(name="purchase_price", precision=15, scale=4)
@@ -197,17 +197,17 @@ public class Item implements ITransferObject {
 		final Item o = (Item) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.barcode, o.barcode)				
-				.append(this.description, o.description)				
-				.append(this.detail, o.detail)				
-				.append(this.expensesFixed, o.expensesFixed)				
+				.append(this.barcode, o.barcode)
+				.append(this.description, o.description)
+				.append(this.detail, o.detail)
+				.append(this.expensesFixed, o.expensesFixed)
 				.append(this.expensesPercent, o.expensesPercent)
 				.append(this.internet, o.internet)
-				.append(this.price, o.price)				
-				.append(this.product, o.product)				
-				.append(this.profitPercent, o.profitPercent)				
-				.append(this.purchasePrice, o.purchasePrice)				
-				.append(this.status, o.status)												
+				.append(this.price, o.price)
+				.append(this.product, o.product)
+				.append(this.profitPercent, o.profitPercent)
+				.append(this.purchasePrice, o.purchasePrice)
+				.append(this.status, o.status)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -216,18 +216,18 @@ public class Item implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-		.append(description)
-			.append(barcode)
-			.append(detail)
-			.append(expensesFixed)			
-			.append(expensesPercent)						
 			.append(id)
-			.append(internet)	
-			.append(price)						
-			.append(product)			
-			.append(profitPercent)						
-			.append(purchasePrice)						
-			.append(status)						
+			.append(this.barcode)
+			.append(this.description)
+			.append(this.detail)
+			.append(this.expensesFixed)			
+			.append(this.expensesPercent)						
+			.append(this.internet)	
+			.append(this.price)						
+			.append(this.product)			
+			.append(this.profitPercent)						
+			.append(this.purchasePrice)						
+			.append(this.status)						
 			.toHashCode();
 	}
 

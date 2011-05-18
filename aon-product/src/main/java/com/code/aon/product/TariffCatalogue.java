@@ -72,8 +72,8 @@ public class TariffCatalogue implements ITransferObject {
 		final TariffCatalogue o = (TariffCatalogue) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.tariff, o.tariff)				
 				.append(this.catalogue, o.catalogue)
+				.append(this.tariff, o.tariff)				
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -83,8 +83,8 @@ public class TariffCatalogue implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)								
-			.append(tariff)						
-			.append(catalogue)		
+			.append(this.tariff)						
+			.append(this.catalogue)		
 			.toHashCode();
 	}
 

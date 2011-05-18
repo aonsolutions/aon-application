@@ -97,7 +97,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	public double getBasePrice(ICalculable calc, boolean forceUnitPrice) {
 		double price = 0;
 		try {
-			if(forceUnitPrice) {
+			if (forceUnitPrice) {
 				price = getUnitPrice(calc);
 			} else {
 				price = calc.getPrice();

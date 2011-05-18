@@ -100,10 +100,10 @@ public class CatalogueItem implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.catalogue, o.catalogue)				
-				.append(this.item, o.item)				
-				.append(this.quantity, o.quantity)				
-				.append(this.price, o.price)								
 				.append(this.discount, o.discount)				
+				.append(this.item, o.item)				
+				.append(this.price, o.price)								
+				.append(this.quantity, o.quantity)				
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -113,11 +113,11 @@ public class CatalogueItem implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)			
-			.append(catalogue)
-			.append(item)						
-			.append(quantity)						
-			.append(price)						
-			.append(discount)
+			.append(this.catalogue)
+			.append(this.discount)
+			.append(this.item)						
+			.append(this.price)						
+			.append(this.quantity)						
 			.toHashCode();
 	}
 

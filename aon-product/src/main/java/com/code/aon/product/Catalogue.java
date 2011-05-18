@@ -76,9 +76,9 @@ public class Catalogue implements ITransferObject {
 		final Catalogue o = (Catalogue) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+				.append(this.endDate, o.endDate)
 				.append(this.name, o.name)				
 				.append(this.startDate, o.startDate)				
-				.append(this.endDate, o.endDate)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -88,9 +88,9 @@ public class Catalogue implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)			
-			.append(name)			
-			.append(startDate)			
-			.append(endDate)
+			.append(this.endDate)
+			.append(this.name)			
+			.append(this.startDate)			
 			.toHashCode();
 	}
 

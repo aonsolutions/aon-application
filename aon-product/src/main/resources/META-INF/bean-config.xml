@@ -7,6 +7,13 @@
 <bean-config>
 
 	<bean description="">
+		<pojo>com.code.aon.product.Item</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.product.event.ItemBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.code.aon.product.ItemAlternative</pojo>
 		<listeners>
 	        <listener>com.code.aon.product.event.ItemAlternativeBeanListener</listener>

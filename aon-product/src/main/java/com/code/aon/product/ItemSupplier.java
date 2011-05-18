@@ -84,10 +84,10 @@ public class ItemSupplier implements ITransferObject{
 		final ItemSupplier o = (ItemSupplier) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.item, o.item)
-				.append(this.supplier, o.supplier)
-				.append(this.priority, o.priority)
 				.append(this.code, o.code)
+				.append(this.item, o.item)
+				.append(this.priority, o.priority)
+				.append(this.supplier, o.supplier)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -97,10 +97,10 @@ public class ItemSupplier implements ITransferObject{
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)	
-			.append(item)			
-			.append(supplier)
-			.append(priority)
-			.append(code)
+			.append(this.code)
+			.append(this.item)			
+			.append(this.priority)
+			.append(this.supplier)
 			.toHashCode();
 	}
 
