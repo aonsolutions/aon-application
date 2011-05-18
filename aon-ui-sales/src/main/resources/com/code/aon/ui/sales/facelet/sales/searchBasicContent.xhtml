@@ -8,25 +8,10 @@
 
 	<ui:include src="/com/code/aon/ui/config/facelet/series/search.xhtml" />
 
-	<aon:outputLabel for="Sales_customer_id"
-		value="#{customerBundle.customer_customer}" />
-	<aon:div styleClass="aon-lookup">
-		<aon:lookupInputText id="Sales_customer_id"  
-			value="#{searchController.customer.id}"
-			lookup="#{customerLookup}"
-			reRender="Sales_customer_full_name"
-			size="5" />
-		<aon:lookupButton 
-			windowTitle="#{customerBundle.customer_selection}" 
-			minHeight="460" minWidth="650" 
-			property="#{searchController.customer}" lookup="#{customerLookup}" 
-			selectReRender="Sales_customer_id,Sales_customer_full_name" 
-			actionType="search">
-		</aon:lookupButton>
-		<aon:inputText id="Sales_customer_full_name"
-			value="#{(searchController.customer.registry.fullName!=null)?(searchController.customer.registry.fullName):('')}"
-			disabled="true" size="50" />							
-	</aon:div>
+	<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+		<ui:param name="lookupTo" value="#{searchController.customer}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+	</ui:include>
 
 	<aon:outputLabel value="#{bundle.aon_date}" />
 	<aon:div>

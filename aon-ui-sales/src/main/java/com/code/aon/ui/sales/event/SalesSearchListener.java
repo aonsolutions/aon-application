@@ -2,10 +2,10 @@ package com.code.aon.ui.sales.event;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.Item;
-import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.sales.dao.ISalesAlias;
@@ -53,11 +53,10 @@ public class SalesSearchListener extends RegistrySearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
-		setCustomer(new Customer());
+		setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		SalesStatus[] defaultSalesStatus = {SalesStatus.PENDING};
 		setSalesStatuses(defaultSalesStatus);
-		setItem(new Item());
-		getItem().setProduct(new Product());		
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 	}
 	
 	@Override

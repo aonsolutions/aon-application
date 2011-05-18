@@ -127,41 +127,16 @@
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-					<aon:outputLabel for="Customer_id" 
-						value="#{customerBundle.customer_customer}" />
-					<aon:div id="Customer_lookup" styleClass="aon-lookup">
-						<a4j:region>
-							<aon:lookupInputText id="Customer_id" 
-								value="#{sales.to.customer.registry.id}"
-								disabled="#{!sales.pending}" size="5"
-								lookupProperty="registry" lookup="#{customerLookup}" 
-								lookupChangeListener="#{sales.customerData}" 
-								reRender="Customer_full_name,Customer_registry_document,SalesAddress,Sales_scope,
-									Sales_defaultPayMethod,payMethodDiv"
-								ajaxSingle="true" required="true"  />
-							<aon:lookupButton
-								windowTitle="#{customerBundle.customer_selection}"
-								disabled="#{!sales.pending}" minHeight="460" minWidth="650" 
-								property="#{sales.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}" 
-								lookupChangeListener="#{sales.customerData}"
-								selectReRender="Customer_lookup,Customer_registry_document,SalesAddress,Sales_scope,
-									Sales_defaultPayMethod,payMethodDiv"								
-								actionType="search">
-							</aon:lookupButton>
-							<aon:lookupButton 
-								windowTitle="#{customerBundle.customer_new}"
-								disabled="#{!sales.pending}" minWidth="650" minHeight="650"
-								property="#{sales.to.customer.registry}" lookupProperty="registry" lookup="#{customerLookup}"
-								lookupChangeListener="#{sales.customerData}"
-								selectReRender="Customer_lookup,Customer_registry_document,SalesAddress,Sales_scope,
-									Sales_defaultPayMethod,payMethodDiv"
-								actionType="new">
-							</aon:lookupButton>
-							<aon:inputText id="Customer_full_name" 
-								value="#{(sales.to.customer.registry.fullName!=null)?(sales.to.customer.registry.fullName):('')}"
-								disabled="true" size="60" />
-						</a4j:region>
-					</aon:div>
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{sales.to.customer.registry}" />
+						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupDisabled" value="#{!sales.pending}" />
+						<ui:param name="lookupReRender" 
+							value="Customer_registry_document,SalesAddress,Sales_scope,Sales_defaultPayMethod,payMethodDiv" />
+						<ui:param name="idRequired" value="#{true}" />						
+						<aon:methodParam name="lookupChangeListener"
+							value="#{sales.customerData}" type="lookupChangeListener" />
+					</ui:include>
 
 					<aon:outputLabel for="Customer_registry_document" 
 						value="#{bundle.aon_company_document}" />
@@ -190,7 +165,7 @@
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
-					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
+					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{sales.to.seller.registry}" />
 						<ui:param name="lookupForRegistry" value="#{true}" />
 						<ui:param name="lookupDisabled" value="#{!sales.pending}" />
@@ -271,7 +246,7 @@
 							<aon:inputText id="Sales_paymentDays"
 								value="#{sales.to.paymentDays}" 
 								disabled="#{!sales.pending}" size="5" />
-							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml" >
+							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 								<ui:param name="lookupTo" value="#{sales.to.bank}" />
 								<ui:param name="lookupDisabled" value="#{!sales.pending}" />
 							</ui:include>								
@@ -342,58 +317,52 @@
 		
 								<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 									<f:facet name="header">
-										<aon:outputLabel for="SalesDetail_item_product_code" value="#{productBundle.product_item}" />
+										<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
 									</f:facet>
 									<aon:outputText value="#{to.description}"
 										rendered="#{formList}">
 										<aon:abbreviateConverter maxWidth="64" />
 									</aon:outputText>
-									<aon:div id="salesDetailItemEdit" styleClass="aon-lookup" rendered="#{formEdit}">
-										<a4j:region>
-											<aon:lookupInputText id="SalesDetail_item_product_code" 
-												value="#{salesDetail.to.item.product.code}"
-												lookup="#{itemLookup}" style="vertical-align: top;" 
-												lookupChangeListener="#{salesDetail.onItemChanged}"
-												reRender="salesDetailItemEdit,SalesDetail_quantity,SalesDetail_price,
-													SalesDetail_discount,SalesDetail_amount"  
-												ajaxSingle="false" required="true" size="10" 
-												onblur="toUpperCase(this);" focus="SalesDetail_item_product_name">
-												<aon:joinProperty alias="Item_product_code" value="#{salesDetail.to.item.product.code}" />
-											</aon:lookupInputText>
-											<aon:lookupButton
-												windowTitle="#{productBundle.product_item_selection}" 
-												minHeight="460" minWidth="650"
-												property="#{salesDetail.to.item}" lookup="#{itemLookup}" 
-												lookupChangeListener="#{salesDetail.onItemChanged}"
-												selectReRender="salesDetailItemEdit,SalesDetail_quantity,SalesDetail_price,
-													SalesDetail_discount,SalesDetail_amount"
-												actionType="search">
-											</aon:lookupButton>
-											<aon:lookupButton
-												windowTitle="#{productBundle.product_item_new}"
-												minHeight="360" minWidth="975"
-												property="#{salesDetail.to.item}" lookup="#{itemLookup}"
-												lookupChangeListener="#{salesDetail.onItemChanged}" 
-												selectReRender="salesDetailItemEdit,SalesDetail_quantity,SalesDetail_price,
-													SalesDetail_discount,SalesDetail_amount"
-												actionType="new">
-											</aon:lookupButton>
-											<c:if test="#{aonConfiguration.bean.product.showStock}">
-												<aon:commandButton value="&#160;"
-													title="#{productBundle.product_info}"
-													rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
-													styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
-													actionListener="#{itemInfo.onShowPanel}"
-													reRender="itemInfoContainer">
-													<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
-													<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
-													<aon:set var="#{itemInfo.item}" value="#{salesDetail.to.item}" /> 
-													<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
-													<aon:set var="#{itemInfo.componentId}" value="SalesDetail_item_product_code" />
-													<aon:set var="#{itemInfo.alternativeMethod}" value="salesDetail.onItemChanged" />
-												</aon:commandButton>															
-											</c:if>
-										</a4j:region>
+									<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+										<ui:param name="lookupTo" value="#{salesDetail.to.item}" />
+										<ui:param name="idRequired" value="#{true}" />
+										<ui:param name="skipLabel" value="#{true}" />
+										<ui:param name="lookupRendered" value="#{formEdit}" />
+										<ui:param name="lookupReRender" 
+											value="SalesDetail_quantity,SalesDetail_price,SalesDetail_discount,SalesDetail_amount" />
+										<aon:methodParam name="lookupChangeListener"
+											value="#{salesDetail.onItemChanged}" type="lookupChangeListener" />
+									</ui:include>
+									<f:facet name="footer" >
+										<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+											<ui:param name="lookupTo" value="#{salesDetail.to.item}" />
+											<ui:param name="idRequired" value="#{true}" />
+											<ui:param name="skipLabel" value="#{true}" />
+											<ui:param name="lookupRendered" value="#{formNew}" />
+											<ui:param name="lookupSuffix" value="-New" />
+											<ui:param name="lookupReRender" 
+												value="SalesDetail_quantity-New,SalesDetail_price-New,SalesDetail_discount-New,SalesDetail_amount-New" />
+											<aon:methodParam name="lookupChangeListener"
+												value="#{salesDetail.onItemChanged}" type="lookupChangeListener" />
+										</ui:include>
+									</f:facet>					
+
+<!-- 
+										<c:if test="#{aonConfiguration.bean.product.showStock}">
+											<aon:commandButton value="&#160;"
+												title="#{productBundle.product_info}"
+												rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
+												styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
+												actionListener="#{itemInfo.onShowPanel}"
+												reRender="itemInfoContainer">
+												<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
+												<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
+												<aon:set var="#{itemInfo.item}" value="#{salesDetail.to.item}" /> 
+												<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
+												<aon:set var="#{itemInfo.componentId}" value="SalesDetail_item_product_code" />
+												<aon:set var="#{itemInfo.alternativeMethod}" value="salesDetail.onItemChanged" />
+											</aon:commandButton>															
+										</c:if>
 										<aon:inputTextarea id="SalesDetail_item_product_name" 
 											value="#{salesDetail.to.description}"
 											cols="60" rows="#{!salesDetail.longDescription?1:5}"
@@ -406,69 +375,38 @@
 										<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 											actionListener="#{salesDetail.onLongDescription}" reRender="SalesDetail_item_product_name"
 											rendered="#{!salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
-									</aon:div>
+
 									<f:facet name="footer">
-										<aon:div id="salesDetailItemNew" styleClass="aon-lookup" rendered="#{formNew}">
-											<a4j:region>
-												<aon:lookupInputText id="SalesDetail_item_product_code-New" 
-													value="#{salesDetail.to.item.product.code}"
-													lookup="#{itemLookup}" style="vertical-align: top;"
-													lookupChangeListener="#{salesDetail.onItemChanged}" 
-													reRender="salesDetailItemNew,SalesDetail_quantity-New,SalesDetail_price-New,
-														SalesDetail_discount-New,SalesDetail_amount-New"  
-													ajaxSingle="false" required="true" size="10" 
-													onblur="toUpperCase(this);" focus="SalesDetail_item_product_name-New">
-													<aon:joinProperty alias="Item_product_code"	value="#{salesDetail.to.item.product.code}" />
-												</aon:lookupInputText>
-												<aon:lookupButton
-													windowTitle="#{productBundle.product_item_selection}"
-													minHeight="460" minWidth="650" 
-													property="#{salesDetail.to.item}" lookup="#{itemLookup}" 
-													lookupChangeListener="#{salesDetail.onItemChanged}"
-													selectReRender="salesDetailItemNew,SalesDetail_quantity-New,SalesDetail_price-New,
-														SalesDetail_discount-New,SalesDetail_amount-New"
-													actionType="search">
-												</aon:lookupButton>
-												<aon:lookupButton
-													windowTitle="#{productBundle.product_item_new}"
-													minHeight="360" minWidth="975"
-													property="#{salesDetail.to.item}" lookup="#{itemLookup}"
-													lookupChangeListener="#{salesDetail.onItemChanged}" 
-													selectReRender="salesDetailItemNew,SalesDetail_quantity-New,SalesDetail_price-New,
-														SalesDetail_discount-New,SalesDetail_amount-New"
-													actionType="new">
-												</aon:lookupButton>
-												<c:if test="#{aonConfiguration.bean.product.showStock}">
-													<aon:commandButton value="&#160;"
-														title="#{productBundle.product_info}"
-														rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
-														styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
-														actionListener="#{itemInfo.onShowPanel}"
-														reRender="itemInfoContainer">
-														<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
-														<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
-														<aon:set var="#{itemInfo.item}" value="#{salesDetail.to.item}" /> 
-														<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
-														<aon:set var="#{itemInfo.componentId}" value="SalesDetail_item_product_code-New" />
-														<aon:set var="#{itemInfo.alternativeMethod}" value="salesDetail.onItemChanged" />
-													</aon:commandButton>															
-												</c:if>
-											</a4j:region>
-											<aon:inputTextarea id="SalesDetail_item_product_name-New"
-												value="#{salesDetail.to.description}"
-												cols="60" rows="#{!salesDetail.longDescription?1:5}"
-												style="#{!salesDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
-												<f:validateLength maximum="1024" />
-											</aon:inputTextarea>
-											<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-												actionListener="#{salesDetail.onShortDescription}" reRender="SalesDetail_item_product_name-New"
-												rendered="#{salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
-											<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-												actionListener="#{salesDetail.onLongDescription}" reRender="SalesDetail_item_product_name-New"
-												rendered="#{!salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
-										</aon:div>
-									</f:facet>
-								</aon:column>
+										<c:if test="#{aonConfiguration.bean.product.showStock}">
+											<aon:commandButton value="&#160;"
+												title="#{productBundle.product_info}"
+												rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
+												styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
+												actionListener="#{itemInfo.onShowPanel}"
+												reRender="itemInfoContainer">
+												<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
+												<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
+												<aon:set var="#{itemInfo.item}" value="#{salesDetail.to.item}" /> 
+												<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
+												<aon:set var="#{itemInfo.componentId}" value="SalesDetail_item_product_code-New" />
+												<aon:set var="#{itemInfo.alternativeMethod}" value="salesDetail.onItemChanged" />
+											</aon:commandButton>															
+										</c:if>
+										<aon:inputTextarea id="SalesDetail_item_product_name-New"
+											value="#{salesDetail.to.description}"
+											cols="60" rows="#{!salesDetail.longDescription?1:5}"
+											style="#{!salesDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+											<f:validateLength maximum="1024" />
+										</aon:inputTextarea>
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
+											actionListener="#{salesDetail.onShortDescription}" reRender="SalesDetail_item_product_name-New"
+											rendered="#{salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
+											actionListener="#{salesDetail.onLongDescription}" reRender="SalesDetail_item_product_name-New"
+											rendered="#{!salesDetail.longDescription and salesDetail.to.item.product.code != null}" />
+ 									</f:facet>
+-->
+ 								</aon:column>
 
 								<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 									<f:facet name="header">
