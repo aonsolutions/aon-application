@@ -590,7 +590,11 @@
 					<value>#{true}</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>										
+		</managed-property>					
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>MarketingAction_campaign_description</value>
+		</managed-property>									
 		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/marketing/facelet/lookup/campaignAction/list.xhtml</value>

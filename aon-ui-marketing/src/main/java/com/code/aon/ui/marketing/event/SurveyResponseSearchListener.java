@@ -1,6 +1,8 @@
 package com.code.aon.ui.marketing.event;
 
 import com.code.aon.commercial.Target;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.Survey;
@@ -43,9 +45,12 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 
 	@Override
 	protected void init() throws ManagerBeanException {
-		setAction(new MarketingAction());
-		setSurvey(new Survey());
-		setTarget(new Target());
+		IManagerBean maBean = BeanManager.getManagerBean(MarketingAction.class);
+		setAction( (MarketingAction) maBean.createNewTo() );
+		IManagerBean surveyBean = BeanManager.getManagerBean(Survey.class);
+		setSurvey( (Survey) surveyBean.createNewTo() );
+		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
+		setTarget( (Target) targetBean.createNewTo() );
 	}
 	
 	@Override
