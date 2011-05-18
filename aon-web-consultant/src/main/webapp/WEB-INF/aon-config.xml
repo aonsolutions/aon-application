@@ -89,6 +89,8 @@
 			showType="false"
 			showBrand="false"
 			showStock="false"
+			showTariff="false"
+			showComposition="false"
 			showAlternatives="false"
 			showSuppliers="false"
 			showAccount="true"

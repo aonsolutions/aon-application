@@ -80,7 +80,7 @@
 		/>
 	</finance:config>
 
-	<product:config version="1.0" xmlns:product="http://www.esferalia.com/product">
+	<product:config version="1.1" xmlns:product="http://www.esferalia.com/product">
 		<product:catalogue
 			showEcommerceData="false"
 		/>
@@ -89,6 +89,8 @@
 			showType="true"
 			showBrand="false"
 			showStock="false"
+			showTariff="true"
+			showComposition="true"
 			showAlternatives="false"
 			showSuppliers="false"
 			showAccount="true"

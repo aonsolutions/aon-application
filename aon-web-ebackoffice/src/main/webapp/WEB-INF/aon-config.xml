@@ -20,12 +20,14 @@
 			showType="false"
 			showBrand="true"
 			showStock="false"
+			showTariff="false"
+			showComposition="false"
+			showAlternatives="false"
 			showSuppliers="false"
 			showAccount="false"
 			showAttachment="true"
 			showEcommerceData="true"
 			showHistory="false"
-			showAlternatives="false"
 		/>
 		<product:productCategory
 			showCategoryGroup="true"
