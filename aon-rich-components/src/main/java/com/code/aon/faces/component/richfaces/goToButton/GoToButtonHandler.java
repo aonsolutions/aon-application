@@ -4,10 +4,6 @@ import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
-import javax.faces.event.ActionListener;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
@@ -18,6 +14,7 @@ import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.sun.facelets.FaceletContext;
+import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 
@@ -28,8 +25,6 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
  */
 public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichFacesTags {
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(GoToButtonHandler.class);
-	
 	private static final String BACK_ACTION = "backAction";
 	
 	private static final String BACK_ACTION_LISTENER = "backActionListener";
@@ -48,6 +43,12 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 		controllerTag = getRequiredAttribute(CONTROLLER);
 		propertyTag = getRequiredAttribute(PROPERTY);
 	}
+	
+	@Override
+	protected MetaRuleset createMetaRuleset(Class type) {
+		MetaRuleset set = super.createMetaRuleset(type);
+		return set.ignore(ACTION_LISTENER);
+	}	
 	
 	private BasicController getController( FaceletContext ctx ) {
 		return (BasicController) controllerTag.getObject(ctx);
@@ -68,6 +69,8 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 		super.setAttributes(ctx, instance);
 		UICommand button = (UICommand) instance;
 		BasicController controller = getController(ctx);	
+		GoToActionListener gtal = new GoToActionListener(controller);
+		button.addActionListener(gtal);
 		TagAttribute actionTag = getAttribute(ACTION);
 		if ( actionTag == null ) {
 			String action = controller.getBeanName() + "_form";
@@ -75,9 +78,11 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 			button.setActionExpression(me);		
 		}
 		TagAttribute actionListenerTag = getAttribute(ACTION_LISTENER);
-		if ( actionListenerTag == null ) {
-			ActionListener al = new GoToActionListener(controller, getTo(ctx));
-			button.addActionListener(al);
+		if ( actionListenerTag != null ) {
+			MethodExpression me = actionListenerTag.getMethodExpression(ctx, null, FaceletUtil.ACTION_LISTENER_SIG);
+			gtal.setActionListener( me );
+		} else {
+			gtal.setToExpression( getTo(ctx) );
 		}
 		String backAction = null;
 		TagAttribute backActionTag = getAttribute(BACK_ACTION);
@@ -86,7 +91,7 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 		} else {
 			backAction = AonUtil.getConfigurationController().getCurrentAction();
 		}
-		controller.setBackAction(backAction);
+		gtal.setBackAction(backAction);
 		String backActionListener = null;
 		TagAttribute balTag = getAttribute(BACK_ACTION_LISTENER);
 		if ( balTag != null ) {
@@ -94,7 +99,7 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 		} else {
 			backActionListener = controller.getBeanName() + ".onBack";
 		}
-		controller.setBackActionListener(backActionListener);
+		gtal.setBackActionListener(backActionListener);
 	}
 
 	private boolean isResolved( FaceletContext ctx ) {

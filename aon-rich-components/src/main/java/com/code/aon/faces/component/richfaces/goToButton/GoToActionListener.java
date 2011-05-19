@@ -1,5 +1,6 @@
 package com.code.aon.faces.component.richfaces.goToButton;
 
+import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.component.StateHolder;
 import javax.faces.context.FacesContext;
@@ -19,35 +20,83 @@ public class GoToActionListener implements ActionListener, StateHolder {
 	
 	private ValueExpression toExpression;
 	
+	private MethodExpression actionListener;
+	
+	private String backAction;
+	
+	private String backActionListener;
+	
 	private boolean isTransient;
 	
 	public GoToActionListener() {
 	}
 
-	public GoToActionListener(BasicController controller, ValueExpression to) {
+	public GoToActionListener(BasicController controller) {
 		this.controller = controller;
-		this.toExpression = to;
+	}
+
+	public MethodExpression getActionListener() {
+		return actionListener;
+	}
+
+	public void setActionListener(MethodExpression actionListener) {
+		this.actionListener = actionListener;
+	}
+
+	public ValueExpression getToExpression() {
+		return toExpression;
+	}
+
+	public void setToExpression(ValueExpression toExpression) {
+		this.toExpression = toExpression;
+	}
+
+	public String getBackAction() {
+		return backAction;
+	}
+
+	public void setBackAction(String backAction) {
+		this.backAction = backAction;
+	}
+
+	public String getBackActionListener() {
+		return backActionListener;
+	}
+
+	public void setBackActionListener(String backActionListener) {
+		this.backActionListener = backActionListener;
 	}
 
 	@Override
 	public void processAction(ActionEvent event) throws AbortProcessingException {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		ITransferObject to = (ITransferObject) toExpression.getValue(ctx.getELContext());
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(to.getClass());
-			controller.select(event, bean.getId(to));
-		} catch (ManagerBeanException e) {
-			throw new AbortProcessingException(e);
+		controller.setBackAction(backAction);
+		controller.setBackActionListener(backActionListener);
+		if ( actionListener != null ) {
+			actionListener.invoke(ctx.getELContext(), new Object[] {event} );
+		} else {
+			ITransferObject to = (ITransferObject) toExpression.getValue(ctx.getELContext());
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(to.getClass());
+				controller.select(event, bean.getId(to));
+			} catch (ManagerBeanException e) {
+				throw new AbortProcessingException(e);
+			}			
 		}
 	}
 
     public Object saveState(FacesContext context) {
-        return new Object[] { controller, toExpression };
+        return new Object[] { controller, toExpression, actionListener,
+        		backAction, backActionListener };
     }
 
     public void restoreState(FacesContext context, Object state) {
-        controller = (BasicController) ((Object[]) state)[0];
-        toExpression = (ValueExpression) ((Object[]) state)[1];
+    	Object[] _state = (Object[]) state;
+        controller = (BasicController) _state[0];
+        toExpression = (ValueExpression) _state[1];
+        actionListener = (MethodExpression) _state[2];
+        backAction = (String) _state[3];
+        backActionListener = (String) _state[4];
     }
 
     public boolean isTransient() {
