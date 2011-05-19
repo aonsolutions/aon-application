@@ -116,16 +116,24 @@ public class AccountChangeController {
 	}
 
 	public void onReset(ActionEvent e){
-		setInitAccount(null);
-		setBalancingAccount(null);
-		setFinalAccount(null);
-		setFromDate(null);
-		setToDate(null);
-		setPeriod(null);
-		setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);	
-		setConcept(null);
-		setDebit(null);
-		setCredit(null);
+		try {
+			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+			setInitAccount((Account) accountBean.createNewTo());
+			setBalancingAccount((Account) accountBean.createNewTo());
+			setFinalAccount((Account) accountBean.createNewTo());
+			setFromDate(null);
+			setToDate(null);
+			setPeriod(null);
+			setSecurityLevel(AonUtil.getRoleManager().isConfidentiality()?null:SecurityLevel.OFFICIAL);	
+			setConcept(null);
+			setDebit(null);
+			setCredit(null);
+		} catch (ManagerBeanException ex) {
+			String msg ="Imposible inicializar las cuenta contables de la pantalla.";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 	}
 	
 

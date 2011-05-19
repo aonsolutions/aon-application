@@ -338,7 +338,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		getHeader().setType(InvoiceType.SALES);
 
 		setDetails(  new ListDataModel(new LinkedList<InvoiceEntryDetail>()));
-		setCurrentDetail(null);
+		setCurrentDetail( resetDetail() );
 		setNewDetail(false);
 		setFinances( new ListDataModel(new LinkedList<Finance>()) );
 		setCurrentFinance( null );
@@ -565,11 +565,17 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		}
 	}
 
+	private InvoiceEntryDetail resetDetail() {
+		InvoiceEntryDetail detail =  new InvoiceEntryDetail();
+		Account a = (getHeader().getAccount() != null) ? getHeader().getAccount() : new Account();
+		detail.setAccount(a);
+		return detail;
+	}
+	
+	
 	public void onNewDetail(ActionEvent event) {
 		setNewDetail(true);
-		setCurrentDetail( new InvoiceEntryDetail() );
-		Account a = (getHeader().getAccount() != null) ? getHeader().getAccount() : null;
-		getCurrentDetail().setAccount(a);
+		setCurrentDetail( resetDetail() );
 
 		AccountAppParamsController c = (AccountAppParamsController) AonUtil
 				.getRegisteredBean(IAccountingConstants.ACCOUNT_APP_PARAM_CONTROLLER_NAME);

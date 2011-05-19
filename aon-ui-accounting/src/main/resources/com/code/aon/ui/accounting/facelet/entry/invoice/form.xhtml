@@ -543,12 +543,12 @@
 				<aon:div id="invoiceDetails">
 					<ui:include
 						src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_lines.xhtml" />
-
 					<ui:include
 						src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_finances.xhtml" />
 				</aon:div>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 		<aon:lookupButtonPopup lookup="#{supplierLookup}" />

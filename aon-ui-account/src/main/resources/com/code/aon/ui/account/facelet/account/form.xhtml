@@ -17,32 +17,11 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
+					
+				<ui:include src="/com/code/aon/ui/account/facelet/account/formContent.xhtml" >
+					<ui:param name="controller" value="#{account}" />
+				</ui:include>
 
-					<aon:outputLabel for="Account_id"
-						value="#{bundle.aon_id}" />
-					<aon:inputText id="Account_id" value="#{account.to.id}"
-						required="#{true}" size="10" maxlength="9"
-						disabled="#{!account.new}">
-						<f:validateLength maximum="9" />
-						<a4j:support event="onchange" ajaxSingle="true"
-						 	actionListener="#{account.onIdentifierChanged}" 
-							reRender="dataTable"
-							focus="Account_description"/>
-					</aon:inputText>
-
-					<aon:outputLabel for="Account_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="Account_description"
-						value="#{account.to.description}" required="#{true}" size="100">
-						<f:validateLength maximum="100" />
-					</aon:inputText>
-
-					<aon:outputLabel for="Account_alias"
-						value="#{bundle.aon_alias}" />
-					<aon:inputText id="Account_alias" value="#{account.to.alias}"
-						size="20">
-						<f:validateLength maximum="32" />
-					</aon:inputText>
 				</aon:panelGrid>
 			</aon:div>
 

@@ -32,39 +32,24 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-auto">
-					<aon:outputLabel
-						value="#{accountingBundle.accounting_change_account_origin}" />
-					<ui:decorate
-						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-						<ui:param name="wizard" value="#{accountWizard}" />
-						<ui:param name="id" value="account" />
-						<ui:param name="size" value="20" />
-						<ui:param name="maxlength" value="100" />
-						<ui:param name="renderDescription" value="#{true}" />
-						<ui:param name="renderedAttr" value="#{true}" />
-						<ui:param name="reRenderAttr" value="none" />
-						<ui:param name="required" value="true" />
-						<ui:param name="entity" value="#{accountChange.initAccount}" />
-						<ui:param name="ELExpression" value="accountChange.initAccount" />
-					</ui:decorate>
 
+					<aon:outputLabel value="#{accountingBundle.accounting_change_account_origin}" />
+					
+					<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupTo" value="#{accountChange.initAccount}" />
+						<ui:param name="idRequired" value="true" />				
+					</ui:include>
+						
 					<aon:outputLabel
 						value="#{accountingBundle.accounting_change_account_destiny}" />
-					<ui:decorate
-						template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-						<ui:param name="wizard" value="#{accountWizard}" />
-						<ui:param name="id" value="finalAccount" />
-						<ui:param name="size" value="20" />
-						<ui:param name="maxlength" value="30" />
-						<ui:param name="renderDescription" value="#{true}" />
-						<ui:param name="renderedAttr" value="#{true}" />
-						<ui:param name="reRenderAttr" value="none" />
-						<ui:param name="required" value="true" />
-						<ui:param name="entity" value="#{accountChange.finalAccount}" />
-						<ui:param name="ELExpression" value="accountChange.finalAccount" />
-					</ui:decorate>
+					<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupSuffix" value="Destiny" />
+						<ui:param name="lookupTo" value="#{accountChange.finalAccount}" />
+						<ui:param name="idRequired" value="true" />				
+					</ui:include>
 				</aon:panelGrid>
-
 
 				<aon:div id="loanContainer" style="margin-top: 10px;width: 100%;">
 					<aon:panelCollapsible
@@ -125,28 +110,18 @@
 
 							<aon:outputLabel
 								value="#{accountingBundle.accounting_balancing_account}" />
-							<ui:decorate
-								template="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-								<ui:param name="wizard" value="#{accountWizard}" />
-								<ui:param name="id" value="balancingAccount" />
-								<ui:param name="size" value="20" />
-								<ui:param name="maxlength" value="30" />
-								<ui:param name="renderDescription" value="#{true}" />
-								<ui:param name="renderedAttr" value="#{true}" />
-								<ui:param name="disabled" value="#{false}" />
-								<ui:param name="reRenderAttr" value="none" />
-								<ui:param name="required" value="false" />
-								<ui:param name="entity"
-									value="#{accountChange.balancingAccount}" />
-								<ui:param name="ELExpression"
-									value="accountChange.balancingAccount" />
-							</ui:decorate>
+							<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="lookupSuffix" value="BalancingAccount" />
+								<ui:param name="lookupTo" value="#{accountChange.balancingAccount}" />
+								<ui:param name="idRequired" value="true" />				
+							</ui:include>
 						</aon:panelGrid>
 					</aon:panelCollapsible>
 				</aon:div>
 			</aon:div>
 		</aon:form>
-		<ui:include
-			src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 	</ui:define>
 </ui:composition>

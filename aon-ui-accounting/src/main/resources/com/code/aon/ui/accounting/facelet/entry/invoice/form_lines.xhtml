@@ -217,14 +217,14 @@
 					rendered="#{to==invoiceEntry.currentDetail}"
 					value="#{invoiceEntry.currentDetail.retentionQuota}"
 					reRender="editRetention,editVat,editSurcharge,editTotal,invoiceTotal"
-					focus="accountId"
+					focus="Account_Id"
 					required="true" />
 				<f:facet name="footer">
 					<aon:inputText id="newRetention" size="8"
 						rendered="#{invoiceEntry.newDetail}" 
 						value="#{invoiceEntry.currentDetail.retentionQuota}"
 						reRender="newRetention,newVat,newSurcharge,newTotal"
-						focus="accountId-New"
+						focus="Account_Id-New"
 						required="true" />
 				</f:facet>
 			</aon:column>
@@ -263,36 +263,24 @@
 					</rich:toolTip>
 				</aon:div>
 					
-				<ui:include
-					src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-					<ui:param name="wizard" value="#{accountWizard}" />
-					<ui:param name="id" value="accountId" />
-					<ui:param name="required" value="#{true}" />
-					<ui:param name="renderDescription" value="#{false}" />
-					<ui:param name="renderedAttr"
-						value="#{to==invoiceEntry.currentDetail}" />
-					<ui:param name="disabled" value="#{false}" />
-					<ui:param name="reRenderAttr" value="none" />
-					<ui:param name="entity"
-						value="#{invoiceEntry.currentDetail.account}" />
-					<ui:param name="ELExpression"
-						value="invoiceEntry.currentDetail.account" />
+				<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupTo" value="#{invoiceEntry.currentDetail.account}" />
+					<ui:param name="lookupRendered" value="#{to==invoiceEntry.currentDetail}" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipGoToButton" value="#{true}" />
+					<ui:param name="skipSuggestText" value="#{true}" />
 				</ui:include>
 				<f:facet name="footer">
 					<aon:div>
-						<ui:include
-							src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-							<ui:param name="wizard" value="#{accountWizard}" />
-							<ui:param name="id" value="accountId-New" />
-							<ui:param name="required" value="#{true}" />
-							<ui:param name="renderDescription" value="#{false}" />
-							<ui:param name="renderedAttr" value="#{invoiceEntry.newDetail}" />
-							<ui:param name="disabled" value="#{false}" />
-							<ui:param name="reRenderAttr" value="none" />
-							<ui:param name="entity"
-								value="#{invoiceEntry.currentDetail.account}" />
-							<ui:param name="ELExpression"
-								value="invoiceEntry.currentDetail.account" />
+						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="lookupSuffix" value="-New" />
+							<ui:param name="lookupTo" value="#{accountEntryDetail.to.balancingAccount}" />
+							<ui:param name="lookupRendered" value="#{invoiceEntry.newDetail}" />
+							<ui:param name="skipGoToButton" value="#{true}" />
+							<ui:param name="skipSuggestText" value="#{true}" />
 						</ui:include>
 						<aon:outputText rendered="#{!invoiceEntry.newDetail}"
 							value="&#160;" />

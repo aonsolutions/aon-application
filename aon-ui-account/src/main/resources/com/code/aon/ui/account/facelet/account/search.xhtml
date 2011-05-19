@@ -18,8 +18,16 @@
 				<ui:param name="controller" value="#{account}" />
 				<ui:define name="searchContent">
 					<ui:include src="/com/code/aon/ui/account/facelet/account/searchContent.xhtml" />
+
+					<aon:outputLabel for="Account_order" value="#{bundle.aon_order}" />
+					<aon:selectOneMenu id="Account_order"
+						value="#{account.orderAlias}">
+						<f:selectItems value="#{account.availableOrders}" />
+					</aon:selectOneMenu>
 				</ui:define>
 			</ui:decorate>
+			
+			
 		</aon:form>
 	</ui:define>
 </ui:composition>
