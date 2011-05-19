@@ -1698,6 +1698,7 @@ color:#000;
 /**********************************************/ 
 .aon-lookup{
 	white-space:nowrap;
+	display:inline;
 	}
 .aon-lookupInputText{
 	border:#808080 1px solid;
