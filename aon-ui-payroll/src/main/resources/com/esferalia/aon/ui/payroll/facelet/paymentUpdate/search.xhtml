@@ -20,22 +20,10 @@
 				<ui:param name="controller" value="#{paymentUpdate}" />
 				<ui:define name="searchContent">
 					<c:if test="#{aonConfiguration.bean.paymentUpdate.showEnterpriseInSearch}">				
-						<aon:outputLabel for="PaymentUpdate_id"
-							value="#{companyBundle.company_enterprise}" />
-						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="PaymentUpdate_id" lookup="#{enterpriseLookup}"
-								reRender="PaymentUpdate_full_name" required="true"
-								value="#{paymentUpdate.enterprise.id}" size="5" />
-							<aon:lookupButton 
-								windowTitle="#{companyBundle.company_enterprise_selection}"
-								selectReRender="PaymentUpdate_id,PaymentUpdate_full_name" actionType="search"
-								lookup="#{enterpriseLookup}" minHeight="460" minWidth="650"
-								property="#{paymentUpdate.enterprise}">
-							</aon:lookupButton>
-							<aon:inputText id="PaymentUpdate_full_name"
-								value="#{(paymentUpdate.enterprise.registry.fullName!=null)?(paymentUpdate.enterprise.registry.fullName):('')}"
-								size="50" disabled="true" />							
-						</aon:div>
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{paymentUpdate.enterprise}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
 					</c:if>
 					
 					<aon:outputText value="#{bundle.aon_date}"/>

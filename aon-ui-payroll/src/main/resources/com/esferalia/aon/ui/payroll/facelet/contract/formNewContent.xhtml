@@ -11,22 +11,10 @@
 
 		<aon:panelGrid columns="2" style="width: 80%;" >
 			
-			<aon:outputLabel for="Person_id"
-				value="#{registryBundle.registry_person}" />
-			<aon:div styleClass="aon-lookup">
-				<aon:lookupInputText id="Person_id" lookup="#{personLookup}"
-					reRender="Person_full_name" required="true"
-					value="#{contract.to.person.id}" size="5" />
-				<aon:lookupButton 
-					windowTitle="#{registryBundle.registry_person_selection}"
-					selectReRender="Person_id,Person_full_name" actionType="search"
-					lookup="#{personLookup}" minHeight="460" minWidth="650"
-					property="#{contract.to.person}">
-				</aon:lookupButton>
-				<aon:inputText id="Person_full_name"
-					value="#{(contract.to.person.registry.fullName!=null)?(contract.to.person.registry.fullName):('')}"
-					size="50" disabled="true" />							
-			</aon:div>
+			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.to.person}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+			</ui:include>
 
 			<aon:outputLabel for="ssRegime"
 				value="#{payrollBundle.payroll_contract_regime}" />
@@ -36,24 +24,10 @@
 				<f:selectItems value="#{payrollCollections.ssRegimes}" />
 			</aon:selectOneMenu>
 
-			<aon:outputLabel for="Enterprise_id"
-				value="#{companyBundle.company_enterprise}" />
-			<aon:div styleClass="aon-lookup" >
-				<aon:lookupInputText id="Enterprise_id" required="true" 
-					lookup="#{enterpriseLookup}" lookupChangeListener="#{contract.onEnterpriseChanged}"
-					reRender="Enterprise_full_name,workPlace,enterpriseActivities"
-					value="#{contract.enterprise.id}" size="5" />
-				<aon:lookupButton 
-					windowTitle="#{companyBundle.company_enterprise_selection}"
-					selectReRender="Enterprise_id,Enterprise_full_name,workPlace,enterpriseActivities"
-					lookup="#{enterpriseLookup}" lookupChangeListener="#{contract.onEnterpriseChanged}"
-					minHeight="460" minWidth="650" actionType="search"
-					property="#{contract.enterprise}">
-				</aon:lookupButton>
-				<aon:inputText id="Enterprise_full_name" 
-					value="#{contract.enterprise.registry.fullName}"
-					size="50" disabled="true" />							
-			</aon:div>
+			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.enterprise}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+			</ui:include>
 			
 			<aon:outputLabel for="workPlace" styleClass="aon-italic aon-margin-left"
 				style="font-size: 0.9em" value="#{companyBundle.company_workplace}" />
