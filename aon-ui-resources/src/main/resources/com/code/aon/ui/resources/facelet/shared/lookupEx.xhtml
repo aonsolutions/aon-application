@@ -23,7 +23,8 @@
 				controllerListener="#{lookupControllerListener}"
 				required="#{idRequired}" disabled="#{lookupDisabled}"
 				size="#{lookupInputSize}" maxlength="#{lookupInputMaxLength}"  
-				onblur="#{lookupInputOnBlur}" reRender="#{lookup_reRender}" >
+				onblur="#{lookupInputOnBlur}" focus="#{lookupInputOnFocus}"
+				reRender="#{lookup_reRender}" >
 				<ui:insert name="lookupInputTextContent"/>
 			</aon:lookupInputText>
 		</c:if>
@@ -37,7 +38,9 @@
 			lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
 			lookupChangeListener="#{lookupChangeListener}"
 			controllerListener="#{lookupControllerListener}"
-			selectReRender="#{lookup_reRender}" />
+			selectReRender="#{lookup_reRender}" >
+			<ui:insert name="searchButtonContent"/>
+		</aon:lookupButton>
 		<aon:lookupButton
 			actionType="clear" disabled="#{lookupDisabled}" 
 			lookup="#{lookupBean}" property="#{lookupTo}"
@@ -53,7 +56,9 @@
 				property="#{lookupTo}" lookup="#{lookupBean}"
 				lookupChangeListener="#{lookupChangeListener}"
 				controllerListener="#{lookupControllerListener}"
-				selectReRender="#{lookup_reRender}" />
+				selectReRender="#{lookup_reRender}" >
+				<ui:insert name="newButtonContent"/>
+			</aon:lookupButton>
 		</c:if>
 		<c:if test="#{!skipSuggestText}">																		
 			<aon:lookupSuggestText id="#{pojoName}_name#{lookupSuffix}"

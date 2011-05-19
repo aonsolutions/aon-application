@@ -22,42 +22,26 @@
 				</f:facet>
 				<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
 					rendered="#{formList}" />
-				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-					<aon:lookupInputText id="CommissionItem_item_product_code" value="#{commissionItem.to.item.product.code}"
-						lookup="#{itemLookup}" reRender="CommissionItem_item_product_name"
-						lookupChangeListener="#{commissionItem.itemData}" onblur="toUpperCase(this);"
-						required="true" size="10">
-						<aon:joinProperty alias="Item_product_code" value="#{commissionItem.to.item.product.code}" />
-					</aon:lookupInputText>
-					<aon:lookupButton
-						windowTitle="#{productBundle.product_item_selection}" actionType="search"
-						property="#{commissionItem.to.item}"	selectReRender="#{dataTableId}"
-						lookup="#{itemLookup}" minHeight="460" minWidth="650"
-						lookupChangeListener="#{commissionItem.itemData}">
-					</aon:lookupButton>
-					<aon:inputText id="CommissionItem_item_product_name" 
-						value="#{(commissionItem.to.item.product.name!=null)?(commissionItem.to.item.product.name):('')}"
-						disabled="true" size="60" />
-				</aon:div>
-				<f:facet name="footer">
-					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-						<aon:lookupInputText id="CommissionItem_item_product_code-New" value="#{commissionItem.to.item.product.code}"
-							lookup="#{itemLookup}" reRender="CommissionItem_item_product_name-New"
-							lookupChangeListener="#{commissionItem.itemData}" onblur="toUpperCase(this);"
-							required="true" size="10">
-							<aon:joinProperty alias="Item_product_code" value="#{commissionItem.to.item.product.code}" />
-						</aon:lookupInputText>
-						<aon:lookupButton
-							windowTitle="#{productBundle.product_item_selection}" actionType="search"
-							property="#{commissionItem.to.item}" selectReRender="#{dataTableId}"
-							lookup="#{itemLookup}" minHeight="460" minWidth="650"
-							lookupChangeListener="#{commissionItem.itemData}">
-						</aon:lookupButton>
-						<aon:inputText id="CommissionItem_item_product_name-New" 
-							value="#{(commissionItem.to.item.product.name!=null)?(commissionItem.to.item.product.name):('')}"
-							disabled="true" size="60" />
-					</aon:div>
-				</f:facet>
+
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{commissionItem.to.item}" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<aon:methodParam name="lookupChangeListener"
+						value="#{commissionItem.itemData}" type="lookupChangeListener" />							
+				</ui:include>
+				<f:facet name="footer" >
+					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{commissionItem.to.item}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{formNew}" />
+						<ui:param name="lookupSuffix" value="-New" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{commissionItem.itemData}" type="lookupChangeListener" />							
+					</ui:include>
+				</f:facet>							
 			</aon:column>
 
 			<aon:column>

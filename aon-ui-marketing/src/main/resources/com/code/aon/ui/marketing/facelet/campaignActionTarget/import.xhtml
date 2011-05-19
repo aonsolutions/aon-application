@@ -35,21 +35,16 @@
 					<aon:outputLabel for="Import_action_id" 
 						value="#{marketingBundle.marketing_campaign_action}" />
 					<aon:div>
-						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="Import_action_id"
-								lookup="#{campaignActionLookup}"
-								lookupChangeListener="#{campaignActionTarget.onActionLookupChange}"
-								reRender="Import_action_detail,targetDataDiv"
-								value="#{campaignActionTarget.action.id}" size="5">
-							</aon:lookupInputText>
-							<aon:lookupButton
-								windowTitle="#{marketingBundle.marketing_action_selection}"
-								selectReRender="Import_action_id,Import_action_detail,targetDataDiv"
-								lookupChangeListener="#{campaignActionTarget.onActionLookupChange}"
-								lookup="#{campaignActionLookup}" minHeight="440"
-								property="#{campaignActionTarget.action}">
-							</aon:lookupButton>
-						</aon:div>
+						<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{campaignActionTarget.action}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="skipGoToButton" value="#{true}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="skipSuggestText" value="#{true}" />
+							<ui:param name="lookupReRender" value="Import_action_detail,targetDataDiv" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{campaignActionTarget.onActionLookupChange}" type="lookupChangeListener" />
+						</ui:include>					
 						<aon:div id="Import_action_detail">
 							<aon:panelGrid columns="2" rendered="#{campaignActionTarget.actionSelected}">
 								<aon:outputText value="#{marketingBundle.marketing_campaign}" />						

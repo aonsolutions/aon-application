@@ -81,24 +81,19 @@
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 
-					<aon:outputLabel for="CommunicationCenter_action_id" 
+					<aon:outputLabel for="MarketingAction_id" 
 						value="#{marketingBundle.marketing_campaign_action}" />
 					<aon:div>
-						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="CommunicationCenter_action_id"
-								lookup="#{campaignActionLookup}"
-								lookupChangeListener="#{communicationCenter.onActionLookupChange}"
-								reRender="CommunicationCenter_action_detail,CommunicationCenter_survey,CommunicationCenter_target,aonToolbar"
-								value="#{communicationCenter.action.id}" size="5">
-							</aon:lookupInputText>
-							<aon:lookupButton
-								windowTitle="#{marketingBundle.marketing_action_selection}"
-								selectReRender="CommunicationCenter_action_id,CommunicationCenter_action_detail,CommunicationCenter_survey,CommunicationCenter_target,aonToolbar"
-								lookupChangeListener="#{communicationCenter.onActionLookupChange}"
-								lookup="#{campaignActionLookup}" minHeight="440"
-								property="#{communicationCenter.action}">
-							</aon:lookupButton>
-						</aon:div>
+						<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{campaignActionTarget.action}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="skipGoToButton" value="#{true}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="skipSuggestText" value="#{true}" />
+							<ui:param name="lookupReRender" value="CommunicationCenter_action_detail,lookupSurvey,CommunicationCenter_target,aonToolbar" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{communicationCenter.onActionLookupChange}" type="lookupChangeListener" />
+						</ui:include>	
 						<aon:div id="CommunicationCenter_action_detail">
 							<aon:panelGrid rendered="#{communicationCenter.actionSelected}" columns="2" dir="true">
 								<aon:outputText value="#{marketingBundle.marketing_campaign}" />						

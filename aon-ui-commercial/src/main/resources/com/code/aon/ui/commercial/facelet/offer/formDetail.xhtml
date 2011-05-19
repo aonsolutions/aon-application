@@ -24,8 +24,8 @@
 		<ui:param name="newSaveButtonReRender" value="menuExt,headerData,Offer_total" />
 		<ui:param name="saveButtonReRender" value="menuExt,headerData,Offer_total" />
 		<ui:param name="removeButtonReRender" value="menuExt,headerData,Offer_total" />
-		<ui:param name="focusOnAdd" value="OfferDetail_item_product_code-New" />
-		<ui:param name="focusOnSelect" value="OfferDetail_item_product_code" />
+		<ui:param name="focusOnAdd" value="Item_id-New" />
+		<ui:param name="focusOnSelect" value="Item_id" />
 	
 		<ui:define name="columns">
 	
@@ -47,7 +47,7 @@
 	
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 				<f:facet name="header">
-					<aon:outputLabel for="OfferDetail_item_product_code" value="#{productBundle.product_item}" />
+					<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" 
 					rendered="#{formList}"
@@ -56,33 +56,11 @@
 				</aon:outputText>
 				<aon:div id="offerDetailItemEdit" styleClass="aon-lookup" rendered="#{formEdit}">
 					<a4j:region>
-						<aon:lookupInputText id="OfferDetail_item_product_code" 
-							value="#{offerDetail.to.item.product.code}"
-							lookup="#{itemLookup}" style="vertical-align: top;"
-							lookupChangeListener="#{offerDetail.onItemChanged}"
-							reRender="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
-							ajaxSingle="false" size="10" 
-							onblur="toUpperCase(this);" focus="OfferDetail_item_product_name">
-							<aon:joinProperty alias="Item_product_code"	value="#{offerDetail.to.item.product.code}" />
-						</aon:lookupInputText>
-						<aon:lookupButton
-							windowTitle="#{productBundle.product_item_selection}"
-							minHeight="460" minWidth="650"
-							property="#{offerDetail.to.item}" lookup="#{itemLookup}"
-							lookupChangeListener="#{offerDetail.onItemChanged}" 
-							selectReRender="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
-							actionType="search">
-							<f:setPropertyActionListener target="#{itemSearch.supplierParam}"
-								value="#{offer.to.supplier}" />
-						</aon:lookupButton>
-						<aon:lookupButton
-							windowTitle="#{productBundle.product_item_new}"
-							minHeight="360" minWidth="975"
-							property="#{offerDetail.to.item}" lookup="#{itemLookup}"
-							lookupChangeListener="#{offerDetail.onItemChanged}" 
-							selectReRender="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount"
-							actionType="new">
-						</aon:lookupButton>
+						<ui:include src="/com/code/aon/ui/commercial/facelet/offer/formDetailItemLookup.xhtml" >
+							<ui:param name="lookupInputOnFocus" value="OfferDetail_item_product_name" />
+							<ui:param name="lookupReRender" 
+								value="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount" />
+						</ui:include>						
 						<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
 							<aon:commandButton value="&#160;"
 								title="#{productBundle.product_info}"
@@ -93,7 +71,7 @@
 								<aon:set var="#{itemInfo.stockVisible}" value="#{false}" />
 								<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
 								<aon:set var="#{itemInfo.item}" value="#{offerDetail.to.item}" /> 
-								<aon:set var="#{itemInfo.componentId}" value="OfferDetail_item_product_code" />
+								<aon:set var="#{itemInfo.componentId}" value="Item_id" />
 								<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
 							</aon:commandButton>															
 						</c:if>
@@ -114,33 +92,12 @@
 				<f:facet name="footer">
 					<aon:div id="offerDetailItemNew" styleClass="aon-lookup" rendered="#{formNew}">
 						<a4j:region>
-							<aon:lookupInputText id="OfferDetail_item_product_code-New" 
-								value="#{offerDetail.to.item.product.code}"
-								lookup="#{itemLookup}" style="vertical-align: top;"
-								lookupChangeListener="#{offerDetail.onItemChanged}"
-								reRender="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"
-								ajaxSingle="false" size="10" 
-								onblur="toUpperCase(this);" focus="OfferDetail_item_product_name-New">
-								<aon:joinProperty alias="Item_product_code"	value="#{offerDetail.to.item.product.code}" />
-							</aon:lookupInputText>
-							<aon:lookupButton
-								windowTitle="#{productBundle.product_item_selection}"
-								minHeight="460" minWidth="650" 
-								property="#{offerDetail.to.item}" lookup="#{itemLookup}"
-								lookupChangeListener="#{offerDetail.onItemChanged}" 
-								selectReRender="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"
-								actionType="search">
-								<f:setPropertyActionListener target="#{itemSearch.supplierParam}"
-									value="#{offer.to.supplier}" />
-							</aon:lookupButton>
-							<aon:lookupButton
-								windowTitle="#{productBundle.product_item_new}"
-								minHeight="360" minWidth="975"
-								property="#{offerDetail.to.item}" lookup="#{itemLookup}"
-								lookupChangeListener="#{offerDetail.onItemChanged}" 
-								selectReRender="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New"
-								actionType="new">
-							</aon:lookupButton>												
+							<ui:include src="/com/code/aon/ui/commercial/facelet/offer/formDetailItemLookup.xhtml" >
+								<ui:param name="lookupSuffix" value="-New" />
+								<ui:param name="lookupInputOnFocus" value="OfferDetail_item_product_name-New" />
+								<ui:param name="lookupReRender" 
+									value="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New" />
+							</ui:include>						
 							<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
 								<aon:commandButton value="&#160;"
 									title="#{productBundle.product_info}"
@@ -151,7 +108,7 @@
 									<aon:set var="#{itemInfo.stockVisible}" value="#{false}" />
 									<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
 									<aon:set var="#{itemInfo.item}" value="#{offerDetail.to.item}" /> 
-									<aon:set var="#{itemInfo.componentId}" value="OfferDetail_item_product_code-New" />
+									<aon:set var="#{itemInfo.componentId}" value="Item_id-New" />
 									<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
 								</aon:commandButton>															
 							</c:if>
