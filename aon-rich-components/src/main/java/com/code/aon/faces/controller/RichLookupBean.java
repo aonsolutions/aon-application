@@ -825,6 +825,7 @@ public class RichLookupBean {
 		this.suggestAlias = getController().resolveAlias(alias);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<ITransferObject> autocomplete( Object value ) {
 		if ( value != null ) {
 			String text = value.toString();
@@ -834,6 +835,10 @@ public class RichLookupBean {
 					Criteria criteria = getController().getCriteria();
 					Expression exp = ExpressionUtilities.getLikeExpression(getSuggestAlias(), "%" + text + "%");
 					criteria.addExpression(exp);
+					onSearch(null);
+					if (getModel().getRowCount() > 0) {
+						return (List<ITransferObject>) getModel().getWrappedData();
+					}					
 					return getController().getManagerBean().getList(criteria);
 		    	} catch (ManagerBeanException e) {
 		    		LOGGER.error( "Error getting suggestion objects", e );
