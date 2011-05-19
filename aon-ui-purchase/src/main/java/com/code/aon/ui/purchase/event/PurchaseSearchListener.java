@@ -2,9 +2,9 @@ package com.code.aon.ui.purchase.event;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
-import com.code.aon.product.Product;
 import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
@@ -53,11 +53,10 @@ public class PurchaseSearchListener extends RegistrySearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
-		setSupplier(new Supplier());
+		setSupplier((Supplier)BeanManager.getManagerBean(Supplier.class).createNewTo());
 		PurchaseStatus[] defaultPurchaseStatus = {PurchaseStatus.PENDING};
 		setPurchaseStatuses(defaultPurchaseStatus);
-		setItem(new Item());
-		getItem().setProduct(new Product());				
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 	}
 	
 	@Override
