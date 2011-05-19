@@ -11,7 +11,7 @@
 	<ui:decorate template="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
 		<ui:param name="lookupTo" value="#{offerDetail.to.item}" />
 		<ui:param name="skipLabel" value="#{true}" />
-		<ui:param name="skipSuggestText" value="#{true}" />
+		<ui:param name="skipSuggestText" value="#{offerDetail.to.item != null and offerDetail.to.item.id != null}" />
 		<ui:param name="lookupInputOnFocus" value="OfferDetail_item_product_name" />
 
 		<ui:define name="searchButtonContent">
