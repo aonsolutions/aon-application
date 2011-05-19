@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<c:if test="#{!aonRole.sisAdmin}" >
+		<aon:outputLabel value="#{bundle.aon_concept}" />
+		<aon:outputText value="#{controller.to.bonusConcept.description}" />
+	</c:if>
+	<c:if test="#{aonRole.sisAdmin}" >
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonusConcept/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{controller.to.bonusConcept}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+			<ui:param name="idRequired" value="#{true}" />
+		</ui:include>
+	</c:if>
+
+	<aon:outputLabel for="ContractBonus_startDate" value="#{bundle.aon_start_date}" />
+	<aon:selectInputDate id="ContractBonus_startDate" value="#{controller.to.startDate}" required="true"
+		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
+	
+	<aon:outputLabel for="ContractBonus_endDate" value="#{bundle.aon_end_date}" />
+	<aon:selectInputDate id="ContractBonus_endDate" value="#{controller.to.endDate}"
+		timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+	<aon:outputLabel for="ContractBonus_description" value="#{bundle.aon_description}" />
+	<aon:inputText id="ContractBonus_description" size="64" maxlength="64" 
+		value="#{controller.to.description}" />
+	
+	<aon:outputLabel for="ContractBonus_expression" value="#{payrollBundle.payroll_salary_expression}" />
+	<aon:outputText value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.bonusConcept.expression)}" 
+		rendered="#{!aonRole.sisAdmin}" />
+	<aon:inputTextarea id="ContractBonus_expression" cols="64" rows="2" maxlength="128"
+		rendered="#{aonRole.sisAdmin}"
+		value="#{controller.to.expression}" required="true">
+		<f:validateLength maximum="128"/>
+		<a4j:region>
+			<rich:suggestionbox id="ContractBonus_expression_suggestion"
+				for="ContractBonus_expression"
+				onselect="suggestionBoxActive=false;"
+				suggestionAction="#{controller.expressionContext}" var="exp"
+				similarityGroupingId=""
+				tokens=" +-/*%()"
+				fetchValue="#{exp.name}"
+				immediate="true" limitToList="true" ajaxSingle="true"
+				eventsQueue="ContractBonus_expressionSug" ignoreDupResponses="true"
+				requestDelay="100" width="500" height="200"
+				nothingLabel="#{bundle.aon_search_no_results}">
+				<aon:column>
+					<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
+					<aon:outputText value=" (#{exp.expression})"/>
+				</aon:column>
+			</rich:suggestionbox>
+		</a4j:region>
+	</aon:inputTextarea>
+
+</ui:composition>

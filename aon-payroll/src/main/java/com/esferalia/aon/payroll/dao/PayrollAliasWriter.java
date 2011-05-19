@@ -10,6 +10,7 @@ import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementLevelPayment;
+import com.esferalia.aon.payroll.BonusConcept;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchData;
@@ -18,6 +19,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchDetail;
+import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractCalendarEvent;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
@@ -57,6 +59,7 @@ public class PayrollAliasWriter {
 				AgreementLevelCategory.class.getName(),
 				AgreementLevelData.class.getName(),
 				AgreementLevelPayment.class.getName(),
+				BonusConcept.class.getName(),
 				Certifica2Batch.class.getName(),
 				Certifica2BatchData.class.getName(),
 				Certifica2BatchDetail.class.getName(),
@@ -65,6 +68,7 @@ public class PayrollAliasWriter {
 				ContractAttachment.class.getName(),
 				ContractBatch.class.getName(),
 				ContractBatchDetail.class.getName(),
+				ContractBonus.class.getName(),
 				ContractCalendarEvent.class.getName(),
 				ContractData.class.getName(),
 				ContractDeduction.class.getName(),

@@ -50,6 +50,7 @@
 						<aon:outputText value="#{payrollBundle.payroll_launch_testTotalPayment}" />
 					</aon:div>
 
+<!--  
 					<aon:outputLabel for="Person_id" value="#{registryBundle.registry_person}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="Person_id" lookup="#{personLookup}"
@@ -65,6 +66,12 @@
 							value="#{(salaryTestLauncher.params.person.registry.fullName!=null)?(salaryTestLauncher.params.person.registry.fullName):('')}"
 							size="50" disabled="true" />							
 					</aon:div>
+-->					
+					<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{salaryTestLauncher.params.person}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
+				
 
 					<aon:outputText value="&#160;" />
 					<aon:outputText value="&#160;" />
@@ -84,6 +91,11 @@
 					</aon:div>
 -->
 
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{salaryTestLauncher.params.enterprise}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
+<!--  
 					<aon:outputLabel for="Enterprise_id"
 						value="#{companyBundle.company_enterprise}" />
 					<aon:div styleClass="aon-lookup">
@@ -100,6 +112,7 @@
 							value="#{(salaryTestLauncher.params.enterprise.registry.fullName!=null)?(salaryTestLauncher.params.enterprise.registry.fullName):('')}"
 							size="50" disabled="true" />							
 					</aon:div>
+-->
 					
 
 <!-- 

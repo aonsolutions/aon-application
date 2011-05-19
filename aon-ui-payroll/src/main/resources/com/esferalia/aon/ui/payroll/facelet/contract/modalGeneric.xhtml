@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="#{controller.beanName}ModalContainer">
+		<c:if test="#{controller.modalPanelVisible}">
+			<rich:modalPanel id="#{controller.beanName}ModalPanel" minHeight="600"
+				minWidth="900" showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{popupWindowTitle}" />
+					</aon:div>
+				</f:facet>
+				<aon:form id="#{controller.beanName}ModalForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+										<aon:commandButton id="#{controller.beanName}Save"
+											value="#{bundle.aon_accept}"
+											reRender="#{controller.beanName}ModalContainer,#{container}"
+											actionListener="#{controller.onSave}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept">
+										</aon:commandButton>
+										<aon:commandButton id="#{controller.beanName}Cancel"
+											value="#{bundle.aon_cancel}"
+											reRender="#{controller.beanName}ModalContainer,#{container}"
+											actionListener="#{controller.onCancel}"
+											immediate="true"
+											styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										</aon:commandButton>
+										<aon:commandButton id="#{controller.beanName}Remove"
+											value="#{bundle.aon_remove}"
+											reRender="#{controller.beanName}ModalContainer,#{container}"
+											actionListener="#{controller.onRemove}"
+											immediate="true"
+											styleClass="aon-finding-toolbar-item aon-icon-delete"
+											onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;">
+										</aon:commandButton>
+									</aon:div>
+									
+									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+										<ui:insert name="gridContent"/>
+									</aon:div>
+									
+									<aon:div id="#{controller.beanName}VarContainer" styleClass="aon-scroll-area" 
+										rendered="#{!controller.new and controller.variablesModel!=null}">
+										<aon:panelGrid columns="1" style="width: 100%; margin-top:10px;"
+											columnClasses="aon-panelGrid-even  aon-width-auto">
+											<aon:div>
+												<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
+												<aon:outputText value="#{payrollBundle.payroll_contract_variables}" 
+													styleClass="aon-bold"/>
+											</aon:div>
+										</aon:panelGrid>	
+										
+										<c:if test="#{controller.contractData==null}" >
+											<aon:editDataTable id="#{controller.beanName}VariablesList"
+												value="#{controller.variablesModel}" var="to" rows="20" >
+												
+												<aon:column 
+													styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<aon:commandButton id="#{controller.beanName}-edit"
+														rendered="#{to.id!=null}"
+														title="#{bundle.aon_update}" 
+														actionListener="#{controller.onSelectVariable}"
+														reRender="#{controller.beanName}VarContainer"
+														styleClass="aon-editDataTable-button aon-icon-rowSelector" />
+													<aon:commandButton id="#{controller.beanName}-overwrite"
+														rendered="#{to.id==null}"
+														title="#{payrollBundle.payroll_overwrite}" 
+														actionListener="#{controller.onSelectVariable}"
+														reRender="#{controller.beanName}VarContainer"
+														styleClass="aon-editDataTable-button aon-icon-go" />
+													<f:facet name="footer">
+														<aon:commandButton
+															id="#{controller.beanName}-reset" 
+															title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+															actionListener="#{controller.onResetVariable}"
+															reRender="#{controller.beanName}VarContainer"
+															styleClass="aon-editDataTable-button aon-icon-reset"
+															accesskey="#{bundle.aon_key_new_line}"/>
+													</f:facet>
+												</aon:column>
+												
+												<ui:include 
+													src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" >
+													<ui:param name="controller" value="#{controller}" />
+													<aon:valueParam name="formList" value="true" />
+												</ui:include>
+												
+											</aon:editDataTable>
+											<aon:dataScroller2 for="#{controller.beanName}VariablesList" showNote="false" />
+											
+											<c:if test="#{controller.undefinedVariablesModel!=null}" >
+												<ui:include 
+													src="/com/esferalia/aon/ui/payroll/facelet/contract/data/grid_undefined.xhtml" >
+													<ui:param name="controller" value="#{controller}" />
+													<aon:valueParam name="formList" value="true" />
+													<aon:valueParam name="saveReRender" value="#{controller.beanName}VarContainer" />
+												</ui:include>
+											</c:if>
+										</c:if>
+													
+										<c:if test="#{controller.contractData!=null}" >
+											<ui:include 
+												src="/com/esferalia/aon/ui/payroll/facelet/contract/data/formContent.xhtml" >
+												<ui:param name="controller" value="#{controller}" />
+												<aon:valueParam name="container" value="#{controller.beanName}VarContainer" />
+											</ui:include>
+										</c:if>
+										
+									</aon:div>
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+				
+				<ui:insert name="afterModalContent"/>
+				
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+</ui:composition>

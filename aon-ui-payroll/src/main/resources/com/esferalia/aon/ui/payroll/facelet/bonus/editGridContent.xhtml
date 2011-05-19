@@ -6,20 +6,21 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<aon:dataTable id="ContractPaymentTable" var="to" value="#{controller.paymentsModel}" rows="0">
+	<aon:dataTable id="ContractBonusTable" var="to" value="#{controller.model}" rows="0">
 		<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 			<f:facet name="header">
 				<aon:outputText value="&#160;" />
 			</f:facet>
-			<aon:commandButton id="ContractPayment-select"
-				title="#{(controller.contractScope)?(bundle.aon_update):(payrollBundle.payroll_overwrite)}" 
+			<aon:commandButton id="ContractBonus-select"
+				title="#{bundle.aon_update}" 
 				actionListener="#{controller.onEdit}"
 				reRender="#{controller.beanName}ModalContainer"
-				styleClass="aon-editDataTable-button #{(controller.contractScope)?('aon-icon-rowSelector'):('aon-icon-go')}"/>
+				styleClass="aon-editDataTable-button aon-icon-rowSelector"
+				focus="accountId" />
 			<f:facet name="footer">
 				<aon:div>
 					<aon:commandButton
-						id="ContractPayment-reset" 
+						id="ContractBonus-reset" 
 						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 						actionListener="#{controller.onReset}"
 						reRender="#{controller.beanName}ModalContainer"
@@ -27,20 +28,6 @@
 						accesskey="#{bundle.aon_key_new_line}"/>
 				</aon:div>
 			</f:facet>
-		</aon:column>
-		
-		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
-			<f:facet name="header">
-				<aon:outputText	value="#{bundle.aon_scope}" />
-			</f:facet>
-			<aon:outputText value="#{to.scope}" />
-		</aon:column>
-		
-		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
-			<f:facet name="header">
-				<aon:outputText	value="#{bundle.aon_type}" />
-			</f:facet>
-			<aon:outputText value="#{to.salaryType}" />
 		</aon:column>
 
 		<c:if test="#{!skipStartDateColumn}">
@@ -66,28 +53,22 @@
 				</aon:outputText>		
 			</aon:column>
 		</c:if>
-		
-		<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+
+<!--  
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
 			<f:facet name="header">
-				<aon:outputText value="#{payrollBundle.payroll_salary_payment_month}" />
+				<aon:outputText value="#{bundle.aon_type}" />
 			</f:facet>
-			<aon:outputText value="#{to.month}" />
+			<aon:outputText value="#{to.type}" />
 		</aon:column>
-		
-		<aon:column styleClass="aon-editDataTable-textColumn aon-width-70">
-			<f:facet name="header">
-				<aon:outputText	value="#{bundle.aon_concept}" />
-			</f:facet>
-			<aon:outputText value="#{to.paymentConcept.code}" />
-		</aon:column>
+-->		
 
 		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_description}" />
 			</f:facet>
-			<aon:outputText value="#{(to.description!=null)?(to.description):(to.paymentConcept.description)}" />
+			<aon:outputText value="#{(to.description!=null)?(to.description):(to.bonusConcept.description)}" />
 		</aon:column>
- 
 	</aon:dataTable>
 	
 </ui:composition>

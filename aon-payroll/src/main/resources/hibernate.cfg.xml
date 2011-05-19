@@ -21,6 +21,7 @@
 		<mapping class="com.esferalia.aon.payroll.AgreementLevelCategory"/>
 		<mapping class="com.esferalia.aon.payroll.AgreementLevelData"/>
 		<mapping class="com.esferalia.aon.payroll.AgreementLevelPayment"/>
+		<mapping class="com.esferalia.aon.payroll.BonusConcept"/>
 		<mapping class="com.esferalia.aon.payroll.Certifica2Batch"/>
 		<mapping class="com.esferalia.aon.payroll.Certifica2BatchData"/>
 		<mapping class="com.esferalia.aon.payroll.Certifica2BatchDetail"/>
@@ -29,6 +30,7 @@
 		<mapping class="com.esferalia.aon.payroll.ContractAttachment"/>
 		<mapping class="com.esferalia.aon.payroll.ContractBatch"/>
 		<mapping class="com.esferalia.aon.payroll.ContractBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBonus"/>
 		<mapping class="com.esferalia.aon.payroll.ContractCalendarEvent"/>
 		<mapping class="com.esferalia.aon.payroll.ContractData"/>
 		<mapping class="com.esferalia.aon.payroll.ContractDeduction"/>

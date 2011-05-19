@@ -34,9 +34,10 @@
 		
 		<aon:outputLabel for="ContractData_name" 
 			value="#{bundle.aon_name}" />
+<!--  
 		<aon:inputText id="ContractData_name" required="true"
-			value="#{controller.contractData.name}" maxlength="16" size="16" >
-			<f:validateLength maximum="16"/>
+			value="#{controller.contractData.name}" maxlength="64" size="20" >
+			<f:validateLength maximum="64"/>
 			<a4j:region>
 				<rich:suggestionbox id="ContractData_name_suggestion"
 					for="ContractData_name"
@@ -55,12 +56,17 @@
 				</rich:suggestionbox>
 			</a4j:region>
 		</aon:inputText>
+			<f:selectItem value="#{null}" itemLabel=" - " />
+-->		
+		<aon:selectOneMenu id="ContractData_name" value="#{controller.contractData.name}">
+			<f:selectItems value="#{controller.newVariableList}"  />
+		</aon:selectOneMenu>
 
 		<aon:outputLabel for="ContractData_expression"
 			value="#{payrollBundle.payroll_salary_expression}" />
 		<aon:inputText id="ContractData_expression" required="true"
-			value="#{controller.contractData.expression}" maxlength="64" size="64">
-			<f:validateLength maximum="64"/>
+			value="#{controller.contractData.expression}" maxlength="128" size="64">
+			<f:validateLength maximum="128"/>
 			<a4j:region>
 				<rich:suggestionbox id="ContractData_expression_suggestion"
 					for="ContractData_expression"

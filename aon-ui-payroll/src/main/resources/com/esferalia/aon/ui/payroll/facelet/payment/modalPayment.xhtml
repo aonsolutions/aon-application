@@ -8,129 +8,25 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panelGroup id="paymentModalContainer">
-		<c:if test="#{controller.modalPanelVisible}">
-			<rich:modalPanel id="paymentModalPanel" minHeight="600"
-				minWidth="900" showWhenRendered="true" zindex="90">
-				<f:facet name="header">
-					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{payrollBundle.payroll_salary_payment}" />
-					</aon:div>
-				</f:facet>
-				<aon:form id="paymentModalForm">
-					<aon:div styleClass="aon-popupWindow-content">
-						<aon:div style="width:100%">
-							<aon:div styleClass="aon-popupWindow-content-internal">
-								<aon:div style="width:99%">
-									<aon:div styleClass="aon-toolbar">
-										<aon:commandButton id="paymentSave"
-											value="#{bundle.aon_accept}"
-											reRender="paymentModalContainer,#{container}"
-											actionListener="#{controller.onSave}"
-											styleClass="aon-finding-toolbar-item aon-icon-accept">
-										</aon:commandButton>
-										<aon:commandButton id="paymentCancel"
-											value="#{bundle.aon_cancel}"
-											reRender="paymentModalContainer,#{container}"
-											actionListener="#{controller.onCancel}"
-											immediate="true"
-											styleClass="aon-finding-toolbar-item aon-icon-cancel">
-										</aon:commandButton>
-										<aon:commandButton id="paymentRemove"
-											value="#{bundle.aon_remove}"
-											rendered="#{!controller.new}"
-											reRender="paymentModalContainer,#{container}"
-											actionListener="#{controller.onRemove}"
-											immediate="true"
-											styleClass="aon-finding-toolbar-item aon-icon-delete"
-											onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;">
-										</aon:commandButton>
-									</aon:div>
-									
-									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
-										<aon:panelGrid id="paymentMenuGrid" columns="2" dir="true" style="width: 80%;">
-											<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/formContent.xhtml">
-												<ui:param name="controller" value="#{controller}" />
-												<ui:param name="containerID" value="paymentMenuGrid" />
-												<ui:param name="skipCurrentMonth" value="#{skipCurrentMonth}" />
-												<ui:param name="contextDisabled" value="#{contextDisabled}" />
-											</ui:include>
-										</aon:panelGrid>
-									</aon:div>
-									
-									<aon:div id="paymentVarContainer" styleClass="aon-scroll-area" rendered="#{!controller.new}">
-										<aon:panelGrid columns="1" style="width: 100%; margin-top:10px;"
-											columnClasses="aon-panelGrid-even  aon-width-auto">
-											<aon:div>
-												<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
-												<aon:outputText value="#{payrollBundle.payroll_contract_variables}" 
-													styleClass="aon-bold"/>
-											</aon:div>
-										</aon:panelGrid>	
-										
-										<c:if test="#{controller.contractData==null}" >
-											<aon:editDataTable id="paymentVariablesList"
-												rendered="#{controller.variablesModel.rowCount > 0}" 
-												value="#{controller.variablesModel}" var="to" rows="20" >
-												
-												<aon:column 
-													styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
-													<f:facet name="header">
-														<aon:outputText value="&#160;" />
-													</f:facet>
-													<aon:commandButton id="ContractPayment-edit"
-														rendered="#{to.id!=null}"
-														title="#{bundle.aon_update}" 
-														actionListener="#{controller.onSelectVariable}"
-														reRender="paymentVarContainer"
-														styleClass="aon-editDataTable-button aon-icon-rowSelector" />
-													<aon:commandButton id="ContractPayment-overwrite"
-														rendered="#{to.id==null}"
-														title="#{payrollBundle.payroll_overwrite}" 
-														actionListener="#{controller.onSelectVariable}"
-														reRender="paymentVarContainer"
-														styleClass="aon-editDataTable-button aon-icon-go" />
-													<f:facet name="footer">
-														<aon:commandButton
-															id="ContractPayment-reset" 
-															title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
-															actionListener="#{controller.onResetVariable}"
-															reRender="paymentVarContainer"
-															styleClass="aon-editDataTable-button aon-icon-reset"
-															accesskey="#{bundle.aon_key_new_line}"/>
-													</f:facet>
-												</aon:column>
-												
-												<ui:include 
-													src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" >
-													<aon:valueParam name="formList" value="true" />
-												</ui:include>
-												
-											</aon:editDataTable>
-											<aon:dataScroller2 for="paymentVariablesList" showNote="true" />
-										</c:if>
-													
-										<c:if test="#{controller.contractData!=null}" >
-											<ui:include 
-												src="/com/esferalia/aon/ui/payroll/facelet/contract/data/formContent.xhtml" >
-												<aon:valueParam name="container" value="paymentVarContainer" />
-											</ui:include>
-										</c:if>
+	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/contract/modalGeneric.xhtml">
+		<ui:param name="controller" value="#{controller}" />
+		<ui:param name="popupWindowTitle" value="#{payrollBundle.payroll_salary_payment}" />
+		
+		<ui:define name="gridContent" >
+			<aon:panelGrid id="#{controller.beanName}MenuGrid" columns="2" dir="true" style="width: 80%;">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/formContent.xhtml">
+					<ui:param name="controller" value="#{controller}" />
+					<ui:param name="containerID" value="paymentMenuGrid" />
+					<ui:param name="skipCurrentMonth" value="#{skipCurrentMonth}" />
+					<ui:param name="contextDisabled" value="#{contextDisabled}" />
+				</ui:include>
+			</aon:panelGrid>
+		</ui:define>
+		
+		<ui:define name="afterModalContent" >
+			<aon:lookupButtonPopup lookup="#{paymentConceptLookup}" />
+		</ui:define>
 
-									</aon:div>
+	</ui:decorate>
 
-									
-									
-									
-								</aon:div>
-							</aon:div>
-						</aon:div>
-					</aon:div>
-				</aon:form>
-				
-				<aon:lookupButtonPopup lookup="#{paymentConceptLookup}" />
-				
-			</rich:modalPanel>
-		</c:if>
-	</aon:panelGroup>
 </ui:composition>

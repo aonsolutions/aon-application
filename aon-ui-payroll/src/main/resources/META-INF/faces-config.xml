@@ -188,6 +188,29 @@
 			<value>contractDeduction</value>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- ************ CONTRACT BONUS ************** -->
+	<managed-bean>
+		<managed-bean-name>contractBonus</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.ContractBonusController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.ContractBonus</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contractBonus</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractBonus_startDate</value>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ************ CONTRACT DATA ************** -->
 	<managed-bean>
@@ -1301,6 +1324,10 @@
 			<value>PaymentConcept_code</value>
 		</managed-property>
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>PaymentConcept_description</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/paymentConcept/list.xhtml</value>
 		</managed-property>
@@ -1328,12 +1355,47 @@
 			<value>DeductionConcept_code</value>
 		</managed-property>
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>DeductionConcept_description</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/deductionConcept/list.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>searchPagePath</property-name>
 			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/deductionConcept/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ BonusConcept LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>bonusConceptLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>bonusConceptLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.esferalia.aon.payroll.BonusConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>BonusConcept_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>BonusConcept_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/bonusConcept/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/esferalia/aon/ui/payroll/facelet/lookup/bonusConcept/search.xhtml</value>
 		</managed-property>
 	</managed-bean>
 
@@ -1418,6 +1480,14 @@
 		<navigation-case>
 			<from-outcome>contractEmbargo_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/embargo/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+	<!-- =================== Contract Bonus ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contractBonus_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/bonus/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 

@@ -8,26 +8,16 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
-	<c:if test="#{aonRole.sisAdmin}">
+	<c:if test="#{!aonRole.sisAdmin}" >
 		<aon:outputLabel value="#{bundle.aon_concept}" />
-		<aon:div styleClass="aon-lookup">
-			<aon:lookupInputText id="DeductionConcept_code" lookup="#{deductionConceptLookup}"
-				reRender="DeductionConcept_description" required="true"
-				property="#{controller.to.deductionConcept}" 
-				value="#{controller.to.deductionConcept.code}" size="5" >
-				<aon:joinProperty alias="DeductionConcept_code"
-					value="#{controller.to.deductionConcept.code}" />
-			</aon:lookupInputText>
-			<aon:lookupButton 
-				windowTitle="#{payrollBundle.payroll_deductionConcept_selection}"
-				selectReRender="DeductionConcept_code,DeductionConcept_description" actionType="search"
-				lookup="#{deductionConceptLookup}" minHeight="460" minWidth="650"
-				property="#{controller.to.deductionConcept}">
-			</aon:lookupButton>
-			<aon:inputText id="DeductionConcept_description"
-				value="#{(controller.to.deductionConcept.description!=null)?(controller.to.deductionConcept.description):('')}"
-				size="50" disabled="true" />
-		</aon:div>
+		<aon:outputText value="#{controller.to.deductionConcept.description}" />
+	</c:if>
+	<c:if test="#{aonRole.sisAdmin}">
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deductionConcept/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{controller.to.deductionConcept}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+			<ui:param name="idRequired" value="#{true}" />
+		</ui:include>
 	</c:if>
 
 	<aon:outputLabel for="ContractDeduction_startDate" value="#{bundle.aon_start_date}" />
@@ -62,9 +52,8 @@
 		
 	<c:if test="#{!aonRole.sisAdmin}">
 		<aon:outputLabel for="ContractDeduction_amount" value="#{payrollBundle.payroll_salary_expression}" />
-		<aon:inputText id="ContractDeduction_amount" size="40" maxlength="64"
-			disabled="#{controller.variableFound}" 
-			value="#{controller.to.expression}" />
+		<aon:outputText id="ContractDeduction_amount" size="40" maxlength="64"
+			value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.deductionConcept.expression)}" />
 	</c:if>
 	
 	<c:if test="#{aonRole.sisAdmin}">
@@ -94,7 +83,7 @@
 			</c:if>
 		</aon:inputTextarea>
 	</c:if>
-
+	
 	<aon:outputText value="&#160;"/>
 	<aon:panelGroup>
 		<aon:selectBooleanCheckbox id="ContractDeduction_decorateDescription" value="#{controller.to.descriptionDecorable}" />

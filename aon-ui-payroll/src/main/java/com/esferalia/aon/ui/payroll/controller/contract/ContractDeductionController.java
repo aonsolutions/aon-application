@@ -41,6 +41,15 @@ public class ContractDeductionController extends ContractDetailAbstractControlle
 	private DataModel variablesModel;
 	private ContractData contractData;
 	private boolean variableFound;
+	private DataModel undefinedVariablesModel;
+	
+	
+	public DataModel getUndefinedVariablesModel() {
+		return undefinedVariablesModel;
+	}
+	public void setUndefinedVariablesModel(DataModel undefinedVariablesModel) {
+		this.undefinedVariablesModel = undefinedVariablesModel;
+	}
 	
 	public boolean isVariableFound() {
 		return variableFound;
@@ -113,12 +122,13 @@ public class ContractDeductionController extends ContractDetailAbstractControlle
 		List<ContractData> dataList;
 		try {
 			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
-			dataList = new LinkedList<ContractData>();
-			if(deduction.getExpression()!=null){
-				setVariableFound(false);
+			variablesModel = null;
+			undefinedVariablesModel = null;
+			if(deduction.getExpression()!=null || deduction.getDeductionConcept().getExpression()!=null){
+				dataList = new LinkedList<ContractData>();
 				Set<String> vl = ExpressionContext.getVariables(deduction.getExpression()==null?deduction.getDeductionConcept().getExpression():deduction.getExpression());
+				List<ContractData> undefined = new LinkedList<ContractData>();
 				if(!vl.isEmpty()){
-					setVariableFound(true);
 					for(String s: vl){
 						List<ITransferObject> list = existingContractData(s, contract);
 						if(!list.isEmpty()){
@@ -129,18 +139,22 @@ public class ContractDeductionController extends ContractDetailAbstractControlle
 							Calendar startCal = Calendar.getInstance();
 							Calendar endCal = Calendar.getInstance();
 							startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
-							endCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+							endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+							ContractData data = new ContractData();
+							data.setContract(contract);
+							data.setName(s);
+							data.setStartDate(startCal.getTime());
+							data.setEndDate(endCal.getTime());
 							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 							if(o==null){
-								String msg = "No se ha definido la variable: "+s;
-								LOGGER.error(msg);
-								AonUtil.addErrorMessage(msg);
+//								String t = ctx.getExpressionContext().evalTemplate(deduction.getDeductionConcept().getDescription(), startCal.getTime(), endCal.getTime());
+//								if(!t.isEmpty()){
+//									data.setExpression(t);
+//									dataList.add(data);
+//								} else {
+									undefined.add(data);
+//								}
 							} else {
-								ContractData data = new ContractData();
-								data.setContract(contract);
-								data.setName(s);
-								data.setStartDate(startCal.getTime());
-								data.setEndDate(endCal.getTime());
 								data.setExpression(o.toString());
 								dataList.add(data);
 							}
@@ -148,6 +162,9 @@ public class ContractDeductionController extends ContractDetailAbstractControlle
 					}
 				}
 				variablesModel = new ListDataModel(dataList);
+				if(!undefined.isEmpty()){
+					undefinedVariablesModel = new ListDataModel(undefined);
+				}
 			}
 		} catch (SalaryException e) {
 			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
@@ -206,5 +223,26 @@ public class ContractDeductionController extends ContractDetailAbstractControlle
 		setContractData(null);
 		initializeVariables(event);
 	}
-
+	public void onAddUndefinedVariable(ActionEvent event) {
+		setContractData((ContractData) getUndefinedVariablesModel().getRowData());
+	}
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getNewVariableList(){
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		if(getVariablesModel()!=null){
+			for(ContractData data: (List<ContractData>)getVariablesModel().getWrappedData()){
+				String name = data.getName();
+				SelectItem item = new SelectItem(name, name);
+				list.add(item);
+			}
+		}
+		if(getUndefinedVariablesModel()!=null){
+			for(ContractData data: (List<ContractData>)getUndefinedVariablesModel().getWrappedData()){
+				String name = data.getName();
+				SelectItem item = new SelectItem(name, name);
+				list.add(item);
+			}
+		}
+		return list;
+	}
 }

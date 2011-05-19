@@ -20,40 +20,16 @@
 				<ui:param name="controller" value="#{contract}" />
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchAction" value="contractCalendarEvent_list" />
-					
-					<aon:outputLabel for="Person_id"
-						value="#{registryBundle.registry_person}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Person_id" lookup="#{personLookup}"
-							reRender="Person_full_name"
-							value="#{contractSearch.person.id}" size="5" />
-						<aon:lookupButton 
-							windowTitle="#{registryBundle.registry_person_selection}"
-							selectReRender="Person_id,Person_full_name" actionType="search"
-							lookup="#{personLookup}" minHeight="460" minWidth="650"
-							property="#{contractSearch.person}">
-						</aon:lookupButton>
-						<aon:inputText id="Person_full_name"
-							value="#{(contractSearch.person.registry.fullName!=null)?(contractSearch.person.registry.fullName):('')}"
-							size="50" disabled="true" />							
-					</aon:div>
 
-					<aon:outputLabel for="Enterprise_id"
-						value="#{companyBundle.company_enterprise}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Enterprise_id" lookup="#{enterpriseLookup}"
-							reRender="Enterprise_full_name"
-							value="#{contractSearch.enterprise.id}" size="5" />
-						<aon:lookupButton 
-							windowTitle="#{companyBundle.company_enterprise_selection}"
-							selectReRender="Enterprise_id,Enterprise_full_name" actionType="search"
-							lookup="#{enterpriseLookup}" minHeight="460" minWidth="650"
-							property="#{contractSearch.enterprise}">
-						</aon:lookupButton>
-						<aon:inputText id="Enterprise_full_name"
-							value="#{(contractSearch.enterprise.registry.fullName!=null)?(contractSearch.enterprise.registry.fullName):('')}"
-							size="50" disabled="true" />							
-					</aon:div>
+					<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{contractSearch.person}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
+				
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{contractSearch.enterprise}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
 										
 					<aon:outputLabel for="ContractType_id"
 						value="#{payrollBundle.payroll_contractType}" />

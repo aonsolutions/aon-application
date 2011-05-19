@@ -111,4 +111,5 @@ public abstract class ContractDetailAbstractController extends BasicController {
 	}
 
 	protected abstract void initialiceConcepts();
+	
 }

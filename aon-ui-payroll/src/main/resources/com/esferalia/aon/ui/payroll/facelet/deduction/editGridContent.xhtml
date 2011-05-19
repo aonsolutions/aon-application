@@ -14,7 +14,7 @@
 			<aon:commandButton id="ContractDeduction-select"
 				title="#{bundle.aon_update}" 
 				actionListener="#{controller.onEdit}"
-				reRender="deductionModalContainer"
+				reRender="#{controller.beanName}ModalContainer"
 				styleClass="aon-editDataTable-button aon-icon-rowSelector"
 				focus="accountId" />
 			<f:facet name="footer">
@@ -23,7 +23,7 @@
 						id="ContractDeduction-reset" 
 						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 						actionListener="#{controller.onReset}"
-						reRender="deductionModalContainer"
+						reRender="#{controller.beanName}ModalContainer"
 						styleClass="aon-editDataTable-button aon-icon-reset"
 						accesskey="#{bundle.aon_key_new_line}"/>
 				</aon:div>
@@ -65,12 +65,7 @@
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_description}" />
 			</f:facet>
-			<aon:outputText value="#{to.fullDescription}" />
-			<aon:panelGroup styleClass="aon-italic">
-				<aon:outputText value="&#160;(" />	
-				<aon:outputText value="#{to.expression}" />	
-				<aon:outputText value=")" />	
-			</aon:panelGroup>
+			<aon:outputText value="#{(to.description!=null)?(to.description):(to.deductionConcept.description)}" />
 		</aon:column>
 	</aon:dataTable>
 	

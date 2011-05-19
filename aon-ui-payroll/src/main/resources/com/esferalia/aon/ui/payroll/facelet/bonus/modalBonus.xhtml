@@ -7,22 +7,22 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
-
+	
 	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/contract/modalGeneric.xhtml">
 		<ui:param name="controller" value="#{controller}" />
-		<ui:param name="popupWindowTitle" value="#{payrollBundle.payroll_salary_deduction}" />
+		<ui:param name="popupWindowTitle" value="#{payrollBundle.payroll_salary_bonus}" />
 		
 		<ui:define name="gridContent" >
 			<aon:panelGrid id="#{controller.beanName}MenuGrid" columns="2" dir="true" style="width: 80%;">
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/formContent.xhtml">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/formContent.xhtml">
 					<ui:param name="controller" value="#{controller}" />
-					<ui:param name="containerID" value="#{controller.beanName}MenuGrid" />
+					<ui:param name="containerID" value="bonusMenuGrid" />
 				</ui:include>
 			</aon:panelGrid>
 		</ui:define>
 		
 		<ui:define name="afterModalContent" >
-			<aon:lookupButtonPopup lookup="#{deductionConceptLookup}" />
+			<aon:lookupButtonPopup lookup="#{bonusConceptLookup}" />
 		</ui:define>
 
 	</ui:decorate>

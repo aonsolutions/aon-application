@@ -7,6 +7,7 @@ import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementLevelPayment;
+import com.esferalia.aon.payroll.BonusConcept;
 import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
@@ -15,6 +16,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractBatch;
 import com.esferalia.aon.payroll.ContractBatchDetail;
+import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractCalendarEvent;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractDeduction;
@@ -249,6 +251,31 @@ public interface IPayrollAlias {
 	* Hibernate value: AgreementLevelPayment.type
 	*/
 	String  AGREEMENT_LEVEL_PAYMENT_TYPE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[12];
+
+
+
+	/** 
+	* DAOConstantsEntry for BonusConcept entity.
+	*/ 
+	DAOConstantsEntry BONUS_CONCEPT_ENTRY = DAOConstants.getDAOConstant(BonusConcept.class);
+
+	/** 
+	* Alias value: BonusConcept_description
+	* Hibernate value: BonusConcept.description
+	*/
+	String  BONUS_CONCEPT_DESCRIPTION = BONUS_CONCEPT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BonusConcept_expression
+	* Hibernate value: BonusConcept.expression
+	*/
+	String  BONUS_CONCEPT_EXPRESSION = BONUS_CONCEPT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BonusConcept_id
+	* Hibernate value: BonusConcept.id
+	*/
+	String  BONUS_CONCEPT_ID = BONUS_CONCEPT_ENTRY.getAliasNames()[2];
 
 
 
@@ -785,6 +812,55 @@ public interface IPayrollAlias {
 	* Hibernate value: ContractBatchDetail.id
 	*/
 	String  CONTRACT_BATCH_DETAIL_ID = CONTRACT_BATCH_DETAIL_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for ContractBonus entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_BONUS_ENTRY = DAOConstants.getDAOConstant(ContractBonus.class);
+
+	/** 
+	* Alias value: ContractBonus_bonusConcept_id
+	* Hibernate value: ContractBonus.bonusConcept.id
+	*/
+	String  CONTRACT_BONUS_BONUS_CONCEPT_ID = CONTRACT_BONUS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractBonus_contract_id
+	* Hibernate value: ContractBonus.contract.id
+	*/
+	String  CONTRACT_BONUS_CONTRACT_ID = CONTRACT_BONUS_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractBonus_description
+	* Hibernate value: ContractBonus.description
+	*/
+	String  CONTRACT_BONUS_DESCRIPTION = CONTRACT_BONUS_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractBonus_endDate
+	* Hibernate value: ContractBonus.endDate
+	*/
+	String  CONTRACT_BONUS_END_DATE = CONTRACT_BONUS_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractBonus_expression
+	* Hibernate value: ContractBonus.expression
+	*/
+	String  CONTRACT_BONUS_EXPRESSION = CONTRACT_BONUS_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContractBonus_id
+	* Hibernate value: ContractBonus.id
+	*/
+	String  CONTRACT_BONUS_ID = CONTRACT_BONUS_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ContractBonus_startDate
+	* Hibernate value: ContractBonus.startDate
+	*/
+	String  CONTRACT_BONUS_START_DATE = CONTRACT_BONUS_ENTRY.getAliasNames()[6];
 
 
 

@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -49,6 +50,15 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 	private DataModel paymentsModel;
 	private DataModel variablesModel;
 	private ContractData contractData;
+	private DataModel undefinedVariablesModel;
+	
+	
+	public DataModel getUndefinedVariablesModel() {
+		return undefinedVariablesModel;
+	}
+	public void setUndefinedVariablesModel(DataModel undefinedVariablesModel) {
+		this.undefinedVariablesModel = undefinedVariablesModel;
+	}
 	
 	public DataModel getPaymentsModel() {
 		if (paymentsModel == null) {
@@ -243,38 +253,47 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 		ContractPayment payment = (ContractPayment)this.getTo();
 		Contract contract = payment.getContract();
 		ContractSalaryCalculatorContext ctx;
-		List<ContractData> varList;
+		List<ContractData> dataList;
 		try {
 			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
-			varList = new LinkedList<ContractData>();
-			if(payment.getExpression()==null && payment.getPaymentConcept().getExpression()==null){
-				String msg = "No hay expresion definida para esta percepcion ni para su concepto";
-				LOGGER.error(msg);
-				AonUtil.addErrorMessage(msg);
-			} else {
-				Calendar startCal = Calendar.getInstance();
-				Calendar endCal = Calendar.getInstance();
-				startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
-				endCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-				for(String s: ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression())){
-					List<ITransferObject> list = existingContractData(s, contract);
-					if(!list.isEmpty()){
-						for(ITransferObject to: list){
-							varList.add((ContractData) to);
+			variablesModel = null;
+			undefinedVariablesModel = null;
+			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
+				dataList = new LinkedList<ContractData>();
+				Set<String> vl = ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
+				List<ContractData> undefined = new LinkedList<ContractData>();
+				if(!vl.isEmpty()){
+					for(String s: vl){
+						List<ITransferObject> list = existingContractData(s, contract);
+						if(!list.isEmpty()){
+							for(ITransferObject to: list){
+								dataList.add((ContractData) to);
+							}
+						} else {
+							Calendar startCal = Calendar.getInstance();
+							Calendar endCal = Calendar.getInstance();
+							startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+							endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+							ContractData data = new ContractData();
+							data.setContract(contract);
+							data.setName(s);
+							data.setStartDate(startCal.getTime());
+							data.setEndDate(endCal.getTime());
+							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
+							if(o==null){
+								undefined.add(data);
+							} else {
+								data.setExpression(o.toString());
+								dataList.add(data);
+							}
 						}
-					} else {
-						ContractData data = new ContractData();
-						data.setContract(contract);
-						data.setName(s);
-						data.setStartDate(startCal.getTime());
-						data.setEndDate(endCal.getTime());
-						Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
-						data.setExpression(o.toString());
-						varList.add(data);
 					}
 				}
+				variablesModel = new ListDataModel(dataList);
+				if(!undefined.isEmpty()){
+					undefinedVariablesModel = new ListDataModel(undefined);
+				}
 			}
-			variablesModel = new ListDataModel(varList);
 		} catch (SalaryException e) {
 			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
 			LOGGER.error(msg);
@@ -332,4 +351,27 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 		setContractData(null);
 		initializeVariables(event);
 	}
+	public void onAddUndefinedVariable(ActionEvent event) {
+		setContractData((ContractData) getUndefinedVariablesModel().getRowData());
+	}
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getNewVariableList(){
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		if(getVariablesModel()!=null){
+			for(ContractData data: (List<ContractData>)getVariablesModel().getWrappedData()){
+				String name = data.getName();
+				SelectItem item = new SelectItem(name, name);
+				list.add(item);
+			}
+		}
+		if(getUndefinedVariablesModel()!=null){
+			for(ContractData data: (List<ContractData>)getUndefinedVariablesModel().getWrappedData()){
+				String name = data.getName();
+				SelectItem item = new SelectItem(name, name);
+				list.add(item);
+			}
+		}
+		return list;
+	}
+	
 }

@@ -189,20 +189,9 @@ public class ContractController extends BasicController {
 	}
 	
 	public void onShowPayments( ActionEvent event ) {
-//		try {
-			Contract to = (Contract) getTo();
-			ContractPaymentController c = (ContractPaymentController) FormUtil.getController(IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER);
-			c.reset(false);
-//			c.onEditSearch(event);
-//			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), to.getId());
-//			c.onSearch(event);
-			c.initialize();
-//		} catch (ManagerBeanException e) {
-//			String msg = "Imposible mostrar las percepciones del contrato (" + e.getMessage() +")";
-//			LOGGER.error(msg);
-//			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg,e);
-//		}						
+		ContractPaymentController c = (ContractPaymentController) FormUtil.getController(IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER);
+		c.reset(false);
+		c.initialize();
 	}
 	
 	public void onShowDeductions( ActionEvent event ) {
@@ -229,6 +218,20 @@ public class ContractController extends BasicController {
 			c.onSearch(event);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible mostrar los embargos del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}						
+	}
+	public void onShowBonus( ActionEvent event ) {
+		try {
+			Contract to = (Contract) getTo();
+			ContractBonusController c = (ContractBonusController) FormUtil.getController(IPayrollConstants.CONTRACT_BONUS_CONTROLLER);
+			c.onEditSearch(event);
+			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_BONUS_CONTRACT_ID), to.getId());
+			c.onSearch(event);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible mostrar las bonificaciones del contrato (" + e.getMessage() +")";
 			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
@@ -418,11 +421,13 @@ public class ContractController extends BasicController {
 	
 	public boolean getExistDocument(){
 		try {
-			Contract c = (Contract)this.getModel().getRowData();
-			setAonFile(null);
-			searchContractAttachDocument(c);
-			if(getAonFile()!=null){
-				return true;
+			if(this.getModel().isRowAvailable()){
+				Contract c = (Contract)this.getModel().getRowData();
+				setAonFile(null);
+				searchContractAttachDocument(c);
+				if(getAonFile()!=null){
+					return true;
+				}
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible obtener el documento. (" +e.getMessage() + ")"; 

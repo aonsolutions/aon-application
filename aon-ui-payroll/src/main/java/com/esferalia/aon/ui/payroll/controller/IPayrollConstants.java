@@ -21,6 +21,7 @@ public interface IPayrollConstants {
 	String AGREEMENT_TREE_CONTROLLER_NAME = "agreementTree";
 	String CONTRACT_CONTROLLER = "contract";
 	String CONTRACT_ATTACH_CONTROLLER = "contractAttach";
+	String CONTRACT_BONUS_CONTROLLER = "contractBonus";
 	String CONTRACT_EMBARGO_CONTROLLER = "contractEmbargo";
 	String CONTRACT_PAYMENT_CONTROLLER = "contractPayment";
 	String CONTRACT_DEDUCTION_CONTROLLER = "contractDeduction";
