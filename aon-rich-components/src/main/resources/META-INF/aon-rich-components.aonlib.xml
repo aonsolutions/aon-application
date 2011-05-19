@@ -11,7 +11,8 @@
 	
 	<component localName="lookupButton">
 		<attribute name="value" value="&#160;" />
-    	<attribute name="immediate" value="true" type="1" />
+    	<attribute name="immediate" value="true" type="1" />		
+    	<attribute name="ajaxSingle" value="true" type="1" />
 	</component>
 	
 	<component localName="lookupButtonPopup">

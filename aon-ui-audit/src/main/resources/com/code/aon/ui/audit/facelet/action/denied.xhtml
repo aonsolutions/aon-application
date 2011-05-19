@@ -28,26 +28,12 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" styleClass="aon-margin-bottom">
-					<aon:outputLabel for="User_login"
-						value="#{bundle.aon_login_user}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="User_login" property="#{actionDenied.user}"
-							reRender="User_name,optionList" lookup="#{userAuditLookup}"
-							lookupChangeListener="#{actionDenied.userChanged}"
-							value="#{actionDenied.user.login}" size="20">
-							<aon:joinProperty alias="User_login" value="#{actionDenied.user.login}" />
-						</aon:lookupInputText>
-						<aon:lookupButton 
-							windowTitle="#{configBundle.config_user_selection}"
-							selectReRender="User_login,User_name,optionList" 
-							lookup="#{userAuditLookup}" minHeight="460" minWidth="650"
-							lookupChangeListener="#{actionDenied.userChanged}"
-							property="#{actionDenied.user}">
-						</aon:lookupButton>
-						<aon:inputText id="User_name"
-							value="#{actionDenied.user.name}"
-							size="50" disabled="true" />							
-					</aon:div>
+					<ui:include src="lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{actionDenied.user}" />
+						<ui:param name="lookupReRender" value="optionList" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{actionDenied.userChanged}" type="lookupChangeListener" />
+					</ui:include>
 				</aon:panelGrid>			
 			
 				<rich:listShuttle id="optionList"

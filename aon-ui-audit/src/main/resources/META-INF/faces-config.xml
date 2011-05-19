@@ -312,6 +312,10 @@
 			<value>User_login</value>
 		</managed-property>
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>User_name</value>
+		</managed-property>
+		<managed-property>
 			<property-name>defaultExpressions</property-name>
 			<map-entries>
 				<map-entry>
