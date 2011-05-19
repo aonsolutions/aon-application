@@ -91,6 +91,6 @@
 		<c:if test="#{!item.new and aonConfiguration.bean.product.showSuppliers}">
 			<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		</c:if>
-		
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />
 	</ui:define>
 </ui:composition>
