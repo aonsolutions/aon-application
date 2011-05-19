@@ -48,8 +48,9 @@ public class LookupInputTextHandler extends LookupBasicInputHandler {
 	}
 
 	@Override
-	protected void onComponentPopulated(FaceletContext ctx, HtmlLookupBasicInput component) {
-		HtmlLookupInputText text = (HtmlLookupInputText) component;
+	protected void updateAttributes(FaceletContext ctx, HtmlLookupBasicInput input) {
+		super.updateAttributes(ctx, input);
+		HtmlLookupInputText text = (HtmlLookupInputText) input;
 		Map<String, ValueExpression> joinBindingsMap = text.getJoinBindingsMap(); 
 		if (joinBindingsMap.isEmpty()) {
 			joinBindingsMap = calculateJoinBindings(ctx, text);

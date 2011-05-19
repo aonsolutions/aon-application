@@ -112,13 +112,12 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		}
 	}
 	
-	private void updateRendered( FaceletContext ctx, HtmlLookupButton button) {
+	private void updateRendered( FaceletContext ctx, HtmlLookupButton button, boolean resolved ) {
 		TagAttribute renderedTag = getAttribute(RENDERED);
 		if ( renderedTag == null ) {
-			boolean resolved = button.isResolved();
 			String rendered = null;
 			if ( button.getButtonType() == LookupButtonType.CLEAR ) {
-				rendered = Boolean.toString(resolved);
+				rendered = Boolean.toString(resolved && !button.isDisabled());
 			} else {
 				rendered = Boolean.toString(!resolved);
 			}
@@ -139,6 +138,15 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.TITLE_ATTR, title );			
 		}		
 		setReRender(ctx, button);
+	}
+	
+	private void updateDisabled( FaceletContext ctx, HtmlLookupButton button, boolean resolved ) {
+		LookupButtonType type = button.getButtonType();
+		if ( (type == LookupButtonType.SEARCH) || (type == LookupButtonType.LIST) ) {
+			if (! FaceletUtil.hasValue(ctx, tag, HTML.DISABLED_ATTR) ) {
+				button.setDisabled(resolved);
+			}
+		}
 	}
 	
 	/**
@@ -163,7 +171,9 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		HtmlLookupButton button = (HtmlLookupButton) c;
 		String buttonId = button.getClientId(ctx.getFacesContext());
 		button.setWindowCloseFocus( buttonId );
-		updateRendered(ctx, button);
+		boolean resolved = button.isResolved();
+		updateDisabled(ctx, button, resolved);		
+		updateRendered(ctx, button, resolved);
 		updateStyleClass(ctx, button);
 		super.applyNextHandler(ctx, c);
 	}

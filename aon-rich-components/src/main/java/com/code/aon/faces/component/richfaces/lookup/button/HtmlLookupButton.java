@@ -177,19 +177,6 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupCo
 	public boolean isResolved() {
 		return getLookup().isResolved( this );
 	}
-
-	public boolean isDisabled() {
-		switch ( buttonType ) {
-			case CLEAR:
-			case NEW:
-				return super.isDisabled();
-			default:
-				if ( super.isDisabled() ) {
-					return true;
-				}
-				return isResolved();
-		}
-	}
 	
 	/**
      * <p>Gets the state of the instance as a <code>Serializable</code>

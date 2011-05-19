@@ -1,9 +1,15 @@
 package com.code.aon.faces.component.richfaces.lookup;
 
+import java.io.IOException;
+
+import javax.el.ELException;
+import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
 import com.code.aon.faces.component.richfaces.AonAjaxInputHandler;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonHandler;
+import com.code.aon.faces.component.util.FaceletUtil;
+import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 
@@ -21,7 +27,6 @@ public class LookupBasicInputHandler extends AonAjaxInputHandler implements ILoo
 	 */
 	public LookupBasicInputHandler(ComponentConfig config) {
 		super( config );
-		getAttribute(PROPERTY);
 	}
 	
 	/**
@@ -39,14 +44,19 @@ public class LookupBasicInputHandler extends AonAjaxInputHandler implements ILoo
 	}
 	
 	@Override
-	protected void onComponentPopulated(FaceletContext ctx, UIComponent c, UIComponent parent) {
-		HtmlLookupBasicInput text = (HtmlLookupBasicInput) c;		
-		if ( c.isRendered() ) {
-			onComponentPopulated( ctx, text );
+	protected void applyNextHandler(FaceletContext ctx, UIComponent c)
+			throws IOException, FacesException, ELException {
+		HtmlLookupBasicInput text = (HtmlLookupBasicInput) c;
+		if ( text.isRendered() ) {
+			updateAttributes(ctx, text);	
 		}
+		super.applyNextHandler(ctx, c);
 	}
 	
-	protected void onComponentPopulated(FaceletContext ctx, HtmlLookupBasicInput text) {
+	protected void updateAttributes(FaceletContext ctx, HtmlLookupBasicInput text) {
+		if (! FaceletUtil.hasValue(ctx, tag, HTML.DISABLED_ATTR) ) {
+			text.setDisabled(text.isResolved());
+		}
 	}
 	
 }

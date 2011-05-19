@@ -1,14 +1,13 @@
 package com.code.aon.faces.component.richfaces.lookup.suggestText;
 
-import java.io.IOException;
 import java.net.URL;
 
-import javax.el.ELException;
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
+import com.code.aon.faces.component.richfaces.lookup.HtmlLookupBasicInput;
 import com.code.aon.faces.component.richfaces.lookup.LookupBasicInputHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
@@ -66,22 +65,21 @@ public class LookupSuggestTextHandler extends LookupBasicInputHandler {
 	}
 	
 	@Override
-	protected void applyNextHandler(FaceletContext ctx, UIComponent component) 
-		throws IOException, FacesException, ELException {		
+	protected void updateAttributes(FaceletContext ctx, HtmlLookupBasicInput input) {
+		super.updateAttributes(ctx, input);
 		URL path = FaceletUtil.getTemplate(TEMPLATE);
 		VariableMapper orig = ctx.getVariableMapper();
 		ctx.setVariableMapper(new VariableMapperWrapper(orig));
 		try {
-			addAttribues(ctx, component);
-			ctx.includeFacelet(component, path );
+			addAttribues(ctx, input);
+			ctx.includeFacelet(input, path );
 		} catch (Exception e) {
 			throw new FacesException("UIInclude component "
-					+ component.getClientId(ctx.getFacesContext())
+					+ input.getClientId(ctx.getFacesContext())
 					+ " could't include page with path " + path, e);
 		} finally {
 			ctx.setVariableMapper(orig);
-		}
-		super.applyNextHandler(ctx, component);		
+		}			
 	}
-	
+
 }

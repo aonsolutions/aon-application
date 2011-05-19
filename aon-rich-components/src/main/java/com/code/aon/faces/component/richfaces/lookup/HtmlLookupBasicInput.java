@@ -79,11 +79,7 @@ public class HtmlLookupBasicInput extends HtmlInputText implements ILookupConsta
 		this.lookupProperty = lookupProperty;
 	}
 
-	@Override
-	public boolean isDisabled() {
-		if ( super.isDisabled() ) {
-			return true;
-		}
+	public boolean isResolved() {
 		return getLookup().isResolved( this );
 	}
 
