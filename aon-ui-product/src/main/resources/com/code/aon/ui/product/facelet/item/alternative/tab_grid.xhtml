@@ -35,7 +35,7 @@
 				</f:facet>
 				<aon:outputText value="#{to.alternativeItem.product.code} - #{to.alternativeItem.product.name}"
 					rendered="#{formList}" />
-				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 					<ui:param name="lookupTo" value="#{itemAlternative.to.alternativeItem}" />
 					<ui:param name="idRequired" value="#{true}" />
 					<ui:param name="skipLabel" value="#{true}" />
