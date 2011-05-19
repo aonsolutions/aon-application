@@ -17,16 +17,18 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{productBundle.product_category}" />
+					<aon:outputLabel for="CatalogueCategory_category" value="#{productBundle.product_category}" />
 				</f:facet>
 				<aon:outputText value="#{to.category.name}"
 					rendered="#{formList}" />
-				<aon:selectOneMenu value="#{catalogueCategory.to.category}"
+				<aon:selectOneMenu id="CatalogueCategory_category"
+					value="#{catalogueCategory.to.category}"
 					rendered="#{formEdit}" required="#{true}">
 					<f:selectItems value="#{productCollections.categories}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
-					<aon:selectOneMenu value="#{catalogueCategory.to.category}"
+					<aon:selectOneMenu id="CatalogueCategory_category-New"
+						value="#{catalogueCategory.to.category}"
 						rendered="#{formNew}" required="#{true}">
 						<f:selectItems value="#{productCollections.categories}" />
 					</aon:selectOneMenu>
@@ -35,18 +37,20 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_date_from} #{bundle.aon_quantity}" />
+					<aon:outputLabel for="CatalogueCategory_quantity" value="#{bundle.aon_date_from} #{bundle.aon_quantity}" />
 				</f:facet>
 				<aon:outputText value="#{to.quantity}"
 					rendered="#{formList}">
 					<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
 				</aon:outputText>
-				<aon:inputText value="#{catalogueCategory.to.quantity}" 
+				<aon:inputText id="CatalogueCategory_quantity"
+					value="#{catalogueCategory.to.quantity}" 
 					rendered="#{formEdit}" required="#{true}" size="7">
 					<f:validateDoubleRange />
 				</aon:inputText>
 				<f:facet name="footer">
-					<aon:inputText value="#{catalogueCategory.to.quantity}"
+					<aon:inputText id="CatalogueCategory_quantity-New"
+						value="#{catalogueCategory.to.quantity}"
 						rendered="#{formNew}" required="#{true}" size="7">
 						<f:validateDoubleRange />
 					</aon:inputText>
@@ -55,18 +59,20 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{bundle.aon_discount}" />
+					<aon:outputLabel for="CatalogueCategory_discount" value="#{bundle.aon_discount}" />
 				</f:facet>
 				<aon:outputText value="#{to.discount}" 
 					rendered="#{formList}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
-				<aon:inputText value="#{catalogueCategory.to.discount}"
+				<aon:inputText id="CatalogueCategory_discount"
+					value="#{catalogueCategory.to.discount}"
 					rendered="#{formEdit}" required="#{true}" size="7">
 					<f:validateDoubleRange />
 				</aon:inputText>
 				<f:facet name="footer">
-					<aon:inputText value="#{catalogueCategory.to.discount}"
+					<aon:inputText id="CatalogueCategory_discount-New"
+						value="#{catalogueCategory.to.discount}"
 						rendered="#{formNew}" required="#{true}" size="7">
 						<f:validateDoubleRange />
 					</aon:inputText>
