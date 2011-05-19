@@ -84,37 +84,20 @@
 						,aon-panelGrid-even aon-width-auto">
 
 					<c:if test="#{aonRole.accountingOperator}">
-						<aon:outputLabel for="Tax_sales_account" value="#{configBundle.config_tax_sales_account}" />
-						<ui:include
-							src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-							<ui:param name="wizard" value="#{accountWizard}" />
-							<ui:param name="id" value="Tax_sales_account" />
-							<ui:param name="required" value="#{false}" />
-							<ui:param name="size" value="9" />
-							<ui:param name="maxlength" value="9" />
-							<ui:param name="renderDescription" value="#{true}" />
-							<ui:param name="renderedAttr" value="#{true}" />
-							<ui:param name="disabled" value="#{false}" />
-							<ui:param name="reRenderAttr" value="none" />
-							<ui:param name="entity" value="#{tax.to.salesAccount}" />
-							<ui:param name="ELExpression" value="tax.to.salesAccount" />
+						<aon:outputLabel for="Account_id-Sales" value="#{configBundle.config_tax_sales_account}" />
+						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupTo" value="#{tax.to.salesAccount}" />
+							<ui:param name="lookupSuffix" value="-Sales" />
 						</ui:include>
 
-						<aon:outputLabel for="Tax_purchase_account" value="#{configBundle.config_tax_purchase_account}" />
-						<ui:include
-							src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-							<ui:param name="wizard" value="#{accountWizard}" />
-							<ui:param name="id" value="Tax_purchase_account" />
-							<ui:param name="required" value="#{false}" />
-							<ui:param name="size" value="9" />
-							<ui:param name="maxlength" value="9" />
-							<ui:param name="renderDescription" value="#{true}" />
-							<ui:param name="renderedAttr" value="#{true}" />
-							<ui:param name="disabled" value="#{false}" />
-							<ui:param name="reRenderAttr" value="none" />
-							<ui:param name="entity" value="#{tax.to.purchaseAccount}" />
-							<ui:param name="ELExpression" value="tax.to.purchaseAccount" />
+						<aon:outputLabel for="Account_id-Purchase" value="#{configBundle.config_tax_purchase_account}" />
+						<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupTo" value="#{tax.to.purchaseAccount}" />
+							<ui:param name="lookupSuffix" value="-Purchase" />
 						</ui:include>
+						
 					</c:if>
 
 				</aon:panelGrid>
@@ -206,5 +189,6 @@
 
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />
 	</ui:define>
 </ui:composition>
