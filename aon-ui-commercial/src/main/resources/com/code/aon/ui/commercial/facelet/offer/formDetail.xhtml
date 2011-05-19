@@ -55,7 +55,7 @@
 					<aon:abbreviateConverter maxWidth="64" />
 				</aon:outputText>
 				<ui:include src="/com/code/aon/ui/commercial/facelet/offer/formDetailItemLookup.xhtml" >
-					<ui:param name="lookupInputOnFocus" value="OfferDetail_item_product_name" />
+					<ui:param name="lookupInputOnFocus" value="OfferDetail_description" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
 					<ui:param name="lookupReRender" 
 						value="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount" />
@@ -75,7 +75,7 @@
 							<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
 						</aon:commandButton>															
 					</c:if>
-					<aon:inputTextarea id="OfferDetail_item_product_name"
+					<aon:inputTextarea id="OfferDetail_description"
 						value="#{offerDetail.to.description}"
 						rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null}"
 						cols="60" rows="#{!offerDetail.longDescription?1:5}"
@@ -83,17 +83,17 @@
 						<f:validateLength maximum="1024" />
 					</aon:inputTextarea>
 					<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-						actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_item_product_name"
+						actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_description"
 						rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
 					<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-						actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_item_product_name"
+						actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_description"
 						rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
 				</aon:panelGroup>
 				<f:facet name="footer">
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/commercial/facelet/offer/formDetailItemLookup.xhtml" >
 							<ui:param name="lookupSuffix" value="-New" />
-							<ui:param name="lookupInputOnFocus" value="OfferDetail_item_product_name-New" />
+							<ui:param name="lookupInputOnFocus" value="OfferDetail_description-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" 
 								value="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New" />
@@ -113,7 +113,7 @@
 									<aon:set var="#{itemInfo.alternativeMethod}" value="offerDetail.onItemChanged" />
 								</aon:commandButton>															
 							</c:if>
-							<aon:inputTextarea id="OfferDetail_item_product_name-New"
+							<aon:inputTextarea id="OfferDetail_description-New"
 								value="#{offerDetail.to.description}"
 								rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null}"
 								cols="60" rows="#{!offerDetail.longDescription?1:5}"
@@ -121,10 +121,10 @@
 								<f:validateLength maximum="1024" />
 							</aon:inputTextarea>
 							<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-								actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_item_product_name-New"
+								actionListener="#{offerDetail.onShortDescription}" reRender="OfferDetail_description-New"
 								rendered="#{offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
 							<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-								actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_item_product_name-New"
+								actionListener="#{offerDetail.onLongDescription}" reRender="OfferDetail_description-New"
 								rendered="#{!offerDetail.longDescription and offerDetail.to.item.product.code != null}" />
 						</aon:panelGroup>
 					</aon:div>
