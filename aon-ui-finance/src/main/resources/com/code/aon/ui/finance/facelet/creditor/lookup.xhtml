@@ -7,10 +7,11 @@
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{creditorLookup}" />
 		<ui:param name="controller" value="#{creditor}" />
-		<ui:param name="lookupLabel" value="#{financeBundle.finance_creditor}"/>
 		<ui:param name="searchButtonTitle" value="#{financeBundle.finance_creditor_selection}" />
 		<ui:param name="newButtonTitle" value="#{financeBundle.finance_creditor_new}" />
 		<ui:param name="newButtonHeight" value="650"/>
+
+		<aon:valueParam name="lookupLabel" default="#{financeBundle.finance_creditor}"/>
 	</ui:include>
 
 </ui:composition>
