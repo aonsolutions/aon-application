@@ -50,41 +50,29 @@
 					test="#{!accountManager.new and accountManager.to.entryEnabled}">
 					<aon:panelTabSet id="accountTab"
 						selectedTab="#{accountManager.selectedTab}">
-						<aon:panelTab id="customer"
-							label="#{customerBundle.customer_module}">
-							<ui:include
-								src="/com/code/aon/ui/account/bridge/facelet/account/customerAccountGrid.xhtml" />
+						<aon:panelTab id="customer" label="#{customerBundle.customer_module}">
+							<ui:include src="/com/code/aon/ui/account/bridge/facelet/account/customerAccountGrid.xhtml" />
 						</aon:panelTab>
-						<aon:panelTab id="creditor"
-							label="#{financeBundle.finance_creditor_module}">
-							<ui:include
-								src="/com/code/aon/ui/account/bridge/facelet/account/creditorAccountGrid.xhtml" />
+						<aon:panelTab id="creditor" label="#{financeBundle.finance_creditor_module}">
+							<ui:include src="/com/code/aon/ui/account/bridge/facelet/account/creditorAccountGrid.xhtml" />
 						</aon:panelTab>
-						<aon:panelTab id="supplier"
-							label="#{supplierBundle.supplier_module}">
-							<ui:include
-								src="/com/code/aon/ui/account/bridge/facelet/account/supplierAccountGrid.xhtml" />
+						<aon:panelTab id="supplier" label="#{supplierBundle.supplier_module}">
+							<ui:include src="/com/code/aon/ui/account/bridge/facelet/account/supplierAccountGrid.xhtml" />
 						</aon:panelTab>
 						<aon:panelTab id="bank" label="#{configBundle.config_bank_module}">
-							<ui:include
-								src="/com/code/aon/ui/account/bridge/facelet/account/registryBankAccountGrid.xhtml" />
+							<ui:include src="/com/code/aon/ui/account/bridge/facelet/account/registryBankAccountGrid.xhtml" />
 						</aon:panelTab>
 						<aon:panelTab id="tax" label="#{configBundle.config_tax_module}">
-							<ui:include
-								src="/com/code/aon/ui/account/bridge/facelet/account/taxAccountGrid.xhtml" />
+							<ui:include src="/com/code/aon/ui/account/bridge/facelet/account/taxAccountGrid.xhtml" />
 						</aon:panelTab>
-						<aon:panelTab id="loan"
-							label="#{accountingBundle.accounting_loan_module}">
-							<ui:include
-								src="/com/code/aon/ui/account/bridge/facelet/account/loanAccountGrid.xhtml" />
+						<aon:panelTab id="loan" label="#{accountingBundle.accounting_loan_module}">
+							<ui:include src="/com/code/aon/ui/account/bridge/facelet/account/loanAccountGrid.xhtml" />
 						</aon:panelTab>
 						<aon:panelTab id="product" label="#{productBundle.product_module}">
-							<ui:include
-								src="/com/code/aon/ui/account/bridge/facelet/account/productAccountGrid.xhtml" />
+							<ui:include src="/com/code/aon/ui/account/bridge/facelet/account/productAccountGrid.xhtml" />
 						</aon:panelTab>
 						<aon:panelTab id="payMethod" label="#{accountBridgeBundle.paymethod_module}">
-							<ui:include
-								src="/com/code/aon/ui/account/bridge/facelet/account/payMethodTypeAccountGrid.xhtml" />
+							<ui:include src="/com/code/aon/ui/account/bridge/facelet/account/payMethodTypeAccountGrid.xhtml" />
 						</aon:panelTab>
 					</aon:panelTabSet>
 				</c:if>
