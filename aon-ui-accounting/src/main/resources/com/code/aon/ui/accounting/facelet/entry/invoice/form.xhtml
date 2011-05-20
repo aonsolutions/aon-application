@@ -213,106 +213,39 @@
 								rendered="#{invoiceEntry.expense}" />
 						</aon:div>
 
-						<aon:div id="aon-lookup" styleClass="aon-lookup">
-							<aon:panelGroup rendered="#{invoiceEntry.sales}">
-								<a4j:region>
-									<aon:lookupInputText id="Customer_id"
-										lookup="#{customerLookup}"
-										reRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
-										lookupProperty="registry" ajaxSingle="false"
-										disabled="#{invoiceEntry.newDetail}"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										focus="Registry_name"
-										value="#{invoiceEntry.header.registry.id}" size="5" />
-									<aon:lookupButton
-										windowTitle="#{customerBundle.customer_selection}"
-										selectReRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										disabled="#{invoiceEntry.newDetail}"
-										actionType="search" lookup="#{customerLookup}" minHeight="460"
-										minWidth="650" property="#{invoiceEntry.header.registry}"
-										focus="Registry_name" lookupProperty="registry">
-									</aon:lookupButton>
-									<aon:lookupButton windowTitle="#{customerBundle.customer_new}"
-										selectReRender="invoiceContainer,invoiceDetails"
-										lookup="#{customerLookup}" actionType="new"
-										disabled="#{invoiceEntry.newDetail}"
-										minWidth="650" minHeight="650"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										property="#{invoiceEntry.header.registry}"
-										lookupProperty="registry">
-									</aon:lookupButton>
-								</a4j:region>
-							</aon:panelGroup>
-
-							<aon:panelGroup rendered="#{invoiceEntry.purchase}">
-								<a4j:region>
-									<aon:lookupInputText id="Supplier_id"
-										lookup="#{supplierLookup}"
-										reRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
-										lookupProperty="registry" ajaxSingle="false"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										focus="Registry_name"
-										disabled="#{invoiceEntry.newDetail}"
-										value="#{invoiceEntry.header.registry.id}" size="5" />
-									<aon:lookupButton
-										windowTitle="#{supplierBundle.supplier_selection}"
-										selectReRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										disabled="#{invoiceEntry.newDetail}"
-										actionType="search" lookup="#{supplierLookup}" minHeight="460"
-										minWidth="650" property="#{invoiceEntry.header.registry}"
-										focus="Registry_name" lookupProperty="registry">
-									</aon:lookupButton>
-									<aon:lookupButton windowTitle="#{supplierBundle.supplier_new}"
-										selectReRender="invoiceContainer,invoiceDetails"
-										disabled="#{invoiceEntry.newDetail}"
-										lookup="#{supplierLookup}" actionType="new" minWidth="650"
-										minHeight="650"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										property="#{invoiceEntry.header.registry}"
-										lookupProperty="registry">
-									</aon:lookupButton>
-								</a4j:region>
-							</aon:panelGroup>
-
-							<aon:panelGroup rendered="#{invoiceEntry.expense}">
-								<a4j:region>
-									<aon:lookupInputText id="Creditor_id"
-										lookup="#{creditorLookup}"
-										reRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
-										lookupProperty="registry" ajaxSingle="false"
-										disabled="#{invoiceEntry.newDetail}"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										focus="Registry_name"
-										value="#{invoiceEntry.header.registry.id}" size="5" />
-									<aon:lookupButton
-										windowTitle="#{financeBundle.finance_creditor_selection}"
-										selectReRender="aon-lookup,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable"
-										disabled="#{invoiceEntry.newDetail}"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										actionType="search" lookup="#{creditorLookup}" minHeight="460"
-										minWidth="650" property="#{invoiceEntry.header.registry}"
-										focus="Registry_name" lookupProperty="registry">
-									</aon:lookupButton>
-									<aon:lookupButton
-										windowTitle="#{financeBundle.finance_creditor_new}"
-										selectReRender="invoiceContainer,invoiceDetails"
-										lookup="#{creditorLookup}" actionType="new"
-										disabled="#{invoiceEntry.newDetail}"
-										minWidth="650" minHeight="650"
-										lookupChangeListener="#{invoiceEntry.registryChanged}"
-										property="#{invoiceEntry.header.registry}"
-										lookupProperty="registry">
-									</aon:lookupButton>
-								</a4j:region>
-							</aon:panelGroup>
-							<aon:panelGroup>
-								<aon:inputText id="Registry_name"
-									value="#{invoiceEntry.header.name}"
-									disabled="#{invoiceEntry.newDetail}" size="50" />
-							</aon:panelGroup>
-						</aon:div>
+						<h:panelGrid id="aon-lookup" columns="2" styleClass="aon-lookup">
+							<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+								<ui:param name="lookupForRegistry" value="#{true}" />
+								<ui:param name="lookupTo" value="#{invoiceEntry.header.registry}" />
+								<ui:param name="lookupReRender" value="Registry_name,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable" />
+								<ui:param name="lookupRendered" value="#{invoiceEntry.sales}" />				
+								<ui:param name="lookupDisabled" value="#{invoiceEntry.newDetail}" />				
+								<aon:methodParam name="lookupChangeListener" value="#{invoiceEntry.registryChanged}" type="lookupChangeListener" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipSuggestText" value="#{true}" />
+							</ui:include>
+							<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
+								<ui:param name="lookupForRegistry" value="#{true}" />
+								<ui:param name="lookupTo" value="#{invoiceEntry.header.registry}" />
+								<ui:param name="lookupReRender" value="Registry_name,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable" />
+								<ui:param name="lookupRendered" value="#{invoiceEntry.purchase}" />				
+								<ui:param name="lookupDisabled" value="#{invoiceEntry.newDetail}" />				
+								<aon:methodParam name="lookupChangeListener" value="#{invoiceEntry.registryChanged}" type="lookupChangeListener" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipSuggestText" value="#{true}" />
+							</ui:include>
+							<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml" >
+								<ui:param name="lookupForRegistry" value="#{true}" />
+								<ui:param name="lookupTo" value="#{invoiceEntry.header.registry}" />
+								<ui:param name="lookupReRender" value="Registry_name,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable" />
+								<ui:param name="lookupRendered" value="#{invoiceEntry.expense}" />				
+								<ui:param name="lookupDisabled" value="#{invoiceEntry.newDetail}" />				
+								<aon:methodParam name="lookupChangeListener" value="#{invoiceEntry.registryChanged}" type="lookupChangeListener" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipSuggestText" value="#{true}" />
+							</ui:include>
+							<aon:inputText id="Registry_name" value="#{invoiceEntry.header.name}" disabled="#{invoiceEntry.newDetail}" size="50" />
+						</h:panelGrid>
 
 						<aon:outputText for="Registry_document"
 							value="#{bundle.aon_company_document}" />
@@ -541,10 +474,10 @@
 					</aon:div>
 				</aon:div>
 				<aon:div id="invoiceDetails">
-					<ui:include
-						src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_lines.xhtml" />
-					<ui:include
-						src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_finances.xhtml" />
+					<ui:include src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_lines.xhtml" />
+					<!-- 
+					<ui:include src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_finances.xhtml" />
+					 -->
 				</aon:div>
 			</aon:div>
 		</aon:form>
