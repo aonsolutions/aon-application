@@ -5,10 +5,10 @@ import java.util.Map;
 
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
+import javax.faces.component.UIComponent;
 
 import com.code.aon.common.dao.AliasEntry;
 import com.code.aon.common.dao.DAOConstantsResolver;
-import com.code.aon.faces.component.richfaces.lookup.HtmlLookupBasicInput;
 import com.code.aon.faces.component.richfaces.lookup.LookupBasicInputHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.ui.form.BasicController;
@@ -48,9 +48,8 @@ public class LookupInputTextHandler extends LookupBasicInputHandler {
 	}
 
 	@Override
-	protected void updateAttributes(FaceletContext ctx, HtmlLookupBasicInput input) {
-		super.updateAttributes(ctx, input);
-		HtmlLookupInputText text = (HtmlLookupInputText) input;
+	protected void onComponentPopulated(FaceletContext ctx, UIComponent c, UIComponent parent) {
+		HtmlLookupInputText text = (HtmlLookupInputText) c;
 		Map<String, ValueExpression> joinBindingsMap = text.getJoinBindingsMap(); 
 		if (joinBindingsMap.isEmpty()) {
 			joinBindingsMap = calculateJoinBindings(ctx, text);
