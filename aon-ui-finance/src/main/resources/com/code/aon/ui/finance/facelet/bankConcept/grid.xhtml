@@ -9,7 +9,7 @@
 	<ui:define name="content">
 
 		<aon:form id="bankConceptList">
-			<aon:div ajaxRendered="true" layout="none">
+			<aon:div layout="none">
 
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
@@ -27,7 +27,7 @@
 							value="aon-editDataTable-text,aon-editDataTable-text" />
 
 						<ui:define name="columns">
-							<aon:column>
+							<aon:column alias="BankConcept_name" styleClass="aon-width-350">
 								<f:facet name="header">
 									<aon:outputLabel for="BankConcept_name" value="#{bundle.aon_description}" />
 								</f:facet>
@@ -44,40 +44,22 @@
 							</aon:column>
 
 							<c:if test="#{aonRole.accountingOperator}">
-								<aon:column>
+								<aon:column styleClass="aon-width-auto">
 									<f:facet name="header">
-										<aon:outputLabel for="BankConcept_account" value="#{financeBundle.finance_account}" />
+										<aon:outputLabel for="Account_id" value="#{financeBundle.finance_account}" />
 									</f:facet>
-									<aon:outputText value="#{bankConcept.account}"
-										rendered="#{formList}" />
-									<ui:include
-										src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-										<ui:param name="wizard" value="#{accountWizard}" />
-										<ui:param name="id" value="BankConcept_account" />
-										<ui:param name="required" value="#{false}" />
-										<ui:param name="size" value="12" />
-										<ui:param name="maxlength" value="12" />
-										<ui:param name="renderDescription" value="#{false}" />
-										<ui:param name="renderedAttr" value="#{formEdit}" />
-										<ui:param name="disabled" value="#{false}" />
-										<ui:param name="reRenderAttr" value="none" />
-										<ui:param name="entity" value="#{bankConcept.to.account}" />
-										<ui:param name="ELExpression" value="bankConcept.to.account" />
+									<aon:outputText value="#{bankConcept.account.fullDescription}" rendered="#{formList}" />
+									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+										<ui:param name="skipLabel" value="#{true}" />
+										<ui:param name="lookupTo" value="#{bankConcept.to.account}" />
+										<ui:param name="lookupRendered" value="#{formEdit}" />
 									</ui:include>
 									<f:facet name="footer">
-										<ui:include
-											src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-											<ui:param name="wizard" value="#{accountWizard}" />
-											<ui:param name="id" value="BankConcept_account-New" />
-											<ui:param name="required" value="#{false}" />
-											<ui:param name="size" value="12" />
-											<ui:param name="maxlength" value="12" />
-											<ui:param name="renderDescription" value="#{false}" />
-											<ui:param name="renderedAttr" value="#{formNew}" />
-											<ui:param name="disabled" value="#{false}" />
-											<ui:param name="reRenderAttr" value="none" />
-											<ui:param name="entity" value="#{bankConcept.to.account}" />
-											<ui:param name="ELExpression" value="bankConcept.to.account" />
+										<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+											<ui:param name="skipLabel" value="#{true}" />
+											<ui:param name="lookupTo" value="#{bankConcept.to.account}" />
+											<ui:param name="lookupSuffix" value="New" />
+											<ui:param name="lookupRendered" value="#{formNew}" />
 										</ui:include>
 									</f:facet>
 	 							</aon:column>
@@ -87,5 +69,6 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{accountLookup}" />
 	</ui:define>
 </ui:composition>
