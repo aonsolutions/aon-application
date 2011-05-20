@@ -60,12 +60,12 @@
 					<ui:param name="lookupReRender" 
 						value="offerDetailItemEdit,OfferDetail_price,OfferDetail_discount,OfferDetail_amount" />
 				</ui:include>						
-				<aon:panelGroup id="offerDetailItemEdit" style="vertical-align:top;" rendered="#{formEdit}">
+				<aon:panelGroup id="offerDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
 						<aon:commandButton value="&#160;"
 							title="#{productBundle.product_info}"
 							rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null and !offerDetail.to.item.active}"
-							styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
+							styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 							actionListener="#{itemInfo.onShowPanel}"
 							reRender="itemInfoContainer">
 							<aon:set var="#{itemInfo.stockVisible}" value="#{false}" />
@@ -98,12 +98,12 @@
 							<ui:param name="lookupReRender" 
 								value="offerDetailItemNew,OfferDetail_price-New,OfferDetail_discount-New,OfferDetail_amount-New" />
 						</ui:include>						
-						<aon:panelGroup id="offerDetailItemNew" style="vertical-align:top;" rendered="#{formNew}">
+						<aon:panelGroup id="offerDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 							<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
 								<aon:commandButton value="&#160;"
 									title="#{productBundle.product_info}"
 									rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null and !offerDetail.to.item.active}"
-									styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
+									styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 									actionListener="#{itemInfo.onShowPanel}"
 									reRender="itemInfoContainer">
 									<aon:set var="#{itemInfo.stockVisible}" value="#{false}" />

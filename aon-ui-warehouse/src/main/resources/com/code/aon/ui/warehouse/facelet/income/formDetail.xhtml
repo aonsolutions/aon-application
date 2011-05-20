@@ -66,7 +66,7 @@
 					<aon:methodParam name="lookupChangeListener"
 						value="#{incomeDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
-				<aon:panelGroup id="incomeDetailItemEdit" style="vertical-align:top;" rendered="#{formEdit}">
+				<aon:panelGroup id="incomeDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<aon:inputTextarea id="IncomeDetail_description" 
 						value="#{incomeDetail.to.description}"
 						rendered="#{incomeDetail.to.item != null and incomeDetail.to.item.id != null}"
@@ -96,7 +96,7 @@
 							<aon:methodParam name="lookupChangeListener"
 								value="#{incomeDetail.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>
-						<aon:panelGroup id="incomeDetailItemNew" style="vertical-align:top;" rendered="#{formNew}">
+						<aon:panelGroup id="incomeDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 							<aon:inputTextarea id="IncomeDetail_description-New" 
 								value="#{incomeDetail.to.description}"
 								rendered="#{incomeDetail.to.item != null and incomeDetail.to.item.id != null}"

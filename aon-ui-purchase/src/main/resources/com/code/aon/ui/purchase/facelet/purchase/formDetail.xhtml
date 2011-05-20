@@ -65,7 +65,7 @@
 					<aon:methodParam name="lookupChangeListener"
 						value="#{purchaseDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
-				<aon:panelGroup id="purchaseDetailItemEdit" style="vertical-align:top;" rendered="#{formEdit}">
+				<aon:panelGroup id="purchaseDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<aon:inputTextarea id="PurchaseDetail_description" 
 						value="#{purchaseDetail.to.description}"
 						rendered="#{purchaseDetail.to.item != null and purchaseDetail.to.item.id != null}"
@@ -95,7 +95,7 @@
 							<aon:methodParam name="lookupChangeListener"
 								value="#{purchaseDetail.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>
-						<aon:panelGroup id="purchaseDetailItemNew" style="vertical-align:top;" rendered="#{formNew}">
+						<aon:panelGroup id="purchaseDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 							<aon:inputTextarea id="PurchaseDetail_description-New"
 								value="#{purchaseDetail.to.description}"
 								rendered="#{purchaseDetail.to.item != null and purchaseDetail.to.item.id != null}"

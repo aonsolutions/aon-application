@@ -66,19 +66,19 @@
 					<aon:methodParam name="lookupChangeListener"
 						value="#{salesDetail.onItemChanged}" type="lookupChangeListener" />
 				</ui:include>
-				<aon:panelGroup id="salesDetailItemEdit" style="vertical-align:top;" rendered="#{formEdit}">
+				<aon:panelGroup id="salesDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
 					<c:if test="#{aonConfiguration.bean.product.showStock}">
 						<aon:commandButton value="&#160;"
 							title="#{productBundle.product_info}"
 							rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
-							styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
+							styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 							actionListener="#{itemInfo.onShowPanel}"
 							reRender="itemInfoContainer">
 							<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
 							<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
 							<aon:set var="#{itemInfo.item}" value="#{salesDetail.to.item}" /> 
 							<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
-							<aon:set var="#{itemInfo.componentId}" value="SalesDetail_description" />
+							<aon:set var="#{itemInfo.componentId}" value="Item_id" />
 							<aon:set var="#{itemInfo.alternativeMethod}" value="salesDetail.onItemChanged" />
 						</aon:commandButton>															
 					</c:if>
@@ -107,23 +107,24 @@
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
 							<ui:param name="lookupReRender" 
-								value="salesDetailItemNew,SalesDetail_quantity-New,SalesDetail_price-New,SalesDetail_discount-New,SalesDetail_amount-New" />
+								value="salesDetailItemNew,SalesDetail_quantity-New,SalesDetail_price-New,SalesDetail_discount-New,
+										SalesDetail_amount-New" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{salesDetail.onItemChanged}" type="lookupChangeListener" />
 						</ui:include>
-						<aon:panelGroup id="salesDetailItemNew" style="vertical-align:top;" rendered="#{formNew}">
+						<aon:panelGroup id="salesDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
 							<c:if test="#{aonConfiguration.bean.product.showStock}">
 								<aon:commandButton value="&#160;"
 									title="#{productBundle.product_info}"
 									rendered="#{salesDetail.to.item != null and salesDetail.to.item.id != null and salesDetail.to.item.product.inventoriable}"
-									styleClass="aon-finding-toolbar-item aon-icon-info aon-finding-toolbar-item-no-border"
+									styleClass="aon-icon aon-icon-edit-end aon-icon-info"
 									actionListener="#{itemInfo.onShowPanel}"
 									reRender="itemInfoContainer">
 									<aon:set var="#{itemInfo.stockVisible}" value="#{true}" />
 									<aon:set var="#{itemInfo.alternativesVisible}" value="#{true}" />
 									<aon:set var="#{itemInfo.item}" value="#{salesDetail.to.item}" /> 
 									<aon:set var="#{itemInfo.warehouse}" value="#{null}" /> 
-									<aon:set var="#{itemInfo.componentId}" value="SalesDetail_description-New" />
+									<aon:set var="#{itemInfo.componentId}" value="Item_id-New" />
 									<aon:set var="#{itemInfo.alternativeMethod}" value="salesDetail.onItemChanged" />
 								</aon:commandButton>															
 							</c:if>
