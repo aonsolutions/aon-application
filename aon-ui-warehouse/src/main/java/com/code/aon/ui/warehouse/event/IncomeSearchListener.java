@@ -2,9 +2,9 @@ package com.code.aon.ui.warehouse.event;
 
 import org.apache.commons.lang.ArrayUtils;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
-import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.supplier.Supplier;
@@ -53,11 +53,10 @@ public class IncomeSearchListener extends RegistrySearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
-		setSupplier(new Supplier());
+		setSupplier((Supplier)BeanManager.getManagerBean(Supplier.class).createNewTo());
 		IncomeStatus[] defaultIncomeStatus = {IncomeStatus.PENDING};
 		setIncomeStatuses(defaultIncomeStatus);
-		setItem(new Item());
-		getItem().setProduct(new Product());				
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 	}
 	
 	@Override

@@ -19,27 +19,11 @@
 		<aon:panelCollapsible expanded="false" label="#{warehouseBundle.warehouse_income_detail}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 			
-				<aon:outputLabel for="InvoiceDetail_item_code"
-					value="#{productBundle.product_item}" />						
-				<aon:div styleClass="aon-lookup">
-					<aon:lookupInputText id="InvoiceDetail_item_code" 
-						lookup="#{itemLookup}"
-						reRender="InvoiceDetail_item_detail"
-						value="#{searchController.item.product.code}" size="10">
-						<aon:joinProperty alias="Item_product_code"
-							value="#{searchController.item.product.code}" />
-					</aon:lookupInputText>
-					<aon:lookupButton
-						windowTitle="#{productBundle.product_item_selection}" actionType="search"
-						selectReRender="InvoiceDetail_item_code,InvoiceDetail_item_detail"
-						lookup="#{itemLookup}" minHeight="460" minWidth="650"
-						property="#{searchController.item}">
-					</aon:lookupButton>
-					<aon:inputText id="InvoiceDetail_item_detail"
-						value="#{(searchController.item.product.name!=null)?(searchController.item.product.name):('')}"
-						size="60" disabled="true" />
-				</aon:div>
-								
+				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+					<ui:param name="lookupTo" value="#{searchController.item}" />
+					<ui:param name="skipNewButton" value="#{true}" />
+				</ui:include>
+
 				<aon:outputLabel for="Income_lines_quantity"
 					value="#{bundle.aon_quantity}" />
 				<aon:inputText id="Income_lines_quantity"

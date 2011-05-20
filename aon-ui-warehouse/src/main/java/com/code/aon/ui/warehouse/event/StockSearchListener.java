@@ -1,8 +1,8 @@
 package com.code.aon.ui.warehouse.event;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
-import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
@@ -22,14 +22,12 @@ public class StockSearchListener extends ControllerSearchListener {
 
 	@Override
 	protected void init() throws ManagerBeanException {
-		Item item = new Item();
-		item.setProduct(new Product() );
-		setItem( item );
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 	}
 	
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
-		if ( (getItem() != null) && (getItem().getId() != null) ) {
+		if ((getItem() != null) && (getItem().getId() != null)) {
 			String field = getFieldName(IWarehouseAlias.STOCK_ITEM_ID);
 			criteria.addEqualExpression(field, getItem().getId());			
 		}			
