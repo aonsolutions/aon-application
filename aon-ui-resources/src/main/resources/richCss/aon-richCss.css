@@ -1704,73 +1704,54 @@ color:#000;
 	border:#808080 1px solid;
 	}
 .aon-lookupButton, .aon-lookupButtonPopup{
-	background:#fff url(images/aon-icon/aon-icon-lookup.png) center center no-repeat;
-	border:#808080 1px solid;
-	width:18px;
-	height:18px;
-	margin:0 2px 0 2px;
+	background:transparent url(images/aon-icon/aon-icon-lookup.png) scroll left center no-repeat;
+	margin:0 4px;
+	width: 16px;
+	height: 18px;
+	border:0;
 	vertical-align: top;
 	}
 .aon-lookupButton-disabled{
-	background:#fff url(images/aon-icon/aon-icon-lookup-disabled.png) center center no-repeat;
-	border:#808080 1px solid;
-	width:18px;
-	height:18px;
-	margin:0 2px 0 2px;
+	background:transparent url(images/aon-icon/aon-icon-lookup-disabled.png) scroll left center no-repeat;
+	margin:0 4px;
+	width: 16px;
+	height: 18px;
+	border:0;
 	vertical-align: top;
 	}
 .aon-lookupButton-new{
-	background:#fff url(images/aon-icon/aon-icon-lookup-new.png) center center no-repeat;
-	border:#808080 1px solid;
-	width:18px;
-	height:18px;
-	margin:0 2px 0 2px;
+	background:transparent url(images/aon-icon/aon-icon-lookup-new.png) scroll left center no-repeat;
+	margin:0 4px;
+	width: 16px;
+	height: 18px;
+	border:0;
 	vertical-align: top;
 	}
 .aon-lookupButton-new-disabled{
-	background:#fff url(images/aon-icon/aon-icon-lookup-new-disabled.png) center center no-repeat;
-	border:#808080 1px solid;
-	width:18px;
-	height:18px;
-	margin:0 2px 0 2px;
-	vertical-align: top;
-	}
-.aon-lookupButton-clear{	
-	background:#fff url(images/aon-icon/aon-icon-rubber.png) center center no-repeat;
-	border:#808080 1px solid;
-	width:18px;
-	height:20px;
-	margin:0 2px 0 2px;
-	vertical-align: top;
-	}
-	
-.aon-button-goto{	
-	background:#fff url(images/aon-icon/aon-icon-file-entrance.png) center center no-repeat;	
-	border:#808080 1px solid;
-	width:18px;
-	height:20px;
-	margin:0 2px 0 2px;
-	vertical-align: top;
-	}
-/*
-.aon-lookupButton-clear{	
-	background:transparent url(images/aon-icon/aon-icon-rubber.png) scroll left center no-repeat;
-	margin:0 2px;
-	width: 14px;
-	height:18px;
+	background:transparent url(images/aon-icon/aon-icon-lookup-new-disabled.png) scroll left center no-repeat;
+	margin:0 4px;
+	width: 16px;
+	height: 18px;
 	border:0;
 	vertical-align: top;
 	}
-	
-.aon-button-goto{	
-	background:transparent url(images/aon-icon/aon-icon-file-entrance.png) scroll left center no-repeat;	
-	margin:0 2px;
-	width: 14px;
-	height:18px;
+.aon-lookupButton-clear{	
+	background:transparent url(images/aon-icon/aon-icon-lookup-clear.png) scroll left center no-repeat;
+	margin:0 4px;
+	width: 16px;
+	height: 18px;
 	border:0;
 	vertical-align: top;
 	}
-*/
+
+.aon-button-goto{	
+	background:transparent url(images/aon-icon/aon-icon-lookup-goto.png) scroll left center no-repeat;	
+	margin:0 4px;
+	width: 16px;
+	height: 18px;
+	border:0;
+	vertical-align: top;
+	}
 
 /**********************************************/
 /************   POPUP WINDOW  *************/

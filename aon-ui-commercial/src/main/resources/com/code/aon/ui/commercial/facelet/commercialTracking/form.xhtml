@@ -81,13 +81,11 @@
 							<aon:inputText id="CommercialTracking_offer_detail"
 								value="#{commercialTracking.to.offer.referenceCode}"
 								size="20" disabled="true" />
-							<aon:lookupButton id="CommercialTracking_offer_lookup"
-								windowTitle="#{commercialBundle.commercial_offer_selection}" actionType="search"
-								controllerListener="#{commercialTracking.offerFilter}"
-								selectReRender="CommercialTracking_activity_offer"
-								lookup="#{offerLookup}" minHeight="500" minWidth="680"
-								property="#{commercialTracking.to.offer}">
-							</aon:lookupButton>
+							<ui:include src="/com/code/aon/ui/commercial/facelet/offer/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{commercialTracking.to.offer}" />
+								<ui:param name="lookupReRender " value="CommercialTracking_activity_offer" />
+								<ui:param name="lookupControllerListener" value="#{commercialTracking.offerFilter}" />
+							</ui:include>								
 							<aon:commandButton
 								rendered="#{commercialTracking.to.offer.id != null}"
 								actionListener="#{commercialTracking.onSelectOffer}"
