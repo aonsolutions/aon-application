@@ -41,24 +41,9 @@
 				<f:selectItems value="#{companyCollections.enterpriseActivityTypes}" />
 			</aon:selectOneMenu>
 	
-			<aon:outputLabel for="EnterpriseActivity_cnae_id"
-				value="#{companyBundle.company_cnae_module}" />
-			<aon:div styleClass="aon-lookup">
-				<aon:lookupInputText id="EnterpriseActivity_cnae_id"
-					lookup="#{cnaeLookup}"
-					reRender="EnterpriseActivity_cnae_detail"
-					value="#{enterpriseActivity.to.cnae.id}" size="5" />
-				<aon:lookupButton
-					windowTitle="#{companyBundle.company_cnae_selection}"
-					selectReRender="EnterpriseActivity_cnae_id,EnterpriseActivity_cnae_detail"
-					lookup="#{cnaeLookup}"
-					minHeight="460" minWidth="650" actionType="search"
-					property="#{enterpriseActivity.to.cnae}">
-				</aon:lookupButton>
-				<aon:inputText id="EnterpriseActivity_cnae_detail"
-					value="#{enterpriseActivity.to.cnae.title}"
-					size="50" disabled="true" />							
-			</aon:div>					
+			<ui:include src="/com/code/aon/ui/config/facelet/cnae/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{enterpriseActivity.to.cnae}" />
+			</ui:include>				
 		</aon:panelGrid>
 		
 		<aon:div>

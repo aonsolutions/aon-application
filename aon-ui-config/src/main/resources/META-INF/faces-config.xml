@@ -552,6 +552,10 @@
 			<value>CNAE_title</value>
 		</managed-property>
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>CNAE_title</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/config/facelet/lookup/cnae/list.xhtml</value>
 		</managed-property>

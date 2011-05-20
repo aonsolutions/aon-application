@@ -67,13 +67,13 @@
 					<aon:selectOneMenu id="WorkPlace_economicAgreement"
 						value="#{controller.to.economicAgreement}" rendered="#{formEdit}">
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{companyCollections.economicAgreements}" />
+						<f:selectItems value="#{configCollections.administrations}" />
 					</aon:selectOneMenu>	
 					<f:facet name="footer">
 						<aon:selectOneMenu id="WorkPlace_economicAgreement-New"
 							value="#{controller.to.economicAgreement}" rendered="#{formNew}">
 							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItems value="#{companyCollections.economicAgreements}" />
+							<f:selectItems value="#{configCollections.administrations}" />
 						</aon:selectOneMenu>	
 					</f:facet>
 				</aon:column>		
@@ -84,39 +84,22 @@
 					</f:facet>
 					<aon:outputText value="#{to.calendar.description}"
 						rendered="#{formList}" />
-					<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-						<aon:lookupInputText id="WorkPlace_calendar_id"
-							lookup="#{calendarLookup}"
-							reRender="WorkPlace_calendar_description"
-							value="#{controller.to.calendar.id}" size="5" />
-						<aon:lookupButton 
-							windowTitle="#{calendarBundle.aon_calendar_selection}"
-							selectReRender="WorkPlace_calendar_id, WorkPlace_calendar_description"
-							lookup="#{calendarLookup}" minHeight="460" minWidth="650"
-							actionType="search"
-							property="#{controller.to.calendar}">
-						</aon:lookupButton>	
-						<aon:inputText id="WorkPlace_calendar_description"
-							value="#{controller.to.calendar.description}"
-							size="50" disabled="true" />	
-					</aon:div>	
+					<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{controller.to.calendar}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{formEdit}" />
+						<ui:param name="lookupInputSuggestSize" value="40" />
+					</ui:include>	
 					<f:facet name="footer">
-						<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-							<aon:lookupInputText id="WorkPlace_calendar_id-New"
-								lookup="#{calendarLookup}"
-								reRender="WorkPlace_calendar_description-New"
-								value="#{workplace.to.calendar.id}" size="5" />
-							<aon:lookupButton 
-								windowTitle="#{calendarBundle.aon_calendar_selection}"
-								selectReRender="WorkPlace_calendar_id-New, WorkPlace_calendar_description-New"
-								lookup="#{calendarLookup}" minHeight="460" minWidth="650"
-								actionType="search"
-								property="#{workplace.to.calendar}">
-							</aon:lookupButton>	
-							<aon:inputText id="WorkPlace_calendar_description-New"
-								value="#{workplace.to.calendar.description}"
-								size="50" disabled="true" />	
-						</aon:div>
+						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{controller.to.calendar}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupSuffix" value="-New" />
+							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupInputSuggestSize" value="40" />
+						</ui:include>	
 					</f:facet>
 				</aon:column>
 			</c:if>

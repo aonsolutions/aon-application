@@ -16,54 +16,15 @@
 			<aon:selectOneMenu id="Enterprise_scope_id" value="#{controller.to.scope}">
 				<f:selectItems value="#{configCollections.currentUserScopes}" />
 			</aon:selectOneMenu>
-			
-<!--  
-			<aon:outputLabel for="Enterprise_agreement_id"
-				value="#{companyBundle.company_agreement}" />
-			<aon:div styleClass="aon-lookup">
-				<aon:lookupInputText id="Enterprise_agreement_id"
-					lookup="#{agreementLookup}"
-					lookupChangeListener="#{controller.onAgreementChanged}"
-					reRender="Enterprise_agreement_description"
-					value="#{controller.to.agreement.id}" size="5" />
-				<aon:lookupButton 
-					windowTitle="#{companyBundle.company_agreement_selection}"
-					selectReRender="Enterprise_agreement_id,Enterprise_agreement_description"
-					lookupChangeListener="#{controller.onAgreementChanged}"
-					lookup="#{agreementLookup}" minHeight="460" minWidth="650"
-					actionType="search"
-					property="#{controller.to.agreement}">
-				</aon:lookupButton>
-				<aon:inputText id="Enterprise_agreement_description"
-					value="#{controller.to.agreement.description}"
-					size="50" disabled="true" />							
-			</aon:div>
--->
 								
 			<ui:include src="/com/code/aon/ui/registry/facelet/raddress/form.xhtml" />
 				
 			<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" />
 			
-			<aon:outputLabel for="Enterprise_calendar_id"
-				value="#{calendarBundle.aon_calendar_calendar}" />
-			<aon:div styleClass="aon-lookup">
-				<aon:lookupInputText id="Enterprise_calendar_id"
-					lookup="#{calendarLookup}"
-					lookupChangeListener="#{enterprise.onAgreementChanged}"
-					reRender="Enterprise_calendar_description"
-					value="#{enterprise.to.calendar.id}" size="5" />
-				<aon:lookupButton 
-					windowTitle="#{calendarBundle.aon_calendar_selection}"
-					selectReRender="Enterprise_calendar_id,Enterprise_calendar_description"
-					lookupChangeListener="#{enterprise.onAgreementChanged}"
-					lookup="#{calendarLookup}" minHeight="460" minWidth="650"
-					actionType="search"
-					property="#{enterprise.to.calendar}">
-				</aon:lookupButton>
-				<aon:inputText id="Enterprise_calendar_description"
-					value="#{enterprise.to.calendar.description}"
-					size="50" disabled="true" />	
-			</aon:div>
+			<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{enterprise.to.calendar}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+			</ui:include>
 			
 		</ui:define>
 		
