@@ -352,6 +352,10 @@
 			<value>Holiday_description</value>
 		</managed-property>
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Holiday_description</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/esferalia/aon/ui/calendar/facelet/lookup/holiday/list.xhtml</value>
 		</managed-property>
@@ -379,6 +383,10 @@
 			<value>Calendar_description</value>
 		</managed-property>
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Calendar_description</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/esferalia/aon/ui/calendar/facelet/lookup/calendar/list.xhtml</value>
 		</managed-property>
@@ -393,8 +401,6 @@
 				<value>#{calendarLookupListener}</value>
 			</list-entries>
 		</managed-property>
-<!--  
--->		
 	</managed-bean>
 
 	<managed-bean>
@@ -402,8 +408,6 @@
 		<managed-bean-class>com.esferalia.aon.ui.calendar.event.CalendarLookupListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-<!--  
--->	
 	
 
 

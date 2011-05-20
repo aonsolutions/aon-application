@@ -5,16 +5,9 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-		<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{lookup}" />
-				<ui:define name="searchContent">
-
-					<aon:outputLabel value="#{bundle.aon_description}" />
-					<aon:inputText id="Holiday_town"
-					valueChangeListener="#{controller.addExpression}"
-						size="50" />
-				</ui:define>
-			</ui:decorate>
+	<aon:outputLabel for="Holiday_description"
+		value="#{bundle.aon_description}" />
+	<aon:inputText id="Holiday_description" size="50"
+		valueChangeListener="#{lookup.addExpression}" />
 
 </ui:composition>

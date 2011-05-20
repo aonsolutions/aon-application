@@ -35,28 +35,10 @@
 				
 					<aon:panelGrid columns="2" id="calendar_data" style="width:100%;">
 						
-						<aon:outputLabel for="Calendar_masterCalendar_id"
-							value="#{calendarBundle.aon_calendar_base_calendar}" />
-
-						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="Calendar_masterCalendar_id"
-								value="#{calendar.to.calendar.id}" size="5"
-								lookup="#{calendarLookup}" 
-								lookupChangeListener="#{calendar.onCalendarLookupChanged}"
-								reRender="Calendar_masterCalendar_name,calendar_data" />
-							<aon:lookupButton
-								windowTitle="#{calendarBundle.aon_calendar_calendar_select}"
-								minHeight="460" minWidth="650" 
-								lookup="#{calendarLookup}"
-								lookupChangeListener="#{calendar.onCalendarLookupChanged}"
-								selectReRender="Calendar_masterCalendar_id,Calendar_masterCalendar_name,calendar_data"
-								actionType="search"
-								property="#{calendar.to.calendar}">
-							</aon:lookupButton>
-							<aon:inputText id="Calendar_masterCalendar_name"
-								value="#{calendar.to.calendar.description}"
-								disabled="true" size="60" />
-						</aon:div>
+						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{calendar.to.calendar}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
 							
 						<aon:outputLabel rendered="#{!calendar.new}"
 							value="#{bundle.aon_year}" />
@@ -81,23 +63,9 @@
 						<aon:inputText id="Calendar_anualHours" size="10" maxlength="6"
 							value="#{calendar.to.anualHours}" />
 							
-						<aon:outputLabel for="Holiday_id"
-							value="#{calendarBundle.aon_calendar_holiday}" />
-						<aon:div styleClass="aon-lookup" >
-							<aon:lookupInputText id="Holiday_id"
-								value="#{calendar.to.holiday.id}" size="5"
-								lookup="#{holidayLookup}" reRender="Holiday_name" />
-							<aon:lookupButton
-								windowTitle="#{calendarBundle.aon_calendar_holiday}"
-								minHeight="460" minWidth="650" property="#{calendar.to.holiday}"
-								lookup="#{holidayLookup}"
-								selectReRender="Holiday_id,Holiday_name"
-								actionType="list">
-							</aon:lookupButton>
-							<aon:inputText id="Holiday_name"
-								value="#{calendar.to.holiday.description}"
-								disabled="true" size="60" />
-						</aon:div>
+						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/holiday/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{calendar.to.holiday}" />
+						</ui:include>
 						
 						<aon:outputLabel for="Calendar_comments"
 							value="#{bundle.aon_comment}" />

@@ -40,23 +40,11 @@
 					<aon:selectBooleanCheckbox value="#{holiday.to.editable}">
 					</aon:selectBooleanCheckbox>
 
-					<aon:outputLabel for="Holiday_id"
-						value="#{calendarBundle.aon_calendar_holiday}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Holiday_id"
-							value="#{holiday.to.holiday.id}" size="5"
-							lookup="#{holidayLookup}" reRender="Holiday_name" />
-						<aon:lookupButton
-							windowTitle="#{calendarBundle.aon_calendar_holiday}"
-							minHeight="460" minWidth="650" property="#{holiday.to.holiday}"
-							lookup="#{holidayLookup}"
-							selectReRender="Holiday_id,Holiday_name"
-							actionType="list">
-						</aon:lookupButton>
-						<aon:inputText id="Holiday_name"
-							value="#{holiday.to.holiday.description}"
-							disabled="true" size="60" />
-					</aon:div>
+					<ui:include src="/com/esferalia/aon/ui/calendar/facelet/holiday/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{holiday.to.holiday}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="skipGoToButton" value="true" />
+					</ui:include>
 				</aon:panelGrid>
 
 				<c:if test="#{!holiday.new}">
