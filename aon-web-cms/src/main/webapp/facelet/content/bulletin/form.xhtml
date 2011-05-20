@@ -118,40 +118,18 @@
 										<aon:outputText value="#{to.article.alias}"
 											rendered="#{to!=bulletin_article.to}" >
 										</aon:outputText>	
-										<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-											<aon:lookupInputText id="BulletinArticle_article_alias"
-												value="#{controller.to.article.alias}"
-												validator="#{article.articleAliasCheck}"
-												lookup="#{articleLookup}"
-												required="true" size="40" >
-												<aon:joinProperty alias="Article_alias"
-													value="#{controller.to.article.alias}" />
-											</aon:lookupInputText>
-											<aon:lookupButton
-												windowTitle="#{appBundle.cms_article_selection}"
-												minHeight="460" minWidth="700"
-												property="#{controller.to.article}" lookup="#{articleLookup}"
-												selectReRender="BulletinArticle_article_alias"
-												actionType="search">
-											</aon:lookupButton>
-										</aon:div>											
+										<ui:include src="/com/code/aon/ui/cms/facelet/article/lookup.xhtml" >
+											<ui:param name="lookupTo" value="#{controller.to.article}" />
+											<ui:param name="idRequired" value="#{true}" />
+											<ui:param name="lookupRendered" value="#{formEdit}" />
+										</ui:include>											
 										<f:facet name="footer">
-											<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-												<aon:lookupInputText id="BulletinArticle_article_alias-New" 
-													value="#{controller.to.article.alias}"
-													lookup="#{articleLookup}"
-													required="true" size="40" >
-													<aon:joinProperty alias="Article_alias"
-														value="#{controller.to.article.alias}" />
-												</aon:lookupInputText>
-												<aon:lookupButton
-													windowTitle="#{appBundle.cms_article_selection}"
-													minHeight="460" minWidth="700"
-													property="#{controller.to.article}" lookup="#{articleLookup}"
-													selectReRender="BulletinArticle_article_alias-New"
-													actionType="search">
-												</aon:lookupButton>
-											</aon:div>											
+											<ui:include src="/com/code/aon/ui/cms/facelet/article/lookup.xhtml" >
+												<ui:param name="lookupTo" value="#{controller.to.article}" />
+												<ui:param name="idRequired" value="#{true}" />
+												<ui:param name="lookupRendered" value="#{formNew}" />
+												<ui:param name="lookupSuffix" value="-New" />
+											</ui:include>											
 										</f:facet>
 									</aon:column>
 															

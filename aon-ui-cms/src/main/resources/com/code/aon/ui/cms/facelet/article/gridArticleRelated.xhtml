@@ -13,26 +13,15 @@
 		<ui:define name="columns">
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputLabel for="ArticleRelated_alias" value="#{bundle.aon_name}" />
+					<aon:outputLabel for="Article_id" value="#{bundle.aon_name}" />
 				</f:facet>
 				<aon:outputText value="#{to.articleRelated.alias}" />
 				<f:facet name="footer">
-					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-						<aon:lookupInputText id="ArticleRelated_alias" 
-							value="#{articleRelated.to.articleRelated.alias}"
-							lookup="#{articleLookup}"
-							required="true" size="40" >
-							<aon:joinProperty alias="Article_alias"
-								value="#{articleRelated.to.articleRelated.alias}" />
-						</aon:lookupInputText>
-						<aon:lookupButton
-							windowTitle="#{appBundle.cms_article_selection}"
-							minHeight="460" minWidth="700"
-							property="#{articleRelated.to.articleRelated}" lookup="#{articleLookup}"
-							selectReRender="ArticleRelated_alias"
-							actionType="search">
-						</aon:lookupButton>
-					</aon:div>							
+					<ui:include src="/com/code/aon/ui/cms/facelet/article/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{articleRelated.to.articleRelated}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{formNew}" />
+					</ui:include>				
 				</f:facet>
 			</aon:column>
 
