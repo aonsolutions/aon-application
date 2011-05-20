@@ -8,23 +8,10 @@
 
 	<aon:panelGrid id="activityDialogTable" columns="2" width="100%">
 
-		<aon:outputLabel for="Asset_name" value="#{assetBundle.asset_asset}" />
-		<aon:div styleClass="aon-lookup" id="Asset_id">
-			<aon:lookupInputText id="Asset_name" lookup="#{assetLookup}"
-				reRender="Asset_description" value="#{activityDialog.asset.name}"
-				required="true" size="10" disabled="#{!activityDialog.new}">
-			</aon:lookupInputText>
-			<aon:lookupButton id="Asset_lookup"
-				windowTitle="#{assetBundle.asset_asset}"
-				selectReRender="Asset_name,Asset_description"
-				lookup="#{assetLookup}" minHeight="440"
-				property="#{activityDialog.asset}"
-				disabled="#{!activityDialog.new}">
-			</aon:lookupButton>
-			<aon:inputText id="Asset_description"
-				value="#{(activityDialog.asset.description!=null)?(activityDialog.asset.description):('')}"
-				size="70" disabled="true" />
-		</aon:div>
+		<ui:include src="/com/code/aon/ui/asset/facelet/asset/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{activityDialog.asset}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+		</ui:include>
 
 		<aon:outputLabel for="ActivityDialog_startDate"
 			value="#{assetBundle.asset_startDate}" />

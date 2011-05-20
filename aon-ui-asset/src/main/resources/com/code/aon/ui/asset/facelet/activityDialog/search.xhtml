@@ -38,22 +38,10 @@
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchAction" value="activityDialog_grid" />	
 				
-					<aon:outputLabel for="AssetActivity_asset" value="#{assetBundle.asset_asset}" />
-					<aon:div styleClass="aon-lookup" id="AssetActivity_asset">
-						<aon:lookupInputText id="Asset_name" lookup="#{assetLookup}"
-							reRender="Asset_description" value="#{activityBasic.asset.name}"
-							size="10">
-						</aon:lookupInputText>
-						<aon:lookupButton id="Asset_lookup"
-							windowTitle="#{assetBundle.asset_asset}"
-							selectReRender="Asset_name,Asset_description"
-							lookup="#{assetLookup}" minHeight="440"
-							property="#{activityBasic.asset}">
-						</aon:lookupButton>
-						<aon:inputText id="Asset_description"
-							value="#{(activityBasic.asset.description!=null)?(activityBasic.asset.description):('')}"
-							size="70" disabled="true" />
-					</aon:div>
+					<ui:include src="/com/code/aon/ui/asset/facelet/asset/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{activityDialog.asset}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
 					
 					<aon:outputLabel for="AssetActivity_startDate" value="#{assetBundle.asset_date}" />
 					<aon:selectInputDate renderAsPopup="true" id="AssetActivity_startDate"
@@ -79,7 +67,7 @@
 				
 					<aon:outputLabel for="AssetActivity_status" value="#{assetBundle.asset_activity_status}" />
 	<!--  
-					<aon:selectOneMenu id="Offer_series-New" converte="aon.EnumConverter"
+					<aon:selectOneMenu id="Offer_series-New" converter="aon.EnumConverter"
 						valueChangeListener="#{activityBasic.addEqualExpression}">
 						<f:selectItems value="#{activityBasic.statusList}" />
 					</aon:selectOneMenu>

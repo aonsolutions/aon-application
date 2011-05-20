@@ -104,12 +104,6 @@
 			<property-name>defaultOrder</property-name>
 			<value>AssetActivity_date, AssetActivity_fromTime</value>
 		</managed-property>
-		<!--  
-		<managed-property> 
-			<property-name>listenerClasses</property-name>
-			<value>#{activityBasicControllerListeners}</value> 
-		</managed-property>
-		-->
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -121,28 +115,18 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	<!--  
-		<managed-bean>
-			<managed-bean-name>activityBasicControllerListeners</managed-bean-name>
-			<managed-bean-class>java.util.LinkedList</managed-bean-class>
-			<managed-bean-scope>none</managed-bean-scope>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{activityBasicControllerListener}</value>
-			</list-entries>
-		</managed-bean>
-	-->
 		
-		<managed-bean>
-			<managed-bean-name>activityBasicControllerListener</managed-bean-name>
-			<managed-bean-class>com.code.aon.ui.asset.event.ActivityBasicControllerListener</managed-bean-class>
-			<managed-bean-scope>session</managed-bean-scope>
-		</managed-bean>
-		<managed-bean>
-			<managed-bean-name>activityBasicSearchListener</managed-bean-name>
-			<managed-bean-class>com.code.aon.ui.asset.event.ActivityBasicSearchListener</managed-bean-class>
-			<managed-bean-scope>session</managed-bean-scope>
-		</managed-bean>
+	<managed-bean>
+		<managed-bean-name>activityBasicControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.asset.event.ActivityBasicControllerListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>activityBasicSearchListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.asset.event.ActivityBasicSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- ********** ASSET ACTIVITY LINES ********** -->
 	<managed-bean>
@@ -187,64 +171,64 @@
 			</map-entries>
 		</managed-property>
 		<managed-property> 
-				<property-name>listenerClasses</property-name>
-				<value>#{activityLinesControllerListeners}</value> 
-			</managed-property>
-		</managed-bean>
+			<property-name>listenerClasses</property-name>
+			<value>#{activityLinesControllerListeners}</value> 
+		</managed-property>
+	</managed-bean>
 		
-		<managed-bean>
-			<managed-bean-name>activityLinesControllerListeners</managed-bean-name>
-			<managed-bean-class>java.util.LinkedList</managed-bean-class>
-			<managed-bean-scope>none</managed-bean-scope>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{activityLinesControllerListener}</value>
-			</list-entries>
-		</managed-bean>
+	<managed-bean>
+		<managed-bean-name>activityLinesControllerListeners</managed-bean-name>
+		<managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<value>#{activityLinesControllerListener}</value>
+		</list-entries>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>activityLinesControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.asset.event.ActivityLinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 		
-		<managed-bean>
-			<managed-bean-name>activityLinesControllerListener</managed-bean-name>
-			<managed-bean-class>com.code.aon.ui.asset.event.ActivityLinesControllerListener</managed-bean-class>
-			<managed-bean-scope>none</managed-bean-scope>
-		</managed-bean>
+	<!-- ********** ASSET ACTIVITY CALENDAR ********** -->
+	<managed-bean>
+		<managed-bean-name>assetCalendar</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.asset.controller.AssetCalendarController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.asset.AssetActivity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>10</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>assetCalendar</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AssetActivity_date</value>
+		</managed-property>
+	</managed-bean>
 		
-		<!-- ********** ASSET ACTIVITY CALENDAR ********** -->
-		<managed-bean>
-			<managed-bean-name>assetCalendar</managed-bean-name>
-			<managed-bean-class>com.code.aon.ui.asset.controller.AssetCalendarController</managed-bean-class>
-			<managed-bean-scope>session</managed-bean-scope>
-			<managed-property>
-				<property-name>queryOnStartUP</property-name>
-				<value>true</value>
-			</managed-property>
-			<managed-property>
-				<property-name>pojo</property-name>
-				<value>com.code.aon.asset.AssetActivity</value>
-			</managed-property>
-			<managed-property>
-				<property-name>pageLimit</property-name>
-				<value>10</value>
-			</managed-property>
-			<managed-property>
-				<property-name>beanName</property-name>
-				<value>assetCalendar</value>
-			</managed-property>
-			<managed-property>
-				<property-name>defaultOrder</property-name>
-				<value>AssetActivity_date</value>
-			</managed-property>
-		</managed-bean>
-		
-		<!-- ********** ASSET ACTIVITY COLLECTIONS ********** -->
-		<managed-bean>
-			<managed-bean-name>assetStat</managed-bean-name>
-			<managed-bean-class>com.code.aon.ui.asset.controller.AssetStatController</managed-bean-class>
-			<managed-bean-scope>session</managed-bean-scope>
-			<managed-property>
-				<property-name>beanName</property-name>
-				<value>assetStat</value>
-			</managed-property>
-		</managed-bean>
+	<!-- ********** ASSET ACTIVITY COLLECTIONS ********** -->
+	<managed-bean>
+		<managed-bean-name>assetStat</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.asset.controller.AssetStatController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>assetStat</value>
+		</managed-property>
+	</managed-bean>
 	
 	<!-- ****************************************** -->
 	<!-- ***************** LOOK UP **************** -->
@@ -262,6 +246,14 @@
 		<managed-property>
 			<property-name>foreignPojo</property-name>
 			<value>com.code.aon.asset.Asset</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Asset_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/asset/facelet/lookup/asset/search.xhtml</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
