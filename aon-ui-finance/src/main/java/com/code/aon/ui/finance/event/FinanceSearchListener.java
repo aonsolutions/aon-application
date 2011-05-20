@@ -6,50 +6,31 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethod;
-import com.code.aon.customer.Customer;
-import com.code.aon.finance.Creditor;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryBank;
-import com.code.aon.supplier.Supplier;
 import com.code.aon.ui.finance.controller.FinanceController;
 
 public class FinanceSearchListener extends FinanceListSearchListener {
 
 	private static final PayMethod EMPTY_PAYMETHOD = new PayMethod();
 	
-	private Customer customer;
-	private Supplier supplier;
-	private Creditor creditor;
+	private Registry registry;
 	private RegistryBank registryBank;
 	private List<PayMethod> payMethods;
 	
-	public Customer getCustomer() {
-		return customer;
+	public Registry getRegistry() {
+		return registry;
 	}
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
-
-	public Supplier getSupplier() {
-		return supplier;
-	}
-
-	public void setSupplier(Supplier supplier) {
-		this.supplier = supplier;
-	}
-	
-	public Creditor getCreditor() {
-		return creditor;
-	}
-
-	public void setCreditor(Creditor creditor) {
-		this.creditor = creditor;
+	public void setRegistry(Registry registry) {
+		this.registry = registry;
 	}
 	
 	public RegistryBank getRegistryBank() {
@@ -89,9 +70,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
-		setCustomer(new Customer());
-		setSupplier(new Supplier());
-		setCreditor(new Creditor());
+		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
 		setRegistryBank(new RegistryBank());
 		FinanceStatus[] defaultFinanceStatus = {FinanceStatus.PENDING, FinanceStatus.RETURNED};
 		setFinanceStatuses(defaultFinanceStatus);
@@ -102,15 +81,9 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_PAYMENT), ((FinanceController)getController()).isPayment());
-		if ((getCustomer() != null) && (getCustomer().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCustomer().getId());			
-		}
-		if ((getSupplier() != null) && (getSupplier().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getSupplier().getId());			
-		}
-		if ((getCreditor() != null) && (getCreditor().getId() != null)) {
-			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getCreditor().getId());			
-		}
+		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
+			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID), getRegistry().getId());			
+		}		
 		if ((getRegistryBank() != null) && (getRegistryBank().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), getRegistryBank().getBankAccount());			
 		}
