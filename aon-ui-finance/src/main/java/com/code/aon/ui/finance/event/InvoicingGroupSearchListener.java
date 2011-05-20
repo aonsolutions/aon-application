@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.event;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -23,11 +24,11 @@ public class InvoicingGroupSearchListener extends ControllerSearchListener {
 
 	@Override
 	protected void init() throws ManagerBeanException {
-		setCustomer( new Customer() );
+		setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 	}
 	
 	@Override
-	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		if ( (getCustomer() != null) && (getCustomer().getId() != null) ) {
 			String field = getController().getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_ID);
 			criteria.addEqualExpression(field, getCustomer().getId());			

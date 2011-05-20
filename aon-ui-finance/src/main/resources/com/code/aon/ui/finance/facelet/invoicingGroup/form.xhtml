@@ -20,23 +20,14 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
 
-					<aon:outputLabel for="Customer_id"
-						value="#{financeBundle.finance_invoicing_group}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-							reRender="Customer_full_name" disabled="#{!invoicingGroup.new}"
-							value="#{invoicingGroup.to.parent.id}" lookupProperty="registry"
-							required="true" size="5" />
-						<aon:lookupButton disabled="#{!invoicingGroup.new}"
-							windowTitle="#{customerBundle.customer_selection}"
-							selectReRender="Customer_id,Customer_full_name" actionType="search"
-							lookup="#{customerLookup}" minHeight="460" minWidth="650"
-							property="#{invoicingGroup.to.parent}" lookupProperty="registry">
-						</aon:lookupButton>
-						<aon:inputText id="Customer_full_name"
-							value="#{(invoicingGroup.to.parent.fullName!=null)?(invoicingGroup.to.parent.fullName):('')}"
-							size="80" disabled="true" />							
-					</aon:div>					
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{invoicingGroup.to.parent}" />
+						<ui:param name="idRequired" value="#{true}" />						
+						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupDisabled" value="#{!invoicingGroup.new}" />
+						<ui:param name="lookupLabel" value="#{financeBundle.finance_invoicing_group}"/>
+					</ui:include>
+
 				</aon:panelGrid>
 
 				<c:if test="#{!invoicingGroup.new}">
@@ -54,55 +45,27 @@
 										<f:facet name="header">
 											<aon:outputText value="#{bundle.aon_company_name}" />
 										</f:facet>
-										<aon:outputText value="#{to.child.fullName}" rendered="#{formList}" />
-										<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-											<aon:lookupInputText id="Customer_id-Edit"
-												lookup="#{customerLookup}" required="true"
-												reRender="Customer_name-Edit" size="5"
-												value="#{invoicingGroupDetail.to.child.id}" lookupProperty="registry">
-											</aon:lookupInputText>
-											<aon:lookupButton actionType="search"
-												windowTitle="#{customerBundle.customer_selection}"
-												selectReRender="invoicingGroupDetailData"
-												lookup="#{customerLookup}" minHeight="460" minWidth="650"
-												property="#{controller.to.child}" lookupProperty="registry">
-											</aon:lookupButton>
-											<aon:lookupButton 
-												windowTitle="#{customerBundle.customer_new}" minWidth="650" minHeight="650"
-												property="#{controller.to.child}" lookupProperty="registry" lookup="#{customerLookup}"
-												selectReRender="invoicingGroupDetailData"
-												actionType="new">
-											</aon:lookupButton>
-											<aon:inputText id="Customer_name-Edit"
-												value="#{(controller.to.child.fullName!=null)?(controller.to.child.fullName):('')}"
-												size="80" disabled="true" />
-										</aon:div>
+										<aon:outputText value="#{to.child.fullName}" 
+											rendered="#{formList}" />
+										<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+											<ui:param name="lookupTo" value="#{invoicingGroupDetail.to.child}" />
+											<ui:param name="idRequired" value="#{true}" />						
+											<ui:param name="skipLabel" value="#{true}" />
+											<ui:param name="lookupForRegistry" value="#{true}" />
+											<ui:param name="lookupSuffix" value="-Edit" />
+											<ui:param name="lookupRendered" value="#{formEdit}" />
+										</ui:include>
 										<f:facet name="footer">
-											<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-												<aon:lookupInputText id="Customer_id-New"
-													lookup="#{customerLookup}" required="true"
-													reRender="Customer_name-New" size="5"
-													value="#{invoicingGroupDetail.to.child.id}" lookupProperty="registry">
-												</aon:lookupInputText>
-												<aon:lookupButton 
-													windowTitle="#{customerBundle.customer_selection}" actionType="search"
-													selectReRender="Customer_id-New,Customer_name-New"
-													lookup="#{customerLookup}" minHeight="460" minWidth="650"
-													property="#{controller.to.child}" lookupProperty="registry">
-												</aon:lookupButton>
-												<aon:lookupButton 
-													windowTitle="#{customerBundle.customer_new}" minWidth="650" minHeight="650"
-													property="#{controller.to.child}" lookupProperty="registry" lookup="#{customerLookup}"
-													selectReRender="invoicingGroupDetailData"
-													actionType="new">
-												</aon:lookupButton>
-												<aon:inputText id="Customer_name-New"
-													value="#{(controller.to.child.fullName!=null)?(controller.to.child.fullName):('')}"
-													size="80" disabled="true" />
-											</aon:div>
+											<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+												<ui:param name="lookupTo" value="#{invoicingGroupDetail.to.child}" />
+												<ui:param name="idRequired" value="#{true}" />						
+												<ui:param name="skipLabel" value="#{true}" />
+												<ui:param name="lookupForRegistry" value="#{true}" />
+												<ui:param name="lookupSuffix" value="-New" />
+												<ui:param name="lookupRendered" value="#{formNew}" />
+											</ui:include>
 										</f:facet>
 									</aon:column>								
-
 								</ui:define>
 							</ui:decorate>
 						</aon:panel>

@@ -35,23 +35,11 @@
 						<aon:outputText value="#{financeBundle.finance_invoicing_criteria}" />
 					</f:facet>
 					<aon:panelGrid columns="2">
-						<aon:outputLabel for="Customer_id"
-							value="#{customerBundle.customer_customer}" />
-						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-								reRender="Customer_full_name"
-								value="#{deliveryInvoicing.params.customer.id}" size="5" />
-							<aon:lookupButton
-								windowTitle="#{customerBundle.customer_selection}"
-								selectReRender="Customer_id,Customer_full_name"
-								actionType="search" lookup="#{customerLookup}" minHeight="460"
-								minWidth="650" property="#{deliveryInvoicing.params.customer}">
-							</aon:lookupButton>
-							<aon:inputText id="Customer_full_name"
-								value="#{(deliveryInvoicing.params.customer.registry.fullName!=null)?(deliveryInvoicing.params.customer.registry.fullName):('')}"
-								size="60" disabled="true" />
-						</aon:div>
-	
+						<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{deliveryInvoicing.params.customer}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+
 						<aon:outputLabel value="#{bundle.aon_period}" />
 						<aon:panelGrid columns="4">
 							<aon:outputLabel for="Invoicing_fromDate"

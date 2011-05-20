@@ -9,6 +9,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.PayMethod;
@@ -17,7 +18,6 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.Item;
-import com.code.aon.product.Product;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
@@ -144,17 +144,16 @@ public class InvoiceSearchListener extends RegistrySearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
-		setRegistry(new Registry());
-		setItem(new Item());
-		getItem().setProduct(new Product());
-		setBank(new Bank());
+		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
+		setBank((Bank)BeanManager.getManagerBean(Bank.class).createNewTo());
 		setFinanceStatuses(new FinanceStatus[0]);
 		setPayMethods(new LinkedList<PayMethod>());
 		getPayMethods().add(EMPTY_PAYMETHOD);
 	}
 	
 	@Override
-	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria( criteria );
 		if (getDefaultType() != null) {
 			InvoiceType type = InvoiceType.valueOf(getDefaultType()); 

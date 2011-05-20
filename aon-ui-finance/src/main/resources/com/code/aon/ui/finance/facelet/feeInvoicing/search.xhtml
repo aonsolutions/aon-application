@@ -35,43 +35,17 @@
 						<aon:outputText value="#{financeBundle.finance_invoicing_criteria}" />
 					</f:facet>
 					<aon:panelGrid columns="2">
-						<aon:outputLabel for="Customer_id"
-							value="#{customerBundle.customer_customer}" />
-						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-								reRender="Customer_full_name"
-								value="#{feeInvoicing.params.customer.id}" size="5" />
-							<aon:lookupButton
-								windowTitle="#{customerBundle.customer_selection}"
-								selectReRender="Customer_id,Customer_full_name"
-								actionType="search" lookup="#{customerLookup}" minHeight="460"
-								minWidth="650" property="#{feeInvoicing.params.customer}">
-							</aon:lookupButton>
-							<aon:inputText id="Customer_full_name"
-								value="#{(feeInvoicing.params.customer.registry.name!=null)?(feeInvoicing.params.customer.registry.fullName):('')}"
-								size="60" disabled="true" />
-						</aon:div>
-	
-						<aon:outputLabel for="Item_product_code"
-							value="#{productBundle.product_item}" />
-						<aon:div styleClass="aon-lookup">
-							<aon:lookupInputText id="Item_product_code" lookup="#{itemLookup}"
-								reRender="Item_product_name"
-								value="#{feeInvoicing.params.item.product.code}" size="5">
-								<aon:joinProperty alias="Item_product_code"
-									value="#{feeInvoicing.params.item.product.code}" />
-							</aon:lookupInputText>
-							<aon:lookupButton
-								windowTitle="#{productBundle.product_item_selection}"
-								selectReRender="Item_product_code,Item_product_name"
-								actionType="search" lookup="#{itemLookup}" minHeight="460"
-								minWidth="650" property="#{feeInvoicing.params.item}">
-							</aon:lookupButton>
-							<aon:inputText id="Item_product_name"
-								value="#{feeInvoicing.params.item.product.name}"
-								size="60" disabled="true" />
-						</aon:div>
-	
+						<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{feeInvoicing.params.customer}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="lookupInputSize" value="10"/>
+						</ui:include>
+
+						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{feeInvoicing.params.item}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+
 						<aon:outputLabel for="Item_product_category" 
 							value="#{productBundle.product_category}" />
 						<aon:selectOneMenu id="Item_product_category" value="#{feeInvoicing.params.category}">

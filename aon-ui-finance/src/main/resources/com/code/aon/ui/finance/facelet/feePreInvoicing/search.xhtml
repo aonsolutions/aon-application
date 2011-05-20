@@ -35,42 +35,16 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
-					<aon:outputLabel for="Customer_id"
-						value="#{customerBundle.customer_customer}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-							reRender="Customer_full_name"
-							value="#{preInvoicing.invoicingParams.customer.id}" size="5" />
-						<aon:lookupButton
-							windowTitle="#{customerBundle.customer_selection}"
-							selectReRender="Customer_id,Customer_full_name"
-							actionType="search" lookup="#{customerLookup}" minHeight="460"
-							minWidth="650" property="#{preInvoicing.invoicingParams.customer}">
-						</aon:lookupButton>
-						<aon:inputText id="Customer_full_name"
-							value="#{(preInvoicing.invoicingParams.customer.registry.fullName!=null)?(preInvoicing.invoicingParams.customer.registry.fullName):('')}"
-							size="50" disabled="true" />
-					</aon:div>
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{preInvoicing.invoicingParams.customer}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupInputSize" value="10"/>
+					</ui:include>
 
-					<aon:outputLabel for="Item_product_code"
-						value="#{productBundle.product_item}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Item_product_code" lookup="#{itemLookup}"
-							reRender="Item_product_name"
-							value="#{preInvoicing.invoicingParams.item.product.code}" size="5">
-							<aon:joinProperty alias="Item_product_code"
-								value="#{preInvoicing.invoicingParams.item.product.code}" />
-						</aon:lookupInputText>
-						<aon:lookupButton
-							windowTitle="#{productBundle.product_item_selection}"
-							selectReRender="Item_product_code,Item_product_name"
-							actionType="search" lookup="#{itemLookup}" minHeight="460"
-							minWidth="650" property="#{preInvoicing.invoicingParams.item}">
-						</aon:lookupButton>
-						<aon:inputText id="Item_product_name"
-							value="#{preInvoicing.invoicingParams.item.product.name}"
-							size="50" disabled="true" />
-					</aon:div>
+					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{preInvoicing.invoicingParams.item}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
 
 					<aon:outputLabel for="Item_product_category" 
 						value="#{productBundle.product_category}" />

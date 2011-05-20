@@ -83,9 +83,9 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 
 	public void onBankChanged(LookupChangeEvent event) {
 		Finance finance = (Finance) getTo();
+		finance.setBankAccount(new BankAccount());
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Bank bank = (Bank) event.getNewValue();
-			finance.setBankAccount(new BankAccount());
 			finance.getBankAccount().setEntity(bank.getCode());			
 		}
 	}

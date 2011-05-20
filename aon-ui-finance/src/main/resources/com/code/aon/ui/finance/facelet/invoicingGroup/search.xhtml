@@ -20,25 +20,13 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{invoicingGroup}" />
 				<ui:define name="searchContent">
-						
-					<aon:outputLabel for="Customer_id"
-						value="#{financeBundle.finance_invoicing_group}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-							reRender="Customer_full_name"
-							value="#{invoicingGroupSearch.customer.id}" size="5" >
-						</aon:lookupInputText>
-						<aon:lookupButton 
-							windowTitle="#{customerBundle.customer_selection}"
-							selectReRender="Customer_id,Customer_full_name" actionType="search"
-							lookup="#{customerLookup}" minHeight="460" minWidth="650"
-							property="#{invoicingGroupSearch.customer}">
-						</aon:lookupButton>
-						<aon:inputText id="Customer_full_name"
-							value="#{(invoicingGroupSearch.customer.registry.fullName!=null)?(invoicingGroupSearch.customer.registry.fullName):('')}"
-							size="50" disabled="true" />							
-					</aon:div>					
-					
+
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{invoicingGroupSearch.customer}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupLabel" value="#{financeBundle.finance_invoicing_group}"/>
+					</ui:include>
+
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

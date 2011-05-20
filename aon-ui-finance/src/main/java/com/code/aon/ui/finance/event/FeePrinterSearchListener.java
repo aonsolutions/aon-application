@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -55,7 +56,7 @@ public class FeePrinterSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		setItem( new Item() );
+		setItem((Item)BeanManager.getManagerBean(Item.class).createNewTo());
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(new Date());
 		setBillingDateMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
