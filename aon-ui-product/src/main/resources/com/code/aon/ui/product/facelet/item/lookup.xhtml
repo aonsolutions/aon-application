@@ -9,7 +9,7 @@
 		<ui:param name="lookupInputSize" value="10"/>
 		<ui:param name="lookupInputValue" value="#{lookupTo.product.code}"/>
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.product.name}"/>
-		<ui:param name="lookupInputSuggestExpression" value="#{lto.product.name} (#{lto.id})"/>
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.product.name} (#{lto.product.code})"/>
 		<ui:param name="lookupInputOnBlur" value="toUpperCase(this);"/>		
 		<ui:param name="lookupLabel" value="#{productBundle.product_item}" />
 		<ui:param name="controller" value="#{item}" />
