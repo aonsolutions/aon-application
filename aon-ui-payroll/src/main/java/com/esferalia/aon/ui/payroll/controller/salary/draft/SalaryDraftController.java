@@ -170,6 +170,28 @@ public class SalaryDraftController extends BasicController {
 			throw new AbortProcessingException(msg,e);
 		}						
 	}
+	
+	public void onShowDeductions( ActionEvent event ) {
+		try {
+			Contract to = (Contract) getTo();
+			SalaryDraftDeductionController c = (SalaryDraftDeductionController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_DEDUCTION_CONTROLLER);
+			c.reset(false);
+			c.onEditSearch(event);
+			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_CONTRACT_ID), to.getId());
+			c.getCriteria().addLessThanOrEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_START_DATE), this.getStartDate());
+			
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE), this.getEndDate());
+			Expression expr2 = ExpressionUtilities.getNullExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE));
+			c.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
+			
+			c.onSearch(event);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible mostrar las percepciones del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}		
+	}
 
 	// *********
 	// IMPRESION

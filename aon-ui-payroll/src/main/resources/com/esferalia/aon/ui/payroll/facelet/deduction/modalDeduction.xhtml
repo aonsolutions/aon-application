@@ -17,6 +17,7 @@
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/formContent.xhtml">
 					<ui:param name="controller" value="#{controller}" />
 					<ui:param name="containerID" value="#{controller.beanName}MenuGrid" />
+					<ui:param name="skipCurrentMonth" value="#{true}" />
 				</ui:include>
 			</aon:panelGrid>
 		</ui:define>

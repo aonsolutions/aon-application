@@ -1,9 +1,11 @@
 package com.esferalia.aon.ui.payroll.controller.salary.draft;
 
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -20,28 +22,26 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.AgreementLevelPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.salary.expression.ExpressionScope;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractDetailAbstractController;
 
-public class SalaryDraftPaymentController extends BasicController{
+public class SalaryDraftDeductionController extends ContractDetailAbstractController {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryDraftPaymentController.class.getName());
-
-	private boolean modalPanelVisible;
+	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryDraftDeductionController.class.getName());
+	
 	private DataModel variablesModel;
 	private ContractData contractData;
+	private boolean variableFound;
 	private DataModel undefinedVariablesModel;
 	
 	
@@ -52,8 +52,17 @@ public class SalaryDraftPaymentController extends BasicController{
 		this.undefinedVariablesModel = undefinedVariablesModel;
 	}
 	
+	public boolean isVariableFound() {
+		return variableFound;
+	}
+	public void setVariableFound(boolean variableFound) {
+		this.variableFound = variableFound;
+	}
 	public DataModel getVariablesModel() {
 		return variablesModel;
+	}
+	public void setVariablesModel(DataModel variablesModel) {
+		this.variablesModel = variablesModel;
 	}
 	public ContractData getContractData() {
 		return contractData;
@@ -62,122 +71,102 @@ public class SalaryDraftPaymentController extends BasicController{
 		this.contractData = contractData;
 	}
 	
-	public boolean isModalPanelVisible() {
-		return modalPanelVisible;
-	}
-	public void setModalPanelVisible(boolean modalPanelVisible) {
-		this.modalPanelVisible = modalPanelVisible;
-	}
-	
-	public void onPaymentConceptChange(ActionEvent event) {
-		ContractPayment cp = (ContractPayment) getTo();
-		if (cp.getType() != null && StringUtils.isEmpty(cp.getDescription())) {
-			cp.setDescription( cp.getPaymentConcept().getDescription() );
-		}
-	}
-	
+	@Override
 	public void onEdit(ActionEvent event) {
-		reset(true);
-		setSelectedPayment(event);
+		super.onEdit(event);
 		initializeVariables(event);
 	}
-
+	
+	@Override
 	public void onSave(ActionEvent event) {
-		ContractPayment cp = (ContractPayment) this.getTo();
-		if(cp.getDescription().isEmpty()){
-			cp.setDescription(null);
-		}
-		SalaryDraftController master = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
-		cp.setContract((Contract) master.getTo());
-		super.onAccept(event);
-		reset(false);
-		master.setPaymentsModel(null);
+		IController master = FormUtil.getController("contract");
+		Contract contract = (Contract) master.getTo();
+		ContractDeduction cd  = (ContractDeduction) getTo();
+		cd.setContract(contract);
+		super.onSave(event);
 	}
-
-	public void onCancel(ActionEvent event) {
-		super.onCancel(event);
-		reset(false);
-	}
-
-	public void onRemove(ActionEvent event) {
-		super.onRemove(event);
-		reset(false);
-		SalaryDraftController master = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
-		master.setPaymentsModel(null);
-	}
-	
-	public void onReset(ActionEvent event) {
-		super.onReset(event);
-		reset(true);
-		initializeVariables(event);
+	@Override
+	protected void initialiceConcepts() {
+		setConcepts(new LinkedList<SelectItem>());
+		try {
+			ContractDeduction cd = (ContractDeduction) getTo();
+			IManagerBean bean = BeanManager.getManagerBean(DeductionConcept.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.DEDUCTION_CONCEPT_TYPE), cd.getType());
+			criteria.addOrder(bean.getFieldName(IPayrollAlias.DEDUCTION_CONCEPT_CODE));
+			List<ITransferObject> list = bean.getList(criteria);
+			for (ITransferObject to: list) {
+				DeductionConcept pc = (DeductionConcept) to;
+				getConcepts().add(new SelectItem(pc, pc.getCode() + " - "+pc.getDescription()));
+			}
+		} catch (ManagerBeanException e) {
+			// Se devuelve la lista vacia.
+		} 
 	}
 	
-	public void reset(boolean panelVisible) {
-		setModalPanelVisible(panelVisible);
-	}
-	
-	private void setSelectedPayment(ActionEvent event){
-		SalaryDraftController controller = (SalaryDraftController) AonUtil.getRegisteredBean(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
-		IContractPayment payment = (IContractPayment) controller.getPaymentsModel().getRowData();
-		if(payment.getScope()==ExpressionScope.CONTRACT){
-			this.setTo((ContractPayment) payment);
-		} else if(payment.getScope()==ExpressionScope.AGREEMENT){
-			super.onReset(event);
-			ContractPayment cp = (ContractPayment) this.getTo();
-			AgreementLevelPayment alp = (AgreementLevelPayment) payment;
-			cp.setContract((Contract) controller.getTo()); 
-			cp.setType(alp.getType()); 
-			cp.setPaymentConcept(alp.getPaymentConcept()); 
-			cp.setDescription(alp.getDescription()); 
-			cp.setExpression(alp.getExpression()); 
-			cp.setIrpfExpression(alp.getIrpfExpression()); 
-			cp.setQuoteExpression(alp.getQuoteExpression()); 
-			cp.setStartDate(alp.getStartDate()); 
-			cp.setEndDate(alp.getEndDate()); 
-			cp.setMonth(alp.getMonth()); 
-			cp.setDescriptionDecorable(alp.isDescriptionDecorable());
-			cp.setSalaryType(alp.getSalaryType());
+	public void onDeductionConceptChange(ActionEvent event) {
+		ContractDeduction cp = (ContractDeduction) getTo();
+		if (cp.getType() != null && StringUtils.isEmpty(cp.getDescription())) {
+			cp.setDescription( cp.getDeductionConcept().getDescription() );
 		}
 	}
 	
 	
+	//**********************************************
+	// VARIABLES
+	//**********************************************
 	
 	private void initializeVariables(ActionEvent event) {
-		ContractPayment payment = (ContractPayment)this.getTo();
-		Contract contract = payment.getContract();
+		ContractDeduction deduction = (ContractDeduction)this.getTo();
+		Contract contract = deduction.getContract();
 		ContractSalaryCalculatorContext ctx;
-		List<ContractData> varList;
+		List<ContractData> dataList;
 		try {
 			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
-			varList = new LinkedList<ContractData>();
-			if(payment.getExpression()==null && payment.getPaymentConcept().getExpression()==null){
-				String msg = "No hay expresion definida para esta percepcion ni para su concepto";
-				LOGGER.error(msg);
-				AonUtil.addErrorMessage(msg);
-			} else {
-				Calendar startCal = Calendar.getInstance();
-				Calendar endCal = Calendar.getInstance();
-				startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
-				endCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-				for(String s: ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression())){
-					List<ITransferObject> list = existingContractData(s, contract);
-					if(!list.isEmpty()){
-						for(ITransferObject to: list){
-							varList.add((ContractData) to);
+			variablesModel = null;
+			undefinedVariablesModel = null;
+			if(deduction.getExpression()!=null || deduction.getDeductionConcept().getExpression()!=null){
+				dataList = new LinkedList<ContractData>();
+				Set<String> vl = ExpressionContext.getVariables(deduction.getExpression()==null?deduction.getDeductionConcept().getExpression():deduction.getExpression());
+				List<ContractData> undefined = new LinkedList<ContractData>();
+				if(!vl.isEmpty()){
+					for(String s: vl){
+						List<ITransferObject> list = existingContractData(s, contract);
+						if(!list.isEmpty()){
+							for(ITransferObject to: list){
+								dataList.add((ContractData) to);
+							}
+						} else {
+							Calendar startCal = Calendar.getInstance();
+							Calendar endCal = Calendar.getInstance();
+							startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+							endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+							ContractData data = new ContractData();
+							data.setContract(contract);
+							data.setName(s);
+							data.setStartDate(startCal.getTime());
+							data.setEndDate(endCal.getTime());
+							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
+							if(o==null){
+//								String t = ctx.getExpressionContext().evalTemplate(deduction.getDeductionConcept().getDescription(), startCal.getTime(), endCal.getTime());
+//								if(!t.isEmpty()){
+//									data.setExpression(t);
+//									dataList.add(data);
+//								} else {
+									undefined.add(data);
+//								}
+							} else {
+								data.setExpression(o.toString());
+								dataList.add(data);
+							}
 						}
-					} else {
-						ContractData data = new ContractData();
-						data.setContract(contract);
-						data.setName(s);
-						data.setStartDate(startCal.getTime());
-						data.setEndDate(endCal.getTime());
-						Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
-						data.setExpression(o.toString());
-						varList.add(data);
 					}
 				}
+				variablesModel = new ListDataModel(dataList);
+				if(!undefined.isEmpty()){
+					undefinedVariablesModel = new ListDataModel(undefined);
+				}
 			}
-			variablesModel = new ListDataModel(varList);
 		} catch (SalaryException e) {
 			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
 			LOGGER.error(msg);
@@ -201,7 +190,7 @@ public class SalaryDraftPaymentController extends BasicController{
 	
 	public void onResetVariable(ActionEvent event) {
 		setContractData(new ContractData());
-		getContractData().setContract(((ContractPayment)this.getTo()).getContract());
+		getContractData().setContract(((ContractDeduction)this.getTo()).getContract());
 	}
 	public void onSelectVariable(ActionEvent event) {
 		setContractData((ContractData) getVariablesModel().getRowData());
@@ -257,5 +246,4 @@ public class SalaryDraftPaymentController extends BasicController{
 		}
 		return list;
 	}
-	
 }

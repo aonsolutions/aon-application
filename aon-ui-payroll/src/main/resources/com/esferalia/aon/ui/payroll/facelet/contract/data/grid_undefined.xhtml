@@ -8,27 +8,28 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
-	<aon:panelGrid columns="2" style="width: 50%; margin-top:10px;"
-		columnClasses="aon-panelGrid-odd aon-width-auto, aon-panelGrid-even aon-width-20">
+	<aon:div styleClass="aon-panelGrid-search" style="width: 50%; margin-top:10px;">
+
+		<aon:div styleClass="aon-panelGrid-search-info">
+			<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-exception"/>
+			<aon:outputText value="#{payrollBundle.payroll_contract_undefined_variables}" styleClass="aon-bold"/>
+		</aon:div>	
 		
-		<f:facet name="header">
-			<aon:div styleClass="aon-panelGrid-even">
-				<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-exception"/>
-				<aon:outputText value="#{payrollBundle.payroll_contract_undefined_variables}" styleClass="aon-bold"/>
-			</aon:div>
-		</f:facet>
+		<aon:panelGrid columns="2" 
+			columnClasses="aon-panelGrid-odd aon-width-auto, aon-panelGrid-even aon-width-20">
+			
+			<c:forEach items="#{controller.undefinedVariablesModel.wrappedData}" var="to">
+				<aon:outputText value="#{to.name}"  />
+				<aon:commandButton
+					id="ContractData-add" 
+					title="#{payrollBundle.payroll_contract_define_variable_button_title}"
+					actionListener="#{controller.onAddUndefinedVariable}"
+					reRender="#{saveReRender}"
+					styleClass="aon-editDataTable-button aon-icon-reset" />
+			</c:forEach>
+			
+		</aon:panelGrid>		
 		
-		<c:forEach items="#{controller.undefinedVariablesModel.wrappedData}" var="to">
-			<aon:outputText value="#{to.name}"  />
-			<aon:commandButton
-				id="ContractData-add" 
-				title="#{payrollBundle.payroll_contract_define_variable_button_title}"
-				actionListener="#{controller.onAddUndefinedVariable}"
-				reRender="#{saveReRender}"
-				styleClass="aon-editDataTable-button aon-icon-reset"
-				accesskey="#{bundle.aon_key_new_line}"/>
-		</c:forEach>
-		
-	</aon:panelGrid>	
+	</aon:div>	
 
 </ui:composition>

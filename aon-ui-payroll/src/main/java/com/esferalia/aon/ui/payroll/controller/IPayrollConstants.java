@@ -19,6 +19,7 @@ public interface IPayrollConstants {
 	String AGREEMENT_CONTROLLER_NAME = "agreement";
 	String AGREEMENT_LEVEL_CONTROLLER_NAME = "agreementLevel";
 	String AGREEMENT_TREE_CONTROLLER_NAME = "agreementTree";
+	String CERTIFICATE_FILE_WIZARD = "certifica2FileWizard";
 	String CONTRACT_CONTROLLER = "contract";
 	String CONTRACT_ATTACH_CONTROLLER = "contractAttach";
 	String CONTRACT_BONUS_CONTROLLER = "contractBonus";
@@ -31,11 +32,11 @@ public interface IPayrollConstants {
 	String ENTERPRISE_CCC_CONTROLLER = "enterpriseCCC";
 	String SALARY_CONTROLLER = "salary";
 	String SALARY_DRAFT_CONTROLLER = "salaryDraft";
-	String SALARY_EMBARGO_CONTROLLER = "salaryEmbargo";
+	String SALARY_DRAFT_DEDUCTION_CONTROLLER = "salaryDraftDeduction";
 	String SALARY_DRAFT_PAYMENT_CONTROLLER = "salaryDraftPayment";
-	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
+	String SALARY_EMBARGO_CONTROLLER = "salaryEmbargo";
 	String SALARY_TEST_LAUNCHER_NAME = "salaryTestLauncher";
-	String CERTIFICATE_FILE_WIZARD = "certifica2FileWizard";
+	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
 
 	// ************************************************************
 	// CONFIGURATION

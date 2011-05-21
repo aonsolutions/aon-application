@@ -14,7 +14,7 @@
 			<aon:commandButton id="ContractPayment-select"
 				title="#{(controller.contractScope)?(bundle.aon_update):(payrollBundle.payroll_overwrite)}" 
 				actionListener="#{salaryDraftPayment.onEdit}"
-				reRender="paymentModalContainer"
+				reRender="#{salaryDraftPayment.beanName}ModalContainer"
 				styleClass="aon-editDataTable-button #{(controller.contractScope)?('aon-icon-rowSelector'):('aon-icon-go')}"/>
 			<f:facet name="footer">
 				<aon:div>
@@ -22,7 +22,7 @@
 						id="ContractPayment-reset" 
 						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 						actionListener="#{salaryDraftPayment.onReset}"
-						reRender="paymentModalContainer"
+						reRender="#{salaryDraftPayment.beanName}ModalContainer"
 						styleClass="aon-editDataTable-button aon-icon-reset"
 						accesskey="#{bundle.aon_key_new_line}"/>
 				</aon:div>
