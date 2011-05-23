@@ -28,27 +28,11 @@
 
 					<aon:panelGrid columns="2"
 						columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
-						<aon:outputLabel 
-							value="Producto" />
-						<aon:div styleClass="aon-lookup">
-
-							<aon:lookupInputText id="item_product_code"
-								value="#{productStat.item.product.code}"
-								lookup="#{itemLookup}"
-								reRender="item_product_name" ajaxSingle="false"
-								required="true" size="10" />
-							<aon:lookupButton
-								windowTitle="#{productBundle.product_item_selection}"
-								minHeight="460" minWidth="650"
-								selectReRender="item_product_code,item_product_name"
-								property="#{productStat.item}" lookup="#{itemLookup}"
-								actionType="search">
-							</aon:lookupButton>
-							<aon:inputText id="item_product_name" size="60"
-								value="#{productStat.item.product.name}" >
-							</aon:inputText>
-						</aon:div>
-					</aon:panelGrid>
+						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{productStat.item}" />
+							<ui:param name="idRequired" value="#{true}" />
+						</ui:include>
+ 					</aon:panelGrid>
 
 				</ui:define>
 			</ui:decorate>

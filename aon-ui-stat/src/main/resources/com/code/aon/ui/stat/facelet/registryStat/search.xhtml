@@ -28,23 +28,10 @@
 
 					<aon:panelGrid columns="2"
 						columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
-						<aon:outputLabel for="Customer_id"
-							value="#{customerBundle.customer_customer}" />
-						<aon:div styleClass="aon-lookup">
-
-							<aon:lookupInputText id="Customer_id" lookup="#{customerLookup}"
-								reRender="Customer_full_name" lookupProperty="registry"
-								value="#{registryStat.registry.id}" size="5" />
-							<aon:lookupButton
-								windowTitle="#{customerBundle.customer_selection}"
-								selectReRender="Customer_id,Customer_full_name"
-								actionType="search" lookup="#{customerLookup}" minHeight="460"
-								minWidth="650" property="#{registryStat.registry}"
-								lookupProperty="registry">
-							</aon:lookupButton>
-							<aon:inputText id="Customer_full_name"
-								value="#{(registryStat.registry.name!=null)?(registryStat.registry.fullName):('')}"
-								size="50" disabled="true" />
+							<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{registryStat.registry}" />
+								<ui:param name="lookupForRegistry" value="#{true}" />
+							</ui:include>
 						</aon:div>
 					</aon:panelGrid>
 
