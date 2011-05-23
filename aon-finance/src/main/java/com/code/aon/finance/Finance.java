@@ -15,6 +15,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
@@ -285,6 +286,21 @@ public class Finance implements ITransferObject, IBankAccountContainer, IConfide
 	@Transient
 	public boolean isNegotiableDocument(){
 		return (getPayMethod() != null && getPayMethod().getType() == PayMethodType.NEGOTIABLE_DOCUMENT);
+	}
+
+	@Transient
+	public String getBankDescription() {
+		StringBuilder sb = new StringBuilder();
+		if (getBank() != null && !StringUtils.isEmpty(getBank().getName()))  {
+			sb.append(StringUtils.abbreviate(getBank().getName(), 30));
+			sb.append(" ");
+		}
+		if (getBankAccount() != null) {
+			sb.append("[");
+			sb.append(getBankAccount().toString());
+			sb.append("]");
+		}
+		return sb.toString(); 
 	}
 
 	public boolean equals(Object obj) {
