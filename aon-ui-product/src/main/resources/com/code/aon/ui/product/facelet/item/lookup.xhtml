@@ -15,7 +15,7 @@
 	<c:if test="#{!lookupForProduct}">
 		<ui:param name="lookupInputValue" value="#{lookupTo.product.code}"/>
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.product.name}"/>
-		<ui:param name="lookupInputSuggestExpression" value="#{lto.product.name} (#{lto.code})"/>
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.product.name} (#{lto.product.code})"/>
 	</c:if>
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
