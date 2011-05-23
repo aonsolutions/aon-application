@@ -505,8 +505,8 @@ public class RichLookupBean {
 	 * @return the criteria
 	 * @throws ManagerBeanException
 	 */
-	private Criteria getCriteria(Map<String, Object> valuesMap) throws ManagerBeanException {
-		Criteria criteria = new Criteria();
+	private void updateCriteria(Map<String, Object> valuesMap) throws ManagerBeanException {
+		Criteria criteria = getController().getCriteria();
 		IManagerBean bean = getController().getManagerBean();
 		for (Entry<String, Object> entry : valuesMap.entrySet()) {
 			String fieldName = bean.getFieldName(entry.getKey());
@@ -516,7 +516,6 @@ public class RichLookupBean {
 				criteria.addNullExpression(fieldName);
 			}
 		}
-		return criteria;
 	}
 	
 	private void fireLookupChangeListener(UIComponent component, boolean resolved) {
@@ -566,24 +565,20 @@ public class RichLookupBean {
 	 * @throws ManagerBeanException
 	 */
 	public void lookupChanged(ActionEvent event) throws ManagerBeanException {
-		UIComponent component = event.getComponent().getParent();
-		lookupChanged(component);
-	}
-	
-	public void lookupChanged( UIComponent component ) throws ManagerBeanException {
 		boolean resolved = false;
+		UIComponent component = event.getComponent().getParent();
 		setBindings( component );
+		onEditSearch(event);
 		Map<String, ValueExpression> joinBindingsMap = getJoinBindingsMap(component);
 		Map<String, Object> valuesMap = getValuesMap(joinBindingsMap);
-		Criteria criteria = getCriteria(valuesMap);
-		getController().setCriteria(criteria);
-		onSearch(null);
+		updateCriteria(valuesMap);
+		onSearch(event);
 		if (getModel().getRowCount() == 1) {
 			getController().getModel().setRowIndex(0);
-			onSelect(null);
+			onSelect(event);
 			resolved = true;
 		} else {
-			onReset(null);
+			onReset(event);
 			AonUtil.addErrorMessageFromBundle(IRichConstants.SEARCH_NO_RESULTS);
 		}
 		fireLookupChangeListener(component, resolved);
@@ -630,7 +625,7 @@ public class RichLookupBean {
 		updateWindowProperties();
 		setShowWindow(true);
 		setSelectedPanel(SEARCH_ID);
-		onEditSearch(null);
+		onEditSearch(event);
 		this.showSearchButtons = true;
 	}
 
@@ -645,7 +640,7 @@ public class RichLookupBean {
 		updateWindowProperties();
 		setShowWindow(true);
 		setSelectedPanel(NEW_ID);
-		onReset(null);
+		onReset(event);
 	}
 
 	/**
@@ -758,7 +753,7 @@ public class RichLookupBean {
 		return windowCloseFocus;
 	}
 
-	public void updateWindowProperties() {
+	private void updateWindowProperties() {
 		if ( (this.component != null) && (this.component instanceof HtmlLookupButton) ) {
 			HtmlLookupButton lookupButton = (HtmlLookupButton) this.component;
 			this.windowTitle = lookupButton.getWindowTitle();
@@ -831,15 +826,13 @@ public class RichLookupBean {
 			String text = value.toString();
 			if (! StringUtils.isBlank(text) ) {
 				try {
-					getController().clearCriteria();
-					Criteria criteria = getController().getCriteria();
+					getController().onEditSearch(null);
 					Expression exp = ExpressionUtilities.getLikeExpression(getSuggestAlias(), "%" + text + "%");
-					criteria.addExpression(exp);
+					getController().getCriteria().addExpression(exp);
 					onSearch(null);
 					if (getModel().getRowCount() > 0) {
 						return (List<ITransferObject>) getModel().getWrappedData();
 					}					
-					return getController().getManagerBean().getList(criteria);
 		    	} catch (ManagerBeanException e) {
 		    		LOGGER.error( "Error getting suggestion objects", e );
 				}				
