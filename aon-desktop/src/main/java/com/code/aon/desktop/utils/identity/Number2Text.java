@@ -1,5 +1,7 @@
 package com.code.aon.desktop.utils.identity;
 
+import org.apache.commons.lang.StringUtils;
+
 public class Number2Text {
 	private int flag;
 	public int numero;
@@ -289,7 +291,7 @@ public class Number2Text {
 		} else {
 			num_letras = decmillon(numero);	
 		}
-		return num_letras + "";
+		return StringUtils.trimToEmpty(num_letras);
 	}
 
 	public static void main(String Arg[]) {

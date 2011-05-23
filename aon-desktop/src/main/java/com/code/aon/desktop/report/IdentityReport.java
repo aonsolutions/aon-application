@@ -2,6 +2,8 @@ package com.code.aon.desktop.report;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.company.Company;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.RegistryAddress;
@@ -348,15 +350,31 @@ public class IdentityReport {
 		this.pagare_cantidad = pagare_cantidad;
 	}
 
+	private int getCutIndex( String value, int max ) {
+		int index = value.indexOf(" ");
+		while ( index < value.length() ) {
+			int newIndex = value.indexOf(" ", index+1);
+			if ( (newIndex == -1) || (newIndex > max) ) {
+				return index;
+			}
+			index = newIndex;
+		}
+		return index;
+	}
+	
 	public String getPagare_cantidad_line1() {
-		if (pagare_cantidad.length()>55)
-			return pagare_cantidad.substring(0,pagare_cantidad.indexOf(" ", 55));
+		if (pagare_cantidad.length()>55) {
+			int index = getCutIndex(pagare_cantidad, 55);
+			return StringUtils.substring( pagare_cantidad, 0, index);
+		}
 		return pagare_cantidad;
 	}
 
 	public String getPagare_cantidad_line2() {
-		if (pagare_cantidad.length()>55)
-			return pagare_cantidad.substring(pagare_cantidad.indexOf(" ", 55), pagare_cantidad.length());
+		if (pagare_cantidad.length()>55) {
+			int index = getCutIndex(pagare_cantidad, 55) + 1;
+			return StringUtils.substring( pagare_cantidad, index);
+		}
 		return "";
 	}
 
