@@ -90,7 +90,7 @@ public class DeliveryInvoicingController implements IProgression, IFinanceConsta
 
 	public void onInitialize(ActionEvent event) throws ManagerBeanException {
 		InvoicingParameters params = new InvoicingParameters();
-		params.setCustomer(new Customer());
+		params.setCustomer((Customer)BeanManager.getManagerBean(Customer.class).createNewTo());
 		params.setConfidential(false);
 		params.setInvoiceNumber(obtainMaxNumber(null));
 		params.setInvoiceDate(new Date());
