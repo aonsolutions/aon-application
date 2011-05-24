@@ -128,8 +128,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{sales.to.customer.registry}" />
-						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupTo" value="#{sales.to.customer}" />
 						<ui:param name="lookupDisabled" value="#{!sales.pending}" />
 						<ui:param name="lookupReRender" 
 							value="Customer_registry_document,SalesAddress,Sales_scope,Sales_defaultPayMethod,payMethodDiv" />
@@ -166,8 +165,7 @@
 					</aon:selectOneMenu>
 
 					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{sales.to.seller.registry}" />
-						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupTo" value="#{sales.to.seller}" />
 						<ui:param name="lookupDisabled" value="#{!sales.pending}" />
 						<aon:methodParam name="lookupChangeListener"
 							value="#{sales.sellerData}" type="lookupChangeListener" />

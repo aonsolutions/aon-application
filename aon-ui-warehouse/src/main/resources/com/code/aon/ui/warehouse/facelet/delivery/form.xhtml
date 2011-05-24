@@ -122,8 +122,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{delivery.to.customer.registry}" />
-						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupTo" value="#{delivery.to.customer}" />
 						<ui:param name="lookupDisabled" value="#{!delivery.pending}" />
 						<ui:param name="lookupReRender" 
 							value="Customer_registry_document,DeliveryAddress,Delivery_scope,Delivery_defaultPayMethod,payMethodDiv" />

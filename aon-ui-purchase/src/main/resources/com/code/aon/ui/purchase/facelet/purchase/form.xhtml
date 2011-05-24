@@ -124,8 +124,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{purchase.to.supplier.registry}" />
-						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupTo" value="#{purchase.to.supplier}" />
 						<ui:param name="lookupDisabled" value="#{!purchase.pending}" />
 						<ui:param name="lookupReRender" value="PurchaseAddress,Purchase_scope,Purchase_defaultPayMethod,payMethodDiv" />
 						<ui:param name="idRequired" value="#{true}" />						

@@ -77,8 +77,7 @@
 											required="true" size="7" />
 
 										<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
-											<ui:param name="lookupTo" value="#{offer.offerTarget.registry}" />
-											<ui:param name="lookupForRegistry" value="#{true}" />
+											<ui:param name="lookupTo" value="#{offer.offerTarget}" />
 											<ui:param name="skipNewButton" value="#{true}" />
 											<ui:param name="idRequired" value="#{true}" />						
 											<aon:methodParam name="lookupChangeListener"

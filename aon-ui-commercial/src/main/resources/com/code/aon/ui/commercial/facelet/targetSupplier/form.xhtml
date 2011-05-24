@@ -32,8 +32,7 @@
 							,aon-panelGrid-odd aon-width-150
 							,aon-panelGrid-even aon-width-200">
 			<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
-				<ui:param name="lookupTo" value="#{controller.to.supplier.registry}" />
-				<ui:param name="lookupForRegistry" value="#{true}" />
+				<ui:param name="lookupTo" value="#{controller.to.supplier}" />
 				<aon:methodParam name="lookupChangeListener"
 					value="#{controller.supplierData}" type="lookupChangeListener" />
 			</ui:include>

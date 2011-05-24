@@ -36,8 +36,7 @@
 				<aon:outputText value="#{to.supplier.registry.fullName}"
 					rendered="#{formList}" />
 				<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
-					<ui:param name="lookupTo" value="#{itemSupplier.to.supplier.registry}" />
-					<ui:param name="lookupForRegistry" value="#{true}" />
+					<ui:param name="lookupTo" value="#{itemSupplier.to.supplier}" />
 					<ui:param name="idRequired" value="#{true}" />						
 					<ui:param name="skipLabel" value="#{true}" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
@@ -46,8 +45,7 @@
 				</ui:include>
 				<f:facet name="footer">
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{itemSupplier.to.supplier.registry}" />
-						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupTo" value="#{itemSupplier.to.supplier}" />
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />
 						<ui:param name="lookupRendered" value="#{formNew}" />
