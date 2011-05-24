@@ -21,7 +21,7 @@
 				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}" 
 				lookupChangeListener="#{lookupChangeListener}"
 				controllerListener="#{lookupControllerListener}"
-				required="#{idRequired}" disabled="#{lookupDisabled}"
+				required="#{idRequired}"
 				size="#{lookupInputSize}" maxlength="#{lookupInputMaxLength}"  
 				onblur="#{lookupInputOnBlur}" focus="#{lookupInputOnFocus}"
 				reRender="#{lookup_reRender}" >
@@ -67,7 +67,7 @@
 				controllerListener="#{lookupControllerListener}"
 				value="#{lookupInputSuggestValue}" property="#{lookupTo}" 
 				columnExpression="#{lookupInputSuggestExpression}"
-				disabled="#{lookupDisabled}" size="#{lookupInputSuggestSize}"
+				size="#{lookupInputSuggestSize}"
 				minChars="#{lookupInputMinChars}"
 				selectReRender="#{lookup_reRender}" />
 		</c:if>
