@@ -71,7 +71,7 @@ public class FinanceSearchListener extends FinanceListSearchListener {
 	protected void init() throws ManagerBeanException {
 		super.init();
 		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
-		setRegistryBank(new RegistryBank());
+		setRegistryBank((RegistryBank)BeanManager.getManagerBean(RegistryBank.class).createNewTo());
 		FinanceStatus[] defaultFinanceStatus = {FinanceStatus.PENDING, FinanceStatus.RETURNED};
 		setFinanceStatuses(defaultFinanceStatus);
 		setPayMethods(new LinkedList<PayMethod>());

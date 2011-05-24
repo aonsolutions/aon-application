@@ -278,6 +278,7 @@ public class FinanceController extends FinanceListController implements IFinance
 		finance.setBankAccount(new BankAccount());
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Bank bank = (Bank) event.getNewValue();
+			finance.setBank(bank);			
 			finance.getBankAccount().setEntity(bank.getCode());			
 		}
 	}
