@@ -119,39 +119,20 @@
  						</aon:div> 
 					</aon:div> 
 
-					<aon:outputLabel for="Customer_id"
-						value="#{financeBundle.finance_debtor}"
-						rendered="#{!finance.to.payment}" />
-					<aon:div id="Customer_lookup" styleClass="aon-lookup" rendered="#{!finance.to.payment}">
-						<a4j:region>
-							<aon:lookupInputText id="Customer_id"
-								value="#{finance.to.registry.id}"
-								disabled="#{!finance.new}" size="5"
-								lookupProperty="registry" lookup="#{customerLookup}"
-								lookupChangeListener="#{finance.registryData}"
-								reRender="Customer_full_name,Finance_holder_document"
-								ajaxSingle="true" required="true" />
-							<aon:lookupButton
-								windowTitle="#{customerBundle.customer_selection}"
-								disabled="#{!finance.new}" minHeight="460" minWidth="650" 
-								property="#{finance.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
-								lookupChangeListener="#{finance.registryData}"
-								selectReRender="Customer_lookup,Finance_holder_document"
-								actionType="search">
-							</aon:lookupButton>
-							<aon:lookupButton
-								windowTitle="#{customerBundle.customer_new}"
-								disabled="#{!finance.new}" minWidth="650" minHeight="650"
-								property="#{finance.to.registry}" lookupProperty="registry" lookup="#{customerLookup}"
-								lookupChangeListener="#{finance.registryData}"
-								selectReRender="Customer_lookup,Finance_holder_document"
-								actionType="new">
-							</aon:lookupButton>
-							<aon:inputText id="Customer_full_name"
-								value="#{finance.to.registryName}"
-								disabled="#{!finance.new}" size="50" />
-						</a4j:region>
-					</aon:div>
+					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{finance.to.registry}" />
+						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
+						<ui:param name="lookupLabel" value="#{financeBundle.finance_debtor}" />
+						<ui:param name="lookupDisabled" value="#{!finance.new}" />
+						<ui:param name="lookupRendered" value="#{!finance.to.payment}" />
+						<ui:param name="lookupReRender" value="Finance_holder_document" />
+						<ui:param name="idRequired" value="#{true}" />						
+						<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{finance.registryData}" type="lookupChangeListener" />
+					</ui:include>
+
 					<aon:div rendered="#{finance.to.payment}">
 						<aon:outputLabel for="Supplier_id"
 							value="#{financeBundle.finance_creditor}"
@@ -170,66 +151,32 @@
 						</aon:selectOneRadio>				
 					</aon:div>
 					<aon:div id="paymentTypeDiv" rendered="#{finance.to.payment}">
-						<aon:div id="Supplier_lookup" styleClass="aon-lookup" rendered="#{finance.to.payment and finance.purchase}">
-							<a4j:region>
-								<aon:lookupInputText id="Supplier_id"
-									value="#{finance.to.registry.id}"
-									disabled="#{!finance.new}" size="5"
-									lookupProperty="registry" lookup="#{supplierLookup}"
-									lookupChangeListener="#{finance.registryData}"
-									reRender="Supplier_full_name,Finance_holder_document"
-									ajaxSingle="true" required="true" />
-								<aon:lookupButton
-									windowTitle="#{supplierBundle.supplier_selection}"
-									disabled="#{!finance.new}" minHeight="460" minWidth="650" 
-									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
-									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Supplier_lookup,Finance_holder_document"
-									actionType="search">
-								</aon:lookupButton>
-								<aon:lookupButton
-									windowTitle="#{supplierBundle.supplier_new}"
-									disabled="#{!finance.new}" minWidth="650" minHeight="650"
-									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{supplierLookup}"
-									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Supplier_lookup,Finance_holder_document"
-									actionType="new">
-								</aon:lookupButton>
-								<aon:inputText id="Supplier_full_name"
-									value="#{finance.to.registryName}"
-									disabled="#{!finance.new}" size="50" />
-							</a4j:region>
-						</aon:div>
-						<aon:div id="Creditor_lookup" styleClass="aon-lookup" rendered="#{finance.to.payment and !finance.purchase}">
-							<a4j:region>
-								<aon:lookupInputText id="Creditor_id"
-									value="#{finance.to.registry.id}"
-									disabled="#{!finance.new}" size="5"
-									lookupProperty="registry" lookup="#{creditorLookup}"
-									lookupChangeListener="#{finance.registryData}"
-									reRender="Creditor_full_name,Finance_holder_document"
-									ajaxSingle="true" required="true" />
-								<aon:lookupButton
-									windowTitle="#{financeBundle.finance_creditor_selection}"
-									disabled="#{!finance.new}" minHeight="460" minWidth="650" 
-									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
-									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Creditor_lookup,Finance_holder_document"
-									actionType="search">
-								</aon:lookupButton>
-								<aon:lookupButton
-									windowTitle="#{financeBundle.finance_creditor_new}"
-									disabled="#{!finance.new}" minWidth="650" minHeight="650"
-									property="#{finance.to.registry}" lookupProperty="registry" lookup="#{creditorLookup}"
-									lookupChangeListener="#{finance.registryData}"
-									selectReRender="Creditor_lookup,Finance_holder_document"
-									actionType="new">
-								</aon:lookupButton>
-								<aon:inputText id="Creditor_full_name"
-									value="#{finance.to.registryName}"
-									disabled="#{!finance.new}" size="50" />
-							</a4j:region>
-						</aon:div>
+						<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{finance.to.registry}" />
+							<ui:param name="lookupForRegistry" value="#{true}" />
+							<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupDisabled" value="#{!finance.new}" />
+							<ui:param name="lookupRendered" value="#{finance.to.payment and finance.purchase}" />
+							<ui:param name="lookupReRender" value="Finance_holder_document" />
+							<ui:param name="idRequired" value="#{true}" />						
+							<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{finance.registryData}" type="lookupChangeListener" />
+						</ui:include>
+						<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{finance.to.registry}" />
+							<ui:param name="lookupForRegistry" value="#{true}" />
+							<ui:param name="lookupInputNameValue" value="#{finance.to.registryName}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupDisabled" value="#{!finance.new}" />
+							<ui:param name="lookupRendered" value="#{finance.to.payment and !finance.purchase}" />
+							<ui:param name="lookupReRender" value="Finance_holder_document" />
+							<ui:param name="idRequired" value="#{true}" />						
+							<ui:param name="skipSuggestText" value="#{finance.to.registry != null and finance.to.registry.id != null}" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{finance.registryData}" type="lookupChangeListener" />
+						</ui:include>
 					</aon:div>
 
 					<aon:outputLabel for="Finance_registry_document"
@@ -294,43 +241,31 @@
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-					<aon:outputLabel for="Finance_bankAccount"
-						value="#{configBundle.config_bank_account}" />
-					<aon:div id="Finance_bankAccount" styleClass="aon-lookup">
-						<aon:lookupInputText id="Finance_bank_code"
-							value="#{finance.to.bank.code}"
-							disabled="#{!finance.pending and !finance.returned}" size="5" maxlength="4"
-							property="#{finance.to.bank}" lookup="#{bankLookup}"
-							lookupChangeListener="#{finance.onBankChanged}"
-							reRender="Finance_bankAccount">
-							<aon:joinProperty alias="Bank_code"
-								value="#{finance.to.bank.code}" />
-						</aon:lookupInputText>
-						<aon:lookupButton
-							windowTitle="#{configBundle.config_bank_selection}"
-							disabled="#{!finance.pending and !finance.returned}" minHeight="460" minWidth="650"
-							property="#{finance.to.bank}" lookup="#{bankLookup}"
-							lookupChangeListener="#{finance.onBankChanged}"
-							selectReRender="Finance_bankAccount" actionType="search">
-						</aon:lookupButton>
-						<aon:inputText id="Finance_bank_name"
-							value="#{finance.to.bank.name}"
-							disabled="true" size="38" />
-						<aon:inputText id="Finance_bankAccount_office"
-							value="#{finance.to.bankAccount.office}"
-							disabled="#{!finance.pending and !finance.returned}" size="3" maxlength="4">
-							<f:validateLength minimum="4" maximum="4" />
-						</aon:inputText>
-						<aon:inputText id="Finance_bankAccount_control"
-							value="#{finance.to.bankAccount.control}"
-							disabled="#{!finance.pending and !finance.returned}" size="1" maxlength="2">
-							<f:validateLength minimum="2" maximum="2" />
-						</aon:inputText>
-						<aon:inputText id="Finance_bankAccount_account"
-							value="#{finance.to.bankAccount.account}"
-							disabled="#{!finance.pending and !finance.returned}" size="10" maxlength="10">
-							<f:validateLength minimum="10" maximum="10" />
-						</aon:inputText>
+					<aon:outputLabel for="Bank_id"
+						value="#{configBundle.config_bank}" />
+					<aon:div>
+						<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{finance.to.bank}" />
+							<ui:param name="lookupDisabled" value="#{!finance.pending and !finance.returned}" />
+							<ui:param name="lookupReRender" value="Finance_bankAccount" />
+						</ui:include>								
+						<aon:panelGroup id="Finance_bankAccount">
+							<aon:inputText id="Finance_bankAccount_office"
+								value="#{finance.to.bankAccount.office}"
+								disabled="#{!finance.pending and !finance.returned}" size="3" maxlength="4">
+								<f:validateLength minimum="4" maximum="4" />
+							</aon:inputText>
+							<aon:inputText id="Finance_bankAccount_control"
+								value="#{finance.to.bankAccount.control}"
+								disabled="#{!finance.pending and !finance.returned}" size="1" maxlength="2">
+								<f:validateLength minimum="2" maximum="2" />
+							</aon:inputText>
+							<aon:inputText id="Finance_bankAccount_account"
+								value="#{finance.to.bankAccount.account}"
+								disabled="#{!finance.pending and !finance.returned}" size="10" maxlength="10">
+								<f:validateLength minimum="10" maximum="10" />
+							</aon:inputText>
+						</aon:panelGroup>
 					</aon:div>
 
 					<aon:outputLabel for="Finance_amount"
