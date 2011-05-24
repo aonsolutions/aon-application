@@ -48,5 +48,18 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<!-- =================== Application Menu Navigation Rules ================= -->	
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>menu_marketing</from-outcome>
+			<to-view-id>/facelet/menu/marketing.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_config</from-outcome>
+			<to-view-id>/facelet/menu/config.xhtml</to-view-id> 
+		</navigation-case>
+	</navigation-rule>		
    
 </faces-config>

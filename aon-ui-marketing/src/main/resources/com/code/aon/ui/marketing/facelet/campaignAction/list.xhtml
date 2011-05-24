@@ -6,67 +6,55 @@
 
 	<aon:div styleClass="aon-scroll-area">
 	
-		<aon:dataTable id="campaignActionData" 
-			var="to" rows="20" value="#{campaignAction.model}"
-			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-				aon-editDataTable-textColumn, aon-editDataTable-textColumn">
-	
-			<aon:rowSelector action="campaignAction_form" actionListener="#{campaignAction.onSelect}" />
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+			<ui:param name="controller" value="#{campaignAction}" />
+
+			<ui:define name="selectFooterContent">
+				<aon:commandButton alt="[#{bundle.aon_reset}]" value="&#160;"
+					styleClass="aon-editDataTable-button aon-icon-reset"
+					action="campaignAction_form" actionListener="#{campaignAction.onReset}"
+					accesskey="#{bundle.aon_key_new_line}" />
+			</ui:define>
 			
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="&#160;" />
-				</f:facet>
-				<aon:outputText value="&#160;" />
-				<f:facet name="footer">
-					<aon:div>
-						<aon:commandButton alt="[#{bundle.aon_reset}]" value=""
-							styleClass="aon-editDataTable-button aon-icon-reset"
-							action="campaignAction_form" actionListener="#{campaignAction.onReset}"
-							rendered="#{!commercialActivity.new}"
-							accesskey="#{bundle.aon_key_new_line}" />
-					</aon:div>
-				</f:facet>
-			</aon:column>			
+			<ui:define name="columns">
 
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{marketingBundle.marketing_action_media_type}" />
-				</f:facet>
-				<aon:outputText value="#{to.mediaType}"/>
-			</aon:column>
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{marketingBundle.marketing_action_media_type}" />
+					</f:facet>
+					<aon:outputText value="#{to.mediaType}"/>
+				</aon:column>
+		
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{marketingBundle.marketing_action_start_date}" />
+					</f:facet>
+					<aon:outputText value="#{to.startDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>					
+				</aon:column>
 	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{marketingBundle.marketing_action_start_date}" />
-				</f:facet>
-				<aon:outputText value="#{to.startDate}" >
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-					timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>					
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{marketingBundle.marketing_action_end_date}" />
-				</f:facet>
-				<aon:outputText value="#{to.endDate}" >
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-					timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>					
-			</aon:column>
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{marketingBundle.marketing_action_end_date}" />
+					</f:facet>
+					<aon:outputText value="#{to.endDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>					
+				</aon:column>
+		
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{marketingBundle.marketing_survey}" />
+					</f:facet>
+					<aon:outputText value="#{to.survey.description}"/>
+				</aon:column>
 	
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{marketingBundle.marketing_survey}" />
-				</f:facet>
-				<aon:outputText value="#{to.survey.description}"/>
-			</aon:column>
-	
-		</aon:dataTable>
-	
-		<aon:dataScroller2 for="campaignActionData" />
-	
+			</ui:define>
+			
+		</ui:decorate>	
 	</aon:div>
 
 </ui:composition>

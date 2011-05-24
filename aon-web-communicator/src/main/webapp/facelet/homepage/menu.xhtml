@@ -6,38 +6,18 @@
 	template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml">
 
 	<ui:define name="afterMenuContent">
-		<aon:dropDownMenu value="#{bundle.aon_masters}"
-			styleClass="aon-dropDownMenu aon-icon-master"
-			style="padding-left: 18px">
-			<aon:menuItem id="target"
-				value="#{appBundle.commercial_target_module}" 
-				iconClass="aon-target-iconClass"
-				action="target_search" actionListener="#{target.onEditSearch}" >
-			</aon:menuItem>
-			<aon:menuItem id="campaign"
-				value="#{marketingBundle.marketing_campaign_module}"
-				action="campaign_list" actionListener="#{campaign.onSearch}" >
-			</aon:menuItem>
-		</aon:dropDownMenu>
-		<aon:dropDownMenu value="#{bundle.aon_configuration}"
-			styleClass="aon-dropDownMenu aon-icon-config"
-			style="padding-left: 18px">				
-			<aon:menuItem id="segment"
-				value="#{registryBundle.registry_segment_module}" 
-				iconClass="aon-commercial-segment-iconClass"
-				action="segment_form" />						
-			<aon:menuItem id="company"
-				value="#{companyBundle.company_data_module}"
-				action="company" actionListener="#{company.onLoad}" />
-			<aon:menuItem id="mailAccountCahnge"
-				value="#{webmailBundle.webmail_mailAccount}"
-				action="mailAccount_list" actionListener="#{mailAccount.onSearch}" />						
-		</aon:dropDownMenu>
+		<aon:commandLink id="marketing"
+			value="#{marketingBundle.marketing_marketing}"
+			action="menu_marketing" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-marketing" />
+		<aon:commandLink id="config"
+			value="#{bundle.aon_configuration}"
+			action="menu_config" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-config" />	
 		<aon:commandLink id="communicationCenter"
 			value="#{commercialBundle.commercial_communication_center_module}"
 			styleClass="aon-top-menu-item aon-icon-telephone" immediate="true" 
 			action="communicationCenter" actionListener="#{communicationCenter.onInit}" />
-
 	</ui:define>
 	
 </ui:composition>

@@ -16,9 +16,8 @@
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{campaign}" />
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{campaign.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="campaign_list" />		
 					
 					<aon:outputLabel for="Campaign_id"
 						value="#{bundle.aon_id}" />

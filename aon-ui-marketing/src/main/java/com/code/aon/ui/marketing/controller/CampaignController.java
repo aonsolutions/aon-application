@@ -19,11 +19,6 @@ public class CampaignController extends BasicController implements IMarketingCon
 		setBundleName(BUNDLE_NAME);
 	}
 
-	private boolean isShowPhoneActionMediaType() {
-		Boolean value = (Boolean) AonUtil.getRegisteredBean("aonConfiguration.bean.campaign.showPhoneActionMediaType");
-		return value.booleanValue();
-	}
-
 	/**
 	 * Gets the action media types.
 	 * 
@@ -32,7 +27,7 @@ public class CampaignController extends BasicController implements IMarketingCon
 	public List<SelectItem> getActionMediaTypes() {
 		MarketingCollectionsController mcc = (MarketingCollectionsController) AonUtil.getRegisteredBean(MARKETING_COLLECTIONS_CONTROLLER_NAME);
 		List<SelectItem> actionMediaTypes = mcc.getActionMediaTypes();
-		if ( isShowPhoneActionMediaType() ) {
+		if ( AonUtil.isBeanValue(CAMPAIGN_CONTROLLER_NAME, SHOW_PHONE_ACTION_MEDIA_TYPE) ) {
 			return actionMediaTypes;
 		} else {
 			List<SelectItem> list = new LinkedList<SelectItem>();

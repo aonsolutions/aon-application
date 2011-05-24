@@ -70,7 +70,7 @@
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%"
+				<aon:panelGrid id="menuGrid" columns="2" width="100%"
 					columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
 
 					<aon:outputLabel for="CommunicationCenter_date"
@@ -85,7 +85,7 @@
 						value="#{marketingBundle.marketing_campaign_action}" />
 					<aon:div>
 						<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{campaignActionTarget.action}" />
+							<ui:param name="lookupTo" value="#{communicationCenter.action}" />
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="skipGoToButton" value="#{true}" />
 							<ui:param name="skipNewButton" value="#{true}" />
@@ -94,8 +94,8 @@
 							<aon:methodParam name="lookupChangeListener"
 								value="#{communicationCenter.onActionLookupChange}" type="lookupChangeListener" />
 						</ui:include>	
-						<aon:div id="CommunicationCenter_action_detail">
-							<aon:panelGrid rendered="#{communicationCenter.actionSelected}" columns="2" dir="true">
+						<aon:div id="CommunicationCenter_action_detail" styleClass="aon-margin-top">
+							<aon:panelGrid rendered="#{communicationCenter.actionSelected}" columns="2">
 								<aon:outputText value="#{marketingBundle.marketing_campaign}" />						
 								<aon:outputText size="64"
 									value="#{communicationCenter.action.campaign.description}" />
