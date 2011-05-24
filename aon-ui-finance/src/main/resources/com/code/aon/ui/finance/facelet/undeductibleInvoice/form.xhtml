@@ -162,9 +162,12 @@
 					<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{undeductibleInvoice.to.registry}" />
 						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupInputNameValue" value="#{undeductibleInvoice.to.registryName}" />
 						<ui:param name="lookupDisabled" value="#{undeductibleInvoice.readOnly or !undeductibleInvoiceFinance.allPending}" />
 						<ui:param name="lookupReRender" value="Creditor_lookup_document,InvoiceAddress" />
 						<ui:param name="idRequired" value="#{true}" />						
+						<ui:param name="skipSuggestText" 
+							value="#{undeductibleInvoice.to.registry != null and undeductibleInvoice.to.registry.id != null}" />
 						<aon:methodParam name="lookupChangeListener"
 							value="#{undeductibleInvoice.creditorData}" type="lookupChangeListener" />
 					</ui:include>
