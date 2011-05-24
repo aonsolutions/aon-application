@@ -195,8 +195,7 @@
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
 					<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{offer.to.target.registry}" />
-						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupTo" value="#{offer.to.target}" />
 						<ui:param name="lookupDisabled" value="#{offer.readOnly}" />
 						<ui:param name="lookupReRender" 
 							value="Target_registry_document,OfferAddress,lookupSeller,Offer_tariff,Offer_defaultPayMethod,payMethodDiv" />
@@ -234,8 +233,7 @@
 					</aon:selectOneMenu>
 
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{offer.to.supplier.registry}" />
-						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupTo" value="#{offer.to.supplier}" />
 						<ui:param name="lookupDisabled" value="#{offer.readOnly}" />
 						<ui:param name="lookupRendered" value="#{offer.dealership}" />
 						<ui:param name="lookupReRender" value="Supplier_registry_document,Offer_tariff,Offer_defaultPayMethod,payMethodDiv" />				
