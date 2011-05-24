@@ -4,10 +4,12 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+
+	<aon:valueParam name="lookupLabel" default="#{commercialBundle.commercial_target}"/>
+
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{targetLookup}" />
 		<ui:param name="controller" value="#{target}" />
-		<ui:param name="lookupLabel" value="#{commercialBundle.commercial_target}" />
 		<ui:param name="searchButtonTitle" value="#{commercialBundle.commercial_target_selection}" />
 		<ui:param name="newButtonTitle" value="#{commercialBundle.commercial_target_new}" />
 		<ui:param name="newButtonHeight" value="600"/>

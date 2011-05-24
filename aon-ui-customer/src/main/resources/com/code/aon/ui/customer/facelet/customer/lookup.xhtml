@@ -4,14 +4,14 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
+	<aon:valueParam name="lookupLabel" default="#{customerBundle.customer_customer}"/>
+
+	<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml">
 		<ui:param name="lookupBean" value="#{customerLookup}" />
 		<ui:param name="controller" value="#{customer}" />
 		<ui:param name="searchButtonTitle" value="#{customerBundle.customer_selection}" />
 		<ui:param name="newButtonTitle" value="#{customerBundle.customer_new}" />
 		<ui:param name="newButtonHeight" value="650"/>
-
-		<aon:valueParam name="lookupLabel" default="#{customerBundle.customer_customer}"/>
 	</ui:include>
 
 </ui:composition>
