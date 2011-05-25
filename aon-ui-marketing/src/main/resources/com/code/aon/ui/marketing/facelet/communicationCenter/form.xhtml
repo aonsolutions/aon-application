@@ -88,17 +88,13 @@
 							<ui:param name="lookupTo" value="#{communicationCenter.action}" />
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="skipGoToButton" value="#{true}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-							<ui:param name="skipSuggestText" value="#{true}" />
 							<ui:param name="lookupReRender" value="CommunicationCenter_action_detail,lookupSurvey,CommunicationCenter_target,aonToolbar" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{communicationCenter.onActionLookupChange}" type="lookupChangeListener" />
 						</ui:include>	
-						<aon:div id="CommunicationCenter_action_detail" styleClass="aon-margin-top">
-							<aon:panelGrid rendered="#{communicationCenter.actionSelected}" columns="2">
-								<aon:outputText value="#{marketingBundle.marketing_campaign}" />						
-								<aon:outputText size="64"
-									value="#{communicationCenter.action.campaign.description}" />
+						<aon:div id="CommunicationCenter_action_detail" >
+							<aon:panelGrid styleClass="aon-margin-top aon-margin-bottom" columns="2"
+								rendered="#{communicationCenter.actionSelected}" >
 								<aon:outputText value="#{bundle.aon_type}" />									
 								<aon:outputText size="40"
 									value="#{communicationCenter.action.mediaType}" />
@@ -129,7 +125,6 @@
 								<ui:param name="lookupTo" value="#{communicationCenter.target}" />
 								<ui:param name="idRequired" value="#{true}" />
 								<ui:param name="skipLabel" value="#{true}" />
-								<ui:param name="skipSuggestText" value="#{true}" />
 								<ui:param name="lookupDisabled" value="#{communicationCenter.actionSelected}" />
 								<ui:param name="lookupReRender" value="CommunicationCenter_target_detail,aonToolbar" />					
 								<aon:methodParam name="lookupChangeListener"
@@ -137,9 +132,12 @@
 							</ui:include>						
 							<aon:div id="CommunicationCenter_target_detail" layout="inline">
 								<c:if test="#{communicationCenter.targetSelected}" >
-									<aon:panelGrid columns="2">		
+									<aon:panelGrid styleClass="aon-margin-top aon-margin-bottom" columns="2">		
 									
-										<ui:include src="/com/code/aon/ui/marketing/facelet/communicationCenter/targetSummary.xhtml" />
+										<ui:include src="/com/code/aon/ui/marketing/facelet/communicationCenter/targetSummary.xhtml" >
+											<ui:param name="skipTargetId" value="#{true}" />
+											<ui:param name="skipTargetName" value="#{true}" />
+										</ui:include>
 		
 										<aon:outputLabel for="CommunicationCenter_status"
 											value="#{bundle.aon_status}" rendered="#{communicationCenter.actionTarget != null}" />

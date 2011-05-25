@@ -30,6 +30,7 @@
 					
 					<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{surveyResponseSearch.target}" />
+						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>						
 
 					<aon:outputLabel for="SurveyResponse_user_name"

@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.richfaces.lookup;
 
+import static com.code.aon.faces.component.util.HTML.DISABLED_ATTR;
+
 import java.io.IOException;
 
 import javax.el.ELException;
@@ -9,7 +11,6 @@ import javax.faces.component.UIComponent;
 import com.code.aon.faces.component.richfaces.AonAjaxInputHandler;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
-import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 
@@ -54,9 +55,13 @@ public class LookupBasicInputHandler extends AonAjaxInputHandler implements ILoo
 	}
 	
 	protected void updateAttributes(FaceletContext ctx, HtmlLookupBasicInput text) {
-		if (! FaceletUtil.hasValue(ctx, tag, HTML.DISABLED_ATTR) ) {
-			text.setDisabled(text.isResolved());
+		boolean disabled = false;
+		if ( text.isResolved() ) {
+			disabled = true;
+		} else if ( FaceletUtil.hasValue(ctx, tag, DISABLED_ATTR) ) {
+			disabled = getAttribute(DISABLED_ATTR).getBoolean(ctx);
 		}
+		text.setDisabled(disabled);
 	}
 	
 }

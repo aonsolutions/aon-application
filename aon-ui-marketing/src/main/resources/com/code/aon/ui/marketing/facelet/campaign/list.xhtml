@@ -23,40 +23,36 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="campaignData" value="#{campaign.model}"
-					var="to" rows="20" rendered="#{campaign.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn,
-						aon-editDataTable-iconColumn">
-
-					<aon:rowSelector action="campaign_form" actionListener="#{campaign.onSelect}" />
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.id}"/>
-					</aon:column>
-
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_description}" />
-						</f:facet>
-						<aon:outputText value="#{to.description}"/>
-					</aon:column>
-
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{marketingBundle.marketing_active}" />
-						</f:facet>
-						<aon:outputText
-							styleClass="#{(to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
-							value="&#160;" />
-					</aon:column>
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{campaign}" />
+					<ui:define name="columns">
+						
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}"/>
+						</aon:column>
+	
+	 					<aon:column styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}"/>
+						</aon:column>
+	
+	 					<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{marketingBundle.marketing_active}" />
+							</f:facet>
+							<aon:outputText
+								styleClass="#{(to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+								value="&#160;" />
+						</aon:column>
+						
+					</ui:define>
+				</ui:decorate>
  
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="campaignData" showNote="true" />
-
 			</aon:div>
 		</aon:form>
 

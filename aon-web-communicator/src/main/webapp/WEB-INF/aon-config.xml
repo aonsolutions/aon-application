@@ -48,7 +48,7 @@
 			showPhoneActionMediaType="true"
 		/>
 		<marketing:communicationCenter
-			showTarget="false"
+			showTarget="true"
 		/>
 	</marketing:config>
 	

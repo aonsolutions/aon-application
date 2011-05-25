@@ -40,16 +40,13 @@
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="skipGoToButton" value="#{true}" />
 							<ui:param name="skipNewButton" value="#{true}" />
-							<ui:param name="skipSuggestText" value="#{true}" />
 							<ui:param name="lookupReRender" value="Import_action_detail,targetDataDiv" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{campaignActionTarget.onActionLookupChange}" type="lookupChangeListener" />
 						</ui:include>					
 						<aon:div id="Import_action_detail">
-							<aon:panelGrid columns="2" rendered="#{campaignActionTarget.actionSelected}">
-								<aon:outputText value="#{marketingBundle.marketing_campaign}" />						
-								<aon:outputText size="64"
-									value="#{campaignActionTarget.action.campaign.description}" />
+							<aon:panelGrid styleClass="aon-margin-top" columns="2"
+								rendered="#{campaignActionTarget.actionSelected}">
 								<aon:outputText value="#{bundle.aon_type}" />									
 								<aon:outputText size="40"
 									value="#{campaignActionTarget.action.mediaType}" />

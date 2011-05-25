@@ -62,13 +62,10 @@
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{commercialTracking}" />
-					<ui:param name="columnClasses" value="aon-editDataTable-dateColumn, 
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
-						aon-editDataTable-textColumn aon-width-350, aon-editDataTable-textColumn, 
-						aon-editDataTable-textColumn" />
 					<ui:define name="columns">
 					
-						<aon:column alias="CommercialTracking.date">
+						<aon:column styleClass="aon-editDataTable-dateColumn"
+							alias="CommercialTracking.date">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>
@@ -78,35 +75,40 @@
 							</aon:outputText>	
 						</aon:column>
 	
-	 					<aon:column alias="CommercialTracking.seller.registry.name">
+	 					<aon:column styleClass="aon-editDataTable-textColumn"
+	 						alias="CommercialTracking.seller.registry.name">
 							<f:facet name="header">
 								<aon:outputText value="#{salesBundle.sales_seller}" />
 							</f:facet>
 							<aon:outputText value="#{to.seller.registry.fullName}"/>
 						</aon:column>
 	
-	 					<aon:column alias="CommercialTracking.target.registry.name">
+	 					<aon:column styleClass="aon-editDataTable-textColumn"
+	 						alias="CommercialTracking.target.registry.name">
 							<f:facet name="header">
 								<aon:outputText value="#{commercialBundle.commercial_target}" />
 							</f:facet>
 							<aon:outputText value="#{to.target.registry.fullName}"/>
 						</aon:column>
 	
-	 					<aon:column alias="CommercialTracking.comments">
+	 					<aon:column styleClass="aon-editDataTable-textColumn aon-width-350"
+	 						alias="CommercialTracking.comments">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_comment}" />
 							</f:facet>
 							<aon:outputText value="#{to.comments}"/>
 						</aon:column>
 	
-	 					<aon:column alias="CommercialTracking.activity.name">
+	 					<aon:column styleClass="aon-editDataTable-textColumn"
+	 						alias="CommercialTracking.activity.name">
 							<f:facet name="header">
 								<aon:outputText value="#{commercialBundle.commercial_tracking_activity}" />
 							</f:facet>
 							<aon:outputText value="#{to.activity.name}"/>
 						</aon:column>
 	
-	 					<aon:column alias="CommercialTracking.status">
+	 					<aon:column styleClass="aon-editDataTable-textColumn"
+	 						alias="CommercialTracking.status">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />
 							</f:facet>
