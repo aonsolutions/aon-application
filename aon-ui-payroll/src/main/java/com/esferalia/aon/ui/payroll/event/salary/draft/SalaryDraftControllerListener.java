@@ -1,7 +1,9 @@
 package com.esferalia.aon.ui.payroll.event.salary.draft;
 
+import java.util.Calendar;
 import java.util.Date;
 
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -24,6 +26,13 @@ public class SalaryDraftControllerListener extends ControllerAdapter{
 		resetSalary(event);
 		SalaryDraftController sc = (SalaryDraftController) event.getController();
 		sc.setIssueDate(new Date());
+	}
+	@Override
+	public void beforeEditSearch(ControllerEvent event)
+			throws ControllerListenerException {
+		SalaryDraftController sc = (SalaryDraftController) event.getController();
+		sc.setYear(Calendar.getInstance().get(Calendar.YEAR));
+		sc.setMonth(Month.getMonthByValue(Calendar.getInstance().get(Calendar.MONTH)));
 	}
 	
     private void resetSalary(ControllerEvent event) {

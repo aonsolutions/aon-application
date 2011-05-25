@@ -2,11 +2,17 @@ package com.esferalia.aon.ui.payroll.controller.launcher;
 
 import java.util.Date;
 
+import javax.faces.event.AbortProcessingException;
+
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 
 public class SalaryLauncherParams {
 
@@ -63,8 +69,16 @@ public class SalaryLauncherParams {
 	}
 
 	public void initialize() {
-		setPerson(new Person());
-		setEnterprise(new Enterprise());
+		try {
+			IManagerBean personBean = BeanManager.getManagerBean(Person.class);
+			setPerson((Person) personBean.createNewTo());
+			IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
+			setEnterprise((Enterprise) enterpriseBean.createNewTo());
+		} catch (ManagerBeanException e) {
+			String msg = "Error de inicializazión";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
 		Date date = new Date();
 		setIssueMonth(Month.getMonthByValue(CommonUtil.getMonth(date)));
 		setIssueYear(CommonUtil.getYear(date));

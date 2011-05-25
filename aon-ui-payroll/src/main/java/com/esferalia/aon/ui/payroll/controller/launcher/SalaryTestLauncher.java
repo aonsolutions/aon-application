@@ -36,7 +36,6 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
-import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryBuilderListenerLevel;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
@@ -301,10 +300,11 @@ public class SalaryTestLauncher {
 			controller.setEndDate(getParams().getEndDate());
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IPayrollAlias.CONTRACT_ID), getContractId());
+			controller.clearCriteria();
 			controller.setCriteria(criteria);
-			controller.onSearch(null);
+			controller.onSearch(event);
 			controller.getModel().setRowIndex(0);
-			controller.onSelect(null);
+			controller.onSelect(event);
 			controller.setBackAction(IPayrollConstants.SALARY_TESTER_LAUNCHER_FORM);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al el borrador de la nómina.";

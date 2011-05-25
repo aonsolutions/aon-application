@@ -34,12 +34,12 @@
 					</c:if>
 					
 					<aon:outputLabel for="SalaryDraft_month" value="#{bundle.aon_month}"/>
-					<aon:selectOneMenu id="SalaryDraft_month" value="#{salaryDraftSearch.month}">
+					<aon:selectOneMenu id="SalaryDraft_month" value="#{salaryDraft.month}" >
 						<f:selectItems value="#{commonCollections.months}"  />
 					</aon:selectOneMenu>
 				
 					<aon:outputLabel for="SalaryDraft_year" value="#{bundle.aon_year}"/>
-		   			<rich:inputNumberSpinner id="SalaryDraft_year" value="#{salaryDraftSearch.year}" 
+		   			<rich:inputNumberSpinner id="SalaryDraft_year" value="#{salaryDraft.year}"
 		   				inputSize="4" minValue="2009" maxValue="2020">
 		   			</rich:inputNumberSpinner>
 					
