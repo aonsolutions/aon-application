@@ -125,7 +125,10 @@ public class SalaryDraftController extends BasicController {
 	}
 	
 	public boolean isContractScope(){
-		return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()==ExpressionScope.CONTRACT;
+		if(this.getPaymentsModel().isRowAvailable()){
+			return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()==ExpressionScope.CONTRACT;
+		}
+		return false;
 	}
 
 	public void onChangeMonth(ActionEvent event) {
@@ -218,7 +221,7 @@ public class SalaryDraftController extends BasicController {
 			if (salary == null) {
 				Contract contract = (Contract) getTo();
 				Date startDate = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate(); 
-				Date endDate = (contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate(); 
+				Date endDate = (contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate();
 				Date issueDate = getIssueDate(); 
 				ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate);
 				salary = ctx.getSalaryProxy().getSalary();
