@@ -87,7 +87,6 @@
 						<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{communicationCenter.action}" />
 							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="skipGoToButton" value="#{true}" />
 							<ui:param name="lookupReRender" value="CommunicationCenter_action_detail,lookupSurvey,CommunicationCenter_target,aonToolbar" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{communicationCenter.onActionLookupChange}" type="lookupChangeListener" />
@@ -125,6 +124,7 @@
 								<ui:param name="lookupTo" value="#{communicationCenter.target}" />
 								<ui:param name="idRequired" value="#{true}" />
 								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipNewButton" value="#{true}" />
 								<ui:param name="lookupDisabled" value="#{communicationCenter.actionSelected}" />
 								<ui:param name="lookupReRender" value="CommunicationCenter_target_detail,aonToolbar" />					
 								<aon:methodParam name="lookupChangeListener"
@@ -134,10 +134,7 @@
 								<c:if test="#{communicationCenter.targetSelected}" >
 									<aon:panelGrid styleClass="aon-margin-top aon-margin-bottom" columns="2">		
 									
-										<ui:include src="/com/code/aon/ui/marketing/facelet/communicationCenter/targetSummary.xhtml" >
-											<ui:param name="skipTargetId" value="#{true}" />
-											<ui:param name="skipTargetName" value="#{true}" />
-										</ui:include>
+										<ui:include src="/com/code/aon/ui/marketing/facelet/communicationCenter/targetSummary.xhtml" />
 		
 										<aon:outputLabel for="CommunicationCenter_status"
 											value="#{bundle.aon_status}" rendered="#{communicationCenter.actionTarget != null}" />

@@ -6,23 +6,13 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{!skipTargetId}">
-		<aon:outputText value="#{bundle.aon_id}" />
-		<aon:outputText value="#{communicationCenter.target.id}" />
-	</c:if>
-
-	<aon:outputText value="#{bundle.aon_company_document}" />
-	<aon:outputText value="#{communicationCenter.target.registry.document}" />
-
-	<c:if test="#{!skipTargetName}">
-		<aon:outputText value="#{bundle.aon_company_name}" />
-		<aon:outputText value="#{communicationCenter.target.registry.name}" />
-	</c:if>
-
 	<aon:outputText value="#{bundle.aon_company_alias}"
 		rendered="#{communicationCenter.renderTargetAlias}" />
 	<aon:outputText value="#{communicationCenter.target.registry.alias}"
 		rendered="#{communicationCenter.renderTargetAlias}" />
+
+	<aon:outputText value="#{bundle.aon_company_document}" />
+	<aon:outputText value="#{communicationCenter.target.registry.document}" />
 		
 	<c:if test="#{communicationCenter.mainAddress != null}">
 		<aon:outputText value="#{registryBundle.registry_address}" />

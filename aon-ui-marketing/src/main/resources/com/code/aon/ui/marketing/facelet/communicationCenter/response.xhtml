@@ -44,14 +44,19 @@
 						value="#{marketingBundle.marketing_survey}" />
 					<aon:outputText id="CommunicationCenter_survey_id"
 						value="#{communicationCenter.survey.id} (#{communicationCenter.survey.description})" />
-	
-					<aon:outputText value="#{target.bundle.commercial_target}" />
-							
-					<aon:panelGrid columns="2" width="90%"
-						columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">						
-	
-						<ui:include src="/com/code/aon/ui/marketing/facelet/communicationCenter/targetSummary.xhtml" />
-					</aon:panelGrid>
+
+					<ui:decorate template="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{communicationCenter.target}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupDisabled" value="#{true}" />
+						<ui:define name="afterLookupContent" >
+							<aon:panelGrid columns="2" width="90%"
+								styleClass="aon-margin-top aon-margin-bottom"
+								columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">						
+								<ui:include src="/com/code/aon/ui/marketing/facelet/communicationCenter/targetSummary.xhtml" />
+							</aon:panelGrid>
+						</ui:define>
+					</ui:decorate>						
 	
 				</aon:panelGrid>
 					
