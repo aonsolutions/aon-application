@@ -98,27 +98,13 @@
 					</aon:div>
 
 
-					<aon:outputLabel for="Offer_seller_id"
-						value="#{salesBundle.sales_seller}" />
-					<aon:div styleClass="aon-lookup">
-						<!--  
-						<aon:lookupInputText id="Offer_seller_id" value="#{cartOffer.to.seller.registry.id}"
-							lookup="#{sellerLookup}" reRender="Offer_seller_full_name"
-							lookupChangeListener="#{cartOffer.sellerData}" lookupProperty="registry"
-							disabled="#{cartOffer.processed}" size="5" />
-						<aon:lookupButton
-							windowTitle="#{salesBundle.sales_seller_selection}" actionType="search"
-							property="#{cartOffer.to.seller.registry}" selectReRender="Offer_seller_id,Offer_seller_full_name"
-							lookup="#{sellerLookup}" minHeight="460" minWidth="650"
-							lookupChangeListener="#{cartOffer.sellerData}" lookupProperty="registry"
-							disabled="#{cartOffer.processed}">
-						</aon:lookupButton>
-						<aon:inputText id="Offer_seller_full_name" 
-							value="#{(cartOffer.to.seller.registry.name!=null)?(cartOffer.to.seller.registry.fullName):('')}"
-							disabled="true" size="50" />
-						-->
-					</aon:div>
-
+					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{cartOffer.to.seller.registry}" />
+						<ui:param name="lookupDisabled" value="#{cartOffer.processed}" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{cartOffer.sellerData}" type="lookupChangeListener" />
+					</ui:include>
+				
 					<aon:outputLabel for="Offer_payMethod"
 						value="#{configBundle.config_pay_method}" />
 					<aon:outputText id="Offer_payMethod"

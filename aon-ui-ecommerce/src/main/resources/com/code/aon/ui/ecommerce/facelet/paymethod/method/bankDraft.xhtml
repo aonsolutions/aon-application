@@ -11,22 +11,11 @@
 	<aon:form>
 		<div>
 			<aon:outputText value="Giro postal" />
-			<aon:div>
-				<aon:lookupInputText id="RegistryBank_code" property="#{cartOffer.offer.bank}"
-					reRender="RegistryBank_name" lookup="#{bankLookup}"
-					value="#{cartOffer.offer.bank.code}" size="5">
-					<aon:joinProperty alias="Bank_code" value="#{cartOffer.offer.bank.code}" />
-				</aon:lookupInputText>
-				<aon:lookupButton 
-					windowTitle="#{configBundle.config_bank_selection}"
-					selectReRender="RegistryBank_code,RegistryBank_name" actionType="search"
-					lookup="#{bankLookup}" minHeight="460" minWidth="650"
-					property="#{cartOffer.offer.bank}">
-				</aon:lookupButton>
-				<aon:inputText id="RegistryBank_name"
-					value="#{cartOffer.offer.bank.name}"
-					size="50" disabled="true" />		
-			</aon:div>
+			<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
+				<ui:param name="lookupTo" value="#{cartOffer.offer.bank}" />
+				<ui:param name="skipLabel" value="#{true}" />
+			</ui:include>
+			
 			<aon:div>
 				<aon:inputText id="Offer_bank_office"
 					value="#{cartOffer.offer.bankAccount.office}"
