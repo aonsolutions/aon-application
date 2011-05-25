@@ -93,7 +93,7 @@
 										<aon:outputText value=" - #{configBundle.config_bank_account}" />
 									</aon:div>
 								</f:facet>
-								<aon:outputText rendered="#{formList}" value=" #{to.bankDescription}" />
+								<aon:outputText value=" #{to.bankDescription}" rendered="#{formList}" />
 								<aon:div id="RegistryBank_lookup" rendered="#{formEdit}">
 									<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 										<ui:param name="lookupTo" value="#{controller.to.bank}" />
