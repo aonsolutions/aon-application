@@ -6,8 +6,6 @@ import com.code.aon.customer.Customer;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.form.event.ControllerEvent;
-import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 
 public class InvoicingGroupSearchListener extends ControllerSearchListener {
@@ -35,10 +33,4 @@ public class InvoicingGroupSearchListener extends ControllerSearchListener {
 		}
 	}
 
-	@Override
-	public void afterBeanCreated(ControllerEvent event)
-			throws ControllerListenerException {
-		setCustomer( new Customer() );
-	}
-	
 }
