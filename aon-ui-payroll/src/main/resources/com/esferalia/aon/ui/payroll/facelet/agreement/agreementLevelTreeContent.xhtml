@@ -16,6 +16,7 @@
 		<ui:param name="skipBackButton" value="true" />
 		<ui:param name="skipSpin" value="true" />
 	</ui:decorate>
+	
 	<aon:div styleClass="aon-scroll-area">
 		<aon:panelGrid columns="2" dir="true" width="100%">
 
@@ -46,13 +47,20 @@
 					label="#{payrollBundle.payroll_salary_payment}">
 					
 					<aon:div style="font-size: 0.9em;">
+					<!--  
 						<c:if test="#{agreementLevelPayment.to == null}">
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementLevelPaymentList.xhtml" />
 						</c:if>
 						<c:if test="#{agreementLevelPayment.to != null}">
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementLevelPaymentForm.xhtml" />
 						</c:if>
+					-->
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
+							<ui:param name="controller" value="#{agreementLevelPayment}" />
+							<ui:param name="skipScopeColumn" value="true" />
+						</ui:include>
 					</aon:div>
+					
 				</aon:panelTab>
 
 				<aon:panelTab id="category" label="#{payrollBundle.payroll_agreementLevel_category}">

@@ -130,26 +130,6 @@
 					<f:selectItems value="#{payrollCollections.educationalLevelList}" />
 				</aon:selectOneMenu>
 			
-<!--  
-				<aon:outputLabel for="cno_id" 
-					value="#{payrollBundle.payroll_contract_cno}" />
-				<aon:div styleClass="aon-lookup">
-					<aon:lookupInputText id="cno_id"
-						lookup="#{cnoLookup}"
-						reRender="cno_detail"
-						value="#{contractGenerationWizard.params.cno.id}" size="5" />
-					<aon:lookupButton
-						windowTitle="#{payrollBundle.payroll_contract_cno_selection}"
-						selectReRender="cno_id,cno_detail"
-						lookup="#{cnoLookup}"
-						minHeight="500" minWidth="650" actionType="search"
-						property="#{contractGenerationWizard.params.cno}">
-					</aon:lookupButton>
-					<aon:inputText id="cno_detail"
-						value="#{contractGenerationWizard.params.cno.title}"
-						size="50" disabled="true" />							
-				</aon:div>		
--->				
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cno/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{contractGenerationWizard.params.cno}" />
 					<ui:param name="skipNewButton" value="#{true}" />

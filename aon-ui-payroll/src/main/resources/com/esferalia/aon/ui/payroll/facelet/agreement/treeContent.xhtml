@@ -16,7 +16,13 @@
 					<ui:include src="agreementLevelTreeContent.xhtml"/>
 				</c:if>
 			</aon:form>
-			<aon:lookupButtonPopup lookup="#{paymentConceptLookup}" />
+			
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
+				<ui:param name="controller" value="#{agreementLevelPayment}" />
+				<ui:param name="skipCurrentMonth" value="#{true}" />
+				<ui:param name="contextDisabled" value="#{true}" />
+			</ui:include>
+			
 		</ui:define>
 
 </ui:composition>

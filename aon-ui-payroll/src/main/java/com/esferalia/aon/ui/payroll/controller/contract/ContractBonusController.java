@@ -8,11 +8,9 @@ import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +26,6 @@ import com.esferalia.aon.payroll.BonusConcept;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
@@ -38,26 +35,6 @@ public class ContractBonusController extends ContractDetailAbstractController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractBonusController.class.getName());
 	
-	private DataModel variablesModel;
-	private ContractData contractData;
-	private DataModel undefinedVariablesModel;
-	
-	
-	public DataModel getUndefinedVariablesModel() {
-		return undefinedVariablesModel;
-	}
-	public void setUndefinedVariablesModel(DataModel undefinedVariablesModel) {
-		this.undefinedVariablesModel = undefinedVariablesModel;
-	}
-	public DataModel getVariablesModel() {
-		return variablesModel;
-	}
-	public ContractData getContractData() {
-		return contractData;
-	}
-	public void setContractData(ContractData contractData) {
-		this.contractData = contractData;
-	}
 
 	@Override
 	public void onSave(ActionEvent event) {
@@ -72,10 +49,8 @@ public class ContractBonusController extends ContractDetailAbstractController {
 	protected void initialiceConcepts() {
 		setConcepts(new LinkedList<SelectItem>());
 		try {
-//			ContractBonus cb = (ContractBonus) getTo();
 			IManagerBean bean = BeanManager.getManagerBean(BonusConcept.class);
 			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_TYPE), cb.getType());
 			criteria.addOrder(bean.getFieldName(IPayrollAlias.BONUS_CONCEPT_DESCRIPTION));
 			List<ITransferObject> list = bean.getList(criteria);
 			for (ITransferObject to: list) {
@@ -85,13 +60,6 @@ public class ContractBonusController extends ContractDetailAbstractController {
 		} catch (ManagerBeanException e) {
 			// Se devuelve la lista vacia.
 		} 
-	}
-	
-	public void onBonusConceptChange(ActionEvent event) {
-		ContractPayment cp = (ContractPayment) getTo();
-		if (cp.getType() != null && StringUtils.isEmpty(cp.getDescription())) {
-			cp.setDescription( cp.getPaymentConcept().getDescription() );
-		}
 	}
 	
 	@Override
@@ -105,17 +73,16 @@ public class ContractBonusController extends ContractDetailAbstractController {
 	// VARIABLES
 	//**********************************************
 	
-	private void initializeVariables(ActionEvent event) {
+	@Override
+	protected void initializeVariables(ActionEvent event) {
 		ContractBonus bonus = (ContractBonus)this.getTo();
 		Contract contract = bonus.getContract();
-//		IController master = FormUtil.getController("contract");
-//		Contract contract = (Contract) master.getTo();
 		ContractSalaryCalculatorContext ctx;
 		List<ContractData> dataList;
 		try {
 			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
-			variablesModel = null;
-			undefinedVariablesModel = null;
+			setVariablesModel(null);
+			setUndefinedVariablesModel(null);
 			if(bonus.getExpression()!=null || bonus.getBonusConcept().getExpression()!=null){
 				dataList = new LinkedList<ContractData>();
 				Set<String> vl = ExpressionContext.getVariables(bonus.getExpression()==null?bonus.getBonusConcept().getExpression():bonus.getExpression());
@@ -147,9 +114,9 @@ public class ContractBonusController extends ContractDetailAbstractController {
 						}
 					}
 				}
-				variablesModel = new ListDataModel(dataList);
+				setVariablesModel(new ListDataModel(dataList));
 				if(!undefined.isEmpty()){
-					undefinedVariablesModel = new ListDataModel(undefined);
+					setUndefinedVariablesModel(new ListDataModel(undefined));
 				}
 			}
 		} catch (SalaryException e) {
@@ -165,70 +132,4 @@ public class ContractBonusController extends ContractDetailAbstractController {
 		}
 	}
 	
-	private List<ITransferObject> existingContractData(String name, Contract contract) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), name);
-		return bean.getList(criteria);
-	}
-	
-	public void onResetVariable(ActionEvent event) {
-		setContractData(new ContractData());
-		getContractData().setContract(((ContractBonus)this.getTo()).getContract());
-	}
-	public void onSelectVariable(ActionEvent event) {
-		setContractData((ContractData) getVariablesModel().getRowData());
-	}
-	public void onSaveVariable(ActionEvent event) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			bean.insertOrUpdate(getContractData());
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible guardar la variable del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-		setContractData(null);
-		initializeVariables(event);
-	}
-	public void onCancelVariable(ActionEvent event) {
-		setContractData(null);
-	}
-	public void onRemoveVariable(ActionEvent event) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			bean.remove(getContractData());
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible borrar la variable del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-		setContractData(null);
-		initializeVariables(event);
-	}
-	public void onAddUndefinedVariable(ActionEvent event) {
-		setContractData((ContractData) getUndefinedVariablesModel().getRowData());
-	}
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getNewVariableList(){
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		if(getVariablesModel()!=null){
-			for(ContractData data: (List<ContractData>)getVariablesModel().getWrappedData()){
-				String name = data.getName();
-				SelectItem item = new SelectItem(name, name);
-				list.add(item);
-			}
-		}
-		if(getUndefinedVariablesModel()!=null){
-			for(ContractData data: (List<ContractData>)getUndefinedVariablesModel().getWrappedData()){
-				String name = data.getName();
-				SelectItem item = new SelectItem(name, name);
-				list.add(item);
-			}
-		}
-		return list;
-	}
 }

@@ -1,12 +1,20 @@
 package com.esferalia.aon.ui.payroll.controller.agreement;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -16,17 +24,52 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.AgreementLevel;
+import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementLevelPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.salary.expression.ExpressionContext;
 
 public class AgreementLevelPaymentController extends LinesController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AgreementLevelPaymentController.class.getName());
 
+	private boolean modalPanelVisible;
 	private List<SelectItem> concepts;
 	private List<String> systemDataVariables;
 	private List<String> paymentConcepts;
+	private AgreementLevelData data;
+	private DataModel variablesModel;
+	private DataModel undefinedVariablesModel;
+	
+	
+	public DataModel getUndefinedVariablesModel() {
+		return undefinedVariablesModel;
+	}
+	public void setUndefinedVariablesModel(DataModel undefinedVariablesModel) {
+		this.undefinedVariablesModel = undefinedVariablesModel;
+	}
+	
+	public DataModel getVariablesModel() {
+		return variablesModel;
+	}
+	
+	public AgreementLevelData getData() {
+		return data;
+	}
+	public void setData(AgreementLevelData data) {
+		this.data = data;
+	}
+	public boolean isModalPanelVisible() {
+		return modalPanelVisible;
+	}
+	public void setModalPanelVisible(boolean modalPanelVisible) {
+		this.modalPanelVisible = modalPanelVisible;
+	}
 
 	public void onTypeChange(ActionEvent event) {
 		setConcepts(null);
@@ -37,6 +80,21 @@ public class AgreementLevelPaymentController extends LinesController {
 			initialiceConcepts();
 		}
 		return concepts;
+	}
+	
+	public DataModel getPaymentsModel(){
+		try {
+			return this.getModel();
+		} catch (ManagerBeanException e) {
+			return null;
+		}
+	}
+	public void setPaymentsModel(DataModel paymentsModel) {
+		this.setModel(paymentsModel);
+	}
+	
+	public boolean isContractScope(){
+		return true;
 	}
 	
 	private void initialiceConcepts() {
@@ -81,7 +139,7 @@ public class AgreementLevelPaymentController extends LinesController {
 					systemDataVariables.add(sd.getName());					
 				}
 			} catch (ManagerBeanException e) {
-				
+				// TODO como tratar esto?
 			}
 		}
 		return systemDataVariables;
@@ -145,5 +203,171 @@ public class AgreementLevelPaymentController extends LinesController {
 	public void onConceptDescriptionChange(ActionEvent event){
 		
 	}
+	
+	public void onEdit(ActionEvent event) {
+		reset(true);
+		this.onSelect(event);
+		initializeVariables(event);
+	}
+
+	public void onSave(ActionEvent event) {
+		AgreementLevelPayment alp = (AgreementLevelPayment) this.getTo();
+		if(alp.getDescription().isEmpty()){
+			alp.setDescription(null);
+		}
+		super.onAccept(event);
+		reset(false);
+		setPaymentsModel(null);
+	}
+
+	public void onCancel(ActionEvent event) {
+		super.onCancel(event);
+		reset(false);
+	}
+
+	public void onRemove(ActionEvent event) {
+		super.onRemove(event);
+		reset(false);
+		setPaymentsModel(null);
+	}
+	
+	public void onReset(ActionEvent event) {
+		super.onReset(event);
+		reset(true);
+		initializeVariables(event);
+	}
+	
+	public void reset(boolean panelVisible) {
+		setModalPanelVisible(panelVisible);
+	}
+	
+	private void initializeVariables(ActionEvent event) {
+		// TODO como resolver las variables de convenio?
+//		ContractPayment payment = (ContractPayment)this.getTo();
+//		Contract contract = payment.getContract();
+		AgreementLevelPayment payment = (AgreementLevelPayment)this.getTo();
+//		ContractSalaryCalculatorContext ctx;
+		List<AgreementLevelData> dataList;
+		try {
+//			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
+			variablesModel = null;
+			undefinedVariablesModel = null;
+			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
+				dataList = new LinkedList<AgreementLevelData>();
+				Set<String> vl = ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
+				List<AgreementLevelData> undefined = new LinkedList<AgreementLevelData>();
+				if(!vl.isEmpty()){
+					for(String s: vl){
+						List<ITransferObject> list = existingAgreementLevelData(s, payment.getLevel());
+						if(!list.isEmpty()){
+							for(ITransferObject to: list){
+								dataList.add( (AgreementLevelData) to);
+							}
+						} else {
+							Calendar startCal = Calendar.getInstance();
+							Calendar endCal = Calendar.getInstance();
+							startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+							endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+							AgreementLevelData data = new AgreementLevelData();
+							data.setLevel(payment.getLevel());
+							data.setName(s);
+							data.setStartDate(startCal.getTime());
+							data.setEndDate(endCal.getTime());
+							Object o = null; 
+//							o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
+							if(o==null){
+								undefined.add(data);
+							} else {
+//								data.setExpression(o.toString());
+								dataList.add(data);
+							}
+						}
+					}
+				}
+				variablesModel = new ListDataModel(dataList);
+				if(!undefined.isEmpty()){
+					undefinedVariablesModel = new ListDataModel(undefined);
+				}
+			}
+//		} catch (SalaryException e) {
+//			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
+//			LOGGER.error(msg);
+//			AonUtil.addErrorMessage(msg);
+//			throw new AbortProcessingException(msg,e);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+	
+	private List<ITransferObject> existingAgreementLevelData(String name, AgreementLevel level) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), level.getId());
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_NAME), name);
+		return bean.getList(criteria);
+	}
+	
+	public void onResetVariable(ActionEvent event) {
+		setData(new AgreementLevelData());
+		getData().setLevel(((AgreementLevelPayment)this.getTo()).getLevel());
+	}
+	public void onSelectVariable(ActionEvent event) {
+		setData((AgreementLevelData) getVariablesModel().getRowData());
+	}
+	public void onSaveVariable(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
+			bean.insertOrUpdate(getData());
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible guardar la variable del convenio (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+		setData(null);
+		initializeVariables(event);
+	}
+	public void onCancelVariable(ActionEvent event) {
+		setData(null);
+	}
+	public void onRemoveVariable(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
+			bean.remove(getData());
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible borrar la variable del convenio (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+		setData(null);
+		initializeVariables(event);
+	}
+	public void onAddUndefinedVariable(ActionEvent event) {
+		setData((AgreementLevelData) getUndefinedVariablesModel().getRowData());
+	}
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getNewVariableList(){
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		if(getVariablesModel()!=null){
+			for(AgreementLevelData data: (List<AgreementLevelData>)getVariablesModel().getWrappedData()){
+				String name = data.getName();
+				SelectItem item = new SelectItem(name, name);
+				list.add(item);
+			}
+		}
+		if(getUndefinedVariablesModel()!=null){
+			for(AgreementLevelData data: (List<AgreementLevelData>)getUndefinedVariablesModel().getWrappedData()){
+				String name = data.getName();
+				SelectItem item = new SelectItem(name, name);
+				list.add(item);
+			}
+		}
+		return list;
+	}
+	
 	
 }

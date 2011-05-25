@@ -61,7 +61,7 @@
 											</aon:div>
 										</aon:panelGrid>	
 										
-										<c:if test="#{controller.contractData==null}" >
+										<c:if test="#{controller.data==null}" >
 											<aon:editDataTable id="#{controller.beanName}VariablesList"
 												value="#{controller.variablesModel}" var="to" rows="20" >
 												
@@ -94,7 +94,7 @@
 												</aon:column>
 												
 												<ui:include 
-													src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" >
+													src="/com/esferalia/aon/ui/payroll/facelet/variables/data/list_content.xhtml" >
 													<ui:param name="controller" value="#{controller}" />
 													<aon:valueParam name="formList" value="true" />
 												</ui:include>
@@ -104,7 +104,7 @@
 											
 											<c:if test="#{controller.undefinedVariablesModel!=null}" >
 												<ui:include 
-													src="/com/esferalia/aon/ui/payroll/facelet/contract/data/grid_undefined.xhtml" >
+													src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_undefined.xhtml" >
 													<ui:param name="controller" value="#{controller}" />
 													<aon:valueParam name="formList" value="true" />
 													<aon:valueParam name="saveReRender" value="#{controller.beanName}VarContainer" />
@@ -112,9 +112,9 @@
 											</c:if>
 										</c:if>
 													
-										<c:if test="#{controller.contractData!=null}" >
+										<c:if test="#{controller.data!=null}" >
 											<ui:include 
-												src="/com/esferalia/aon/ui/payroll/facelet/contract/data/formContent.xhtml" >
+												src="/com/esferalia/aon/ui/payroll/facelet/variables/data/formContent.xhtml" >
 												<ui:param name="controller" value="#{controller}" />
 												<aon:valueParam name="container" value="#{controller.beanName}VarContainer" />
 											</ui:include>

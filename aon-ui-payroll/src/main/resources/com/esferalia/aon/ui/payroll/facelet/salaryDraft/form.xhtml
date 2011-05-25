@@ -93,10 +93,6 @@
 										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/editGridContent.xhtml" >
 											<ui:param name="controller" value="#{salaryDraftDeduction}" />
 											<ui:param name="skipCurrentMonth" value="#{true}" />
-												<!--  
-												<ui:param name="skipStartDateColumn" value="#{true}" />
-												<ui:param name="skipEndDateColumn" value="#{true}" />
-												-->
 										</ui:include>
 									</aon:div>
 								</aon:panelTab>
@@ -125,7 +121,6 @@
 		</aon:form>
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
 			<ui:param name="controller" value="#{salaryDraftPayment}" />
-			<ui:param name="container" value="paymentGrid" />
 			<ui:param name="skipCurrentMonth" value="#{true}" />
 		</ui:include>
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/modalDeduction.xhtml">

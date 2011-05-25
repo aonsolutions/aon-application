@@ -21,7 +21,6 @@
 			<c:forEach items="#{controller.undefinedVariablesModel.wrappedData}" var="to">
 				<aon:outputText value="#{to.name}"  />
 				<aon:commandButton
-					id="ContractData-add" 
 					title="#{payrollBundle.payroll_contract_define_variable_button_title}"
 					actionListener="#{controller.onAddUndefinedVariable}"
 					reRender="#{saveReRender}"

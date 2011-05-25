@@ -22,7 +22,7 @@
 			styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 		<aon:commandButton id="paymentVarRemove"
 			value="#{bundle.aon_remove}"
-			rendered="#{controller.contractData.id!=null}"
+			rendered="#{controller.data.id!=null}"
 			reRender="#{container}"
 			actionListener="#{controller.onRemoveVariable}"
 			styleClass="aon-finding-toolbar-item aon-icon-delete"
@@ -32,7 +32,7 @@
 	<aon:panelGrid columns="2" style="width: 100%;"
 		columnClasses="aon-panelGrid-odd aon-width-100 ,aon-panelGrid-even aon-width-auto">
 		
-		<aon:outputLabel for="ContractData_name" 
+		<aon:outputLabel for="#{controller.beanName}_name" 
 			value="#{bundle.aon_name}" />
 <!--  
 		<aon:inputText id="ContractData_name" required="true"
@@ -58,25 +58,25 @@
 		</aon:inputText>
 			<f:selectItem value="#{null}" itemLabel=" - " />
 -->		
-		<aon:selectOneMenu id="ContractData_name" value="#{controller.contractData.name}">
+		<aon:selectOneMenu id="#{controller.beanName}_name" value="#{controller.data.name}">
 			<f:selectItems value="#{controller.newVariableList}"  />
 		</aon:selectOneMenu>
 
-		<aon:outputLabel for="ContractData_expression"
+		<aon:outputLabel for="#{controller.beanName}_expression"
 			value="#{payrollBundle.payroll_salary_expression}" />
-		<aon:inputText id="ContractData_expression" required="true"
-			value="#{controller.contractData.expression}" maxlength="128" size="64">
+		<aon:inputText id="#{controller.beanName}_expression" required="true"
+			value="#{controller.data.expression}" maxlength="128" size="64">
 			<f:validateLength maximum="128"/>
 			<a4j:region>
-				<rich:suggestionbox id="ContractData_expression_suggestion"
-					for="ContractData_expression"
+				<rich:suggestionbox id="#{controller.beanName}_expression_suggestion"
+					for="#{controller.beanName}_expression"
 					onselect="suggestionBoxActive=false;"
 					suggestionAction="#{controller.expressionContext}" var="exp"
 					similarityGroupingId=""
 					tokens=" +-/*%()"
 					fetchValue="#{exp}"
 					immediate="true" limitToList="true" ajaxSingle="true"
-					eventsQueue="ContractData_expressionSug" ignoreDupResponses="true"
+					eventsQueue="#{controller.beanName}_expressionSug" ignoreDupResponses="true"
 					requestDelay="100" width="500" height="200"
 					nothingLabel="#{bundle.aon_search_no_results}">
 					<aon:column>
@@ -86,17 +86,17 @@
 			</a4j:region>
 		</aon:inputText>
 		
-		<aon:outputLabel for="ContractData_startDate" 
+		<aon:outputLabel for="#{controller.beanName}_startDate" 
 			value="#{bundle.aon_start_date}" />
-		<aon:selectInputDate id="ContractData_startDate" 
-			value="#{controller.contractData.startDate}"
+		<aon:selectInputDate id="#{controller.beanName}_startDate" 
+			value="#{controller.data.startDate}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 
-		<aon:outputLabel for="ContractData_endDate" 
+		<aon:outputLabel for="#{controller.beanName}_endDate" 
 			value="#{bundle.aon_end_date}" />
-		<aon:selectInputDate id="ContractData_endDate" 
-			value="#{controller.contractData.endDate}"
+		<aon:selectInputDate id="#{controller.beanName}_endDate" 
+			value="#{controller.data.endDate}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}"/>
 		
