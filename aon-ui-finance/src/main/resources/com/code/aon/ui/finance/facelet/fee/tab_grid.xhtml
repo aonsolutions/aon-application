@@ -38,35 +38,37 @@
 					rendered="#{formList}">
 					<aon:abbreviateConverter maxWidth="64" />
 				</aon:outputText>
-				<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
-					<ui:param name="lookupTo" value="#{controller.to.item}" />
-					<ui:param name="idRequired" value="#{true}" />
-					<ui:param name="skipLabel" value="#{true}" />
-					<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
-					<ui:param name="lookupInputSuggestSize" value="50" />
-					<ui:param name="lookupInputOnFocus" value="CustomerFee_description" />
-					<ui:param name="lookupRendered" value="#{formEdit}" />
-					<ui:param name="lookupReRender" value="customerFeeItemEdit,CustomerFee_price,CustomerFee_discount" />
-					<aon:methodParam name="lookupChangeListener"
-						value="#{controller.onItemChanged}" type="lookupChangeListener" />
-				</ui:include>
-				<aon:panelGroup id="customerFeeItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
-					<aon:inputTextarea id="CustomerFee_description"
-						value="#{controller.to.description}"
-						rendered="#{controller.to.item != null and controller.to.item.id != null}"
-						cols="50" rows="#{!controller.longDescription?1:5}"
-						style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
-						<f:validateLength maximum="1024" />
-					</aon:inputTextarea>
-					<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-						actionListener="#{controller.onShortDescription}" reRender="CustomerFee_description"
-						rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
-					<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-						actionListener="#{controller.onLongDescription}" reRender="CustomerFee_description"
-						rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
-				</aon:panelGroup>
+				<aon:div styleClass="aon-nowrap">
+					<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{controller.to.item}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
+						<ui:param name="lookupInputSuggestSize" value="50" />
+						<ui:param name="lookupInputOnFocus" value="CustomerFee_description" />
+						<ui:param name="lookupRendered" value="#{formEdit}" />
+						<ui:param name="lookupReRender" value="customerFeeItemEdit,CustomerFee_price,CustomerFee_discount" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{controller.onItemChanged}" type="lookupChangeListener" />
+					</ui:include>
+					<aon:panelGroup id="customerFeeItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
+						<aon:inputTextarea id="CustomerFee_description"
+							value="#{controller.to.description}"
+							rendered="#{controller.to.item != null and controller.to.item.id != null}"
+							cols="50" rows="#{!controller.longDescription?1:5}"
+							style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+							<f:validateLength maximum="1024" />
+						</aon:inputTextarea>
+						<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
+							actionListener="#{controller.onShortDescription}" reRender="CustomerFee_description"
+							rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
+						<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
+							actionListener="#{controller.onLongDescription}" reRender="CustomerFee_description"
+							rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
+					</aon:panelGroup>
+				</aon:div>
 				<f:facet name="footer">
-					<aon:div>
+					<aon:div styleClass="aon-nowrap">
 						<ui:include src="/com/code/aon/ui/product/facelet/item/lookup.xhtml">
 							<ui:param name="lookupTo" value="#{controller.to.item}" />
 							<ui:param name="idRequired" value="#{true}" />
