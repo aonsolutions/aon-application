@@ -99,34 +99,21 @@
 			<aon:column>
 				<f:facet name="header">
 					<aon:div>
-						<aon:outputLabel for="RegistryBank_code"
-							value="#{configBundle.config_bank}" />
+						<aon:outputLabel for="Bank_id" value="#{configBundle.config_bank}" />
 						<aon:outputText value=" - #{configBundle.config_bank_account}" />
 					</aon:div>
 				</f:facet>
-				<aon:outputText value="#{financeTo.bank.name}"
+				<aon:outputText value="#{financeTo.bankDescription}"
 					rendered="#{financeTo!=invoiceEntry.currentFinance}" />
-				<aon:outputText rendered="#{financeTo!=invoiceEntry.currentFinance}"
-					value=" #{financeTo.bankAccount}" />
-
-				<aon:div id="RegistryBank_lookup" styleClass="aon-lookup"
-					rendered="#{financeTo==invoiceEntry.currentFinance}">
-					<aon:lookupInputText id="RegistryBank_code"
-						property="#{financeTo.bank}" reRender="RegistryBank_lookup"
-						lookup="#{bankLookup}" value="#{financeTo.bank.code}" size="3"
-						focus="RegistryBank_office"
-						lookupChangeListener="#{invoiceEntry.onBankChanged}" maxlength="4">
-						<aon:joinProperty alias="Bank_code" value="#{financeTo.bank.code}" />
-					</aon:lookupInputText>
-					<aon:lookupButton
-						windowTitle="#{configBundle.config_bank_selection}"
-						selectReRender="RegistryBank_lookup" actionType="search"
-						lookupChangeListener="#{invoiceEntry.onBankChanged}"
-						lookup="#{bankLookup}" minHeight="460" minWidth="650"
-						property="#{financeTo.bank}">
-					</aon:lookupButton>
-					<aon:inputText id="RegistryBank_name"
-						value="#{financeTo.bank.name}" size="30" disabled="true" />
+				<aon:div id="RegistryBank_lookup" rendered="#{financeTo==invoiceEntry.currentFinance}">
+					<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{financeTo.bank}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{financeTo==invoiceEntry.currentFinance}" />
+						<ui:param name="lookupReRender" value="RegistryBank_lookup" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{invoiceEntry.onBankChanged}" type="lookupChangeListener" />
+					</ui:include>								
 					<aon:inputText id="RegistryBank_office"
 						value="#{invoiceEntry.currentFinance.bankAccount.office}" size="3"
 						maxlength="4">
@@ -173,28 +160,16 @@
 					</aon:div>
 				</aon:div>
 				<f:facet name="footer">
-					<aon:div id="RegistryBank_lookup-New" styleClass="aon-lookup"
-						rendered="#{invoiceEntry.newFinance}">
-						<aon:lookupInputText id="RegistryBank_code-New"
-							property="#{invoiceEntry.currentFinance.bank}"
-							reRender="RegistryBank_lookup-New" lookup="#{bankLookup}"
-							lookupChangeListener="#{invoiceEntry.onBankChanged}"
-							value="#{invoiceEntry.currentFinance.bank.code}" size="3"
-							maxlength="4" focus="RegistryBank_office-New">
-							<aon:joinProperty alias="Bank_code"
-								value="#{invoiceEntry.currentFinance.bank.code}" />
-						</aon:lookupInputText>
-						<aon:lookupButton
-							windowTitle="#{configBundle.config_bank_selection}"
-							selectReRender="RegistryBank_lookup-New"
-							lookupChangeListener="#{invoiceEntry.onBankChanged}"
-							actionType="search" lookup="#{bankLookup}" minHeight="460"
-							minWidth="650" property="#{invoiceEntry.currentFinance.bank}">
-						</aon:lookupButton>
-						<aon:inputText id="RegistryBank_name-New"
-							value="#{invoiceEntry.currentFinance.bank.name}" size="30"
-							reRender="RegistryBank_lookup-New"
-							disabled="true" />
+					<aon:div id="RegistryBank_lookup-New" rendered="#{invoiceEntry.newFinance}">
+						<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
+							<ui:param name="lookupTo" value="#{invoiceEntry.currentFinance.bank}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupSuffix" value="-New" />
+							<ui:param name="lookupRendered" value="#{invoiceEntry.newFinance}" />
+							<ui:param name="lookupReRender" value="RegistryBank_lookup-New" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{invoiceEntry.onBankChanged}" type="lookupChangeListener" />
+						</ui:include>								
 						<aon:inputText id="RegistryBank_office-New"
 							value="#{invoiceEntry.currentFinance.bankAccount.office}"
 							size="3" maxlength="4">

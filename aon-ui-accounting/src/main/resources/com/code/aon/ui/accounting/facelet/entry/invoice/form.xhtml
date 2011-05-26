@@ -217,34 +217,39 @@
 							<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
 								<ui:param name="lookupForRegistry" value="#{true}" />
 								<ui:param name="lookupTo" value="#{invoiceEntry.header.registry}" />
-								<ui:param name="lookupReRender" value="Registry_name,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable" />
+								<ui:param name="lookupInputNameValue" value="#{invoiceEntry.header.name}" />
+								<ui:param name="lookupReRender" value="Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable" />
 								<ui:param name="lookupRendered" value="#{invoiceEntry.sales}" />				
 								<ui:param name="lookupDisabled" value="#{invoiceEntry.newDetail}" />				
 								<aon:methodParam name="lookupChangeListener" value="#{invoiceEntry.registryChanged}" type="lookupChangeListener" />
+								<ui:param name="idRequired" value="#{true}" />						
 								<ui:param name="skipLabel" value="#{true}" />
-								<ui:param name="skipSuggestText" value="#{true}" />
+								<ui:param name="skipSuggestText" value="#{invoiceEntry.header.registry != null and invoiceEntry.header.registry.id != null}" />
 							</ui:include>
 							<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
 								<ui:param name="lookupForRegistry" value="#{true}" />
 								<ui:param name="lookupTo" value="#{invoiceEntry.header.registry}" />
-								<ui:param name="lookupReRender" value="Registry_name,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable" />
+								<ui:param name="lookupInputNameValue" value="#{invoiceEntry.header.name}" />
+								<ui:param name="lookupReRender" value="Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable" />
 								<ui:param name="lookupRendered" value="#{invoiceEntry.purchase}" />				
 								<ui:param name="lookupDisabled" value="#{invoiceEntry.newDetail}" />				
 								<aon:methodParam name="lookupChangeListener" value="#{invoiceEntry.registryChanged}" type="lookupChangeListener" />
+								<ui:param name="idRequired" value="#{true}" />						
 								<ui:param name="skipLabel" value="#{true}" />
-								<ui:param name="skipSuggestText" value="#{true}" />
+								<ui:param name="skipSuggestText" value="#{invoiceEntry.header.registry != null and invoiceEntry.header.registry.id != null}" />
 							</ui:include>
 							<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml" >
 								<ui:param name="lookupForRegistry" value="#{true}" />
 								<ui:param name="lookupTo" value="#{invoiceEntry.header.registry}" />
-								<ui:param name="lookupReRender" value="Registry_name,Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable" />
+								<ui:param name="lookupInputNameValue" value="#{invoiceEntry.header.name}" />
+								<ui:param name="lookupReRender" value="Account_invoiceTransactionType,documentPanel,taxInfoPanel,invoiceDetails,Account_Related,InvoiceWizard,retentionTable" />
 								<ui:param name="lookupRendered" value="#{invoiceEntry.expense}" />				
 								<ui:param name="lookupDisabled" value="#{invoiceEntry.newDetail}" />				
 								<aon:methodParam name="lookupChangeListener" value="#{invoiceEntry.registryChanged}" type="lookupChangeListener" />
+								<ui:param name="idRequired" value="#{true}" />						
 								<ui:param name="skipLabel" value="#{true}" />
-								<ui:param name="skipSuggestText" value="#{true}" />
+								<ui:param name="skipSuggestText" value="#{invoiceEntry.header.registry != null and invoiceEntry.header.registry.id != null}" />
 							</ui:include>
-							<aon:inputText id="Registry_name" value="#{invoiceEntry.header.name}" disabled="#{invoiceEntry.newDetail}" size="50" />
 						</h:panelGrid>
 
 						<aon:outputText for="Registry_document"
@@ -475,9 +480,8 @@
 				</aon:div>
 				<aon:div id="invoiceDetails">
 					<ui:include src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_lines.xhtml" />
-					<!-- 
+
 					<ui:include src="/com/code/aon/ui/accounting/facelet/entry/invoice/form_finances.xhtml" />
-					 -->
 				</aon:div>
 			</aon:div>
 		</aon:form>
