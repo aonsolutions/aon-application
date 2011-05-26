@@ -29,12 +29,10 @@
 									accesskey="#{bundle.aon_key_accept}" />				
 								<aon:commandButton id="save" value="#{bundle.aon_save}"
 									action="communicationCenter" actionListener="#{communicationCenter.onUpdateActionTarget}"
-									reRender="CommunicationCenter_target,CommunicationCenter_action_detail,aonToolbar"
 									styleClass="aon-finding-toolbar-item aon-icon-save"
 									accesskey="#{bundle.aon_key_save}" />
 								<aon:commandButton id="skip" value="#{marketingBundle.marketing_skip}"
 									action="communicationCenter" actionListener="#{communicationCenter.onNextTarget}"
-									reRender="CommunicationCenter_target,aonToolbar"
 									styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 									accesskey="#{bundle.aon_key_cancel}"/>
 							</c:if>
@@ -87,7 +85,7 @@
 						<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{communicationCenter.action}" />
 							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="lookupReRender" value="CommunicationCenter_action_detail,lookupSurvey,CommunicationCenter_target,aonToolbar" />
+							<ui:param name="lookupReRender" value="aonContent" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{communicationCenter.onActionLookupChange}" type="lookupChangeListener" />
 						</ui:include>	
@@ -104,50 +102,41 @@
 						</aon:div>
 					</aon:div>
 					
-					<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
-						<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{communicationCenter.survey}" />
-							<ui:param name="idRequired" value="#{true}" />
-							<ui:param name="lookupDisabled" value="#{communicationCenter.actionSelected}" />
-							<ui:param name="lookupReRender" value="aonToolbar" />
-							<aon:methodParam name="lookupChangeListener"
-								value="#{communicationCenter.onSurveyLookupChange}" type="lookupChangeListener" />
-							
-						</ui:include>					
-					</c:if>
-
-					<c:if test="#{aonConfiguration.bean.communicationCenter.showTarget}" >
-						<aon:outputLabel for="Target_id"
-							value="#{target.bundle.commercial_target}" />
-						<aon:div id="CommunicationCenter_target">
-							<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
-								<ui:param name="lookupTo" value="#{communicationCenter.target}" />
-								<ui:param name="idRequired" value="#{true}" />
-								<ui:param name="skipLabel" value="#{true}" />
-								<ui:param name="skipNewButton" value="#{true}" />
-								<ui:param name="lookupDisabled" value="#{communicationCenter.actionSelected}" />
-								<ui:param name="lookupReRender" value="CommunicationCenter_target_detail,aonToolbar" />					
-								<aon:methodParam name="lookupChangeListener"
-									value="#{communicationCenter.onTargetLookupChange}" type="lookupChangeListener" />
-							</ui:include>						
-							<aon:div id="CommunicationCenter_target_detail" layout="inline">
-								<c:if test="#{communicationCenter.targetSelected}" >
-									<aon:panelGrid styleClass="aon-margin-top aon-margin-bottom" columns="2">		
+					<c:if test="#{communicationCenter.actionSelected}" >
+						<c:if test="#{communicationCenter.surveySelected and aonConfiguration.bean.campaign.showSurvey}" >
+							<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{communicationCenter.survey}" />
+								<ui:param name="lookupDisabled" value="#{true}" />
+							</ui:include>					
+						</c:if>
+	
+						<c:if test="#{communicationCenter.targetSelected}" >
+							<aon:outputLabel for="Target_id"
+								value="#{target.bundle.commercial_target}" />
+							<aon:div id="CommunicationCenter_target">
+								<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+									<ui:param name="lookupTo" value="#{communicationCenter.target}" />
+									<ui:param name="skipLabel" value="#{true}" />
+									<ui:param name="lookupDisabled" value="#{true}" />
+								</ui:include>						
+								<aon:div id="CommunicationCenter_target_detail" layout="inline">
+									<h:panelGrid columns="2"
+										styleClass="aon-margin-top aon-margin-bottom"
+										columnClasses="aon-vertical-align-top, aon-vertical-align-top">		
 									
-										<ui:include src="/com/code/aon/ui/marketing/facelet/communicationCenter/targetSummary.xhtml" />
-		
-										<aon:outputLabel for="CommunicationCenter_status"
-											value="#{bundle.aon_status}" rendered="#{communicationCenter.actionTarget != null}" />
-										<aon:selectOneMenu id="CommunicationCenter_status" required="true"
-											value="#{communicationCenter.actionTarget.status}"
-											rendered="#{communicationCenter.actionTarget != null}">
-											<f:selectItems value="#{marketingCollections.actionTargetStatuses}" />
-										</aon:selectOneMenu>
+										<aon:panelGrid columns="2"
+											columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">						
+											<ui:include src="targetSummary.xhtml" />
+										</aon:panelGrid>
+									
+										<aon:panelGrid rendered="#{communicationCenter.actionTarget != null}" columns="2" >					
+											<ui:include src="actionTargetStatus.xhtml" />	
+										</aon:panelGrid>
 											
-									</aon:panelGrid>
-								</c:if>
+									</h:panelGrid>
+								</aon:div>
 							</aon:div>
-						</aon:div>
+						</c:if>
 					</c:if>
 
 				</aon:panelGrid>
@@ -156,9 +145,7 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
-		<c:if test="#{aonConfiguration.bean.communicationCenter.showTarget}" >
-			<aon:lookupButtonPopup lookup="#{targetLookup}" />
-		</c:if>
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 		</c:if>

@@ -480,8 +480,16 @@
 			<value>com.code.aon.config.User</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>-1</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>User_login</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>User_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultExpressions</property-name>
@@ -496,7 +504,22 @@
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/config/facelet/lookup/user/list.xhtml</value>
 		</managed-property>
-	</managed-bean>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{userLookupListener}</value>
+			</list-entries>
+		</managed-property>			
+	</managed-bean>	
+	
+	<managed-bean>
+		<managed-bean-name>userLookupListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.event.UserLoookupListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>			
 
 	<!-- ********* BANK ACCOUNT VALIDATOR LISTENER ************** -->
 	<managed-bean>

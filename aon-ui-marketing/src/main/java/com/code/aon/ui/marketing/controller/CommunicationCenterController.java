@@ -297,7 +297,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			updateSurveyQuestion( surveyQuestion );			
 		} else {
 			this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER;
-			finishActionTarget();
+			finishActionTarget( false );
 			if ( isActionSelected() ) {
 				onNextTarget(event);
 			} else {
@@ -316,10 +316,12 @@ public class CommunicationCenterController implements IMarketingConstants {
 		questionValue.copyValues(response);			
 	}
 
-	private void finishActionTarget() throws ManagerBeanException {
+	private void finishActionTarget( boolean updateStatus ) throws ManagerBeanException {
 		if ( this.actionTarget != null ) {
 			this.actionTarget.setSurveyResponse(this.surveyResponse);
-			this.actionTarget.setStatus(ActionTargetStatus.FINISHED);
+			if ( updateStatus ){
+				this.actionTarget.setStatus(ActionTargetStatus.FINISHED);	
+			}
 			IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
 			bean.update(this.actionTarget);
 		}
@@ -469,7 +471,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		return null;
 	}	
 	
-	public void initTarget( Target target ) throws ManagerBeanException {
+	private void initTarget( Target target ) throws ManagerBeanException {
 		Integer id = target.getRegistry().getId();
 		this.phone = getTargetMedia( id, MediaType.FIXED_PHONE );
 		this.cellular = getTargetMedia( id, MediaType.CELLULAR );
@@ -523,23 +525,6 @@ public class CommunicationCenterController implements IMarketingConstants {
 		}
 	}
 
-	public void onTargetLookupChange(LookupChangeEvent event) {
-		this.targetSelected = (event.getNewValue() != null);
-		if (this.targetSelected) {
-			try {
-				Target newTarget = (Target) event.getNewValue();
-				initTarget(newTarget);
-			} catch (ManagerBeanException e) {
-				AonUtil.addErrorMessage(e.getMessage());
-				throw new AbortProcessingException(e);
-			}
-		}
-	}
-
-	public void onSurveyLookupChange(LookupChangeEvent event) {
-		this.surveySelected = (event.getNewValue() != null);
-	}
-
 	private Criteria getPendingTargetsCriteria( IManagerBean bean, boolean onlyCount ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		String id = bean.getFieldName(IMarketingAlias.ACTION_TARGET_ID);
@@ -586,5 +571,14 @@ public class CommunicationCenterController implements IMarketingConstants {
         List<MailData> data = (List<MailData>) this.mailingModel.getWrappedData();
         MailingManager.generateMailing(data);
 	}		
+	
+	public void onFinishSurvey(ActionEvent event) throws ManagerBeanException {
+		finishActionTarget( false );
+		if ( isActionSelected() ) {
+			onNextTarget(event);
+		} else {
+			onInit(event);	
+		}					
+	}
 	
 }

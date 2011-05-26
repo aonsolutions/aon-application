@@ -28,7 +28,7 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" styleClass="aon-margin-bottom">
-					<ui:include src="lookup.xhtml" >
+					<ui:include src="/com/code/aon/ui/config/facelet/user/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{actionDenied.user}" />
 						<ui:param name="lookupReRender" value="optionList" />
 						<aon:methodParam name="lookupChangeListener"
@@ -64,6 +64,6 @@
         		</rich:listShuttle>
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{userAuditLookup}" />
+		<aon:lookupButtonPopup lookup="#{userLookup}" />
 	</ui:define>
 </ui:composition>

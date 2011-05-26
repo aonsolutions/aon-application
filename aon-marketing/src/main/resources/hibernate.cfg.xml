@@ -34,8 +34,10 @@
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
 
 		<!-- AON-REGISTRY Mapping files -->
+		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>		
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
 		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
 		<mapping class="com.code.aon.registry.RegistryBank"/>
@@ -43,28 +45,76 @@
 		<mapping class="com.code.aon.registry.Segment"/>
 
 		<!-- AON-COMMERCIAL Mapping files -->
+		<mapping class="com.code.aon.commercial.CommercialActivity"/>
+		<mapping class="com.code.aon.commercial.CommercialTerm"/>
+		<mapping class="com.code.aon.commercial.CommercialTracking"/>
+		<mapping class="com.code.aon.commercial.Commission"/>
+		<mapping class="com.code.aon.commercial.CommissionCategory"/>
+		<mapping class="com.code.aon.commercial.CommissionItem"/>
+		<mapping class="com.code.aon.commercial.CommissionTypeCommission"/>
+		<mapping class="com.code.aon.commercial.Expense"/>
+		<mapping class="com.code.aon.commercial.ExpenseAccount"/>
+		<mapping class="com.code.aon.commercial.ExpenseAccountDetail"/>
+		<mapping class="com.code.aon.commercial.Offer"/>
+		<mapping class="com.code.aon.commercial.OfferAttachment"/>
+		<mapping class="com.code.aon.commercial.OfferDetail"/>
+		<mapping class="com.code.aon.commercial.OfferDetailCommission"/>
+		<mapping class="com.code.aon.commercial.OfferTerm"/>
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
-		<mapping class="com.code.aon.commercial.TargetSeller"/>
-		<mapping class="com.code.aon.commercial.CommercialTracking"/>
-		<mapping class="com.code.aon.commercial.CommercialActivity"/>
+		<mapping class="com.code.aon.commercial.TargetSeller"/>		
+		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 		
-		<!-- AON-CONFIG Mapping files -->
-		<mapping class="com.code.aon.config.User"/>
-		<mapping class="com.code.aon.config.PayMethod"/>
+		<!-- AON-CONFIG Mapping files -->		
+		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Bank"/>
-		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.CNAE"/>
 		<mapping class="com.code.aon.config.CommissionType"/>
+		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.PayMethodTypeDetail"/>
+		<mapping class="com.code.aon.config.Series"/>
+		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.Tariff"/>
+		<mapping class="com.code.aon.config.Tax"/>
+		<mapping class="com.code.aon.config.TaxDetail"/>
+		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
 		
-		<!-- AON-PRODUCT Mapping files -->	
-		<mapping class="com.code.aon.product.Item"/>
-		<mapping class="com.code.aon.product.Product"/>
+		<!-- AON-PRODUCT Mapping files -->
 		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Catalogue"/>
+		<mapping class="com.code.aon.product.CatalogueCategory"/>
+		<mapping class="com.code.aon.product.CatalogueItem"/>
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemAttachment"/>
+		<mapping class="com.code.aon.product.ItemAlternative"/>
+		<mapping class="com.code.aon.product.ItemComposition"/>
+		<mapping class="com.code.aon.product.ItemSupplier"/>
+		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
-		<mapping class="com.code.aon.product.ProductCategoryGroup"/>		
-		
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.ProductCategoryTree"/>
+		<mapping class="com.code.aon.product.TariffCatalogue"/>		
 		<!-- AON-SELLER Mapping files -->	
 		<mapping class="com.code.aon.seller.Seller"/>
+		
+		<!-- AON-SUPPLIER Mapping files -->	
+		<mapping class="com.code.aon.supplier.Supplier"/>		
+		
+		<!-- AON-COMPANY Mapping files -->
+		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.company.Enterprise"/>
+		<mapping class="com.code.aon.company.EnterpriseActivity"/>
+		<mapping class="com.code.aon.company.EnterpriseCCC"/>				
+		<mapping class="com.code.aon.company.WorkPlace"/>				
+		
+		<!-- AON-CALENDAR Mapping files -->		
+		<mapping class="com.esferalia.aon.calendar.Calendar"/>
+		<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>	
+		<mapping class="com.esferalia.aon.calendar.CalendarPeriod"/>
+		<mapping class="com.esferalia.aon.calendar.Holiday"/>	
+		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>			
 		
 	</session-factory>
 

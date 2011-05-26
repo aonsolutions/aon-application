@@ -26,6 +26,12 @@
 						action="#{communicationCenter.nextQuestionAction}" actionListener="#{communicationCenter.onNextQuestion}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 						accesskey="#{bundle.aon_key_cancel}"/>
+					<aon:commandButton id="finish" value="#{marketingBundle.marketing_finish}"
+						reRender="aonStatus" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-exit" >
+						<rich:componentControl for="surveyFinishModalPanel"
+							operation="show" event="onclick" />						
+					</aon:commandButton>
 				</ui:define>
 			</ui:decorate>	
 
@@ -50,8 +56,7 @@
 						<ui:param name="skipNewButton" value="#{true}" />
 						<ui:param name="lookupDisabled" value="#{true}" />
 						<ui:define name="afterLookupContent" >
-							<aon:panelGrid columns="2" width="90%"
-								styleClass="aon-margin-top aon-margin-bottom"
+							<aon:panelGrid columns="2" styleClass="aon-margin-top aon-margin-bottom"
 								columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">						
 								<ui:include src="/com/code/aon/ui/marketing/facelet/communicationCenter/targetSummary.xhtml" />
 							</aon:panelGrid>
@@ -125,6 +130,7 @@
 			</aon:div>			
 			
 		</aon:form>
+		<ui:include src="surveyFinishModal.xhtml" />
 	</ui:define>
 </ui:composition>
 

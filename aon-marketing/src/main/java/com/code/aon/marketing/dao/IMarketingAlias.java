@@ -83,28 +83,40 @@ public interface IMarketingAlias {
 	String  ACTION_TARGET_ACTION_ID = ACTION_TARGET_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: ActionTarget_comments
+	* Hibernate value: ActionTarget.comments
+	*/
+	String  ACTION_TARGET_COMMENTS = ACTION_TARGET_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: ActionTarget_id
 	* Hibernate value: ActionTarget.id
 	*/
-	String  ACTION_TARGET_ID = ACTION_TARGET_ENTRY.getAliasNames()[1];
+	String  ACTION_TARGET_ID = ACTION_TARGET_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ActionTarget_status
 	* Hibernate value: ActionTarget.status
 	*/
-	String  ACTION_TARGET_STATUS = ACTION_TARGET_ENTRY.getAliasNames()[2];
+	String  ACTION_TARGET_STATUS = ACTION_TARGET_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ActionTarget_surveyResponse_id
 	* Hibernate value: ActionTarget.surveyResponse.id
 	*/
-	String  ACTION_TARGET_SURVEY_RESPONSE_ID = ACTION_TARGET_ENTRY.getAliasNames()[3];
+	String  ACTION_TARGET_SURVEY_RESPONSE_ID = ACTION_TARGET_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: ActionTarget_target_id
 	* Hibernate value: ActionTarget.target.id
 	*/
-	String  ACTION_TARGET_TARGET_ID = ACTION_TARGET_ENTRY.getAliasNames()[4];
+	String  ACTION_TARGET_TARGET_ID = ACTION_TARGET_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ActionTarget_user_id
+	* Hibernate value: ActionTarget.user.id
+	*/
+	String  ACTION_TARGET_USER_ID = ACTION_TARGET_ENTRY.getAliasNames()[6];
 
 
 

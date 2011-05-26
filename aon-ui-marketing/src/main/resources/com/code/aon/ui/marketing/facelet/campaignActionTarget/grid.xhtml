@@ -23,6 +23,7 @@
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />
 						<ui:param name="lookupRendered" value="#{formEdit}" />
+						<ui:param name="lookupInputSuggestSize" value="40"/>
 					</ui:include>
 					<f:facet name="footer" >
 						<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
@@ -30,10 +31,28 @@
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupInputSuggestSize" value="40"/>
 							<ui:param name="lookupSuffix" value="-New" />
 						</ui:include>
 					</f:facet>	
 				</aon:column>
+				
+				<aon:column styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputLabel for="ActionTarget_comments"
+							value="#{marketingBundle.marketing_comments}" />
+					</f:facet>				
+					<aon:outputText value="#{to.comments}"
+						rendered="#{formList}" />
+					<aon:inputTextarea id="ActionTarget_comments"
+						value="#{controller.to.comments}"
+						rows="2" cols="40" rendered="#{formEdit}" />					
+					<f:facet name="footer">
+						<aon:inputTextarea id="ActionTarget_comments-New"
+							value="#{controller.to.comments}"
+							rows="2" cols="40" rendered="#{formNew}" />					
+					</f:facet>
+				</aon:column>					
 				
 				<aon:column alias="ActionTarget.status"
 					styleClass="aon-editDataTable-textColumn aon-width-80">

@@ -4,6 +4,7 @@ import com.code.aon.commercial.Target;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
 import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.Survey;
 import com.code.aon.marketing.dao.IMarketingAlias;
@@ -18,6 +19,16 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 	private Target target;
 	
 	private MarketingAction action;
+	
+	private User user;
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 	public Survey getSurvey() {
 		return survey;
@@ -51,6 +62,8 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 		setSurvey( (Survey) surveyBean.createNewTo() );
 		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
 		setTarget( (Target) targetBean.createNewTo() );
+		IManagerBean userBean = BeanManager.getManagerBean(User.class);
+		setUser( (User) userBean.createNewTo() );
 	}
 	
 	@Override
@@ -66,6 +79,10 @@ public class SurveyResponseSearchListener extends ControllerSearchListener {
 		if ( (getAction() != null) && (getAction().getId() != null) ) {
 			String alias = getFieldName(IMarketingAlias.SURVEY_RESPONSE_ACTION_ID);
 			criteria.addEqualExpression(alias, getAction().getId());			
+		}
+		if ( (getUser() != null) && (getUser().getId() != null) ) {
+			String alias = getFieldName(IMarketingAlias.SURVEY_RESPONSE_USER_ID);
+			criteria.addEqualExpression(alias, getUser().getId());			
 		}
 	}	
 }

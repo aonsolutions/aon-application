@@ -1,14 +1,15 @@
-package com.code.aon.ui.audit.event;
+package com.code.aon.ui.config.event;
 
 import static com.code.aon.ldap.IAonObjectClasses.USER;
 import static com.code.aon.ldap.ILdapConstants.ACTIVE_ATTRIBUTE;
-import static com.code.aon.ui.audit.controller.IAuditConstants.AUDIT_CONTROLLER_NAME;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.model.DataModel;
 import javax.naming.Name;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.ManagerBeanException;
@@ -17,15 +18,25 @@ import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.NameResolver;
-import com.code.aon.ui.audit.controller.AuditController;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
-public class UserAuditLoookupListener extends ControllerAdapter {
+public class UserLoookupListener extends ControllerAdapter {
 	
-	private boolean isValid( BasicLdap ldap, String domain, String application, String user ) {
+	private String domain;
+	
+	private String application;
+	
+	public UserLoookupListener() {
+    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
+    	this.domain = resolver.getDomain();			
+    	this.application = StringUtils.removeStart(UserUtils.getInstance().getPrincipal().getContext(), "/" );
+	}
+
+	private boolean isValid( BasicLdap ldap, String user ) {
 		Name userDN = NameResolver.getUserDN(domain, user);
 		if ( ldap.exists(userDN, USER) ) {
 			Entry entry = ldap.get(userDN, USER, ACTIVE_ATTRIBUTE);
@@ -46,14 +57,10 @@ public class UserAuditLoookupListener extends ControllerAdapter {
 			DataModel model = event.getController().getModel();
 			if ( (model != null) && (model.getRowCount() > 0) ) {
 				BasicLdap ldap = new BasicLdap();
-		    	DomainResolver resolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
-		    	String domain = resolver.getDomain();			
-		    	AuditController ac = (AuditController) AonUtil.getRegisteredBean(AUDIT_CONTROLLER_NAME);
-		    	String application = ac.getApplication().getName();
 				List<User> list = (List<User>) model.getWrappedData();
 				List<User> users = new LinkedList<User>();
 				for( User user : list ) {
-					if ( isValid( ldap, domain, application, user.getLogin()) ) {
+					if ( isValid( ldap, user.getLogin()) ) {
 						users.add(user);
 					}
 				}

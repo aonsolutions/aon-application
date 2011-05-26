@@ -21,7 +21,7 @@
 				<ui:define name="searchContent">
 
 					<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{communicationCenter.survey}" />
+						<ui:param name="lookupTo" value="#{surveyResponseSearch.survey}" />
 					</ui:include>	
 
 					<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/lookup.xhtml" >
@@ -31,12 +31,11 @@
 					<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{surveyResponseSearch.target}" />
 						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>						
-
-					<aon:outputLabel for="SurveyResponse_user_name"
-						value="#{bundle.aon_login_user}" />
-					<aon:inputText id="SurveyResponse_user_name" size="60"
-						valueChangeListener="#{surveyResponse.addExpression}" />		
+					</ui:include>					
+					
+					<ui:include src="/com/code/aon/ui/config/facelet/user/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{surveyResponseSearch.user}" />
+					</ui:include>								
 			
 				</ui:define>			
 			</ui:decorate>
@@ -45,6 +44,7 @@
 		<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
+		<aon:lookupButtonPopup lookup="#{userLookup}" />
 	</ui:define>
 		
 </ui:composition>

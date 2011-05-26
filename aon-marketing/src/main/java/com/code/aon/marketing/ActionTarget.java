@@ -6,19 +6,23 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.User;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
@@ -60,6 +64,16 @@ public class ActionTarget implements ITransferObject, IRegistry {
     @JoinColumn( name="survey_response" )	
 	@Index(name = "IDX_MK_ACTION_TARGET_SURVEY_RESPONSE")
 	private SurveyResponse surveyResponse;	
+	
+	@ManyToOne (fetch=FetchType.EAGER)
+    @JoinColumn( name="user" )	
+	@ForeignKey(name = "FK_MK_ACTION_TARGET_USER")
+	@Index(name = "IDX_MK_ACTION_TARGET_USER")
+	private User user;
+	
+	@Lob
+	@Type(type="stringClob")	
+	private String comments;
 	
     /**
      * The empty constructor.
@@ -179,6 +193,32 @@ public class ActionTarget implements ITransferObject, IRegistry {
 		this.target.setRegistry(registry);
 	}
 	
+	/**
+	 * Gets the user.
+	 * 
+	 * @return the user
+	 */
+	public User getUser() {
+		return user;
+	}
+
+	/**
+	 * Sets the user.
+	 * 
+	 * @param user the new user
+	 */
+	public void setUser(User user) {
+		this.user = user;
+	}	
+	
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -188,9 +228,11 @@ public class ActionTarget implements ITransferObject, IRegistry {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.action, o.action)
+				.append(this.comments, o.comments)
 				.append(this.status, o.status)				
 				.append(this.surveyResponse, o.surveyResponse)
 				.append(this.target, o.target)				
+				.append(this.user, o.user)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -200,16 +242,26 @@ public class ActionTarget implements ITransferObject, IRegistry {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(action)
+			.append(comments)
 			.append(id)	
 			.append(status)			
 			.append(surveyResponse)
 			.append(target)
+			.append(user)
 			.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return new PojoToStringBuilder(this).toString();
+		return new ToStringBuilder(this).
+			append("action", action.getId()).		
+			append("comments", StringUtils.abbreviate(comments, 64)).
+			append("id", id).
+			append("status", status).
+			append("surveyResponse", (surveyResponse.getId() != null) ? surveyResponse.getId() : null ).
+			append("target", target.getId()).
+			append("user", (user.getId() != null) ? user.getId() : null ).
+			toString();
 	}
 	
 }
