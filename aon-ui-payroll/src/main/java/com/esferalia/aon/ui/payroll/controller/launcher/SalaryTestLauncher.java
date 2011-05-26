@@ -54,6 +54,7 @@ public class SalaryTestLauncher {
 	private boolean saveLog;
 	private boolean debugEnabled;
 	private boolean refreshEnabled;
+	private boolean testEnterpriseCost;
 	private boolean testTotalPayment;
 	private boolean testBaseIRPF;
 	private boolean testBaseCGC;
@@ -90,7 +91,13 @@ public class SalaryTestLauncher {
 	public void setRefreshEnabled(boolean refreshEnabled) {
 		this.refreshEnabled = refreshEnabled;
 	}
-
+	
+	public boolean isTestEnterpriseCost() {
+		return testEnterpriseCost;
+	}
+	public void setTestEnterpriseCost(boolean testEnterpriseCost) {
+		this.testEnterpriseCost = testEnterpriseCost;
+	}
 	public boolean isTestTotalPayment() {
 		return testTotalPayment;
 	}
@@ -132,6 +139,7 @@ public class SalaryTestLauncher {
 		setTestBaseCGC(true);
 		setTestTotalPayment(true);
 		setTestBaseIRPF(true);
+		setTestEnterpriseCost(true);
 	}
 	
 	public String getBeanName() {
@@ -194,6 +202,8 @@ public class SalaryTestLauncher {
 				salaryBuilder.setTestBaseCGC(isTestBaseCGC());
 				salaryBuilder.setTestBaseIRPF(isTestBaseIRPF());
 				salaryBuilder.setTestTotalPayment(isTestTotalPayment());
+				// TODO contemplar en el chequeo los costes de empresa
+//				salaryBuilder.setTestEnterpriseCost(isTestEnterpriseCost());
 				listener = new ListSQLSalaryBuilderTesterListener(salaryBuilder);
 				listener.setDebugEnabled(isDebugEnabled());
 				listener.setSaveLog(isSaveLog());

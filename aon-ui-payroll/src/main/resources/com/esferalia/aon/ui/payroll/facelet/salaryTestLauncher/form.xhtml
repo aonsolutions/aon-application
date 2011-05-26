@@ -27,7 +27,7 @@
 					<aon:outputText value="#{payrollBundle.payroll_launch_info}" styleClass="aon-panelGrid-search-info-internal"/>
 				</aon:div>			
 		
-				<aon:panelGrid id="salaryTestLauncherLaunchContent" columns="6">
+				<aon:panelGrid id="salaryTestLauncherLaunchContent" columns="4">
 	
 					<aon:outputLabel for="Month" value="#{bundle.aon_month}" />
 					<h:panelGrid columns="3">
@@ -44,29 +44,31 @@
 						<aon:outputText value="#{payrollBundle.payroll_launch_saveLog}" />
 					</aon:div>
 
+					<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{salaryTestLauncher.params.person}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
+
 					<aon:outputText value="&#160;" />
 					<aon:div>
 						<aon:selectBooleanCheckbox value="#{salaryTestLauncher.testTotalPayment}" />
 						<aon:outputText value="#{payrollBundle.payroll_launch_testTotalPayment}" />
 					</aon:div>
-
-					<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{salaryTestLauncher.params.person}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>
 				
 
-					<aon:outputText value="&#160;" />
-					<aon:outputText value="&#160;" />
 <!--  
+					<aon:outputText value="&#160;" />
+					<aon:outputText value="&#160;" />
 					<aon:div>
 						<aon:selectBooleanCheckbox value="#{salaryTestLauncher.debugEnabled}" />
 						<aon:outputText value="#{payrollBundle.payroll_launch_debugEnabled}" />
 					</aon:div>
 -->
 
+<!--  
 					<aon:outputText value="&#160;" />
 					<aon:outputText value="&#160;" />
+-->
 <!--  
 					<aon:div>
 						<aon:selectBooleanCheckbox value="#{salaryTestLauncher.testBaseIRPF}" />
@@ -79,6 +81,11 @@
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
 					
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox value="#{salaryTestLauncher.testEnterpriseCost}" />
+						<aon:outputText value="#{payrollBundle.payroll_launch_testEnterpriseCost}" />
+					</aon:div>
 
 <!-- 
 					<aon:outputText value="&#160;" />
@@ -87,12 +94,13 @@
 						<aon:outputText value="#{payrollBundle.payroll_launch_refreshEnabled}" />
 					</aon:div>
  -->
-	
+<!--  
 					<aon:outputText value="&#160;" />
 					<aon:outputText value="&#160;" />
 
 					<aon:outputText value="&#160;" />
 					<aon:outputText value="&#160;" />
+-->	
 <!--  
 					<aon:div>
 						<aon:selectBooleanCheckbox value="#{salaryTestLauncher.testBaseCGC}" />
