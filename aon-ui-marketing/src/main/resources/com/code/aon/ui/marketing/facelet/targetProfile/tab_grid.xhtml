@@ -8,11 +8,10 @@
 
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 			<ui:param name="controller" value="#{targetProfile}" />
-			<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
 			
 			<ui:define name="columns">
 
-				<aon:column>
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-120">
 					<f:facet name="header">
 						<aon:outputLabel for="TargetProfile_lastUpdate" value="#{marketingBundle.marketing_target_profile_lastUpdate}" />
 					</f:facet>
@@ -32,7 +31,7 @@
 					</f:facet>
 				</aon:column>
 	
-				<aon:column>
+				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputLabel for="Question_id" value="#{marketingBundle.marketing_question}" />
 					</f:facet>
@@ -48,7 +47,7 @@
 					</f:facet>
 				</aon:column>
 				
-				<aon:column>
+				<aon:column styleClass="aon-editDataTable-textColumn">
 					<f:facet name="header">
 						<aon:outputLabel for="TargetProfile_value"
 							value="#{marketingBundle.marketing_response}" />

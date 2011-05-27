@@ -58,7 +58,7 @@
 		<commercial:target
 			showTaxInfoData="false"
 			showEcommerceTab="false"
-			showProfile="false"
+			showProfile="true"
 			showSearchOnlyCustomers="false"
 			showCommercialTracking="false"
 			showProduct="false"

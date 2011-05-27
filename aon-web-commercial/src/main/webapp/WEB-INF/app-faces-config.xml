@@ -56,13 +56,14 @@
 				<value>#{targetControllerListener}</value>
 				<value>#{targetSearch}</value>
 				<value>#{targetForm}</value>
+				<value>#{targetMediaListener}</value>				
 				<value>#{targetAddressListener}</value>
-				<value>#{targetMediaListener}</value>
+				<value>#{targetRPayMethodChildListener}</value>				
 				<value>#{targetRBankChildListener}</value>
-				<value>#{targetRPayMethodChildListener}</value>
 				<value>#{targetNoteChildListener}</value>
 				<value>#{targetSegmentListener}</value>
-				<value>#{targetAddInfoListener}</value>				
+				<value>#{targetAddInfoListener}</value>	
+				<value>#{targetRAttachChildListener}</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
