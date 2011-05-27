@@ -44,6 +44,7 @@ import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.LdapException;
@@ -316,6 +317,7 @@ public class DomainUserController extends LdapBasicController implements IManage
 			workGroup = (WorkGroup) wgs.get(0);
 		} else {
 			workGroup = new WorkGroup();
+			workGroup.setStatus(WorkGroupStatus.ACTIVE);
 			workGroup.setDescription(workGroupName);
 			bean.insert(workGroup);
 		}
