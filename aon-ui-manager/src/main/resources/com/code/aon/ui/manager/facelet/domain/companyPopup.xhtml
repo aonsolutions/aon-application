@@ -55,8 +55,8 @@
 									<c:if test="#{domain.enterpriseRecipient}" >
 										<aon:outputText value="#{configBundle.config_bank_account}" />
 										<aon:div>
-											<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankLookup.xhtml">
-												<ui:param name="bankTo" value="#{domain.registryBank.bank}" />
+											<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
+												<ui:param name="lookupTo" value="#{domain.registryBank.bank}" />
 											</ui:include>
 											<ui:include src="/com/code/aon/ui/registry/facelet/rbank/bankAccount.xhtml">
 												<ui:param name="bankAccountTo" value="#{domain.registryBank.bankAccount}" />
@@ -70,6 +70,9 @@
 					</aon:div>
 				</aon:div>
 			</aon:form>
+			<c:if test="#{manager.currentDomain.type == 'CONSULTANCY'}" >
+				<aon:lookupButtonPopup lookup="#{bankLookup}" />
+			</c:if>
 
 		</rich:modalPanel> 
 

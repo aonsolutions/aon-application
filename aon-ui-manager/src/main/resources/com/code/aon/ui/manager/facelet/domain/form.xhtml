@@ -119,14 +119,16 @@
 							size="10" maxlength="20"
 							value="#{domain.to.dataBaseId}" />
 							
-						<aon:outputLabel for="Domain_administrator"
-							value="#{managerBundle.manager_domain_administrator}" />
-						<aon:selectOneMenu id="Domain_administrator"
-							converter="#{domainUser.converter}"
-							value="#{domain.to.administrator}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItems value="#{domainUser.userList}" />
-						</aon:selectOneMenu>	
+						<c:if test="#{!domain.new}" >							
+							<aon:outputLabel for="Domain_administrator"
+								value="#{managerBundle.manager_domain_administrator}" />
+							<aon:selectOneMenu id="Domain_administrator"
+								converter="#{domainUser.converter}"
+								value="#{domain.to.administrator}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{domainUser.userList}" />
+							</aon:selectOneMenu>
+						</c:if>	
 								
 					</c:if>
 
@@ -260,8 +262,5 @@
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/manager/facelet/domain/companyPopup.xhtml" />
-		<c:if test="#{manager.currentDomain.type == 'CONSULTANCY'}" >
-			<aon:lookupButtonPopup lookup="#{bankLookup}" />
-		</c:if>
 	</ui:define>
 </ui:composition>
