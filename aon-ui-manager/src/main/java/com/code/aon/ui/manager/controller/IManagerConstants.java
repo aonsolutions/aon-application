@@ -61,6 +61,7 @@ public interface IManagerConstants {
 	String NOTIFICATION_EMAIL = "notification_email";
 	String MAIL_ACCOUNT_CREATE_SCRIPT = "MailAccount_create_script";
 	String MAIL_ACCOUNT_DELETE_SCRIPT = "MailAccount_delete_script";
+	String LOGGER_SCRIPT = "logger_script";
 	String SHOW_DOMAIN_MANAGEMENT = "showDomainManagement";
 	
 	String DOMAIN_LIST = "domain_list";
