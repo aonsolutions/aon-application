@@ -17,7 +17,7 @@
 				<ui:param name="controller" value="#{domain}" />
 				<ui:param name="skipResetButton" value="#{!manager.domainManagement}" />
 				<ui:param name="skipSearchButton" value="#{!manager.config.showDomainSearch}" />
-				<ui:param name="skipRemoveButton" value="#{!manager.domainManagement}" />
+				<ui:param name="skipRemoveButton" value="#{!domain.deletable}" />
 				<ui:param name="skipBackButton" value="#{!manager.config.showDomainBack}" />				
 				<ui:param name="saveOnClick" value="Richfaces.showModalPanel('waitProccess')" />
 				<ui:param name="saveOnComplete" value="Richfaces.hideModalPanel('waitProccess')" />				

@@ -18,6 +18,7 @@ import javax.faces.validator.ValidatorException;
 import javax.naming.Context;
 import javax.naming.Name;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.config.event.BankAccountValidationListener;
+import com.code.aon.ui.manager.UserType;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
@@ -380,6 +382,13 @@ public class DomainController extends LdapBasicController implements IAonObjectC
 		return false;
 	}
 
+	public boolean isDeletable() {
+		if (! ObjectUtils.equals(getDomain(), getManager().getCurrentDomain())  ) {
+			return getManager().getUserType() != UserType.NORMAL;
+		}
+		return false;
+	}
+	
 	public void addDomainEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null) {
 			Domain domain = (Domain) event.getNewValue();
