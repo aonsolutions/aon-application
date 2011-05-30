@@ -123,18 +123,16 @@
 									</f:facet>
 									<aon:outputText value="#{expenseItem.account}"
 										rendered="#{formList}" />
-									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
-										<ui:param name="skipLabel" value="#{true}" />
+									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 										<ui:param name="lookupTo" value="#{expenseItem.to.product.purchaseAccount}" />
-										<ui:param name="lookupSuffix" value="_Purchase" />
+										<ui:param name="lookupSuffix" value="-Purchase" />
 										<ui:param name="lookupRendered" value="#{formEdit}" />
 										<ui:param name="skipSuggestText" value="#{true}" />
 									</ui:include>
 									<f:facet name="footer">
-										<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
-											<ui:param name="skipLabel" value="#{true}" />
+										<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 											<ui:param name="lookupTo" value="#{expenseItem.to.product.purchaseAccount}" />
-											<ui:param name="lookupSuffix" value="_Purchase-New" />
+											<ui:param name="lookupSuffix" value="-Purchase-New" />
 											<ui:param name="lookupRendered" value="#{formNew}" />
 											<ui:param name="skipSuggestText" value="#{true}" />
 										</ui:include>

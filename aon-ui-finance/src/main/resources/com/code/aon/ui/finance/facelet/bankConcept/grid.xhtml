@@ -49,16 +49,14 @@
 										<aon:outputLabel for="Account_id" value="#{financeBundle.finance_account}" />
 									</f:facet>
 									<aon:outputText value="#{bankConcept.account.fullDescription}" rendered="#{formList}" />
-									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
-										<ui:param name="skipLabel" value="#{true}" />
+									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 										<ui:param name="lookupTo" value="#{bankConcept.to.account}" />
 										<ui:param name="lookupRendered" value="#{formEdit}" />
 									</ui:include>
 									<f:facet name="footer">
-										<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
-											<ui:param name="skipLabel" value="#{true}" />
+										<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 											<ui:param name="lookupTo" value="#{bankConcept.to.account}" />
-											<ui:param name="lookupSuffix" value="New" />
+											<ui:param name="lookupSuffix" value="-New" />
 											<ui:param name="lookupRendered" value="#{formNew}" />
 										</ui:include>
 									</f:facet>

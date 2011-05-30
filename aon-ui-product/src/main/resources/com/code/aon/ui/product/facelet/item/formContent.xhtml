@@ -203,16 +203,14 @@
 	
 									<aon:outputLabel for="Account_id-Sales"
 										value="#{productBundle.product_sales_account}" />
-									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
-										<ui:param name="skipLabel" value="#{true}" />
+									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 										<ui:param name="lookupTo" value="#{item.to.product.salesAccount}" />
 										<ui:param name="lookupSuffix" value="-Sales" />
 									</ui:include>
 
 									<aon:outputLabel for="Account_id-Purchase"
 										value="#{productBundle.product_purchase_account}" />
-									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
-										<ui:param name="skipLabel" value="#{true}" />
+									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 										<ui:param name="lookupTo" value="#{item.to.product.purchaseAccount}" />
 										<ui:param name="lookupSuffix" value="-Purchase" />
 									</ui:include>
