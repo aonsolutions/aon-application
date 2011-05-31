@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.mail.Address;
-import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
@@ -32,6 +31,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
+import com.code.aon.webmail.bean.AonServer;
 
 public class ManagerLogger {
 
@@ -59,28 +59,42 @@ public class ManagerLogger {
 	
 	private boolean configured;
 	
+	private MailAccount getMailAccount() throws ManagerBeanException {
+		boolean accountTested = false;
+		MailAccount account = WebmailUtil.getDefaultAccount(loggedUser.getDomain(), true);
+		if ( account != null ) {
+			accountTested = true;
+			if ( AonServer.test(account, false, true) ) {
+				return account;
+			} else {
+				AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, WRONG_MAIL_ACCOUNT, account.getName());
+			}			
+		}
+		account = WebmailUtil.getDefaultAccount(loggedUser.getDomain(), loggedUser.getShortName());
+		if ( account != null ) {
+			accountTested = true;
+			if ( AonServer.test(account, false, true) ) {
+				return account;
+			} else {
+				AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, WRONG_MAIL_ACCOUNT, account.getName());
+			}
+		}
+		if (! accountTested ) {
+			AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, NEED_MAIL_ACCOUNT, loggedUser.getShortName());
+		}
+		return null;
+	}
+	
 	public ManagerLogger( String toEmails ) {
 		LoggedUser _loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
 		loggedUser = _loggedUser.getPrincipal();
 		try {
 			to = InternetAddress.parse(toEmails);
-			MailAccount account = WebmailUtil.getDefaultAccount(loggedUser.getDomain(), loggedUser.getShortName());
+			MailAccount account = getMailAccount();
 			if ( account != null ) {
 				Address from = InternetAddress.parse(account.getEmail())[0];
-				this.sender = new EmailSender(from, account);			
-				try {
-					this.sender.connect();
-					this.configured = true;
-				} catch (MessagingException e) {
-					AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, WRONG_MAIL_ACCOUNT, e.getMessage());
-				} finally {
-					this.sender.disconnect();	
-					if (! this.configured ) {
-						this.sender = null;
-					}
-				}
-			} else {
-				AonUtil.addErrorMessageFromBundle(BUNDLE_NAME, NEED_MAIL_ACCOUNT, loggedUser.getShortName());				
+				this.sender = new EmailSender(from, account);
+				this.configured = true;				
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e );
@@ -96,10 +110,8 @@ public class ManagerLogger {
 	private void sendEmail( String subject, String content ) {
 		if ( isConfigured() ) {
 			try {		
-				sender.connect();
 				String fullContent = subject + SystemUtils.LINE_SEPARATOR + content;
 				sender.sendMessage(to, subject, fullContent);
-				sender.disconnect();
 			} catch (Throwable e) {
 				LOGGER.error(e.getMessage(), e );
 			}

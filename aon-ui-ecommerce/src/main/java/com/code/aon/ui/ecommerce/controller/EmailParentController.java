@@ -7,7 +7,6 @@ import java.text.MessageFormat;
 
 import javax.faces.event.AbortProcessingException;
 import javax.mail.Address;
-import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
@@ -38,10 +37,7 @@ public class EmailParentController {
 		EmailSender es;
 		try {
 			es = getEmailSender(from);
-			es.connect();
 		} catch (UnsupportedEncodingException e) {
-			// nada
-		} catch (MessagingException e) {
 			// nada
 		}
 		sendEmail(from, to, subject, content);

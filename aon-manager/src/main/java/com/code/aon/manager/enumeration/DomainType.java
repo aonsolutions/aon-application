@@ -15,7 +15,12 @@ public enum DomainType implements IResourceable {
 	/**
      * CONSULTANCY 
      */
-	CONSULTANCY;   
+	CONSULTANCY,
+	
+	/**
+     * ENTERPRISE_MANANGER 
+     */
+	ENTERPRISE_MANAGER;   
     
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.manager.i18n.messages";

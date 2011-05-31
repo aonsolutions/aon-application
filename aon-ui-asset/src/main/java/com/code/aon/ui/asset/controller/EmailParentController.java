@@ -5,7 +5,6 @@ import java.text.MessageFormat;
 
 import javax.faces.event.AbortProcessingException;
 import javax.mail.Address;
-import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -32,11 +31,7 @@ public class EmailParentController {
 		EmailSender es;
 		try {
 			es = getEmailSender(from);
-			es.connect();
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MessagingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

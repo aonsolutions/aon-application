@@ -24,6 +24,7 @@ public class EmailSender {
 	public EmailSender( Address from, MailAccount mailAccount ) {
 		setFrom( from );
 		setMailAccount( mailAccount );
+		this.server = new AonServer(mailAccount);
 	}
 
 	public MailAccount getMailAccount() {
@@ -40,11 +41,6 @@ public class EmailSender {
 
 	public void setFrom(Address from) {
 		this.from = from;
-	}
-
-	public void connect() throws MessagingException {
-		this.server = new AonServer(mailAccount);
-		server.connect();
 	}
 	
 	public void sendMessage( Address[] to, String subject, String content ) throws WebmailException {
@@ -81,13 +77,6 @@ public class EmailSender {
 			aonMessage.setContent(content);	
 		}
 		server.sendMessage(aonMessage);
-	}
-	
-	public void disconnect() {
-		if ( (server != null) && server.isConnected() ) {
-			server.disconnect();
-			server = null;			
-		}
 	}
 
 }

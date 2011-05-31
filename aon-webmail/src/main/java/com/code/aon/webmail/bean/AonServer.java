@@ -13,6 +13,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Quota;
 import javax.mail.SendFailedException;
+import javax.mail.Service;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.Transport;
@@ -32,8 +33,6 @@ public class AonServer implements IMailConstants {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonServer.class);
 
-	private Properties properties;
-	
     private Store store;
 
     private Session session;
@@ -45,7 +44,8 @@ public class AonServer implements IMailConstants {
     /** Creates a new instance of Server */
     public AonServer(MailAccount account){
         setAccount( account );
-        this.properties = calculateProperties();
+        Properties properties = calculateProperties( account );
+        this.session = Session.getInstance(properties);
     }
     
     public boolean isQuotaAware() {
@@ -98,7 +98,7 @@ public class AonServer implements IMailConstants {
         return store != null && store.isConnected();
     }
 
-    private Properties calculateProperties() {
+    private static Properties calculateProperties( MailAccount account ) {
         Properties values = System.getProperties();
         if (account.isIncomingSsl()) {
         	values.setProperty(MAIL_IMAP_SOCKET_FACTORY_CLASS, "javax.net.ssl.SSLSocketFactory");
@@ -129,7 +129,6 @@ public class AonServer implements IMailConstants {
      */
 	public void connect() throws MessagingException {
 		LOGGER.info( "Connecting {}", account.getHost() );
-        session = Session.getInstance(properties);
         store = session.getStore();
         store.connect(account.getMailUsername(),account.getPasswordString());
         quotaAware = calculateQuotaAware();
@@ -208,31 +207,35 @@ public class AonServer implements IMailConstants {
     	sendMessage(message.getMessage());
     }
 
+    private static Transport getTransport( Session session, MailAccount account ) throws MessagingException {
+        Transport transport;
+        if (account.isOutgoingSsl()) {
+            transport = session.getTransport(SMTPS);
+        } else {
+            transport = session.getTransport(SMTP);
+        }
+        if (account.isOutgoingVerification()) {
+        	session.getProperties().put(MAIL_SMTP_AUTH, "true");
+            transport.connect(
+            		account.getOutgoingHost(),
+            		account.getOutgoingPort(),
+            		account.getMailUsername(),
+            		account.getPasswordString());
+        } else {
+        	session.getProperties().put(MAIL_SMTP_AUTH, "false");
+            transport.connect(
+            		account.getOutgoingHost(),
+            		account.getOutgoingPort(),
+                    null, null);
+        }
+        return transport;
+    }
+    
     private void sendMessage(Message message) throws WebmailException {
+    	Transport transport = null;
         try {
-            Transport transport;
-            if (account.isOutgoingSsl()) {
-                transport = session.getTransport(SMTPS);
-            } else {
-                transport = session.getTransport(SMTP);
-            }
-            if (account.isOutgoingVerification()) {
-            	session.getProperties().put(MAIL_SMTP_AUTH, "true");
-                transport.connect(
-                		account.getOutgoingHost(),
-                		account.getOutgoingPort(),
-                		account.getMailUsername(),
-                		account.getPasswordString());
-            } else {
-            	session.getProperties().put(MAIL_SMTP_AUTH, "false");
-                transport.connect(
-                		account.getOutgoingHost(),
-                		account.getOutgoingPort(),
-                        null, null);
-            }
-            if (transport.isConnected() &&
-                    message != null &&
-                    message.getFrom() != null) {
+            if ( (message != null) && (message.getFrom() != null) ) {
+            	transport = getTransport(session, account);
                 message.setSentDate(new Date());
                 message.setHeader(X_MAILER, WEBMAIL_MAILER);
                 transport.sendMessage(message,
@@ -246,6 +249,8 @@ public class AonServer implements IMailConstants {
         	throw new WebmailException( "Message was not sent correctly", e );
         } catch (Throwable e) {
         	throw new WebmailException( "Unexpected error sending the message", e );        	
+        } finally {
+        	closeQuietly(transport);
         }
     }
 
@@ -306,4 +311,40 @@ public class AonServer implements IMailConstants {
         return message;
     }    
 	
+    public static void closeQuietly( Service service ) {
+    	if ( (service != null) && service.isConnected() ) {
+    		try {
+				service.close();
+			} catch (MessagingException e) {
+				LOGGER.error( "Error closing service, " + e.getMessage(), e );
+			}
+    	}
+    }
+    
+    public static boolean test( MailAccount account, boolean receive, boolean send ) {
+    	boolean ok = true;
+        Store store = null;
+        Transport transport = null;
+        try {
+        	Properties properties = calculateProperties( account );
+            Session session = Session.getInstance(properties);
+        	if ( receive ) {
+    	        store = session.getStore();
+    	        store.connect(account.getMailUsername(),account.getPasswordString());
+    	        ok = store.isConnected();
+        	}
+        	if ( ok && send ) {
+        		transport = getTransport(session, account);
+        		ok = transport.isConnected();
+        	}
+        } catch ( Throwable th ) {
+        	LOGGER.error( "Error testing " + account, th );
+        	ok = false;
+        } finally {
+        	closeQuietly(store);
+        	closeQuietly(transport);
+        }
+    	return ok;
+    }
+    
 }

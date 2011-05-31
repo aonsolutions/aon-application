@@ -34,6 +34,7 @@ import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.manager.Domain;
 import com.code.aon.manager.dao.IManagerAlias;
+import com.code.aon.manager.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -110,6 +111,10 @@ public class ManagerController implements IManagerConstants {
 	public Domain getCurrentDomain() {
 		return currentDomain;
 	}
+	
+	public String getCurrentDomainTypeLabel() {
+		return currentDomain.getType().getName(AonUtil.getCurrentLocale());
+	}	
 	
 	public void setCurrentDomain(Domain currentDomain) {
 		this.currentDomain = currentDomain;
@@ -239,9 +244,10 @@ public class ManagerController implements IManagerConstants {
 	}
 	
 	private UserType calculateUserType() {
-		UserType type = UserType.PARENT;
-		if ( currentDomain.getParentDomain() != null ) {
-			type = UserType.NORMAL;
+		UserType type = UserType.NORMAL;
+		DomainType dt = currentDomain.getType();
+		if ( (dt != null) && ((dt == DomainType.CONSULTANCY) || (dt == DomainType.ENTERPRISE_MANAGER)) ) {
+			type = UserType.PARENT;
 		}
 		return type;
 	}

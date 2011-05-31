@@ -41,7 +41,7 @@
 							</ui:include>
 						</aon:panelGrid>	
 						
-						<c:if test="#{manager.currentDomain.type == 'CONSULTANCY'}" >
+						<c:if test="#{manager.currentDomain.type != 'ENTERPRISE'}" >
 							<aon:div id="BankAccountDiv" styleClass="aon-margin-top"> 
 								<aon:panelGrid columns="2" 
 									columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-450" >
@@ -50,7 +50,7 @@
 									<aon:selectOneMenu id="Company_feeRecipient" 
 										value="#{domain.enterpriseRecipient}" reRender="BankAccountDiv">
 										<f:selectItem itemLabel="#{domain.domainTypes[0].label}" itemValue="#{true}" />
-										<f:selectItem itemLabel="#{domain.domainTypes[1].label}" itemValue="#{false}" />
+										<f:selectItem itemLabel="#{manager.currentDomainTypeLabel}" itemValue="#{false}" />
 									</aon:selectOneMenu>							
 									<c:if test="#{domain.enterpriseRecipient}" >
 										<aon:outputText value="#{configBundle.config_bank_account}" />
@@ -70,7 +70,7 @@
 					</aon:div>
 				</aon:div>
 			</aon:form>
-			<c:if test="#{manager.currentDomain.type == 'CONSULTANCY'}" >
+			<c:if test="#{manager.currentDomain.type != 'ENTERPRISE'}" >
 				<aon:lookupButtonPopup lookup="#{bankLookup}" />
 			</c:if>
 
