@@ -514,6 +514,50 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ************ EXPENSE ITEM LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>expenseItemLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ItemLookup</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>expenseItemLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.product.Item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Item_product_type</key>
+					<value>4</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Item_product_category_name,Item_product_name,Item_product_code</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Item_product_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/product/facelet/lookup/item/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{itemSearch}</value>
+				<value>#{itemControllerListener}</value>			
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
+
 	<!-- ****** CATALOGUE ****** -->
 	<managed-bean>
 		<managed-bean-name>catalogue</managed-bean-name>
