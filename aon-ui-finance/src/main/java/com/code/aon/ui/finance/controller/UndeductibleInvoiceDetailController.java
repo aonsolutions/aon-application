@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
@@ -26,6 +25,7 @@ import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 
 public class UndeductibleInvoiceDetailController extends InvoiceDetailController {
 
@@ -103,7 +103,7 @@ public class UndeductibleInvoiceDetailController extends InvoiceDetailController
 		return recordedItemList;
 	}
 
-	public void onItemChanged(ValueChangeEvent event) {
+	public void onItemChanged(LookupChangeEvent event) {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			itemChanged(item);

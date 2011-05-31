@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -64,6 +62,8 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		super.afterBeanSelected(event);
+
 		ExpenseInvoiceDetailController controller = (ExpenseInvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		invoiceDetail.setTaxDataInDetail(true);
@@ -73,7 +73,6 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
-		controller.setLongDescription(!StringUtils.equals(invoiceDetail.getItem().getProduct().getName(), invoiceDetail.getDescription()));
 	}
 
 	@Override

@@ -65,54 +65,71 @@
 		
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
-								<aon:outputLabel for="InvoiceDetail_item" value="#{bundle.aon_concept}" />
+								<aon:outputLabel for="Item_id" value="#{bundle.aon_concept}" />
 							</f:facet>
 							<aon:outputText value="#{to.description}" 
 								rendered="#{formList}">
 								<aon:abbreviateConverter maxWidth="64" />
 							</aon:outputText>
-							<aon:div id="invoiceDetailItemEdit" rendered="#{formEdit}">
-								<aon:selectOneMenu id="InvoiceDetail_item" style="width: 300px;"
-									value="#{controller.to.item}" rendered="#{formEdit}"
-									valueChangeListener="#{controller.onItemChanged}"
-									reRender="#{dataTableId}"
-									focus="InvoiceDetail_taxableBase">
-									<f:selectItems value="#{controller.expenseItems}" />
-								</aon:selectOneMenu>
+							<ui:include src="/com/code/aon/ui/product/facelet/expenseItem/lookup.xhtml">
+								<ui:param name="lookupTo" value="#{controller.to.item}" />
+								<ui:param name="idRequired" value="#{true}" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
+								<ui:param name="lookupInputOnFocus" value="InvoiceDetail_description" />
+								<ui:param name="lookupRendered" value="#{formEdit}" />
+								<ui:param name="lookupReRender"	value="#{dataTableId}" />
+								<aon:methodParam name="lookupChangeListener"
+									value="#{controller.onItemChanged}" type="lookupChangeListener" />
+							</ui:include>
+							<aon:panelGroup id="invoiceDetailItemEdit" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formEdit}">
+								<aon:inputTextarea id="InvoiceDetail_description"
+									value="#{controller.to.description}"
+									rendered="#{controller.to.item != null and controller.to.item.id != null}"
+									cols="60" rows="#{!controller.longDescription?1:5}"
+									style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+									<f:validateLength maximum="1024" />
+								</aon:inputTextarea>
 								<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
 									actionListener="#{controller.onShortDescription}" reRender="InvoiceDetail_description"
 									rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
 								<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
 									actionListener="#{controller.onLongDescription}" reRender="InvoiceDetail_description"
 									rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
-							</aon:div>
-							<aon:inputText id="InvoiceDetail_description"
-								value="#{controller.to.description}" rendered="#{formEdit and controller.longDescription}"
-								required="true" size="45" />
+							</aon:panelGroup>
 							<f:facet name="footer">
-								<aon:div id="invoiceDetailItemNew" rendered="#{formNew}">
-									<aon:selectOneMenu id="InvoiceDetail_item-New" style="width: 300px;"
-										value="#{controller.to.item}" rendered="#{formNew}"
-										valueChangeListener="#{controller.onItemChanged}"
-										reRender="#{dataTableId}"
-										focus="InvoiceDetail_taxableBase-New">
-										<f:selectItems value="#{controller.expenseItems}" />
-									</aon:selectOneMenu>
-									<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
-										actionListener="#{controller.onShortDescription}" reRender="InvoiceDetail_description-New"
-										rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
-									<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
-										actionListener="#{controller.onLongDescription}" reRender="InvoiceDetail_description-New"
-										rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
-									<aon:div>
-										<aon:inputText id="InvoiceDetail_description-New"
-											value="#{controller.to.description}" rendered="#{formNew and controller.longDescription}"
-											required="true" size="45" />
-									</aon:div>
+								<aon:div>
+									<ui:include src="/com/code/aon/ui/product/facelet/expenseItem/lookup.xhtml">
+										<ui:param name="lookupTo" value="#{controller.to.item}" />
+										<ui:param name="idRequired" value="#{true}" />
+										<ui:param name="skipLabel" value="#{true}" />
+										<ui:param name="skipSuggestText" value="#{controller.to.item != null and controller.to.item.id != null}" />
+										<ui:param name="lookupInputOnFocus" value="InvoiceDetail_description-New" />
+										<ui:param name="lookupSuffix" value="-New" />
+										<ui:param name="lookupRendered" value="#{formNew}" />
+										<ui:param name="lookupReRender"	value="#{dataTableId}" />
+										<aon:methodParam name="lookupChangeListener"
+											value="#{controller.onItemChanged}" type="lookupChangeListener" />
+									</ui:include>
+									<aon:panelGroup id="invoiceDetailItemNew" styleClass="aon-nowrap aon-vertical-align-top" rendered="#{formNew}">
+										<aon:inputTextarea id="InvoiceDetail_description-New"
+											value="#{controller.to.description}"
+											rendered="#{controller.to.item != null and controller.to.item.id != null}"
+											cols="60" rows="#{!controller.longDescription?1:5}"
+											style="#{!controller.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
+											<f:validateLength maximum="1024" />
+										</aon:inputTextarea>
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-end"
+											actionListener="#{controller.onShortDescription}" reRender="InvoiceDetail_description-New"
+											rendered="#{controller.longDescription and controller.to.item.product.code != null}" />
+										<aon:commandButton styleClass="aon-icon aon-icon-edit-add"
+											actionListener="#{controller.onLongDescription}" reRender="InvoiceDetail_description-New"
+											rendered="#{!controller.longDescription and controller.to.item.product.code != null}" />
+									</aon:panelGroup>
 								</aon:div>
 							</f:facet>
 						</aon:column>
-	
+
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 							<f:facet name="header">
 								<aon:outputLabel for="InvoiceDetail_taxableBase" value="#{bundle.aon_amount}" />

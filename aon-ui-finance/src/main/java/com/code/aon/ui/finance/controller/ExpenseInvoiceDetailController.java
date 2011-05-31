@@ -29,6 +29,7 @@ import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 
 public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 
@@ -106,7 +107,7 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 		return recordedItemList;
 	}
 
-	public void onItemChanged(ValueChangeEvent event) throws ManagerBeanException {
+	public void onItemChanged(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().toString().equals("")) {
 			Item item = (Item)event.getNewValue();
 			itemChanged(item);

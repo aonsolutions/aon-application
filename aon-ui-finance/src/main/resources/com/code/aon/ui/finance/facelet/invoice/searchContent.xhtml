@@ -24,7 +24,7 @@
 					<aon:outputLabel value="#{(searchController.sales) ? customerBundle.customer_customer : 
 					 						  (searchController.purchase) ? supplierBundle.supplier_supplier : financeBundle.finance_creditor}" />
 				</f:facet>
-				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">		
 					<aon:outputLabel for="#{searchController.preffix}alias"
 						value="#{bundle.aon_company_alias}" />
 					<aon:inputText id="#{searchController.preffix}alias" size="60"
@@ -63,7 +63,7 @@
 				<f:facet name="header">
 					<aon:outputLabel value="#{registryBundle.registry_address_module}" />
 				</f:facet>
-				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml" />
 				</aon:panelGrid>
 			</aon:panel>
@@ -71,7 +71,7 @@
 				<f:facet name="header">
 					<aon:outputLabel value="#{registryBundle.registry_media_module}" />
 				</f:facet>
-				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">		
 					<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/searchContent.xhtml" />
 				</aon:panelGrid>
 			</aon:panel>
@@ -87,13 +87,9 @@
 				</c:if>
 
 				<c:if test="#{!(searchController.sales or searchController.purchase)}">
-					<aon:outputLabel for="InvoiceDetail_item"
-						value="#{bundle.aon_concept}" />						
-					<aon:selectOneMenu id="InvoiceDetail_item" style="width: 300px;"
-						value="#{searchController.item}">
-						<f:selectItem itemLabel="-" value="#{null}" />		
-						<f:selectItems value="#{productCollections.expenseItems}" />
-					</aon:selectOneMenu>
+					<ui:include src="/com/code/aon/ui/product/facelet/expenseItem/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{searchController.item}" />
+					</ui:include>
 				</c:if>
 
 				<aon:outputLabel for="Invoice_lines_quantity"
@@ -123,9 +119,9 @@
 		</aon:panelCollapsible>
 
 		<aon:panelCollapsible expanded="false" label="#{financeBundle.finance_finances}" >
-			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<aon:outputLabel 
-					value="#{financeBundle.finance_finance_date}" />
+					value="#{financeBundle.finance_finance_date_abbrv}" />
 				<aon:div>
 					<aon:outputLabel for="Invoice_finances_dueDate-From" styleClass="aon-form-date-label aon-padding-right"
 						value="#{bundle.aon_date_from}:" />
@@ -142,6 +138,8 @@
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 				</aon:div>
 				
+				<aon:outputLabel for="Bank_id"
+					value="#{configBundle.config_bank}" />
 				<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
 					<ui:param name="lookupTo" value="#{searchController.bank}" />
 					<ui:param name="skipNewButton" value="#{true}" />

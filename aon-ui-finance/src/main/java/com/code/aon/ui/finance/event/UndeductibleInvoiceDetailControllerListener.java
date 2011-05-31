@@ -2,8 +2,6 @@ package com.code.aon.ui.finance.event;
 
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.product.Item;
@@ -33,14 +31,14 @@ public class UndeductibleInvoiceDetailControllerListener extends InvoiceDetailCo
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		super.afterBeanCreated(event);
+
 		UndeductibleInvoiceDetailController controller = (UndeductibleInvoiceDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		try {
 			controller.loadExpenseItems();
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
-		controller.setLongDescription(!StringUtils.equals(invoiceDetail.getItem().getProduct().getName(), invoiceDetail.getDescription()));
 	}
 
 	@Override
