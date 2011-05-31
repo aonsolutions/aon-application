@@ -21,6 +21,7 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{itemLookup}" />
 		<ui:param name="lookupInputSize" value="10"/>
+		<ui:param name="lookupInputMaxLength" value="15"/>
 		<ui:param name="lookupInputOnBlur" value="toUpperCase(this);"/>		
 		<ui:param name="lookupLabel" value="#{productBundle.product_item}" />
 		<ui:param name="controller" value="#{item}" />
