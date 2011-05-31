@@ -4,11 +4,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.faces.event.AbortProcessingException;
@@ -52,6 +58,7 @@ import com.esferalia.aon.file.payroll.certificate.data.Cotizacion;
 import com.esferalia.aon.file.payroll.certificate.data.CuentaCotizacion;
 import com.esferalia.aon.file.payroll.certificate.data.DistribucionJornada;
 import com.esferalia.aon.file.payroll.certificate.data.Empresa;
+import com.esferalia.aon.file.payroll.certificate.data.Periodo;
 import com.esferalia.aon.file.payroll.certificate.data.Representante;
 import com.esferalia.aon.file.payroll.certificate.data.Trabajador;
 import com.esferalia.aon.file.payroll.certificate.data.Vacaciones;
@@ -59,11 +66,13 @@ import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
-import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.Period;
 
 public class CertificateWriter {
 	
@@ -74,6 +83,8 @@ public class CertificateWriter {
 	private static final String REPRESENTATIVE = "Administrativo";
 	private static final String REPRESENTATIVE_LABOR = "Representante Laboral";
 	private static final String DIRECTOR = "Apoderado";
+	private static final String IRREGULAR_VALUE = "2";
+	private static final String REGULAR_VALUE = "1";
 	
 	private Certificate certificate;
 	
@@ -85,16 +96,16 @@ public class CertificateWriter {
 		this.certificate = certificate;
 	}
 	
-	public FileOutput createCertificate(Certifica2Batch remesa, List<Certifica2BatchDetail> remesaDetail) throws ManagerBeanException {
+	public FileOutput createCertificate(Certifica2Batch batch, List<Certifica2BatchDetail> batchDetail) throws ManagerBeanException {
 		final String INDENT_AMOUNT_VALUE = "4";
 		final String INDENT_AMOUNT_PROPERTY = "{http://xml.apache.org/xslt}indent-amount";
 		try {
-			setCertificate(new Certificate(remesa.getEnterprise().getRegistry().getDocument(), remesa.getDate()));
-			List<CuentaCotizacion> listaCuentas = new ArrayList<CuentaCotizacion>();
-			for(String ccc: getCccList(remesaDetail)) {
-				listaCuentas.add(createCuentaCotizacionRecord(ccc, remesa, remesaDetail));
+			setCertificate(new Certificate(batch.getEnterprise().getRegistry().getDocument(), batch.getDate()));
+			List<CuentaCotizacion> list = new ArrayList<CuentaCotizacion>();
+			for(String ccc: getCccList(batchDetail)) {
+				list.add(createCuentaCotizacionRecord(ccc, batch, batchDetail));
 			}
-			getCertificate().setCuentaCotizacion(listaCuentas);
+			getCertificate().setCuentaCotizacion(list);
 			FileOutput output = new FileOutput();
 			File file = File.createTempFile("aon-temp", ".XML");
 			FileOutputStream out = new FileOutputStream(file);
@@ -149,10 +160,10 @@ public class CertificateWriter {
 		}
 	}
 	
-	private List<String> getCccList(List<Certifica2BatchDetail> remesaDetail) {
+	private List<String> getCccList(List<Certifica2BatchDetail> batchDetail) {
 		List<String> list = new ArrayList<String>();
 		String ccc;
-		for(Certifica2BatchDetail detail: remesaDetail){
+		for(Certifica2BatchDetail detail: batchDetail){
 			ccc = detail.getContract().getEnterpriseCCC().getCcc();
 			if(!list.contains(ccc)){
 				list.add(ccc);
@@ -164,7 +175,6 @@ public class CertificateWriter {
 	private void validateXmlPattern(File xml) {
 		final String SCHEMA = "enterpriseCertificate.xsd";
 		try {
-//			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.XMLNS_ATTRIBUTE_NS_URI);
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
 			URL[] urls = Classpath.search(cl, "META-INF/", SCHEMA);
@@ -179,11 +189,11 @@ public class CertificateWriter {
 		}
 	}
 	
-	private CuentaCotizacion createCuentaCotizacionRecord(String ccc, Certifica2Batch remesa, List<Certifica2BatchDetail> listaDetalle) {
+	private CuentaCotizacion createCuentaCotizacionRecord(String ccc, Certifica2Batch batch, List<Certifica2BatchDetail> listaDetalle) {
 		CuentaCotizacion cuentaCotizacion = new CuentaCotizacion();
 		Representante representante = new Representante();
 		RegistryDirStaff rds = null;
-		rds = getRegistryDirStaff(remesa.getEnterprise());
+		rds = getRegistryDirStaff(batch.getEnterprise());
 		if(rds!=null){
 			String name[] = StringUtils.split(rds.getName(),' ');
 			String nombre = name.length>=1?name[0]:"";
@@ -206,7 +216,7 @@ public class CertificateWriter {
 		cuentaCotizacion.setRepresentante(representante);
 		Empresa empresa = new Empresa();
 		empresa.setCcc(parseToLength(ccc, 15));
-		empresa.setCifNif(remesa.getEnterprise().getRegistry().getDocument());
+		empresa.setCifNif(batch.getEnterprise().getRegistry().getDocument());
 		cuentaCotizacion.setEmpresa(empresa);
 		List<Trabajador> listaTrabajadores = new ArrayList<Trabajador>();
 		for(Certifica2BatchDetail detalle: listaDetalle) {
@@ -218,30 +228,27 @@ public class CertificateWriter {
 		return cuentaCotizacion;
 	}
 	
-	private Trabajador createTrabajadorRecord(Certifica2BatchDetail detalle) {
+	private Trabajador createTrabajadorRecord(Certifica2BatchDetail detail) {
 		Trabajador trabajador = new Trabajador();
-		trabajador.setDniNie(detalle.getDocument());
-		trabajador.setNombre(parseMaxLength(detalle.getName(), 15));
-		trabajador.setApellido1(parseMaxLength(detalle.getFirstSurname(), 20));
-		if(!StringUtils.isBlank(detalle.getSecondSurname())) {
-			trabajador.setApellido2(parseMaxLength(detalle.getSecondSurname(), 20));
+		trabajador.setDniNie(detail.getDocument());
+		trabajador.setNombre(parseMaxLength(detail.getName(), 15));
+		trabajador.setApellido1(parseMaxLength(detail.getFirstSurname(), 20));
+		if(!StringUtils.isBlank(detail.getSecondSurname())) {
+			trabajador.setApellido2(parseMaxLength(detail.getSecondSurname(), 20));
 		}
-		trabajador.setNumSs(detalle.getSsNumber());
-		detalle.getQuoteGroup();
-		trabajador.setGrupoCotizacion(detalle.getQuoteGroup());
-		trabajador.setTipoContrato(parseToLength(detalle.getContractType(), 3));
-		if(detalle.getContract().getEndDate() != null && detalle.getContract().getStartDate() != null) {
-			trabajador.setDuracionContrato(parseToLength(detalle.getContractDuration(), 5));
+		trabajador.setNumSs(detail.getSsNumber());
+		trabajador.setGrupoCotizacion(detail.getQuoteGroup());
+		trabajador.setTipoContrato(parseToLength(detail.getContractType(), 3));
+		if(detail.getContract().getEndDate() != null && detail.getContract().getStartDate() != null) {
+			trabajador.setDuracionContrato(parseToLength(detail.getContractDuration(), 5));
 		}
 		// trabajador.setIndicadorDuracionContrato();
-		// TODO cno, codigo nacional de ocupacion
-//		trabajador.setCodProfesion(parseToLength(trabajos.get(0).getCno(), 7, false));
+		trabajador.setCodProfesion(parseToLength(detail.getOccupationCode(), 7, false));
 		// trabajador.setCargoPublicoSindical();
 		// trabajador.setPorcentualDedicacion();
-		trabajador.setFechaAltaEmpresa(parseFecha(detalle.getEnterpriseStartDate()));
-		trabajador.setCodCausaSuspension(parseToLength(detalle.getSuspensionCause().getValue(), 2));
-		// trabajador.setFechaSuspensionExtincion(detalle.getEmpleado().getFechaFin().toString());
-		trabajador.setFechaSuspensionExtincion(parseFecha(detalle.getExpireDate()));
+		trabajador.setFechaAltaEmpresa(parseFecha(detail.getEnterpriseStartDate()));
+		trabajador.setCodCausaSuspension(parseToLength(detail.getSuspensionCause().getValue(), 2));
+		trabajador.setFechaSuspensionExtincion(parseFecha(detail.getExpireDate()));
 		// trabajador.setFechaFinSuspension();
 		// trabajador.setEre();
 		// trabajador.setPorcentualReduccionERE();
@@ -253,79 +260,117 @@ public class CertificateWriter {
 		/*
 		 * NODOS
 		 */
-		if(isFulltimeContract(detalle.getContractType())){
-			trabajador.setDistribucionJornada(createDistribucionJornadaRecord(detalle));
+		if(!isFulltimeContract(detail)){
+			trabajador.setDistribucionJornada(createDistribucionJornadaRecord(detail));
 		}
 		List<Cotizacion> listaDatosCotizacion = new ArrayList<Cotizacion>();
-		listaDatosCotizacion.addAll(createDatosCotizacionRecord(detalle));
+		listaDatosCotizacion.addAll(createDatosCotizacionRecord(detail));
 		trabajador.setDatosCotizacion(listaDatosCotizacion);
-		trabajador.setDatosVacacionesCotizadas(createDatosVacacionesCotizadasRecord(detalle.getContract()));
+		trabajador.setDatosVacacionesCotizadas(createDatosVacacionesCotizadasRecord(detail.getContract()));
 		return trabajador;
 	}
 	
-	// TODO obtener los contratos a tiempo parcial y el tipo de tiempo parcial (regular/irregular)
-	private DistribucionJornada createDistribucionJornadaRecord(Certifica2BatchDetail detalle) {
+	private DistribucionJornada createDistribucionJornadaRecord(Certifica2BatchDetail detail) {
 		DistribucionJornada jornada = null;
-//		List<ITrabajo> trabajosTP = null;
-//		try {
-//			trabajosTP = getEmpleadoDAO().getTrabajosTP(detalle.getEmpleado());
-//		} catch (PayrollException e) {
-//			AonUtil.addErrorMessage(e.getMessage());
-//		}
-//		if (trabajosTP != null && trabajosTP.size() > 0) {
-//			Periodo periodo = null;
-//			List<Periodo> listaPeriodos = new ArrayList<Periodo>();
-//			DateFormat dateYYYYMMDD = new SimpleDateFormat(DATE_FORMAT);
-//			for (ITrabajo t : trabajosTP) {
-//				if (t.getTipoTP() != null && t.getDiasTP() != null) {
-//					if (periodo == null) {
-//						periodo = new Periodo();
-//						periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
-//						if (dateYYYYMMDD.format(t.getFecfin()).equals(FINAL_END_DATE)) {
-//							periodo.setFechaFinPeriodo(parseFecha(detalle.getFechaBaja()));
-//						}
-//						else {
-//							periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
-//						}
-//						periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
-//						periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(), 5));
-//					}
-//					else {
-//						try {
-//							Date fechaInicioPeriodo = dateYYYYMMDD.parse(periodo.getFechaInicioPeriodo());
-//							if (periodo.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(parseToLength(t.getDiasTP(), 5))
-//									&& periodo.getTipoDistribucion().equals(parseTipoDistribucion(t.getTipoTP()))
-//									&& differenceBetweenDates(t.getFecfin(),fechaInicioPeriodo).equals(2)) {
-//								periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
-//							}
-//							else {
-//								listaPeriodos.add(periodo);
-//								periodo = new Periodo();
-//								periodo.setFechaInicioPeriodo(parseFecha(t.getFecini()));
-//								periodo.setFechaFinPeriodo(parseFecha(t.getFecfin()));
-//								periodo.setTipoDistribucion(parseTipoDistribucion(t.getTipoTP()));
-//								periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(t.getDiasTP(), 5));
-//							}
-//						} catch (ParseException e) {
-//							String msg = "Error al obtener la fecha de inicio del periodo ("+e.getMessage()+")";
-//							LOGGER.warn(msg);
-//						}
-//					}
-//				}
-//			}
-//			if (periodo != null) {
-//				listaPeriodos.add(periodo);
-//				jornada = new DistribucionJornada();
-//				jornada.setListaPeriodos(listaPeriodos);
-//			}
-//		}
+		Periodo periodo = null;
+		List<Periodo> listaPeriodos = new ArrayList<Periodo>();
+		for (Period p : getPeriodList(detail.getContract())) {
+			String diasTp = getContractDataExpression(detail.getContract(), p, ContractVariables.CONTRACT_DAYS);
+			String diasSemanaTp = getContractDataExpression(detail.getContract(), p, ContractVariables.WEEK_DAYS);
+			if(diasTp!=null || diasSemanaTp!=null){
+				if(isIrregular(detail.getContract(), p)){
+					addPeriod(IRREGULAR_VALUE, p, diasTp, listaPeriodos, periodo);
+				} else {
+					addPeriod(REGULAR_VALUE, p, diasSemanaTp, listaPeriodos, periodo);
+				}
+			}
+		}
+		if(!listaPeriodos.isEmpty()){
+			jornada = new DistribucionJornada();
+			jornada.setListaPeriodos(listaPeriodos);
+		}
 		return jornada;
 	}
 	
-	private List<Cotizacion> createDatosCotizacionRecord(Certifica2BatchDetail detalle) {
+	private void addPeriod(String tipoTp, Period p, String diasTp, List<Periodo> listaPeriodos, Periodo periodo) {
+		DateFormat dateYYYYMMDD = new SimpleDateFormat(DATE_FORMAT);
+		Date startDate = p.getStart();
+		Date endDate = p.getEnd();
+		if(listaPeriodos.isEmpty()){
+			periodo = new Periodo();
+			periodo.setFechaInicioPeriodo(parseFecha(startDate));
+			periodo.setFechaFinPeriodo(parseFecha(endDate));
+			periodo.setTipoDistribucion(tipoTp);
+			periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(diasTp, 5));
+			listaPeriodos.add(periodo);
+		} else {
+			Periodo tmp = listaPeriodos.get(listaPeriodos.size()-1);
+			try {
+				if(tmp.getTipoDistribucion().equals(tipoTp) 
+						&& tmp.getNumeroDiasTrabajadosPorSemanaOPeriodo().equals(parseToLength(diasTp, 5))
+						&& differenceBetweenDates(dateYYYYMMDD.parse(tmp.getFechaFinPeriodo()),startDate).equals(2)){
+					tmp.setFechaFinPeriodo(parseFecha(endDate));
+				} else {
+					periodo = new Periodo();
+					periodo.setFechaInicioPeriodo(parseFecha(startDate));
+					periodo.setFechaFinPeriodo(parseFecha(endDate));
+					periodo.setTipoDistribucion(tipoTp);
+					periodo.setNumeroDiasTrabajadosPorSemanaOPeriodo(parseToLength(diasTp, 5));
+					listaPeriodos.add(periodo);
+				}
+			} catch (ParseException e) {
+				String msg = "Error al obtener la fecha de inicio del periodo ("+e.getMessage()+")";
+				LOGGER.warn(msg);
+			}
+		}
+	}
+
+	private String getContractDataExpression(Contract contract, Period p,
+			ContractVariables workedDays) {
+		ContractData cd = getContractDataMap(contract, p).get(workedDays.getName());
+		return (cd==null)?null:cd.getExpression();
+	}
+
+	private boolean isIrregular(Contract contract, Period p) {
+		ContractData cd = getContractDataMap(contract, p).get(ContractVariables.IRREGULAR.getName());
+		return (cd!=null && new Boolean(cd.getExpression()));
+	}
+
+	private String getContractDataExpression(ContractData cd, ContractVariables cv) {
+		List<ContractData> list = getContractDataList(cd.getContract());
+		for (ContractData c : list) {
+			if(c.getName()==cv.getName()
+					&& (c.getStartDate().after(cd.getStartDate()) || c.getStartDate().equals(cd.getStartDate()))
+					&& (c.getEndDate().before(cd.getEndDate()) || c.getEndDate().equals(cd.getEndDate()))){
+				return c.getExpression();
+			}
+		}
+		return null;
+	}
+	
+	private List<Period> getPeriodList(Contract contract) {
+		List<Period> list = null;
+		for(ContractData cd: getContractDataList(contract)){
+			if(cd.getName().equals(ContractVariables.WEEK_DAYS.getName()) || cd.getName().equals(ContractVariables.CONTRACT_DAYS.getName())){
+				Period period = new Period(cd.getStartDate(), cd.getEndDate());
+				if(list==null){
+					list = new LinkedList<Period>();
+					list.add(period);
+				} else {
+					Period tmp = list.get(list.size()-1);
+					if(!tmp.getStart().equals(period.getStart()) || !tmp.getEnd().equals(period.getEnd())){
+						list.add(period);
+					}
+				}
+			}
+		}
+		return list;
+	}
+
+	private List<Cotizacion> createDatosCotizacionRecord(Certifica2BatchDetail detail) {
 		List<Cotizacion> cotizacionList = null;
 		cotizacionList = new ArrayList<Cotizacion>();
-		for(ITransferObject to: getBatchData(detalle)){
+		for(ITransferObject to: getBatchData(detail)){
 			Certifica2BatchData data = (Certifica2BatchData) to;
 			Cotizacion cotizacion = new Cotizacion();
 			cotizacion.setAno(data.getYear().toString());
@@ -339,34 +384,36 @@ public class CertificateWriter {
 		return cotizacionList;
 	}
 	
-	// TODO obtener los finiquitos para asi poder obtener tambien las vacaciones
-	private Vacaciones createDatosVacacionesCotizadasRecord(Contract empleado) {
-//		try {
-//			IFiniquito finiquito = getNominaDAO().getFiniquito(empleado);
-//			
-//			if(finiquito != null && finiquito.getDiasVacaciones() !=0 && finiquito.getImporteVacaciones() != 0) {
-//				Double baseAccidentesTrabajo = finiquito.getBaseAccidentesTrabajo();
-//				Double baseContingenciaGenerales = finiquito.getBaseContingenciasGenerales();
-//				
+	private Vacaciones createDatosVacacionesCotizadasRecord(Contract contract) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), SalaryType.SETTLE);
+			// un contracto solo puede tener un finiquito, se asume el primero de la lista
+			List<ITransferObject> list = bean.getList(criteria);
+			String noHolidays = getContractDataMap(contract).get(ContractVariables.NO_HOLIDAYS.getName()).getExpression();
+			if(!list.isEmpty() && noHolidays!=null && noHolidays!="0"){
+				Vacaciones vacaciones = new Vacaciones();
+				Salary salary = (Salary) list.get(0);
+				Double baseContingenciaGenerales = salary.getCommonBase();
+				Double baseAccidentesTrabajo = salary.getProfessionalBase();
+// TODO contemplar el caso de que exista atraso de finiquito 
 //				IFiniquitoDiferencia finiquitodf = getNominaDAO().getFiniquitoDiferencia(empleado);
-//				
 //				if(finiquitodf != null && finiquitodf.getDiasVacaciones() != 0 && finiquitodf.getImporteVacaciones() != 0) {
 //					baseAccidentesTrabajo += finiquitodf.getBaseAccidentesTrabajo();
 //					baseContingenciaGenerales += finiquitodf.getBaseContingenciasGenerales();
 //				}
-//				
-//				Vacaciones vacaciones = new Vacaciones();
-//				
-//				vacaciones.setNumDiasCotizados(parseToLength(finiquito.getDiasVacaciones(), 3));
-//				vacaciones.setBaseCotizacionContingenciasComunes(parseToLength(baseContingenciaGenerales, 9));
-//				vacaciones.setBaseCotizacionDesempleo(parseToLength(baseAccidentesTrabajo, 9));
-//				vacaciones.setObservaciones(null);
-//				
-//				return vacaciones;
-//			}
-//		} catch (PayrollException e) {
-//			AonUtil.addErrorMessage(e.getMessage());
-//		}
+				vacaciones.setNumDiasCotizados(parseToLength(noHolidays, 3));
+				vacaciones.setBaseCotizacionContingenciasComunes(parseToLength(baseContingenciaGenerales, 9));
+				vacaciones.setBaseCotizacionDesempleo(parseToLength(baseAccidentesTrabajo, 9));
+				vacaciones.setObservaciones(null);
+				return vacaciones;
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Error al obtener el finiquito de "+contract.getPerson().getFullName();
+			AonUtil.addErrorMessage(msg);
+		}
 		return null;
 	}
 	
@@ -378,7 +425,6 @@ public class CertificateWriter {
 			IManagerBean bean = BeanManager.getManagerBean(RegistryDirStaff.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_REGISTRY_ID), enterprise.getId());
-//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DUE_DATE), new Date());
 			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IRegistryAlias.REGISTRY_DIR_STAFF_DUE_DATE));
 			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
@@ -406,35 +452,7 @@ public class CertificateWriter {
 		}
 		return null;
 	}
-		
-//	private Salary getCurrentSalary(Contract contract, SalaryType type, Date startDate, Date endDate){
-//		try {
-//			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), contract.getId());
-//			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), type);
-//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), startDate);
-//			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), endDate);
-//			
-//			List<ITransferObject> salaryList = bean.getList(criteria);
-//			if(!salaryList.isEmpty()){
-//				return (Salary) salaryList.get(0);
-//			} 
-////			else {
-//////				ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate,endDate,endDate);
-//////				return (Salary) ctx.getSalaryProxy().getSalary();
-////				AonUtil.addErrorMessage(contract.getPerson().getFullName()+" no tiene las nominas calculadas.");
-////			}
-//		} catch (ManagerBeanException e) {
-//			// NADA, que siga generando el fichero
-//		} 
-////		catch (SalaryException e) {
-////			// NADA, que siga generando el fichero
-////		}
-//		return null;
-//	}
 	
-	@SuppressWarnings("unused")
 	private ContractWorkingDay getContractWorkingTime(String tc2) {
 		if(tc2.startsWith("1") || tc2.startsWith("4")){ // completa
 			return ContractWorkingDay.FULL_TIME;
@@ -448,24 +466,76 @@ public class CertificateWriter {
 		return null;
 	}
 	
-	private boolean isFulltimeContract(String tc2) {
-		if(tc2.startsWith("1") || tc2.startsWith("4")){ 
-			return true;
-		} 
+	private boolean isFulltimeContract(Certifica2BatchDetail detalle) {
+		ContractData fullTime = getContractDataMap(detalle.getContract()).get(ContractVariables.FULL_TIME.getName());
+		if(fullTime==null || new Boolean(fullTime.getName())){
+			if(detalle.getContractType().startsWith("1") || detalle.getContractType().startsWith("4")){ 
+				return true;
+			} 
+		}
 		return false;
 	}
-
-
+	
+	protected Map<String, ContractData> getContractDataMap(Contract contract) {
+		Map<String, ContractData> map = new HashMap<String, ContractData>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractData data = (ContractData) to;
+				if(data.getExpression()!=null){
+					map.put(data.getName(), data);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, que siga generando el fichero
+		}
+		return map;
+	}
+	
+	protected Map<String, ContractData> getContractDataMap(Contract contract, Period period) {
+		Map<String, ContractData> map = new HashMap<String, ContractData>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE), period.getStart());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), period.getEnd());
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractData data = (ContractData) to;
+				if(data.getExpression()!=null){
+					map.put(data.getName(), data);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, que siga generando el fichero
+		}
+		return map;
+	}
+	
+	protected List<ContractData> getContractDataList(Contract contract) {
+		List<ContractData> list = new LinkedList<ContractData>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE));
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractData data = (ContractData) to;
+				if(data.getExpression()!=null){
+					list.add(data);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, que siga generando el fichero
+		}
+		return list;
+	}
 	
 	/*
 	 * CONVERSIONES
 	 */
-	
-	// TODO Divisa
-//	private Double convertMoney(Double money, IDivisa divisa) {
-//		return money;
-//	}
-	
 	private Integer differenceBetweenDates(Date from, Date to) {
 		Integer diffDays = new Integer(0);
 		final Double MS_PER_DAY = new Double(1000 * 60 * 60 * 24);
@@ -536,15 +606,5 @@ public class CertificateWriter {
 		return parse.toString();
 	}
 	
-	// TODO TipoTiempoParcial = regular/irregular
-//	private String parseTipoDistribucion(TipoTiempoParcial tipoTP) {
-//		String parse = null;
-//		
-//		if(tipoTP != null) {
-//			parse = new String(String.valueOf(tipoTP.ordinal() + 1));
-//		}
-//		
-//		return parse;
-//	}
 		
 }

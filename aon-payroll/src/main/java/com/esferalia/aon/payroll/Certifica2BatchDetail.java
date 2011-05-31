@@ -108,7 +108,7 @@ public class Certifica2BatchDetail implements ITransferObject {
 		this.enterpriseNif = enterpriseNif;
 	}
 	
-	@Column(nullable = false, length = 15)
+	@Column(nullable = false, length = 9)
 	public String getCcc() {
 		return ccc;
 	}
@@ -124,12 +124,10 @@ public class Certifica2BatchDetail implements ITransferObject {
 		this.document = document;
 	}
 
-	@Column(nullable = false, length = 9)
+	@Column(nullable = false, length = 15)
 	public String getName() {
 		return name;
 	}
-	
-	@Column(nullable = false, length = 15)
 	public void setName(String name) {
 		this.name = name;
 	}

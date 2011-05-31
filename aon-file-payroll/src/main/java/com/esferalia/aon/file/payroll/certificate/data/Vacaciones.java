@@ -45,15 +45,15 @@ public class Vacaciones {
 		Element datosVacacionesCotizadas = xmldoc.createElement(DATOS_VACACIONES_COTIZADAS);
 
 		Element numDiasCotizados = xmldoc.createElement(NUM_DIAS_COTIZADOS);
-		numDiasCotizados.appendChild(xmldoc.createTextNode(getNumDiasCotizados().toString()));
+		numDiasCotizados.appendChild(xmldoc.createTextNode(getNumDiasCotizados()));
 		datosVacacionesCotizadas.appendChild(numDiasCotizados);
 
 		Element baseCotizacionContingenciasComunes = xmldoc.createElement(BASE_COTIZACION_CONTINGENCIAS_COMUNES);
-		baseCotizacionContingenciasComunes.appendChild(xmldoc.createTextNode(getBaseCotizacionContingenciasComunes().toString()));
+		baseCotizacionContingenciasComunes.appendChild(xmldoc.createTextNode(getBaseCotizacionContingenciasComunes()));
 		datosVacacionesCotizadas.appendChild(baseCotizacionContingenciasComunes);
 
 		Element baseCotizacionDesempleo = xmldoc.createElement(BASE_COTIZACION_DESEMPLEO);
-		baseCotizacionDesempleo.appendChild(xmldoc.createTextNode(getBaseCotizacionDesempleo().toString()));
+		baseCotizacionDesempleo.appendChild(xmldoc.createTextNode(getBaseCotizacionDesempleo()));
 		datosVacacionesCotizadas.appendChild(baseCotizacionDesempleo);
 
 		Element observaciones = null;

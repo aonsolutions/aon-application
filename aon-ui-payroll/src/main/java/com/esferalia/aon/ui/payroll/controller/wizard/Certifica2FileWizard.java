@@ -46,7 +46,8 @@ public class Certifica2FileWizard extends Certifica2Factory implements Serializa
 	private static final long serialVersionUID = 6365122064043568318L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(Certifica2FileWizard.class);
 
-	private Date date;
+	private Date fromDate;
+	private Date toDate;
 	private FileStatus[] status;
 	
 	private int currentStep;
@@ -65,39 +66,36 @@ public class Certifica2FileWizard extends Certifica2Factory implements Serializa
 	public Certifica2Batch getRemesa() {
 		return remesa;
 	}
-	
-	public Date getDate() {
-		return date;
+	public Date getFromDate() {
+		return fromDate;
 	}
-
-	public void setDate(Date date) {
-		this.date = date;
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
 	}
-
+	public Date getToDate() {
+		return toDate;
+	}
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
 	public FileStatus[] getStatus() {
 		return status;
 	}
-
 	public void setStatus(FileStatus[] status) {
 		this.status = status;
 	}
-
 	public void setRemesa(Certifica2Batch remesa) {
 		this.remesa = remesa;
 	}
-	
 	public List<RemesableCertificate> getSelectedRemesas() {
 		return selectedRemesas;
 	}
-
 	public void setSelectedRemesas(List<RemesableCertificate> selectedRemesas) {
 		this.selectedRemesas = selectedRemesas;
 	}
-	
 	public List<Certifica2Batch> getBatchList() {
 		return batchList;
 	}
-
 	public void setBatchList(List<Certifica2Batch> batchList) {
 		this.batchList = batchList;
 	}
@@ -237,7 +235,7 @@ public class Certifica2FileWizard extends Certifica2Factory implements Serializa
 		setCurrentStep(0);
 		FileStatus[] status = {FileStatus.PENDING};
 		setStatus(status);
-		setDate(new Date());
+		setFromDate(new Date());
 	}
 
 	private void onValidate(ActionEvent event) {
@@ -291,8 +289,11 @@ public class Certifica2FileWizard extends Certifica2Factory implements Serializa
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Certifica2Batch.class);
 			Criteria criteria = new Criteria();
-			if (getDate() != null) {
-				criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DATE),getDate());
+			if (getFromDate() != null) {
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DATE),getFromDate());
+			}
+			if (getToDate() != null) {
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_DATE),getToDate());
 			}
 			if (!ArrayUtils.isEmpty(getStatus())) {
 				String status = bean.getFieldName(IPayrollAlias.CERTIFICA2BATCH_STATUS);
@@ -349,7 +350,7 @@ public class Certifica2FileWizard extends Certifica2Factory implements Serializa
 			FileOutputStream fos = new FileOutputStream(file);
 			ZipOutputStream out = new ZipOutputStream(fos);
 			for(RemesableCertificate remesable: getSelectedRemesas()){
-				getDetalleRemesaCertificados(remesable.getCertificate());
+//				getDetalleRemesaCertificados(remesable.getCertificate());
 				setFileOutput(getCertificateWriter().createCertificate(remesable.getCertificate(), getDetalleRemesaCertificados(remesable.getCertificate())));
 				FileInputStream in = new FileInputStream(getFileOutput().getFile());
 				out.putNextEntry(new ZipEntry(getCertificateWriter().getCertificate().getFile()+".xml"));

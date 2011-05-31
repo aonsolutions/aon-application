@@ -80,6 +80,12 @@ public enum ContractVariables implements IResourceable{
 	TOTAL_LIQUID("TOTAL_LIQUIDO"),
 	TOTAL_PAYMENT("TOTAL_DEVENGADO"),
 	
+	// TODO se pone en ultimo lugar para que no afecte al orden existente en la base de datos
+	NO_HOLIDAYS("DIAS_VACACIONES_NO_DISFRUTADOS"),
+	CONTRACT_DAYS("DIAS_CONTRATO"),
+	WEEK_DAYS("DIAS_SEMANA"),
+	IRREGULAR("IRREGULAR"),
+	CNO("CNO"),
 	;
 	
 	private final String name;

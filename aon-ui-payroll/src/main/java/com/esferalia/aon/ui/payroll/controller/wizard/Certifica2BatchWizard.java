@@ -416,7 +416,7 @@ public class Certifica2BatchWizard extends Certifica2Factory implements Serializ
 				detalle.setContractType(getContractDataMap(detalle.getContract()).get(ContractVariables.TC2.getName()));
 				detalle.setContractDuration(differenceBetweenDates(detalle.getContract().getStartDate(), detalle.getContract().getEndDate()).toString());
 //				detalle.setContractDurationIndicator;
-				detalle.setOccupationCode("-------");
+				detalle.setOccupationCode(getContractDataMap(detalle.getContract()).get(ContractVariables.CNO.getName()));
 //				detalle.setPublicAssociationCharge;
 //				detalle.setDedicationPercent;
 				detalle.setEnterpriseStartDate(d.getContract().getStartDate());
