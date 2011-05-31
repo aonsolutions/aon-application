@@ -25,6 +25,7 @@
 	<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
 		<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 			<ui:param name="lookupTo" value="#{itemSearch.supplier}" />
+			<ui:param name="skipNewButton" value="#{true}" />
 		</ui:include>	
 	</c:if>
 
