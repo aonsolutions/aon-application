@@ -3,11 +3,16 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:h="http://java.sun.com/jsf/html">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
 
 	<ui:include
 		src="/com/code/aon/ui/product/facelet/item/searchContent.xhtml">
 		<ui:param name="controller" value="#{lookup}" />
 	</ui:include>
+
+	<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
+		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+	</c:if>
 
 </ui:composition>
