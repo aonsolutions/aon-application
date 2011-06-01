@@ -18,51 +18,26 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<h:outputText value="#{registryBundle.registry_relationed}" />
+					<aon:outputText for="Registry_id"
+						value="#{registryBundle.registry_relationed}" />
 				</f:facet>
 				<aon:outputText value="#{to.relatedRegistry.name}"
 					rendered="#{formList}" />
-
-				<aon:div styleClass="aon-lookup" rendered="#{formEdit}">
-				<a4j:region>
-					<aon:lookupInputText id="RelatedRegistry_id"
-						value="#{controller.to.relatedRegistry.id}" size="5"
-						lookup="#{registryLookup}"
-						reRender="RelatedRegistry_name" ajaxSingle="true" 
-						required="true" />
-					<aon:lookupButton
-						windowTitle="#{registryBundle.registry_selection}"
-						selectReRender="#{dataTableId}" actionType="search"
-						lookup="#{registryLookup}" minHeight="460" minWidth="650"
-						property="#{controller.to.relatedRegistry}">
-					</aon:lookupButton>
-					<aon:inputText id="RelatedRegistry_name"
-						value="#{controller.to.relatedRegistry.name}" size="50"
-						disabled="true" />
-				</a4j:region>
-				</aon:div>
-				
-				<f:facet name="footer">
-					<aon:div styleClass="aon-lookup" rendered="#{formNew}">
-					<a4j:region>
-						<aon:lookupInputText id="RelatedRegistry_id-new"
-							value="#{controller.to.relatedRegistry.id}" size="5"
-							lookup="#{registryLookup}"
-							reRender="RelatedRegistry_name-new" ajaxSingle="true"
-							required="true" />
-						<aon:lookupButton
-							windowTitle="#{registryBundle.registry_selection}"
-							selectReRender="#{dataTableId}" actionType="search"
-							lookup="#{registryLookup}" minHeight="460" minWidth="650"
-							property="#{controller.to.relatedRegistry}">
-						</aon:lookupButton>
-						<aon:inputText id="RelatedRegistry_name-new"
-							value="#{controller.to.relatedRegistry.name}" size="50"
-							disabled="true" />
-					</a4j:region>
-					</aon:div>
-
-				</f:facet>
+				<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
+					<ui:param name="lookupTo" value="#{controller.to.relatedRegistry}" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupRendered" value="#{formEdit}" />
+				</ui:include>
+				<f:facet name="footer" >
+					<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
+						<ui:param name="lookupTo" value="#{controller.to.relatedRegistry}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{formNew}" />
+						<ui:param name="lookupSuffix" value="-New" />
+					</ui:include>
+				</f:facet>	
 			</aon:column>
 
 			<aon:column>

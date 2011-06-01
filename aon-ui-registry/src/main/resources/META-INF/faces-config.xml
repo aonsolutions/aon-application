@@ -179,6 +179,10 @@
 			<value>com.code.aon.registry.Registry</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Registry_name</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/registry/facelet/lookup/registry/list.xhtml</value>
 		</managed-property>
