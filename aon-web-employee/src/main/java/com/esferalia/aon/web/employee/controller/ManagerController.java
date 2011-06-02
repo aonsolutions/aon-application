@@ -198,8 +198,9 @@ public class ManagerController implements IPayrollConstants {
 //		controller.setSource(CalendarSource.CONTRACT);
 //		controller.setSourceId( contract.getId() );
 		controller.onInitialize(null);
-		CalendarHolidayDataController chdc = (CalendarHolidayDataController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME);
-		chdc.getHolidayDataModels();
+		// TODO ¿¿porque esta esto aqui??
+//		CalendarHolidayDataController chdc = (CalendarHolidayDataController) AonUtil.getRegisteredBean(CALENDAR_HOLIDAY_DATA_CONTROLLER_NAME);
+//		chdc.getHolidayDataModels();
 	}
 	
 	private void initWorker() {
