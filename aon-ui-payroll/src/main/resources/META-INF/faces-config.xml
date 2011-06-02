@@ -1204,6 +1204,12 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.launcher.SalaryRemoverController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<!-- ************ SALARY SETTLE ************** -->
+	<managed-bean>
+		<managed-bean-name>settle</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.salary.SettleController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- ************ CNO ************** -->
 	<managed-bean>
@@ -1722,6 +1728,22 @@
 	    <navigation-case>
     	  	<from-outcome>contractLeave_form</from-outcome>
     		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractLeave/form.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== salary settle ========================== -->
+	<navigation-rule id="settle">
+	    <navigation-case>
+    	  	<from-outcome>settle_search</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/settle/search.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>settle_list</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/settle/list.xhtml</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+    	  	<from-outcome>settle_form</from-outcome>
+    		<to-view-id>/com/esferalia/aon/ui/payroll/facelet/settle/form.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	

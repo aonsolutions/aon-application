@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+
+	<aon:panelGrid columns="2" style="width: 900px;"
+		columnClasses="aon-panelGrid-odd aon-width-250
+					  ,aon-panelGrid-even aon-width-auto">
+	
+		<aon:outputText value="#{registryBundle.registry_person}" />
+		<aon:div> 
+			<aon:outputText value="#{contract.person.registry.document}" />
+			<aon:outputText value=" - " />
+			<aon:outputText value="#{contract.person.fullName}" styleClass="aon-bold"/>
+		</aon:div>	
+
+		<aon:outputText value="#{payrollBundle.payroll_salary_ss_number}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{contract.person.socialSecurityNumber}"  style="margin-left: 50px;"/>
+
+		<aon:outputText value="#{companyBundle.company_enterprise}" />
+		<aon:div>
+			<aon:outputText value="#{contract.workPlace.enterprise.registry.document}" />
+			<aon:outputText value=" - " />	
+			<aon:outputText value="#{contract.workPlace.enterprise.registry.fullName}" styleClass="aon-bold"/>
+		</aon:div>
+
+		<aon:outputText value="#{companyBundle.company_workplace}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{contract.workPlace.description}" style="margin-left: 50px;"/>
+
+		<aon:outputText value="#{companyBundle.company_activity}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:div>
+			<aon:outputText value="#{contract.activity.description}"  style="margin-left: 50px;"/>
+			<aon:outputText value=" - ("/>
+			<aon:outputText value="#{contract.activity.cnae.code}"/>
+			<aon:outputText value=") - "/>
+			<aon:outputText value="#{contract.activity.cnae.title}"/>
+		</aon:div>
+
+		<aon:outputText value="#{companyBundle.company_enterprise_ccc}" style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{contract.enterpriseCCC.ccc}"  style="margin-left: 50px;"/>
+		
+		<aon:outputText value="#{payrollBundle.payroll_contract_period}" />
+		<aon:div>
+			<aon:outputText value="#{bundle.aon_start_date}:" styleClass="aon-italic aon-margin-right"/>
+			<aon:outputText value="#{contract.startDate}" styleClass="aon-bold">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>		
+			<aon:outputText value="#{bundle.aon_end_date}:" styleClass="aon-italic aon-margin-right aon-margin-left"/>
+			<aon:outputText value="#{contract.endDate}" styleClass="aon-bold">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>		
+		</aon:div>
+		
+	</aon:panelGrid>
+
+</ui:composition>

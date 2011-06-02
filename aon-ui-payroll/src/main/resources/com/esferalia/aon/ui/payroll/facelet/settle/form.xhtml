@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="settleForm">
+
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/settle/formToolbar.xhtml" />
+			
+			<aon:div styleClass="aon-scroll-area">
+				<c:if test="#{settle.params.contract!=null and settle.params.contract.id!=null}" >
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/settle/formHeader.xhtml" >
+						<ui:param name="contract" value="#{settle.params.contract}" />
+					</ui:include>
+				</c:if>
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="2" dir="true" width="900px">
+
+<!--  
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{settle.params.contract}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupReRender" value="settleForm" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{settle.onContractChanged}" type="lookupChangeListener" />
+					</ui:include>
+-->		
+											
+					<aon:outputLabel for="Settle_dismissCause" 
+						value="#{payrollBundle.payroll_settle_dismissCause}" />
+					<aon:selectOneMenu id="Settle_dismissCause" value="#{settle.params.dismissCause}"
+						actionListener="{settle.onDismissCauseChange}"
+						reRender="settleForm" >
+						<f:selectItem value="#{null}" itemLabel=" - " />
+						<f:selectItems value="#{payrollCollections.dismissCauseList}"  />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="Settle_daysPerYear"
+						value="#{payrollBundle.payroll_settle_daysPerYear}" />
+					<aon:inputText id="Settle_daysPerYear"
+						size="10" maxlength="7"
+						value="#{settle.params.daysPerYear}" />
+
+					<aon:outputLabel for="Settle_seniorityDate"
+						value="#{payrollBundle.payroll_salary_seniority_date}" />
+					<aon:panelGroup id="seniorityDateContainer">
+						<aon:selectInputDate id="Settle_seniorityDate"
+							value="#{settle.params.seniorityDate}" required="true"
+							inputSize="10" renderAsPopup="true" enableManualInput="true"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="oninputchange" reRender="settleForm" ajaxSingle="true"/>
+							<a4j:support event="onchanged" reRender="settleForm" ajaxSingle="true"/>
+						</aon:selectInputDate>
+						<aon:outputText value="#{payrollBundle.payroll_days}:" rendered="#{settle.params.days!=null}"
+							style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+						<aon:outputText value="#{settle.params.days}" rendered="#{settle.params.days!=null}" />	
+						<aon:outputText value="#{payrollBundle.payroll_years}:" rendered="#{settle.params.years!=null}"
+							style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+						<aon:outputText value="#{settle.params.years}" rendered="#{settle.params.years!=null}" >
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>	
+					</aon:panelGroup>
+					
+					<aon:outputLabel for="Settle_suspensionDate"
+						value="#{payrollBundle.payroll_settle_suspensionDate}" />
+					<aon:selectInputDate id="Settle_suspensionDate" 
+						value="#{settle.params.suspensionDate}"
+						timeZone="#{timeZoneController.timeZone}" 
+						popupDateFormat="#{bundle.aon_date_pattern}">
+						<a4j:support event="oninputchange" reRender="settleForm" ajaxSingle="true"/>
+						<a4j:support event="onchanged" reRender="settleForm" ajaxSingle="true"/>
+					</aon:selectInputDate>
+					
+					<aon:outputLabel for="Settle_compensationDays"
+						value="#{payrollBundle.payroll_settle_compensationDays}" />
+					<aon:panelGroup id="compensationDaysContainer">
+						<aon:inputText id="Settle_compensationDays"
+							size="10" maxlength="7"
+							value="#{settle.params.compensationDays}" />
+						<aon:outputText value="#{payrollBundle.payroll_limit}:" rendered="#{settle.params.dismissCause!=null}"
+							style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+						<aon:outputText value="#{settle.params.limit}" rendered="#{settle.params.dismissCause!=null}"/>	
+						<aon:outputText value="#{payrollBundle.payroll_settle_monthly}"
+							rendered="#{settle.params.dismissCause!=null}" 
+							style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+					</aon:panelGroup>
+					
+					<aon:outputLabel for="Settle_dayAmount"
+						value="#{payrollBundle.payroll_settle_dayAmount}" />
+					<aon:inputText id="Settle_dayAmount"
+						size="10" maxlength="4"
+						value="#{settle.params.dayAmount}" />
+
+					<aon:outputLabel for="Settle_compensation"
+						value="#{payrollBundle.payroll_settle_compensation}" />
+					<aon:inputText id="Settle_compensation"
+						size="10" maxlength="7"
+						value="#{settle.params.compensation}" />
+
+					<aon:outputLabel for="Settle_pendingVacation"
+						value="#{payrollBundle.payroll_settle_pendingVacation}" />
+					<aon:inputText id="Settle_pendingVacation"
+						size="10" maxlength="7"
+						value="#{settle.params.pendingVacation}" />
+
+					<aon:outputLabel for="Settle_vacationDayAmount"
+						value="#{payrollBundle.payroll_settle_vacationDayAmount}" />
+					<aon:inputText id="Settle_vacationDayAmount"
+						size="10" maxlength="7"
+						value="#{settle.params.vacationDayAmount}" />
+
+					<aon:outputLabel for="Settle_vacationAmount"
+						value="#{payrollBundle.payroll_settle_vacationAmount}" />
+					<aon:inputText id="Settle_vacationAmount"
+						size="10" maxlength="7"
+						value="#{settle.params.vacationAmount}" />
+				
+				</aon:panelGrid>
+			</aon:div>
+			
+			
+		</aon:form>
+<!--  
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
+-->
+	</ui:define>
+	
+</ui:composition>

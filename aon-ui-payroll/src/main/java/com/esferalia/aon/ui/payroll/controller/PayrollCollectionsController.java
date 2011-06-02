@@ -24,6 +24,7 @@ import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.DisabilityCode;
 import com.esferalia.aon.payroll.enumeration.DischargeCause;
+import com.esferalia.aon.payroll.enumeration.DismissCause;
 import com.esferalia.aon.payroll.enumeration.DismissalCollective;
 import com.esferalia.aon.payroll.enumeration.EducationalLevel;
 import com.esferalia.aon.payroll.enumeration.EmbargableType;
@@ -77,6 +78,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> basicCopySignatureTypeList;
 	private List<SelectItem> ageGroupList;
 	private List<SelectItem> embargableTypeList;
+	private List<SelectItem> dismissCauseList;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -534,6 +536,20 @@ public class PayrollCollectionsController {
 			}
 		}
 		return embargableTypeList;
+	}
+	
+	public List<SelectItem> getDismissCauseList() {
+		if (dismissCauseList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			dismissCauseList = new LinkedList<SelectItem>();
+			DismissCause[] el = DismissCause.values();
+			for (DismissCause c : el) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				dismissCauseList.add(item);
+			}
+		}
+		return dismissCauseList;
 	}
 		
 }
