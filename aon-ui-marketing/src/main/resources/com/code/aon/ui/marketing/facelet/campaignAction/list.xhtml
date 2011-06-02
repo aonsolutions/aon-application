@@ -8,6 +8,8 @@
 	
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 			<ui:param name="controller" value="#{campaignAction}" />
+			<ui:param name="showDataTable" value="#{true}" />
+			<ui:param name="showNote" value="#{false}" />
 
 			<ui:define name="selectFooterContent">
 				<aon:commandButton alt="[#{bundle.aon_reset}]" value="&#160;"

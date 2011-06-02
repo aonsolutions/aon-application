@@ -32,7 +32,7 @@
 									styleClass="aon-finding-toolbar-item aon-icon-save"
 									accesskey="#{bundle.aon_key_save}" />
 								<aon:commandButton id="skip" value="#{marketingBundle.marketing_skip}"
-									action="communicationCenter" actionListener="#{communicationCenter.onNextTarget}"
+									action="communicationCenter" actionListener="#{communicationCenter.onNextActionTarget}"
 									styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 									accesskey="#{bundle.aon_key_cancel}"/>
 							</c:if>
@@ -86,6 +86,8 @@
 							<ui:param name="lookupTo" value="#{communicationCenter.action}" />
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="lookupReRender" value="aonContent" />
+							<ui:param name="goToBackActionListener"
+								value="communicationCenter.onMarketingActionBackActionListener" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{communicationCenter.onActionLookupChange}" type="lookupChangeListener" />
 						</ui:include>	

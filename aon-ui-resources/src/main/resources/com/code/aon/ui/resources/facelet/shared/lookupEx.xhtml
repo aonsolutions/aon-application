@@ -29,7 +29,8 @@
 			</aon:lookupInputText>
 		</c:if>
 		<c:if test="#{!skipGoToButton}">
-			<aon:goToButton controller="#{controller}" property="#{lookupTo}" />
+			<aon:goToButton controller="#{controller}" property="#{lookupTo}"
+				backActionListener="#{goToBackActionListener}" />
 		</c:if>
 		<aon:lookupButton
 			windowTitle="#{searchButtonTitle}" property="#{lookupTo}"

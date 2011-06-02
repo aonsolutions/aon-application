@@ -40,7 +40,7 @@ public class EmailCommunicationController implements IMarketingConstants {
 	
 	private ActionTarget getNextActionTarget() throws ManagerBeanException {
     	CommunicationCenterController ccc = getCommunicationController();
-    	List<ActionTarget> list = ccc.getActionTargets(true);
+    	List<ActionTarget> list = ccc.getActionTargets();
     	if (! list.isEmpty() ) {
     		ActionTarget actionTarget = list.get(0);
     		ccc.setActionTarget(actionTarget);

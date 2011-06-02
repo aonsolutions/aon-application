@@ -76,10 +76,19 @@
 				<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 					<aon:column styleClass="aon-text-center aon-width-80">
 						<f:facet name="header">
-							<aon:outputText value="#{marketingBundle.marketing_survey_response}" />
+							<aon:outputText value="#{marketingBundle.marketing_survey_module}" />
 						</f:facet>
 						<aon:commandButton style="border:0;" reRender="aonContent" value="&#160;"
-							styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+							title="#{marketingBundle.marketing_survey_start}"
+							styleClass="aon-finding-toolbar-item aon-icon-telephone"
+							action="communicationCenter" actionListener="#{communicationCenter.onStartActionTarget}"
+							onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
+							immediate="true">
+							<f:param name="actionTargetId" value="#{to.id}" />
+						</aon:commandButton>
+						<aon:commandButton reRender="aonContent" value="&#160;"
+							title="#{marketingBundle.marketing_survey_response_view}"
+							styleClass="aon-button-goto"
 							action="surveyResponse_action_form" actionListener="#{surveyResponse.onSelectSurveyResponse}"
 							onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
 							rendered="#{to.surveyResponse.id != null}" immediate="true">

@@ -16,6 +16,10 @@
 		<aon:valueParam name="lookupInputSuggestValue" default="#{lookupTo.name}"/>
 		<aon:valueParam name="lookupInputSuggestExpression" default="#{lto.name} (#{lto.id})"/>
 		
+		<c:if test="#{!skipGoToButton}">		
+			<aon:valueParam name="goToBackActionListener" default="#{controller.beanName}#{'.onBack'}"/>
+		</c:if>
+		
 		<aon:valueParam name="searchButtonWidth" default="650"/>
 		<aon:valueParam name="searchButtonHeight" default="480"/>
 

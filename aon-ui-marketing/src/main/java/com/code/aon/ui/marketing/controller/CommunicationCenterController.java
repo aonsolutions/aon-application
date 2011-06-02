@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
@@ -33,7 +34,6 @@ import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.marketing.SurveyWorkflow;
 import com.code.aon.marketing.TargetProfile;
 import com.code.aon.marketing.dao.IMarketingAlias;
-import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.marketing.enumeration.QuestionType;
 import com.code.aon.ql.Criteria;
@@ -46,6 +46,8 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.mailing.MailData;
 import com.code.aon.ui.mailing.MailingManager;
 import com.code.aon.ui.util.AonUtil;
@@ -98,9 +100,12 @@ public class CommunicationCenterController implements IMarketingConstants {
 	
 	private ListDataModel mailingModel;
 	
+	private User user;
+	
 	public CommunicationCenterController() {
 		this.date = new Date();
 		this.questionValues = new LinkedList<SelectItem>();
+		this.user = UserUtils.getInstance().getLoggedUser();
 	}
 
 	public ListDataModel getMailingModel() {
@@ -241,6 +246,10 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 
 	public void onInit( ActionEvent event ) {
+		init();
+	}
+
+	private void init() {
 		try {
 			setAction(null);
 			setTarget(null);
@@ -250,7 +259,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		}
 		setMailingModel(null);
 		this.surveyResponse = null;
-		this.actionTarget = null;
+		setActionTarget(null);
 	}
 	
 	public Question getQuestion() {
@@ -282,10 +291,11 @@ public class CommunicationCenterController implements IMarketingConstants {
 		this.surveyResponse.setTarget( this.target );
 		this.surveyResponse.setCreationDate( new Date() );
 		this.surveyResponse.setDate( this.date );
-		User user = UserUtils.getInstance().getLoggedUser();
 		this.surveyResponse.setUser( user );
 		IManagerBean surveyResponseBean = BeanManager.getManagerBean(SurveyResponse.class);
 		surveyResponseBean.insert( surveyResponse );
+		getActionTarget().setSurveyResponse(this.surveyResponse);
+		updateActionTarget();
 		updateSurveyQuestion( getFirstSurveyQuestion() );
 		this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER_RESPONSE;
 	}
@@ -297,12 +307,9 @@ public class CommunicationCenterController implements IMarketingConstants {
 			updateSurveyQuestion( surveyQuestion );			
 		} else {
 			this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER;
-			finishActionTarget( false );
-			if ( isActionSelected() ) {
-				onNextTarget(event);
-			} else {
-				onInit(event);	
-			}			
+			getActionTarget().setStatus(ActionTargetStatus.FINISHED);
+			updateActionTarget();
+			nextActionTarget(false);
 		}
 	}
 	
@@ -316,15 +323,9 @@ public class CommunicationCenterController implements IMarketingConstants {
 		questionValue.copyValues(response);			
 	}
 
-	private void finishActionTarget( boolean updateStatus ) throws ManagerBeanException {
-		if ( this.actionTarget != null ) {
-			this.actionTarget.setSurveyResponse(this.surveyResponse);
-			if ( updateStatus ){
-				this.actionTarget.setStatus(ActionTargetStatus.FINISHED);	
-			}
-			IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-			bean.update(this.actionTarget);
-		}
+	private void updateActionTarget() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		bean.update(getActionTarget());
 	}
 	
 	private void updateTargetProfile() throws ManagerBeanException {
@@ -481,26 +482,43 @@ public class CommunicationCenterController implements IMarketingConstants {
 		this.mainAddress = getTargetAddress(id);
 	}
 	
-	public void onNextTarget( ActionEvent event ) throws ManagerBeanException {
-		if ( this.action.getMediaType() == ActionMediaType.PHONE ) {
-			List<ActionTarget> targets = getActionTargets(true);
-			if (! targets.isEmpty() ) {
-				this.actionTarget = targets.get(0);
-				setTarget( this.actionTarget.getTarget() );
-				initTarget(this.target);
-			} else {
-				onInit(event);
-			}
-		} else {
-			setTarget(null);
+	private void blockActionTarget() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		Criteria criteria = new Criteria();
+		String userId = bean.getFieldName(IMarketingAlias.ACTION_TARGET_USER_ID);
+		criteria.addEqualExpression(userId, user.getId() );
+		String actionId = bean.getFieldName(IMarketingAlias.ACTION_TARGET_ACTION_ID);
+		criteria.addEqualExpression(actionId, this.action.getId());		
+		for( ITransferObject to : bean.getList(criteria) ) {
+			ActionTarget at = (ActionTarget) to;
+			at.setUser(null);
+			bean.update(at);
 		}
-		refreshPendingTargets();		
+		getActionTarget().setUser(user);
+		bean.update(getActionTarget());
+	}
+	
+	public void onNextActionTarget( ActionEvent event ) throws ManagerBeanException {
+		nextActionTarget(false);
+	}
+	
+	private void nextActionTarget( boolean includeCurrentTarget ) throws ManagerBeanException {
+		List<ActionTarget> targets = getActionTargets(true, includeCurrentTarget);
+		if (! targets.isEmpty() ) {
+			setActionTarget( targets.get(0) );
+			setTarget( getActionTarget().getTarget() );
+			initTarget(this.target);
+			blockActionTarget();
+			refreshPendingTargets();
+		} else {
+			init();
+		}		
 	}
 	
 	public void onUpdateActionTarget( ActionEvent event ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-		bean.update(this.actionTarget);
-		onNextTarget(event);
+		bean.update( getActionTarget() );
+		nextActionTarget(false);
 	}
 
 	public void onActionLookupChange(LookupChangeEvent event) throws ManagerBeanException {
@@ -509,13 +527,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 			MarketingAction action = (MarketingAction) event.getNewValue();
 			setAction(action);
 			try {				
-				Survey survey = null;
-				if ( (action.getSurvey() != null) && (action.getSurvey().getId() != null) ) {
-					IManagerBean bean = BeanManager.getManagerBean(Survey.class);
-					survey = (Survey) bean.get(action.getSurvey().getId());
-				}
-				setSurvey(survey);
-				onNextTarget(null);
+				setSurvey( action.getSurvey() );
+				nextActionTarget(false);
 			} catch (ManagerBeanException e) {
 				AonUtil.addErrorMessage(e.getMessage());
 				throw new AbortProcessingException(e);
@@ -525,12 +538,21 @@ public class CommunicationCenterController implements IMarketingConstants {
 		}
 	}
 
-	private Criteria getPendingTargetsCriteria( IManagerBean bean, boolean onlyCount ) throws ManagerBeanException {
+	private Criteria getPendingTargetsCriteria( IManagerBean bean, boolean onlyCount, boolean includeCurrentTarget ) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		String id = bean.getFieldName(IMarketingAlias.ACTION_TARGET_ID);
 		criteria.addOrder( id );
-		if ( !onlyCount && (this.actionTarget != null) ) {
-			criteria.addGreaterThanExpression( id, this.actionTarget.getId() );	
+		if ( !onlyCount ) {
+			Expression exp1 = ExpressionUtilities.getNullExpression("ActionTarget.user");
+			Expression exp2 = ExpressionUtilities.getEqualExpression("ActionTarget.user<id", user.getId());
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));		
+			if ( getActionTarget() != null ) {
+				if ( includeCurrentTarget ) {
+					criteria.addGreaterThanOrEqualExpression( id, getActionTarget().getId() );
+				} else {
+					criteria.addGreaterThanExpression( id, getActionTarget().getId() );	
+				}
+			}	
 		}
 		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.ACTION_TARGET_ACTION_ID), this.action.getId());
 		String status = bean.getFieldName(IMarketingAlias.ACTION_TARGET_STATUS);
@@ -541,22 +563,26 @@ public class CommunicationCenterController implements IMarketingConstants {
 		return criteria;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<ActionTarget> getActionTargets( boolean onlyFirst ) throws ManagerBeanException {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private List<ActionTarget> getActionTargets( boolean onlyFirst, boolean includeCurrentTarget ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-		Criteria criteria = getPendingTargetsCriteria(bean, false);
+		Criteria criteria = getPendingTargetsCriteria(bean, false, includeCurrentTarget);
 		List list = onlyFirst ? bean.getList(criteria, 0, 1) : bean.getList(criteria);
 		return list;
 	}
 
+	public List<ActionTarget> getActionTargets() throws ManagerBeanException {
+		return getActionTargets(false, false);
+	}
+	
 	private void refreshPendingTargets() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-		Criteria criteria = getPendingTargetsCriteria(bean, true);
+		Criteria criteria = getPendingTargetsCriteria(bean, true, false);
 		setPendingTargets(bean.getCount(criteria));
 	}
 	
 	public void onGenerateTargetMailing(ActionEvent event) throws ManagerBeanException {
-        List<ActionTarget> targets = getActionTargets(false);
+        List<ActionTarget> targets = getActionTargets();
         List<MailData> data = MailingManager.generateMailingList(targets);
         this.mailingModel = new ListDataModel(data);
         IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
@@ -573,12 +599,35 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}		
 	
 	public void onFinishSurvey(ActionEvent event) throws ManagerBeanException {
-		finishActionTarget( false );
-		if ( isActionSelected() ) {
-			onNextTarget(event);
-		} else {
-			onInit(event);	
-		}					
+		updateActionTarget();
+		nextActionTarget(false);
+	}
+
+	public void onMarketingActionBackActionListener( ActionEvent event ) throws ManagerBeanException {
+		nextActionTarget(true);
+	}
+
+	public void onStartActionTarget( ActionEvent event ) throws ManagerBeanException {
+		FacesContext context = FacesContext.getCurrentInstance();
+		String idValue = context.getExternalContext().getRequestParameterMap().get("actionTargetId");
+		if (! StringUtils.isEmpty(idValue) ) {
+			IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+			Integer id = Integer.valueOf(idValue);
+			ActionTarget at = (ActionTarget) bean.get(id);
+			at.setStatus(ActionTargetStatus.PENDING);
+			updateActionTarget();
+			setActionTarget( at );			
+		}
+		IController controller = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
+		MarketingAction action = (MarketingAction) controller.getTo();
+		setAction(action);
+		try {				
+			setSurvey( action.getSurvey() );
+			nextActionTarget(true);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}       
 	}
 	
 }

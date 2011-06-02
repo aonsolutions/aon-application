@@ -526,7 +526,7 @@ public class BasicController extends AbstractPojoController implements IControll
 				addMessage(e.getMessage());
 				throw new AbortProcessingException(e.getMessage(), e);
 			}
-			onSelect(event);
+			select(event);
 		}
 	}
 
@@ -544,7 +544,7 @@ public class BasicController extends AbstractPojoController implements IControll
 				addMessage(e.getMessage());
 				throw new AbortProcessingException(e.getMessage(), e);
 			}
-			onSelect(event);
+			select(event);
 		}
 	}
 
@@ -559,7 +559,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			int index = getSelectedIndex();
 			if ((index != -1) && (index < (model.getRowCount() - 1))) {
 				getModel().setRowIndex(index + 1);
-				onSelect(event);
+				select(event);
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectFirst exception: ", e);
@@ -577,7 +577,7 @@ public class BasicController extends AbstractPojoController implements IControll
 		try {
 			if ((getModel().getRowCount() > 0) && (!isInLast())) {
 				getModel().setRowIndex(getModel().getRowCount() - 1);
-				onSelect(event);
+				select(event);
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectFirst exception: ", e);
@@ -588,6 +588,16 @@ public class BasicController extends AbstractPojoController implements IControll
 
 	@Override
 	public void onSelect(ActionEvent event) {
+		resetBackProccess();
+		select(event);
+	}
+
+	/**
+	 * Execute selection action.
+	 *
+	 * @param event the event
+	 */
+	public void select(ActionEvent event) {
 		try {
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireBeforeBeanSelected(evt);
@@ -609,7 +619,7 @@ public class BasicController extends AbstractPojoController implements IControll
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
-
+	
 	@Override
 	public ITransferObject getTo() {
 		return this.to;
@@ -1091,7 +1101,7 @@ public class BasicController extends AbstractPojoController implements IControll
 		criteria.addEqualExpression(alias, id);
 		initializeModel();
 		getModel().setRowIndex(0);
-		onSelect(event);		
+		select(event);		
 	}	
 
 	private void resetBackProccess() {

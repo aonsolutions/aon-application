@@ -140,7 +140,7 @@ public class SMSCommunicationController implements IMarketingConstants {
     private void fillRecipients( SMSController sms ) throws ManagerBeanException {
     	CommunicationCenterController ccc = getCommunicationController();
     	cellularMap = new HashMap<String, ActionTarget>();
-    	for( ActionTarget actionTarget : ccc.getActionTargets(false) ) {
+    	for( ActionTarget actionTarget : ccc.getActionTargets() ) {
     		List<String> cellulars = getCellulars(actionTarget.getTarget());
     		if (! cellulars.isEmpty() ) {
 	   			for( String phone : cellulars ) {
