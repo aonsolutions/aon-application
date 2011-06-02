@@ -43,10 +43,6 @@
 			<aon:outputText value="&#160;"/>
 			<aon:outputText value="&#160;"/>
 
-			<aon:div style="margin-left: 10px;">
-				<aon:outputText value="1. #{payrollBundle.payroll_salary_bases_common}" styleClass="aon-bold"/>
-			</aon:div>
-			<aon:outputText value="&#160;"/>
 			<aon:div style="margin-left: 20px; border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="#{payrollBundle.payroll_salary_bases_common_remuneration}" />
 			</aon:div>
@@ -67,8 +63,18 @@
 				</aon:outputText>
 			</aon:div>
 
-			<aon:div style="border-bottom: solid #CCCCCC 1px; text-align: right;">
+			<aon:div style="margin-left: 500px; border-bottom: solid #CCCCCC 1px; text-align: right;">
 				<aon:outputText value="#{bundle.aon_total}" />
+			</aon:div>
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{salaryTO.remuneration + salaryTO.extraPayProration}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+
+			<aon:div style="margin-left: 10px;border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="1. #{payrollBundle.payroll_salary_bases_common}" styleClass="aon-bold"/>
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
@@ -76,7 +82,6 @@
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
-
 
 			<aon:div style="margin-left: 10px; border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="2. #{payrollBundle.payroll_salary_bases_professional}" styleClass="aon-bold"/>
@@ -98,10 +103,10 @@
 				</aon:outputText>
 			</aon:div>
 
-			<aon:div style="margin-left: 10px; border-bottom: solid #CCCCCC 1px;">
+			<aon:div style="margin-left: 10px; ">
 				<aon:outputText value="4. #{payrollBundle.payroll_salary_bases_irpf}" styleClass="aon-bold"/>
 			</aon:div>
-			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+			<aon:div style="">
 				<aon:outputText value="&#160;"/>
 				<aon:outputText value="#{salaryTO.irpfBase}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />

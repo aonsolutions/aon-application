@@ -44,7 +44,7 @@
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{controller.to.salary.commonBase}">
+				<aon:outputText rendered="#{controller.to.salary.commonBase != 0}"  value="#{controller.to.salary.commonBase}" >
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
@@ -65,7 +65,7 @@
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{controller.to.salary.overtimeBase}">
+				<aon:outputText rendered="#{controller.to.salary.overtimeBase != 0}" value="#{controller.to.salary.overtimeBase}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>

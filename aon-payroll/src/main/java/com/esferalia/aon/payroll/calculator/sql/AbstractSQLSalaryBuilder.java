@@ -13,10 +13,19 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 
 	protected AbstractSQL.Salary salary;
+	protected List<AbstractSQL.SalaryCost> salaryCosts;
+	protected List<AbstractSQL.SalaryBonus> salaryBonuses;
+	protected List<AbstractSQL.SalaryEmbargo> salaryEmbargos;
 	protected List<AbstractSQL.SalaryPayment> salaryPayments;
 	protected List<AbstractSQL.SalaryDeduction> salaryDeductions;
 	
 	public AbstractSQLSalaryBuilder() {
+		salaryCosts = 
+			new LinkedList<AbstractSQL.SalaryCost>();
+		salaryBonuses = 
+			new LinkedList<AbstractSQL.SalaryBonus>();
+		salaryEmbargos = 
+			new LinkedList<AbstractSQL.SalaryEmbargo>();
 		salaryPayments = 
 			new LinkedList<AbstractSQL.SalaryPayment>();
 		salaryDeductions = 
@@ -26,6 +35,9 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 	@Override
 	public void createNewSalary() {
 		salary = null;
+		salaryCosts.clear();
+		salaryBonuses.clear();
+		salaryEmbargos.clear();
 		salaryPayments.clear();
 		salaryDeductions.clear();
 		
@@ -185,7 +197,50 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 			Double socialSecurityContributions) {
 		salary.setSocialSecurityContributions(socialSecurityContributions);
 	}
+	
+	@Override
+	public void setTotalEnterprise(Double totalEnterprise) {
+		salary.setTotalEnterprise(totalEnterprise);
+	}
+	
+	
+	@Override
+	public void addBonus(String concept, Double amount, String description) {
+		AbstractSQL.SalaryBonus salaryBonus = 
+			new AbstractSQL.SalaryBonus();
+		
+		salaryBonus.setAmount(amount);
+		salaryBonus.setBonusConcept(concept);
+		salaryBonus.setDescription(description);
+		
+		salaryBonuses.add(salaryBonus);
+	}
+	
+	@Override
+	public void addCost(DeductionType type, String concept, Double amount, String description) {
+		AbstractSQL.SalaryCost salaryCost = 
+			new AbstractSQL.SalaryCost();
+		
+		salaryCost.setType(type);
+		salaryCost.setAmount(amount);
+		salaryCost.setCostConcept(concept);
+		salaryCost.setDescription(description);
+		
+		salaryCosts.add(salaryCost);
+	}
 
+	@Override
+	public void addEmbargo(Integer embargo, Double amount, String description) {
+		AbstractSQL.SalaryEmbargo salaryEmbargo= 
+			new AbstractSQL.SalaryEmbargo();
+		
+		salaryEmbargo.setAmount(amount);
+		salaryEmbargo.setContractEmbargo(embargo);
+		salaryEmbargo.setDescription(description);
+		
+		salaryEmbargos.add(salaryEmbargo);
+	}
+	
 	@Override
 	public void addPayment(PaymentType type, String concept, Double amount,
 			String description, String expression) {

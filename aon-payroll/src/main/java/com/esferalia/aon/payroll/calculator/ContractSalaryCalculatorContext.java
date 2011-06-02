@@ -13,6 +13,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorConte
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
@@ -41,6 +42,11 @@ public class ContractSalaryCalculatorContext implements IContractSalaryCalculato
 		} catch (SQLException e) {
 			throw new SalaryException(e.getMessage(),e);
 		}
+	}
+	
+	@Override
+	public SalaryType getSalaryType() {
+		return ctx.getSalaryType();
 	}
 	
 	@Override
@@ -139,8 +145,17 @@ public class ContractSalaryCalculatorContext implements IContractSalaryCalculato
 	}
 	
 	@Override
-	public Collection<IContractDeduction> getContractEmbargos()throws AonException {
+	public Collection<IContractEmbargo> getContractEmbargos()throws AonException {
 		return ctx.getContractEmbargos();
 	}
 	
+	@Override
+	public Collection<IContractCost> getContractCosts() throws AonException {
+		return ctx.getContractCosts();
+	}
+	
+	@Override
+	public Collection<IContractBonus> getContractBonus() throws AonException {
+		return ctx.getContractBonus();
+	}
 }

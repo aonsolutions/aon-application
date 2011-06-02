@@ -1,7 +1,10 @@
 package com.esferalia.aon.payroll;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -20,13 +23,20 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.Session;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Index;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
@@ -86,6 +96,18 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	private Date endDate;
 	//private boolean fullTime; //TODO Dar soporte
 	private Integer timeUnits;
+
+	//COSTOS
+	private Set<SalaryCost> salaryCosts = new HashSet<SalaryCost>();
+	private Double totalCost;
+
+	//BONIFICACIONES
+	private Set<SalaryBonus> salaryBonus = new HashSet<SalaryBonus>();
+	private Double totalBonus;
+
+	//EMBARGOS
+	private Set<SalaryEmbargo> salaryEmbargos = new HashSet<SalaryEmbargo>();
+	private Double salaryEmbargo;
 
 	//DEVENGOS
 	private Set<SalaryPayment> salaryPayments = new HashSet<SalaryPayment>();
@@ -330,6 +352,39 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	}
 
 	// *******************************************************
+	// ********************* COSTOS **************************
+	// *******************************************************
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	public Set<SalaryCost> getSalaryCosts() {
+		return salaryCosts;
+	}
+	public void setSalaryCosts(Set<SalaryCost> salaryCosts) {
+		this.salaryCosts = salaryCosts;
+	}
+
+	// *******************************************************
+	// ******************** EMBARGOS *************************
+	// *******************************************************
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	public Set<SalaryEmbargo> getSalaryEmbargos() {
+		return salaryEmbargos;
+	}
+	public void setSalaryEmbargos(Set<SalaryEmbargo> salaryEmbargos) {
+		this.salaryEmbargos= salaryEmbargos;
+	}
+
+	// *******************************************************
+	// **************** BONIFICACIONES **********************
+	// *******************************************************
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	public Set<SalaryBonus> getSalaryBonus() {
+		return salaryBonus;
+	}
+	public void setSalaryBonus(Set<SalaryBonus> salaryBonus) {
+		this.salaryBonus = salaryBonus;
+	}
+
+	// *******************************************************
 	// ****************** DEVENGOS ***************************
 	// *******************************************************
 	
@@ -568,6 +623,56 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 		this.deductions = deductions;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Transient
+	public Collection<SalaryCost> getCosts() throws SalaryException {
+		try {
+			Collection<SalaryCost> costs ;
+			String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+			Session session = HibernateUtil.getSession(sessionName);
+			// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
+			// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+			// el FrameWork.
+			if (  session.contains(this)  || this.getId() == null ) {
+				costs =  this.getSalaryCosts();
+			} else {
+				IManagerBean bean = BeanManager.getManagerBean(SalaryCost.class);
+				Criteria c = new Criteria();
+				c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_COST_SALARY_ID), this.getId());
+				List<?> list = bean.getList(c);
+				costs = (Collection<SalaryCost>) list;
+			}
+			return costs;
+		} catch (ManagerBeanException  e) {
+			throw new SalaryException(e.getMessage(),e);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transient
+	public Collection<SalaryBonus> getBonus() throws SalaryException {
+		try {
+			Collection<SalaryBonus> bonus ;
+			String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+			Session session = HibernateUtil.getSession(sessionName);
+			// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
+			// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+			// el FrameWork.
+			if (  session.contains(this)  || this.getId() == null ) {
+				bonus =  this.getSalaryBonus();
+			} else {
+				IManagerBean bean = BeanManager.getManagerBean(SalaryBonus.class);
+				Criteria c = new Criteria();
+				c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_BONUS_SALARY_ID), this.getId());
+				List<?> list = bean.getList(c);
+				bonus = (Collection<SalaryBonus>) list;
+			}
+			return bonus;
+		} catch (ManagerBeanException  e) {
+			throw new SalaryException(e.getMessage(),e);
+		}
+	}
+
 	@Transient
 	@Override
 	public Payments getPayments() throws SalaryException {
@@ -578,6 +683,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 		}
 		return payments;
 	}
+
 	public void setPayments(Payments payments) throws SalaryException {
 		this.payments = payments;
 	}

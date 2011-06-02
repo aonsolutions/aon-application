@@ -30,6 +30,7 @@ import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryEmbargo;
@@ -1592,6 +1593,43 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for SalaryBonus entity.
+	*/ 
+	DAOConstantsEntry SALARY_BONUS_ENTRY = DAOConstants.getDAOConstant(SalaryBonus.class);
+
+	/** 
+	* Alias value: SalaryBonus_amount
+	* Hibernate value: SalaryBonus.amount
+	*/
+	String  SALARY_BONUS_AMOUNT = SALARY_BONUS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SalaryBonus_bonusConcept
+	* Hibernate value: SalaryBonus.bonusConcept
+	*/
+	String  SALARY_BONUS_BONUS_CONCEPT = SALARY_BONUS_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SalaryBonus_description
+	* Hibernate value: SalaryBonus.description
+	*/
+	String  SALARY_BONUS_DESCRIPTION = SALARY_BONUS_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SalaryBonus_id
+	* Hibernate value: SalaryBonus.id
+	*/
+	String  SALARY_BONUS_ID = SALARY_BONUS_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SalaryBonus_salary_id
+	* Hibernate value: SalaryBonus.salary.id
+	*/
+	String  SALARY_BONUS_SALARY_ID = SALARY_BONUS_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
 	* DAOConstantsEntry for SalaryCost entity.
 	*/ 
 	DAOConstantsEntry SALARY_COST_ENTRY = DAOConstants.getDAOConstant(SalaryCost.class);
@@ -1603,22 +1641,34 @@ public interface IPayrollAlias {
 	String  SALARY_COST_AMOUNT = SALARY_COST_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: SalaryCost_costConcept
+	* Hibernate value: SalaryCost.costConcept
+	*/
+	String  SALARY_COST_COST_CONCEPT = SALARY_COST_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: SalaryCost_description
 	* Hibernate value: SalaryCost.description
 	*/
-	String  SALARY_COST_DESCRIPTION = SALARY_COST_ENTRY.getAliasNames()[1];
+	String  SALARY_COST_DESCRIPTION = SALARY_COST_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: SalaryCost_id
 	* Hibernate value: SalaryCost.id
 	*/
-	String  SALARY_COST_ID = SALARY_COST_ENTRY.getAliasNames()[2];
+	String  SALARY_COST_ID = SALARY_COST_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: SalaryCost_salary_id
 	* Hibernate value: SalaryCost.salary.id
 	*/
-	String  SALARY_COST_SALARY_ID = SALARY_COST_ENTRY.getAliasNames()[3];
+	String  SALARY_COST_SALARY_ID = SALARY_COST_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: SalaryCost_type
+	* Hibernate value: SalaryCost.type
+	*/
+	String  SALARY_COST_TYPE = SALARY_COST_ENTRY.getAliasNames()[5];
 
 
 
@@ -1634,34 +1684,40 @@ public interface IPayrollAlias {
 	String  SALARY_DEDUCTION_AMOUNT = SALARY_DEDUCTION_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: SalaryDeduction_deductionConcept
+	* Hibernate value: SalaryDeduction.deductionConcept
+	*/
+	String  SALARY_DEDUCTION_DEDUCTION_CONCEPT = SALARY_DEDUCTION_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: SalaryDeduction_description
 	* Hibernate value: SalaryDeduction.description
 	*/
-	String  SALARY_DEDUCTION_DESCRIPTION = SALARY_DEDUCTION_ENTRY.getAliasNames()[1];
+	String  SALARY_DEDUCTION_DESCRIPTION = SALARY_DEDUCTION_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: SalaryDeduction_expression
 	* Hibernate value: SalaryDeduction.expression
 	*/
-	String  SALARY_DEDUCTION_EXPRESSION = SALARY_DEDUCTION_ENTRY.getAliasNames()[2];
+	String  SALARY_DEDUCTION_EXPRESSION = SALARY_DEDUCTION_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: SalaryDeduction_id
 	* Hibernate value: SalaryDeduction.id
 	*/
-	String  SALARY_DEDUCTION_ID = SALARY_DEDUCTION_ENTRY.getAliasNames()[3];
+	String  SALARY_DEDUCTION_ID = SALARY_DEDUCTION_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: SalaryDeduction_salary_id
 	* Hibernate value: SalaryDeduction.salary.id
 	*/
-	String  SALARY_DEDUCTION_SALARY_ID = SALARY_DEDUCTION_ENTRY.getAliasNames()[4];
+	String  SALARY_DEDUCTION_SALARY_ID = SALARY_DEDUCTION_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: SalaryDeduction_type
 	* Hibernate value: SalaryDeduction.type
 	*/
-	String  SALARY_DEDUCTION_TYPE = SALARY_DEDUCTION_ENTRY.getAliasNames()[5];
+	String  SALARY_DEDUCTION_TYPE = SALARY_DEDUCTION_ENTRY.getAliasNames()[6];
 
 
 

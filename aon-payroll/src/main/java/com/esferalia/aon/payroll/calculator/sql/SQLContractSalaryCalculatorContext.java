@@ -22,7 +22,10 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.calendar.enumeration.DayType;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
 import com.esferalia.aon.payroll.calculator.HierarchyPayments;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
+import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.LRUCache;
@@ -33,6 +36,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseActivityColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.EnterpriseCccColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
@@ -46,6 +50,7 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
+import com.esferalia.aon.salary.expression.UndefinedVariableException;
 
 public class SQLContractSalaryCalculatorContext implements
 		IContractSalaryCalculatorContext{
@@ -65,6 +70,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private static final String MAIN_SQL = "SELECT * "
 		+" FROM contract"
 		+" LEFT JOIN enterprise_ccc ON (contract.enterprise_ccc = enterprise_ccc.id)"
+		+" LEFT JOIN enterprise_activity ON (contract.enterprise_activity = enterprise_activity.id)"
 		+" LEFT JOIN agreement_level_category ON (contract.agreement_level_category = agreement_level_category.id)"
 		+", person"
 		+", registry AS " + PERSON_REGISTRY
@@ -77,6 +83,7 @@ public class SQLContractSalaryCalculatorContext implements
 		+" AND person.registry = person_registry.id"			// INNER JOIN: registry es NOT NULL
 		+" AND contract.workplace = workplace.id"				// INNER JOIN: workplace es NOT NULL
 		+" AND workplace.enterprise = enterprise.registry"		// INNER JOIN: enterprise es NOT NULL
+		+" AND enterprise.registry = enterprise_registry.id"	// INNER JOIN: registry es NOT NULL
 		+" AND enterprise.registry = enterprise_registry.id"	// INNER JOIN: registry es NOT NULL
 		+" AND customer.registry = enterprise_registry.id"		// INNER JOIN: registry es NOT NULL
 		+" AND workplace.address = raddress.id"					// INNER JOIN: address es NOT NULL
@@ -92,14 +99,32 @@ public class SQLContractSalaryCalculatorContext implements
 		+" WHERE contract = ? "
 		+" AND start_date <= ? "
 		+" AND ( end_date IS NULL "
-		+" OR end_date >= ? )"
-		+" AND salary_type IN ("+SalaryType.SALARY.ordinal()+" ,"+SalaryType.EXTRA.ordinal()+")";
+		+" OR end_date >= ? )";
+	
+	private static final String PAYMENTS_FILTER [] = {
+		" AND salary_type IN ("+SalaryType.SALARY.ordinal()+" ,"+SalaryType.EXTRA.ordinal()+")" , 	//SalaryType.SALARY
+		" AND salary_type = " + SalaryType.EXTRA.ordinal()+ " " , 									//SalaryType.EXTRA
+		" AND salary_type = " + SalaryType.SETTLE.ordinal()+ " " , 									//SalaryType.SETTLE
+		" AND salary_type = " + SalaryType.DELAY.ordinal()+ " " , 									//SalaryType.DELAY
+		" AND salary_type = " + SalaryType.NOT_ENJOYED_VACATIONS.ordinal()+ " " , 					//SalaryType.NOT_ENJOYED_VACATIONS
+	};
+	//" AND salary_type IN ("+SalaryType.SALARY.ordinal()+" ,"+SalaryType.EXTRA.ordinal()+")"
 
 	private static final String DEDUCTION_SQL =
 		"SELECT *"
 		+" FROM contract_deduction"
 		+" LEFT JOIN  deduction_concept" 							// LEFT JOIN: deduction_concept puede ser NULL
 		+"	ON deduction_concept = deduction_concept.id"	
+		+" WHERE contract = ? "
+		+" AND start_date <= ? "
+		+" AND ( end_date IS NULL"
+		+" OR end_date >= ? )";
+
+	private static final String BONUS_SQL =
+		"SELECT *"
+		+" FROM contract_bonus"
+		+" LEFT JOIN  bonus_concept" 							// LEFT JOIN: bonus_concept puede ser NULL
+		+"	ON bonus_concept = bonus_concept.id"	
 		+" WHERE contract = ? "
 		+" AND start_date <= ? "
 		+" AND ( end_date IS NULL"
@@ -114,6 +139,13 @@ public class SQLContractSalaryCalculatorContext implements
 		+" AND ( end_date IS NULL"
 		+" OR end_date >= ? )"
 		+" ORDER BY start_date";									// ORDER BY : El primero que llega cobra
+
+	private static final String SYSTEM_COST_SQL =
+		"SELECT *"
+		+" FROM system_cost"
+		+" WHERE start_date <= ? "
+		+" AND ( end_date IS NULL"
+		+" OR end_date >= ? )";
 
 	private static final String SYSTEM_DEDUCTION_SQL =
 		"SELECT *"
@@ -212,29 +244,34 @@ public class SQLContractSalaryCalculatorContext implements
 
 	private Criteria 										criteria;
 	private Connection 										connection;
-
+	
+	private SalaryType										salaryType;
+	
 	private Date 											issueDate;
 	private Date 											startDate;
 	private Date 											endDate;
-	
 	private ResultSet 										resultSet;  
 	private PreparedStatement 								ceventStmt;
 	private PreparedStatement 								cleaveStmt;
 	private PreparedStatement 								paymentStmt;
 	private PreparedStatement 								deductionStmt;
+	private PreparedStatement 								bonusStmt;
 	private PreparedStatement 								embargoStmt;
 
 	private SQLContractPayment 								sqlContractPayment;  
 	private SQLContractDeduction 							sqlContractDeduction;  
+	private SQLContractBonus								sqlContractBonus;  
 	private SQLContractEmbargo 								sqlContractEmbargo;  
 	private ExpressionContext 								contractExpressionContext;
 	private SQLContractLeaveLoader 							leaveLoader;
 	
 	private Date 											contractStartDate;
 	private Date 											contractEndDate;
+	private Collection<IContractCost> 						systemCosts;
 	private Collection<IContractDeduction> 					systemDeductions;
 	private Collection<IContractPayment> 					systemPayments;
 	
+	private SQLCnae2009										cnae2009;
 	private LRUCache<Integer, ICalendar> 					calendars;
 	private SQLCalendarFactory 								calendarFactory; 
 	private LRUCache<Integer, Collection<IContractPayment>> agreementPayments;
@@ -244,15 +281,20 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate) 
 	throws SQLException, ExpressionException {
-		this(connection, startDate, endDate, Calendar.getInstance().getTime(), null);
+		this(connection, startDate, endDate, Calendar.getInstance().getTime(), null, SalaryType.SALARY);
 	}
 	
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate) 
 	throws SQLException, ExpressionException {
-		this(connection, startDate, endDate, issueDate, null);
+		this(connection, startDate, endDate, issueDate, null, SalaryType.SALARY);
 	}
 
-	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate, Criteria criteria) 
+	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate, Criteria criteria)
+	throws SQLException, ExpressionException {
+		this(connection, startDate, endDate, issueDate, criteria, SalaryType.SALARY);
+	}
+	
+	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate, Criteria criteria, SalaryType salaryType) 
 	throws SQLException, ExpressionException {
 		this.connection = connection;
 		
@@ -262,12 +304,16 @@ public class SQLContractSalaryCalculatorContext implements
 		
 		this.criteria = criteria;
 		
+		this.salaryType = salaryType;
+		
 		initResultSet();
 		initPaymentStmt();
 		initDeductionStmt();
+		initBonusStmt();
 		initEmbargoStmt();
 		initCeventStmt();
 		initLeaveStmt();
+		initSystemCosts();
 		initSystemDeductions();
 		initSystemPayments();
 
@@ -275,8 +321,13 @@ public class SQLContractSalaryCalculatorContext implements
 			new SQLContractPayment();
 		this.sqlContractDeduction = 
 			new SQLContractDeduction();
+		this.sqlContractBonus = 
+			new SQLContractBonus();
 		this.sqlContractEmbargo = 
 			new SQLContractEmbargo();
+		
+		this.cnae2009 = 
+			new SQLCnae2009(connection, this.startDate, this.endDate);
 		
 		calendarFactory = 
 			new SQLCalendarFactory(connection, this.startDate, this.endDate);
@@ -296,6 +347,11 @@ public class SQLContractSalaryCalculatorContext implements
 		this.leaveLoader = 
 			new SQLContractLeaveLoader(this.startDate, this.endDate);
 
+	}
+	
+	@Override
+	public SalaryType getSalaryType() {
+		return this.salaryType;
 	}
 
 	@Override
@@ -471,9 +527,10 @@ public class SQLContractSalaryCalculatorContext implements
 	}
 	
 	@Override
-	public Collection<IContractDeduction> getContractEmbargos()
+	public Collection<IContractEmbargo> getContractEmbargos()
 			throws AonException {
 		try {
+			
 			this.sqlContractEmbargo.close();
 			int id = getId();
 			embargoStmt.setInt(1,id);
@@ -485,11 +542,36 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 	}
 	
+	@Override
+	public Collection<IContractCost> getContractCosts()
+			throws AonException {
+		return this.systemCosts;
+	}
+	
+	@Override
+	public Collection<IContractBonus> getContractBonus()
+	throws AonException {
+		try {
+			this.sqlContractBonus.close();
+			int id = getId();
+			bonusStmt.setInt(1,id);
+			ResultSet rs = bonusStmt.executeQuery();
+			this.sqlContractBonus.setResultSet(rs);
+			return sqlContractBonus;
+		} catch (SQLException e) {
+			throw new AonException(e);
+		}
+	}
 	
 	public int getId() {
 		return getInt(SQLConstants.CONTRACT, ContractColumns.ID);
 	}
 	
+	public Integer getCnae2009() {
+		Object cna2009 = getObject(SQLConstants.ENTERPRISE_ACTIVITY, 
+				EnterpriseActivityColumns.CNAE2009);
+		return cna2009 != null ? ( Integer ) cna2009 : null; 
+	}
 
 	public boolean next() throws SQLException, ExpressionException{
 		
@@ -524,6 +606,10 @@ public class SQLContractSalaryCalculatorContext implements
 		if ( this.deductionStmt != null ) {
 			this.deductionStmt.close();
 			this.deductionStmt = null;
+		}
+		if ( this.bonusStmt != null ) {
+			this.bonusStmt.close();
+			this.bonusStmt = null;
 		}
 		if ( this.embargoStmt != null ) {
 			this.embargoStmt.close();
@@ -561,6 +647,10 @@ public class SQLContractSalaryCalculatorContext implements
 			this.systemPayments.clear();
 			this.systemPayments = null;
 		}
+		if ( this.systemCosts != null ) {
+			this.systemCosts.clear();
+			this.systemCosts = null;
+		}
 	}
 
 	@Override
@@ -590,8 +680,9 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	private void initPaymentStmt()
 	throws SQLException {
+		String paymentSql = PAYMENT_SQL + PAYMENTS_FILTER[salaryType.ordinal()];
 		this.paymentStmt  = 
-			this.connection.prepareStatement(PAYMENT_SQL);
+			this.connection.prepareStatement(paymentSql);
 		this.paymentStmt.setDate(2, toSqlDate( this.endDate ) );
 		this.paymentStmt.setDate(3, toSqlDate( this.startDate ) );
 	}
@@ -604,6 +695,15 @@ public class SQLContractSalaryCalculatorContext implements
 		this.deductionStmt.setDate(3, toSqlDate( this.startDate) );
 	}
 	
+	private void initBonusStmt()
+	throws SQLException {
+		this.bonusStmt  = 
+			this.connection.prepareStatement(BONUS_SQL);
+		this.bonusStmt.setDate(2, toSqlDate( this.endDate) );
+		this.bonusStmt.setDate(3, toSqlDate( this.startDate) );
+	}
+	
+
 	private void initEmbargoStmt()
 	throws SQLException {
 		this.embargoStmt  = 
@@ -757,6 +857,20 @@ public class SQLContractSalaryCalculatorContext implements
 		return tc2 == null ? true : "14".indexOf(tc2.charAt(0)) != -1; 
 	}
 
+	private boolean isShortContract() {
+		Date endDate = getDate(SQLConstants.CONTRACT, ContractColumns.END_DATE);
+		if ( endDate == null ) {
+			return false;
+		}
+		Date startDate = getDate(SQLConstants.CONTRACT, ContractColumns.START_DATE);
+		long naturalDays = 
+			CommonUtil.getDaysBetweenDates(startDate,endDate) + 1;
+		if ( naturalDays < 7 ) {
+			return true;
+		}
+		return false;
+	}
+
 	private boolean isAssimilatted() {
 		Object object = getObject(SQLConstants.ENTERPRISE_CCC, EnterpriseCccColumns.TYPE);
 		if ( object == null ){
@@ -764,6 +878,16 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 		Integer ordinal = (Integer ) object;
 		return ordinal == CCCType.ASSIMILATEDS.ordinal();
+	}
+	
+	private Double getItRate() {
+		Integer cnae2009 = getCnae2009();
+		return cnae2009 != null ? this.cnae2009.getItRate(cnae2009) : 0.00;
+	}
+	
+	private Double getImsRate() {
+		Integer cnae2009 = getCnae2009();
+		return cnae2009 != null ? this.cnae2009.getImsRate(cnae2009) : 0.00;
 	}
 
 	private double getDoubleVariable(String name) {
@@ -837,6 +961,12 @@ public class SQLContractSalaryCalculatorContext implements
 			}
 		};
 		
+		ActiveTimedVariable<Double> bonusDays =  new ActiveTimedVariable<Double>(){
+			@Override
+			public Double getValue(Period p) {
+				return ( double )getAvailableDays(p.getStart(), p.getEnd());
+			}
+		};
 		
 		this.contractExpressionContext.addVariable(WORKED_DAYS, 
 				workedDays
@@ -862,6 +992,9 @@ public class SQLContractSalaryCalculatorContext implements
 						return getSalaryHours();
 					}
 				}
+		);
+		this.contractExpressionContext.addVariable(BONUS_DAYS, 
+				bonusDays
 		);
 		
 		this.contractExpressionContext.addVariable(INDEFINITE, 
@@ -900,7 +1033,33 @@ public class SQLContractSalaryCalculatorContext implements
 				}
 		);
 
+		this.contractExpressionContext.addVariable(SHORT_CONTRACT, 
+				new LazyTimedVariable<Boolean>(){
+					@Override
+					public Boolean create() {
+						return isShortContract();
+					}
+				}
+		);
+
+		this.contractExpressionContext.addVariable(IT_RATE, 
+				new LazyTimedVariable<Double>(){
+					@Override
+					public Double create() {
+						return getItRate();
+					}
+				}
+		);
 		
+		this.contractExpressionContext.addVariable(IMS_RATE, 
+				new LazyTimedVariable<Double>(){
+					@Override
+					public Double create() {
+						return getImsRate();
+					}
+				}
+		);
+
 		loadContractLeave(this.contractExpressionContext);
 		loadContractData(this.contractExpressionContext);
 		
@@ -996,6 +1155,29 @@ public class SQLContractSalaryCalculatorContext implements
 			if ( rs != null ){
 				rs.close();
 			}
+		}
+	}
+
+	private void initSystemCosts() throws SQLException {
+		ResultSet rs = null ;
+		PreparedStatement stmt= null ;
+		try {
+			stmt = 
+				connection.prepareStatement(SYSTEM_COST_SQL);
+			java.sql.Date sqlEndDate = 
+				new java.sql.Date(this.endDate.getTime());
+			java.sql.Date sqlStartDate = 
+				new java.sql.Date(this.startDate.getTime());
+			stmt.setDate(1, sqlEndDate);
+			stmt.setDate(2, sqlStartDate);
+			rs = stmt.executeQuery();
+			systemCosts = SQLCollections.costsCollection(rs);
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
 		}
 	}
 

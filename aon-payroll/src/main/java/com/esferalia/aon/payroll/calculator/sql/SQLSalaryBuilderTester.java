@@ -20,10 +20,10 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	private static final String FORMAT = "[%s]: %s - %s";
 	private static final String NO_SALARY_FORMAT  ="No hay nómina que calcular para: '%s' [%s,%s]";
 	private static final String TOTAL_LIQUID  ="Líquido Total a Percibir";
+	private static final String TOTAL_ENTERPRISE  ="Cuota de empresa";
 	
-	private boolean testTotalPayment;
-	private boolean testBaseIRPF;
-	private boolean testBaseCGC;
+	private boolean testTotalLiquid;
+	private boolean testEnterpriseCost;
 	
 	private double delta = 0.9;
 	private SQLReader sqlReader ;
@@ -36,9 +36,8 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 	
 	public SQLSalaryBuilderTester(Connection connection) throws SQLException {
 		sqlReader= new SQLReader(connection);
-		testTotalPayment = true;
-		testBaseIRPF = true;
-		testBaseCGC = true;
+		testTotalLiquid = false;
+		testEnterpriseCost = false;
 		
 	}
 	
@@ -50,36 +49,21 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 		return dbSalary;
 	}
 	
-	public boolean isTestTotalPayment() {
-		return testTotalPayment;
+	public boolean isTestTotalLiquid() {
+		return testTotalLiquid;
 	}
 
 
-	public void setTestTotalPayment(boolean testTotalPayment) {
-		this.testTotalPayment = testTotalPayment;
+	public void setTestTotalLiquid(boolean testTotalPayment) {
+		this.testTotalLiquid = testTotalPayment;
 	}
 
 
-	public boolean isTestBaseIRPF() {
-		return testBaseIRPF;
+	
+	public void setTestEnterpriseCost(boolean testEnterpriseCost) {
+		this.testEnterpriseCost = testEnterpriseCost;
 	}
-
-
-	public void setTestBaseIRPF(boolean testBaseIRPF) {
-		this.testBaseIRPF = testBaseIRPF;
-	}
-
-
-	public boolean isTestBaseCGC() {
-		return testBaseCGC;
-	}
-
-
-	public void setTestBaseCGC(boolean testBaseCGC) {
-		this.testBaseCGC = testBaseCGC;
-	}
-
-
+	
 	public void setDelta(double delta) {
 		this.delta = delta;
 	}
@@ -113,7 +97,14 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 				return null;
 			}
 			++salaryCount;
-			testEquals(TOTAL_LIQUID,dbSalary.getTotalLiquid(),salary.getTotalLiquid(),delta);
+			
+			if ( testTotalLiquid ) {
+				testEquals(TOTAL_LIQUID,dbSalary.getTotalLiquid(),salary.getTotalLiquid(),delta);
+			}
+			if ( testEnterpriseCost ) {
+				testEquals(TOTAL_ENTERPRISE,dbSalary.getTotalEnterprise(),salary.getTotalEnterprise(),delta);
+			}
+			
 			++rightTestedsalariesCount;
 		} catch (SQLException e) {
 			onError(e.getLocalizedMessage());

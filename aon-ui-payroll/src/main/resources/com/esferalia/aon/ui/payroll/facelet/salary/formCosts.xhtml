@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+
+	<aon:div styleClass="aon-margin-top" 
+		style="width: 815px;margin-left: 5px;">
+		
+		<aon:panelGrid columns="2" style="width: 100%;margin-right:10px;"
+			columnClasses="aon-noborder aon-padding-left aon-width-auto
+						  ,aon-border aon-width-150 aon-text-right aon-bold">
+			
+			<aon:div style="margin-left: 200px;border-bottom: solid #CCCCCC 1px;" >
+				<aon:outputText value="#{payrollBundle.payroll_salary_totalCost} (C-D)&#160;" styleClass="aon-bold"/>
+			</aon:div>
+			<aon:div styleClass="aon-padding-right" style="font-size: 1.1em;background-color: #F6F6F6;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{salaryTO.totalEnterprise}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+		</aon:panelGrid>		
+	</aon:div>
+
+
+</ui:composition>

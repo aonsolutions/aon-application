@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.code.aon.common.enumeration.Month;
+import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -70,22 +71,46 @@ public class SQLCollections {
 		return contractDeductionList;
 	}
 
+	public static Collection<IContractCost> costsCollection(ResultSet rs) 
+	throws SQLException {
+		SQLContractCost sqlContractCosts = 
+			new SQLContractCost(rs);
+		List<IContractCost> contractCostList = 
+			new ArrayList<IContractCost>();
+		
+		for (IContractCost sqlContractCost : sqlContractCosts) {
+			ContractCost contractCost = 
+				new ContractCost();
+
+			contractCost.type = sqlContractCost.getType();
+			contractCost.name = sqlContractCost.getName();
+			contractCost.startDate = sqlContractCost.getStartDate();
+			contractCost.endDate = sqlContractCost.getEndDate();
+			contractCost.expression = sqlContractCost.getExpression();
+			contractCost.description = sqlContractCost.getDescription();
+			
+			contractCostList.add(contractCost);
+		}
+		
+		return contractCostList;
+	}
+
 	private static class ContractPayment implements IContractPayment{
 		
-		private String name;
-		private PaymentType type;
-		private String description;
-		private String expression;
-		private String irpfExpression;
-		private String quoteExpression;
-		private Date startDate;
-		private Date endDate;
-		private Month month;
-		private boolean readOnly;
-		private boolean descriptionDecorable;
-		private Double amount;
-		private ExpressionScope expressionScope;
-		private SalaryType salaryType;
+		protected String name;
+		protected PaymentType type;
+		protected String description;
+		protected String expression;
+		protected String irpfExpression;
+		protected String quoteExpression;
+		protected Date startDate;
+		protected Date endDate;
+		protected Month month;
+		protected boolean readOnly;
+		protected boolean descriptionDecorable;
+		protected Double amount;
+		protected ExpressionScope expressionScope;
+		protected SalaryType salaryType;
 		
 		
 		@Override
@@ -161,16 +186,16 @@ public class SQLCollections {
 	
 	private static class ContractDeduction implements IContractDeduction {
 
-		private String name;
-		private DeductionType type;
-		private String description;
-		private String expression;
-		private Date startDate;
-		private Date endDate;
-		private Month month;
-		private boolean readOnly;
-		private Double amount;
-		private ExpressionScope expressionScope;
+		protected String name;
+		protected DeductionType type;
+		protected String description;
+		protected String expression;
+		protected Date startDate;
+		protected Date endDate;
+		protected Month month;
+		protected boolean readOnly;
+		protected Double amount;
+		protected ExpressionScope expressionScope;
 
 		@Override
 		public DeductionType getType() {
@@ -219,5 +244,7 @@ public class SQLCollections {
 		}
 		
 	}
-
+	
+	private static class ContractCost extends ContractDeduction implements IContractCost {
+	}
 }

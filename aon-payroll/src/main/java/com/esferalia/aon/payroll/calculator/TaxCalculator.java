@@ -19,12 +19,10 @@ public abstract class TaxCalculator {
 	double renumeration = 0;
 	double totalPayment = 0;
 
-	
 
 	public double getIrpfBase() {
 		return irpfBase;
 	}
-
 
 	public double getRenumeration() {
 		return renumeration;
@@ -75,7 +73,7 @@ public abstract class TaxCalculator {
 				final double amount) throws AonException {
 			
 			SalaryType salaryType = contractPayment.getSalaryType();
-			if ( salaryType != SalaryType.SALARY ) {
+			if ( salaryType != context.getSalaryType() ) {
 				return 0.00;
 			}
 			

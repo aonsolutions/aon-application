@@ -42,6 +42,9 @@ public interface ISalary {
 	
 	// TOTAL LIQUIDO
 	Double getTotalLiquid();
+	
+	//CUOTA EMPRESA
+	Double getTotalEnterprise();
 
 	//BASES
 	//Remuneración mensual

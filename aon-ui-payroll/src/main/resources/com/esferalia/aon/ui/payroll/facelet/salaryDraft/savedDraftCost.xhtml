@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<aon:panelGrid columns="2" style="width: 1000px;margin-right:10px;"
+		columnClasses="aon-noborder, aon-noborder">
+	
+		<aon:div style="width: 840px; margin-top: 10px;">
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cost/gridContent.xhtml" >
+				<ui:param name="sortedSalaryCosts" value="#{draftSortedSalaryCosts}" />
+				<ui:param name="total" value="#{salaryDraft.salary.totalEnterprise}" />
+			</ui:include>
+		</aon:div>
+	
+	</aon:panelGrid>
+</ui:composition>

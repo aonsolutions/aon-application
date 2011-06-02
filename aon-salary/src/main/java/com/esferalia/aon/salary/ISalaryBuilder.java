@@ -77,7 +77,6 @@ public interface ISalaryBuilder {
 
 	// ------------------------------------------------------------------------
 	// Totals 
-	
 	public void setTotalLiquid(Double totalLiquid);
 	
 	public void setTotalPayment(Double totalPayment);
@@ -86,14 +85,23 @@ public interface ISalaryBuilder {
 	
 	public void setSocialSecurityContributions(Double socialSecurityContributions);
 	
+	public void setTotalEnterprise(Double totalEnterprise);
+	
 	// ------------------------------------------------------------------------
-	// Paymnets & Deductions  
+	// Paymnets, deductions, embargos ...  
+
+
+	public void addBonus(String concept, Double amount, String description );
+
+	public void addEmbargo(Integer embargo, Double amount, String description );
+
+	public void addCost(DeductionType type, String concept, Double amount, String description );
 
 	public void addPayment(PaymentType type, String concept, Double amount, String description , String expression);
-	
+
 	public void addDeduction(DeductionType type, String concept, Double amount, String description , String expression);
-	
-	
+
+		
 	// ------------------------------------------------------------------------
 	// Listener  
 	

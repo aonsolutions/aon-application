@@ -41,6 +41,7 @@ public class SalaryDeduction implements ITransferObject, IDeduction {
 
 	private double amount;
 
+	private String deductionConcept;
 	
 	@Id
 	@GeneratedValue
@@ -105,6 +106,14 @@ public class SalaryDeduction implements ITransferObject, IDeduction {
 	}
 	
 	
+	@Column(name = "deduction_concept", length = 5)
+	public String getDeductionConcept() {
+		return deductionConcept;
+	}
+	public void setDeductionConcept(String deductionConcept) {
+		this.deductionConcept = deductionConcept;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

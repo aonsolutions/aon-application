@@ -21,5 +21,7 @@ public interface DeductionTypeVisitor {
 	void visitInkind(DeductionType deductionType);
 
 	void visitOther(DeductionType deductionType);
+	
+	void visitFogasa(DeductionType deductionType);
 
 }

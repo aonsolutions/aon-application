@@ -18,15 +18,17 @@
 	</aon:div>
 	
 	<aon:div styleClass="aon-margin-top aon-border" 
-		style="width: 155px; margin-top: 20px; margin-left: 5px;background-color: #F6F6F6;">
+		style="width: 155px; margin-top: 10px; margin-left: 5px;background-color: #F6F6F6;">
 		
 		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
-			columnClasses="aon-noborder aon-padding-right aon-width-150 aon-text-right aon-bold">
+			columnClasses="aon-noborder aon-padding-left aon-width-auto">
 			
 			<aon:outputText value="&#160;II. #{payrollBundle.payroll_salary_deductions}&#160;" 
 				styleClass="aon-bold" style="position: relative; top: -8px; margin-left: 5px; background-color: white;"/>
 
-			<aon:outputText value="&#160;"/>
+			<aon:div style="margin-left: 10px;">
+				<aon:outputText value="&#160;"/>
+			</aon:div>
 		</aon:panelGrid>
 
 		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
@@ -151,7 +153,7 @@
 				</aon:outputText>
 			</aon:div>
 
-			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+			<aon:div style="">
 				<aon:outputText value="&#160;"/>
 				<aon:outputText rendered="#{!deductions.totalDeduction.showAmount}" 
 					value="#{deductions.totalDeduction.textValue}"

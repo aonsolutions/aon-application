@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.AonException;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeTypeVisitor;
@@ -255,8 +257,11 @@ public abstract class QuoteCalculator {
 					return null;
 				}
 			});
-			
-			bases.put(payment.getName(), quote);
+			String name = payment.getName();
+			if ( !StringUtils.isBlank(name )){
+				bases.put(name, quote);
+				context.addVariable(String.format("BASE_%s", name), quote, start, end);
+			}
 		}
 		
 	}

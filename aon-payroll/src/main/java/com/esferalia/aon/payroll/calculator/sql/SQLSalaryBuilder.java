@@ -55,6 +55,21 @@ public class SQLSalaryBuilder extends  AbstractSQLSalaryBuilder {
 	public void insertSalary() throws SQLException{
 		int salaryId = sqlWriter.insertSalary(salary);
 
+		for (AbstractSQL.SalaryCost salaryCost : salaryCosts) {
+			salaryCost.setSalary(salaryId);
+			sqlWriter.insertSalaryCost(salaryCost);
+		}
+
+		for (AbstractSQL.SalaryBonus salaryBonus : salaryBonuses) {
+			salaryBonus.setSalary(salaryId);
+			sqlWriter.insertSalaryBonus(salaryBonus);
+		}
+
+		for (AbstractSQL.SalaryEmbargo salaryEmbargo : salaryEmbargos) {
+			salaryEmbargo.setSalary(salaryId);
+			sqlWriter.insertSalaryEmbargo(salaryEmbargo);
+		}
+
 		for (AbstractSQL.SalaryPayment salaryPayment : salaryPayments) {
 			salaryPayment.setSalary(salaryId);
 			sqlWriter.insertSalaryPayment(salaryPayment);

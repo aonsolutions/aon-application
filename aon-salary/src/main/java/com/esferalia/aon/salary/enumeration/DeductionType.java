@@ -77,6 +77,14 @@ public enum DeductionType implements IResourceable {
 		public void accept(DeductionTypeVisitor visitor) {
 			visitor.visitOther(this);
 		}
+	},
+	FOGASA(true) // TODO: After Professional Contingency?
+	{
+		@Override
+		public void accept(DeductionTypeVisitor visitor) {
+			visitor.visitFogasa(this);
+		}
+		
 	}
 	;
 	

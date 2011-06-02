@@ -201,6 +201,46 @@ public class SalaryBuilder implements ISalaryBuilder {
 	}
 	
 	@Override
+	public void setTotalEnterprise(Double totalEnterprise) {
+		this.salary.setTotalEnterprise(totalEnterprise);
+	}
+	
+	@Override
+	public void addBonus(String concept, Double amount, String description) {
+		SalaryBonus salaryBonus  = new SalaryBonus();
+		
+		salaryBonus.setBonusConcept(concept);
+		salaryBonus.setAmount(amount);
+		salaryBonus.setDescription(description);
+		
+		this.salary.getSalaryBonus().add(salaryBonus);
+	}
+	
+	@Override
+	public void addCost(DeductionType type, String concept, Double amount, String description) {
+		SalaryCost salaryCost = new SalaryCost();
+		
+		salaryCost.setType(type);
+		salaryCost.setAmount(amount);
+		salaryCost.setCostConcept(concept);
+		salaryCost.setDescription(description);
+		
+		this.salary.getSalaryCosts().add(salaryCost);
+	}
+	
+	@Override
+	public void addEmbargo(Integer embargo, Double amount, String description) {
+		
+		SalaryEmbargo salaryEmbargo = new SalaryEmbargo() ;
+		
+		// TODO setContractEmbargo(null)
+		salaryEmbargo.setAmount(amount);
+		salaryEmbargo.setDescription(description);
+		
+		this.salary.getSalaryEmbargos().add(salaryEmbargo);
+	}
+	
+	@Override
 	public void addPayment(PaymentType type, String concept, Double amount,
 			String description, String expression) {
 		

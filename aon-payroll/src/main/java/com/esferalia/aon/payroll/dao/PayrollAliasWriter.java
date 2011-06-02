@@ -33,6 +33,7 @@ import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryEmbargo;
@@ -52,7 +53,7 @@ public class PayrollAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-TRUNK/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
+		File file = new File("/home/rtrepiana/workspace/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] { 
 				Agreement.class.getName(),
 				AgreementLevel.class.getName(),
@@ -82,6 +83,7 @@ public class PayrollAliasWriter {
 				LeaveBatchDetail.class.getName(),
 				PaymentConcept.class.getName(),
 				Salary.class.getName(),
+				SalaryBonus.class.getName(),
 				SalaryCost.class.getName(),
 				SalaryDeduction.class.getName(),
 				SalaryEmbargo.class.getName(),

@@ -20,27 +20,26 @@ import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 
 /**
- * Transfer Object that represents the salary cost.
+ * Transfer Object that represents the salary bonus.
  * 
  */
 @Entity
-@Table(name="salary_cost")
-public class SalaryCost implements ITransferObject {
+@Table(name="salary_bonus")
+public class SalaryBonus implements ITransferObject {
 	
-	private static final long serialVersionUID = -4982015552581635450L;
+	private static final long serialVersionUID = 3117718151672116287L;
 
+
+	
 	private Integer id;
 
 	private Salary salary;
 
-	private DeductionType type;
-	
 	private double amount;
 	
 	private String description;
 	
-	private String costConcept;
-	
+	private String bonusConcept;
 	
 	@Id
 	@GeneratedValue
@@ -65,13 +64,6 @@ public class SalaryCost implements ITransferObject {
 		this.salary = salary;
 	}
 	
-	public DeductionType getType() {
-		return type;
-	}
-	
-	public void setType(DeductionType type) {
-		this.type = type;
-	}
 
 	@Column(length = 64)
 	public String getDescription() {
@@ -91,12 +83,13 @@ public class SalaryCost implements ITransferObject {
 		this.amount = amount;
 	}
 	
-	@Column(name = "cost_concept", length = 5)
-	public String getCostConcept() {
-		return costConcept;
+	@Column(name = "bonus_concept", length = 5)
+	public String getBonusConcept() {
+		return bonusConcept;
 	}
-	public void setCostConcept(String costConcept) {
-		this.costConcept = costConcept;
+	
+	public void setBonusConcept(String bonusConcept) {
+		this.bonusConcept = bonusConcept;
 	}
 	
 	@Override
@@ -104,13 +97,13 @@ public class SalaryCost implements ITransferObject {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final SalaryCost o = (SalaryCost) obj;
+		final SalaryBonus o = (SalaryBonus) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.salary, o.salary)
-				.append(this.type, o.type)
 				.append(this.description, o.description)
 				.append(this.amount, o.amount)
+				.append(this.bonusConcept, o.bonusConcept)
 				.isEquals();	
 		}
 		return ObjectUtils.equals(getId(), o.getId());		

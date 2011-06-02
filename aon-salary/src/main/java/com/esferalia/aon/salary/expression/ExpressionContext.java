@@ -1,6 +1,8 @@
 package com.esferalia.aon.salary.expression;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -17,8 +19,13 @@ import org.mvel2.MVEL;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
 import org.mvel2.compiler.CompiledAccExpression;
+import org.mvel2.conversion.BigDecimalCH;
+import org.mvel2.templates.TemplateRegistry;
 import org.mvel2.templates.TemplateRuntime;
+import org.mvel2.templates.util.TemplateOutputStream;
+import org.mvel2.util.StringAppender;
 
+import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
 
@@ -153,20 +160,11 @@ public class ExpressionContext {
 		clear();
 		super.finalize();
 	}
-	
-	
+
 	//Pattern pattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*");
 	private static final Pattern VARIABLE_PATTERN = 
 		Pattern.compile("[A-Z_][A-Z0-9_]*");
 	
 	
-	public static void main(String[] args) throws SecurityException, NoSuchMethodException {
-		org.mvel2.compiler.CompiledAccExpression expr;
-		
-		System.out.println( MVEL.compileGetExpression("A + B +C +F(1000) + ( X='G'?:100:0.00)") );
-		
-		System.out.println( getVariables("A + B +C +F(1000) + ( X='G'?:100:0.00)") );
-
-	}
 	
 }

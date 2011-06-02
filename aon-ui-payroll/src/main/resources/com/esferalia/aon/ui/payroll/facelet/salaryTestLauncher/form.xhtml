@@ -51,30 +51,11 @@
 
 					<aon:outputText value="&#160;" />
 					<aon:div>
-						<aon:selectBooleanCheckbox value="#{salaryTestLauncher.testTotalPayment}" />
-						<aon:outputText value="#{payrollBundle.payroll_launch_testTotalPayment}" />
+						<aon:selectBooleanCheckbox value="#{salaryTestLauncher.testTotalLiquid}" />
+						<aon:outputText value="#{payrollBundle.payroll_launch_testTotalLiquid}" />
 					</aon:div>
 				
 
-<!--  
-					<aon:outputText value="&#160;" />
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox value="#{salaryTestLauncher.debugEnabled}" />
-						<aon:outputText value="#{payrollBundle.payroll_launch_debugEnabled}" />
-					</aon:div>
--->
-
-<!--  
-					<aon:outputText value="&#160;" />
-					<aon:outputText value="&#160;" />
--->
-<!--  
-					<aon:div>
-						<aon:selectBooleanCheckbox value="#{salaryTestLauncher.testBaseIRPF}" />
-						<aon:outputText value="#{payrollBundle.payroll_launch_testBaseIRPF}" />
-					</aon:div>
--->
 
 					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{salaryTestLauncher.params.enterprise}" />
@@ -87,28 +68,6 @@
 						<aon:outputText value="#{payrollBundle.payroll_launch_testEnterpriseCost}" />
 					</aon:div>
 
-<!-- 
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox value="#{salaryTestLauncher.refreshEnabled}" />
-						<aon:outputText value="#{payrollBundle.payroll_launch_refreshEnabled}" />
-					</aon:div>
- -->
-<!--  
-					<aon:outputText value="&#160;" />
-					<aon:outputText value="&#160;" />
-
-					<aon:outputText value="&#160;" />
-					<aon:outputText value="&#160;" />
--->	
-<!--  
-					<aon:div>
-						<aon:selectBooleanCheckbox value="#{salaryTestLauncher.testBaseCGC}" />
-						<aon:outputText value="#{payrollBundle.payroll_launch_testBaseCGC}" />
-					</aon:div>
--->
-					
-					
 					<aon:outputText value="&#160;" />
 					<aon:div >
 						<aon:commandButton id="launchSalaries"

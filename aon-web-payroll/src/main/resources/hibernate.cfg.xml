@@ -118,6 +118,7 @@
 		<mapping class="com.esferalia.aon.payroll.LeaveBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>
 		<mapping class="com.esferalia.aon.payroll.Salary"/>
+		<mapping class="com.esferalia.aon.payroll.SalaryBonus"/>
 		<mapping class="com.esferalia.aon.payroll.SalaryCost"/>
 		<mapping class="com.esferalia.aon.payroll.SalaryDeduction"/>
 		<mapping class="com.esferalia.aon.payroll.SalaryEmbargo"/>

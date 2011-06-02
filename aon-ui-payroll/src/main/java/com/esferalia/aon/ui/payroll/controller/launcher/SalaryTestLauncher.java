@@ -55,7 +55,7 @@ public class SalaryTestLauncher {
 	private boolean debugEnabled;
 	private boolean refreshEnabled;
 	private boolean testEnterpriseCost;
-	private boolean testTotalPayment;
+	private boolean testTotalLiquid;
 	private boolean testBaseIRPF;
 	private boolean testBaseCGC;
 	private Integer contractId;
@@ -98,11 +98,11 @@ public class SalaryTestLauncher {
 	public void setTestEnterpriseCost(boolean testEnterpriseCost) {
 		this.testEnterpriseCost = testEnterpriseCost;
 	}
-	public boolean isTestTotalPayment() {
-		return testTotalPayment;
+	public boolean isTestTotalLiquid() {
+		return testTotalLiquid;
 	}
-	public void setTestTotalPayment(boolean testTotalPayment) {
-		this.testTotalPayment = testTotalPayment;
+	public void setTestTotalLiquid(boolean testTotalLiquid) {
+		this.testTotalLiquid = testTotalLiquid;
 	}
 
 	public boolean isTestBaseIRPF() {
@@ -137,7 +137,7 @@ public class SalaryTestLauncher {
 		setSaveLog(false);
 		setDebugEnabled(false);
 		setTestBaseCGC(true);
-		setTestTotalPayment(true);
+		setTestTotalLiquid(true);
 		setTestBaseIRPF(true);
 		setTestEnterpriseCost(true);
 	}
@@ -161,6 +161,7 @@ public class SalaryTestLauncher {
 				String msg = "Proceso Finalizado correctamente.";
 				listener.onInfo(new TestLogMessage(SalaryBuilderListenerLevel.INFO, msg));
 			} catch (Throwable e) {
+				e.printStackTrace();
 				listener.onError(e.getLocalizedMessage());
 				String msg = "Se produjeron errores en el cálculo de nóminas.";
 				listener.onInfo(new TestLogMessage(SalaryBuilderListenerLevel.INFO, msg));
@@ -199,11 +200,8 @@ public class SalaryTestLauncher {
 				String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());
 				Connection connection = HibernateUtil.getSQLConnection(sessionFactory);
 				SQLSalaryBuilderTester salaryBuilder = new SQLSalaryBuilderTester(connection);
-				salaryBuilder.setTestBaseCGC(isTestBaseCGC());
-				salaryBuilder.setTestBaseIRPF(isTestBaseIRPF());
-				salaryBuilder.setTestTotalPayment(isTestTotalPayment());
-				// TODO contemplar en el chequeo los costes de empresa
-//				salaryBuilder.setTestEnterpriseCost(isTestEnterpriseCost());
+				salaryBuilder.setTestTotalLiquid(isTestTotalLiquid());
+				salaryBuilder.setTestEnterpriseCost(isTestEnterpriseCost());
 				listener = new ListSQLSalaryBuilderTesterListener(salaryBuilder);
 				listener.setDebugEnabled(isDebugEnabled());
 				listener.setSaveLog(isSaveLog());
