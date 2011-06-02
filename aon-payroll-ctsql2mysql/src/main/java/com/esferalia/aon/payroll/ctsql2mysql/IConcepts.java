@@ -23,8 +23,25 @@ public interface IConcepts {
 		}
 	}
 	
-	public Concept<PaymentType> getConcept(String codCom)
+	public static class Bonus{
+		public Integer id;
+		public String calculo;
+		public String description;
+		public String expression;
+		
+		
+		public Bonus(Integer id, String calculo, String description, String expression) {
+			this.id = id;
+			this.calculo = calculo;
+			this.description = description;
+			this.expression = expression;
+		}
+	}
+
+	public Concept<PaymentType> getPaymentConcept(String codCom)
 		throws SQLException;
 	
+	public Bonus getBonusConcept(Integer cdg)
+	throws SQLException;
 	
 }

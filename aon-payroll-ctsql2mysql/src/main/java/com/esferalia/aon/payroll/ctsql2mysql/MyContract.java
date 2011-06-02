@@ -3,19 +3,7 @@ package com.esferalia.aon.payroll.ctsql2mysql;
 
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.toDouble;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.ACTUAL_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.CATEGORY;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.ENTRY_BY_COMPANY_ACCOUNT;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.FULL_TIME;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.HOLIDAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.IRPF_PERCENT;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.MORE_THAN_65;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.QUOTE_GROUP;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.QUOTE_IT;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.SPECIAL_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.TC2;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.WEEK_HOURS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.WORKED_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
@@ -29,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Bonifica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Embargo;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finiquito;
@@ -46,10 +35,12 @@ import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabdto;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Trabinci;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Contract_embargo;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractMysqlDB.Salary_embargo;
+import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Bonus;
 import com.esferalia.aon.payroll.ctsql2mysql.MyAgreement.PercepPercnivComparator;
 import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Concept;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.sql.AbstractSQL.ISalary;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -569,6 +560,31 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					emprper.getCdg(), emprper.getCodper(), this.contractId );
 		}
 		
+		String shortContract = "N";
+		Date fecBaja = emprper.getFecbaj();
+		if ( fecBaja != null ) {
+			Date fecIni  = emprper.getFecalt();
+			long days = ( fecBaja.getTime() - fecIni.getTime() ) / (24 * 3600 * 1000) ; 
+			if ( days + 1  < 7 ) {
+				shortContract = "S";
+			}
+		}
+		
+		String contrTemp = emprper.getContr_temp();
+		if ( contrTemp == null ) {
+			contrTemp = "N";
+		}
+		
+		if ( !shortContract.equals(contrTemp )) {
+			mysqlDB.insertContract_data(
+					SHORT_CONTRACT.getName(), 
+					this.contractId, 
+					contrTemp.equals("S") ? Boolean.TRUE.toString() : Boolean.FALSE.toString(), 
+					emprper.getFecalt(), 
+					emprper.getFecbaj());
+			MysqlDB.error("emprper[{},{}]: [{}:{}] Contract is short contract '{}'", 
+					emprper.getCdg(), this.contractId, emprper.getFecalt(), emprper.getFecbaj(), contrTemp);
+		}
 		
 		String numDoc = 
 			persons.getNumDoc(emprper.getCodper());
@@ -586,11 +602,14 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		}
 		contractDatas.clear();
 
+		
 		emprper.visitTrabajo_emprper(this);
 		emprper.visitRel_pcp_epp(this);
 		emprper.visitRel_dto_per(this);
+
 		emprper.visitEmbargo_emprper(this);
 		
+		emprper.visitBonifica_emprper(this);
 		
 		Date savedDate = fromDate;
 		java.sql.Date embargoStartDate = 
@@ -606,7 +625,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		
 		emprper.visitRel_nom_per(mySalary);
 		emprper.visitRel_pex_per(mySalary);
-		emprper.visitRel_fin_epp(this);
+		emprper.visitRel_fin_epp(mySalary);
 		fromDate = savedDate;
 		
 		emprper.visitTrabinci_emprper(this);
@@ -615,6 +634,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		emprper.visitPitnu_emprper(this);
 		
 		insertEmbargos();
+
 		
 	}
 	
@@ -683,6 +703,60 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 				String.format("\"%s\"", trabajo.getCodbas()), 
 				startDate, 
 				endDate);
+		
+		String cno = trabajo.getCno();
+		if ( cno != null ) {
+			mysqlDB.insertContract_data(CNO.getName(), 
+					this.contractId, 
+					String.format("\"%s\"", trabajo.getCno()), 
+					startDate, 
+					endDate);
+		}
+		
+		Integer diasTp = trabajo.getDiastp();
+
+		String tipoTp = trabajo.getTipotp();
+		if ( tipoTp != null && tipoTp.equals("I")) {
+			mysqlDB.insertContract_data(IRREGULAR.getName(), 
+					this.contractId, 
+					String.format("%s", Boolean.TRUE), 
+					startDate, 
+					endDate);
+			if ( diasTp > 0 ) {
+				mysqlDB.insertContract_data(CONTRACT_DAYS.getName(), 
+						this.contractId, 
+						String.format("%d", diasTp), 
+						startDate, 
+						endDate);
+			}
+		}
+		else {
+			if ( diasTp > 0 ) {
+				mysqlDB.insertContract_data(WEEK_DAYS.getName(), 
+						this.contractId, 
+						String.format("%d", diasTp), 
+						trabajo.getFecini(), 
+						endDate);
+			}
+		}
+		
+		
+		String ocupacion2009 = trabajo.getOcupacion2009();
+		if ( ocupacion2009 != null ) {
+			try {
+				OccupationType occupationType = 
+					OccupationType.valueOf(OccupationType.class, ocupacion2009);
+				mysqlDB.insertContract_data(OCCUPATION.getName(), 
+						this.contractId, 
+						String.format("\"%s\"", occupationType.name()), 
+						startDate, 
+						endDate);
+			}
+			catch (IllegalArgumentException e ) {
+				MysqlDB.error("emprper[{}] : Unknown occupation {} ", 
+						emprper.getCdg(), ocupacion2009);
+			}
+		}
 		
 		BigDecimal irpf = trabajo.getIrpf();
 
@@ -755,6 +829,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					emprper.getCdg(), tc2, oldPercents.employee  );
 		}
 		
+
 		ContractData contractData = 
 			new ContractData(startDate, 
 					endDate, 
@@ -780,6 +855,29 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		fullEmbargo.contractEmbargo.expression = getEmbargoExpression(embargo);
 		
 		embargos.put(concepto, fullEmbargo);
+	}
+	
+	@Override
+	public void visitBonifica_emprper(Bonifica bonifica, Emprper emprper)
+			throws SQLException {
+		
+		java.sql.Date endDate = 
+			getEndDate(bonifica.getFecfin(), emprper);
+		
+		Bonus bonus = concepts.getBonusConcept(bonifica.getCdg());
+		
+		String expression = null;
+		if ( bonus.expression == null ) {
+			expression = MyConcept.getExpr(bonifica);
+		}
+		
+		mysqlDB.insertContract_bonus(
+				this.contractId, 
+				null, 				// Description , heredada de Bonus concept.
+				expression, 
+				bonifica.getFecini(), 
+				endDate, 
+				bonus.id);
 	}
 	
 	@Override
@@ -846,7 +944,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 
 
 		Concept<PaymentType> concept = 
-			concepts.getConcept(percep.getCodcom());
+			concepts.getPaymentConcept(percep.getCodcom());
 		
 		if ( concept == null ){
 			MysqlDB.error("precep[{}] : Not found concept {} ", percep.getCdg(), percep.getCodcom());
@@ -903,7 +1001,8 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					!percep.getRedext().replace('S','D').equals(porCot) )
 				{ 
 					porQuote = MyConcept.getPorQuote(porCot, 
-							MyConcept.getQuoteExprFormat(tipcot));
+							MyConcept.getQuoteExprFormat(tipcot),
+							SalaryType.EXTRA);
 					mysqlDB.insertContract_payment(
 							enum2short(type),
 							this.contractId, 
@@ -927,7 +1026,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 			if ( !inheritFromAgreement(percep, endDate) || 
 				!percep.getRedext().replace('S','D').equals(porCot) )
 			{ 
-				porQuote = MyConcept.getPorQuote(porCot, quote);
+				porQuote = MyConcept.getPorQuote(porCot, quote, SalaryType.EXTRA);
 				mysqlDB.insertContract_payment(
 						enum2short(type),
 						this.contractId, 
@@ -1051,15 +1150,6 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		}
 	}
 	
-	
-
-
-	
-	@Override
-	public void visitRel_fin_epp(Finiquito finiquito, Emprper emprper)
-			throws SQLException {
-		
-	}
 	
 	@Override
 	public void visitTrabinci_emprper(Trabinci trabinci, Emprper emprper)

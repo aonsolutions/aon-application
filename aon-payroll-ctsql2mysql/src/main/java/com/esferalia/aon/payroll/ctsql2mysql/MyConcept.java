@@ -1,29 +1,18 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.ACTUAL_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.ENTRY_BY_COMPANY_ACCOUNT;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.FREE_IPREM;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.FREE_IPREM_SHORT;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.HOLIDAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.IPREM;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.IPREM_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.IPREM_BASE_SHORT;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.MONTH_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.QUOTE_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.SALARY_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.SENIOR_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.SPECIAL_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.WORKED_DAYS;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.YEAR_DAYS;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Bonifica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complemento;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipboni;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 
@@ -136,7 +125,7 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 		return DefaultMysqlDB.format(format, variable );
 	}
 
-	public static String getPorQuote(String porCot , String expr) {
+	public static String getPorQuote(String porCot , String expr, SalaryType type) {
 		String porQuote = "M".equalsIgnoreCase(porCot) ? 
 				"( " +  expr + " ) / 12 * " + QUOTE_DAYS + "/" + MONTH_DAYS : 
 				"( " +  expr + " ) /" + YEAR_DAYS + " *" + QUOTE_DAYS ;
@@ -149,15 +138,104 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 		}
 		return porQuote;
 	}
+	
+	public static String getExpr ( Bonifica bonifica ) throws SQLException{
+
+		double importe = DefaultMysqlDB.toDouble(bonifica.getImporte());
+		
+		String tipo = bonifica.getTipo();
+		
+		if ( tipo == null || tipo.equals("M")) {
+			if ( "S".equals(bonifica.getProrrateo() )){
+				return String.format("%.3f * %s / %s ", importe, BONUS_DAYS, MONTH_DAYS ) ;
+			}
+			else {
+				return String.format("%.3f ", importe) ;
+			}
+		}else if ( tipo.equals("A")){
+			if ( "S".equals(bonifica.getProrrateo() )){
+				return String.format("( %.3f / 12 ) * %s / %s", importe, BONUS_DAYS, MONTH_DAYS) ;
+			}
+			else{
+				return String.format("%.3f / 12 ", importe) ;
+			}
+		}
+		else if ( tipo.equals("D")) {
+			return String.format("%.3f * %s ", importe, BONUS_DAYS ) ;
+		}
+		return null;
+	}
+
+	public static String getExpr ( Tipboni tipboni ) throws SQLException{
+		
+		StringBuffer exprBuffer = 
+			new StringBuffer();
+		
+		String calculo = tipboni.getCalculo();
+
+		double prcCg = tipboni.getPrc_cg().doubleValue(); // It's not null
+		double prcAcc = tipboni.getPrc_acc().doubleValue(); // It's not null
+		double prcAccFgs = tipboni.getPrc_accfgs().doubleValue(); // It's not null
+		
+		
+		if ( calculo.equals("0")) { // % sobre cuota Empresa
+			if ( prcCg == prcAcc &&  prcAcc == prcAccFgs ) {
+				exprBuffer.append(String.format ( "%s * %.2f / 100", ENTERPRISE_QUOTA, prcCg));
+			}
+			else {
+				if ( prcCg != 0.00 ) {
+					exprBuffer.append(String.format(" %s * %.2f / 100", 
+							CGC_ENTERPRISE, prcCg  ));
+				}
+				if ( prcAcc != 0.00 ) {
+					if ( exprBuffer.length() > 0 )  { 
+						exprBuffer.append(" + ");
+					}
+					exprBuffer.append(String.format("( %s + %s ) * %.2f / 100 )", 
+							IT_ENTERPRISE, IMS_ENTERPRISE, prcAcc ));
+				}
+				if ( prcAccFgs != 0.00 ) {
+					if ( exprBuffer.length() > 0 )  { 
+						exprBuffer.append(" + ");
+					}
+					exprBuffer.append(String.format("( %s + %s + %s ) * %.2f / 100 )", 
+							UNEMPLOY_ENTERPRISE, FP_ENTERPRISE, FOGASA_ENTERPRISE,  prcAccFgs  ));
+				}
+			}
+		}
+		else if ( calculo.equals("3")) { // Reducción sobre % Empresa
+			if ( prcCg != 0.00 ) {
+				exprBuffer.append(String.format("%s * %.2f / 100", 
+						CGC_BASE, prcCg  ));
+			}
+			if ( prcAcc != 0.00 ) {
+				if ( exprBuffer.length() > 0 )  { 
+					exprBuffer.append(" + ");
+				}
+				exprBuffer.append(String.format("%s * %.2f / 100 )", 
+						CGP_BASE, prcAcc ));
+			}
+		}
+		
+		if ( exprBuffer.length() == 0 ) {
+			return null;
+		}
+		else {
+			return String.format("( %s ) * %s / %s ", 
+					exprBuffer.toString(), BONUS_DAYS, SALARY_DAYS);
+		}
+	}
 
 	private DefaultMysqlDB mysqlDB;
 
 	private Map<String, Concept<PaymentType>> paymentConcepts ;
+	private Map<Integer, Bonus> bonusConcepts ;
 	
 	public MyConcept(DefaultMysqlDB mysqlDB) 
 	{
 		this.mysqlDB = mysqlDB;	
 		this.paymentConcepts = new HashMap<String, Concept<PaymentType>>();
+		this.bonusConcepts = new HashMap<Integer, Bonus>();
 	}
 	
 	public String getCode(String cdg) {
@@ -166,16 +244,24 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 	}
 	
 	@Override
-	public Concept<PaymentType> getConcept(String codCom) throws SQLException{
+	public Concept<PaymentType> getPaymentConcept(String codCom) throws SQLException{
 
 		return paymentConcepts.get(codCom);
 		
 	}
 	
+	@Override
+	public Bonus getBonusConcept(Integer cdg) throws SQLException{
 
+		return bonusConcepts.get(cdg);
+		
+	}
+
+	
 	@Override
 	public void visit(AbstractCtsqlDB ctsqlDB) throws SQLException {
 		ctsqlDB.visitComplemento(this);
+		ctsqlDB.visitTipboni(this);
 	}
 	
 	
@@ -208,5 +294,19 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 		paymentConcepts.put(complemento.getCdg() , concept );
 	}
 	
+	
+	@Override
+	public void visitTipboni(Tipboni tipboni) throws SQLException {
+		String description = tipboni.getDescripcion();
+		String expression = getExpr(tipboni);
+		Integer bonusConceptId = 
+			mysqlDB.insertBonus_concept(
+					expression, 
+					description );
+		
+		Bonus bonus = 
+			new Bonus(bonusConceptId, tipboni.getCalculo(), description, expression);
+		bonusConcepts.put(tipboni.getCdg(), bonus );
+	}
 	
 }

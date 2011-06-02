@@ -287,7 +287,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 								percniv.getTipcot());
 		
 		Concept<PaymentType> concept = 
-			concepts.getConcept(percniv.getCodcom());
+			concepts.getPaymentConcept(percniv.getCodcom());
 		
 		String exprFormat = getExprFormat(percniv);
 
@@ -316,18 +316,20 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 		String amount = DefaultMysqlDB.format(exprFormat, variable );
 		
 		
+		
 		SalaryType salaryType = SalaryType.SALARY;
 		if ( "P".equals(percniv.getIndcom()) &&
 				"6".equals(percniv.getCalculo()) )
 		{
 			salaryType = SalaryType.EXTRA;
 		}
-		
+
 		Short month = MyConcept.getMonth(percniv.getMes());
 		if ( month != null ) {
 			quote = MyConcept.getPorQuote(percniv.getRedext(), 
-					MyConcept.getQuoteExprFormat(tipCot) );
+					MyConcept.getQuoteExprFormat(tipCot), salaryType);
 		}
+
 		
 
 		mysqlDB.insertAgreement_level_payment(

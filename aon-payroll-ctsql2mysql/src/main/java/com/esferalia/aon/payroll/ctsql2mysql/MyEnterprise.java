@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.print.CancelablePrintJob;
+
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.company.enumeration.EnterpriseActivityType;
@@ -320,14 +322,23 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		
 		Integer enterprise = enterprises.get(empract.getCodemp());
 		// TODO : Cómo elegimos el tipo de actividad ?
-
+		Integer cnae2009 = null;
+		String cnae2009Str = empract.getCnae2009() ;
+		if ( cnae2009Str != null && !cnae2009Str.isEmpty()){
+			if ( cnae2009Str.charAt(0) == '0') {
+				cnae2009Str = "1000" + cnae2009Str;
+			}
+			cnae2009 = Integer.valueOf(cnae2009Str);
+		}
+		
 		Integer activityId  = DefaultMysqlDB.get(cnae_activity, enterprise, cnae);
 		if ( activityId == null ) {
 			activityId = 
 				mysqlDB.insertEnterprise_activity(empract.getDescripcion(), 
 										enterprise, 
 										cnae, 
-										DefaultMysqlDB.enum2short(EnterpriseActivityType.PRINCIPAL));
+										DefaultMysqlDB.enum2short(EnterpriseActivityType.PRINCIPAL),
+										cnae2009);
 		}
 		DefaultMysqlDB.save(cnae_activity, enterprise, cnae, activityId);
 
@@ -338,6 +349,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		activities.put(empract.getCdg(), activity );
 		
 		empract.visitEmprccc_empract(this);
+		
+		//emprnif.visitOtrperc_emprnif(this);
 	}
 
 	

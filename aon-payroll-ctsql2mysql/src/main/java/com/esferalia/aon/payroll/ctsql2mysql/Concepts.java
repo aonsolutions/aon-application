@@ -20,7 +20,7 @@ public class Concepts implements IConcepts {
 	}
 	
 	@Override
-	public Concept<PaymentType> getConcept(String codCom) 
+	public Concept<PaymentType> getPaymentConcept(String codCom) 
 		throws SQLException {
 		ResultSet rs = null;
 		try {
@@ -52,6 +52,13 @@ public class Concepts implements IConcepts {
 				rs.close();
 			}
 		}
+	}
+	
+	@Override
+	public Bonus getBonusConcept(Integer cdg)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	@Override
