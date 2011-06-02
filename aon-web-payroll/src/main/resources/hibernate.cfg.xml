@@ -28,6 +28,14 @@
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
 		
+		<!-- AON-AUDIT Mapping files -->
+		<mapping class="com.code.aon.audit.Action"/>
+		<mapping class="com.code.aon.audit.ActionDenied"/>
+		<mapping class="com.code.aon.audit.ActionEntry"/>
+		<mapping class="com.code.aon.audit.ActionFavorite"/>
+		<mapping class="com.code.aon.audit.Application"/>
+		<mapping class="com.code.aon.audit.Session"/>		
+		
 		<!-- AON-CALENDAR Mapping files -->		
 		<mapping class="com.esferalia.aon.calendar.Calendar"/>
 		<mapping class="com.esferalia.aon.calendar.CalendarHoliday"/>
@@ -59,35 +67,19 @@
 		<mapping class="com.code.aon.config.UserWorkGroup"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
 
+		<!-- AON-FISCAL Mapping files -->	
+		<mapping class="com.code.aon.fiscal.Mod347"/>
+		<mapping class="com.code.aon.fiscal.Mod347Detail"/>
+		<mapping class="com.code.aon.fiscal.ProfessionalRetention"/>
+		<mapping class="com.code.aon.fiscal.Renting"/>
+		<mapping class="com.code.aon.fiscal.RentingDetail"/>
+		<mapping class="com.code.aon.fiscal.VatTax"/>
+		<mapping class="com.code.aon.fiscal.VatTaxDeclaration"/>
+		<mapping class="com.code.aon.fiscal.VatTaxDetail"/>
+
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>
-		
-		<!-- AON-REGISTRY Mapping files -->	
-		<mapping class="com.code.aon.person.Person"/>
-		<mapping class="com.code.aon.registry.Category"/>
-		<mapping class="com.code.aon.registry.RegistryBank"/>
-		<mapping class="com.code.aon.registry.RecordData"/>
-		<mapping class="com.code.aon.registry.Registry"/>
-		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
-		<mapping class="com.code.aon.registry.RegistryAddress"/>
-		<mapping class="com.code.aon.registry.RegistryAttachment"/>
-		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
-		<mapping class="com.code.aon.registry.RegistryMedia"/>
-		<mapping class="com.code.aon.registry.RegistryNote"/>
-		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
-		<mapping class="com.code.aon.registry.RegistryRelationship"/>
-		<mapping class="com.code.aon.registry.RegistrySegment"/>
-		<mapping class="com.code.aon.registry.Relationship"/>
-		<mapping class="com.code.aon.registry.Segment"/>
-		
-		<!-- AON-AUDIT Mapping files -->
-		<mapping class="com.code.aon.audit.Action"/>
-		<mapping class="com.code.aon.audit.ActionDenied"/>
-		<mapping class="com.code.aon.audit.ActionEntry"/>
-		<mapping class="com.code.aon.audit.ActionFavorite"/>
-		<mapping class="com.code.aon.audit.Application"/>
-		<mapping class="com.code.aon.audit.Session"/>		
 		
 		<!-- AON-PAYROLL Mapping files -->
 		<mapping class="com.esferalia.aon.payroll.Agreement"/>
@@ -127,6 +119,23 @@
 		<mapping class="com.esferalia.aon.payroll.SystemDeduction"/>
 		<mapping class="com.esferalia.aon.payroll.SystemPayment"/>
 
+		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.person.Person"/>
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryBank"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddInfo"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
+		<mapping class="com.code.aon.registry.RegistryRelationship"/>
+		<mapping class="com.code.aon.registry.RegistrySegment"/>
+		<mapping class="com.code.aon.registry.Relationship"/>
+		<mapping class="com.code.aon.registry.Segment"/>
 	</session-factory>
 
 </hibernate-configuration>

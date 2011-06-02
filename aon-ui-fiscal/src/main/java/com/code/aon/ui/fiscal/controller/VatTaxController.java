@@ -29,7 +29,7 @@ import com.code.aon.fiscal.VatTaxDeclaration;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Period;
-import com.code.aon.fiscal.enumeration.VatTaxColumn;
+import com.code.aon.fiscal.enumeration.TaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.vat.tax.VatTaxManager;
@@ -242,8 +242,8 @@ public class VatTaxController extends BasicController {
 		recalculate();		
 	}
 	
-	public List<VatTaxColumn> getColumns() {
-		return Arrays.asList( VatTaxColumn.values() );
+	public List<TaxColumn> getColumns() {
+		return Arrays.asList( TaxColumn.values() );
 	}
 
 	public void saveVatTax() throws ManagerBeanException{

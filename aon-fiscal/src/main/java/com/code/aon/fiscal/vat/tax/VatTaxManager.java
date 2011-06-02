@@ -27,7 +27,7 @@ import com.code.aon.fiscal.VatTax;
 import com.code.aon.fiscal.VatTaxDetail;
 import com.code.aon.fiscal.dao.IFiscalAlias;
 import com.code.aon.fiscal.enumeration.Period;
-import com.code.aon.fiscal.enumeration.VatTaxColumn;
+import com.code.aon.fiscal.enumeration.TaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -43,7 +43,7 @@ public class VatTaxManager {
 		Date dateTo = params.getPeriod().getDueDate(params.getYear());
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-		VatTaxColumn column = VatTaxColumn.ACUMULADO; 
+		TaxColumn column = TaxColumn.ACUMULADO; 
 		try {
 			StringWriter stmt = new StringWriter();
 			String quotaStmt = "IF(it.quota != 0,it.quota,ROUND(id.taxable_base * it.percentage / 100, 2) )";
@@ -164,7 +164,7 @@ public class VatTaxManager {
 		}
 	}
 
-	private void manageKey(VatTaxColumn column,List<VatTaxDetail> list, 
+	private void manageKey(TaxColumn column,List<VatTaxDetail> list, 
 			VatTaxKeyEx keyEx, VatTaxAmount amount) throws SQLException {
 		VatTaxDetail  detail = null;
 		for (VatTaxDetail d:list) {

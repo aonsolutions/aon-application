@@ -32,6 +32,12 @@
 		/>
 	</company:config>
 	
+	<fiscal:config version="1.0" xmlns:fiscal="http://www.esferalia.com/fiscal">
+		<fiscal:fiscal 
+			model347Enabled="false"
+		 	enterpriseEnabled="true"/>
+	</fiscal:config>
+	
 	<payroll:config version="1.1" xmlns:payroll="http://www.esferalia.com/payroll">
 		<payroll:payroll 
 			showPaymentEditionTab="true" 

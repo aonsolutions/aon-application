@@ -17,16 +17,16 @@ import com.code.aon.fiscal.enumeration.RentingStatus;
 import com.code.aon.fiscal.enumeration.VatTaxDeclarationStatus;
 import com.code.aon.fiscal.enumeration.VatTaxStatus;
 import com.code.aon.fiscal.enumeration.VatType;
+import com.code.aon.fiscal.enumeration.WithholdingDetailKey;
+import com.code.aon.fiscal.enumeration.WithholdingStatus;
 
-/**
- * Collections controller
- * 
- * @author Consulting & Development. Joseba Urkiri - 25-may-2006
- * 
- */
 public class FiscalCollectionsController {
 
 	private List<SelectItem> rentingStatuses;
+
+	private List<SelectItem> withholdingDetailKeys;
+
+	private List<SelectItem> withholdingStatuses;
 
 	private List<SelectItem> vatTaxStatuses;
 	private List<SelectItem> vatTaxDeclarationStatuses;
@@ -39,7 +39,7 @@ public class FiscalCollectionsController {
 	private List<SelectItem> mod347Types;
 
 	private List<SelectItem> mod340Formats;
-
+	
 	public List<SelectItem> getRentingStatuses() {
 		if (rentingStatuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -51,6 +51,32 @@ public class FiscalCollectionsController {
 			}
 		}
 		return rentingStatuses;
+	}
+
+	public List<SelectItem> getWithholdingDetailKeys() {
+		if (withholdingDetailKeys == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			withholdingDetailKeys = new LinkedList<SelectItem>();
+			for (WithholdingDetailKey key:WithholdingDetailKey.values()) {
+				String name = key.getName(locale);
+				SelectItem item = new SelectItem(key, name);
+				withholdingDetailKeys.add(item);
+			}
+		}
+		return withholdingDetailKeys;
+	}
+
+	public List<SelectItem> getWithholdingStatuses() {
+		if (withholdingStatuses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			withholdingStatuses = new LinkedList<SelectItem>();
+			for (WithholdingStatus status:WithholdingStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				withholdingStatuses.add(item);
+			}
+		}
+		return withholdingStatuses;
 	}
 
 	public List<SelectItem> getVatTaxStatuses() {

@@ -19,7 +19,7 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.fiscal.enumeration.VatTaxColumn;
+import com.code.aon.fiscal.enumeration.TaxColumn;
 import com.code.aon.fiscal.enumeration.VatTaxKey;
 import com.code.aon.fiscal.vat.tax.VatTaxAmount;
 
@@ -337,24 +337,24 @@ public class VatTaxDetail implements ITransferObject {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
-	public void add(VatTaxColumn column, VatTaxAmount amount) {
-		if (column == VatTaxColumn.ACUMULADO) {
+	public void add(TaxColumn column, VatTaxAmount amount) {
+		if (column == TaxColumn.ACUMULADO) {
 			setTaxableBaseAccumulated(CommonUtil.round(amount.getTaxableBase() + getTaxableBaseAccumulated()));
 			setDeductibleQuotaAccumulated(CommonUtil.round(amount.getDeductibleQuota() + getDeductibleQuotaAccumulated()));	
 			setQuotaAccumulated(CommonUtil.round(amount.getQuota() + getQuotaAccumulated()));
-		} else if (column == VatTaxColumn.DECLARADO) {
+		} else if (column == TaxColumn.DECLARADO) {
 			setTaxableBaseDeclared(CommonUtil.round(amount.getTaxableBase() + getTaxableBaseDeclared()));
 			setDeductibleQuotaDeclared(CommonUtil.round(amount.getDeductibleQuota() + getDeductibleQuotaDeclared()));	
 			setQuotaDeclared(CommonUtil.round(amount.getQuota() + getQuotaDeclared()));
-		} else if (column == VatTaxColumn.RESULTADO) {
+		} else if (column == TaxColumn.RESULTADO) {
 			setTaxableBaseResult(CommonUtil.round(amount.getTaxableBase() + getTaxableBaseResult()));
 			setDeductibleQuotaResult(CommonUtil.round(amount.getDeductibleQuota() + getDeductibleQuotaResult()));	
 			setQuotaResult(CommonUtil.round(amount.getQuota() + getQuotaResult()));
-		} else if (column == VatTaxColumn.AJUSTE) {
+		} else if (column == TaxColumn.AJUSTE) {
 			setTaxableBaseAdjust(CommonUtil.round(amount.getTaxableBase() + getTaxableBaseAdjust()));
 			setDeductibleQuotaAdjust(CommonUtil.round(amount.getDeductibleQuota() + getDeductibleQuotaAdjust()));	
 			setQuotaAdjust(CommonUtil.round(amount.getQuota() + getQuotaAdjust()));
-		} else if (column == VatTaxColumn.DECLARAR) {
+		} else if (column == TaxColumn.DECLARAR) {
 			setTaxableBase(CommonUtil.round(amount.getTaxableBase() + getTaxableBase()));
 			setDeductibleQuota(CommonUtil.round(amount.getDeductibleQuota() + getDeductibleQuota()));	
 			setQuota(CommonUtil.round(amount.getQuota() + getQuota()));

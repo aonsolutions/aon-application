@@ -4,6 +4,7 @@ import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.Mod347Detail;
+import com.code.aon.fiscal.ProfessionalRetention;
 import com.code.aon.fiscal.Renting;
 import com.code.aon.fiscal.RentingDetail;
 import com.code.aon.fiscal.VatTax;
@@ -142,6 +143,97 @@ public interface IFiscalAlias {
 	* Hibernate value: Mod347Detail.type
 	*/
 	String  MOD347DETAIL_TYPE = MOD347DETAIL_ENTRY.getAliasNames()[8];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProfessionalRetention entity.
+	*/ 
+	DAOConstantsEntry PROFESSIONAL_RETENTION_ENTRY = DAOConstants.getDAOConstant(ProfessionalRetention.class);
+
+	/** 
+	* Alias value: ProfessionalRetention_concept
+	* Hibernate value: ProfessionalRetention.concept
+	*/
+	String  PROFESSIONAL_RETENTION_CONCEPT = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProfessionalRetention_document
+	* Hibernate value: ProfessionalRetention.document
+	*/
+	String  PROFESSIONAL_RETENTION_DOCUMENT = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ProfessionalRetention_documentCountry
+	* Hibernate value: ProfessionalRetention.documentCountry
+	*/
+	String  PROFESSIONAL_RETENTION_DOCUMENT_COUNTRY = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ProfessionalRetention_documentType
+	* Hibernate value: ProfessionalRetention.documentType
+	*/
+	String  PROFESSIONAL_RETENTION_DOCUMENT_TYPE = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ProfessionalRetention_enterprise_id
+	* Hibernate value: ProfessionalRetention.enterprise.id
+	*/
+	String  PROFESSIONAL_RETENTION_ENTERPRISE_ID = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ProfessionalRetention_id
+	* Hibernate value: ProfessionalRetention.id
+	*/
+	String  PROFESSIONAL_RETENTION_ID = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ProfessionalRetention_inKind
+	* Hibernate value: ProfessionalRetention.inKind
+	*/
+	String  PROFESSIONAL_RETENTION_IN_KIND = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ProfessionalRetention_key
+	* Hibernate value: ProfessionalRetention.key
+	*/
+	String  PROFESSIONAL_RETENTION_KEY = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: ProfessionalRetention_name
+	* Hibernate value: ProfessionalRetention.name
+	*/
+	String  PROFESSIONAL_RETENTION_NAME = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: ProfessionalRetention_paymentDate
+	* Hibernate value: ProfessionalRetention.paymentDate
+	*/
+	String  PROFESSIONAL_RETENTION_PAYMENT_DATE = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: ProfessionalRetention_percent
+	* Hibernate value: ProfessionalRetention.percent
+	*/
+	String  PROFESSIONAL_RETENTION_PERCENT = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: ProfessionalRetention_quota
+	* Hibernate value: ProfessionalRetention.quota
+	*/
+	String  PROFESSIONAL_RETENTION_QUOTA = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: ProfessionalRetention_subkey
+	* Hibernate value: ProfessionalRetention.subkey
+	*/
+	String  PROFESSIONAL_RETENTION_SUBKEY = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: ProfessionalRetention_taxableBase
+	* Hibernate value: ProfessionalRetention.taxableBase
+	*/
+	String  PROFESSIONAL_RETENTION_TAXABLE_BASE = PROFESSIONAL_RETENTION_ENTRY.getAliasNames()[13];
 
 
 

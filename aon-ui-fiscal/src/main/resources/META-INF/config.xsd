@@ -13,6 +13,7 @@
 	<xs:element name="fiscal">
 		<xs:complexType>
 			<xs:attribute name="model347Enabled" type="xs:boolean" use="required"/>
+			<xs:attribute name="enterpriseEnabled" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

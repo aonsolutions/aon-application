@@ -8,6 +8,7 @@ import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.fiscal.Mod347;
 import com.code.aon.fiscal.Mod347Detail;
+import com.code.aon.fiscal.ProfessionalRetention;
 import com.code.aon.fiscal.Renting;
 import com.code.aon.fiscal.RentingDetail;
 import com.code.aon.fiscal.VatTax;
@@ -21,11 +22,12 @@ public class FiscalAliasWriter {
 		String[] classes = new String[]{
 			Mod347.class.getName(),
 			Mod347Detail.class.getName(),
+			ProfessionalRetention.class.getName(),
 			Renting.class.getName(),
 			RentingDetail.class.getName(),
 			VatTax.class.getName(),
 			VatTaxDetail.class.getName(),
-			VatTaxDeclaration.class.getName()
+			VatTaxDeclaration.class.getName(),
 		};
 		AliasWriter writer = new AliasWriter("com.code.aon.fiscal.dao");
 		HibernateUtil.getSessionFactory(null);

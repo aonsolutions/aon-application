@@ -66,6 +66,37 @@
 								</aon:div>		
 							</aon:div>
 						</aon:panelGrid>
+						
+						<aon:panelGrid id="group_fiscal_payroll"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-aeat aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.fiscal_menu_group}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="profRetention" 
+										action="profRetention_search" 
+										actionListener="#{profRetention.onEditSearch}"
+										value="#{fiscalBundle.fiscal_professional_retention_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="model110" 
+										action="withholdingReport_search" 
+										actionListener="#{withholdingReport.onReset}"
+										value="#{fiscalBundle.fiscal_withholding_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="model190" 
+										disabled="true" 
+										value="#{fiscalBundle.fiscal_model_190_module}">
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
 						<aon:panelGrid id="group_entity_payroll"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-customer aon-direct-access-panel">
