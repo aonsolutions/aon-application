@@ -7,6 +7,10 @@ public class EnterpriseWithholding {
 	private int count;
 	private double taxableBase;
 	private double quota;
+
+	private int workCount;
+	private double workTaxableBase;
+	private double workQuota;
 	
 	public int getEnterpriseId() {
 		return enterpriseId;
@@ -38,6 +42,25 @@ public class EnterpriseWithholding {
 	public void setQuota(double quota) {
 		this.quota = quota;
 	}
+	public int getWorkCount() {
+		return workCount;
+	}
+	public void setWorkCount(int workCount) {
+		this.workCount = workCount;
+	}
+	public double getWorkTaxableBase() {
+		return workTaxableBase;
+	}
+	public void setWorkTaxableBase(double workTaxableBase) {
+		this.workTaxableBase = workTaxableBase;
+	}
+	public double getWorkQuota() {
+		return workQuota;
+	}
+	public void setWorkQuota(double workQuota) {
+		this.workQuota = workQuota;
+	}
 
+	
 	
 }

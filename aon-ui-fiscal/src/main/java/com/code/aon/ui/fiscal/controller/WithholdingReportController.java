@@ -179,6 +179,11 @@ public class WithholdingReportController {
 			getModel111().setYear(getParams().getYear());
 			getModel111().setPeriod(getParams().getPeriod());
 			getModel111().setDetail10( getValues1(parameters,false) );
+			
+			getModel111().getDetail10().setCount( getModel111().getDetail10().getCount() + ew.getWorkCount() );
+			getModel111().getDetail10().setAmount( getModel111().getDetail10().getAmount() + ew.getWorkTaxableBase() );
+			getModel111().getDetail10().setQuota( getModel111().getDetail10().getQuota() + ew.getWorkQuota() );
+			
 			getModel111().setDetail11( getValues1(parameters,true) );
 			getModel111().setDetail20( getValues2(parameters,false) );
 			getModel111().setDetail21( getValues2(parameters,true) );
@@ -227,7 +232,7 @@ public class WithholdingReportController {
 		addCommonExpression(parameters,criteria);
 		criteria.addEqualExpression(IN_KIND_ALIAS, inKind);
 		criteria.addEqualExpression(KEY_ALIAS, WithholdingDetailKey.K);
-		criteria.addEqualExpression(SUBKEY_ALIAS, WithholdingDetailSubkey.K01);
+		criteria.addEqualExpression(SUBKEY_ALIAS, WithholdingDetailSubkey.K02);
 		return getModelDetail(criteria);
 	}
 	private ModelDetail getValues5(WithholdingParameters parameters, boolean inKind) throws ExpressionException, ManagerBeanException {

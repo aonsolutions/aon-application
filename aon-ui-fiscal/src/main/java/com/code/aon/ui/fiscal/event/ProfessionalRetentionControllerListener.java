@@ -61,4 +61,11 @@ public class ProfessionalRetentionControllerListener extends ControllerAdapter{
 		prc.setEnterprise( pr.getEnterprise() );
 		prc.setDate(pr.getPaymentDate());
 	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		ProfessionalRetentionController prc = (ProfessionalRetentionController) event.getController();
+		prc.setWithholdingDetailSubkeys(null);
+	}
+	
 }
