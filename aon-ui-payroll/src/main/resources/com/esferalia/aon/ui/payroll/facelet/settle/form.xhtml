@@ -24,20 +24,10 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" dir="true" width="900px">
 
-<!--  
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{settle.params.contract}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="lookupReRender" value="settleForm" />
-						<aon:methodParam name="lookupChangeListener"
-							value="#{settle.onContractChanged}" type="lookupChangeListener" />
-					</ui:include>
--->		
 											
 					<aon:outputLabel for="Settle_dismissCause" 
 						value="#{payrollBundle.payroll_settle_dismissCause}" />
 					<aon:selectOneMenu id="Settle_dismissCause" value="#{settle.params.dismissCause}"
-						actionListener="{settle.onDismissCauseChange}"
 						reRender="settleForm" >
 						<f:selectItem value="#{null}" itemLabel=" - " />
 						<f:selectItems value="#{payrollCollections.dismissCauseList}"  />
@@ -53,7 +43,7 @@
 						value="#{payrollBundle.payroll_salary_seniority_date}" />
 					<aon:panelGroup id="seniorityDateContainer">
 						<aon:selectInputDate id="Settle_seniorityDate"
-							value="#{settle.params.seniorityDate}" required="true"
+							value="#{settle.params.seniorityDate}" 
 							inputSize="10" renderAsPopup="true" enableManualInput="true"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
@@ -129,9 +119,7 @@
 			
 			
 		</aon:form>
-<!--  
-		<aon:lookupButtonPopup lookup="#{contractLookup}" />
--->
+
 	</ui:define>
 	
 </ui:composition>

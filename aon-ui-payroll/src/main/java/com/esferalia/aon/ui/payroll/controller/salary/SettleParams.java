@@ -30,8 +30,8 @@ public class SettleParams {
 	private Double vacationDayAmount;
 	private Double vacationAmount;
 	
-	private Double baseSalary;
-	private Integer monthDays;
+	private Double lastBaseSalary;
+	private Integer lastSalaryMonthDays;
 	
 	public Contract getContract() {
 		return contract;
@@ -44,6 +44,9 @@ public class SettleParams {
 	}
 	public void setSuspensionDate(Date suspensionDate) {
 		this.suspensionDate = suspensionDate;
+		if(getSeniorityDate()!=null && suspensionDate!=null && getDismissCause()!=null ){
+			setCompensationDays( new Double((getYears()*getDaysPerYear())).intValue() );
+		}
 	}
 	public Date getSeniorityDate() {
 		return seniorityDate;
@@ -56,28 +59,28 @@ public class SettleParams {
 	}
 	public void setDismissCause(DismissCause dismissCause) {
 		this.dismissCause = dismissCause;
+		if(dismissCause!=null){
+			setDaysPerYear(dismissCause.getCompensationDaysPerYear());
+		}
 	}
 	public Integer getCompensationDays() {
-		if(compensationDays==null && getSeniorityDate()!=null && getSuspensionDate()!=null && getDismissCause()!=null ){
-			compensationDays = getDays()/getDaysPerYear();
-		}
 		return compensationDays;
 	}
 	public void setCompensationDays(Integer compensationDays) {
 		this.compensationDays = compensationDays;
+		if(compensationDays!=null){
+			setCompensation(CommonUtil.round(compensationDays*getDayAmount()));
+		}
 	}
 	public Double getCompensation() {
-		if(compensation==null && getCompensationDays()!=null){
-			compensation = CommonUtil.round(getCompensationDays()*getDayAmount());
-		}
 		return compensation;
 	}
 	public void setCompensation(Double compensation) {
 		this.compensation = compensation;
 	}
 	public Double getDayAmount() {
-		if(dayAmount==null && getBaseSalary()!=null){
-			dayAmount = CommonUtil.round(getBaseSalary()/getMonthDays());
+		if(dayAmount==null && getLastBaseSalary()!=null){
+			dayAmount = CommonUtil.round(getLastBaseSalary()/getLastSalaryMonthDays());
 		}
 		return dayAmount;
 	}
@@ -85,13 +88,13 @@ public class SettleParams {
 		this.dayAmount = dayAmount;
 	}
 	public Integer getDaysPerYear() {
-		if(daysPerYear==null && getDismissCause()!=null){
-			daysPerYear = getDismissCause().getCompensationDaysPerYear();
-		}
 		return daysPerYear;
 	}
 	public void setDaysPerYear(Integer daysPerYear) {
 		this.daysPerYear = daysPerYear;
+		if(getSeniorityDate()!=null && getSuspensionDate()!=null && getDismissCause()!=null ){
+			setCompensationDays( new Double((getYears()*getDaysPerYear())).intValue() );
+		}
 	}
 	public Integer getPendingVacation() {
 		return pendingVacation;
@@ -100,8 +103,8 @@ public class SettleParams {
 		this.pendingVacation = pendingVacation;
 	}
 	public Double getVacationDayAmount() {
-		if(vacationDayAmount==null && getBaseSalary()!=null){
-			vacationDayAmount = CommonUtil.round(getBaseSalary()/getMonthDays());
+		if(vacationDayAmount==null && getLastBaseSalary()!=null){
+			vacationDayAmount = CommonUtil.round(getLastBaseSalary()/getLastSalaryMonthDays());
 		}
 		return vacationDayAmount;
 	}
@@ -114,20 +117,20 @@ public class SettleParams {
 	public void setVacationAmount(Double vacationAmount) {
 		this.vacationAmount = vacationAmount;
 	}
-	public Double getBaseSalary() {
+	public Double getLastBaseSalary() {
 		if(getContract()!=null){
 			searchBaseSalary();
 		}
-		return baseSalary;
+		return lastBaseSalary;
 	}
-	public void setBaseSalary(Double baseSalary) {
-		this.baseSalary = baseSalary;
+	public void setLastBaseSalary(Double lastBaseSalary) {
+		this.lastBaseSalary = lastBaseSalary;
 	}
-	public Integer getMonthDays() {
-		return monthDays;
+	public Integer getLastSalaryMonthDays() {
+		return lastSalaryMonthDays;
 	}
-	public void setMonthDays(Integer monthDays) {
-		this.monthDays = monthDays;
+	public void setLastSalaryMonthDays(Integer lastSalaryMonthDays) {
+		this.lastSalaryMonthDays = lastSalaryMonthDays;
 	}
 	
 	public Integer getDays() {
@@ -163,11 +166,11 @@ public class SettleParams {
 			criteria.addOrder(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), false);
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
-				setBaseSalary(((Salary)list.get(0)).getRemuneration());
-				setMonthDays(((Salary)list.get(0)).getTimeUnits());
+				setLastBaseSalary(((Salary)list.get(0)).getRemuneration());
+				setLastSalaryMonthDays(((Salary)list.get(0)).getTimeUnits());
 			}
 		} catch (ManagerBeanException e1) {
-			setBaseSalary(null);
+			setLastBaseSalary(null);
 		}
 	}
 

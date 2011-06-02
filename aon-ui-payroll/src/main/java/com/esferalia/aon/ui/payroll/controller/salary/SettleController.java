@@ -6,10 +6,6 @@ import javax.faces.event.ActionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
@@ -29,46 +25,26 @@ public class SettleController {
 		this.params = params;
 	}
 	
-	
-	public void onInitialize(ActionEvent event){
-		setParams(new SettleParams());
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-			getParams().setContract((Contract) bean.createNewTo());
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-			String msg = "Imposible lanzar el mantenimiento (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-	}
-	
 	public void onSelectContract(ActionEvent event){
 		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		controller.onSelect(event);
+		validateEndDate((Contract) controller.getTo());
+		setParams(new SettleParams());
 		getParams().setContract((Contract) controller.getTo());
 		getParams().setSeniorityDate(((Contract) controller.getTo()).getSeniorityDate());
 	}
 	
-	public void onContractChanged( LookupChangeEvent event ){
-		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
-			getParams().setSeniorityDate(((Contract) event.getNewValue()).getSeniorityDate());
-		}
-		if (event.getNewValue() == null || event.getNewValue().equals("")) {
-			onInitialize(null);
+	private void validateEndDate(Contract contract) {
+		if(contract.getEndDate()==null){
+			String msg = "No se puede generar el finiquito de un contrato no finalizado.";
+			AonUtil.addErrorMessage(msg);
+			LOGGER.error(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 	
-	public void onDismissCauseChanged(ActionEvent event){
-		getParams().setDaysPerYear(getParams().getDismissCause().getCompensationDaysPerYear());
-	}
-	
-	public void onSeniorityDateChanged(ActionEvent event){
-		
-	}
-
 	public void onGenerate(ActionEvent event){
 		AonUtil.addErrorMessage("sin implementar");
+		LOGGER.error("sin implementar");
 	}
 }
