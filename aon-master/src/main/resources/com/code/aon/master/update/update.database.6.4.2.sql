@@ -21,8 +21,8 @@ CREATE TABLE `fs_prof_retention` (
   `percent` double(15,3) default '0.000' COMMENT 'Porcentaje de  retencion',
   `quota` double default '0' COMMENT 'Cuota de retencion',
   `in_kind` tinyint(1) default '0' COMMENT 'Indica si el importe es en especie (1) o dinerario (0)',
-  `key` varchar(2) collate latin1_spanish_ci NOT NULL COMMENT 'Clave de retencion',
-  `subkey` varchar(3) collate latin1_spanish_ci default NULL COMMENT 'Subclave de retencion',
+  `withholding_key` varchar(2) collate latin1_spanish_ci NOT NULL COMMENT 'Clave de retencion',
+  `withholding_subkey` varchar(3) collate latin1_spanish_ci default NULL COMMENT 'Subclave de retencion',
   PRIMARY KEY  (`id`),
   KEY `IDX_FS_PROF_RET_ENTERPRISE` (`enterprise`),
   CONSTRAINT `FK_FS_PROF_RET_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`)
