@@ -16,6 +16,7 @@ ALTER TABLE `system_cost` ADD COLUMN `type` tinyint(2) default NULL COMMENT 'Tip
 ALTER TABLE `system_cost` MODIFY `expression` TEXT collate latin1_spanish_ci COMMENT 'Expresion'; 
 ALTER TABLE `system_cost` ADD COLUMN `code` varchar(10) collate latin1_spanish_ci default NULL COMMENT 'Código';
 
+ALTER TABLE `certifica2_batch_detail` MODIFY COLUMN `ccc` VARCHAR(15) COLLATE latin1_spanish_ci NOT NULL COMMENT 'Codigo cuenta cotizacion';
 
 INSERT INTO payment_concept 
  (id	,code		, type	, description					, description_decorable , expression	, irpf_expression	, quote_expression	)
