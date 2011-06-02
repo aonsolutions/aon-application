@@ -35,7 +35,7 @@
         </executions>
 	<configuration>
 		<targetPackage>com.esferalia.aon.payroll.sql</targetPackage>
-		<dbtables>registry,person,enterprise.*,customer,workplace.*,agreement.*,calendar.*,deduction_concept,payment_concept,system.*,contract.*,salary.*</dbtables>
+		<dbtables>registry,person,enterprise.*,customer,workplace.*,agreement.*,calendar.*,deduction_concept,payment_concept,bonus_concept,system.*,contract.*,salary.*,cnae2009.*</dbtables>
 	</configuration>
       </plugin>
     </plugins>
