@@ -83,6 +83,7 @@
 	<fiscal:config version="1.0" xmlns:fiscal="http://www.esferalia.com/fiscal">
 		<fiscal:fiscal
 			model347Enabled="true" 
+			enterpriseEnabled="false" 
 		/>
 	</fiscal:config>
 
