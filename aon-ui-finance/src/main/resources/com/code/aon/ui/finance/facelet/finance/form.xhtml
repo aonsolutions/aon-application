@@ -111,7 +111,7 @@
 								value=")"
 								rendered="#{!finance.to.emptyInvoice}" />
 							<aon:commandLink id="invoice_link" immediate="true"
-								styleClass="aon-icon-file-entrance aon-margin-left" style="padding-right: 20px;"
+								styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
 								value="&#160;" title="#{bundle.aon_go}"
 								rendered="#{!finance.to.emptyInvoice}"
 								actionListener="#{finance.onLoadInvoice}"
@@ -244,12 +244,12 @@
 					<aon:outputLabel for="Bank_id"
 						value="#{configBundle.config_bank}" />
 					<aon:div>
-						<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
-							<ui:param name="lookupTo" value="#{finance.to.bank}" />
-							<ui:param name="lookupDisabled" value="#{!finance.pending and !finance.returned}" />
-							<ui:param name="lookupReRender" value="Finance_bankAccount" />
-						</ui:include>								
 						<aon:panelGroup id="Finance_bankAccount">
+							<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml">
+								<ui:param name="lookupTo" value="#{finance.to.bank}" />
+								<ui:param name="lookupDisabled" value="#{!finance.pending and !finance.returned}" />
+								<ui:param name="lookupReRender" value="Finance_bankAccount" />
+							</ui:include>								
 							<aon:inputText id="Finance_bankAccount_office"
 								value="#{finance.to.bankAccount.office}"
 								disabled="#{!finance.pending and !finance.returned}" size="3" maxlength="4">
@@ -378,7 +378,7 @@
 											styleClass="aon-editDataTable-button aon-icon-delete"
 											accesskey="#{bundle.aon_key_remove_line}" />										
 										<aon:commandLink id="bankStatement_link" immediate="true"
-											styleClass="aon-icon-file-entrance" style="padding-right: 20px;"
+											styleClass="aon-button-goto" style="padding-right: 20px;"
 											value="&#160;" title="#{financeBundle.finance_bank_statement_checked}"
 											rendered="#{to.bankStatementLink != null}"
 											actionListener="#{financeTracking.onLoadBankStatement}"
