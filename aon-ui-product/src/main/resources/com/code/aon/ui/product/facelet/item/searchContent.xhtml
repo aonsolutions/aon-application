@@ -38,7 +38,7 @@
 		<f:selectItems value="#{productCollections.categories}" />
 	</aon:selectOneMenu>
 	
-	<c:if test="#{aonConfiguration.bean.product.showBrand}">
+	<c:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
 		<aon:outputLabel for="Item_product_brand_id"
 			value="#{productBundle.product_brand}" />
 		<aon:selectOneMenu id="Item_product_brand_id"
