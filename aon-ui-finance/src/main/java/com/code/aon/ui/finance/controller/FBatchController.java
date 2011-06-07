@@ -136,6 +136,15 @@ public class FBatchController extends BasicController implements ICollectionProv
         return FinanceBatchType.NONE != ((FinanceBatch)this.getTo()).getFinanceBatchType();
     }
 
+    public boolean isInStatement() {
+    	FinanceBatch fBatch = (FinanceBatch)this.getTo();
+    	return (fBatch.getBankStatementLink() != null && fBatch.getBankStatementLink().getId() != null);
+    }
+
+    public boolean isReadOnly() {
+    	return isRecorded() || isInStatement();
+    }
+
     public boolean isFilled() {
 		FinanceBatch fbatch = (FinanceBatch) this.getTo();
         return (fbatch.getFinanceBatchTotalDetails().intValue() > 0);
@@ -402,5 +411,11 @@ public class FBatchController extends BasicController implements ICollectionProv
             throw new AbortProcessingException();
         }
     }
+
+	public void onLoadBankStatement(ActionEvent event) throws ManagerBeanException {
+        FinanceBatch fBatch = (FinanceBatch)this.getTo();
+		BankStatementController statementController = (BankStatementController) AonUtil.getRegisteredBean(BANK_STATEMENT_CONTROLLER_NAME);
+		statementController.onLoadBankStatement(event, fBatch.getBankStatementLink().getBankStatement(), FINANCE_BATCH_FORM_NAME);
+	}
 
 }

@@ -15,8 +15,8 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{(fbatch.payment)?(financeBundle.finance_fbatch_payment_module):(financeBundle.finance_fbatch_charge_module)}" />
 				<ui:param name="controller" value="#{fbatch}" />
-				<ui:param name="skipSaveButton" value="#{fbatch.recorded}" />
-				<ui:param name="skipRemoveButton" value="#{fbatch.recorded}" />
+				<ui:param name="skipSaveButton" value="#{fbatch.readOnly}" />
+				<ui:param name="skipRemoveButton" value="#{fbatch.readOnly}" />
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:htmlCommandLink id="fBatch-excel-report"
@@ -41,14 +41,14 @@
 			     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 					<c:if test="#{aonRole.accountingOperator}">
 						<aon:commandButton id="recordPopup" value="#{financeBundle.finance_record}"
-							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}"
+							rendered="#{!fbatch.new and !fbatch.readOnly and (fbatch.done or !fbatch.diskMode)}"
 							styleClass="aon-finding-toolbar-item aon-icon-task-assume"
 							reRender="showFbatchRecordWindow">	
 							<f:setPropertyActionListener target="#{fbatch.showFbatchRecordWindow}"
 								value="#{true}" />
 						</aon:commandButton>								
 						<aon:commandButton id="unrecord" value="#{financeBundle.finance_unrecord}"
-							rendered="#{fbatch.recorded}"
+							rendered="#{fbatch.recorded and !fbatch.inStatement}"
 							styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
 							action="fbatch_form" actionListener="#{fbatch.onUnrecord}"
 							onclick="Richfaces.showModalPanel('waitProccess')" 
@@ -101,7 +101,7 @@
 						value="#{bundle.aon_date}" />
 					<aon:selectInputDate id="FinanceBatch_issueDate" 
 						value="#{fbatch.to.issueDate}" required="true"
-						disabled="#{fbatch.recorded}" size="10"
+						disabled="#{fbatch.readOnly}" size="10"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}"/>
 
@@ -109,7 +109,7 @@
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="FinanceBatch_description"
 						value="#{fbatch.to.description}" required="true"
-						disabled="#{fbatch.recorded}" size="40" maxlength="32" />
+						disabled="#{fbatch.readOnly}" size="40" maxlength="32" />
 
 					<aon:outputLabel for="FinanceBatch_financeBatchType"
 						value="#{financeBundle.finance_disk_type}" />
@@ -121,12 +121,20 @@
 
 					<aon:outputLabel for="RegistryBank_Lookup_id"
 						value="#{configBundle.config_bank}" />
-					<aon:selectOneMenu id="RegistryBank_Lookup_id"
-						value="#{fbatch.to.registryBank}"
-						disabled="#{fbatch.recorded}">
-						<f:selectItem itemLabel="-" value="#{null}"  />
-						<f:selectItems value="#{companyCollections.companyBanks}" />
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:selectOneMenu id="RegistryBank_Lookup_id"
+							value="#{fbatch.to.registryBank}"
+							disabled="#{fbatch.readOnly}">
+							<f:selectItem itemLabel="-" value="#{null}"  />
+							<f:selectItems value="#{companyCollections.companyBanks}" />
+						</aon:selectOneMenu>
+						<aon:commandLink id="bankStatement_link" immediate="true"
+							styleClass="aon-icon-commandButton aon-button-goto aon-bold aon-italic" style="padding-right: 20px;"
+							value="Extracto" title="#{financeBundle.finance_bank_statement_checked}"
+							rendered="#{fbatch.inStatement}"
+							actionListener="#{fbatch.onLoadBankStatement}"
+							action="bankStatement_list" />
+					</aon:div>
 
 					<aon:outputLabel for="FinanceBatch_totalAmount"
 						value="#{financeBundle.finance_total_amount}" />
@@ -148,7 +156,7 @@
 							</aon:panelTab>
 						</c:if>
 	
-						<c:if test="#{!fbatch.recorded}" >
+						<c:if test="#{!fbatch.readOnly}" >
 							<aon:panelTab id="financeTab" label="#{financeBundle.finance_not_batched_finances}">
 								<ui:include src="/com/code/aon/ui/finance/facelet/fbatch/formFinance.xhtml" />
 							</aon:panelTab>

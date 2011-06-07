@@ -6,7 +6,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:div styleClass="aon-toolbar" rendered="#{!fbatch.recorded}">
+	<aon:div styleClass="aon-toolbar" rendered="#{!fbatch.readOnly}">
 		<aon:commandButton title="#{bundle.aon_check_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 			value="#{bundle.aon_check_all}"
@@ -46,7 +46,7 @@
 				</f:facet>
 				<aon:selectBooleanCheckbox id="Included_Row_checked"
 					value="#{fBatchDetail.rowChecked}"
-					rendered="#{!fbatch.recorded}"
+					rendered="#{!fbatch.readOnly}"
 					valueChangeListener="#{fBatchDetail.rowSelected}" />	
 			</aon:column>
 	
