@@ -32,8 +32,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.dao.IProductAlias;
@@ -55,6 +53,8 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class CommercialStatEngineController {
+	
+	private static final String COMMERCIAL_TRACKING_TARGET_ID = "CommercialTracking.project.target.id";
 
 	private StatParams params;
 	private List<Stat> yearStats;
@@ -1378,8 +1378,7 @@ public class CommercialStatEngineController {
 				.getManagerBean(CommercialTracking.class);
 		List<ITransferObject> list2 = new LinkedList<ITransferObject>();
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID),
+		criteria.addEqualExpression(COMMERCIAL_TRACKING_TARGET_ID,
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
 				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
@@ -1437,8 +1436,7 @@ public class CommercialStatEngineController {
 				.getManagerBean(CommercialTracking.class);
 		List<ITransferObject> list2 = new LinkedList<ITransferObject>();
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID),
+		criteria.addEqualExpression(COMMERCIAL_TRACKING_TARGET_ID,
 				((ControlSummary) getSummaryModel().getRowData()).getId());
 		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
 				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
@@ -1485,8 +1483,7 @@ public class CommercialStatEngineController {
 								.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_ACTIVITY_ID),
 						((ControlSummary) getActivityModel().getRowData())
 								.getId());
-		criteria.addEqualExpression(commercialTrackingBean
-				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID),
+		criteria.addEqualExpression(COMMERCIAL_TRACKING_TARGET_ID,
 				this.getTarget().getId());
 		criteria.addGreaterThanOrEqualExpression(commercialTrackingBean
 				.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE),
