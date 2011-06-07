@@ -362,7 +362,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 				return FinanceStatus.PENDING;
 			}
 		}
-		return (financeBean.getCount(criteria) == 0) ? FinanceStatus.PENDING : FinanceStatus.PAID;
+		return (financeBean.getCount(criteria) == 0) ? null : FinanceStatus.PAID;
 	}
 
 	public boolean isRemovable() {
