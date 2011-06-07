@@ -3,6 +3,7 @@ package com.code.aon.commercial.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.commercial.CommercialActivity;
+import com.code.aon.commercial.Project;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.Commission;
@@ -49,6 +50,61 @@ public interface ICommercialAlias {
 
 
 	/** 
+	* DAOConstantsEntry for Project entity.
+	*/ 
+	DAOConstantsEntry PROJECT_ENTRY = DAOConstants.getDAOConstant(Project.class);
+
+	/** 
+	* Alias value: Project_date
+	* Hibernate value: Project.date
+	*/
+	String  PROJECT_DATE = PROJECT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Project_description
+	* Hibernate value: Project.description
+	*/
+	String  PROJECT_DESCRIPTION = PROJECT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Project_id
+	* Hibernate value: Project.id
+	*/
+	String  PROJECT_ID = PROJECT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Project_probability
+	* Hibernate value: Project.probability
+	*/
+	String  PROJECT_PROBABILITY = PROJECT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Project_seller_id
+	* Hibernate value: Project.seller.id
+	*/
+	String  PROJECT_SELLER_ID = PROJECT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Project_status
+	* Hibernate value: Project.status
+	*/
+	String  PROJECT_STATUS = PROJECT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Project_statusDate
+	* Hibernate value: Project.statusDate
+	*/
+	String  PROJECT_STATUS_DATE = PROJECT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Project_target_id
+	* Hibernate value: Project.target.id
+	*/
+	String  PROJECT_TARGET_ID = PROJECT_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
 	* DAOConstantsEntry for CommercialTracking entity.
 	*/ 
 	DAOConstantsEntry COMMERCIAL_TRACKING_ENTRY = DAOConstants.getDAOConstant(CommercialTracking.class);
@@ -60,58 +116,70 @@ public interface ICommercialAlias {
 	String  COMMERCIAL_TRACKING_ACTIVITY_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: CommercialTracking_allDay
+	* Hibernate value: CommercialTracking.allDay
+	*/
+	String  COMMERCIAL_TRACKING_ALL_DAY = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: CommercialTracking_comments
 	* Hibernate value: CommercialTracking.comments
 	*/
-	String  COMMERCIAL_TRACKING_COMMENTS = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[1];
+	String  COMMERCIAL_TRACKING_COMMENTS = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: CommercialTracking_date
 	* Hibernate value: CommercialTracking.date
 	*/
-	String  COMMERCIAL_TRACKING_DATE = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[2];
+	String  COMMERCIAL_TRACKING_DATE = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: CommercialTracking_endDate
 	* Hibernate value: CommercialTracking.endDate
 	*/
-	String  COMMERCIAL_TRACKING_END_DATE = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[3];
+	String  COMMERCIAL_TRACKING_END_DATE = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: CommercialTracking_id
 	* Hibernate value: CommercialTracking.id
 	*/
-	String  COMMERCIAL_TRACKING_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[4];
+	String  COMMERCIAL_TRACKING_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: CommercialTracking_location
+	* Hibernate value: CommercialTracking.location
+	*/
+	String  COMMERCIAL_TRACKING_LOCATION = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: CommercialTracking_next_id
 	* Hibernate value: CommercialTracking.next.id
 	*/
-	String  COMMERCIAL_TRACKING_NEXT_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[5];
+	String  COMMERCIAL_TRACKING_NEXT_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: CommercialTracking_offer_id
 	* Hibernate value: CommercialTracking.offer.id
 	*/
-	String  COMMERCIAL_TRACKING_OFFER_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[6];
+	String  COMMERCIAL_TRACKING_OFFER_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: CommercialTracking_project_id
+	* Hibernate value: CommercialTracking.project.id
+	*/
+	String  COMMERCIAL_TRACKING_PROJECT_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: CommercialTracking_seller_id
 	* Hibernate value: CommercialTracking.seller.id
 	*/
-	String  COMMERCIAL_TRACKING_SELLER_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[7];
+	String  COMMERCIAL_TRACKING_SELLER_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: CommercialTracking_status
 	* Hibernate value: CommercialTracking.status
 	*/
-	String  COMMERCIAL_TRACKING_STATUS = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[8];
-
-	/** 
-	* Alias value: CommercialTracking_target_id
-	* Hibernate value: CommercialTracking.target.id
-	*/
-	String  COMMERCIAL_TRACKING_TARGET_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[9];
+	String  COMMERCIAL_TRACKING_STATUS = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[11];
 
 
 

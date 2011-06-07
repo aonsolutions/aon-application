@@ -105,12 +105,6 @@
 							</aon:panelTab>
 						</c:if>
 
-						<c:if test="#{aonConfiguration.bean.target.showCommercialTracking}">
-							<aon:panelTab id="targetTracking" label="#{commercialBundle.commercial_target_tracking_module}">
-								<ui:include src="/com/code/aon/ui/commercial/facelet/targetTracking/tab_grid.xhtml" />
-							</aon:panelTab>
-						</c:if>
-
 						<c:if test="#{aonConfiguration.bean.target.showProfile}">
 							<aon:panelTab id="targetProfile" label="#{marketingBundle.marketing_target_profile}">
 								<ui:include src="/com/code/aon/ui/marketing/facelet/targetProfile/tab_grid.xhtml" />

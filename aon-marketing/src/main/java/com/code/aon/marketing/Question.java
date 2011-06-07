@@ -8,15 +8,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.marketing.enumeration.QuestionType;
 
 
@@ -44,7 +47,8 @@ public class Question implements ITransferObject {
 	@Column(nullable = false)
 	private QuestionType type;
 	
-	@Column(length = 1024)
+	@Lob
+	@Type(type="stringClob")
     private String argument;	
 	
 	@Column(nullable = false)
@@ -212,7 +216,13 @@ public class Question implements ITransferObject {
 
 	@Override
 	public String toString() {
-		return new PojoToStringBuilder(this).toString();
+		return new ToStringBuilder(this).
+			append("active", active).
+			append("argument", StringUtils.abbreviate(argument, 64)).			
+			append("id", id).
+			append("text", text).
+			append("type", type).
+			toString();
 	}
 	
 }

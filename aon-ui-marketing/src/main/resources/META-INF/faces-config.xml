@@ -295,6 +295,10 @@
 			<value>surveyQuestion</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>SurveyQuestion_position</value>
+		</managed-property>										
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>

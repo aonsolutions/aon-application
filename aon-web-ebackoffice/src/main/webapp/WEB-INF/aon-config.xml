@@ -34,8 +34,7 @@
 		/>
 	</product:config>
 	
-	<commercial:config version="1.2"
-		xmlns:commercial="http://www.esferalia.com/commercial">
+	<commercial:config version="1.3" xmlns:commercial="http://www.esferalia.com/commercial">
 		<commercial:offer
 			showInvoicing="false"
 			showSalesOrder="true"
@@ -46,7 +45,6 @@
 			showEcommerceTab="true"
 			showProfile="false"
 			showSearchOnlyCustomers="false"
-			showCommercialTracking="false"
 			showProduct="true"
 			showSeller="false"
 			showAddInfo="true"

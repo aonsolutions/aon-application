@@ -43,22 +43,35 @@
 
 					<aon:outputLabel for="CommercialTracking_date"
 						value="#{bundle.aon_date}" />
-					<aon:selectInputDate id="CommercialTracking_date" 
-						value="#{commercialTracking.to.date}" required="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>
-
-					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{commercialTracking.to.seller}" />
-						<ui:param name="idRequired" value="#{true}" />
-					</ui:include>
-
-					<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{commercialTracking.to.target}" />
-						<ui:param name="idRequired" value="#{true}" />
-					</ui:include>
-
+					<aon:div id="CommercialTracking_dateDiv">
+						<a4j:region>
+							<aon:outputLabel
+								rendered="#{!commercialTracking.to.allDay}"
+								styleClass="aon-form-date-label"
+								value="#{bundle.aon_date_from}:" />
+							<aon:selectInputDate id="CommercialTracking_date"
+								value="#{commercialTracking.to.date}" required="true"
+								timeZone="#{timeZoneController.timeZone}" inputSize="16"
+								popupDateFormat="#{(commercialTracking.to.allDay)?(bundle.aon_date_pattern):(bundle.aon_timestamp2_pattern)}">									
+							</aon:selectInputDate>
+							<c:if test="#{!commercialTracking.to.allDay}" >
+								<aon:outputLabel for="CommercialTracking_date-To"
+									styleClass="aon-form-date-label"
+									value="#{bundle.aon_date_to}:" />
+								<aon:selectInputDate id="CommercialTracking_date-To"
+									value="#{commercialTracking.to.endDate}"
+									timeZone="#{timeZoneController.timeZone}" inputSize="16"
+									popupDateFormat="#{bundle.aon_timestamp2_pattern}">									
+								</aon:selectInputDate>
+							</c:if>
+							<aon:selectBooleanCheckbox id="CommercialTracking_allDay" 
+								value="#{commercialTracking.to.allDay}" ajaxSingle="false"
+								reRender="CommercialTracking_dateDiv" />						
+							<aon:outputLabel for="CommercialTracking_allDay"
+								value="#{commercialBundle.commercial_tracking_allDay}" />
+						</a4j:region>
+					</aon:div>
+					
 					<aon:outputLabel for="CommercialTracking_activity_id"
 						value="#{commercialBundle.commercial_tracking_activity}" />
 					<h:panelGrid columns="3" id="CommercialTracking_activity_offer">						
@@ -94,31 +107,34 @@
 							</aon:commandButton>							
 						</aon:div>																			
 					</h:panelGrid>
+					
+					<ui:include src="/com/code/aon/ui/commercial/facelet/project/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{commercialTracking.to.project}" />
+						<ui:param name="idRequired" value="#{true}" />
+					</ui:include>
+
+					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{commercialTracking.to.seller}" />
+						<ui:param name="idRequired" value="#{true}" />
+					</ui:include>					
 
 					<aon:outputLabel for="CommercialTracking_status"
 						value="#{bundle.aon_status}" />
-					<h:panelGrid columns="2" id="CommercialTracking_statusDiv">
-						<aon:selectOneRadio id="CommercialTracking_status"
-							reRender="CommercialTracking_statusDiv"
-							valueChangeListener="#{commercialTracking.statusChanged}"
-							value="#{commercialTracking.to.status}">
-							<f:selectItems
-								value="#{commercialCollections.commercialTrackingStatuses}" />
-						</aon:selectOneRadio>
-						<aon:div styleClass="aon-margin-left"
-							rendered="#{commercialTracking.to.status  == 'CLOSED'}" >
-							<aon:selectInputDate id="CommercialTracking_endDate" 
-								value="#{commercialTracking.to.endDate}"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}">
-							</aon:selectInputDate>
-						</aon:div>						
-					</h:panelGrid>
+					<aon:selectOneRadio id="CommercialTracking_status"
+						value="#{commercialTracking.to.status}">
+						<f:selectItems
+							value="#{commercialCollections.commercialTrackingStatuses}" />
+					</aon:selectOneRadio>
 
 					<aon:outputLabel for="CommercialTracking_comments"
 						value="#{bundle.aon_comment}" />
 					<aon:inputTextarea id="CommercialTracking_comments"
-						value="#{commercialTracking.to.comments}" cols="51" rows="4" />
+						value="#{commercialTracking.to.comments}" cols="80" rows="4" />
+						
+					<aon:outputLabel for="CommercialTracking_location"
+						value="#{commercialBundle.commercial_tracking_location}" />
+					<aon:inputText id="CommercialTracking_location"
+						value="#{commercialTracking.to.comments}" size="80" maxlength="255" />											
 
 					<aon:outputLabel for="CommercialTracking_next_id"
 						value="#{commercialBundle.commercial_tracking_next_action}" />
@@ -136,7 +152,8 @@
 									value="#{bundle.aon_date}" />
 								<aon:selectInputDate id="CommercialTracking_next_date"
 									value="#{commercialTracking.next.date}" required="true"
-									popupDateFormat="#{bundle.aon_date_pattern}">
+									timeZone="#{timeZoneController.timeZone}" inputSize="16"
+									popupDateFormat="#{bundle.aon_timestamp2_pattern}">									
 								</aon:selectInputDate>
 
 								<aon:outputLabel for="CommercialTracking_next_activity_id"
@@ -150,7 +167,7 @@
 								<aon:outputLabel for="CommercialTracking_next_comments"
 									value="#{bundle.aon_comment}" />
 								<aon:inputTextarea id="CommercialTracking_next_comments"
-									value="#{commercialTracking.next.comments}" cols="51"
+									value="#{commercialTracking.next.comments}" cols="80"
 									rows="4" />
 
 							</aon:panelGrid>
@@ -162,8 +179,8 @@
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
-		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		<aon:lookupButtonPopup lookup="#{offerLookup}" />
+		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 	</ui:define>
 </ui:composition>
 

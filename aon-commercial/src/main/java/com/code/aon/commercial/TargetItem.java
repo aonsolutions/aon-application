@@ -13,6 +13,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.commercial.enumeration.TargetItemStatus;
 import com.code.aon.common.ITransferObject;
@@ -71,6 +72,7 @@ public class TargetItem implements ITransferObject {
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="target", nullable=false , updatable=false)
 	@ForeignKey(name = "FK_TARGET_ITEM_TARGET")
+	@Index(name = "IDX_TARGET_ITEM_TARGET")
 	public Target getTarget() {
 		return target;
 	}
@@ -92,6 +94,7 @@ public class TargetItem implements ITransferObject {
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn( name="item", nullable=false )
 	@ForeignKey(name = "FK_TARGET_ITEM_ITEM")
+	@Index(name = "IDX_TARGET_ITEM_ITEM")
 	public Item getItem() {
 		return item;
 	}

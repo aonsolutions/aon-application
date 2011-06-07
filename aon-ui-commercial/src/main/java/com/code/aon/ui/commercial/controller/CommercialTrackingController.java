@@ -1,5 +1,6 @@
 package com.code.aon.ui.commercial.controller;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
@@ -7,6 +8,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,16 +131,6 @@ public class CommercialTrackingController extends BasicController {
 		}
 	}
 
-	public void statusChanged( ValueChangeEvent event ) {
-		CommercialTracking ct = (CommercialTracking) getTo();
-		CommercialTrackingStatus status = (CommercialTrackingStatus) event.getNewValue();
-		if ( status == CommercialTrackingStatus.CLOSED ) {
-			ct.setEndDate(new Date());
-		} else {
-			ct.setEndDate(null);
-		}
-	}
-
 	public void offerChanged( ValueChangeEvent event ) {
 		CommercialTracking ct = (CommercialTracking) getTo();
 		Boolean value = (Boolean) event.getNewValue();
@@ -163,10 +155,6 @@ public class CommercialTrackingController extends BasicController {
 						if ( ct.getSeller().getId() != null ) {
 							String alias = controller.getFieldName(ICommercialAlias.OFFER_SELLER_ID);
 							controller.getCriteria().addEqualExpression(alias, ct.getSeller().getId());
-						}
-						if ( ct.getTarget().getId() != null ) {
-							String alias = controller.getFieldName(ICommercialAlias.OFFER_TARGET_ID);
-							controller.getCriteria().addEqualExpression(alias, ct.getTarget().getId());
 						}
 					} catch (ManagerBeanException e) {
 						LOGGER.error("Error filtering offer", e);

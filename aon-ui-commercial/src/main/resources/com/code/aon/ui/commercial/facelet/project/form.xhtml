@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="projectForm">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_opportunity_module}" />
+				<ui:param name="controller" value="#{project}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="menuGrid" columns="2" width="100%"
+					columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
+
+					<aon:outputLabel for="Project_id"
+						rendered="#{!project.new}" value="#{bundle.aon_id}" />
+					<aon:inputText id="Project_id" value="#{project.to.id}"
+						rendered="#{!project.new}" size="15" disabled="true" />
+						
+					<aon:outputLabel for="Project_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="Project_description" required="true"
+						value="#{project.to.description}" size="60" maxlength="64" />
+					
+					<aon:outputLabel for="Project_date"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate id="Project_date" 
+						value="#{project.to.date}" required="true"
+						timeZone="#{timeZoneController.timeZone}" inputSize="16"
+						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
+					</aon:selectInputDate>
+
+					<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{project.to.target}" />
+						<ui:param name="idRequired" value="#{true}" />
+					</ui:include>
+					
+					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{project.to.seller}" />
+					</ui:include>
+
+					<aon:outputLabel for="Project_statusDate"
+						value="#{commercialBundle.commercial_project_statusDate}" />
+					<aon:selectInputDate id="Project_statusDate" 
+						value="#{project.to.statusDate}" required="true"
+						timeZone="#{timeZoneController.timeZone}" inputSize="16"
+						popupDateFormat="#{bundle.aon_timestamp2_pattern}">
+					</aon:selectInputDate>
+					
+					<aon:outputLabel for="Project_status"
+						value="#{bundle.aon_status}" />
+					<aon:selectOneRadio id="Project_status"
+						reRender="Project_statusDiv"
+						valueChangeListener="#{project.statusChanged}"
+						value="#{project.to.status}">
+						<f:selectItems
+							value="#{commercialCollections.projectStatuses}" />
+					</aon:selectOneRadio>
+					
+					<aon:outputLabel for="Project_probability"
+						value="#{commercialBundle.commercial_project_probability}" />
+					<rich:inputNumberSlider id="Project_probability"
+						value="#{project.to.probability}"
+						minValue="0" maxValue="100" step="1"/>											
+
+				</aon:panelGrid>
+
+				<aon:div styleClass="aon-form-group" rendered="#{!project.new}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="projectTrackingData" value="#{commercialBundle.commercial_tracking_module}" />
+						</aon:div>
+					</aon:div>
+
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+						<ui:param name="controller" value="#{projectTracking}" />
+						<ui:param name="skipSelectButton" value="#{true}" />
+						<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+						<ui:define name="columns">
+						
+							<ui:include
+								src="/com/code/aon/ui/commercial/facelet/commercialTracking/listContent.xhtml" />
+	
+						</ui:define>
+					</ui:decorate>					
+				</aon:div>
+						
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

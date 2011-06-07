@@ -8,7 +8,7 @@
 		      <xs:element ref="offer" />
 		      <xs:element ref="target" />
 		    </xs:sequence>		
-			<xs:attribute name="version" type="xs:string" use="required" fixed="1.2"/>		    
+			<xs:attribute name="version" type="xs:string" use="required" fixed="1.3"/>		    
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="offer">
@@ -24,7 +24,6 @@
 			<xs:attribute name="showEcommerceTab" type="xs:boolean" use="required"/>
 			<xs:attribute name="showProfile" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSearchOnlyCustomers" type="xs:boolean" use="required"/>
-			<xs:attribute name="showCommercialTracking" type="xs:boolean" use="required"/>
 			<xs:attribute name="showProduct" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSeller" type="xs:boolean" use="required"/>
 			<xs:attribute name="showAddInfo" type="xs:boolean" use="required"/>

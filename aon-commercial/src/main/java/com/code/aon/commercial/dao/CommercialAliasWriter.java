@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.commercial.CommercialActivity;
+import com.code.aon.commercial.Project;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Commission;
@@ -36,9 +37,10 @@ public class CommercialAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-TRUNK/aon-commercial/src/main/java/com/code/aon/commercial/dao/ICommercialAlias.java");
+		File file = new File("/AON-PROJECT/aon-commercial/src/main/java/com/code/aon/commercial/dao/ICommercialAlias.java");
 		String[] classes = new String[] { 
 				CommercialActivity.class.getName(),
+				Project.class.getName(),
 				CommercialTracking.class.getName(),
 				CommercialTerm.class.getName(),
 				Commission.class.getName(),

@@ -17,6 +17,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.ITransferObject;
@@ -40,8 +41,8 @@ public class CommercialTracking implements ITransferObject {
 	/** The date. */
 	private Date date;
 	
-	/** The target. */
-	private Target target;
+	/** The project. */
+	private Project project;
 	
 	/** The seller. */
 	private Seller seller;
@@ -63,6 +64,12 @@ public class CommercialTracking implements ITransferObject {
 	
 	/** The end date. */
 	private Date endDate;
+	
+	/** The all day. */
+	private boolean allDay;
+	
+	/** The location. */
+	private String location;
 	
 	public CommercialTracking() {
 		this.status = CommercialTrackingStatus.PENDING;
@@ -94,7 +101,7 @@ public class CommercialTracking implements ITransferObject {
 	 * 
 	 * @return the date
 	 */
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getDate() {
 		return date;
 	}
@@ -109,24 +116,25 @@ public class CommercialTracking implements ITransferObject {
 	}
 
 	/**
-	 * Gets the target.
+	 * Gets the project.
 	 * 
-	 * @return the target
+	 * @return the project
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="target", nullable=false , updatable=false)
-	@ForeignKey(name = "FK_COMMERCAIL_TRACKING_TARGET")
-	public Target getTarget() {
-		return target;
+	@JoinColumn(name="project", nullable=false)
+	@ForeignKey(name = "FK_COMMERCAIL_TRACKING_PROJECT")
+	@Index(name = "IDX_COMMERCAIL_TRACKING_PROJECT")
+	public Project getProject() {
+		return project;
 	}
 
 	/**
-	 * Sets the target.
+	 * Sets the project.
 	 * 
-	 * @param target the target
+	 * @param project the project
 	 */
-	public void setTarget(Target target) {
-		this.target = target;
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	/**
@@ -135,8 +143,9 @@ public class CommercialTracking implements ITransferObject {
 	 * @return the seller
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="seller", nullable=false )
+	@JoinColumn(name="seller", nullable=false)
 	@ForeignKey(name = "FK_COMMERCAIL_TRACKING_SELLER")
+	@Index(name = "IDX_COMMERCAIL_TRACKING_SELLER")
 	public Seller getSeller() {
 		return seller;
 	}
@@ -156,8 +165,9 @@ public class CommercialTracking implements ITransferObject {
 	 * @return the activity
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="activity", nullable=false )
+	@JoinColumn(name="activity", nullable=false)
 	@ForeignKey(name = "FK_COMMERCAIL_TRACKING_ACTIVITY")
+	@Index(name = "IDX_COMMERCAIL_TRACKING_ACTIVITY")
 	public CommercialActivity getActivity() {
 		return activity;
 	}
@@ -215,8 +225,9 @@ public class CommercialTracking implements ITransferObject {
 	 * @return the next
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="next_commercial_tracking" )
-	@ForeignKey(name = "FK_COMMERCAIL_TRACKING_NEXT_COMMERCIAL_TRACKING")
+	@JoinColumn(name="next_commercial_tracking")
+	@ForeignKey(name = "FK_COMMERCAIL_TRACKING_NEXT")
+	@Index(name = "IDX_COMMERCAIL_TRACKING_NEXT")
 	public CommercialTracking getNext() {
 		return next;
 	}
@@ -236,8 +247,9 @@ public class CommercialTracking implements ITransferObject {
 	 * @return the offer
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
-	@JoinColumn( name="offer" )
+	@JoinColumn(name="offer")
 	@ForeignKey(name = "FK_COMMERCAIL_TRACKING_OFFER")
+	@Index(name = "IDX_COMMERCAIL_TRACKING_OFFER")
 	public Offer getOffer() {
 		return offer;
 	}
@@ -256,7 +268,7 @@ public class CommercialTracking implements ITransferObject {
 	 * 
 	 * @return the end date
 	 */
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="end_date")
 	public Date getEndDate() {
 		return endDate;
@@ -271,6 +283,44 @@ public class CommercialTracking implements ITransferObject {
 		this.endDate = endDate;
 	}
 
+	/**
+	 * Checks if is all day.
+	 *
+	 * @return true, if is all day
+	 */
+	@Column(nullable=false)
+	public boolean isAllDay() {
+		return allDay;
+	}
+
+	/**
+	 * Sets the all day.
+	 *
+	 * @param allDay the new all day
+	 */
+	public void setAllDay(boolean allDay) {
+		this.allDay = allDay;
+	}
+
+	/**
+	 * Gets the location.
+	 *
+	 * @return the location
+	 */
+	@Column(length=255)
+	public String getLocation() {
+		return location;
+	}
+
+	/**
+	 * Sets the location.
+	 *
+	 * @param location the new location
+	 */
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -280,14 +330,16 @@ public class CommercialTracking implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.activity, o.activity)				
+				.append(this.allDay, o.allDay)
 				.append(this.comments, o.comments)
 				.append(this.date, o.date)				
 				.append(this.endDate, o.endDate)
+				.append(this.location, o.location)
 				.append(this.next, o.next)
 				.append(this.offer, o.offer)
+				.append(this.project, o.project)				
 				.append(this.seller, o.seller)				
-				.append(this.status, o.status)
-				.append(this.target, o.target)				
+				.append(this.status, o.status)				
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -297,15 +349,17 @@ public class CommercialTracking implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(activity)
+			.append(allDay)
 			.append(comments)	
 			.append(date)
 			.append(endDate)
 			.append(id)			
+			.append(location)
 			.append(next)
 			.append(offer)
+			.append(project)			
 			.append(seller)
 			.append(status)
-			.append(target)
 			.toHashCode();
 	}
 

@@ -12,6 +12,7 @@ import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.Commission;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.Advertising;
+import com.code.aon.commercial.enumeration.ProjectStatus;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.ExpenseHolderType;
 import com.code.aon.commercial.enumeration.ExpenseStatus;
@@ -42,6 +43,8 @@ public class CommercialCollectionsController {
 	private List<SelectItem> offerDetailStatuses;
 	
 	private List<SelectItem> commercialTrackingStatuses;
+	
+	private List<SelectItem> projectStatuses;
 	
 	private List<SelectItem> targetItemStatuses;
 	
@@ -132,6 +135,24 @@ public class CommercialCollectionsController {
 		return commercialTrackingStatuses;
 	}
 
+	/**
+	 * Gets the project statuses.
+	 * 
+	 * @return the project statuses
+	 */
+	public List<SelectItem> getProjectStatuses() {
+		if ( projectStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			projectStatuses = new LinkedList<SelectItem>();
+			for (ProjectStatus status : ProjectStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				projectStatuses.add(item);
+			}
+		}
+		return projectStatuses;
+	}
+	
 	/**
 	 * Gets the target item statuses.
 	 * 

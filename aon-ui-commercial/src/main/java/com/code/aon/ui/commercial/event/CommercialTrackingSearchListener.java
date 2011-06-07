@@ -1,6 +1,6 @@
 package com.code.aon.ui.commercial.event;
 
-import com.code.aon.commercial.Target;
+import com.code.aon.commercial.Project;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -14,7 +14,7 @@ public class CommercialTrackingSearchListener extends ControllerSearchListener {
 
 	private Seller seller;
 	
-	private Target target;
+	private Project project;
 		
 	public Seller getSeller() {
 		return seller;
@@ -23,21 +23,21 @@ public class CommercialTrackingSearchListener extends ControllerSearchListener {
 	public void setSeller(Seller seller) {
 		this.seller = seller;
 	}
-
-	public Target getTarget() {
-		return target;
+	
+	public Project getProject() {
+		return project;
 	}
 
-	public void setTarget(Target target) {
-		this.target = target;
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	@Override
 	protected void init() throws ManagerBeanException {
 		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
 		setSeller( (Seller) sellerBean.createNewTo() );
-		IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
-		setTarget( (Target) targetBean.createNewTo() );
+		IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+		setProject( (Project) projectBean.createNewTo() );
 	}
 	
 	@Override
@@ -46,9 +46,9 @@ public class CommercialTrackingSearchListener extends ControllerSearchListener {
 			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID);
 			criteria.addEqualExpression(alias, getSeller().getId());			
 		}
-		if ( (getTarget() != null) && (getTarget().getId() != null) ) {
-			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID);
-			criteria.addEqualExpression(alias, getTarget().getId());			
+		if ( (getProject() != null) && (getProject().getId() != null) ) {
+			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_PROJECT_ID);
+			criteria.addEqualExpression(alias, getProject().getId());			
 		}
 	}
 	

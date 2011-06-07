@@ -40,15 +40,15 @@
 					<aon:outputLabel for="Question_text"
 						value="#{bundle.aon_description}" />
 					<aon:inputTextarea id="Question_text" required="true"
-						value="#{question.to.text}" cols="60" rows="4" >
+						value="#{question.to.text}" cols="80" rows="2" >
 						<f:validateLength  maximum="255"/>
 					</aon:inputTextarea>
 
 					<aon:outputLabel for="Question_argument"
 						value="#{marketingBundle.marketing_question_argument}" />
 					<aon:inputTextarea id="Question_argument" 
-						value="#{question.to.argument}" cols="60" rows="4" >
-						<f:validateLength  maximum="1024"/>
+						value="#{question.to.argument}" cols="80" rows="4" >
+						<f:validateLength  maximum="65536"/>
 					</aon:inputTextarea>
 					
 					<aon:outputLabel for="Question_active"

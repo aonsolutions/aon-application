@@ -111,7 +111,7 @@ public class CommercialTrackingListener extends ControllerAdapter {
 			CommercialTracking next = controller.getNext();
 			ct.setNext( next );
 			next.setSeller( ct.getSeller() );	
-			next.setTarget( ct.getTarget() );
+			next.setProject( ct.getProject() );
 			controller.getManagerBean().insertOrUpdate(next);
 		} else {
 			CommercialTracking ct = (CommercialTracking) controller.getTo();
