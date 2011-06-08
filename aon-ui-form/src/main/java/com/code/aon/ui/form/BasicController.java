@@ -1077,6 +1077,17 @@ public class BasicController extends AbstractPojoController implements IControll
 	}
 	
 	/**
+	 * Refresh current TO.
+	 * 
+	 * @param event the event
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public void refresh( ActionEvent event ) throws ManagerBeanException {
+		setTo( getManagerBean().get( getManagerBean().getId( getTo() ) ) );
+		setRowData( getTo() );
+	}
+	
+	/**
 	 * Select an ITransferObject.
 	 * 
 	 * @param event the event
