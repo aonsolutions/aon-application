@@ -259,7 +259,11 @@ public class FBatchController extends BasicController implements ICollectionProv
 		this.onSearchFinance(null);
     }
 
-    private void loadDetails(FinanceBatch fbatch) {
+    public void loadDetails(ActionEvent event) {
+    	loadDetails();
+    }
+
+    private void loadDetails() {
         LinesController fBatchDetailController = (LinesController)FormUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
         fBatchDetailController.onSearch(null);
     }
@@ -294,7 +298,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 			FinanceTrackingWriter.addFinanceTracking(finance, fBatch.getIssueDate(), FinanceTrackingType.BATCHED, message);
         }
         financeController.clearCheckedFinances();
-        loadDetails(fBatch);
+        loadDetails();
         onSearchFinance(event);
 	}
 
@@ -315,7 +319,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         	financeBatchDetailBean.remove(fBatchDetail);
         }
 		fBatchDetailController.clearCheckedFinanceBatchDetails();
-        loadDetails(fBatch);
+        loadDetails();
         onSearchFinance(event);
     }
 
@@ -403,14 +407,14 @@ public class FBatchController extends BasicController implements ICollectionProv
     public void onRecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fBatch = (FinanceBatch)this.getTo();
         getWriter().recordFBatch(fBatch, getRecordDate());
-        loadDetails(fBatch);
+        loadDetails();
     }
 
     public void onUnrecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fBatch = (FinanceBatch)this.getTo();
         if (getWriter().canRemoveAccountEntryFinanceBatch(fBatch)) {
             getWriter().removeAccountEntryFinanceBatch(fBatch);
-            loadDetails(fBatch);
+            loadDetails();
         } else {
             AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_UNRECORD_ERROR);
             throw new AbortProcessingException();
@@ -420,7 +424,7 @@ public class FBatchController extends BasicController implements ICollectionProv
 	public void onLoadBankStatement(ActionEvent event) throws ManagerBeanException {
         BankStatement statement = ((FinanceBatch)this.getTo()).getBankStatementLink().getBankStatement();
 		BankStatementController statementController = (BankStatementController) AonUtil.getRegisteredBean(BANK_STATEMENT_CONTROLLER_NAME);
-		statementController.onLoadBankStatement(event, statement, FINANCE_BATCH_FORM_NAME, FINANCE_BATCH_CONTROLLER_NAME + ".refresh");
+		statementController.onLoadBankStatement(event, statement, FINANCE_BATCH_FORM_NAME, FINANCE_BATCH_CONTROLLER_NAME + ".onBackFinanceBatch");
 	}
 
 	public void onLoadFinanceBatch(ActionEvent event, FinanceBatch fBatch, String backAction, String backActionListener) 
@@ -433,6 +437,14 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 		setBackAction(backAction);
 		setBackActionListener(backActionListener);
+	}
+
+	public void onBackFinanceBatch(ActionEvent event) throws ManagerBeanException {
+		FBatchController fBatchController = (FBatchController) AonUtil.getRegisteredBean(FINANCE_BATCH_CONTROLLER_NAME);
+		fBatchController.refresh(event);
+
+		loadDetails();
+		loadAvailableFinances();
 	}
 
 }

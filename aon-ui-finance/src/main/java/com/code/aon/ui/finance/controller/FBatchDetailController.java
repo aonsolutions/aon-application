@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.controller;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.ui.util.AonUtil;
 
@@ -10,11 +11,11 @@ public class FBatchDetailController extends FBatchDetailListController implement
 
 	public void onLoadFinance(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
-			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)this.getModel().getRowData();
+			Finance finance = ((FinanceBatchDetail)this.getModel().getRowData()).getFinance();
 
 			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
-			financeController.setPayment(fBatchDetail.getFinance().isPayment());
-			financeController.onLoadFinance(event, fBatchDetail.getFinance(), FINANCE_BATCH_FORM_NAME, FINANCE_CONTROLLER_NAME + ".onBack");
+			financeController.setPayment(finance.isPayment());
+			financeController.onLoadFinance(event, finance, FINANCE_BATCH_FORM_NAME, FINANCE_BATCH_CONTROLLER_NAME + ".onBackFinanceBatch");
 		}
 	}
 
