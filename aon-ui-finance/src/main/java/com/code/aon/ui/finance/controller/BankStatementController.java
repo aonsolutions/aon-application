@@ -1687,7 +1687,7 @@ public class BankStatementController extends BasicController implements IFinance
 		return false;
 	}
 
-	public void onLoadBankStatement(ActionEvent event, BankStatement statement, String backAction) throws ManagerBeanException {
+	public void onLoadBankStatement(ActionEvent event, BankStatement statement, String backAction, String backActionListener)  throws ManagerBeanException {
 		onEditSearch(null);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_ID), statement.getId());
@@ -1700,7 +1700,7 @@ public class BankStatementController extends BasicController implements IFinance
 		onSearch(null);
 
 		setBackAction(backAction);
-		setBackActionListener(BANK_STATEMENT_CONTROLLER_NAME + ".onBack");
+		setBackActionListener(backActionListener);
 	}
 
 	/**
