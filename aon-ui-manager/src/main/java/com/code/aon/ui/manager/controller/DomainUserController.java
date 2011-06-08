@@ -509,5 +509,9 @@ public class DomainUserController extends LdapBasicController implements IManage
 		}
 		return converter;
 	}
+
+	public boolean isValidName( String name ) {
+		return name.matches("\\p{Lower}[\\p{Lower}\\p{Digit}\\.\\-]*");
+	}
 	
 }
