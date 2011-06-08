@@ -394,7 +394,6 @@ public class FinanceController extends FinanceListController {
 		setReturnRecordable(AonUtil.getRoleManager().isAccountingOperator());
 	}
 
-	@SuppressWarnings("unchecked")
 	private RegistryBank obtainReturnRegistryBank(Registry registry, Finance finance) throws ManagerBeanException {
 		Bank bank = finance.getBank();
 		BankAccount bankAccount = finance.getBankAccount();
@@ -402,7 +401,7 @@ public class FinanceController extends FinanceListController {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
 		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
-		Iterator iterator = fBatchDetailBean.getList(criteria).iterator();
+		Iterator<?> iterator = fBatchDetailBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
 			bank = detail.getFinanceBatch().getRegistryBank().getBank();
@@ -519,14 +518,13 @@ public class FinanceController extends FinanceListController {
 		financeTrackingController.onSearch(null);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void returnFinanceBatchDetail(Finance finance) throws ManagerBeanException {
 		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
 		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
-		Iterator iterator = fBatchDetailBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
+		Iterator<?> iterator = fBatchDetailBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
 			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
 			detail.setStatus(FinanceStatus.RETURNED);
 			fBatchDetailBean.update(detail);

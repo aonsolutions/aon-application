@@ -113,7 +113,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 	private void updateFinanceStatus(FinanceTracking tracking) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		if (tracking.getType().equals(FinanceTrackingType.RETURNED)) {
-			updateFinanceBatchDetailStatus(tracking.getFinance());
+			updateFinanceBatchDetailStatus(tracking);
 			tracking.getFinance().setFinanceStatus(FinanceStatus.PAID);
 		} else {
 			tracking.getFinance().setFinanceStatus((FinanceTrackingWriter.wasFinanceReturned(tracking.getFinance())?FinanceStatus.RETURNED:FinanceStatus.PENDING));
@@ -124,28 +124,33 @@ public class FinanceTrackingController extends LinesController implements IFinan
 		((Finance)financeController.getTo()).setFinanceStatus(finance.getFinanceStatus());
 	}
 
-	private void updateFinanceBatchDetailStatus(Finance finance) throws ManagerBeanException {
-		if (FinanceTrackingWriter.getReturnedTimes(finance) == getBatchedTimes(finance)) {
-			IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
-			criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
-			criteria.addOrder(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ISSUE_DATE), false);
-			Iterator<?> iterator = fBatchDetailBean.getList(criteria).iterator();
+	private void updateFinanceBatchDetailStatus(FinanceTracking tracking) throws ManagerBeanException {
+		Finance finance = tracking.getFinance();
+		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
+		criteria.addLessThanExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID), tracking.getId());
+		criteria.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID), false);
+		Iterator<?> iterator = trackingBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			iterator.next();
 			if (iterator.hasNext()) {
-				FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
-				detail.setStatus(FinanceStatus.PAID);
-				fBatchDetailBean.update(detail);
+				FinanceTracking batchedTracking = (FinanceTracking)iterator.next();
+				if (batchedTracking.isBatched()) {
+					IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+					criteria = new Criteria();
+					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
+					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
+					criteria.addOrder(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_ID), false);
+					for (ITransferObject ito : fBatchDetailBean.getList(criteria)) {
+						FinanceBatchDetail detail = (FinanceBatchDetail)ito;
+						detail.setStatus(FinanceStatus.PAID);
+						fBatchDetailBean.update(detail);
+						return;
+					}
+				}
 			}
 		}
-	}
-
-	private int getBatchedTimes(Finance finance) throws ManagerBeanException {
-		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
-		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
-		return (fBatchDetailBean.getCount(criteria));
 	}
 
 	public void onLoadFinanceBatch(ActionEvent event) throws ManagerBeanException {
