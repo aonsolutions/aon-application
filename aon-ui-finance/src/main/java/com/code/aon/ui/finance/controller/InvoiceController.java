@@ -620,7 +620,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 	
-	public void onLoadInvoice(ActionEvent event, Invoice invoice, String backAction, String invoiceControllerName) throws ManagerBeanException {
+	public void onLoadInvoice(ActionEvent event, Invoice invoice, String backAction, String backActionListener) throws ManagerBeanException {
 		onEditSearch(event);
 		getCriteria().addEqualExpression(getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
 		onSearch(event);
@@ -628,7 +628,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		onSelect(event);
 
 		setBackAction(backAction);
-		setBackActionListener(invoiceControllerName + ".onBack");
+		setBackActionListener(backActionListener);
 	}
 
 }

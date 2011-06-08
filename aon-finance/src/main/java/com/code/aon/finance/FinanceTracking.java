@@ -141,6 +141,11 @@ public class FinanceTracking implements ITransferObject, IConfidentialable {
 	}
 
 	@Transient
+	public boolean isBatched() {
+		return (type == FinanceTrackingType.BATCHED);
+	}
+
+	@Transient
 	public boolean isRecordable() {
 		return (type == FinanceTrackingType.PAID || type == FinanceTrackingType.RETURNED);
 	}

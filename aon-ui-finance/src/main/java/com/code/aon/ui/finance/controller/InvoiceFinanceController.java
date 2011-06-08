@@ -161,19 +161,24 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		if (getModel().isRowAvailable()) {  
 			Finance finance = (Finance)getModel().getRowData();
 			String backAction = "";
+			String backActionListener = "";
 			if (finance.getInvoice().getType() == InvoiceType.SALES) {
 				backAction = SALE_INVOICE_FORM_NAME;
+				backActionListener = SALE_INVOICE_FINANCE_CONTROLLER_NAME;
 			} else if (finance.getInvoice().getType() == InvoiceType.PURCHASE) {
 				backAction = PURCHASE_INVOICE_FORM_NAME;
+				backActionListener = PURCHASE_INVOICE_FINANCE_CONTROLLER_NAME;
 			} else if (finance.getInvoice().getType() == InvoiceType.EXPENSES) {
 				backAction = EXPENSE_INVOICE_FORM_NAME;
+				backActionListener = EXPENSE_INVOICE_FINANCE_CONTROLLER_NAME;
 			} else if (finance.getInvoice().getType() == InvoiceType.UNDEDUCTIBLE) {
 				backAction = UNDEDUCTIBLE_INVOICE_FORM_NAME;
+				backActionListener = UNDEDUCTIBLE_INVOICE_FINANCE_CONTROLLER_NAME;
 			}
 
 			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
-			financeController.setPayment(finance.getInvoice().getType() != InvoiceType.SALES);
-			financeController.onLoadFinance(event, finance, backAction);
+			financeController.setPayment(finance.isPayment());
+			financeController.onLoadFinance(event, finance, backAction, backActionListener + ".onSearch");
 		}
 	}
 

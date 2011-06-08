@@ -35,6 +35,7 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.PayMethodType;
 import com.code.aon.file.format.output.FileOutput;
+import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
@@ -249,6 +250,10 @@ public class FBatchController extends BasicController implements ICollectionProv
 		financeList.onSearch(event);
 	}
 
+	public void loadAvailableFinances(ActionEvent event) throws ManagerBeanException {
+		loadAvailableFinances();
+	}
+
 	public void loadAvailableFinances() throws ManagerBeanException {
 		this.onEditSearchFinance(null);
 		this.onSearchFinance(null);
@@ -413,9 +418,21 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 
 	public void onLoadBankStatement(ActionEvent event) throws ManagerBeanException {
-        FinanceBatch fBatch = (FinanceBatch)this.getTo();
+        BankStatement statement = ((FinanceBatch)this.getTo()).getBankStatementLink().getBankStatement();
 		BankStatementController statementController = (BankStatementController) AonUtil.getRegisteredBean(BANK_STATEMENT_CONTROLLER_NAME);
-		statementController.onLoadBankStatement(event, fBatch.getBankStatementLink().getBankStatement(), FINANCE_BATCH_FORM_NAME);
+		statementController.onLoadBankStatement(event, statement, FINANCE_BATCH_FORM_NAME, FINANCE_BATCH_CONTROLLER_NAME + ".refresh");
+	}
+
+	public void onLoadFinanceBatch(ActionEvent event, FinanceBatch fBatch, String backAction, String backActionListener) 
+		throws ManagerBeanException{
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(IFinanceAlias.FINANCE_BATCH_ID), fBatch.getId());
+		onSearch(event);
+		getModel().setRowIndex(0);
+		onSelect(event);
+
+		setBackAction(backAction);
+		setBackActionListener(backActionListener);
 	}
 
 }

@@ -12,8 +12,11 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.dao.IFinanceAlias;
@@ -145,12 +148,44 @@ public class FinanceTrackingController extends LinesController implements IFinan
 		return (fBatchDetailBean.getCount(criteria));
 	}
 
-	public void onLoadBankStatement(ActionEvent event) throws ManagerBeanException {
+	public void onLoadFinanceBatch(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			FinanceTracking tracking = (FinanceTracking)this.getModel().getRowData();
-			BankStatementController statementController = (BankStatementController) AonUtil.getRegisteredBean(BANK_STATEMENT_CONTROLLER_NAME);
-			statementController.onLoadBankStatement(event, tracking.getBankStatementLink().getBankStatement(), FINANCE_FORM_NAME);
+			FinanceBatch fBatch = obtainFinanceBatch(tracking);
+			if (fBatch != null) {
+				FBatchController fBatchController = (FBatchController) AonUtil.getRegisteredBean(FINANCE_BATCH_CONTROLLER_NAME);
+				fBatchController.setPayment(fBatch.isPayment());
+				fBatchController.onLoadFinanceBatch(event, fBatch, FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackTracking");
+			}
 		}
+	}
+
+	private FinanceBatch obtainFinanceBatch(FinanceTracking tracking) throws ManagerBeanException {
+		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), tracking.getFinance().getId());
+		for (ITransferObject ito : fBatchDetailBean.getList(criteria)) {
+			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)ito;
+			if (tracking.getDescription().indexOf(": " + fBatchDetail.getFinanceBatch().getId() + " - ") >= 0) {
+				return fBatchDetail.getFinanceBatch();
+			}
+		}
+		return null;
+	}
+
+	public void onLoadBankStatement(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			BankStatement statement = ((FinanceTracking)this.getModel().getRowData()).getBankStatementLink().getBankStatement();
+			BankStatementController statementController = (BankStatementController) AonUtil.getRegisteredBean(BANK_STATEMENT_CONTROLLER_NAME);
+			statementController.onLoadBankStatement(event, statement, FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackTracking");
+		}
+	}
+
+	public void onBackTracking(ActionEvent event) throws ManagerBeanException {
+		FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
+		financeController.refresh(event);
+
+		onSearch(event);
 	}
 
 }

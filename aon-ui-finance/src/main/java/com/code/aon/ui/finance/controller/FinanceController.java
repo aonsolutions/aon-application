@@ -50,7 +50,7 @@ import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 
-public class FinanceController extends FinanceListController implements IFinanceConstants {
+public class FinanceController extends FinanceListController {
 
 	private Company company;
 	private boolean payment;
@@ -626,10 +626,10 @@ public class FinanceController extends FinanceListController implements IFinance
 		}
 
 		InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(invoiceControllerName);
-		invoiceController.onLoadInvoice(event, finance.getInvoice(), FINANCE_FORM_NAME, invoiceControllerName);
+		invoiceController.onLoadInvoice(event, finance.getInvoice(), FINANCE_FORM_NAME, FINANCE_CONTROLLER_NAME + ".refresh");
 	}
 
-	public void onLoadFinance(ActionEvent event, Finance finance, String backAction) throws ManagerBeanException {
+	public void onLoadFinance(ActionEvent event, Finance finance, String backAction, String backActionListener) throws ManagerBeanException {
 		FinanceSearchListener financeSearch = (FinanceSearchListener)AonUtil.getRegisteredBean(FINANCE_SEARCH_LISTENER_NAME);
 
 		onEditSearch(event);
@@ -640,7 +640,7 @@ public class FinanceController extends FinanceListController implements IFinance
 		onSelect(event);
 
 		setBackAction(backAction);
-		setBackActionListener(FINANCE_CONTROLLER_NAME + ".onBack");
+		setBackActionListener(backActionListener);
 	}
 
 }

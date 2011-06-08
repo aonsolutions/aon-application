@@ -38,7 +38,8 @@
 			var="to" rows="20" rendered="#{fBatchDetail.model.rowCount > 0}"
 			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, 
 				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">				
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn,
+				aon-editDataTable-textColumn aon-width-40">				
 			
 			<aon:column>
 				<f:facet name="header">
@@ -104,6 +105,20 @@
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:div>
+					<aon:commandLink id="finance_link" immediate="true"
+						styleClass="aon-button-goto" style="padding-right: 20px;"
+						value="&#160;" title="#{bundle.aon_go}"
+						actionListener="#{fBatchDetail.onLoadFinance}"
+						action="finance_form" />
+				</aon:div>
+			</aon:column>
+
 		</aon:dataTable>					
 	
 		<aon:dataScroller2 for="fBatchDetailData" showNote="true" />

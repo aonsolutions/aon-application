@@ -9,8 +9,9 @@ import javax.faces.event.ValueChangeEvent;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Finance;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
-public class FinanceListController extends BasicController {
+public class FinanceListController extends BasicController implements IFinanceConstants {
 
 	private boolean showFinanceSearchWindow;
 	private boolean showFinanceFractionWindow;
@@ -102,6 +103,16 @@ public class FinanceListController extends BasicController {
 			length = to.getRegistryName().length();
 		}
 		return length;
+	}
+
+	public void onLoadFinance(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			Finance finance = (Finance)this.getModel().getRowData();
+
+			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
+			financeController.setPayment(finance.isPayment());
+			financeController.onLoadFinance(event, finance, FINANCE_BATCH_FORM_NAME, FINANCE_BATCH_CONTROLLER_NAME + ".loadAvailableFinances");
+		}
 	}
 
 }
