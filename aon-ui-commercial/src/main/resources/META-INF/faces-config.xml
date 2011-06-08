@@ -90,7 +90,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
-			<value>projectTracking</value>
+			<value>commercialTracking</value>
 		</managed-property>
 		<managed-property>
 			<property-name>aliasMap</property-name>
@@ -102,25 +102,6 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>	
-
-	<!-- ************ PROJECT TRACKING ************** -->
-	<managed-bean>
-		<managed-bean-name>projectTracking</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.commercial.CommercialTracking</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>projectTracking</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>CommercialTracking_date</value>
-		</managed-property>
-	</managed-bean>
 
 	<!-- ************ COMMERCIAL TRACKING ************** -->
 	<managed-bean>

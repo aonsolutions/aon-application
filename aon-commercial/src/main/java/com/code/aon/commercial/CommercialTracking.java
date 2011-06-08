@@ -102,6 +102,7 @@ public class CommercialTracking implements ITransferObject {
 	 * @return the date
 	 */
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable=false)
 	public Date getDate() {
 		return date;
 	}

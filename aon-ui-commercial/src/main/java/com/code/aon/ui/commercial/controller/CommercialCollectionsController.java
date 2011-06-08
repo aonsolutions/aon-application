@@ -12,6 +12,7 @@ import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.Commission;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.Advertising;
+import com.code.aon.commercial.enumeration.ProjectSource;
 import com.code.aon.commercial.enumeration.ProjectStatus;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.ExpenseHolderType;
@@ -45,6 +46,8 @@ public class CommercialCollectionsController {
 	private List<SelectItem> commercialTrackingStatuses;
 	
 	private List<SelectItem> projectStatuses;
+	
+	private List<SelectItem> projectSources;
 	
 	private List<SelectItem> targetItemStatuses;
 	
@@ -151,6 +154,24 @@ public class CommercialCollectionsController {
 			}
 		}
 		return projectStatuses;
+	}
+
+	/**
+	 * Gets the project sources.
+	 * 
+	 * @return the project sources
+	 */
+	public List<SelectItem> getProjectSources() {
+		if ( projectSources == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			projectSources = new LinkedList<SelectItem>();
+			for (ProjectSource source : ProjectSource.values()) {
+				String name = source.getName(locale);
+				SelectItem item = new SelectItem(source, name);
+				projectSources.add(item);
+			}
+		}
+		return projectSources;
 	}
 	
 	/**

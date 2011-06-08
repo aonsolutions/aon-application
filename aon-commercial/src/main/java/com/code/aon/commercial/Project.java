@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -18,14 +19,17 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.Type;
 
+import com.code.aon.commercial.enumeration.ProjectSource;
 import com.code.aon.commercial.enumeration.ProjectStatus;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.seller.Seller;
 
 /**
@@ -42,7 +46,11 @@ public class Project implements ITransferObject {
 	/** The id. */
 	private Integer id;
 	
-    private String description;	
+    /** The name. */
+    private String name;	
+    
+    /** The comments. */
+    private String comments;
 	
 	/** The date. */
 	private Date date;
@@ -55,6 +63,9 @@ public class Project implements ITransferObject {
 
 	/** The status. */
 	private ProjectStatus status;
+	
+	/** The source. */
+	private ProjectSource source;
 
 	/** The status date. */
 	private Date statusDate;
@@ -89,31 +100,32 @@ public class Project implements ITransferObject {
 		this.id = id;
 	}
 	
-	/**
-	 * Gets the description.
-	 * 
-	 * @return the description
-	 */
 	@Column(nullable = false, length = 64)
-	public String getDescription() {
-		return description;
+	public String getName() {
+		return name;
 	}
 
-	/**
-	 * Sets the description.
-	 * 
-	 * @param description the new description
-	 */
-	public void setDescription(String description) {
-		this.description = description;
+	public void setName(String name) {
+		this.name = name;
 	}	
 	
+	@Lob
+	@Type(type="stringClob")
+	public String getComments() {
+		return comments;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
 	/**
 	 * Gets the date.
 	 * 
 	 * @return the date
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
+	@Column(nullable=false)
 	public Date getDate() {
 		return date;
 	}
@@ -189,13 +201,32 @@ public class Project implements ITransferObject {
 	public void setStatus(ProjectStatus status) {
 		this.status = status;
 	}
+	
+	/**
+	 * Gets the source.
+	 *
+	 * @return the source
+	 */
+	@Column(nullable=false)
+	public ProjectSource getSource() {
+		return source;
+	}
+
+	/**
+	 * Sets the source.
+	 *
+	 * @param source the new source
+	 */
+	public void setSource(ProjectSource source) {
+		this.source = source;
+	}
 
 	/**
 	 * Gets the status date.
 	 *
 	 * @return the status date
 	 */
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name="status_date")	
 	public Date getStatusDate() {
 		return statusDate;
@@ -245,10 +276,12 @@ public class Project implements ITransferObject {
 		final Project o = (Project) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+				.append(this.comments, o.comments)
 				.append(this.date, o.date)
-				.append(this.description, o.description)
+				.append(this.name, o.name)
 				.append(this.probability, o.probability)
 				.append(this.seller, o.seller)				
+				.append(this.source, o.source)
 				.append(this.status, o.status)
 				.append(this.statusDate, o.statusDate)
 				.append(this.target, o.target)				
@@ -260,11 +293,13 @@ public class Project implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(comments)
 			.append(date)
-			.append(description)
+			.append(name)
 			.append(id)			
 			.append(probability)
 			.append(seller)
+			.append(source)
 			.append(status)
 			.append(statusDate)
 			.append(target)
@@ -273,7 +308,18 @@ public class Project implements ITransferObject {
 
 	@Override
 	public String toString() {
-		return new PojoToStringBuilder(this).toString();
+		return new ToStringBuilder(this).
+			append("comments", StringUtils.abbreviate(comments, 64)).
+			append("date", date).
+			append("name", name).
+			append("id", id).
+			append("probability", probability).
+			append("seller", (seller != null) ? seller.getId() : null).
+			append("source", source).
+			append("status", status).
+			append("statusDate", statusDate).
+			append("target", target.getId()).
+			toString();
 	}
-
+	
 }

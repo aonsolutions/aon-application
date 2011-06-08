@@ -11,7 +11,7 @@
 		<aon:form id="projectSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_opportunity_module}" />
+				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_operation_module}" />
 				<ui:param name="controller" value="#{project}" />
 			</ui:include>
 
@@ -19,12 +19,26 @@
 				<ui:param name="controller" value="#{project}" />
 				<ui:define name="searchContent">
 				
+					<aon:outputLabel for="Project_name"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="Project_name" size="60"
+						valueChangeListener="#{controller.addExpression}" />
+						
+					<aon:outputLabel for="Project_source"
+						value="#{commercialBundle.commercial_project_source}" />
+					<aon:selectOneMenu id="Project_source"
+						converter="aon.EnumConverter"
+						valueChangeListener="#{controller.addEqualExpression}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{commercialCollections.projectSources}" />
+					</aon:selectOneMenu>					
+						
 					<aon:outputText value="#{bundle.aon_date}" />
 					<aon:div>
 						<aon:outputLabel for="Project_date-From" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="Project_date-From"
-							valueChangeListener="#{project.addGreaterThanOrEqualExpression}"
+							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
 						</aon:selectInputDate>
@@ -32,16 +46,11 @@
 						<aon:outputLabel for="Project_date-To" styleClass="aon-form-date-label"
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="Project_date-To"
-							valueChangeListener="#{project.addLessThanOrEqualExpression}"
+							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
 						</aon:selectInputDate>
-					</aon:div>
-			
-					<aon:outputLabel for="Project_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="Project_description" size="60"
-						valueChangeListener="#{controller.addExpression}" />
+					</aon:div>						
 							
 					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{projectSearch.seller}" />
@@ -52,12 +61,17 @@
 						<ui:param name="lookupTo" value="#{projectSearch.target}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
+					
+					<aon:outputLabel for="Project_comments"
+						value="#{bundle.aon_comment}" />
+					<aon:inputText id="Project_comments" size="60"
+						valueChangeListener="#{controller.addExpression}" />					
 				
 					<aon:outputLabel for="Project_status"
 						value="#{bundle.aon_status}" />
 					<aon:selectOneMenu id="Project_status"
 						converter="aon.EnumConverter"
-						valueChangeListener="#{project.addEqualExpression}">
+						valueChangeListener="#{controller.addEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{commercialCollections.projectStatuses}" />
 					</aon:selectOneMenu>					

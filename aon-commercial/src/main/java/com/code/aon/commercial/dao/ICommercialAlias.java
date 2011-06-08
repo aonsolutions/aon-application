@@ -55,16 +55,16 @@ public interface ICommercialAlias {
 	DAOConstantsEntry PROJECT_ENTRY = DAOConstants.getDAOConstant(Project.class);
 
 	/** 
+	* Alias value: Project_comments
+	* Hibernate value: Project.comments
+	*/
+	String  PROJECT_COMMENTS = PROJECT_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: Project_date
 	* Hibernate value: Project.date
 	*/
-	String  PROJECT_DATE = PROJECT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Project_description
-	* Hibernate value: Project.description
-	*/
-	String  PROJECT_DESCRIPTION = PROJECT_ENTRY.getAliasNames()[1];
+	String  PROJECT_DATE = PROJECT_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Project_id
@@ -73,34 +73,46 @@ public interface ICommercialAlias {
 	String  PROJECT_ID = PROJECT_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: Project_name
+	* Hibernate value: Project.name
+	*/
+	String  PROJECT_NAME = PROJECT_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: Project_probability
 	* Hibernate value: Project.probability
 	*/
-	String  PROJECT_PROBABILITY = PROJECT_ENTRY.getAliasNames()[3];
+	String  PROJECT_PROBABILITY = PROJECT_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Project_seller_id
 	* Hibernate value: Project.seller.id
 	*/
-	String  PROJECT_SELLER_ID = PROJECT_ENTRY.getAliasNames()[4];
+	String  PROJECT_SELLER_ID = PROJECT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Project_source
+	* Hibernate value: Project.source
+	*/
+	String  PROJECT_SOURCE = PROJECT_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Project_status
 	* Hibernate value: Project.status
 	*/
-	String  PROJECT_STATUS = PROJECT_ENTRY.getAliasNames()[5];
+	String  PROJECT_STATUS = PROJECT_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Project_statusDate
 	* Hibernate value: Project.statusDate
 	*/
-	String  PROJECT_STATUS_DATE = PROJECT_ENTRY.getAliasNames()[6];
+	String  PROJECT_STATUS_DATE = PROJECT_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Project_target_id
 	* Hibernate value: Project.target.id
 	*/
-	String  PROJECT_TARGET_ID = PROJECT_ENTRY.getAliasNames()[7];
+	String  PROJECT_TARGET_ID = PROJECT_ENTRY.getAliasNames()[9];
 
 
 
