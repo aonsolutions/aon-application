@@ -91,7 +91,7 @@ public class FinanceTrackingWriter {
 		return (getReturnedTimes(finance) > 0);
 	}
 
-	public static int getReturnedTimes(Finance finance) throws ManagerBeanException {
+	private static int getReturnedTimes(Finance finance) throws ManagerBeanException {
 		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
