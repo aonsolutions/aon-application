@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -23,6 +24,7 @@ import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.BankStatementLink;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
+import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
@@ -209,10 +211,14 @@ public class BankStatementLinkManager implements IFinanceConstants {
 	}
 
 	public double getCheckedAmount() throws ManagerBeanException {
+		return getCheckedAmount(getCurrentStatement());
+	}
+
+	public double getCheckedAmount(BankStatement statement) throws ManagerBeanException {
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		Projection projection = Projection.sum(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_AMOUNT));
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), getCurrentStatement().getId());
+		criteria.addEqualExpression(statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_BANK_STATEMENT_ID), statement.getId());
 		Double amount = (Double)statementLinkBean.getUniqueResult(projection, criteria);
 		return (amount!=null) ? CommonUtil.round(amount.doubleValue()) : 0;
 	}
@@ -301,7 +307,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		}
 		if (financeList.getCheckedFinances().size() > 0) {
 			financeList.onSearch(null);
-			checkBankStatement(getCurrentStatement(), StatementReliability.VERY_HIGH);
+			checkBankStatement(getCurrentStatement());
 		}
 
 		FinanceTrackingListController trackingList = (FinanceTrackingListController)FormUtil.getController(FINANCE_TRACKING_LIST_CONTROLLER_NAME);
@@ -310,7 +316,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		}
 		if (trackingList.getCheckedTrackings().size() > 0) {
 			trackingList.onSearch(null);
-			checkBankStatement(getCurrentStatement(), StatementReliability.VERY_HIGH);
+			checkBankStatement(getCurrentStatement());
 		}
 
 		BankStatementLinkController statementLinkList = (BankStatementLinkController)FormUtil.getController(BANK_STATEMENT_LINK_CONTROLLER_NAME);
@@ -348,9 +354,25 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		FinanceTrackingType type = (finance.getFinanceStatus() == FinanceStatus.PAID) ? FinanceTrackingType.PAID : FinanceTrackingType.RETURNED;
 		FinanceTracking tracking = FinanceTrackingWriter.addFinanceTracking(finance, statement.getOperationDate(), type, message, 
 									statement.getRegistryBank(), null, finance.getTotalAmount(), false, statementLink);
+		if (type == FinanceTrackingType.RETURNED) {
+			returnFinanceBatchDetail(finance);
+		}
 
 		statementLink.setSourceId(tracking.getId());
 		statementLinkBean.update(statementLink);
+	}
+
+	private void returnFinanceBatchDetail(Finance finance) throws ManagerBeanException {
+		IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
+		criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.PAID);
+		Iterator<?> iterator = fBatchDetailBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			FinanceBatchDetail detail = (FinanceBatchDetail)iterator.next();
+			detail.setStatus(FinanceStatus.RETURNED);
+			fBatchDetailBean.update(detail);
+		}
 	}
 
 	public void addLink(BankStatement statement, FinanceTracking tracking) throws ManagerBeanException {
@@ -378,7 +400,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		}
 		if (batchList.getCheckedBatches().size() > 0) {
 			batchList.onSearch(null);
-			checkBankStatement(getCurrentStatement(), StatementReliability.VERY_HIGH);
+			checkBankStatement(getCurrentStatement());
 		}
 
 		BankStatementLinkController statementLinkList = (BankStatementLinkController)FormUtil.getController(BANK_STATEMENT_LINK_CONTROLLER_NAME);
@@ -426,7 +448,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		} else {
 			addLink(getCurrentStatement(), bankConcept, to.getAmount(), to);
 		}
-		checkBankStatement(getCurrentStatement(), StatementReliability.VERY_HIGH);
+		checkBankStatement(getCurrentStatement());
 
 		BankStatementLinkController statementLinkList = (BankStatementLinkController)FormUtil.getController(BANK_STATEMENT_LINK_CONTROLLER_NAME);
 		statementLinkList.onSearch(null);
@@ -453,7 +475,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			
 			addLink(getCurrentStatement(), getBankConcept(), getAmount().doubleValue());
 		}
-		checkBankStatement(getCurrentStatement(), StatementReliability.VERY_HIGH);
+		checkBankStatement(getCurrentStatement());
 
 		BankStatementLinkController statementLinkList = (BankStatementLinkController)FormUtil.getController(BANK_STATEMENT_LINK_CONTROLLER_NAME);
 		statementLinkList.onSearch(null);
@@ -514,6 +536,8 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			statementLinkList.onSearch(null);
 			if (statementLinkList.getRowCount() == 0) {
 				unCheckBankStatement(getCurrentStatement());
+			} else {
+				checkBankStatement(getCurrentStatement());
 			}
 		}
 
@@ -553,6 +577,8 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			if (statementLink.getStatus() == StatementLinkStatus.PAID) {
 				tracking.getFinance().setFinanceStatus(FinanceStatus.PAID);
+
+				updateFinanceBatchDetailStatus(tracking);
 			} else if (statementLink.getStatus() == StatementLinkStatus.PENDING) {
 				tracking.getFinance().setFinanceStatus(FinanceStatus.PENDING);
 			} else if (statementLink.getStatus() == StatementLinkStatus.RETURNED) {
@@ -564,6 +590,35 @@ public class BankStatementLinkManager implements IFinanceConstants {
 				FinanceTrackingWriter.addFinanceTracking(tracking.getFinance(), new Date(), FinanceTrackingType.SETTLED, message);
 			}
 			financeBean.update(tracking.getFinance());
+		}
+	}
+
+	private void updateFinanceBatchDetailStatus(FinanceTracking tracking) throws ManagerBeanException {
+		Finance finance = tracking.getFinance();
+		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
+		criteria.addLessThanExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID), tracking.getId());
+		criteria.addOrder(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID), false);
+		Iterator<?> iterator = trackingBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			iterator.next();
+			if (iterator.hasNext()) {
+				FinanceTracking batchedTracking = (FinanceTracking)iterator.next();
+				if (batchedTracking.isBatched()) {
+					IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+					criteria = new Criteria();
+					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_ID), finance.getId());
+					criteria.addEqualExpression(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_STATUS), FinanceStatus.RETURNED);
+					criteria.addOrder(fBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_ID), false);
+					for (ITransferObject ito : fBatchDetailBean.getList(criteria)) {
+						FinanceBatchDetail detail = (FinanceBatchDetail)ito;
+						detail.setStatus(FinanceStatus.PAID);
+						fBatchDetailBean.update(detail);
+						return;
+					}
+				}
+			}
 		}
 	}
 
@@ -583,6 +638,27 @@ public class BankStatementLinkManager implements IFinanceConstants {
 			statementLink.setLinkedBankStatementLink(null);
 			statementLinkBean.update(statementLink);
 		}
+	}
+
+	public void checkBankStatement(BankStatement statement) throws ManagerBeanException {
+		StatementReliability reliability = StatementReliability.LOW;
+		double checkedAmount = getCheckedAmount();
+		if (statement.getAmount() == checkedAmount) {
+			reliability = StatementReliability.VERY_HIGH;
+		} else {
+			double fromAmount = CommonUtil.round(statement.getAmount() * 0.75);
+			double toAmount = CommonUtil.round(statement.getAmount() * 1.25);
+			if (fromAmount <= checkedAmount && toAmount >= checkedAmount) {
+				reliability = StatementReliability.HIGH;
+			} else {
+				fromAmount = CommonUtil.round(statement.getAmount() * 0.50);
+				toAmount = CommonUtil.round(statement.getAmount() * 1.50);
+				if (fromAmount <= checkedAmount && toAmount >= checkedAmount) {
+					reliability = StatementReliability.MEDIUM;
+				}
+			}
+		}
+		checkBankStatement(statement, reliability);
 	}
 
 	public void checkBankStatement(BankStatement statement, StatementReliability reliability) throws ManagerBeanException {

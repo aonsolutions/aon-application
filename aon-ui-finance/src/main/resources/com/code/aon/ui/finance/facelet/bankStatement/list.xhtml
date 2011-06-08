@@ -137,7 +137,19 @@
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 
 							<c:if test="#{aonRole.accountingOperator}">
-								<aon:outputText value="#{financeBundle.finance_check_selected}:" styleClass="aon-bold" />
+									<aon:outputText value="#{financeBundle.finance_check_selected}:" styleClass="aon-bold" />
+									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+										<ui:param name="lookupTo" value="#{bankStatement.account}" />
+									</ui:include>
+									<aon:commandButton id="BankStatement-checkByAccount"
+										value="#{financeBundle.finance_bank_statement_check}"
+										styleClass="aon-finding-toolbar-item aon-icon-attach-file aon-noborder"
+										actionListener="#{bankStatement.onCheckSelectedByAccount}"
+										reRender="#{dataTableId}"
+										onclick="Richfaces.showModalPanel('waitProccess')"
+										oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+
+<!-- 
 								<ui:include	src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 									<ui:param name="wizard" value="#{accountWizard}" />
 									<ui:param name="id" value="BankStatement_account" />
@@ -156,13 +168,7 @@
 									value="#{bankStatement.account.description}"
 									styleClass="aon-bold"
 									disabled="true" size="30" ajaxRendered="true" />
-								<aon:commandButton id="BankStatement-checkByAccount"
-									value="#{financeBundle.finance_bank_statement_check}"
-									styleClass="aon-finding-toolbar-item aon-icon-attach-file aon-noborder"
-									actionListener="#{bankStatement.onCheckSelectedByAccount}"
-									reRender="#{dataTableId}"
-									onclick="Richfaces.showModalPanel('waitProccess')"
-									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+ -->
 							</c:if>							
 						</aon:div>
 						<aon:div>
@@ -372,18 +378,22 @@
 												<rich:toolTip showEvent="onclick" hideEvent="onmouseout" hideDelay="2000" direction="top-right">
 													<aon:commandButton id="BankStatement-toExact"
 														value="&#160;" styleClass="aon-icon-point-green aon-noborder"
+														rendered="#{!to.exact and controller.pendingAmount == 0}"
 														actionListener="#{controller.onSetVeryHighReliability}"
 														reRender="#{dataTableId}" />
 													<aon:commandButton id="BankStatement-toApproximate"
 														value="&#160;" styleClass="aon-icon-point-light-green aon-noborder"
+														rendered="#{!to.approximate}"
 														actionListener="#{controller.onSetHighReliability}"
 														reRender="#{dataTableId}" />
 													<aon:commandButton id="BankStatement-toAmbiguous"
 														value="&#160;" styleClass="aon-icon-point-yellow aon-noborder"
+														rendered="#{!to.ambiguous}"
 														actionListener="#{controller.onSetMediumReliability}"
 														reRender="#{dataTableId}" />
 													<aon:commandButton id="BankStatement-toVeryAmbiguous"
 														value="&#160;" styleClass="aon-icon-point-orange aon-noborder"
+														rendered="#{!to.inexact}"
 														actionListener="#{controller.onSetLowReliability}"
 														reRender="#{dataTableId}" />
 												</rich:toolTip>
@@ -659,8 +669,10 @@
 
 											<aon:column colspan="2" 
 												styleClass="aon-editDataTable-textColumn aon-italic aon-bold aon-subTable-yellow-column">
-												<aon:outputText value="#{financeBundle.finance_finance_date_abbrv}: " />
-												<aon:outputText value="#{statementLink.dueDate}">
+												<aon:outputText value="#{financeBundle.finance_finance_date_abbrv}: "
+													rendered="#{statementLink.financeTracking}" />
+												<aon:outputText value="#{statementLink.dueDate}"
+													rendered="#{statementLink.financeTracking}">
 													<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 														timeZone="#{timeZoneController.timeZoneId}" />
 												</aon:outputText>
@@ -753,6 +765,9 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
+		<c:if test="#{aonRole.accountingOperator}">
+			<aon:lookupButtonPopup lookup="#{accountLookup}" />
+		</c:if>
 		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalLink.xhtml">
 			<ui:param name="linkManager" value="#{bankStatement.bankStatementLinkManager}" />

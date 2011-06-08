@@ -346,7 +346,7 @@ public class BankStatementController extends BasicController implements IFinance
 				removeLinks(statement);
 			}
 		}
-		onSearch(null);
+		searchBankStatements();
 	}
 
 	public void onCancelSelected(ActionEvent event) throws ManagerBeanException {
@@ -355,7 +355,7 @@ public class BankStatementController extends BasicController implements IFinance
 				removeLinks(statement);
 			}
 		}
-		onSearch(null);
+		searchBankStatements();
 	}
 
 	public void onCancelExact(ActionEvent event) throws ManagerBeanException {
@@ -365,7 +365,7 @@ public class BankStatementController extends BasicController implements IFinance
 				removeLinks(statement);
 			}
 		}
-		onSearch(null);
+		searchBankStatements();
 	}
 
 	public void onCancelApproximate(ActionEvent event) throws ManagerBeanException {
@@ -375,7 +375,7 @@ public class BankStatementController extends BasicController implements IFinance
 				removeLinks(statement);
 			}
 		}
-		onSearch(null);
+		searchBankStatements();
 	}
 
 	public void onCancelAmbiguous(ActionEvent event) throws ManagerBeanException {
@@ -387,7 +387,7 @@ public class BankStatementController extends BasicController implements IFinance
 				}
 			}
 		}
-		onSearch(null);
+		searchBankStatements();
 	}
 
 	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
@@ -433,7 +433,15 @@ public class BankStatementController extends BasicController implements IFinance
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_REGISTRY_BANK_ID), registryBank.getId());
 		setCriteria(criteria);
+		searchBankStatements();
+	}
+
+	private void searchBankStatements() throws ManagerBeanException {
+		String backAction = backAction();
+		String backActionListener = getBackActionListener();
 		onSearch(null);
+		setBackAction(backAction);
+		setBackActionListener(backActionListener);
 	}
 
 	public int getDescriptionLength() throws ManagerBeanException {
@@ -1335,6 +1343,14 @@ public class BankStatementController extends BasicController implements IFinance
 		return false;
 	}
 
+	public double getPendingAmount() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			BankStatement to = (BankStatement)getModel().getRowData();
+			return CommonUtil.round(to.getAmount() - getBankStatementLinkManager().getCheckedAmount(to));
+		}
+		return 0;
+	}
+
 	public void onSetVeryHighReliability(ActionEvent event) {
 		try {
 			BankStatement to = (BankStatement)getModel().getRowData();
@@ -1584,6 +1600,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	private void onUnrecordBankStatement(BankStatement statement) throws ManagerBeanException {
+		getErrors().remove(statement.getId());
 		if (statement.isRecorded()) {
 			IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 			Criteria criteria = new Criteria();
@@ -1607,8 +1624,9 @@ public class BankStatementController extends BasicController implements IFinance
 				        if (getWriter().canRemoveAccountEntryFinanceBatch(fBatch)) {
 							getWriter().removeAccountEntryFinanceBatch(fBatch, false);
 				        } else {
-				            AonUtil.addErrorMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_UNRECORD_ERROR);
-				            throw new AbortProcessingException();
+				        	String message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_BATCH_UNRECORD_ERROR);
+				        	getErrors().put(statement.getId(), message);
+				        	return;
 				        }
 					}
 
@@ -1687,7 +1705,8 @@ public class BankStatementController extends BasicController implements IFinance
 		return false;
 	}
 
-	public void onLoadBankStatement(ActionEvent event, BankStatement statement, String backAction, String backActionListener)  throws ManagerBeanException {
+	public void onLoadBankStatement(ActionEvent event, BankStatement statement, String backAction, String backActionListener) 
+		throws ManagerBeanException {
 		onEditSearch(null);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(getFieldName(IFinanceAlias.BANK_STATEMENT_ID), statement.getId());
