@@ -35,9 +35,6 @@
 						<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{controllerLookupListener.registryBank.bank}" />
 						</ui:include>						
-						<aon:inputText id="RegistryBank_name"
-							value="#{controllerLookupListener.registryBank.bank.name}"
-							size="50" disabled="true" />
 						<aon:div>
 							<aon:inputText label="#{configBundle.config_bank_code}" 
 								value="#{controllerLookupListener.registryBank.bankAccount.office}"
