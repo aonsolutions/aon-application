@@ -103,6 +103,10 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
       	</map-entry>
       </map-entries>
     </managed-property>
+	<managed-property>
+		<property-name>suggestAlias</property-name>
+		<value>Account_description</value>
+	</managed-property>
     <managed-property>
       <property-name>listPagePath</property-name>
       <value>/com/code/aon/ui/account/facelet/account/listContent.xhtml</value>
