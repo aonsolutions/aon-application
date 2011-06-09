@@ -32,11 +32,8 @@
 	</report>
 	
 	<!--  IMPRESION DE LA NOMINA -->
-	<report id="currentSalaryReport" description="Current Salary report ">
+	<report id="salary" description="Current Salary report ">
 		<template path="/com/esferalia/aon/ui/payroll/report/salary.jasper" />
-<!--  
-		<template path="/com/esferalia/aon/ui/payroll/report/salaryTemplate1.jasper" />
--->
 		<collection provider="#{salary}" forceRefresh="true"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.payroll.i18n.report" />
@@ -47,11 +44,8 @@
 		</params>
 	</report>
 	
-	<report id="salaryReport" description="Salary report ">
+	<report id="salaryList" description="Salary List report ">
 		<template path="/com/esferalia/aon/ui/payroll/report/salary.jasper" />
-<!--  
-		<template path="/com/esferalia/aon/ui/payroll/report/salaryTemplate1.jasper" />
--->
 		<bean key="com.esferalia.aon.payroll.Salary" />
 		<criteria provider="#{salary}"/>
 		<params>
@@ -64,7 +58,7 @@
 	</report>
 	
 	<!--  IMPRESION DEL BORRADOR DE LA NOMINA -->
-	<report id="currentSalaryDraftReport" description="Current Salary Draft report ">
+	<report id="salaryDraft" description="Current Salary Draft report ">
 		<template path="/com/esferalia/aon/ui/payroll/report/salary.jasper" />
 		<collection provider="#{salaryDraft}" forceRefresh="true"/>
 		<params>

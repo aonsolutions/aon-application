@@ -70,7 +70,7 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		ReportManager reportManager = new ReportManager();
 		reportManager.setOutputFormat(OutputFormat.PDF);
 		reportManager.setCollectionProvider( new SingleCollectionProvider(salary) );
-		reportManager.execute( out, CURRENT_SALARY_REPORT );
+		reportManager.execute( out, SALARY_REPORT );
 	}	
 	
 	public AonFile getSalaryFile( Salary salary ) throws IOException, ReportException {

@@ -79,6 +79,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> ageGroupList;
 	private List<SelectItem> embargableTypeList;
 	private List<SelectItem> dismissCauseList;
+	private List<SelectItem> salaryModelList;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -550,6 +551,20 @@ public class PayrollCollectionsController {
 			}
 		}
 		return dismissCauseList;
+	}
+	
+	public List<SelectItem> getSalaryModelList() {
+		if (salaryModelList == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			salaryModelList = new LinkedList<SelectItem>();
+			SalaryTemplate[] st = SalaryTemplate.values();
+			for (SalaryTemplate c : st) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c.getValue(), name);
+				salaryModelList.add(item);
+			}
+		}
+		return salaryModelList;
 	}
 		
 }

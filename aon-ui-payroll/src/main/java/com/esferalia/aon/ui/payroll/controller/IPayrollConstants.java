@@ -48,8 +48,8 @@ public interface IPayrollConstants {
 	// ************************************************************
 	// REPORT
 	// ************************************************************
-	String CURRENT_SALARY_REPORT = "currentSalaryReport";
-	String SALARY_REPORT = "salaryReport";
+	String SALARY_REPORT = "salary";
+	String SALARY_LIST_REPORT = "salaryList";
 
 	// ************************************************************
 	// NAVIGATION KEYS

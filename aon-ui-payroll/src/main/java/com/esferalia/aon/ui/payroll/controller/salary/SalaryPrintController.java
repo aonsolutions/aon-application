@@ -241,7 +241,7 @@ public class SalaryPrintController implements ICollectionProvider, IPayrollConst
 
 	public String onPrint() {
 		ReportManager reportManager = new ReportManager();
-		reportManager.setReportKey(CURRENT_SALARY_REPORT);
+		reportManager.setReportKey(SALARY_REPORT);
 		reportManager.setOutputFormat(OutputFormat.PDF);
 		reportManager.setCollectionProvider( this );
 		return reportManager.onExecute();	
