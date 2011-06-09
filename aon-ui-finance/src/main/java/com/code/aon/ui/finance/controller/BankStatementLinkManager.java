@@ -10,6 +10,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.account.Account;
 import com.code.aon.account.bridge.BankConceptAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -459,14 +461,14 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		if (getAmount() == null) {
 			setAmount(0.0);
 		}
-		if (getAccount() != null && getAccount().getId() != null) {
+		if (getAccount() != null && !StringUtils.isEmpty(getAccount().getId())) {
 			if (!getAccount().isEntryEnabled()) {
 				AonUtil.addErrorMessage("La Cuenta Contable " + getAccount().getId() + " no permite apuntes.");
 				throw new AbortProcessingException();
 			}
 
 			addLink(getCurrentStatement(), getAccount(), getAmount().doubleValue());
-			setAccount(null);
+			setAccount(new Account());
 		} else {
 			if (getBankConcept() == null || getBankConcept().getId() == null) {
 				AonUtil.addErrorMessage("Concepto Bancario: Error de Validación: Valor es necesario.");

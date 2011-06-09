@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.event;
 
 import com.code.aon.account.Account;
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.BankStatement;
@@ -19,16 +18,12 @@ public class BankStatementControllerListener extends ControllerAdapter {
 	@Override
 	public void afterEditSearch(ControllerEvent event) throws ControllerListenerException {
 		BankStatementController controller = (BankStatementController)event.getController();
+		controller.setAccount(new Account());
 		controller.setModel(null);
 		controller.setRegistryBank(null);
 		controller.setBankStatementLinkManager(null);
 		controller.clearCheckedBankStatement();
 		controller.resetErrors();
-		try {
-			controller.setAccount((Account)BeanManager.getManagerBean(Account.class).createNewTo());
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
 	}
 
 	@Override

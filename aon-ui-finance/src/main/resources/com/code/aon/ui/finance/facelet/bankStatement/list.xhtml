@@ -11,9 +11,8 @@
 
 	<ui:define name="content">
 
-		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<aon:form id="bankStatementList">
-			<aon:div ajaxRendered="true" layout="none">
+			<aon:div layout="none">
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
 					<ui:param name="toolbarTitle" value="#{financeBundle.finance_bank_statement_module}" />
@@ -82,9 +81,10 @@
 
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area">
-					<aon:div style="background-color:#f6f5e3; padding:5px; margin-bottom:5px;"
+					<aon:div id="bankStatementCommandContainer"
+						style="background-color:#f6f5e3; padding:5px; margin-bottom:5px;"
 						rendered="#{!bankStatement.new and bankStatement.to == null}">
-						<aon:div id="bankStatementCommandContainer">
+						<aon:div>
 							<aon:outputText value="#{bundle.aon_see}:" styleClass="aon-bold" />
 							<aon:commandLink id="BankStatement-seeAll"
 								value="#{financeBundle.finance_all}"
@@ -137,38 +137,17 @@
 								oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 
 							<c:if test="#{aonRole.accountingOperator}">
-									<aon:outputText value="#{financeBundle.finance_check_selected}:" styleClass="aon-bold" />
-									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
-										<ui:param name="lookupTo" value="#{bankStatement.account}" />
-									</ui:include>
-									<aon:commandButton id="BankStatement-checkByAccount"
-										value="#{financeBundle.finance_bank_statement_check}"
-										styleClass="aon-finding-toolbar-item aon-icon-attach-file aon-noborder"
-										actionListener="#{bankStatement.onCheckSelectedByAccount}"
-										reRender="#{dataTableId}"
-										onclick="Richfaces.showModalPanel('waitProccess')"
-										oncomplete="Richfaces.hideModalPanel('waitProccess')" />
-
-<!-- 
-								<ui:include	src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
-									<ui:param name="wizard" value="#{accountWizard}" />
-									<ui:param name="id" value="BankStatement_account" />
-									<ui:param name="required" value="#{false}" />
-									<ui:param name="style" value="display:inline; margin-left:0.7em;" />
-									<ui:param name="size" value="12" />
-									<ui:param name="maxlength" value="12" />
-									<ui:param name="renderDescription" value="#{false}" />
-									<ui:param name="renderedAttr" value="#{true}" />
-									<ui:param name="disabled" value="#{false}" />
-									<ui:param name="reRenderAttr" value="BankStatement_account_description" />
-									<ui:param name="entity" value="#{bankStatement.account}" />
-									<ui:param name="ELExpression" value="bankStatement.account" />
+								<aon:outputText value="#{financeBundle.finance_check_selected}:" styleClass="aon-bold aon-margin-right" />
+								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
+									<ui:param name="lookupTo" value="#{bankStatement.account}" />
 								</ui:include>
-								<aon:inputText id="BankStatement_account_description"
-									value="#{bankStatement.account.description}"
-									styleClass="aon-bold"
-									disabled="true" size="30" ajaxRendered="true" />
- -->
+								<aon:commandButton id="BankStatement-checkByAccount"
+									value="#{financeBundle.finance_bank_statement_check}"
+									styleClass="aon-finding-toolbar-item aon-icon-attach-file aon-noborder"
+									actionListener="#{bankStatement.onCheckSelectedByAccount}"
+									reRender="#{dataTableId}"
+									onclick="Richfaces.showModalPanel('waitProccess')"
+									oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 							</c:if>							
 						</aon:div>
 						<aon:div>
@@ -327,12 +306,19 @@
 									<ui:param name="controller" value="#{bankStatement}" />
 									<ui:param name="skipLineEdition" value="#{true}" />
 									<ui:param name="skipRemoveButton" value="#{controller.to.recorded}" />
+									<ui:param name="resetButtonReRender" value="aonContent" />
+									<ui:param name="newSaveButtonReRender" value="aonContent" />
+									<ui:param name="saveButtonReRender" value="aonContent" />
+									<ui:param name="newCancelButtonReRender" value="aonContent" />
+									<ui:param name="cancelButtonReRender" value="aonContent" />
+									<ui:param name="removeButtonReRender" value="aonContent" />
 									<ui:define name="beginFormListContent">
 										<aon:commandLink id="BankStatement-selectButton"
 											styleClass="aon-table-row-link" value="&#160;"
 											immediate="true" ajaxSingle="true" requestDelay="100"
 											rendered="#{!to.recorded}"
 											actionListener="#{controller.onSelect}"
+											reRender="aonContent"
 											onkeyup="#{dataTableId}KeyUp(this)"
 											onfocus="#{dataTableId}SelectRow(this)"
 											onblur="#{dataTableId}DeselectRow(this)"
@@ -768,6 +754,7 @@
 		<c:if test="#{aonRole.accountingOperator}">
 			<aon:lookupButtonPopup lookup="#{accountLookup}" />
 		</c:if>
+		<ui:include	src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalImport.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/bankStatement/modalLink.xhtml">
 			<ui:param name="linkManager" value="#{bankStatement.bankStatementLinkManager}" />

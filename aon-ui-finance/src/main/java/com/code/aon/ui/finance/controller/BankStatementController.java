@@ -674,7 +674,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onCheckSelectedByAccount(ActionEvent event) throws ManagerBeanException {
-		if (getAccount() == null || getAccount().getId() == null) {
+		if (getAccount() == null || StringUtils.isEmpty(getAccount().getId())) {
 			addMessage("Cuenta Contable: Error de Validación: Valor es necesario.");
 			throw new AbortProcessingException();
 		}
@@ -1267,6 +1267,7 @@ public class BankStatementController extends BasicController implements IFinance
 		getBankStatementLinkManager().setEntryDetailModel(null);
 
         getBankStatementLinkManager().setCurrentStatement(to);
+        getBankStatementLinkManager().setAccount(new Account());
         getBankStatementLinkManager().setComments(to.getComments());
 
         if (getBankStatementLinkManager().getEntryDetailList() != null && getBankStatementLinkManager().getEntryDetailList().size() > 0) {
