@@ -6,6 +6,8 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.CreditorAccount;
@@ -29,8 +31,8 @@ public class BasicAccountListener extends ControllerAdapter {
 
 	private String pojo;
 	private String alias;
-	private Account account;
 	private IAccount to;
+	private Account account;
 	
 	private AccountBridgeUtil accountBridgeUtil;
 	
@@ -55,13 +57,6 @@ public class BasicAccountListener extends ControllerAdapter {
 		this.alias = alias;
 	}
 
-	public Account getAccount() {
-		return account;
-	}
-	public void setAccount(Account account) {
-		this.account = account;
-	}
-
 	public IAccount getTo() {
 		return to;
 	}
@@ -69,9 +64,24 @@ public class BasicAccountListener extends ControllerAdapter {
 		this.to = to;
 	}
 
+	public Account getAccount() {
+		return account;
+	}
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	public boolean isEmptyAccount() {
+		return isEmptyAccount(getAccount());
+	}
+
+	private boolean isEmptyAccount(Account account) {
+		return (account == null || StringUtils.isEmpty(account.getId()));
+	}
+
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		setAccount(null);
+		setAccount(new Account());
 	}
 
 	@Override
@@ -92,43 +102,27 @@ public class BasicAccountListener extends ControllerAdapter {
 		}
 	}
 
-	private void loadAccount(Serializable id) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(getPojo());
-		Criteria criteria = new Criteria();
-		String fieldName = bean.getFieldName(getAlias());
-		criteria.addEqualExpression(fieldName, id);
-		List<ITransferObject> list = bean.getList(criteria);
-		if (list.size() > 0) {
-			IAccount iAccount = (IAccount) list.get(0);
-			setAccount(iAccount.getAccount());
-			setTo(iAccount);
-		} else {
-			setAccount(null);
-			setTo(null);
-		}
-	}
-
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(getPojo());
-			Account newValue = getAccount();
-			Account oldValue = (getTo()!=null && getTo().getAccount()!=null && getTo().getAccount().getId()!=null) ? getTo().getAccount() : null;
+			Account newValue = !isEmptyAccount(getAccount()) ? getAccount() : null;
+			Account oldValue = (getTo() != null && !isEmptyAccount(getTo().getAccount())) ? getTo().getAccount() : null;
 			if (newValue == null) {
 				if (oldValue != null) {
-					bean.remove((ITransferObject) to);
+					bean.remove((ITransferObject)getTo());
 				}
 			} else {
 				if (oldValue == null) {
 					ITransferObject newTo = (ITransferObject) Class.forName(getPojo()).newInstance();
-					IAccount toAccount = (IAccount) newTo;
+					IAccount toAccount = (IAccount)newTo;
 					toAccount.setLinkedTo(event.getController().getTo());
 					toAccount.setAccount(newValue);
 					bean.insert(newTo);
 				} else {
 					if (!newValue.equals(oldValue)) {
 						getTo().setAccount(newValue);
-						bean.update((ITransferObject) to);
+						bean.update((ITransferObject)getTo());
 					}
 				}
 			}
@@ -144,16 +138,31 @@ public class BasicAccountListener extends ControllerAdapter {
 		}
 	}
 
+	private void loadAccount(Serializable id) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(getPojo());
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(getAlias()), id);
+		List<ITransferObject> list = bean.getList(criteria);
+		if (list.size() > 0) {
+			IAccount iAccount = (IAccount)list.get(0);
+			setAccount(iAccount.getAccount());
+			setTo(iAccount);
+		} else {
+			setAccount(new Account());
+			setTo(null);
+		}
+	}
+
 	public boolean isAccountSynchronizable() {
-		return (getAccount()!=null && getTo()!=null && !getAccount().getDescription().equals(getTo().getAccountDescription()));
+		return (getTo() != null && !isEmptyAccount(getAccount()) && !getAccount().getDescription().equals(getTo().getAccountDescription()));
 	}
 
 	public void onAccountSynchronize(ActionEvent event) {
 		try {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			getAccount().setDescription(to.getAccountDescription());
-			if (to instanceof IRegistry) {
-				getAccount().setAlias(((IRegistry) to).getRegistry().getAlias());
+			getAccount().setDescription(getTo().getAccountDescription());
+			if (getTo() instanceof IRegistry) {
+				getAccount().setAlias(((IRegistry)getTo()).getRegistry().getAlias());
 			}
 			accountBean.update(getAccount());
 		} catch (ManagerBeanException e) {
@@ -165,11 +174,11 @@ public class BasicAccountListener extends ControllerAdapter {
 
 	public void onNewAccount(ActionEvent event) {
 		try {
-			IController c = FormUtil.getController(getMasterController());
-			IRegistry registry = (IRegistry) c.getTo();
+			IController controller = FormUtil.getController(getMasterController());
+			IRegistry registry = (IRegistry)controller.getTo();
 			IAccount iAccount = getAccountBridgeUtil().obtainIRegistryAccount(registry);
+			setAccount((iAccount==null) ? new Account() : iAccount.getAccount());
 			setTo(iAccount);
-			setAccount((iAccount==null) ? null : iAccount.getAccount());
 		} catch (ManagerBeanException e) {
 			String msg = "No se pudo crear la cuenta contable. " + e.getMessage();
 			AonUtil.addErrorMessage(msg);
@@ -178,11 +187,11 @@ public class BasicAccountListener extends ControllerAdapter {
 	}
 
 	public String getMasterController() {
-		if (CustomerAccount.class.getName().equals( getPojo() )) {
+		if (CustomerAccount.class.getName().equals(getPojo())) {
 			return "customer";
-		} else if (SupplierAccount.class.getName().equals( getPojo() )) {
+		} else if (SupplierAccount.class.getName().equals(getPojo())) {
 			return "supplier";
-		} else if (CreditorAccount.class.getName().equals( getPojo() )) {
+		} else if (CreditorAccount.class.getName().equals(getPojo())) {
 			return "creditor";
 		}
 		return null;

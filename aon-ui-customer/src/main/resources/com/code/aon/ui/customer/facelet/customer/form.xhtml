@@ -85,14 +85,11 @@
 						</c:if>
 	
 						<c:if test="#{!customer.new and aonRole.accountingOperator and aonConfiguration.bean.customer.showAccount}">
-							<aon:outputLabel for="Customer_account" value="#{accountBundle.account_accounting}" />
+							<aon:outputLabel for="Account_id" value="#{accountBundle.account_accounting}" />
 							<aon:panelGrid id="accountContainer" columns="2" columnClasses="none,none">
-								<ui:include
-									src="/com/code/aon/ui/account/facelet/lookup/account/accountLookup.xhtml">
-									<ui:param name="id" value="Customer_account" />
-									<ui:param name="entity" value="#{customerAccount.account}" />
-									<ui:param name="ELExpression" value="customerAccount.account" />
-									<ui:param name="reRenderAttr" value="accountLookupButtons" />
+								<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
+									<ui:param name="lookupTo" value="#{customerAccount.account}" />
+									<ui:param name="lookupReRender" value="accountLookupButtons" />
 								</ui:include>
 								<aon:div id="accountLookupButtons">
 									<aon:commandButton
@@ -104,13 +101,12 @@
 										reRender="accountContainer"
 										actionListener="#{customerAccount.onAccountSynchronize}">
 									</aon:commandButton>
-		
 									<aon:commandButton
 										value="#{accountBundle.account_new_account}" 
 										title="#{accountBundle.account_new_account}"
 										style="border: #808080 1px solid;"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
-										rendered="#{customerAccount.account == null}"
+										rendered="#{customerAccount.account == null or customerAccount.emptyAccount}"
 										reRender="accountContainer"
 										actionListener="#{customerAccount.onNewAccount}">
 									</aon:commandButton>
@@ -251,6 +247,9 @@
 			<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		</c:if>
 		<c:if test="#{!customer.new}">
+			<c:if test="#{aonRole.accountingOperator}">
+				<aon:lookupButtonPopup lookup="#{accountLookup}" />
+			</c:if>
 			<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData}">
 				<aon:lookupButtonPopup lookup="#{itemLookup}" />
 			</c:if>
