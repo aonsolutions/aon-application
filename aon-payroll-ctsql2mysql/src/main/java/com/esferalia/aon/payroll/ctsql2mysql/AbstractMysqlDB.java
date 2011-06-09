@@ -37485,6 +37485,260 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 	}
 
 
+	private int fs_prof_retentionStmtSize = 0;
+
+	private int fs_prof_retentionInserted = 0;
+
+	private List<Fs_prof_retention> fs_prof_retentions = 
+		new LinkedList<Fs_prof_retention>();
+
+	private PreparedStatement fs_prof_retentionStmt = null;
+
+	public static class Fs_prof_retention {
+		protected Integer id; 
+		protected Integer enterprise; 
+		protected Date payment_date; 
+		protected String document; 
+		protected Short document_type; 
+		protected String document_country; 
+		protected String name; 
+		protected String concept; 
+		protected Double taxable_base; 
+		protected Double percent; 
+		protected Double quota; 
+		protected Boolean in_kind; 
+		protected String withholding_key; 
+		protected String withholding_subkey; 
+	}
+	
+	private void insertFs_prof_retention( List<Fs_prof_retention> fs_prof_retentions )
+	throws SQLException {
+		long start = System.currentTimeMillis();
+		int size = fs_prof_retentions.size();
+		if ( fs_prof_retentionStmtSize != size ) {
+			if ( fs_prof_retentionStmt != null ) {
+				fs_prof_retentionStmt.close();
+			}
+			String values = "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			StringBuffer valuesList = new StringBuffer(values);
+			for ( int i = 1; i < size; i++ ) {
+				valuesList.append(",");
+				valuesList.append(values);
+			}
+	
+			fs_prof_retentionStmt = 
+				mysqlConnection.prepareStatement(
+				"INSERT INTO fs_prof_retention (id,enterprise,payment_date,document,document_type,document_country,name,concept,taxable_base,percent,quota,in_kind,withholding_key,withholding_subkey)"  
+				+" VALUES " + valuesList.toString()  );
+			
+			fs_prof_retentionStmtSize = size;
+		}
+
+		int offset = 1;
+			
+		for (Fs_prof_retention fs_prof_retention : fs_prof_retentions) {
+			if ( fs_prof_retention.id == null )
+				fs_prof_retentionStmt.setNull(offset++, 4);
+			else
+				fs_prof_retentionStmt.setInt(offset++, fs_prof_retention.id);
+			if ( fs_prof_retention.enterprise == null )
+				fs_prof_retentionStmt.setNull(offset++, 4);
+			else
+				fs_prof_retentionStmt.setInt(offset++, fs_prof_retention.enterprise);
+			if ( fs_prof_retention.payment_date == null )
+				fs_prof_retentionStmt.setNull(offset++, 91);
+			else
+				fs_prof_retentionStmt.setDate(offset++, fs_prof_retention.payment_date);
+			if ( fs_prof_retention.document == null )
+				fs_prof_retentionStmt.setNull(offset++, 12);
+			else
+				fs_prof_retentionStmt.setString(offset++, fs_prof_retention.document);
+			if ( fs_prof_retention.document_type == null )
+				fs_prof_retentionStmt.setNull(offset++, -6);
+			else
+				fs_prof_retentionStmt.setShort(offset++, fs_prof_retention.document_type);
+			if ( fs_prof_retention.document_country == null )
+				fs_prof_retentionStmt.setNull(offset++, 12);
+			else
+				fs_prof_retentionStmt.setString(offset++, fs_prof_retention.document_country);
+			if ( fs_prof_retention.name == null )
+				fs_prof_retentionStmt.setNull(offset++, 12);
+			else
+				fs_prof_retentionStmt.setString(offset++, fs_prof_retention.name);
+			if ( fs_prof_retention.concept == null )
+				fs_prof_retentionStmt.setNull(offset++, 12);
+			else
+				fs_prof_retentionStmt.setString(offset++, fs_prof_retention.concept);
+			if ( fs_prof_retention.taxable_base == null )
+				fs_prof_retentionStmt.setNull(offset++, 8);
+			else
+				fs_prof_retentionStmt.setDouble(offset++, fs_prof_retention.taxable_base);
+			if ( fs_prof_retention.percent == null )
+				fs_prof_retentionStmt.setNull(offset++, 8);
+			else
+				fs_prof_retentionStmt.setDouble(offset++, fs_prof_retention.percent);
+			if ( fs_prof_retention.quota == null )
+				fs_prof_retentionStmt.setNull(offset++, 8);
+			else
+				fs_prof_retentionStmt.setDouble(offset++, fs_prof_retention.quota);
+			if ( fs_prof_retention.in_kind == null )
+				fs_prof_retentionStmt.setNull(offset++, -7);
+			else
+				fs_prof_retentionStmt.setBoolean(offset++, fs_prof_retention.in_kind);
+			if ( fs_prof_retention.withholding_key == null )
+				fs_prof_retentionStmt.setNull(offset++, 12);
+			else
+				fs_prof_retentionStmt.setString(offset++, fs_prof_retention.withholding_key);
+			if ( fs_prof_retention.withholding_subkey == null )
+				fs_prof_retentionStmt.setNull(offset++, 12);
+			else
+				fs_prof_retentionStmt.setString(offset++, fs_prof_retention.withholding_subkey);
+		}
+		fs_prof_retentionStmt.executeUpdate();
+		fs_prof_retentionInserted += size;
+
+		// elapsed time in milliseconds
+		long elapsed = System.currentTimeMillis() - start;
+		info("Inserted {}/{} Fs_prof_retentions in {} milliseconds.", size, fs_prof_retentionInserted, elapsed );		
+	}
+		
+		private int fs_prof_retentionId = -1;
+		
+		private void initFs_prof_retentionId() 
+		throws SQLException  {
+			ResultSet rs = null;
+			Statement stmt = null;
+			try {
+				stmt = mysqlConnection.createStatement();
+				rs = stmt.executeQuery("SELECT max(id) FROM `fs_prof_retention`" );
+				Integer max = null;
+				if ( rs.next() ) {		
+					max = rs.getInt(1);
+				}
+				this.fs_prof_retentionId = max == null ? 0 : max;
+			}
+			finally {
+				if ( rs != null )
+					rs.close(); 
+				if ( stmt != null )
+					stmt.close(); 
+			}
+		}
+
+		public int nextFs_prof_retentionId() {
+			return ++this.fs_prof_retentionId;
+		} 
+
+		public void setFs_prof_retentionId(Integer fs_prof_retentionId) {
+			this.fs_prof_retentionId = fs_prof_retentionId;
+		} 
+	
+	private void flushFs_prof_retention(  )
+	throws SQLException {
+		if ( ! fs_prof_retentions.isEmpty() )
+			insertFs_prof_retention(fs_prof_retentions);
+		if ( fs_prof_retentionStmt != null )
+			fs_prof_retentionStmt.close();
+	}	
+
+	/**
+	 * Fs_prof_retention
+	 * @param id Identificador unico
+	 * @param enterprise Identificador de Empresa
+	 * @param payment_date Fecha de Pago
+	 * @param document Numero de Documento del Profesional
+	 * @param document_type Tipo de documento (NIF, CIF...) del Profesional
+	 * @param document_country Pais del documento del Profesional
+	 * @param name Nombre completo del Profesional
+	 * @param concept Concepto
+	 * @param taxable_base Base Imponible
+	 * @param percent Porcentaje de  retencion
+	 * @param quota Cuota de retencion
+	 * @param in_kind Indica si el importe es en especie (1) o dinerario (0)
+	 * @param withholding_key Clave de retencion
+	 * @param withholding_subkey Subclave de retencion
+	 * @throws SQLException
+	*/
+	protected void insertFs_prof_retention(Integer id, Integer enterprise, Date payment_date, String document, Short document_type, String document_country, String name, String concept, Double taxable_base, Double percent, Double quota, Boolean in_kind, String withholding_key, String withholding_subkey)
+	throws SQLException {
+
+		Fs_prof_retention fs_prof_retention_ = new Fs_prof_retention();
+		fs_prof_retention_.id = id;
+		fs_prof_retention_.enterprise = enterprise;
+		fs_prof_retention_.payment_date = payment_date;
+		fs_prof_retention_.document = document;
+		fs_prof_retention_.document_type = document_type;
+		fs_prof_retention_.document_country = document_country;
+		fs_prof_retention_.name = name;
+		fs_prof_retention_.concept = concept;
+		fs_prof_retention_.taxable_base = taxable_base;
+		fs_prof_retention_.percent = percent;
+		fs_prof_retention_.quota = quota;
+		fs_prof_retention_.in_kind = in_kind;
+		fs_prof_retention_.withholding_key = withholding_key;
+		fs_prof_retention_.withholding_subkey = withholding_subkey;
+
+		fs_prof_retentions.add(fs_prof_retention_);
+		
+		int fs_prof_retentionCount = fs_prof_retentions.size();
+		
+		if ( 243 * fs_prof_retentionCount >=  this.maxAllowedPacket ){
+			insertFs_prof_retention(fs_prof_retentions);
+			fs_prof_retentions.clear();
+		} 
+	}
+
+
+	/**
+	 * Fs_prof_retention
+	 * @param enterprise Identificador de Empresa
+	 * @param payment_date Fecha de Pago
+	 * @param document Numero de Documento del Profesional
+	 * @param document_type Tipo de documento (NIF, CIF...) del Profesional
+	 * @param document_country Pais del documento del Profesional
+	 * @param name Nombre completo del Profesional
+	 * @param concept Concepto
+	 * @param taxable_base Base Imponible
+	 * @param percent Porcentaje de  retencion
+	 * @param quota Cuota de retencion
+	 * @param in_kind Indica si el importe es en especie (1) o dinerario (0)
+	 * @param withholding_key Clave de retencion
+	 * @param withholding_subkey Subclave de retencion
+	 * @returns auto-generated key
+	 * @throws SQLException
+	*/
+	public int insertFs_prof_retention(Integer enterprise, Date payment_date, String document, Short document_type, String document_country, String name, String concept, Double taxable_base, Double percent, Double quota, Boolean in_kind, String withholding_key, String withholding_subkey)
+	throws SQLException {
+		int id = nextFs_prof_retentionId();
+
+		Fs_prof_retention fs_prof_retention_ = new Fs_prof_retention();
+		fs_prof_retention_.id = id;
+		fs_prof_retention_.enterprise = enterprise;
+		fs_prof_retention_.payment_date = payment_date;
+		fs_prof_retention_.document = document;
+		fs_prof_retention_.document_type = document_type;
+		fs_prof_retention_.document_country = document_country;
+		fs_prof_retention_.name = name;
+		fs_prof_retention_.concept = concept;
+		fs_prof_retention_.taxable_base = taxable_base;
+		fs_prof_retention_.percent = percent;
+		fs_prof_retention_.quota = quota;
+		fs_prof_retention_.in_kind = in_kind;
+		fs_prof_retention_.withholding_key = withholding_key;
+		fs_prof_retention_.withholding_subkey = withholding_subkey;
+
+		fs_prof_retentions.add(fs_prof_retention_);
+		
+		int fs_prof_retentionCount = fs_prof_retentions.size();
+		
+		if ( 243 * fs_prof_retentionCount >=  this.maxAllowedPacket ){
+			insertFs_prof_retention(fs_prof_retentions);
+			fs_prof_retentions.clear();
+		} 
+		return id;
+	}
+
+
 	private int survey_workflowStmtSize = 0;
 
 	private int survey_workflowInserted = 0;
@@ -46371,7 +46625,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int salary_costCount = salary_costs.size();
 		
-		if ( 107 * salary_costCount >=  this.maxAllowedPacket ){
+		if ( 112 * salary_costCount >=  this.maxAllowedPacket ){
 			insertSalary_cost(salary_costs);
 			salary_costs.clear();
 		} 
@@ -46404,7 +46658,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		
 		int salary_costCount = salary_costs.size();
 		
-		if ( 107 * salary_costCount >=  this.maxAllowedPacket ){
+		if ( 112 * salary_costCount >=  this.maxAllowedPacket ){
 			insertSalary_cost(salary_costs);
 			salary_costs.clear();
 		} 
@@ -53619,6 +53873,7 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		flushAction_favorite();
 		flushLoan_account();
 		flushSalary_embargo();
+		flushFs_prof_retention();
 		flushSurvey_workflow();
 		flushProduct();
 		flushProcess();
@@ -54153,6 +54408,8 @@ public class AbstractMysqlDB extends DefaultCtsqlDBVisitor {
 		initLoan_accountId();
 		initMaxAllowedPacket();
 		initSalary_embargoId();
+		initMaxAllowedPacket();
+		initFs_prof_retentionId();
 		initMaxAllowedPacket();
 		initSurvey_workflowId();
 		initMaxAllowedPacket();

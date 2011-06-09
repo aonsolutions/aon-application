@@ -78,6 +78,10 @@ public class MysqlDB extends DefaultMysqlDB{
 					myAgreement,
 					myCalendar,
 					fromDate);
+		MyFsProfRetention myFsProfRetention = 
+			new MyFsProfRetention(this, 
+					myEnterprise, 
+					fromDate);
 		
 		ctsqlReader.visitPais(this);
 		ctsqlReader.visitTipdoc(this);
@@ -89,7 +93,8 @@ public class MysqlDB extends DefaultMysqlDB{
 		ctsqlReader.visit(myCalendar);
 		ctsqlReader.visit(myEnterprise);
 		ctsqlReader.visit(myContract);
-
+		ctsqlReader.visit(myFsProfRetention);
+		
 		finish();
 		//ctsqlReader.visit(new MyTraverse());
 	}
