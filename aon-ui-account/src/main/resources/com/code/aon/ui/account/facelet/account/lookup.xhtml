@@ -11,11 +11,23 @@
 		<ui:param name="lookupBean" value="#{accountLookup}" />
 		<ui:param name="lookupInputSize" value="10"/>
 		<ui:param name="lookupInputMaxLength" value="9"/>
-		<ui:param name="lookupInputSuggestSize" value="40" />
-		<ui:param name="searchButtonTitle" value="#{accountBundle.account_selection}" />
-		<ui:param name="newButtonTitle" value="#{accountBundle.account_module}" />
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}"/>
 		<ui:param name="lookupInputSuggestExpression" value="#{lto.id} (#{lto.description})"/>
+		<ui:param name="lookupInputSuggestSize" value="40" />
+		<ui:param name="lookupInputOnSubmit" 
+			value="if (this.value.indexOf('.') != -1) {
+						arr = this.value.split('.');
+						if (arr.length > 1) {
+							prefix = arr[0];
+							suffix = arr[1];
+							for (i=(prefix.length + suffix.length); i&lt;9; i++) {
+								prefix += '0';
+							}
+							this.value = prefix + suffix;
+						}
+					};"/>		
+		<ui:param name="searchButtonTitle" value="#{accountBundle.account_selection}" />
+		<ui:param name="newButtonTitle" value="#{accountBundle.account_module}" />
 	</ui:decorate>
 
 </ui:composition>
