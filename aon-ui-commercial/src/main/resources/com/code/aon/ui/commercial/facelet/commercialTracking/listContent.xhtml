@@ -2,6 +2,7 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120"
@@ -23,13 +24,15 @@
 		<aon:outputText value="#{to.seller.registry.fullName}"/>
 	</aon:column>
 
-	<aon:column styleClass="aon-editDataTable-textColumn"
-		alias="CommercialTracking.target.registry.name">
-		<f:facet name="header">
-			<aon:outputText value="#{commercialBundle.commercial_target}" />
-		</f:facet>
-		<aon:outputText value="#{to.project.target.registry.fullName}"/>
-	</aon:column>
+	<c:if test="#{!skipTarget}">
+		<aon:column styleClass="aon-editDataTable-textColumn"
+			alias="CommercialTracking.target.registry.name">
+			<f:facet name="header">
+				<aon:outputText value="#{commercialBundle.commercial_target}" />
+			</f:facet>
+			<aon:outputText value="#{to.project.target.registry.fullName}"/>
+		</aon:column>
+	</c:if>
 
 	<aon:column styleClass="aon-editDataTable-textColumn aon-width-350"
 		alias="CommercialTracking.comments">

@@ -62,7 +62,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Project_date</value>
+			<value>Project_date desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -90,7 +90,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
-			<value>commercialTracking</value>
+			<value>projectTracking</value>
 		</managed-property>
 		<managed-property>
 			<property-name>aliasMap</property-name>
@@ -102,6 +102,31 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>	
+	
+	<!-- ************ PROJECT TRACKING ************** -->
+	<managed-bean>
+		<managed-bean-name>projectTracking</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.CommercialTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>projectTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CommercialTracking_date desc</value>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ************ COMMERCIAL TRACKING ************** -->
 	<managed-bean>
@@ -124,7 +149,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CommercialTracking_date</value>
+			<value>CommercialTracking_date desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1787,7 +1812,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Project_date</value>
+			<value>Project_date desc</value>
 		</managed-property>										
 		<managed-property>
 			<property-name>suggestAlias</property-name>
@@ -1797,6 +1822,10 @@
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/commercial/facelet/project/listBasic.xhtml</value>
 		</managed-property>
+		<managed-property>
+			<property-name>newPagePath</property-name>
+			<value>/com/code/aon/ui/commercial/facelet/lookup/project/form.xhtml</value>
+		</managed-property>		
 	</managed-bean>	
 
    	<!-- ************* NAVIGATION RULES ***************** -->

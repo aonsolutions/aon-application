@@ -1,6 +1,5 @@
 package com.code.aon.ui.commercial.controller;
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
@@ -8,18 +7,19 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.Project;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.seller.Seller;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -98,14 +98,16 @@ public class CommercialTrackingController extends BasicController {
 		this.previous = previous;
 	}
 
-	public void nextActionChanged( ValueChangeEvent event ) {
-		Boolean value = (Boolean) event.getNewValue();
-		if ( value ) {
+	public void onNextChanged( ActionEvent event ) {
+		if ( this.nextAction ) {
 			this.next = new CommercialTracking();
 			if ( getLastDate() != null ) {
 				this.next.setDate( getLastDate() );	
 			}
 			this.next.setStatus(CommercialTrackingStatus.PENDING);
+			CommercialTracking ct = (CommercialTracking) getTo();
+			this.next.setSeller(ct.getSeller());
+			this.next.setLocation(ct.getLocation());
 		} else {
 			this.next = null;
 		}
@@ -156,6 +158,10 @@ public class CommercialTrackingController extends BasicController {
 							String alias = controller.getFieldName(ICommercialAlias.OFFER_SELLER_ID);
 							controller.getCriteria().addEqualExpression(alias, ct.getSeller().getId());
 						}
+						if ( ct.getProject().getTarget().getId() != null ) {
+							String alias = controller.getFieldName(ICommercialAlias.OFFER_TARGET_ID);
+							controller.getCriteria().addEqualExpression(alias, ct.getProject().getTarget().getId());
+						}						
 					} catch (ManagerBeanException e) {
 						LOGGER.error("Error filtering offer", e);
 					}
@@ -192,6 +198,16 @@ public class CommercialTrackingController extends BasicController {
 			addMessage(e.getMessage());
 		}
 		return this.getManagerBean().getList(criteria);
+	}
+
+	public void projectChanged( LookupChangeEvent event ) {
+		CommercialTracking ct = (CommercialTracking) getTo();
+		if ( event.getNewValue() != null ) {
+			Project project = (Project) event.getNewValue();
+			if ( project.getSeller().getId() != null ) {
+				ct.setSeller(project.getSeller());
+			}
+		}
 	}
 	
 }

@@ -24,6 +24,7 @@ public interface ICommercialConstants {
 	String SELLER_ADDRESS_CONTROLLER_NAME = "sellerAddress";
 	String COMMERCIAL_TRACKING_CONTROLLER_NAME = "commercialTracking";
 	String PROJECT_CONTROLLER_NAME = "project";
+	String PROJECT_TRACKING_CONTROLLER_NAME = "projectTracking";
 	String COLLECTIONS_CONTROLLER_NAME = "commercialCollections";
 
 	// ************************************************************

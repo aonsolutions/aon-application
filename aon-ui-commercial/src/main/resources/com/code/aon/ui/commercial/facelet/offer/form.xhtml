@@ -12,7 +12,6 @@
 	<ui:define name="content">
 		<aon:form id="offerForm">
 			<aon:div id="menuExt"> 
-				<aon:methodParam name="backAction" value="#{offer.backAction}" />
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle"
@@ -20,7 +19,7 @@
 					<ui:param name="controller" value="#{offer}" />
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{offer.readOnly}" />
-					<ui:param name="skipRemoveButton" value="#{offer.readOnly || (offer.backAction != null)}" />
+					<ui:param name="skipRemoveButton" value="#{offer.readOnly}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonConfiguration.bean.offer.showSalesOrder and aonRole.saleOperator}">
 							<aon:commandButton id="sales"

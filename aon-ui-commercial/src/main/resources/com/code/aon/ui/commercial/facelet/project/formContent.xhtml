@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel for="Project_id"
+		rendered="#{!controller.new}" value="#{bundle.aon_id}" />
+	<aon:inputText id="Project_id" value="#{controller.to.id}"
+		rendered="#{!controller.new}" size="15" disabled="true" />
+		
+	<aon:outputLabel for="Project_name"
+		value="#{bundle.aon_name}" />
+	<aon:inputText id="Project_name" required="true"
+		value="#{controller.to.name}" size="60" maxlength="64" />
+	
+	<aon:outputLabel for="Project_source"
+		value="#{commercialBundle.commercial_project_source}" />
+	<aon:selectOneMenu id="Project_source"
+		value="#{controller.to.source}" required="true">
+		<f:selectItem itemLabel="-" value="#{null}"/>
+		<f:selectItems value="#{commercialCollections.projectSources}" />
+	</aon:selectOneMenu>
+						
+	<aon:outputLabel for="Project_date"
+		value="#{bundle.aon_date}" />
+	<aon:selectInputDate id="Project_date" 
+		value="#{controller.to.date}" required="true"
+		timeZone="#{timeZoneController.timeZone}"
+		popupDateFormat="#{bundle.aon_date_pattern}">
+	</aon:selectInputDate>
+
+	<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.to.target}" />
+		<ui:param name="idRequired" value="#{true}" />
+	</ui:include>
+	
+	<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.to.seller}" />
+	</ui:include>
+
+	<aon:outputLabel for="Project_comments"
+		value="#{bundle.aon_comment}" />
+	<aon:inputTextarea id="Project_comments" 
+		value="#{controller.to.comments}" cols="80" rows="4" >
+		<f:validateLength  maximum="65536"/>
+	</aon:inputTextarea>
+	
+	<aon:outputLabel for="Project_status"
+		value="#{bundle.aon_status}" />
+	<h:panelGrid columns="2" id="Project_statusDiv">
+		<aon:selectOneMenu id="Project_status"
+			reRender="Project_statusDiv"
+			value="#{controller.to.status}">
+			<f:selectItems value="#{commercialCollections.projectStatuses}" />
+		</aon:selectOneMenu>
+		<aon:div styleClass="aon-margin-left"
+			rendered="#{controller.to.status  != 'PENDING'}" >
+			<aon:selectInputDate id="Project_statusDate" 
+				value="#{controller.to.statusDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+			</aon:selectInputDate>
+		</aon:div>						
+	</h:panelGrid>					
+	
+	<aon:outputLabel for="Project_probability"
+		value="#{commercialBundle.commercial_project_probability}" />
+	<rich:inputNumberSlider id="Project_probability"
+		value="#{controller.to.probability}"
+		minValue="0" maxValue="100" step="1"/>											
+
+</ui:composition>

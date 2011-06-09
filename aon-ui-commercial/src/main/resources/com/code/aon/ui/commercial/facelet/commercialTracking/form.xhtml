@@ -41,6 +41,38 @@
 				<aon:panelGrid id="menuGrid" columns="2" width="100%"
 					columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
 
+					<aon:outputLabel for="Project_id" 
+						value="#{commercialBundle.commercial_operation_module}" />
+					<aon:div>
+						<ui:include src="/com/code/aon/ui/commercial/facelet/project/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{commercialTracking.to.project}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="lookupReRender"
+								value="CommercialTracking_project_detail,lookupSeller" />
+							<aon:methodParam name="lookupChangeListener"
+								value="#{commercialTracking.projectChanged}" type="lookupChangeListener" />							
+						</ui:include>
+						<aon:div id="CommercialTracking_project_detail" >
+							<aon:panelGrid styleClass="aon-margin-top aon-margin-bottom" columns="2"
+								rendered="#{commercialTracking.to.project.id != null}" >
+								<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+									<ui:param name="lookupTo" value="#{commercialTracking.to.project.target}" />
+									<ui:param name="lookupDisabled" value="#{true}" />
+								</ui:include>					
+								<aon:outputText value="#{bundle.aon_comment}" />	
+								<aon:inputTextarea cols="70" rows="2" disabled="true"
+									value="#{commercialTracking.to.project.comments}" />
+							</aon:panelGrid>
+						</aon:div>
+					</aon:div>
+					
+
+					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{commercialTracking.to.seller}" />
+						<ui:param name="idRequired" value="#{true}" />
+					</ui:include>					
+
 					<aon:outputLabel for="CommercialTracking_date"
 						value="#{bundle.aon_date}" />
 					<aon:div id="CommercialTracking_dateDiv">
@@ -74,10 +106,10 @@
 					
 					<aon:outputLabel for="CommercialTracking_activity_id"
 						value="#{commercialBundle.commercial_tracking_activity}" />
-					<h:panelGrid columns="3" id="CommercialTracking_activity_offer">						
+					<h:panelGrid columns="3" >						
 						<aon:selectOneMenu id="CommercialTracking_activity_id"
 							required="true" value="#{commercialTracking.to.activity}">
-							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItem itemLabel="-" value="#{null}"/>
 							<f:selectItems value="#{commercialCollections.activities}" />
 						</aon:selectOneMenu>
 						<aon:div styleClass="aon-margin-left">							
@@ -89,34 +121,20 @@
 							<aon:outputLabel for="CommercialTracking_offer_check"
 								value="#{commercialBundle.commercial_offer}" />
 						</aon:div>							
-						<aon:div rendered="#{commercialTracking.offerChecked}"
+						<aon:div id="CommercialTracking_activity_offer"
 							styleClass="aon-lookup aon-margin-left">
-							<aon:inputText id="CommercialTracking_offer_detail"
-								value="#{commercialTracking.to.offer.referenceCode}"
-								size="20" disabled="true" />
-							<ui:include src="/com/code/aon/ui/commercial/facelet/offer/lookup.xhtml" >
-								<ui:param name="lookupTo" value="#{commercialTracking.to.offer}" />
-								<ui:param name="lookupReRender " value="CommercialTracking_activity_offer" />
-								<ui:param name="lookupControllerListener" value="#{commercialTracking.offerFilter}" />
-							</ui:include>								
-							<aon:commandButton
-								rendered="#{commercialTracking.to.offer.id != null}"
-								actionListener="#{commercialTracking.onSelectOffer}"
-								value="&#160;" action="offer_form"
-								styleClass="aon-finding-toolbar-item aon-icon-file-entrance aon-finding-toolbar-item-no-border">
-							</aon:commandButton>							
+							<c:if test="#{commercialTracking.offerChecked}">
+								<ui:decorate template="/com/code/aon/ui/commercial/facelet/offer/lookup.xhtml" >
+									<ui:param name="lookupTo" value="#{commercialTracking.to.offer}" />
+									<ui:param name="lookupControllerListener" value="#{commercialTracking.offerFilter}" />
+									<ui:define name="beforeLookupContent">
+										<aon:inputText size="20" disabled="true" 
+											value="#{commercialTracking.to.offer.referenceCode}" />
+									</ui:define>
+								</ui:decorate>								
+							</c:if>					
 						</aon:div>																			
 					</h:panelGrid>
-					
-					<ui:include src="/com/code/aon/ui/commercial/facelet/project/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{commercialTracking.to.project}" />
-						<ui:param name="idRequired" value="#{true}" />
-					</ui:include>
-
-					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{commercialTracking.to.seller}" />
-						<ui:param name="idRequired" value="#{true}" />
-					</ui:include>					
 
 					<aon:outputLabel for="CommercialTracking_status"
 						value="#{bundle.aon_status}" />
@@ -129,7 +147,9 @@
 					<aon:outputLabel for="CommercialTracking_comments"
 						value="#{bundle.aon_comment}" />
 					<aon:inputTextarea id="CommercialTracking_comments"
-						value="#{commercialTracking.to.comments}" cols="80" rows="4" />
+						value="#{commercialTracking.to.comments}" cols="80" rows="4">
+						<f:validateLength maximum="255" />
+					</aon:inputTextarea>
 						
 					<aon:outputLabel for="CommercialTracking_location"
 						value="#{commercialBundle.commercial_tracking_location}" />
@@ -141,13 +161,19 @@
 						
 					<aon:div>					
 						<aon:selectBooleanCheckbox id="CommercialTracking_next_id"
-							reRender="next_action" 
-							valueChangeListener="#{commercialTracking.nextActionChanged}"
+							reRender="next_action" process="CommercialTracking_location"
+							actionListener="#{commercialTracking.onNextChanged}"
 							value="#{commercialTracking.nextAction}">
 						</aon:selectBooleanCheckbox>
 						<aon:div id="next_action">
 							<aon:panelGrid rendered="#{commercialTracking.nextAction}" columns="2">
 
+								<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
+									<ui:param name="lookupTo" value="#{commercialTracking.next.seller}" />
+									<ui:param name="lookupSuffix" value="-Next" />
+									<ui:param name="idRequired" value="#{true}" />
+								</ui:include>	
+					
 								<aon:outputLabel for="CommercialTracking_next_date"
 									value="#{bundle.aon_date}" />
 								<aon:selectInputDate id="CommercialTracking_next_date"
@@ -160,15 +186,21 @@
 									value="#{commercialBundle.commercial_tracking_activity}" />
 								<aon:selectOneMenu id="CommercialTracking_next_activity_id"
 									required="true" value="#{commercialTracking.next.activity}">
-									<f:selectItem value="#{null}" itemLabel="    " />
+									<f:selectItem itemLabel="-" value="#{null}"/>
 									<f:selectItems value="#{commercialCollections.activities}" />
 								</aon:selectOneMenu>
 
 								<aon:outputLabel for="CommercialTracking_next_comments"
 									value="#{bundle.aon_comment}" />
 								<aon:inputTextarea id="CommercialTracking_next_comments"
-									value="#{commercialTracking.next.comments}" cols="80"
-									rows="4" />
+									value="#{commercialTracking.next.comments}" cols="80" rows="4" >
+									<f:validateLength maximum="255" />
+								</aon:inputTextarea>
+									
+								<aon:outputLabel for="CommercialTracking_next_location"
+									value="#{commercialBundle.commercial_tracking_location}" />
+								<aon:inputText id="CommercialTracking_next_location"
+									value="#{commercialTracking.next.location}" size="80" maxlength="255" />									
 
 							</aon:panelGrid>
 						</aon:div>
@@ -181,6 +213,7 @@
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{offerLookup}" />
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 	</ui:define>
 </ui:composition>
 

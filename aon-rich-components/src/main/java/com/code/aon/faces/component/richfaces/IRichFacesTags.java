@@ -60,4 +60,6 @@ public interface IRichFacesTags {
 
 	String IMMEDIATE = "immediate";
 	
+	String PROCESS = "process";
+	
 }
