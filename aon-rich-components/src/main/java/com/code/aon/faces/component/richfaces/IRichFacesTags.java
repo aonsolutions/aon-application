@@ -14,6 +14,8 @@ public interface IRichFacesTags {
 	
 	String FOCUS = "focus";
 	
+	String ON_SUBMIT = "onsubmit";
+	
 	String ON_COMPLETE = "oncomplete";
 	
    	String DISABLE_HOT_KEYS = "disableHotKeys";

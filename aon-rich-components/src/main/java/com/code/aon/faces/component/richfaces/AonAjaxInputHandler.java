@@ -124,6 +124,16 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 					String value = focus.getValue();
 					attributes.add( BasicComponentConfig.newAttribute(tag, FOCUS, value) );					
 				}
+				TagAttribute onsubmit = getAttribute(ON_SUBMIT);
+				if ( onsubmit != null ) {
+					String value = onsubmit.getValue();
+					attributes.add( BasicComponentConfig.newAttribute(tag, ON_SUBMIT, value) );	
+				}
+				TagAttribute oncomplete = getAttribute(ON_COMPLETE);
+				if ( oncomplete != null ) {
+					String value = oncomplete.getValue();
+					attributes.add( BasicComponentConfig.newAttribute(tag, ON_COMPLETE, value) );	
+				}
 				if ( actionListener != null ) {
 					String value = actionListener.getValue();
 					attributes.add( BasicComponentConfig.newAttribute(tag, ACTION_LISTENER, value) );					
