@@ -33,19 +33,12 @@
 						<f:selectItems value="#{payrollCollections.dismissCauseList}"  />
 					</aon:selectOneMenu>
 					
-					<aon:outputLabel for="Settle_daysPerYear"
-						value="#{payrollBundle.payroll_settle_daysPerYear}" />
-					<aon:inputText id="Settle_daysPerYear"
-						size="10" maxlength="7"
-						value="#{settle.params.daysPerYear}" />
-
-					<aon:outputLabel for="Settle_seniorityDate"
-						value="#{payrollBundle.payroll_salary_seniority_date}" />
-					<aon:panelGroup id="seniorityDateContainer">
-						<aon:selectInputDate id="Settle_seniorityDate"
-							value="#{settle.params.seniorityDate}" 
-							inputSize="10" renderAsPopup="true" enableManualInput="true"
-							timeZone="#{timeZoneController.timeZone}"
+					<aon:outputLabel for="Settle_suspensionDate"
+						value="#{payrollBundle.payroll_settle_terminateDate}" />
+					<aon:panelGroup id="suspensionDateContainer">
+						<aon:selectInputDate id="Settle_suspensionDate" 
+							value="#{settle.params.suspensionDate}"
+							timeZone="#{timeZoneController.timeZone}" 
 							popupDateFormat="#{bundle.aon_date_pattern}">
 							<a4j:support event="oninputchange" reRender="settleForm" ajaxSingle="true"/>
 							<a4j:support event="onchanged" reRender="settleForm" ajaxSingle="true"/>
@@ -60,16 +53,51 @@
 						</aon:outputText>	
 					</aon:panelGroup>
 					
-					<aon:outputLabel for="Settle_suspensionDate"
-						value="#{payrollBundle.payroll_settle_suspensionDate}" />
-					<aon:selectInputDate id="Settle_suspensionDate" 
-						value="#{settle.params.suspensionDate}"
-						timeZone="#{timeZoneController.timeZone}" 
+					<aon:outputLabel for="Settle_noticeDate"
+						value="#{payrollBundle.payroll_settle_noticeDate}" />
+					<aon:panelGroup id="noticeDateContainer">
+						<aon:selectInputDate id="Settle_noticeDate" 
+							value="#{settle.params.noticeDate}"
+							timeZone="#{timeZoneController.timeZone}" 
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="oninputchange" reRender="settleForm" ajaxSingle="true"/>
+							<a4j:support event="onchanged" reRender="settleForm" ajaxSingle="true"/>
+						</aon:selectInputDate>
+						<aon:outputText value="#{settle.params.voluntaryLeave?'-':'+'}" rendered="#{settle.params.noticeLimitExceeded}" />
+						<aon:outputText value="#{payrollBundle.payroll_settle_noticeLimitExceeded}" 
+							rendered="#{settle.params.noticeLimitExceeded}"
+							style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
+					</aon:panelGroup>
+
+					<aon:outputLabel for="Settle_seniorityDate"
+						value="#{payrollBundle.payroll_salary_seniority_date}" />
+					<aon:selectInputDate id="Settle_seniorityDate"
+						value="#{settle.params.seniorityDate}" 
+						inputSize="10" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}">
 						<a4j:support event="oninputchange" reRender="settleForm" ajaxSingle="true"/>
 						<a4j:support event="onchanged" reRender="settleForm" ajaxSingle="true"/>
 					</aon:selectInputDate>
 					
+					<aon:outputLabel for="Settle_daysPerYear"
+						value="#{payrollBundle.payroll_settle_daysPerYear}" />
+					<aon:inputText id="Settle_daysPerYear"
+						size="10" maxlength="7"
+						value="#{settle.params.daysPerYear}" />
+					
+					<aon:outputLabel for="Settle_pendingVacation"
+						value="#{payrollBundle.payroll_settle_pendingVacation}" />
+					<aon:inputText id="Settle_pendingVacation"
+						size="10" maxlength="7"
+						value="#{settle.params.pendingVacation}" />
+						
+					<aon:outputLabel for="Settle_noticeDays"
+						value="#{payrollBundle.payroll_settle_noticeDays}" />
+					<aon:inputText id="Settle_noticeDays"
+						size="10" maxlength="4"
+						value="#{settle.params.noticeDays}" />
+
 					<aon:outputLabel for="Settle_compensationDays"
 						value="#{payrollBundle.payroll_settle_compensationDays}" />
 					<aon:panelGroup id="compensationDaysContainer">
@@ -83,36 +111,46 @@
 							rendered="#{settle.params.dismissCause!=null}" 
 							style="font-size: 0.9em" styleClass="aon-italic aon-margin-left"/>
 					</aon:panelGroup>
-					
-					<aon:outputLabel for="Settle_dayAmount"
-						value="#{payrollBundle.payroll_settle_dayAmount}" />
-					<aon:inputText id="Settle_dayAmount"
-						size="10" maxlength="4"
-						value="#{settle.params.dayAmount}" />
-
-					<aon:outputLabel for="Settle_compensation"
-						value="#{payrollBundle.payroll_settle_compensation}" />
-					<aon:inputText id="Settle_compensation"
-						size="10" maxlength="7"
-						value="#{settle.params.compensation}" />
-
-					<aon:outputLabel for="Settle_pendingVacation"
-						value="#{payrollBundle.payroll_settle_pendingVacation}" />
-					<aon:inputText id="Settle_pendingVacation"
-						size="10" maxlength="7"
-						value="#{settle.params.pendingVacation}" />
 
 					<aon:outputLabel for="Settle_vacationDayAmount"
 						value="#{payrollBundle.payroll_settle_vacationDayAmount}" />
 					<aon:inputText id="Settle_vacationDayAmount"
 						size="10" maxlength="7"
 						value="#{settle.params.vacationDayAmount}" />
+					
+					<aon:outputLabel for="Settle_noticeDayAmount"
+						value="#{payrollBundle.payroll_settle_noticeDayAmount}" />
+					<aon:inputText id="Settle_noticeDayAmount"
+						size="10" maxlength="4"
+						value="#{settle.params.noticeDayAmount}" />
+
+					<aon:outputLabel for="Settle_dayAmount"
+						value="#{payrollBundle.payroll_settle_dayAmount}" />
+					<aon:inputText id="Settle_dayAmount"
+						size="10" maxlength="4"
+						value="#{settle.params.dayAmount}" />
 
 					<aon:outputLabel for="Settle_vacationAmount"
 						value="#{payrollBundle.payroll_settle_vacationAmount}" />
 					<aon:inputText id="Settle_vacationAmount"
 						size="10" maxlength="7"
-						value="#{settle.params.vacationAmount}" />
+						value="#{settle.params.vacationAmount}" >
+						<a4j:support event="onchange" reRender="settleForm" ajaxSingle="true"/>
+					</aon:inputText>
+
+					<aon:outputLabel for="Settle_compensation"
+						value="#{payrollBundle.payroll_settle_compensation}" />
+					<aon:inputText id="Settle_compensation"
+						size="10" maxlength="7"
+						value="#{settle.params.compensation}" >
+						<a4j:support event="onchange" reRender="settleForm" ajaxSingle="true"/>
+					</aon:inputText>
+
+					<aon:outputLabel for="Settle_toalAmount"
+						value="#{payrollBundle.payroll_settle_total_amount}" />
+					<aon:outputText id="Settle_toalAmount"
+						size="10" 
+						value="#{settle.params.toalAmount}" />
 				
 				</aon:panelGrid>
 			</aon:div>

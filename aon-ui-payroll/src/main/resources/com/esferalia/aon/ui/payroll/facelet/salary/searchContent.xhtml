@@ -28,23 +28,14 @@
 		valueChangeListener="#{controller.addLessThanOrEqualExpression}"
 		timeZone="#{timeZoneController.timeZone}"
 		popupDateFormat="#{bundle.aon_date_pattern}"/>
+		
+	<aon:outputLabel for="Salary_type" value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="Salary_type" converter="aon.EnumConverter"
+		valueChangeListener="#{controller.addEqualExpression}" >
+		<f:selectItem itemLabel="#{bundle.aon_common_all}" value="#{null}" />
+		<f:selectItems value="#{payrollCollections.salaryTypes}" />
+	</aon:selectOneMenu>
 
-<!--  
-	<aon:outputText value="#{payrollBundle.payroll_salary_totalPayment}" />
-	<aon:outputText value="#{controller.to.totalPayment}">
-		<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-	</aon:outputText>
-
-	<aon:outputText value="#{payrollBundle.payroll_salary_totalLiquid}" />
-	<aon:outputText value="#{controller.to.totalLiquid}">
-		<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-	</aon:outputText>
-
-	<aon:outputText value="#{payrollBundle.payroll_salary_totalDeduction}" />
-	<aon:outputText value="#{controller.to.totalDeduction}">
-		<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-	</aon:outputText>
--->
 					
 				
 </ui:composition>

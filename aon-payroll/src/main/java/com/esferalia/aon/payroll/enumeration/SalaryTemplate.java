@@ -7,8 +7,8 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum SalaryTemplate implements IResourceable {
 
-	DEFAULT,
-	TEMPLATE1
+	DEFAULT("salary"),
+	TEMPLATE1("salaryTemplate1")
 	;      
 	
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
@@ -17,6 +17,16 @@ public enum SalaryTemplate implements IResourceable {
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
+    }
+    
+    private String value;
+    
+    SalaryTemplate( String value ) {
+      	this.value = value;
+  	}
+    
+    public String getValue() {
+    	return value;
     }
     
     

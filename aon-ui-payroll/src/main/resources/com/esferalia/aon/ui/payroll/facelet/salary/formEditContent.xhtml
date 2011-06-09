@@ -75,16 +75,21 @@
 			<h:panelGrid columns="3" style="width: 100%;">
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="#{bundle.aon_type}:&#160;"/>
-					<aon:outputText value="#{controller.to.type}" styleClass="aon-bold"/>
+					<aon:panelGroup>
+						<aon:outputText value="#{controller.to.type}" styleClass="aon-bold"/>
+						<aon:outputText value="&#160;("/>
+						<aon:outputText value="#{controller.to.month}"/>
+						<aon:outputText styleClass="aon-italic" value="&#160;/&#160;"/>
+						<aon:outputText value="#{controller.to.issueYear}"/>
+						<aon:outputText value=")"/>
+					</aon:panelGroup>
 				</aon:div>
 				
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_issue_date}:&#160;"/>
-					<aon:panelGroup styleClass="aon-bold">
-						<aon:outputText value="#{controller.to.month}"/>
-						<aon:outputText styleClass="aon-italic" value="&#160;/&#160;"/>
-						<aon:outputText value="#{controller.to.issueYear}"/>
-					</aon:panelGroup>
+					<aon:outputText styleClass="aon-bold" value="#{controller.to.issueDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
 				</aon:div>
 
 				<aon:div>

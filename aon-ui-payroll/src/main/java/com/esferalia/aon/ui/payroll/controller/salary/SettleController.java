@@ -1,6 +1,5 @@
 package com.esferalia.aon.ui.payroll.controller.salary;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.slf4j.Logger;
@@ -28,23 +27,41 @@ public class SettleController {
 	public void onSelectContract(ActionEvent event){
 		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		controller.onSelect(event);
-		validateEndDate((Contract) controller.getTo());
 		setParams(new SettleParams());
 		getParams().setContract((Contract) controller.getTo());
 		getParams().setSeniorityDate(((Contract) controller.getTo()).getSeniorityDate());
-	}
-	
-	private void validateEndDate(Contract contract) {
-		if(contract.getEndDate()==null){
-			String msg = "No se puede generar el finiquito de un contrato no finalizado.";
-			AonUtil.addErrorMessage(msg);
-			LOGGER.error(msg);
-			throw new AbortProcessingException(msg);
-		}
+		initializeParams();
 	}
 	
 	public void onGenerate(ActionEvent event){
-		AonUtil.addErrorMessage("sin implementar");
-		LOGGER.error("sin implementar");
+		generateSettle();
+		if(getParams().getContract().getEndDate()==null){
+			finalizeContract();
+		}
+	}
+	
+	private void initializeParams() {
+		// TODO inicializar los parametros obteniendo los datos del calculador
+	}
+	
+	private void generateSettle() {
+		// TODO lanzar el calculo de finiquitos
+		AonUtil.addErrorMessage("sin implementar: generar el finiquito");
+		LOGGER.error("sin implementar: generar el finiquito");
+	}
+	
+	private void finalizeContract(){
+		AonUtil.addErrorMessage("sin implementar: finalizar el contrato");
+		LOGGER.error("sin implementar: finalizar el contrato");
+		// TODO finalizar el contrato estableciendo su fecha fin
+//		try {
+//			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+//			getParams().getContract().setEndDate(getParams().getSuspensionDate());
+//			bean.update(getParams().getContract());
+//		} catch (ManagerBeanException e) {
+//			String msg = "Imposible actualizar el contrato.";
+//			AonUtil.addErrorMessage(msg);
+//			LOGGER.error(msg);
+//		}
 	}
 }

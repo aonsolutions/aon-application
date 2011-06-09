@@ -1,9 +1,9 @@
 package com.esferalia.aon.payroll;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -92,6 +92,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	private int issueMonth;
 	private int issueYear;
 	private Month month;
+	private Integer year;
 	private Date startDate;
 	private Date endDate;
 	//private boolean fullTime; //TODO Dar soporte
@@ -300,11 +301,20 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	}
 	public void setIssueMonth(int issueMonth) {
 		this.issueMonth = issueMonth;
-		month = Month.getMonthByValue(issueMonth-1);
 	}
 	@Transient
 	public Month getMonth() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(getEndDate());
+		month = Month.getMonthByValue(cal.get(Calendar.MONTH));
 		return month;
+	}
+	@Transient
+	public Integer getYear() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(getEndDate());
+		year = cal.get(Calendar.YEAR);
+		return year;
 	}
 	
 	@Formula("year(issue_date)")
