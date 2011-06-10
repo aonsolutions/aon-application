@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel for="Item_purchase_price" value="#{productBundle.product_purchase_price}" />
+	<aon:inputText id="Item_purchase_price" 
+		value="#{controller.to.purchasePrice}" required="true" size="10"
+		valueChangeListener="#{controller.onPurchasePriceChanged}" 
+		reRender="Item_profit_percent,Item_price,Item_sales_price"
+		focus="Item_profit_percent">
+		<f:validateDoubleRange />
+	</aon:inputText>
+
+	<aon:outputLabel for="Item_profit_percent" value="% #{bundle.aon_profit}" />
+	<aon:inputText id="Item_profit_percent" 
+		value="#{controller.to.profitPercent}" required="true" size="10"
+		valueChangeListener="#{controller.onProfitChanged}"
+		reRender="Item_price,Item_sales_price"
+		focus="Item_price">
+		<f:validateDoubleRange />
+	</aon:inputText>
+
+	<aon:outputLabel for="Item_price" value="#{productBundle.product_sales_base_price}" />
+	<aon:inputText id="Item_price" 
+		value="#{controller.to.price}" required="true" size="10"
+		valueChangeListener="#{controller.onPriceChanged}" 
+		reRender="Item_profit_percent,Item_sales_price"
+		focus="Item_product_vat">
+		<f:validateDoubleRange />
+	</aon:inputText>
+
+	<aon:outputLabel for="Item_product_vat" value="#{bundle.aon_vat}" />
+	<aon:div>
+		<aon:selectOneMenu id="Item_product_vat" value="#{controller.to.product.vat}"
+			ajaxSingle="true" reRender="Item_product_vat_percentage,Item_sales_price"
+			focus="Item_product_retention">
+			<f:selectItems value="#{configCollections.vatTaxes}" />
+		</aon:selectOneMenu>
+		<aon:outputLabel id="Item_product_vat_percentage" styleClass="aon-margin-left aon-italic"
+			value="#{controller.to.product.vat.percentage}">
+			<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+		</aon:outputLabel>
+		<aon:outputLabel value="%" />
+	</aon:div>
+
+	<aon:outputLabel for="Item_product_retention" value="#{bundle.aon_retention}" />
+	<aon:div>
+		<aon:selectOneMenu id="Item_product_retention" value="#{controller.to.product.retention}"
+			ajaxSingle="true" reRender="Item_product_retention_percentage,Item_sales_price"
+			focus="Item_sales_price">
+			<f:selectItem itemLabel="-" itemValue="" />
+			<f:selectItems value="#{configCollections.retentionTaxes}" />
+		</aon:selectOneMenu>
+		<aon:panelGroup id="Item_product_retention_percentage">
+			<aon:outputLabel styleClass="aon-margin-left aon-italic"
+				value="#{controller.to.product.retention.percentage}">
+				<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
+			</aon:outputLabel>
+			<aon:outputLabel value="%" rendered="#{controller.to.product.retention!=null}" />
+		</aon:panelGroup>
+	</aon:div>
+
+	<aon:outputLabel for="Item_sales_price" value="#{bundle.aon_sales_price}" />
+	<aon:inputText id="Item_sales_price" 
+		value="#{controller.to.salesPrice}" required="true" size="10"
+		valueChangeListener="#{controller.onSalesPriceChanged}" 
+		reRender="Item_profit_percent,Item_price">
+		<f:validateDoubleRange/>
+	</aon:inputText>
+
+</ui:composition>

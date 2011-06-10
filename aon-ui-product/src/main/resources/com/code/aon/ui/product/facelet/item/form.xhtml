@@ -5,15 +5,13 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 		<aon:form id="itemForm">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle"
-					value="#{productBundle.product_module}" />
+				<ui:param name="toolbarTitle" value="#{productBundle.product_module}" />
 				<ui:param name="controller" value="#{item}" />
 				<ui:define name="beforeSpinToolbarContent">
 					<c:if test="#{aonConfiguration.bean.product.showHistory and !item.new}">
@@ -25,17 +23,22 @@
 				</ui:define>
 			</ui:decorate>
 
-			<ui:include
-				src="/com/code/aon/ui/product/facelet/item/formContent.xhtml">
-				<ui:param name="controller" value="#{item}" />
-			</ui:include>
+			<aon:div styleClass="aon-scroll-area">
+				<c:if test="#{item.new}">
+					<ui:include src="/com/code/aon/ui/product/facelet/item/formNewContent.xhtml">
+						<ui:param name="controller" value="#{item}" />
+					</ui:include>
+				</c:if>
 
-			<c:if test="#{!item.new}">
-				<c:if test="#{aonConfiguration.bean.product.showAttachment or 
-								aonConfiguration.bean.product.showAlternatives or
-								aonConfiguration.bean.product.showSuppliers or
-								(aonConfiguration.bean.product.showStock and item.to.product.inventoriable)}">
-					<aon:div styleClass="aon-scroll-area">
+				<c:if test="#{!item.new}">
+					<ui:include src="/com/code/aon/ui/product/facelet/item/formContent.xhtml">
+						<ui:param name="controller" value="#{item}" />
+					</ui:include>
+
+					<c:if test="#{aonConfiguration.bean.product.showAttachment or 
+									aonConfiguration.bean.product.showAlternatives or
+									aonConfiguration.bean.product.showSuppliers or
+									(aonConfiguration.bean.product.showStock and item.to.product.inventoriable)}">
 						<aon:panelTabSet id="itemTab" selectedTab="#{item.selectedTab}">
 							<c:if test="#{aonConfiguration.bean.product.showAttachment}">
 								<aon:panelTab id="itemAttachPanelTab"
@@ -75,22 +78,25 @@
 								</aon:panelTab>
 							</c:if>
 						</aon:panelTabSet>
-					</aon:div>
+					</c:if>
 				</c:if>
-			</c:if>
+			</aon:div>
 		</aon:form>
 
-		<c:if test="#{aonConfiguration.bean.product.showStock and !item.new and item.to.product.inventoriable}">
+		<c:if test="#{!item.new and aonConfiguration.bean.product.showStock and item.to.product.inventoriable}">
 			<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		</c:if>
 
-		<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
+		<c:if test="#{!item.new and aonConfiguration.bean.product.showAlternatives}">
 			<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		</c:if>
 
 		<c:if test="#{!item.new and aonConfiguration.bean.product.showSuppliers}">
 			<aon:lookupButtonPopup lookup="#{supplierLookup}" />
 		</c:if>
-		<aon:lookupButtonPopup lookup="#{accountLookup}" />
+
+		<c:if test="#{!item.new and aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
+			<aon:lookupButtonPopup lookup="#{accountLookup}" />
+		</c:if>
 	</ui:define>
 </ui:composition>

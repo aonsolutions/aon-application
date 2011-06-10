@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel for="Item_product_code" value="#{bundle.aon_id}" />
+	<aon:div>
+		<aon:inputText id="Item_product_code" 
+			value="#{controller.to.product.code}" size="20" maxlength="15" 
+			onblur="toUpperCase(this);" />
+
+		<c:if test="#{aonConfiguration.bean.product.showBarcode}">
+			<aon:outputLabel for="Item_barcode" styleClass="aon-margin-left aon-margin-right aon-italic"
+				value="#{productBundle.product_barcode}" />
+			<aon:inputText id="Item_barcode" 
+				value="#{controller.to.barcode}" size="25" maxlength="32" />
+ 		</c:if>
+	</aon:div>
+
+	<aon:outputLabel for="Item_product_name" value="#{bundle.aon_description}" />
+	<aon:inputText id="Item_product_name" 
+		value="#{controller.to.product.name}" required="true" size="70" maxlength="64" />
+
+	<aon:outputLabel for="Item_product_detail" value="#{productBundle.product_detail}" />
+	<aon:inputTextarea id="Item_product_detail" 
+		value="#{controller.to.description}" cols="72" rows="4" />
+
+	<aon:outputLabel for="Item_product_category" value="#{productBundle.product_category}" />
+	<aon:div>
+		<aon:selectOneMenu id="Item_product_category" value="#{controller.to.product.category}">
+			<f:selectItems value="#{productCollections.categories}" />
+		</aon:selectOneMenu>
+
+		<c:if test="#{aonConfiguration.bean.product.showBrand and productCollections.brandsCount > 0}">
+			<aon:outputLabel for="Item_product_brand" styleClass="aon-margin-left aon-margin-right aon-italic"
+				value="#{productBundle.product_brand}" />
+			<aon:selectOneMenu id="Item_product_brand" value="#{controller.to.product.brand}">
+				<f:selectItem itemLabel="-" itemValue="" />
+				<f:selectItems value="#{productCollections.brands}" />
+			</aon:selectOneMenu>
+		</c:if>
+	</aon:div>
+
+	<c:if test="#{aonConfiguration.bean.product.showType or aonConfiguration.bean.product.showEcommerceData}">
+		<aon:outputLabel for="Item_product_type" value="#{bundle.aon_type}" />
+		<aon:div>
+			<c:if test="#{aonConfiguration.bean.product.showType}">
+				<aon:selectOneMenu id="Item_product_type" styleClass="aon-margin-right"
+					value="#{controller.to.product.type}">
+					<f:selectItems value="#{productCollections.noExpenseProductTypes}" />
+				</aon:selectOneMenu>
+			</c:if>
+
+			<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">
+				<aon:selectBooleanCheckbox id="Item_internet" 
+					value="#{controller.to.internet}" />
+				<aon:outputLabel for="Item_internet" styleClass="aon-margin-right aon-italic"
+					value="#{productBundle.product_ecommerce_available}" />
+			</c:if>
+		</aon:div>
+	</c:if>
+
+	<c:if test="#{aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showComposition}">
+		<aon:outputLabel value="#{productBundle.product_info}" />
+		<aon:div>
+			<c:if test="#{aonConfiguration.bean.product.showStock}">
+				<aon:selectBooleanCheckbox id="Item_product_inventoriable"
+					value="#{controller.to.product.inventoriable}" />
+				<aon:outputLabel for="Item_product_inventoriable" styleClass="aon-margin-right aon-italic"
+					value="#{productBundle.product_inventoriable}" />
+			</c:if>
+
+			<c:if test="#{aonConfiguration.bean.product.showComposition}">
+				<aon:selectBooleanCheckbox id="Item_product_composition"
+					value="#{controller.to.product.composition}"
+					ajaxSingle="true" reRender="Item_product_composition_price" />
+				<aon:outputLabel for="Item_product_composition" styleClass="aon-margin-right aon-italic"
+					value="#{productBundle.product_composition}" />
+
+				<aon:panelGroup id="Item_product_composition_price">
+					<aon:selectBooleanCheckbox value="#{controller.to.product.compositionPrice}"
+						rendered="#{controller.to.product.composition}" />
+					<aon:outputLabel for="Item_product_composition_price" styleClass="aon-margin-right aon-italic"
+						value="#{productBundle.product_composition_price}"
+						rendered="#{controller.to.product.composition}" />
+				</aon:panelGroup>
+			</c:if>
+		</aon:div>
+	</c:if>
+
+	<aon:outputLabel for="Item_status" value="#{bundle.aon_status}" />
+	<aon:selectOneRadio id="Item_status" value="#{controller.to.status}">
+		<f:selectItems value="#{productCollections.productStatuses}" />
+	</aon:selectOneRadio>
+	 
+</ui:composition>
