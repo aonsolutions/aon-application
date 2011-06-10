@@ -39,6 +39,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Bonus;
 import com.esferalia.aon.payroll.ctsql2mysql.MyAgreement.PercepPercnivComparator;
 import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Concept;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
+import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -324,15 +325,20 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		return null;
 	}
 	
+	private String getAfectaExpression(String afecta, String expression ) {
+		String format = "%s ? %s : 0.00";
+		if ( "P".equals(afecta) ) 
+			return String.format(format, EXTRA_PAY, expression ) ;
+		if ( "A".equals(afecta) ) 
+			return String.format(format, "(" + SALARY + " || " + EXTRA_PAY + ")", expression ) ;
+		if ( "T".equals(afecta) ) 
+			return String.format(format, DELAY, expression ) ;
+		return String.format(format, SALARY, expression ) ;
+	}
+	
 	private String getEmbargoExpression(Embargo embargo ) throws SQLException {
 		String afecta = embargo.getAfecta();
-		if ( "P".equals(afecta) ) 
-			return "PAGA_EXTRA ? (( PENDIENTE > EMBARGABLE ) ? EMBARGABLE : PENDIENTE ) : 0.00 ";
-		if ( "A".equals(afecta) ) 
-			return "( NOMINA || PAGA_EXTRA ) ? (( PENDIENTE > EMBARGABLE ) ? EMBARGABLE : PENDIENTE ) : 0.00 ";
-		if ( "T".equals(afecta) ) 
-			return "ATRASOS ? (( PENDIENTE > EMBARGABLE ) ? EMBARGABLE : PENDIENTE ) : 0.00 ";
-		return "NOMINA ? (( PENDIENTE > EMBARGABLE ) ? EMBARGABLE : PENDIENTE ) : 0.00 ";
+		return getAfectaExpression(afecta, "(( PENDIENTE > EMBARGABLE ) ? EMBARGABLE : PENDIENTE)");
 	}
 	
 	@Override
@@ -894,6 +900,8 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		String function = String.format("%.3f", 
 				importe != null ? importe : 0);
 		
+		String expression = 
+			getAfectaExpression(trabdto.getAfecta(), function);
 		
 		java.sql.Date endDate = 
 			getEndDate(trabdto.getFecfin(), emprper);
@@ -903,7 +911,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 				this.contractId, 
 				concepto, 
 				(short) 0,
-				function, 
+				expression, 
 				trabdto.getFecini(), 
 				endDate,
 				(short) 0 );

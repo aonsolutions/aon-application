@@ -652,7 +652,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				contractId, 
 				description, 
 				(short)1, 
-				String.format("%.3f", importe), 
+				String.format("%s ? %.3f : 0.00", ContractVariables.SETTLE, importe), 
 				finiquito.getFecbaj(), 
 				finiquito.getFecbaj(), 
 				null);
