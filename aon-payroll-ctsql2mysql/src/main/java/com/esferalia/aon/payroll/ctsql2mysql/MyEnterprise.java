@@ -245,11 +245,31 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 				scopeId,
 				status);
 		
+		String nroDocRep = emprnif.getNrodocrep();
+		String represantante = emprnif.getRepresentante();
+		if ( represantante != null && nroDocRep != null ) {
+			mysqlDB.insertRdir_staff(
+					registry, 
+					nroDocRep, 
+					represantante, 
+					false, 						// shareholder, 
+					true, 						// representative, 
+					false, 						// director, 
+					0.00,						// percent_share, 
+					0, 							// share_number, 
+					0.00, 						// nominal_value, 
+					null,						// due_date, 
+					true ); 					// representative_labor
+		} else {
+			MysqlDB.error("emprnif[{}]: Enterprise {} {} {} without labour represantive ", 
+					registry, emprnif.getNumdoc(), emprnif.getDescripcion());
+		}
 		
 		cifs.put(emprnif.getNumdoc(), registry);
 		enterprises.put(emprnif.getCdg(), registry);
 
 		customerChilds.put(emprnif.getNumdoc(), registry);
+		
 		
 		Integer userId = 
 			mysqlDB.insertUser(
