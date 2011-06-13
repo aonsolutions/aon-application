@@ -6,6 +6,7 @@ import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseCCC;
+import com.code.aon.company.EnterpriseData;
 import com.code.aon.company.EnterpriseActivity;
 
 /** 
@@ -226,6 +227,49 @@ public interface ICompanyAlias {
 	* Hibernate value: EnterpriseCCC.activity.enterprise.id
 	*/
 	String  ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for EnterpriseData entity.
+	*/ 
+	DAOConstantsEntry ENTERPRISE_DATA_ENTRY = DAOConstants.getDAOConstant(EnterpriseData.class);
+
+	/** 
+	* Alias value: EnterpriseData_endDate
+	* Hibernate value: EnterpriseData.endDate
+	*/
+	String  ENTERPRISE_DATA_END_DATE = ENTERPRISE_DATA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: EnterpriseData_enterprise_id
+	* Hibernate value: EnterpriseData.enterprise.id
+	*/
+	String  ENTERPRISE_DATA_ENTERPRISE_ID = ENTERPRISE_DATA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: EnterpriseData_expression
+	* Hibernate value: EnterpriseData.expression
+	*/
+	String  ENTERPRISE_DATA_EXPRESSION = ENTERPRISE_DATA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: EnterpriseData_id
+	* Hibernate value: EnterpriseData.id
+	*/
+	String  ENTERPRISE_DATA_ID = ENTERPRISE_DATA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: EnterpriseData_name
+	* Hibernate value: EnterpriseData.name
+	*/
+	String  ENTERPRISE_DATA_NAME = ENTERPRISE_DATA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: EnterpriseData_startDate
+	* Hibernate value: EnterpriseData.startDate
+	*/
+	String  ENTERPRISE_DATA_START_DATE = ENTERPRISE_DATA_ENTRY.getAliasNames()[5];
 
 
 
