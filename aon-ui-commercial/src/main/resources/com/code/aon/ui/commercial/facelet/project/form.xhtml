@@ -36,18 +36,7 @@
 							<aon:outputLabel for="projectTrackingData" value="#{commercialBundle.commercial_tracking_module}" />
 						</aon:div>
 					</aon:div>
-
-					<aon:methodParam name="rowSelectorActionListener" value="#{project.onSelectTracking}" type="actionListener" />
-					<aon:methodParam name="rowSelectorAction" value="commercialTracking_form" />
-					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-						<ui:param name="controller" value="#{projectTracking}" />
-						<ui:define name="columns">
-							<ui:include
-								src="/com/code/aon/ui/commercial/facelet/commercialTracking/listContent.xhtml" >
-								<ui:param name="skipTarget" value="#{true}" />
-							</ui:include>
-						</ui:define>
-					</ui:decorate>					
+					<ui:include src="/com/code/aon/ui/commercial/facelet/projectTracking/grid.xhtml" />
 				</aon:div>
 						
 			</aon:div>

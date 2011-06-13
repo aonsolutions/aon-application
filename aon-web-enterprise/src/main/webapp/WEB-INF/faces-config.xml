@@ -242,6 +242,7 @@
 			<value>#{targetItemListener}</value>
 			<value>#{targetSellerListener}</value>
 			<value>#{targetSupplierListener}</value>
+			<value>#{targetProjectListener}</value>
 		</list-entries>		
 	</managed-bean>
 

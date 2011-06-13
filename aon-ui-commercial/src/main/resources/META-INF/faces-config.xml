@@ -45,7 +45,7 @@
 	<managed-bean>
 		<managed-bean-name>project</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.commercial.controller.ProjectController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -107,7 +107,7 @@
 	<managed-bean>
 		<managed-bean-name>projectTracking</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.commercial.controller.ProjectTrackingController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -957,6 +957,50 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>	
+
+	<!-- ************ TARGET PROJECT ************** -->
+	<managed-bean>
+		<managed-bean-name>targetProject</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.TargetProjectController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.Project</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>targetProject</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Project_date desc</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>targetProjectListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.MasterControllerListener</managed-bean-class>		
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>targetProject</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Project_target_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>		
 	
 	<!-- ************ TARGET LOOKUP ************** -->
 	<managed-bean>
@@ -1816,7 +1860,7 @@
 		</managed-property>										
 		<managed-property>
 			<property-name>suggestAlias</property-name>
-			<value>Project_description</value>
+			<value>Project_name</value>
 		</managed-property>																
 		<managed-property>
 			<property-name>listPagePath</property-name>
@@ -1825,7 +1869,18 @@
 		<managed-property>
 			<property-name>newPagePath</property-name>
 			<value>/com/code/aon/ui/commercial/facelet/lookup/project/form.xhtml</value>
-		</managed-property>		
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/commercial/facelet/lookup/project/search.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{projectSearch}</value>
+			</list-entries>
+		</managed-property>						
 	</managed-bean>	
 
    	<!-- ************* NAVIGATION RULES ***************** -->

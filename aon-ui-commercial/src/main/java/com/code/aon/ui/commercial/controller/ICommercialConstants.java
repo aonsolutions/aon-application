@@ -6,7 +6,8 @@ public interface ICommercialConstants {
 	// NAVIGATION
 	// ************************************************************
 	String NAVIGATION_OFFER_LIST = "offer_list"; 
-	String NAVIGATION_COMMERCIAL_TRACKING_FORM = "commercialTracking_form"; 
+	String NAVIGATION_COMMERCIAL_TRACKING_FORM = "commercialTracking_form";
+	String NAVIGATION_TARGET_FORM = "target_form";
 	String NAVIGATION_PROJECT_FORM = "project_form";
 
 	// ************************************************************
@@ -20,6 +21,7 @@ public interface ICommercialConstants {
 	String TARGET_ADDRESS_CONTROLLER_NAME = "targetAddress";
 	String TARGET_ITEM_CONTROLLER_NAME = "targetItem";
 	String TARGET_SELLER_CONTROLLER_NAME = "targetSeller";
+	String TARGET_PROJECT_CONTROLLER_NAME = "targetProject";
 	String SELLER_MEDIA_CONTROLLER_NAME = "sellerMedia";
 	String SELLER_ADDRESS_CONTROLLER_NAME = "sellerAddress";
 	String COMMERCIAL_TRACKING_CONTROLLER_NAME = "commercialTracking";

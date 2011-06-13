@@ -40,7 +40,7 @@
 								<ui:param name="controller" value="#{targetAddress}" />
 							</ui:include>
 						</aon:panelTab>
-
+						
 						<aon:panelTab id="targetMedia" label="#{registryBundle.registry_media_module}">
 							<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
 								<ui:param name="controller" value="#{targetMedia}" />
@@ -92,7 +92,7 @@
 								</ui:include>
 							</aon:panelTab>
 						</c:if>
-
+						
 						<c:if test="#{aonConfiguration.bean.target.showProduct}">
 							<aon:panelTab id="targetItem" label="#{productBundle.product_module}">
 								<ui:include src="/com/code/aon/ui/commercial/facelet/targetItem/tab_grid.xhtml" />
@@ -102,6 +102,12 @@
 						<c:if test="#{aonConfiguration.bean.target.showSeller}">
 							<aon:panelTab id="targetSeller" label="#{salesBundle.sales_seller}">
 								<ui:include src="/com/code/aon/ui/commercial/facelet/targetSeller/tab_grid.xhtml" />
+							</aon:panelTab>
+						</c:if>
+
+						<c:if test="#{aonConfiguration.bean.target.showProject}">
+							<aon:panelTab id="targetProject" label="#{commercialBundle.commercial_target_operation_module}">
+								<ui:include src="/com/code/aon/ui/commercial/facelet/targetProject/grid.xhtml" />
 							</aon:panelTab>
 						</c:if>
 

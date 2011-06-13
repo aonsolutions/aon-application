@@ -115,6 +115,7 @@
 			showEcommerceTab="false"
 			showProfile="false"
 			showSearchOnlyCustomers="true"
+			showProject="true"
 			showProduct="true"
 			showSeller="true"
 			showAddInfo="true"

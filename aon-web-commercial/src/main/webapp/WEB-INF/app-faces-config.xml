@@ -13,6 +13,7 @@
 			<value>#{targetSellerListener}</value>
 			<value>#{targetProfileListener}</value>
 			<value>#{targetSupplierListener}</value>
+			<value>#{targetProjectListener}</value>
 		</list-entries>		
 	</managed-bean>
 

@@ -57,6 +57,7 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
 	private boolean customer;
 	private Set<TargetItem> items = new HashSet<TargetItem>();
 	private Set<TargetSeller> sellers = new HashSet<TargetSeller>();
+	private Set<Project> projects = new HashSet<Project>();
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	
 	@Id
@@ -154,6 +155,15 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
 		this.sellers = sellers;
 	}
 
+	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})
+	public Set<Project> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(Set<Project> projects) {
+		this.projects = projects;
+	}
+	
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
 	public Set<RegistryAttachment> getDocuments() {
 		return documents;

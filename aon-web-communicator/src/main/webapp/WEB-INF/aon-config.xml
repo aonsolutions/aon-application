@@ -61,6 +61,7 @@
 			showEcommerceTab="false"
 			showProfile="true"
 			showSearchOnlyCustomers="false"
+			showProject="false"
 			showProduct="false"
 			showSeller="false"
 			showAddInfo="true"			

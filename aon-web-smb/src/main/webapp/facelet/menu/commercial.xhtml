@@ -54,7 +54,12 @@
 							<f:facet name="header">
 								<aon:outputText value="#{commercialBundle.commercial_agenda_module}" />
 							</f:facet>							
-							<aon:div styleClass="aon-direct-access-list">								
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="commercialOperation"
+										action="project_search" actionListener="#{project.onEditSearch}"
+										value="#{commercialBundle.commercial_operation_module}" />
+								</aon:div>															
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="commercialTracking"
 										action="commercialTracking_search" actionListener="#{commercialTracking.onEditSearch}"
