@@ -70,6 +70,8 @@ public interface ICompanyConstants {
 	
 	String ENTERPRISE_BANK_CONTROLLER_NAME = "enterpriseRbank";
 	
+	String ENTERPRISE_PARAMS_CONTROLLER_NAME = "enterpriseParams";
+	
 	String ENTERPRISE_PAY_METHOD_CONTROLLER_NAME = "enterpriseRPayMethod";
 	
 	String EMPLOYEE_CONTROLLER_NAME = "employee";	

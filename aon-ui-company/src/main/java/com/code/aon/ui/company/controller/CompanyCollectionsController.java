@@ -17,6 +17,9 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.company.enumeration.EnterpriseActivityType;
+import com.code.aon.company.enumeration.EnterpriseSalaryTemplate;
+import com.code.aon.company.enumeration.SalarySendingMethod;
+import com.code.aon.company.enumeration.SalaryTemplate;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryBank;
@@ -26,6 +29,23 @@ public class CompanyCollectionsController {
 
 	private List<SelectItem> cccTypes;
 	private List<SelectItem> enterpriseActivityTypes;
+	private List<SelectItem> salarySendingMethods;
+	private List<SelectItem> enterpriseSalaryTemplates;
+	private List<SelectItem> salaryTemplates;
+	
+	public List<SelectItem> getSalaryTemplates() {
+		if (salaryTemplates == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			salaryTemplates = new LinkedList<SelectItem>();
+			SalaryTemplate[] st = SalaryTemplate.values();
+			for (SalaryTemplate c : st) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c.getValue(), name);
+				salaryTemplates.add(item);
+			}
+		}
+		return salaryTemplates;
+	}
 	
 	public List<SelectItem> getCCCTypes() {
 		if (cccTypes == null) {
@@ -51,6 +71,32 @@ public class CompanyCollectionsController {
 			}
 		}
 		return enterpriseActivityTypes;
+	}	
+	
+	public List<SelectItem> getSalarySendingMethods() {
+		if (salarySendingMethods == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			salarySendingMethods = new LinkedList<SelectItem>();
+			for( SalarySendingMethod type : SalarySendingMethod.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type.name(), name);
+				salarySendingMethods.add(item);			
+			}
+		}
+		return salarySendingMethods;
+	}	
+	
+	public List<SelectItem> getEnterpriseSalaryTemplates() {
+		if (enterpriseSalaryTemplates == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			enterpriseSalaryTemplates = new LinkedList<SelectItem>();
+			for( EnterpriseSalaryTemplate type : EnterpriseSalaryTemplate.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type.getValue(), name);
+				enterpriseSalaryTemplates.add(item);			
+			}
+		}
+		return enterpriseSalaryTemplates;
 	}	
 	
     public List<SelectItem> getCompanyAddresses() throws ManagerBeanException {

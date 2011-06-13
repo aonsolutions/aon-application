@@ -32,4 +32,26 @@
 		<aon:outputText value="#{enterprise.dirStaff.name}, #{bundle.aon_company_document} #{enterprise.dirStaff.document}" />
 	</c:if>
 	
+	<c:if test="#{aonConfiguration.bean.enterprise.showEnterpriseParams}" >
+		<aon:outputLabel for="salary_model" value="#{companyBundle.company_enterprise_params_salary_model}" />
+		<aon:selectOneMenu id="salary_model"
+			value="#{enterpriseParams.parameters['REPORT_salary'].expression}">
+			<f:selectItems value="#{companyCollections.salaryTemplates}" />
+		</aon:selectOneMenu>
+
+		<aon:outputLabel for="enterprise_salary_model" value="#{companyBundle.company_enterprise_params_enterprise_salary_model}" />
+		<aon:selectOneMenu id="enterprise_salary_model"
+			value="#{enterpriseParams.parameters['REPORT_enterpriseSalary'].expression}">
+			<f:selectItems value="#{companyCollections.enterpriseSalaryTemplates}" />
+		</aon:selectOneMenu>
+
+		<aon:outputLabel for="salary_sending_method" value="#{companyBundle.company_enterprise_params_salary_sending_method}" />
+		<aon:selectOneMenu id="salary_sending_method"
+			value="#{enterpriseParams.parameters['PAY_salarySendingMethod_PAY'].expression}">
+			<f:selectItems value="#{companyCollections.salarySendingMethods}" />
+		</aon:selectOneMenu>
+	</c:if>
+	
+	
+	
 </ui:composition>
