@@ -22,7 +22,7 @@
 	</report>
 	
 	<report id="inventory_close" description="Inventory Count report">
-		<template path="/com/code/aon/ui/warehouse/report/count.jasper" />
+		<template path="/com/code/aon/ui/warehouse/report/inventoryCount.jasper" />
 		<collection provider="#{inventoryDetail}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
@@ -32,7 +32,7 @@
 	</report>
 	
 	<report id="inventory_valued" description="Valued Inventory report">
-		<template path="/com/code/aon/ui/warehouse/report/valued.jasper" />
+		<template path="/com/code/aon/ui/warehouse/report/inventoryValued.jasper" />
 		<collection provider="#{inventoryDetail}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
@@ -43,13 +43,22 @@
 	<!--  **********************************************************
 						      STOCK
 		  ********************************************************** -->
-	<report id="stockWarehouseList" description="Stock report By Warehouse">
-		<template path="/com/code/aon/ui/warehouse/report/stockWarehouseList.jasper" />
+	<report id="stockList" description="Stock report">
+		<template path="/com/code/aon/ui/warehouse/report/stockList.jasper" />
 		<bean key="com.code.aon.warehouse.Stock" />
 		<criteria provider="#{stock}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>	  
+
+	<report id="stockWarehouseList" description="Stock report By Warehouse">
+		<template path="/com/code/aon/ui/warehouse/report/stockWarehouseList.jasper" />
+		<bean key="com.code.aon.warehouse.Stock" />
+		<collection provider="#{stockReport}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>	  
@@ -57,14 +66,36 @@
 	<report id="stockItemList" description="Stock report By Item">
 		<template path="/com/code/aon/ui/warehouse/report/stockItemList.jasper" />
 		<bean key="com.code.aon.warehouse.Stock" />
-		<criteria provider="#{stock}" />
+		<collection provider="#{stockReport}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
 	
+	<report id="stockWarehouseValuedList" description="Valued Stock report By Warehouse">
+		<template path="/com/code/aon/ui/warehouse/report/stockWarehouseValuedList.jasper" />
+		<bean key="com.code.aon.warehouse.Stock" />
+		<collection provider="#{stockReport}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="priceType" value="#{stockReport.getPriceType}" />
+			<param id="manager" value="#{stockReport.getManager}" />
+		</params>
+	</report>	  
+
+	<report id="stockItemValuedList" description="Valued Stock report By Item">
+		<template path="/com/code/aon/ui/warehouse/report/stockItemValuedList.jasper" />
+		<bean key="com.code.aon.warehouse.Stock" />
+		<collection provider="#{stockReport}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="priceType" value="#{stockReport.getPriceType}" />
+			<param id="manager" value="#{stockReport.getManager}" />
+		</params>
+	</report>
 		<!--  **********************************************************
 						      DELIVERY
 		  ********************************************************** -->
@@ -239,6 +270,7 @@
 		<template path="/com/code/aon/ui/warehouse/report/incomeVatBreakDown.jasper"/>
 	</report>
 	
+	<!--  ************* ORDER PROPOSAL ***************************** -->
 	<report id="orderProposal" description="Order Proposal report">
 		<template path="/com/code/aon/ui/warehouse/report/orderProposal.jasper" />
 		<collection provider="#{orderProposal}" forceRefresh="false"/>

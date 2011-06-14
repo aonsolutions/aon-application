@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -14,7 +15,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
+import com.code.aon.warehouse.enumeration.PriceType;
 
 @Entity
 @Table(name="stock")
@@ -62,6 +65,12 @@ public class Stock implements ITransferObject{
 		this.warehouse = warehouse;
 	}
 
+	// Utilizado en los listados valorados.
+	@Transient
+	public Stock getTo() {
+		return this;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

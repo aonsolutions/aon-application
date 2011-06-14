@@ -44,4 +44,21 @@
 		</vetoListeners>
 	</bean>
 	
+	<bean description="">
+		<pojo>com.code.aon.warehouse.WarehouseTransfer</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.warehouse.event.WarehouseTransferBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.warehouse.WarehouseTransferDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.warehouse.event.WarehouseTransferDetailBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.warehouse.event.WarehouseTransferDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
 </bean-config>

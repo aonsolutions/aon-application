@@ -12,7 +12,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_remake_module}" />
+				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_closed_module}" />
 				<ui:param name="controller" value="#{inventory}" />
 				<ui:param name="skipSaveButton" value="true" />
 				<ui:param name="skipResetButton" value="true" />
@@ -51,43 +51,47 @@
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:div styleClass="aon-padding-bottom">
-					<aon:panelGrid columns="2">
-						<aon:outputLabel for="Inventory_id"
-							value="#{bundle.aon_id}" />
-						<aon:outputText id="Inventory_id"
-							value="#{inventory.to.id}" size="14" />
-	
-						<aon:outputLabel for="Inventory_inventoryDate"
-							value="#{bundle.aon_date}" />
-						<aon:outputText id="Inventory_inventoryDate" value="#{inventory.to.inventoryDate}">
+					<aon:panelGrid columns="8" style="width:100%;"
+						columnClasses=" aon-panelGrid-odd aon-width-80
+								,aon-panelGrid-even aon-width-50
+								,aon-panelGrid-odd aon-width-80
+								,aon-panelGrid-even aon-width-80
+								,aon-panelGrid-odd aon-width-80
+								,aon-panelGrid-even aon-width-250
+								,aon-panelGrid-odd aon-width-80
+								,aon-panelGrid-even aon-width-auto">
+						<aon:outputText value="#{bundle.aon_id}" />
+						<aon:outputText value="#{inventory.to.id}"/>
+
+						<aon:outputText value="#{bundle.aon_date}" />
+						<aon:outputText value="#{inventory.to.inventoryDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								type="both" timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
 						
-						<aon:outputLabel for="Inventory_description"
-							value="#{bundle.aon_description}" />
-						<aon:outputText id="Inventory_description"
-							value="#{inventory.to.description}" size="64" />
+						<aon:outputText value="#{warehouseBundle.warehouse_warehouse}" />
+						<aon:outputText value="#{inventory.to.warehouse.name}"/>
+
+						<aon:outputText value="#{bundle.aon_description}" />
+						<aon:outputText value="#{inventory.to.description}" size="64" />
 					</aon:panelGrid>
 				</aon:div>
 								
-				<aon:div styleClass="aon-padding-bottom">								
-					<aon:panelGrid columns="2"> 
-						<aon:outputLabel for="Inventory_category"
-							value="#{productBundle.product_category}"  />
-						<aon:div>
-							<aon:selectOneMenu id="Inventory_category" 
-								value="#{inventoryDetail.category}">
-								<f:selectItem itemLabel="-" value="#{null}"/>
-								<f:selectItems value="#{productCollections.categories}" />
-							</aon:selectOneMenu>
-							<aon:commandButton title="#{bundle.aon_accept}"
-								actionListener="#{inventoryDetail.loadDetailModel}"
-								reRender="inventoryDetailDiv" value="" 
-								styleClass="aon-editDataTable-button aon-icon-accept aon-margin-left" 
-								accesskey="#{bundle.aon_key_save_line}" />
-						</aon:div>
-					</aon:panelGrid>
+				<aon:div styleClass="aon-padding-bottom"
+						style="background-color:#f6f5e3; padding:5px; margin-bottom:5px; width:100%;">
+				  	<aon:outputLabel for="Inventory_category"
+				  		styleClass="aon-italic" 
+				  		value="#{warehouseBundle.warehouse_inventory_category_filter}"  />
+					<aon:selectOneMenu id="Inventory_category" styleClass="aon-margin-left"
+						value="#{inventoryDetail.category}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{productCollections.categories}" />
+					</aon:selectOneMenu>
+					<aon:commandButton title="#{bundle.aon_accept}"
+						actionListener="#{inventoryDetail.loadDetailModel}"
+						reRender="inventoryDetailDiv" value="" 
+						styleClass="aon-editDataTable-button aon-icon-accept aon-margin-left" 
+						accesskey="#{bundle.aon_key_save_line}" />
 				</aon:div>
 
 				<aon:div layout="none" id="inventoryDetailDiv" >
@@ -97,17 +101,18 @@
 						<ui:param name="skipRemoveButton" value="true" />
 						<ui:param name="showNote" value="true" />
 						<ui:param name="showDataTable" value="#{inventoryDetail.model.rowCount > 0}" />
+						
 						<ui:define name="columns">
 							<aon:methodParam name="saveActionListener" value="#{inventoryDetail.onAcceptNext}" type="actionListener" />					
 						
-							<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-150">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_id}" />
 								</f:facet>
 								<aon:outputText value="#{to.item.product.code}" />
 							</aon:column>
 			
-							<aon:column styleClass="aon-editDataTable-textColumn">
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
 								<f:facet name="header">
 									<aon:outputText value="#{productBundle.product_item}" />
 								</f:facet>
@@ -116,7 +121,7 @@
 								</aon:div>
 							</aon:column>
 							
-							<aon:column styleClass="aon-editDataTable-numberColumn">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 								<f:facet name="header">
 									<aon:outputText value="#{warehouseBundle.warehouse_inventory}" />
 								</f:facet>
@@ -129,7 +134,7 @@
 								</aon:div>
 							</aon:column>
 		
-							<aon:column styleClass="aon-editDataTable-numberColumn">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 								<f:facet name="header">
 									<aon:outputText value="#{warehouseBundle.warehouse_inventoryDetail_cost}"	/>
 								</f:facet>
@@ -143,12 +148,12 @@
 								</aon:div>
 							</aon:column>
 		
-							<aon:column styleClass="aon-editDataTable-numberColumn">
+							<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100">
 								<f:facet name="header">
 									<aon:outputText value="#{bundle.aon_total}" />
 								</f:facet>
 								<aon:div>
-									<aon:outputText value="#{to.realQuantity * to.cost}">
+									<aon:outputText value="#{to.costAmount}">
 										<f:convertNumber pattern="#{bundle.aon_decimal3_pattern}" />
 									</aon:outputText>
 								</aon:div>

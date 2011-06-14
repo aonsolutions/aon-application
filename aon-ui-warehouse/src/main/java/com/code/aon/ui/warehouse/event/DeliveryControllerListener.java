@@ -42,13 +42,12 @@ public class DeliveryControllerListener extends ControllerAdapter {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Warehouse obtainWarehouseId(Delivery delivery) throws ControllerListenerException {
 		try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
-			Iterator iterator = deliveryDetailBean.getList(criteria).iterator();
+			Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				return ((DeliveryDetail)iterator.next()).getWarehouse();
 			} else {

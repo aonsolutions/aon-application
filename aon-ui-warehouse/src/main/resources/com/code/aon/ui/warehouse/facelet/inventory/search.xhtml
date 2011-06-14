@@ -10,7 +10,7 @@
 		<aon:form id="inventorySearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_remake_module}" />
+				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_closed_module}" />
 				<ui:param name="controller" value="#{inventory}" />
 			</ui:include>
 
@@ -18,11 +18,17 @@
 				<ui:param name="controller" value="#{inventory}" />
 				<ui:define name="searchContent">
 
-						<aon:outputLabel for="Inventory_id"
-							value="#{bundle.aon_id}" />
-						<aon:inputText id="Inventory_id" size="14"
-							valueChangeListener="#{inventory.addExpression}" />
+						<aon:outputLabel for="Inventory_id" value="#{bundle.aon_id}" />
+						<aon:inputText id="Inventory_id" size="14" valueChangeListener="#{inventory.addExpression}" />
 	
+						<aon:outputLabel for="Inventory_warehouse_id" value="#{warehouseBundle.warehouse_warehouse}" />
+						<aon:selectOneMenu id="Inventory_warehouse_id"
+							value="#{warehouseCollections.warehouse}"
+							valueChangeListener="#{inventory.addIdEqualExpression}">
+							<f:selectItem itemLabel="-" value="#{null}"/>
+							<f:selectItems value="#{warehouseCollections.warehouses}" />
+						</aon:selectOneMenu>
+
 						<aon:outputLabel value="#{bundle.aon_date}" />
 						<aon:div>
 							<aon:outputLabel for="Inventory_inventoryDate-From" styleClass="aon-form-date-label"
@@ -47,8 +53,7 @@
 					
 				</ui:define>
 			</ui:decorate>
-
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{sellerLookup}" />	
+		
 	</ui:define>
 </ui:composition>

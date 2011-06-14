@@ -194,7 +194,6 @@ public class DeliveryController extends BasicController {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getInvoiceCode() throws ManagerBeanException {
 		Delivery delivery = (Delivery)this.getTo();
 		if (delivery != null && delivery.getId() != null) {
@@ -209,7 +208,7 @@ public class DeliveryController extends BasicController {
 				criteria = new Criteria();
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
-				Iterator iter = invoiceDetailBean.getList(criteria).iterator();
+				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
 					return invoiceDetail.getInvoice().getReferenceCode();
@@ -232,12 +231,11 @@ public class DeliveryController extends BasicController {
     	return SeriesNumberUtil.obtainNumber(seriesId, StringUtils.capitalize(this.getBeanName()));
 	}
 
-	@SuppressWarnings("unchecked")
 	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
+		Iterator<?> iter = seriesBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			Series series = (Series)iter.next(); 
 			if (series.getSecurityLevel() != null) {
@@ -290,7 +288,6 @@ public class DeliveryController extends BasicController {
 		return 0;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
 			if (((Delivery)this.getTo()).getPayMethod() != null && ((Delivery)this.getTo()).getPayMethod().getId() != null) {
@@ -302,7 +299,7 @@ public class DeliveryController extends BasicController {
 					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-					Iterator iter = rPayMethodBean.getList(criteria).iterator();
+					Iterator<?> iter = rPayMethodBean.getList(criteria).iterator();
 					setDefaultPayMethod(iter.hasNext());
 				}
 			}

@@ -10,6 +10,8 @@ import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.InventoryDetail;
 import com.code.aon.warehouse.ItemWarehouse;
 import com.code.aon.warehouse.Stock;
+import com.code.aon.warehouse.WarehouseTransfer;
+import com.code.aon.warehouse.WarehouseTransferDetail;
 import com.code.aon.warehouse.Warehouse;
 
 /** 
@@ -606,6 +608,86 @@ public interface IWarehouseAlias {
 	* Hibernate value: Stock.warehouse.id
 	*/
 	String  STOCK_WAREHOUSE_ID = STOCK_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for WarehouseTransfer entity.
+	*/ 
+	DAOConstantsEntry WAREHOUSE_TRANSFER_ENTRY = DAOConstants.getDAOConstant(WarehouseTransfer.class);
+
+	/** 
+	* Alias value: WarehouseTransfer_comments
+	* Hibernate value: WarehouseTransfer.comments
+	*/
+	String  WAREHOUSE_TRANSFER_COMMENTS = WAREHOUSE_TRANSFER_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: WarehouseTransfer_id
+	* Hibernate value: WarehouseTransfer.id
+	*/
+	String  WAREHOUSE_TRANSFER_ID = WAREHOUSE_TRANSFER_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: WarehouseTransfer_issueTime
+	* Hibernate value: WarehouseTransfer.issueTime
+	*/
+	String  WAREHOUSE_TRANSFER_ISSUE_TIME = WAREHOUSE_TRANSFER_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: WarehouseTransfer_number
+	* Hibernate value: WarehouseTransfer.number
+	*/
+	String  WAREHOUSE_TRANSFER_NUMBER = WAREHOUSE_TRANSFER_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: WarehouseTransfer_series
+	* Hibernate value: WarehouseTransfer.series
+	*/
+	String  WAREHOUSE_TRANSFER_SERIES = WAREHOUSE_TRANSFER_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: WarehouseTransfer_sourceWarehouse_id
+	* Hibernate value: WarehouseTransfer.sourceWarehouse.id
+	*/
+	String  WAREHOUSE_TRANSFER_SOURCE_WAREHOUSE_ID = WAREHOUSE_TRANSFER_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: WarehouseTransfer_targetWarehouse_id
+	* Hibernate value: WarehouseTransfer.targetWarehouse.id
+	*/
+	String  WAREHOUSE_TRANSFER_TARGET_WAREHOUSE_ID = WAREHOUSE_TRANSFER_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for WarehouseTransferDetail entity.
+	*/ 
+	DAOConstantsEntry WAREHOUSE_TRANSFER_DETAIL_ENTRY = DAOConstants.getDAOConstant(WarehouseTransferDetail.class);
+
+	/** 
+	* Alias value: WarehouseTransferDetail_id
+	* Hibernate value: WarehouseTransferDetail.id
+	*/
+	String  WAREHOUSE_TRANSFER_DETAIL_ID = WAREHOUSE_TRANSFER_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: WarehouseTransferDetail_item_id
+	* Hibernate value: WarehouseTransferDetail.item.id
+	*/
+	String  WAREHOUSE_TRANSFER_DETAIL_ITEM_ID = WAREHOUSE_TRANSFER_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: WarehouseTransferDetail_quantity
+	* Hibernate value: WarehouseTransferDetail.quantity
+	*/
+	String  WAREHOUSE_TRANSFER_DETAIL_QUANTITY = WAREHOUSE_TRANSFER_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: WarehouseTransferDetail_warehouseTransfer_id
+	* Hibernate value: WarehouseTransferDetail.warehouseTransfer.id
+	*/
+	String  WAREHOUSE_TRANSFER_DETAIL_WAREHOUSE_TRANSFER_ID = WAREHOUSE_TRANSFER_DETAIL_ENTRY.getAliasNames()[3];
 
 
 

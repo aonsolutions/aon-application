@@ -19,20 +19,14 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
+import com.code.aon.warehouse.enumeration.PriceType;
 
-/**
- * Controller for collections
- * 
- * @author Consulting & Development. Joseba Urkiri - 31-may-2006
- * 
- */
 public class WarehouseCollectionsController {
 
 	private List<SelectItem> warehouses;
-	
 	private List<SelectItem> deliveryStatuses;
-	
 	private List<SelectItem> incomeStatuses;
+	private List<SelectItem> priceTypes;
 
 	public Warehouse getWarehouse() {
 		return null;
@@ -41,12 +35,6 @@ public class WarehouseCollectionsController {
 	public void setWarehouse( Warehouse warehouse ) {
 	}
 	
-	/**
-	 * Returns the list of warehouses
-	 * 
-	 * @return a list of warehouses
-	 * @throws ManagerBeanException
-	 */
 	public List<SelectItem> getWarehouses() throws ManagerBeanException {
 		if (warehouses == null) {
 			warehouses = new LinkedList<SelectItem>();
@@ -64,11 +52,6 @@ public class WarehouseCollectionsController {
 		return warehouses;
 	}
 
-	/**
-	 * Returns a list with the delivery statuses
-	 * 
-	 * @return list of DeliveryStatus
-	 */
 	public List<SelectItem> getDeliveryStatuses() {
 		if ( deliveryStatuses == null ) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -82,11 +65,6 @@ public class WarehouseCollectionsController {
 		return deliveryStatuses;
 	}
 	
-	/**
-	 * Returns a list of income statuses
-	 * 
-	 * @return IncomeStatus list
-	 */
 	public List<SelectItem> getIncomeStatuses() {
 		if ( incomeStatuses == null ) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -100,18 +78,24 @@ public class WarehouseCollectionsController {
 		return incomeStatuses;
 	}
 	
-	/**
-	 * Return a list of all inventories
-	 * 
-	 * @return Inventory list
-	 * @throws ManagerBeanException 
-	 */
-	@SuppressWarnings("unchecked")
+	public List<SelectItem> getPriceTypes() {
+		if ( priceTypes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			priceTypes = new LinkedList<SelectItem>();
+			for (PriceType type : PriceType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name, name, (PriceType.AVERAGE_PURCHASE_PRICE == type));
+				priceTypes.add(item);
+			}
+		}
+		return priceTypes;
+	}
+
 	public List<SelectItem> getInventories() throws ManagerBeanException {
 		List<SelectItem> inventories = new LinkedList<SelectItem>();
 		IManagerBean inventoryBean = BeanManager.getManagerBean(Inventory.class);
 		try {
-			Iterator iter = inventoryBean.getList(null).iterator();
+			Iterator<?> iter = inventoryBean.getList(null).iterator();
 			while(iter.hasNext()){
 				Inventory inventory = (Inventory)iter.next();
 				String date = new SimpleDateFormat("dd/MM/yyyy").format(inventory.getInventoryDate());

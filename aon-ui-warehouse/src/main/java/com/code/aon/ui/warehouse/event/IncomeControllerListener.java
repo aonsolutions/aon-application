@@ -42,13 +42,12 @@ public class IncomeControllerListener extends ControllerAdapter {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Warehouse obtainWarehouseId(Income income) throws ControllerListenerException {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), income.getId());
-			Iterator iterator = incomeDetailBean.getList(criteria).iterator();
+			Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				return ((IncomeDetail)iterator.next()).getWarehouse();
 			} else {

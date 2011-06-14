@@ -45,9 +45,6 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
 
-/**
- * Controller for Income.
- */
 public class IncomeController extends BasicController {
 
 	private final String INCOME_DETAIL_CONTROLLER = "incomeDetail";
@@ -164,7 +161,6 @@ public class IncomeController extends BasicController {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	public String getInvoiceCode() throws ManagerBeanException {
 		Income income = (Income)this.getTo();
 		if (income != null && income.getId() != null) {
@@ -179,7 +175,7 @@ public class IncomeController extends BasicController {
 				criteria = new Criteria();
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
-				Iterator iter = invoiceDetailBean.getList(criteria).iterator();
+				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
 					return invoiceDetail.getInvoice().getReferenceCode();
@@ -232,7 +228,6 @@ public class IncomeController extends BasicController {
 		return 0;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
 			if (((Income)this.getTo()).getPayMethod() != null && ((Income)this.getTo()).getPayMethod().getId() != null) {
@@ -244,7 +239,7 @@ public class IncomeController extends BasicController {
 					IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), id);
-					Iterator iter = rPayMethodBean.getList(criteria).iterator();
+					Iterator<?> iter = rPayMethodBean.getList(criteria).iterator();
 					setDefaultPayMethod(iter.hasNext());
 				}
 			}

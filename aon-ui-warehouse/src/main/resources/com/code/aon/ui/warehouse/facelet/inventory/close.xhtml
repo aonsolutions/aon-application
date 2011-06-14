@@ -15,19 +15,8 @@
 				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_remake_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">		
-					<aon:commandButton id="search" 
-						value="#{bundle.aon_search}" immediate="true"
-						action="inventory_search" actionListener="#{inventory.onEditSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-search"
-						accesskey="#{bundle.aon_key_search}" />
-					<aon:commandButton id="back"
-						value="#{bundle.aon_back}" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						actionListener="#{inventory.onCancel}"
-						action="inventory_list"
-						accesskey="#{bundle.aon_key_cancel}" />
 					<aon:commandButton id="accept"
-						value="#{warehouseBundle.warehouse_inventory_close}"
+						value="#{warehouseBundle.warehouse_inventory_close_module}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{inventory.onClosing}"
 						action="inventory_form"

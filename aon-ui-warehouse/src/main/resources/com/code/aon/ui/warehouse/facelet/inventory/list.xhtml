@@ -16,7 +16,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_remake_module}" />
+				<ui:param name="toolbarTitle" value="#{warehouseBundle.warehouse_inventory_closed_module}" />
 				<ui:param name="controller" value="#{inventory}" />
 				
 				<ui:define name="additionalToolbarContent">
@@ -39,43 +39,46 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="inventoryData" value="#{inventory.model}"
-					var="to" rows="20" rendered="#{inventory.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{inventory}" />
+					<ui:define name="columns">
 
-					<aon:rowSelector action="inventory_form" actionListener="#{inventory.onSelect}" />
+						<aon:column	alias="Inventory.id" 
+							styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_id}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}" />
+						</aon:column>
+						
+						<aon:column alias="Inventory.inventoryDate" 
+							styleClass="aon-editDataTable-textColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.inventoryDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									type="both" timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+						
+						<aon:column alias="Inventory.warehouse.id"
+							 styleClass="aon-editDataTable-textColumn aon-width-250">
+							<f:facet name="header">
+								<aon:outputText value="#{warehouseBundle.warehouse_warehouse}" />
+							</f:facet>
+							<aon:outputText value="#{to.warehouse.name}" />
+						</aon:column>
 
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.id}" />
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_description}" />
-						</f:facet>
-						<aon:outputText value="#{to.description}" />
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_date}" />
-						</f:facet>
-						<aon:outputText value="#{to.inventoryDate}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								type="both" timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:column>
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{warehouseBundle.warehouse_warehouse}" />
-						</f:facet>
-						<aon:outputText value="#{to.warehouse.name}" />
-					</aon:column>
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="inventoryData" showNote="true" />
+						<aon:column alias="Inventory.description"
+							styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
 			
 		</aon:form>

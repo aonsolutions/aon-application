@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -14,6 +15,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 
 @Entity
@@ -79,6 +81,11 @@ public class InventoryDetail implements ITransferObject {
 	}
 	public void setCost(double cost) {
 		this.cost = cost;
+	}
+	
+	@Transient
+	public double getCostAmount() {
+		return CommonUtil.round(getCost() * getRealQuantity());
 	}
 	
 	@Override

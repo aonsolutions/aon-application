@@ -20,21 +20,11 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.warehouse.Inventory;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 
-/**
- * Controller for inventory detail.
- * 
- * @author Consulting & Development.
- * @since 1.0
- */
 public class InventoryDetailController extends LinesController implements ICollectionProvider {
 	
-	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryDetailController.class.getName());
-
-	/** Inventory controller. */
 	private static final String INVENTORY_CONTROLLER_NAME = "inventory";
 	
-	/** Category identifier. */
 	private ProductCategory category;
 	
 	public ProductCategory getCategory() {
@@ -45,11 +35,6 @@ public class InventoryDetailController extends LinesController implements IColle
 		this.category = category;
 	}
 
-	/**
-	 * Accepts current row and selects the next.
-	 * 
-	 * @param event an action event
-	 */
 	public void onAcceptNext(ActionEvent event) {
 		accept(event);
 		int current = this.model.getRowIndex();
@@ -65,10 +50,6 @@ public class InventoryDetailController extends LinesController implements IColle
 		return (Inventory)inventoryController.getTo();
 	}
 	
-	/**
-	 * Assigns a new list of inventory detail.
-	 * @throws ManagerBeanException 
-	 */
 	public void loadDetailModel(ActionEvent event) throws ManagerBeanException {
 		onEditSearch(event);
 		Criteria criteria = getCriteria();
@@ -80,14 +61,8 @@ public class InventoryDetailController extends LinesController implements IColle
 		onSearch(event);
 	}
 	
-	/**
-	 * Gets the collection.
-	 * 
-	 * @return the collection
-	 */
 	@Override
-	@SuppressWarnings("unchecked")
-	public Collection getCollection() {
+	public Collection<ITransferObject> getCollection() {
 		try {
 			Criteria criteria = getCriteria();
 			OrderByList oldOrderList = criteria.getOrderByList();

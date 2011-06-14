@@ -14,6 +14,8 @@ import com.code.aon.warehouse.InventoryDetail;
 import com.code.aon.warehouse.ItemWarehouse;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
+import com.code.aon.warehouse.WarehouseTransfer;
+import com.code.aon.warehouse.WarehouseTransferDetail;
 
 /**
  * @author Consulting & Development. jurkiri - 22/01/2007
@@ -36,6 +38,8 @@ public class WarehouseAliasWriter {
 			InventoryDetail.class.getName(),
 			ItemWarehouse.class.getName(),
 			Stock.class.getName(),
+			WarehouseTransfer.class.getName(),
+			WarehouseTransferDetail.class.getName(),
 			Warehouse.class.getName() };
 		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.warehouse.dao");

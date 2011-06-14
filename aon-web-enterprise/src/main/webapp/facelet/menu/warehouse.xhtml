@@ -17,32 +17,97 @@
 				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
-					<aon:panelGrid id="group_warehouse_warehouse"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-warehouse aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{warehouseBundle.warehouse_menu_group}"/>
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="inventory_remake" 
-									action="inventoryClose" actionListener="#{inventory.onStartClosing}"
-									value="#{warehouseBundle.warehouse_inventory_remake_module}" />
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="stock" 
-									action="stock_search" actionListener="#{stock.onEditSearch}"
-									value="#{warehouseBundle.warehouse_stock_module}" />
-							</aon:div>
-							<c:if test="#{aonRole.config}">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="warehouse" 
-										action="warehouse" 
-										value="#{warehouseBundle.warehouse_warehouse_module}" />
+					<aon:panelGroup>
+						<c:if test="#{aonRole.config}">
+							<aon:panelGrid id="group_warehouse_warehouse"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-warehouse aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{warehouseBundle.warehouse_menu_group}"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+										<aon:div styleClass="aon-direct-access-list-element">
+											<aon:commandLink id="warehouse" 
+												action="warehouse" 
+												value="#{warehouseBundle.warehouse_warehouse_module}" />
+										</aon:div>
 								</aon:div>
-							</c:if>
-						</aon:div>
-					</aon:panelGrid>
+							</aon:panelGrid>
+						</c:if>
+						
+						<aon:panelGrid id="group_warehouse_stock"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-warehouse aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{warehouseBundle.warehouse_stock_module}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="stock" 
+										action="stock_search" actionListener="#{stock.onEditSearch}"
+										value="#{warehouseBundle.warehouse_stock_module}" />
+								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="stock_report_by_warehouse" 
+										action="stock_report_search" actionListener="#{stockReport.onReportByWarehouse}"
+										value="#{warehouseBundle.warehouse_stock_by_warehouse_module}" />
+								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="stock_report_by_item" 
+										action="stock_report_search" actionListener="#{stockReport.onReportByItem}"
+										value="#{warehouseBundle.warehouse_stock_by_item_module}" />
+								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="stock_report_by_warehouse_valued" 
+										action="stock_report_search" actionListener="#{stockReport.onReportByWarehouseValued}"
+										value="#{warehouseBundle.warehouse_stock_by_warehouse_valued_module}" />
+								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="stock_report_by_item_valued" 
+										action="stock_report_search" actionListener="#{stockReport.onReportByItemValued}"
+										value="#{warehouseBundle.warehouse_stock_by_item_valued_module}" />
+								</aon:div>
+
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="warehouseTransfer" 
+										action="warehouseTransfer_search" actionListener="#{warehouseTransfer.onEditSearch}"
+										value="#{warehouseBundle.warehouse_transfer_module}" />
+								</aon:div>
+								
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="orderProposal" 
+										action="orderProposal_search" actionListener="#{orderProposal.onEditSearch}"
+										value="#{warehouseBundle.warehouse_order_proposal_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+						
+						<aon:panelGrid id="group_warehouse_inventory"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-warehouse aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{warehouseBundle.warehouse_inventory_module}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="inventory_close" 
+										action="inventory_close" actionListener="#{inventory.onStartClosing}"
+										value="#{warehouseBundle.warehouse_inventory_close_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="inventory" 
+										action="inventory_search" actionListener="#{inventory.onEditSearch}"
+										value="#{warehouseBundle.warehouse_inventory_closed_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
+					</aon:panelGroup>
 
 					<aon:panelGroup>
 						<c:if test="#{aonRole.productOperator or aonRole.config}">
@@ -85,27 +150,7 @@
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
-
-						<aon:panelGrid id="group_warehouse_reports"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-report aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_reports}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:htmlCommandLink value="#{warehouseBundle.warehouse_order_proposal_module}"
-										target="_blank" 
-										action="#{report.onExecute}"
-										styleClass="aon-icon-pdf"
-										style="padding-left: 18px;">
-										<f:param name="reportKey" value="orderProposal" />
-									</aon:htmlCommandLink>
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
 					</aon:panelGroup>
-					
 				</h:panelGrid>
 				
 			</aon:div>

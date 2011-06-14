@@ -281,8 +281,7 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	}
 
 	@Transient
-	@SuppressWarnings("unchecked")
-	public List getDetailList() {
+	public List<?> getDetailList() {
 		try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();
@@ -295,8 +294,7 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	}
 	
 	@Transient
-	@SuppressWarnings("unchecked")
-	public List getOrderedDetailList() {
+	public List<?> getOrderedDetailList() {
 		try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 			Criteria criteria = new Criteria();

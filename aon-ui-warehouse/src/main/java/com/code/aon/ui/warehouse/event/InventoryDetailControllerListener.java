@@ -16,27 +16,11 @@ import com.code.aon.warehouse.InventoryDetail;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 
-/**
- * An iventorydetail controller listener 
- * 
- * @author Consulting & Development. 
- * @since 1.0
- *
- */
 public class InventoryDetailControllerListener extends ControllerAdapter {
 	
-	/**
-	 * The class logger
-	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(InventoryDetailControllerListener.class.getName());
 
-	/**
-	 * After updating the inventory search the stock and updates it or creates if needed
-	 * 
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanUpdated(com.code.aon.ui.form.event.ControllerEvent)
-	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		InventoryDetail inventoryDetail = (InventoryDetail)event.getController().getTo();
 		try {
@@ -45,7 +29,7 @@ public class InventoryDetailControllerListener extends ControllerAdapter {
 			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID) ,inventoryDetail.getItem().getId());
-			Iterator stockListIter = stockBean.getList(criteria).iterator();
+			Iterator<?> stockListIter = stockBean.getList(criteria).iterator();
 			if (stockListIter.hasNext()){
 				Stock stock = (Stock) stockListIter.next();
 				stock.setQuantity(q);

@@ -24,6 +24,8 @@
 		<mapping class="com.code.aon.warehouse.ItemWarehouse"/>
 		<mapping class="com.code.aon.warehouse.Stock"/>
 		<mapping class="com.code.aon.warehouse.Warehouse"/>
+		<mapping class="com.code.aon.warehouse.WarehouseTransfer"/>
+		<mapping class="com.code.aon.warehouse.WarehouseTransferDetail"/>
 		
 		<!-- AON CALENDAR -->
 		<mapping class="com.esferalia.aon.calendar.Calendar"/>
@@ -40,6 +42,7 @@
 		<mapping class="com.code.aon.commercial.OfferAttachment"/>
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
 		<mapping class="com.code.aon.commercial.OfferTerm"/>
+		<mapping class="com.code.aon.commercial.Project"/>
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
@@ -73,7 +76,6 @@
 		<mapping class="com.code.aon.product.CatalogueItem"/>
 		<mapping class="com.code.aon.product.Item"/>
 		<mapping class="com.code.aon.product.ItemAttachment"/>
-		<mapping class="com.code.aon.product.ItemPos"/>
 		<mapping class="com.code.aon.product.ItemSupplier"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
