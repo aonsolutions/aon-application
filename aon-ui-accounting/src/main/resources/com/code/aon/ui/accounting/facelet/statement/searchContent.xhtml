@@ -158,7 +158,9 @@
 						action="account_statement_account_list"
 						actionListener="#{trialBalance.onSearch}"
 						disabled="#{!trialBalance.dateValid}" reRender="#{searchReRender}"
-						accesskey="#{bundle.aon_key_search}" />
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionHotKey key="return" />
+					</aon:commandButton>
 				</aon:div>
 			</aon:div>
 

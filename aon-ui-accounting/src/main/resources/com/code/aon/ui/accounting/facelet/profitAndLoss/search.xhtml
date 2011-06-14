@@ -165,7 +165,9 @@
 								actionListener="#{profitAndLossReport.calculateSummaryCollections}"
 								disabled="#{!profitAndLossReport.dateValid}"
 								reRender="#{searchReRender}"
-								accesskey="#{bundle.aon_key_search}" />
+								accesskey="#{bundle.aon_key_search}">
+								<aon:actionHotKey key="return" />
+							</aon:commandButton>
 						</aon:div>
 					</aon:div>
 				</ui:define>
