@@ -106,7 +106,7 @@
 								immediate="true"
 								onclick="if (!confirm('#{accountingBundle.accounting_change_security}')) return false;" />
 						</c:if>
-
+<!-- 
 						<aon:commandButton id="duplicate" value="#{accountingBundle.accounting_duplicate}"
 							title="#{accountingBundle.accounting_duplicate}"
 							actionListener="#{accountEntry.onDuplicate}"
@@ -114,7 +114,14 @@
 							styleClass="aon-finding-toolbar-item aon-icon-copy"
 							onclick="if (!confirm('#{accountingBundle.accounting_duplicate_confirm}')) return false;"
 							immediate="true" />
-							
+ -->						
+						<aon:commandButton id="duplicate" value="#{accountingBundle.accounting_duplicate}"
+							title="#{accountingBundle.accounting_duplicate}"
+							actionListener="#{accountEntry.showDuplicateEntryPanel}"
+							rendered="#{!accountEntry.new and accountEntry.updatable}"
+							reRender="duplicateEntryContainer"
+							styleClass="aon-finding-toolbar-item aon-icon-copy"
+							immediate="true" />
 						<aon:spin controller="#{accountEntry}" action="accountEntry_form" rendered="#{!accountEntry.new}" />
 					</ui:define>
 				</ui:decorate>
@@ -287,8 +294,72 @@
 					</aon:form>
 				</rich:modalPanel>
 			</c:if>
+		</aon:div>
+		
+		
+		<aon:div id="duplicateEntryContainer">
+			<c:if test="#{accountEntry.duplicateEntryPanelVisible}">
+				<rich:modalPanel id="duplicateEntryModalPanel" minHeight="300"
+					minWidth="520" rendered="#{accountEntry.duplicateEntryPanelVisible}"
+					showWhenRendered="true" zindex="90">
+					<f:facet name="header">
+						<aon:div styleClass="aon-popupWindow-title">
+							<aon:outputText value="#{accountingBundle.accounting_duplicate}" />
+						</aon:div>
+					</f:facet>
+					<f:facet name="controls">
+						<aon:form>
+							<aon:commandButton type="button"
+								styleClass="aon-popupWindow-close"
+								reRender="duplicateEntryContainer,duplicateEntryIconContainer"
+								immediate="true">
+								<aon:actionHotKey key="esc" />
+								<f:setPropertyActionListener
+									target="#{accountEntry.duplicateEntryPanelVisible}" value="#{false}" />
+							</aon:commandButton>
+						</aon:form>
+					</f:facet>
+					<aon:form id="duplicateEntryForm">
+						<aon:div styleClass="aon-popupWindow-content">
+							<aon:div style="width:100%">
+								<aon:div styleClass="aon-popupWindow-content-internal">
+									<aon:div style="width:99%">
+										<aon:div styleClass="aon-toolbar">
+											<aon:commandButton id="duplicateEntryAccept"
+												value="#{accountingBundle.accounting_duplicate}"
+												actionListener="#{accountEntry.onDuplicate}"
+												styleClass="aon-finding-toolbar-item aon-icon-accept">
+												<f:setPropertyActionListener
+													target="#{accountEntry.duplicateEntryPanelVisible}"
+													value="#{false}" />
+											</aon:commandButton>
+										</aon:div>
+										<aon:div styleClass="aon-scroll-area aon-margin-top">
+											<aon:panelGrid id="menuGrid" columns="2" dir="true"
+												style="width: 80%;">
+												<aon:outputLabel for="AccountEntry_date"
+													value="#{bundle.aon_date}" />
+												<aon:selectInputDate required="true"
+													id="AccountEntry_date" value="#{accountEntry.duplicateDate}"
+													timeZone="#{timeZoneController.timeZone}"
+													popupDateFormat="#{bundle.aon_date_pattern}"/>
+
+												<aon:outputLabel for="AccountEntry_concept"
+													value="#{bundle.aon_concept}" />
+												<aon:inputText required="true" size="20"
+													id="AccountEntry_concept" value="#{accountEntry.duplicateConcept}"/>
+											</aon:panelGrid>
+										</aon:div>
+									</aon:div>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:form>
+				</rich:modalPanel>
+			</c:if>
 
 		</aon:div>
+		
 		<aon:lookupButtonPopup lookup="#{accountLookup}" />
 		
 		<rich:jQuery timing="onload" selector="#AccountEntry_accountPeriod" query="focus()"/>

@@ -21,6 +21,7 @@ public interface IAccountingConstants {
 	String ACCOUNT_CHECK_CONTROLLER = "accountCheck";
 	String ACCOUNT_COLLECTIONS_CONTROLLER_NAME = "accountCollections";
 	String ACCOUNT_ENTRY_CONTROLLER_NAME = "accountEntry";
+	String ACCOUNT_ENTRY_CONTROLLER_DETAIL_NAME = "accountEntryDetail";
 	String AMORTIZATION_DETAIL_CONTROLLER = "amortizationDetail";	
 	String FINANCIAL_STATEMENT_CONTROLLER_NAME = "financialStatement";
 	String STATEMENT_CONTROLLER_NAME = "statement";

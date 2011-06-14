@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.controller.entry;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -34,6 +35,8 @@ import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountEntryController extends BasicController {
@@ -47,10 +50,14 @@ public class AccountEntryController extends BasicController {
 	private boolean updatableViaWizard;
 	private boolean aonInvoice;
 	
+	private Date duplicateDate;
+	private String duplicateConcept;
+	
 	private Double totalDebit;
 	private Double totalCredit;
 
 	private boolean commentPanelVisible;
+	private boolean duplicateEntryPanelVisible;
 	
 	private SpecialEntryControllerManager getControllerManager() {
 		if (controllerManager == null) {
@@ -342,7 +349,13 @@ public class AccountEntryController extends BasicController {
 	public void setCommentPanelVisible(boolean commentPanelVisible) {
 		this.commentPanelVisible = commentPanelVisible;
 	}
-
+	public boolean isDuplicateEntryPanelVisible() {
+		return duplicateEntryPanelVisible;
+	}
+	public void setDuplicateEntryPanelVisible(boolean duplicateEntryPanelVisible) {
+		this.duplicateEntryPanelVisible = duplicateEntryPanelVisible;
+	}
+	
   	public void showCommentPanel(ActionEvent event  ) {
 		setCommentPanelVisible(true);
 	}
@@ -350,6 +363,44 @@ public class AccountEntryController extends BasicController {
 		setCommentPanelVisible(false);
 	}
 	
+  	public void showDuplicateEntryPanel(ActionEvent event  ) {
+		try {
+	  		AccountEntry entry = (AccountEntry) getTo();
+	  		setDuplicateDate(entry.getEntryDate());
+	  		IController detail = FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_DETAIL_NAME);
+	  		List<?> list = (List<?>) detail.getModel().getWrappedData();
+	  		if (list == null || list.size() == 0) {
+				String msg = "No hay líneas en el apunte. No se puede duplicar";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
+	  		}
+	  		setDuplicateConcept(((AccountEntryDetail) list.get(0)).getConcept());
+			setDuplicateEntryPanelVisible(true);
+		} catch (ManagerBeanException e) {
+			String msg = "No se pudo duplicar el apunte. [" + e.getLocalizedMessage()+ "]";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+	public void hideDuplicateEntryPanel(ActionEvent event  ) {
+		setDuplicateEntryPanelVisible(false);
+	}
+	
+	
+	public Date getDuplicateDate() {
+		return duplicateDate;
+	}
+	public void setDuplicateDate(Date duplicateDate) {
+		this.duplicateDate = duplicateDate;
+	}
+
+	public String getDuplicateConcept() {
+		return duplicateConcept;
+	}
+	public void setDuplicateConcept(String duplicateConcept) {
+		this.duplicateConcept = duplicateConcept;
+	}
+
 	public String onLoadInvoice() throws ManagerBeanException {
 		String invoiceViewer = null;
    		AccountEntry entry = (AccountEntry) getTo();
@@ -385,7 +436,7 @@ public class AccountEntryController extends BasicController {
     		AccountEntry dup = new AccountEntry();
     		
     		dup.setAccountPeriod(entry.getAccountPeriod());
-    		dup.setEntryDate(entry.getEntryDate());
+    		dup.setEntryDate(getDuplicateDate());
     		dup.setType(entry.getType());
     		dup.setSecurityLevel(entry.getSecurityLevel());
     		dup = (AccountEntry) getManagerBean().insert(dup);
@@ -401,7 +452,7 @@ public class AccountEntryController extends BasicController {
     			dupDetail.setAccountEntry(dup);
     			dupDetail.setLine(detail.getLine());
     			dupDetail.setAccount(detail.getAccount());
-    			dupDetail.setConcept(detail.getConcept());
+    			dupDetail.setConcept(getDuplicateConcept());
     			dupDetail.setBalancingAccount(detail.getBalancingAccount());
     			dupDetail.setDebit(detail.getDebit());
     			dupDetail.setCredit(detail.getCredit());
