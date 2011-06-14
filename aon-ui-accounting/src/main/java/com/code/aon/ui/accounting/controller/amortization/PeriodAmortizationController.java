@@ -14,10 +14,11 @@ import com.code.aon.accounting.amortization.AmortizationManager;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AmortizationDetailStatus;
 import com.code.aon.accounting.summary.SummaryProvider;
-import com.code.aon.accounting.util.Balance;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
+import com.code.aon.ql.ProjectionList;
 import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.entry.AccountEntryController;
 import com.code.aon.ui.form.BasicController;
@@ -81,12 +82,18 @@ public class PeriodAmortizationController extends BasicController {
 			model.setRowIndex(i);
 			AmortizationDetail detail = (AmortizationDetail) model.getRowData();
 			Amortization a = detail.getAmortization();
-
-			Balance balance = getSummaryProvider().getPeriodBalance(period.getInitiationDate(),
-					period.getDeadline(), a.getAccumulatedAccount().getId(),null, false, false);
-			double accumulated = balance.getCreditBalance();
-			double pending = CommonUtil.round(a.getAmount() - accumulated
-					- (detail.isScored() ? 0 : detail.getAllocation()));
+			
+			double accumulated = 0.0;
+			Criteria c = new Criteria();
+			c.addEqualExpression(getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
+			c.addLessThanExpression(getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), period.getInitiationDate());
+			ProjectionList pl = new ProjectionList();
+			pl.add(Projection.sum(getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_ALLOCATION)));
+			List<?> list = getManagerBean().getList(pl, c);
+			if (list != null && list.size() > 0) {
+				accumulated = (Double) list.get(0);	
+			}
+			double pending = CommonUtil.round(a.getAmount() - accumulated - detail.getAllocation());
 
 			detail.setAccumulated(accumulated);
 			detail.setPending(pending);
