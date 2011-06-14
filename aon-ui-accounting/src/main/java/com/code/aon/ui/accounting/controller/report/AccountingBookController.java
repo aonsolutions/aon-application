@@ -26,10 +26,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.annualReport.AnnualReportContext;
 import com.code.aon.accounting.annualReport.AnnualReportParameters;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.BalanceType;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
 import com.code.aon.common.BeanManager;
@@ -44,6 +46,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.ReportException;
+import com.code.aon.ui.accounting.IAccountingConstants;
+import com.code.aon.ui.accounting.controller.AccountRegeneratorController;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.accounting.controller.balance.BalanceSheetController;
 import com.code.aon.ui.company.controller.CompanyController;
@@ -460,6 +464,30 @@ public class AccountingBookController implements ICollectionProvider{
 		}
 		setGeneratedPages(getGeneratedPages() + i);
 		zout.closeEntry();
+	}
+
+	public boolean isJournalCorrect() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
+			Criteria c = new Criteria();
+			if (getPeriod() != null) {
+				c.addEqualExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), getPeriod().getId());	
+			}
+			c.addNullExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_JOURNAL));
+			int count = bean.getCount(c);
+			return (count==0);
+		} catch (ManagerBeanException e) {
+			return false;
+		}
+	}
+	
+	public void onRegenerate(ActionEvent event) {
+		AccountRegeneratorController arc = (AccountRegeneratorController) AonUtil.getRegisteredBean("accountRegenerator");
+		arc.onEditSearch(event);
+		arc.setJournal(true);
+		arc.setPeriod(getPeriod());
+		arc.setSecurityLevel(null);
+		arc.regenerateAccount(event);
 	}
 
 	private void addLedger(ZipOutputStream zout) throws ReportException, IOException{
