@@ -52,7 +52,8 @@
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
 		<mapping class="com.code.aon.company.EnterpriseActivity"/>
-		<mapping class="com.code.aon.company.EnterpriseCCC"/>				
+		<mapping class="com.code.aon.company.EnterpriseCCC"/>
+		<mapping class="com.code.aon.company.EnterpriseData"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>
 		
 		<!-- Mapping files -->
