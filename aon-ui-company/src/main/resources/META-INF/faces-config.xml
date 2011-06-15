@@ -1391,15 +1391,15 @@
 				<key-class>java.lang.String</key-class>
 				<value-class>java.lang.String</value-class>
 				<map-entry>
-					<key>REPORT_salary</key>
+					<key>PAY_REPORT_salary_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>
-					<key>REPORT_salaryDraft</key>
+					<key>PAY_REPORT_salaryDraft_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>
-					<key>REPORT_enterpriseSalary</key>
+					<key>PAY_REPORT_enterpriseSalary_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>

@@ -29,6 +29,10 @@ import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
+import com.code.aon.company.EnterpriseData;
+import com.code.aon.company.dao.ICompanyAlias;
+import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.RegistryMedia;
@@ -37,6 +41,7 @@ import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.report.OutputFormat;
 import com.code.aon.report.ReportException;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
@@ -218,6 +223,50 @@ public class SalaryController extends BasicController implements IPayrollConstan
 			LOGGER.error(msg);
 		}
 		return null;
+	}
+	
+	/*
+	 * Plantilla de impresion de la nomina
+	 */
+	public String getSalaryTemplate(){
+		try {
+			EnterpriseData enterpriseData = getEnterpriseDataTemplate();
+			if(enterpriseData == null || enterpriseData.getExpression() == null){
+				ApplicationParameter appParam = getAppDefaultTemplate();
+				if(appParam == null || appParam.getValue() == null){
+					return DEFAULT_SALARY_TEMPLATE;
+				}
+				return appParam.getValue();
+			}
+			return enterpriseData.getExpression();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> getSalaryTemplate ",e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
+	private ApplicationParameter getAppDefaultTemplate() throws ManagerBeanException {
+		IManagerBean dataBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(dataBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), ICompanyConstants.REPORT_SALARY_PARAM);
+		List<ITransferObject> list = dataBean.getList(criteria);
+		if(list.isEmpty()){
+			return null;
+		}
+		return (ApplicationParameter) dataBean.getList(criteria).get(0);
+	}
+
+	private EnterpriseData getEnterpriseDataTemplate() throws ManagerBeanException {
+		IManagerBean dataBean = BeanManager.getManagerBean(EnterpriseData.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(dataBean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_ENTERPRISE_ID), ((Salary)getTo()).getContract().getWorkPlace().getEnterprise().getId());
+		criteria.addEqualExpression(dataBean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_NAME), ICompanyConstants.REPORT_SALARY_PARAM);
+		List<ITransferObject> list = dataBean.getList(criteria);
+		if(list.isEmpty()){
+			return null;
+		}
+		return (EnterpriseData) dataBean.getList(criteria).get(0);
 	}
 
 }

@@ -93,4 +93,15 @@ public interface ICompanyConstants {
 	
 	String SHOW_ADD_INFO = "showAddInfo";
 	
+	// ************************************************************
+	// PARAMETERS
+	// ************************************************************
+	String SALARY = "salary";
+
+	String SALARY_DRAFT = "salaryDraft";
+	
+	String REPORT_SALARY_PARAM = "PAY_REPORT_salary_PAY";
+	
+	String REPORT_SALARY_DRAFT_PARAM = "PAY_REPORT_salaryDraft_PAY";
+	
 }

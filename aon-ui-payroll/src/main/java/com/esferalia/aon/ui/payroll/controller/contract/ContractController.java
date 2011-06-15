@@ -244,8 +244,8 @@ public class ContractController extends BasicController {
 		} else {
 			setEnterprise(null);
 		}
-		setActivities(null);
-		setWorkPlaces(null);
+//		setActivities(null);
+//		setWorkPlaces(null);
 	}
 	
 	public void onActivityChanged( ActionEvent event ) {
@@ -253,8 +253,9 @@ public class ContractController extends BasicController {
 	}
 
 	private void loadWorkPlaces() {
-		setWorkPlaces(new LinkedList<SelectItem>());
+		setWorkPlaces(null);
 		if (getEnterprise() != null) {
+			setWorkPlaces(new LinkedList<SelectItem>());
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
 				Criteria criteria = new Criteria();
@@ -276,8 +277,9 @@ public class ContractController extends BasicController {
 	}
 
 	private void loadActivities() {
-		setActivities( new LinkedList<SelectItem>());
+		setActivities(null);
 		if (getEnterprise() != null) {
+			setActivities( new LinkedList<SelectItem>());
 			try {
 				IManagerBean ecBean = BeanManager.getManagerBean(EnterpriseActivity.class);
 				Criteria criteria = new Criteria();

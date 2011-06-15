@@ -36,7 +36,6 @@ import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.OtherLaws;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.payroll.enumeration.SalaryTemplate;
 import com.esferalia.aon.payroll.enumeration.SchoolWorkshop;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.salary.enumeration.DeductionType;
@@ -59,7 +58,6 @@ public class PayrollCollectionsController {
 	private Map<ContractOption,List<SelectItem>> contractTypesMap;
 	private List<SelectItem> quoteGroups;
 	private List<SelectItem> ssRegimes;
-	private List<SelectItem> salaryTemplates;
 	
 	private List<SelectItem> streetTypes;
 	private List<SelectItem> leaveReportTypes;
@@ -79,7 +77,6 @@ public class PayrollCollectionsController {
 	private List<SelectItem> ageGroupList;
 	private List<SelectItem> embargableTypeList;
 	private List<SelectItem> dismissCauseList;
-	private List<SelectItem> salaryModelList;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -280,21 +277,6 @@ public class PayrollCollectionsController {
 			}
 		}
 		return quoteGroups;
-	}
-	
-	public List<SelectItem> getSalaryTemplates() {
-		if (salaryTemplates == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot()
-			.getLocale();
-			salaryTemplates = new LinkedList<SelectItem>();
-			SalaryTemplate[] templates = SalaryTemplate.values();
-			for (SalaryTemplate t : templates) {
-				String name = t.getName(locale);
-				SelectItem item = new SelectItem(t, name);
-				salaryTemplates.add(item);
-			}
-		}
-		return salaryTemplates;
 	}
 	
 	public List<SelectItem> getSsRegimes() {
@@ -553,18 +535,6 @@ public class PayrollCollectionsController {
 		return dismissCauseList;
 	}
 	
-	public List<SelectItem> getSalaryModelList() {
-		if (salaryModelList == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			salaryModelList = new LinkedList<SelectItem>();
-			SalaryTemplate[] st = SalaryTemplate.values();
-			for (SalaryTemplate c : st) {
-				String name = c.getName(locale);
-				SelectItem item = new SelectItem(c.getValue(), name);
-				salaryModelList.add(item);
-			}
-		}
-		return salaryModelList;
-	}
+	
 		
 }

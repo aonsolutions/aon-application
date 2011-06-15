@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<c:if test="#{aonConfiguration.bean.enterprise.showEnterpriseParams}" >
+		<aon:outputLabel for="salary_model" value="#{companyBundle.company_enterprise_params_salary_model}" />
+		<aon:selectOneMenu id="salary_model"
+			value="#{enterpriseParams.parameters['PAY_REPORT_salary_PAY'].expression}">
+			<f:selectItems value="#{companyCollections.salaryTemplates}" />
+		</aon:selectOneMenu>
+
+		<aon:outputLabel for="enterprise_salary_model" value="#{companyBundle.company_enterprise_params_enterprise_salary_model}" />
+		<aon:selectOneMenu id="enterprise_salary_model"
+			value="#{enterpriseParams.parameters['PAY_REPORT_enterpriseSalary_PAY'].expression}">
+			<f:selectItems value="#{companyCollections.enterpriseSalaryTemplates}" />
+		</aon:selectOneMenu>
+
+		<aon:outputLabel for="salary_sending_method" value="#{companyBundle.company_enterprise_params_salary_sending_method}" />
+		<aon:selectOneMenu id="salary_sending_method"
+			value="#{enterpriseParams.parameters['PAY_salarySendingMethod_PAY'].expression}">
+			<f:selectItems value="#{companyCollections.salarySendingMethods}" />
+		</aon:selectOneMenu>
+	</c:if>
+	
+</ui:composition>

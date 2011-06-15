@@ -15,12 +15,10 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class PayrollAppParamsController{
-	
-	private static final String REPORT_SALARY = "REPORT_salary";
-	private static final String REPORT_SALARY_DRAFT = "REPORT_salaryDraft";
 	
 	private Map<String, ApplicationParameter> parameters;
 
@@ -101,6 +99,11 @@ public class PayrollAppParamsController{
 	}
 	
 	private void beforeBeanUpdate() throws ManagerBeanException {
-		getParameter(REPORT_SALARY_DRAFT).setValue(getParameter(REPORT_SALARY).getValue());
+		getParameter(ICompanyConstants.REPORT_SALARY_DRAFT_PARAM).setValue(getDraftTemplateName());
 	}
+
+	private String getDraftTemplateName() throws ManagerBeanException {
+		return getParameter(ICompanyConstants.REPORT_SALARY_PARAM).getValue().replaceFirst(ICompanyConstants.SALARY, ICompanyConstants.SALARY_DRAFT);
+	}
+
 }

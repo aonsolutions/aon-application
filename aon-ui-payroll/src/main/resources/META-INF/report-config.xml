@@ -31,9 +31,23 @@
 		</params>
 	</report>
 	
-	<!--  IMPRESION DE LA NOMINA -->
+	<!--  
+		TEMPLATES DE IMPRESION DE LA NOMINA 
+	-->
 	<report id="salary" description="Current Salary report ">
 		<template path="/com/esferalia/aon/ui/payroll/report/salary.jasper" />
+		<collection provider="#{salary}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.payroll.i18n.report" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{salary.getAttachAsInputStream}" />
+			<param id="embargo" value="#{salary.getEmbargo}" />
+		</params>
+	</report>
+
+	<report id="salaryTemplate1" description="Current Salary report ">
+		<template path="/com/esferalia/aon/ui/payroll/report/salaryTemplate1.jasper" />
 		<collection provider="#{salary}" forceRefresh="true"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.payroll.i18n.report" />
@@ -57,9 +71,23 @@
 		</params>
 	</report>
 	
-	<!--  IMPRESION DEL BORRADOR DE LA NOMINA -->
+	<!--  
+		TEMPLATES DE IMPRESION DEL BORRADOR DE LA NOMINA 
+	-->
 	<report id="salaryDraft" description="Current Salary Draft report ">
 		<template path="/com/esferalia/aon/ui/payroll/report/salary.jasper" />
+		<collection provider="#{salaryDraft}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.payroll.i18n.report" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="showBackground" value="#{salaryDraft.isShowBackground}" />
+		</params>
+	</report>
+	
+	<report id="salaryDraftTemplate1" description="Current Salary Draft report ">
+		<template path="/com/esferalia/aon/ui/payroll/report/salaryTemplate1.jasper" />
 		<collection provider="#{salaryDraft}" forceRefresh="true"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.payroll.i18n.report" />

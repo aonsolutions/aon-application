@@ -27,6 +27,8 @@
 			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.enterprise}" />
 				<ui:param name="skipNewButton" value="#{true}" />
+				<aon:methodParam name="lookupChangeListener" value="#{contract.onEnterpriseChanged}" type="lookupChangeListener" />
+				<ui:param name="lookup_reRender" value="workPlace" />
 			</ui:include>
 			
 			<aon:outputLabel for="workPlace" styleClass="aon-italic aon-margin-left"

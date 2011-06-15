@@ -50,6 +50,8 @@ public interface IPayrollConstants {
 	// ************************************************************
 	String SALARY_REPORT = "salary";
 	String SALARY_LIST_REPORT = "salaryList";
+	String DEFAULT_SALARY_TEMPLATE = "salary";
+	String DEFAULT_SALARY_DRAFT_TEMPLATE = "salaryDraft";
 
 	// ************************************************************
 	// NAVIGATION KEYS

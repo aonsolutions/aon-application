@@ -24,9 +24,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseParamsController {
 	
-	private static final String REPORT_SALARY_PARAM = "REPORT_salary";
-	private static final String REPORT_SALARY_DRAFT_PARAM = "REPORT_salaryDraft";
-	
 	private Map<String, EnterpriseData> parameters;
 
 	private Map<String, String> defaultParameters;
@@ -71,7 +68,7 @@ public class EnterpriseParamsController {
 		Collection<EnterpriseData>params = parameters.values();
 		for(EnterpriseData param : params){
 			beforeBeanUpdate();
-			managerBean.update(param);
+			managerBean.insertOrUpdate(param);
 		}
 		loadParameters();
 	}
@@ -106,7 +103,6 @@ public class EnterpriseParamsController {
 				p.setExpression(defaultParameters.get(key));
 				p.setStartDate(null);
 				p.setEndDate(null);
-				p = (EnterpriseData) managerBean.insert(p);
 				parameters.put(p.getName(), p);
 			}
 		}
@@ -125,6 +121,11 @@ public class EnterpriseParamsController {
 	}
 	
 	private void beforeBeanUpdate() throws ManagerBeanException {
-		getParameter(REPORT_SALARY_DRAFT_PARAM).setExpression(getParameter(REPORT_SALARY_PARAM).getExpression());
+		getParameter(ICompanyConstants.REPORT_SALARY_DRAFT_PARAM).setExpression(getDraftTemplateName());
 	}
+	
+	private String getDraftTemplateName() throws ManagerBeanException {
+		return getParameter(ICompanyConstants.REPORT_SALARY_PARAM).getExpression().replaceFirst(ICompanyConstants.SALARY, ICompanyConstants.SALARY_DRAFT);
+	}
+	
 }
