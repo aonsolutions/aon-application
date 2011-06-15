@@ -16,6 +16,8 @@ DROP TABLE `expense`;
 
 ALTER TABLE `item_composition` ADD `sequence` smallint(2) default '0' COMMENT 'Numero de secuencia dentro de la Composicion' AFTER `composition_item`;
 
+ALTER TABLE `item_composition` MODIFY `description` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del componente';
+
 
 UPDATE `db_version` SET `version_number` = '6.4.8';
 

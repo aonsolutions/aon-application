@@ -3685,7 +3685,7 @@ CREATE TABLE `item_composition` (
   `item` int(4) NOT NULL COMMENT 'Identificador del Articulo compuesto',
   `composition_item` int(4) NOT NULL COMMENT 'Identificador del Articulo componente',
   `sequence` smallint(2) default '0' COMMENT 'Numero de secuencia dentro de la Composicion',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del componente',
+  `description` varchar(1024) collate latin1_spanish_ci default NULL COMMENT 'Descripcion del componente',
   `quantity` double(15,3) default '0.000' COMMENT 'Cantidad del componente',
   `price` double default '0' COMMENT 'Precio del componente',
   `discount_expr` varchar(32) collate latin1_spanish_ci default NULL COMMENT 'Descuentos del componente',
