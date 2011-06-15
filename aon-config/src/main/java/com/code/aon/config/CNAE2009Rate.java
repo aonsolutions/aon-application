@@ -90,7 +90,7 @@ public class CNAE2009Rate implements ITransferObject {
 		this.endDate = endDate;
 	}
 
-	@Column(name="it_mount",precision = 15, scale = 3)
+	@Column(name="it_amount",precision = 15, scale = 3)
 	   public double getItAmount() {
 		return itAmount;
 	}

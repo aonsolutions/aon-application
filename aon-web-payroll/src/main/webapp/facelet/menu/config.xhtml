@@ -70,7 +70,17 @@
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="cnae"
 										action="cnae_list" actionListener="#{cnae.onSearch}" 
-										value="#{companyBundle.company_cnae_module}" />
+										value="#{configBundle.config_cnae_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="cnae2009"
+										action="cnae2009_list" actionListener="#{cnae2009.onSearch}" 
+										value="#{configBundle.config_cnae2009_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="cnae2009Rate"
+										action="cnae2009Rate_list" actionListener="#{cnae2009Rate.onSearch}" 
+										value="#{configBundle.config_cnae2009Rate_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="cno"

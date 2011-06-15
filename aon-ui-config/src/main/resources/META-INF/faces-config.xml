@@ -575,6 +575,25 @@
 			<value>cnae2009</value>
 		</managed-property>
 	</managed-bean>	
+
+	<!-- ************ CNAE2009Rate ************** -->
+	<managed-bean>
+		<managed-bean-name>cnae2009Rate</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.CNAE2009Rate</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae2009Rate</value>
+		</managed-property>
+	</managed-bean>	
 	
 	<!-- ************ CNAE LOOKUP ************** -->
 	<managed-bean>
@@ -695,6 +714,14 @@
 		<navigation-case>
 			<from-outcome>cnae2009_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/config/facelet/cnae2009/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== CNAE2009Rate ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>cnae2009Rate_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/cnae2009Rate/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
