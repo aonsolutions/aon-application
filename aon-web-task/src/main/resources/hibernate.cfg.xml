@@ -50,9 +50,6 @@
 		<mapping class="com.code.aon.commercial.CommissionCategory"/>
 		<mapping class="com.code.aon.commercial.CommissionItem"/>
 		<mapping class="com.code.aon.commercial.CommissionTypeCommission"/>
-		<mapping class="com.code.aon.commercial.Expense"/>
-		<mapping class="com.code.aon.commercial.ExpenseAccount"/>
-		<mapping class="com.code.aon.commercial.ExpenseAccountDetail"/>
 		<mapping class="com.code.aon.commercial.Offer"/>
 		<mapping class="com.code.aon.commercial.OfferAttachment"/>
 		<mapping class="com.code.aon.commercial.OfferDetail"/>

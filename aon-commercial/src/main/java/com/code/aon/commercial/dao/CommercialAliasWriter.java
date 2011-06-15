@@ -4,21 +4,18 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.commercial.CommercialActivity;
-import com.code.aon.commercial.Project;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Commission;
 import com.code.aon.commercial.CommissionCategory;
 import com.code.aon.commercial.CommissionItem;
 import com.code.aon.commercial.CommissionTypeCommission;
-import com.code.aon.commercial.Expense;
-import com.code.aon.commercial.ExpenseAccount;
-import com.code.aon.commercial.ExpenseAccountDetail;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.OfferDetailCommission;
 import com.code.aon.commercial.OfferTerm;
+import com.code.aon.commercial.Project;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetItem;
 import com.code.aon.commercial.TargetSeller;
@@ -47,9 +44,6 @@ public class CommercialAliasWriter {
 				CommissionCategory.class.getName(),
 				CommissionItem.class.getName(),
 				CommissionTypeCommission.class.getName(),
-				Expense.class.getName(),
-				ExpenseAccount.class.getName(),
-				ExpenseAccountDetail.class.getName(),
 				Offer.class.getName(),
 				OfferAttachment.class.getName(),
 				OfferDetail.class.getName(),

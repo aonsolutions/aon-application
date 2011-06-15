@@ -35,9 +35,6 @@
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
 		<mapping class="com.code.aon.commercial.CommercialTerm"/>
 		<mapping class="com.code.aon.commercial.CommercialTracking"/>
-		<mapping class="com.code.aon.commercial.Expense"/>
-		<mapping class="com.code.aon.commercial.ExpenseAccount"/>
-		<mapping class="com.code.aon.commercial.ExpenseAccountDetail"/>
 		<mapping class="com.code.aon.commercial.Offer"/>
 		<mapping class="com.code.aon.commercial.OfferAttachment"/>
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
