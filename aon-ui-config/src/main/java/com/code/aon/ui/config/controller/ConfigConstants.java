@@ -5,6 +5,7 @@ public class ConfigConstants {
 	// ************************************************************
 	// BEAN
 	// ************************************************************
+	public static final String CONFIG_COLLECTIONS = "configCollections";
 	public static final String USER = "user";
 	public static final String USER_SCOPE = "userScope";
 	public static final String USER_WORK_GROUP = "userWorkGroup";
