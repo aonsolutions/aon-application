@@ -556,6 +556,25 @@
 			<value>cnae</value>
 		</managed-property>
 	</managed-bean>	
+
+	<!-- ************ CNAE2009 ************** -->
+	<managed-bean>
+		<managed-bean-name>cnae2009</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.CNAE2009</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae2009</value>
+		</managed-property>
+	</managed-bean>	
 	
 	<!-- ************ CNAE LOOKUP ************** -->
 	<managed-bean>
@@ -577,6 +596,37 @@
 		<managed-property>
 			<property-name>suggestAlias</property-name>
 			<value>CNAE_title</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/cnae/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/config/facelet/lookup/cnae/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ CNAE2009 LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>cnae2009Lookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryRichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae2009Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.CNAE2009</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CNAE2009_title</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>CNAE2009_title</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
@@ -633,6 +683,18 @@
 		<navigation-case>
 			<from-outcome>cnae_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/config/facelet/cnae/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== CNAE2009 ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>cnae2009_grid</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/cnae2009/grid.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>cnae2009_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/cnae2009/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

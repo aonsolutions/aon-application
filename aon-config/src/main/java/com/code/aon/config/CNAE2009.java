@@ -14,10 +14,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
-@Table(name="cnae")
-public class CNAE implements ITransferObject {
+@Table(name="cnae2009")
+public class CNAE2009 implements ITransferObject {
 	
-	private static final long serialVersionUID = -2983807414844231317L;
+	private static final long serialVersionUID = -2149603901731262023L;
 
 	private Integer id;
 	
@@ -25,9 +25,9 @@ public class CNAE implements ITransferObject {
     
     private String title;
 
-	@Id
-	@GeneratedValue
-	@Column(nullable = false)
+    @Id
+    @GeneratedValue
+    @Column(nullable = false)
 	public Integer getId() {
 		return id;
 	}
@@ -36,7 +36,7 @@ public class CNAE implements ITransferObject {
 		this.id = id;
 	}
 	
-	@Column(length = 5, nullable = false)
+	@Column(length = 4, nullable = false)
 	public String getCode() {
 		return code;
 	}
@@ -59,7 +59,7 @@ public class CNAE implements ITransferObject {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final CNAE o = (CNAE) obj;
+		final CNAE2009 o = (CNAE2009) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.code, o.code)
