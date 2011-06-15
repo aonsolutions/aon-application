@@ -136,7 +136,7 @@ public class RectificationInvoicingManager {
 				Iterator<?> iterator = invoiceTaxBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
 					InvoiceTax invoiceTax = (InvoiceTax)iterator.next();
-					double quota = CommonUtil.round(getPriceStrategy().getBasePrice(invoiceDetail) * invoiceTax.getPercentage() / 100); 
+					double quota = CommonUtil.round(invoiceDetail.getTaxableBase() * invoiceTax.getPercentage() / 100); 
 					rectifierDetail.setVatPercent(invoiceTax.getPercentage());
 					rectifierDetail.setVatQuota(CommonUtil.round(quota * percent * (-1) / 100));
 				}
