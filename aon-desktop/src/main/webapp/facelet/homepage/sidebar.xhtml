@@ -12,7 +12,7 @@
 		<aon:div>
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink action="home">
+				<aon:commandLink actionListener="#{desktop.onRefresh}" action="home">
 					<aon:graphicImage height="32" width="32"
 						url="#{aonResource.resolveLocal['/images/aon-icon-big-home.png']}" />
 					<aon:div><aon:outputText value="#{bundle.aon_home}" /></aon:div>
@@ -28,15 +28,15 @@
 			</aon:div>
 			
 			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink actionListener="#{notice.onSearch}" action="notice">
+				<aon:commandLink actionListener="#{notice.onSearch}" action="notice_list">
 					<aon:graphicImage height="32" width="32"
 						url="#{aonResource.resolveLocal['/images/aon-icon-big-avisos.png']}" />
-					<aon:div><aon:outputText value="#{groupwareBundle.aon_alarms}" /></aon:div>
+					<aon:div><aon:outputText value="#{groupwareBundle.aon_notice}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 			
 			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink actionListener="#{note.onSearch}" action="note">
+				<aon:commandLink actionListener="#{note.onSearch}" action="note_list">
 					<aon:graphicImage height="32" width="32"
 						url="#{aonResource.resolveLocal['/images/aon-icon-big-notas.png']}" />
 					<aon:div><aon:outputText value="#{groupwareBundle.aon_notes}" /></aon:div>
@@ -53,7 +53,7 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
-				<aon:commandLink actionListener="#{favorite.onSearch}" action="favorite">
+				<aon:commandLink actionListener="#{favorite.onSearch}" action="favorite_list">
 					<aon:graphicImage height="32" width="32"
 						url="#{aonResource.resolveLocal['/images/aon-icon-big-favoritos.png']}" />
 					<aon:div><aon:outputText value="#{groupwareBundle.aon_favorites}" /></aon:div>

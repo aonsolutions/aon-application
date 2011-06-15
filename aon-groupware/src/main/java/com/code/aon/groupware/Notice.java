@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -70,7 +72,8 @@ public class Notice implements ITransferObject {
 		this.id = id;
 	}
 
-    @Column(name="date", nullable=false)   
+    @Column(name="date", nullable=false)
+    @Temporal(TemporalType.TIMESTAMP)
 	public Date getDate() {
 		return date;
 	}

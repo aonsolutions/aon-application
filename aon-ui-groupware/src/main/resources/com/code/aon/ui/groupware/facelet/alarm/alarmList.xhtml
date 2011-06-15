@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition  xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+
+	<aon:valueParam name="alarmDescriptionWidth" default="120" />
+
+	<aon:panelCollapsible expanded="true" label="#{alarmListTitle}">
+
+		<aon:dataTable
+			value="#{alarmListModel}" var="to" columns="3"
+			columnClasses="aon-table-portlet-column" rowClasses="aon-table-portlet-row"
+			styleClass="aon-table-portlet" >
+
+			<aon:rowSelector action="alarm_form"
+				actionListener="#{alarmListRowSelectorActionListener}"/>	
+										
+			<aon:column styleClass="aon-width-30">
+				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-call.png']}" rendered="#{to.call}"/>
+				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-visit.png']}" rendered="#{to.visit}"/>
+				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-message.png']}" rendered="#{to.message}"/>
+				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-info.png']}" rendered="#{to.communication}"/>
+				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-high-prty.png']}" rendered="#{to.highPriority}"/>
+				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-medium-prty.png']}" rendered="#{to.mediumPriority}"/>
+				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-low-prty.png']}" rendered="#{to.lowPriority}"/>
+				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-task-assume.png']}" rendered="#{to.fromTask}"/>
+				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-esferalia.png']}" rendered="#{to.fromExternal}"/>
+			</aon:column>
+			
+			<aon:column styleClass="aon-width-70">
+				<aon:outputText value="#{to.alarmDate}" styleClass="aon-bold">
+					<f:convertDateTime pattern="#{bundle.aon_time_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+
+			<aon:column styleClass="aon-nowrap">
+				<aon:outputText value="#{to.description}" >
+					<aon:abbreviateConverter maxWidth="#{alarmDescriptionWidth}" />
+				</aon:outputText>
+			</aon:column>
+
+		</aon:dataTable>
+
+	</aon:panelCollapsible>
+
+</ui:composition>

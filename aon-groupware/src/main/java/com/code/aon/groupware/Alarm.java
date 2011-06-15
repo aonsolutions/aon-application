@@ -11,6 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -18,12 +21,18 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.User;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
+import com.code.aon.groupware.enumeration.NoticeType;
 import com.code.aon.groupware.enumeration.Priority;
 
 @Entity
@@ -31,6 +40,8 @@ import com.code.aon.groupware.enumeration.Priority;
 public class Alarm implements ITransferObject {
 
 	private static final long serialVersionUID = 5331239358786123832L;
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(Alarm.class);
 
 	private Integer id;
 	
@@ -43,6 +54,8 @@ public class Alarm implements ITransferObject {
 	private AlarmSource source;
 	
 	private Integer sourceId;
+	
+	private ITransferObject to;
 	
 	private User user;
 	
@@ -71,6 +84,7 @@ public class Alarm implements ITransferObject {
 	}
 	
 	@Column(name="alarm_date", nullable=false)
+	@Temporal(TemporalType.TIMESTAMP)
 	public Date getAlarmDate() {
 		return alarmDate;
 	}
@@ -121,11 +135,97 @@ public class Alarm implements ITransferObject {
 	public Priority getPriority() {
 		return priority;
 	}
-
+	
 	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
 	
+	@Transient
+	public ITransferObject getTo() {
+		return to;
+	}
+
+	public void setTo(ITransferObject to) {
+		this.to = to;
+	}
+
+	@Transient
+	public boolean isHighPriority() {
+        return priority.equals(Priority.HIGH);
+    }
+	
+	@Transient
+	public boolean isMediumPriority() {
+        return priority.equals(Priority.NORMAL);
+    }
+	
+	@Transient
+	public boolean isLowPriority() {
+        return priority.equals(Priority.LOW);
+    }
+
+	@Transient
+    public boolean isFromTask() {
+        return source == AlarmSource.TASK;
+    }
+    
+    @Transient
+    public boolean isFromNotice() {
+        return source == AlarmSource.NOTICE;
+    }
+    
+    @Transient
+    public boolean isFromExternal() {
+        return source == AlarmSource.EXTERNAL;
+    }
+
+    @Transient
+    public Notice getNotice() {
+    	if ( (source == AlarmSource.NOTICE) && (sourceId != null) ) {
+    		if ( to == null ) {
+    			try {
+    				IManagerBean noticeBean = BeanManager.getManagerBean(Notice.class);
+    				to = noticeBean.get(sourceId);
+    			} catch (ManagerBeanException e) {
+    				LOGGER.error( e.getMessage(), e );
+    			}    			
+    		}
+    		if ( to != null ) {
+    			return (Notice) to; 
+    		}
+    	}
+    	return null;
+    }
+    
+    @Transient
+    public NoticeType getNoticeType() {
+    	Notice notice = getNotice();
+    	if ( notice != null ) {
+    		return notice.getType();
+    	}
+    	return null;
+    }
+	
+    @Transient
+	public boolean isCall() {
+        return NoticeType.CALL == getNoticeType();
+    }
+	
+    @Transient
+    public boolean isVisit() {
+    	return NoticeType.VISIT == getNoticeType();
+    }
+    
+    @Transient
+    public boolean isMessage() {
+    	return NoticeType.MESSAGE == getNoticeType();
+    }
+    
+    @Transient
+    public boolean isCommunication() {
+    	return NoticeType.COMMUNICATION == getNoticeType();
+    }    
+    
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

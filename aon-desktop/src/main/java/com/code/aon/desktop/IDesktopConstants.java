@@ -23,12 +23,6 @@ public interface IDesktopConstants {
 	String CURRENT_USER_CONTROLLER_NAME = "currentUser";
 	
 	String DOMAIN_CONTROLLER_NAME = "domain";
-	
-	String NOTE_CONTROLLER_NAME = "note";
-	
-	String ALARM_CONTROLLER_NAME = "alarm";
-	
-    String NOTICE_CONTROLLER_NAME = "notice";
 
 	String SMS_CONTROLLER_NAME = "sms";
     

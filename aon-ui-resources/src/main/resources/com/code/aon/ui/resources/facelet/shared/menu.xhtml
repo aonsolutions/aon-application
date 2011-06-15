@@ -19,7 +19,9 @@
 				<rich:toolBarGroup style="padding-right: 6px;padding-left: 6px"
 					location="right" itemSeparator="line">
 					<ui:insert name="beforeRightMenuContent"/>
+	                <aon:methodParam name="homeActionListener" default="" />					
 					<aon:commandLink action="home" 
+						actionListener="#{homeActionListener}" 
 						title="#{bundle.aon_home}"
 						styleClass="aon-icon-home"
 						value="&#160;" />

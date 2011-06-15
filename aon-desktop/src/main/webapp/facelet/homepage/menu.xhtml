@@ -29,5 +29,10 @@
 			actionListener="#{currentUser.onInit}"
 			value="#{appBundle.aon_user_data}" />		
 	</ui:define>	
+
+	<ui:define name="beforeRightMenuContent">	
+		<aon:methodParam name="homeActionListener"
+			value="#{desktop.onRefresh}" type="actionListener" />				
+	</ui:define>	
 	
 </ui:composition>

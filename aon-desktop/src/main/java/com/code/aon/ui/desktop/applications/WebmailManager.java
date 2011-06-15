@@ -2,9 +2,10 @@ package com.code.aon.ui.desktop.applications;
 
 import static com.code.aon.webmail.bean.IMailConstants.INBOX_FOLDER_NAME;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+
+import javax.mail.MessagingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.WebmailUtil;
@@ -25,45 +25,51 @@ public class WebmailManager implements IServices, IDesktopConstants {
 
 	private ApplicationsManager.App app;
 
-    private AonServer webmailServer;
+    private AonServer server;
+    
+    private List<AonFolder> mailSummaryModel;
 
-	public WebmailManager() throws DeploymentException, IOException {
+	public WebmailManager() {
 		ApplicationsManager apps = (ApplicationsManager) AonUtil.getRegisteredBean( APPLICATIONS_CONTROLLER_NAME );
 		app = apps.getApplication( "aon-webmail" );
 		if ( app != null ) {
 			try {
 				AuthPrincipal user = Utils.getAuthPrincipal();
 				MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName());
-				this.webmailServer = new AonServer(mailAccount);
-				this.webmailServer.connect();
+				server = new AonServer(mailAccount);
+				server.connect();
+				updateMailSummaryModel();
 			} catch (Throwable th) {
 				LOGGER.error("Error on Webmail init", th);
+				if ( server != null ) {
+					server.disconnect();
+					server = null;
+				}
 			}
 		}
 	}
 
-    public List<AonFolder> getMailSummaryModel() {
-    	List<AonFolder> result = new ArrayList<AonFolder>();
-		if ( webmailServer != null ) {
-			AonFolder folder = webmailServer.getAonFolder( INBOX_FOLDER_NAME );
-			result.add(folder);
-			return result;
+    private void updateMailSummaryModel() {
+		AonFolder folder = server.getAonFolder( INBOX_FOLDER_NAME );
+		if ( folder != null ) {
+			mailSummaryModel = new LinkedList<AonFolder>();
+			mailSummaryModel.add(folder);
 		}
-		return null;
+    }
+    
+    public List<AonFolder> getMailSummaryModel() {
+		if ( mailSummaryModel != null ) {
+			try {
+				server.ensureConnection();
+			} catch (MessagingException e) {
+				LOGGER.error(e.getMessage(), e);
+			}
+		}
+		return mailSummaryModel;
     }
 
     public boolean isMailActive() {
-    	try {
-	    	if ( (webmailServer != null) && (webmailServer.isConnected()) ) {
-				AonFolder folder = webmailServer.getAonFolder( INBOX_FOLDER_NAME );
-				if ( folder != null ) {
-					return true;
-				}
-			}
-		} catch (Throwable th) {
-    		LOGGER.error("Error on Webmail init", th);
-    	}
-		return false;
+		return (mailSummaryModel != null);
     }
 
  // ************************************** IServices methods implementation *************************************

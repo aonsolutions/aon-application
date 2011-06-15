@@ -963,10 +963,27 @@ color:#000;
 
 #aon-content .aon-company-logo{
 	text-align:center;
-	
 	}
 	
+.aon-table-portlet {
+	border:0;
+	background-color:transparent;
+	}
 
+.aon-table-portlet-column{
+	border:0;	
+	border-bottom:#ccc 1px dotted !important;
+	padding:1px 5px 1px 0;
+	vertical-align:middle;
+	font-size:12px;
+	background-color:transparent !important;
+	text-align:left;
+	color:#000 !important;
+	}
+	
+.aon-table-portlet-row{
+	background-color:transparent;
+	}	
 
 /**** row selector ****/
   #aon-content .aon-table-row-hover a,

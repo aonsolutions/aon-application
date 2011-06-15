@@ -14,7 +14,10 @@ public enum AlarmStatus implements IResourceable {
 	PENDING,
 	
 	/** FINISHED. */
-	FINISHED;
+	FINISHED,
+	
+	/** READ. */
+	READ;
 	
 	/** Message file base path. */
 	private static final String BASE_NAME = "com.code.aon.groupware.i18n.messages";

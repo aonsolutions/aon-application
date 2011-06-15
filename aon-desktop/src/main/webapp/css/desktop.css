@@ -37,30 +37,6 @@
 	padding:5px;
 	}
 
-
-/*************************************************/
-/********* PORTLET izda ****************/
-/*************************************/
-#aon-content .aon-portlet-body .aon-table-portlet, #aon-content .aon-table-portlet tr, #aon-content .aon-table-portlet .rich-table-cell{
-	border:0;
-	background-color:transparent;
-	}
-#aon-content .aon-portlet-body .aon-table-portlet td, #aon-content .aon-portlet-body .aon-table-portlet td span{
-	border:0;	
-	font-size:12px;
-	background-color:transparent !important;
-	text-align:left;
-	color:#000 !important;
-	}
-#aon-content .aon-portlet-body .aon-table-portlet td{
-	border-bottom:#ccc 1px dotted !important;
-	padding:1px 5px 1px 0;
-	vertical-align:middle;
-}
-#aon-content .aon-portlet-body .aon-collapsible- .aon-table-portlet td{
-	vertical-align:top;
-	}
-
 /********  AON SECONDARY MENU  ****************/
 /* barra de menus del desktop donde se muestran el resto de aplicaciones*/
 .aon-menu-application{
