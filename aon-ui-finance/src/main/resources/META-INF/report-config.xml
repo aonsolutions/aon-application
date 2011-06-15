@@ -6,6 +6,17 @@
 
 <report-config>
 
+	<!--  *********  Listado de extracto bancario  ********* -->
+	<report id="bankStatementList" description="Bank Statement List">
+		<template path="/com/code/aon/ui/finance/report/bankStatementList.jasper"/>
+		<bean key="com.code.aon.finance.BankStatement" />
+		<criteria provider="#{bankStatement}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
 	<!--  *********  Listado de Facturas de Ventas  ********* -->
 	<report id="saleInvoiceList" description="Sales Invoice's List">
 		<template path="/com/code/aon/ui/finance/report/invoiceList.jasper"/>
