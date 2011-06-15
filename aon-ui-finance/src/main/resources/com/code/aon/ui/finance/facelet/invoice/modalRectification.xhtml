@@ -39,6 +39,7 @@
 									<aon:commandButton id="rectification-accept"
 										value="#{financeBundle.finance_rectify}"
 										actionListener="#{invoiceController.onRectify}"
+										action="#{invoiceController.rectificationRedirect}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
 										<rich:componentControl for="rectificationModalPanel"
 											event="onclick" operation="hide"/>																					

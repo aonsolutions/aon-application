@@ -71,12 +71,15 @@
 										action="undeductibleInvoice_search" actionListener="#{undeductibleInvoice.onEditSearch}"
 										value="#{financeBundle.finance_undeductible_invoice_management_module}" />
 								</aon:div>
+<!-- 
+	Se quita esta opcion del menu por su peligrosidad obvia. Ahora mismo genera facturas que no son compatibles con la aplicacion 
+	a la hora de imprimirlas o contabilizarlas. Si sigue adelante este tema habria que revisarlo con MAC para dejarlo bien.
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="rectifiedInvoiceManagement"
-										action="rectifiedInvoice_search" actionListener="#{rectifiedInvoice.onReset}"
-										value="#{financeBundle.finance_special_rectified_invoice_module}" />
+									<aon:commandLink id="rectifierInvoiceManagement"
+										action="rectifierInvoice_search" actionListener="#{rectifierInvoice.onReset}"
+										value="#{financeBundle.finance_special_rectifier_invoice_module}" />
 								</aon:div>
-								
+ -->								
 							</aon:div>
 						</aon:panelGrid>
 						

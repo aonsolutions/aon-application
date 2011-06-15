@@ -36,6 +36,8 @@ public interface IFinanceConstants {
 	
 	String SALE_INVOICE_FORM_NAME = "saleInvoice_form";
 	
+	String SALE_INVOICE_LIST_NAME = "saleInvoice_list";
+	
 	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
 	
 	String SALE_INVOICE_ADDRESS_CONTROLLER_NAME = "saleInvoiceAddress";

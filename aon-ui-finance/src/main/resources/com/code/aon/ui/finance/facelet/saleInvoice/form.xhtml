@@ -36,9 +36,9 @@
 						<aon:commandButton id="finances"
 							value="#{bundle.aon_key_finance_description}"
 							title="#{bundle.aon_key_finance_accelerator}"
-							actionListener="#{saleInvoice.generateFinances}"
 							rendered="#{saleInvoiceDetail.model.rowCount > 0 and (!saleInvoice.recorded or saleInvoiceFinance.model.rowCount == 0)}"
 							styleClass="aon-finding-toolbar-item aon-icon-tree"
+							actionListener="#{saleInvoice.generateFinances}"
 							accesskey="#{bundle.aon_key_finance}">
 							<f:setPropertyActionListener target="#{saleInvoice.backActionListener}"
 								value="#{null}" />
@@ -47,7 +47,7 @@
 						</aon:commandButton>
 						<aon:commandButton id="rectify"
 							value="#{financeBundle.finance_rectify}"
-							immediate="#{true}" rendered="#{saleInvoiceDetail.model.rowCount > 0 and !saleInvoice.rectifier and !saleInvoice.accountSource}"
+							rendered="#{saleInvoiceDetail.model.rowCount > 0 and !saleInvoice.rectifier and !saleInvoice.accountSource}"
 							styleClass="aon-finding-toolbar-item aon-icon-version"
 							actionListener="#{saleInvoice.onRectificationShow}"
 							reRender="showRectificationWindow">

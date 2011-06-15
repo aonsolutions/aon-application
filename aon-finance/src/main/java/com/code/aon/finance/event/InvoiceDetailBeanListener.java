@@ -171,13 +171,12 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			percentage = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatPercent() : invoiceDetail.getRetentionPercent();
 			quota = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatQuota() : invoiceDetail.getRetentionQuota();
 		} else {
-			Date date = invoiceDetail.getInvoice().getIssueDate();
-			if (date.before(tax.getStartDate())) {
-				tax = obtainTax(tax.getId(), date);
+			Invoice invoice = (!invoiceDetail.getInvoice().isRectifier()) ? invoiceDetail.getInvoice() : invoiceDetail.getInvoice().getRectificationInvoice();
+			if (invoice.getIssueDate().before(tax.getStartDate())) {
+				tax = obtainTax(tax.getId(), invoice.getIssueDate());
 			}
-
 			percentage = tax.getPercentage();
-			if (invoiceDetail.getInvoice().isSurcharge()) {
+			if (invoice.isSurcharge()) {
 				surcharge = tax.getSurcharge();
 			}
 		}

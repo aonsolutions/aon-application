@@ -12,29 +12,22 @@
 		<aon:form id="invoiceList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_special_rectified_invoice_module}" />
-				<ui:param name="controller" value="#{rectifiedInvoice}" />
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_special_rectifier_invoice_module}" />
+				<ui:param name="controller" value="#{rectifierInvoice}" />
 				<ui:param name="skipResetButton" value="true" />
 
 				<ui:define name="toolbarActions">
-					<aon:methodParam name="searchActionListener" value="#{rectifiedInvoice.onReset}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="rectifiedInvoice_search" />
+					<aon:methodParam name="searchActionListener" value="#{rectifierInvoice.onReset}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="rectifierInvoice_search" />
 				</ui:define>
 	
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton id="rectify"
 						value="#{financeBundle.finance_rectify}"
 						styleClass="aon-finding-toolbar-item aon-icon-version"
-						actionListener="#{rectifiedInvoice.onRectificationShow}"
+						actionListener="#{rectifierInvoice.onRectificationShow}"
 						reRender="showRectificationWindow">
 					</aon:commandButton>
-
-					<aon:commandButton id="record_selected"
-						value="#{financeBundle.finance_invoice_generate}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						actionListener="#{controller.onGenerate}"
-						onclick="Richfaces.showModalPanel('waitProccess')"
-						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 			</ui:define>
 	
 			</ui:decorate>
@@ -46,13 +39,13 @@
 					<aon:outputText value="#{customerBundle.customer_customer}" />
 					<aon:outputText value=":&#160;" />
 					<aon:div style="display:inline;font-size: 1.1em;font-weight: bold;">
-						<aon:outputText value="#{rectifiedInvoice.customer.id}" />
+						<aon:outputText value="#{rectifierInvoice.customer.id}" />
 					</aon:div>
 					<aon:outputText value="&#160;-&#160;" />
-					<aon:outputText value="#{rectifiedInvoice.customer.registry.fullName}" />
+					<aon:outputText value="#{rectifierInvoice.customer.registry.fullName}" />
 				</aon:panel>
 
-				<aon:dataTable id="rectifiedInvoiceList" value="#{rectifiedInvoice.model}" 
+				<aon:dataTable id="rectifierInvoiceList" value="#{rectifierInvoice.model}" 
 					style="margin-top: 1em;" var="to" rows="0">
 
 					<aon:column styleClass="aon-editDataTable-iconColumn">
@@ -127,7 +120,7 @@
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
-			<ui:param name="invoiceController" value="#{rectifiedInvoice}" />
+			<ui:param name="invoiceController" value="#{rectifierInvoice}" />
 		</ui:include>
 	</ui:define>
 

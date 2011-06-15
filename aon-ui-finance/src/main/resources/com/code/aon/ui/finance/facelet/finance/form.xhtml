@@ -358,13 +358,13 @@
 									<f:facet name="header">
 										<aon:outputText value="&#160;" />
 									</f:facet>
-									<aon:div>
+									<aon:div styleClass="aon-nowrap">
 										<c:if test="#{aonRole.accountingOperator}">
 											<aon:commandButton id="record"
 												title="#{financeBundle.finance_record}"
 												immediate="true" rendered="#{to.recordable and !to.recorded and to.bankStatementLink == null}"
 												actionListener="#{financeTracking.recordTracking}"
-												styleClass="aon-editDataTable-button aon-icon-task-assume"
+												styleClass="aon-editDataTable-button aon-icon-task-assume aon-nowrap"
 												reRender="financeTrackingData" 
 												onclick="Richfaces.showModalPanel('waitProccess')" 
 									     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
@@ -375,16 +375,16 @@
 											confirmTitle="#{bundle.aon_confirm_title}"
 											confirmMessage="#{bundle.aon_remove_confirm}"
 											confirmActionListener="#{financeTracking.undoTracking}"
-											styleClass="aon-editDataTable-button aon-icon-delete"
+											styleClass="aon-editDataTable-button aon-icon-delete aon-nowrap"
 											accesskey="#{bundle.aon_key_remove_line}" />										
 										<aon:commandLink id="financeBatch_link" immediate="true"
-											styleClass="aon-button-goto" style="padding-right: 20px;"
+											styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
 											value="&#160;" title="#{financeBundle.finance_batch}"
 											rendered="#{to.batched}"
 											actionListener="#{financeTracking.onLoadFinanceBatch}"
 											action="fbatch_form" />
 										<aon:commandLink id="bankStatement_link" immediate="true"
-											styleClass="aon-button-goto" style="padding-right: 20px;"
+											styleClass="aon-button-goto aon-nowrap" style="padding-right: 20px;"
 											value="&#160;" title="#{financeBundle.finance_bank_statement}"
 											rendered="#{to.bankStatementLink != null}"
 											actionListener="#{financeTracking.onLoadBankStatement}"

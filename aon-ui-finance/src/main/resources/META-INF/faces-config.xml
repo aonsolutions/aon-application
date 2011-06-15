@@ -2941,15 +2941,6 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ************ RECTIFIED INVOICE MANAGEMENT ************* -->
-	<managed-bean>
-		<managed-bean-name>rectifiedInvoice</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.controller.RectifiedInvoiceController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-
-
 	<!-- ************ INVOICE TAX ************* -->
 	<managed-bean>
 		<managed-bean-name>invoiceTax</managed-bean-name>
@@ -2967,6 +2958,13 @@
 		</managed-property>				
 	</managed-bean>
 	
+	<!-- ************ RECTIFIER INVOICE MANAGEMENT ************* -->
+	<managed-bean>
+		<managed-bean-name>rectifierInvoice</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.controller.RectifierInvoiceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!--  **** BANK CONCEPT ****	-->
 	<managed-bean>
 		<managed-bean-name>bankConcept</managed-bean-name>
@@ -3495,15 +3493,15 @@
 	    </navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== Rectified Invoice Report ========================== -->
+	<!-- =================== Rectifier Invoice Report ========================== -->
 	<navigation-rule>
 	    <navigation-case>
-    	  	<from-outcome>rectifiedInvoice_search</from-outcome>
-    		<to-view-id>/com/code/aon/ui/finance/facelet/rectifiedInvoice/search.xhtml</to-view-id>
+    	  	<from-outcome>rectifierInvoice_search</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/rectifierInvoice/search.xhtml</to-view-id>
 	    </navigation-case>
 	    <navigation-case>
-    	  	<from-outcome>rectifiedInvoice_list</from-outcome>
-    		<to-view-id>/com/code/aon/ui/finance/facelet/rectifiedInvoice/list.xhtml</to-view-id>
+    	  	<from-outcome>rectifierInvoice_list</from-outcome>
+    		<to-view-id>/com/code/aon/ui/finance/facelet/rectifierInvoice/list.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	

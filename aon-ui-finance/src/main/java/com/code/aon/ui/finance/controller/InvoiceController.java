@@ -64,7 +64,7 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.SecurityInfo;
 
-public class InvoiceController extends BasicController implements ISignatureController {
+public class InvoiceController extends BasicController implements ISignatureController, IFinanceConstants {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceController.class.getName());
 	
@@ -247,6 +247,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		setRectificationSeries(obtainRectificationSeries(getInvoice().getSeries()));
 		setRectificationNumber(obtainMaxRectificationNumber(getRectificationSeries()));
 		setRectificationDate(new Date());
+		setRectificationCause(null);
 	}
 
 	private String obtainRectificationSeries(String seriesId) throws ManagerBeanException {
@@ -278,6 +279,10 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		onSearch(event);
 		getModel().setRowIndex(0);
 		onSelect(event);
+	}
+
+	public String rectificationRedirect() {
+		return SALE_INVOICE_FORM_NAME;
 	}
 
 	public void onDateChanged(ActionEvent event) {
@@ -499,9 +504,13 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	}
 
 	public boolean isReadOnly() {
-		return (getInvoice().isRecorded() || getInvoice().isSigned() || (getInvoice().isRectified()));
+		return (isSigned() || isRecorded() || isRectified() || isSpecialRectifier());
 	}
 	
+	public boolean isSigned() {
+		return getInvoice().isSigned();
+	}
+
 	public boolean isRecorded() {
 		return getInvoice().isRecorded();
 	}
@@ -523,6 +532,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public boolean isRectifier() {
 		return getInvoice().isRectifier();
+	}
+
+	public boolean isNormalRectifier() {
+		return getInvoice().isNormalRectifier();
+	}
+
+	public boolean isSpecialRectifier() {
+		return getInvoice().isSpecialRectifier();
 	}
 
 	public boolean isRectified() {

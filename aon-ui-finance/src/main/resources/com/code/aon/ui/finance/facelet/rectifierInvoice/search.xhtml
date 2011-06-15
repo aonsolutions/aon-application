@@ -9,7 +9,7 @@
 	<ui:define name="content">
 		<aon:form id="invoiceSearch">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
-				<ui:param name="toolbarTitle" value="#{financeBundle.finance_special_rectified_invoice_module}" />
+				<ui:param name="toolbarTitle" value="#{financeBundle.finance_special_rectifier_invoice_module}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:decorate>
@@ -19,7 +19,7 @@
 					<ui:param name="skipSearchButton" value="true" />
 						
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
-						<ui:param name="lookupTo" value="#{rectifiedInvoice.customer}" />
+						<ui:param name="lookupTo" value="#{rectifierInvoice.customer}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
 
@@ -27,12 +27,12 @@
 					<aon:div>
 						<aon:outputLabel for="date-From" styleClass="aon-form-date-label aon-margin-left aon-margin-right"
 							value="#{bundle.aon_date_from}" />
-						<aon:selectInputDate id="date-From" value="#{rectifiedInvoice.fromDate}"
+						<aon:selectInputDate id="date-From" value="#{rectifierInvoice.fromDate}"
 							timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}" />
 				
 						<aon:outputLabel for="date-To" styleClass="aon-form-date-label aon-margin-left aon-margin-right"
 							value="#{bundle.aon_date_to}" />
-						<aon:selectInputDate id="date-To" value="#{rectifiedInvoice.toDate}"
+						<aon:selectInputDate id="date-To" value="#{rectifierInvoice.toDate}"
 							timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:div>
 					
@@ -41,8 +41,8 @@
 						<aon:div styleClass="aon-search-commandButton-right">
 							<aon:commandButton id="SearchButton"   
 								value="#{bundle.aon_search}"
-								action="rectifiedInvoice_list"
-								actionListener="#{rectifiedInvoice.onSearch}"
+								action="rectifierInvoice_list"
+								actionListener="#{rectifierInvoice.onSearch}"
 								accesskey="#{bundle.aon_key_search}" />
 						</aon:div>
 					</aon:div>

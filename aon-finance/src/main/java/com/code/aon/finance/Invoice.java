@@ -564,7 +564,15 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 	@Transient
 	public boolean isRectifier() {
-		return (getRectificationType() == RectificationType.NORMAL_RECTIFIER || getRectificationType() == RectificationType.SPECIAL_RECTIFIER);
+		return (isNormalRectifier() || isSpecialRectifier());
+	}
+	@Transient
+	public boolean isNormalRectifier() {
+		return getRectificationType() == RectificationType.NORMAL_RECTIFIER;
+	}
+	@Transient
+	public boolean isSpecialRectifier() {
+		return getRectificationType() == RectificationType.SPECIAL_RECTIFIER;
 	}
 	@Transient
 	public boolean isRectified() {
