@@ -8,6 +8,8 @@ public interface IGroupWareConstants {
 
 	String BUNDLE_NAME = "groupwareBundle";
 	
+	String ALARM_PENDING = "groupware_alarm_pending";	
+	
 	// ************************************************************
 	// BEAN
 	// ************************************************************

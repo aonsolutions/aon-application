@@ -26,4 +26,21 @@
 			styleClass="aon-top-menu-item aon-icon-config" />
 	</ui:define>
 
+	<ui:define name="beforeRightMenuContent2">
+		<aon:div layout="none" id="pendingAlarmsDiv" >
+			<aon:commandLink id="pendingAlarms"
+				title="#{alarm.pendingAlarmTitle}" value="&#160;"
+				rendered="#{alarm.pendingCount &gt; 0}"
+				action="alarm_list" actionListener="#{alarm.onInit}" 
+				styleClass="aon-icon-alarm-pending" />
+		</aon:div>
+	</ui:define>
+
+	<ui:define name="beforeHelpMenuContent2">
+		<aon:menuItem id="alarm"
+			value="#{groupwareBundle.aon_alarm}"
+			action="alarm_list" actionListener="#{alarm.onInit}" 
+			iconClass="aon-icon-alarm" />		
+	</ui:define>
+	
 </ui:composition>

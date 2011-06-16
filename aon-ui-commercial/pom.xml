@@ -86,6 +86,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.groupware</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>				
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sign</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>

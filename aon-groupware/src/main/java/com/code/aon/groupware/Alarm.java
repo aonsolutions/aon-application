@@ -150,18 +150,23 @@ public class Alarm implements ITransferObject {
 	}
 
 	@Transient
+	public boolean isPending() {
+        return status == AlarmStatus.PENDING;
+    }
+	
+	@Transient
 	public boolean isHighPriority() {
-        return priority.equals(Priority.HIGH);
+        return priority == Priority.HIGH;
     }
 	
 	@Transient
 	public boolean isMediumPriority() {
-        return priority.equals(Priority.NORMAL);
+        return priority == Priority.NORMAL;
     }
 	
 	@Transient
 	public boolean isLowPriority() {
-        return priority.equals(Priority.LOW);
+        return priority == Priority.LOW;
     }
 
 	@Transient
@@ -224,6 +229,21 @@ public class Alarm implements ITransferObject {
     @Transient
     public boolean isCommunication() {
     	return NoticeType.COMMUNICATION == getNoticeType();
+    }    
+
+    @Transient
+    public boolean isNotice() {
+    	return source == AlarmSource.NOTICE;
+    }   
+    
+    @Transient
+    public boolean isCommercialTracking() {
+    	return source == AlarmSource.COMMERCIAL_TRACKING;
+    }    
+    
+    @Transient
+    public boolean isCallCenter() {
+    	return source == AlarmSource.CALL_CENTER;
     }    
     
 	@Override

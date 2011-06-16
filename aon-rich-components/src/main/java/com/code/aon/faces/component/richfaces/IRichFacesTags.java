@@ -57,6 +57,8 @@ public interface IRichFacesTags {
 	String CONTROLLER = "controller";
 
 	String PROPERTY = "property";
+	
+	String PROPERTY_ID = "propertyId";
 
 	String IMMEDIATE = "immediate";
 	

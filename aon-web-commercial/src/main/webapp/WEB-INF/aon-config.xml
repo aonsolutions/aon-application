@@ -116,4 +116,11 @@
 		/>
 	</commercial:config>
 		
+	<groupware:config version="1.0" xmlns:groupware="http://www.esferalia.com/groupware">
+		<groupware:alarm
+			showGoToCallCenter="true"
+			showGoToCommercialMarketing="true"
+		/>
+	</groupware:config>
+		
 </config>

@@ -1,11 +1,18 @@
 package com.code.aon.faces.component.richfaces.goToButton;
 
+import java.io.Serializable;
+
+import javax.el.ELContext;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.component.UICommand;
 import javax.faces.component.UIComponent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxComponentHandler;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
@@ -24,6 +31,8 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
  * @author atellitu
  */
 public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichFacesTags {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(GoToButtonHandler.class);
 
 	private static final String BACK_ACTION = "backAction";
 	
@@ -33,6 +42,8 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 	
 	private TagAttribute propertyTag;
 	
+	private TagAttribute propertyIdTag;
+	
    	/**
 	 * The Constructor.
 	 * 
@@ -41,7 +52,10 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 	public GoToButtonHandler(ComponentConfig config) {
 		super( config );
 		controllerTag = getRequiredAttribute(CONTROLLER);
-		propertyTag = getRequiredAttribute(PROPERTY);
+		propertyIdTag  = getAttribute(PROPERTY_ID);
+		if ( propertyIdTag  == null ) {
+			propertyTag = getRequiredAttribute(PROPERTY);
+		}
 	}
 	
 	@Override
@@ -54,8 +68,39 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 		return (BasicController) controllerTag.getObject(ctx);
 	}
 
-	private ValueExpression getTo( FaceletContext ctx ) {
-		return propertyTag.getValueExpression(ctx, ITransferObject.class);
+	private ValueExpression getToExpression( FaceletContext ctx ) {
+		if ( propertyTag != null ) {
+			return propertyTag.getValueExpression(ctx, ITransferObject.class);
+		}
+		return null;
+	}
+
+	private ValueExpression getIdExpression( FaceletContext ctx ) {
+		if ( propertyIdTag != null ) {
+			return propertyIdTag.getValueExpression(ctx, Serializable.class);	
+		}
+		return null;
+	}
+	
+	public static ITransferObject getTo( ELContext ctx, ValueExpression toVE, ValueExpression idVE, BasicController controller ) {
+		ITransferObject to = null;
+		if ( toVE != null ) {
+			to = (ITransferObject) toVE.getValue(ctx);
+		} else if ( idVE != null ) {
+			Serializable id = (Serializable) idVE.getValue(ctx);
+			if ( id != null ) {
+				try {
+					to = controller.getManagerBean().get(id);
+				} catch (ManagerBeanException e) {
+					LOGGER.warn( "No ITransferObject for id " + id, e);
+				}
+			}
+		}
+		return to;
+	}
+	
+	private ITransferObject getTo( FaceletContext ctx ) {
+		return getTo(ctx, getToExpression(ctx), getIdExpression(ctx), getController(ctx));
 	}
 	
 	/**
@@ -82,7 +127,8 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 			MethodExpression me = actionListenerTag.getMethodExpression(ctx, null, FaceletUtil.ACTION_LISTENER_SIG);
 			gtal.setActionListener( me );
 		} else {
-			gtal.setToExpression( getTo(ctx) );
+			gtal.setToExpression( getToExpression(ctx) );
+			gtal.setIdExpression( getIdExpression(ctx) );
 		}
 		String backAction = null;
 		TagAttribute backActionTag = getAttribute(BACK_ACTION);
@@ -103,8 +149,11 @@ public class GoToButtonHandler extends AonAjaxComponentHandler implements IRichF
 	}
 
 	private boolean isResolved( FaceletContext ctx ) {
-		Object to = getTo(ctx).getValue(ctx);
-		return RichLookupBean.isResolved( (ITransferObject) to );
+		Object to = getTo(ctx);
+		if ( to != null ) {
+			return RichLookupBean.isResolved( (ITransferObject) to );	
+		}
+		return false;
 	}	
 	
 	@Override

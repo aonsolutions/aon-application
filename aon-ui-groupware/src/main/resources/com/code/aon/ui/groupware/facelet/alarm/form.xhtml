@@ -33,44 +33,8 @@
 			</ui:decorate>		
 
 			<aon:div styleClass="aon-scroll-area">
-
-				<aon:panelGrid columns="2">
-
-					<aon:outputLabel for="Alarm_alarmDate"
-						value="#{bundle.aon_date}" />
-					<aon:outputText id="Alarm_alarmDate" value="#{alarm.to.alarmDate}">
-						<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>
-
-					<c:if test="#{alarm.sender != null}" >
-						<aon:outputLabel for="Alarm_Sender"
-							value="#{groupwareBundle.groupware_sender}" />
-						<aon:outputText id="Alarm_Sender" value="#{alarm.sender}" />
-					</c:if>
-
-					<aon:outputLabel for="Alarm_delayTime"
-						value="#{groupwareBundle.alarm_delay_time}" />
-					<aon:selectOneMenu id="Alarm_delayTime"
-						value="#{alarm.delayTime}">
-						<f:selectItems value="#{groupWareCollections.delayTimes}" />
-					</aon:selectOneMenu>
-					
-					<aon:outputLabel for="Alarm_priority"
-						value="#{groupwareBundle.alarm_priority}" />
-					<aon:outputText id="Alarm_priority" value="#{alarm.to.priority}"/>
-					
-					<aon:outputLabel for="Alarm_status"
-						value="#{bundle.aon_status}" />
-					<aon:outputText id="Alarm_status" value="#{alarm.to.status}"/>
-
-					<aon:outputLabel for="Alarm_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputTextarea id="Alarm_description"
-						cols="60" rows="7" 
-						value="#{alarm.to.description}" />
-
-				</aon:panelGrid>
+			
+				<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/formContent.xhtml" />
 
 			</aon:div>
 

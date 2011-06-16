@@ -20,6 +20,8 @@ public class GoToActionListener implements ActionListener, StateHolder {
 	
 	private ValueExpression toExpression;
 	
+	private ValueExpression idExpression;
+	
 	private MethodExpression actionListener;
 	
 	private String backAction;
@@ -50,6 +52,14 @@ public class GoToActionListener implements ActionListener, StateHolder {
 	public void setToExpression(ValueExpression toExpression) {
 		this.toExpression = toExpression;
 	}
+	
+	public ValueExpression getIdExpression() {
+		return idExpression;
+	}
+
+	public void setIdExpression(ValueExpression idExpression) {
+		this.idExpression = idExpression;
+	}
 
 	public String getBackAction() {
 		return backAction;
@@ -75,7 +85,7 @@ public class GoToActionListener implements ActionListener, StateHolder {
 		if ( actionListener != null ) {
 			actionListener.invoke(ctx.getELContext(), new Object[] {event} );
 		} else {
-			ITransferObject to = (ITransferObject) toExpression.getValue(ctx.getELContext());
+			ITransferObject to = GoToButtonHandler.getTo(ctx.getELContext(), toExpression, idExpression, controller);
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(to.getClass());
 				controller.select(event, bean.getId(to));
@@ -87,7 +97,7 @@ public class GoToActionListener implements ActionListener, StateHolder {
 
     public Object saveState(FacesContext context) {
         return new Object[] { controller, toExpression, actionListener,
-        		backAction, backActionListener };
+        		backAction, backActionListener, idExpression };
     }
 
     public void restoreState(FacesContext context, Object state) {
@@ -97,6 +107,7 @@ public class GoToActionListener implements ActionListener, StateHolder {
         actionListener = (MethodExpression) _state[2];
         backAction = (String) _state[3];
         backActionListener = (String) _state[4];
+        idExpression = (ValueExpression) _state[5];
     }
 
     public boolean isTransient() {

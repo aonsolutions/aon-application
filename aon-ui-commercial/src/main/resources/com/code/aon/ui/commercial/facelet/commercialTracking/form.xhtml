@@ -15,10 +15,19 @@
 
 		<aon:form id="commercialTrackingForm">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_tracking_module}" />
 				<ui:param name="controller" value="#{commercialTracking}" />
-			</ui:include>
+				<ui:define name="beforeSpinToolbarContent" >				
+					<aon:commandButton id="alarm"
+						rendered="#{!formNew and controller.backActionListener == null}"
+						value="#{groupwareBundle.groupware_alarm_new}"
+						reRender="newAlarmWindow" immediate="true"
+						actionListener="#{commercialTracking.onNewAlarm}"
+						styleClass="aon-finding-toolbar-item aon-icon-alarms" >
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div rendered="#{!commercialTracking.new}"
 				styleClass="aon-float-right aon-margin-right aon-margin-top aon-margin-bottom">
@@ -214,6 +223,7 @@
 		<aon:lookupButtonPopup lookup="#{offerLookup}" />
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+		<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/newAlarm.xhtml" />
 	</ui:define>
 </ui:composition>
 

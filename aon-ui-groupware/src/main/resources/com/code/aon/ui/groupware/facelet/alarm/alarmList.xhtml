@@ -14,32 +14,41 @@
 		<aon:dataTable
 			value="#{alarmListModel}" var="to" columns="3"
 			columnClasses="aon-table-portlet-column" rowClasses="aon-table-portlet-row"
-			styleClass="aon-table-portlet" >
+			styleClass="aon-width-all aon-table-portlet" >
 
 			<aon:rowSelector action="alarm_form"
 				actionListener="#{alarmListRowSelectorActionListener}"/>	
 										
 			<aon:column styleClass="aon-width-30">
-				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-call.png']}" rendered="#{to.call}"/>
-				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-visit.png']}" rendered="#{to.visit}"/>
-				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-message.png']}" rendered="#{to.message}"/>
-				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-info.png']}" rendered="#{to.communication}"/>
-				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-high-prty.png']}" rendered="#{to.highPriority}"/>
-				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-medium-prty.png']}" rendered="#{to.mediumPriority}"/>
-				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-low-prty.png']}" rendered="#{to.lowPriority}"/>
-				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-task-assume.png']}" rendered="#{to.fromTask}"/>
-				<h:graphicImage url="#{aonResource.resolve['/images/aon-icon/aon-icon-esferalia.png']}" rendered="#{to.fromExternal}"/>
+				<h:graphicImage rendered="#{to.call}"
+					url="#{aonResource.resolve['/images/aon-icon/aon-icon-call.png']}" />
+				<h:graphicImage rendered="#{to.visit}"
+					url="#{aonResource.resolve['/images/aon-icon/aon-icon-visit.png']}" />
+				<h:graphicImage rendered="#{to.message}"
+					url="#{aonResource.resolve['/images/aon-icon/aon-icon-message.png']}" />
+				<h:graphicImage rendered="#{to.communication or to.commercialTracking or to.callCenter}"
+					url="#{aonResource.resolve['/images/aon-icon/aon-icon-info.png']}" />
+				<h:graphicImage rendered="#{to.highPriority}"
+					url="#{aonResource.resolve['/images/aon-icon/aon-icon-high-prty.png']}" />
+				<h:graphicImage rendered="#{to.mediumPriority}"
+					url="#{aonResource.resolve['/images/aon-icon/aon-icon-medium-prty.png']}" />
+				<h:graphicImage rendered="#{to.lowPriority}"
+					url="#{aonResource.resolve['/images/aon-icon/aon-icon-low-prty.png']}" />
+				<h:graphicImage rendered="#{to.fromTask}"
+					url="#{aonResource.resolve['/images/aon-icon/aon-icon-task-assume.png']}" />
+				<h:graphicImage rendered="#{to.fromExternal}"
+					url="#{aonResource.resolve['/images/aon-icon/aon-icon-esferalia.png']}" />
 			</aon:column>
 			
-			<aon:column styleClass="aon-width-70">
-				<aon:outputText value="#{to.alarmDate}" styleClass="aon-bold">
+			<aon:column styleClass="aon-width-70 #{to.pending?'aon-bold aon-italic':''}">
+				<aon:outputText value="#{to.alarmDate}">
 					<f:convertDateTime pattern="#{bundle.aon_time_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 			</aon:column>
 
-			<aon:column styleClass="aon-nowrap">
-				<aon:outputText value="#{to.description}" >
+			<aon:column styleClass="aon-nowrap #{to.pending?'aon-bold aon-italic':''}">
+				<aon:outputText value="#{to.description}">
 					<aon:abbreviateConverter maxWidth="#{alarmDescriptionWidth}" />
 				</aon:outputText>
 			</aon:column>

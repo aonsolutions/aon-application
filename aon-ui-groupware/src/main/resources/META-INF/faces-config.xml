@@ -38,9 +38,23 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>alarm</value>
-		</managed-property>		
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{alarmControllerListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
-
+	
+	<managed-bean>
+		<managed-bean-name>alarmControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.groupware.event.AlarmControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- ************* NOTE ***************** -->
 	<managed-bean>
@@ -63,7 +77,7 @@
 		</managed-property>				
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Note_date</value>
+			<value>Note_date desc</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultExpressions</property-name>

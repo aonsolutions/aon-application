@@ -2289,6 +2289,13 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
  	padding:2px 6px 1px 10px;
 	background:transparent url(images/aon-main-menu/aon-icon-home.png) no-repeat scroll center left;
 }
+.aon-icon-alarm-pending{
+	padding-left: 8px;
+	cursor:pointer;
+ 	display:block;
+ 	padding:2px 6px 1px 10px;
+	background:transparent url(images/aon-main-menu/aon-icon-alarm-pending.png) no-repeat scroll center left;
+}
 .aon-icon-favorites{
 	background:transparent url(images/aon-main-menu/aon-icon-favorites.png) no-repeat scroll center left;
 }
@@ -2435,6 +2442,18 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 }
 .aon-icon-registradores-black{
 	background:transparent url(images/aon-main-menu/aon-icon-registradores-black.png) no-repeat scroll center left;
+}
+.aon-icon-about{
+	background:transparent url(images/aon-main-menu/aon-icon-about.png) no-repeat scroll center left;
+}
+.aon-icon-menu-help{
+	background:transparent url(images/aon-main-menu/aon-icon-menu-help.png) no-repeat scroll center left;
+}
+.aon-icon-sitemap{
+	background:transparent url(images/aon-main-menu/aon-icon-sitemap.png) no-repeat scroll center left;
+}
+.aon-icon-alarm{
+	background:transparent url(images/aon-main-menu/aon-icon-alarm.png) no-repeat scroll center left;
 }
 
 .aon-subTable-green-header{

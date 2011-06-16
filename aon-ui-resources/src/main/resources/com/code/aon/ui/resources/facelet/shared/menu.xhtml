@@ -31,7 +31,8 @@
 	                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
 		                </f:facet>					                
 		                <ui:insert name="beforeHelpMenuContent"/>
-						<aon:menuItem submitMode="none" reRender="aonStatus">
+						<aon:menuItem submitMode="none" reRender="aonStatus"
+							iconClass="aon-icon-menu-help">
 							<h:outputLink style="font-size:1em;"
 								value="#{aonConfiguration.helpURL}"
 								target="_blank" >
@@ -39,6 +40,7 @@
 							</h:outputLink>
 						</aon:menuItem>
 						<aon:menuItem id="about" reRender="aboutWindowPanel"
+							iconClass="aon-icon-about"
 							value="#{bundle.aon_about}" >
 							<f:setPropertyActionListener target="#{aonConfiguration.properties.showAbout}" value="#{true}" />
 						</aon:menuItem>

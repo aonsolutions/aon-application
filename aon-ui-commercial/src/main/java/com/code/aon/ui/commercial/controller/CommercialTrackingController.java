@@ -1,5 +1,7 @@
 package com.code.aon.ui.commercial.controller;
 
+import static com.code.aon.ui.groupware.controller.IGroupWareConstants.ALARM_CONTROLLER_NAME;
+
 import java.util.Collection;
 import java.util.Date;
 
@@ -17,6 +19,8 @@ import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.groupware.Alarm;
+import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.ql.Criteria;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -26,6 +30,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.IControllerListener;
+import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -208,6 +213,16 @@ public class CommercialTrackingController extends BasicController {
 				ct.setSeller(project.getSeller());
 			}
 		}
+	}
+
+	public void onNewAlarm( ActionEvent event ) {
+		AlarmController controller = (AlarmController) AonUtil.getRegisteredBean(ALARM_CONTROLLER_NAME);
+		controller.setShowNewAlarmWindow(true);
+		controller.onReset(event);
+		CommercialTracking ct = (CommercialTracking) getTo();
+		Alarm alarm = (Alarm) controller.getTo();
+		alarm.setSource(AlarmSource.COMMERCIAL_TRACKING);
+		alarm.setSourceId(ct.getId());
 	}
 	
 }

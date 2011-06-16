@@ -1,5 +1,8 @@
 package com.code.aon.ui.groupware.controller;
 
+import static com.code.aon.ui.groupware.controller.IGroupWareConstants.ALARM_PENDING;
+import static com.code.aon.ui.groupware.controller.IGroupWareConstants.BUNDLE_NAME;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -21,12 +24,14 @@ import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.DelayTime;
+import com.code.aon.groupware.enumeration.Priority;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class AlarmController extends BasicController {
 	
@@ -42,8 +47,13 @@ public class AlarmController extends BasicController {
 
 	private User user;
 	
+	private boolean showNewAlarmWindow;
+	
+	private int pendingCount;
+	
 	public AlarmController() {
 		this.user = UserUtils.getInstance().getLoggedUser();
+		updatePendingCount();
 	}
 
 	public DelayTime getDelayTime() {
@@ -53,12 +63,6 @@ public class AlarmController extends BasicController {
 	public void setDelayTime(DelayTime delayTime) {
 		this.delayTime = delayTime;
 	}
-
-	@Override
-	public void onSelect(ActionEvent event) {
-		setDelayTime(null);
-		super.onSelect(event);
-	}
 	
 	public void onDelayAlarm(ActionEvent event) throws ControllerListenerException {
 		if (getDelayTime() != null) {
@@ -66,7 +70,7 @@ public class AlarmController extends BasicController {
 			try {
 				alarm.setAlarmDate(obtainNewDate());
 				alarm.setUser(user);
-				alarm.setStatus(AlarmStatus.READ);
+				alarm.setStatus(AlarmStatus.PENDING);
 				getManagerBean().update(alarm);
 			} catch (ManagerBeanException e) {
 				LOGGER.error("Error updating alarm with id=" + alarm.getId(), e);
@@ -100,13 +104,16 @@ public class AlarmController extends BasicController {
 		return null;
 	}
 	
-    private List<ITransferObject> getAlarmList(Date from, Date to) throws ManagerBeanException {
-    	IManagerBean bean = BeanManager.getManagerBean(Alarm.class);
+	private Criteria getCriteria(IManagerBean bean, Date from, Date to, boolean onlyPending) throws ManagerBeanException {
     	Criteria criteria = new Criteria();
     	String statusAlias = bean.getFieldName(IGroupWareAlias.ALARM_STATUS);
     	Expression expr1 = ExpressionUtilities.getEqualExpression(statusAlias, AlarmStatus.PENDING);
-    	Expression expr2 = ExpressionUtilities.getEqualExpression(statusAlias, AlarmStatus.READ);
-    	criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+    	if ( onlyPending ) {
+    		criteria.addExpression(expr1);
+    	} else {
+        	Expression expr2 = ExpressionUtilities.getEqualExpression(statusAlias, AlarmStatus.READ);
+        	criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));    		
+    	}
     	String userAlias = bean.getFieldName(IGroupWareAlias.ALARM_USER_ID);
     	criteria.addEqualExpression(userAlias, UserUtils.getInstance().getLoggedUser().getId());
     	String dateAlias = bean.getFieldName(IGroupWareAlias.ALARM_ALARM_DATE);
@@ -114,7 +121,15 @@ public class AlarmController extends BasicController {
         	criteria.addGreaterThanOrEqualExpression(dateAlias, from);	
     	}
     	criteria.addLessThanOrEqualExpression(dateAlias, to);
-    	criteria.addOrder(dateAlias, false);
+    	if (! onlyPending ) {
+        	criteria.addOrder(dateAlias, false);	
+    	}
+    	return criteria;
+	}
+	
+    private List<ITransferObject> getAlarmList(Date from, Date to) throws ManagerBeanException {
+    	IManagerBean bean = BeanManager.getManagerBean(Alarm.class);
+    	Criteria criteria = getCriteria(bean, from, to, false);
     	return bean.getList(criteria);
     }	
     
@@ -206,4 +221,41 @@ public class AlarmController extends BasicController {
         }
     }
     
+    public boolean isShowNewAlarmWindow() {
+		return showNewAlarmWindow;
+	}
+
+	public void setShowNewAlarmWindow(boolean showNewAlarmWindow) {
+		this.showNewAlarmWindow = showNewAlarmWindow;
+	}
+
+	public void initAlarm() {
+		Alarm alarm = (Alarm)this.getTo();
+		alarm.setStatus(AlarmStatus.PENDING);
+		alarm.setPriority(Priority.NONE);
+		alarm.setUser(user);
+    }
+
+	public int getPendingCount() {
+		return pendingCount;
+	}
+	
+	public String getPendingAlarmTitle() {
+		return AonUtil.getMessage(BUNDLE_NAME, ALARM_PENDING, pendingCount);
+	}
+
+	public void onRefresh( ActionEvent event ) {
+		updatePendingCount();
+	}
+	
+	public void updatePendingCount() {
+		try {		
+	    	IManagerBean bean = BeanManager.getManagerBean(Alarm.class);
+	    	Criteria criteria = getCriteria(bean, null, new Date(), true);
+	    	pendingCount = bean.getCount(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+	}
+	
 }
