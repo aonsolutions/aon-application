@@ -31,6 +31,7 @@ public class CustomerFeeControllerListener extends ControllerAdapter {
 		CustomerFee customerFee = (CustomerFee)controller.getTo();
 		customerFee.setQuantity(1.0);
 		customerFee.setInitialDate(CommonUtil.getDate(CommonUtil.getYear(new Date()), CommonUtil.getMonth(new Date()), 1));
+		customerFee.setBillingDate(customerFee.getInitialDate());
 		customerFee.setSecurityLevel(SecurityLevel.OFFICIAL);
 
 		controller.setLongDescription(false);

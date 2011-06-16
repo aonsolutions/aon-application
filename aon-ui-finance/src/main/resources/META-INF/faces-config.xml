@@ -1185,6 +1185,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{customerFeeControllerListener}</value>
+				<value>#{customerFeeCompositeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1193,6 +1194,14 @@
 		<managed-bean-name>customerFeeControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.finance.event.CustomerFeeControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>customerFeeCompositeListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.CustomerFeeCompositeListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
