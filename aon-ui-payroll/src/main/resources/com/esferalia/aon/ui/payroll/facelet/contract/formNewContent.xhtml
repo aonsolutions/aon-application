@@ -27,8 +27,9 @@
 			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.enterprise}" />
 				<ui:param name="skipNewButton" value="#{true}" />
-				<aon:methodParam name="lookupChangeListener" value="#{contract.onEnterpriseChanged}" type="lookupChangeListener" />
-				<ui:param name="lookup_reRender" value="workPlace" />
+				<ui:param name="lookupReRender" value="workPlace,enterpriseActivities,enterpriseCCCs" />
+				<aon:methodParam name="lookupChangeListener" 
+					value="#{contract.onEnterpriseChanged}" type="lookupChangeListener" />
 			</ui:include>
 			
 			<aon:outputLabel for="workPlace" styleClass="aon-italic aon-margin-left"
@@ -36,7 +37,6 @@
 			<aon:selectOneMenu id="workPlace" required="true"
 				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
 				value="#{contract.to.workPlace}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contract.workPlaces}" />
 			</aon:selectOneMenu>
 			
@@ -45,7 +45,6 @@
 			<aon:selectOneMenu id="enterpriseActivities"
 				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
 				value="#{contract.to.activity}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contract.activities}" />
 				<a4j:support event="onchange" actionListener="#{contract.onActivityChanged}" ajaxSingle="true" reRender="enterpriseCCCs"/>
 			</aon:selectOneMenu>
@@ -55,7 +54,6 @@
 			<aon:selectOneMenu id="enterpriseCCCs"
 				disabled="#{contract.to.activity==null or contract.to.activity.id==null}"
 				value="#{contract.to.enterpriseCCC}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{contract.enterpriseCCCs}" />
 			</aon:selectOneMenu>
 			

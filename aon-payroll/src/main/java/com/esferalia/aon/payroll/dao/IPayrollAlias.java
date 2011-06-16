@@ -26,6 +26,8 @@ import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.EnterpriseAgreement;
+import com.code.aon.company.EnterpriseCCC;
+import com.code.aon.company.EnterpriseActivity;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PaymentConcept;
@@ -1333,6 +1335,86 @@ public interface IPayrollAlias {
 	* Hibernate value: EnterpriseAgreement.id
 	*/
 	String  ENTERPRISE_AGREEMENT_ID = ENTERPRISE_AGREEMENT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for EnterpriseCCC entity.
+	*/ 
+	DAOConstantsEntry ENTERPRISE_CCC_ENTRY = DAOConstants.getDAOConstant(EnterpriseCCC.class);
+
+	/** 
+	* Alias value: EnterpriseCCC_activity_id
+	* Hibernate value: EnterpriseCCC.activity.id
+	*/
+	String  ENTERPRISE_CCC_ACTIVITY_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: EnterpriseCCC_ccc
+	* Hibernate value: EnterpriseCCC.ccc
+	*/
+	String  ENTERPRISE_CCC_CCC = ENTERPRISE_CCC_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: EnterpriseCCC_geozone_id
+	* Hibernate value: EnterpriseCCC.geozone.id
+	*/
+	String  ENTERPRISE_CCC_GEOZONE_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: EnterpriseCCC_id
+	* Hibernate value: EnterpriseCCC.id
+	*/
+	String  ENTERPRISE_CCC_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: EnterpriseCCC_type
+	* Hibernate value: EnterpriseCCC.type
+	*/
+	String  ENTERPRISE_CCC_TYPE = ENTERPRISE_CCC_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: EnterpriseCCC_activity_enterprise_id
+	* Hibernate value: EnterpriseCCC.activity.enterprise.id
+	*/
+	String  ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID = ENTERPRISE_CCC_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for EnterpriseActivity entity.
+	*/ 
+	DAOConstantsEntry ENTERPRISE_ACTIVITY_ENTRY = DAOConstants.getDAOConstant(EnterpriseActivity.class);
+
+	/** 
+	* Alias value: EnterpriseActivity_cnae_id
+	* Hibernate value: EnterpriseActivity.cnae.id
+	*/
+	String  ENTERPRISE_ACTIVITY_CNAE_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: EnterpriseActivity_description
+	* Hibernate value: EnterpriseActivity.description
+	*/
+	String  ENTERPRISE_ACTIVITY_DESCRIPTION = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: EnterpriseActivity_enterprise_id
+	* Hibernate value: EnterpriseActivity.enterprise.id
+	*/
+	String  ENTERPRISE_ACTIVITY_ENTERPRISE_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: EnterpriseActivity_id
+	* Hibernate value: EnterpriseActivity.id
+	*/
+	String  ENTERPRISE_ACTIVITY_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: EnterpriseActivity_type
+	* Hibernate value: EnterpriseActivity.type
+	*/
+	String  ENTERPRISE_ACTIVITY_TYPE = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[4];
 
 
 

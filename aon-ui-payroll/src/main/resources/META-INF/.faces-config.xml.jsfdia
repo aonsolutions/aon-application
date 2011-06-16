@@ -411,6 +411,28 @@
  <PROCESS-ITEM NAME="rules::24" SHAPE="32,6737,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::24" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
+    ID="settle_search::#com#esferalia#aon#ui#payroll#facelet#settle#search.xhtml"
+    NAME="output"
+    PATH="/com/esferalia/aon/ui/payroll/facelet/settle/search.xhtml"
+    TARGET="rules:#com#esferalia#aon#ui#payroll#facelet#settle#search.xhtml"
+    TITLE="settle_search" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="settle_list::#com#esferalia#aon#ui#payroll#facelet#settle#list.xhtml"
+    NAME="output1"
+    PATH="/com/esferalia/aon/ui/payroll/facelet/settle/list.xhtml"
+    TARGET="rules:#com#esferalia#aon#ui#payroll#facelet#settle#list.xhtml"
+    TITLE="settle_list" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="settle_form::#com#esferalia#aon#ui#payroll#facelet#settle#form.xhtml"
+    NAME="output2"
+    PATH="/com/esferalia/aon/ui/payroll/facelet/settle/form.xhtml"
+    TARGET="rules:#com#esferalia#aon#ui#payroll#facelet#settle#form.xhtml"
+    TITLE="settle_form" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::25" SHAPE="32,7425,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::25" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
     ID="leaveBatchWizard_step0::#com#esferalia#aon#ui#payroll#facelet#leaveBatch#step0.xhtml"
     NAME="output"
     PATH="/com/esferalia/aon/ui/payroll/facelet/leaveBatch/step0.xhtml"
@@ -442,8 +464,8 @@
     TITLE="leaveBatchWizard_step4" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::25" SHAPE="32,7425,0,0" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules::25" NAME="item" model-entity="JSFProcessItem">
+ <PROCESS-ITEM NAME="rules::26" SHAPE="32,7825,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::26" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
     ID="certifica2BatchWizard_step0::#com#esferalia#aon#ui#payroll#facelet#certifica2Batch#step0.xhtml"
     NAME="output"
@@ -464,8 +486,8 @@
     TITLE="certifica2BatchWizard_step2" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::26" SHAPE="32,7825,0,0" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules::26" NAME="item" model-entity="JSFProcessItem">
+ <PROCESS-ITEM NAME="rules::27" SHAPE="32,8369,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::27" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
     ID="certifica2FileWizard_step0::#com#esferalia#aon#ui#payroll#facelet#certifica2File#step0.xhtml"
     NAME="output"
@@ -492,8 +514,8 @@
     TITLE="certifica2FileWizard_step3" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::27" SHAPE="32,8369,0,0" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules::27" NAME="item" model-entity="JSFProcessItem">
+ <PROCESS-ITEM NAME="rules::28" SHAPE="32,9345,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::28" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
     ID="contractGenerationWizard_search::#com#esferalia#aon#ui#payroll#facelet#contractGeneration#search.xhtml"
     NAME="output"
@@ -538,8 +560,8 @@
     TITLE="contractPdf_form" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::28" SHAPE="32,9345,0,0" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules::28" NAME="item" model-entity="JSFProcessItem">
+ <PROCESS-ITEM NAME="rules::29" SHAPE="32,10177,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::29" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
     ID="contractGenerationWizard_step0::#com#esferalia#aon#ui#payroll#facelet#contractGeneration#step0.xhtml"
     NAME="output"
@@ -578,8 +600,24 @@
     TITLE="contractGenerationWizard_step5" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::29" SHAPE="32,10177,0,0" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules::29" NAME="item" model-entity="JSFProcessItem">
+ <PROCESS-ITEM NAME="rules::30" SHAPE="32,10721,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::30" NAME="item" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="fanBatchWizard_step0::#com#esferalia#aon#ui#payroll#facelet#fanBatch#step0.xhtml"
+    NAME="output"
+    PATH="/com/esferalia/aon/ui/payroll/facelet/fanBatch/step0.xhtml"
+    TARGET="rules:#com#esferalia#aon#ui#payroll#facelet#fanBatch#step0.xhtml"
+    TITLE="fanBatchWizard_step0" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="fanBatchWizard_step1::#com#esferalia#aon#ui#payroll#facelet#fanBatch#step1.xhtml"
+    NAME="output1"
+    PATH="/com/esferalia/aon/ui/payroll/facelet/fanBatch/step1.xhtml"
+    TARGET="rules:#com#esferalia#aon#ui#payroll#facelet#fanBatch#step1.xhtml"
+    TITLE="fanBatchWizard_step1" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules::31" SHAPE="32,12577,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::31" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
     ID="contractBatchWizard_step0::#com#esferalia#aon#ui#payroll#facelet#contractBatch#step0.xhtml"
     NAME="output"
@@ -606,8 +644,8 @@
     TITLE="contractBatchWizard_step3" model-entity="JSFProcessItemOutput"/>
   </PROCESS-ITEM>
  </PROCESS-ITEM>
- <PROCESS-ITEM NAME="rules::30" SHAPE="32,10721,0,0" model-entity="JSFProcessGroup">
-  <PROCESS-ITEM ID="rules::30" NAME="item" model-entity="JSFProcessItem">
+ <PROCESS-ITEM NAME="rules::32" SHAPE="32,14465,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules::32" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
     ID="cno_grid::#com#esferalia#aon#ui#payroll#facelet#cno#grid.xhtml"
     NAME="output"
@@ -767,6 +805,10 @@
   PATH="/com/esferalia/aon/ui/payroll/facelet/agreement/treeContent.xhtml"
   SHAPE="288,465,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
+  NAME="rules:#com#esferalia#aon#ui#payroll#facelet#fanBatch#step0.xhtml"
+  PATH="/com/esferalia/aon/ui/payroll/facelet/fanBatch/step0.xhtml"
+  SHAPE="240,12385,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
   NAME="rules:#com#esferalia#aon#ui#payroll#facelet#deductionConcept#form.xhtml"
   PATH="/com/esferalia/aon/ui/payroll/facelet/deductionConcept/form.xhtml"
   SHAPE="272,4961,0,0" model-entity="JSFProcessGroup"/>
@@ -782,6 +824,10 @@
   NAME="rules:#com#esferalia#aon#ui#payroll#facelet#certifica2Batch#step0.xhtml"
   PATH="/com/esferalia/aon/ui/payroll/facelet/certifica2Batch/step0.xhtml"
   SHAPE="272,7441,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#esferalia#aon#ui#payroll#facelet#settle#search.xhtml"
+  PATH="/com/esferalia/aon/ui/payroll/facelet/settle/search.xhtml"
+  SHAPE="272,7825,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#com#esferalia#aon#ui#payroll#facelet#salary#list.xhtml"
   PATH="/com/esferalia/aon/ui/payroll/facelet/salary/list.xhtml"
@@ -851,6 +897,10 @@
   PATH="/com/esferalia/aon/ui/payroll/facelet/certifica2File/step1.xhtml"
   SHAPE="288,8049,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
+  NAME="rules:#com#esferalia#aon#ui#payroll#facelet#settle#list.xhtml"
+  PATH="/com/esferalia/aon/ui/payroll/facelet/settle/list.xhtml"
+  SHAPE="272,8625,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
   NAME="rules:#com#esferalia#aon#ui#payroll#facelet#systemDeduction#search.xhtml"
   PATH="/com/esferalia/aon/ui/payroll/facelet/systemDeduction/search.xhtml"
   SHAPE="272,3473,0,0" model-entity="JSFProcessGroup"/>
@@ -866,6 +916,10 @@
   NAME="rules:#com#esferalia#aon#ui#payroll#facelet#contractGeneration#step1.xhtml"
   PATH="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step1.xhtml"
   SHAPE="304,9633,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#esferalia#aon#ui#payroll#facelet#settle#form.xhtml"
+  PATH="/com/esferalia/aon/ui/payroll/facelet/settle/form.xhtml"
+  SHAPE="272,9681,0,0" model-entity="JSFProcessGroup"/>
  <PROCESS-ITEM
   NAME="rules:#com#esferalia#aon#ui#payroll#facelet#contractGeneration#step4.xhtml"
   PATH="/com/esferalia/aon/ui/payroll/facelet/contractGeneration/step4.xhtml"
@@ -954,4 +1008,8 @@
   NAME="rules:#com#esferalia#aon#ui#payroll#facelet#contract#payment#list.xhtml"
   PATH="/com/esferalia/aon/ui/payroll/facelet/contract/payment/list.xhtml"
   SHAPE="240,1233,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#com#esferalia#aon#ui#payroll#facelet#fanBatch#step1.xhtml"
+  PATH="/com/esferalia/aon/ui/payroll/facelet/fanBatch/step1.xhtml"
+  SHAPE="256,12417,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>

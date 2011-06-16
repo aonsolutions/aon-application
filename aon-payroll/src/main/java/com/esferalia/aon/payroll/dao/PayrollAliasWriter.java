@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.company.EnterpriseActivity;
+import com.code.aon.company.EnterpriseCCC;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
@@ -79,6 +81,8 @@ public class PayrollAliasWriter {
 				ContractPayment.class.getName(),
 				DeductionConcept.class.getName(),
 				EnterpriseAgreement.class.getName(),
+				EnterpriseCCC.class.getName(),
+				EnterpriseActivity.class.getName(),
 				LeaveBatch.class.getName(),
 				LeaveBatchDetail.class.getName(),
 				PaymentConcept.class.getName(),

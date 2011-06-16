@@ -244,8 +244,10 @@ public class ContractController extends BasicController {
 		} else {
 			setEnterprise(null);
 		}
-//		setActivities(null);
-//		setWorkPlaces(null);
+		
+		setActivities(null);
+		setWorkPlaces(null);
+		setEnterpriseCCCs(null);
 	}
 	
 	public void onActivityChanged( ActionEvent event ) {
@@ -253,9 +255,10 @@ public class ContractController extends BasicController {
 	}
 
 	private void loadWorkPlaces() {
-		setWorkPlaces(null);
+		setWorkPlaces(new LinkedList<SelectItem>());
+		Contract contract = (Contract) getTo();
+		contract.setWorkPlace(null);
 		if (getEnterprise() != null) {
-			setWorkPlaces(new LinkedList<SelectItem>());
 			try {
 				IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
 				Criteria criteria = new Criteria();
@@ -267,6 +270,9 @@ public class ContractController extends BasicController {
 					SelectItem item = new SelectItem(w, name);
 					getWorkPlaces().add(item);
 				}
+				if ( list.size() > 0 ) {
+					contract.setWorkPlace((WorkPlace)list.get(0));
+				}
 			} catch (ManagerBeanException e) {
 				String msg = "Imposible cargar los Centros de Trabajo de la empresa. (" + e.getMessage() +")";
 				LOGGER.error(msg);
@@ -277,9 +283,10 @@ public class ContractController extends BasicController {
 	}
 
 	private void loadActivities() {
-		setActivities(null);
+		setActivities( new LinkedList<SelectItem>());
+		Contract contract = (Contract) getTo();
+		contract.setActivity(null);
 		if (getEnterprise() != null) {
-			setActivities( new LinkedList<SelectItem>());
 			try {
 				IManagerBean ecBean = BeanManager.getManagerBean(EnterpriseActivity.class);
 				Criteria criteria = new Criteria();
@@ -291,6 +298,10 @@ public class ContractController extends BasicController {
 					SelectItem item = new SelectItem(ea, name);
 					getActivities().add(item);
 				}
+				if ( ecList.size() > 0 ) {
+					contract.setActivity((EnterpriseActivity)ecList.get(0));
+				}
+				
 			} catch (ManagerBeanException e) {
 				String msg = "Imposible cargar las Actividades de la empresa. (" + e.getMessage() +")";
 				LOGGER.error(msg);
@@ -302,12 +313,13 @@ public class ContractController extends BasicController {
 
 	private void loadEnterpriseCCCs() {
 		setEnterpriseCCCs( new LinkedList<SelectItem>());
-		Contract c = (Contract) getTo();
-		if (c.getActivity() != null && c.getActivity().getId() != null) {
+		Contract contract = (Contract) getTo();
+		contract.setEnterpriseCCC(null);
+		if (contract.getActivity() != null && contract.getActivity().getId() != null) {
 			try {
 				IManagerBean ecBean = BeanManager.getManagerBean(EnterpriseCCC.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(ecBean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ID), c.getActivity().getId());
+				criteria.addEqualExpression(ecBean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ID), contract.getActivity().getId());
 				List<ITransferObject> ecList = ecBean.getList(criteria);
 				for(ITransferObject to: ecList){
 					EnterpriseCCC ccc = (EnterpriseCCC) to;
@@ -315,6 +327,10 @@ public class ContractController extends BasicController {
 					SelectItem item = new SelectItem(ccc, name);
 					getEnterpriseCCCs().add(item);
 				}
+				if ( ecList.size() > 0 ) {
+					contract.setEnterpriseCCC((EnterpriseCCC)ecList.get(0));
+				}
+				
 			} catch (ManagerBeanException e) {
 				String msg = "Imposible cargar los CCC de la empresa. (" + e.getMessage() +")";
 				LOGGER.error(msg);

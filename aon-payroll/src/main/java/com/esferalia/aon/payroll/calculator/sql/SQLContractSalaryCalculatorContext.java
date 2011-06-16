@@ -77,15 +77,13 @@ public class SQLContractSalaryCalculatorContext implements
 		+", workplace"
 		+", enterprise"
 		+", registry AS " + ENTERPRISE_REGISTRY
-		+", customer"
+		+" LEFT JOIN customer ON (customer.registry = " + ENTERPRISE_REGISTRY + ".id)"
 		+", raddress"
 		+" WHERE contract.person = person.registry"				// INNER JOIN: person es NOT NULL
 		+" AND person.registry = person_registry.id"			// INNER JOIN: registry es NOT NULL
 		+" AND contract.workplace = workplace.id"				// INNER JOIN: workplace es NOT NULL
 		+" AND workplace.enterprise = enterprise.registry"		// INNER JOIN: enterprise es NOT NULL
 		+" AND enterprise.registry = enterprise_registry.id"	// INNER JOIN: registry es NOT NULL
-		+" AND enterprise.registry = enterprise_registry.id"	// INNER JOIN: registry es NOT NULL
-		+" AND customer.registry = enterprise_registry.id"		// INNER JOIN: registry es NOT NULL
 		+" AND workplace.address = raddress.id"					// INNER JOIN: address es NOT NULL
 		+" AND contract.start_date <= ? "					 
 		+" AND ( contract.end_date  IS NULL"

@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<aon:column alias="EnterpriseCCC.ccc"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{companyBundle.company_enterprise_ccc}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.enterpriseCCC.ccc}"/>
+		</aon:div>
+	</aon:column>
+
+			
+	<aon:column alias="EnterpriseCCC.type"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.enterpriseCCC.type}"/>
+		</aon:div>
+	</aon:column>
+
+        <aon:column alias="EnterpriseCCC.activity.description"
+		styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{companyBundle.company_activity}" />
+		</f:facet>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.enterpriseCCC.activity.description}"/>
+		</aon:div>
+	</aon:column>
+	
+        <aon:column alias="EnterpriseCCC.activity.enterprise.registry.surname,EnterpriseCC.activity.enterprise.registry.name"
+                styleClass="aon-editDataTable-textColumn">
+                <f:facet name="header">
+                        <aon:outputText value="#{companyBundle.company_enterprise}" />
+                </f:facet>
+                <aon:div styleClass="aon-nowrap">
+                        <aon:outputText value="#{to.enterpriseCCC.activity.enterprise.registry.fullName}"/>
+                </aon:div>
+        </aon:column>
+
+
+</ui:composition>

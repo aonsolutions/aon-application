@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/esferalia/aon/ui/payroll/facelet/fanBatch/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{payrollBundle.fanBatch_step0}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+		<aon:methodParam name="searchAction" value="fanBatchWizard_step1" />
+		<aon:methodParam name="searchActionListener" value="#{fanBatchWizard.onNext}" type="actionListener" />
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+			<ui:param name="controller" value="#{contract}" />
+			<ui:define name="searchContent">
+				
+				<!-- ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{enterpriseCCCSearch.customer}" />
+					<ui:param name="skipNewButton" value="#{true}" />
+				</ui:include -->
+			
+				<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{enterpriseCCCSearch.enterprise}" />
+					<ui:param name="skipNewButton" value="#{true}" />
+				</ui:include>
+				
+								
+				<aon:outputLabel value="#{payrollBundle.fanBatch_period}" />
+				<h:panelGrid columns="5">
+
+		   			<rich:inputNumberSpinner id="Fan_year" value="#{enterpriseCCCSearch.year}"
+		   				inputSize="4" minValue="2009" maxValue="2020">
+		   			</rich:inputNumberSpinner>
+	
+					<aon:outputLabel for="Fan_month_from" styleClass="aon-form-date-label"
+						value="#{bundle.aon_date_from}:" />
+					<aon:selectOneMenu id="Fan_month_from" value="#{enterpriseCCCSearch.startMonth}" >
+						<f:selectItems value="#{commonCollections.months}"  />
+					</aon:selectOneMenu>
+				
+					<aon:outputLabel for="Fan_month_to" styleClass="aon-form-date-label"
+						value="#{bundle.aon_date_to}:" />
+					<aon:selectOneMenu id="Fan_month_to" value="#{enterpriseCCCSearch.endMonth}" >
+						<f:selectItems value="#{commonCollections.months}"  />
+					</aon:selectOneMenu>
+					
+				</h:panelGrid>
+								
+			</ui:define>
+		</ui:decorate>
+	</ui:define>
+	<ui:define name="after_form">
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+	</ui:define>
+
+</ui:composition>
