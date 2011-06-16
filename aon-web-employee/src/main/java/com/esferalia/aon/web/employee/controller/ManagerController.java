@@ -149,7 +149,7 @@ public class ManagerController implements IPayrollConstants {
 	}
 	
 	private void initEnterprise() {
-		this.homeTemplate = "/com/code/aon/ui/company/facelet/enterprise/formTree.xhtml";
+		this.homeTemplate = "/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/formTree.xhtml";
 		initEnterpriseTree();
 		initSalaryDraft();
 	}

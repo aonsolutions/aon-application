@@ -5,7 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
+	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
 	<ui:define name="content">	
 
@@ -58,6 +58,16 @@
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							action="enterprise_list"
 							accesskey="#{bundle.aon_key_cancel}" />
+<!--  
+						<aon:commandButton id="Contract-select"
+							title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+							value="#{bundle.aon_reset} contrato -i18n-" 
+							reRender="#{contract.beanName}ModalContainer"
+							styleClass="aon-finding-toolbar-item aon-icon-reset" >
+							<aon:actionListener method="#{contract.onReset}" />
+							<aon:actionListener method="#{contract.onShowNewContractModal}" />
+						</aon:commandButton>						
+-->
 					</c:if>										
 					<aon:spin id="enterpriseSpin" controller="#{enterprise}" />
 				</ui:define>				
@@ -122,6 +132,10 @@
 		</aon:form>		
 		
 		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/expenseModal.xhtml" />
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/modalNewContract.xhtml" >
+			<ui:param name="controller" value="#{contract}" />
+		</ui:include>
 	
 		
 	</ui:define>

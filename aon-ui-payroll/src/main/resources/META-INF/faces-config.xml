@@ -1407,6 +1407,10 @@
 			<from-outcome>contractPayment_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/payment/list.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractPayment_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/payment/formTree.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	<!--
 		=================== Contract Deduction ==========================
@@ -1416,12 +1420,20 @@
 			<from-outcome>contractDeduction_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/deduction/list.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractDeduction_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/deduction/formTree.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	<!-- =================== Contract Data ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>contractData_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/data/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractData_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/data/formTree.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== Contract Embargo ========================== -->
@@ -1430,12 +1442,20 @@
 			<from-outcome>contractEmbargo_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/embargo/list.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractEmbargo_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/embargo/formTree.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	<!-- =================== Contract Bonus ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>contractBonus_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/bonus/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractBonus_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/bonus/formTree.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== Salary ========================== -->
@@ -1456,6 +1476,10 @@
 			<from-outcome>salaryPrint_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryPrint/list.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>salary_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salary/formTree.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	<!-- =================== Salary Draft ========================== -->
 	<navigation-rule>
@@ -1470,6 +1494,10 @@
 		<navigation-case>
 			<from-outcome>salaryDraft_search</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryDraft/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>salaryDraft_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formTree.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== Contract Type ========================== -->
@@ -1589,7 +1617,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>enterprise_formTree</from-outcome>
-			<to-view-id>/com/code/aon/ui/company/facelet/enterprise/formTree.xhtml</to-view-id>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/formTree.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>enterpriseWorkplace_formTree</from-outcome>

@@ -29,16 +29,22 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.controller.RegistryInfo;
-import com.code.aon.ui.company.util.EnterpriseTreeData;
-import com.code.aon.ui.company.util.EnterpriseTreeType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractBonus;
+import com.esferalia.aon.payroll.ContractDeduction;
+import com.esferalia.aon.payroll.ContractEmbargo;
+import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
+import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
+import com.esferalia.aon.ui.payroll.utils.EnterpriseTreeData;
+import com.esferalia.aon.ui.payroll.utils.EnterpriseTreeType;
 
 public class EnterpriseTree implements ICompanyConstants {
 
@@ -49,10 +55,20 @@ public class EnterpriseTree implements ICompanyConstants {
 	private TreeNode<EnterpriseTreeData> enterpriseNode;
 	
 	private EnterpriseTreeData currentNode;
+
+	private EnterpriseTreeData parentNode;
 	
 	private WorkPlace workPlace;
 	
 	private Contract contract;
+	
+	private ContractPayment contractPayment;
+	
+	private ContractDeduction contractDeduction;
+	
+	private ContractBonus contractBonus;
+	
+	private ContractEmbargo contractEmbargo;
 	
 	private RegistryInfo personInfo = new RegistryInfo();
 	
@@ -68,12 +84,32 @@ public class EnterpriseTree implements ICompanyConstants {
 		return currentNode;
 	}
 	
+	public EnterpriseTreeData getParentNode() {
+		return parentNode;
+	}
+	
 	public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
 	
 	public Contract getContract() {
 		return contract;
+	}
+	
+	public ContractPayment getContractPayment() {
+		return contractPayment;
+	}
+	
+	public ContractDeduction getContractDeduction() {
+		return contractDeduction;
+	}
+	
+	public ContractBonus getContractBonus() {
+		return contractBonus;
+	}
+	
+	public ContractEmbargo getContractEmbargo() {
+		return contractEmbargo;
 	}
 
     public RegistryMedia getPhone() {
@@ -100,6 +136,10 @@ public class EnterpriseTree implements ICompanyConstants {
 		this.currentNode = currentNode;
 	}
 	
+	public void setParentNode(EnterpriseTreeData parentNode) {
+		this.parentNode = parentNode;
+	}
+	
 	public TreeNode<EnterpriseTreeData> getEnterpriseNode() {
 		return enterpriseNode;
 	}
@@ -114,6 +154,81 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	private EnterpriseTreeData getTreeData( Contract c ) {
 		return new EnterpriseTreeData( c.getId(), c.getPerson().getFullName(), EnterpriseTreeType.CONTRACT);
+	}
+	
+	
+	private void addGeneralDataNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		String id = IPayrollConstants.CONTRACT_CONTROLLER;
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+//		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
+//		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Datos generales", EnterpriseTreeType.GENERAL);
+		node.setData(etd);
+		contractNode.addChild( id, node);
+	}
+
+	private void addVariablesNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		String id = IPayrollConstants.CONTRACT_DATA_CONTROLLER;
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+//		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
+//		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Variables", EnterpriseTreeType.VARIABLES);
+		node.setData(etd);
+		contractNode.addChild( id, node);
+	}
+	private void addPaymentsNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		String id = IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER;
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+//		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
+//		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Percepciones", EnterpriseTreeType.PAYMENT);
+		node.setData(etd);
+		contractNode.addChild( id, node);
+	}
+	private void addDeductionsNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		String id = IPayrollConstants.CONTRACT_DEDUCTION_CONTROLLER;
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+//		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
+//		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Deducciones", EnterpriseTreeType.DEDUCTION);
+		node.setData(etd);
+		contractNode.addChild( id, node);
+	}
+	private void addBonusNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		String id = IPayrollConstants.CONTRACT_BONUS_CONTROLLER;
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+//		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
+//		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Bonificaciones", EnterpriseTreeType.BONUS);
+		node.setData(etd);
+		contractNode.addChild( id, node);
+	}
+	private void addEmbargosNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		String id = IPayrollConstants.CONTRACT_EMBARGO_CONTROLLER;
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+//		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
+//		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Embargos", EnterpriseTreeType.EMBARGO);
+		node.setData(etd);
+		contractNode.addChild( id, node);
+	}
+	private void addSalaryNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		String id = IPayrollConstants.SALARY_CONTROLLER;
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+//		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
+//		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Nominas", EnterpriseTreeType.SALARY);
+		node.setData(etd);
+		contractNode.addChild( id, node);
+	}
+	private void addSalaryDraftNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		String id = IPayrollConstants.SALARY_DRAFT_CONTROLLER;
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+//		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
+//		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Borrador", EnterpriseTreeType.SALARY_DRAFT);
+		node.setData(etd);
+		contractNode.addChild( id, node);
 	}
 	
 	private void loadContracts( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
@@ -134,6 +249,14 @@ public class EnterpriseTree implements ICompanyConstants {
 			EnterpriseTreeData etd = getTreeData(contract);
 			contractNode.setData(etd);
 			workPlaceNode.addChild( etd.getType().toString() + etd.getId(), contractNode );
+			addGeneralDataNode(contractNode);
+			addVariablesNode(contractNode);
+			addPaymentsNode(contractNode);
+			addDeductionsNode(contractNode);
+			addBonusNode(contractNode);
+			addEmbargosNode(contractNode);
+			addSalaryNode(contractNode);
+			addSalaryDraftNode(contractNode);
 		}	
 	}		
 	
@@ -159,7 +282,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
 		node.setData(etd);
 		enterpriseNode.addChild( id, node);
-}
+	}
 	
 	public void loadTree() {
 		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
@@ -199,6 +322,7 @@ public class EnterpriseTree implements ICompanyConstants {
 
 	public void processSelection(NodeSelectedEvent event) {
 		UITree tree = (UITree) event.getComponent();
+		parentNode = (EnterpriseTreeData) tree.getTreeNode().getParent().getData();
 		currentNode = (EnterpriseTreeData) tree.getRowData();
 	}
 	
@@ -226,7 +350,95 @@ public class EnterpriseTree implements ICompanyConstants {
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}	
+	
+	private void selectContract(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			this.contract = (Contract) bean.get( parentNode.getId() );
+			ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+			c.select(event, this.contract);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> selectContract exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	private void selectSalary(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			this.contract = (Contract) bean.get( parentNode.getId() );
+			this.personInfo.init( this.contract.getPerson().getRegistry() );
+			this.showContractHeader = this.personInfo.hasMedias();
+			this.showContractHeader |= selectSalaries(event, this.contract);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSelectTreeContract exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	private void selectSalaryDraft(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			this.contract = (Contract) bean.get( parentNode.getId() );
+			SalaryDraftController c = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
+			c.select(event, this.contract);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> selectSalaryDraft exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	public void onSelectTreeGeneralData(ActionEvent event) {
+		selectContract(event);
+		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		c.onShowVariables(event);
+	}
+	
+	public void onSelectTreeVariables(ActionEvent event) {
+		selectContract(event);
+		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		c.onShowVariables(event);
+	}
 		
+	public void onSelectTreePayments(ActionEvent event) {
+		selectContract(event);
+		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		c.onShowPayments(event);
+	}
+
+	public void onSelectTreeDeductions(ActionEvent event) {
+		selectContract(event);
+		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		c.onShowDeductions(event);
+	}
+
+	public void onSelectTreeBonus(ActionEvent event) {
+		selectContract(event);
+		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		c.onShowBonus(event);
+	}
+
+	public void onSelectTreeEmbargos(ActionEvent event) {
+		selectContract(event);
+		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		c.onShowEmbargos(event);
+	}
+	
+	public void onSelectTreeSalary(ActionEvent event) {
+		selectSalary(event);
+	}
+	
+	public void onSelectTreeSalaryDraft(ActionEvent event) {
+		selectSalaryDraft(event);
+		SalaryDraftController sc = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
+		sc.setSalary(null);
+		sc.setSalary(null);
+    	sc.searchSavedDraftSalary();
+	}
+	
 	public boolean selectSalaries( ActionEvent event, Contract contract ) {
 		try {
 			IController controller = FormUtil.getController(SALARY_CONTROLLER_NAME);

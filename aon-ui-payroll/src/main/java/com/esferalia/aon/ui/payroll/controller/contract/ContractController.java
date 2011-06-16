@@ -75,6 +75,15 @@ public class ContractController extends BasicController {
 	private ContractWorkingDay contractWorkingDay;
 	private String tc2Code;
 	
+	private boolean modalPanelVisible;
+	
+	public boolean isModalPanelVisible() {
+		return modalPanelVisible;
+	}
+	public void setModalPanelVisible(boolean modalPanelVisible) {
+		this.modalPanelVisible = modalPanelVisible;
+	}
+	
 	
 	public String getTc2Code() {
 		return tc2Code;
@@ -171,6 +180,10 @@ public class ContractController extends BasicController {
 	}
 	public void setQuoteGroup(QuoteGroup quoteGroup) {
 		this.quoteGroup = quoteGroup;
+	}
+	
+	public void onShowNewContractModal(ActionEvent event) {
+		setModalPanelVisible(true);
 	}
 	
 	public void onShowVariables( ActionEvent event ) {
