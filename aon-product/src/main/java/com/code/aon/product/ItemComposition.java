@@ -30,6 +30,7 @@ public class ItemComposition implements ITransferObject{
 	private Integer id;
 	private Item item;
 	private Item compositionItem;
+    private int sequence;
     private String description;
     private double quantity;
     private double price;
@@ -67,7 +68,14 @@ public class ItemComposition implements ITransferObject{
         this.compositionItem = compositionItem;
     }
 
-    @Column(length=64)
+    public int getSequence() {
+        return sequence;
+    }
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
+    }
+
+    @Column(length=1024)
     public String getDescription() {
         return description;
     }

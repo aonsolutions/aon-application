@@ -144,6 +144,8 @@
 			<!--  aon.ui.warehouse -->
 			<value>#{itemWarehouseChildListener}</value>
 			<!--  aon.ui.product -->
+			<value>#{itemAlternativeChildListener}</value>				
+			<value>#{itemCompositionChildListener}</value>				
 			<value>#{itemSupplierChildListener}</value>
 		</list-entries>
 	</managed-bean>
@@ -193,6 +195,7 @@
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.finance -->
 			<value>#{invoiceDetailDirectSalesListener}</value>
+			<value>#{invoiceDetailCompositeListener}</value>
 		</list-entries>
 	</managed-bean>
 
@@ -205,6 +208,7 @@
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.finance -->
 			<value>#{invoiceDetailDirectPurchaseListener}</value>
+			<value>#{invoiceDetailCompositeListener}</value>
 		</list-entries>
 	</managed-bean>
 

@@ -457,6 +457,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{salesDetailControllerListener}</value>
+				<value>#{salesDetailCompositeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -465,6 +466,14 @@
 		<managed-bean-name>salesDetailControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.sales.event.SalesDetailControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>salesDetailCompositeListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.sales.event.SalesDetailCompositeListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>

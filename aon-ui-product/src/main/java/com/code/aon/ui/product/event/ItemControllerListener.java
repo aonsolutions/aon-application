@@ -15,7 +15,7 @@ import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
-import com.code.aon.ui.form.IController;
+import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -23,24 +23,12 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ItemControllerListener extends ControllerAdapter {
 
-	private static final String CONFIG_COLLECTIONS_CONTROLLER = "configCollections";
-
-    @Override
-    public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
-        IController controller = event.getController();
-        try {
-            controller.getCriteria().addEqualExpression(controller.getFieldName(IProductAlias.ITEM_PRODUCT_COMPOSITION), new Boolean(false));
-        } catch (ManagerBeanException e) {
-            throw new ControllerListenerException(e.getMessage(), e);
-        }
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
     	Item item = (Item)event.getController().getTo();
     	try {
-            ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(CONFIG_COLLECTIONS_CONTROLLER);
+            ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
         	List vats = collections.getVatTaxes();
         	if (vats.size() > 0) {
         		Tax vat = (Tax)((SelectItem)vats.get(0)).getValue();
@@ -71,7 +59,7 @@ public class ItemControllerListener extends ControllerAdapter {
 					product.setBrand(null);
 				}
 				if (product.getVat() == null || product.getVat().getId() == null) {
-					ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(CONFIG_COLLECTIONS_CONTROLLER);
+					ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
 		        	List vats = collections.getVatTaxes();
 		        	if (vats.size() > 0) {
 		        		Tax vat = (Tax)((SelectItem)vats.get(0)).getValue();

@@ -42,5 +42,10 @@ public interface ICalculable {
 	 */
 	public double getPrice();
 	
+	/**
+	 * Returns the taxes
+	 * 
+	 * @return the taxes
+	 */
 	public double getTaxes() throws ManagerBeanException;
 }

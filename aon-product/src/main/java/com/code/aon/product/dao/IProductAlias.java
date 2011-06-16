@@ -414,6 +414,12 @@ public interface IProductAlias {
 	*/
 	String  ITEM_COMPOSITION_QUANTITY = ITEM_COMPOSITION_ENTRY.getAliasNames()[6];
 
+	/** 
+	* Alias value: ItemComposition_sequence
+	* Hibernate value: ItemComposition.sequence
+	*/
+	String  ITEM_COMPOSITION_SEQUENCE = ITEM_COMPOSITION_ENTRY.getAliasNames()[7];
+
 
 
 	/** 

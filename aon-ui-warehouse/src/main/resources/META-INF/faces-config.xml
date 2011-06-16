@@ -365,6 +365,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{deliveryDetailControllerListener}</value>
+				<value>#{deliveryDetailCompositeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -373,6 +374,14 @@
 		<managed-bean-name>deliveryDetailControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.warehouse.event.DeliveryDetailControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>deliveryDetailCompositeListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.warehouse.event.DeliveryDetailCompositeListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -503,6 +512,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{incomeDetailControllerListener}</value>
+				<value>#{incomeDetailCompositeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -511,6 +521,14 @@
 		<managed-bean-name>incomeDetailControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.warehouse.event.IncomeDetailControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>incomeDetailCompositeListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.warehouse.event.IncomeDetailCompositeListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>

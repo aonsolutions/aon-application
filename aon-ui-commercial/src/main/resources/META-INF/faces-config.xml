@@ -1269,6 +1269,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{offerDetailControllerListener}</value>
+				<value>#{offerDetailCompositeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1277,6 +1278,14 @@
 		<managed-bean-name>offerDetailControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.commercial.event.OfferDetailControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>offerDetailCompositeListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.OfferDetailCompositeListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>

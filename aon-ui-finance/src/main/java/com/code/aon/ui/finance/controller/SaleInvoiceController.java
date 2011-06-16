@@ -94,9 +94,9 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			Series series = (Series)iter.next(); 
+		Iterator iterator = seriesBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			Series series = (Series)iterator.next(); 
 			if (series.getSecurityLevel() != null) {
 				return series.getSecurityLevel();
 			}
@@ -150,9 +150,9 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 		Criteria criteria = new Criteria();
 		if (getInvoice() != null) {
 			criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_REGISTRY_ID), getInvoice().getRegistry().getId());
-			Iterator<?> iter = customerBean.getList(criteria).iterator();
-			if (iter.hasNext()) {
-				return (Customer)iter.next();
+			Iterator<?> iterator = customerBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				return (Customer)iterator.next();
 			}
 		}
 		return null;
