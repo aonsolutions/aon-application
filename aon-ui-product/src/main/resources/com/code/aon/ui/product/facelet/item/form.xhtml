@@ -35,23 +35,12 @@
 						<ui:param name="controller" value="#{item}" />
 					</ui:include>
 
-					<c:if test="#{aonConfiguration.bean.product.showAttachment or 
-									aonConfiguration.bean.product.showAlternatives or
+					<c:if test="#{(aonConfiguration.bean.product.showStock and item.to.product.inventoriable) or
+									(aonConfiguration.bean.product.showComposition and item.to.product.composition) or
 									aonConfiguration.bean.product.showSuppliers or
-									(aonConfiguration.bean.product.showStock and item.to.product.inventoriable) or
-									(aonConfiguration.bean.product.showComposition and item.to.product.composition)}">
+									aonConfiguration.bean.product.showAlternatives or
+									aonConfiguration.bean.product.showAttachment}">
 						<aon:panelTabSet id="itemTab" selectedTab="#{item.selectedTab}">
-							<c:if test="#{aonConfiguration.bean.product.showAttachment}">
-								<aon:panelTab id="itemAttachPanelTab"
-									label="#{productBundle.product_attachment}">
-									<ui:include
-										src="/com/code/aon/ui/product/facelet/item/attach/tab_grid.xhtml">
-										<ui:param name="controller" value="#{itemAttach}" />
-										<ui:param name="skipCategoryColumn" value="true" />
-									</ui:include>
-								</aon:panelTab>
-							</c:if>
-
 							<c:if test="#{aonConfiguration.bean.product.showStock and item.to.product.inventoriable}">
 								<aon:panelTab id="itemWarehousePanelTab"
 									label="#{warehouseBundle.warehouse_item_warehouse_module}">
@@ -84,6 +73,17 @@
 									label="#{productBundle.product_alternative_items}">
 									<ui:include
 										src="/com/code/aon/ui/product/facelet/item/alternative/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+
+							<c:if test="#{aonConfiguration.bean.product.showAttachment}">
+								<aon:panelTab id="itemAttachPanelTab"
+									label="#{productBundle.product_attachment}">
+									<ui:include
+										src="/com/code/aon/ui/product/facelet/item/attach/tab_grid.xhtml">
+										<ui:param name="controller" value="#{itemAttach}" />
+										<ui:param name="skipCategoryColumn" value="true" />
 									</ui:include>
 								</aon:panelTab>
 							</c:if>

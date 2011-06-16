@@ -52,23 +52,31 @@
 	<c:if test="#{aonConfiguration.bean.product.showStock}">
 		<aon:outputLabel for="Item_product_inventoriable"
 			value="#{productBundle.product_inventoriable}" />
-		<aon:selectOneMenu id="Item_product_inventoriable"
+		<aon:selectOneRadio id="Item_product_inventoriable"
 			valueChangeListener="#{controller.addExpression}">
-			<f:selectItem itemLabel="-" itemValue="#{null}" />
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-		</aon:selectOneMenu>
+		</aon:selectOneRadio>
+	</c:if>
+
+	<c:if test="#{aonConfiguration.bean.product.showComposition}">
+		<aon:outputLabel for="Item_product_composition"
+			value="#{productBundle.product_composite_product}" />
+		<aon:selectOneRadio id="Item_product_composition"
+			valueChangeListener="#{controller.addExpression}">
+			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
+			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
+		</aon:selectOneRadio>
 	</c:if>
 
 	<c:if test="#{aonConfiguration.bean.product.showEcommerceData}">
 		<aon:outputLabel for="Item_internet"
 			value="#{productBundle.product_ecommerce}" />
-		<aon:selectOneMenu id="Item_internet"
+		<aon:selectOneRadio id="Item_internet"
 			valueChangeListener="#{controller.addExpression}">
-			<f:selectItem itemLabel="-" itemValue="#{null}" />
 			<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="true" />
 			<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="false" />
-		</aon:selectOneMenu>
+		</aon:selectOneRadio>
 	</c:if>
 
 	<aon:outputText value="#{bundle.aon_status}"/>
