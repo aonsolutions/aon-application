@@ -149,7 +149,7 @@ public class VatTaxDeclarationController extends LinesController {
 		criteria.addEqualExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_YEAR), vatTax.getYear());
 		criteria.addLessThanExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), vatTax.getPeriod());
 		criteria.addEqualExpression( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_ADMINISTRATION), dec.getAdministration());
-		criteria.addOrder( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_NUMBER), false);
+		criteria.addOrder( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_PERIOD), false);
 		criteria.addOrder( getManagerBean().getFieldName(IFiscalAlias.VAT_TAX_DECLARATION_VAT_TAX_REPLACEMENT), false);
 		List<ITransferObject> list = getManagerBean().getList(criteria);
 		double pycq = 0.0;
