@@ -25,6 +25,9 @@ public class ItemBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     	if (StringUtils.isEmpty(item.getProduct().getCode())) {
     		item.getProduct().setCode(item.getId().toString());
     	}
+    	if (item.getProduct().isInventoriable()) {
+    		item.getProduct().setComposition(false);
+    	}
     	if (!item.getProduct().isComposition()) {
     		item.getProduct().setCompositionPrice(false);
     	}

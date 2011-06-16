@@ -11,6 +11,9 @@
 		<vetoListeners>
 	        <vetoListener>com.code.aon.product.event.ItemBeanVetoListener</vetoListener>
 		</vetoListeners>
+		<listeners>
+	        <listener>com.code.aon.product.event.ItemBeanListener</listener>
+		</listeners>
 	</bean>
 
 	<bean description="">

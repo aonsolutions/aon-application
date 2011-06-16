@@ -65,10 +65,12 @@
 
 	<c:if test="#{aonConfiguration.bean.product.showStock or aonConfiguration.bean.product.showComposition}">
 		<aon:outputLabel value="#{productBundle.product_info}" />
-		<aon:div>
+		<aon:div id="itemCheckValues">
 			<c:if test="#{aonConfiguration.bean.product.showStock}">
 				<aon:selectBooleanCheckbox id="Item_product_inventoriable"
-					value="#{controller.to.product.inventoriable}" />
+					value="#{controller.to.product.inventoriable}"
+					disabled="#{controller.to.product.composition}"
+					ajaxSingle="true" reRender="itemCheckValues" />
 				<aon:outputLabel for="Item_product_inventoriable" styleClass="aon-margin-right aon-italic"
 					value="#{productBundle.product_inventoriable}" />
 			</c:if>
@@ -76,7 +78,8 @@
 			<c:if test="#{aonConfiguration.bean.product.showComposition}">
 				<aon:selectBooleanCheckbox id="Item_product_composition"
 					value="#{controller.to.product.composition}"
-					ajaxSingle="true" reRender="Item_product_composition_price" />
+					disabled="#{controller.to.product.inventoriable}"
+					ajaxSingle="true" reRender="itemCheckValues" />
 				<aon:outputLabel for="Item_product_composition" styleClass="aon-margin-right aon-italic"
 					value="#{productBundle.product_composite_product}" />
 

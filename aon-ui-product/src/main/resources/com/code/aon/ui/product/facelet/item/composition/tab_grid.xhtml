@@ -44,7 +44,7 @@
 					<ui:param name="skipSuggestText" value="#{controller.to.compositionItem != null and controller.to.compositionItem.id != null}" />
 					<ui:param name="lookupInputOnFocus" value="ItemComposition_description" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
-					<ui:param name="lookupReRender" value="itemCompositionDescription" />
+					<ui:param name="lookupReRender" value="itemCompositionDescription,ItemComposition_quantity" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{controller.onCompositionItemChanged}" type="lookupChangeListener" />
 				</ui:include>
@@ -74,7 +74,7 @@
 							<ui:param name="lookupInputOnFocus" value="ItemComposition_description-New" />
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
-							<ui:param name="lookupReRender" value="itemCompositionDescriptionNew" />
+							<ui:param name="lookupReRender" value="itemCompositionDescriptionNew,ItemComposition_quantity-New" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{controller.onCompositionItemChanged}" type="lookupChangeListener" />
 						</ui:include>
