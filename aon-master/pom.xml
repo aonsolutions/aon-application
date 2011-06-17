@@ -3,19 +3,19 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.4.0-SNAPSHOT</version>
+		<version>6.4.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-master</artifactId>
-	<version>6.4.0-SNAPSHOT</version>
+	<version>6.4.0</version>
 	<description>AON MASTER</description>
 	<name>AON-MASTER</name>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-master</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-master</connection>
-		<url>http://dev.esferalia.com/websvn/wsvn/aon-master</url>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.4.x/aon-master</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.4.x/aon-master</connection>
+		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.4.x/aon-master</url>
 	</scm>
 
 
