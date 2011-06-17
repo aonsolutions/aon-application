@@ -25,8 +25,8 @@
 									<aon:div styleClass="aon-toolbar">
 										<aon:commandButton id="#{controller.beanName}Save"
 											value="#{bundle.aon_accept}"
-											reRender="#{controller.beanName}ModalContainer,#{container}"
-											actionListener="#{controller.onSave}"
+											reRender="#{controller.beanName}ModalContainer,enterpriseTreeForm,#{container}"
+											actionListener="#{controller.onAccept}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept">
 										</aon:commandButton>
 										<aon:commandButton id="#{controller.beanName}Cancel"

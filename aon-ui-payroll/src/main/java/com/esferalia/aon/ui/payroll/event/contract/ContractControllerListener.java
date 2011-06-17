@@ -13,12 +13,13 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
-import com.esferalia.aon.payroll.enumeration.ContractDuration;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
-import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
+import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 
 public class ContractControllerListener extends ControllerAdapter{
@@ -30,6 +31,10 @@ public class ContractControllerListener extends ControllerAdapter{
 			throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
 		controller.searchContractAttachDocument((Contract) controller.getTo());
+		controller.setEnterprise(((Contract) controller.getTo()).getWorkPlace().getEnterprise());
+		controller.setWorkPlaces(null);
+		controller.setActivities(null);
+		controller.setEnterpriseCCCs(null);
 	}
 	
 	@Override
@@ -65,6 +70,17 @@ public class ContractControllerListener extends ControllerAdapter{
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		saveContractData();
+		ContractController controller = (ContractController) this.getController();
+		controller.setModalPanelVisible(false);
+		EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_TREE_CONTROLLER);
+		tree.loadTree();
+	}
+	
+	@Override
+	public void afterBeanCanceled(ControllerEvent event)
+			throws ControllerListenerException {
+		ContractController controller = (ContractController) this.getController();
+		controller.setModalPanelVisible(false);
 	}
 	
 	private void saveContractData() throws ControllerListenerException {
@@ -86,27 +102,20 @@ public class ContractControllerListener extends ControllerAdapter{
 			data.setName( ContractVariables.QUOTE_GROUP.getName() );
 			data.setExpression("\"" + controller.getQuoteGroup().getValue() + "\"");
 			bean.insert(data);
-		
+
 //			data = new ContractData();
 //			data.setContract(contract);
 //			data.setStartDate(contract.getStartDate());
-//			data.setName( ContractVariables.TC2.getName() );
-//			data.setExpression("\"" + controller.getContractCode().getValue() + "\"");
+//			data.setName( ContractVariables.FULL_TIME.getName() );
+//			data.setExpression("\"" + (controller.getContractWorkingDay()==ContractWorkingDay.FULL_TIME?true:false) + "\"");
 //			bean.insert(data);
-
-			data = new ContractData();
-			data.setContract(contract);
-			data.setStartDate(contract.getStartDate());
-			data.setName( ContractVariables.FULL_TIME.getName() );
-			data.setExpression("\"" + (controller.getContractWorkingDay()==ContractWorkingDay.FULL_TIME?true:false) + "\"");
-			bean.insert(data);
 			
-			data = new ContractData();
-			data.setContract(contract);
-			data.setStartDate(contract.getStartDate());
-			data.setName( ContractVariables.INDEFINITE.getName() );
-			data.setExpression("\"" + (controller.getContractDuration()==ContractDuration.UNSPECIFIED?true:false) + "\"");
-			bean.insert(data);
+//			data = new ContractData();
+//			data.setContract(contract);
+//			data.setStartDate(contract.getStartDate());
+//			data.setName( ContractVariables.INDEFINITE.getName() );
+//			data.setExpression("\"" + (controller.getContractDuration()==ContractDuration.UNSPECIFIED?true:false) + "\"");
+//			bean.insert(data);
 			
 			data = new ContractData();
 			data.setContract(contract);

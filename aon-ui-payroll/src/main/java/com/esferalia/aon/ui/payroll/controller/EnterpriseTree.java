@@ -157,12 +157,12 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	
-	private void addGeneralDataNode( TreeNode<EnterpriseTreeData> contractNode ) {
+	private void addMainDataNode( TreeNode<EnterpriseTreeData> contractNode ) {
 		String id = IPayrollConstants.CONTRACT_CONTROLLER;
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 //		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
 //		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
-		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Datos generales", EnterpriseTreeType.GENERAL);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), "Datos generales", EnterpriseTreeType.MAIN);
 		node.setData(etd);
 		contractNode.addChild( id, node);
 	}
@@ -172,7 +172,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 //		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
 //		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
-		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Variables", EnterpriseTreeType.VARIABLES);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), "Variables", EnterpriseTreeType.VARIABLES);
 		node.setData(etd);
 		contractNode.addChild( id, node);
 	}
@@ -181,7 +181,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 //		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
 //		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
-		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Percepciones", EnterpriseTreeType.PAYMENT);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), "Percepciones", EnterpriseTreeType.PAYMENT);
 		node.setData(etd);
 		contractNode.addChild( id, node);
 	}
@@ -190,7 +190,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 //		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
 //		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
-		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Deducciones", EnterpriseTreeType.DEDUCTION);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), "Deducciones", EnterpriseTreeType.DEDUCTION);
 		node.setData(etd);
 		contractNode.addChild( id, node);
 	}
@@ -199,7 +199,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 //		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
 //		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
-		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Bonificaciones", EnterpriseTreeType.BONUS);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), "Bonificaciones", EnterpriseTreeType.BONUS);
 		node.setData(etd);
 		contractNode.addChild( id, node);
 	}
@@ -208,7 +208,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 //		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
 //		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
-		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Embargos", EnterpriseTreeType.EMBARGO);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), "Embargos", EnterpriseTreeType.EMBARGO);
 		node.setData(etd);
 		contractNode.addChild( id, node);
 	}
@@ -217,7 +217,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 //		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
 //		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
-		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Nominas", EnterpriseTreeType.SALARY);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), "Nominas", EnterpriseTreeType.SALARY);
 		node.setData(etd);
 		contractNode.addChild( id, node);
 	}
@@ -226,7 +226,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 //		String label = AonUtil.getMessage( ICompanyConstants.BUNDLE_NAME, ICompanyConstants.COMPANY_ACTIVITY_MODULE );
 //		EnterpriseTreeData etd = new EnterpriseTreeData( id, label, EnterpriseTreeType.ACTIVITY);
-		EnterpriseTreeData etd = new EnterpriseTreeData( id, "Borrador", EnterpriseTreeType.SALARY_DRAFT);
+		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), "Borrador", EnterpriseTreeType.SALARY_DRAFT);
 		node.setData(etd);
 		contractNode.addChild( id, node);
 	}
@@ -249,7 +249,7 @@ public class EnterpriseTree implements ICompanyConstants {
 			EnterpriseTreeData etd = getTreeData(contract);
 			contractNode.setData(etd);
 			workPlaceNode.addChild( etd.getType().toString() + etd.getId(), contractNode );
-			addGeneralDataNode(contractNode);
+			addMainDataNode(contractNode);
 			addVariablesNode(contractNode);
 			addPaymentsNode(contractNode);
 			addDeductionsNode(contractNode);
@@ -391,7 +391,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 	}
 	
-	public void onSelectTreeGeneralData(ActionEvent event) {
+	public void onSelectTreeMainData(ActionEvent event) {
 		selectContract(event);
 		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		c.onShowVariables(event);

@@ -2,6 +2,13 @@
 <faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+	
+	<application>
+		<resource-bundle>
+			<base-name>com.esferalia.aon.ui.payroll.i18n.messages</base-name>
+			<var>payrollBundle</var>
+		</resource-bundle>
+	</application>
 	<!-- ************** PAYROLL COLLECTIONS ****************** -->
 	<managed-bean>
 		<managed-bean-name>payrollCollections</managed-bean-name>
@@ -1400,6 +1407,10 @@
 			<from-outcome>contract_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/formTree.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractMainData_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/formMainTree.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	<!-- =================== Contract Payment ========================== -->
 	<navigation-rule>
@@ -1508,8 +1519,7 @@
 		</navigation-case>
 	</navigation-rule>
 	<!--
-		=================== Contract Tracking
-		Management==========================
+		=================== Contract Tracking Management==========================
 	-->
 	<navigation-rule>
 		<navigation-case>
@@ -1526,8 +1536,7 @@
 		</navigation-case>
 	</navigation-rule>
 	<!--
-		=================== Contract Tracking
-		Management==========================
+		=================== Contract Tracking Management==========================
 	-->
 	<navigation-rule id="contractOptions">
 		<navigation-case>
@@ -1691,8 +1700,7 @@
 	</navigation-rule>
 
 	<!--
-		=================== LeaveBatch Wizard
-		Management==========================
+		=================== LeaveBatch Wizard Management==========================
 	-->
 	<navigation-rule id="leaveBatchWizard">
 		<navigation-case>
@@ -1845,10 +1853,4 @@
 		</navigation-case>
 	</navigation-rule>
 	
-	<application>
-		<resource-bundle>
-			<base-name>com.esferalia.aon.ui.payroll.i18n.messages</base-name>
-			<var>payrollBundle</var>
-		</resource-bundle>
-	</application>
 </faces-config>

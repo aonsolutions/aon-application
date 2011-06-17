@@ -30,6 +30,7 @@ public interface IPayrollConstants {
 	String ENTERPRISE_DIR_STAFF_CONTROLLER="enterpriseDirStaff";
 	String ENTERPRISE_ACTIVITY_CONTROLLER = "enterpriseActivity";
 	String ENTERPRISE_CCC_CONTROLLER = "enterpriseCCC";
+	String ENTERPRISE_TREE_CONTROLLER = "enterpriseTree";
 	String SALARY_CONTROLLER = "salary";
 	String SALARY_DRAFT_CONTROLLER = "salaryDraft";
 	String SALARY_DRAFT_DEDUCTION_CONTROLLER = "salaryDraftDeduction";

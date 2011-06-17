@@ -15,7 +15,7 @@ public enum EnterpriseTreeType {
 	CONTRACT( EnterpriseTreeData.CONTRACT_ICON, "contract_formTree", "onSelectTreeContract" ),
 	ACTIVITY( EnterpriseTreeData.ACTIVITY_ICON, "enterpriseActivity_formTree", null ),
 	
-	GENERAL( EnterpriseTreeData.VARIABLES_ICON, "contractGeneralData_formTree", "onSelectTreeGeneralData" ),
+	MAIN( EnterpriseTreeData.MAIN_ICON, "contractMainData_formTree", "onSelectTreeMainData" ),
 	VARIABLES( EnterpriseTreeData.VARIABLES_ICON, "contractData_formTree", "onSelectTreeVariables" ),
 	PAYMENT( EnterpriseTreeData.PAYMENT_ICON, "contractPayment_formTree", "onSelectTreePayments" ),
 	DEDUCTION( EnterpriseTreeData.DEDUCTION_ICON, "contractDeduction_formTree", "onSelectTreeDeductions" ),

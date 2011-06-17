@@ -51,72 +51,16 @@
 			</ui:decorate>		
 
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{enterpriseTree.showContractHeader}" >
-					<aon:panelGrid columns="2" style="width:100%"
-						columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
-						
-						<c:if test="#{salary.model.rowCount == 0}" >
-							<aon:outputText value="#{bundle.aon_name}" />
-							<aon:outputText value="#{enterpriseTree.contract.person.fullName}" />
-							
-							<aon:outputText value="#{bundle.aon_document}" />
-							<aon:panelGroup>
-								<aon:inputText value="#{enterpriseTree.contract.person.registry.document}"
-									readonly="true" />						
-								<aon:outputText value="#{bundle.aon_type}" styleClass="aon-margin-left aon-italic"/>
-								<aon:inputText value="#{enterpriseTree.contract.person.registry.documentType}"
-									styleClass="aon-margin-left" readonly="true" />
-								<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-margin-left aon-italic"/>
-								<aon:inputText value="#{enterpriseTree.contract.person.registry.documentCountry}"
-									styleClass="aon-margin-left" readonly="true" />
-							</aon:panelGroup>
-							
-							<aon:outputText value="#{registryBundle.registry_person_nss}" />
-							<aon:outputText value="#{enterpriseTree.contract.person.socialSecurityNumber}" />
-		
-							<aon:outputText value="#{payrollBundle.payroll_contract}" />
-							<aon:panelGroup>
-								<aon:outputText value="#{bundle.aon_start_date}" styleClass="aon-italic"/>
-								<aon:inputText value="#{enterpriseTree.contract.startDate}"
-									styleClass="aon-margin-left" readonly="true" >
-									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:inputText>		
-								<aon:outputText value="#{bundle.aon_end_date}" styleClass="aon-margin-left aon-italic"/>
-								<aon:inputText value="#{enterpriseTree.contract.endDate}"
-									styleClass="aon-margin-left" readonly="true" >
-									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:inputText>		
-							</aon:panelGroup>
-						</c:if>
-						
-						<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" >
-							<ui:param name="controller" value="#{enterpriseTree}" />
-						</ui:include>
-								
-					</aon:panelGrid>
+				
+				<c:if test="#{salary.model.rowCount == 0}" >
+					<aon:outputText value="#{payrollBundle.payroll_salary_no_salary_exist}" 
+						styleClass="aon-bold aon-italic"/>
 				</c:if>
 				
 				<c:if test="#{salary.model.rowCount > 0}" >
-					
-					<aon:div style="width: 840px; margin-top: 10px;">
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formEditContent.xhtml" >
-							<ui:param name="controller" value="#{salary}" />
-						</ui:include>
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/gridContent.xhtml" >
-							<ui:param name="controller" value="#{salary.to.payments}" />
-							<ui:param name="totalPayment" value="#{salary.to.totalPayment}" />
-						</ui:include>
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/gridContent.xhtml" >
-							<ui:param name="controller" value="#{salary.to.deductions}" />
-							<ui:param name="totalDeduction" value="#{salary.to.totalDeduction}" />
-						</ui:include>
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formBases.xhtml" >
-							<ui:param name="salaryTO" value="#{salary.to}" />
-						</ui:include>					
-					</aon:div>
-												
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formSalary.xhtml" >
+						<ui:param name="controller" value="#{salary}" />
+					</ui:include>
 				</c:if>
 
 			</aon:div>
