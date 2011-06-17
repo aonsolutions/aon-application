@@ -37,6 +37,8 @@ public class AlarmController extends BasicController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(AlarmController.class);
 	
+	private final static String HOME_ACTION = "home";
+	
     private ListDataModel todayModel;
 
     private ListDataModel recentModel;
@@ -51,9 +53,16 @@ public class AlarmController extends BasicController {
 	
 	private int pendingCount;
 	
+	private boolean returnToList;
+	
 	public AlarmController() {
 		this.user = UserUtils.getInstance().getLoggedUser();
 		updatePendingCount();
+		setBackAction(HOME_ACTION);
+	}
+
+	public boolean isReturnToList() {
+		return returnToList;
 	}
 
 	public DelayTime getDelayTime() {
@@ -72,6 +81,7 @@ public class AlarmController extends BasicController {
 				alarm.setUser(user);
 				alarm.setStatus(AlarmStatus.PENDING);
 				getManagerBean().update(alarm);
+				updateModels();
 			} catch (ManagerBeanException e) {
 				LOGGER.error("Error updating alarm with id=" + alarm.getId(), e);
 			}			
@@ -91,6 +101,7 @@ public class AlarmController extends BasicController {
 			alarm.setStatus(AlarmStatus.FINISHED);
 			alarm.setUser(user);
 			getManagerBean().update(alarm);
+			updateModels();
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error updating alarm with id=" + alarm.getId(), e);
 		}
@@ -191,7 +202,10 @@ public class AlarmController extends BasicController {
 
     public void onInit(ActionEvent event) {
         try {
+        	this.returnToList = true;
+        	setBackAction(null);
 			updateModels();
+			updatePendingCount();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onInit ",e);
 			addMessage(e.getMessage());
@@ -210,11 +224,20 @@ public class AlarmController extends BasicController {
     public void onSelectAncientAlarm(ActionEvent event) {
         onSelectAlarm(event, ancientModel);
     }
+    
+    private void updateModel( ListDataModel model, ITransferObject alarm ) {
+    	if ( model.isRowAvailable() ) {
+        	List<ITransferObject> list = (List) model.getWrappedData();	
+        	int index = model.getRowIndex();
+        	list.set(index, alarm);
+    	}
+    }
 
     private void onSelectAlarm(ActionEvent event, ListDataModel model) {
         Alarm alarm = (Alarm) model.getRowData();
         try {
             select(event, alarm);
+            updateModel(model, getTo() );
         } catch (ManagerBeanException e) {
         	LOGGER.error( e.getMessage(), e );
             throw new AbortProcessingException("Error obtaining alarm with id=" + alarm.getId(), e);

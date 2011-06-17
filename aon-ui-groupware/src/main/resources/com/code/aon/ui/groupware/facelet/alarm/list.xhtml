@@ -13,6 +13,8 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_alarm}" />
 				<ui:param name="controller" value="#{alarm}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:include>
 
 			<!--  aon-region-body -->

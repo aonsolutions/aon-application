@@ -27,13 +27,11 @@
 	</ui:define>
 
 	<ui:define name="beforeRightMenuContent2">
-		<aon:div layout="none" id="pendingAlarmsDiv" >
-			<aon:commandLink id="pendingAlarms"
-				title="#{alarm.pendingAlarmTitle}" value="&#160;"
-				rendered="#{alarm.pendingCount &gt; 0}"
-				action="alarm_list" actionListener="#{alarm.onInit}" 
-				styleClass="aon-icon-alarm-pending" />
-		</aon:div>
+		<aon:commandLink id="pendingAlarms"
+			title="#{alarm.pendingAlarmTitle}" value="&#160;"
+			rendered="#{alarm.pendingCount &gt; 0}"
+			action="alarm_list" actionListener="#{alarm.onInit}" 
+			styleClass="aon-icon-alarm-pending" />
 	</ui:define>
 
 	<ui:define name="beforeHelpMenuContent2">

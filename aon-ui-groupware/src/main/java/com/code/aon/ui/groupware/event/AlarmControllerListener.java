@@ -20,10 +20,10 @@ public class AlarmControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		AlarmController controller = (AlarmController) event.getController();
-		Alarm alarm = (Alarm) controller.getTo();
 		controller.setDelayTime(null);
-		alarm.setStatus(AlarmStatus.READ);
 		try {
+			Alarm alarm = (Alarm) controller.getTo();
+			alarm.setStatus(AlarmStatus.READ);
 			controller.getManagerBean().update(alarm);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

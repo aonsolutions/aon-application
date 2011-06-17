@@ -13,9 +13,7 @@ public enum AlarmSource implements IResourceable {
 	
 	EXTERNAL,
 	
-	COMMERCIAL_TRACKING,
-	
-	CALL_CENTER;
+	COMMERCIAL_TRACKING;
 	
 	/** Message file base path. */
 	private static final String BASE_NAME = "com.code.aon.groupware.i18n.messages";

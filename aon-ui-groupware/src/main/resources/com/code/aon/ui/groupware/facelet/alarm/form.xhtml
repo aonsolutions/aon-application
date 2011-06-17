@@ -16,19 +16,17 @@
 				<ui:param name="toolbarDescription"
 					value="#{alarm.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="cancel" value="#{bundle.aon_back}"
-						action="home" actionListener="#{alarm.onCancel}"
+					<aon:commandButton id="cancel"
+						value="#{(alarm.returnToList)? bundle.aon_list : bundle.aon_back}"
+						action="#{alarm.backAction}" immediate="true"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						immediate="true"
 						accesskey="#{bundle.aon_key_cancel}" />
 					<aon:commandButton id="alarm_delay" value="#{groupwareBundle.alarm_delay}"
 						styleClass="aon-finding-toolbar-item aon-icon-alarms-postpone"
-						action="home" actionListener="#{alarm.onDelayAlarm}"/>	
+						action="#{alarm.backAction}" actionListener="#{alarm.onDelayAlarm}"/>	
 					<aon:commandButton id="alarm_finish" value="#{groupwareBundle.alarm_finish}"
 						styleClass="aon-finding-toolbar-item aon-icon-alarms-finish"
-						action="home" actionListener="#{alarm.onFinishAlarm}"/>	
-						
-					<aon:spin controller="#{alarm}" action="alarm_form" rendered="#{!alarm.new}" />
+						action="#{alarm.backAction}" actionListener="#{alarm.onFinishAlarm}"/>	
 				</ui:define>				
 			</ui:decorate>		
 
