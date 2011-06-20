@@ -13,6 +13,8 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_period_amortization_module}" />
 				<ui:param name="controller" value="#{periodAmortization}" />
+				
+				<ui:param name="skipResetButton" value="true" />				
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
@@ -22,7 +24,7 @@
 				
 					<aon:outputLabel for="Amortization_period"
 						value="#{accountingBundle.accounting_period}" />
-					<aon:selectOneMenu id="Amortization_period" 
+					<aon:selectOneMenu id="Amortization_period" required="true" 
 						value="#{periodAmortization.period}">
 						<f:selectItem itemLabel="-" value="#{null}" />
 						<f:selectItems value="#{accountingCollections.activeAccountPeriods}" />

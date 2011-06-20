@@ -97,7 +97,7 @@
 			<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
 		</c:if>
 
-		<c:if test="#{!item.new and aonConfiguration.bean.product.showAlternatives}">
+		<c:if test="#{!item.new and (aonConfiguration.bean.product.showAlternatives or aonConfiguration.bean.product.showComposition)}">
 			<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		</c:if>
 

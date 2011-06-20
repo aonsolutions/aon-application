@@ -16,6 +16,8 @@
 					value="#{accountingBundle.accounting_period_amortization_module}" />
 				<ui:param name="controller" value="#{periodAmortization}" />
 
+				<ui:param name="skipResetButton" value="true" />				
+
 				<ui:define name="additionalToolbarContent">
 					<aon:htmlCommandLink id="trialBalance-excel-report"
 						value="&#160;" target="_blank" action="#{report.onExecute}"

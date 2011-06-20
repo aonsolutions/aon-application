@@ -90,7 +90,7 @@ public class PeriodAmortizationController extends BasicController {
 			ProjectionList pl = new ProjectionList();
 			pl.add(Projection.sum(getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_ALLOCATION)));
 			List<?> list = getManagerBean().getList(pl, c);
-			if (list != null && list.size() > 1) {
+			if (list != null && list.size() > 0 && list.get(0) != null) {
 				accumulated = (Double) list.get(0);	
 			}
 			double pending = CommonUtil.round(a.getAmount() - accumulated - detail.getAllocation());

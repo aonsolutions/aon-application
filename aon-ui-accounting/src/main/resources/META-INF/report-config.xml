@@ -9,7 +9,6 @@
 	<!--  PORTADA DEPOSITO CUENTAS  -->
 	<report id="cover" description="PORTADA DEPOSITO CUENTAS">
 		<template path="/com/code/aon/ui/accounting/report/cover.jasper"/>
-		<bean key="com.code.aon.accounting.AccountEntryDetail" />
 		<collection provider="#{accountingBook}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.accounting.i18n.report" />
