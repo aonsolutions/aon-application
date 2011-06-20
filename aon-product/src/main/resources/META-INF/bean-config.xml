@@ -8,12 +8,12 @@
 
 	<bean description="">
 		<pojo>com.code.aon.product.Item</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.product.event.ItemBeanVetoListener</vetoListener>
-		</vetoListeners>
 		<listeners>
 	        <listener>com.code.aon.product.event.ItemBeanListener</listener>
 		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.product.event.ItemBeanVetoListener</vetoListener>
+		</vetoListeners>
 	</bean>
 
 	<bean description="">
