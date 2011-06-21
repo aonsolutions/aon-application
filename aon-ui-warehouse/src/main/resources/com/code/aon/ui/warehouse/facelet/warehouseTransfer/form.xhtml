@@ -76,10 +76,11 @@
 						value="#{warehouseTransfer.to.comments}" />
 				</aon:panelGrid>
 
-				<aon:div styleClass="aon-padding-top">
-					<ui:include src="/com/code/aon/ui/warehouse/facelet/warehouseTransfer/formDetail.xhtml" />
-				</aon:div>
-
+				<c:if test="#{!warehouseTransfer.new}">
+					<aon:div styleClass="aon-padding-top">
+						<ui:include src="/com/code/aon/ui/warehouse/facelet/warehouseTransfer/formDetail.xhtml" />
+					</aon:div>
+				</c:if>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
