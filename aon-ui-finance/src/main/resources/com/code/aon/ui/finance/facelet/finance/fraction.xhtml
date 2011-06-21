@@ -82,32 +82,12 @@
 
 					<aon:outputLabel 
 						value="#{financeFraction.targetFinance.payment ? (financeBundle.finance_creditor) : (financeBundle.finance_debtor)}" />
-					<aon:div>
-						<aon:inputText value="#{financeFraction.targetFinance.registry.id}"
-							disabled="true" size="5" />	
-						<aon:lookupButton
-							windowTitle="#{customerBundle.customer_selection}"
-							disabled="true" 
-							lookup="#{customerLookup}"
-							actionType="search">
-						</aon:lookupButton>
-						<aon:lookupButton
-							windowTitle="#{customerBundle.customer_new}"
-							disabled="true"
-							lookup="#{customerLookup}"
-							actionType="new">
-						</aon:lookupButton>
- 						<aon:inputText value="#{financeFraction.targetFinance.registryName}"
-							disabled="true" size="50" />
-						<aon:inputText styleClass="aon-margin-left"
-							value="#{financeFraction.targetFinance.registryDocument}"
-							disabled="true" size="10" />
-					</aon:div>												
+					<aon:outputText styleClass="aon-bold"
+						value="#{financeFraction.targetFinance.registryName}" />	
 
 					<aon:outputLabel value="#{bundle.aon_total}" />
 					<aon:outputText styleClass="aon-bold"
-						value="#{financeFraction.targetFinance.totalAmount}"
-						size="15">
+						value="#{financeFraction.targetFinance.totalAmount}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>	
 

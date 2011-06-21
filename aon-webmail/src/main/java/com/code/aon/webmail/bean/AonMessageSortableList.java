@@ -4,20 +4,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.event.MessageChangedEvent;
-import javax.mail.event.MessageChangedListener;
-import javax.mail.event.MessageCountEvent;
-import javax.mail.event.MessageCountListener;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.webmail.WebmailException;
-
-public class AonMessageSortableList extends AonSortableList implements MessageCountListener,MessageChangedListener {
+public class AonMessageSortableList extends AonSortableList {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AonMessageSortableList.class);
 
@@ -37,18 +29,10 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	
 	private boolean sortable;
 	
-	public AonMessageSortableList(Folder folder) {
-		this(AonMessageSortableList.DATE_COLUMN,folder,true);
-	}
-
 	public AonMessageSortableList(String column, Folder folder, boolean sortable) {
 		super(column);
 		this.sortable = sortable;
 		this.folder = folder;
-		if (this.folder != null) {
-			this.folder.addMessageCountListener(this);
-			this.folder.addMessageChangedListener(this);
-		}
 	}
 
 	/**
@@ -113,76 +97,5 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 			}
 		}
 	}
-    
-    /**
-     * Invoked when messages are added into a folder.  
-     */
-    public void messagesAdded(MessageCountEvent messageCountEvent) {
-    	//this.messageCountEvent = messageCountEvent;
-    }
-
-    /**
-     * Invoked when messages are removed (expunged) from a folder. 
-     */
-    public void messagesRemoved(MessageCountEvent messageCountEvent) {
-        if (messageCountEvent.getMessages() != null) {
-            removeMessage(messageCountEvent.getMessages());
-        }
-    }
-    
-    protected synchronized void removeMessage(Message[] messages) {
-        if (messages != null) {
-        	boolean changed = false;
-        	AonMessage[] list = getMessageList();
-        	for( Message message : messages ) {
-                AonMessage aonMessage = findMessage(message);
-                if (aonMessage != null){
-                    int index = ArrayUtils.indexOf( list, aonMessage );
-                    if (index >= 0) {
-                    	changed = true;
-                    	list = (AonMessage[]) ArrayUtils.remove( list, index );
-                    }
-                }
-            }
-        	if ( changed ) {
-        		setMessageList( list );
-        	}
-        }
-    }
-
-    protected synchronized AonMessage findMessage(Message message){
-        if (message == null) {
-            return null;
-        }
-        for (int i = this.messageList.length - 1; i >= 0 ; i--) {
-            if (message.equals(messageList[i].getMessage())){
-                return messageList[i];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Invoked when a message is changed.  The messageChangedEvent holds
-     * the message that has been changed, this method must update respective
-     * message in the messageList.
-     * @throws WebmailException 
-     */
-    public void messageChanged(MessageChangedEvent messageChangedEvent){
-        if (messageChangedEvent != null) {
-            if (messageChangedEvent.getMessageChangeType()
-                    == MessageChangedEvent.FLAGS_CHANGED ){
-                Message changedMessage = messageChangedEvent.getMessage();
-                AonMessage foundMessage = findMessage(changedMessage);
-                if (foundMessage != null){
-                    try {
-                        foundMessage.setMessageFlag(changedMessage.getFlags());
-                    } catch (MessagingException e) {
-            			LOGGER.error("Error getting message flags",e);
-                    }
-                }
-            }
-        }
-    }
 
 }

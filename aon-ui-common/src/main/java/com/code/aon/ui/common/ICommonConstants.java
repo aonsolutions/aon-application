@@ -36,4 +36,7 @@ public interface ICommonConstants {
 	/** The hide menu bar. */
 	String HIDE_MENU_BAR = "hideMenuBar";
 
+	/** Logout action listener. */
+	String ON_LOGOUT = "onLogout";
+	
 }

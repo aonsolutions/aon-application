@@ -34,7 +34,7 @@ public class AonFolder extends AonMessageSortableList {
 		this( folder, server, false );
 	}
 
-	public AonFolder(Folder folder, AonServer server, boolean sortable) {
+	private AonFolder(Folder folder, AonServer server, boolean sortable) {
 		super(DATE_COLUMN,folder, sortable);
 		this.server = server;		
 	}

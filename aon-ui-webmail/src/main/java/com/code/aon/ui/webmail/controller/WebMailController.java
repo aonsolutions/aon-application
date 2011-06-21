@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
@@ -14,7 +13,6 @@ import javax.mail.Quota;
 import javax.naming.Name;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +30,6 @@ import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.resources.bean.ResourceResolver;
 import com.code.aon.ui.util.AonUtil;
@@ -256,5 +253,16 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 	public void poll( ActionEvent event ) {
 		LOGGER.debug( "Connection ready: ", isReady() );
 	}
+	
+    /**
+     * Logout from the current session.
+     * 
+     * @param event the event
+     */
+    public void logout( ActionEvent event ) {
+    	if ( isLogged() ) {
+    		getServer().disconnect();
+    	}
+    }	
 	
 }

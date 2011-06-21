@@ -41,6 +41,15 @@
 				<value>#{aonResource.resolveLocal['/css/desktop.css']}</value>				
 			</list-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>properties</property-name>
+			<map-entries>
+	            <map-entry>
+	                <key>onLogout</key>
+	                <value>desktop.logout</value>                
+	            </map-entry>
+	        </map-entries>			
+		</managed-property>		
 	</managed-bean>
 
 	<!-- ************ DESKTOP ************** -->
