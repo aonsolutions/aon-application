@@ -21,6 +21,7 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.product.CatalogueCategory;
 import com.code.aon.product.CatalogueItem;
+import com.code.aon.product.ItemTariff;
 import com.code.aon.product.TariffCatalogue;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
@@ -82,6 +83,16 @@ public class BasicPriceStrategy implements IPriceStrategy {
 						calc.getDiscountExpression().setDiscountExpr(Double.toString(catalogueCategory.getDiscount()));
 						return getUnitPrice(calc);
 					}
+				}
+
+				IManagerBean itemTariffBean = BeanManager.getManagerBean(ItemTariff.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(itemTariffBean.getFieldName(IProductAlias.ITEM_TARIFF_ITEM_ID), calc.getItem().getId());
+				criteria.addEqualExpression(itemTariffBean.getFieldName(IProductAlias.ITEM_TARIFF_TARIFF_ID), tariff.getId());
+				iterator = itemTariffBean.getList(criteria).iterator();
+				if (iterator.hasNext()) {
+					ItemTariff itemTariff = (ItemTariff)iterator.next();
+					return itemTariff.getPrice();
 				}
 			}
 		} catch (ManagerBeanException e) {

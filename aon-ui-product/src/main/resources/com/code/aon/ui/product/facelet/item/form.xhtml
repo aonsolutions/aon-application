@@ -35,12 +35,22 @@
 						<ui:param name="controller" value="#{item}" />
 					</ui:include>
 
-					<c:if test="#{(aonConfiguration.bean.product.showStock and item.to.product.inventoriable) or
+					<c:if test="#{aonConfiguration.bean.product.showTariff or
+									(aonConfiguration.bean.product.showStock and item.to.product.inventoriable) or
 									(aonConfiguration.bean.product.showComposition and item.to.product.composition) or
 									aonConfiguration.bean.product.showSuppliers or
 									aonConfiguration.bean.product.showAlternatives or
 									aonConfiguration.bean.product.showAttachment}">
 						<aon:panelTabSet id="itemTab" selectedTab="#{item.selectedTab}">
+							<c:if test="#{aonConfiguration.bean.product.showTariff}">
+								<aon:panelTab id="itemTariffPanelTab"
+									label="#{productBundle.product_tariff_module}">
+									<ui:include
+										src="/com/code/aon/ui/product/facelet/item/tariff/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+
 							<c:if test="#{aonConfiguration.bean.product.showStock and item.to.product.inventoriable}">
 								<aon:panelTab id="itemWarehousePanelTab"
 									label="#{warehouseBundle.warehouse_item_warehouse_module}">

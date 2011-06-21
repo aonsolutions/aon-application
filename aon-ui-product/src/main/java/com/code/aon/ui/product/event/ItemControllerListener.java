@@ -19,6 +19,8 @@ import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.product.controller.ItemTariffController;
+import com.code.aon.ui.product.controller.ProductConstants;
 import com.code.aon.ui.util.AonUtil;
 
 public class ItemControllerListener extends ControllerAdapter {
@@ -74,7 +76,13 @@ public class ItemControllerListener extends ControllerAdapter {
 		}
 	}
 
-    @Override
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)	throws ControllerListenerException {
+		ItemTariffController itemTariffController = (ItemTariffController)AonUtil.getRegisteredBean(ProductConstants.ITEM_TARIFF);
+		itemTariffController.onSearch(null);
+	}
+
+	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Item item = (Item)event.getController().getTo();

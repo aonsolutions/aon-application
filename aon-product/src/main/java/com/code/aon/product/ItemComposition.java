@@ -17,8 +17,6 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.common.util.CommonUtil;
-import com.code.aon.product.Item;
 import com.code.aon.product.util.DiscountExpression;
 
 @Entity
@@ -33,7 +31,6 @@ public class ItemComposition implements ITransferObject{
     private int sequence;
     private String description;
     private double quantity;
-    private double price;
     private DiscountExpression discountExpression;
 
 	@Id
@@ -58,7 +55,7 @@ public class ItemComposition implements ITransferObject{
 	}
 	
     @ManyToOne
-    @JoinColumn(name="composition_item")
+    @JoinColumn(name="composition_item",nullable=false)
     @ForeignKey(name = "FK_ITEM_COMPOSITION_COMPOSITION")
     @Index(name = "IDX_ITEM_COMPOSITION_COMPOSITION")
     public Item getCompositionItem() {
@@ -91,14 +88,6 @@ public class ItemComposition implements ITransferObject{
         this.quantity = quantity;
     }
 
-	@Column(precision=15, scale=4)
-    public double getPrice() {
-        return price;
-    }
-    public void setPrice(double price) {
-        this.price = CommonUtil.round(price, 4);
-    }
-
     @Column(name ="discount_expr",length=32)
     @Type(type = "com.code.aon.product.util.DiscountExpressionUserType")
     public DiscountExpression getDiscountExpression() {
@@ -120,8 +109,8 @@ public class ItemComposition implements ITransferObject{
 				.append(this.description, o.description)
 				.append(this.discountExpression, o.discountExpression)
 				.append(this.item, o.item)
-				.append(this.price, o.price)
 				.append(this.quantity, o.quantity)
+				.append(this.sequence, o.sequence)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -135,8 +124,8 @@ public class ItemComposition implements ITransferObject{
 			.append(this.description)
 			.append(this.discountExpression)
 			.append(this.item)			
-			.append(this.price)
 			.append(this.quantity)
+			.append(this.sequence)
 			.toHashCode();
 	}
 

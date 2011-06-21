@@ -51,7 +51,7 @@ public class ItemAlternative implements ITransferObject{
 	}
 	
     @ManyToOne
-    @JoinColumn(name="alternative_item")
+    @JoinColumn(name="alternative_item",nullable=false)
     @ForeignKey(name = "FK_ITEM_ALTENATIVE_ALTERNATIVE")
     @Index(name = "IDX_ITEM_ALTENATIVE_ALTERNATIVE")
     public Item getAlternativeItem() {

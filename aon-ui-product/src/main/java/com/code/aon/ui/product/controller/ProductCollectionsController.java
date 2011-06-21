@@ -19,6 +19,7 @@ import com.code.aon.product.Item;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductCategoryGroup;
 import com.code.aon.product.dao.IProductAlias;
+import com.code.aon.product.enumeration.ItemTariffType;
 import com.code.aon.product.enumeration.ProductStatus;
 import com.code.aon.product.enumeration.ProductType;
 import com.code.aon.ql.Criteria;
@@ -28,6 +29,7 @@ public class ProductCollectionsController {
 	private List<SelectItem> mimeTypes;
 	private List<SelectItem> productTypes;
 	private List<SelectItem> productStatuses;
+	private List<SelectItem> itemTariffTypes;
 	
 	public List<SelectItem> getMimeTypes() {
 		if (mimeTypes == null) {
@@ -46,7 +48,7 @@ public class ProductCollectionsController {
 		if (productTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			productTypes = new LinkedList<SelectItem>();
-			for (ProductType type:ProductType.values()) {
+			for (ProductType type : ProductType.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
 				productTypes .add(item);
@@ -59,7 +61,7 @@ public class ProductCollectionsController {
 		if (productTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			productTypes = new LinkedList<SelectItem>();
-			for (ProductType type:ProductType.values()) {
+			for (ProductType type : ProductType.values()) {
 				if (type != ProductType.EXPENSE) {
 					String name = type.getName(locale);
 					SelectItem item = new SelectItem(type, name);
@@ -74,13 +76,26 @@ public class ProductCollectionsController {
 		if (productStatuses == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			productStatuses = new LinkedList<SelectItem>();
-			for (ProductStatus status:ProductStatus.values()) {
+			for (ProductStatus status : ProductStatus.values()) {
 				String name = status.getName(locale);
 				SelectItem item = new SelectItem(status, name);
 				productStatuses.add(item);
 			}
 		}
 		return productStatuses;
+	}
+	
+	public List<SelectItem> getItemTariffTypes() {
+		if (itemTariffTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			itemTariffTypes = new LinkedList<SelectItem>();
+			for (ItemTariffType type : ItemTariffType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				itemTariffTypes .add(item);
+			}
+		}
+		return itemTariffTypes;
 	}
 	
 	public Brand getBrand() {

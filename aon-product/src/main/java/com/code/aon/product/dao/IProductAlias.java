@@ -11,6 +11,7 @@ import com.code.aon.product.ItemAlternative;
 import com.code.aon.product.ItemAttachment;
 import com.code.aon.product.ItemComposition;
 import com.code.aon.product.ItemSupplier;
+import com.code.aon.product.ItemTariff;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.ProductCategoryGroup;
@@ -403,22 +404,16 @@ public interface IProductAlias {
 	String  ITEM_COMPOSITION_ITEM_ID = ITEM_COMPOSITION_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: ItemComposition_price
-	* Hibernate value: ItemComposition.price
-	*/
-	String  ITEM_COMPOSITION_PRICE = ITEM_COMPOSITION_ENTRY.getAliasNames()[5];
-
-	/** 
 	* Alias value: ItemComposition_quantity
 	* Hibernate value: ItemComposition.quantity
 	*/
-	String  ITEM_COMPOSITION_QUANTITY = ITEM_COMPOSITION_ENTRY.getAliasNames()[6];
+	String  ITEM_COMPOSITION_QUANTITY = ITEM_COMPOSITION_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: ItemComposition_sequence
 	* Hibernate value: ItemComposition.sequence
 	*/
-	String  ITEM_COMPOSITION_SEQUENCE = ITEM_COMPOSITION_ENTRY.getAliasNames()[7];
+	String  ITEM_COMPOSITION_SEQUENCE = ITEM_COMPOSITION_ENTRY.getAliasNames()[6];
 
 
 
@@ -456,6 +451,55 @@ public interface IProductAlias {
 	* Hibernate value: ItemSupplier.supplier.id
 	*/
 	String  ITEM_SUPPLIER_SUPPLIER_ID = ITEM_SUPPLIER_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for ItemTariff entity.
+	*/ 
+	DAOConstantsEntry ITEM_TARIFF_ENTRY = DAOConstants.getDAOConstant(ItemTariff.class);
+
+	/** 
+	* Alias value: ItemTariff_id
+	* Hibernate value: ItemTariff.id
+	*/
+	String  ITEM_TARIFF_ID = ITEM_TARIFF_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ItemTariff_item_id
+	* Hibernate value: ItemTariff.item.id
+	*/
+	String  ITEM_TARIFF_ITEM_ID = ITEM_TARIFF_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ItemTariff_price
+	* Hibernate value: ItemTariff.price
+	*/
+	String  ITEM_TARIFF_PRICE = ITEM_TARIFF_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ItemTariff_profit_percent
+	* Hibernate value: ItemTariff.profitPercent
+	*/
+	String  ITEM_TARIFF_PROFIT_PERCENT = ITEM_TARIFF_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ItemTariff_tariff_id
+	* Hibernate value: ItemTariff.tariff.id
+	*/
+	String  ITEM_TARIFF_TARIFF_ID = ITEM_TARIFF_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ItemTariff_tariff_name
+	* Hibernate value: ItemTariff.tariff.name
+	*/
+	String  ITEM_TARIFF_TARIFF_NAME = ITEM_TARIFF_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ItemTariff_type
+	* Hibernate value: ItemTariff.type
+	*/
+	String  ITEM_TARIFF_TYPE = ITEM_TARIFF_ENTRY.getAliasNames()[6];
 
 
 

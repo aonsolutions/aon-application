@@ -52,7 +52,7 @@ public class ItemSupplier implements ITransferObject{
 	}
 	
 	@ManyToOne
-	@JoinColumn( name="supplier",nullable=false )
+	@JoinColumn(name="supplier",nullable=false)
     @ForeignKey(name = "FK_ITEM_SUPPLIER_SUPPLIER")
     @Index(name = "IDX_ITEM_SUPPLIER_SUPPLIER")
 	public Supplier getSupplier() {

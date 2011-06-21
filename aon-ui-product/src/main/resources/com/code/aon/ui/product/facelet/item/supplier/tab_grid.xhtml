@@ -14,7 +14,7 @@
 		<ui:define name="columns">
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_priority}" />
+					<aon:outputLabel for="ItemSupplier_priority" value="#{bundle.aon_priority}" />
 				</f:facet>
 				<aon:outputText value="#{to.priority}"
 					rendered="#{formList}" />
@@ -30,8 +30,7 @@
 
 			<aon:column	styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="Supplier_id"
-						value="#{supplierBundle.supplier_supplier}" />
+					<aon:outputLabel for="Supplier_id" value="#{supplierBundle.supplier_supplier}" />
 				</f:facet>
 				<aon:outputText value="#{to.supplier.registry.fullName}"
 					rendered="#{formList}" />
@@ -59,17 +58,16 @@
 			<aon:column
 				styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-150 aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="itemSupplier_Code"
-						value="#{productBundle.product_item_supplier_code}" />
+					<aon:outputLabel for="ItemSupplier_Code" value="#{productBundle.product_item_supplier_code}" />
 				</f:facet>
 				<aon:outputText value="#{to.code}" rendered="#{formList}" />
-				<aon:inputText id="itemSupplier_Code"
-					value="#{itemSupplier.to.code}" rendered="#{formEdit}" size="25"
-					maxlength="32" />
+				<aon:inputText id="ItemSupplier_Code"
+					value="#{itemSupplier.to.code}" rendered="#{formEdit}" 
+					size="25" maxlength="32" />
 				<f:facet name="footer">
-					<aon:inputText id="itemSupplier_Code-New"
-						value="#{itemSupplier.to.code}" maxlength="15"
-						rendered="#{formNew}" size="15" />
+					<aon:inputText id="ItemSupplier_Code-New"
+						value="#{itemSupplier.to.code}" rendered="#{formNew}"
+						size="15" maxlength="15" />
 				</f:facet>
 			</aon:column>
 		</ui:define>

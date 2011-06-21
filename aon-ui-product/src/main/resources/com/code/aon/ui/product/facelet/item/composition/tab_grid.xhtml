@@ -14,7 +14,7 @@
 		<ui:define name="columns">
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
 				<f:facet name="header">
-					<aon:outputLabel value="#{bundle.aon_order}" />
+					<aon:outputLabel for="ItemComposition_sequence" value="#{bundle.aon_order}" />
 				</f:facet>
 				<aon:outputText value="#{to.sequence}"
 					rendered="#{formList}" />
@@ -30,8 +30,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="Item_id"
-						value="#{productBundle.product_component}" />
+					<aon:outputLabel for="Item_id" value="#{productBundle.product_component}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" 
 					rendered="#{formList}">

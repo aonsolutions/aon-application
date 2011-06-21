@@ -4,6 +4,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.faces.controller.RichLookupBean;
 import com.code.aon.product.Item;
+import com.code.aon.product.pricing.ItemPricesManager;
 
 public class ItemLookup extends RichLookupBean {
 

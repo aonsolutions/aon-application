@@ -31,13 +31,15 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.Tax;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.ProductStatus;
+import com.code.aon.product.pricing.IPriceable;
 import com.code.aon.ql.Criteria;
 
 @Entity
 @Table(name="item")
-public class Item implements ITransferObject {
+public class Item implements ITransferObject, IPriceable {
 
 	private static final long serialVersionUID = -2720748805321005422L;
 	
@@ -195,17 +197,30 @@ public class Item implements ITransferObject {
 	}
 
 	@Transient
+	public double getProfitablePrice() {
+		return getPurchasePrice();
+	}
+
+	@Transient
 	public double getSalesPrice() {
 		return getSalesPrice(this.getPrice());
 	}
 	public double getSalesPrice(double price) {
-		Product product = this.getProduct();
-		double vatQuota = (product.getVat() != null) ? CommonUtil.round(price * product.getVat().getPercentage() / 100) : 0;
-		double retentionQuota = (product.getRetention() != null) ? CommonUtil.round(price * product.getRetention().getPercentage() / 100) : 0;
+		double vatQuota = (getVat() != null) ? CommonUtil.round(price * getVat().getPercentage() / 100) : 0;
+		double retentionQuota = (getRetention() != null) ? CommonUtil.round(price * getRetention().getPercentage() / 100) : 0;
 		return CommonUtil.round(CommonUtil.round(price) + vatQuota - retentionQuota);
 	}
-	
 	public void setSalesPrice(double salesPrice) {
+	}
+
+	@Transient
+	public Tax getVat() {
+		return getProduct().getVat();
+	}
+
+	@Transient
+	public Tax getRetention() {
+		return getProduct().getRetention();
 	}
 
 	@Transient
