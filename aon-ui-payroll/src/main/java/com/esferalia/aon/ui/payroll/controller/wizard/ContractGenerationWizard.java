@@ -57,7 +57,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
-import com.esferalia.aon.payroll.AgreementLevelPayment;
+import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractData;
@@ -126,7 +126,7 @@ public class ContractGenerationWizard extends BasicController{
 	private Agreement agreement;
 	private AgreementLevel agreementLevel;
 	private AgreementLevelCategory category;
-	private AgreementLevelPayment payment;
+	private AgreementPayment payment;
 	private AonFile aonFile;
 	private boolean agreementSalary;
 	private ContractXmlWriter xmlWriter;
@@ -176,13 +176,13 @@ public class ContractGenerationWizard extends BasicController{
 
 	private void loadPayment() {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(AgreementLevelPayment.class);
-			String identifier = bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_PAYMENT_LEVEL_ID);
-			Integer data = getAgreementLevel().getId();
+			IManagerBean bean = BeanManager.getManagerBean(AgreementPayment.class);
+			String identifier = bean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_AGREEMENT_ID);
+			Integer data = getAgreement().getId();
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(identifier, data);
 			for( ITransferObject to : bean.getList(criteria) ) {
-				AgreementLevelPayment a = (AgreementLevelPayment)to;
+				AgreementPayment a = (AgreementPayment)to;
 				if(a.getType() == PaymentType.BASE_SALARY){
 					setPayment(a);
 				}
@@ -192,11 +192,11 @@ public class ContractGenerationWizard extends BasicController{
 		}
 	}
 
-	public AgreementLevelPayment getPayment() {
+	public AgreementPayment getPayment() {
 		return payment;
 	}
 
-	public void setPayment(AgreementLevelPayment payment) {
+	public void setPayment(AgreementPayment payment) {
 		this.payment = payment;
 	}
 

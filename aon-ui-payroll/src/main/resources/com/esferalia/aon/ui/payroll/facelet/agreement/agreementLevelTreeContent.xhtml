@@ -43,24 +43,11 @@
 		
 			<aon:panelTabSet rendered="#{!agreementLevel.new}" >
 
-				<aon:panelTab id="payment" disabled="#{agreementLevel.model==null}"
-					label="#{payrollBundle.payroll_salary_payment}">
-					
-					<aon:div style="font-size: 0.9em;">
-					<!--  
-						<c:if test="#{agreementLevelPayment.to == null}">
-							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementLevelPaymentList.xhtml" />
-						</c:if>
-						<c:if test="#{agreementLevelPayment.to != null}">
-							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementLevelPaymentForm.xhtml" />
-						</c:if>
-					-->
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
-							<ui:param name="controller" value="#{agreementLevelPayment}" />
-							<ui:param name="skipScopeColumn" value="true" />
-						</ui:include>
-					</aon:div>
-					
+				
+
+				<aon:panelTab id="levelData" disabled="#{agreementLevel.model==null}"
+					label="#{payrollBundle.payroll_agreement_data}">
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementLevelData.xhtml" />
 				</aon:panelTab>
 
 				<aon:panelTab id="category" label="#{payrollBundle.payroll_agreementLevel_category}">
@@ -69,21 +56,6 @@
 						<aon:methodParam name="removeAction"  value="" />
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 							<ui:param name="controller" value="#{agreementLevelCategory}" />
-<!-- 							
-							<ui:param name="skipLineEdition" value="true" />
-							<ui:define name="beginFormListContent">
-								<aon:commandLink id="#{dataTableId}-selectButton" 
-									styleClass="aon-table-row-link" value="&#160;"
-									immediate="true" ajaxSingle="true" requestDelay="100"
-									actionListener="#{controller.onSelect}"
-									onkeyup="#{dataTableId}KeyUp(this)"
-									onfocus="#{dataTableId}SelectRow(this)"
-									onblur="#{dataTableId}DeselectRow(this)"
-									focus="#{(focusOnSelect != null)?(focusOnSelect):''}"
-									reRender="#{dataTableId}Div" >
-								</aon:commandLink>
-							</ui:define>
- -->
 							<ui:define name="columns">
 								<aon:column styleClass="aon-editDataTable-textColumn">
 									<f:facet name="header">
@@ -103,10 +75,6 @@
 						</ui:decorate>
 				</aon:panelTab>
 				
-				<aon:panelTab id="levelData" disabled="#{agreementLevel.model==null}"
-					label="#{payrollBundle.payroll_agreement_data}">
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementLevelData.xhtml" />
-				</aon:panelTab>
 				
 			</aon:panelTabSet>
 		</aon:panelGrid>

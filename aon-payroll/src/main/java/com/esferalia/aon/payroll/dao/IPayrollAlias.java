@@ -6,7 +6,7 @@ import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
-import com.esferalia.aon.payroll.AgreementLevelPayment;
+import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.BonusConcept;
 import com.esferalia.aon.payroll.Certifica2Batch;
 import com.esferalia.aon.payroll.Certifica2BatchData;
@@ -173,87 +173,87 @@ public interface IPayrollAlias {
 
 
 	/** 
-	* DAOConstantsEntry for AgreementLevelPayment entity.
+	* DAOConstantsEntry for AgreementPayment entity.
 	*/ 
-	DAOConstantsEntry AGREEMENT_LEVEL_PAYMENT_ENTRY = DAOConstants.getDAOConstant(AgreementLevelPayment.class);
+	DAOConstantsEntry AGREEMENT_PAYMENT_ENTRY = DAOConstants.getDAOConstant(AgreementPayment.class);
 
 	/** 
-	* Alias value: AgreementLevelPayment_description
-	* Hibernate value: AgreementLevelPayment.description
+	* Alias value: AgreementPayment_agreement_id
+	* Hibernate value: AgreementPayment.agreement.id
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_DESCRIPTION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[0];
+	String  AGREEMENT_PAYMENT_AGREEMENT_ID = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: AgreementLevelPayment_descriptionDecorable
-	* Hibernate value: AgreementLevelPayment.descriptionDecorable
+	* Alias value: AgreementPayment_description
+	* Hibernate value: AgreementPayment.description
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_DESCRIPTION_DECORABLE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[1];
+	String  AGREEMENT_PAYMENT_DESCRIPTION = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: AgreementLevelPayment_endDate
-	* Hibernate value: AgreementLevelPayment.endDate
+	* Alias value: AgreementPayment_descriptionDecorable
+	* Hibernate value: AgreementPayment.descriptionDecorable
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_END_DATE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[2];
+	String  AGREEMENT_PAYMENT_DESCRIPTION_DECORABLE = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: AgreementLevelPayment_expression
-	* Hibernate value: AgreementLevelPayment.expression
+	* Alias value: AgreementPayment_endDate
+	* Hibernate value: AgreementPayment.endDate
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_EXPRESSION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[3];
+	String  AGREEMENT_PAYMENT_END_DATE = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: AgreementLevelPayment_id
-	* Hibernate value: AgreementLevelPayment.id
+	* Alias value: AgreementPayment_expression
+	* Hibernate value: AgreementPayment.expression
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[4];
+	String  AGREEMENT_PAYMENT_EXPRESSION = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: AgreementLevelPayment_irpfExpression
-	* Hibernate value: AgreementLevelPayment.irpfExpression
+	* Alias value: AgreementPayment_id
+	* Hibernate value: AgreementPayment.id
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_IRPF_EXPRESSION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[5];
+	String  AGREEMENT_PAYMENT_ID = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: AgreementLevelPayment_level_id
-	* Hibernate value: AgreementLevelPayment.level.id
+	* Alias value: AgreementPayment_irpfExpression
+	* Hibernate value: AgreementPayment.irpfExpression
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_LEVEL_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[6];
+	String  AGREEMENT_PAYMENT_IRPF_EXPRESSION = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: AgreementLevelPayment_month
-	* Hibernate value: AgreementLevelPayment.month
+	* Alias value: AgreementPayment_month
+	* Hibernate value: AgreementPayment.month
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_MONTH = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[7];
+	String  AGREEMENT_PAYMENT_MONTH = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[7];
 
 	/** 
-	* Alias value: AgreementLevelPayment_paymentConcept_id
-	* Hibernate value: AgreementLevelPayment.paymentConcept.id
+	* Alias value: AgreementPayment_paymentConcept_id
+	* Hibernate value: AgreementPayment.paymentConcept.id
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_PAYMENT_CONCEPT_ID = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[8];
+	String  AGREEMENT_PAYMENT_PAYMENT_CONCEPT_ID = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[8];
 
 	/** 
-	* Alias value: AgreementLevelPayment_quoteExpression
-	* Hibernate value: AgreementLevelPayment.quoteExpression
+	* Alias value: AgreementPayment_quoteExpression
+	* Hibernate value: AgreementPayment.quoteExpression
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_QUOTE_EXPRESSION = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[9];
+	String  AGREEMENT_PAYMENT_QUOTE_EXPRESSION = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[9];
 
 	/** 
-	* Alias value: AgreementLevelPayment_salaryType
-	* Hibernate value: AgreementLevelPayment.salaryType
+	* Alias value: AgreementPayment_salaryType
+	* Hibernate value: AgreementPayment.salaryType
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_SALARY_TYPE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[10];
+	String  AGREEMENT_PAYMENT_SALARY_TYPE = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[10];
 
 	/** 
-	* Alias value: AgreementLevelPayment_startDate
-	* Hibernate value: AgreementLevelPayment.startDate
+	* Alias value: AgreementPayment_startDate
+	* Hibernate value: AgreementPayment.startDate
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_START_DATE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[11];
+	String  AGREEMENT_PAYMENT_START_DATE = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[11];
 
 	/** 
-	* Alias value: AgreementLevelPayment_type
-	* Hibernate value: AgreementLevelPayment.type
+	* Alias value: AgreementPayment_type
+	* Hibernate value: AgreementPayment.type
 	*/
-	String  AGREEMENT_LEVEL_PAYMENT_TYPE = AGREEMENT_LEVEL_PAYMENT_ENTRY.getAliasNames()[12];
+	String  AGREEMENT_PAYMENT_TYPE = AGREEMENT_PAYMENT_ENTRY.getAliasNames()[12];
 
 
 

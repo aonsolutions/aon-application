@@ -166,5 +166,4 @@ public class ExpressionContext {
 		Pattern.compile("[A-Z_][A-Z0-9_]*");
 	
 	
-	
 }

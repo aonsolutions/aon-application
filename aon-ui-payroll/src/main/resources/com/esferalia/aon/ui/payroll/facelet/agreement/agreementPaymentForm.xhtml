@@ -16,63 +16,63 @@
 		template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 		<ui:param name="toolbarTitle"
 			value="#{payrollBundle.payroll_agreementLevel_payment}" />
-		<ui:param name="controller" value="#{agreementLevelPayment}" />
+		<ui:param name="controller" value="#{agreementPayment}" />
 		<ui:param name="skipSearchButton" value="true" />
 	</ui:decorate>
 
 	<aon:panelGrid id="dataTable" columns="2" styleClass="aon-margin-top">
 	
-		<aon:outputLabel for="AgreementLevelPayment_startDate" value="#{bundle.aon_start_date}" />
-		<aon:selectInputDate id="AgreementLevelPayment_startDate" value="#{agreementLevelPayment.to.startDate}" required="true"
+		<aon:outputLabel for="agreementPayment_startDate" value="#{bundle.aon_start_date}" />
+		<aon:selectInputDate id="agreementPayment_startDate" value="#{agreementPayment.to.startDate}" required="true"
 			timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
 		
-		<aon:outputLabel for="AgreementLevelPayment_endDate" value="#{bundle.aon_end_date}" />
-		<aon:selectInputDate id="AgreementLevelPayment_endDate" value="#{agreementLevelPayment.to.endDate}"
+		<aon:outputLabel for="agreementPayment_endDate" value="#{bundle.aon_end_date}" />
+		<aon:selectInputDate id="agreementPayment_endDate" value="#{agreementPayment.to.endDate}"
 			timeZone="#{timeZoneController.timeZone}" popupDateFormat="#{bundle.aon_date_pattern}"/>
 	
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{agreementLevelPayment.to.paymentConcept}" />
+			<ui:param name="lookupTo" value="#{agreementPayment.to.paymentConcept}" />
 			<ui:param name="skipNewButton" value="#{true}" />
 		</ui:include>
 
-		<aon:outputLabel for="AgreementLevelPayment_description"
+		<aon:outputLabel for="agreementPayment_description"
 			value="#{bundle.aon_description}" />
-		<aon:inputText id="AgreementLevelPayment_description" size="64"
-			maxlength="64" value="#{agreementLevelPayment.to.description}" />
+		<aon:inputText id="agreementPayment_description" size="64"
+			maxlength="64" value="#{agreementPayment.to.description}" />
 
 		<aon:outputText value="&#160;" />
 		<aon:panelGroup>
-			<aon:selectBooleanCheckbox id="AgreementLevelPayment_decorateDescription"
-				value="#{agreementLevelPayment.to.descriptionDecorable}" />
-			<aon:outputLabel for="AgreementLevelPayment_decorateDescription"
+			<aon:selectBooleanCheckbox id="agreementPayment_decorateDescription"
+				value="#{agreementPayment.to.descriptionDecorable}" />
+			<aon:outputLabel for="agreementPayment_decorateDescription"
 				value="#{payrollBundle.payroll_salary_show_expression}" />
 		</aon:panelGroup>
 
-		<aon:outputLabel for="AgreementLevelPayment_salaryType" value="#{bundle.aon_type}" />
-		<aon:selectOneRadio id="AgreementLevelPayment_salaryType" value="#{agreementLevelPayment.to.salaryType}">
+		<aon:outputLabel for="agreementPayment_salaryType" value="#{bundle.aon_type}" />
+		<aon:selectOneRadio id="agreementPayment_salaryType" value="#{agreementPayment.to.salaryType}">
 			<f:selectItems value="#{payrollCollections.salaryTypes}" />
 		</aon:selectOneRadio>
 
-		<aon:outputLabel for="AgreementLevelPayment_month" value="#{payrollBundle.payroll_salary_payment_month}" />
-		<aon:selectOneMenu id="AgreementLevelPayment_month" value="#{agreementLevelPayment.to.month}">
+		<aon:outputLabel for="agreementPayment_month" value="#{payrollBundle.payroll_salary_payment_month}" />
+		<aon:selectOneMenu id="agreementPayment_month" value="#{agreementPayment.to.month}">
 			<f:selectItem value="#{null}" itemLabel=" - " />
 			<f:selectItems value="#{commonCollections.months}"  />
 		</aon:selectOneMenu>
 
 		<c:if test="#{aonRole.sisAdmin}">
-			<aon:outputLabel for="AgreementLevelPayment_expression"
+			<aon:outputLabel for="agreementPayment_expression"
 				value="#{payrollBundle.payroll_salary_expression}" />
-			<aon:inputTextarea id="AgreementLevelPayment_expression" cols="60" rows="3"
-				maxlength="128" value="#{agreementLevelPayment.to.expression}">
+			<aon:inputTextarea id="agreementPayment_expression" cols="60" rows="3"
+				maxlength="128" value="#{agreementPayment.to.expression}">
 				<f:validateLength maximum="128" />
 				<a4j:region>
-					<rich:suggestionbox id="AgreementLevelPayment_expression_suggestion"
-						for="AgreementLevelPayment_expression"
+					<rich:suggestionbox id="agreementPayment_expression_suggestion"
+						for="agreementPayment_expression"
 						onselect="suggestionBoxActive=false;"
-						suggestionAction="#{agreementLevelPayment.expressionContext}" var="exp"
+						suggestionAction="#{agreementPayment.expressionContext}" var="exp"
 						similarityGroupingId="" tokens=" +-/*%(){}[]" fetchValue="#{exp}"
 						immediate="true" limitToList="true" ajaxSingle="true"
-						eventsQueue="AgreementLevelPayment_expressionSug"
+						eventsQueue="agreementPayment_expressionSug"
 						ignoreDupResponses="true" requestDelay="100" width="500"
 						height="100" nothingLabel="#{bundle.aon_search_no_results}">
 						<aon:column>
@@ -82,19 +82,19 @@
 				</a4j:region>
 			</aon:inputTextarea>
 	
-			<aon:outputLabel for="AgreementLevelPayment_irpf_expression"
+			<aon:outputLabel for="agreementPayment_irpf_expression"
 				value="#{payrollBundle.payroll_salary_irpf_expression}" />
-			<aon:inputTextarea id="AgreementLevelPayment_irpf_expression" cols="60"
-				rows="3" maxlength="128" value="#{agreementLevelPayment.to.irpfExpression}">
+			<aon:inputTextarea id="agreementPayment_irpf_expression" cols="60"
+				rows="3" maxlength="128" value="#{agreementPayment.to.irpfExpression}">
 				<f:validateLength maximum="128" />
 				<a4j:region>
-					<rich:suggestionbox id="AgreementLevelPayment_irpf_expression_suggestion"
-						for="AgreementLevelPayment_irpf_expression"
+					<rich:suggestionbox id="agreementPayment_irpf_expression_suggestion"
+						for="agreementPayment_irpf_expression"
 						onselect="suggestionBoxActive=false;"
-						suggestionAction="#{agreementLevelPayment.expressionContext}" var="exp"
+						suggestionAction="#{agreementPayment.expressionContext}" var="exp"
 						similarityGroupingId="" tokens=" +-/*%(){}[]" fetchValue="#{exp}"
 						immediate="true" limitToList="true" ajaxSingle="true"
-						eventsQueue="AgreementLevelPayment_irpf_expressionSug"
+						eventsQueue="agreementPayment_irpf_expressionSug"
 						ignoreDupResponses="true" requestDelay="100" width="500"
 						height="100" nothingLabel="#{bundle.aon_search_no_results}">
 						<aon:column>
@@ -104,19 +104,19 @@
 				</a4j:region>
 			</aon:inputTextarea>
 	
-			<aon:outputLabel for="AgreementLevelPayment_quote_expression"
+			<aon:outputLabel for="agreementPayment_quote_expression"
 				value="#{payrollBundle.payroll_salary_quote_expression}" />
-			<aon:inputTextarea id="AgreementLevelPayment_quote_expression" cols="60"
-				rows="3" maxlength="128" value="#{agreementLevelPayment.to.quoteExpression}">
+			<aon:inputTextarea id="agreementPayment_quote_expression" cols="60"
+				rows="3" maxlength="128" value="#{agreementPayment.to.quoteExpression}">
 				<f:validateLength maximum="128" />
 				<a4j:region>
-					<rich:suggestionbox id="AgreementLevelPayment_quote_expression_suggestion"
-						for="AgreementLevelPayment_quote_expression"
+					<rich:suggestionbox id="agreementPayment_quote_expression_suggestion"
+						for="agreementPayment_quote_expression"
 						onselect="suggestionBoxActive=false;"
-						suggestionAction="#{agreementLevelPayment.expressionContext}" var="exp"
+						suggestionAction="#{agreementPayment.expressionContext}" var="exp"
 						similarityGroupingId="" tokens=" +-/*%(){}[]" fetchValue="#{exp}"
 						immediate="true" limitToList="true" ajaxSingle="true"
-						eventsQueue="AgreementLevelPayment_quote_expressionSug"
+						eventsQueue="agreementPayment_quote_expressionSug"
 						ignoreDupResponses="true" requestDelay="100" width="500"
 						height="100" nothingLabel="#{bundle.aon_search_no_results}">
 						<aon:column>

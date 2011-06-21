@@ -16,6 +16,16 @@ public class SQLAgreementPaymentsFactory
 
 	private static final String SQL = 
 		"SELECT * " 
+		+" FROM agreement_payment"
+		+" LEFT JOIN  payment_concept" 							// LEFT JOIN: payment_concept puede ser NULL
+		+"	ON payment_concept = payment_concept.id"
+		+" WHERE agreement IN (SELECT agreement FROM agreement_level WHERE id = ? )"
+		+" AND start_date <= ?"
+		+" AND ( end_date IS NULL"
+		+" OR end_date >= ? )";
+
+	private static final String SQL_ = 
+		"SELECT * " 
 		+" FROM `agreement_level_payment`"
 		+" LEFT JOIN  payment_concept" 							// LEFT JOIN: payment_concept puede ser NULL
 		+"	ON payment_concept = payment_concept.id"	
@@ -23,7 +33,7 @@ public class SQLAgreementPaymentsFactory
 		+" AND start_date <= ?"
 		+" AND ( end_date IS NULL"
 		+" OR end_date >= ? )";
-
+	
 	private PreparedStatement 		stmt;
 
 	public SQLAgreementPaymentsFactory(Connection connection,Date startDate, Date endDate ) 

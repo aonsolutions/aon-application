@@ -12,7 +12,7 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
-import com.esferalia.aon.payroll.AgreementLevelPayment;
+import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class AgreementLevelVetoableBeanListener extends ManagerBeanVetoListenerAdapter {
@@ -25,23 +25,9 @@ public class AgreementLevelVetoableBeanListener extends ManagerBeanVetoListenerA
 		} catch (ManagerBeanException e) {
 			throw new  ManagerBeanVetoListenerException("Imposible borrar Categorías.");
 		}
-		try {
-			removeAgreementLevelPayments(al);
-		} catch (ManagerBeanException e) {
-			throw new  ManagerBeanVetoListenerException("Imposible borrar Salarios.");
-		}
 		
 	}
 
-	private void removeAgreementLevelPayments(AgreementLevel al) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(AgreementLevelPayment.class);
-		Criteria c = new Criteria();
-		c.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_PAYMENT_LEVEL_ID), al.getId());
-		List<ITransferObject> list = bean.getList(c);
-		for (ITransferObject to : list) {
-			bean.remove(to);
-		}
-	}
 
 	private void removeAgreementLevelCategories(AgreementLevel al) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(AgreementLevelCategory.class);

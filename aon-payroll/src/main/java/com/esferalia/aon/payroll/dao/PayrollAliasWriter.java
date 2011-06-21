@@ -11,7 +11,7 @@ import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
-import com.esferalia.aon.payroll.AgreementLevelPayment;
+import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.BonusConcept;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Certifica2Batch;
@@ -61,7 +61,7 @@ public class PayrollAliasWriter {
 				AgreementLevel.class.getName(),
 				AgreementLevelCategory.class.getName(),
 				AgreementLevelData.class.getName(),
-				AgreementLevelPayment.class.getName(),
+				AgreementPayment.class.getName(),
 				BonusConcept.class.getName(),
 				Certifica2Batch.class.getName(),
 				Certifica2BatchData.class.getName(),

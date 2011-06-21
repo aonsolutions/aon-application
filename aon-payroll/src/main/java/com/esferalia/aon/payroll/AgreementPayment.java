@@ -29,13 +29,13 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 
 @Entity
-@Table(name="agreement_level_payment")
-public class AgreementLevelPayment implements ITransferObject, IContractPayment  {
+@Table(name="agreement_payment")
+public class AgreementPayment implements ITransferObject, IContractPayment  {
 
 	private static final long serialVersionUID = 2714371281487806164L;
 
 	private Integer id;
-	private AgreementLevel level;
+	private Agreement agreement;
 	private Date startDate;	
 	private Date endDate;
 	private PaymentType type;
@@ -59,14 +59,14 @@ public class AgreementLevelPayment implements ITransferObject, IContractPayment 
 	}
 	
 	@ManyToOne
-    @JoinColumn( name="agreement_level", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_PAYMENT_AGREEMENT_LEVEL")
-	@Index(name = "FK_PAYMENT_AGREEMENT_LEVEL")
-	public AgreementLevel getLevel() {
-		return level;
+    @JoinColumn( name="agreement", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_PAYMENT_AGREEMENT")
+	@Index(name = "FK_PAYMENT_AGREEMENT")
+	public Agreement getAgreement() {
+		return agreement;
 	}
-	public void setLevel(AgreementLevel level) {
-		this.level = level;
+	public void setAgreement(Agreement agreement) {
+		this.agreement = agreement;
 	}
 	
 	@Temporal(TemporalType.DATE)
@@ -96,8 +96,8 @@ public class AgreementLevelPayment implements ITransferObject, IContractPayment 
 
 	@ManyToOne
 	@JoinColumn(name = "payment_concept")
-	@ForeignKey(name = "FK_AGREE_LEVEL_PAYMENT_PAYMENT_CONCEPT")
-	@Index(name = "IDX_AGREE_LEVEL_PAYMENT_PAYMENT_CONCEPT")
+	@ForeignKey(name = "FK_AGREEMENT_PAYMENT_PAYMENT_CONCEPT")
+	@Index(name = "IDX_AGREEMENT_PAYMENT_PAYMENT_CONCEPT")
 	public PaymentConcept getPaymentConcept() {
 		return paymentConcept;
 	}
@@ -165,10 +165,10 @@ public class AgreementLevelPayment implements ITransferObject, IContractPayment 
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final AgreementLevelPayment o = (AgreementLevelPayment) obj;
+		final AgreementPayment o = (AgreementPayment) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.level, o.level)			
+				.append(this.agreement, o.agreement)			
 				.append(this.type, o.type)
 				.append(this.paymentConcept,o.paymentConcept)
 				.append(this.description, o.description)			
@@ -185,7 +185,7 @@ public class AgreementLevelPayment implements ITransferObject, IContractPayment 
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)
-			.append(level)
+			.append(agreement)
 			.append(type)
 			.append(paymentConcept)
 			.append(description)

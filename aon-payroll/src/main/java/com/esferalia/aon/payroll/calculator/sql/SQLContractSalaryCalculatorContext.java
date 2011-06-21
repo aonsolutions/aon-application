@@ -811,6 +811,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	
 	/* 
+	 * Calcula los 'DIAS_TRABAJADOS' (DIAS_MES - DIAS_BAJA). 
 	 */
 	private double getWorkDays(Period p) {
 
@@ -823,9 +824,6 @@ public class SQLContractSalaryCalculatorContext implements
 		return workedDays;
 	}
 	
-	/* 
-	 * Calcula los 'DIAS_TRABAJADOS' (DIAS_MES - DIAS_BAJA). 
-	 */
 	private double getSalaryDays() {
 
 		Long availableDays = 

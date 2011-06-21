@@ -858,6 +858,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{agreementLevelListener}</value>
+				<value>#{agreementPaymentListener}</value>
 				<value>#{agreementTreeControlerListener}</value>
 			</list-entries>
 		</managed-property>
@@ -925,7 +926,6 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{agreementLevelDataChildListener}</value>
-				<value>#{agreementLevelPaymentChildListener}</value>
 				<value>#{agreementLevelCategoryChildListener}</value>
 				<value>#{agreementLevelTreeControllerListener}</value>
 			</list-entries>
@@ -1048,37 +1048,37 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.agreement.AgreementLevelDataSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<!-- ************ AGREEMENT LEVEL Payment LISTENER ************** -->
+	<!-- ************ AGREEMENT PAYMENT LISTENER ************** -->
 	<managed-bean>
-		<managed-bean-name>agreementLevelPaymentChildListener</managed-bean-name>
+		<managed-bean-name>agreementPaymentListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
-			<value>agreementLevelPayment</value>
+			<value>agreementPayment</value>
 		</managed-property>
 		<managed-property>
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
-					<key>AgreementLevelPayment_level_id</key>
+					<key>AgreementPayment_agreement_id</key>
 					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	<!-- ************ AGREEMENT LEVEL Payment ************** -->
+	<!-- ************ AGREEMENT PAYMENT ************** -->
 	<managed-bean>
-		<managed-bean-name>agreementLevelPayment</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.agreement.AgreementLevelPaymentController</managed-bean-class>
+		<managed-bean-name>agreementPayment</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.agreement.AgreementPaymentController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.AgreementLevelPayment</value>
+			<value>com.esferalia.aon.payroll.AgreementPayment</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>agreementLevelPayment</value>
+			<value>agreementPayment</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -1086,14 +1086,14 @@
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
-			<value>agreementLevel</value>
+			<value>agreement</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
 					<key>id</key>
-					<value>level.id</value>
+					<value>agreement.id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>

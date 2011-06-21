@@ -17,7 +17,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.AgreementLevelPayment;
+import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
@@ -93,7 +93,7 @@ public class SalaryDraftPaymentController extends ContractDetailAbstractControll
 		} else if(payment.getScope()==ExpressionScope.AGREEMENT){
 			super.onReset(event);
 			ContractPayment cp = (ContractPayment) this.getTo();
-			AgreementLevelPayment alp = (AgreementLevelPayment) payment;
+			AgreementPayment alp = (AgreementPayment) payment;
 			cp.setContract((Contract) controller.getTo()); 
 			cp.setType(alp.getType()); 
 			cp.setPaymentConcept(alp.getPaymentConcept()); 

@@ -2,25 +2,38 @@ package com.esferalia.aon.ui.payroll.controller.agreement;
 
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.persistence.Transient;
 
 import org.ajax4jsf.model.DataComponentState;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.Session;
 import org.richfaces.component.UITree;
 import org.richfaces.event.NodeSelectedEvent;
 import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeNodeImpl;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
+import com.esferalia.aon.payroll.AgreementLevelCategory;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryCost;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class AgreementTree {
@@ -121,7 +134,8 @@ public class AgreementTree {
 	}
 
 	public AgreementTreeData getTreeData(AgreementLevel a) {
-		return new AgreementTreeData( a.getId(), a.getDescription(), AgreementTreeType.AGREEMENT_LEVEL);
+		String descrition = String.format("%s %s", a.getDescription(), getLevelCategories(a));
+		return new AgreementTreeData( a.getId(), descrition, AgreementTreeType.AGREEMENT_LEVEL);
 	}
 	public AgreementTreeData getTreeData( Agreement a ) {
 		return new AgreementTreeData( a.getId(), a.getDescription(), AgreementTreeType.AGREEMENT);
@@ -179,6 +193,36 @@ public class AgreementTree {
 		if (node != null) {
 			setCurrentTreeNode(node);
 			setCurrentNode(node.getData());
+		}
+	}
+	
+	
+	private String getLevelCategories(AgreementLevel level) {
+		try {
+			IManagerBean bean = 
+				BeanManager.getManagerBean(AgreementLevelCategory.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(
+					bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_ID), 
+					level.getId());
+			List<?> list = bean.getList(c);
+			@SuppressWarnings("unchecked")
+			Collection<AgreementLevelCategory> categories = 
+				(Collection<AgreementLevelCategory>) list;
+
+			StringBuffer buffer = new StringBuffer();
+			for (AgreementLevelCategory category : categories) {
+				if ( StringUtils.isEmpty(category.getDescription()) ){
+						continue;
+				}
+				if ( buffer.length() >  0 ) {
+					buffer.append(", ");
+				}
+				buffer.append( category.getDescription() );
+			}
+			return buffer.toString();
+		} catch (ManagerBeanException  e) {
+			return StringUtils.EMPTY;
 		}
 	}
 
