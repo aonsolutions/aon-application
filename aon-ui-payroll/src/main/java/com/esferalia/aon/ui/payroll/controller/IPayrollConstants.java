@@ -7,11 +7,17 @@ public interface IPayrollConstants {
 	// ************************************************************
 	
 	/** ResourceBundle name. */
-	String BUNDLE_NAME = "employeeBundle";
+	String BUNDLE_NAME = "payrollBundle";
 	String SALARY_EMAIL_SUBJECT = "employee_email_subject";
 	String SALARY_EMAIL_BODY_HEADER = "employee_email_subject_header";
 	String SALARY_EMAIL_BODY_LINE = "employee_email_subject_line";
 	String SALARY_EMAIL_BODY_FOOTER = "employee_email_subject_footer";
+	String PAYROLL_SALARY_PAYMENTS = "payroll_salary_payments_tab";
+	String PAYROLL_SALARY_DEDUCTIONS = "payroll_salary_deductions_tab";
+	String PAYROLL_SALARY_BONUS = "payroll_salary_bonus_tab";
+	String PAYROLL_SALARY_EMBARGOS = "payroll_salary_embargos_tab";
+	String PAYROLL_SALARY = "payroll_salary";
+	String PAYROLL_SALARY_DRAFT = "payroll_salary_draft";
 	
 	// ************************************************************
 	// CONTROLLERS

@@ -17,9 +17,9 @@ public class EnterpriseTreeData {
 	
 	public static final String ACTIVITY_ICON = "/images/aon-icon/aon-icon-menu-top-item.png";
 	
-	public static final String MAIN_ICON = "/images/aon-icon/aon-icon-search.png";
+//	public static final String MAIN_ICON = "/images/aon-icon/aon-icon-search.png";
 	
-	public static final String VARIABLES_ICON = "/images/aon-icon/aon-icon-search.png";
+//	public static final String VARIABLES_ICON = "/images/aon-icon/aon-icon-search.png";
 	
 	public static final String PAYMENT_ICON = "/images/aon-icon/aon-icon-fraction.png";
 	

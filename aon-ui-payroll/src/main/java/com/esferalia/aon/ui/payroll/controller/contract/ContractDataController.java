@@ -4,11 +4,23 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
+
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
 import com.esferalia.aon.payroll.ContractData;
 
 public class ContractDataController extends BasicController {
+	
+	private boolean showOnlyCurrent;
+	
+	public boolean isShowOnlyCurrent() {
+		return showOnlyCurrent;
+	}
+
+	public void setShowOnlyCurrent(boolean showOnlyCurrent) {
+		this.showOnlyCurrent = showOnlyCurrent;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<?> expressionContext(Object suggest) {
@@ -36,6 +48,14 @@ public class ContractDataController extends BasicController {
 		}
 		Collections.sort(list);
 		return list;
+	}
+	
+	public void onSearchCurrent(ActionEvent event){
+		
+	}
+	
+	public void onSearchAll(ActionEvent event){
+		
 	}
 
 }

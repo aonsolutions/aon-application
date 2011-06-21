@@ -10,6 +10,14 @@
 	<ui:define name="content">
 	
 		<aon:form id="contractEmbargoForm">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_embargos_tab}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+				<ui:define name="toolbarContent">
+					
+				</ui:define>				
+			</ui:decorate>
+		
 			<aon:div id="embargoGrid" styleClass="aon-scroll-area">
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/listContent.xhtml">
 					<ui:param name="controller" value="#{contractEmbargo}" />

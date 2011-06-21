@@ -10,6 +10,14 @@
 	<ui:define name="content">
 	
 		<aon:form id="contractBonusForm">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_bonus_tab}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+				<ui:define name="toolbarContent">
+					
+				</ui:define>				
+			</ui:decorate>
+		
 			<aon:div id="bonusGrid" styleClass="aon-scroll-area">
 				
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/editGridContent.xhtml" >

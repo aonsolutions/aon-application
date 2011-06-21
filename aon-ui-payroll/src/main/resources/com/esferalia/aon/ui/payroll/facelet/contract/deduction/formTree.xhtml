@@ -10,6 +10,14 @@
 	<ui:define name="content">
 	
 		<aon:form id="contractDeductionForm">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_deductions_tab}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+				<ui:define name="toolbarContent">
+					
+				</ui:define>				
+			</ui:decorate>	
+		
 			<aon:div id="deductionGrid" styleClass="aon-scroll-area">
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/editGridContent.xhtml" >
 					<ui:param name="controller" value="#{contractDeduction}" />

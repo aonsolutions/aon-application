@@ -15,6 +15,9 @@ public class ContractDataSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+//		if(getController()){
+//			
+//		}
 		String alias = getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE);
 		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, new Date());
 		Expression expr2 = ExpressionUtilities.getNullExpression(alias);

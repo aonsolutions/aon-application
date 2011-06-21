@@ -10,6 +10,23 @@
 	<ui:define name="content">
 	
 		<aon:form id="contractDataForm">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_variables}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="current"
+						value="En curso"
+						actionListener="#{contractData.onSearchCurrent}"
+						styleClass="aon-finding-toolbar-item aon-icon-category" >
+					</aon:commandButton>
+					<aon:commandButton id="history"
+						value="Historico"
+						actionListener="#{contractData.onSearchAll}"
+						styleClass="aon-finding-toolbar-item aon-icon-category" >
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>	
+		
 			<aon:div id="dataGrid" styleClass="aon-scroll-area">
 				<ui:decorate	
 					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">

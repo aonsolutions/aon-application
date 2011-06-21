@@ -79,6 +79,15 @@
 				styleClass="aon-icon-info"
 				rendered="#{contract.to.seniorityDateDifferent}" />
 		</aon:panelGroup>
+		
+		<aon:outputLabel for="agreementLevelCategory" 
+			value="#{payrollBundle.payroll_agreementLevel_category}" />
+		<aon:selectOneMenu id="agreementLevelCategory"
+			disabled="#{contract.to.activity==null or contract.to.activity.id==null}"
+			value="#{contract.to.agreementLevelCategory}" >
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{contract.agreementLevelCategories}" />
+		</aon:selectOneMenu>
 
 	</aon:panelGrid>
 

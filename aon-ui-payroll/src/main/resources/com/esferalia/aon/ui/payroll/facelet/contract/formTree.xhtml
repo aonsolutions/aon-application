@@ -5,11 +5,48 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	template="/com/code/aon/ui/company/facelet/enterprise/treeTemplate.xhtml">
+	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
 	<ui:define name="content">
 	
 		<aon:form id="contractForm">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="Contract-Save"
+						value="#{bundle.aon_accept}"
+						actionListener="#{contract.accept}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept">
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>	
+		
+			<aon:div id="contractMainGrid" styleClass="aon-scroll-area">
+				<ui:include 
+					src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" >
+					<ui:param name="controller" value="#{contract}" />
+				</ui:include>
+			</aon:div>
+		
+		
+			<aon:div id="dataGrid" styleClass="aon-scroll-area">
+				<ui:decorate	
+					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+					<ui:param name="controller" value="#{contractData}" />
+					<ui:define name="columns">
+				
+						<ui:include 
+							src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" >
+							<ui:param name="controller" value="#{contractData}" />
+						</ui:include>
+							
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+		
+<!--  
 		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_module}" />
@@ -120,7 +157,11 @@
 				</c:if>
 
 			</aon:div>
+
+-->
 		</aon:form>
+<!--  
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+-->
 	</ui:define>
 </ui:composition>

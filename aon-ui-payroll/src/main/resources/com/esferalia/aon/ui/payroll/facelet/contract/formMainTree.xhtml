@@ -10,6 +10,18 @@
 	<ui:define name="content">
 	
 		<aon:form id="contractMainForm">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="Contract-Save"
+						value="#{bundle.aon_accept}"
+						actionListener="#{contract.accept}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept">
+					</aon:commandButton>
+				</ui:define>				
+			</ui:decorate>	
+		
 			<aon:div id="contractMainGrid" styleClass="aon-scroll-area">
 				<ui:include 
 					src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" >
