@@ -8,10 +8,10 @@
 		<ui:define name="afterVersionContent">
 			<a4j:region>
 				<h:form>		
-		            <a4j:poll interval="300000" actionListener="#{webmail.poll}"
+		            <a4j:poll interval="240000" actionListener="#{webmail.poll}"
 		            	enabled="#{webmail.logged}" status="aonStatus" />
 				</h:form>
-			</a4j:region>	
+			</a4j:region>
 		</ui:define>
 		<ui:param name="skipDBUpdate" value="true" />
 	</ui:decorate>

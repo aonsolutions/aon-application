@@ -8,11 +8,7 @@ public abstract class AonSortableList {
     protected String oldSort;
     protected boolean oldAscending;
 
-    public AonSortableList() {
-
-    }
-
-    protected AonSortableList(String defaultSortColumn) {
+    public AonSortableList(String defaultSortColumn) {
         sort = defaultSortColumn;
         ascending = isDefaultAscending(defaultSortColumn);
         oldSort = sort;
@@ -66,4 +62,5 @@ public abstract class AonSortableList {
         oldAscending = this.ascending;
         this.ascending = ascending;
     }
+    
 }

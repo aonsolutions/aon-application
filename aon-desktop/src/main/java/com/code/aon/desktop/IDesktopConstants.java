@@ -27,6 +27,7 @@ public interface IDesktopConstants {
 	String SMS_CONTROLLER_NAME = "sms";
     
 	String COMPANY_CONTROLLER_NAME = "company"; 
-
+	
+	String EMAIL_CONTROLLER_NAME = "email";
 
 }

@@ -253,12 +253,21 @@ public class ConfigurationController implements Serializable, ICommonConstants, 
     	return session.getId();
     }
     
+    private void onLogout( ActionEvent event ) {
+    	String onLogout = (String) getProperty(ON_LOGOUT);
+    	if (! StringUtils.isEmpty(onLogout) ) {
+			String expression = "#{" + onLogout + "}";
+			AonUtil.actionListener(expression, event);
+    	}
+    }
+    
     /**
      * Logout from the current session.
      * 
      * @param event the event
      */
     public void logout( ActionEvent event ) {
+    	onLogout(event);
     	FacesContext context = FacesContext.getCurrentInstance();
     	HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
     	session.invalidate();    	

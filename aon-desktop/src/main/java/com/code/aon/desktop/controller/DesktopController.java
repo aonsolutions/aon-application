@@ -51,6 +51,7 @@ import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.desktop.applications.WebmailManager;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.groupware.controller.NoteController;
@@ -290,5 +291,15 @@ public class DesktopController implements IDesktopConstants {
 	        throw new AbortProcessingException("Error updating desktop models", e);
 		}
 	}
-	
+
+    /**
+     * Logout from the current session.
+     * 
+     * @param event the event
+     */
+    public void logout( ActionEvent event ) {
+    	WebmailManager email = (WebmailManager) AonUtil.getRegisteredBean(EMAIL_CONTROLLER_NAME);
+    	email.disconect();
+    }	
+    
 }

@@ -72,6 +72,12 @@ public class WebmailManager implements IServices, IDesktopConstants {
 		return (mailSummaryModel != null);
     }
 
+    public void disconect() {
+    	if ( server != null ) {
+    		server.disconnect();
+    	}
+    }
+    
  // ************************************** IServices methods implementation *************************************
 	public boolean isInfobarEnabled() {
 		return app != null && app.isInfobarEnabled();
