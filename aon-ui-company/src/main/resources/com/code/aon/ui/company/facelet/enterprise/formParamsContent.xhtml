@@ -25,6 +25,10 @@
 			value="#{enterpriseParams.parameters['PAY_salarySendingMethod_PAY'].expression}">
 			<f:selectItems value="#{companyCollections.salarySendingMethods}" />
 		</aon:selectOneMenu>
+		
+		<aon:outputLabel value="#{payrollBundle.payroll_agreement}" />
+		<aon:inputText value="#{enterpriseParams.agreement.expression}" />
+		
 	</c:if>
 	
 </ui:composition>

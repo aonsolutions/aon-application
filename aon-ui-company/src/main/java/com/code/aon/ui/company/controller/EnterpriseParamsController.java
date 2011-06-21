@@ -56,6 +56,7 @@ public class EnterpriseParamsController {
 	public void onAccept(ActionEvent event) {
 		try {
 			accept();
+			acceptAgreement();
 		} catch (ManagerBeanException e) {
 			String msg = "Unable to save parameters";
 			AonUtil.addErrorMessage(msg);
@@ -76,6 +77,7 @@ public class EnterpriseParamsController {
 	public void onLoad(ActionEvent event) {
 		try {
 			loadParameters();
+			loadAgreement();
 		} catch (ManagerBeanException e) {
 			String msg = "Unable to load defaultParameters";
 			AonUtil.addErrorMessage(msg);
@@ -127,5 +129,46 @@ public class EnterpriseParamsController {
 	private String getDraftTemplateName() throws ManagerBeanException {
 		return getParameter(ICompanyConstants.REPORT_SALARY_PARAM).getExpression().replaceFirst(ICompanyConstants.SALARY, ICompanyConstants.SALARY_DRAFT);
 	}
+	
+	
+	//TODO repatriar, esto solo es para salir del paso 
+	private EnterpriseData agreement;
+	private static final String AGREEMENT = "agreement";
+	
+	public EnterpriseData getAgreement() {
+		return agreement;
+	}
+
+	public void setAgreement(EnterpriseData agreement) {
+		this.agreement = agreement;
+	}
+
+	private void acceptAgreement() throws ManagerBeanException{
+		EnterpriseData data = new EnterpriseData();
+		IController controller = FormUtil.getController(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+		data.setId(getAgreement().getId());
+		data.setEnterprise((Enterprise) controller.getTo());
+		data.setName(AGREEMENT);
+		data.setExpression(getAgreement().getExpression().toString());
+		IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);
+		setAgreement((EnterpriseData) bean.insertOrUpdate(data));
+		
+	}
+
+	private void loadAgreement() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);
+		IController controller = FormUtil.getController(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_NAME), AGREEMENT);
+		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_ENTERPRISE_ID), ((Enterprise) controller.getTo()).getId());
+		List<ITransferObject> list = bean.getList(criteria);
+		if(list.isEmpty()){
+			setAgreement(new EnterpriseData());
+		} else {
+			setAgreement(((EnterpriseData)list.get(0)));
+		}
+	}
+	
+	
 	
 }
