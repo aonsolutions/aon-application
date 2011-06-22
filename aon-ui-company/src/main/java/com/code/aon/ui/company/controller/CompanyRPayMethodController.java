@@ -10,9 +10,13 @@ import com.code.aon.ui.registry.controller.RegistryPayMethodController;
 
 public class CompanyRPayMethodController extends RegistryPayMethodController{
 	
-	public List<SelectItem> getBanks() throws ManagerBeanException {
+	public List<SelectItem> getAllBanks() throws ManagerBeanException {
 		Company company = (Company) getMasterController().getTo();
-		return getBanks(company);
+		return getAllBanks(company);
+	}
+	public List<SelectItem> getActiveBanks() throws ManagerBeanException {
+		Company company = (Company) getMasterController().getTo();
+		return getActiveBanks(company);
 	}
 
 }

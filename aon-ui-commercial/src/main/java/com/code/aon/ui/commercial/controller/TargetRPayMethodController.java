@@ -13,13 +13,22 @@ import com.code.aon.ui.util.AonUtil;
 
 public class TargetRPayMethodController extends RegistryPayMethodController{
 	
-	public List<SelectItem> getBanks() throws ManagerBeanException {
+	public List<SelectItem> getAllBanks() throws ManagerBeanException {
 		if (isNegotiableDocument()) {
 			Target target = (Target) getMasterController().getTo();
-			return getBanks(target.getRegistry());
+			return getAllBanks(target.getRegistry());
 		}
 		CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-		return c.getCompanyBanks();
+		return c.getAllCompanyBanks();
+	}
+
+	public List<SelectItem> getActiveBanks() throws ManagerBeanException {
+		if (isNegotiableDocument()) {
+			Target target = (Target) getMasterController().getTo();
+			return getActiveBanks(target.getRegistry());
+		}
+		CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+		return c.getActiveCompanyBanks();
 	}
 
 }

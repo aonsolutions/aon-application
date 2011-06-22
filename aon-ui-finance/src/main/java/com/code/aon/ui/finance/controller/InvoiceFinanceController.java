@@ -57,9 +57,8 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	public boolean isAllPending() throws ManagerBeanException{
-		Iterator iterator = ((List)getModel().getWrappedData()).iterator();
+		Iterator<?> iterator = ((List<?>)getModel().getWrappedData()).iterator();
 		while(iterator.hasNext()){
 			Finance finance = (Finance)iterator.next();
 			if(FinanceStatus.PENDING != finance.getFinanceStatus()){
@@ -106,19 +105,32 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		}
 	}
 
-	public List<SelectItem> getBanks() throws ManagerBeanException {
+	public List<SelectItem> getAllBanks() throws ManagerBeanException {
 		Finance finance = (Finance) getTo();
 		if (finance != null && finance.getPayMethod() != null) {
 			if (useRegistryBanks(finance.getInvoice().getType() == InvoiceType.SALES, finance.getPayMethod().getType())) {
 				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
-				return c.getRegistryBanks(finance.getRegistry());
+				return c.getAllRegistryBanks(finance.getRegistry());
 			} 
 			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-			return c.getCompanyBanks();
+			return c.getAllCompanyBanks();
 		}
 		return new LinkedList<SelectItem>();
 	}
 	
+	public List<SelectItem> getActiveBanks() throws ManagerBeanException {
+		Finance finance = (Finance) getTo();
+		if (finance != null && finance.getPayMethod() != null) {
+			if (useRegistryBanks(finance.getInvoice().getType() == InvoiceType.SALES, finance.getPayMethod().getType())) {
+				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
+				return c.getActiveRegistryBanks(finance.getRegistry());
+			} 
+			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+			return c.getActiveCompanyBanks();
+		}
+		return new LinkedList<SelectItem>();
+	}
+
 	private boolean useRegistryBanks(boolean sales, PayMethodType payMethodType) {
 		return ((sales && payMethodType == PayMethodType.NEGOTIABLE_DOCUMENT) || (!sales && payMethodType == PayMethodType.BANK_TRANSFER));	
 	}
@@ -132,7 +144,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 		if (!finance.getBankAccount().isValid())
 			return false;
 
-		for (SelectItem item : getBanks()) {
+		for (SelectItem item : getAllBanks()) {
 			RegistryBank rBank = (RegistryBank)item.getValue();
 			BankAccount bankAccount = rBank.getBankAccount();
 			if (bankAccount != null) {

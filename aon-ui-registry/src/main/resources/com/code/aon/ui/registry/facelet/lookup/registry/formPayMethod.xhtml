@@ -27,7 +27,7 @@
 					<aon:selectOneMenu id="Bank_id"
 						value="#{controllerLookupListener.registryBank}">
 						<f:selectItem value="#{null}" />
-						<f:selectItems value="#{companyCollections.companyBanks}" />
+						<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 					</aon:selectOneMenu>
 				</c:if>					
 				<c:if test="#{!controllerLookupListener.showCompanyBanks}">

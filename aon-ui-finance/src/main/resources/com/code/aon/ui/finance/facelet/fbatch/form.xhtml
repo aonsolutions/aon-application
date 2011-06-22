@@ -126,7 +126,12 @@
 							value="#{fbatch.to.registryBank}"
 							disabled="#{fbatch.readOnly}">
 							<f:selectItem itemLabel="-" value="#{null}"  />
-							<f:selectItems value="#{companyCollections.companyBanks}" />
+							<c:if test="#{fbatch.new}">
+								<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
+							</c:if>
+							<c:if test="#{!fbatch.new}">
+								<f:selectItems value="#{companyCollections.allCompanyBanks}" />
+							</c:if>
 						</aon:selectOneMenu>
 						<aon:commandLink id="bankStatement_link" immediate="true"
 							styleClass="aon-icon-commandButton aon-button-goto aon-bold aon-italic" style="padding-right: 20px;"

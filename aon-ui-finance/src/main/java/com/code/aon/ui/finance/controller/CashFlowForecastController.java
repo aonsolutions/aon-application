@@ -44,7 +44,7 @@ public class CashFlowForecastController extends BasicController {
 	public int getAvailableRegistryBanks() throws ManagerBeanException {
 		String companyControllerName = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
 		CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyControllerName);
-		return companyCollections.getCompanyBanks().size();
+		return companyCollections.getAllCompanyBanks().size();
 	}
 
 	public void onUpdateChecks(ActionEvent event) {

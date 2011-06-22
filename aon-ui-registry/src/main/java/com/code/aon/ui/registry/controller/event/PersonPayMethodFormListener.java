@@ -23,7 +23,6 @@ import com.code.aon.ui.registry.controller.PersonController;
 public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		try {
 			PersonController c = (PersonController) event.getController();
@@ -32,7 +31,7 @@ public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 			IManagerBean rPayBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 			Criteria rPayBeanCriteria = new Criteria();
 			rPayBeanCriteria.addEqualExpression(rPayBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), person.getId());
-			Iterator iter = rPayBean.getList(rPayBeanCriteria).iterator();
+			Iterator<?> iter = rPayBean.getList(rPayBeanCriteria).iterator();
 			if(iter.hasNext()){
 				RegistryPayMethod pm = (RegistryPayMethod)iter.next(); 
 				setRegistryPayMethod(pm);

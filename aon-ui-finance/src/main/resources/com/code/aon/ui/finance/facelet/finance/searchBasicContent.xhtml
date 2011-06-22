@@ -120,7 +120,7 @@
 	<aon:selectOneMenu id="Finance_registryBank_id"
 		value="#{searchController.registryBank}">
 		<f:selectItem itemLabel="-" value="#{null}" />
-		<f:selectItems value="#{companyCollections.companyBanks}" />
+		<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 	</aon:selectOneMenu>
 
 	<c:if test="#{aonRole.confidentiality}">

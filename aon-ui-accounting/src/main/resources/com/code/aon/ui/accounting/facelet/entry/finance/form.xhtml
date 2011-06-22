@@ -15,10 +15,9 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarID" value="aonToolbar" />
-				<ui:param name="toolbarTitle"
-					value="#{accountingBundle.accounting_entry_finance_module}" />
+				<ui:param name="toolbarTitle" value="sss #{accountingBundle.accounting_entry_finance_module}" />
 				<ui:param name="toolbarDescription" value="#{financeEntry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-
+				
 				<ui:define name="toolbarContent">
 					<aon:commandButton value="#{accountingBundle.accounting_entry_generate}"
 						id="saveFinance" accesskey="#{bundle.aon_key_save}"
@@ -137,7 +136,7 @@
 					<aon:selectOneMenu id="AccountEntry_balancingRegistryBank"
 						value="#{financeEntry.registryBank}"
 						rendered="#{financeEntry.deposit == 0}">
-						<f:selectItems value="#{companyCollections.companyBanks}" />
+						<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 					</aon:selectOneMenu>
 					<aon:outputLabel for="AccountEntry_balancingPayMethodTypeDetail"
 						value="#{financeBundle.finance_cash}"

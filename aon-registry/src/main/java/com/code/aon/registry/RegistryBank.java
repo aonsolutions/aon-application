@@ -24,78 +24,38 @@ import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.IBankAccountContainer;
 
-/**
- * Transfer Object that represents a union between a Registry and a Bank.
- * 
- * @author Consulting & Development. Eugenio Castellano - 31-ene-2005
- * @since 1.0
- */
 @Entity
 @Table(name ="rbank")
 public class RegistryBank implements ITransferObject,IBankAccountContainer {
 
 	private static final long serialVersionUID = -8532648329534533542L;
 
-	/** The id. */
     private Integer id;
-
-    /** The registry. */
     private Registry registry;
-
-    /** The bank. */
     private Bank bank;
-
-    /** The bank account. */
     private BankAccount bankAccount;
-
-    /** The sufix. */
     private String sufix;
+    private String alias;
+    private boolean active;
 
-    /**
-     * Gets the id.
-     * 
-     * @return the id
-     */
     @Id
     @GeneratedValue
     public Integer getId() {
         return id;
     }
-
-    /**
-     * Sets the id.
-     * 
-     * @param id the id
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * Gets the bank account.
-     * 
-     * @return the bank account
-     */
     @Column(name = "bank_account", length = 30)
     @Type(type="com.code.aon.config.hibernate.BankAccountType")
     public BankAccount getBankAccount() {
         return bankAccount;
     }
-
-    /**
-     * Sets the bank account.
-     * 
-     * @param bankAccount the bank account
-     */
     public void setBankAccount(BankAccount bankAccount) {
         this.bankAccount = bankAccount;
     }
 
-    /**
-     * Gets the bank.
-     * 
-     * @return the bank
-     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="bank", nullable = false)
     @ForeignKey(name = "FK_RBANK_BANK")
@@ -103,21 +63,10 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
     public Bank getBank() {
         return bank;
     }
-
-    /**
-     * Sets the bank.
-     * 
-     * @param bank the bank
-     */
     public void setBank(Bank bank) {
         this.bank = bank;
     }
 
-    /**
-     * Gets the registry.
-     * 
-     * @return the registry
-     */
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="registry", nullable = false)
     @ForeignKey(name = "FK_RBANK_REGISTRY")
@@ -125,46 +74,48 @@ public class RegistryBank implements ITransferObject,IBankAccountContainer {
     public Registry getRegistry() {
         return registry;
     }
-
-    /**
-     * Sets the registry.
-     * 
-     * @param registry the registry
-     */
     public void setRegistry(Registry registry) {
         this.registry = registry ;
     }
 
-	/**
-	 * Gets the sufix
-	 * 
-	 * @return the sufix
-	 */
     @Column(length=3)
 	public String getSufix() {
 		return sufix;
 	}
-
-	/**
-	 * Sets the sufix
-	 * 
-	 * @param sufix the sufix to set
-	 */
 	public void setSufix(String sufix) {
 		this.sufix = sufix;
 	}
-    
+	
+	@Column(length=16)
+	public String getAlias() {
+		return alias;
+	}
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+	
+	@Column(nullable = false)
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 	@Transient
 	public String getFullName() {
 		StringBuilder sb = new StringBuilder();
-		if (getBank() != null && !StringUtils.isEmpty(getBank().getName()))  {
-			sb.append(StringUtils.abbreviate(getBank().getName(), 30));
-			sb.append(" ");
-		}
-		if (getBankAccount() != null) {
-			sb.append("[");
-			sb.append(getBankAccount().toString());
-			sb.append("]");
+		if (!StringUtils.isBlank(getAlias())) {
+			sb.append(getAlias());	
+		} else {
+			if (getBank() != null && !StringUtils.isEmpty(getBank().getName()))  {
+				sb.append(StringUtils.abbreviate(getBank().getName(), 30));
+				sb.append(" ");
+			}
+			if (getBankAccount() != null) {
+				sb.append("[");
+				sb.append(getBankAccount().toString());
+				sb.append("]");
+			}
 		}
 		return sb.toString(); 
 	}

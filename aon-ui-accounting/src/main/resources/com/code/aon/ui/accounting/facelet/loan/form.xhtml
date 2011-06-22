@@ -86,7 +86,12 @@
 					<aon:selectOneMenu id="RegistryBank_Lookup_id" required="true"
 						value="#{loan.to.registryBank}">
 						<f:selectItem value="#{null}" itemLabel="-" />
-						<f:selectItems value="#{companyCollections.companyBanks}" />
+						<c:if test="#{loan.new}">
+							<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
+						</c:if>
+						<c:if test="#{!loan.new}">
+							<f:selectItems value="#{companyCollections.allCompanyBanks}" />
+						</c:if>
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Loan_amount"

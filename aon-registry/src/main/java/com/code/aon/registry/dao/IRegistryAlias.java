@@ -386,34 +386,46 @@ public interface IRegistryAlias {
 	DAOConstantsEntry REGISTRY_BANK_ENTRY = DAOConstants.getDAOConstant(RegistryBank.class);
 
 	/** 
+	* Alias value: RegistryBank_active
+	* Hibernate value: RegistryBank.active
+	*/
+	String  REGISTRY_BANK_ACTIVE = REGISTRY_BANK_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: RegistryBank_alias
+	* Hibernate value: RegistryBank.alias
+	*/
+	String  REGISTRY_BANK_ALIAS = REGISTRY_BANK_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: RegistryBank_bankAccount
 	* Hibernate value: RegistryBank.bankAccount
 	*/
-	String  REGISTRY_BANK_BANK_ACCOUNT = REGISTRY_BANK_ENTRY.getAliasNames()[0];
+	String  REGISTRY_BANK_BANK_ACCOUNT = REGISTRY_BANK_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: RegistryBank_bank_id
 	* Hibernate value: RegistryBank.bank.id
 	*/
-	String  REGISTRY_BANK_BANK_ID = REGISTRY_BANK_ENTRY.getAliasNames()[1];
+	String  REGISTRY_BANK_BANK_ID = REGISTRY_BANK_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: RegistryBank_id
 	* Hibernate value: RegistryBank.id
 	*/
-	String  REGISTRY_BANK_ID = REGISTRY_BANK_ENTRY.getAliasNames()[2];
+	String  REGISTRY_BANK_ID = REGISTRY_BANK_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: RegistryBank_registry_id
 	* Hibernate value: RegistryBank.registry.id
 	*/
-	String  REGISTRY_BANK_REGISTRY_ID = REGISTRY_BANK_ENTRY.getAliasNames()[3];
+	String  REGISTRY_BANK_REGISTRY_ID = REGISTRY_BANK_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: RegistryBank_sufix
 	* Hibernate value: RegistryBank.sufix
 	*/
-	String  REGISTRY_BANK_SUFIX = REGISTRY_BANK_ENTRY.getAliasNames()[4];
+	String  REGISTRY_BANK_SUFIX = REGISTRY_BANK_ENTRY.getAliasNames()[6];
 
 
 

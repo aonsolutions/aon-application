@@ -10,7 +10,7 @@
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 
 		<ui:define name="columns">
-			<aon:column width="300" styleClass="aon-nowrap aon-editDataTable-textColumn">
+			<aon:column styleClass="aon-nowrap aon-editDataTable-textColumn aon-width-auto" >
 				<f:facet name="header">
 					<aon:outputLabel for="Bank_id" value="#{configBundle.config_bank}" />
 				</f:facet>
@@ -28,7 +28,22 @@
 				</f:facet>				
 			</aon:column>
 
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-150" >
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryBank_alias" value="#{bundle.aon_alias}" />
+				</f:facet>
+				<aon:outputText value="#{to.alias}" rendered="#{formList}" />
+				<aon:inputText id="RegistryBank_alias"
+					value="#{to.alias}" rendered="#{formEdit}"
+					size="15" maxlength="16" />
+				<f:facet name="footer">
+					<aon:inputText id="RegistryBank_alias-New"
+						value="#{controller.to.alias}" rendered="#{formNew}"
+						size="15" maxlength="16" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
 				<f:facet name="header">
 					<aon:outputText value="#{configBundle.config_bank_account}" />
 				</f:facet>
@@ -46,7 +61,7 @@
 			</aon:column>
 			
 			<c:if test="#{showSuffix}">
-				<aon:column>
+				<aon:column styleClass="aon-editDataTable-textColumn aon-width-80">
 					<f:facet name="header">
 						<aon:outputLabel for="RegistryBank_suffix" value="#{configBundle.config_bank_sufix}" />
 					</f:facet>
@@ -61,6 +76,23 @@
 					</f:facet>
 				</aon:column>
 			</c:if>
+
+			<aon:column styleClass="aon-editDataTable-textColumn aon-width-60">
+				<f:facet name="header">
+					<aon:outputLabel for="RegistryBank_active" value="#{bundle.aon_active}" />
+				</f:facet>
+				<aon:outputText rendered="#{formList}"
+					value="&#160;"
+					styleClass="#{to.active?'aon-icon-checked':'aon-icon-check'}" 
+					style="padding-left: 20px;background-position: 5px 2px;" />
+				<aon:selectBooleanCheckbox id="RegistryBank_active"
+					rendered="#{formEdit}" value="#{to.active}" />
+				<f:facet name="footer">
+					<aon:selectBooleanCheckbox id="RegistryBank_active-New"
+						rendered="#{formNew}" value="#{controller.to.active}">
+					</aon:selectBooleanCheckbox>
+				</f:facet>
+			</aon:column>
 
 		</ui:define>
 	</ui:decorate>

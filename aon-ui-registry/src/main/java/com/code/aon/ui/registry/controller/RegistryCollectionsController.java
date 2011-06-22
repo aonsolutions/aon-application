@@ -52,11 +52,6 @@ public class RegistryCollectionsController {
 								// Se utiliza como selector 
 								// en la pantalla de alta de vencimientos.
 	
-	/**
-     * Gets the address types.
-     * 
-     * @return the address types
-     */
     public List<SelectItem> getAddressTypes() {
     	if ( addressTypes == null ) {
     		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -70,11 +65,6 @@ public class RegistryCollectionsController {
         return addressTypes;
     }
 
-    /**
-     * Gets the street types.
-     * 
-     * @return the street types
-     */
     public List<SelectItem> getStreetTypes() {
     	if ( streetTypes == null ) {
 	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -88,13 +78,7 @@ public class RegistryCollectionsController {
         return streetTypes;
     }
 
-    /**
-     * Gets the media types.
-     * 
-     * @return the media types
-     */
-    @SuppressWarnings("unchecked")
-    public List getMediaTypes() {
+    public List<SelectItem> getMediaTypes() {
     	if ( mediaTypes == null ) {
 	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 	        mediaTypes = new LinkedList<SelectItem>();
@@ -107,11 +91,6 @@ public class RegistryCollectionsController {
         return mediaTypes;
     }
     
-    /**
-     * Gets the registry types.
-     * 
-     * @return the registry types
-     */
     public List<SelectItem> getRegistryTypes() {
     	if ( registryTypes == null) {
 	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -125,19 +104,12 @@ public class RegistryCollectionsController {
         return registryTypes;
     }
     
-    /**
-     * Gets the Relationships.
-     * 
-     * @return the Relationships
-     * @throws ManagerBeanException 
-     */
-    @SuppressWarnings("unchecked")
     public List<SelectItem> getRelationships() throws ManagerBeanException{
     	List<SelectItem> relationships = new LinkedList<SelectItem>();
     	IManagerBean relationshipBean = BeanManager.getManagerBean(Relationship.class);
     	Criteria criteria = new Criteria();
     	criteria.addOrder(relationshipBean.getFieldName(IRegistryAlias.RELATIONSHIP_DESCRIPTION));
-    	Iterator iter = relationshipBean.getList(criteria).iterator();
+    	Iterator<?> iter = relationshipBean.getList(criteria).iterator();
     	while(iter.hasNext()){
     		Relationship relationship = (Relationship)iter.next();
     		SelectItem item = new SelectItem(relationship.getId(), relationship.getDescription());
@@ -213,13 +185,12 @@ public class RegistryCollectionsController {
 		return documentTypes;
 	}
 	
-    @SuppressWarnings("unchecked")
     public List<SelectItem> getSegments() throws ManagerBeanException{
     	List<SelectItem> segments = new LinkedList<SelectItem>();
     	IManagerBean segmentBean = BeanManager.getManagerBean(Segment.class);
     	Criteria criteria = new Criteria();
     	criteria.addOrder(segmentBean.getFieldName(IRegistryAlias.SEGMENT_NAME));
-    	Iterator iter = segmentBean.getList(criteria).iterator();
+    	Iterator<?> iter = segmentBean.getList(criteria).iterator();
     	while(iter.hasNext()){
     		Segment segment = (Segment)iter.next();
     		SelectItem item = new SelectItem(segment.getId(), segment.getName());
@@ -228,13 +199,12 @@ public class RegistryCollectionsController {
     	return segments;
     }
     
-	@SuppressWarnings("unchecked")
 	public List<SelectItem> getUsers() throws ManagerBeanException {
 		List<SelectItem> users = new LinkedList<SelectItem>();
 		IManagerBean userBean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
 		criteria.addOrder(userBean.getFieldName(IConfigAlias.USER_NAME));
-		Iterator iter = userBean.getList(criteria).iterator();
+		Iterator<?> iter = userBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			User user = (User)iter.next();
 			SelectItem item = new SelectItem(user.getId(), user.getName());
@@ -243,13 +213,27 @@ public class RegistryCollectionsController {
 		return users;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getRegistryBanks(Registry registry) throws ManagerBeanException {
+	public List<SelectItem> getAllRegistryBanks(Registry registry) throws ManagerBeanException {
 		List<SelectItem> rBanks = new LinkedList<SelectItem>();
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
-		Iterator iter = rBankBean.getList(criteria).iterator();
+		Iterator<?> iter = rBankBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			RegistryBank rBank = (RegistryBank)iter.next();
+			SelectItem item = new SelectItem(rBank, rBank.getFullName());
+			rBanks.add(item);
+		}
+		return rBanks;
+	}
+
+	public List<SelectItem> getActiveRegistryBanks(Registry registry) throws ManagerBeanException {
+		List<SelectItem> rBanks = new LinkedList<SelectItem>();
+		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), registry.getId());
+		criteria.addEqualExpression(rBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_ACTIVE), true);
+		Iterator<?> iter = rBankBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			RegistryBank rBank = (RegistryBank)iter.next();
 			SelectItem item = new SelectItem(rBank, rBank.getFullName());
@@ -266,13 +250,12 @@ public class RegistryCollectionsController {
 		// void
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<SelectItem> getCategories() throws ManagerBeanException {
 		List<SelectItem> users = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(Category.class);
 		Criteria criteria = new Criteria();
 		criteria.addOrder(categoryBean.getFieldName(IRegistryAlias.CATEGORY_NAME));
-		Iterator iter = categoryBean.getList(criteria).iterator();
+		Iterator<?> iter = categoryBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Category category = (Category) iter.next();
 			SelectItem item = new SelectItem(category, category.getName());
@@ -288,14 +271,13 @@ public class RegistryCollectionsController {
 	public void setCategory( Category category ) {
 	}	
 
-    @SuppressWarnings("unchecked")
     public List<String> getAddInfoAttributes() throws ManagerBeanException{
     	List<String> addInfos = new LinkedList<String>();
     	IManagerBean addInfoBean = BeanManager.getManagerBean(RegistryAddInfo.class);
     	Criteria criteria = new Criteria();
     	criteria.addOrder(addInfoBean.getFieldName(IRegistryAlias.REGISTRY_ADD_INFO_ATTRIBUTE));
 		Projection projection = Projection.group(addInfoBean.getFieldName(IRegistryAlias.REGISTRY_ADD_INFO_ATTRIBUTE));
-		Iterator iter = addInfoBean.getList(new ProjectionList(projection), criteria).iterator();
+		Iterator<?> iter = addInfoBean.getList(new ProjectionList(projection), criteria).iterator();
     	while(iter.hasNext()){
     		String addInfo = (String)iter.next();
     		addInfos.add(addInfo);

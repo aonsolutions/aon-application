@@ -70,7 +70,7 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 		Finance finance = (Finance)financeController.getTo();
 		try {
 			if (StringUtils.isNotEmpty(finance.getBankAccount().getValue())) {
-				for (SelectItem item : financeController.getBanks()) {
+				for (SelectItem item : financeController.getAllBanks()) {
 					RegistryBank rBank = (RegistryBank)item.getValue();
 					BankAccount bankAccount = rBank.getBankAccount();
 					if (bankAccount!= null) {
@@ -86,12 +86,11 @@ public class InvoiceFinanceControllerListener extends ControllerAdapter {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private RegistryPayMethod obtainRegistryPayMethod(Registry registry) throws ManagerBeanException {
 		IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), registry.getId());
-		Iterator iterator = rPayMethodBean.getList(criteria).iterator();
+		Iterator<?> iterator = rPayMethodBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			return (RegistryPayMethod)iterator.next();
 		}

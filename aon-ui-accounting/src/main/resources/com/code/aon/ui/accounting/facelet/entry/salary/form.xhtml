@@ -69,7 +69,7 @@
 					<aon:selectOneMenu id="Account_registryBank"
 						value="#{salaryEntry.entry.registryBank}">
 						<f:selectItem itemLabel="#{accountingBundle.accounting_pending_salary}" value="#{null}" />
-						<f:selectItems value="#{companyCollections.companyBanks}" />
+						<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Account_concept"

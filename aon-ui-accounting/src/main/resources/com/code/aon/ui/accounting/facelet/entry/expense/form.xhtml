@@ -80,7 +80,7 @@
 					<aon:selectOneMenu id="AccountEntry_registryBank"
 						value="#{expenseEntry.entry.registryBank}"
 						rendered="#{expenseEntry.entry.deposit == 0}">
-						<f:selectItems value="#{companyCollections.companyBanks}" />
+						<f:selectItems value="#{companyCollections.activeCompanyBanks}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="AccountEntry_payMethodTypeDetail"

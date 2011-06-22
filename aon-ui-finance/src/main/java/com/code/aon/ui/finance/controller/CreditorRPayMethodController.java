@@ -13,13 +13,21 @@ import com.code.aon.ui.util.AonUtil;
 
 public class CreditorRPayMethodController extends RegistryPayMethodController{
 	
-	public List<SelectItem> getBanks() throws ManagerBeanException {
+	public List<SelectItem> getAllBanks() throws ManagerBeanException {
 		if (isBankTransfer()) {
 			Creditor creditor = (Creditor) getMasterController().getTo();
-			return getBanks(creditor.getRegistry());
+			return getAllBanks(creditor.getRegistry());
 		} 
 		CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-		return c.getCompanyBanks();
+		return c.getAllCompanyBanks();
 	}
 	
+	public List<SelectItem> getActiveBanks() throws ManagerBeanException {
+		if (isBankTransfer()) {
+			Creditor creditor = (Creditor) getMasterController().getTo();
+			return getActiveBanks(creditor.getRegistry());
+		} 
+		CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+		return c.getActiveCompanyBanks();
+	}
 }

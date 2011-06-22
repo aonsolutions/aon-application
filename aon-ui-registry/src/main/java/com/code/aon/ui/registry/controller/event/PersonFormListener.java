@@ -22,7 +22,6 @@ import com.code.aon.ui.registry.controller.PersonController;
 public class PersonFormListener extends RegistryFormListener {
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		try {
 			PersonController c = (PersonController) event.getController();
@@ -32,7 +31,7 @@ public class PersonFormListener extends RegistryFormListener {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), person.getId());
 			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
-			Iterator iter = rAddressBean.getList(criteria).iterator();
+			Iterator<?> iter = rAddressBean.getList(criteria).iterator();
 			if (iter.hasNext()) {
 				setMainAddress((RegistryAddress) iter.next());
 			} else {
@@ -47,8 +46,8 @@ public class PersonFormListener extends RegistryFormListener {
 			IManagerBean beanMedia = BeanManager.getManagerBean(RegistryMedia.class);
 			String registryIdFieldName = beanMedia.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID);
 			criteriaMedia.addEqualExpression(registryIdFieldName, person.getId());
-			List mediaList = beanMedia.getList(criteriaMedia);
-
+			List<?> mediaList = beanMedia.getList(criteriaMedia);
+			
 			RegistryMedia phone = new RegistryMedia();
 			phone.setRegistry(person.getRegistry());
 			phone.setMediaType(MediaType.FIXED_PHONE);
@@ -62,7 +61,7 @@ public class PersonFormListener extends RegistryFormListener {
 			web.setRegistry(person.getRegistry());
 			web.setMediaType(MediaType.WEB);
 
-			Iterator mediaIter = mediaList.iterator();
+			Iterator<?> mediaIter = mediaList.iterator();
 			while (mediaIter.hasNext()) {
 				RegistryMedia rmedia = (RegistryMedia) mediaIter.next();
 				switch (rmedia.getMediaType()) {

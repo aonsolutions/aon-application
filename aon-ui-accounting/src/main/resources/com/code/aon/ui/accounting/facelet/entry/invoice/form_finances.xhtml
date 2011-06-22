@@ -96,7 +96,7 @@
 				</f:facet>
 			</aon:column>
 
-			<aon:column>
+			<aon:column styleClass="aon-nowrap">
 				<f:facet name="header">
 					<aon:div>
 						<aon:outputLabel for="Bank_id" value="#{configBundle.config_bank}" />
@@ -155,7 +155,7 @@
 							value="#{invoiceEntry.currentBank}"
 							valueChangeListener="#{invoiceEntry.onRBankChanged}">
 							<f:selectItem value="#{invoiceEntry.emptyBank}" />
-							<f:selectItems value="#{invoiceEntry.banks}" />
+							<f:selectItems value="#{invoiceEntry.allBanks}" />
 						</aon:selectOneMenu>
 					</aon:div>
 				</aon:div>
@@ -209,7 +209,7 @@
 								value="#{invoiceEntry.currentBank}" immediate="true"
 								reRender="RegistryBank_lookup-New">
 								<f:selectItem value="#{invoiceEntry.emptyBank}" />
-								<f:selectItems value="#{invoiceEntry.banks}" />
+								<f:selectItems value="#{invoiceEntry.activeBanks}" />
 							</aon:selectOneMenu>
 						</aon:div>
 					</aon:div>

@@ -260,7 +260,7 @@ public class CartOfferController extends EmailParentController {
 	public List<SelectItem> getBanks() {
 		CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
 		try {
-			return c.getCompanyBanks();
+			return c.getAllCompanyBanks();
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -275,7 +275,7 @@ public class CartOfferController extends EmailParentController {
 		
 		
 		try {
-			for (SelectItem item : c.getCompanyBanks()) {
+			for (SelectItem item : c.getAllCompanyBanks()) {
 				RegistryBank rBank = (RegistryBank)item.getValue();
 				list.add(rBank);
 			}

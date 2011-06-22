@@ -21,14 +21,13 @@ public class RegistryRelationshipController extends BasicController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(RegistryRelationshipController.class);	
 	
-	@SuppressWarnings("unchecked")
 	public void onRegistryChanged(ValueChangeEvent event){
 		if(event.getNewValue() != null){
 			try {
 				IManagerBean registryBean = BeanManager.getManagerBean(Registry.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(registryBean.getFieldName(IRegistryAlias.REGISTRY_ID), event.getNewValue());
-				Iterator iter = registryBean.getList(criteria).iterator();
+				Iterator<?> iter = registryBean.getList(criteria).iterator();
 				if(iter.hasNext()){
 					Registry registry = (Registry)iter.next();
 					((RegistryRelationship)this.getTo()).setRelatedRegistry(registry);
@@ -39,14 +38,13 @@ public class RegistryRelationshipController extends BasicController {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void onRelationshipChanged(ValueChangeEvent event){
 		if(event.getNewValue() != null){
 			try {
 				IManagerBean relationshipBean = BeanManager.getManagerBean(Relationship.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(relationshipBean.getFieldName(IRegistryAlias.RELATIONSHIP_ID), event.getNewValue());
-				Iterator iter = relationshipBean.getList(criteria).iterator();
+				Iterator<?> iter = relationshipBean.getList(criteria).iterator();
 				if(iter.hasNext()){
 					Relationship relationship = (Relationship)iter.next();
 					((RegistryRelationship)this.getTo()).setRelationship(relationship);

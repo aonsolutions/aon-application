@@ -137,7 +137,7 @@
 			<aon:selectOneMenu id="Bank_id"
 				value="#{personPayMethodForm.registryBank}">
 				<f:selectItem value="#{null}" />
-				<f:selectItems value="#{companyCollections.companyBanks}" />
+				<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 			</aon:selectOneMenu>
 		</c:if>					
 		<c:if test="#{!personPayMethodForm.showCompanyBanks and !personPayMethodForm.cash}">

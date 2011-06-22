@@ -37,9 +37,14 @@ public class RegistryPayMethodController extends LinesController {
 		return (payMethod != null && payMethod.getType() == PayMethodType.BANK_TRANSFER);
 	}
 	
-	protected List<SelectItem> getBanks(Registry registry) throws ManagerBeanException {
+	protected List<SelectItem> getAllBanks(Registry registry) throws ManagerBeanException {
 		RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
-		return c.getRegistryBanks(registry);
+		return c.getAllRegistryBanks(registry);
 	}
-	
+
+	protected List<SelectItem> getActiveBanks(Registry registry) throws ManagerBeanException {
+		RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
+		return c.getActiveRegistryBanks(registry);
+	}
+
 }

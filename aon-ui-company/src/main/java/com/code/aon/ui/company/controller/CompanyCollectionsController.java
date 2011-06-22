@@ -118,7 +118,7 @@ public class CompanyCollectionsController {
     	return addresses;
     }
 
-    public List<SelectItem> getCompanyBanks() throws ManagerBeanException {
+    public List<SelectItem> getAllCompanyBanks() throws ManagerBeanException {
     	LinkedList<SelectItem> banks = new LinkedList<SelectItem>();
     	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
     	Iterator<?> iterator = companyBean.getList(null).iterator();
@@ -137,7 +137,27 @@ public class CompanyCollectionsController {
     	return banks;
     }
 
-	public WorkPlace getWorkPlace() {
+    public List<SelectItem> getActiveCompanyBanks() throws ManagerBeanException {
+    	LinkedList<SelectItem> banks = new LinkedList<SelectItem>();
+    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+    	Iterator<?> iterator = companyBean.getList(null).iterator();
+    	if(iterator.hasNext()) {
+    		Company company = (Company)iterator.next();
+    		IManagerBean registryBankBean = BeanManager.getManagerBean(RegistryBank.class);
+    		Criteria criteria = new Criteria();
+    		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_REGISTRY_ID), company.getId());
+    		criteria.addEqualExpression(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_ACTIVE), true);
+    		criteria.addOrder(registryBankBean.getFieldName(IRegistryAlias.REGISTRY_BANK_ID));
+    		List<ITransferObject> list = registryBankBean.getList(criteria);
+    		for (ITransferObject to : list) {
+    			RegistryBank rBank = (RegistryBank)to;
+    			banks.add(new SelectItem(rBank, rBank.getFullName()));
+    		}
+    	}
+    	return banks;
+    }
+
+    public WorkPlace getWorkPlace() {
 		return null;
 	}
 

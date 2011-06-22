@@ -295,16 +295,30 @@ public class FinanceController extends FinanceListController {
 		}
 	}
 
-	public List<SelectItem> getBanks() throws ManagerBeanException {
+	public List<SelectItem> getAllBanks() throws ManagerBeanException {
 		Finance finance = (Finance)getTo();
 		if (finance != null && finance.getPayMethod() != null) {
 			PayMethod pm = finance.getPayMethod();
 			if ((!isPayment() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (isPayment() && pm.getType() == PayMethodType.BANK_TRANSFER)) {
 				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
-				return c.getRegistryBanks(finance.getRegistry());
+				return c.getAllRegistryBanks(finance.getRegistry());
 			} 
 			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-			return c.getCompanyBanks();
+			return c.getAllCompanyBanks();
+		}
+		return new LinkedList<SelectItem>();
+	}
+
+	public List<SelectItem> getActiveBanks() throws ManagerBeanException {
+		Finance finance = (Finance)getTo();
+		if (finance != null && finance.getPayMethod() != null) {
+			PayMethod pm = finance.getPayMethod();
+			if ((!isPayment() && pm.getType() == PayMethodType.NEGOTIABLE_DOCUMENT) || (isPayment() && pm.getType() == PayMethodType.BANK_TRANSFER)) {
+				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
+				return c.getActiveRegistryBanks(finance.getRegistry());
+			} 
+			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+			return c.getActiveCompanyBanks();
 		}
 		return new LinkedList<SelectItem>();
 	}
@@ -543,13 +557,11 @@ public class FinanceController extends FinanceListController {
 		financeTrackingController.onSearch(null);
 	}
 
-	@SuppressWarnings("unchecked")
-	public List getOrderedList() {
+	public List<?> getOrderedList() {
 		return orderedList;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void setOrderedList(List orderedList) {
+	public void setOrderedList(List<?> orderedList) {
 		this.orderedList = orderedList;
 	}
 	

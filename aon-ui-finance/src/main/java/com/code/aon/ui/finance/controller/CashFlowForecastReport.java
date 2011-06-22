@@ -204,7 +204,7 @@ public class CashFlowForecastReport {
 	private void initializeBankList() throws ManagerBeanException {
 		String companyControllerName = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
 		CompanyCollectionsController companyCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyControllerName);
-		List<SelectItem> banks = companyCollections.getCompanyBanks();
+		List<SelectItem> banks = companyCollections.getAllCompanyBanks();
 		setBankList( new LinkedList<CashFlowBank>());
 		CashFlowBank sa = new CashFlowBank();
 		sa.setId(Integer.MIN_VALUE);
@@ -220,7 +220,7 @@ public class CashFlowForecastReport {
 			String alias = StringUtils.abbreviate(rbank.getBank().getName(), 15) + " " +rbank.getBankAccount().getAccount();
 			bank.setDescription( alias );
 			bank.setAccount(rbank.getBankAccount().toString());
-			bank.setEnabled(true);
+			bank.setEnabled(rbank.isActive());
 			// TODO Calcular el saldo inicial del banco.
 			bank.setBalance(0.0);
 			getBankList().add(bank);

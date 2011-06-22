@@ -134,7 +134,7 @@
 										value="#{controller.registryBank}"
 										valueChangeListener="#{controller.onRBankChanged}">
 										<f:selectItem value="#{null}" />
-										<f:selectItems value="#{controller.banks}" />
+										<f:selectItems value="#{controller.allBanks}" />
 									</aon:selectOneMenu>
 								</aon:div>
 								</aon:div>
@@ -183,7 +183,7 @@
 											value="#{controller.registryBank}"
 											reRender="RegistryBank_lookup-New">
 											<f:selectItem value="#{null}" />
-											<f:selectItems value="#{controller.banks}" />
+											<f:selectItems value="#{controller.activeBanks}" />
 										</aon:selectOneMenu>
 									</aon:div>
 								</aon:div>

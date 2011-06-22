@@ -265,7 +265,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				setCurrentBank(null);
 			} else {
 				String ccc1 = currentFinance.getBankAccount().getValue();
-				List<SelectItem> banks = getBanks();
+				List<SelectItem> banks = getAllBanks();
 				boolean found = false;
 				for (SelectItem item : banks) {
 					RegistryBank rBank = (RegistryBank) item.getValue();
@@ -1439,15 +1439,29 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		}
 	}
 
-	public List<SelectItem> getBanks() throws ManagerBeanException {
+	public List<SelectItem> getAllBanks() throws ManagerBeanException {
 		if (getCurrentFinance() != null && getCurrentFinance().getPayMethod() != null) {
 			PayMethod pm = getCurrentFinance().getPayMethod();
 			if (useRegistryBanks(pm) ) {
 				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
-				return c.getRegistryBanks(getCurrentFinance().getRegistry());
+				return c.getAllRegistryBanks(getCurrentFinance().getRegistry());
 			} 
 			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
-			return c.getCompanyBanks();
+			return c.getAllCompanyBanks();
+			
+		}
+		return new LinkedList<SelectItem>();
+	}
+
+	public List<SelectItem> getActiveBanks() throws ManagerBeanException {
+		if (getCurrentFinance() != null && getCurrentFinance().getPayMethod() != null) {
+			PayMethod pm = getCurrentFinance().getPayMethod();
+			if (useRegistryBanks(pm) ) {
+				RegistryCollectionsController c = (RegistryCollectionsController)AonUtil.getRegisteredBean(IRegistryConstants.COLLECTIONS_CONTROLLER_NAME);
+				return c.getActiveRegistryBanks(getCurrentFinance().getRegistry());
+			} 
+			CompanyCollectionsController c = (CompanyCollectionsController)AonUtil.getRegisteredBean(ICompanyConstants.COLLECTIONS_CONTROLLER_NAME);
+			return c.getActiveCompanyBanks();
 			
 		}
 		return new LinkedList<SelectItem>();
@@ -1764,7 +1778,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			if (!f.getBankAccount().isValid())
 				return false;
 			String ccc1 = f.getBankAccount().getValue(); 
-			List<SelectItem> banks = getBanks();
+			List<SelectItem> banks = getAllBanks();
 			for (SelectItem item: banks) {
 				RegistryBank rBank = (RegistryBank) item.getValue();
 				BankAccount ba = rBank.getBankAccount();

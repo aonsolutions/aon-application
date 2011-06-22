@@ -292,7 +292,12 @@
 						valueChangeListener="#{finance.onRegistryBankChanged}"
 						disabled="#{!finance.pending and !finance.returned}">
 						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{finance.banks}" />
+						<c:if test="#{!finance.new}">
+							<f:selectItems value="#{finance.allBanks}" />
+						</c:if>
+						<c:if test="#{finance.new}">
+							<f:selectItems value="#{finance.activeBanks}" />
+						</c:if>
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Finance_total"
