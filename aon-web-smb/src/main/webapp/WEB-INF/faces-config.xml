@@ -144,6 +144,7 @@
 			<!--  aon.ui.product -->
 			<value>#{itemCompositionChildListener}</value>				
 			<value>#{itemTariffChildListener}</value>
+			<value>#{itemCatalogueChildListener}</value>
 		</list-entries>
 	</managed-bean>
 

@@ -93,28 +93,34 @@ public interface IProductAlias {
 	String  CATALOGUE_CATEGORY_CATALOGUE_ID = CATALOGUE_CATEGORY_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: CatalogueCategory_catalogue_name
+	* Hibernate value: CatalogueCategory.catalogue.name
+	*/
+	String  CATALOGUE_CATEGORY_CATALOGUE_NAME = CATALOGUE_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: CatalogueCategory_category_id
 	* Hibernate value: CatalogueCategory.category.id
 	*/
-	String  CATALOGUE_CATEGORY_CATEGORY_ID = CATALOGUE_CATEGORY_ENTRY.getAliasNames()[2];
+	String  CATALOGUE_CATEGORY_CATEGORY_ID = CATALOGUE_CATEGORY_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: CatalogueCategory_quantity
 	* Hibernate value: CatalogueCategory.quantity
 	*/
-	String  CATALOGUE_CATEGORY_QUANTITY = CATALOGUE_CATEGORY_ENTRY.getAliasNames()[3];
+	String  CATALOGUE_CATEGORY_QUANTITY = CATALOGUE_CATEGORY_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: CatalogueCategory_discount
 	* Hibernate value: CatalogueCategory.discount
 	*/
-	String  CATALOGUE_CATEGORY_DISCOUNT = CATALOGUE_CATEGORY_ENTRY.getAliasNames()[4];
+	String  CATALOGUE_CATEGORY_DISCOUNT = CATALOGUE_CATEGORY_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: CatalogueCategory_category_name
 	* Hibernate value: CatalogueCategory.category.name
 	*/
-	String  CATALOGUE_CATEGORY_CATEGORY_NAME = CATALOGUE_CATEGORY_ENTRY.getAliasNames()[5];
+	String  CATALOGUE_CATEGORY_CATEGORY_NAME = CATALOGUE_CATEGORY_ENTRY.getAliasNames()[6];
 
 
 
@@ -136,28 +142,34 @@ public interface IProductAlias {
 	String  CATALOGUE_ITEM_CATALOGUE_ID = CATALOGUE_ITEM_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: CatalogueItem_catalogue_name
+	* Hibernate value: CatalogueItem.catalogue.name
+	*/
+	String  CATALOGUE_ITEM_CATALOGUE_NAME = CATALOGUE_ITEM_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: CatalogueItem_item_id
 	* Hibernate value: CatalogueItem.item.id
 	*/
-	String  CATALOGUE_ITEM_ITEM_ID = CATALOGUE_ITEM_ENTRY.getAliasNames()[2];
+	String  CATALOGUE_ITEM_ITEM_ID = CATALOGUE_ITEM_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: CatalogueItem_quantity
 	* Hibernate value: CatalogueItem.quantity
 	*/
-	String  CATALOGUE_ITEM_QUANTITY = CATALOGUE_ITEM_ENTRY.getAliasNames()[3];
+	String  CATALOGUE_ITEM_QUANTITY = CATALOGUE_ITEM_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: CatalogueItem_discount
 	* Hibernate value: CatalogueItem.discount
 	*/
-	String  CATALOGUE_ITEM_DISCOUNT = CATALOGUE_ITEM_ENTRY.getAliasNames()[4];
+	String  CATALOGUE_ITEM_DISCOUNT = CATALOGUE_ITEM_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: CatalogueItem_item_product_name
 	* Hibernate value: CatalogueItem.item.product.name
 	*/
-	String  CATALOGUE_ITEM_ITEM_PRODUCT_NAME = CATALOGUE_ITEM_ENTRY.getAliasNames()[5];
+	String  CATALOGUE_ITEM_ITEM_PRODUCT_NAME = CATALOGUE_ITEM_ENTRY.getAliasNames()[6];
 
 
 

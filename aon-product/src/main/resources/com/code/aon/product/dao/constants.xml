@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.product.CatalogueCategory" sqlName="catalogue_category">
-		<alias names="id,catalogue_id,category_id,quantity,discount,category_name" />
-		<hibernate names="id,catalogue.id,category.id,quantity,discount,category.name" />
+		<alias names="id,catalogue_id,catalogue_name,category_id,quantity,discount,category_name" />
+		<hibernate names="id,catalogue.id,catalogue.name,category.id,quantity,discount,category.name" />
 	</bean>
 
 	<bean class="com.code.aon.product.CatalogueItem" sqlName="catalogue_item">
-		<alias names="id,catalogue_id,item_id,quantity,discount,item_product_name" />
-		<hibernate names="id,catalogue.id,item.id,quantity,discount,item.product.name" />
+		<alias names="id,catalogue_id,catalogue_name,item_id,quantity,discount,item_product_name" />
+		<hibernate names="id,catalogue.id,catalogue.name,item.id,quantity,discount,item.product.name" />
 	</bean>
 
 	<bean class="com.code.aon.product.Item" sqlName="item">

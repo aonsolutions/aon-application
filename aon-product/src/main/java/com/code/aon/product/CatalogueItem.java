@@ -17,6 +17,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.util.CommonUtil;
 
 @Entity
 @Table(name="catalogue_item")
@@ -66,20 +67,22 @@ public class CatalogueItem implements ITransferObject {
 		this.item = item;
 	}
 
+    @Column(precision=15, scale=3)
 	public double getQuantity() {
 		return quantity;
 	}
 
 	public void setQuantity(double quantity) {
-		this.quantity = quantity;
+        this.quantity = CommonUtil.round(quantity, 3);
 	}
 
+    @Column(precision=15, scale=4)
 	public double getPrice() {
 		return price;
 	}
 
 	public void setPrice(double price) {
-		this.price = price;
+        this.price = CommonUtil.round(price, 4);
 	}
 
 	@Column(precision = 6, scale = 2)
@@ -88,7 +91,7 @@ public class CatalogueItem implements ITransferObject {
 	}
 
 	public void setDiscount(double discount) {
-		this.discount = discount;
+		this.discount = CommonUtil.round(discount);
 	}
 
 	@Override

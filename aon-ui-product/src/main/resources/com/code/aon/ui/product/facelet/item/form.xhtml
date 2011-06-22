@@ -51,6 +51,15 @@
 								</aon:panelTab>
 							</c:if>
 
+							<c:if test="#{aonConfiguration.bean.product.showCatalogues}">
+								<aon:panelTab id="itemCataloguePanelTab"
+									label="#{productBundle.product_catalogue_module}">
+									<ui:include
+										src="/com/code/aon/ui/product/facelet/item/catalogue/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+
 							<c:if test="#{aonConfiguration.bean.product.showStock and item.to.product.inventoriable}">
 								<aon:panelTab id="itemWarehousePanelTab"
 									label="#{warehouseBundle.warehouse_item_warehouse_module}">

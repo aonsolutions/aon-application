@@ -284,6 +284,27 @@
 		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>itemCatalogueChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>itemCatalogue</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CatalogueItem_item_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************ ITEM ATTACH ************** -->
 	<managed-bean>
 		<managed-bean-name>itemAttach</managed-bean-name>
@@ -543,6 +564,59 @@
 		<managed-bean-name>itemTariffControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.product.event.ItemTariffControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************ ITEM CATALOGUE ************* -->
+	<managed-bean>
+		<managed-bean-name>itemCatalogue</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.ItemCatalogueController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.CatalogueItem</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>itemCatalogue</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CatalogueItem_catalogue_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>item</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>item.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{itemCatalogueControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>itemCatalogueControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.event.ItemCatalogueControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>

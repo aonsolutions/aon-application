@@ -39,7 +39,7 @@ public class ItemTariffControllerListener extends ControllerAdapter {
 			criteria.addEqualExpression(itemTariffBean.getFieldName(IProductAlias.ITEM_TARIFF_ITEM_ID), itemTariff.getItem().getId());
 			criteria.addEqualExpression(itemTariffBean.getFieldName(IProductAlias.ITEM_TARIFF_TARIFF_ID), itemTariff.getTariff().getId());
 			if (itemTariffBean.getCount(criteria) > 0) {
-				throw new ControllerListenerException("La Tarifa ya esta definida para el Producto.");
+				throw new ControllerListenerException("El Producto ya esta definido para esa Tarifa.");
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
