@@ -2455,6 +2455,12 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .aon-icon-alarm{
 	background:transparent url(images/aon-main-menu/aon-icon-alarm.png) no-repeat scroll center left;
 }
+.aon-icon-car{
+	background:transparent url(images/aon-main-menu/aon-icon-car.png) no-repeat scroll center left;
+}
+.aon-icon-audatex{
+	background:transparent url(images/aon-main-menu/aon-icon-audatex.png) no-repeat scroll center left;
+}
 
 .aon-subTable-green-header{
 	padding-left: 10px; 
