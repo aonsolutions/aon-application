@@ -74,8 +74,8 @@ public class StatementController extends BasicController {
 	}
 
 	@Override
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
+	public void select(ActionEvent event) {
+		super.select(event);
 		refresh();
 	}
 

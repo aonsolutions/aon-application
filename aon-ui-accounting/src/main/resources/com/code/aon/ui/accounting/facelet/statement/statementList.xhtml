@@ -11,7 +11,7 @@
 	<ui:define name="content">
 		<aon:form>
 			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbarEx.xhtml">
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{accountingBundle.accounting_statement_module}" />
 				<ui:param name="skipSaveButton" value="true" />
@@ -66,7 +66,7 @@
 
 			</ui:decorate>
 
-			<aon:div styleClass="aon-scroll-area" ajaxRendered="true">
+			<aon:div styleClass="aon-scroll-area">
 
 				<aon:panel style="background-color:#f6f5e3;">
 					<aon:outputText styleClass=""
