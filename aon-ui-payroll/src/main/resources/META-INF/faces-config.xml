@@ -857,6 +857,7 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{agreementSalaryTable}</value>
 				<value>#{agreementLevelListener}</value>
 				<value>#{agreementPaymentListener}</value>
 				<value>#{agreementTreeControlerListener}</value>
@@ -936,6 +937,35 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.agreement.AgreementLevelTreeControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<!-- ************ AGREEMENT SALARY TABLE ************** -->
+
+	<managed-bean>
+		<managed-bean-name>agreementSalaryTable</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.agreement.AgreeementSalaryTableController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************ AGREEMENT SALARY TABLE LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementSalaryTableListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>agreementSalaryTable</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AgreementLevel_agreement_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************ AGREEMENT LEVEL CATEGORY LISTENER ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementLevelCategoryChildListener</managed-bean-name>

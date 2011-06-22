@@ -43,72 +43,8 @@
 				</aon:panelTab>
 
 				<aon:panelTab id="group" label="#{payrollBundle.payroll_agreementLevel_module}">
-
-					<aon:editDataTable id="agreementLevelGrid" var="to" value="#{agreementLevel.model}" rows="0">
-						<aon:rowSelector id="agreementLevelGrid-select" toggleOnClick="#{agreementLevel.to == null}"
-							actionListener="#{agreementLevel.onSelect}" 
-							reRender="agreementForm,agreementTree"/>
-				
-							<aon:column id="agreementLevelGrid-selectColumn" 
-								styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
-								<f:facet name="header">
-									<aon:outputText value="&#160;" />
-								</f:facet>
-								<f:facet name="footer">
-									<aon:div>
-										<aon:commandButton
-											id="agreementLevelGrid-reset" title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
-											actionListener="#{agreementLevel.onReset}"
-											rendered="#{!agreementLevel.new and agreementLevel.to == null}" 
-											reRender="#{agreementLevelGrid}"
-											styleClass="aon-editDataTable-button aon-icon-reset"
-											accesskey="#{bundle.aon_key_new_line}"/>
-				
-									</aon:div>
-								</f:facet>
-							</aon:column>
-							
-							<aon:column styleClass="aon-editDataTable-textColumn">
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_description}" />
-								</f:facet>
-								<aon:outputText value="#{to.description}"/>
-								<f:facet name="footer">
-									<aon:inputText id="AgreementLevel_description-New"
-										value="#{agreementLevel.to.description}"
-										rendered="#{agreementLevel.new}" required="true" maxlength="64" size="64" />
-								</f:facet>
-							</aon:column>
-			
-							<aon:column styleClass="aon-editDataTable-buttonsColumn aon-vertical-align-top">
-								<f:facet name="header">
-									<aon:outputText value="&#160;" />
-								</f:facet>
-								<aon:outputText value="&#160;" />
-								<f:facet name="footer">
-									<aon:div>
-										<aon:outputText rendered="#{!agreementLevel.new}" value="&#160;" />
-										<aon:commandButton
-											id="agreementLevelGrid-new-save" 
-											title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
-											actionListener="#{agreementLevel.accept}"
-											rendered="#{agreementLevel.new}"
-											reRender="agreementForm,agreementTree"
-											styleClass="aon-editDataTable-button aon-icon-accept"
-											accesskey="#{bundle.aon_key_save_line}" />
-										<aon:confirmButton
-											id="agreementLevelGrid-new-cancel" title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
-											rendered="#{agreementLevel.new}" reRender="agreementLevelGrid"
-											immediate="true"
-											confirmTitle="#{bundle.aon_confirm_title}"
-											confirmMessage="#{bundle.aon_cancel_confirm}"
-											confirmActionListener="#{agreementLevel.onCancel}"
-											styleClass="aon-editDataTable-button aon-icon-cancel"
-											accesskey="#{bundle.aon_key_cancel_line}" />
-									</aon:div>
-								</f:facet>
-							</aon:column>
-						</aon:editDataTable>
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/level/editGridSalaryTable.xhtml" >
+						</ui:include>
 				</aon:panelTab>
 			</aon:panelTabSet>								
 		</c:if>
