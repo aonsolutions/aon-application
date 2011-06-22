@@ -1057,6 +1057,65 @@ CREATE TABLE `activity_process` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Relacion entre Campañas, Actividades y Tareas';
 
 #
+# Structure for the `payment_concept` table : 
+#
+
+CREATE TABLE `payment_concept` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `code` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de Percepcion Salarial',
+  `description_decorable` tinyint(2) NOT NULL default '0',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe',
+  `irpf_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe tributable',
+  `quote_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe cotizable',
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de devengos';
+
+#
+# Structure for the `agreement_payment` table : 
+#
+
+CREATE TABLE `agreement_payment` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `agreement` int(4) NOT NULL COMMENT 'Convenio',
+  `payment_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
+  `type` tinyint(2) default NULL COMMENT 'Tipo de complemento Salarial',
+  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Script',
+  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
+  `start_date` date NOT NULL COMMENT 'Fecha de inicio',
+  `end_date` date default NULL COMMENT 'Fecha de finalizacion',
+  `month` tinyint(2) default NULL COMMENT 'Mes de la percepcion',
+  `salary_type` tinyint(2) default NULL COMMENT 'Tipo de Nomina/Recibo',
+  `description_decorable` tinyint(2) NOT NULL default '0',
+  `irpf_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe tributable',
+  `quote_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe cotizable',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_PAYMENT_AGREEMENT` (`agreement`),
+  KEY `IDX_AGREEMENT_PAYMENT_PAYMENT_CONCEPT` (`payment_concept`),
+  CONSTRAINT `FK_AGREEMENT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`),
+  CONSTRAINT `FK_PAYMENT_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones';
+
+#
+# Structure for the `agreement_extra` table : 
+#
+
+CREATE TABLE `agreement_extra` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
+  `agreement` int(4) NOT NULL COMMENT 'Convenio',
+  `agreement_payment` int(4) default NULL COMMENT 'Concepto',
+  `start_date` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Fecha de inicio dd mm [year offset]',
+  `end_date` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Fecha de finalizacion dd mm [year offset]',
+  `issue_date` varchar(32) collate latin1_spanish_ci NOT NULL COMMENT 'Fecha de emision dd mm',
+  PRIMARY KEY  (`id`),
+  KEY `IDX_AGREEMENT_EXTRA_AGREEMENT` (`agreement`),
+  KEY `IDX_AGREEMENT_EXTRA_AGREEMENT_PAYMENT` (`agreement_payment`),
+  CONSTRAINT `FK_AGREEMENT_EXTRA_AGREEMENT` FOREIGN KEY (`agreement`) REFERENCES `agreement` (`id`),
+  CONSTRAINT `FK_AGREEMENT_EXTRA_AGREEMENT_PAYMENT` FOREIGN KEY (`agreement_payment`) REFERENCES `agreement_payment` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Pagas extras';
+
+#
 # Structure for the `agreement_level` table : 
 #
 
@@ -1097,47 +1156,6 @@ CREATE TABLE `agreement_level_data` (
   KEY `IDX_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL` (`agreement_level`),
   CONSTRAINT `FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Contexto del convenio';
-
-#
-# Structure for the `payment_concept` table : 
-#
-
-CREATE TABLE `payment_concept` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `code` varchar(5) collate latin1_spanish_ci default NULL COMMENT 'Codigo',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `type` tinyint(2) default NULL COMMENT 'Tipo de Percepcion Salarial',
-  `description_decorable` tinyint(2) NOT NULL default '0',
-  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe',
-  `irpf_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe tributable',
-  `quote_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe cotizable',
-  PRIMARY KEY  (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Conceptos de devengos';
-
-#
-# Structure for the `agreement_level_payment` table : 
-#
-
-CREATE TABLE `agreement_level_payment` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `agreement_level` int(4) NOT NULL COMMENT 'Nivel retributivo',
-  `type` tinyint(2) default NULL COMMENT 'Tipo de Percepción Salarial',
-  `expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Fórmula',
-  `description` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Descripcion',
-  `start_date` date NOT NULL COMMENT 'Fecha de inicio',
-  `end_date` date default NULL COMMENT 'Fecha de finalizacion',
-  `month` tinyint(2) default NULL COMMENT 'Mes de la percepcion',
-  `payment_concept` int(4) default NULL COMMENT 'Identificador unico del concepto',
-  `salary_type` tinyint(2) default NULL COMMENT 'Tipo de Nomina/Recibo',
-  `description_decorable` tinyint(2) NOT NULL default '0',
-  `irpf_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe tributable',
-  `quote_expression` varchar(128) collate latin1_spanish_ci default NULL COMMENT 'Importe cotizable',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_PAYMENT_AGREEMENT_LEVEL` (`agreement_level`),
-  KEY `IDX_AGREEMENT_PAYMENT_PAYMENT_CONCEPT` (`payment_concept`),
-  CONSTRAINT `FK_AGREEMENT_PAYMENT_PAYMENT_CONCEPT` FOREIGN KEY (`payment_concept`) REFERENCES `payment_concept` (`id`),
-  CONSTRAINT `FK_PAYMENT_AGREEMENT_LEVEL` FOREIGN KEY (`agreement_level`) REFERENCES `agreement_level` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Percepciones';
 
 #
 # Structure for the `alarm` table : 
