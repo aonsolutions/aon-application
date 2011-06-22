@@ -134,7 +134,9 @@
 						onclick="Richfaces.showModalPanel('waitProccess')"
 						oncomplete="Richfaces.hideModalPanel('waitProccess')"
 						actionListener="#{balanceSheet.onBalance}"
-						action="balance_sheet_list" />
+						action="balance_sheet_list">
+						<aon:actionHotKey key="return" />
+					</aon:commandButton>
 				</ui:define>
 			</ui:decorate>
 
