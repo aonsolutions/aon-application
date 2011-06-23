@@ -22,13 +22,13 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-sales aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{salesBundle.sales_seller_module}" />
+								<aon:outputText value="#{sellerBundle.seller_module}" />
 							</f:facet>							
 							<aon:div styleClass="aon-direct-access-list">			
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="seller" 
 										action="seller_search" actionListener="#{seller.onEditSearch}"
-										value="#{salesBundle.sales_seller_module}" />
+										value="#{sellerBundle.seller_module}" />
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="geotreeParent" 

@@ -164,7 +164,7 @@
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</aon:selectOneMenu>
 
-					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml">
+					<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{sales.to.seller}" />
 						<ui:param name="lookupDisabled" value="#{!sales.pending}" />
 						<aon:methodParam name="lookupChangeListener"

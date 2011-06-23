@@ -9,31 +9,11 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.sales.enumeration.DocumentType;
 import com.code.aon.sales.enumeration.SalesStatus;
-import com.code.aon.seller.enumeration.SellerStatus;
 
-/**
- * Controller used to get Collections related with clasess in
- * <code>com.code.aon.sales</code>
- * 
- * @author Consulting & Development. igayarre - 22-jun-2006
- */
 public class SalesCollectionsController {
-	List<SelectItem> sellerStatuses;
+
 	List<SelectItem> salesStatuses;
 	List<SelectItem> documentTypes;
-
-	public List<SelectItem> getSellerStatuses() {
-		if (sellerStatuses == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			sellerStatuses = new LinkedList<SelectItem>();
-			for (SellerStatus status : SellerStatus.values()) {
-				String name = status.getName(locale);
-				SelectItem item = new SelectItem(status, name);
-				sellerStatuses.add(item);
-			}
-		}
-		return sellerStatuses;
-	}
 
 	public List<SelectItem> getSalesStatuses() {
 		if (salesStatuses == null) {
