@@ -127,6 +127,7 @@ public class SalaryDraftPaymentController extends ContractDetailAbstractControll
 		ContractSalaryCalculatorContext ctx;
 		List<ContractData> dataList;
 		try {
+			contract.setSalaryCalculatorContext(null);
 			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
 			setVariablesModel(null);
 			setUndefinedVariablesModel(null);
