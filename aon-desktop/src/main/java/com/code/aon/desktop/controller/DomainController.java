@@ -5,12 +5,10 @@ import static com.code.aon.desktop.Domain.DOMAIN_PARENT_DOMAIN;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.naming.Name;
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +32,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.desktop.applications.ApplicationsManager;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class DomainController extends BasicController implements IDesktopConstants, IAonObjectClasses {
@@ -60,11 +57,6 @@ public class DomainController extends BasicController implements IDesktopConstan
 			Domain domain = (Domain) getRegisteredDomains().getRowData();
 			StringBuffer url = new StringBuffer( "http://" );
 			url.append( domain.getCommonName() );
-			FacesContext context = FacesContext.getCurrentInstance();
-			HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
-			if ( request.getRemotePort() != 80 ) {
-				url.append( ":" ).append( String.valueOf(request.getLocalPort()) );
-			}
 			url.append( selectedApplication.getContext() );
 			return url.toString();				
 		}
