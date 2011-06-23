@@ -98,6 +98,7 @@
 	  <module>aon-ui-fiscal</module>
 	  <module>aon-ui-product</module>
 	  <module>aon-ui-sales</module>
+	  <module>aon-ui-seller</module>
 	  <module>aon-ui-sign</module>
 	  <module>aon-ui-stat</module>
 	  <module>aon-ui-supplier</module>
