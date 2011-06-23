@@ -2,19 +2,14 @@ package com.code.aon.ui.product.controller;
 
 public interface IItemConstants  {
 	
-	// ************************************************************
-	// MESSAGES
-	// ************************************************************
+	public static final String PRODUCT_COLLECTIONS = "productCollections";
+	public static final String ITEM = "item";
+	public static final String ITEM_ALTERNATIVE = "itemAlternative";
+	public static final String ITEM_COMPOSITION = "itemComposition";
+	public static final String ITEM_SUPPLIER = "itemSupplier";
+	public static final String ITEM_TARIFF = "itemTariff";
+	
+	public static final String THUMBNAIL_WIDTH_SIZE = "200";
+	public static final String THUMBNAIL_HEIGHT_SIZE = "200";
 
-	/** ResourceBundle name. */
-	String BUNDLE_NAME = "productBundle";
-	
-	String PRODUCT_DOCUMENT_MAX_SIZE_ERROR = "product_document_max_size_error";
-	
-	// ************************************************************
-	// BEAN
-	// ************************************************************
-	
-	String THUMBNAIL_WIDTH_SIZE = "200";
-	String THUMBNAIL_HEIGHT_SIZE = "200";
 }

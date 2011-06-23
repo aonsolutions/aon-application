@@ -8,7 +8,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Catalogue;
-import com.code.aon.product.CatalogueItem;
+import com.code.aon.product.TariffCatalogue;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -19,17 +19,17 @@ import com.code.aon.ui.product.controller.IItemConstants;
 import com.code.aon.ui.product.controller.ProductCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 
-public class ItemCatalogueControllerListener extends ControllerAdapter implements IItemMessages, IItemConstants {
+public class TariffCatalogueControllerListener extends ControllerAdapter implements IItemMessages, IItemConstants {
 
     @Override
-    public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		CatalogueItem catalogueItem = (CatalogueItem)event.getController().getTo();
+    public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		TariffCatalogue tariffCatalogue = (TariffCatalogue)event.getController().getTo();
     	try {
             ProductCollectionsController collections = (ProductCollectionsController)AonUtil.getRegisteredBean(PRODUCT_COLLECTIONS);
         	List<?> catalogues = collections.getCatalogues();
         	if (catalogues.size() > 0) {
         		Catalogue catalogue = (Catalogue)((SelectItem)catalogues.get(0)).getValue();
-        		catalogueItem.setCatalogue(catalogue);
+        		tariffCatalogue.setCatalogue(catalogue);
         	}
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
@@ -38,14 +38,14 @@ public class ItemCatalogueControllerListener extends ControllerAdapter implement
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		CatalogueItem catalogueItem = (CatalogueItem)event.getController().getTo();
+		TariffCatalogue tariffCatalogue = (TariffCatalogue)event.getController().getTo();
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(CatalogueItem.class);
+			IManagerBean bean = BeanManager.getManagerBean(TariffCatalogue.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IProductAlias.CATALOGUE_ITEM_ITEM_ID), catalogueItem.getItem().getId());
-			criteria.addEqualExpression(bean.getFieldName(IProductAlias.CATALOGUE_ITEM_CATALOGUE_ID), catalogueItem.getCatalogue().getId());
+			criteria.addEqualExpression(bean.getFieldName(IProductAlias.TARIFF_CATALOGUE_TARIFF_ID), tariffCatalogue.getTariff().getId());
+			criteria.addEqualExpression(bean.getFieldName(IProductAlias.TARIFF_CATALOGUE_CATALOGUE_ID), tariffCatalogue.getCatalogue().getId());
 			if (bean.getCount(criteria) > 0) {
-				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, PRODUCT_DEFINED_FOR_CATALOGUE_ERROR));
+				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, CATALOGUE_DEFINED_FOR_TARIFF_ERROR));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

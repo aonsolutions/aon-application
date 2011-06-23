@@ -18,12 +18,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.product.controller.IItemConstants;
+import com.code.aon.ui.product.IItemMessages;
 import com.code.aon.ui.product.controller.ItemAttachController;
 import com.code.aon.ui.util.AonUtil;
 import com.sun.faces.util.MessageFactory;
 
-public class ItemAttachControllerListener extends ControllerAdapter implements IItemConstants{
+public class ItemAttachControllerListener extends ControllerAdapter implements IItemMessages {
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {

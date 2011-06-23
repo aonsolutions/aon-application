@@ -12,8 +12,10 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.product.IItemMessages;
+import com.code.aon.ui.util.AonUtil;
 
-public class ItemTariffControllerListener extends ControllerAdapter {
+public class ItemTariffControllerListener extends ControllerAdapter implements IItemMessages {
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -39,7 +41,7 @@ public class ItemTariffControllerListener extends ControllerAdapter {
 			criteria.addEqualExpression(itemTariffBean.getFieldName(IProductAlias.ITEM_TARIFF_ITEM_ID), itemTariff.getItem().getId());
 			criteria.addEqualExpression(itemTariffBean.getFieldName(IProductAlias.ITEM_TARIFF_TARIFF_ID), itemTariff.getTariff().getId());
 			if (itemTariffBean.getCount(criteria) > 0) {
-				throw new ControllerListenerException("El Producto ya esta definido para esa Tarifa.");
+				throw new ControllerListenerException(AonUtil.getMessage(BUNDLE_NAME, PRODUCT_DEFINED_FOR_TARIFF_ERROR));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

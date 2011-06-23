@@ -43,7 +43,7 @@
 				</aon:outputText>
 				<f:facet name="footer">
 					<aon:outputText id="ItemCatalogue_catalogue_startDate-New"
-						value="#{to.catalogue.startDate}"
+						value="#{controller.to.catalogue.startDate}"
 						rendered="#{formNew}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
@@ -63,7 +63,7 @@
 				</aon:outputText>
 				<f:facet name="footer">
 					<aon:outputText id="ItemCatalogue_catalogue_endDate-New"
-						value="#{to.catalogue.endDate}"
+						value="#{controller.to.catalogue.endDate}"
 						rendered="#{formNew}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />

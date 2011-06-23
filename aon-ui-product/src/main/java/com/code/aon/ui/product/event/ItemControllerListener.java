@@ -19,19 +19,18 @@ import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.product.controller.IItemConstants;
 import com.code.aon.ui.product.controller.ItemTariffController;
-import com.code.aon.ui.product.controller.ProductConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class ItemControllerListener extends ControllerAdapter {
+public class ItemControllerListener extends ControllerAdapter implements IItemConstants {
 
     @Override
-    @SuppressWarnings("unchecked")
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
     	Item item = (Item)event.getController().getTo();
     	try {
             ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
-        	List vats = collections.getVatTaxes();
+        	List<?> vats = collections.getVatTaxes();
         	if (vats.size() > 0) {
         		Tax vat = (Tax)((SelectItem)vats.get(0)).getValue();
         		item.getProduct().setVat(vat);
@@ -46,7 +45,6 @@ public class ItemControllerListener extends ControllerAdapter {
     }
 
 	@Override
-    @SuppressWarnings("unchecked")
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		if (event.getController().isNew()) {
 			try {
@@ -62,7 +60,7 @@ public class ItemControllerListener extends ControllerAdapter {
 				}
 				if (product.getVat() == null || product.getVat().getId() == null) {
 					ConfigCollectionsController collections = (ConfigCollectionsController)AonUtil.getRegisteredBean(ConfigConstants.CONFIG_COLLECTIONS);
-		        	List vats = collections.getVatTaxes();
+		        	List<?> vats = collections.getVatTaxes();
 		        	if (vats.size() > 0) {
 		        		Tax vat = (Tax)((SelectItem)vats.get(0)).getValue();
 		        		item.getProduct().setVat(vat);
@@ -78,7 +76,7 @@ public class ItemControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event)	throws ControllerListenerException {
-		ItemTariffController itemTariffController = (ItemTariffController)AonUtil.getRegisteredBean(ProductConstants.ITEM_TARIFF);
+		ItemTariffController itemTariffController = (ItemTariffController)AonUtil.getRegisteredBean(ITEM_TARIFF);
 		itemTariffController.onSearch(null);
 	}
 
