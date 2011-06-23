@@ -175,7 +175,7 @@ public class CertificateWriter {
 	private void validateXmlPattern(File xml) {
 		final String SCHEMA = "enterpriseCertificate.xsd";
 		try {
-			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.XMLNS_ATTRIBUTE_NS_URI);
+			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
 			URL[] urls = Classpath.search(cl, "META-INF/", SCHEMA);
 			Validator validator = sf.newSchema(urls[0]).newValidator();
@@ -392,7 +392,11 @@ public class CertificateWriter {
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), SalaryType.SETTLE);
 			// un contracto solo puede tener un finiquito, se asume el primero de la lista
 			List<ITransferObject> list = bean.getList(criteria);
-			String noHolidays = getContractDataMap(contract).get(ContractVariables.NO_HOLIDAYS.getName()).getExpression();
+			ContractData cd = getContractDataMap(contract).get(ContractVariables.NO_HOLIDAYS.getName());
+			String noHolidays = null;
+			if(cd != null){
+				noHolidays = cd.getExpression();
+			}
 			if(!list.isEmpty() && noHolidays!=null && noHolidays!="0"){
 				Vacaciones vacaciones = new Vacaciones();
 				Salary salary = (Salary) list.get(0);
