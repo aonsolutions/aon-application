@@ -20,6 +20,7 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
@@ -136,6 +137,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		salaryBuilder.setEndDate( ctx.getEndDate());
 		long days  = CommonUtil.getDaysBetweenDates(ctx.getStartDate(), ctx.getEndDate()) + 1;
 		salaryBuilder.setTimeUnits( (int) days );
+		salaryBuilder.setType(ctx.getSalaryType());
 	}
 
 	private Double fillPayments(IContractSalaryCalculatorContext ctx) 
