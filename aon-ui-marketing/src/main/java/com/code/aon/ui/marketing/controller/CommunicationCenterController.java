@@ -1,5 +1,7 @@
 package com.code.aon.ui.marketing.controller;
 
+import static com.code.aon.ui.groupware.controller.IGroupWareConstants.ALARM_CONTROLLER_NAME;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
@@ -23,6 +25,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
+import com.code.aon.groupware.Alarm;
+import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.MarketingAction;
 import com.code.aon.marketing.Question;
@@ -48,6 +52,7 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.mailing.MailData;
 import com.code.aon.ui.mailing.MailingManager;
 import com.code.aon.ui.util.AonUtil;
@@ -260,6 +265,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		setMailingModel(null);
 		this.surveyResponse = null;
 		setActionTarget(null);
+		setPendingTargets(0);
 	}
 	
 	public Question getQuestion() {
@@ -295,7 +301,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		IManagerBean surveyResponseBean = BeanManager.getManagerBean(SurveyResponse.class);
 		surveyResponseBean.insert( surveyResponse );
 		getActionTarget().setSurveyResponse(this.surveyResponse);
-		updateActionTarget();
+		updateActionTarget(false);
 		updateSurveyQuestion( getFirstSurveyQuestion() );
 		this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER_RESPONSE;
 	}
@@ -308,7 +314,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		} else {
 			this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER;
 			getActionTarget().setStatus(ActionTargetStatus.FINISHED);
-			updateActionTarget();
+			updateActionTarget(true);
 			nextActionTarget(false);
 		}
 	}
@@ -323,8 +329,11 @@ public class CommunicationCenterController implements IMarketingConstants {
 		questionValue.copyValues(response);			
 	}
 
-	private void updateActionTarget() throws ManagerBeanException {
+	private void updateActionTarget( boolean resetUser ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		if ( resetUser ) {
+			getActionTarget().setUser(null);
+		}
 		bean.update(getActionTarget());
 	}
 	
@@ -498,7 +507,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 		bean.update(getActionTarget());
 	}
 	
-	public void onNextActionTarget( ActionEvent event ) throws ManagerBeanException {
+	public void onSkipActionTarget( ActionEvent event ) throws ManagerBeanException {
+		updateActionTarget(true);
 		nextActionTarget(false);
 	}
 	
@@ -516,8 +526,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	public void onUpdateActionTarget( ActionEvent event ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-		bean.update( getActionTarget() );
+		updateActionTarget(true);
 		nextActionTarget(false);
 	}
 
@@ -599,7 +608,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}		
 	
 	public void onFinishSurvey(ActionEvent event) throws ManagerBeanException {
-		updateActionTarget();
+		updateActionTarget(true);
 		nextActionTarget(false);
 	}
 
@@ -607,27 +616,58 @@ public class CommunicationCenterController implements IMarketingConstants {
 		nextActionTarget(true);
 	}
 
-	public void onStartActionTarget( ActionEvent event ) throws ManagerBeanException {
+	public void onStartActionTarget( ActionEvent event ) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		String idValue = context.getExternalContext().getRequestParameterMap().get("actionTargetId");
-		if (! StringUtils.isEmpty(idValue) ) {
-			IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
-			Integer id = Integer.valueOf(idValue);
-			ActionTarget at = (ActionTarget) bean.get(id);
-			at.setStatus(ActionTargetStatus.PENDING);
-			updateActionTarget();
-			setActionTarget( at );			
-		}
-		IController controller = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
-		MarketingAction action = (MarketingAction) controller.getTo();
-		setAction(action);
 		try {				
-			setSurvey( action.getSurvey() );
-			nextActionTarget(true);
+			ActionTarget at = null;
+			if (! StringUtils.isEmpty(idValue) ) {
+				IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+				Integer id = Integer.valueOf(idValue);
+				at = (ActionTarget) bean.get(id);
+			}
+			if ( at != null ) {
+				startActionTarget(at);
+			}
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
 		}       
+	}
+
+	public void onGoToActionTarget( ActionEvent event ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(ALARM_CONTROLLER_NAME);
+		Alarm alarm = (Alarm) controller.getTo();
+		try {				
+			IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+			ActionTarget at = (ActionTarget) bean.get(alarm.getSourceId());
+			if ( at != null ) {
+				startActionTarget(at);	
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}       
+	}	
+	
+	public void startActionTarget( ActionTarget at ) throws ManagerBeanException {
+		if ( at.getStatus() == ActionTargetStatus.FINISHED ) {
+			at.setStatus(ActionTargetStatus.PENDING);	
+		}
+		setActionTarget( at );			
+		updateActionTarget(true);
+		setAction(at.getAction());
+		setSurvey( action.getSurvey() );
+		nextActionTarget(true);
+	}	
+	
+	public void onNewAlarm( ActionEvent event ) {
+		AlarmController controller = (AlarmController) AonUtil.getRegisteredBean(ALARM_CONTROLLER_NAME);
+		controller.setShowNewAlarmWindow(true);
+		controller.onReset(event);
+		Alarm alarm = (Alarm) controller.getTo();
+		alarm.setSource(AlarmSource.CALL_CENTER);
+		alarm.setSourceId(getActionTarget().getId());
 	}
 	
 }

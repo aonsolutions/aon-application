@@ -37,6 +37,14 @@
 						<aon:goToButton controller="#{commercialTracking}"
 							propertyId="#{alarm.to.sourceId}" />					
 					</c:if>
+					<c:if test="#{aonConfiguration.bean.alarm.showGoToCallCenter and alarm.to.callCenter}" >
+						<aon:commandButton immediate="true"
+							value="&#160;" style="border:0;"
+							title="#{marketingBundle.marketing_survey_start}"
+							action="communicationCenter"
+							actionListener="#{communicationCenter.onGoToActionTarget}"
+							styleClass="aon-finding-toolbar-item aon-icon-telephone" />
+					</c:if>
 				</c:if>
 			</aon:div>
 	

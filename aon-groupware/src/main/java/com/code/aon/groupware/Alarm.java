@@ -241,6 +241,11 @@ public class Alarm implements ITransferObject {
     	return source == AlarmSource.COMMERCIAL_TRACKING;
     }    
     
+    @Transient
+    public boolean isCallCenter() {
+    	return source == AlarmSource.CALL_CENTER;
+    }    
+    
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

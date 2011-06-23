@@ -23,7 +23,7 @@
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />
 						<ui:param name="lookupRendered" value="#{formEdit}" />
-						<ui:param name="lookupInputSuggestSize" value="40"/>
+						<ui:param name="lookupInputSuggestSize" value="30"/>
 					</ui:include>
 					<f:facet name="footer" >
 						<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
@@ -31,7 +31,7 @@
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
-							<ui:param name="lookupInputSuggestSize" value="40"/>
+							<ui:param name="lookupInputSuggestSize" value="30"/>
 							<ui:param name="lookupSuffix" value="-New" />
 						</ui:include>
 					</f:facet>	
@@ -46,11 +46,11 @@
 						rendered="#{formList}" />
 					<aon:inputTextarea id="ActionTarget_comments"
 						value="#{controller.to.comments}"
-						rows="2" cols="40" rendered="#{formEdit}" />					
+						rows="2" cols="30" rendered="#{formEdit}" />					
 					<f:facet name="footer">
 						<aon:inputTextarea id="ActionTarget_comments-New"
 							value="#{controller.to.comments}"
-							rows="2" cols="40" rendered="#{formNew}" />					
+							rows="2" cols="30" rendered="#{formNew}" />					
 					</f:facet>
 				</aon:column>					
 				
@@ -73,27 +73,46 @@
 					</f:facet>
 				</aon:column>		
 				
+				<aon:column alias="ActionTarget.user.name"
+					styleClass="aon-editDataTable-textColumn">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_login_user}" />
+					</f:facet>				
+					<aon:outputText value="#{to.user.name}"
+						rendered="#{formList}" />
+					<ui:include src="/com/code/aon/ui/config/facelet/user/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{controller.to.user}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="skipInputText" value="#{true}" />
+						<ui:param name="lookupRendered" value="#{formEdit and (controller.to.user.id != null)}" />
+						<ui:param name="lookupReRender" value="campaignActionTargetData" />
+						<ui:param name="lookupInputSuggestSize" value="20"/>
+					</ui:include>
+				</aon:column>					
+				
 				<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 					<aon:column styleClass="aon-text-center aon-width-80">
 						<f:facet name="header">
 							<aon:outputText value="#{marketingBundle.marketing_survey_module}" />
 						</f:facet>
-						<aon:commandButton style="border:0;" reRender="aonContent" value="&#160;"
-							title="#{marketingBundle.marketing_survey_start}"
-							styleClass="aon-finding-toolbar-item aon-icon-telephone"
-							action="communicationCenter" actionListener="#{communicationCenter.onStartActionTarget}"
-							onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
-							immediate="true">
-							<f:param name="actionTargetId" value="#{to.id}" />
-						</aon:commandButton>
-						<aon:commandButton reRender="aonContent" value="&#160;"
-							title="#{marketingBundle.marketing_survey_response_view}"
-							styleClass="aon-button-goto"
-							action="surveyResponse_action_form" actionListener="#{surveyResponse.onSelectSurveyResponse}"
-							onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
-							rendered="#{to.surveyResponse.id != null}" immediate="true">
-							<f:param name="surveyResponseId" value="#{to.surveyResponse.id}" />
-						</aon:commandButton>
+						<aon:div>
+							<aon:commandButton style="border:0;" reRender="aonContent" value="&#160;"
+								title="#{marketingBundle.marketing_survey_start}"
+								styleClass="aon-finding-toolbar-item aon-icon-telephone"
+								action="communicationCenter" actionListener="#{communicationCenter.onStartActionTarget}"
+								onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
+								immediate="true">
+								<f:param name="actionTargetId" value="#{to.id}" />
+							</aon:commandButton>
+							<aon:commandButton reRender="aonContent" value="&#160;"
+								title="#{marketingBundle.marketing_survey_response_view}"
+								styleClass="aon-button-goto"
+								action="surveyResponse_action_form" actionListener="#{surveyResponse.onSelectSurveyResponse}"
+								onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
+								rendered="#{to.surveyResponse.id != null}" immediate="true">
+								<f:param name="surveyResponseId" value="#{to.surveyResponse.id}" />
+							</aon:commandButton>
+						</aon:div>
 					</aon:column>
 				</c:if>		
 
