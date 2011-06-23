@@ -30,6 +30,14 @@
 					</f:facet>
 					<aon:outputText value="#{to.advertising}"/>
 				</aon:column>
+
+				<aon:column alias="#{controller.aliasPreffix}.status"
+					styleClass="aon-editDataTable-textColumn aon-width-100">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_status}" />
+					</f:facet>
+					<aon:outputText value="#{to.status}"/>
+				</aon:column>
 			</ui:define>
 		</ui:decorate>
 	</aon:div>
