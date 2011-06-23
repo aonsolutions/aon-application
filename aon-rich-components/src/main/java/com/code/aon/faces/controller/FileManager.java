@@ -51,6 +51,8 @@ public class FileManager implements IRichConstants {
 	
 	private boolean _new;
 	
+	private String backActionListener;
+	
 	private String nextAction;
 	
 	private AonFile aonFile;
@@ -103,6 +105,14 @@ public class FileManager implements IRichConstants {
 
 	public void setModel(DataModel model) {
 		this.model = model;
+	}
+	
+	public String getBackActionListener() {
+		return backActionListener;
+	}
+
+	public void setBackActionListener(String expression) {
+		this.backActionListener = expression;
 	}
 	
 	public File getCurrentDirectory() {
@@ -543,9 +553,9 @@ public class FileManager implements IRichConstants {
 				}
 				
 			};
-			loadModel( getCurrentDirectory() );
-			reset();
 		}
+		loadModel( getCurrentDirectory() );
+		reset();
 	}
 
 }
