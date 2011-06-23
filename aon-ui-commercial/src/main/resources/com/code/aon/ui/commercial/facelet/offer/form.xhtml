@@ -249,7 +249,7 @@
 						disabled="true" size="10" />
 
 					<c:if test="#{aonConfiguration.bean.offer.showSeller}">
-						<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
+						<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{offer.to.seller}" />
 							<ui:param name="lookupDisabled" value="#{offer.readOnly}" />
 							<aon:methodParam name="lookupChangeListener"

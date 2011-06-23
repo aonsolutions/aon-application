@@ -84,7 +84,7 @@
 		</c:if>
 						
 		<c:if test="#{aonConfiguration.bean.target.showSeller}">						
-			<aon:panelCollapsible expanded="false" label="#{salesBundle.sales_seller}">
+			<aon:panelCollapsible expanded="false" label="#{sellerBundle.seller_seller}">
 				<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">					
 					<aon:outputLabel for="Target_sellers_seller_id"
 						value="#{bundle.aon_id}" />
@@ -129,7 +129,7 @@
 							popupDateFormat="#{bundle.aon_date_pattern}"/>
 					</aon:div>
 			
-					<ui:include src="/com/code/aon/ui/sales/facelet/seller/lookup.xhtml" >
+					<ui:include src="/com/code/aon/ui/seller/facelet/seller/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{targetSearch.seller}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
