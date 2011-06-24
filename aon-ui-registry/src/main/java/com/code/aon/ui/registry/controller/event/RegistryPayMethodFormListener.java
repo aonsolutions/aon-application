@@ -48,9 +48,7 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 	@Override
 	public void afterBeanCreated(ControllerEvent event)	throws ControllerListenerException {
 		super.afterBeanCreated(event);
-		this.registryPayMethod = new RegistryPayMethod();
-		this.registryPayMethod.setPayment(new PayMethod());
-		resetRegistryBank();
+		resetPayMethod();
 	}
 	
 	@Override
@@ -59,6 +57,18 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 		checkRegistryBank();
 	}
 	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		super.beforeBeanUpdated(event);
+		checkRegistryBank();
+	}
+	
+	protected void resetPayMethod() {
+		this.registryPayMethod = new RegistryPayMethod();
+		this.registryPayMethod.setPayment(new PayMethod());
+		resetRegistryBank();
+	}
+
 	private void resetRegistryBank() {
 		this.registryPayMethod.setRegistryBank(new RegistryBank());
 		this.registryPayMethod.getRegistryBank().setBank(new Bank());

@@ -16,11 +16,9 @@
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="listData" columns="2">
-					<ui:include src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
-						<ui:param name="controller" value="#{person}" />
-					</ui:include>
-				</aon:panelGrid>
+				<ui:include src="/com/code/aon/ui/registry/facelet/person/formContent.xhtml">
+					<ui:param name="controller" value="#{person}" />
+				</ui:include>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{bankLookup}" />

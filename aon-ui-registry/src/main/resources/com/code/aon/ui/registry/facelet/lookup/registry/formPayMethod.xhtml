@@ -7,8 +7,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div id="Registry-PayMethodDiv" styleClass="aon-margin-top"> 
-		<aon:panelGrid columns="2" 
-			columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-450" >
+		<aon:panelGrid columns="2" columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
 	
 			<aon:outputLabel for="RegistryPayMethod_payment" 
 				value="#{configBundle.config_pay_method}" />
@@ -60,8 +59,8 @@
 				
 	<aon:div id="Registry-PayMethodDiv2"  styleClass="aon-margin-top">
 		<aon:panelGrid columns="4" 
-			columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-100,
-				aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-100" >
+			columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-160,
+				aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-160">
 					
 			<c:if test="#{controllerLookupListener.registryPayMethod.payment.type != null}">				
 				<aon:outputLabel for="RegistryPayMethod_numberOfPayments" 

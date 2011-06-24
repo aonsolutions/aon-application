@@ -27,7 +27,8 @@
 					</ui:include>								
 				</c:if>
 				<c:if test="#{!seller.new}">
-					<aon:panelGrid id="menuGrid" columns="2" dir="true">
+					<aon:panelGrid id="menuGrid" columns="2" 	
+						columnClasses="aon-panelGrid-odd aon-width-150,aon-panelGrid-even aon-width-500">
 	
 						<ui:include src="/com/code/aon/ui/seller/facelet/seller/formContent.xhtml">
 							<ui:param name="controller" value="#{seller}" />

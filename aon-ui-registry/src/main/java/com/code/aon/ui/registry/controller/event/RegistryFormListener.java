@@ -25,6 +25,7 @@ public class RegistryFormListener extends ControllerAdapter {
 	
 	private RegistryAddress mainAddress;
 	private RegistryMedia phone;
+	private RegistryMedia cellular;
 	private RegistryMedia fax;
 	private RegistryMedia email;
 	private RegistryMedia web;	
@@ -43,6 +44,14 @@ public class RegistryFormListener extends ControllerAdapter {
 
 	public void setPhone(RegistryMedia phone) {
 		this.phone = phone;
+	}
+
+	public RegistryMedia getCellular() {
+		return cellular;
+	}
+
+	public void setCellular(RegistryMedia cellular) {
+		this.cellular = cellular;
 	}
 
 	public RegistryMedia getFax() {
@@ -83,6 +92,8 @@ public class RegistryFormListener extends ControllerAdapter {
 		}
 		setPhone(new RegistryMedia());
 		initRegistryMedia(phone, MediaType.FIXED_PHONE);
+		setCellular(new RegistryMedia());
+		initRegistryMedia(cellular, MediaType.CELLULAR);
 		setFax(new RegistryMedia());
 		initRegistryMedia(fax, MediaType.FAX);
 		setEmail(new RegistryMedia());
@@ -131,6 +142,7 @@ public class RegistryFormListener extends ControllerAdapter {
 	protected void updateRegistryLines(Registry registry) throws ManagerBeanException {
 		RegistryAddress address = updateRegistryAddress(registry, getMainAddress());
 		updateRegistryMedia(registry, phone, address);
+		updateRegistryMedia(registry, cellular, address);
 		updateRegistryMedia(registry, fax, address);
 		updateRegistryMedia(registry, email, address);
 		updateRegistryMedia(registry, web, address);

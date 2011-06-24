@@ -81,13 +81,11 @@
 					rendered="#{formList}" />
 				<aon:selectOneMenu id="TargetSeller_status" rendered="#{formEdit}"
 					required="true" value="#{controller.to.status}">
-					<f:selectItem value="#{null}" itemLabel="    " />
 					<f:selectItems value="#{commercialCollections.targetSellerStatuses}" />
 				</aon:selectOneMenu>								
 				<f:facet name="footer">
 					<aon:selectOneMenu id="TargetSeller_status-New" rendered="#{formNew}"
 						required="true" value="#{controller.to.status}">
-						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{commercialCollections.targetSellerStatuses}" />
 					</aon:selectOneMenu>								
 				</f:facet>
