@@ -35,11 +35,13 @@
 									action="communicationCenter" actionListener="#{communicationCenter.onSkipActionTarget}"
 									styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 									accesskey="#{bundle.aon_key_cancel}"/>
-								<aon:commandButton id="alarm"
-									value="#{groupwareBundle.groupware_alarm_new}"
-									reRender="newAlarmWindow" immediate="true"
-									actionListener="#{communicationCenter.onNewAlarm}"
-									styleClass="aon-finding-toolbar-item aon-icon-alarms" />
+								<c:if test="#{aonConfiguration.bean.alarm.showNew}">									
+									<aon:commandButton id="alarm"
+										value="#{groupwareBundle.groupware_alarm_new}"
+										reRender="newAlarmWindow" immediate="true"
+										actionListener="#{communicationCenter.onNewAlarm}"
+										styleClass="aon-finding-toolbar-item aon-icon-alarms" />
+								</c:if>
 							</c:if>
 						</c:if>					
 						<c:if test="#{communicationCenter.action.mediaType  == 'MAIL'}" >							
@@ -156,7 +158,9 @@
 		<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 		</c:if>
-		<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/newAlarm.xhtml" />
+		<c:if test="#{aonConfiguration.bean.alarm.showNew}">
+			<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/newAlarm.xhtml" />
+		</c:if>
 	</ui:define>
 </ui:composition>
 

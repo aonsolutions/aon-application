@@ -6,7 +6,6 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml" >
 		<ui:define name="beforeRightMenuContent">
-			<ui:insert name="beforeRightMenuContent2"/>
 			<c:if test="#{not empty actionFavorite.favorites}">
 				<aon:dropDownMenu>
 					<aon:dynamicInclude value="#{actionFavorite.menuTemplate}" />
@@ -18,7 +17,6 @@
 			</c:if>				
 		</ui:define>
 		<ui:define name="beforeHelpMenuContent">
-			<ui:insert name="beforeHelpMenuContent2"/>
 			<aon:menuItem id="webMap" action="webMap"
 				iconClass="aon-icon-sitemap"
 				value="#{bundle.aon_web_map}" />						

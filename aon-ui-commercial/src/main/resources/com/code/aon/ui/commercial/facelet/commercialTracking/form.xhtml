@@ -19,13 +19,14 @@
 				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_tracking_module}" />
 				<ui:param name="controller" value="#{commercialTracking}" />
 				<ui:define name="beforeSpinToolbarContent" >				
-					<aon:commandButton id="alarm"
-						rendered="#{!formNew and controller.backActionListener == null}"
-						value="#{groupwareBundle.groupware_alarm_new}"
-						reRender="newAlarmWindow" immediate="true"
-						actionListener="#{commercialTracking.onNewAlarm}"
-						styleClass="aon-finding-toolbar-item aon-icon-alarms" >
-					</aon:commandButton>
+					<c:if test="#{aonConfiguration.bean.alarm.showNew}">
+						<aon:commandButton id="alarm"
+							rendered="#{!formNew and controller.backActionListener == null}"
+							value="#{groupwareBundle.groupware_alarm_new}"
+							reRender="newAlarmWindow" immediate="true"
+							actionListener="#{commercialTracking.onNewAlarm}"
+							styleClass="aon-finding-toolbar-item aon-icon-alarms" />
+					</c:if>
 				</ui:define>
 			</ui:decorate>
 
@@ -223,7 +224,9 @@
 		<aon:lookupButtonPopup lookup="#{offerLookup}" />
 		<aon:lookupButtonPopup lookup="#{projectLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
-		<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/newAlarm.xhtml" />
+		<c:if test="#{aonConfiguration.bean.alarm.showNew}">
+			<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/newAlarm.xhtml" />
+		</c:if>
 	</ui:define>
 </ui:composition>
 

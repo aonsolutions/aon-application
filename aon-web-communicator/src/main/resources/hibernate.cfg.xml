@@ -143,6 +143,13 @@
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>		
 				
+		<!-- AON-GROUPWARE Mapping files -->
+		<mapping class="com.code.aon.groupware.Alarm"/>
+		<mapping class="com.code.aon.groupware.Note"/>
+		<mapping class="com.code.aon.groupware.Notice"/>
+		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
+		<mapping class="com.code.aon.groupware.Favorite"/>	
+				
 	</session-factory>
 
 </hibernate-configuration>

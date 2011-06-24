@@ -12,6 +12,9 @@
 	</xs:element>
 	<xs:element name="alarm">
 		<xs:complexType>
+			<xs:attribute name="showPending" type="xs:boolean" use="required"/>
+			<xs:attribute name="showList" type="xs:boolean" use="required"/>
+			<xs:attribute name="showNew" type="xs:boolean" use="required"/>
 			<xs:attribute name="showGoToCallCenter" type="xs:boolean" use="required"/>			
 			<xs:attribute name="showGoToCommercialMarketing" type="xs:boolean" use="required"/>
 		</xs:complexType>

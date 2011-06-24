@@ -134,4 +134,14 @@
 		/>
 	</webmail:config>	
 
+	<groupware:config version="1.0" xmlns:groupware="http://www.esferalia.com/groupware">
+		<groupware:alarm
+			showPending="true"
+			showList="true"
+			showNew="true"
+			showGoToCallCenter="true"
+			showGoToCommercialMarketing="true"
+		/>
+	</groupware:config>
+		
 </config>

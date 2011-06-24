@@ -19,7 +19,14 @@
 				<rich:toolBarGroup id="rightMenuContent"
 					style="padding-right: 6px;padding-left: 6px"
 					location="right" itemSeparator="line">
-					<ui:insert name="beforeRightMenuContent"/>
+					<c:if test="#{aonConfiguration.bean.alarm.showPending}">
+						<aon:commandLink id="pendingAlarms"
+							title="#{alarm.pendingAlarmTitle}" value="&#160;"
+							rendered="#{alarm.pendingCount &gt; 0}"
+							action="alarm_list" actionListener="#{alarm.onInit}" 
+							styleClass="aon-icon-alarm-pending" />					
+					</c:if>
+					<ui:insert name="beforeRightMenuContent"/>					
 	                <aon:methodParam name="homeActionListener" default="" />					
 					<aon:commandLink action="home" 
 						actionListener="#{homeActionListener}" 
@@ -31,6 +38,12 @@
 	                        <aon:graphicImage title="#{bundle.aon_help}"
 	                        	value="#{aonResource.resolve['/images/aon-main-menu/aon-icon-help.png']}" />
 		                </f:facet>					                
+		                <c:if test="#{aonConfiguration.bean.alarm.showList}">
+	                		<aon:menuItem id="alarm"
+								value="#{groupwareBundle.aon_alarm}"
+								action="alarm_list" actionListener="#{alarm.onInit}" 
+								iconClass="aon-icon-alarm" />
+						</c:if>	
 		                <ui:insert name="beforeHelpMenuContent"/>
 						<aon:menuItem submitMode="none" reRender="aonStatus"
 							iconClass="aon-icon-menu-help">
