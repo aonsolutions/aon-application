@@ -379,12 +379,8 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getInvoice().getId());
-		Iterator<ITransferObject> iterator = invoiceDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
-			return InvoiceSource.ACCOUNT == invoiceDetail.getSource();
-		}
-		return false;
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.ACCOUNT);
+		return (invoiceDetailBean.getCount(criteria) > 0);
 	}
 
 	public void generateFinances(ActionEvent event) throws ManagerBeanException{
