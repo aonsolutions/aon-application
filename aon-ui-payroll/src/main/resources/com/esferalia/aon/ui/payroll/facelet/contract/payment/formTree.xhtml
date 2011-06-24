@@ -8,7 +8,7 @@
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
 	<ui:define name="content">
-	
+
 		<aon:form id="contractPaymentForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_payments_tab}" />
@@ -30,5 +30,6 @@
 			<ui:param name="contextDisabled" value="#{true}" />
 			<ui:param name="container" value="contractPaymentForm" />
 		</ui:include>
+
 	</ui:define>
 </ui:composition>

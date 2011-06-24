@@ -124,6 +124,9 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	public boolean isLeaveSelected(){
+		if(getLeaveDetailList()==null){
+			return true;
+		}
 		if(getReport()==null){
 			return false;
 		}
@@ -203,12 +206,14 @@ public class ContractLeaveController extends BasicController {
 		if(newReport){
 			if(getLeaveList()==null || getLeaveList().isEmpty()){
 				setReport(new ContractLeaveDetail());
+				getReport().setContractLeave(new ContractLeave());
+				getReport().getContractLeave().setParent(new ContractLeave());
 			} else {
 				ContractLeaveDetail detail = new ContractLeaveDetail();
 				ContractLeaveDetail lastLeave = getLastLeave();
 				if(lastLeave!=null && lastLeave.getType()!=LeaveReportType.DISCHARGE){
 					detail.setType(LeaveReportType.CONFIRM);
-					detail.setConfirmOrder(lastLeave.getConfirmOrder()+1);
+					detail.setConfirmOrder(lastLeave.getConfirmOrder()==null?1:lastLeave.getConfirmOrder()+1);
 					detail.setContractLeave(lastLeave.getContractLeave());
 					detail.setCias(lastLeave.getCias());
 					detail.setCollegeNumber(lastLeave.getCollegeNumber());
@@ -253,7 +258,9 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	public void calculateBases(){
-		// TODO obtener las bases del trabajador, las del mes anterior?
+		// TODO obtener las bases del trabajador, 
+//		las de la nomina del mes anterior dividido por 30
+//		el problema viene cuando no existe nomina anterior (cae de baja el primer mes)
 		getReport().getContractLeave().setDailyCgcBase(null);
 		getReport().getContractLeave().setDailyCgpBase(null);
 		getReport().getContractLeave().setDailyRegBase(null);
@@ -309,7 +316,7 @@ public class ContractLeaveController extends BasicController {
 	private Date getConfirmSuggestedDate(Date date, Integer confirmReportNumber) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		cal.add(Calendar.DAY_OF_YEAR, 3 + ((confirmReportNumber  * 7)));
+		cal.add(Calendar.DAY_OF_YEAR, 3 + (((confirmReportNumber==null?0:confirmReportNumber)  * 7)));
 		return cal.getTime();
 	}
 	

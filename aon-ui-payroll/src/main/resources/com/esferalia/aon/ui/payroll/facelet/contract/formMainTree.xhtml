@@ -4,11 +4,105 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
 	<ui:define name="content">
-	
+		<!--  
+		<ui:include 
+			src="/com/esferalia/aon/ui/payroll/facelet/contract/payment/formContent.xhtml" />
+		
+		<ui:include 
+			src="/com/esferalia/aon/ui/payroll/facelet/contract/deduction/formContent.xhtml" />
+		-->
+			
+		<aon:form id="contractMainDataForm">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+					
+				</ui:define>				
+			</ui:decorate>	
+		
+			<aon:panelCollapsible expanded="true" 
+				label="#{payrollBundle.payroll_salary_payments_tab}">
+				
+				
+				<aon:panelGrid columns="1" style="width: 100%;"
+					columnClasses="aon-panelGrid-even  aon-width-auto">
+					<aon:selectOneRadio>
+						<f:selectItem itemLabel="en curso" />
+						<f:selectItem itemLabel="historico" />
+					</aon:selectOneRadio>
+				</aon:panelGrid>	
+				
+				
+				
+				<aon:div id="paymentGrid" >
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
+						<ui:param name="controller" value="#{contractPayment}" />
+					</ui:include>
+				</aon:div>
+			</aon:panelCollapsible>
+
+			<aon:panelCollapsible expanded="false" 
+				label="#{payrollBundle.payroll_salary_deductions_tab}">
+				<aon:div id="deductionGrid" >
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/editGridContent.xhtml" >
+						<ui:param name="controller" value="#{contractDeduction}" />
+					</ui:include>
+				</aon:div>
+			</aon:panelCollapsible>
+			
+			<aon:panelCollapsible expanded="false" 
+				label="#{payrollBundle.payroll_salary_bonus_tab}">
+				<aon:div id="bonusGrid" >
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/editGridContent.xhtml" >
+						<ui:param name="controller" value="#{contractBonus}" />
+					</ui:include>
+				</aon:div>
+			</aon:panelCollapsible>
+		
+			<aon:panelCollapsible expanded="false" 
+				label="#{payrollBundle.payroll_salary_embargos_tab}">
+				<aon:div id="embargoGrid" >
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/listContent.xhtml">
+						<ui:param name="controller" value="#{contractEmbargo}" />
+					</ui:include>
+				</aon:div>
+			</aon:panelCollapsible>
+		</aon:form>
+
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
+			<ui:param name="controller" value="#{contractPayment}" />
+			<ui:param name="skipCurrentMonth" value="#{true}" />
+			<ui:param name="contextDisabled" value="#{true}" />
+			<ui:param name="container" value="paymentGrid" />
+		</ui:include>
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/modalDeduction.xhtml">
+			<ui:param name="controller" value="#{contractDeduction}" />
+			<ui:param name="skipCurrentMonth" value="#{true}" />
+			<ui:param name="contextDisabled" value="#{true}" />
+			<ui:param name="container" value="deductionGrid" />
+		</ui:include>
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/modalBonus.xhtml">
+			<ui:param name="controller" value="#{contractBonus}" />
+			<ui:param name="skipCurrentMonth" value="#{true}" />
+			<ui:param name="contextDisabled" value="#{true}" />
+			<ui:param name="container" value="bonusGrid" />
+		</ui:include>
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/modalEmbargo.xhtml">
+			<ui:param name="controller" value="#{contractEmbargo}" />
+			<ui:param name="container" value="embargoGrid" />
+		</ui:include>
+		
+
+<!--  
 		<aon:form id="contractMainForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
@@ -29,6 +123,7 @@
 				</ui:include>
 			</aon:div>
 		</aon:form>
+-->	
 		
 	</ui:define>
 </ui:composition>

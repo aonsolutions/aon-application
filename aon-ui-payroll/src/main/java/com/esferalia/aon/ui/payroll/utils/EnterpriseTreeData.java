@@ -17,6 +17,8 @@ public class EnterpriseTreeData {
 	
 	public static final String ACTIVITY_ICON = "/images/aon-icon/aon-icon-menu-top-item.png";
 	
+	public static final String MAIN_ICON = "/images/aon-icon/aon-icon-pay.png";
+	
 //	public static final String MAIN_ICON = "/images/aon-icon/aon-icon-search.png";
 	
 //	public static final String VARIABLES_ICON = "/images/aon-icon/aon-icon-search.png";
@@ -29,9 +31,9 @@ public class EnterpriseTreeData {
 	
 	public static final String EMBARGO_ICON = "/images/aon-icon/aon-icon-settle.png";
 	
-	public static final String SALARY_ICON = "/images/aon-icon/aon-icon-go.png";
+	public static final String SALARY_ICON = "/images/aon-icon/aon-icon-menu-top-item.png";
 	
-	public static final String SALARY_DRAFT_ICON = "/images/aon-icon/aon-icon-go.png";
+	public static final String SALARY_DRAFT_ICON = "/images/aon-icon/aon-icon-edit.png";
 	
 	private Serializable id;
 	

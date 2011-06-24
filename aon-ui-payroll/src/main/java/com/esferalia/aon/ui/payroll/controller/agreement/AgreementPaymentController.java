@@ -1,16 +1,12 @@
 package com.esferalia.aon.ui.payroll.controller.agreement;
 
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
@@ -24,7 +20,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementPayment;
@@ -32,7 +27,6 @@ import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
-import com.esferalia.aon.salary.expression.ExpressionContext;
 
 public class AgreementPaymentController extends LinesController {
 	
@@ -59,7 +53,10 @@ public class AgreementPaymentController extends LinesController {
 	public DataModel getVariablesModel() {
 		return variablesModel;
 	}
-	
+	public void setVariablesModel(DataModel variablesModel) {
+		this.variablesModel = variablesModel;
+	}
+
 	public boolean isModalPanelVisible() {
 		return modalPanelVisible;
 	}
@@ -90,7 +87,7 @@ public class AgreementPaymentController extends LinesController {
 	}
 	
 	public boolean isContractScope(){
-		return true;
+		return false;
 	}
 	
 	private void initialiceConcepts() {
@@ -263,6 +260,5 @@ public class AgreementPaymentController extends LinesController {
 		}
 		return list;
 	}
-	
 	
 }

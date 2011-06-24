@@ -156,6 +156,15 @@ public class EnterpriseTree implements ICompanyConstants {
 		return new EnterpriseTreeData( c.getId(), c.getPerson().getFullName(), EnterpriseTreeType.CONTRACT);
 	}
 	
+	private void addMainNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		String id = IPayrollConstants.CONTRACT_CONTROLLER;
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+//		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_PAYMENTS );
+		String label = "Datos economicos";
+		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.MAIN);
+		node.setData(etd);
+		contractNode.addChild( id, node);
+	}
 	private void addPaymentsNode( TreeNode<EnterpriseTreeData> contractNode ) {
 		String id = IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER;
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
@@ -223,10 +232,11 @@ public class EnterpriseTree implements ICompanyConstants {
 			EnterpriseTreeData etd = getTreeData(contract);
 			contractNode.setData(etd);
 			workPlaceNode.addChild( etd.getType().toString() + etd.getId(), contractNode );
-			addPaymentsNode(contractNode);
-			addDeductionsNode(contractNode);
-			addBonusNode(contractNode);
-			addEmbargosNode(contractNode);
+			addMainNode(contractNode);
+//			addPaymentsNode(contractNode);
+//			addDeductionsNode(contractNode);
+//			addBonusNode(contractNode);
+//			addEmbargosNode(contractNode);
 			addSalaryNode(contractNode);
 			addSalaryDraftNode(contractNode);
 		}	
@@ -358,12 +368,21 @@ public class EnterpriseTree implements ICompanyConstants {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
 			this.contract = (Contract) bean.get( parentNode.getId() );
 			SalaryDraftController c = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
-			c.select(event, this.contract);
+			c.select(event, this.contract.getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> selectSalaryDraft exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
+	}
+	
+	public void onSelectTreeMainData(ActionEvent event) {
+		selectContract(event);
+		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		c.onShowPayments(event);
+		c.onShowDeductions(event);
+		c.onShowBonus(event);
+		c.onShowEmbargos(event);
 	}
 		
 	public void onSelectTreePayments(ActionEvent event) {
