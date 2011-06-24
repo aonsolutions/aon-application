@@ -22,5 +22,4 @@ public enum ContractAttachmentType implements IResourceable {
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
 	
-	
 }

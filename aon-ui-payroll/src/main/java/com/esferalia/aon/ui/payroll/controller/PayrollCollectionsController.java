@@ -15,6 +15,7 @@ import com.code.aon.registry.enumeration.StreetType;
 import com.esferalia.aon.payroll.enumeration.AgeGroup;
 import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
 import com.esferalia.aon.payroll.enumeration.CNO;
+import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCalendarEventType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
@@ -77,6 +78,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> ageGroupList;
 	private List<SelectItem> embargableTypeList;
 	private List<SelectItem> dismissCauseList;
+	private List<SelectItem> contractAttachTypes;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -533,6 +535,20 @@ public class PayrollCollectionsController {
 			}
 		}
 		return dismissCauseList;
+	}
+	
+	public List<SelectItem> getContractAttachTypes() {
+		if (contractAttachTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			contractAttachTypes = new LinkedList<SelectItem>();
+			ContractAttachmentType[] cat = ContractAttachmentType.values();
+			for (ContractAttachmentType c : cat) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				contractAttachTypes.add(item);
+			}
+		}
+		return contractAttachTypes;
 	}
 	
 	

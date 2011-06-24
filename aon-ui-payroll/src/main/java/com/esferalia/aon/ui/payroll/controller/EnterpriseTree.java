@@ -43,6 +43,7 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
+import com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard;
 import com.esferalia.aon.ui.payroll.utils.EnterpriseTreeData;
 import com.esferalia.aon.ui.payroll.utils.EnterpriseTreeType;
 
@@ -213,6 +214,15 @@ public class EnterpriseTree implements ICompanyConstants {
 		node.setData(etd);
 		contractNode.addChild( id, node);
 	}
+	private void addDocumentNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		String id = IPayrollConstants.CONTRACT_GENERATION_WIZARD_CONTROLLER;
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+//		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_DRAFT );
+		String label = "Documentos";
+		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.DOCUMENT);
+		node.setData(etd);
+		contractNode.addChild( id, node);
+	}
 	
 	private void loadContracts( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Contract.class);		
@@ -239,6 +249,7 @@ public class EnterpriseTree implements ICompanyConstants {
 //			addEmbargosNode(contractNode);
 			addSalaryNode(contractNode);
 			addSalaryDraftNode(contractNode);
+			addDocumentNode(contractNode);
 		}	
 	}		
 	
@@ -419,6 +430,17 @@ public class EnterpriseTree implements ICompanyConstants {
 		sc.setSalary(null);
 		sc.setSalary(null);
     	sc.searchSavedDraftSalary();
+	}
+	
+	public void onSelectTreeDocuments(ActionEvent event) {
+		selectContract(event);
+		ContractGenerationWizard c = (ContractGenerationWizard) FormUtil.getController(IPayrollConstants.CONTRACT_GENERATION_WIZARD_CONTROLLER);
+		try {
+			c.select(event, this.contract);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public boolean selectSalaries( ActionEvent event, Contract contract ) {

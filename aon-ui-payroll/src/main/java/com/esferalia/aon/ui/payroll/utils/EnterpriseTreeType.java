@@ -24,6 +24,7 @@ public enum EnterpriseTreeType {
 	EMBARGO( EnterpriseTreeData.EMBARGO_ICON, "contractEmbargo_formTree", "onSelectTreeEmbargos" ),
 	SALARY( EnterpriseTreeData.SALARY_ICON, "salary_formTree", "onSelectTreeSalary" ),
 	SALARY_DRAFT( EnterpriseTreeData.SALARY_DRAFT_ICON, "salaryDraft_formTree", "onSelectTreeSalaryDraft" ),
+	DOCUMENT( EnterpriseTreeData.DOCUMENT_ICON, "contractDocument_formTree", "onSelectTreeDocuments" ),
 	;
 	
 	private String icon;

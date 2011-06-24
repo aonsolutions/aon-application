@@ -35,6 +35,8 @@ public class EnterpriseTreeData {
 	
 	public static final String SALARY_DRAFT_ICON = "/images/aon-icon/aon-icon-edit.png";
 	
+	public static final String DOCUMENT_ICON = "/images/aon-icon/aon-icon-file.png";
+	
 	private Serializable id;
 	
 	private String label;
