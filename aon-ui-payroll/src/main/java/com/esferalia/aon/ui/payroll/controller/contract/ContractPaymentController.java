@@ -48,6 +48,7 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractPaymentController.class.getName());
 	
 	private DataModel paymentsModel;
+	private boolean searchCurrent;
 	
 	public DataModel getPaymentsModel() {
 		if (paymentsModel == null) {
@@ -58,15 +59,25 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 	public void setPaymentsModel(DataModel paymentsModel) {
 		this.paymentsModel = paymentsModel;
 	}
+	public boolean isSearchCurrent() {
+		return searchCurrent;
+	}
+	public void setSearchCurrent(boolean searchCurrent) {
+		this.searchCurrent = searchCurrent;
+	}
 	
 	public void initialize(){
-		initializePaymentModel();
+		setPaymentsModel(null);
 	}
 	
 	public boolean isContractScope(){
 		return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()==ExpressionScope.CONTRACT;
 	}
 
+	public void initialize(ActionEvent event) {
+		initialize();
+	}
+	
 	@Override
 	public void onSave(ActionEvent event) {
 		IController master = FormUtil.getController("contract");
@@ -170,9 +181,11 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 			Criteria cCriteria = new Criteria();
 			cCriteria.addEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
 			cCriteria.addOrder(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_START_DATE), false);
-			expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE), new Date());
-			expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE));
-			cCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			if(isSearchCurrent()){
+				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE), new Date());
+				expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE));
+				cCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			}
 			List<?> sl = sBean.getList(sCriteria);
 			List<?> al = aBean.getList(aCriteria);
 			List<?> cl = cBean.getList(cCriteria);

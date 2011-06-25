@@ -42,6 +42,7 @@ import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractPaymentController;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 import com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard;
 import com.esferalia.aon.ui.payroll.utils.EnterpriseTreeData;
@@ -160,8 +161,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void addMainNode( TreeNode<EnterpriseTreeData> contractNode ) {
 		String id = IPayrollConstants.CONTRACT_CONTROLLER;
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
-//		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_PAYMENTS );
-		String label = "Datos economicos";
+		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_ECONOMIC_DATA );
 		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.MAIN);
 		node.setData(etd);
 		contractNode.addChild( id, node);
@@ -217,8 +217,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void addDocumentNode( TreeNode<EnterpriseTreeData> contractNode ) {
 		String id = IPayrollConstants.CONTRACT_GENERATION_WIZARD_CONTROLLER;
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
-//		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_DRAFT );
-		String label = "Documentos";
+		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_DOCUMENTS);
 		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.DOCUMENT);
 		node.setData(etd);
 		contractNode.addChild( id, node);
@@ -389,11 +388,13 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	public void onSelectTreeMainData(ActionEvent event) {
 		selectContract(event);
-		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
-		c.onShowPayments(event);
-		c.onShowDeductions(event);
-		c.onShowBonus(event);
-		c.onShowEmbargos(event);
+		ContractController contract = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		contract.onShowPayments(event);
+		contract.onShowDeductions(event);
+		contract.onShowBonus(event);
+		contract.onShowEmbargos(event);
+		ContractPaymentController payment = (ContractPaymentController) FormUtil.getController(IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER);
+		payment.setSearchCurrent(true);
 	}
 		
 	public void onSelectTreePayments(ActionEvent event) {

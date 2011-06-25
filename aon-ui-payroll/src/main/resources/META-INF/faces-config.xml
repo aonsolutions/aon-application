@@ -1665,7 +1665,7 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/formTree.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>enterpriseWorkplace_formTree</from-outcome>
+			<from-outcome>enterpriseWorkPlace_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/workplaceTree/formTree.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>

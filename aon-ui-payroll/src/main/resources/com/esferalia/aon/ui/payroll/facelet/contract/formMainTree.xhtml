@@ -4,42 +4,23 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
 	<ui:define name="content">
-		<!--  
-		<ui:include 
-			src="/com/esferalia/aon/ui/payroll/facelet/contract/payment/formContent.xhtml" />
-		
-		<ui:include 
-			src="/com/esferalia/aon/ui/payroll/facelet/contract/deduction/formContent.xhtml" />
-		-->
 			
 		<aon:form id="contractMainDataForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_economic_data}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 				<ui:define name="toolbarContent">
 					
 				</ui:define>				
 			</ui:decorate>	
 		
-			<aon:panelCollapsible expanded="true" 
+			<aon:panelCollapsible id="paymentPanel"
+				expanded="true" style="margin-top:5px;"
 				label="#{payrollBundle.payroll_salary_payments_tab}">
-				
-				
-				<aon:panelGrid columns="1" style="width: 100%;"
-					columnClasses="aon-panelGrid-even  aon-width-auto">
-					<aon:selectOneRadio>
-						<f:selectItem itemLabel="en curso" />
-						<f:selectItem itemLabel="historico" />
-					</aon:selectOneRadio>
-				</aon:panelGrid>	
-				
-				
-				
 				<aon:div id="paymentGrid" >
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
 						<ui:param name="controller" value="#{contractPayment}" />
@@ -100,30 +81,6 @@
 			<ui:param name="controller" value="#{contractEmbargo}" />
 			<ui:param name="container" value="embargoGrid" />
 		</ui:include>
-		
-
-<!--  
-		<aon:form id="contractMainForm">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
-				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-				<ui:define name="toolbarContent">
-					<aon:commandButton id="Contract-Save"
-						value="#{bundle.aon_accept}"
-						actionListener="#{contract.accept}"
-						styleClass="aon-finding-toolbar-item aon-icon-accept">
-					</aon:commandButton>
-				</ui:define>				
-			</ui:decorate>	
-		
-			<aon:div id="contractMainGrid" styleClass="aon-scroll-area">
-				<ui:include 
-					src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" >
-					<ui:param name="controller" value="#{contract}" />
-				</ui:include>
-			</aon:div>
-		</aon:form>
--->	
 		
 	</ui:define>
 </ui:composition>
