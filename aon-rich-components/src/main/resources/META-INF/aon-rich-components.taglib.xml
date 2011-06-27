@@ -217,7 +217,7 @@
 				org.richfaces.EditorRenderer
 			</renderer-type>
 			<handler-class>
-				com.code.aon.faces.component.AonComponentHandler
+				com.code.aon.faces.component.richfaces.inputRichText.InputRichTextHandler
 			</handler-class>
 		</component>
 	</tag>
