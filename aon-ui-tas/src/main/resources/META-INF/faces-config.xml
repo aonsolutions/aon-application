@@ -1,0 +1,156 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.tas.i18n.messages</base-name>
+			<var>tasBundle</var>
+		</resource-bundle>				
+	</application>
+
+	<!--  *************** COLLECTIONS ***************** -->
+	<managed-bean>
+		<managed-bean-name>TASCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tas.controller.TASCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<!--  *************** MAKE ***************** -->
+	<managed-bean>
+		<managed-bean-name>make</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.Make</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>make</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{makeCollectionInitializer}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>makeCollectionInitializer</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.tas.event.MakeCollectionInitializer</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+
+	<!--  *************** MODEL ***************** -->
+	<managed-bean>
+		<managed-bean-name>model</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.Model</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>model</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ MODEL LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>modelLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>modelLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.tas.Model</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Model_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/tas/facelet/lookup/model/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/tas/facelet/lookup/model/search.xhtml</value>
+		</managed-property>				
+	</managed-bean>
+
+	<!--  *************** TAS ITEM ***************** -->
+	<managed-bean>
+		<managed-bean-name>tasItem</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.TasItem</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tasItem</value>
+		</managed-property>
+	</managed-bean>
+
+   	<!-- ************* NAVIGATION RULES ***************** -->
+
+   	<!-- ************* MAKE ***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>make_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/tas/facelet/make/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+   	<!-- ************* MODEL ***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>model_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/tas/facelet/model/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+   	<!-- ************* TAS ITEM ***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tasItem_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/tas/facelet/tasItem/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tasItem_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/tas/facelet/tasItem/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tasItem_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/tas/facelet/tasItem/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+</faces-config>

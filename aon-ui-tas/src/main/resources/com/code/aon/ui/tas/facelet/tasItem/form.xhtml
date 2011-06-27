@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="accountForm">
+
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{tasBundle.tas_tasItem_module}" />
+				<ui:param name="controller" value="#{tasItem}" />
+			</ui:include>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="2">
+					
+					<ui:include src="/com/code/aon/ui/tas/facelet/model/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{tasItem.to.model}" />
+						<ui:param name="idRequired" value="#{true}" />						
+					</ui:include>
+
+					<aon:outputLabel for="tasItem_publicCode"
+						value="#{tasBundle.tas_publicCode}" />
+					<aon:inputText id="tasItem_publicCode"
+						value="#{tasItem.to.publicCode}" required="#{true}" size="15">
+						<f:validateLength maximum="100" />
+					</aon:inputText>
+
+					<aon:outputLabel for="tasItem_privateCode"
+						value="#{tasBundle.tas_privateCode}" />
+					<aon:inputText id="tasItem_privateCode"
+						value="#{tasItem.to.privateCode}" size="20">
+						<f:validateLength maximum="100" />
+					</aon:inputText>
+
+					<aon:outputLabel for="tasItem_description" value="#{bundle.aon_description}" />
+					<aon:inputTextarea id="tasItem_description" value="#{tasItem.to.description}" 
+						cols="130" rows="3"/>
+
+					<aon:outputLabel for="tasItem_addInfo" value="#{tasBundle.tas_add_info}" />
+					<aon:inputTextarea id="tasItem_addInfo" value="#{tasItem.to.addInfo}" 
+						cols="130" rows="3"/>
+				</aon:panelGrid>
+			</aon:div>
+
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{modelLookup}" />
+	</ui:define>
+</ui:composition>
