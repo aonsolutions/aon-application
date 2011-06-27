@@ -21,7 +21,7 @@
 				<ui:define name="beforeSpinToolbarContent" >				
 					<c:if test="#{aonConfiguration.bean.alarm.showNew}">
 						<aon:commandButton id="alarm"
-							rendered="#{!formNew and controller.backActionListener == null}"
+							rendered="#{!formNew}"
 							value="#{groupwareBundle.groupware_alarm_new}"
 							reRender="newAlarmWindow" immediate="true"
 							actionListener="#{commercialTracking.onNewAlarm}"
