@@ -23,8 +23,9 @@
 	  <module>aon-ui-dbutils</module>
 	  <module>aon-ui-db-manager</module>
 	  <module>aon-maven-plugin</module>
+<!--
 	  <module>aon-sql-payroll</module>
-
+-->
     <!-- FRAMEWORK -->
 	  <module>aon-audit</module>
 	  <module>aon-ui-audit</module>
@@ -79,6 +80,7 @@
 	  <module>aon-infoweb-templates</module>
 	  <module>aon-marketing</module>
 	  <module>aon-purchase-bridge</module>
+	  <module>aon-tas</module>
 
     <!-- UI MODULES -->
 	  <module>aon-ui-company</module>
@@ -113,6 +115,7 @@
 	  <module>aon-ui-publisher</module>
 	  <module>aon-ui-purchase</module>
 	  <module>aon-ui-warehouse</module>
+	  <module>aon-ui-tas</module>
 
     <!-- UTILITY -->
 	  <module>aon-file-format</module>
@@ -142,6 +145,7 @@
 	  <module>aon-web-enterprise</module>
 	  <module>aon-web-finance</module>
 	  <module>aon-web-fiscal</module>
+	  <module>aon-web-gta</module>
 	  <module>aon-web-infoweb</module>
 	  <module>aon-web-manager</module>
 	  <module>aon-web-publisher</module>
