@@ -1,0 +1,209 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="commercialMenu">
+		
+			<aon:div styleClass="aon-scroll-area">		
+		
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+	
+					<aon:panelGroup>	
+						<aon:panelGrid id="group_commercial_commercial"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-offer aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_commercial}"/>
+							</f:facet>						
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="target" 
+										action="target_search" actionListener="#{target.onEditSearch}"
+										value="#{commercialBundle.commercial_target_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="seller" 
+										action="seller_search" actionListener="#{seller.onEditSearch}"
+										value="#{salesBundle.sales_seller_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="offer" 
+										action="offer_search" actionListener="#{offer.onEditSearch}"
+										value="#{commercialBundle.commercial_offer_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="commercialTerm"
+										action="commercialTerm" actionListener="#{commercialTerm.onSearch}" 
+										value="#{commercialBundle.commercial_term_module}" />
+								</aon:div>								
+							</aon:div>
+						</aon:panelGrid>
+					
+						<aon:panelGrid id="group_commercial_agenda"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-commercial aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{commercialBundle.commercial_agenda_module}" />
+							</f:facet>							
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="commercialOperation"
+										action="project_search" actionListener="#{project.onEditSearch}"
+										value="#{commercialBundle.commercial_operation_module}" />
+								</aon:div>															
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="commercialTracking"
+										action="commercialTracking_search" actionListener="#{commercialTracking.onEditSearch}"
+										value="#{commercialBundle.commercial_tracking_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="commercialActivity"
+										action="commercialActivity" actionListener="#{commercialActivity.onSearch}" 
+										value="#{commercialBundle.commercial_activity_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+						
+						<aon:panelGrid id="group_commercial_prices"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-prices">
+							<f:facet name="header">
+								<aon:outputText value="#{productBundle.product_price_module}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<c:if test="#{aonRole.config}">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="tariff-commercial" 
+											action="tariff_list-commercial" actionListener="#{tariff.onSearch}"
+											value="#{productBundle.product_tariff_module}" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="catalogue-commercial" 
+											action="catalogue_search-commercial" actionListener="#{catalogue.onEditSearch}"
+											value="#{productBundle.product_catalogue_module}" />
+									</aon:div>
+								</c:if>
+							</aon:div>
+						</aon:panelGrid>									
+					</aon:panelGroup>					
+
+					<aon:panelGroup>
+						<ui:include src="/facelet/menu/general.xhtml" >
+							<ui:param name="category" value="commercial" />
+						</ui:include>
+					
+						<aon:panelGrid id="group_statistics" styleClass="aon-width-all"
+							columnClasses="aon-padding"
+							headerClass="aon-icon-statistics aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_reports}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="statCategory"
+										value="#{statBundle.stat_report_commercial_category}"
+										action="commercial_category_stat_search">
+										<aon:actionListener method="#{commercialStat.onReset}" />
+										<aon:actionListener method="#{commercialStat.onCategoryType}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="statZone"
+										value="#{statBundle.stat_report_commercial_geozone}"
+										action="commercial_geozone_stat_search"
+										>
+										<aon:actionListener method="#{commercialStat.onReset}" />
+										<aon:actionListener method="#{commercialStat.onGeozoneType}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="statSeller"
+										value="#{statBundle.stat_report_commercial_seller}"
+										action="commercial_seller_stat_search">
+										<aon:actionListener method="#{commercialStat.onReset}" />
+										<aon:actionListener method="#{commercialStat.onSellerType}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="statTarget"
+										value="#{statBundle.stat_report_commercial_target}"
+										action="commercial_target_stat_search">
+										<aon:actionListener method="#{commercialStat.onReset}" />
+										<aon:actionListener method="#{commercialStat.onTargetType}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="statProduct"
+										value="#{statBundle.stat_report_commercial_product}"
+										action="commercial_product_stat_search">
+										<aon:actionListener method="#{commercialStat.onReset}" />
+										<aon:actionListener method="#{commercialStat.onProductType}" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+	
+						<aon:panelGrid id="group_statistics_mando"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-task aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{statBundle.seller_stat_control}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="sellerControl2"
+										value="#{statBundle.seller_stat_control_seller}"
+										action="commercial_search_view-seller">
+										<aon:actionListener method="#{commercialStat.onReset}" />
+										<aon:actionListener method="#{commercialStat.onSellerType}" />
+									</aon:commandLink>
+								</aon:div>
+	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="sellerControl3"
+										value="#{statBundle.seller_stat_control_target}"
+										action="commercial_search_view-target">
+										<aon:actionListener method="#{commercialStat.onReset}" />
+										<aon:actionListener method="#{commercialStat.onTargetType}" />
+									</aon:commandLink>
+								</aon:div>
+	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="sellerControl4"
+										value="#{statBundle.seller_stat_control_product}"
+										action="commercial_search_view-product">
+										<aon:actionListener method="#{commercialStat.onReset}" />
+										<aon:actionListener method="#{commercialStat.onProductType}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="sellerControl5"
+										value="#{statBundle.seller_stat_control_category}"
+										action="commercial_search_view-category">
+										<aon:actionListener method="#{commercialStat.onReset}" />
+										<aon:actionListener method="#{commercialStat.onCategoryType}" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>					
+					
+				</h:panelGrid>
+
+			</aon:div>
+				
+		</aon:form>
+
+	</ui:define>
+
+</ui:composition>
