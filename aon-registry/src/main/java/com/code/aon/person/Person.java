@@ -41,11 +41,8 @@ public class Person implements ITransferObject, IRegistry {
 	private Gender gender;
 	private MaritalStatus maritalStatus;
 	private String socialSecurityNumber;
-	
 	private String name;
-
 	private String firstSurname;
-
 	private String secondSurname;
 
     @Id
