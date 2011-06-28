@@ -314,8 +314,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		} else {
 			this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER;
 			getActionTarget().setStatus(ActionTargetStatus.FINISHED);
-			updateActionTarget(true);
-			nextActionTarget(false);
+			updateActionTarget(false);
 		}
 	}
 	
@@ -507,7 +506,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		bean.update(getActionTarget());
 	}
 	
-	public void onSkipActionTarget( ActionEvent event ) throws ManagerBeanException {
+	public void onNextActionTarget( ActionEvent event ) throws ManagerBeanException {
 		updateActionTarget(true);
 		nextActionTarget(false);
 	}
@@ -526,8 +525,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 	
 	public void onUpdateActionTarget( ActionEvent event ) throws ManagerBeanException {
-		updateActionTarget(true);
-		nextActionTarget(false);
+		updateActionTarget(false);
 	}
 
 	public void onActionLookupChange(LookupChangeEvent event) throws ManagerBeanException {
@@ -608,8 +606,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}		
 	
 	public void onFinishSurvey(ActionEvent event) throws ManagerBeanException {
-		updateActionTarget(true);
-		nextActionTarget(false);
+		updateActionTarget(false);
 	}
 
 	public void onMarketingActionBackActionListener( ActionEvent event ) throws ManagerBeanException {
