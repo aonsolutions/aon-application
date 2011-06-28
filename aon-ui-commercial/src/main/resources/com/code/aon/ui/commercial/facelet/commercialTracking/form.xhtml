@@ -87,10 +87,6 @@
 						value="#{bundle.aon_date}" />
 					<aon:div id="CommercialTracking_dateDiv">
 						<a4j:region>
-							<aon:outputLabel
-								rendered="#{!commercialTracking.to.allDay}"
-								styleClass="aon-form-date-label"
-								value="#{bundle.aon_date_from}:" />
 							<aon:selectInputDate id="CommercialTracking_date"
 								value="#{commercialTracking.to.date}" required="true"
 								timeZone="#{timeZoneController.timeZone}" inputSize="16"
