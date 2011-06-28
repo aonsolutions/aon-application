@@ -30,19 +30,19 @@
 					</aon:selectOneMenu>
 				</c:if>					
 				<c:if test="#{!controllerLookupListener.showCompanyBanks}">
-					<aon:panelGroup>
+					<aon:div>
 						<ui:include src="/com/code/aon/ui/registry/facelet/rbank/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{controllerLookupListener.registryBank.bank}" />
 						</ui:include>						
-						<aon:div>
+						<aon:panelGroup styleClass="aon-margin-left">
 							<aon:inputText label="#{configBundle.config_bank_code}" 
 								value="#{controllerLookupListener.registryBank.bankAccount.office}"
-								required="true" size="4" maxlength="4">
+								required="true" size="3" maxlength="4">
 								<f:validateLength minimum="4" maximum="4" />
 							</aon:inputText>
 							<aon:inputText label="#{configBundle.config_bank_control}"
 								value="#{controllerLookupListener.registryBank.bankAccount.control}"
-								required="true" size="2" maxlength="2">
+								required="true" size="1" maxlength="2">
 								<f:validateLength minimum="2" maximum="2" />
 							</aon:inputText>
 							<aon:inputText label="#{configBundle.config_bank_account}"
@@ -50,8 +50,8 @@
 								required="true" size="10" maxlength="10">
 								<f:validateLength minimum="10" maximum="10" />
 							</aon:inputText>
-						</aon:div>
-					</aon:panelGroup>
+						</aon:panelGroup>
+					</aon:div>
 				</c:if>
 			</c:if>			
 		</aon:panelGrid>					

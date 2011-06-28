@@ -223,7 +223,11 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Person_firstSurname,Person_secondSurname,Person_registry_name</value>
+			<value>Person_firstSurname,Person_secondSurname,Person_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Person_registry_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
@@ -242,15 +246,12 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{personSearch}</value>
-				<value>#{personLookupForm}</value>
+				<value>#{personForm}</value>
+				<value>#{personPayMethodForm}</value>
+				<value>#{personControllerListener}</value>
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>personLookupForm</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.event.RegistryFormListener</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
 
 	<!-- ======================= NAVIGATION ========================== -->
 	<navigation-rule>

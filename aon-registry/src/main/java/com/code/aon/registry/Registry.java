@@ -29,6 +29,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.enumeration.IConfidentialable;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
@@ -46,7 +48,7 @@ import com.code.aon.registry.enumeration.RegistryType;
 @Table(name="registry")
 @Inheritance(strategy=InheritanceType.JOINED )
 @org.hibernate.annotations.Table( appliesTo = "registry", indexes = { @Index(name="IDX_REGISTRY", columnNames={"name"})})
-public class Registry implements ITransferObject {
+public class Registry implements ITransferObject, IConfidentialable {
 	
 	private static final long serialVersionUID = 8635760095705923309L;
 
@@ -58,6 +60,7 @@ public class Registry implements ITransferObject {
 	private String alias;
 	private RegistryType type;
 	private Country nationality;
+	private SecurityLevel securityLevel;
 	private Set<RegistryAddress> addresses = new HashSet<RegistryAddress>();
 	private Set<RegistryMedia> medias = new HashSet<RegistryMedia>();
 	private Set<RegistryPayMethod> payMethods = new HashSet<RegistryPayMethod>();
@@ -69,6 +72,7 @@ public class Registry implements ITransferObject {
 		this.documentType = DocumentType.NIF;
 		this.documentCountry  = Country.ES;
 		this.nationality = Country.ES;
+		this.securityLevel = SecurityLevel.OFFICIAL;
 	}
 
 	@Id
@@ -137,6 +141,14 @@ public class Registry implements ITransferObject {
 	public void setNationality(Country nationality) {
 		this.nationality = nationality;
 	}
+
+    @Column(name = "security_level")
+    public SecurityLevel getSecurityLevel() {
+        return securityLevel;
+    }
+    public void setSecurityLevel(SecurityLevel securityLevel) {
+        this.securityLevel = securityLevel;
+    }
 
 	@OneToMany(mappedBy = "registry", cascade={CascadeType.REMOVE})
 	public Set<RegistryAddress> getAddresses() {
@@ -262,6 +274,15 @@ public class Registry implements ITransferObject {
 		return null;
 	}
 
+	@Transient
+	public boolean isConfidential() {
+		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
+	}
+	@Transient
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -273,10 +294,11 @@ public class Registry implements ITransferObject {
 				.append(this.alias, o.alias)
 				.append(this.document, o.document)				
 				.append(this.documentType, o.documentType)
-				.append(documentCountry, o.documentCountry)
+				.append(this.documentCountry, o.documentCountry)
 				.append(this.name, o.name)
 				.append(this.type, o.type)
-				.append(nationality, o.nationality)
+				.append(this.nationality, o.nationality)
+				.append(this.securityLevel, o.securityLevel)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -293,6 +315,7 @@ public class Registry implements ITransferObject {
 			.append(name)			
 			.append(type)
 			.append(nationality)
+			.append(securityLevel)
 			.toHashCode();
 	}
 

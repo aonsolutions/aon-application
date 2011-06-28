@@ -9,7 +9,8 @@
 
 	<ui:decorate 
 		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-		<ui:param name="columnClasses" value="aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn" />
+		<ui:param name="columnClasses" value="aon-editDataTable-textColumn aon-width-200,aon-editDataTable-textColumn aon-width-auto,
+			aon-editDataTable-textColumn aon-width-100" />
 		<ui:define name="columns">
 			<aon:column>
 				<f:facet name="header">
@@ -23,15 +24,13 @@
 					size="40" maxlength="32" />
 				<f:facet name="footer">
 					<aon:div>
-						<rich:comboBox suggestionValues="#{registryCollections.addInfoAttributes}"
+						<rich:comboBox id="RegistryAddInfo_attribute-New"
+							directInputSuggestions="true"
+							suggestionValues="#{registryCollections.addInfoAttributes}"
 							value="#{controller.to.attribute}"
 							rendered="#{formNew}" required="true"
 							maxlength="32" width="250"	
-							directInputSuggestions="true"
-							inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif; font-size:1em;"
-							buttonDisabledStyle="display:none;"
-							buttonInactiveStyle="display:none;"
-							buttonStyle="display:none;" />
+							inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif; font-size:1em;" />
 					</aon:div>
 				</f:facet>
 			</aon:column>
@@ -45,7 +44,7 @@
 				<aon:inputText id="RegistryAddInfo_value"
 					value="#{controller.to.value}"
 					rendered="#{formEdit}" required="true" 
-					size="40" maxlength="32" />
+					size="0" maxlength="32" />
 				<f:facet name="footer">
 					<aon:inputText id="RegistryAddInfo_value-New"
 						value="#{controller.to.value}"

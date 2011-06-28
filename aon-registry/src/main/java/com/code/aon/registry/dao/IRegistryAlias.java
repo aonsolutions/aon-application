@@ -178,10 +178,16 @@ public interface IRegistryAlias {
 	String  REGISTRY_NATIONALITY = REGISTRY_ENTRY.getAliasNames()[6];
 
 	/** 
+	* Alias value: Registry_securityLevel
+	* Hibernate value: Registry.securityLevel
+	*/
+	String  REGISTRY_SECURITY_LEVEL = REGISTRY_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: Registry_type
 	* Hibernate value: Registry.type
 	*/
-	String  REGISTRY_TYPE = REGISTRY_ENTRY.getAliasNames()[7];
+	String  REGISTRY_TYPE = REGISTRY_ENTRY.getAliasNames()[8];
 
 
 

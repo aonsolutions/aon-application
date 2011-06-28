@@ -10,17 +10,21 @@ public class PersonBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	Person person = (Person) evt.getTo();
-    	mergeRegistry( person );
+    	mergeRegistry(person);
     }
 
     @Override
     public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	Person person = (Person) evt.getTo();
-    	mergeRegistry( person );
+    	mergeRegistry(person);
     }
 
 	private void mergeRegistry(Person person) {
-		person.getRegistry().setName(person.getFullName());
+		String fullName = person.getFullName();
+		if (fullName.length() > 64) {
+			fullName = fullName.substring(0, 64);
+		}
+		person.getRegistry().setName(fullName);
 	}
 
 }

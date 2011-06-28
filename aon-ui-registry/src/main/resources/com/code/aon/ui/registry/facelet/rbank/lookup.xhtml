@@ -10,6 +10,8 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{bankLookup}" />
 		<ui:param name="lookupInputValue" value="#{lookupTo.code}"/>
+		<ui:param name="lookupInputSize" value="3"/>
+		<ui:param name="lookupInputMaxLength" value="4"/>
 		<ui:param name="lookupInputSuggestSize" value="40" />
 		<ui:param name="searchButtonTitle" value="#{configBundle.config_bank_selection}" />
 		<ui:param name="skipLabel" value="#{true}" />
