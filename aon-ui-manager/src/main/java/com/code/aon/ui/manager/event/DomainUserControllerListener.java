@@ -37,7 +37,10 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 		if ( duc.isWebmail() ) {
 			updateWebmail(user);
 		}
-		updateDBUser( duc, user );
+		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		if ( dc.isAonDB() ) {
+			updateDBUser( duc, user );	
+		}
 	}
 	
 	@Override
@@ -56,10 +59,12 @@ public class DomainUserControllerListener extends ControllerAdapter implements I
 			duc.registerUserInApplication(user, AON_DESKTOP, USUARIO_PROFILE);
 			duc.registerUserInApplication(user, AON_WEBMAIL, USUARIO_PROFILE);
 			duc.registerInDBs(user.getUid(), GENERAL_SCOPE);
-			updateDBUser( duc, user );
+			DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+			if ( dc.isAonDB() ) {
+				updateDBUser( duc, user );	
+			}
 			duc.createMailAccount(user);
-			DomainController controller = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
-			duc.addDefaultWebmailData(user, controller.getCompany());
+			duc.addDefaultWebmailData(user, dc.getCompany());
 			duc.setWebmail(true);
 		} catch (Throwable e) {
 			LOGGER.error(e.getMessage(), e);
