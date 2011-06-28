@@ -40,14 +40,14 @@
 					url="#{aonResource.resolve['/images/aon-icon/aon-icon-esferalia.png']}" />
 			</aon:column>
 			
-			<aon:column styleClass="aon-width-70 #{to.pending?'aon-bold aon-italic':''}">
+			<aon:column styleClass="aon-width-70 #{to.pending?'aon-input-required aon-italic':''}">
 				<aon:outputText value="#{to.alarmDate}">
 					<f:convertDateTime pattern="#{bundle.aon_time_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 			</aon:column>
 
-			<aon:column styleClass="aon-nowrap #{to.pending?'aon-bold aon-italic':''}">
+			<aon:column styleClass="aon-nowrap #{to.pending?'aon-input-required aon-italic':''}">
 				<aon:outputText value="#{to.description}">
 					<aon:abbreviateConverter maxWidth="#{alarmDescriptionWidth}" />
 				</aon:outputText>
