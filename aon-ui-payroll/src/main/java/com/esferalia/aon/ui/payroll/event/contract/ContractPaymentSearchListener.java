@@ -10,13 +10,13 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractPaymentController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractDetailAbstractController;
 
 public class ContractPaymentSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
-		ContractPaymentController controller = (ContractPaymentController) this.getController();
+		ContractDetailAbstractController controller = (ContractDetailAbstractController) this.getController();
 		String alias = null;
 		if(controller.isSearchCurrent()){
 			alias = getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE);

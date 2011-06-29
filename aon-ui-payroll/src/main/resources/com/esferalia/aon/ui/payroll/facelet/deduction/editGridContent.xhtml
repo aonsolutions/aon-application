@@ -4,9 +4,23 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<aon:dataTable id="ContractDeductionTable" var="to" value="#{controller.model}" rows="0">
+	<c:if test="#{!skipSearchOption}" >
+		<aon:panelGrid columns="1" style="width: 100%;"
+			columnClasses="aon-panelGrid-even  aon-width-auto">
+			<aon:selectOneRadio value="#{contractDeduction.searchCurrent}">
+				<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
+				<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
+				<a4j:support event="onclick" reRender="contractDeductionTable" >
+					<aon:actionListener method="#{contractDeduction.onSearch}" />
+				</a4j:support>
+			</aon:selectOneRadio>
+		</aon:panelGrid>
+	</c:if>
+	
+	<aon:dataTable id="contractDeductionTable" var="to" value="#{controller.model}" rows="0">
 		<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 			<f:facet name="header">
 				<aon:outputText value="&#160;" />

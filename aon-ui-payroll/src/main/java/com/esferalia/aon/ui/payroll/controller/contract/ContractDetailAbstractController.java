@@ -37,7 +37,14 @@ public abstract class ContractDetailAbstractController extends BasicController {
 	private ContractData data;
 	private DataModel variablesModel;
 	private DataModel undefinedVariablesModel;
+	private boolean searchCurrent;
 	
+	public boolean isSearchCurrent() {
+		return searchCurrent;
+	}
+	public void setSearchCurrent(boolean searchCurrent) {
+		this.searchCurrent = searchCurrent;
+	}
 	public boolean isModalPanelVisible() {
 		return modalPanelVisible;
 	}
@@ -101,7 +108,13 @@ public abstract class ContractDetailAbstractController extends BasicController {
 		super.onAccept(event);
 		reset(false);
 	}
-
+	
+	@Override
+	public void onSearch(ActionEvent event) {
+		completeCiteria();
+		super.onSearch(event);
+	}
+	
 	@Override
 	public void onCancel(ActionEvent event) {
 		super.onCancel(event);
@@ -141,6 +154,7 @@ public abstract class ContractDetailAbstractController extends BasicController {
 	}
 
 	protected abstract void initialiceConcepts();
+	protected abstract void completeCiteria();
 	
 	
 	//**********************************************

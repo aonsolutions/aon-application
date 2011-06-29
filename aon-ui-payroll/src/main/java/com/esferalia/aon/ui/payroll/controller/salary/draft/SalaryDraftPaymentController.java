@@ -16,7 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
@@ -24,6 +27,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -114,6 +118,26 @@ public class SalaryDraftPaymentController extends ContractDetailAbstractControll
 	protected void initialiceConcepts() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	protected void completeCiteria() {
+		try {
+			this.clearCriteria();
+			IController master = FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
+			Contract contract = (Contract) master.getTo();
+			getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
+			if(isSearchCurrent()){
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE), new Date());
+				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE));
+				getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible cargar las percepciones del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 	
 	//**********************************************

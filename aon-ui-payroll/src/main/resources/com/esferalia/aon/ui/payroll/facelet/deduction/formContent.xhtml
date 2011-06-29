@@ -8,17 +8,11 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
-	<c:if test="#{!aonRole.sisAdmin}" >
-		<aon:outputLabel value="#{bundle.aon_concept}" />
-		<aon:outputText value="#{controller.to.deductionConcept.description}" />
-	</c:if>
-	<c:if test="#{aonRole.sisAdmin}">
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deductionConcept/lookup.xhtml" >
-			<ui:param name="lookupTo" value="#{controller.to.deductionConcept}" />
-			<ui:param name="skipNewButton" value="#{true}" />
-			<ui:param name="idRequired" value="#{true}" />
-		</ui:include>
-	</c:if>
+	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deductionConcept/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.to.deductionConcept}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+		<ui:param name="idRequired" value="#{true}" />
+	</ui:include>
 
 	<aon:outputLabel for="ContractDeduction_startDate" value="#{bundle.aon_start_date}" />
 	<aon:selectInputDate id="ContractDeduction_startDate" value="#{controller.to.startDate}" required="true"

@@ -14,6 +14,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -28,7 +30,14 @@ public class ContractEmbargoController extends BasicController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractEmbargoController.class.getName());
 
 	private boolean modalPanelVisible;
+	private boolean searchCurrent;
 	
+	public boolean isSearchCurrent() {
+		return searchCurrent;
+	}
+	public void setSearchCurrent(boolean searchCurrent) {
+		this.searchCurrent = searchCurrent;
+	}
 	public boolean isModalPanelVisible() {
 		return modalPanelVisible;
 	}
@@ -63,6 +72,25 @@ public class ContractEmbargoController extends BasicController {
 	
 	public void reset(boolean panelVisible) {
 		setModalPanelVisible(panelVisible);
+	}
+	
+	@Override
+	public void onSearch(ActionEvent event) {
+		completeCiteria();
+		super.onSearch(event);
+	}
+	
+	protected void completeCiteria() {
+		if(isSearchCurrent()){
+			try {
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_EMBARGO_END_DATE), new Date());
+				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_EMBARGO_END_DATE));
+				getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			} catch (ManagerBeanException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public double getEmbargedAmount(){

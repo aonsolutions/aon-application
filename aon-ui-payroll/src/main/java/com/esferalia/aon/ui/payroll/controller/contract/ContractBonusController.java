@@ -19,6 +19,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -66,6 +68,20 @@ public class ContractBonusController extends ContractDetailAbstractController {
 	public void onEdit(ActionEvent event) {
 		super.onEdit(event);
 		initializeVariables(event);
+	}
+	
+	@Override
+	protected void completeCiteria() {
+		if(isSearchCurrent()){
+			try {
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE), new Date());
+				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE));
+				getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			} catch (ManagerBeanException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	

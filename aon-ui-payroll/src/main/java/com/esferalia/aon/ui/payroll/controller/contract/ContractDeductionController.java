@@ -21,6 +21,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -74,6 +76,25 @@ public class ContractDeductionController extends ContractDetailAbstractControlle
 		} 
 	}
 	
+	@Override
+	protected void completeCiteria() {
+		try {
+			this.clearCriteria();
+			IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+			Contract contract = (Contract) master.getTo();
+			getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_CONTRACT_ID), contract.getId());
+			
+			if(isSearchCurrent()){
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE), new Date());
+				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE));
+				getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			}
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void onDeductionConceptChange(ActionEvent event) {
 		ContractDeduction cp = (ContractDeduction) getTo();
 		if (cp.getType() != null && StringUtils.isEmpty(cp.getDescription())) {
@@ -120,13 +141,7 @@ public class ContractDeductionController extends ContractDetailAbstractControlle
 							data.setEndDate(endCal.getTime());
 							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 							if(o==null){
-//								String t = ctx.getExpressionContext().evalTemplate(deduction.getDeductionConcept().getDescription(), startCal.getTime(), endCal.getTime());
-//								if(!t.isEmpty()){
-//									data.setExpression(t);
-//									dataList.add(data);
-//								} else {
-									undefined.add(data);
-//								}
+								undefined.add(data);
 							} else {
 								data.setExpression(o.toString());
 								dataList.add(data);

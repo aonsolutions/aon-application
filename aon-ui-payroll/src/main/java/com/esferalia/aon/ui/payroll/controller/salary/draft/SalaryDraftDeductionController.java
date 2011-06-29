@@ -21,6 +21,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -32,6 +34,7 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractDetailAbstractController;
 
 public class SalaryDraftDeductionController extends ContractDetailAbstractController {
@@ -72,6 +75,26 @@ public class SalaryDraftDeductionController extends ContractDetailAbstractContro
 		} catch (ManagerBeanException e) {
 			// Se devuelve la lista vacia.
 		} 
+	}
+	
+	@Override
+	protected void completeCiteria() {
+		try {
+			this.clearCriteria();
+			IController master = FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
+			Contract contract = (Contract) master.getTo();
+			getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_CONTRACT_ID), contract.getId());
+			if(isSearchCurrent()){
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE), new Date());
+				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE));
+				getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible cargar las deducciones del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 	
 	public void onDeductionConceptChange(ActionEvent event) {
@@ -120,13 +143,7 @@ public class SalaryDraftDeductionController extends ContractDetailAbstractContro
 							data.setEndDate(endCal.getTime());
 							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 							if(o==null){
-//								String t = ctx.getExpressionContext().evalTemplate(deduction.getDeductionConcept().getDescription(), startCal.getTime(), endCal.getTime());
-//								if(!t.isEmpty()){
-//									data.setExpression(t);
-//									dataList.add(data);
-//								} else {
-									undefined.add(data);
-//								}
+								undefined.add(data);
 							} else {
 								data.setExpression(o.toString());
 								dataList.add(data);

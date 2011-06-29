@@ -48,7 +48,6 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractPaymentController.class.getName());
 	
 	private DataModel paymentsModel;
-	private boolean searchCurrent;
 	
 	public DataModel getPaymentsModel() {
 		if (paymentsModel == null) {
@@ -58,12 +57,6 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 	}
 	public void setPaymentsModel(DataModel paymentsModel) {
 		this.paymentsModel = paymentsModel;
-	}
-	public boolean isSearchCurrent() {
-		return searchCurrent;
-	}
-	public void setSearchCurrent(boolean searchCurrent) {
-		this.searchCurrent = searchCurrent;
 	}
 	
 	public void initialize(){
@@ -157,6 +150,11 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 	public void onRemove(ActionEvent event) {
 		super.onRemove(event);
 		initializePaymentModel();
+	}
+	
+	@Override
+	protected void completeCiteria() {
+		
 	}
 	
 	@SuppressWarnings("unchecked")
