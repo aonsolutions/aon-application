@@ -47,6 +47,26 @@
 							</aon:outputText>
 						</aon:column>
 						
+						<aon:column alias="Contract.startDate" styleClass="aon-editDataTable-dateColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_start_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.startDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>		
+						</aon:column>
+					
+						<aon:column alias="Contract.endDate" styleClass="aon-editDataTable-dateColumn aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_end_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.endDate}" >
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>		
+						</aon:column>
+						
 						<aon:column alias="Contract.workPlace.enterprise.registry.fullName"
 							styleClass="aon-editDataTable-textColumn aon-width-250">
 							<f:facet name="header">

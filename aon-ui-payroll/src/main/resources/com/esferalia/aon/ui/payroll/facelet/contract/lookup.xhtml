@@ -7,8 +7,8 @@
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{contractLookup}" />
 		<ui:param name="controller" value="#{contract}" />
-		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.person.name}" />
-		<ui:param name="lookupInputSuggestExpression" value="#{lto.person.name}"/>
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.person.fullName}" />
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.person.fullName}"/>
 		<ui:param name="skipNewButton" value="true" />
 		<ui:param name="lookupLabel" value="#{payrollBundle.payroll_contract}" />
 	</ui:include>

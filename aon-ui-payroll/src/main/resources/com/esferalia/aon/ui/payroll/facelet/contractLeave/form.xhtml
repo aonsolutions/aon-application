@@ -16,9 +16,9 @@
 				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contractLeave_module}" />
 				<ui:param name="controller" value="#{contractLeave}" />
 				<ui:param name="skipSpin" value="true" />
-<!--  
-				<ui:param name="saveButtonReRender" value="form_leaves" />
--->
+				<ui:param name="skipSearchButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
+				<ui:param name="skipCancelButton" value="true" />
 			</ui:decorate>
 					
 			<aon:div styleClass="aon-scroll-area">
@@ -29,21 +29,30 @@
 				
 					<aon:panelGrid columns="2" id="form_header" style="width:100%;">
 						<ui:include 
-							src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_header.xhtml" />
+							src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_header.xhtml" >
+							<ui:param name="controller" value="#{contractLeave}" />
+						</ui:include>
 					</aon:panelGrid>
 
 					<aon:panelGrid columns="2" id="report_panel" style="width:100%;">
-						<ui:include 
-							src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_report.xhtml" />
+						<c:if test="#{contractLeave.contract.id!=null}">
+							<ui:include 
+								src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_report.xhtml" />
+						</c:if>
 					</aon:panelGrid>
 				</aon:panelGrid>
 			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area" id="form_leaves">
-				<ui:include 
-					src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_leaves.xhtml" />
+				<c:if test="#{contractLeave.leaveModel!=null}">
+					<ui:include 
+						src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/form_leaves.xhtml" />
+				</c:if>
 			</aon:div>				
 				
 		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
+		
 	</ui:define>
 </ui:composition>

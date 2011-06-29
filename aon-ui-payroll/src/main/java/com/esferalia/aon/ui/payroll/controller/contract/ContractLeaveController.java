@@ -20,13 +20,18 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
+import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
+import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.NumberValidation;
 
@@ -45,7 +50,6 @@ public class ContractLeaveController extends BasicController {
 	private Boolean validCollegeNumber;
 	private Boolean validCias;
 	private Integer selectedLeaveIndex;
-	
 	
 	public Contract getContract() {
 		return contract;
@@ -109,11 +113,18 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	public ContractLeaveDetail getLastLeave(){
-		if(!getLeaveDetailList().isEmpty()){
-			return (ContractLeaveDetail) getLeaveDetailList().get(0);
-		} else {
-			return null;
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractLeaveDetail.class);
+			Criteria criteria = new Criteria();
+			ContractLeave leave = null;
+			leave = (ContractLeave) getLeaveList().get(0);
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
+			criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_DATE), false);
+			return (ContractLeaveDetail) bean.getList(criteria).get(0);
+		} catch (ManagerBeanException e) {
+			// NADA, no se sugiere ninguna informacion
 		}
+		return null;
 	}
 
 	public boolean isShowDetail() {
@@ -124,9 +135,6 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	public boolean isLeaveSelected(){
-		if(getLeaveDetailList()==null){
-			return true;
-		}
 		if(getReport()==null){
 			return false;
 		}
@@ -223,8 +231,8 @@ public class ContractLeaveController extends BasicController {
 					detail.setType(LeaveReportType.LEAVE);
 					detail.setContractLeave(new ContractLeave());
 					detail.getContractLeave().setParent(new ContractLeave());
-					detail.setCias(null);
-					detail.setCollegeNumber(null);
+					detail.setCias(lastLeave.getCias());
+					detail.setCollegeNumber(lastLeave.getCollegeNumber());
 					detail.setProcessed(false);
 					detail.setDate(null);
 				}
@@ -238,8 +246,9 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	public void initialize() {
-		this.onReset(null);
-		setContract((Contract) ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER)).getTo());
+		if(getContract()!=null && getContract().getId()!=null){
+			this.onReset(null);
+		}
 		try {
 			buildLeaveList();
 		} catch (ManagerBeanException e) {
@@ -261,21 +270,91 @@ public class ContractLeaveController extends BasicController {
 		// TODO obtener las bases del trabajador, 
 //		las de la nomina del mes anterior dividido por 30
 //		el problema viene cuando no existe nomina anterior (cae de baja el primer mes)
-		getReport().getContractLeave().setDailyCgcBase(null);
-		getReport().getContractLeave().setDailyCgpBase(null);
+		ISalary salary = getLastSalary();
+		if(salary==null){
+			salary = getCurrentSalary();
+		}
+		getReport().getContractLeave().setDailyCgcBase(salary.getCommonBase()/30);
+		getReport().getContractLeave().setDailyCgpBase(salary.getProfessionalBase()/30);
+		// TODO de donde se obtiene la base reguladora?
 		getReport().getContractLeave().setDailyRegBase(null);
 	}
 	
+	private ISalary getLastSalary() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), getContract().getId());
+			criteria.addOrder(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), false);
+			List<ITransferObject> list = bean.getList(criteria);
+			if(list!=null && !list.isEmpty()){
+				return (ISalary) list.get(0);
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible obtener la ultima nomina";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+		return null;
+	}
+	
+	private ISalary getCurrentSalary() {
+		// TODO calcular la nomina actual?
+		return null;
+	}
 	
 	/*
 	 * ACTION LISTENER
 	 */
+	
+	public void onInit(ActionEvent event) {
+		ContractController controller = ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER));
+		try {
+			setContract((Contract) controller.getManagerBean().createNewTo());
+		} catch (ManagerBeanException e) {
+			String msg = "No se puede inicializar el lookup.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		setLeaveList(null);
+		setLeaveDetailList(null);
+		setLeaveModel(null);
+		setLeaveDetailModel(null);
+		this.onReset(null);
+	}
+	
+	public void onContractChanged(LookupChangeEvent event) {
+		onInit(null);
+		if(event.getNewValue()!=null){
+			setContract((Contract) event.getNewValue());
+		} 
+		initialize();
+		buildLeaveReport(true);
+		checkCollegeNumber();
+		checkCiasNumber();
+	}
+	
+	public void onSearchContract(ActionEvent event) {
+		// TODO este metodo sobra si el mnto se mantiene sin search ni list
+		ContractController controller = ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER));
+		try {
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(controller.getFieldName(IPayrollAlias.CONTRACT_END_DATE), new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(controller.getFieldName(IPayrollAlias.CONTRACT_END_DATE));
+			controller.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		} catch (ManagerBeanException e) {
+			String msg = "Error al buscar contratos.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		controller.onSearch(event);
+
+	}
 	public void onSelectContract(ActionEvent event) {
+		// TODO este metodo sobra si el mnto se mantiene sin search ni list
 		ContractController controller = ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER));
 		if(controller.getTo()==null){
-			controller.onSelect(event);
 		}
-//		this.onReset(event);
+		controller.onSelect(event);
 		initialize();
 		buildLeaveReport(true);
 		checkCollegeNumber();
@@ -311,7 +390,6 @@ public class ContractLeaveController extends BasicController {
 		}
 		buildLeaveReport(false);
 	}
-	
 	
 	private Date getConfirmSuggestedDate(Date date, Integer confirmReportNumber) {
 		Calendar cal = Calendar.getInstance();

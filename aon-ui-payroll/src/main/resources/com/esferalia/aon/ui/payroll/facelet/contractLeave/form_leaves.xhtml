@@ -95,11 +95,13 @@
 			</f:facet>
 			<aon:outputText value="#{leave.parent.id}" />
 		</aon:column>
-
+  
 		<ui:include 
 			src="/com/esferalia/aon/ui/payroll/facelet/contractLeave/leaveDetail_list.xhtml" />
 
 	</aon:dataTable>
-	<aon:dataScroller2 for="contractLeaveDataList" showNote="true" />
+
+	<aon:dataScroller2 for="contractLeaveDataList"
+		showNote="#{contractLeave.contract.id!=null}" />
 		
 </ui:composition>

@@ -7,17 +7,14 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractLeaveController;
 
 public class ContractLeaveControllerListener extends ControllerAdapter{
@@ -26,7 +23,6 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	@Override
 	public void beforeBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
-//		getController(event).initialize();
 		getController(event).buildLeaveReport(true);
 	}
 	
@@ -84,12 +80,12 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 			if(detail.getType()==LeaveReportType.LEAVE && hasMoreLines(detail.getContractLeave())){
 				String msg = "No se puede borrar una baja que tiene confirmaciones.";
 				AonUtil.addErrorMessage(msg);
-//				throw new ControllerListenerException(msg);
 				throw new AbortProcessingException(msg);
 			}
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "Error al buscar los partes.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 
@@ -113,8 +109,9 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 			try {
 				removeMaster(detail.getContractLeave());
 			} catch (ManagerBeanException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				String msg = "Error al borrar la cabecera.";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
 			}
 		}
 		getController(event).initialize();
@@ -122,7 +119,6 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	
 	private boolean hasMoreLines(ContractLeave leave) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ContractLeaveDetail.class);
-		
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
 		if(bean.getList(criteria).size()>1){
@@ -138,8 +134,7 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 	}
 	
 	private ITransferObject completeMaster(ContractLeave leave, ContractLeaveDetail detail) {
-		Contract contract = (Contract) ((IController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER)).getTo();
-		leave.setContract(contract);
+		leave.setContract(((ContractLeaveController)getController()).getContract());
 		if(detail.getType()==LeaveReportType.LEAVE){
 			leave.setStartDate(detail.getDate());
 		} else if(detail.getType()==LeaveReportType.DISCHARGE){

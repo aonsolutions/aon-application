@@ -16,6 +16,7 @@
 			</ui:include>
 
 			<aon:methodParam name="searchAction" value="contractLeave_list" />
+			<aon:methodParam name="searchActionListener" value="#{contractLeave.onSearchContract}" type="actionListener" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{contract}" />

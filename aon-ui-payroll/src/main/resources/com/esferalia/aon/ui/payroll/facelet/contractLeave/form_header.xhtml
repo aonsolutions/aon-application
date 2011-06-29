@@ -7,21 +7,49 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
-
-	<aon:outputLabel value="#{companyBundle.company_enterprise}" />
-	<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}" />
 	
-	<aon:outputLabel value="#{companyBundle.company_workplace}" />
-	<aon:outputText value="#{contract.to.workPlace.description}" />
-	
-	<aon:outputLabel value="#{payrollBundle.payroll_employee_name}" />
-	<aon:outputText value="#{contract.to.person.registry.fullName}" />
+	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{controller.contract}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+		<ui:param name="lookupReRender" value="contractLeaveForm" />
+		<aon:methodParam name="lookupChangeListener" 
+			value="#{controller.onContractChanged}" type="lookupChangeListener" />
+	</ui:include>
 	
 	<aon:outputLabel value="#{bundle.aon_document}" />
-	<aon:outputText value="#{contract.to.person.registry.document}" />
-		
+	<aon:outputText rendered="#{controller.contract.id==null}" value="&#160;" />
+	<aon:div rendered="#{controller.contract.id!=null}">
+		<aon:outputText value="#{controller.contract.person.registry.documentType}" />
+		<aon:outputText value="#{controller.contract.person.registry.document}" style="margin-left: 3px;"/>
+		<aon:outputText value="#{bundle.aon_document_country}" styleClass="aon-italic aon-margin-left"/>
+		<aon:outputText value="#{controller.contract.person.registry.documentCountry}" styleClass="aon-margin-left"/>
+	</aon:div>
+	
+	<aon:outputLabel value="#{payrollBundle.payroll_contract_period}"/>
+	<aon:outputText rendered="#{controller.contract.id==null}" value="&#160;" />
+	<aon:div rendered="#{controller.contract.id!=null}">
+		<aon:outputLabel styleClass="aon-italic aon-margin-right aon-margin-left"
+			value="#{bundle.aon_start_date}:" />
+		<aon:outputText value="#{controller.contract.startDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+		<aon:outputLabel styleClass="aon-italic aon-margin-right aon-margin-left"
+			rendered="#{controller.contract.endDate!=null}"
+			value="#{bundle.aon_end_date}:" />
+		<aon:outputText value="#{controller.contract.endDate}" >
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>
+	</aon:div>
+			
 	<aon:outputLabel value="#{payrollBundle.payroll_salary_ss_number}" />
-	<aon:outputText value="#{contract.to.person.socialSecurityNumber}" />
-		
-		
+	<aon:outputText value="#{controller.contract.person.socialSecurityNumber}" />
+	
+	<aon:outputLabel value="#{companyBundle.company_enterprise}" />
+	<aon:outputText value="#{controller.contract.workPlace.enterprise.registry.fullName}" />
+	
+	<aon:outputLabel value="#{companyBundle.company_workplace}" />
+	<aon:outputText value="#{controller.contract.workPlace.description}" />
+	
 </ui:composition>
