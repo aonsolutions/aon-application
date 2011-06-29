@@ -9,6 +9,9 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:div id="dataGrid" styleClass="aon-scroll-area">
+		<aon:methodParam name="resetAction" value="" />
+		<aon:methodParam name="saveAction" value="" />
+		<aon:methodParam name="removeAction"  value="" />
 		<ui:decorate
 			template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 			<ui:param name="controller" value="#{agreementLevelData}" />

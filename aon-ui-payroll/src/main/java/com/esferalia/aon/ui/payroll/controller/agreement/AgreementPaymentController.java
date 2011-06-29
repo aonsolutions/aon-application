@@ -38,6 +38,14 @@ public class AgreementPaymentController extends LinesController {
 	private List<String> paymentConcepts;
 	private DataModel variablesModel;
 	private DataModel undefinedVariablesModel;
+	private boolean searchCurrent;
+	
+	public boolean isSearchCurrent() {
+		return searchCurrent;
+	}
+	public void setSearchCurrent(boolean searchCurrent) {
+		this.searchCurrent = searchCurrent;
+	}
 	
 	public AgreementLevelData getData() {
 		return null;
