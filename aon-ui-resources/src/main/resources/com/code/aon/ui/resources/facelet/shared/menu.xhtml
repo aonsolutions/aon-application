@@ -17,14 +17,16 @@
 				</aon:componentGroup>		
 				<ui:insert name="afterMenuContent"/>		
 				<rich:toolBarGroup id="rightMenuContent"
-					style="padding-right: 6px;padding-left: 6px"
+					style="padding-right: 5px;padding-left: 5px"
 					location="right" itemSeparator="line">
 					<c:if test="#{aonConfiguration.bean.alarm.showPending}">
 						<aon:commandLink id="pendingAlarms"
-							title="#{alarm.pendingAlarmTitle}" value="&#160;"
+							title="#{alarm.pendingAlarmTitle}"
+							value="(#{alarm.pendingCount})"
 							rendered="#{alarm.pendingCount &gt; 0}"
 							action="alarm_list" actionListener="#{alarm.onInit}" 
-							styleClass="aon-icon-alarm-pending" />					
+							style="padding-right: 5px;padding-left: 18px"
+							styleClass="aon-bold aon-icon-alarm-pending" />					
 					</c:if>
 					<ui:insert name="beforeRightMenuContent"/>					
 	                <aon:methodParam name="homeActionListener" default="" />					

@@ -3,16 +3,30 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGrid columns="2">
 		<aon:outputLabel for="Alarm_alarmDate"
 			value="#{bundle.aon_date}" />
-		<aon:selectInputDate id="Alarm_alarmDate"
-			value="#{alarm.to.alarmDate}" required="true" disabled="#{!alarm.new}"
-			timeZone="#{timeZoneController.timeZone}" inputSize="16"
-			popupDateFormat="#{bundle.aon_timestamp2_pattern}">									
-		</aon:selectInputDate>		
+		<aon:div>			
+			<a4j:region>
+				<aon:selectInputDate id="Alarm_alarmDate"
+					value="#{alarm.to.alarmDate}" required="true"
+					timeZone="#{timeZoneController.timeZone}" inputSize="16"
+					popupDateFormat="#{bundle.aon_timestamp2_pattern}">									
+				</aon:selectInputDate>
+				<aon:outputLabel for="Alarm_delayTime" rendered="#{!alarm.new}"
+					value="#{groupwareBundle.alarm_delay_time}" />
+				<aon:selectOneMenu id="Alarm_delayTime"
+					styleClass="aon-margin-left" rendered="#{!alarm.new}"
+					valueChangeListener="#{alarm.onDelayTimeChanged}"
+					reRender="Alarm_alarmDate" value="#{alarm.delayTime}">
+					<f:selectItem itemLabel="-" value="#{null}"/>
+					<f:selectItems value="#{groupWareCollections.delayTimes}" />
+				</aon:selectOneMenu>
+			</a4j:region>			
+		</aon:div>		
 		
 		<aon:outputLabel for="Alarm_priority"
 			value="#{groupwareBundle.alarm_priority}" />
@@ -47,13 +61,6 @@
 					</c:if>
 				</c:if>
 			</aon:div>
-	
-			<aon:outputLabel for="Alarm_delayTime"
-				value="#{groupwareBundle.alarm_delay_time}" />
-			<aon:selectOneMenu id="Alarm_delayTime"
-				value="#{alarm.delayTime}">
-				<f:selectItems value="#{groupWareCollections.delayTimes}" />
-			</aon:selectOneMenu>
 	
 			<c:if test="#{alarm.sender != null}" >	
 				<aon:outputLabel value="#{groupwareBundle.groupware_sender}" />

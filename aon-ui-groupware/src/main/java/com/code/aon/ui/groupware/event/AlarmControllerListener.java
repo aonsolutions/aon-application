@@ -31,4 +31,22 @@ public class AlarmControllerListener extends ControllerAdapter {
 		controller.updatePendingCount();
 	}
 
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		Alarm alarm = (Alarm) event.getController().getTo();
+		alarm.setStatus(AlarmStatus.PENDING);
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		AlarmController controller = (AlarmController) event.getController();
+		try {
+			controller.updateModels();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
+	}
+
 }

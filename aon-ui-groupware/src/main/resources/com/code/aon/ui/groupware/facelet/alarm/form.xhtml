@@ -10,20 +10,14 @@
 
 		<aon:form id="alarmForm">
 		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle"
-					value="#{groupwareBundle.aon_alarm}" />
-				<ui:param name="toolbarDescription"
-					value="#{alarm.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-				<ui:define name="toolbarContent">
-					<aon:commandButton id="cancel"
-						value="#{(alarm.returnToList)? bundle.aon_list : bundle.aon_back}"
-						action="#{alarm.backAction}" immediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-cancel"
-						accesskey="#{bundle.aon_key_cancel}" />
-					<aon:commandButton id="alarm_delay" value="#{groupwareBundle.alarm_delay}"
-						styleClass="aon-finding-toolbar-item aon-icon-alarms-postpone"
-						action="#{alarm.backAction}" actionListener="#{alarm.onDelayAlarm}"/>	
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_alarm}" />
+				<ui:param name="controller" value="#{alarm}" />
+				<ui:param name="skipRemoveButton" value="#{true}" />
+				<ui:param name="skipSearchButton" value="#{true}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+				<ui:param name="skipSpin" value="#{true}" />
+				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="alarm_finish" value="#{groupwareBundle.alarm_finish}"
 						styleClass="aon-finding-toolbar-item aon-icon-alarms-finish"
 						action="#{alarm.backAction}" actionListener="#{alarm.onFinishAlarm}"/>	

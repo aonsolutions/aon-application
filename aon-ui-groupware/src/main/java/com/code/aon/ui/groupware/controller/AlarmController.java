@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.ListDataModel;
 
 import org.slf4j.Logger;
@@ -30,7 +31,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
 public class AlarmController extends BasicController {
@@ -55,6 +55,8 @@ public class AlarmController extends BasicController {
 	
 	private boolean returnToList;
 	
+	private String returnAction;
+	
 	public AlarmController() {
 		this.user = UserUtils.getInstance().getLoggedUser();
 		updatePendingCount();
@@ -71,28 +73,6 @@ public class AlarmController extends BasicController {
 
 	public void setDelayTime(DelayTime delayTime) {
 		this.delayTime = delayTime;
-	}
-	
-	public void onDelayAlarm(ActionEvent event) throws ControllerListenerException {
-		if (getDelayTime() != null) {
-			Alarm alarm = (Alarm)this.getTo();			
-			try {
-				alarm.setAlarmDate(obtainNewDate());
-				alarm.setUser(user);
-				alarm.setStatus(AlarmStatus.PENDING);
-				getManagerBean().update(alarm);
-				updateModels();
-			} catch (ManagerBeanException e) {
-				LOGGER.error("Error updating alarm with id=" + alarm.getId(), e);
-			}			
-		}
-	}
-	
-	private Date obtainNewDate() {
-		Calendar calendar = new GregorianCalendar();
-		calendar.setTime(new Date());
-		calendar.add(Calendar.MINUTE, this.getDelayTime().getValue());
-		return calendar.getTime();
 	}
 
 	public void onFinishAlarm(ActionEvent event){
@@ -203,6 +183,7 @@ public class AlarmController extends BasicController {
     public void onInit(ActionEvent event) {
         try {
         	this.returnToList = true;
+        	this.returnAction = AonUtil.getConfigurationController().getCurrentAction();
         	setBackAction(null);
 			updateModels();
 			updatePendingCount();
@@ -278,6 +259,21 @@ public class AlarmController extends BasicController {
 	    	pendingCount = bean.getCount(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
+		}
+	}
+	
+	public String returnAction() {
+		return this.returnAction;
+	}
+
+	public void onDelayTimeChanged( ValueChangeEvent event ) {
+		if ( event.getNewValue() != null ) {
+			DelayTime dt = (DelayTime) event.getNewValue();
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(new Date());
+			calendar.add(Calendar.MINUTE, dt.getValue());
+			Alarm alarm = (Alarm) getTo();
+			alarm.setAlarmDate(calendar.getTime());
 		}
 	}
 	
