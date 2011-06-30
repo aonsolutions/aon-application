@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -23,6 +22,7 @@ import com.esferalia.aon.file.payroll.fdi.data.ODP;
 import com.esferalia.aon.file.payroll.fdi.data.TRA;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
+import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;

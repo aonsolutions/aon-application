@@ -14,13 +14,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.EnterpriseCCC;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
@@ -543,8 +542,8 @@ public class ContractXmlWriter {
 	private String getEnterpriseCCC(Enterprise enterprise) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
-		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
 		List<ITransferObject> list = bean.getList(criteria);
 		if(!list.isEmpty()){
 			return ((EnterpriseCCC)list.get(0)).getCcc();

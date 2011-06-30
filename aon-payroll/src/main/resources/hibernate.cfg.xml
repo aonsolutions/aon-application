@@ -40,6 +40,8 @@
 		<mapping class="com.esferalia.aon.payroll.ContractLeaveDetail"/>
 		<mapping class="com.esferalia.aon.payroll.ContractPayment"/>
 		<mapping class="com.esferalia.aon.payroll.DeductionConcept"/>
+		<mapping class="com.esferalia.aon.payroll.EnterpriseActivity"/>
+		<mapping class="com.esferalia.aon.payroll.EnterpriseCCC"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatch"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>
@@ -55,8 +57,6 @@
 		<mapping class="com.esferalia.aon.payroll.SystemPayment"/>
 
 		<mapping class="com.code.aon.company.Enterprise"/>
-		<mapping class="com.code.aon.company.EnterpriseActivity"/>
-		<mapping class="com.code.aon.company.EnterpriseCCC"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
 
 		<mapping class="com.code.aon.person.Person"/>	

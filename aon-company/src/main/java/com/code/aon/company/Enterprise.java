@@ -50,8 +50,6 @@ public class Enterprise implements ITransferObject, IRegistry, IScopable {
 	
 	private Calendar calendar;
 	
-	private Set<EnterpriseActivity> activities = new HashSet<EnterpriseActivity>();
-	
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	
 	@Id
@@ -90,15 +88,6 @@ public class Enterprise implements ITransferObject, IRegistry, IScopable {
 		this.scope = scope;
 	}	
 	
-	@OneToMany(mappedBy = "enterprise", cascade={CascadeType.REMOVE})
-	public Set<EnterpriseActivity> getActivities() {
-		return activities;
-	}
-
-	public void setActivities(Set<EnterpriseActivity> activities) {
-		this.activities = activities;
-	}
-
 	@ManyToOne
     @JoinColumn( name="calendar")	
 	@ForeignKey(name = "FK_ENTERPRISE_CALENDAR")

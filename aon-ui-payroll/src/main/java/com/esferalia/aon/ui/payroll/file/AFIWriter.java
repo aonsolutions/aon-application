@@ -80,9 +80,10 @@ public class AFIWriter {
 		ent.getCriteria().addEqualExpression(ent.getFieldName(ICompanyAlias.ENTERPRISE_ID), enterprise.getId());
 		ent.onSearch(null);
 		ent.onSelectFirst(null);
-		ent.initMainActiviy();
-		String ccc = ent.getCcc().getCcc();
-		emp.setCodigoCuentaCotizacionSeguridadSocial(ccc);
+		// TODO se ha movido el ccc y activity de company a payroll
+//		ent.initMainActiviy();
+//		String ccc = ent.getCcc().getCcc();
+//		emp.setCodigoCuentaCotizacionSeguridadSocial(ccc);
 		String tipo = String.valueOf(enterprise.getRegistry().getType().ordinal());
 		if (StringUtils.isBlank(tipo)) {
 			tipo = "9";
@@ -99,7 +100,7 @@ public class AFIWriter {
 		emp.setPais(pais);
 		emp.setNumero(enterprise.getRegistry().getDocument());
 		emp.setCalificador("  ");
-		emp.setCodigoCuentaCotizacionPrincipal(ccc);
+//		emp.setCodigoCuentaCotizacionPrincipal(ccc);
 		RZS rzs = new RZS();
 		rzs.setIndicador("0");
 		/*

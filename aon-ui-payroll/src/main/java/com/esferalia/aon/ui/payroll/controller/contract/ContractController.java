@@ -29,8 +29,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.EnterpriseActivity;
-import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.EnterpriseData;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
@@ -44,6 +42,8 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.EnterpriseActivity;
+import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -305,7 +305,7 @@ public class ContractController extends BasicController {
 			try {
 				IManagerBean ecBean = BeanManager.getManagerBean(EnterpriseActivity.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(ecBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
+				criteria.addEqualExpression(ecBean.getFieldName(IPayrollAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
 				List<ITransferObject> ecList = ecBean.getList(criteria);
 				for(ITransferObject to: ecList){
 					EnterpriseActivity ea = (EnterpriseActivity) to;
@@ -334,7 +334,7 @@ public class ContractController extends BasicController {
 			try {
 				IManagerBean ecBean = BeanManager.getManagerBean(EnterpriseCCC.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(ecBean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ID), contract.getActivity().getId());
+				criteria.addEqualExpression(ecBean.getFieldName(IPayrollAlias.ENTERPRISE_CCC_ACTIVITY_ID), contract.getActivity().getId());
 				List<ITransferObject> ecList = ecBean.getList(criteria);
 				for(ITransferObject to: ecList){
 					EnterpriseCCC ccc = (EnterpriseCCC) to;

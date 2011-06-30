@@ -32,20 +32,20 @@ public class ContractXmlReader {
 	
 	
 	public void completeContrataParams(CONTRATOS contratos, ContrataParams params) throws JAXBException, IOException {
-			CONTRATO100TYPE c = (CONTRATO100TYPE) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
-					
-			completeDatosGeneralesContrato(c.getDATOSGENERALESCONTRATO(), params);
-			completeDatosMedidasFomento(c.getDATOSMEDIDASFOMENTO(), params);
-			if(c.getDATOSANEXOCONTRATORELEVO()!=null){
-				completeDatosAnexoContratoRelevo(c.getDATOSANEXOCONTRATORELEVO(), params);
-			}
-			if(c.getDATOSETCOTE()!=null){
-				completeDatosEtCote(c.getDATOSETCOTE(), params);
-			}
-			if(c.getDATOSETT()!=null){
-				completeDatosEtt(c.getDATOSETT(), params);
-			}
-			completeDatosComunicacionCopiaBasica(c.getDATOSCOMUNICACOPIABASICA(), params);
+		CONTRATO100TYPE c = (CONTRATO100TYPE) contratos.getCONTRATO100AndCONTRATO130AndCONTRATO150().get(0);
+				
+		completeDatosGeneralesContrato(c.getDATOSGENERALESCONTRATO(), params);
+		completeDatosMedidasFomento(c.getDATOSMEDIDASFOMENTO(), params);
+		if(c.getDATOSANEXOCONTRATORELEVO()!=null){
+			completeDatosAnexoContratoRelevo(c.getDATOSANEXOCONTRATORELEVO(), params);
+		}
+		if(c.getDATOSETCOTE()!=null){
+			completeDatosEtCote(c.getDATOSETCOTE(), params);
+		}
+		if(c.getDATOSETT()!=null){
+			completeDatosEtt(c.getDATOSETT(), params);
+		}
+		completeDatosComunicacionCopiaBasica(c.getDATOSCOMUNICACOPIABASICA(), params);
 			
 //			c.getDATOSETCOTE();
 //			c.getDATOSCONTRATOEXTRANJERO();

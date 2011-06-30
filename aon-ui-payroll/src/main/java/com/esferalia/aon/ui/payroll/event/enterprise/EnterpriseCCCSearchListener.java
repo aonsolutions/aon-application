@@ -1,17 +1,12 @@
 package com.esferalia.aon.ui.payroll.event.enterprise;
 
-import java.util.Iterator;
-import java.util.Set;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
-import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class EnterpriseCCCSearchListener extends ControllerSearchListener {
 

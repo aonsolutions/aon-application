@@ -23,8 +23,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.EnterpriseActivity;
-import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.enumeration.CCCType;
@@ -46,8 +44,6 @@ public class EnterpriseController extends RegistryController implements ICompany
 	private RegistryInfo info = new RegistryInfo();
 
 	private boolean showActivityNode;
-	private EnterpriseActivity activity;	
-	private EnterpriseCCC ccc;
 	private WorkPlace workplace;
 	private RegistryDirStaff dirStaff;
 	
@@ -56,9 +52,6 @@ public class EnterpriseController extends RegistryController implements ICompany
 	private AonFile aonFile;
 	private RegistryAttachment attach;
 	
-	// TODO EnterpriseAgreement
-	// private Agreement agreement;
-
     public boolean isTreeView() {
 		return treeView;
 	}
@@ -69,14 +62,6 @@ public class EnterpriseController extends RegistryController implements ICompany
 	
 	public boolean isShowActivityNode() {
 		return showActivityNode;
-	}
-
-	public EnterpriseActivity getActivity() {
-		return activity;
-	}
-
-	public void setActivity(EnterpriseActivity activity) {
-		this.activity = activity;
 	}
 	
 	public RegistryAddress getMainAddress() {
@@ -115,23 +100,6 @@ public class EnterpriseController extends RegistryController implements ICompany
 		return info.getWeb();
 	}
 
-	public EnterpriseCCC getCcc() {
-		return ccc;
-	}
-
-	public void setCcc(EnterpriseCCC ccc) {
-		this.ccc = ccc;
-	}
-	
-	// TODO EnterpriseAgreement
-//	public Agreement getAgreement() {
-//		return agreement;
-//	}
-//
-//	public void setAgreement(Agreement agreement) {
-//		this.agreement = agreement;
-//	}
-
 	/**
      * Gets the addresses of the enterprise.
      * 
@@ -159,58 +127,54 @@ public class EnterpriseController extends RegistryController implements ICompany
      * @return the CCCs of the enterprise
      * @throws ManagerBeanException 
      */
-    public List<SelectItem> getCCCs() throws ManagerBeanException {
-    	LinkedList<SelectItem> cccs = new LinkedList<SelectItem>();
-    	Enterprise enterprise = (Enterprise) getTo();
-		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
-		criteria.addOrder(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_CCC));
-		List<ITransferObject> list = bean.getList(criteria);
-		for (ITransferObject to : list) {
-			EnterpriseCCC ccc = (EnterpriseCCC)to;
-			cccs.add(new SelectItem(ccc, ccc.getCcc()));
-		}
-    	return cccs;
-    }	    
+//    public List<SelectItem> getCCCs() throws ManagerBeanException {
+//    	LinkedList<SelectItem> cccs = new LinkedList<SelectItem>();
+//    	Enterprise enterprise = (Enterprise) getTo();
+//		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
+//		Criteria criteria = new Criteria();
+//		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
+//		criteria.addOrder(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_CCC));
+//		List<ITransferObject> list = bean.getList(criteria);
+//		for (ITransferObject to : list) {
+//			EnterpriseCCC ccc = (EnterpriseCCC)to;
+//			cccs.add(new SelectItem(ccc, ccc.getCcc()));
+//		}
+//    	return cccs;
+//    }	    
 
-	private void loadMainActivity() throws ManagerBeanException {
-		IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
-		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_TYPE), EnterpriseActivityType.PRINCIPAL);
-		List<ITransferObject> activities = activityBean.getList(criteria);
-		if (! activities.isEmpty() ) {
-			setActivity( (EnterpriseActivity) activities.get(0) );
-			IManagerBean cccBean = BeanManager.getManagerBean(EnterpriseCCC.class);
-			Criteria cccCriteria = new Criteria();
-			cccCriteria.addEqualExpression(cccBean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ID), getActivity().getId());
-			cccCriteria.addEqualExpression(cccBean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
-			List<ITransferObject> cccs = cccBean.getList(cccCriteria);
-			if (! cccs.isEmpty() ) {
-				setCcc( (EnterpriseCCC) cccs.get(0) );
-			}
-			this.showActivityNode = (activities.size() > 1) || (cccs.size() > 1);
-		}
-	}    
+//	private void loadMainActivity() throws ManagerBeanException {
+//		IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
+//		Criteria criteria = new Criteria();
+//		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
+//		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_TYPE), EnterpriseActivityType.PRINCIPAL);
+//		List<ITransferObject> activities = activityBean.getList(criteria);
+//		if (! activities.isEmpty() ) {
+//			setActivity( (EnterpriseActivity) activities.get(0) );
+//			IManagerBean cccBean = BeanManager.getManagerBean(EnterpriseCCC.class);
+//			Criteria cccCriteria = new Criteria();
+//			cccCriteria.addEqualExpression(cccBean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ID), getActivity().getId());
+//			cccCriteria.addEqualExpression(cccBean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
+//			List<ITransferObject> cccs = cccBean.getList(cccCriteria);
+//			if (! cccs.isEmpty() ) {
+//				setCcc( (EnterpriseCCC) cccs.get(0) );
+//			}
+//			this.showActivityNode = (activities.size() > 1) || (cccs.size() > 1);
+//		}
+//	}    
 	
 	public void reset() {
     	this.showActivityNode = false;
-    	setActivity(null);
-    	setCcc(null);
     	setWorkplace(null);
     	setDirStaff(null);
     	setAonFile(null);
     	this.info.reset();
-   	// TODO EnterpriseAgreement    	
-//    	setAgreement(new Agreement());
 	}
     
-    public void initMainActiviy() throws ManagerBeanException {
-    	if (! isNew() ) {
-    		loadMainActivity();
-    	}
-    }
+//    public void initMainActiviy() throws ManagerBeanException {
+//    	if (! isNew() ) {
+//    		loadMainActivity();
+//    	}
+//    }
     
     public Enterprise getEnterprise() {
     	return (Enterprise) getTo();
@@ -332,10 +296,6 @@ public class EnterpriseController extends RegistryController implements ICompany
 			throw new AbortProcessingException(e.getMessage());
 		}
 	}
-
-//	public void onAgreementChanged( LookupChangeEvent event ) {
-//		// TODO a la espera del company-payroll-bridge
-//	}	
 	
 	public void onLoadCalendar( ActionEvent event ) {
 		// TODO implementar la busqueda del calendario. si la entidad no tiene calendario, 

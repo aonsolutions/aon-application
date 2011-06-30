@@ -53,7 +53,7 @@ public class AgreementExtra implements ITransferObject {
 	}
 	
 	@ManyToOne
-	@JoinColumn( name="agreement_payment", nullable = false, updatable = false )	
+	@JoinColumn( name="agreement_payment", updatable = false )	
 	@ForeignKey(name = "FK_AGREEMENT_EXTRA_AGREEMENT_PAYMENT")
 	@Index(name = "IDX_AGREEMENT_EXTRA_AGREEMENT_PAYMENT")
 	public AgreementPayment getAgreementPayment() {
@@ -63,8 +63,7 @@ public class AgreementExtra implements ITransferObject {
 		this.agreementPayment = agreementPayment;
 	}
 	
-//	@Temporal(TemporalType.DATE)
-	@Column( name = "start_date", nullable = false )
+	@Column( name = "start_date", length = 32, nullable = false )
     public String getStartDate() {
 		return startDate;
 	}
@@ -72,8 +71,7 @@ public class AgreementExtra implements ITransferObject {
 		this.startDate = startDate;
 	}
 
-//	@Temporal(TemporalType.DATE)
-	@Column( name = "end_date" )
+	@Column( name = "end_date", length = 32, nullable = false )
     public String getEndDate() {
 		return endDate;
 	}
@@ -81,8 +79,7 @@ public class AgreementExtra implements ITransferObject {
 		this.endDate = endDate;
 	}	
 	
-//	@Temporal(TemporalType.DATE)
-	@Column( name = "issue_date" )
+	@Column( name = "issue_date", length = 32, nullable = false )
 	public String getIssueDate() {
 		return issueDate;
 	}

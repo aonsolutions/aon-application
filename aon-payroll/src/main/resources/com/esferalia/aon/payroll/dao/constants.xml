@@ -12,6 +12,10 @@
 		<alias 	   names="date,enterprise_id,enterprise_registry_name,id,sign,status" />
 		<hibernate names="date,enterprise.id,enterprise.registry.name,id,sign,status" />
 	</bean>
+	<bean class="com.esferalia.aon.payroll.EnterpriseCCC">
+		<alias names="activity_id,ccc,geozone_id,id,type,activity_enterprise_id"/>
+		<hibernate names="activity.id,ccc,geozone.id,id,type,activity.enterprise.id"/>
+	</bean>
 	<bean class="com.esferalia.aon.payroll.Salary">
 		<alias     names="id,address,broadcastDate,category,commonBase,contract_id,contract_person_id,contract_workPlace_id,contract_workPlace_enterprise_id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
 		<hibernate names="id,address,broadcastDate,category,commonBase,contract.id,contract.person.id,contract.workPlace.id,contract.workPlace.enterprise.id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>

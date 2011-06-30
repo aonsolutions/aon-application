@@ -20,7 +20,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.enumeration.Administration;
 import com.code.aon.registry.RegistryAddress;
-import com.esferalia.aon.calendar.Calendar;
 
 @Entity
 @Table(name="workplace")
@@ -40,8 +39,6 @@ public class WorkPlace implements ITransferObject {
     private Administration economicAgreement;
     /** Indicates if the working place is currently active. */
 	private boolean active;
-	/** Calendar */
-	private Calendar calendar;
 
     @Id
 	@GeneratedValue
@@ -100,17 +97,6 @@ public class WorkPlace implements ITransferObject {
 		this.economicAgreement = economicAgreement;
 	}
 	
-	@ManyToOne
-    @JoinColumn( name="calendar")	
-	@ForeignKey(name = "FK_WORKPLACE_CALENDAR")
-	@Index(name = "FK_WORKPLACE_CALENDAR")
-	public Calendar getCalendar() {
-		return calendar;
-	}
-	public void setCalendar(Calendar calendar) {
-		this.calendar = calendar;
-	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -124,7 +110,6 @@ public class WorkPlace implements ITransferObject {
 				.append(this.description, o.description)
 				.append(this.economicAgreement, o.economicAgreement)
 				.append(this.enterprise, o.enterprise)
-				.append(this.calendar, o.calendar)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -139,7 +124,6 @@ public class WorkPlace implements ITransferObject {
 			.append(economicAgreement)
 			.append(enterprise)
 			.append(id)
-			.append(calendar)
 			.toHashCode();
 	}
 

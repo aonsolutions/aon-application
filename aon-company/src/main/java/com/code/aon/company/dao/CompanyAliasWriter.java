@@ -8,8 +8,6 @@ import com.code.aon.common.dao.DAOConstantsWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.company.Company;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.EnterpriseActivity;
-import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.EnterpriseData;
 import com.code.aon.company.WorkPlace;
 
@@ -29,9 +27,8 @@ public class CompanyAliasWriter {
 				Company.class.getName(),
 				WorkPlace.class.getName(),
 				Enterprise.class.getName(),
-				EnterpriseCCC.class.getName(),
-				EnterpriseData.class.getName(),
-				EnterpriseActivity.class.getName() };
+				EnterpriseData.class.getName() 
+				};
 		HibernateUtil.getSessionFactory( HibernateUtil.getSessionFactoryName() );
 		AliasWriter writer = new AliasWriter("com.code.aon.company.dao");
 		writer.write(classes, file);

@@ -16,7 +16,6 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.WorkPlace;
 import com.esferalia.aon.calendar.Calendar;
 
