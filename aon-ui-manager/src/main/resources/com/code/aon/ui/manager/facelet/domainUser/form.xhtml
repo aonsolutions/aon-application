@@ -43,7 +43,7 @@
 						value="#{bundle.aon_login}" />
 					<h:panelGrid>
 						<aon:inputText id="DomainUser_uid"
-							size="80" required="true" 
+							size="20" maxlength="16" required="true" 
 							validator="#{domainUser.idCheck}"
 							value="#{domainUser.to.uid}" />
 						<aon:outputText value="#{managerBundle.manager_user_init_password}"
