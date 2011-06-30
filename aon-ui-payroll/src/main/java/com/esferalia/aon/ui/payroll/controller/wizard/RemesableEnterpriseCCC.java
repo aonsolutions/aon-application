@@ -2,7 +2,7 @@ package com.esferalia.aon.ui.payroll.controller.wizard;
 
 import java.io.Serializable;
 
-import com.code.aon.company.EnterpriseCCC;
+import com.esferalia.aon.payroll.EnterpriseCCC;
 
 public class RemesableEnterpriseCCC implements Serializable {
 
