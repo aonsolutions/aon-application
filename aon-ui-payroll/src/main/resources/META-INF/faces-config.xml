@@ -872,6 +872,7 @@
 				<value>#{agreementSalaryTable}</value>
 				<value>#{agreementLevelListener}</value>
 				<value>#{agreementPaymentListener}</value>
+				<value>#{agreementExtraListener}</value>
 				<value>#{agreementTreeControlerListener}</value>
 			</list-entries>
 		</managed-property>
@@ -1121,6 +1122,56 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>agreementPayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>agreement</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>agreement.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<!-- ************ AGREEMENT EXTRA LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementExtraListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>agreementExtra</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AgreementExtra_agreement_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<!-- ************ AGREEMENT EXTRA ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementExtra</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.AgreementExtra</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>agreementExtra</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>

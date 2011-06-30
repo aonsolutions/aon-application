@@ -8,6 +8,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.company.EnterpriseActivity;
 import com.code.aon.company.EnterpriseCCC;
 import com.esferalia.aon.payroll.Agreement;
+import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
@@ -30,10 +31,10 @@ import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DeductionConcept;
-import com.esferalia.aon.payroll.EnterpriseAgreement;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PaymentConcept;
+import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryCost;
@@ -55,9 +56,11 @@ public class PayrollAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/home/rtrepiana/workspace/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
+		File file = new File("/AON-TRUNK/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
+//		File file = new File("/home/rtrepiana/workspace/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] { 
 				Agreement.class.getName(),
+				AgreementExtra.class.getName(),
 				AgreementLevel.class.getName(),
 				AgreementLevelCategory.class.getName(),
 				AgreementLevelData.class.getName(),
@@ -80,12 +83,12 @@ public class PayrollAliasWriter {
 				ContractLeaveDetail.class.getName(),
 				ContractPayment.class.getName(),
 				DeductionConcept.class.getName(),
-				EnterpriseAgreement.class.getName(),
 				EnterpriseCCC.class.getName(),
 				EnterpriseActivity.class.getName(),
 				LeaveBatch.class.getName(),
 				LeaveBatchDetail.class.getName(),
 				PaymentConcept.class.getName(),
+				PayrollWorkPlace.class.getName(),
 				Salary.class.getName(),
 				SalaryBonus.class.getName(),
 				SalaryCost.class.getName(),

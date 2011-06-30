@@ -496,7 +496,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICompanyConstants.CALENDAR_CONTROLLER_NAME);
 		controller.setEnterpriseName(wp.getEnterprise().getRegistry().getFullName());
 		controller.setWorkPlaceName(wp.getDescription());
-		controller.setCalendarId(wp.getCalendar().getId());
+//		controller.setCalendarId(wp.getCalendar().getId());
 		controller.onInitialize(event);
 	}	
 	

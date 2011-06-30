@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.esferalia.aon.payroll.Agreement;
+import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementLevelData;
@@ -25,12 +26,12 @@ import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DeductionConcept;
-import com.esferalia.aon.payroll.EnterpriseAgreement;
 import com.code.aon.company.EnterpriseCCC;
 import com.code.aon.company.EnterpriseActivity;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.PaymentConcept;
+import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryCost;
@@ -70,6 +71,49 @@ public interface IPayrollAlias {
 	* Hibernate value: Agreement.id
 	*/
 	String  AGREEMENT_ID = AGREEMENT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for AgreementExtra entity.
+	*/ 
+	DAOConstantsEntry AGREEMENT_EXTRA_ENTRY = DAOConstants.getDAOConstant(AgreementExtra.class);
+
+	/** 
+	* Alias value: AgreementExtra_agreementPayment_id
+	* Hibernate value: AgreementExtra.agreementPayment.id
+	*/
+	String  AGREEMENT_EXTRA_AGREEMENT_PAYMENT_ID = AGREEMENT_EXTRA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AgreementExtra_agreement_id
+	* Hibernate value: AgreementExtra.agreement.id
+	*/
+	String  AGREEMENT_EXTRA_AGREEMENT_ID = AGREEMENT_EXTRA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AgreementExtra_endDate
+	* Hibernate value: AgreementExtra.endDate
+	*/
+	String  AGREEMENT_EXTRA_END_DATE = AGREEMENT_EXTRA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AgreementExtra_id
+	* Hibernate value: AgreementExtra.id
+	*/
+	String  AGREEMENT_EXTRA_ID = AGREEMENT_EXTRA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AgreementExtra_issueDate
+	* Hibernate value: AgreementExtra.issueDate
+	*/
+	String  AGREEMENT_EXTRA_ISSUE_DATE = AGREEMENT_EXTRA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: AgreementExtra_startDate
+	* Hibernate value: AgreementExtra.startDate
+	*/
+	String  AGREEMENT_EXTRA_START_DATE = AGREEMENT_EXTRA_ENTRY.getAliasNames()[5];
 
 
 
@@ -1314,31 +1358,6 @@ public interface IPayrollAlias {
 
 
 	/** 
-	* DAOConstantsEntry for EnterpriseAgreement entity.
-	*/ 
-	DAOConstantsEntry ENTERPRISE_AGREEMENT_ENTRY = DAOConstants.getDAOConstant(EnterpriseAgreement.class);
-
-	/** 
-	* Alias value: EnterpriseAgreement_agreement_id
-	* Hibernate value: EnterpriseAgreement.agreement.id
-	*/
-	String  ENTERPRISE_AGREEMENT_AGREEMENT_ID = ENTERPRISE_AGREEMENT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: EnterpriseAgreement_enterprise_id
-	* Hibernate value: EnterpriseAgreement.enterprise.id
-	*/
-	String  ENTERPRISE_AGREEMENT_ENTERPRISE_ID = ENTERPRISE_AGREEMENT_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: EnterpriseAgreement_id
-	* Hibernate value: EnterpriseAgreement.id
-	*/
-	String  ENTERPRISE_AGREEMENT_ID = ENTERPRISE_AGREEMENT_ENTRY.getAliasNames()[2];
-
-
-
-	/** 
 	* DAOConstantsEntry for EnterpriseCCC entity.
 	*/ 
 	DAOConstantsEntry ENTERPRISE_CCC_ENTRY = DAOConstants.getDAOConstant(EnterpriseCCC.class);
@@ -1514,6 +1533,43 @@ public interface IPayrollAlias {
 	* Hibernate value: PaymentConcept.type
 	*/
 	String  PAYMENT_CONCEPT_TYPE = PAYMENT_CONCEPT_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for PayrollWorkPlace entity.
+	*/ 
+	DAOConstantsEntry PAYROLL_WORK_PLACE_ENTRY = DAOConstants.getDAOConstant(PayrollWorkPlace.class);
+
+	/** 
+	* Alias value: PayrollWorkPlace_agreement_id
+	* Hibernate value: PayrollWorkPlace.agreement.id
+	*/
+	String  PAYROLL_WORK_PLACE_AGREEMENT_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: PayrollWorkPlace_calendar_id
+	* Hibernate value: PayrollWorkPlace.calendar.id
+	*/
+	String  PAYROLL_WORK_PLACE_CALENDAR_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: PayrollWorkPlace_enterpriseActivity_id
+	* Hibernate value: PayrollWorkPlace.enterpriseActivity.id
+	*/
+	String  PAYROLL_WORK_PLACE_ENTERPRISE_ACTIVITY_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: PayrollWorkPlace_id
+	* Hibernate value: PayrollWorkPlace.id
+	*/
+	String  PAYROLL_WORK_PLACE_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: PayrollWorkPlace_workPlace_id
+	* Hibernate value: PayrollWorkPlace.workPlace.id
+	*/
+	String  PAYROLL_WORK_PLACE_WORK_PLACE_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[4];
 
 
 

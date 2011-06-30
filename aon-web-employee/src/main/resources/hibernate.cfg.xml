@@ -86,6 +86,7 @@
 		
 		<!-- AON-PAYROLL Mapping files -->
 		<mapping class="com.esferalia.aon.payroll.Agreement"/>
+		<mapping class="com.esferalia.aon.payroll.AgreementExtra"/>
 		<mapping class="com.esferalia.aon.payroll.AgreementLevel"/>
 		<mapping class="com.esferalia.aon.payroll.AgreementLevelCategory"/>
 		<mapping class="com.esferalia.aon.payroll.AgreementLevelData"/>
@@ -108,10 +109,10 @@
 		<mapping class="com.esferalia.aon.payroll.ContractLeaveDetail"/>
 		<mapping class="com.esferalia.aon.payroll.ContractPayment"/>
 		<mapping class="com.esferalia.aon.payroll.DeductionConcept"/>
-		<mapping class="com.esferalia.aon.payroll.EnterpriseAgreement"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatch"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>
+		<mapping class="com.esferalia.aon.payroll.PayrollWorkPlace"/>
 		<mapping class="com.esferalia.aon.payroll.Salary"/>
 		<mapping class="com.esferalia.aon.payroll.SalaryBonus"/>
 		<mapping class="com.esferalia.aon.payroll.SalaryCost"/>

@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<ui:decorate
+		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+		<ui:param name="controller" value="#{agreementExtra}" />
+		<ui:param name="skipResetButton" value="#{true}" />
+		<ui:define name="columns">	
+		
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_concept}" />
+			</f:facet>
+			<aon:outputText value="#{to.agreementPayment.paymentConcept.code}" rendered="#{formList}"/>
+			<aon:outputText value="(#{to.agreementPayment.paymentConcept.description})" rendered="#{formList}"/>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{to.agreementPayment.paymentConcept}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="idRequired" value="#{true}" />
+				<ui:param name="skipLabel" value="#{true}" />
+				<ui:param name="lookupRendered" value="#{formEdit}" />
+			</ui:include>
+			<f:facet name="footer">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{agreementExtra.to.agreementPayment.paymentConcept}" />
+					<ui:param name="skipNewButton" value="#{true}" />
+					<ui:param name="idRequired" value="#{true}" />
+					<ui:param name="skipLabel" value="#{true}" />
+					<ui:param name="lookupRendered" value="#{formNew}" />
+					<ui:param name="lookupSuffix" value="-New" />
+				</ui:include>
+			</f:facet>
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText for="startDate" value="#{bundle.aon_start_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.startDate}" rendered="#{formList}"/>
+			<aon:inputText id="startDate"
+				rendered="#{formEdit}" size="15" maxlength="32"
+				value="#{agreementExtra.to.startDate}" required="true" />
+			<f:facet name="footer">
+				<aon:inputText id="startDate-New"
+					rendered="#{formNew}" size="15" maxlength="32"
+					value="#{agreementExtra.to.startDate}" required="true" />
+			</f:facet>
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText for="endDate" value="#{bundle.aon_end_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.endDate}" rendered="#{formList}"/>
+			<aon:inputText id="endDate"
+				rendered="#{formEdit}" size="15" maxlength="32"
+				value="#{agreementExtra.to.endDate}" required="true" />
+			<f:facet name="footer">
+				<aon:inputText id="endDate-New"
+					rendered="#{formNew}" size="15" maxlength="32"
+					value="#{agreementExtra.to.endDate}" required="true" />
+			</f:facet>
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText for="issueDate"
+					value="#{payrollBundle.payroll_salary_issue_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.issueDate}" rendered="#{formList}"/>
+			<aon:inputText id="issueDate"
+				rendered="#{formEdit}" size="15" maxlength="32"
+				value="#{agreementExtra.to.issueDate}" required="true" />
+			<f:facet name="footer">
+				<aon:inputText id="issueDate-New"
+					rendered="#{formNew}" size="15" maxlength="32"
+					value="#{agreementExtra.to.issueDate}" required="true" />
+			</f:facet>
+		</aon:column>
+				
+		</ui:define>
+	</ui:decorate>
+	
+</ui:composition>

@@ -32,19 +32,23 @@
 			<aon:panelTabSet>
 				<aon:panelTab id="payment" disabled="#{agreementLevel.model==null}"
 					label="#{payrollBundle.payroll_salary_payment}">
-					
 					<aon:div style="font-size: 0.9em;">
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
 							<ui:param name="controller" value="#{agreementPayment}" />
 							<ui:param name="skipScopeColumn" value="true" />
 						</ui:include>
 					</aon:div>
-					
+				</aon:panelTab>
+
+				<aon:panelTab id="extra" disabled="#{agreementLevel.model==null}"
+					label="#{payrollBundle.payroll_agreementExtra}">
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/extra/grid.xhtml" >
+					</ui:include>
 				</aon:panelTab>
 
 				<aon:panelTab id="group" label="#{payrollBundle.payroll_agreementLevel_module}">
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/level/editGridSalaryTable.xhtml" >
-						</ui:include>
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/level/editGridSalaryTable.xhtml" >
+					</ui:include>
 				</aon:panelTab>
 			</aon:panelTabSet>								
 		</c:if>
