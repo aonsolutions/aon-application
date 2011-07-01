@@ -128,12 +128,13 @@
 							
 						<!-- Move button  -->
 						<aon:commandButton
-							id="moveButton" reRender="aonStatus"
+							id="moveButton" reRender="folderWindow"
 							title="#{webmailBundle.webmail_movemail}"
 							value="#{webmailBundle.webmail_movemail}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-move">
-							<rich:componentControl for="folderModalPanel" operation="show" event="onclick"/>
-						</aon:commandButton>									
+							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+								value="#{true}" />							
+						</aon:commandButton>			
 		
 						<aon:commandButton
 							id="back" immediate="true"
@@ -284,12 +285,14 @@
 					</aon:div>
 				</aon:div>
 			
+			</aon:form>
+			
+			<aon:form>
 				<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/moveMessages.xhtml">
 					<aon:methodParam name="moveMessagesActionListener" value="#{webmailTree.moveMessageToFolder}" type="nodeSelectListener" />
 					<aon:methodParam name="moveMessagesAction" value="#{webmailMessage.getReturnAction}" />
 				</ui:include>
-			
-			</aon:form>
+			</aon:form>			
 			
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/addContact.xhtml" />
 			

@@ -133,7 +133,8 @@ public class FoldersTreeBean implements IWebMailConstants {
 		AonFolder destinyFolder = (AonFolder) tree.getRowData();
    		MessageController message = (MessageController)AonUtil.getRegisteredBean(IWebMailConstants.BEAN_MESSAGE);
    		message.moveSelectedMessage(destinyFolder);
-   		getFolderController().updateModel();
+   		getFolderController().refresh();
+   		getFolderController().resetCurrentPage();
 	}
 
 	public FolderController getFolderController() {

@@ -58,12 +58,12 @@
 						</aon:commandButton>
 		
 						<!-- Move button  -->
-						<aon:commandButton id="moveButton" reRender="aonStatus"
+						<aon:commandButton id="moveButton" reRender="folderWindow"
 							title="#{webmailBundle.webmail_movemail}"
 							value="#{webmailBundle.webmail_movemail}"
 							styleClass="aon-finding-toolbar-item aon-icon-mail-move">
-							<rich:componentControl for="folderModalPanel" operation="show"
-								event="onclick" />
+							<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+								value="#{true}" />							
 						</aon:commandButton>
 						
 						<!-- Purge button  -->						
@@ -134,10 +134,12 @@
 
 			</aon:panelGrid>
 
+		</aon:form>
+
+		<aon:form>
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/moveMessages.xhtml">
 				<aon:methodParam name="moveMessagesActionListener" value="#{webmailTree.moveMessagesToFolder}" type="nodeSelectListener" />
 			</ui:include>
-
 		</aon:form>
 		
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailFolder/createFolder.xhtml" />

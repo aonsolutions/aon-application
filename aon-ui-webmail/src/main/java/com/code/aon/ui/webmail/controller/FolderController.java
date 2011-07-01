@@ -54,6 +54,8 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
 	
 	private Ordering dateOrder = Ordering.DESCENDING;
 	
+	private boolean showFolderWindow;
+	
 	public FolderController() {
 	}
 
@@ -100,11 +102,12 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
 			this.folder.close(true);
 		}
 		this.folder = folder;
-		if (this.folder!=null)
-			initFolderSelection();
+		if (this.folder!=null) {
+			refresh();
+		}
 	}
 
-	private void initFolderSelection(){
+	public void refresh(){
 		try {
 			folder.refresh();
 		} catch (WebmailException e) {
@@ -505,6 +508,14 @@ public class FolderController implements IMessageContainer, IWebMailConstants {
 			AonUtil.addErrorMessage(th.getMessage());
 			throw new AbortProcessingException(th.getMessage(), th);
 		}
+	}
+
+	public boolean isShowFolderWindow() {
+		return showFolderWindow;
+	}
+
+	public void setShowFolderWindow(boolean showFolderWindow) {
+		this.showFolderWindow = showFolderWindow;
 	}	
 	
 }

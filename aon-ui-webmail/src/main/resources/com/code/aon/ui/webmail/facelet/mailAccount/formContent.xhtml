@@ -150,14 +150,14 @@
 					<aon:inputText id="MailAccount_draftFolder"
 						size="60" maxlength="64"
 						value="#{controller.to.draftFolder}" />
-					<aon:commandButton reRender="aonStatus"
+					<aon:commandButton reRender="folderWindow"
 						rendered="#{!controller.new and (controller.treeNode != null)}"
 						title="#{webmailBundle.webmail_folder_selection}"
 						value="&#160;" styleClass="aon-lookupButton aon-margin-left">
 						<f:setPropertyActionListener target="#{controller.selectedFolder}"
 							value="draftFolder" />
-						<rich:componentControl for="folderModalPanel" operation="show"
-							event="onclick" />
+						<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+							value="#{true}" />							
 					</aon:commandButton>
 				</aon:div>
 
@@ -167,14 +167,14 @@
 					<aon:inputText id="MailAccount_sentFolder"
 						size="60" maxlength="64"
 						value="#{controller.to.sentFolder}" />
-					<aon:commandButton reRender="aonStatus"
+					<aon:commandButton reRender="folderWindow"
 						rendered="#{!controller.new and (controller.treeNode != null)}"
 						title="#{webmailBundle.webmail_folder_selection}"
 						value="&#160;" styleClass="aon-lookupButton aon-margin-left">
 						<f:setPropertyActionListener target="#{controller.selectedFolder}"
 							value="sentFolder" />
-						<rich:componentControl for="folderModalPanel" operation="show"
-							event="onclick" />
+						<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+							value="#{true}" />							
 					</aon:commandButton>						
 				</aon:div>
 
@@ -184,14 +184,14 @@
 					<aon:inputText id="MailAccount_trashFolder"
 						size="60" maxlength="64"
 						value="#{controller.to.trashFolder}" />
-					<aon:commandButton reRender="aonStatus"
+					<aon:commandButton reRender="folderWindow"
 						rendered="#{!controller.new and (controller.treeNode != null)}"
 						title="#{webmailBundle.webmail_folder_selection}"
 						value="&#160;" styleClass="aon-lookupButton aon-margin-left">
 						<f:setPropertyActionListener target="#{controller.selectedFolder}"
 							value="trashFolder" />
-						<rich:componentControl for="folderModalPanel" operation="show"
-							event="onclick" />
+						<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+							value="#{true}" />							
 					</aon:commandButton>												
 				</aon:div>
 
@@ -201,14 +201,14 @@
 					<aon:inputText id="MailAccount_spamFolder"
 						size="60" maxlength="64"
 						value="#{controller.to.spamFolder}" />
-					<aon:commandButton reRender="aonStatus"
+					<aon:commandButton reRender="folderWindow"
 						rendered="#{!controller.new and (controller.treeNode != null)}"
 						title="#{webmailBundle.webmail_folder_selection}"
 						value="&#160;" styleClass="aon-lookupButton aon-margin-left">
 						<f:setPropertyActionListener target="#{controller.selectedFolder}"
 							value="spamFolder" />
-						<rich:componentControl for="folderModalPanel" operation="show"
-							event="onclick" />
+						<f:setPropertyActionListener target="#{webmailFolder.showFolderWindow}"
+							value="#{true}" />							
 					</aon:commandButton>							
 				</aon:div>
 
