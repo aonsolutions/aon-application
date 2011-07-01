@@ -40,7 +40,6 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		try {
 			controller.reset();
-//			controller.initMainActiviy();			
 			controller.initRegistryInfo();					
 			controller.initMainWorkPlace();			
 			controller.initMainDirStaff();			

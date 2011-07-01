@@ -36,6 +36,7 @@ public interface IPayrollConstants {
 	String CONTRACT_DEDUCTION_CONTROLLER = "contractDeduction";
 	String CONTRACT_DATA_CONTROLLER = "contractData";
 	String CONTRACT_GENERATION_WIZARD_CONTROLLER = "contractGenerationWizard";
+	String ENTERPRISE_CONTROLLER="enterprise";
 	String ENTERPRISE_DIR_STAFF_CONTROLLER="enterpriseDirStaff";
 	String ENTERPRISE_ACTIVITY_CONTROLLER = "enterpriseActivity";
 	String ENTERPRISE_CCC_CONTROLLER = "enterpriseCCC";

@@ -25,8 +25,6 @@ import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
-import com.code.aon.company.enumeration.CCCType;
-import com.code.aon.company.enumeration.EnterpriseActivityType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;

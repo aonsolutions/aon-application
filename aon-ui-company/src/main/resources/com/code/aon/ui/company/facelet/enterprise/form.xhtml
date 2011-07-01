@@ -39,11 +39,13 @@
 
 					<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">
 
-						<aon:panelTab id="activities" label="#{companyBundle.company_activity_module}">
-							<ui:include	src="/com/code/aon/ui/company/facelet/enterpriseActivity/gridContent.xhtml" >
-								<ui:param name="controller" value="#{enterpriseActivity}" />
-							</ui:include>
-						</aon:panelTab>
+						<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+							<aon:panelTab id="activities" label="#{companyBundle.company_activity_module}">
+								<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/enterpriseActivity/gridContent.xhtml" >
+									<ui:param name="controller" value="#{enterpriseActivity}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
 						
 						<aon:panelTab id="workplace" label="#{companyBundle.company_workplaces}">
 							<ui:include	src="/com/code/aon/ui/company/facelet/workplace/tab_grid.xhtml" >

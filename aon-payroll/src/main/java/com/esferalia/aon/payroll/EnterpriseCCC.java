@@ -17,15 +17,15 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.company.enumeration.CCCType;
 import com.code.aon.geozone.GeoZone;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 
 @Entity
 @Table(name="enterprise_ccc")
 public class EnterpriseCCC implements ITransferObject {
 	
-	private static final long serialVersionUID = 1963813351162602177L;
-	
+	private static final long serialVersionUID = 4491397866033040466L;
+
 	private Integer id;
     private String ccc;
 	private CCCType type;

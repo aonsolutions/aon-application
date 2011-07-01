@@ -23,15 +23,15 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.enumeration.EnterpriseActivityType;
 import com.code.aon.config.CNAE;
+import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 
 @Entity
 @Table(name="enterprise_activity")
 public class EnterpriseActivity implements ITransferObject {
 	
-	private static final long serialVersionUID = 5196325202406492589L;
-	
+	private static final long serialVersionUID = 7441683008416320456L;
+
 	private Integer id;
     private String description;
     private Enterprise enterprise; 

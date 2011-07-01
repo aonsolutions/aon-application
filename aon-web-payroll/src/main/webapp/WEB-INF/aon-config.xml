@@ -15,7 +15,7 @@
 		/>
 	</config:config>	
 
-	<company:config version="1.3" xmlns:company="http://www.esferalia.com/company">
+	<company:config version="1.4" xmlns:company="http://www.esferalia.com/company">
 		<company:company 
 			showRegistryBank="true" 
 			showCompanyOtherData="true"
@@ -30,6 +30,7 @@
 			showDirStaff="true"
 			standalone="false"
 			showEnterpriseParams="true"
+			showPayrollData="true"
 		/>
 	</company:config>
 	

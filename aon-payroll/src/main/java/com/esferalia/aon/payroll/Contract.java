@@ -120,8 +120,8 @@ public class Contract implements ITransferObject, ISalaryProxy {
 
 	@ManyToOne
     @JoinColumn( name="enterprise_activity")	
-	@ForeignKey(name = "FK_CONTRACT_ACTIVITY")
-	@Index(name = "IDX_CONTRACT_ACTIVITY")
+	@ForeignKey(name = "FK_CONTRACT_ENTERPRISE_ACTIVITY")
+	@Index(name = "IDX_CONTRACT_ENTERPRISE_ACTIVITY")
 	public EnterpriseActivity getActivity() {
 		return activity;
 	}

@@ -7,14 +7,16 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<c:if test="#{enterprise.activity != null}" >	
-		<aon:outputText value="#{companyBundle.company_activity}" />
-		<aon:outputText value="#{enterprise.activity.cnae.code} - #{enterprise.activity.description}" />
-	</c:if>
-
-	<c:if test="#{enterprise.ccc != null}" >	
-		<aon:outputText value="#{companyBundle.company_enterprise_ccc}" />
-		<aon:outputText value="#{enterprise.ccc.ccc}" />
+	<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+		<c:if test="#{enterprisePayroll.activity != null}" >	
+			<aon:outputText value="#{companyBundle.company_activity}" />
+			<aon:outputText value="#{enterprisePayroll.activity.cnae.code} - #{enterprisePayroll.activity.description}" />
+		</c:if>
+	
+		<c:if test="#{enterprisePayroll.ccc != null}" >	
+			<aon:outputText value="#{companyBundle.company_enterprise_ccc}" />
+			<aon:outputText value="#{enterprisePayroll.ccc.ccc}" />
+		</c:if>
 	</c:if>
 
 	<aon:outputText value="#{companyBundle.company_workplace}" />
