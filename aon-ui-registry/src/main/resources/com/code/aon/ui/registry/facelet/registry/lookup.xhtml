@@ -15,7 +15,8 @@
 
 		<ui:define name="afterLookupContent">
 			<c:if test="#{skipSuggestText}">
-				<aon:inputText value="#{lookupInputNameValue}"
+				<aon:inputText id="#{pojoName}_name#{lookupSuffix}"
+					value="#{lookupInputNameValue}" 
 					disabled="#{lookupDisabled}" size="#{lookupInputSuggestSize}"
 					rendered="#{lookupInputNameValue != null}" />
 			</c:if>

@@ -80,7 +80,7 @@
 					<aon:panelGrid id="invoiceTables1" columns="4" style="width: 100%;"
 						columnClasses="aon-panelGrid-odd aon-width-100
 							,aon-panelGrid-even aon-width-500
-							,aon-panelGrid-odd aon-width-100
+							,aon-panelGrid-odd aon-width-80
 							,aon-panelGrid-even aon-width-auto">
 
 						<aon:outputLabel for="Account_invoiceType"
@@ -225,6 +225,8 @@
 								<ui:param name="idRequired" value="#{true}" />						
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="skipSuggestText" value="#{invoiceEntry.header.registry != null and invoiceEntry.header.registry.id != null}" />
+								<ui:param name="lookupInputOnFocus" value="Customer_name" />
+								<ui:param name="lookupInputSuggestSize" value="50" />
 							</ui:include>
 							<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
 								<ui:param name="lookupForRegistry" value="#{true}" />
@@ -237,6 +239,8 @@
 								<ui:param name="idRequired" value="#{true}" />						
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="skipSuggestText" value="#{invoiceEntry.header.registry != null and invoiceEntry.header.registry.id != null}" />
+								<ui:param name="lookupInputOnFocus" value="Supplier_name" />
+								<ui:param name="lookupInputSuggestSize" value="50" />
 							</ui:include>
 							<ui:include src="/com/code/aon/ui/finance/facelet/creditor/lookup.xhtml" >
 								<ui:param name="lookupForRegistry" value="#{true}" />
@@ -249,6 +253,8 @@
 								<ui:param name="idRequired" value="#{true}" />						
 								<ui:param name="skipLabel" value="#{true}" />
 								<ui:param name="skipSuggestText" value="#{invoiceEntry.header.registry != null and invoiceEntry.header.registry.id != null}" />
+								<ui:param name="lookupInputOnFocus" value="Creditor_name" />
+								<ui:param name="lookupInputSuggestSize" value="50" />
 							</ui:include>
 						</h:panelGrid>
 
@@ -271,7 +277,7 @@
 							</aon:selectOneMenu>
 							<aon:inputText id="Registry_document" 
 								style="margin-left: 5px;" disabled="#{invoiceEntry.newDetail}"
-								value="#{invoiceEntry.header.document}" size="16" maxlength="16"
+								value="#{invoiceEntry.header.document}" size="10" maxlength="16"
 								reRender="documentPanel_icon"
 								onblur="toUpperCase(this);">
 								<f:validateLength minimum="1" maximum="16" />
