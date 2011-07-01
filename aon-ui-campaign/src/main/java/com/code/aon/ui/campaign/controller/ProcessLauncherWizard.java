@@ -201,7 +201,6 @@ public class ProcessLauncherWizard implements Serializable {
 		this.availableDossiers = availableDossiers;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void loadAvailableDossiers() {
 		setAvailableDossiers(new LinkedList<SelectItem>());
 		try {
@@ -220,7 +219,7 @@ public class ProcessLauncherWizard implements Serializable {
 					.getFieldName(IProjectAlias.DOSSIER_CUSTOMER_ID));
 			criteria.addOrder(managerBean
 					.getFieldName(IProjectAlias.DOSSIER_NUMBER));
-			Iterator iterator = managerBean.getList(criteria).iterator();
+			Iterator<?> iterator = managerBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				Dossier dossier = (Dossier) iterator.next();
 				StringBuilder sb = new StringBuilder(dossier.getNumber());
@@ -259,7 +258,7 @@ public class ProcessLauncherWizard implements Serializable {
 		this.dossiersModel = dossiersModel;
 	}
 
-	private void initializeController() {
+	private void initializeController() throws ManagerBeanException {
 		setProcess(null);
 		setDescription(null);
 		setStartDate(new Date());
@@ -267,7 +266,7 @@ public class ProcessLauncherWizard implements Serializable {
 		setWorkGroup(null);
 		setType(CampaignType.MANUAL);
 		setStatus(CampaignStatus.IN_PROGRESS);
-		setCustomer(new Customer());
+		setCustomer( (Customer) BeanManager.getManagerBean(Customer.class).createNewTo() );
 		setDossier(null);
 		setDossierType(null);
 		setDossierNumber(null);
@@ -289,13 +288,26 @@ public class ProcessLauncherWizard implements Serializable {
 	}
 
 	public String start() {
-		initializeController();
-		return determineStep();
+		try {
+			initializeController();
+			return determineStep();
+		} catch (ManagerBeanException e) {
+			String msg = "Error al inicializar el lanzador.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+		
 	}
 
 	public String startWithProcess() {
-		initializeController();
-		return determineStep();
+		try {
+			initializeController();
+			return determineStep();
+		} catch (ManagerBeanException e) {
+			String msg = "Error al inicializar el lanzador.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
 	}
 
 	public String previous() {
@@ -396,19 +408,25 @@ public class ProcessLauncherWizard implements Serializable {
 	}
 
 	public void addNewDossier(ActionEvent event) {
-		Dossier dossier = new Dossier();
-		dossier.setCustomer(getCustomer());
-		dossier.setDossierType(getDossierType());
-		dossier.setNumber(getDossierNumber());
-		addDossier(dossier);
+		try {
+			Dossier dossier = new Dossier();
+			dossier.setCustomer(getCustomer());
+			dossier.setDossierType(getDossierType());
+			dossier.setNumber(getDossierNumber());
+			addDossier(dossier);
+		} catch (ManagerBeanException e) {
+			String msg = "Error al añadir el expediente.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
 	}
 
-	private void addDossier(Dossier dossier) {
+	private void addDossier(Dossier dossier) throws ManagerBeanException {
 		CampaignDossier cd = new CampaignDossier();
 		cd.setDossier(dossier);
 		if (validate(cd)) {
 			getDossiers().add(cd);
-			setCustomer(new Customer());
+			setCustomer( (Customer) BeanManager.getManagerBean(Customer.class).createNewTo() );
 			setAvailableDossiers(null);
 		}
 	}
@@ -437,27 +455,20 @@ public class ProcessLauncherWizard implements Serializable {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void removeDossier(ActionEvent event) {
 		int index = getDossiersModel().getRowIndex();
-		List list = (List) getDossiersModel().getWrappedData();
+		List<?> list = (List<?>) getDossiersModel().getWrappedData();
 		list.remove(index);
 	}
 
-	@SuppressWarnings("unchecked")
 	public String finalice() {
 		try {
-			IManagerBean dossierBean = BeanManager
-					.getManagerBean(Dossier.class);
-			IManagerBean campaignDossierBean = BeanManager
-					.getManagerBean(CampaignDossier.class);
-			IManagerBean campaignBean = BeanManager
-					.getManagerBean(Campaign.class);
-			IManagerBean processDetailBean = BeanManager
-					.getManagerBean(ProcessDetail.class);
+			IManagerBean dossierBean = BeanManager.getManagerBean(Dossier.class);
+			IManagerBean campaignDossierBean = BeanManager.getManagerBean(CampaignDossier.class);
+			IManagerBean campaignBean = BeanManager.getManagerBean(Campaign.class);
+			IManagerBean processDetailBean = BeanManager.getManagerBean(ProcessDetail.class);
 			IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
-			IManagerBean activityProcessBean = BeanManager
-					.getManagerBean(ActivityProcess.class);
+			IManagerBean activityProcessBean = BeanManager.getManagerBean(ActivityProcess.class);
 
 			Criteria criteria = new Criteria();
 			String alias = processDetailBean
@@ -465,7 +476,7 @@ public class ProcessLauncherWizard implements Serializable {
 			criteria.addEqualExpression(alias, getProcess().getId());
 			criteria.addOrder(processDetailBean
 					.getFieldName(ICampaignAlias.PROCESS_DETAIL_POSITION));
-			List list = processDetailBean.getList(criteria);
+			List<?> list = processDetailBean.getList(criteria);
 			if (list.size() == 0) {
 				String msg = "El proceso seleccionado no tiene acciones";
 				AonUtil.addErrorMessage(msg);
