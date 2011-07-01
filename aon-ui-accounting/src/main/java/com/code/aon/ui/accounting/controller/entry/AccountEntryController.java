@@ -50,6 +50,7 @@ public class AccountEntryController extends BasicController {
 	private boolean updatableViaWizard;
 	private boolean aonInvoice;
 	
+	private String duplicatePeriod;
 	private Date duplicateDate;
 	private String duplicateConcept;
 	
@@ -366,6 +367,7 @@ public class AccountEntryController extends BasicController {
   	public void showDuplicateEntryPanel(ActionEvent event  ) {
 		try {
 	  		AccountEntry entry = (AccountEntry) getTo();
+	  		setDuplicatePeriod(entry.getAccountPeriod());
 	  		setDuplicateDate(entry.getEntryDate());
 	  		IController detail = FormUtil.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_DETAIL_NAME);
 	  		List<?> list = (List<?>) detail.getModel().getWrappedData();
@@ -387,6 +389,12 @@ public class AccountEntryController extends BasicController {
 	}
 	
 	
+	public String getDuplicatePeriod() {
+		return duplicatePeriod;
+	}
+	public void setDuplicatePeriod(String duplicatePeriod) {
+		this.duplicatePeriod = duplicatePeriod;
+	}
 	public Date getDuplicateDate() {
 		return duplicateDate;
 	}
@@ -435,7 +443,7 @@ public class AccountEntryController extends BasicController {
     		AccountEntry entry = (AccountEntry) this.getModel().getRowData();
     		AccountEntry dup = new AccountEntry();
     		
-    		dup.setAccountPeriod(entry.getAccountPeriod());
+    		dup.setAccountPeriod(getDuplicatePeriod());
     		dup.setEntryDate(getDuplicateDate());
     		dup.setType(entry.getType());
     		dup.setSecurityLevel(entry.getSecurityLevel());
