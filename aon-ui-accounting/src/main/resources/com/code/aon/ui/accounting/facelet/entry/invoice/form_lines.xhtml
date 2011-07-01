@@ -277,7 +277,7 @@
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="lookupSuffix" value="-New" />
-							<ui:param name="lookupTo" value="#{accountEntryDetail.to.balancingAccount}" />
+							<ui:param name="lookupTo" value="#{invoiceEntry.currentDetail.account}" />
 							<ui:param name="lookupRendered" value="#{invoiceEntry.newDetail}" />
 							<ui:param name="skipGoToButton" value="#{true}" />
 							<ui:param name="skipSuggestText" value="#{true}" />
