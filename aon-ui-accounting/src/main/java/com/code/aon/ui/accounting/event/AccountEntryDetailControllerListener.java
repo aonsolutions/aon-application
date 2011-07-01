@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.accounting.IAccountingConstants;
@@ -62,11 +63,15 @@ public class AccountEntryDetailControllerListener extends ControllerAdapter {
 					detail.setDebit(CommonUtil.round(imp*(-1)));
 				}
 				detail.setConcept(getConcept());
-				detail.setAccount(getBalancingAccount());
+				if (getBalancingAccount() != null && getBalancingAccount().getId() != null) {
+					detail.setAccount(getBalancingAccount());
+				}else {
+					detail.setAccount((Account) BeanManager.getManagerBean(Account.class).createNewTo());
+				}
 				detail.setBalancingAccount(getAccount());
 			}
-			setBalancingAccount(null);
-			setAccount(null);
+			setBalancingAccount((Account) BeanManager.getManagerBean(Account.class).createNewTo());
+			setAccount((Account) BeanManager.getManagerBean(Account.class).createNewTo());
 			setConcept(null);
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Unable to initialize pojo. " + e.getMessage());

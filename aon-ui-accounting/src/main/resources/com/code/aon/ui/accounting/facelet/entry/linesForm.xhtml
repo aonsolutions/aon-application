@@ -102,15 +102,17 @@
 						<ui:param name="lookupTo" value="#{accountEntryDetail.to.account}" />
 						<ui:param name="lookupRendered" value="#{to==accountEntryDetail.to and accountEntryDetail.updatable}" />
 						<ui:param name="idRequired" value="true" />				
+						<ui:param name="lookupInputOnFocus" value="AccountEntryDetail_concept-Edit" />
 					</ui:include>
 					<f:facet name="footer">
 						<aon:div styleClass="aon-nowrap">
 							<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml" >
 								<ui:param name="skipLabel" value="#{true}" />
-								<ui:param name="lookupSuffix" value="-NEW" />
+								<ui:param name="lookupSuffix" value="-New" />
 								<ui:param name="lookupTo" value="#{accountEntryDetail.to.account}" />
 								<ui:param name="lookupRendered" value="#{accountEntryDetail.new}" />
-								<ui:param name="idRequired" value="true" />				
+								<ui:param name="idRequired" value="true" />
+								<ui:param name="lookupInputOnFocus" value="AccountEntryDetail_concept-New" />				
 							</ui:include>
 						</aon:div>
 					</f:facet>
@@ -129,7 +131,9 @@
 						required="true" size="15" maxlength="32"/>
 					<f:facet name="footer">
 						<aon:div>
-							<rich:comboBox suggestionValues="#{accountingCollections.conceptsDescriptions}"
+							<rich:comboBox
+								id="AccountEntryDetail_concept-New" 
+								suggestionValues="#{accountingCollections.conceptsDescriptions}"
 								value="#{accountEntryDetail.to.concept}"
 								maxlength="32" width="150"
 								directInputSuggestions="true"
@@ -251,6 +255,7 @@
 						<ui:param name="skipNewButton" value="#{true}" />
 						<ui:param name="skipGoToButton" value="#{true}" />
 						<ui:param name="skipSuggestText" value="#{true}" />
+						<ui:param name="lookupInputOnFocus" value="AccountEntryDetail_documentNumber-Edit" />
 					</ui:include>
  					<f:facet name="footer">
 						<aon:div styleClass="aon-nowrap">
@@ -262,6 +267,7 @@
 								<ui:param name="skipNewButton" value="#{true}" />
 								<ui:param name="skipGoToButton" value="#{true}" />
 								<ui:param name="skipSuggestText" value="#{true}" />
+								<ui:param name="lookupInputOnFocus" value="AccountEntryDetail_documentNumber-New" />
 							</ui:include>
 						</aon:div>
 					</f:facet>

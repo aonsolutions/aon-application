@@ -18,12 +18,12 @@
 			value="if (this.value.indexOf('.') != -1) {
 						arr = this.value.split('.');
 						if (arr.length > 1) {
-							prefix = arr[0];
-							suffix = arr[1];
-							for (i=(prefix.length + suffix.length); i&lt;9; i++) {
-								prefix += '0';
+							account_prefix = arr[0];
+							account_suffix = arr[1];
+							for (i=(account_prefix.length + account_suffix.length); i&lt;9; i++) {
+								account_prefix += '0';
 							}
-							this.value = prefix + suffix;
+							this.value = account_prefix + account_suffix;
 						}
 					};"/>		
 		<ui:param name="searchButtonTitle" value="#{accountBundle.account_selection}" />
