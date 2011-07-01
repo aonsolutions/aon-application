@@ -21,12 +21,12 @@
 					value="#{to.accountDescription}" />
 				<aon:selectOneMenu id="RegistryBank_id" rendered="#{formEdit}"
 					value="#{accountManagerRegistryBank.to.registryBank}">
-					<f:selectItems value="#{companyCollections.companyBanks}" />
+					<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="RegistryBank_id-New" rendered="#{formNew}"
 						value="#{accountManagerRegistryBank.to.registryBank}">
-						<f:selectItems value="#{companyCollections.companyBanks}" />
+						<f:selectItems value="#{companyCollections.allCompanyBanks}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>
