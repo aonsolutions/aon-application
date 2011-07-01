@@ -7,8 +7,8 @@ import java.util.Map;
 import javax.print.CancelablePrintJob;
 
 import com.code.aon.common.enumeration.Country;
-import com.code.aon.company.enumeration.CCCType;
-import com.code.aon.company.enumeration.EnterpriseActivityType;
+import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
