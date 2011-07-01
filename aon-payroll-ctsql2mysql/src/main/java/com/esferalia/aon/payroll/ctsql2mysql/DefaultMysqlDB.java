@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -362,7 +363,6 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 			fullName.append(" ");
 			fullName.append(secondSurname);
 		}
-		
 		Integer registry = super.insertRegistry(
 				document,  
 				enum2short(docType),
@@ -370,7 +370,8 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 				fullName.toString(), 
 				alias, 
 				type ,
-				country != null ? country.getValue() : null);
+				country != null ? country.getValue() : null,
+				enum2short(SecurityLevel.OFFICIAL));
 		super.insertPerson(registry, birthDate, gender, maritalStatus,socialSecurityNum, name, firstSurname, secondSurname);
 		return registry;
 	}
@@ -386,7 +387,8 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 				name, 
 				alias, 
 				type, 
-				country != null ? country.getValue() : null);
+				country != null ? country.getValue() : null,
+				enum2short(SecurityLevel.OFFICIAL));
 		super.insertEnterprise(registry, 
 				scope, 
 				null );		// TODO: ¿ Calendar ? 

@@ -14,6 +14,7 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 
 public class SQLContractPayment extends SQLCollection<IContractPayment> implements IContractPayment {
 	
+	public static final String PAYMENT_ALIAS = "payment";
 	
 	
 	public SQLContractPayment() {

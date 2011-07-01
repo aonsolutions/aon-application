@@ -9,6 +9,7 @@ public class SalaryCalculatorContext implements ISalaryCalculatorContext{
 	
 	private ISalaryProxy salaryProxy;
 	private Date issueDate;
+	private Date chargeDate;
 	private Date startDate;
 	private Date endDate;
 	private ExpressionContext ExpressionContext; 
@@ -56,5 +57,13 @@ public class SalaryCalculatorContext implements ISalaryCalculatorContext{
 	}
 	public void setExpressionContext(ExpressionContext expressionContext) {
 		ExpressionContext = expressionContext;
+	}
+	@Override
+	public Date getChargeDate() {
+		return chargeDate;
+	}
+	
+	public void setChargeDate(Date chargeDate) {
+		this.chargeDate = chargeDate;
 	}
 }

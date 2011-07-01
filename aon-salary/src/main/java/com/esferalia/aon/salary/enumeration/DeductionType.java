@@ -50,7 +50,7 @@ public enum DeductionType implements IResourceable {
 			visitor.visitNonStructuralOvertime(this);
 		}
 	},
-	IRPF(false)
+	IRPF(false, true)
 	{
 		@Override
 		public void accept(DeductionTypeVisitor visitor) {
@@ -90,10 +90,16 @@ public enum DeductionType implements IResourceable {
 	
 	
 	private boolean ssDeduction = false;
+	private boolean taxDeduction = false;
 	
 	
 	private DeductionType(boolean ssDeduction) {
 		this.ssDeduction = ssDeduction;
+	}
+
+	private DeductionType(boolean ssDeduction, boolean taxDeduction) {
+		this.ssDeduction = ssDeduction;
+		this.taxDeduction = taxDeduction;
 	}
 
 	public abstract void accept( DeductionTypeVisitor visitor );
@@ -125,4 +131,7 @@ public enum DeductionType implements IResourceable {
 		return ssDeduction;
 	}
 	
+	public boolean isTaxDeduction() {
+		return taxDeduction;
+	}
 }

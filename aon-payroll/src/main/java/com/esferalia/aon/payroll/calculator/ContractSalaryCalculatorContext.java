@@ -50,6 +50,11 @@ public class ContractSalaryCalculatorContext implements IContractSalaryCalculato
 	}
 	
 	@Override
+	public Date getChargeDate() {
+		return ctx.getChargeDate();
+	}
+	
+	@Override
 	public Date getIssueDate() {
 		return ctx.getIssueDate();
 	}

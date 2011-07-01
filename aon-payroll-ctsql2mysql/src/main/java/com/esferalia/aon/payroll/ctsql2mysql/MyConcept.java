@@ -58,6 +58,9 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 		return month.shortValue();
 	}
 	
+	public static String getCurrent(String variable) {
+		return variable + "_" + CURRENT;
+	}
 
 	public static String getQuoteExprFormat(String tipoCot ) {
 		return QUOTE_EXPRESSIONS.get(tipoCot);
@@ -83,7 +86,7 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 		return null;
 	}
 
-	public static String getExprFormat(String calculo, String indCom, String codeApl) 
+	public static String getExprFormat(String calculo, String indCom, String codeApl, String redExt) 
 	throws SQLException {
 		if (calculo.equals("1")) {
 			return String.format("%%1$s * %s / %s", 
@@ -105,7 +108,18 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 				return String.format("%%1$s * %s / 30", 
 						HOLIDAYS ); // Jodete
 			}
-			
+			if ("P".equals(indCom)) {
+				if ( "M".equalsIgnoreCase(redExt)) {
+					return String.format("%%1$s * %s / %s", 
+							WORKED_MONTHS , SALARY_MONTHS);
+				} 
+				if ( "S".equalsIgnoreCase(redExt)) {
+					return String.format("%%1$s * %s / %s", 
+							WORKED_WEEKS , SALARY_WEEKS );
+				}
+				return String.format("%%1$s * %s / %s", 
+						WORKED_DAYS , SALARY_DAYS );
+			} // paga extra 
 		}else if (calculo.equals("7")) {
 			return String.format("%s * %%1$s / 100 ", 
 					SENIOR_BASE);
@@ -113,15 +127,15 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 		return "%1$s";
 	}
 	
-	public static String getExprFormat(String calculo, BigDecimal importe, String indCom, String codeApl) 
+	public static String getExpr(String calculo, BigDecimal importe, String indCom, String codeApl, String redExt) 
 	throws SQLException {
-		String format = getExprFormat(calculo, indCom, codeApl);
+		String format = getExprFormat(calculo, indCom, codeApl, redExt);
 		return DefaultMysqlDB.format(format, String.format("%.3f", importe ) );
 	}
 	
-	public static String getExprFormat(String calculo, String variable, String indCom, String codeApl) 
+	public static String getExpr(String calculo, String variable, String indCom, String codeApl, String redExt) 
 	throws SQLException {
-		String format = getExprFormat(calculo, indCom, codeApl);
+		String format = getExprFormat(calculo, indCom, codeApl, redExt);
 		return DefaultMysqlDB.format(format, variable );
 	}
 

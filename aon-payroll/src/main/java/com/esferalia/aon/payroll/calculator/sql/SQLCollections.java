@@ -32,6 +32,7 @@ public class SQLCollections {
 
 			contractPayment.type = sqlContractPayment.getType();
 			contractPayment.name = sqlContractPayment.getName();
+			contractPayment.month = sqlContractPayment.getMonth();
 			contractPayment.startDate = sqlContractPayment.getStartDate();
 			contractPayment.endDate = sqlContractPayment.getEndDate();
 			contractPayment.expression = sqlContractPayment.getExpression();

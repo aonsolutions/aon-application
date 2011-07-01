@@ -1,8 +1,10 @@
 package com.esferalia.aon.salary.expression;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -26,6 +28,7 @@ import org.mvel2.templates.util.TemplateOutputStream;
 import org.mvel2.util.StringAppender;
 
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
 
@@ -46,11 +49,19 @@ public class ExpressionContext {
 
 
 	public ExpressionContext() {
-		variables = new Variables();
+		variables = new Variables(null);
+	}
+
+	public ExpressionContext(NotFoundHandler notFoundHandler) {
+		variables = new Variables(notFoundHandler);
 	}
 	
 	public ExpressionContext(ExpressionContext expressionContext){
-		variables = new Variables(expressionContext.variables);
+		this(expressionContext, null);
+	}
+
+	public ExpressionContext(ExpressionContext expressionContext, NotFoundHandler notFoundHandler){
+		variables = new Variables(expressionContext.variables, notFoundHandler);
 	}
 	
 	public Collection<IExpression> getValues() {
@@ -163,7 +174,6 @@ public class ExpressionContext {
 
 	//Pattern pattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*");
 	private static final Pattern VARIABLE_PATTERN = 
-		Pattern.compile("[A-Z_][A-Z0-9_]*");
-	
+		Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
 	
 }

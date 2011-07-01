@@ -8,28 +8,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 
+import com.code.aon.common.dao.CriteriaUtilities;
+import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
+
 
 public class SQLAgreementPaymentsFactory 
 	implements LRUCacheFactory<Integer, Collection<IContractPayment>> {
 
 	private static final String SQL = 
 		"SELECT * " 
-		+" FROM agreement_payment"
+		+" FROM agreement_payment AS " + SQLContractPayment.PAYMENT_ALIAS
 		+" LEFT JOIN  payment_concept" 							// LEFT JOIN: payment_concept puede ser NULL
 		+"	ON payment_concept = payment_concept.id"
-		+" WHERE agreement IN (SELECT agreement FROM agreement_level WHERE id = ? )"
-		+" AND start_date <= ?"
-		+" AND ( end_date IS NULL"
-		+" OR end_date >= ? )";
-
-	private static final String SQL_ = 
-		"SELECT * " 
-		+" FROM `agreement_level_payment`"
-		+" LEFT JOIN  payment_concept" 							// LEFT JOIN: payment_concept puede ser NULL
-		+"	ON payment_concept = payment_concept.id"	
-		+" WHERE agreement_level = ?"
+		+" WHERE agreement = ?"
 		+" AND start_date <= ?"
 		+" AND ( end_date IS NULL"
 		+" OR end_date >= ? )";
@@ -38,9 +31,14 @@ public class SQLAgreementPaymentsFactory
 
 	public SQLAgreementPaymentsFactory(Connection connection,Date startDate, Date endDate ) 
 	throws SQLException {
-		initAgreementStmt(connection, startDate, endDate);
+		this(connection, startDate, endDate, null);
 	}
 	
+	public SQLAgreementPaymentsFactory(Connection connection,Date startDate, Date endDate, Criteria criteria ) 
+	throws SQLException {
+		initAgreementStmt(connection, startDate, endDate, criteria);
+	}
+
 	public void close() 
 	throws SQLException {
 		if ( stmt != null ) {
@@ -50,14 +48,14 @@ public class SQLAgreementPaymentsFactory
 	}
 	
 	@Override
-	public Collection<IContractPayment> create(Integer agreementLevelId) {
-		if ( agreementLevelId == null ){
+	public Collection<IContractPayment> create(Integer agreementId) {
+		if ( agreementId == null ){
 			return Collections.emptyList();
 		}// LRUCache<K,V> as LinkedHasMap accepts null keys and/or values.
 		
 		ResultSet rs = null;
 		try {
-			stmt.setInt(1, agreementLevelId);
+			stmt.setInt(1, agreementId);
 			rs = stmt.executeQuery();
 			return SQLCollections.paymentsCollection(rs);
 		}catch (SQLException e) {
@@ -81,10 +79,11 @@ public class SQLAgreementPaymentsFactory
 		super.finalize();
 	}
 
-	private void initAgreementStmt(Connection connection, Date startDate, Date endDate)
+	private void initAgreementStmt(Connection connection, Date startDate, Date endDate, Criteria criteria)
 	throws SQLException {
+		String sql = CriteriaUtilities.toSQLString(criteria, SQL);    
 		this.stmt  = 
-			connection.prepareStatement(SQL);
+			connection.prepareStatement(sql);
 		this.stmt.setDate(2, new java.sql.Date(endDate.getTime()) );
 		this.stmt.setDate(3, new java.sql.Date(startDate.getTime()) );
 	}

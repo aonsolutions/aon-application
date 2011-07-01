@@ -16,6 +16,7 @@ public enum ContractVariables implements IResourceable{
 	WEEK_DAYS("DIAS_SEMANA"),
 	CONTRACT_DAYS("DIAS_CONTRATO"),
 	SALARY_DAYS("DIAS_NOMINA"),
+	PAY_DAYS("DIAS_PAGA"),
 	EXTRA_DAYS("DIAS_PAGA"),
 	BONUS_DAYS("DIAS_BONIFICACION"),
 	QUOTE_DAYS("DIAS_TRABAJADOS_INC_VAC"),
@@ -26,6 +27,13 @@ public enum ContractVariables implements IResourceable{
 	MATERNITY_DAYS("DIAS_MATERNIDAD"),
 	COMMON_DISEASE_DAYS("DIAS_ENFERMEDAD_COMUN"),
 	OCCUPATIONAL_DISEASE_DAYS("DIAS_ENFERMEDAD_PROFESIONAL"),
+
+	WORKED_MONTHS("MESES_TRABAJADOS"),
+	SALARY_MONTHS("MESES_NOMINA"),
+	PAY_MONTHS("MESES_PAGA"),
+	WORKED_WEEKS("SEMANAS_TRABAJADAS"),
+	SALARY_WEEKS("SEMANAS_NOMINA"),
+	PAY_WEEKS("SEMANAS_PAGA"),
 	
 	// Horas ( contratos  a tiempo parcial )
 	WEEK_HOURS("HORAS_SEMANA"),
@@ -33,8 +41,6 @@ public enum ContractVariables implements IResourceable{
 
 	HOLIDAY_AMOUNT("IMPORTE_DIA_VACACIONES"),
 	COMPENSATION_AMOUNT("IMPORTE_INDEMNIZACION"),
-
-
 
 	// Bases 
 	CGC_BASE("BASE_CGC"),
@@ -65,8 +71,6 @@ public enum ContractVariables implements IResourceable{
 	ENTERPRISE_QUOTA("CUOTA_EMPRESARIAL"),
 	EMPLOYEE_QUOTA("CUOTA_TRABAJADOR"),
 
-
-	
 
 	// Datos 'temporales' del contrato
 	TC2("TC2"),
@@ -113,6 +117,9 @@ public enum ContractVariables implements IResourceable{
 	TOTAL_LIQUID("TOTAL_LIQUIDO"),
 	TOTAL_PAYMENT("TOTAL_DEVENGADO"),
 	
+	//
+	CURRENT("ACTUAL"),
+	
 	;
 	
 	private final String name;
@@ -131,12 +138,6 @@ public enum ContractVariables implements IResourceable{
 		return name;
 	}
 	
-	/** Message file base path. */
-    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
-    
-    /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_contract_variables_";
-
     /**
      * Returns a <code>String</code> with the transalation <code>Locale</code>
      * for the locale.
@@ -150,5 +151,13 @@ public enum ContractVariables implements IResourceable{
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+
+    /** Message file base path. */
+    private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
+    
+    /** Message key prefix. */
+    private static final String MSG_KEY_PREFIX = "aon_enum_contract_variables_";
+
+    
 	
 }

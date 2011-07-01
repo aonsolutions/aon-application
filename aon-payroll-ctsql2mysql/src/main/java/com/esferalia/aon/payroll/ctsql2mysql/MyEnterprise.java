@@ -4,11 +4,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.print.CancelablePrintJob;
-
 import com.code.aon.common.enumeration.Country;
-import com.esferalia.aon.payroll.enumeration.CCCType;
-import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -27,6 +24,8 @@ import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.CNAENotFoundExceptio
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.InvalidFaxException;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.InvalidTelephoneException;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.NullCNAEException;
+import com.esferalia.aon.payroll.enumeration.CCCType;
+import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 
 public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises {
 	
@@ -199,7 +198,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 						cliente.getDescripcion(), 
 						cliente.getAlias(), 
 						MysqlDB.enum2short(RegistryType.LEGAL), 
-						Country.ES.getValue());
+						Country.ES.getValue(),
+						DefaultMysqlDB.enum2short(SecurityLevel.OFFICIAL));
 				mysqlDB.insertCustomer(registry,null, false, false,false,null,status,null,  scopeId,false, true,true);
 			}
 			
@@ -313,14 +313,15 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 				codsuc,
 				dc != null ? dc : "XX" ,
 				numcta);
-		
 		// TODOD : Chequear con BankAccount ...
 		if ( bankAccount.length() == 20 ) {
 		
 			mysqlDB.insertRbank(customerId, 
 					bankId, 
 					bankAccount, 
-					null);
+					null,
+					null,
+					true);
 		}
 
 	}
@@ -516,10 +517,13 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 						description, 
 						raddress, 
 						null,				// TODO:  Concierto Económico del Centro de Trabajo
-						true,
-						calendar,				// TODO: ¿ Calendar ?
-						null,
-						agreement);
+						true);
+				mysqlDB.insertPayroll_workplace(
+						workplace, 
+						agreement, 
+						null, 
+						calendar);
+				
 				if ( calendar != null ) {
 					calendarsMap.put(workplace, calendar);
 				}

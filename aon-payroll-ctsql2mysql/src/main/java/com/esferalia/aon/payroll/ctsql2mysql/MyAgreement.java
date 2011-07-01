@@ -8,14 +8,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Categoria;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Convenio;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Nivel;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Pagaext;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percep;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Percniv;
 import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Concept;
@@ -52,7 +55,11 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 	
 	
 	private Map<String,Map<String,List<String>>> agreementPayments;
-
+	
+	private Map<Integer, Integer> agreementConcepts ; 
+	private Map<String,Map<String,String>> paymentsLevels;
+	private Map<String,Map<String,Map<String,BigDecimal>>> paymentsAmounts;
+	
 	public MyAgreement(DefaultMysqlDB mysqlDB, IConcepts myConcepts) {
 		this(mysqlDB, myConcepts, null);
 	}
@@ -64,6 +71,10 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 		this.categories = new HashMap<String, Map<String,Map<String,Integer>>>();
 		this.agreements = new HashMap<String, Integer>();
 		this.agreementPayments = new HashMap<String, Map<String,List<String>>>();
+		
+		this.agreementConcepts = new HashMap<Integer, Integer>();
+		this.paymentsLevels = new HashMap<String, Map<String,String>>();
+		this.paymentsAmounts = new HashMap<String, Map<String, Map<String,BigDecimal>>>();
 	}
 	
 	
@@ -116,10 +127,12 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 		public static int NOT_GARILT 	= 1<<1;
 		
 		private Percep percep;
+		private BigDecimal importe;
 		private int compare = NOT_FOUND;
 		
-		public PercepPercnivComparator(Percep percep) {
+		public PercepPercnivComparator(Percep percep, BigDecimal importe) {
 			this.percep = percep;
+			this.importe = importe;
 		}
 		
 		@Override
@@ -157,7 +170,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
                     return ;
             } // TODO: Solo cuando sea paga extra.
             
-			if ( ! percniv.getImporte().equals(percep.getImporte()) ){
+			if ( importe == null || ! importe.equals(percep.getImporte()) ){
 				compare = NOT_AMOUNT  | NOT_GARILT;
 				return;
 			}
@@ -206,9 +219,17 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 	@Override
 	public int hasPayment(String cdg, String nivel, String codcom,  Percep percep) 
 	throws SQLException {
+		
+		String realNivel = DefaultMysqlDB.get(this.paymentsLevels, cdg, codcom);
+		if ( realNivel == null ) {
+			return PercepPercnivComparator.NOT_FOUND;
+		}
+		
+		BigDecimal importe = DefaultMysqlDB.get(this.paymentsAmounts, cdg, nivel, codcom);
+
 		PercepPercnivComparator comparator = 
-			new PercepPercnivComparator(percep);
-		this.ctsqlDB.visitPercniv(cdg, nivel, codcom, comparator);
+			new PercepPercnivComparator(percep, importe );
+		this.ctsqlDB.visitPercniv(cdg, realNivel, codcom, comparator);
 		
 		return comparator.compare;
 	}
@@ -235,12 +256,14 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 	public void visitConvenio(Convenio convenio) throws SQLException {
 		
 		String description = convenio.getDescripcion();
+		this.agreementConcepts.clear();
 		this.agreement = mysqlDB.insertAgreement(null,	//TODO: ¿ Calendar ?  
 				description);
 		agreements.put(convenio.getCdg(), this.agreement);
 		
 		convenio.visitRel_niv_con(this);
 		convenio.visitRel_cat_con(this);
+		convenio.visitRel_pga_con(this);
 	}
 	
 	@Override
@@ -276,6 +299,57 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 	}
 	
 	@Override
+	public void visitRel_pga_con(Pagaext pagaext, Convenio convenio)
+			throws SQLException {
+		
+		Concept<PaymentType> concept = 
+			concepts.getPaymentConcept(pagaext.getCodcom());
+		
+		if ( concept == null ){
+			MysqlDB.error("pagaext[{}] : Not found concept {} ", 
+					pagaext.getCdg(), pagaext.getCodcom());
+			return ;
+		}
+		
+		Integer agreementPayment =  
+			agreementConcepts.get(concept.id);
+		if ( agreementPayment == null ){
+			MysqlDB.error("pagaext[{}] : Not found payment for concept {} in agreement {} ", 
+					pagaext.getCdg(), pagaext.getCodcom(), pagaext.getCdg() );
+			return ;
+		}
+		
+		
+		String perIni = pagaext.getPerini();
+		String startDate = 
+			String.format("%s/%s%s", 
+					perIni.substring(0, 2), 
+					perIni.substring(2,4),
+					pagaext.getIndini().equals("1") ? " -1": "");
+		
+		
+		String perFin = pagaext.getPerfin();
+		String endDate = 
+			String.format("%s/%s%s", 
+					perFin.substring(0, 2), 
+					perFin.substring(2,4),
+					pagaext.getIndfin().equals("1") ? " -1": "");
+
+		String fecCob = pagaext.getFeccob();
+		String issueDate = 
+			String.format("%s/%s", 
+					fecCob.substring(0, 2), 
+					fecCob.substring(2,4) );
+
+		mysqlDB.insertAgreement_extra(
+				agreement, 
+				agreementPayment, 
+				startDate, 
+				endDate, 
+				issueDate);
+	}
+	
+	@Override
 	public void visitPercniv_nivel(Percniv percniv, Nivel nivel)
 			throws SQLException {
 		
@@ -305,47 +379,57 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 		}
 		
 		String tipCot = percniv.getTipcot();
-		String irpf = null;
-		String quote = null;
+		String irpfFormat = null;
+		String quoteFormat = null;
 		if ( !tipCot.equals(concept.quote) ){
 			String dinEsp = percniv.getDinesp();
-			irpf = MyConcept.getIrpfExprFormat(tipCot, dinEsp);
-			quote = MyConcept.getQuoteExprFormat(tipCot);
+			irpfFormat = MyConcept.getIrpfExprFormat(tipCot, dinEsp);
+			quoteFormat = MyConcept.getQuoteExprFormat(tipCot);
 		}
 		String variable = getAmountVariable ( percniv.getCodcom() );
 		String amount = DefaultMysqlDB.format(exprFormat, variable );
-		
-		
 		
 		SalaryType salaryType = SalaryType.SALARY;
 		if ( "P".equals(percniv.getIndcom()) &&
 				"6".equals(percniv.getCalculo()) )
 		{
 			salaryType = SalaryType.EXTRA;
+			amount = DefaultMysqlDB.format(exprFormat, MyConcept.getCurrent(variable));
 		}
+		
+
+		String quote = null;
 
 		Short month = MyConcept.getMonth(percniv.getMes());
 		if ( month != null ) {
-			quote = MyConcept.getPorQuote(percniv.getRedext(), 
-					MyConcept.getQuoteExprFormat(tipCot), salaryType);
+			quoteFormat = MyConcept.getPorQuote(percniv.getRedext(), 
+										MyConcept.getQuoteExprFormat(tipCot), salaryType);
+			quote = DefaultMysqlDB.format ( quoteFormat, variable );
+		} else {
+			quote = DefaultMysqlDB.format ( quoteFormat, concept.code );
 		}
 
+		String irpf = DefaultMysqlDB.format ( irpfFormat, concept.code );
 		
-
-		mysqlDB.insertAgreement_level_payment(
-				this.level, 
-				DefaultMysqlDB.enum2short(paymetType), 
-				amount,
-				description,
-				startDate,
-				null,
-				month,
-				concept.id ,
-				enum2short(salaryType),
-				(short) 1,
-				DefaultMysqlDB.format ( irpf, concept.code ),
-				DefaultMysqlDB.format ( quote, concept.code ));
-		
+		if ( ! this.agreementConcepts.containsKey(concept.id)) {
+			Integer agreementpayment = 
+				mysqlDB.insertAgreement_payment(
+						agreement, 
+						concept.id , 
+						DefaultMysqlDB.enum2short(paymetType), 
+						amount, 
+						description, 
+						startDate, 
+						null, 
+						month, 
+						enum2short(salaryType), 
+						(short) 1, 
+						irpf, 
+						quote);
+			this.agreementConcepts.put(concept.id, agreementpayment);
+			// para este nivel es el qeue manda .
+			DefaultMysqlDB.save(this.paymentsLevels, percniv.getCdg(), percniv.getCodcom(), percniv.getNivel());
+		}
 		
 		BigDecimal data = percniv.getImporte();
 		if ( data != null && data.doubleValue() != 0.00  ) {
@@ -355,6 +439,7 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 					String.format("%.3f", data ), 
 					this.startDate, 
 					null);
+			DefaultMysqlDB.save(this.paymentsAmounts, percniv.getCdg(), percniv.getNivel(), percniv.getCodcom(), data);
 			List<String>  codComs = DefaultMysqlDB.get(agreementPayments, nivel.getCodcon(), nivel.getCdg() );
 			if ( codComs != null ) {
 				codComs.add(percniv.getCodcom());
@@ -378,15 +463,14 @@ public class MyAgreement extends DefaultCtsqlDBVisitor implements IAgreements {
 		
 	}
 
-	private String getExprFormat(Percniv percniv) 
+	public static String getExprFormat(Percniv percniv) 
 	throws SQLException {
-
 		String calculo =  percniv.getCalculo();
 		String indCom = percniv.getIndcom();
 		String comApl = percniv.getCodcomapl();
+		String redExt = percniv.getRedext();
 		
-		
-		return MyConcept.getExprFormat(calculo, indCom, comApl);
+		return MyConcept.getExprFormat(calculo, indCom, comApl, redExt);
 	}
 	
 	

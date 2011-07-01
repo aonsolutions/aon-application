@@ -268,6 +268,10 @@ public abstract class QuoteCalculator {
 	
 	public static QuoteCalculator getQuoteCalculator(IContractSalaryCalculatorContext ctx) {
 		
+		if ( ctx.getSalaryType() == SalaryType.EXTRA ){
+			return NonQuote.getInstance();
+		}
+		
 		SSRegimeType ssRegimeType = ctx.getSSRegime();
 		
 		final ExpressionContext expressionContext = 

@@ -928,8 +928,9 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		BigDecimal importe = percep.getImporte();
 		String indCom = percep.getIndcom();
 		String comApl = percep.getComapl();
+		String redExt = percep.getRedext();
 		
-		return MyConcept.getExprFormat(calculo, importe, indCom, comApl);
+		return MyConcept.getExpr(calculo, importe, indCom, comApl, redExt);
 	}
 	
 	private String getVariableExpression(Percep percep, String variable) 
@@ -938,8 +939,9 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		String calculo =  percep.getCalculo();
 		String indCom = percep.getIndcom();
 		String comApl = percep.getComapl();
+		String redExt = percep.getRedext();
 		
-		return MyConcept.getExprFormat(calculo, variable, indCom, comApl);
+		return MyConcept.getExpr(calculo, variable, indCom, comApl, redExt);
 	}
 
 
@@ -949,7 +951,11 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		
 		if ( outOfDate( percep.getFecfin()))
 			return ;
-
+		
+		if ( !before(percep.getFecini(), percep.getFecfin()) ) {
+			MysqlDB.error("percep[{}] : Bad dates {}-{} ", percep.getCdg(), percep.getFecini(), percep.getFecfin());
+			return ;
+		}
 
 		Concept<PaymentType> concept = 
 			concepts.getPaymentConcept(percep.getCodcom());
@@ -979,10 +985,28 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 		}
 		
 		if ( "P".equals(percep.getIndcom()) &&
-				"6".equals(percep.getCalculo()) )
+				"6".equals(percep.getCalculo()) ) 
+		// Es una paga extra
 		{
+			String variable = MyAgreement.getAmountVariable ( percep.getCodcom() );
+
+			Boolean inheritFromAgreement = 
+				inheritFromAgreement(percep, endDate);
+			if ( !inheritFromAgreement ) {
+					mysqlDB.insertContract_data(
+							variable, 
+							this.contractId, 
+							String.format("%.3f", percep.getImporte()), 
+							percep.getFecini(), 
+							endDate);
+				
+			}
+			String currentVar = MyConcept.getCurrent(variable);
+			String script = getVariableExpression(percep, currentVar );
 			
-			String script = getInlineExpression(percep);
+			
+			//String script = getInlineExpression(percep);
+			//String importe = String.format("%.3f", percep.getImporte());
 
 			java.sql.Date startDate = percep.getFecini();
 			List<ContractData> datas = 
@@ -1005,7 +1029,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 					continue;
 				}
 				
-				if ( !inheritFromAgreement(percep, endDate) || 
+				if ( !inheritFromAgreement || 
 					!percep.getRedext().replace('S','D').equals(porCot) )
 				{ 
 					porQuote = MyConcept.getPorQuote(porCot, 
@@ -1019,7 +1043,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 							(short) 0,
 							script, 
 							DefaultMysqlDB.format( irpf, concept.code ),
-							DefaultMysqlDB.format ( porQuote, concept.code ),
+							DefaultMysqlDB.format ( porQuote, variable ),
 							startDate, 
 							month, 
 							endDate,
@@ -1031,7 +1055,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 				startDate = data.startDate;
 			}
 
-			if ( !inheritFromAgreement(percep, endDate) || 
+			if ( !inheritFromAgreement || 
 				!percep.getRedext().replace('S','D').equals(porCot) )
 			{ 
 				porQuote = MyConcept.getPorQuote(porCot, quote, SalaryType.EXTRA);
@@ -1043,7 +1067,7 @@ public class MyContract extends DefaultCtsqlDBVisitor implements IContracts{
 						(short) 0,
 						script, 
 						DefaultMysqlDB.format ( irpf, concept.code ),
-						DefaultMysqlDB.format ( porQuote, concept.code ),
+						DefaultMysqlDB.format ( porQuote, variable ),
 						startDate, 
 						month, 
 						endDate,

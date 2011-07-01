@@ -18,8 +18,11 @@ import com.code.aon.common.util.CommonUtil;
 
 public class Variables implements Comparator<ITimedVariable<?>> {
 
+	public static interface NotFoundHandler {
+		List<ITimedVariable<?>> get(String var);
+	}
 	
-	
+	private NotFoundHandler notFoundHandler;
 	private Map<String, List<ITimedVariable<?>>> vars;
 	
 	public class PeriodMap implements Map<String, Object> {
@@ -41,7 +44,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 		@Override
 		public boolean containsKey(Object key) {
-			return Variables.this.containsKey(key, this.period);
+			return Variables.this.containsKey((String)key, this.period);
 		}
 
 		@Override
@@ -105,20 +108,22 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 
 	}
 	
-	public Variables() {
-		 vars = new HashMap<String, List<ITimedVariable<?>>>();
+	public Variables(NotFoundHandler notFoundHandler) {
+		this.vars = new HashMap<String, List<ITimedVariable<?>>>();
+		this.notFoundHandler = notFoundHandler;
 	}
 	
 	public void clear() {
 		vars.clear();
 	}
 	
-	public Variables(Variables variables) {
+	public Variables(Variables variables, NotFoundHandler notFoundHandler) {
 		// TODO:  Delegate Map	
 		vars = new HashMap<String, List<ITimedVariable<?>>>();
 		for (Entry<String, List<ITimedVariable<?>>> var : variables.vars.entrySet()) {
 			 vars.put(var.getKey(), new ArrayList<ITimedVariable<?>>(var.getValue()));
 		}
+		this.notFoundHandler = notFoundHandler;
 	}
 
 	public Set<String> varsSet() {
@@ -203,7 +208,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 	}
 	
 	public Object get(String var, Period p){
-		List<ITimedVariable<?>> values =  vars.get(var);
+		List<ITimedVariable<?>> values =  get(var);
 		if ( values == null ) {
 			return null;
 		}
@@ -220,8 +225,8 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		
 	}
 	
-	public boolean containsKey(Object key, Period p){
-		List<ITimedVariable<?>> values =  vars.get(key);
+	public boolean containsKey(String key, Period p){
+		List<ITimedVariable<?>> values =  get(key);
 		if ( values == null ) {
 			return false;
 		}
@@ -251,7 +256,11 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 			if ( varPeriods == null ) {
 				continue;//throw new UndefinedVariableException(var);
 			}
-			periods = Period.intersect(periods, varPeriods);
+			List<Period> intersectedPeriods = 
+				Period.intersect(periods, varPeriods);
+			if ( intersectedPeriods.size() > 0 ){
+				periods = intersectedPeriods;
+			}
 		}
 		
 		for (Period period : periods) {
@@ -285,6 +294,15 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 	}
 	
 	// ------------------------------------------
+	
+	private List<ITimedVariable<?>> get(String var) {
+		List<ITimedVariable<?>>  values = vars.get(var) ;
+		if ( values == null && notFoundHandler != null ){
+			values = notFoundHandler.get(var);
+		}
+		return values ;
+	}
+	
 	private void traceRemove ( String name, ITimedVariable<?> cur, ITimedVariable<?> old ){
 		System.out.printf("Eliminada %1$s=%2$s (%4$tF..%5$tF) %1$s=%3$s (%6$tF..%7$tF) \r\n", 
 			name , 

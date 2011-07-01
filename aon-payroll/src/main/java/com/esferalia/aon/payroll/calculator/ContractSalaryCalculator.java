@@ -12,6 +12,7 @@ import java.util.Map;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
@@ -156,11 +157,17 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			TaxCalculator taxCalculator = 
 				TaxCalculator.getTaxCalculator(ctx);
 			
+			Date issueDate = ctx.getIssueDate();
+			
 			Collection<IContractPayment> payments =  ctx.getContractPayments();
 			for (IContractPayment contractPayment : payments) {
 				
 				Date paymentStart = Period.max(contractPayment.getStartDate(), start);
 				Date paymentEnd= Period.min(contractPayment.getEndDate(), end );
+				if ( paymentEnd.before(paymentStart) ) 
+				{
+					continue; //TODO : must be done in context ?
+				}
 				try {
 
 					List<ITimedObject<Double>> amounts = 
@@ -180,7 +187,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 
 						Double value = amount.getValue();
 						total += value;
-						Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, value);
+						Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, issueDate, value);
 
 						if ( payment != 0.00 ){
 							try  {
@@ -208,9 +215,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 
 			salaryBuilder.setItBase(quoteCalculator.getItBase()); 
 
+			Date chargeDate = ctx.getChargeDate();
 			salaryBuilder.setIrpfBase(taxCalculator.getIrpfBase()); 
-			TimedVariable irpfBaseVar = new TimedVariable(start, end, taxCalculator.getIrpfBase());
-			expressionContext.addVariable(IRPF_BASE, irpfBaseVar);
+			expressionContext.addVariable(IRPF_BASE, taxCalculator.getIrpfBase(), chargeDate, chargeDate);
 
 			salaryBuilder.setRawCgcBase(quoteCalculator.getRawCgcBase());
 
@@ -252,10 +259,26 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				ctx.getContractDeductions();
 			ExpressionContext expressionContext = ctx.getExpressionContext();
 			for (IContractDeduction contractDeduction : contractDeductions) {
-					Date deductionStart = Period.max(contractDeduction.getStartDate(), start);
-					Date deductionEnd= Period.min(contractDeduction.getEndDate(), end );
+					DeductionType type = contractDeduction.getType();
+					
+					Date deductionStart = null;
+					Date deductionEnd = null;
+
+					if ( type.isTaxDeduction() ) {
+						deductionStart  = ctx.getChargeDate();
+						deductionEnd = ctx.getChargeDate();
+					} else {
+						deductionStart = Period.max(contractDeduction.getStartDate(), start);
+						deductionEnd= Period.min(contractDeduction.getEndDate(), end ); 
+						if ( deductionEnd.before(deductionStart) ) 
+						{
+							continue; //TODO : must be done in context ?
+						}
+					}
+					
 					totalDeduction += resolveDeduction(expressionContext, contractDeduction, deductionStart, deductionEnd );
-					if ( contractDeduction.getType().isSsDeduction() ) {
+					
+					if ( type.isSsDeduction() ) {
 						ssContributions += totalDeduction;
 					}
 			}
@@ -439,11 +462,16 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			
 			for (IContractBonus contractBonus : contractBonuses) {
 				
-				Date costStart = Period.max(contractBonus.getStartDate(), start);
-				Date costEnd= Period.min(contractBonus.getEndDate(), end );
+				Date bonusStart = Period.max(contractBonus.getStartDate(), start);
+				Date bonusEnd= Period.min(contractBonus.getEndDate(), end );
 				
+				if ( bonusEnd.before(bonusStart) ) 
+				{
+					continue; //TODO : must be done in context ?
+				}
+
 				List<ITimedObject<Double>> amounts = 
-					expressionContext.eval(contractBonus.getExpression(), costStart, costEnd, Double.class);
+					expressionContext.eval(contractBonus.getExpression(), bonusStart, bonusEnd, Double.class);
 				
 				double bonus = 0.00;
 				for (ITimedObject<Double> amount : amounts) {

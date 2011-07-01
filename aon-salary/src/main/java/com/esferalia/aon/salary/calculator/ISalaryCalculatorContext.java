@@ -7,6 +7,8 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 
 public interface ISalaryCalculatorContext {
 	
+	public Date getChargeDate();
+
 	public Date getIssueDate();
 	
 	public Date getStartDate() ;

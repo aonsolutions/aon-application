@@ -35,7 +35,7 @@ public abstract class TaxCalculator {
 		
 	
 	public abstract double tax(IContractPayment payment, Date start, Date end, 
-			double amount ) throws AonException;
+			Date issueDate, double amount ) throws AonException;
 
 	private static class DefaultTaxCalculator extends TaxCalculator {
 		
@@ -70,14 +70,14 @@ public abstract class TaxCalculator {
 
 		@Override
 		public double tax(IContractPayment contractPayment, Date start, Date end,
-				final double amount) throws AonException {
+				Date issue, final double amount) throws AonException {
 			
 			SalaryType salaryType = contractPayment.getSalaryType();
 			if ( salaryType != context.getSalaryType() ) {
 				return 0.00;
 			}
 			
-			Month salaryMonth =  getMonth(start);
+			Month salaryMonth =  getMonth(issue);
 			Month paymentMonth = contractPayment.getMonth();
 			if ( paymentMonth != null && paymentMonth != salaryMonth ) {
 				return 0.00;
