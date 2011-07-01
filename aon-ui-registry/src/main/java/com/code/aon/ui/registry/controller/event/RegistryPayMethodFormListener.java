@@ -116,7 +116,9 @@ public class RegistryPayMethodFormListener extends RegistryFormListener {
 	}
 
 	private boolean isEmpty(RegistryPayMethod payMethod) {
-		return (registryPayMethod.getPayment() == null) || (this.registryPayMethod.getPayment().getType() == null);
+		return (registryPayMethod == null)
+			|| (registryPayMethod.getPayment() == null)
+			|| (this.registryPayMethod.getPayment().getType() == null);
 	}
 	
 	public void onPayMethodChanged(ValueChangeEvent event) {
