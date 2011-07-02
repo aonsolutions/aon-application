@@ -53,7 +53,7 @@ public class PayrollWorkPlace implements ITransferObject {
 	}
 	
 	@ManyToOne
-    @JoinColumn( name="agreement", updatable = false )	
+    @JoinColumn( name="agreement" )	
 	@ForeignKey(name = "FK_PAYROLL_WORKPLACE_AGREEMENT")
 	@Index(name = "IDX_PAYROLL_WORKPLACE_AGREEMENT")
 	public Agreement getAgreement() {
@@ -64,7 +64,7 @@ public class PayrollWorkPlace implements ITransferObject {
 	}
 	
 	@ManyToOne
-	@JoinColumn( name="calendar", updatable = false )	
+	@JoinColumn( name="calendar" )	
 	@ForeignKey(name = "FK_PAYROLL_WORKPLACE_CALENDAR")
 	@Index(name = "IDX_PAYROLL_WORKPLACE_CALENDAR")
 	public Calendar getCalendar() {
@@ -75,7 +75,7 @@ public class PayrollWorkPlace implements ITransferObject {
 	}
 	
 	@ManyToOne
-	@JoinColumn( name="enterprise_activity", updatable = false )	
+	@JoinColumn( name="enterprise_activity" )	
 	@ForeignKey(name = "FK_PAYROLL_WORKPLACE_ENTERPRISE_ACTIVITY")
 	@Index(name = "IDX_PAYROLL_WORKPLACE_ENTERPRISE_ACTIVITY")
 	public EnterpriseActivity getEnterpriseActivity() {

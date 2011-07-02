@@ -48,6 +48,7 @@ public interface IPayrollConstants {
 	String SALARY_EMBARGO_CONTROLLER = "salaryEmbargo";
 	String SALARY_TEST_LAUNCHER_NAME = "salaryTestLauncher";
 	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
+	String PAYROLL_WORK_PLACE_CONTROLLER = "payrollWorkPlace";
 
 	// ************************************************************
 	// CONFIGURATION

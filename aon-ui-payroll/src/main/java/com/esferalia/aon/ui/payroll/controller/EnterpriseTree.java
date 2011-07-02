@@ -40,7 +40,6 @@ import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractPaymentController;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
@@ -492,12 +491,20 @@ public class EnterpriseTree implements ICompanyConstants {
 	public void onLoadWorkPlaceCalendar( ActionEvent event ) {
 		// TODO implementar la busqueda del calendario. si la entidad no tiene calendario, 
 		// buscar el calendario en sus entidades superiores
-		WorkPlace wp = getWorkPlace();
-		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICompanyConstants.CALENDAR_CONTROLLER_NAME);
-		controller.setEnterpriseName(wp.getEnterprise().getRegistry().getFullName());
-		controller.setWorkPlaceName(wp.getDescription());
-//		controller.setCalendarId(wp.getCalendar().getId());
-		controller.onInitialize(event);
+//		WorkPlace wp = getWorkPlace();
+//		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICompanyConstants.CALENDAR_CONTROLLER_NAME);
+//		controller.setEnterpriseName(wp.getEnterprise().getRegistry().getFullName());
+//		controller.setWorkPlaceName(wp.getDescription());
+//		controller.setCalendarId(getPayrollWorkPlace().getCalendar().getId());
+//		controller.onInitialize(event);
+	}
+
+	public WorkPlace getPayrollWorkPlace() {
+		IController controller = FormUtil.getController(IPayrollConstants.PAYROLL_WORK_PLACE_CONTROLLER);
+		if(controller.getTo()!=null){
+			return (WorkPlace) controller.getTo();
+		}
+		return null;
 	}	
 	
 }

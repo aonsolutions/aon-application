@@ -75,6 +75,8 @@
 			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 			<!--  aon.ui.company -->
 			<value>#{enterpriseTreeControllerListener}</value>
+			<value>#{enterpriseActivityChildListener}</value>
+			<value>#{payrollWorkPlaceChildListener}</value>
 		</list-entries>
 	</managed-bean>
 	

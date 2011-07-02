@@ -48,10 +48,7 @@
 						</c:if>
 						
 						<aon:panelTab id="workplace" label="#{companyBundle.company_workplaces}">
-							<ui:include	src="/com/code/aon/ui/company/facelet/workplace/tab_grid.xhtml" >
-								<ui:param name="controller" value="#{enterpriseWorkPlace}" />
-								<ui:param name="showEnterpriseData" value="#{true}" />
-							</ui:include>
+							<ui:include	src="/com/code/aon/ui/company/facelet/workplace/tab_grid.xhtml" />
 						</aon:panelTab>
 
 						<aon:panelTab id="address" label="#{registryBundle.registry_address_module}">

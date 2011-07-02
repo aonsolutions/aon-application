@@ -4,12 +4,15 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
+	<ui:include src="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{agreementLookup}" />
 		<ui:param name="controller" value="#{agreement}" />
-		<ui:param name="lookupLabel" value="#{payrollBundle.company_enterprise}" />
-		<ui:param name="searchButtonTitle" value="#{payrollBundle.company_enterprise_selection}" />
-		<ui:param name="newButtonHeight" value="600"/>
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}" />
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.description}"/>
+		<ui:param name="skipNewButton" value="true" />
+		<ui:param name="skipGoToButton" value="true" />
+		<ui:param name="lookupLabel" value="#{payrollBundle.payroll_agreement}" />
+		<ui:param name="searchButtonTitle" value="#{payrollBundle.payroll_agreement_selection}" />
 	</ui:include>
 
 </ui:composition>

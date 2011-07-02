@@ -34,12 +34,12 @@
 					rendered="#{formList}" />
 				<aon:selectOneMenu id="EnterpriseCCC_type" required="true"
 					value="#{controller.to.type}" rendered="#{formEdit}">
-					<f:selectItems value="#{companyCollections.CCCTypes}" />
+					<f:selectItems value="#{payrollCollections.CCCTypes}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="EnterpriseCCC_type-New" required="true"
 						value="#{controller.to.type}" rendered="#{formNew}">
-						<f:selectItems value="#{companyCollections.CCCTypes}" />
+						<f:selectItems value="#{payrollCollections.CCCTypes}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>

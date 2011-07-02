@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.registry.enumeration.StreetType;
 import com.esferalia.aon.payroll.enumeration.AgeGroup;
 import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
+import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCalendarEventType;
@@ -31,6 +32,7 @@ import com.esferalia.aon.payroll.enumeration.EducationalLevel;
 import com.esferalia.aon.payroll.enumeration.EmbargableType;
 import com.esferalia.aon.payroll.enumeration.EmployeeType;
 import com.esferalia.aon.payroll.enumeration.EmploymentProgram;
+import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
@@ -79,6 +81,9 @@ public class PayrollCollectionsController {
 	private List<SelectItem> embargableTypeList;
 	private List<SelectItem> dismissCauseList;
 	private List<SelectItem> contractAttachTypes;
+	
+	private List<SelectItem> cccTypes;
+	private List<SelectItem> enterpriseActivityTypes;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -549,6 +554,32 @@ public class PayrollCollectionsController {
 			}
 		}
 		return contractAttachTypes;
+	}
+	
+	public List<SelectItem> getCCCTypes() {
+		if (cccTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			cccTypes = new LinkedList<SelectItem>();
+			for( CCCType cccType : CCCType.values() ) {
+				String name = cccType.getName(locale);
+				SelectItem item = new SelectItem(cccType, name);
+				cccTypes.add(item);			
+			}
+		}
+		return cccTypes;
+	}	
+
+	public List<SelectItem> getEnterpriseActivityTypes() {
+		if (enterpriseActivityTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			enterpriseActivityTypes = new LinkedList<SelectItem>();
+			for( EnterpriseActivityType type : EnterpriseActivityType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				enterpriseActivityTypes.add(item);			
+			}
+		}
+		return enterpriseActivityTypes;
 	}
 	
 	

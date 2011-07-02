@@ -7,119 +7,16 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j">
 
-	<ui:decorate
-		template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-		<ui:define name="columns">
-
-			<aon:column styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputLabel for="WorkPlace_description" value="#{bundle.aon_description}" />
-				</f:facet>
-				<aon:outputText value="#{to.description}" 
-					rendered="#{formList}" />
-				<aon:inputText id="WorkPlace_description"  
-					value="#{controller.to.description}" rendered="#{formEdit}"
-					required="true" size="40" maxlength="64" />
-				<f:facet name="footer">
-					<aon:inputText id="WorkPlace_description-New" 
-						value="#{controller.to.description}" rendered="#{formNew}"
-						required="true" size="40" maxlength="64" />
-				</f:facet>								
-			</aon:column>
-
-			<aon:column styleClass="aon-editDataTable-textColumn">
-				<f:facet name="header">
-					<aon:outputLabel for="WorkPlace_address_id" value="#{companyBundle.company_workplace_address}" />
-				</f:facet>
-				<aon:outputText value="#{to.address.shortAddress}"
-					rendered="#{formList}" />
-				<aon:selectOneMenu id="WorkPlace_address_id" 
-					value="#{controller.to.address}" rendered="#{formEdit}"
-					required="true">
-					<c:if test="#{showEnterpriseData}">
-						<f:selectItems value="#{enterprise.addresses}" />
-					</c:if>
-					<c:if test="#{!showEnterpriseData}">
-						<f:selectItems value="#{companyCollections.companyAddresses}" />
-					</c:if>
-				</aon:selectOneMenu>
-				<f:facet name="footer">
-					<aon:selectOneMenu id="WorkPlace_address_id-New"
-						value="#{controller.to.address}" rendered="#{formNew}"
-						required="true">
-						<c:if test="#{showEnterpriseData}">
-							<f:selectItems value="#{enterprise.addresses}" />
-						</c:if>
-						<c:if test="#{!showEnterpriseData}">
-							<f:selectItems value="#{companyCollections.companyAddresses}" />
-						</c:if>
-					</aon:selectOneMenu>
-				</f:facet>								
-			</aon:column>			
-			
-			<c:if test="#{showEnterpriseData}">
-				<aon:column styleClass="aon-editDataTable-textColumn">
-					<f:facet name="header">
-						<aon:outputText for="WorkPlace_economicAgreement" value="#{configBundle.config_administration}" />
-					</f:facet>
-					<aon:outputText value="#{to.economicAgreement}"
-						rendered="#{formList}" />
-					<aon:selectOneMenu id="WorkPlace_economicAgreement"
-						value="#{controller.to.economicAgreement}" rendered="#{formEdit}">
-						<f:selectItem itemLabel="-" value="#{null}" />
-						<f:selectItems value="#{configCollections.administrations}" />
-					</aon:selectOneMenu>	
-					<f:facet name="footer">
-						<aon:selectOneMenu id="WorkPlace_economicAgreement-New"
-							value="#{controller.to.economicAgreement}" rendered="#{formNew}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItems value="#{configCollections.administrations}" />
-						</aon:selectOneMenu>	
-					</f:facet>
-				</aon:column>		
-			
-				<aon:column styleClass="aon-editDataTable-textColumn">
-					<f:facet name="header">
-						<aon:outputText for="WorkPlace_calendar_id" value="#{calendarBundle.aon_calendar_calendar}" />
-					</f:facet>
-					<aon:outputText value="#{to.calendar.description}"
-						rendered="#{formList}" />
-					<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{controller.to.calendar}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="skipLabel" value="#{true}" />
-						<ui:param name="lookupRendered" value="#{formEdit}" />
-						<ui:param name="lookupInputSuggestSize" value="40" />
-					</ui:include>	
-					<f:facet name="footer">
-						<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{controller.to.calendar}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-							<ui:param name="skipLabel" value="#{true}" />
-							<ui:param name="lookupSuffix" value="-New" />
-							<ui:param name="lookupRendered" value="#{formNew}" />
-							<ui:param name="lookupInputSuggestSize" value="40" />
-						</ui:include>	
-					</f:facet>
-				</aon:column>
-			</c:if>
-			
-			<aon:column styleClass="aon-width-100">
-				<f:facet name="header">
-					<aon:outputLabel for="WorkPlace_active" value="#{bundle.aon_active}" />
-				</f:facet>
-				<aon:div rendered="#{formList}" styleClass="#{to.active?'aon-icon-checked':'aon-icon-check'}">
-					<aon:outputText value="&#160;" />
-				</aon:div>
-				<aon:selectBooleanCheckbox id="WorkPlace_active" styleClass="aon-margin-left"
-					value="#{controller.to.active}" rendered="#{formEdit}" />
-				<f:facet name="footer">
-					<aon:selectBooleanCheckbox id="WorkPlace_active-New" styleClass="aon-margin-left"
-						value="#{controller.to.active}" rendered="#{formNew}" />
-				</f:facet>
-			</aon:column>
-
-		</ui:define>
-	</ui:decorate>
+	<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/workplacePayroll/gridContent.xhtml" >
+			<ui:param name="controller" value="#{payrollWorkPlace}" />
+		</ui:include>
+	</c:if>	
+	<c:if test="#{!aonConfiguration.bean.enterprise.showPayrollData}" >
+		<ui:include src="gridContent.xhtml" >
+			<ui:param name="controller" value="#{enterpriseWorkPlace}" />
+			<ui:param name="showEnterpriseData" value="#{true}" />
+		</ui:include>
+	</c:if>
 
 </ui:composition>

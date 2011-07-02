@@ -1542,34 +1542,40 @@ public interface IPayrollAlias {
 	DAOConstantsEntry PAYROLL_WORK_PLACE_ENTRY = DAOConstants.getDAOConstant(PayrollWorkPlace.class);
 
 	/** 
+	* Alias value: PayrollWorkPlace_id
+	* Hibernate value: PayrollWorkPlace.id
+	*/
+	String  PAYROLL_WORK_PLACE_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: PayrollWorkPlace_agreement_id
 	* Hibernate value: PayrollWorkPlace.agreement.id
 	*/
-	String  PAYROLL_WORK_PLACE_AGREEMENT_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[0];
+	String  PAYROLL_WORK_PLACE_AGREEMENT_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: PayrollWorkPlace_calendar_id
 	* Hibernate value: PayrollWorkPlace.calendar.id
 	*/
-	String  PAYROLL_WORK_PLACE_CALENDAR_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[1];
+	String  PAYROLL_WORK_PLACE_CALENDAR_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: PayrollWorkPlace_enterpriseActivity_id
 	* Hibernate value: PayrollWorkPlace.enterpriseActivity.id
 	*/
-	String  PAYROLL_WORK_PLACE_ENTERPRISE_ACTIVITY_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: PayrollWorkPlace_id
-	* Hibernate value: PayrollWorkPlace.id
-	*/
-	String  PAYROLL_WORK_PLACE_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[3];
+	String  PAYROLL_WORK_PLACE_ENTERPRISE_ACTIVITY_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: PayrollWorkPlace_workPlace_id
 	* Hibernate value: PayrollWorkPlace.workPlace.id
 	*/
 	String  PAYROLL_WORK_PLACE_WORK_PLACE_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: PayrollWorkPlace_workPlace_enterprise_id
+	* Hibernate value: PayrollWorkPlace.workPlace.enterprise.id
+	*/
+	String  PAYROLL_WORK_PLACE_WORK_PLACE_ENTERPRISE_ID = PAYROLL_WORK_PLACE_ENTRY.getAliasNames()[5];
 
 
 

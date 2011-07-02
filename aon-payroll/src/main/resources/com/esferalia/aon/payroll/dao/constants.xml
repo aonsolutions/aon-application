@@ -16,6 +16,10 @@
 		<alias names="activity_id,ccc,geozone_id,id,type,activity_enterprise_id"/>
 		<hibernate names="activity.id,ccc,geozone.id,id,type,activity.enterprise.id"/>
 	</bean>
+	<bean class="com.esferalia.aon.payroll.PayrollWorkPlace">
+		<alias     names="id,agreement_id,calendar_id,enterpriseActivity_id,workPlace_id,workPlace_enterprise_id"/>
+		<hibernate names="id,agreement.id,calendar.id,enterpriseActivity.id,workPlace.id,workPlace.enterprise.id"/>
+	</bean>
 	<bean class="com.esferalia.aon.payroll.Salary">
 		<alias     names="id,address,broadcastDate,category,commonBase,contract_id,contract_person_id,contract_workPlace_id,contract_workPlace_enterprise_id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
 		<hibernate names="id,address,broadcastDate,category,commonBase,contract.id,contract.person.id,contract.workPlace.id,contract.workPlace.enterprise.id,employeeName,endDate,extraPayProration,irpfBase,type,issueDate,overtimeBase,professionalBase,registration,remuneration,startDate,totalDeduction,totalDaysHours,totalLiquid,totalPayment,total"/>
