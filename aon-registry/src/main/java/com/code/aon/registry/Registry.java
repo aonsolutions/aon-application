@@ -61,6 +61,7 @@ public class Registry implements ITransferObject, IConfidentialable {
 	private RegistryType type;
 	private Country nationality;
 	private SecurityLevel securityLevel;
+
 	private Set<RegistryAddress> addresses = new HashSet<RegistryAddress>();
 	private Set<RegistryMedia> medias = new HashSet<RegistryMedia>();
 	private Set<RegistryPayMethod> payMethods = new HashSet<RegistryPayMethod>();
