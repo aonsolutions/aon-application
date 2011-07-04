@@ -80,6 +80,13 @@
 				rendered="#{contract.to.seniorityDateDifferent}" />
 		</aon:panelGroup>
 		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{contract.agreement}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+			<ui:param name="lookupInputSuggestSize" value="40" />
+			<ui:param name="lookupReRender" value="agreementLevelCategory" />
+		</ui:include>	
+		
 		<aon:outputLabel for="agreementLevelCategory" 
 			value="#{payrollBundle.payroll_agreementLevel_category}" />
 		<aon:selectOneMenu id="agreementLevelCategory"

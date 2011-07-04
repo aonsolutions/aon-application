@@ -2,20 +2,25 @@ package com.esferalia.aon.ui.payroll.event.contract;
 
 
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.PayrollWorkPlace;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
@@ -35,6 +40,7 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setWorkPlaces(null);
 		controller.setActivities(null);
 		controller.setEnterpriseCCCs(null);
+		searchAgreement();
 	}
 	
 	@Override
@@ -128,6 +134,22 @@ public class ContractControllerListener extends ControllerAdapter{
 			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
 			LOGGER.error(msg);
 			throw new ControllerListenerException(msg,e);
+		}
+	}
+	
+	private void searchAgreement() {
+		try {
+			ContractController controller = (ContractController) this.getController();
+			Contract contract = (Contract) controller.getTo();
+			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				controller.setAgreement(((PayrollWorkPlace)list.get(0)).getAgreement());
+			}
+		} catch (ManagerBeanException e) {
+			// NADA, no se define ningun convenio
 		}
 	}
 	

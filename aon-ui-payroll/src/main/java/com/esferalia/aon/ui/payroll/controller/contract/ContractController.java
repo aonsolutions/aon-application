@@ -29,7 +29,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.EnterpriseData;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
@@ -39,6 +38,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
@@ -72,6 +72,7 @@ public class ContractController extends BasicController {
 	private QuoteGroup quoteGroup;
 	private Double irpf;
 	private AonFile aonFile;
+	private Agreement agreement;
 	
 	private ContractDuration contractDuration;
 	private ContractWorkingDay contractWorkingDay;
@@ -86,7 +87,12 @@ public class ContractController extends BasicController {
 		this.modalPanelVisible = modalPanelVisible;
 	}
 	
-	
+	public Agreement getAgreement() {
+		return agreement;
+	}
+	public void setAgreement(Agreement agreement) {
+		this.agreement = agreement;
+	}
 	public String getTc2Code() {
 		return tc2Code;
 	}
@@ -514,35 +520,14 @@ public class ContractController extends BasicController {
 		controller.onInitialize(event);
 	}	
 	
-	// TODO parchazo para salir del paso con los convenios
-	private EnterpriseData agreement;
-	private static final String AGREEMENT = "agreement";
-	
-	public EnterpriseData getAgreement() {
-		return agreement;
-	}
-
-	public void setAgreement(EnterpriseData agreement) {
-		this.agreement = agreement;
-	}
-	
 	public List<SelectItem> getAgreementLevelCategories(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_NAME), AGREEMENT);
-			criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_DATA_ENTERPRISE_ID), ((Contract) getTo()).getWorkPlace().getEnterprise().getId());
-			List<ITransferObject> dataList = bean.getList(criteria);
-			if(dataList.isEmpty()){
-				setAgreement(null);
-			} else {
-				setAgreement(((EnterpriseData)dataList.get(0)));
-			}
-			if(getAgreement()!=null){
+			if(getAgreement()!=null && getAgreement().getId()!=null){
 				IManagerBean cBean = BeanManager.getManagerBean(AgreementLevelCategory.class);
 				criteria = new Criteria();
-				criteria.addEqualExpression(cBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID), Integer.parseInt(getAgreement().getExpression()));
+				criteria.addEqualExpression(cBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID), getAgreement().getId());
 				for (ITransferObject to : cBean.getList(criteria)) {
 					AgreementLevelCategory alc = (AgreementLevelCategory) to;
 					String name = alc.getLevel().getDescription()+" - "+alc.getDescription();
