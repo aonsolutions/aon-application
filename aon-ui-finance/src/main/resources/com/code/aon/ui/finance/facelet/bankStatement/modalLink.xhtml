@@ -103,7 +103,7 @@
 													styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
 													value="#{financeBundle.finance_cancel_checks}"
 													actionListener="#{linkManager.onRemoveLinks}" 
-													reRender="statementLinkToolbar,statementLinkBody"
+													reRender="aonContent"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 											</aon:div>
@@ -206,7 +206,7 @@
 													value="#{financeBundle.finance_check_selected}"
 													rendered="#{financeList.model.rowCount > 0 or financeTrackingList.model.rowCount > 0}"
 													actionListener="#{linkManager.onAddFinanceLinks}" 
-													reRender="statementLinkToolbar,statementLinkBody"
+													reRender="aonContent"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 											</aon:div>
@@ -409,7 +409,7 @@
 													styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 													value="#{financeBundle.finance_check_selected}"
 													actionListener="#{linkManager.onAddBatchLinks}" 
-													reRender="statementLinkToolbar,statementLinkBody"
+													reRender="aonContent"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 											</aon:div>
@@ -499,7 +499,7 @@
 														value="&#160;" styleClass="aon-icon-attach-file aon-noborder"
 														title="#{financeBundle.finance_bank_statement_check}"
 														actionListener="#{linkManager.onAddTransferLinks}"
-														reRender="statementLinkToolbar,statementLinkBody"
+														reRender="aonContent"
 														onclick="Richfaces.showModalPanel('waitProccess')" 
 											     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 		 										</aon:column>
@@ -551,7 +551,7 @@
 													styleClass="aon-finding-toolbar-item aon-icon-newFolder"
 													value="#{financeBundle.finance_bank_statement_check}"
 													actionListener="#{linkManager.onAddOtherConceptLinks}" 
-													reRender="statementLinkToolbar,statementLinkBody"
+													reRender="aonContent"
 													onclick="Richfaces.showModalPanel('waitProccess')" 
 										     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 											</aon:div>
@@ -593,7 +593,7 @@
 														value="&#160;" styleClass="aon-icon-attach-file aon-noborder"
 														title="#{financeBundle.finance_bind}"
 														actionListener="#{linkManager.onBindEntryDetail}"
-														reRender="showLinkWindow"
+														reRender="aonContent"
 														onclick="Richfaces.showModalPanel('waitProccess')" 
 											     		oncomplete="Richfaces.hideModalPanel('waitProccess')">	
 														<f:setPropertyActionListener target="#{bankStatement.showLinkWindow}"
