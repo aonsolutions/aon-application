@@ -68,7 +68,6 @@ import com.code.aon.webmail.Contact;
 import com.code.aon.webmail.EmailSecurity;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.SecurityInfo;
-import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.WebmailUtil;
 import com.code.aon.webmail.bean.AonAttachment;
@@ -573,13 +572,12 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		recipientsCc = null;
 		recipientsBcc = null;
 		subject = null;		
-		Signature signature = senderMailAccount.getSignature();
-		content = (signature!=null)?signature.getSignature():"";
+		messageBody = null;
+		updateContent(senderMailAccount);
     	newMsgFileList = new ArrayList<AonFile>();
 		draftMessageUID = null;
 		parentMessage = null;
 		messageContent = null;
-		messageBody = null;
 		loadContacts = true;
 		setErrorMessage(null);
 	}
@@ -1003,7 +1001,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	}	
 	
 	private void updateContent( MailAccount mailAccount ) {
-		if ( mailAccount.getSignature() != null ) {
+		if ( (!AonUtil.isAppleDevice()) && (mailAccount.getSignature() != null) ) {
 			if ( isAppendSignature() ) {
 				content = StringUtils.defaultString(messageBody) + mailAccount.getSignature().getSignature();
 			} else {

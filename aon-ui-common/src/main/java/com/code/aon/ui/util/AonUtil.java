@@ -15,6 +15,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -582,5 +583,19 @@ public class AonUtil {
     	}
     	return value;
     }
-    
+
+	/**
+	 * Checks if is apple device.
+	 *
+	 * @return true, if is apple device
+	 */
+	public static boolean isAppleDevice() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		ExternalContext ectx = context.getExternalContext();
+		String userAgent = ectx.getRequestHeaderMap().get("user-agent");
+		return StringUtils.contains(userAgent, "iPad") ||
+				StringUtils.contains(userAgent, "iPod") ||
+				StringUtils.contains(userAgent, "iPhone");
+	}    
+	
 }
