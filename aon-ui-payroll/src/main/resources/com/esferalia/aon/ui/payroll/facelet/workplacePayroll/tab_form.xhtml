@@ -6,7 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:panelGrid columns="2" >
+	<aon:panelGrid columns="2" style="width: 50%;">
 			
 		<ui:include src="/com/esferalia/aon/ui/calendar/facelet/calendar/lookup.xhtml" >
 			<ui:param name="lookupTo" value="#{controller.payrollWorkPlace.calendar}" />
@@ -21,13 +21,13 @@
 			<ui:param name="lookupInputSuggestSize" value="40" />
 		</ui:include>	
 		
-		<!--  
 		<aon:outputLabel for="PayrollWorkPlace_enterpriseActivity" 
-			value="#{payrollBundle.payroll_enterprise_activity}" />
-		<aon:inputText id="PayrollWorkPlace_enterpriseActivity" 
-			value="#{controller.payrollWorkPlace.enterpriseActivity}" 
-			size="40" maxlength="64" />
-		-->
+			value="#{payrollBundle.payroll_activity}" />
+		<aon:selectOneMenu id="PayrollWorkPlace_enterpriseActivity"
+			value="#{controller.payrollWorkPlace.enterpriseActivity}" >
+			<f:selectItem itemLabel="-" value="#{null}" />
+			<f:selectItems value="#{enterprisePayroll.activities}" />
+		</aon:selectOneMenu>	
 						
 	</aon:panelGrid>
 	

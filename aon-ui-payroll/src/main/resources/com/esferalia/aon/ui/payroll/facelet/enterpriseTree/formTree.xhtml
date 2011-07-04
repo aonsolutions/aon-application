@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
@@ -60,7 +61,7 @@
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="Contract-select"
 							title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
-							value="#{bundle.aon_reset} contrato -i18n-" 
+							value="#{payrollBundle.payroll_contract_new}" 
 							reRender="#{contract.beanName}ModalContainer"
 							styleClass="aon-finding-toolbar-item aon-icon-reset" >
 							<aon:actionListener method="#{contract.onReset}" />
@@ -72,26 +73,47 @@
 			</ui:decorate>
 			
 			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-panelGrid-search" style="width: 100%; margin-bottom:10px;">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{payrollBundle.payroll_contract_filter}" styleClass="aon-bold"/>
+					</aon:div>	
+					<aon:panelGrid columns="4" 
+						columnClasses="
+						aon-panelGrid-odd aon-width-50, aon-panelGrid-even aon-width-20,
+						aon-panelGrid-odd aon-width-50, aon-panelGrid-even aon-width-20">
+						
+						<aon:outputText value="#{payrollBundle.payroll_active}"  />
+						<aon:selectBooleanCheckbox value="#{enterpriseTree.activeContract}"  >
+							<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true"
+								actionListener="#{enterpriseTree.reloadTree}" />
+						</aon:selectBooleanCheckbox>
+						
+						<aon:outputText value="#{payrollBundle.payroll_inactive}"  />
+						<aon:selectBooleanCheckbox value="#{enterpriseTree.inactiveContract}"  >
+							<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true"
+								actionListener="#{enterpriseTree.reloadTree}" />
+						</aon:selectBooleanCheckbox>
+						
+					</aon:panelGrid>		
+				</aon:div>	
+			
 				<aon:panelGrid columns="2" styleClass="aon-width-all"
 					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
 							
 					<aon:outputText value="#{companyBundle.company_enterprise}" />
 					<aon:outputText value="#{enterprise.to.registry.name}" />
 						
-					<aon:outputText value="#{bundle.aon_id}" />
-					<aon:outputText value="#{enterprise.to.id}" />
-
 					<aon:outputText value="#{bundle.aon_scope}" />
 					<aon:outputText value="#{enterprise.to.scope.description}" />
 
-					<aon:outputText value="#{bundle.aon_document_type}" />
-					<aon:outputText value="#{enterprise.to.registry.documentType}" />
-
-					<aon:outputText value="#{bundle.aon_document_country}" />
-					<aon:outputText value="#{enterprise.to.registry.documentCountry}" />
-
 					<aon:outputText value="#{bundle.aon_document}" />
-					<aon:outputText value="#{enterprise.to.registry.document}" />
+					<aon:div>
+						<aon:outputText value="#{bundle.aon_document_country}:" styleClass="aon-italic aon-margin-right"/>
+						<aon:outputText value="#{enterprise.to.registry.documentCountry}" />
+						<aon:outputText value="#{bundle.aon_document_type}:" styleClass="aon-italic aon-margin-right aon-margin-left"/>
+						<aon:outputText value="#{enterprise.to.registry.documentType}" />
+						<aon:outputText value="#{enterprise.to.registry.document}" styleClass="aon-margin-left"/>
+					</aon:div>
 
 					<aon:outputText value="#{registryBundle.registry_address}" />
 					<aon:outputText value="#{enterprise.mainAddress.fullAddress}"  />
@@ -104,16 +126,6 @@
 
 					<aon:outputText value="#{registryBundle.registry_geozone}" />
 					<aon:outputText value="#{enterprise.mainAddress.geozone.name}"  />
-
-					<aon:outputText value="#{bundle.aon_scope}" />
-					<aon:outputText value="#{enterprise.to.scope.description}" />
-
-<!--  
-					<c:if test="#{enterprise.to.agreement != null and enterprise.to.agreement.id != null}" >
-						<aon:outputText value="#{companyBundle.company_agreement}" />
-						<aon:outputText value="#{enterprise.to.agreement.description}" />
-					</c:if>
--->
 				
 					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />				
 				

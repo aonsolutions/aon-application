@@ -53,16 +53,14 @@
 					<aon:outputText value="#{configBundle.config_administration}" />
 					<aon:outputText value="#{enterpriseTree.workPlace.economicAgreement}" />
 					
-					<c:if test="#{enterpriseTree.payrollWorkPlace.id!=null}" >
-						<aon:outputText value="#{calendarBundle.aon_calendar_calendar}" />
-						<aon:outputText value="#{enterpriseTree.payrollWorkPlace.calendar.description}" />
-						
-						<aon:outputText value="#{calendarBundle.aon_calendar_calendar}" />
-						<aon:outputText value="#{enterpriseTree.payrollWorkPlace.agreement.description}" />
-						
-						<aon:outputText value="#{calendarBundle.aon_calendar_calendar}" />
-						<aon:outputText value="#{enterpriseTree.payrollWorkPlace.enterpriseActivity.description}" />
-					</c:if>
+					<aon:outputText value="#{calendarBundle.aon_calendar_calendar}" />
+					<aon:outputText value="#{enterpriseTree.payrollWorkPlace.calendar.description}" />
+					
+					<aon:outputText value="#{payrollBundle.payroll_agreement}" />
+					<aon:outputText value="#{enterpriseTree.payrollWorkPlace.agreement.description}" />
+					
+					<aon:outputText value="#{payrollBundle.payroll_activity}" />
+					<aon:outputText value="#{enterpriseTree.payrollWorkPlace.enterpriseActivity.description}" />
 					
 				</aon:panelGrid>
 

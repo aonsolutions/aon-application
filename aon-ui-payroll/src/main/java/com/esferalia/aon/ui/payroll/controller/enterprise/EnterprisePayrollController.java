@@ -73,6 +73,26 @@ public class EnterprisePayrollController {
 		}
     	return cccs;
     }	    
+    
+    /**
+     * Gets the Activities of the enterprise.
+     * 
+     * @return the Activities of the enterprise
+     * @throws ManagerBeanException 
+     */
+    public List<SelectItem> getActivities() throws ManagerBeanException {
+    	LinkedList<SelectItem> list = new LinkedList<SelectItem>();
+    	IManagerBean bean = BeanManager.getManagerBean(EnterpriseActivity.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
+    	criteria.addOrder(bean.getFieldName(IPayrollAlias.ENTERPRISE_ACTIVITY_TYPE));
+    	for (ITransferObject to : bean.getList(criteria)) {
+    		EnterpriseActivity a = (EnterpriseActivity)to;
+    		String label = a.getDescription();
+    		list.add(new SelectItem(a, label));
+    	}
+    	return list;
+    }	    
 
 	private void loadMainActivity() throws ManagerBeanException {
 		IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);

@@ -1,6 +1,7 @@
 package com.esferalia.aon.ui.payroll.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -39,7 +40,9 @@ import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractDeduction;
 import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractPaymentController;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
@@ -76,6 +79,26 @@ public class EnterpriseTree implements ICompanyConstants {
 	private boolean showContractHeader;
 	
 	private DataComponentState state;
+	
+	private boolean activeContract;
+	
+	private boolean inactiveContract;
+	
+	public boolean isActiveContract() {
+		return activeContract;
+	}
+
+	public void setActiveContract(boolean activeContract) {
+		this.activeContract = activeContract;
+	}
+
+	public boolean isInactiveContract() {
+		return inactiveContract;
+	}
+	
+	public void setInactiveContract(boolean inactiveContract) {
+		this.inactiveContract = inactiveContract;
+	}
 	
 	public TreeNode<EnterpriseTreeData> getRootNode() {
 		return rootNode;
@@ -165,38 +188,6 @@ public class EnterpriseTree implements ICompanyConstants {
 		node.setData(etd);
 		contractNode.addChild( id, node);
 	}
-	private void addPaymentsNode( TreeNode<EnterpriseTreeData> contractNode ) {
-		String id = IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER;
-		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
-		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_PAYMENTS );
-		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.PAYMENT);
-		node.setData(etd);
-		contractNode.addChild( id, node);
-	}
-	private void addDeductionsNode( TreeNode<EnterpriseTreeData> contractNode ) {
-		String id = IPayrollConstants.CONTRACT_DEDUCTION_CONTROLLER;
-		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
-		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_DEDUCTIONS );
-		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.DEDUCTION);
-		node.setData(etd);
-		contractNode.addChild( id, node);
-	}
-	private void addBonusNode( TreeNode<EnterpriseTreeData> contractNode ) {
-		String id = IPayrollConstants.CONTRACT_BONUS_CONTROLLER;
-		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
-		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_BONUS );
-		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.BONUS);
-		node.setData(etd);
-		contractNode.addChild( id, node);
-	}
-	private void addEmbargosNode( TreeNode<EnterpriseTreeData> contractNode ) {
-		String id = IPayrollConstants.CONTRACT_EMBARGO_CONTROLLER;
-		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
-		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_EMBARGOS );
-		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.EMBARGO);
-		node.setData(etd);
-		contractNode.addChild( id, node);
-	}
 	private void addSalaryNode( TreeNode<EnterpriseTreeData> contractNode ) {
 		String id = IPayrollConstants.SALARY_CONTROLLER;
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
@@ -225,10 +216,16 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void loadContracts( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Contract.class);		
 		Criteria criteria = new Criteria();
-		String endDate = bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE);
-		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
-		Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
-		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		if(!isActiveContract()){
+			String endDate = bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE);
+			criteria.addLessThanOrEqualExpression(endDate, new Date());
+		}
+		if(!isInactiveContract()){
+			String endDate = bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		}
 		String workPlaceId = bean.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ID);
 		criteria.addEqualExpression(workPlaceId, workPlace.getId());
 		criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_PERSON_FIRST_SURNAME));
@@ -241,10 +238,6 @@ public class EnterpriseTree implements ICompanyConstants {
 			contractNode.setData(etd);
 			workPlaceNode.addChild( etd.getType().toString() + etd.getId(), contractNode );
 			addMainNode(contractNode);
-//			addPaymentsNode(contractNode);
-//			addDeductionsNode(contractNode);
-//			addBonusNode(contractNode);
-//			addEmbargosNode(contractNode);
 			addSalaryNode(contractNode);
 			addSalaryDraftNode(contractNode);
 			addDocumentNode(contractNode);
@@ -292,6 +285,10 @@ public class EnterpriseTree implements ICompanyConstants {
 			LOGGER.error( "Error loading work places for " + enterprise, e );
 		}
 		currentNode = etd;
+	}
+	
+	public void reloadTree(ActionEvent event){
+		loadTree();
 	}
 
 	public Boolean adviseNodeSelected(UITree tree) {
@@ -491,20 +488,27 @@ public class EnterpriseTree implements ICompanyConstants {
 	public void onLoadWorkPlaceCalendar( ActionEvent event ) {
 		// TODO implementar la busqueda del calendario. si la entidad no tiene calendario, 
 		// buscar el calendario en sus entidades superiores
-//		WorkPlace wp = getWorkPlace();
-//		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICompanyConstants.CALENDAR_CONTROLLER_NAME);
-//		controller.setEnterpriseName(wp.getEnterprise().getRegistry().getFullName());
-//		controller.setWorkPlaceName(wp.getDescription());
-//		controller.setCalendarId(getPayrollWorkPlace().getCalendar().getId());
-//		controller.onInitialize(event);
+		WorkPlace wp = getWorkPlace();
+		CalendarController controller = (CalendarController) AonUtil.getRegisteredBean(ICompanyConstants.CALENDAR_CONTROLLER_NAME);
+		controller.setEnterpriseName(wp.getEnterprise().getRegistry().getFullName());
+		controller.setWorkPlaceName(wp.getDescription());
+		controller.setCalendarId(getPayrollWorkPlace().getCalendar().getId());
+		controller.onInitialize(event);
 	}
 
-	public WorkPlace getPayrollWorkPlace() {
-		IController controller = FormUtil.getController(IPayrollConstants.PAYROLL_WORK_PLACE_CONTROLLER);
-		if(controller.getTo()!=null){
-			return (WorkPlace) controller.getTo();
+	public PayrollWorkPlace getPayrollWorkPlace() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), getWorkPlace().getId());
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				return (PayrollWorkPlace) list.get(0); 
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> getPayrollWorkPlace exception: ",e);
 		}
-		return null;
+		return new PayrollWorkPlace();
 	}	
 	
 }

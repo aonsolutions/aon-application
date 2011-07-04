@@ -527,7 +527,7 @@ public class ContractController extends BasicController {
 	}
 	
 	public List<SelectItem> getAgreementLevelCategories(){
-		List<SelectItem> list = null;
+		List<SelectItem> list = new LinkedList<SelectItem>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(EnterpriseData.class);
 			Criteria criteria = new Criteria();
@@ -543,7 +543,6 @@ public class ContractController extends BasicController {
 				IManagerBean cBean = BeanManager.getManagerBean(AgreementLevelCategory.class);
 				criteria = new Criteria();
 				criteria.addEqualExpression(cBean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_CATEGORY_LEVEL_AGREEMENT_ID), Integer.parseInt(getAgreement().getExpression()));
-				list = new LinkedList<SelectItem>();
 				for (ITransferObject to : cBean.getList(criteria)) {
 					AgreementLevelCategory alc = (AgreementLevelCategory) to;
 					String name = alc.getLevel().getDescription()+" - "+alc.getDescription();
@@ -552,8 +551,7 @@ public class ContractController extends BasicController {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// NADA, no se cargan datos del convenio
 		}
 		return list;
 	}

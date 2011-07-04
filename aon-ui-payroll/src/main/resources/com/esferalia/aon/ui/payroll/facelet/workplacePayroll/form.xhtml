@@ -32,7 +32,7 @@
 			columnClasses="
 			aon-noborder aon-padding-left aon-width-auto aon-vertical-align-top,
 			aon-noborder aon-padding-left aon-width-auto aon-vertical-align-top">
-			<aon:panelGrid id="dataTable" columns="2" >
+			<aon:panelGrid id="dataTable" columns="2" style="width: 50%;">
 				
 				<aon:outputLabel for="WorkPlace_description" value="#{bundle.aon_description}" />
 				<aon:inputText id="WorkPlace_description"  
@@ -43,12 +43,7 @@
 				<aon:selectOneMenu id="WorkPlace_address_id" 
 					value="#{payrollWorkPlace.to.address}" 
 					required="true">
-					<c:if test="#{showEnterpriseData}">
 						<f:selectItems value="#{enterprise.addresses}" />
-					</c:if>
-					<c:if test="#{!showEnterpriseData}">
-						<f:selectItems value="#{companyCollections.companyAddresses}" />
-					</c:if>
 				</aon:selectOneMenu>
 			
 				<aon:outputText for="WorkPlace_economicAgreement" value="#{configBundle.config_administration}" />
