@@ -926,7 +926,13 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}
 
-	private void setRowData(ITransferObject to) throws ManagerBeanException {
+	/**
+	 * Sets the row data.
+	 *
+	 * @param to the new row data
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	protected void setRowData(ITransferObject to) throws ManagerBeanException {
 		if (getModel() instanceof ExtendedPageDataModel) {
 			((ExtendedPageDataModel) getModel()).setRowData(getSelectedIndex(), to);
 		} else {

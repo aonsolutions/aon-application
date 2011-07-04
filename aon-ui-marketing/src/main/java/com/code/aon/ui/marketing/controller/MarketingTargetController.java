@@ -64,6 +64,13 @@ public class MarketingTargetController extends TargetController {
 	}
 
 	@Override
+	protected void setRowData(ITransferObject to) throws ManagerBeanException {
+		Target target = (Target) to;
+		MarketingTarget mt = (MarketingTarget) getManagerBean().get( target.getId() );
+		super.setRowData( mt );
+	}
+	
+	@Override
 	public String getListReportKey() {
 		return IMarketingConstants.MARKETING_TARGET_LIST;
 	}	
