@@ -55,7 +55,8 @@ public class Item implements ITransferObject, IPriceable {
     private double profitPercent;
     private double purchasePrice;
     private boolean internet;
-	private Set<ItemSupplier> suppliers = new HashSet<ItemSupplier>();
+
+    private Set<ItemSupplier> suppliers = new HashSet<ItemSupplier>();
 
     @Id
     @GeneratedValue
