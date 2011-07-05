@@ -101,6 +101,10 @@ public class RichLookupBean {
 	private ITransferObject suggestedTo;
 	
 	private String suggestAlias;
+	
+	private String componentSuggestAlias;
+
+	private boolean suggestMatchBeginOnly;
 
 	/**
 	 * The Constructor.
@@ -819,6 +823,13 @@ public class RichLookupBean {
 	public void setSuggestAlias(String alias) {
 		this.suggestAlias = getController().resolveAlias(alias);
 	}
+	
+	private String resolveSuggestAlias() {
+		if (! StringUtils.isEmpty(componentSuggestAlias) ) {
+			return getController().resolveAlias(componentSuggestAlias);
+		}
+		return getSuggestAlias();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<ITransferObject> autocomplete( Object value ) {
@@ -827,7 +838,8 @@ public class RichLookupBean {
 			if (! StringUtils.isBlank(text) ) {
 				try {
 					getController().onEditSearch(null);
-					Expression exp = ExpressionUtilities.getLikeExpression(getSuggestAlias(), "%" + text + "%");
+					String search = (suggestMatchBeginOnly ? "" : "%") + text + "%"; 
+					Expression exp = ExpressionUtilities.getLikeExpression(resolveSuggestAlias(), search);
 					getController().getCriteria().addExpression(exp);
 					onSearch(null);
 					if (getModel().getRowCount() > 0) {
@@ -862,6 +874,22 @@ public class RichLookupBean {
 		fireLookupChangeListener(component, true);
 		updateSourcePojo();
 		removeControllerListener();
+	}
+
+	public String getComponentSuggestAlias() {
+		return componentSuggestAlias;
+	}
+
+	public void setComponentSuggestAlias(String componentSuggestAlias) {
+		this.componentSuggestAlias = componentSuggestAlias;
+	}
+
+	public boolean isSuggestMatchBeginOnly() {
+		return suggestMatchBeginOnly;
+	}
+
+	public void setSuggestMatchBeginOnly(boolean suggestMatchBeginOnly) {
+		this.suggestMatchBeginOnly = suggestMatchBeginOnly;
 	}
 	
 }

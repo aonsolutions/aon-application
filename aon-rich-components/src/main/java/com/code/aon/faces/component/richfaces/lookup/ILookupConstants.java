@@ -13,6 +13,8 @@ public interface ILookupConstants {
 	String CONTROLLER_LISTENER = "controllerListener";
 	String ALIAS = "alias";
 	String COLUMN_EXPRESSION = "columnExpression";
+	String SUGGEST_ALIAS = "suggestAlias";
+	String MATCH_BEGIN_ONLY = "matchBeginOnly";
 	
 	// Title default messages
 	String LIST_TITLE = "#{bundle.aon_open_select_window}";

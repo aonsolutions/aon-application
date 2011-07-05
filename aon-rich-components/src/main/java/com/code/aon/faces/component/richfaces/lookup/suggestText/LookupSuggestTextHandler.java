@@ -9,7 +9,6 @@ import javax.faces.component.UIComponent;
 
 import com.code.aon.faces.component.richfaces.lookup.HtmlLookupBasicInput;
 import com.code.aon.faces.component.richfaces.lookup.LookupBasicInputHandler;
-import com.code.aon.faces.component.util.BasicComponentConfig;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
@@ -67,6 +66,12 @@ public class LookupSuggestTextHandler extends LookupBasicInputHandler {
 		if ( focus != null ) {
 			mapper.setVariable(PREFFIX + FOCUS, focus.getValueExpression(ctx, Object.class));				
 		}		
+		TagAttribute suggestAlias = getAttribute(SUGGEST_ALIAS);
+		if (suggestAlias != null) {
+			mapper.setVariable(PREFFIX + SUGGEST_ALIAS, suggestAlias.getValueExpression(ctx, String.class));
+		}		
+		TagAttribute matchBeginOnly = getAttribute(MATCH_BEGIN_ONLY);
+		mapper.setVariable(PREFFIX + MATCH_BEGIN_ONLY, FaceletUtil.getBooleanValueExpression(ctx, matchBeginOnly));
 	}
 	
 	@Override

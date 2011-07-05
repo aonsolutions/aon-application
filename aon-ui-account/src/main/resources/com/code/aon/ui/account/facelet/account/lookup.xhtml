@@ -9,25 +9,24 @@
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="controller" value="#{account}" />
 		<ui:param name="lookupBean" value="#{accountLookup}" />
-		<ui:param name="lookupInputSize" value="10"/>
-		<ui:param name="lookupInputMaxLength" value="9"/>
+		<ui:param name="skipInputText" value="#{true}"/>
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}"/>
 		<ui:param name="lookupInputSuggestExpression" value="#{lto.id} (#{lto.description})"/>
 		<ui:param name="lookupInputSuggestSize" value="40" />
-		<ui:param name="lookupInputOnSubmit" 
-			value="if (this.value.indexOf('.') != -1) {
-						arr = this.value.split('.');
-						if (arr.length > 1) {
-							account_prefix = arr[0];
-							account_suffix = arr[1];
-							for (i=(account_prefix.length + account_suffix.length); i&lt;9; i++) {
-								account_prefix += '0';
-							}
-							this.value = account_prefix + account_suffix;
-						}
-					};"/>		
 		<ui:param name="searchButtonTitle" value="#{accountBundle.account_selection}" />
 		<ui:param name="newButtonTitle" value="#{accountBundle.account_module}" />
+		
+		<ui:define name="beforeLookupContent">
+			<aon:lookupSuggestText id="#{pojoName}_id#{lookupSuffix}"
+				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
+				value="#{lookupTo.id}" property="#{lookupTo}" 
+				suggestAlias="Account_id" matchBeginOnly="#{true}"
+				columnExpression="#{lookupInputSuggestExpression}"
+				size="10" maxlength="9" disabled="#{lookupDisabled}"
+				minChars="2" focus="#{lookupInputOnFocus}"
+				selectReRender="#{lookup_reRender}" />		
+		</ui:define>
+		
 	</ui:decorate>
 
 </ui:composition>

@@ -5,6 +5,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<rich:suggestionbox 
@@ -14,6 +15,10 @@
 		<h:column>
 			<aon:outputText value="#{aon_lst_columnExpression}" />
 		</h:column>
+		<a4j:support event="onsubmit" ajaxSingle="true">
+			<f:setPropertyActionListener value="#{aon_lst_suggestAlias}" target="#{lookup.componentSuggestAlias}" />
+			<f:setPropertyActionListener value="#{aon_lst_matchBeginOnly}" target="#{lookup.suggestMatchBeginOnly}" />
+		</a4j:support>
 		<a4j:support event="onselect" ajaxSingle="true"
 			reRender="#{aon_lst_selectReRender}" focus="#{aon_lst_focus}" >
 			<f:setPropertyActionListener value="#{lto}" target="#{lookup.suggestedTo}" />

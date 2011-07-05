@@ -26,6 +26,10 @@
 		<aon:valueParam name="newButtonWidth" default="680"/>
 		<aon:valueParam name="newButtonHeight" default="520"/>
 		
+		<c:if test="#{!skipInputText}">
+			<aon:valueParam name="clearButtonFocus" default="#{pojoName}_id#{lookupSuffix}"/>
+		</c:if>
+		
 		<aon:methodParam name="lookupChangeListener" default="" type="lookupChangeListener" />
 		
 	</ui:include>
