@@ -1166,6 +1166,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	public String initialAction(){
 		try {
 			if(getRowCount()==1){
+				initializeModel();
 				getModel().setRowIndex(0);
 				select(null);
 				return getBeanName()+FORM_SUFFIX;
