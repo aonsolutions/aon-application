@@ -6,7 +6,7 @@
 
 	<ui:define name="menuContent">
 		<aon:commandLink id="integral" 
-			action="enterprise_search" 
+			action="#{enterprise.initialAction}" 
 			value="#{appBundle.menu_integral}"
 			styleClass="aon-top-menu-item aon-icon-payroll">
 			<aon:actionListener method="#{enterprise.onTreeViewSelect}" />

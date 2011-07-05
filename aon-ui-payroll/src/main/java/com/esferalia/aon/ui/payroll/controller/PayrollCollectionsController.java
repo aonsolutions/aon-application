@@ -34,6 +34,7 @@ import com.esferalia.aon.payroll.enumeration.EmployeeType;
 import com.esferalia.aon.payroll.enumeration.EmploymentProgram;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
+import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.OtherLaws;
@@ -81,6 +82,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> embargableTypeList;
 	private List<SelectItem> dismissCauseList;
 	private List<SelectItem> contractAttachTypes;
+	private List<SelectItem> inactiveLastPeriod;
 	
 	private List<SelectItem> cccTypes;
 	private List<SelectItem> enterpriseActivityTypes;
@@ -580,6 +582,19 @@ public class PayrollCollectionsController {
 			}
 		}
 		return enterpriseActivityTypes;
+	}
+	
+	public List<SelectItem> getInactiveLastPeriods() {
+		if (inactiveLastPeriod == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			inactiveLastPeriod = new LinkedList<SelectItem>();
+			for( InactiveLastPeriod p : InactiveLastPeriod.values() ) {
+				String name = p.getName(locale);
+				SelectItem item = new SelectItem(p, name);
+				inactiveLastPeriod.add(item);			
+			}
+		}
+		return inactiveLastPeriod;
 	}
 	
 	

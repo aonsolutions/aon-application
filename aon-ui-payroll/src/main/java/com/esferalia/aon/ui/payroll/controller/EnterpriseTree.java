@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +43,7 @@ import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractPaymentController;
@@ -84,6 +86,26 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	private boolean inactiveContract;
 	
+	private Date inactiveDate;
+	
+	private InactiveLastPeriod inactiveLastPeriod;
+	
+	public InactiveLastPeriod getInactiveLastPeriod() {
+		return inactiveLastPeriod;
+	}
+
+	public void setInactiveLastPeriod(InactiveLastPeriod inactiveLastPeriod) {
+		this.inactiveLastPeriod = inactiveLastPeriod;
+	}
+
+	public Date getInactiveDate() {
+		return inactiveDate;
+	}
+
+	public void setInactiveDate(Date inactiveDate) {
+		this.inactiveDate = inactiveDate;
+	}
+
 	public boolean isActiveContract() {
 		return activeContract;
 	}
@@ -177,7 +199,11 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	private EnterpriseTreeData getTreeData( Contract c ) {
-		return new EnterpriseTreeData( c.getId(), c.getPerson().getFullName(), EnterpriseTreeType.CONTRACT);
+		if(c.getEndDate()!=null && c.getEndDate().before(new Date())){
+			return new EnterpriseTreeData( c.getId(), c.getPerson().getFullName(), EnterpriseTreeType.END_CONTRACT);
+		} else {
+			return new EnterpriseTreeData( c.getId(), c.getPerson().getFullName(), EnterpriseTreeType.CONTRACT);
+		}
 	}
 	
 	private void addMainNode( TreeNode<EnterpriseTreeData> contractNode ) {
@@ -216,16 +242,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void loadContracts( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Contract.class);		
 		Criteria criteria = new Criteria();
-		if(!isActiveContract()){
-			String endDate = bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE);
-			criteria.addLessThanOrEqualExpression(endDate, new Date());
-		}
-		if(!isInactiveContract()){
-			String endDate = bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE);
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
-			Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
-			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-		}
+		completeContractCriteria(bean, criteria);
 		String workPlaceId = bean.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ID);
 		criteria.addEqualExpression(workPlaceId, workPlace.getId());
 		criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_PERSON_FIRST_SURNAME));
@@ -243,6 +260,34 @@ public class EnterpriseTree implements ICompanyConstants {
 			addDocumentNode(contractNode);
 		}	
 	}		
+	
+	private void completeContractCriteria(IManagerBean bean, Criteria criteria) throws ManagerBeanException{
+		if(isActiveContract() && isInactiveContract()){
+			if(getInactiveDate()!=null){
+				String endDate = bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE);
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, getInactiveDate());
+				Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
+				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			}
+		} else if(!isActiveContract() && !isInactiveContract()){
+			String alias = bean.getFieldName(IPayrollAlias.CONTRACT_ID);
+			criteria.addEqualExpression(alias, null);
+		} else if(isActiveContract()){
+			String endDate = bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(endDate);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		} else if(isInactiveContract()){
+			String endDate = bean.getFieldName(IPayrollAlias.CONTRACT_END_DATE);
+			if(getInactiveDate()==null){
+				criteria.addNotNullExpression(endDate);
+			} else {
+				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(endDate, getInactiveDate());
+				Expression expr2 = ExpressionUtilities.getNotNullExpression(endDate);
+				criteria.addExpression(ExpressionUtilities.getAndExpression(expr1, expr2));
+			}
+		}
+	}
 	
 	private void loadWorkPlaces( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);		
@@ -510,5 +555,29 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 		return new PayrollWorkPlace();
 	}	
+
+	public void onChangeLastPeriod( ActionEvent event ) {
+		Calendar cal = Calendar.getInstance();
+		if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
+			cal.add(Calendar.MONTH, -1);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
+			cal.add(Calendar.MONTH, -3);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
+			cal.add(Calendar.MONTH, -6);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
+			cal.add(Calendar.YEAR, -1);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
+			cal = null;
+		}
+		setInactiveDate(cal!=null?cal.getTime():null);
+	}
+	
+	public void onChangeInactiveDate( ActionEvent event ) {
+		if(isInactiveContract() && getInactiveDate()==null && getInactiveLastPeriod()!=InactiveLastPeriod.ALL){
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.MONTH, -1);
+			setInactiveDate(cal!=null?cal.getTime():null);
+		}
+	}
 	
 }
