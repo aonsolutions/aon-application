@@ -1157,5 +1157,27 @@ public class BasicController extends AbstractPojoController implements IControll
 			AonUtil.actionListener(expression, event);
 		}
 	}	
+	
+	/**
+	 * Gets the initial action
+	 * 
+	 * @return the initial action
+	 */
+	public String initialAction(){
+		try {
+			if(getRowCount()==1){
+				getModel().setRowIndex(0);
+				select(null);
+				return getBeanName()+FORM_SUFFIX;
+			} else if(getRowCount()<LIMIT){
+				initializeModel();
+				return getBeanName()+LIST_SUFFIX;
+			} else {
+				return getBeanName()+SEARCH_SUFFIX;
+			}
+		} catch (ManagerBeanException e) {
+			return getBeanName()+SEARCH_SUFFIX;
+		}
+	}
 
 }

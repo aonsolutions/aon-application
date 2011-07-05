@@ -104,14 +104,14 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="enterprise" action="enterprise_search"
+									<aon:commandLink id="enterprise" action="#{enterprise.initialAction}"
 										value="#{companyBundle.company_enterprise_module}">
 										<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
 										<aon:actionListener method="#{enterprise.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="person" action="person_search"
+									<aon:commandLink id="person" action="#{person.initialAction}"
 										actionListener="#{person.onEditSearch}"
 										value="#{registryBundle.registry_person_module}">
 									</aon:commandLink>
@@ -129,14 +129,14 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="calendar" action="calendar_search"
+									<aon:commandLink id="calendar" action="#{calendar.initialAction}"
 										value="#{calendarBundle.aon_calendar_generic_menu}">
 										<aon:actionListener method="#{calendar.onEditSearch}" />
 										<aon:actionListener method="#{calendar.onInitialize}" />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="holiday" action="holiday_search"
+									<aon:commandLink id="holiday" action="#{holiday.initialAction}"
 										value="#{calendarBundle.aon_calendar_holiday}" />
 								</aon:div>
 							</aon:div>
