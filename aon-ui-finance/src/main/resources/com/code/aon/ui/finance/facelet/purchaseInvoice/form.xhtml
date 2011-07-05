@@ -103,6 +103,7 @@
 							<aon:div id="invoiceReferenceCodeDiv">
 								<aon:inputText id="Invoice_referenceCode" 
 									value="#{purchaseInvoice.to.referenceCode}"
+									required="true"
 									rendered="#{!purchaseInvoice.readOnly and purchaseInvoiceFinance.allPending}" 
 									size="25" maxlength="32" />
 								<aon:outputText styleClass="aon-bold"
