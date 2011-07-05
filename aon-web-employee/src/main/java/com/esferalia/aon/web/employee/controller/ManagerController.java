@@ -96,6 +96,11 @@ public class ManagerController implements IPayrollConstants {
             List<ITransferObject> list = bean.getList(criteria);
             if (! list.isEmpty() ) {
                 return (EnterpriseUser) list.get(0);
+            } else {
+            	String message = "El usuario no existe";
+            	LOGGER.error(message);
+    			AonUtil.addErrorMessage(message);
+    			throw new AbortProcessingException(message);
             }
         } catch (ManagerBeanException e) {
         	LOGGER.error( "Error obtaining the USER related with the logged user: " + getPrincipal(), e);
