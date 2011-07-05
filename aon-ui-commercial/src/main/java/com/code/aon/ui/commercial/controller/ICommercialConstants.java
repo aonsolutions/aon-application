@@ -8,7 +8,7 @@ public interface ICommercialConstants {
 	String NAVIGATION_OFFER_LIST = "offer_list"; 
 	String NAVIGATION_COMMERCIAL_TRACKING_FORM = "commercialTracking_form";
 	String NAVIGATION_TARGET_FORM = "target_form";
-	String NAVIGATION_PROJECT_FORM = "project_form";
+	String NAVIGATION_PROJECT_COMMERCIAL_FORM = "projectCommercial_form";
 
 	// ************************************************************
 	// BEAN
@@ -21,12 +21,12 @@ public interface ICommercialConstants {
 	String TARGET_ADDRESS_CONTROLLER_NAME = "targetAddress";
 	String TARGET_ITEM_CONTROLLER_NAME = "targetItem";
 	String TARGET_SELLER_CONTROLLER_NAME = "targetSeller";
-	String TARGET_PROJECT_CONTROLLER_NAME = "targetProject";
+	String TARGET_PROJECT_COMMERCIAL_CONTROLLER_NAME = "targetProjectCommercial";
 	String SELLER_MEDIA_CONTROLLER_NAME = "sellerMedia";
 	String SELLER_ADDRESS_CONTROLLER_NAME = "sellerAddress";
 	String COMMERCIAL_TRACKING_CONTROLLER_NAME = "commercialTracking";
-	String PROJECT_CONTROLLER_NAME = "project";
-	String PROJECT_TRACKING_CONTROLLER_NAME = "projectTracking";
+	String PROJECT_COMMERCIAL_CONTROLLER_NAME = "projectCommercial";
+	String PROJECT_COMMERCIAL_TRACKING_CONTROLLER_NAME = "projectCommercialTracking";
 	String COLLECTIONS_CONTROLLER_NAME = "commercialCollections";
 
 	// ************************************************************

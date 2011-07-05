@@ -8,6 +8,7 @@ import com.code.aon.project.DailyTracking;
 import com.code.aon.project.Dossier;
 import com.code.aon.project.DossierType;
 import com.code.aon.project.JobType;
+import com.code.aon.project.Project;
 import com.code.aon.project.Task;
 
 /** 
@@ -254,6 +255,55 @@ public interface IProjectAlias {
 	* Hibernate value: JobType.id
 	*/
 	String  JOB_TYPE_ID = JOB_TYPE_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Project entity.
+	*/ 
+	DAOConstantsEntry PROJECT_ENTRY = DAOConstants.getDAOConstant(Project.class);
+
+	/** 
+	* Alias value: Project_alias
+	* Hibernate value: Project.alias
+	*/
+	String  PROJECT_ALIAS = PROJECT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Project_commercial
+	* Hibernate value: Project.commercial
+	*/
+	String  PROJECT_COMMERCIAL = PROJECT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Project_date
+	* Hibernate value: Project.date
+	*/
+	String  PROJECT_DATE = PROJECT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Project_dossier
+	* Hibernate value: Project.dossier
+	*/
+	String  PROJECT_DOSSIER = PROJECT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Project_id
+	* Hibernate value: Project.id
+	*/
+	String  PROJECT_ID = PROJECT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Project_name
+	* Hibernate value: Project.name
+	*/
+	String  PROJECT_NAME = PROJECT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Project_tas
+	* Hibernate value: Project.tas
+	*/
+	String  PROJECT_TAS = PROJECT_ENTRY.getAliasNames()[6];
 
 
 

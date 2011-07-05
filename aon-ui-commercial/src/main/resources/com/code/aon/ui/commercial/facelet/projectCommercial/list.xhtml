@@ -10,21 +10,21 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="projectList">
+		<aon:form id="projectCommercialList">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_operation_module}" />
-				<ui:param name="controller" value="#{project}" />
+				<ui:param name="controller" value="#{projectCommercial}" />
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{project}" />
+					<ui:param name="controller" value="#{projectCommercial}" />
 					<ui:define name="columns">
 					
 						<ui:include
-							src="/com/code/aon/ui/commercial/facelet/project/listContent.xhtml" />
+							src="/com/code/aon/ui/commercial/facelet/projectCommercial/listContent.xhtml" />
 
 					</ui:define>
 				</ui:decorate>

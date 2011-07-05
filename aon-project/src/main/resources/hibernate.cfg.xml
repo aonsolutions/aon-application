@@ -33,6 +33,7 @@
 		<mapping class="com.code.aon.project.Dossier"/>
 		<mapping class="com.code.aon.project.DossierType"/>
 		<mapping class="com.code.aon.project.JobType"/>
+		<mapping class="com.code.aon.project.Project"/>
 		<mapping class="com.code.aon.project.Task"/>
 
 		<mapping class="com.code.aon.registry.Category"/>

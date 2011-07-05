@@ -42,7 +42,7 @@ public class CommercialTracking implements ITransferObject {
 	private Date date;
 	
 	/** The project. */
-	private Project project;
+	private ProjectCommercial project;
 	
 	/** The seller. */
 	private Seller seller;
@@ -123,9 +123,9 @@ public class CommercialTracking implements ITransferObject {
 	 */
 	@ManyToOne (fetch=FetchType.EAGER)
 	@JoinColumn(name="project", nullable=false)
-	@ForeignKey(name = "FK_COMMERCAIL_TRACKING_PROJECT")
-	@Index(name = "IDX_COMMERCAIL_TRACKING_PROJECT")
-	public Project getProject() {
+	@ForeignKey(name = "FK_COMMERCIAL_TRACKING_PROJECT")
+	@Index(name = "IDX_COMMERCIAL_TRACKING_PROJECT")
+	public ProjectCommercial getProject() {
 		return project;
 	}
 
@@ -134,7 +134,7 @@ public class CommercialTracking implements ITransferObject {
 	 * 
 	 * @param project the project
 	 */
-	public void setProject(Project project) {
+	public void setProject(ProjectCommercial project) {
 		this.project = project;
 	}
 

@@ -46,7 +46,7 @@
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
 		<mapping class="com.code.aon.commercial.OfferDetailCommission"/>
 		<mapping class="com.code.aon.commercial.OfferTerm"/>
-		<mapping class="com.code.aon.commercial.Project"/>		
+		<mapping class="com.code.aon.commercial.ProjectCommercial"/>		
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>		
@@ -79,6 +79,17 @@
 		<!-- AON-CUSTOMER Mapping files -->		
 		<mapping class="com.code.aon.customer.Customer"/>
 
+		<!-- AON-GEOZONE Mapping files -->		
+		<mapping class="com.code.aon.geozone.GeoTree"/>
+		<mapping class="com.code.aon.geozone.GeoZone"/>			
+	
+		<!-- AON-GROUPWARE Mapping files -->
+		<mapping class="com.code.aon.groupware.Alarm"/>
+		<mapping class="com.code.aon.groupware.Note"/>
+		<mapping class="com.code.aon.groupware.Notice"/>
+		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
+		<mapping class="com.code.aon.groupware.Favorite"/>	
+				
 		<!-- AON-MARKETING Mapping files -->
 		<mapping class="com.code.aon.marketing.MarketingAction"/>
 		<mapping class="com.code.aon.marketing.ActionTarget"/>
@@ -93,10 +104,6 @@
 		<mapping class="com.code.aon.marketing.TargetProfile"/>
 		<mapping class="com.code.aon.marketing.MarketingTarget"/>		
 		
-		<!-- AON-GEOZONE Mapping files -->		
-		<mapping class="com.code.aon.geozone.GeoTree"/>
-		<mapping class="com.code.aon.geozone.GeoZone"/>			
-	
 		<!-- AON-MESSAGING Mapping files -->
 		<mapping class="com.code.aon.messaging.Message"/>
 		<mapping class="com.code.aon.messaging.MessageContent"/>
@@ -118,6 +125,9 @@
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 						
+		<!-- AON-PROJECT Mapping files -->
+		<mapping class="com.code.aon.project.Project"/>
+
 		<!-- AON-REGISTRY Mapping files -->
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.RegistryBank"/>
@@ -140,13 +150,6 @@
 		
 		<!-- AON-SUPPLIER Mapping files -->	
 		<mapping class="com.code.aon.supplier.Supplier"/>		
-				
-		<!-- AON-GROUPWARE Mapping files -->
-		<mapping class="com.code.aon.groupware.Alarm"/>
-		<mapping class="com.code.aon.groupware.Note"/>
-		<mapping class="com.code.aon.groupware.Notice"/>
-		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
-		<mapping class="com.code.aon.groupware.Favorite"/>	
 				
 	</session-factory>
 

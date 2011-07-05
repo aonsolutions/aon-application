@@ -51,10 +51,10 @@
 				<aon:panelGrid id="menuGrid" columns="2" width="100%"
 					columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
 
-					<aon:outputLabel for="Project_id" 
+					<aon:outputLabel for="ProjectCommercial_id" 
 						value="#{commercialBundle.commercial_operation_module}" />
 					<aon:div>
-						<ui:include src="/com/code/aon/ui/commercial/facelet/project/lookup.xhtml" >
+						<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercial/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{commercialTracking.to.project}" />
 							<ui:param name="skipLabel" value="#{true}" />
 							<ui:param name="idRequired" value="#{true}" />
@@ -218,7 +218,7 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{offerLookup}" />
-		<aon:lookupButtonPopup lookup="#{projectLookup}" />
+		<aon:lookupButtonPopup lookup="#{projectCommercialLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		<c:if test="#{aonConfiguration.bean.alarm.showNew}">
 			<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/newAlarm.xhtml" />

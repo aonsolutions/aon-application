@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://volga:3306/aon-enterprise-com?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://volga:3306/aon_master?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
@@ -28,7 +28,7 @@
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
 		<mapping class="com.code.aon.commercial.OfferDetailCommission"/>
 		<mapping class="com.code.aon.commercial.OfferTerm"/>
-		<mapping class="com.code.aon.commercial.Project"/>		
+		<mapping class="com.code.aon.commercial.ProjectCommercial"/>		
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
@@ -69,10 +69,11 @@
 
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Enterprise"/>
-		<mapping class="com.code.aon.company.EnterpriseActivity"/>
-		<mapping class="com.code.aon.company.EnterpriseCCC"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>		
 		
+		<!-- AON-PROJECT Mapping files -->
+		<mapping class="com.code.aon.project.Project"/>
+
 		<!-- AON-CALENDAR Mapping files -->		
 		<mapping class="com.esferalia.aon.calendar.Calendar"/>
 		<mapping class="com.esferalia.aon.calendar.Holiday"/>

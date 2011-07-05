@@ -3,7 +3,6 @@ package com.code.aon.commercial.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.commercial.CommercialActivity;
-import com.code.aon.commercial.Project;
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.CommercialTerm;
 import com.code.aon.commercial.Commission;
@@ -15,6 +14,7 @@ import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.OfferDetailCommission;
 import com.code.aon.commercial.OfferTerm;
+import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetItem;
 import com.code.aon.commercial.TargetSeller;
@@ -43,73 +43,6 @@ public interface ICommercialAlias {
 	* Hibernate value: CommercialActivity.name
 	*/
 	String  COMMERCIAL_ACTIVITY_NAME = COMMERCIAL_ACTIVITY_ENTRY.getAliasNames()[1];
-
-
-
-	/** 
-	* DAOConstantsEntry for Project entity.
-	*/ 
-	DAOConstantsEntry PROJECT_ENTRY = DAOConstants.getDAOConstant(Project.class);
-
-	/** 
-	* Alias value: Project_comments
-	* Hibernate value: Project.comments
-	*/
-	String  PROJECT_COMMENTS = PROJECT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Project_date
-	* Hibernate value: Project.date
-	*/
-	String  PROJECT_DATE = PROJECT_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Project_id
-	* Hibernate value: Project.id
-	*/
-	String  PROJECT_ID = PROJECT_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Project_name
-	* Hibernate value: Project.name
-	*/
-	String  PROJECT_NAME = PROJECT_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Project_probability
-	* Hibernate value: Project.probability
-	*/
-	String  PROJECT_PROBABILITY = PROJECT_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: Project_seller_id
-	* Hibernate value: Project.seller.id
-	*/
-	String  PROJECT_SELLER_ID = PROJECT_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: Project_source
-	* Hibernate value: Project.source
-	*/
-	String  PROJECT_SOURCE = PROJECT_ENTRY.getAliasNames()[6];
-
-	/** 
-	* Alias value: Project_status
-	* Hibernate value: Project.status
-	*/
-	String  PROJECT_STATUS = PROJECT_ENTRY.getAliasNames()[7];
-
-	/** 
-	* Alias value: Project_statusDate
-	* Hibernate value: Project.statusDate
-	*/
-	String  PROJECT_STATUS_DATE = PROJECT_ENTRY.getAliasNames()[8];
-
-	/** 
-	* Alias value: Project_target_id
-	* Hibernate value: Project.target.id
-	*/
-	String  PROJECT_TARGET_ID = PROJECT_ENTRY.getAliasNames()[9];
 
 
 
@@ -901,6 +834,91 @@ public interface ICommercialAlias {
 	* Hibernate value: OfferTerm.offer.id
 	*/
 	String  OFFER_TERM_OFFER_ID = OFFER_TERM_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProjectCommercial entity.
+	*/ 
+	DAOConstantsEntry PROJECT_COMMERCIAL_ENTRY = DAOConstants.getDAOConstant(ProjectCommercial.class);
+
+	/** 
+	* Alias value: ProjectCommercial_id
+	* Hibernate value: ProjectCommercial.id
+	*/
+	String  PROJECT_COMMERCIAL_ID = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProjectCommercial_project_id
+	* Hibernate value: ProjectCommercial.project.id
+	*/
+	String  PROJECT_COMMERCIAL_PROJECT_ID = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ProjectCommercial_target_id
+	* Hibernate value: ProjectCommercial.target.id
+	*/
+	String  PROJECT_COMMERCIAL_TARGET_ID = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ProjectCommercial_seller_id
+	* Hibernate value: ProjectCommercial.seller.id
+	*/
+	String  PROJECT_COMMERCIAL_SELLER_ID = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ProjectCommercial_comments
+	* Hibernate value: ProjectCommercial.comments
+	*/
+	String  PROJECT_COMMERCIAL_COMMENTS = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ProjectCommercial_source
+	* Hibernate value: ProjectCommercial.source
+	*/
+	String  PROJECT_COMMERCIAL_SOURCE = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ProjectCommercial_status
+	* Hibernate value: ProjectCommercial.status
+	*/
+	String  PROJECT_COMMERCIAL_STATUS = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ProjectCommercial_statusDate
+	* Hibernate value: ProjectCommercial.statusDate
+	*/
+	String  PROJECT_COMMERCIAL_STATUS_DATE = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: ProjectCommercial_probability
+	* Hibernate value: ProjectCommercial.probability
+	*/
+	String  PROJECT_COMMERCIAL_PROBABILITY = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: ProjectCommercial_project_name
+	* Hibernate value: ProjectCommercial.project.name
+	*/
+	String  PROJECT_COMMERCIAL_PROJECT_NAME = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: ProjectCommercial_project_alias
+	* Hibernate value: ProjectCommercial.project.alias
+	*/
+	String  PROJECT_COMMERCIAL_PROJECT_ALIAS = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: ProjectCommercial_project_date
+	* Hibernate value: ProjectCommercial.project.date
+	*/
+	String  PROJECT_COMMERCIAL_PROJECT_DATE = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: ProjectCommercial_project_commercial
+	* Hibernate value: ProjectCommercial.project.commercial
+	*/
+	String  PROJECT_COMMERCIAL_PROJECT_COMMERCIAL = PROJECT_COMMERCIAL_ENTRY.getAliasNames()[12];
 
 
 

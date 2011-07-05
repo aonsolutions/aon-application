@@ -13,7 +13,7 @@
 			<value>#{targetSellerListener}</value>
 			<value>#{targetProfileListener}</value>
 			<value>#{targetSupplierListener}</value>
-			<value>#{targetProjectListener}</value>
+			<value>#{targetProjectCommercialListener}</value>
 		</list-entries>		
 	</managed-bean>
 

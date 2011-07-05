@@ -15,7 +15,7 @@ import com.code.aon.commercial.OfferAttachment;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.OfferDetailCommission;
 import com.code.aon.commercial.OfferTerm;
-import com.code.aon.commercial.Project;
+import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.Target;
 import com.code.aon.commercial.TargetItem;
 import com.code.aon.commercial.TargetSeller;
@@ -34,10 +34,9 @@ public class CommercialAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-commercial/src/main/java/com/code/aon/commercial/dao/ICommercialAlias.java");
+		File file = new File("/AON-TRUNK/aon-commercial/src/main/java/com/code/aon/commercial/dao/ICommercialAlias.java");
 		String[] classes = new String[] { 
 				CommercialActivity.class.getName(),
-				Project.class.getName(),
 				CommercialTracking.class.getName(),
 				CommercialTerm.class.getName(),
 				Commission.class.getName(),
@@ -49,6 +48,7 @@ public class CommercialAliasWriter {
 				OfferDetail.class.getName(),
 				OfferDetailCommission.class.getName(),
 				OfferTerm.class.getName(),
+				ProjectCommercial.class.getName(),
 				Target.class.getName(),
 				TargetItem.class.getName(),
 				TargetSeller.class.getName(),

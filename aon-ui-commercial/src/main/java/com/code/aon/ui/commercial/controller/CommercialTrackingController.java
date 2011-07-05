@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.commercial.Offer;
-import com.code.aon.commercial.Project;
+import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.ITransferObject;
@@ -208,7 +208,7 @@ public class CommercialTrackingController extends BasicController {
 	public void projectChanged( LookupChangeEvent event ) {
 		CommercialTracking ct = (CommercialTracking) getTo();
 		if ( event.getNewValue() != null ) {
-			Project project = (Project) event.getNewValue();
+			ProjectCommercial project = (ProjectCommercial) event.getNewValue();
 			if ( project.getSeller().getId() != null ) {
 				ct.setSeller(project.getSeller());
 			}

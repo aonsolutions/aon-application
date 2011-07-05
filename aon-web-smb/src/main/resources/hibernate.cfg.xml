@@ -69,7 +69,7 @@
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
 		<mapping class="com.code.aon.commercial.OfferDetailCommission"/>
 		<mapping class="com.code.aon.commercial.OfferTerm"/>
-		<mapping class="com.code.aon.commercial.Project"/>
+		<mapping class="com.code.aon.commercial.ProjectCommercial"/>
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
@@ -132,6 +132,13 @@
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 
+		<!-- AON-GROUPWARE Mapping files -->
+		<mapping class="com.code.aon.groupware.Alarm"/>
+		<mapping class="com.code.aon.groupware.Note"/>
+		<mapping class="com.code.aon.groupware.Notice"/>
+		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
+		<mapping class="com.code.aon.groupware.Favorite"/>	
+				
 		<!-- AON-PRODUCT Mapping files -->	
 		<mapping class="com.code.aon.product.Brand"/>
 		<mapping class="com.code.aon.product.Catalogue"/>
@@ -149,6 +156,9 @@
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 		
+		<!-- AON-PROJECT Mapping files -->	
+		<mapping class="com.code.aon.project.Project"/>
+
 		<!-- AON-PURCHASE Mapping files -->	
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
@@ -201,13 +211,6 @@
 		<mapping class="com.code.aon.audit.ActionFavorite"/>
 		<mapping class="com.code.aon.audit.Application"/>
 		<mapping class="com.code.aon.audit.Session"/>								
-				
-		<!-- AON-GROUPWARE Mapping files -->
-		<mapping class="com.code.aon.groupware.Alarm"/>
-		<mapping class="com.code.aon.groupware.Note"/>
-		<mapping class="com.code.aon.groupware.Notice"/>
-		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
-		<mapping class="com.code.aon.groupware.Favorite"/>	
 				
 	</session-factory>
 

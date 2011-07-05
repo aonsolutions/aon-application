@@ -1,6 +1,6 @@
 package com.code.aon.ui.commercial.event;
 
-import com.code.aon.commercial.Project;
+import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -14,7 +14,7 @@ public class CommercialTrackingSearchListener extends ControllerSearchListener {
 
 	private Seller seller;
 	
-	private Project project;
+	private ProjectCommercial project;
 		
 	public Seller getSeller() {
 		return seller;
@@ -24,11 +24,11 @@ public class CommercialTrackingSearchListener extends ControllerSearchListener {
 		this.seller = seller;
 	}
 	
-	public Project getProject() {
+	public ProjectCommercial getProject() {
 		return project;
 	}
 
-	public void setProject(Project project) {
+	public void setProject(ProjectCommercial project) {
 		this.project = project;
 	}
 
@@ -36,8 +36,8 @@ public class CommercialTrackingSearchListener extends ControllerSearchListener {
 	protected void init() throws ManagerBeanException {
 		IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
 		setSeller( (Seller) sellerBean.createNewTo() );
-		IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
-		setProject( (Project) projectBean.createNewTo() );
+		IManagerBean projectBean = BeanManager.getManagerBean(ProjectCommercial.class);
+		setProject( (ProjectCommercial) projectBean.createNewTo() );
 	}
 	
 	@Override

@@ -47,8 +47,8 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
 	private static final long serialVersionUID = -7492435795404962788L;
 
 	private Integer id;
-    private Tariff tariff;
 	private Registry registry;
+    private Tariff tariff;
 	private Advertising advertising;
     private boolean surcharge;
     private boolean withholding;
@@ -57,7 +57,7 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
 	private boolean customer;
 	private Set<TargetItem> items = new HashSet<TargetItem>();
 	private Set<TargetSeller> sellers = new HashSet<TargetSeller>();
-	private Set<Project> projects = new HashSet<Project>();
+	private Set<ProjectCommercial> projects = new HashSet<ProjectCommercial>();
 	private Set<RegistryAttachment> documents = new HashSet<RegistryAttachment>();
 	
 	@Id
@@ -156,11 +156,11 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
 	}
 
 	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})
-	public Set<Project> getProjects() {
+	public Set<ProjectCommercial> getProjects() {
 		return projects;
 	}
 
-	public void setProjects(Set<Project> projects) {
+	public void setProjects(Set<ProjectCommercial> projects) {
 		this.projects = projects;
 	}
 	

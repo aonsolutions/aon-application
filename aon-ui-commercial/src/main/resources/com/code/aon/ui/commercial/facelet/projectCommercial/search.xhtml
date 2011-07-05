@@ -8,19 +8,19 @@
 	
 	<ui:define name="content">
 
-		<aon:form id="projectSearch">
+		<aon:form id="projectCommercialSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_operation_module}" />
-				<ui:param name="controller" value="#{project}" />
+				<ui:param name="controller" value="#{projectCommercial}" />
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:param name="controller" value="#{project}" />
+				<ui:param name="controller" value="#{projectCommercial}" />
 				<ui:define name="searchContent">
 				
 					<ui:include
-						src="/com/code/aon/ui/commercial/facelet/project/searchContent.xhtml" />
+						src="/com/code/aon/ui/commercial/facelet/projectCommercial/searchContent.xhtml" />
 
 				</ui:define>
 			

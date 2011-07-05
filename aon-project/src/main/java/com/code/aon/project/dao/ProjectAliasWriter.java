@@ -11,6 +11,7 @@ import com.code.aon.project.DailyTracking;
 import com.code.aon.project.Dossier;
 import com.code.aon.project.DossierType;
 import com.code.aon.project.JobType;
+import com.code.aon.project.Project;
 import com.code.aon.project.Task;
 
 public class ProjectAliasWriter {
@@ -24,6 +25,7 @@ public class ProjectAliasWriter {
 			Dossier.class.getName(),
 			DossierType.class.getName(),
 	        JobType.class.getName(),
+	        Project.class.getName(),
 	        Task.class.getName()
 		};
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());

@@ -13,30 +13,30 @@
 
 	<ui:define name="content">
 
-		<aon:form id="projectForm">
+		<aon:form id="projectCommercialForm">
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_operation_module}" />
-				<ui:param name="controller" value="#{project}" />
+				<ui:param name="controller" value="#{projectCommercial}" />
 			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" width="100%"
 					columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
 
-					<ui:include src="/com/code/aon/ui/commercial/facelet/project/formContent.xhtml">
-						<ui:param name="controller" value="#{project}"/>
+					<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercial/formContent.xhtml">
+						<ui:param name="controller" value="#{projectCommercial}"/>
 					</ui:include>				
 
 				</aon:panelGrid>
 
-				<aon:div styleClass="aon-form-group" rendered="#{!project.new}">
+				<aon:div styleClass="aon-form-group" rendered="#{!projectCommercial.new}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							<aon:outputLabel for="projectTrackingData" value="#{commercialBundle.commercial_tracking_module}" />
+							<aon:outputLabel for="projectCommercialTrackingData" value="#{commercialBundle.commercial_tracking_module}" />
 						</aon:div>
 					</aon:div>
-					<ui:include src="/com/code/aon/ui/commercial/facelet/projectTracking/grid.xhtml" />
+					<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercialTracking/grid.xhtml" />
 				</aon:div>
 						
 			</aon:div>

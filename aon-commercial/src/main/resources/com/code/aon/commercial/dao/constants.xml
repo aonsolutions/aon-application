@@ -20,4 +20,8 @@
 		<alias names="id,commissionType_id,commission_id,commission_name,commission_startDate,commission_endDate"/>
 		<hibernate names="id,commissionType.id,commission.id,commission.name,commission.startDate,commission.endDate"/>
 	</bean>
+	<bean class="com.code.aon.commercial.ProjectCommercial" sqlName="project_commercial">
+		<alias names="id,project_id,target_id,seller_id,comments,source,status,statusDate,probability,project_name,project_alias,project_date,project_commercial"/>
+		<hibernate names="id,project.id,target.id,seller.id,comments,source,status,statusDate,probability,project.name,project.alias,project.date,project.commercial"/>
+	</bean>
 </dao>

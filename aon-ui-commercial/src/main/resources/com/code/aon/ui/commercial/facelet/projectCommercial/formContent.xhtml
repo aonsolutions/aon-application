@@ -6,28 +6,28 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:outputLabel for="Project_id"
+	<aon:outputLabel for="ProjectCommercial_id"
 		rendered="#{!controller.new}" value="#{bundle.aon_id}" />
-	<aon:inputText id="Project_id" value="#{controller.to.id}"
+	<aon:inputText id="ProjectCommercial_id" value="#{controller.to.id}"
 		rendered="#{!controller.new}" size="15" disabled="true" />
 		
-	<aon:outputLabel for="Project_name"
+	<aon:outputLabel for="ProjectCommercial_project_name"
 		value="#{bundle.aon_name}" />
-	<aon:inputText id="Project_name" required="true"
-		value="#{controller.to.name}" size="60" maxlength="64" />
+	<aon:inputText id="ProjectCommercial_project_name" required="true"
+		value="#{controller.to.project.name}" size="60" maxlength="64" />
 	
-	<aon:outputLabel for="Project_source"
+	<aon:outputLabel for="ProjectCommercial_source"
 		value="#{commercialBundle.commercial_project_source}" />
-	<aon:selectOneMenu id="Project_source"
+	<aon:selectOneMenu id="ProjectCommercial_source"
 		value="#{controller.to.source}" required="true">
 		<f:selectItem itemLabel="-" value="#{null}"/>
 		<f:selectItems value="#{commercialCollections.projectSources}" />
 	</aon:selectOneMenu>
 						
-	<aon:outputLabel for="Project_date"
+	<aon:outputLabel for="ProjectCommercial_project_date"
 		value="#{bundle.aon_date}" />
-	<aon:selectInputDate id="Project_date" 
-		value="#{controller.to.date}" required="true"
+	<aon:selectInputDate id="ProjectCommercial_project_date" 
+		value="#{controller.to.project.date}" required="true"
 		timeZone="#{timeZoneController.timeZone}"
 		popupDateFormat="#{bundle.aon_date_pattern}">
 	</aon:selectInputDate>
@@ -41,24 +41,24 @@
 		<ui:param name="lookupTo" value="#{controller.to.seller}" />
 	</ui:include>
 
-	<aon:outputLabel for="Project_comments"
+	<aon:outputLabel for="ProjectCommercial_comments"
 		value="#{bundle.aon_comment}" />
-	<aon:inputTextarea id="Project_comments" 
+	<aon:inputTextarea id="ProjectCommercial_comments" 
 		value="#{controller.to.comments}" cols="80" rows="4" >
-		<f:validateLength  maximum="65536"/>
+		<f:validateLength maximum="65536"/>
 	</aon:inputTextarea>
 	
-	<aon:outputLabel for="Project_status"
+	<aon:outputLabel for="ProjectCommercial_status"
 		value="#{bundle.aon_status}" />
-	<h:panelGrid columns="2" id="Project_statusDiv">
-		<aon:selectOneMenu id="Project_status"
-			reRender="Project_statusDiv"
+	<h:panelGrid columns="2" id="ProjectCommercial_statusDiv">
+		<aon:selectOneMenu id="ProjectCommercial_status"
+			reRender="ProjectCommercial_statusDiv"
 			value="#{controller.to.status}">
 			<f:selectItems value="#{commercialCollections.projectStatuses}" />
 		</aon:selectOneMenu>
 		<aon:div styleClass="aon-margin-left"
 			rendered="#{controller.to.status  != 'PENDING'}" >
-			<aon:selectInputDate id="Project_statusDate" 
+			<aon:selectInputDate id="ProjectCommercial_statusDate" 
 				value="#{controller.to.statusDate}"
 				timeZone="#{timeZoneController.timeZone}"
 				popupDateFormat="#{bundle.aon_date_pattern}">
@@ -66,9 +66,9 @@
 		</aon:div>						
 	</h:panelGrid>					
 	
-	<aon:outputLabel for="Project_probability"
+	<aon:outputLabel for="ProjectCommercial_probability"
 		value="#{commercialBundle.commercial_project_probability}" />
-	<rich:inputNumberSlider id="Project_probability"
+	<rich:inputNumberSlider id="ProjectCommercial_probability"
 		value="#{controller.to.probability}"
 		minValue="0" maxValue="100" step="1"/>											
 

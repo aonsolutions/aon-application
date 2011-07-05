@@ -49,6 +49,13 @@
 	</bean>
 
 	<bean description="">
+		<pojo>com.code.aon.commercial.ProjectCommercial</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.commercial.event.ProjectCommercialBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
 		<pojo>com.code.aon.customer.Customer</pojo>
 		<listeners>
 	        <listener>com.code.aon.commercial.event.TargetFromCustomerBeanListener</listener>

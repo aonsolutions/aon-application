@@ -19,7 +19,7 @@
 				<ui:param name="controller" value="#{commercialTracking}" />			
 				<ui:define name="searchContent">
 
-					<ui:include src="/com/code/aon/ui/commercial/facelet/project/lookup.xhtml" >
+					<ui:include src="/com/code/aon/ui/commercial/facelet/projectCommercial/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{commercialTrackingSearch.project}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
@@ -82,7 +82,7 @@
 							 
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
-		<aon:lookupButtonPopup lookup="#{projectLookup}" />
+		<aon:lookupButtonPopup lookup="#{projectCommercialLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />		
 	</ui:define>
 		
