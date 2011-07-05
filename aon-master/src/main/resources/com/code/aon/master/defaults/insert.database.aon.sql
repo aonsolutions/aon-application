@@ -8,7 +8,7 @@ SET FOREIGN_KEY_CHECKS=0;
 #
 
 INSERT INTO `geozone` (`id`, `name`) VALUES 
-  (1,'ALAVA'),
+  (1,'ARABA/ALAVA'),
   (2,'ALBACETE'),
   (3,'ALICANTE'),
   (4,'ALMERIA'),
@@ -27,7 +27,7 @@ INSERT INTO `geozone` (`id`, `name`) VALUES
   (17,'GIRONA'),
   (18,'GRANADA'),
   (19,'GUADALAJARA'),
-  (20,'GUIPUZCOA'),
+  (20,'GIPUZKOA'),
   (21,'HUELVA'),
   (22,'HUESCA'),
   (23,'JAEN'),
@@ -55,7 +55,7 @@ INSERT INTO `geozone` (`id`, `name`) VALUES
   (45,'TOLEDO'),
   (46,'VALENCIA'),
   (47,'VALLADOLID'),
-  (48,'VIZCAYA'),
+  (48,'BIZKAIA'),
   (49,'ZAMORA'),
   (50,'ZARAGOZA'),
   (51,'CEUTA'),
