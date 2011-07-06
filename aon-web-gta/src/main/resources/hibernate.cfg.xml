@@ -85,8 +85,6 @@
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
-		<mapping class="com.code.aon.company.EnterpriseActivity"/>
-		<mapping class="com.code.aon.company.EnterpriseCCC"/>
 		<mapping class="com.code.aon.company.EnterpriseData"/>				
 		<mapping class="com.code.aon.company.WorkPlace"/>
 
@@ -151,6 +149,7 @@
 		<mapping class="com.code.aon.product.ItemAttachment"/>
 		<mapping class="com.code.aon.product.ItemComposition"/>
 		<mapping class="com.code.aon.product.ItemSupplier"/>
+		<mapping class="com.code.aon.product.ItemTariff"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
