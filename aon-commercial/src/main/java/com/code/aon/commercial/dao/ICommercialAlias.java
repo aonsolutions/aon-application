@@ -364,112 +364,118 @@ public interface ICommercialAlias {
 	String  OFFER_DISCOUNT_EXPRESSION = OFFER_ENTRY.getAliasNames()[6];
 
 	/** 
+	* Alias value: Offer_externalReference
+	* Hibernate value: Offer.externalReference
+	*/
+	String  OFFER_EXTERNAL_REFERENCE = OFFER_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: Offer_id
 	* Hibernate value: Offer.id
 	*/
-	String  OFFER_ID = OFFER_ENTRY.getAliasNames()[7];
+	String  OFFER_ID = OFFER_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Offer_issueDate
 	* Hibernate value: Offer.issueDate
 	*/
-	String  OFFER_ISSUE_DATE = OFFER_ENTRY.getAliasNames()[8];
+	String  OFFER_ISSUE_DATE = OFFER_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Offer_number
 	* Hibernate value: Offer.number
 	*/
-	String  OFFER_NUMBER = OFFER_ENTRY.getAliasNames()[9];
+	String  OFFER_NUMBER = OFFER_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Offer_numberOfPayments
 	* Hibernate value: Offer.numberOfPayments
 	*/
-	String  OFFER_NUMBER_OF_PAYMENTS = OFFER_ENTRY.getAliasNames()[10];
+	String  OFFER_NUMBER_OF_PAYMENTS = OFFER_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Offer_payMethod_id
 	* Hibernate value: Offer.payMethod.id
 	*/
-	String  OFFER_PAY_METHOD_ID = OFFER_ENTRY.getAliasNames()[11];
+	String  OFFER_PAY_METHOD_ID = OFFER_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Offer_paymentDays
 	* Hibernate value: Offer.paymentDays
 	*/
-	String  OFFER_PAYMENT_DAYS = OFFER_ENTRY.getAliasNames()[12];
+	String  OFFER_PAYMENT_DAYS = OFFER_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Offer_scope_id
 	* Hibernate value: Offer.scope.id
 	*/
-	String  OFFER_SCOPE_ID = OFFER_ENTRY.getAliasNames()[13];
+	String  OFFER_SCOPE_ID = OFFER_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Offer_securityLevel
 	* Hibernate value: Offer.securityLevel
 	*/
-	String  OFFER_SECURITY_LEVEL = OFFER_ENTRY.getAliasNames()[14];
+	String  OFFER_SECURITY_LEVEL = OFFER_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Offer_seller_id
 	* Hibernate value: Offer.seller.id
 	*/
-	String  OFFER_SELLER_ID = OFFER_ENTRY.getAliasNames()[15];
+	String  OFFER_SELLER_ID = OFFER_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Offer_series
 	* Hibernate value: Offer.series
 	*/
-	String  OFFER_SERIES = OFFER_ENTRY.getAliasNames()[16];
+	String  OFFER_SERIES = OFFER_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Offer_signed
 	* Hibernate value: Offer.signed
 	*/
-	String  OFFER_SIGNED = OFFER_ENTRY.getAliasNames()[17];
+	String  OFFER_SIGNED = OFFER_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Offer_status
 	* Hibernate value: Offer.status
 	*/
-	String  OFFER_STATUS = OFFER_ENTRY.getAliasNames()[18];
+	String  OFFER_STATUS = OFFER_ENTRY.getAliasNames()[19];
 
 	/** 
 	* Alias value: Offer_supplier_id
 	* Hibernate value: Offer.supplier.id
 	*/
-	String  OFFER_SUPPLIER_ID = OFFER_ENTRY.getAliasNames()[19];
+	String  OFFER_SUPPLIER_ID = OFFER_ENTRY.getAliasNames()[20];
 
 	/** 
 	* Alias value: Offer_target_id
 	* Hibernate value: Offer.target.id
 	*/
-	String  OFFER_TARGET_ID = OFFER_ENTRY.getAliasNames()[20];
+	String  OFFER_TARGET_ID = OFFER_ENTRY.getAliasNames()[21];
 
 	/** 
 	* Alias value: Offer_tariff_id
 	* Hibernate value: Offer.tariff.id
 	*/
-	String  OFFER_TARIFF_ID = OFFER_ENTRY.getAliasNames()[21];
+	String  OFFER_TARIFF_ID = OFFER_ENTRY.getAliasNames()[22];
 
 	/** 
 	* Alias value: Offer_type
 	* Hibernate value: Offer.type
 	*/
-	String  OFFER_TYPE = OFFER_ENTRY.getAliasNames()[22];
+	String  OFFER_TYPE = OFFER_ENTRY.getAliasNames()[23];
 
 	/** 
 	* Alias value: Offer_version
 	* Hibernate value: Offer.version
 	*/
-	String  OFFER_VERSION = OFFER_ENTRY.getAliasNames()[23];
+	String  OFFER_VERSION = OFFER_ENTRY.getAliasNames()[24];
 
 	/** 
 	* Alias value: Offer_workPlace_id
 	* Hibernate value: Offer.workPlace.id
 	*/
-	String  OFFER_WORK_PLACE_ID = OFFER_ENTRY.getAliasNames()[24];
+	String  OFFER_WORK_PLACE_ID = OFFER_ENTRY.getAliasNames()[25];
 
 
 

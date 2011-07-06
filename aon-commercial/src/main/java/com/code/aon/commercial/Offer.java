@@ -93,6 +93,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	private BankAccount bankAccount;
     private boolean signed;    
 	private String comments;
+	private String externalReference;
 	private Set<OfferDetail> lines = new HashSet<OfferDetail>();
 	private Set<OfferAttachment> attachments = new HashSet<OfferAttachment>();	
 	private Set<OfferTerm> terms = new HashSet<OfferTerm>();	
@@ -356,6 +357,15 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 		this.comments = comments;
 	}
 	
+	@Column(name="external_reference")	
+	public String getExternalReference() {
+		return externalReference;
+	}
+
+	public void setExternalReference(String externalReference) {
+		this.externalReference = externalReference;
+	}
+
 	@OneToMany(mappedBy = "offer", cascade={CascadeType.REMOVE})
 	@OrderBy("line")
 	public Set<OfferDetail> getLines() {
@@ -435,14 +445,13 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 				.append(this.address, o.address)				
 				.append(this.bank, o.bank)
 				.append(this.bankAccount, o.bankAccount)				
-				.append(this.supplier, o.supplier)
 				.append(this.comments, o.comments)
 				.append(this.daysBetweenPayments, o.daysBetweenPayments)				
 				.append(this.daysToFirstPayment, o.daysToFirstPayment)
 				.append(this.discountExpression, o.discountExpression)				
+				.append(this.externalReference, o.externalReference)
 				.append(this.issueDate, o.issueDate)				
 				.append(this.number, o.number)
-				.append(this.version, o.version)
 				.append(this.numberOfPayments, o.numberOfPayments)				
 				.append(this.paymentDays, o.paymentDays)
 				.append(this.payMethod, o.payMethod)				
@@ -452,9 +461,11 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 				.append(this.series, o.series)
 				.append(this.signed, o.signed)				
 				.append(this.status, o.status)
+				.append(this.supplier, o.supplier)
 				.append(this.target, o.target)				
 				.append(this.tariff, o.tariff)
 				.append(this.type, o.type)				
+				.append(this.version, o.version)
 				.append(this.workPlace, o.workPlace)
 				.isEquals();
 		}
@@ -467,15 +478,14 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 			.append(address)
 			.append(bank)
 			.append(bankAccount)
-			.append(supplier)	
 			.append(comments)	
 			.append(daysBetweenPayments)
 			.append(daysToFirstPayment)
 			.append(discountExpression)
+			.append(externalReference)
 			.append(id)			
 			.append(issueDate)
 			.append(number)
-			.append(version)
 			.append(numberOfPayments)
 			.append(paymentDays)
 			.append(payMethod)
@@ -485,9 +495,11 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 			.append(series)
 			.append(signed)
 			.append(status)
+			.append(supplier)	
 			.append(target)
 			.append(tariff)
 			.append(type)
+			.append(version)
 			.append(workPlace)
 			.toHashCode();
 	}
