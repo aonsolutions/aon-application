@@ -18,7 +18,7 @@ public class OfferDetailCompositeListener extends ControllerAdapter {
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		OfferDetailController controller = (OfferDetailController)event.getController();
 		OfferDetail offerDetail = (OfferDetail)controller.getTo();
-		if (offerDetail.getItem().getProduct().isComposition()) {
+		if (offerDetail.getItem() != null && offerDetail.getItem().getId() != null && offerDetail.getItem().getProduct().isComposition()) {
 			double quantity = offerDetail.getQuantity();
 			try {
 				for (ItemComposition composition : offerDetail.getItem().getItemCompositionList()) {
