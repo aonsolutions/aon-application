@@ -1,13 +1,11 @@
 package com.esferalia.aon.ui.payroll.controller.agreement;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,16 +18,11 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
@@ -41,13 +34,11 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelData;
-import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class AgreeementSalaryTableController extends ControllerAdapter implements IController {
 	
@@ -138,31 +129,24 @@ public class AgreeementSalaryTableController extends ControllerAdapter implement
 		this.agreement = agreement;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private Set<String> newVariables(Agreement agreement, Date startDate, Date endDate) throws SQLException {
-		
-		Connection sqlConnection = 
-			HibernateUtil.getSQLConnection();
-		SQLAgreementPaymentsFactory factory = 
-			new SQLAgreementPaymentsFactory(sqlConnection, startDate,endDate); 
-		
-		Collection<IContractPayment> payments = 
-			factory.create(agreement.getId());
-		
-		Set<String> userVariables = 
-			new LinkedHashSet<String>();
-
+		Connection sqlConnection = HibernateUtil.getSQLConnection();
+		SQLAgreementPaymentsFactory factory = new SQLAgreementPaymentsFactory(sqlConnection, startDate,endDate); 
+		Collection<IContractPayment> payments = factory.create(agreement.getId());
+		Set<String> userVariables = new LinkedHashSet<String>();
 		for (IContractPayment payment : payments) {
 			String expression = payment.getExpression();
-			Set<String> expressionVariables = 
-				ExpressionContext.getVariables(expression);
-			for (String variable : expressionVariables) {
-				if ( this.isUserVariable( variable)) {
-					userVariables.add(variable);
+			if(expression!=null){
+				Set<String> expressionVariables = ExpressionContext.getVariables(expression);
+				for (String variable : expressionVariables) {
+					if ( this.isUserVariable( variable)) {
+						userVariables.add(variable);
+					}
 				}
 			}
 		}
 		return userVariables;
-		
 	}
 	
 	@Override

@@ -13,6 +13,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,14 +35,16 @@ import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
+import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
+import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
@@ -56,7 +59,7 @@ import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
-public class ContractController extends BasicController {
+public class ContractController extends VariablesAbstractController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractController.class.getName());
 	private static final int MAX_FILE_SIZE_MB = 3;
@@ -201,6 +204,7 @@ public class ContractController extends BasicController {
 			c.onEditSearch(event);
 			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), to.getId());
 			c.onSearch(event);
+			this.initializeVariables(event);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible mostrar las variables del contrato (" + e.getMessage() +")";
 			LOGGER.error(msg);
@@ -540,4 +544,61 @@ public class ContractController extends BasicController {
 		}
 		return list;
 	}
+	
+	@Override
+	protected void initializeVariables(ActionEvent event) {
+		try {
+			Contract contract = ((Contract)getTo());
+			setVariablesModel(null);
+			setUndefinedVariablesModel(null);
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			List<ContractData> dataList = null;
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				dataList = new LinkedList<ContractData>();
+				for(ITransferObject to: list){
+					dataList.add((ContractData) to);
+				}
+			}
+			bean = BeanManager.getManagerBean(AgreementLevelData.class);
+			String label = bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID);
+			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
+				AgreementLevel level = contract.getAgreementLevelCategory().getLevel();
+				criteria = new Criteria();
+				criteria.addEqualExpression(label, level.getId());
+				list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					for(ITransferObject to: list){
+						AgreementLevelData d = (AgreementLevelData) to;
+						if(!existVariable(d, dataList)){
+							ContractData data = new ContractData();
+							data.setContract((Contract) this.getTo());
+							data.setName(d.getName());
+							data.setStartDate(d.getStartDate());
+							data.setEndDate(d.getEndDate());
+							data.setExpression(d.getExpression());
+							dataList.add(data);
+						}
+					}
+				}
+			}
+			setVariablesModel(new ListDataModel(dataList));
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+	}
+	private boolean existVariable(AgreementLevelData d, List<ContractData> dataList) {
+		for(ContractData data: dataList){
+			if(data.getName().equals(d.getName())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }

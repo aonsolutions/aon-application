@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
@@ -17,43 +18,50 @@
 					
 				</ui:define>				
 			</ui:decorate>	
-		
-			<aon:panelCollapsible id="paymentPanel"
-				expanded="true" style="margin-top:5px;"
+			
+			<rich:simpleTogglePanel opened="#{contractPayment.paymentsModel.rowCount > 0}" 
+		        switchType="client"
+		        style="margin-top:5px;"
 				label="#{payrollBundle.payroll_salary_payments_tab}">
 				<aon:div id="paymentGrid" >
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
 						<ui:param name="controller" value="#{contractPayment}" />
 					</ui:include>
-				</aon:div>
-			</aon:panelCollapsible>
+				</aon:div>       
+		    </rich:simpleTogglePanel>   
 
-			<aon:panelCollapsible expanded="false" 
-				label="#{payrollBundle.payroll_salary_deductions_tab}">
+			<rich:simpleTogglePanel opened="#{contractDeduction.model.rowCount > 0}"
+				switchType="client"
+		        style="margin-top:5px;"
+		        label="#{payrollBundle.payroll_salary_deductions_tab}" >
 				<aon:div id="deductionGrid" >
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/editGridContent.xhtml" >
 						<ui:param name="controller" value="#{contractDeduction}" />
 					</ui:include>
 				</aon:div>
-			</aon:panelCollapsible>
-			
-			<aon:panelCollapsible expanded="false" 
-				label="#{payrollBundle.payroll_salary_bonus_tab}">
+			</rich:simpleTogglePanel>
+						
+			<rich:simpleTogglePanel opened="#{contractBonus.model.rowCount > 0}" 
+				switchType="client"
+		        style="margin-top:5px;"
+		        label="#{payrollBundle.payroll_salary_bonus_tab}">
 				<aon:div id="bonusGrid" >
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/editGridContent.xhtml" >
 						<ui:param name="controller" value="#{contractBonus}" />
 					</ui:include>
 				</aon:div>
-			</aon:panelCollapsible>
+			</rich:simpleTogglePanel>
 		
-			<aon:panelCollapsible expanded="false" 
-				label="#{payrollBundle.payroll_salary_embargos_tab}">
+			<rich:simpleTogglePanel opened="#{contractEmbargo.model.rowCount > 0}"
+				switchType="client"
+		        style="margin-top:5px;"
+		        label="#{payrollBundle.payroll_salary_embargos_tab}">
 				<aon:div id="embargoGrid" >
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/listContent.xhtml">
 						<ui:param name="controller" value="#{contractEmbargo}" />
 					</ui:include>
 				</aon:div>
-			</aon:panelCollapsible>
+			</rich:simpleTogglePanel>
 		</aon:form>
 
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">

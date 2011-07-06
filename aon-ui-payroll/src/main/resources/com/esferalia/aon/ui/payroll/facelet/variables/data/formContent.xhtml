@@ -34,30 +34,6 @@
 		
 		<aon:outputLabel for="#{controller.beanName}_name" 
 			value="#{bundle.aon_name}" />
-<!--  
-		<aon:inputText id="ContractData_name" required="true"
-			value="#{controller.contractData.name}" maxlength="64" size="20" >
-			<f:validateLength maximum="64"/>
-			<a4j:region>
-				<rich:suggestionbox id="ContractData_name_suggestion"
-					for="ContractData_name"
-					onselect="suggestionBoxActive=false;"
-					suggestionAction="#{controller.expressionContext}" var="exp"
-					similarityGroupingId=""
-					tokens=" +-/*%()"
-					fetchValue="#{exp}"
-					immediate="true" limitToList="true" ajaxSingle="true"
-					eventsQueue="ContractData_nameSug" ignoreDupResponses="true"
-					requestDelay="100" width="500" height="200"
-					nothingLabel="#{bundle.aon_search_no_results}">
-					<aon:column>
-						<aon:outputText value="#{exp}"/>
-					</aon:column>
-				</rich:suggestionbox>
-			</a4j:region>
-		</aon:inputText>
-			<f:selectItem value="#{null}" itemLabel=" - " />
--->		
 		<aon:selectOneMenu id="#{controller.beanName}_name" value="#{controller.data.name}">
 			<f:selectItems value="#{controller.newVariableList}"  />
 		</aon:selectOneMenu>

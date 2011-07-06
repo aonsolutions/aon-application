@@ -17,8 +17,10 @@
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="Contract-Save"
 						value="#{bundle.aon_accept}"
-						actionListener="#{contract.accept}"
+						reRender="dataGrid"
 						styleClass="aon-finding-toolbar-item aon-icon-accept">
+						<aon:actionListener method="#{contract.accept}" />
+						<aon:actionListener method="#{contract.onShowVariables}" />
 					</aon:commandButton>
 				</ui:define>				
 			</ui:decorate>	
@@ -30,20 +32,80 @@
 				</ui:include>
 			</aon:div>
 		
-		
+			<ui:param name="controller" value="#{contract}" />
 			<aon:div id="dataGrid" styleClass="aon-scroll-area">
-				<ui:decorate	
-					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-					<ui:param name="controller" value="#{contractData}" />
-					<ui:define name="columns">
 				
-						<ui:include 
-							src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" >
-							<ui:param name="controller" value="#{contractData}" />
-						</ui:include>
+				<aon:div id="#{controller.beanName}VarContainer" 
+					rendered="#{!controller.new and controller.variablesModel!=null}">
+					<aon:panelGrid columns="1" style="width: 100%; margin-top:10px;"
+						columnClasses="aon-panelGrid-even  aon-width-auto">
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
+							<aon:outputText value="#{payrollBundle.payroll_contract_variables}" 
+								styleClass="aon-bold"/>
+						</aon:div>
+					</aon:panelGrid>	
+					
+					<c:if test="#{controller.data==null}" >
+						<aon:editDataTable id="#{controller.beanName}VariablesList"
+							value="#{controller.variablesModel}" var="to" rows="20" >
 							
-					</ui:define>
-				</ui:decorate>
+							<aon:column 
+								styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+								<f:facet name="header">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+								<aon:commandButton 
+									rendered="#{to.id!=null}"
+									title="#{bundle.aon_update}" 
+									actionListener="#{controller.onSelectVariable}"
+									reRender="#{controller.beanName}VarContainer"
+									styleClass="aon-editDataTable-button aon-icon-rowSelector" />
+								<aon:commandButton 
+									rendered="#{to.id==null}"
+									title="#{payrollBundle.payroll_overwrite}" 
+									actionListener="#{controller.onSelectVariable}"
+									reRender="#{controller.beanName}VarContainer"
+									styleClass="aon-editDataTable-button aon-icon-go" />
+								<f:facet name="footer">
+									<aon:commandButton
+										title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+										actionListener="#{controller.onResetVariable}"
+										reRender="#{controller.beanName}VarContainer"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										accesskey="#{bundle.aon_key_new_line}"/>
+								</f:facet>
+							</aon:column>
+							
+							<ui:include 
+								src="/com/esferalia/aon/ui/payroll/facelet/variables/data/list_content.xhtml" >
+								<ui:param name="controller" value="#{controller}" />
+								<aon:valueParam name="formList" value="true" />
+							</ui:include>
+							
+						</aon:editDataTable>
+						<aon:dataScroller2 for="#{controller.beanName}VariablesList" showNote="false" />
+						
+						<c:if test="#{controller.undefinedVariablesModel!=null}" >
+							<ui:include 
+								src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_undefined.xhtml" >
+								<ui:param name="controller" value="#{controller}" />
+								<aon:valueParam name="formList" value="true" />
+								<aon:valueParam name="saveReRender" value="#{controller.beanName}VarContainer" />
+							</ui:include>
+						</c:if>
+					</c:if>
+								
+					<c:if test="#{controller.data!=null}" >
+						<ui:include 
+							src="/com/esferalia/aon/ui/payroll/facelet/variables/data/formContent.xhtml" >
+							<ui:param name="controller" value="#{controller}" />
+							<aon:valueParam name="container" value="#{controller.beanName}VarContainer" />
+						</ui:include>
+					</c:if>
+					
+				</aon:div>
+
 			</aon:div>
 		
 		</aon:form>
