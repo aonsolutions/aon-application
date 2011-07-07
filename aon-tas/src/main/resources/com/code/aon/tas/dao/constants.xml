@@ -4,13 +4,12 @@
 		<alias names="id,make_id,make_name,name" />
 		<hibernate names="id,make.id,make.name,name" />
 	</bean>
-	
 	<bean class="com.code.aon.tas.TasItem" sqlName="tasItem">
 		<alias names="addInfo,description,id,model_id,model_name,model_make_id,model_make_name,privateCode,publicCode" />
 		<hibernate names="addInfo,description,id,model.id,model.name,model.make.id,model.make.name,privateCode,publicCode" />
 	</bean>
-	
+	<bean class="com.code.aon.tas.ProjectTas" sqlName="project_tas">
+		<alias names="id,project_id,series,number,target_id,tasItem_id,counter,taskHolder_id,comments,status,statusDate,project_name,project_alias,project_date,project_tas"/>
+		<hibernate names="id,project.id,series,number,target.id,tasItem.id,counter,taskHolder.id,comments,status,statusDate,project.name,project.alias,project.date,project.tas"/>
+	</bean>
 </dao>
-
-
-

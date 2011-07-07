@@ -4,6 +4,7 @@ import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.tas.Make;
 import com.code.aon.tas.Model;
+import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.TasItem;
 
 /** 
@@ -60,6 +61,103 @@ public interface ITASAlias {
 	* Hibernate value: Model.name
 	*/
 	String  MODEL_NAME = MODEL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProjectTas entity.
+	*/ 
+	DAOConstantsEntry PROJECT_TAS_ENTRY = DAOConstants.getDAOConstant(ProjectTas.class);
+
+	/** 
+	* Alias value: ProjectTas_id
+	* Hibernate value: ProjectTas.id
+	*/
+	String  PROJECT_TAS_ID = PROJECT_TAS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProjectTas_project_id
+	* Hibernate value: ProjectTas.project.id
+	*/
+	String  PROJECT_TAS_PROJECT_ID = PROJECT_TAS_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ProjectTas_series
+	* Hibernate value: ProjectTas.series
+	*/
+	String  PROJECT_TAS_SERIES = PROJECT_TAS_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ProjectTas_number
+	* Hibernate value: ProjectTas.number
+	*/
+	String  PROJECT_TAS_NUMBER = PROJECT_TAS_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ProjectTas_target_id
+	* Hibernate value: ProjectTas.target.id
+	*/
+	String  PROJECT_TAS_TARGET_ID = PROJECT_TAS_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ProjectTas_tasItem_id
+	* Hibernate value: ProjectTas.tasItem.id
+	*/
+	String  PROJECT_TAS_TAS_ITEM_ID = PROJECT_TAS_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ProjectTas_counter
+	* Hibernate value: ProjectTas.counter
+	*/
+	String  PROJECT_TAS_COUNTER = PROJECT_TAS_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ProjectTas_taskHolder_id
+	* Hibernate value: ProjectTas.taskHolder.id
+	*/
+	String  PROJECT_TAS_TASK_HOLDER_ID = PROJECT_TAS_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: ProjectTas_comments
+	* Hibernate value: ProjectTas.comments
+	*/
+	String  PROJECT_TAS_COMMENTS = PROJECT_TAS_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: ProjectTas_status
+	* Hibernate value: ProjectTas.status
+	*/
+	String  PROJECT_TAS_STATUS = PROJECT_TAS_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: ProjectTas_statusDate
+	* Hibernate value: ProjectTas.statusDate
+	*/
+	String  PROJECT_TAS_STATUS_DATE = PROJECT_TAS_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: ProjectTas_project_name
+	* Hibernate value: ProjectTas.project.name
+	*/
+	String  PROJECT_TAS_PROJECT_NAME = PROJECT_TAS_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: ProjectTas_project_alias
+	* Hibernate value: ProjectTas.project.alias
+	*/
+	String  PROJECT_TAS_PROJECT_ALIAS = PROJECT_TAS_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: ProjectTas_project_date
+	* Hibernate value: ProjectTas.project.date
+	*/
+	String  PROJECT_TAS_PROJECT_DATE = PROJECT_TAS_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: ProjectTas_project_tas
+	* Hibernate value: ProjectTas.project.tas
+	*/
+	String  PROJECT_TAS_PROJECT_TAS = PROJECT_TAS_ENTRY.getAliasNames()[14];
 
 
 

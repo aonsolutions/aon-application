@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -38,6 +39,11 @@ public class Make implements ITransferObject {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Transient
+	public String getFullName() {
+		return (getName() == null) ? "" : getName();
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -49,6 +50,13 @@ public class Model implements ITransferObject{
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Transient
+	public String getFullName() {
+		return ((getMake() != null) ? getMake().getFullName() + " " : "") + ((getName() != null) ? getName() : "");
+	}
+	public void setFullName(String value) {
 	}
 
 	@Override

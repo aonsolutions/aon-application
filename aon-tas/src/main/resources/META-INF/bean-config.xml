@@ -13,4 +13,11 @@
 		</vetoListeners>
 	</bean>
 
+	<bean description="">
+		<pojo>com.code.aon.tas.ProjectTas</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.tas.event.ProjectTasBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
 </bean-config>

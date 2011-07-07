@@ -7,15 +7,17 @@ import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.tas.Make;
 import com.code.aon.tas.Model;
+import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.TasItem;
 
 public class TasAliasWriter {
 	public static void main(String[] args) throws IOException {
-        File file = new File("/home/ecastellano/AON-6.0.0/aon-tas/src/main/java/com/code/aon/tas/dao/ITASAlias.java");
+        File file = new File("/AON-TRUNK/aon-tas/src/main/java/com/code/aon/tas/dao/ITASAlias.java");
 		String[] classes = new String[] {
-			 	 Make.class.getName()
-				,Model.class.getName()
-				,TasItem.class.getName() 
+			 	Make.class.getName(),
+				Model.class.getName(),
+				ProjectTas.class.getName(),
+				TasItem.class.getName() 
 		};
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.tas.dao");
