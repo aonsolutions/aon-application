@@ -11,11 +11,13 @@ import javax.faces.model.SelectItemGroup;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.enumeration.Priority;
 import com.code.aon.project.ActivityType;
 import com.code.aon.project.DossierType;
 import com.code.aon.project.JobType;
+import com.code.aon.project.TaskHolder;
 import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.project.enumeration.DossierStatus;
 import com.code.aon.project.enumeration.TaskPeriod;
@@ -155,4 +157,25 @@ public class ProjectCollectionsController {
         }
         return taskPeriodList;
     }
+
+	public TaskHolder getTaskHolder() {
+		return null;
+	}
+	public void setTaskHolder(TaskHolder taskHolder) {
+	}
+
+	public List<SelectItem> getTaskHolders() throws ManagerBeanException {
+		List<SelectItem> taskHolderList = new LinkedList<SelectItem>();
+		IManagerBean taskHolderBean = BeanManager.getManagerBean(TaskHolder.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(taskHolderBean.getFieldName(IProjectAlias.TASK_HOLDER_ACTIVE), new Boolean(true));
+		criteria.addOrder(taskHolderBean.getFieldName(IProjectAlias.TASK_HOLDER_REGISTRY_NAME));
+		for (ITransferObject ito : taskHolderBean.getList(criteria)) {
+			TaskHolder taskHolder = (TaskHolder)ito;
+			SelectItem item = new SelectItem(taskHolder, taskHolder.getRegistry().getName());
+			taskHolderList.add(item);
+		}
+		return taskHolderList;
+	}
+
 }
