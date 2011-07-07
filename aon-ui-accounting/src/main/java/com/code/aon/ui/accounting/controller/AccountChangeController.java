@@ -179,7 +179,7 @@ public class AccountChangeController {
 				if (securityLevel != null) {
 					criteria.addEqualExpression(security, securityLevel);
 				}
-				if (balancingAccount != null) {
+				if (balancingAccount != null && StringUtils.isNotBlank( balancingAccount.getId())) {
 					criteria.addEqualExpression(accountBalancing, balancingAccount.getId());
 				}
 				if (!StringUtils.isEmpty(getConcept())) {
@@ -215,7 +215,7 @@ public class AccountChangeController {
 				if (securityLevel != null) {
 					criteria.addEqualExpression(security, securityLevel);
 				}
-				if (balancingAccount != null) {
+				if (balancingAccount != null && StringUtils.isNotBlank( balancingAccount.getId())) {
 					criteria.addEqualExpression(accountInit, balancingAccount.getId());
 				}
 				if (!StringUtils.isEmpty(getConcept())) {
