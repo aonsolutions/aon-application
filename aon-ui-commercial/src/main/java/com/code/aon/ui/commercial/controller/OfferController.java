@@ -699,7 +699,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		setProjectTasSeries(obtainProjectTasSeries(to.getSeries()));
 		setProjectTasNumber(obtainMaxProjectTasNumber(getProjectTasSeries()));
 		setProjectTasDate(new Date());
-		//setProjectTasItem(obtainProjectTasItem(to));
+		setProjectTasItem((TasItem)BeanManager.getManagerBean(TasItem.class).createNewTo());
 	}
 
 	private String obtainProjectTasSeries(String seriesId) throws ManagerBeanException {

@@ -11,7 +11,7 @@
 	<aon:panelGroup id="showProjectTasWindow">
 		<c:if test="#{offer.showProjectTasWindow}">
 			<rich:modalPanel id="projectTasModalPanel" minHeight="240"
-				minWidth="520" rendered="#{offer.showProjectTasWindow}"
+				minWidth="580" rendered="#{offer.showProjectTasWindow}"
 				showWhenRendered="true" zindex="90">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -98,6 +98,7 @@
 					</aon:div>
 				</aon:div>
 				</aon:form>
+				<aon:lookupButtonPopup lookup="#{tasItemLookup}" />
 			</rich:modalPanel>
 		</c:if>
 	</aon:panelGroup>
