@@ -7,7 +7,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="accountList">
+		<aon:form id="tasItemList">
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{tasBundle.tas_tasItem_module}" />
@@ -18,47 +18,7 @@
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{tasItem}" />
 					<ui:define name="columns">
-					
-						<aon:column alias="TasItem.model.make.name"
-							styleClass="aon-editDataTable-textColumn aon-width-150">
-							<f:facet name="header">
-								<aon:outputText value="#{tasBundle.tas_make}" />
-							</f:facet>
-							<aon:outputText value="#{to.model.make.name}" />
-						</aon:column>
-
-						<aon:column alias="TasItem.model.name"
-							styleClass="aon-editDataTable-textColumn aon-width-150">
-							<f:facet name="header">
-								<aon:outputText value="#{tasBundle.tas_model}" />
-							</f:facet>
-							<aon:outputText value="#{to.model.name}" />
-						</aon:column>
-
-						<aon:column alias="TasItem.publicCode"
-							styleClass="aon-editDataTable-textColumn aon-width-100">
-							<f:facet name="header">
-								<aon:outputText value="#{tasBundle.tas_publicCode}" />
-							</f:facet>
-							<aon:outputText value="#{to.publicCode}" />
-						</aon:column>
-
-						<aon:column alias="TasItem.privateCode"
-							styleClass="aon-editDataTable-textColumn aon-width-150">
-							<f:facet name="header">
-								<aon:outputText value="#{tasBundle.tas_privateCode}" />
-							</f:facet>
-							<aon:outputText value="#{to.privateCode}" />
-						</aon:column>
-						
-						<aon:column alias="TasItem.description"
-							styleClass="aon-editDataTable-textColumn aon-width-auto">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_description}" />
-							</f:facet>
-							<aon:outputText value="#{to.description}" />
-						</aon:column>
-
+						<ui:include	src="/com/code/aon/ui/tas/facelet/tasItem/listContent.xhtml" />
 					</ui:define>
 				</ui:decorate>
 			</aon:div>

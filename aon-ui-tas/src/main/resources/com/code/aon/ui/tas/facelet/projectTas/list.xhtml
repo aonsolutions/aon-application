@@ -4,9 +4,6 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -17,7 +14,6 @@
 				<ui:param name="controller" value="#{projectTas}" />
 			</ui:include>
 
-			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{projectTas}" />
