@@ -40,7 +40,7 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.tas</artifactId>
 			<version>${pom.version}</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
