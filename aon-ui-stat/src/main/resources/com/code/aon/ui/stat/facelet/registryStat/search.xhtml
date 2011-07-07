@@ -26,13 +26,11 @@
 						value="#{registryStat.onRegistryStats}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="registry_stats" />
 
-					<aon:panelGrid columns="2"
-						columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
-							<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
-								<ui:param name="lookupTo" value="#{registryStat.registry}" />
-								<ui:param name="lookupForRegistry" value="#{true}" />
-							</ui:include>
-						</aon:div>
+					<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+						<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{registryStat.registry}" />
+							<ui:param name="lookupForRegistry" value="#{true}" />
+						</ui:include>
 					</aon:panelGrid>
 
 				</ui:define>

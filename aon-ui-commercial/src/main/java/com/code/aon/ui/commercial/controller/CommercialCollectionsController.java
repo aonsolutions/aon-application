@@ -27,6 +27,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used to get Collections related with clasess in <code>com.code.aon.commercial</code>
@@ -85,12 +86,19 @@ public class CommercialCollectionsController {
 	 */
 	public List<SelectItem> getOfferTypes() {
 		if ( offerTypes == null ) {
+			boolean audatexEnabled =  (Boolean)  AonUtil.getConfigurationController().getBean()
+				.get(ICommercialConstants.CONFIG_OFFER_BEAN)
+				.get(ICommercialConstants.SHOW_AUDATEX_OPTIONS);
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			offerTypes = new LinkedList<SelectItem>();
 			for (OfferType type : OfferType.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
-				offerTypes.add(item);
+				if (type != OfferType.AUDATEX) {  
+					offerTypes.add(item);
+				} else if (audatexEnabled) {
+					offerTypes.add(item);
+				}
 			}
 		}
 		return offerTypes;

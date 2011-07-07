@@ -76,7 +76,22 @@
 							<ui:param name="skipSignButton" value="#{offer.new or offer.to.signed or (!certificate.signable)}" />
 							<ui:param name="skipCancelSignButton" value="#{offer.new or (!offer.to.signed)}" />
 							<ui:param name="signButtonReRender" value="offerForm,showNewMessageWindow" />
-						</ui:include>				
+						</ui:include>
+						<c:if test="#{aonConfiguration.bean.offer.showAudaTexOptions}">
+							<aon:htmlCommandLink id="audagateCall" value="#{audabridgeBundle.audabridge_edit_assessment}"
+								rendered="#{!offer.new and offer.to.audatexOffer and offer.to.externalReference != null and offerDetail.model.rowCount == 0}" target="_new"
+								actionListener="#{audabridgeOffer.onCallAudaGate}"
+								style="padding-left: 25px;"
+								styleClass="aon-finding-toolbar-item aon-icon-audatex">
+							</aon:htmlCommandLink>
+							<aon:commandButton id="offerCreation" value="#{audabridgeBundle.audabridge_import_assessment}"
+								rendered="#{!offer.new and offer.to.audatexOffer and offer.to.externalReference != null and offerDetail.model.rowCount == 0}" 
+								actionListener="#{audabridgeOffer.onImportAssessment}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								oncomplete="Richfaces.hideModalPanel('waitProccess')"
+								styleClass="aon-finding-toolbar-item aon-icon-go">
+							</aon:commandButton>
+						</c:if>						
 					</ui:define>
 				</ui:decorate>
 			</aon:div>			
@@ -180,7 +195,10 @@
 									title="#{commercialBundle.commercial_offer_to_unblock}"
 									immediate="true" rendered="#{offer.blocked}"
 									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
-								</aon:commandButton>										
+								</aon:commandButton>
+								<aon:outputText styleClass="aon-bold aon-margin-left"
+									value="#{offer.to.externalReference}"
+									rendered="#{!offer.new and offer.to.audatexOffer}" />
 							</aon:div>
 						</h:panelGrid>
  					</aon:div>

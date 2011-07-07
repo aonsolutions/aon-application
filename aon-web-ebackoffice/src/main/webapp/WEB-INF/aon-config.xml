@@ -36,11 +36,12 @@
 		/>
 	</product:config>
 	
-	<commercial:config version="1.3" xmlns:commercial="http://www.esferalia.com/commercial">
+	<commercial:config version="1.4" xmlns:commercial="http://www.esferalia.com/commercial">
 		<commercial:offer
 			showInvoicing="false"
 			showSalesOrder="true"
 			showSeller="false"
+			showAudaTexOptions="false"
 		/>
 		<commercial:target
 			showTaxInfoData="true"

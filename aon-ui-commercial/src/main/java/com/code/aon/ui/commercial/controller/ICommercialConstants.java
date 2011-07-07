@@ -15,6 +15,8 @@ public interface ICommercialConstants {
 	// ************************************************************
 	
 	String OFFER_CONTROLLER_NAME = "offer";
+	String OFFER_DETAIL_CONTROLLER_NAME = "offerDetail";
+	String OFFER_ATTACH_CONTROLLER_NAME = "offerAttachment";
 	String OFFER_SIGNER_CONTROLLER_NAME = "offerSigner";
 	String TARGET_CONTROLLER_NAME = "target";
 	String TARGET_MEDIA_CONTROLLER_NAME = "targetMedia";
@@ -39,4 +41,10 @@ public interface ICommercialConstants {
 
 	String TARGET_LIST = "targetList";	
 	
+	// ************************************************************
+	// CONFIGURATION
+	// ************************************************************
+	
+	String CONFIG_OFFER_BEAN = "offer";
+	String SHOW_AUDATEX_OPTIONS = "showAudaTexOptions";
 }

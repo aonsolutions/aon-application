@@ -421,8 +421,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	@Transient
-	@SuppressWarnings("unchecked")
-	public List getDetailList() {
+	public List<?> getDetailList() {
 		try {
 			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 			Criteria criteria = new Criteria();
@@ -432,6 +431,11 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 			LOGGER.error("Error obtaining offerDetail list", e);
 		}
 		return null;
+	}
+	
+	@Transient
+	public boolean isAudatexOffer() {
+		return getType() == OfferType.AUDATEX;
 	}
 
 	@Override

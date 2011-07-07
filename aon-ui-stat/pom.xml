@@ -14,6 +14,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.stat</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
@@ -26,13 +32,13 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.stat</artifactId>
+			<artifactId>aon.ui.report</artifactId>
 			<version>${pom.version}</version>
-			<scope>compile</scope>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.report</artifactId>
+			<artifactId>aon.ui.tas</artifactId>
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
 		</dependency>

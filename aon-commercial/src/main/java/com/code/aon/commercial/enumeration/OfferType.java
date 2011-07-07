@@ -14,17 +14,11 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum OfferType implements IResourceable {
 
-	/** NORMAL. */
 	NORMAL,
-
-    /** INTERNET. */
     INTERNET,
-
-    /** PROFORMA. */
     PROFORMA,
-
-    /** DEALERSHIP. */ 
-    DEALERSHIP;
+    DEALERSHIP,
+    AUDATEX;
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.commercial.i18n.messages";
