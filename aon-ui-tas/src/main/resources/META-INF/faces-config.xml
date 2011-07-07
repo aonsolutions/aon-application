@@ -12,9 +12,9 @@
 
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
-		<managed-bean-name>TASCollections</managed-bean-name>
+		<managed-bean-name>tasCollections</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.tas.controller.TASCollectionsController
+			com.code.aon.ui.tas.controller.TasCollectionsController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
@@ -37,6 +37,10 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>make</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Make_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -72,6 +76,10 @@
 			<property-name>beanName</property-name>
 			<value>model</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Model_make_name,Model_name</value>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************ MODEL LOOKUP ************** -->
@@ -89,7 +97,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Model_name</value>
+			<value>Model_make_name,Model_name</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>listPagePath</property-name>
@@ -120,8 +128,81 @@
 			<property-name>beanName</property-name>
 			<value>tasItem</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>TasItem_model_make_name,TasItem_model_name,TasItem_publicCode</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{tasItemSearch}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>tasItemSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tas.event.TasItemSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+
+	<!-- ************ PROJECT TAS ************** -->
+	<managed-bean>
+		<managed-bean-name>projectTas</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.ProjectTas</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>projectTas</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ProjectTas_project_tas</key>
+					<value>true</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ProjectTas_project_date desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{projectTasSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>projectTasSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tas.event.ProjectTasSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
    	<!-- ************* NAVIGATION RULES ***************** -->
 
    	<!-- ************* MAKE ***************** -->
@@ -153,4 +234,20 @@
 			<to-view-id>/com/code/aon/ui/tas/facelet/tasItem/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+   	<!-- ************* PROJECT TAS ***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>projectTas_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/tas/facelet/projectTas/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>projectTas_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/tas/facelet/projectTas/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>projectTas_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/tas/facelet/projectTas/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 </faces-config>

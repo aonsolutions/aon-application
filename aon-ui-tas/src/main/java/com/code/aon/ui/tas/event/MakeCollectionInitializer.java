@@ -3,7 +3,7 @@ package com.code.aon.ui.tas.event;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.tas.controller.TASCollectionsController;
+import com.code.aon.ui.tas.controller.TasCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 
 public class MakeCollectionInitializer extends ControllerAdapter{
@@ -21,8 +21,8 @@ public class MakeCollectionInitializer extends ControllerAdapter{
 		initializeCollection();
 	}
 	private void initializeCollection() {
-		TASCollectionsController tcc = (TASCollectionsController) AonUtil.getRegisteredBean("TASCollections");
-		tcc.initizlizeMakes();
+		TasCollectionsController tcc = (TasCollectionsController) AonUtil.getRegisteredBean("tasCollections");
+		tcc.initializeMakes();
 		
 	}
 

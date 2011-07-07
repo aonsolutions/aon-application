@@ -30,8 +30,7 @@
 						<ui:define name="columns">
 							<aon:column alias="model.id">
 								<f:facet name="header">
-									<aon:outputText
-										value="#{bundle.aon_id}" />
+									<aon:outputText	value="#{bundle.aon_id}" />
 								</f:facet>
 								<aon:outputText value="#{to.id}" />
 								<f:facet name="footer">
@@ -41,26 +40,24 @@
 	
 							<aon:column alias="Model.make.name">
 								<f:facet name="header">
-									<aon:outputLabel for="Model_make"
-										value="#{bundle.aon_name}" />
+									<aon:outputLabel for="Model_make" value="#{tasBundle.tas_make}" />
 								</f:facet>
 								<aon:outputText value="#{to.make.name}" rendered="#{formList}" />
 								<aon:selectOneMenu id="Model_make_name" required="true"
 									value="#{model.to.make}" rendered="#{formEdit}">
-									<f:selectItems value="#{TASCollections.makes}" />
+									<f:selectItems value="#{tasCollections.makes}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:selectOneMenu id="Model_make_name-New" required="true"
 										value="#{model.to.make}" rendered="#{formNew}">
-										<f:selectItems value="#{TASCollections.makes}" />
+										<f:selectItems value="#{tasCollections.makes}" />
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
 
 							<aon:column alias="Model.name">
 								<f:facet name="header">
-									<aon:outputLabel for="Model_name"
-										value="#{bundle.aon_name}" />
+									<aon:outputLabel for="Model_name" value="#{tasBundle.tas_model}" />
 								</f:facet>
 								<aon:outputText value="#{to.name}"
 									rendered="#{formList}" />

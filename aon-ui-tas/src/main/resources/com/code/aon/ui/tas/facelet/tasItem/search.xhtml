@@ -7,7 +7,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="tasItemForm">
+		<aon:form id="tasItemSearch">
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{tasBundle.tas_tasItem_module}" />
 				<ui:param name="controller" value="#{tasItem}" />
@@ -15,26 +15,14 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{tasItem}" />
+				<ui:param name="searchController" value="#{tasItemSearch}" />
 				
 				<ui:define name="searchContent">
 				
-					<aon:outputLabel for="TasItem_id"
-						value="#{bundle.aon_id}" />
-					<aon:inputText id="TasItem_id" size="10"
-						valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="TasItem_model_make_id" value="#{tasBundle.tas_make}" />
-					<aon:selectOneMenu id="TasItem_model_make_id"
-						value="#{TASCollections.make}"
-						valueChangeListener="#{controller.addIdEqualExpression}">
-						<f:selectItem itemLabel=" - " value="#{null}" />
-						<f:selectItems value="#{TASCollections.makes}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="TasItem_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="TasItem_description" size="50"
-						valueChangeListener="#{controller.addExpression}" />
+					<ui:include src="/com/code/aon/ui/tas/facelet/model/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{searchController.model}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
 
 					<aon:outputLabel for="TasItem_publicCode"
 						value="#{tasBundle.tas_publicCode}" />
@@ -46,6 +34,11 @@
 					<aon:inputText id="TasItem_privateCode" size="15"
 						valueChangeListener="#{controller.addExpression}" />
 
+					<aon:outputLabel for="TasItem_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="TasItem_description" size="50"
+						valueChangeListener="#{controller.addExpression}" />
+
 					<aon:outputLabel for="TasItem_addInfo"
 						value="#{tasBundle.tas_add_info}" />
 					<aon:inputText id="TasItem_addInfo" size="50"
@@ -53,8 +46,7 @@
 						
 				</ui:define>
 			</ui:decorate>
-			
-			
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{modelLookup}" />
 	</ui:define>
 </ui:composition>

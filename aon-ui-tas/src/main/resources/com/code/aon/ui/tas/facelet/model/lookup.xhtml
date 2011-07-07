@@ -8,10 +8,11 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
-		<ui:param name="controller" value="#{model}" />
 		<ui:param name="lookupBean" value="#{modelLookup}" />
+		<ui:param name="controller" value="#{model}" />
 		<ui:param name="lookupInputValue" value="#{lookupTo.id}"/>
-		<ui:param name="lookupInputSuggestSize" value="20" />
+		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.fullName}"/>
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.make.name} #{lto.name}"/>
 		<ui:param name="lookupLabel" value="#{tasBundle.tas_model}" />
 		<ui:param name="searchButtonTitle" value="#{tasBundle.model_selection}" />
 		<ui:param name="skipNewButton" value="#{true}"/>
