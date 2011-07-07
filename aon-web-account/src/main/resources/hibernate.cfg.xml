@@ -166,6 +166,9 @@
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 
+		<!-- AON-PROJECT Mapping files -->	
+		<mapping class="com.code.aon.project.Project"/>
+
 		<!-- AON-PURCHASE Mapping files -->	
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
