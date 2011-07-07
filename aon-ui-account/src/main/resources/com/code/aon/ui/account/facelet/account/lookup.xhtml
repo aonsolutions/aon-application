@@ -22,6 +22,7 @@
 				value="#{lookupTo.id}" property="#{lookupTo}" 
 				suggestAlias="Account_id" matchBeginOnly="#{true}"
 				columnExpression="#{lookupInputSuggestExpression}"
+				required="#{idRequired}"
 				size="10" maxlength="9" disabled="#{lookupDisabled}"
 				minChars="2" focus="#{lookupInputOnFocus}"
 				selectReRender="#{lookup_reRender}" />		
