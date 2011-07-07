@@ -106,14 +106,14 @@ public class AgreeementSalaryTableController extends ControllerAdapter implement
 	
 	
 	public DataModel getSalaryRows() throws ManagerBeanException {
-		if ( this.salaryRows == null){
+		if ( this.salaryRows == null && this.agreement!=null){
 			this.salaryRows = newDataModel(this.agreement, this.startDate, this.endDate);
 		}
 		return this.salaryRows;
 	}
 	
 	public Collection<String> getVariables() throws ManagerBeanException, SQLException {
-		if ( this.variables == null ){
+		if ( this.variables == null && this.agreement!=null){
 			this.variables = newVariables(this.agreement, this.startDate, this.endDate);
 		}
 		return this.variables;

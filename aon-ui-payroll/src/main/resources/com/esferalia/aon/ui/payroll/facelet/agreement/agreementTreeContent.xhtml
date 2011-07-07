@@ -15,6 +15,21 @@
 		<ui:param name="skipResetButton" value="true" />
 		<ui:param name="skipBackButton" value="true" />
 		<ui:param name="skipSpin" value="true" />
+		
+		<ui:define name="beforeSpinToolbarContent">
+			<aon:commandButton id="AgreementLevel-reset"
+				title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+				value="#{payrollBundle.payroll_agreementLevel_new}" 
+				reRender="aonContent"
+				styleClass="aon-finding-toolbar-item aon-icon-reset" >
+				<aon:actionListener method="#{agreementLevel.onReset}" />
+				<!--  
+				action="agreement_level_form"
+				<aon:actionListener method="#{contract.onShowNewContractModal}" />
+				-->
+			</aon:commandButton>		
+		</ui:define>
+		
 	</ui:decorate>
 	<aon:div styleClass="aon-scroll-area">
 		<aon:panelGrid columns="2" dir="true" width="100%" style="aon-margin-bottom">

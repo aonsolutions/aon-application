@@ -176,10 +176,12 @@ public class AgreementTree {
 	}
 
 	public boolean isAgreementSelected(){
-		return (getCurrentNode() != null && getCurrentNode().getType() == AgreementTreeType.AGREEMENT);
+		IController controller = FormUtil.getController(IPayrollConstants.AGREEMENT_LEVEL_CONTROLLER_NAME);
+		return (getCurrentNode() != null && getCurrentNode().getType() == AgreementTreeType.AGREEMENT && !controller.isNew());
 	}
 	public boolean isAgreementLevelSelected(){
-		return (getCurrentNode() != null && getCurrentNode().getType() == AgreementTreeType.AGREEMENT_LEVEL);
+		IController controller = FormUtil.getController(IPayrollConstants.AGREEMENT_LEVEL_CONTROLLER_NAME);
+		return (getCurrentNode() != null && getCurrentNode().getType() == AgreementTreeType.AGREEMENT_LEVEL || controller.isNew());
 	}
 	public void select(AgreementLevel al) {
 		Serializable id  = AgreementTreeType.AGREEMENT_LEVEL.toString() + al.getId();
