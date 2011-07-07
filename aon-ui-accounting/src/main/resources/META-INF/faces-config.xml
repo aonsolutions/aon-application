@@ -476,6 +476,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accountEntryDetail</value>
+		</managed-property>
+		<managed-property>
 			<property-name>pageLimit</property-name>
 			<value>100</value>
 		</managed-property>

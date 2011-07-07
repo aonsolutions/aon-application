@@ -85,6 +85,8 @@ public class StatementController extends BasicController {
 
 	private void refresh() {
 		try {
+			IController c = FormUtil.getController(STATEMENT_DETAIL_CONTROLLER_NAME);
+			c.onSearch(null);
 			initialize();
 			initializeAmounts();
 			transformDetailModel();
