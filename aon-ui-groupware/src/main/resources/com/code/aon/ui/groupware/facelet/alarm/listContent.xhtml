@@ -9,6 +9,7 @@
 	<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/alarmList.xhtml" >
 		<ui:param name="alarmListTitle" value="#{groupwareBundle.groupware_alarm_today}" />
 		<ui:param name="alarmListModel" value="#{alarm.todayModel}" />
+		<ui:param name="useDatePattern" value="#{false}" />		
 		<aon:methodParam name="alarmListRowSelectorActionListener"
 			value="#{alarm.onSelectTodayAlarm}" type="actionListener" />
 	</ui:include>								

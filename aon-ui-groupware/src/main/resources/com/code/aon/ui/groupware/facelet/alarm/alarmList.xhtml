@@ -8,6 +8,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components" >
 
 	<aon:valueParam name="alarmDescriptionWidth" default="120" />
+	<aon:valueParam name="useDatePattern" default="#{true}" />
 
 	<aon:panelCollapsible expanded="true" label="#{alarmListTitle}">
 
@@ -42,8 +43,8 @@
 			
 			<aon:column styleClass="aon-width-70 #{to.pending?'aon-input-required aon-italic':''}">
 				<aon:outputText value="#{to.alarmDate}">
-					<f:convertDateTime pattern="#{bundle.aon_time_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
+					<f:convertDateTime timeZone="#{timeZoneController.timeZoneId}"
+						pattern="#{(useDatePattern)?(bundle.aon_date_pattern):(bundle.aon_time_pattern)}" />
 				</aon:outputText>
 			</aon:column>
 
