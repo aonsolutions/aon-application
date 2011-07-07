@@ -152,7 +152,7 @@
     </component>
     <component>
         <component-type>com.code.aon.faces.HtmlLookupSuggestText</component-type>
-        <component-class>com.code.aon.faces.component.richfaces.lookup.HtmlLookupBasicInput</component-class>
+        <component-class>com.code.aon.faces.component.richfaces.lookup.suggestText.HtmlLookupSuggestText</component-class>
     </component>
     <component>
         <component-type>com.code.aon.faces.MenuBar</component-type>
@@ -197,7 +197,15 @@
     <component>
         <component-type>com.code.aon.faces.PickList</component-type>
         <component-class>org.richfaces.component.html.HtmlPickList</component-class>
-    </component>    
+    </component>
+	<component>
+		<component-type>com.code.aon.faces.suggestionBox</component-type>
+		<component-class>org.richfaces.component.html.HtmlSuggestionBox</component-class>
+		<component-extension>
+			<component-family>org.richfaces.SuggestionBox</component-family>
+			<renderer-type>org.richfaces.SuggestionBox</renderer-type>
+		</component-extension>
+	</component>        
 	<render-kit>
         <renderer>
             <component-family>com.code.aon.faces.DataPaginator</component-family>

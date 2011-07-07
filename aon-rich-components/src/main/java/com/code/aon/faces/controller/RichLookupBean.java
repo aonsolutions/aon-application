@@ -28,6 +28,7 @@ import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonType;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
+import com.code.aon.faces.component.richfaces.lookup.suggestText.HtmlLookupSuggestText;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.ast.Expression;
@@ -101,10 +102,6 @@ public class RichLookupBean {
 	private ITransferObject suggestedTo;
 	
 	private String suggestAlias;
-	
-	private String componentSuggestAlias;
-
-	private boolean suggestMatchBeginOnly;
 
 	/**
 	 * The Constructor.
@@ -824,22 +821,23 @@ public class RichLookupBean {
 		this.suggestAlias = getController().resolveAlias(alias);
 	}
 	
-	private String resolveSuggestAlias() {
-		if (! StringUtils.isEmpty(componentSuggestAlias) ) {
-			return getController().resolveAlias(componentSuggestAlias);
+	private String getSuggestAlias( HtmlLookupSuggestText st ) {
+		if (! StringUtils.isEmpty(st.getSuggestAlias()) ) {
+			return getController().resolveAlias(st.getSuggestAlias());
 		}
 		return getSuggestAlias();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ITransferObject> autocomplete( Object value ) {
+	public List<ITransferObject> autocomplete( Object value, UIComponent component ) {
 		if ( value != null ) {
 			String text = value.toString();
 			if (! StringUtils.isBlank(text) ) {
 				try {
 					getController().onEditSearch(null);
-					String search = (suggestMatchBeginOnly ? "" : "%") + text + "%"; 
-					Expression exp = ExpressionUtilities.getLikeExpression(resolveSuggestAlias(), search);
+					HtmlLookupSuggestText st = (HtmlLookupSuggestText) component.getParent();
+					String search = (st.getMatchBeginOnly() ? "" : "%") + text + "%"; 
+					Expression exp = ExpressionUtilities.getLikeExpression(getSuggestAlias(st), search);
 					getController().getCriteria().addExpression(exp);
 					onSearch(null);
 					if (getModel().getRowCount() > 0) {
@@ -874,22 +872,6 @@ public class RichLookupBean {
 		fireLookupChangeListener(component, true);
 		updateSourcePojo();
 		removeControllerListener();
-	}
-
-	public String getComponentSuggestAlias() {
-		return componentSuggestAlias;
-	}
-
-	public void setComponentSuggestAlias(String componentSuggestAlias) {
-		this.componentSuggestAlias = componentSuggestAlias;
-	}
-
-	public boolean isSuggestMatchBeginOnly() {
-		return suggestMatchBeginOnly;
-	}
-
-	public void setSuggestMatchBeginOnly(boolean suggestMatchBeginOnly) {
-		this.suggestMatchBeginOnly = suggestMatchBeginOnly;
 	}
 	
 }

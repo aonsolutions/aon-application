@@ -66,12 +66,6 @@ public class LookupSuggestTextHandler extends LookupBasicInputHandler {
 		if ( focus != null ) {
 			mapper.setVariable(PREFFIX + FOCUS, focus.getValueExpression(ctx, Object.class));				
 		}		
-		TagAttribute suggestAlias = getAttribute(SUGGEST_ALIAS);
-		if (suggestAlias != null) {
-			mapper.setVariable(PREFFIX + SUGGEST_ALIAS, suggestAlias.getValueExpression(ctx, String.class));
-		}		
-		TagAttribute matchBeginOnly = getAttribute(MATCH_BEGIN_ONLY);
-		mapper.setVariable(PREFFIX + MATCH_BEGIN_ONLY, FaceletUtil.getBooleanValueExpression(ctx, matchBeginOnly));
 	}
 	
 	@Override

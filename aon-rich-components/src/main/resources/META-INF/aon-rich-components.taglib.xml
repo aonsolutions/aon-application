@@ -401,6 +401,20 @@
 		</handler-class>
 	</tag>
 	<tag>
+		<tag-name>suggestionBox</tag-name>
+		<component>
+			<component-type>
+				com.code.aon.faces.suggestionBox
+			</component-type>
+			<renderer-type>
+				org.richfaces.SuggestionBox
+			</renderer-type>
+			<handler-class>
+				com.code.aon.faces.component.richfaces.suggestionBox.SuggestionBoxHandler
+			</handler-class>
+		</component>
+	</tag>
+	<tag>
 		<tag-name>rowSelector</tag-name>
 		<component>
 			<component-type>
