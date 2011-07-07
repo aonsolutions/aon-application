@@ -174,7 +174,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>suggestAlias</property-name>
-			<value>TasItem_publicCode</value>
+			<value>TasItem_model_name</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>listPagePath</property-name>

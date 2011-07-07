@@ -79,13 +79,16 @@
 					<aon:outputText value="#{tasBundle.tas_projectTas_tasItemData}"/>
 				</aon:div>
 				<aon:div styleClass="aon-group-body"> 	
-					<aon:div styleClass="aon-group-body-internal">
+					<aon:div id="TasItemDiv" styleClass="aon-group-body-internal">
 						<aon:panelGrid columns="2" styleClass="aon-width-all"
 							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 
 							<ui:include src="/com/code/aon/ui/tas/facelet/tasItem/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{controller.to.tasItem}" />
 								<ui:param name="idRequired" value="#{true}" />
+								<ui:param name="lookupReRender"	value="TasItemDiv,TargetDiv" />
+								<aon:methodParam name="lookupChangeListener"
+									value="#{controller.tasItemData}" type="lookupChangeListener" />
 							</ui:include>
 
 							<aon:outputLabel value="#{tasBundle.tas_privateCode}" />
@@ -106,13 +109,16 @@
 					<aon:outputText value="#{tasBundle.tas_projectTas_targetData}"/>
 				</aon:div>
 				<aon:div styleClass="aon-group-body"> 	
-					<aon:div styleClass="aon-group-body-internal">
+					<aon:div id="TargetDiv" styleClass="aon-group-body-internal">
 						<aon:panelGrid columns="2" styleClass="aon-width-all"
 							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 
 							<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{controller.to.target}" />
 								<ui:param name="idRequired" value="#{true}" />
+								<ui:param name="lookupReRender"	value="TasItemDiv,TargetDiv" />
+								<aon:methodParam name="lookupChangeListener"
+									value="#{controller.targetData}" type="lookupChangeListener" />
 							</ui:include>
 
 							<aon:outputText value="#{bundle.aon_company_document}" />
