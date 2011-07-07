@@ -202,6 +202,14 @@ public class ConfigCollectionsController {
 		return retentionTaxes;
 	}
 
+	public List<SelectItem> getTasSeries() throws ManagerBeanException{
+		return getSeries(false, IConfigAlias.SERIES_TAS);
+	}
+
+	public List<SelectItem> getTasSeriesIds() throws ManagerBeanException {
+		return getSeries(true, IConfigAlias.SERIES_TAS);
+	}	
+
 	public List<SelectItem> getOfferSeries() throws ManagerBeanException{
 		return getSeries(false, IConfigAlias.SERIES_OFFER);
 	}
