@@ -82,6 +82,7 @@
 	  <module>aon-tas</module>
 
     <!-- UI MODULES -->
+	  <module>aon-ui-audabridge</module>
 	  <module>aon-ui-company</module>
 	  <module>aon-ui-config</module>
 	  <module>aon-ui-customer</module>
@@ -115,6 +116,9 @@
 	  <module>aon-ui-purchase</module>
 	  <module>aon-ui-warehouse</module>
 	  <module>aon-ui-tas</module>
+
+    <!-- GENERATED -->
+	  <module>aon-audabridge-api</module>
 
     <!-- UTILITY -->
 	  <module>aon-file-format</module>
