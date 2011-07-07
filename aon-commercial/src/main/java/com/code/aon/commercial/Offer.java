@@ -48,6 +48,7 @@ import com.code.aon.config.Scope;
 import com.code.aon.config.Tariff;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.seller.Seller;
@@ -63,14 +64,11 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Offer.class.getName());
 	
-	public Offer() {
-		this.issueDate = new Date();
-	}
-	
     private Integer id;
     private String series;
     private int number;
     private int version;
+    private Project project;
     private Target target;
     private RegistryAddress address;
     private Tariff tariff;
@@ -97,6 +95,10 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	private Set<OfferDetail> lines = new HashSet<OfferDetail>();
 	private Set<OfferAttachment> attachments = new HashSet<OfferAttachment>();	
 	private Set<OfferTerm> terms = new HashSet<OfferTerm>();	
+	
+	public Offer() {
+		this.issueDate = new Date();
+	}
 	
     @Id
     @GeneratedValue
@@ -145,6 +147,16 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 		}
     	return referenceCode;
     }
+
+	@ManyToOne
+	@JoinColumn(name="project")
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
 
 	@ManyToOne
 	@JoinColumn(name="target", nullable = false)
@@ -459,6 +471,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 				.append(this.numberOfPayments, o.numberOfPayments)				
 				.append(this.paymentDays, o.paymentDays)
 				.append(this.payMethod, o.payMethod)				
+				.append(this.project, o.project)				
 				.append(this.scope, o.scope)
 				.append(this.securityLevel, o.securityLevel)				
 				.append(this.seller, o.seller)				
@@ -493,6 +506,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 			.append(numberOfPayments)
 			.append(paymentDays)
 			.append(payMethod)
+			.append(project)
 			.append(scope)
 			.append(securityLevel)
 			.append(seller)

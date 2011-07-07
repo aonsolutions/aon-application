@@ -14,6 +14,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.TasItem;
 import com.code.aon.tas.dao.ITASAlias;
+import com.code.aon.tas.enumeration.ProjectStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 
@@ -73,5 +74,9 @@ public class ProjectTasController extends BasicController {
 		return null;
 	}
 
+	public boolean isFinished() {
+		ProjectTas projectTas = ((ProjectTas)getTo());
+		return (projectTas != null && projectTas.getStatus() == ProjectStatus.CLOSED);
+	}
 
 }

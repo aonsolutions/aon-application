@@ -41,7 +41,7 @@
 			showInvoicing="false"
 			showSalesOrder="true"
 			showSeller="false"
-			showAudaTexOptions="false"
+			showTasData="false"
 		/>
 		<commercial:target
 			showTaxInfoData="true"

@@ -46,5 +46,5 @@ public interface ICommercialConstants {
 	// ************************************************************
 	
 	String CONFIG_OFFER_BEAN = "offer";
-	String SHOW_AUDATEX_OPTIONS = "showAudaTexOptions";
+	String SHOW_TAS_DATA = "showTasData";
 }

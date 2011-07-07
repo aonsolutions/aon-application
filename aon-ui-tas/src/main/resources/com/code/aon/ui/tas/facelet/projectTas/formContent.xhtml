@@ -20,26 +20,38 @@
 
 							<aon:outputLabel for="ProjectTas_number"
 								value="#{bundle.aon_series}/#{bundle.aon_number}" />
-							<aon:div>
-								<aon:selectOneMenu id="ProjectTas_series" 
-									value="#{controller.to.series}" rendered="#{controller.new}"
-									valueChangeListener="#{controller.onSeriesChanged}" 
-									reRender="ProjectTas_number">
-									<f:selectItem itemLabel=" " itemValue="#{null}" />
-									<f:selectItems value="#{configCollections.tasSeriesIds}" />
-								</aon:selectOneMenu>
-								<aon:inputText id="ProjectTas_number" styleClass="aon-margin-left"
-									value="#{controller.to.number}" rendered="#{controller.new}"
-									required="true" size="7" />
-								<aon:outputText styleClass="aon-bold aon-margin-right"
-									value="#{controller.to.referenceCode}"
-									rendered="#{!controller.new}" />
-							</aon:div>
+							<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+								<aon:div>
+									<aon:selectOneMenu id="ProjectTas_series" 
+										value="#{controller.to.series}" rendered="#{controller.new}"
+										valueChangeListener="#{controller.onSeriesChanged}" 
+										reRender="ProjectTas_number">
+										<f:selectItem itemLabel=" " itemValue="#{null}" />
+										<f:selectItems value="#{configCollections.tasSeriesIds}" />
+									</aon:selectOneMenu>
+									<aon:inputText id="ProjectTas_number" styleClass="aon-margin-left"
+										value="#{controller.to.number}" rendered="#{controller.new}"
+										required="true" size="7" />
+									<aon:outputText styleClass="aon-bold aon-margin-right"
+										value="#{controller.to.referenceCode}"
+										rendered="#{!controller.new}" />
+								</aon:div>
+								<aon:div>
+									<aon:outputText value="#{controller.to.status}"
+										styleClass="aon-bold aon-margin-right" />
+									<aon:outputText value="#{controller.to.statusDate}"
+										styleClass="aon-bold">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</aon:outputText>
+								</aon:div>
+							</aon:panelGrid>
 
 							<aon:outputLabel for="ProjectTas_project_date"
 								value="#{bundle.aon_date}" />
 							<aon:selectInputDate id="ProjectTas_project_date" 
 								value="#{controller.to.project.date}" required="true"
+								disabled="#{controller.finished}"
 								timeZone="#{timeZoneController.timeZone}"
 								popupDateFormat="#{bundle.aon_date_pattern}">
 							</aon:selectInputDate>
@@ -47,14 +59,16 @@
 							<aon:outputLabel for="ProjectTas_counter"
 								value="#{tasBundle.tas_odometer}" />
 							<aon:inputText id="ProjectTas_counter" 
-								value="#{controller.to.counter}">
+								value="#{controller.to.counter}"
+								disabled="#{controller.finished}">
 								<f:validateDoubleRange />
 							</aon:inputText>
 
 							<aon:outputLabel for="ProjectTas_taskHolder"
 								value="#{tasBundle.tas_projectTas_taskHolder}" />
 							<aon:selectOneMenu id="ProjectTas_taskHolder"
-								value="#{controller.to.taskHolder}">
+								value="#{controller.to.taskHolder}"
+								disabled="#{controller.finished}">
 								<f:selectItem itemLabel="-" value="#{null}" />		
 								<f:selectItems value="#{projectCollections.taskHolders}" />
 							</aon:selectOneMenu>					
@@ -62,7 +76,8 @@
 							<aon:outputLabel for="ProjectTas_comments"
 								value="#{bundle.aon_description}" />
 							<aon:inputTextarea id="ProjectTas_comments" 
-								value="#{controller.to.comments}" cols="80" rows="4" >
+								value="#{controller.to.comments}" cols="80" rows="6"
+								disabled="#{controller.finished}">
 								<f:validateLength maximum="65536"/>
 							</aon:inputTextarea>
 
@@ -83,9 +98,10 @@
 						<aon:panelGrid columns="2" styleClass="aon-width-all"
 							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 
-							<ui:include src="/com/code/aon/ui/tas/facelet/tasItem/lookup.xhtml" >
+							<ui:include src="/com/code/aon/ui/tas/facelet/tasItem/lookup.xhtml">
 								<ui:param name="lookupTo" value="#{controller.to.tasItem}" />
 								<ui:param name="idRequired" value="#{true}" />
+								<ui:param name="lookupDisabled"	value="#{controller.finished}" />
 								<ui:param name="lookupReRender"	value="TasItemDiv,TargetDiv" />
 								<aon:methodParam name="lookupChangeListener"
 									value="#{controller.tasItemData}" type="lookupChangeListener" />
@@ -113,9 +129,10 @@
 						<aon:panelGrid columns="2" styleClass="aon-width-all"
 							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
 
-							<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+							<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml">
 								<ui:param name="lookupTo" value="#{controller.to.target}" />
 								<ui:param name="idRequired" value="#{true}" />
+								<ui:param name="lookupDisabled"	value="#{controller.finished}" />
 								<ui:param name="lookupReRender"	value="TasItemDiv,TargetDiv" />
 								<aon:methodParam name="lookupChangeListener"
 									value="#{controller.targetData}" type="lookupChangeListener" />

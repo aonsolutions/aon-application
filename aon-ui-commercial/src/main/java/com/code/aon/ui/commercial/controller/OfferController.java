@@ -57,10 +57,14 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.report.ReportException;
 import com.code.aon.sales.Sales;
+import com.code.aon.sales.bridge.ProjectTasManager;
 import com.code.aon.sales.bridge.SalesManager;
 import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.seller.Seller;
 import com.code.aon.supplier.Supplier;
+import com.code.aon.tas.ProjectTas;
+import com.code.aon.tas.TasItem;
+import com.code.aon.tas.dao.ITASAlias;
 import com.code.aon.ui.commercial.util.CommercialEmailUtil;
 import com.code.aon.ui.commercial.util.OfferImportManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -84,6 +88,7 @@ public class OfferController extends BasicController implements ISignatureContro
 	
 	private final String SALES_CONTROLLER = "sales";
 	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
+	private final String PROJECT_TAS_CONTROLLER = "projectTas";
 
 	private String selectedTab;
 	private List<SelectItem> addresses;
@@ -102,6 +107,11 @@ public class OfferController extends BasicController implements ISignatureContro
 	private String invoiceSeries;
 	private int invoiceNumber;
 	private Date invoiceDate;
+	private boolean showProjectTasWindow;
+	private String projectTasSeries;
+	private int projectTasNumber;
+	private Date projectTasDate;
+	private TasItem projectTasItem;
 	private CommercialEmailUtil emailUtil;
 	
 	public OfferController() {
@@ -246,6 +256,46 @@ public class OfferController extends BasicController implements ISignatureContro
 		this.invoiceDate = invoiceDate;
 	}
 
+	public boolean isShowProjectTasWindow() {
+		return showProjectTasWindow;
+	}
+
+	public void setShowProjectTasWindow(boolean value) {
+		this.showProjectTasWindow = value;
+	}
+	
+	public String getProjectTasSeries() {
+		return projectTasSeries;
+	}
+
+	public void setProjectTasSeries(String projectTasSeries) {
+		this.projectTasSeries = projectTasSeries;
+	}
+
+	public int getProjectTasNumber() {
+		return projectTasNumber;
+	}
+
+	public void setProjectTasNumber(int projectTasNumber) {
+		this.projectTasNumber = projectTasNumber;
+	}
+
+	public Date getProjectTasDate() {
+		return projectTasDate;
+	}
+
+	public void setProjectTasDate(Date projectTasDate) {
+		this.projectTasDate = projectTasDate;
+	}
+
+	public TasItem getProjectTasItem() {
+		return projectTasItem;
+	}
+
+	public void setProjectTasItem(TasItem projectTasItem) {
+		this.projectTasItem = projectTasItem;
+	}
+
 	private Offer getOffer() {
 		return (Offer) this.getTo();
 	}
@@ -274,6 +324,10 @@ public class OfferController extends BasicController implements ISignatureContro
 		return OfferStatus.BLOCKED == getOffer().getStatus();
 	}
 	
+	public boolean isProject() {
+		return getOffer().getProject() != null && getOffer().getProject().getId() != null; 
+	}	
+
 	public boolean isLinesPending() throws ManagerBeanException {
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
@@ -638,6 +692,77 @@ public class OfferController extends BasicController implements ISignatureContro
 			}
 		}
     	return null;
+	}
+
+	public void onProjectTasShow(ActionEvent event) throws ManagerBeanException {
+		Offer to = getOffer();
+		setProjectTasSeries(obtainProjectTasSeries(to.getSeries()));
+		setProjectTasNumber(obtainMaxProjectTasNumber(getProjectTasSeries()));
+		setProjectTasDate(new Date());
+		//setProjectTasItem(obtainProjectTasItem(to));
+	}
+
+	private String obtainProjectTasSeries(String seriesId) throws ManagerBeanException {
+		if (StringUtils.isNotEmpty(seriesId)) {
+			Series series = (Series)BeanManager.getManagerBean(Series.class).get(seriesId);
+			if (series != null && series.isTas()) {
+				return series.getId();
+			}
+		}
+		return null;
+	}
+
+	public void onProjectTasSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
+		setProjectTasNumber(obtainMaxProjectTasNumber((String)event.getNewValue()));
+	}
+
+	private int obtainMaxProjectTasNumber(String seriesId) {
+		return SeriesNumberUtil.obtainNumber(seriesId, "ProjectTas");
+	}
+
+/*
+	private TasItem obtainProjectTasItem(Offer offer) throws ManagerBeanException {
+		IManagerBean offerAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(offerAttachBean.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID), offer.getId());
+		criteria.addEqualExpression(offerAttachBean.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_MIME_TYPE), MimeType.MIME_XML);
+		Iterator<?> iterator = offerAttachBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			OfferAttachment offerAttach = (OfferAttachment)iterator.next();
+			String chasis = null;
+			try {
+				InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(offerAttach.getData())); 
+				AudaBridgeManager manager = new AudaBridgeManager();
+				CalculationDataResponse response =  manager.parseCalculationDataResponse(reader);
+				chasis = response.getTotalGeneral().getChasis();
+				reader.close();
+			} catch (Exception e) {
+			}
+
+			if (chasis != null) {
+				IManagerBean tasItemBean = BeanManager.getManagerBean(TasItem.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(tasItemBean.getFieldName(ITASAlias.TAS_ITEM_PRIVATE_CODE), chasis);
+				for (ITransferObject ito : tasItemBean.getList(criteria)) {
+					return (TasItem)ito;
+				}
+			}
+		}
+		return null;
+	}
+*/
+
+	public void onProjectTas(ActionEvent event) throws ManagerBeanException {
+		Offer to = getOffer();
+		ProjectTasManager tasManager = new ProjectTasManager();
+		ProjectTas projectTas = tasManager.projectTas(to, getProjectTasSeries(), getProjectTasNumber(), getProjectTasDate(), getProjectTasItem());
+
+		IController projectTasController = FormUtil.getController(PROJECT_TAS_CONTROLLER);
+		projectTasController.onEditSearch(event);
+		projectTasController.getCriteria().addEqualExpression(projectTasController.getFieldName(ITASAlias.PROJECT_TAS_ID), projectTas.getId());
+		projectTasController.onSearch(event);
+		projectTasController.getModel().setRowIndex(0);
+		projectTasController.onSelect(event);
 	}
 
 	public void onSendOfferByEmail(ActionEvent event) throws ManagerBeanException, ReportException, IOException, SAXException {

@@ -86,17 +86,15 @@ public class CommercialCollectionsController {
 	 */
 	public List<SelectItem> getOfferTypes() {
 		if ( offerTypes == null ) {
-			boolean audatexEnabled =  (Boolean)  AonUtil.getConfigurationController().getBean()
+			boolean audatexEnabled = (Boolean)AonUtil.getConfigurationController().getBean()
 				.get(ICommercialConstants.CONFIG_OFFER_BEAN)
-				.get(ICommercialConstants.SHOW_AUDATEX_OPTIONS);
+				.get(ICommercialConstants.SHOW_TAS_DATA);
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			offerTypes = new LinkedList<SelectItem>();
 			for (OfferType type : OfferType.values()) {
 				String name = type.getName(locale);
 				SelectItem item = new SelectItem(type, name);
-				if (type != OfferType.AUDATEX) {  
-					offerTypes.add(item);
-				} else if (audatexEnabled) {
+				if ((type != OfferType.AUDATEX) || (type == OfferType.AUDATEX && audatexEnabled)) {  
 					offerTypes.add(item);
 				}
 			}
