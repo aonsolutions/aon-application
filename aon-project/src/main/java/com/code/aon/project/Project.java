@@ -31,6 +31,10 @@ public class Project implements ITransferObject {
 	private boolean commercial;
 	private boolean dossier;
 
+	public Project() {
+		this.date = new Date();
+	}
+
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
