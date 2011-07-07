@@ -10,12 +10,54 @@
 	<aon:panelGrid columns="2" style="width: 1000px;margin-right:10px;"
 		columnClasses="aon-noborder, aon-noborder">
 	
-		<aon:div style="width: 840px; margin-top: 10px;">
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/gridContent.xhtml" >
-				<ui:param name="bonuses" value="#{salaryDraft.salary.salaryBonus}" />
-			</ui:include>
-		</aon:div>
+	<aon:div style="width: 840px; margin-top: 10px;">
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/gridContent.xhtml" >
+			<ui:param name="bonuses" value="#{salaryDraft.salary.salaryBonus}" />
+		</ui:include>
+	</aon:div>
+	
+	<aon:div styleClass="aon-margin-top aon-border" 
+		style="width: 155px; margin-top: 10px; margin-left: 5px;background-color: #F6F6F6;">
 		
+		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
+			columnClasses="aon-noborder aon-padding-left aon-width-auto">
+			
+			<aon:outputText value="&#160;III. #{payrollBundle.payroll_salary_bonus}&#160;" 
+				styleClass="aon-bold" style="position: relative; top: -8px; margin-left: 5px; background-color: white;"/>
+
+		</aon:panelGrid>
+
+		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
+			columnClasses="aon-noborder aon-padding-right aon-width-150 aon-text-right aon-bold">
+			
+			<c:forEach items="#{bonuses.amounts}" var="to">
+			
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+					<aon:outputText rendered="#{!to.showAmount}"
+						styleClass="#{to.style}" 
+						value="#{to.textValue}"/>
+					<aon:outputText value="#{to.doubleValue}"
+						rendered="#{to.showAmount}"
+						styleClass="#{to.style}">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div>
+			</c:forEach>
+
+			<aon:div style="">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText rendered="#{!bonuses.totalAmount.showAmount}" 
+					value="#{bonuses.totalAmount.textValue}"
+					styleClass="#{bonuses.totalAmount.style}" />
+				<aon:outputText rendered="#{bonuses.totalAmount.showAmount}" 
+					value="#{bonuses.totalAmount.doubleValue}"
+					styleClass="#{bonuses.totalAmount.style}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+		</aon:panelGrid>		
+	</aon:div>
 
 	</aon:panelGrid>
 </ui:composition>

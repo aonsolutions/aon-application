@@ -38,15 +38,6 @@ public class SalaryDraftPaymentController extends ContractDetailAbstractControll
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryDraftPaymentController.class.getName());
 
-	private boolean modalPanelVisible;
-	
-	public boolean isModalPanelVisible() {
-		return modalPanelVisible;
-	}
-	public void setModalPanelVisible(boolean modalPanelVisible) {
-		this.modalPanelVisible = modalPanelVisible;
-	}
-	
 	public void onPaymentConceptChange(ActionEvent event) {
 		ContractPayment cp = (ContractPayment) getTo();
 		if (cp.getType() != null && StringUtils.isEmpty(cp.getDescription())) {
@@ -191,36 +182,6 @@ public class SalaryDraftPaymentController extends ContractDetailAbstractControll
 					setUndefinedVariablesModel(new ListDataModel(undefined));
 				}
 			}
-//			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
-//			dataList = new LinkedList<ContractData>();
-//			if(payment.getExpression()==null && payment.getPaymentConcept().getExpression()==null){
-//				String msg = "No hay expresion definida para esta percepcion ni para su concepto";
-//				LOGGER.error(msg);
-//				AonUtil.addErrorMessage(msg);
-//			} else {
-//				Calendar startCal = Calendar.getInstance();
-//				Calendar endCal = Calendar.getInstance();
-//				startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
-//				endCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-//				for(String s: ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression())){
-//					List<ITransferObject> list = existingContractData(s, contract);
-//					if(!list.isEmpty()){
-//						for(ITransferObject to: list){
-//							dataList.add((ContractData) to);
-//						}
-//					} else {
-//						ContractData data = new ContractData();
-//						data.setContract(contract);
-//						data.setName(s);
-//						data.setStartDate(startCal.getTime());
-//						data.setEndDate(endCal.getTime());
-//						Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
-//						data.setExpression(o.toString());
-//						dataList.add(data);
-//					}
-//				}
-//			}
-//			setVariablesModel(new ListDataModel(dataList));
 		} catch (SalaryException e) {
 			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
 			LOGGER.error(msg);

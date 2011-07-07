@@ -187,11 +187,9 @@ public class SalaryDraftController extends BasicController {
 			c.onEditSearch(event);
 			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_CONTRACT_ID), to.getId());
 			c.getCriteria().addLessThanOrEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_START_DATE), this.getStartDate());
-			
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE), this.getEndDate());
 			Expression expr2 = ExpressionUtilities.getNullExpression(c.getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE));
 			c.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
-			
 			c.onSearch(event);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible mostrar las percepciones del contrato (" + e.getMessage() +")";
@@ -199,6 +197,24 @@ public class SalaryDraftController extends BasicController {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}		
+	}
+	
+	public void onShowBonus( ActionEvent event ) {
+		try {
+			SalaryDraftBonusController c = (SalaryDraftBonusController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_BONUS_CONTROLLER);
+			c.reset(false);
+			c.onEditSearch(event);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE), getStartDate());
+			Expression expr2 = ExpressionUtilities.getNullExpression(c.getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE));
+			c.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			c.onSearch(event);
+			c.getModel();
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible mostrar las bonificaciones del contrato (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}						
 	}
 
 	// *********

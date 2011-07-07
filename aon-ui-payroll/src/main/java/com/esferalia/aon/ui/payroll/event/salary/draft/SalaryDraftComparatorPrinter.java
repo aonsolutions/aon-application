@@ -7,10 +7,19 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractBonus;
+import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBonus;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
@@ -38,6 +47,7 @@ public class SalaryDraftComparatorPrinter {
 	private Payments payments;
 	private Deductions deductions;
 	private Bases bases;
+	private Bonus bonuses;
 	
 	public SalaryDraftComparatorPrinter(Contract contract, ISalary dbSalary, Date startDate, Date endDate, Date issueDate) {
 		this.salary = dbSalary;
@@ -70,6 +80,7 @@ public class SalaryDraftComparatorPrinter {
 			decoratePayments();
 			decorateDeduction();
 			decorateBases();
+			decorateBonuses();
 			setSalary(null);
 			setDraft(null);
 		} catch (SalaryException e) {
@@ -108,6 +119,12 @@ public class SalaryDraftComparatorPrinter {
 	}
 	public void setBases(Bases bases) {
 		this.bases = bases;
+	}
+	public Bonus getBonuses() {
+		return bonuses;
+	}
+	public void setBonuses(Bonus bonuses) {
+		this.bonuses = bonuses;
 	}
 
 	private void decoratePayments() throws SalaryException {
@@ -150,6 +167,52 @@ public class SalaryDraftComparatorPrinter {
 		bases.setOvertimeBase(getSalary().getOvertimeBase(), getDraft().getOvertimeBase());
 		bases.setIrpfBase(getSalary().getIrpfBase(), getDraft().getIrpfBase());
 		setBases(bases);
+	}
+	private void decorateBonuses() {
+//		List<SalaryBonus> salaryBonus;
+//		List<ContractBonus> contractBonus;
+		Bonus bonuses = new Bonus();
+		bonuses.setAmounts(getSalaryBonuses(), getContractBonuses());
+		setBonuses(bonuses);
+	}
+
+	private List<ITransferObject> getContractBonuses() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(ContractBonus.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_BONUS_CONTRACT_ID), ((Salary)getSalary()).getContract().getId());
+			
+			
+//			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_BONUS_START_DATE), getSalary().getStartDate());
+//			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE), getSalary().getEndDate());
+			
+			
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE), getSalary().getStartDate());
+			Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_BONUS_END_DATE));
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));				
+			
+			
+			criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_BONUS_EXPRESSION));
+			return bean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private List<ITransferObject> getSalaryBonuses() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(SalaryBonus.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_BONUS_SALARY_ID), ((Salary)getSalary()).getId());
+			criteria.addOrder(bean.getFieldName(IPayrollAlias.SALARY_BONUS_AMOUNT));
+			return bean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 
@@ -641,6 +704,73 @@ public class SalaryDraftComparatorPrinter {
 			setTotalLiquid(getDecorableAmount(totalLiquid2, totalLiquid3));
 		}
 
+		public DecorableAmount getDecorableAmount(Double salaryValue, Double draftValue){
+			DecorableAmount DecorableAmount = new DecorableAmount();
+			if(salaryValue==null && draftValue==null){
+				DecorableAmount.setTextValue(BLANK_TEXT);
+				DecorableAmount.setStyle(NORMAL_STYLE);
+			} else if(salaryValue!=null && draftValue!=null){
+				DecorableAmount.setDoubleValue(CommonUtil.round(salaryValue));
+				DecorableAmount.setStyle(CommonUtil.round(salaryValue)==CommonUtil.round(draftValue)?NORMAL_STYLE:RED_STYLE);
+			} else {
+				if(salaryValue==null){
+					DecorableAmount.setTextValue(NO_ELEMENT_TEXT);	
+					DecorableAmount.setStyle(RED_STYLE);
+				} else {
+					DecorableAmount.setDoubleValue(CommonUtil.round(salaryValue));
+					DecorableAmount.setStyle(NORMAL_STYLE);
+				}
+			}
+			return DecorableAmount;
+		}
+	}
+	
+	public class Bonus {
+		private List<DecorableAmount> amounts;
+		private DecorableAmount totalAmount;
+		
+		public DecorableAmount getTotalAmount() {
+			return totalAmount;
+		}
+		public void setTotalAmount(DecorableAmount totalAmount) {
+			this.totalAmount = totalAmount;
+		}
+		public List<DecorableAmount> getAmounts() {
+			return amounts;
+		}
+		public void setAmounts(List<DecorableAmount> amounts) {
+			this.amounts = amounts;
+		}
+		
+		public void setAmounts(List<ITransferObject> salaryBonus, List<ITransferObject> draftBonus) {
+			Double salaryTotal = new Double(0.0);
+			Double draftTotal = new Double(0.0);
+			List<DecorableAmount> list = new LinkedList<DecorableAmount>();
+			for(ITransferObject to: draftBonus){
+				ContractBonus b = (ContractBonus) to;
+				SalaryBonus sb = getSameSalaryBonus(b, salaryBonus);
+				list.add(getDecorableAmount(sb==null?null:sb.getAmount(), b==null?null:Double.valueOf(b.getExpression())));
+//				setTotalAmount(getDecorableAmount(0.0, 0.0));
+//				getTotalAmount().set;
+//				setTotalAmount(getDecorableAmount(getTotalAmount()+Double.valueOf(b.getExpression())));
+				salaryTotal += sb==null?0.0:sb.getAmount();
+				draftTotal += b==null?0.0:Double.valueOf(b.getExpression());
+			}
+			setTotalAmount(getDecorableAmount(salaryTotal, draftTotal));
+			setAmounts(list);
+		}
+		private SalaryBonus getSameSalaryBonus(ITransferObject contractBonus, List<ITransferObject> salaryBonus) {
+			ContractBonus cb = (ContractBonus) contractBonus;
+			for(ITransferObject to: salaryBonus){
+				SalaryBonus sb = (SalaryBonus) to;
+				if(cb.getDescription().equals(sb.getDescription()) 
+						&& CommonUtil.round(Double.valueOf(cb.getExpression())) == CommonUtil.round(sb.getAmount())) {
+					return sb;
+				}
+			}
+			return null;
+		}
+		
 		public DecorableAmount getDecorableAmount(Double salaryValue, Double draftValue){
 			DecorableAmount DecorableAmount = new DecorableAmount();
 			if(salaryValue==null && draftValue==null){

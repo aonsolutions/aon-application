@@ -652,6 +652,20 @@
 			<value>salaryDraftDeduction</value>
 		</managed-property>
 	</managed-bean>
+	<!-- ************ SALARY DRAFT BONUS ************** -->
+	<managed-bean>
+		<managed-bean-name>salaryDraftBonus</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftBonusController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.ContractBonus</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>salaryDraftBonus</value>
+		</managed-property>
+	</managed-bean>
 	<!--  **** SALARY PRINT **** -->
 	<managed-bean>
 		<managed-bean-name>salaryPrint</managed-bean-name>
