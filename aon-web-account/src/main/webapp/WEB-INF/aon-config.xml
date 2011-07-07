@@ -9,12 +9,13 @@
 		/>
 	</registry:config>
 
-	<config:config version="1.0" xmlns:config="http://www.esferalia.com/config" >
+	<config:config version="1.1" xmlns:config="http://www.esferalia.com/config" >
 		<config:series
 			showOfferData="false"
 			showSalesData="false"
 			showDeliveryData="false"
 			showInvoiceData="true"
+			showTasData="false"
 		/>
 	</config:config>	
 
