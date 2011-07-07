@@ -15,7 +15,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import com.code.aon.common.ITransferObject;
 
 @Entity
-@Table(name = "make")
+@Table(name="make")
 public class Make implements ITransferObject {
 
 	private static final long serialVersionUID = 3826737561335651683L;

@@ -8,8 +8,6 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum ProjectStatus implements IResourceable {
 
 	PENDING,
-	APPROVED,
-    REFUSED,
 	CLOSED;
     
 	/** Message file base path. */

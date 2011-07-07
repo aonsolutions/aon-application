@@ -17,7 +17,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
-@Table(name = "model")
+@Table(name="model")
 public class Model implements ITransferObject{
 
 	private static final long serialVersionUID = 5608358274994999663L;
@@ -36,7 +36,7 @@ public class Model implements ITransferObject{
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "make", nullable = false)
+	@JoinColumn(name="make", nullable=false)
 	public Make getMake() {
 		return this.make;
 	}
@@ -44,7 +44,7 @@ public class Model implements ITransferObject{
 		this.make = make;
 	}
 
-	@Column(length = 64, nullable = false)
+	@Column(length=64, nullable=false)
 	public String getName() {
 		return this.name;
 	}

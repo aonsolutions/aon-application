@@ -149,7 +149,6 @@
 		<mapping class="com.code.aon.product.ItemAttachment"/>
 		<mapping class="com.code.aon.product.ItemComposition"/>
 		<mapping class="com.code.aon.product.ItemSupplier"/>
-		<mapping class="com.code.aon.product.ItemTariff"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
@@ -157,7 +156,15 @@
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 		
 		<!-- AON-PROJECT Mapping files -->	
+		<mapping class="com.code.aon.project.Activity"/>
+		<mapping class="com.code.aon.project.ActivityType"/>
+		<mapping class="com.code.aon.project.DailyTracking"/>
+		<mapping class="com.code.aon.project.Dossier"/>
+		<mapping class="com.code.aon.project.DossierType"/>
+		<mapping class="com.code.aon.project.JobType"/>
 		<mapping class="com.code.aon.project.Project"/>
+		<mapping class="com.code.aon.project.Task"/>
+		<mapping class="com.code.aon.project.TaskHolder"/>
 
 		<!-- AON-PURCHASE Mapping files -->	
 		<mapping class="com.code.aon.purchase.Purchase"/>
@@ -193,6 +200,7 @@
 		<!-- AON-TAS Mapping files -->	
 		<mapping class="com.code.aon.tas.Make"/>
 		<mapping class="com.code.aon.tas.Model"/>
+		<mapping class="com.code.aon.tas.ProjectTas"/>
 		<mapping class="com.code.aon.tas.TasItem"/>
 
 		<!-- AON-WAREHOUSE Mapping files -->		

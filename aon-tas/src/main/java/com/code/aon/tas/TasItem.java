@@ -1,6 +1,5 @@
 package com.code.aon.tas;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,7 +18,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 
 @Entity
-@Table(name = "tas_item")
+@Table(name="tas_item")
 public class TasItem implements ITransferObject {
 
 	private static final long serialVersionUID = -2161261906986667487L;
@@ -41,7 +40,7 @@ public class TasItem implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "model", nullable = false)
+	@JoinColumn(name="model", nullable=false)
 	public Model getModel() {
 		return this.model;
 	}
@@ -49,7 +48,7 @@ public class TasItem implements ITransferObject {
 		this.model = model;
 	}
 
-	@Column(length = 25, nullable = false)
+	@Column(length=25, nullable=false)
 	public String getPublicCode() {
 		return this.publicCode;
 	}
@@ -57,7 +56,7 @@ public class TasItem implements ITransferObject {
 		this.publicCode = publicCode;
 	}
 
-	@Column(length = 25)
+	@Column(length=25)
 	public String getPrivateCode() {
 		return this.privateCode;
 	}
@@ -80,6 +79,13 @@ public class TasItem implements ITransferObject {
 	}
 	public void setAddInfo(String addInfo) {
 		this.addInfo = addInfo;
+	}
+
+	@Transient
+	public String getFullName() {
+		return ((publicCode != null) ? publicCode + " " : "") + ((model != null && model.getId() != null) ? "(" + model.getFullName() + ")" : "");
+	}
+	public void setFullName(String value) {
 	}
 
 	@Override

@@ -5,14 +5,19 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:outputLabel for="Model_make_name"
+	<aon:outputLabel for="Model_make_id"
 		value="#{tasBundle.tas_make}" />
-	<aon:inputText id="Model_make_name" size="60"
-		valueChangeListener="#{lookup.addExpression}"  onblur="toUpperCase(this);"  />
+
+	<aon:selectOneMenu id="Model_make_id"
+		value="#{tasCollections.make}"
+		valueChangeListener="#{lookup.addIdEqualExpression}">
+		<f:selectItem itemLabel=" - " value="#{null}" />
+		<f:selectItems value="#{tasCollections.makes}" />
+	</aon:selectOneMenu>
 
 	<aon:outputLabel for="Model_name"
 		value="#{bundle.aon_description}" />
 	<aon:inputText id="Model_name" size="60"
-		valueChangeListener="#{lookup.addExpression}"  onblur="toUpperCase(this);"  />
+		valueChangeListener="#{lookup.addExpression}" />
 
 </ui:composition>

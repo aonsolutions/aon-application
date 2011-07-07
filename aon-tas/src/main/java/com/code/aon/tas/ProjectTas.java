@@ -29,8 +29,10 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
 import com.code.aon.commercial.Target;
+import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.project.Project;
 import com.code.aon.project.TaskHolder;
 import com.code.aon.tas.enumeration.ProjectStatus;
@@ -38,7 +40,7 @@ import com.code.aon.tas.enumeration.ProjectStatus;
 @Entity
 @Table(name="project_tas")
 @PrimaryKeyJoinColumn(name="project")
-public class ProjectTas implements ITransferObject {
+public class ProjectTas implements ITransferObject, IHeaderObject {
 
 	private static final long serialVersionUID = -2595051575335189544L;
 
@@ -180,7 +182,12 @@ public class ProjectTas implements ITransferObject {
     	return referenceCode;
     }
 
-	@Override
+    @Transient
+    public SecurityLevel getSecurityLevel() {
+    	return SecurityLevel.OFFICIAL;
+    }
+
+    @Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;

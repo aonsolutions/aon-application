@@ -71,6 +71,21 @@
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
+
+						<aon:panelGrid id="group_projectTas"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-car aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{tasBundle.tas_projectTas_module}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="projectTas" 
+										action="projectTas_search" actionListener="#{projectTas.onEditSearch}"
+										value="#{tasBundle.tas_projectTas_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
 					</aon:panelGroup>
 
 					<aon:panelGroup>
@@ -94,7 +109,7 @@
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="tasItem" 
-											action="tasItem_search" actionListener="#{model.onEditSearch}"
+											action="tasItem_search" actionListener="#{tasItem.onEditSearch}"
 											value="#{tasBundle.tas_tasItem_module}" />
 									</aon:div>
 								</aon:div>

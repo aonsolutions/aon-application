@@ -100,6 +100,10 @@
 			<value>Model_make_name,Model_name</value>
 		</managed-property>		
 		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>Model_name</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/com/code/aon/ui/tas/facelet/lookup/model/list.xhtml</value>
 		</managed-property>
@@ -151,12 +155,51 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ************ TAS ITEM LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>tasItemLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tasItemLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.tas.TasItem</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>TasItem_model_make_name,TasItem_model_name,TasItem_publicCode</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>suggestAlias</property-name>
+			<value>TasItem_publicCode</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/tas/facelet/lookup/tasItem/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/com/code/aon/ui/tas/facelet/lookup/tasItem/search.xhtml</value>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{tasItemSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
 
 	<!-- ************ PROJECT TAS ************** -->
 	<managed-bean>
 		<managed-bean-name>projectTas</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.tas.controller.ProjectTasController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -182,7 +225,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>ProjectTas_project_date desc</value>
+			<value>ProjectTas_project_date desc,ProjectTas_series desc,ProjectTas_number desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -191,6 +234,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{projectTasSearch}</value>
+				<value>#{projectTasHeaderControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -203,6 +247,16 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+ 	<managed-bean>
+		<managed-bean-name>projectTasHeaderControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.HeaderControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>table</property-name>
+			<value>ProjectTas</value>
+		</managed-property>
+	</managed-bean>
+
    	<!-- ************* NAVIGATION RULES ***************** -->
 
    	<!-- ************* MAKE ***************** -->

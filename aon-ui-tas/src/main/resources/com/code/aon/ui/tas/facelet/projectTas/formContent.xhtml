@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:panelGrid columns="2" cellpadding="5" styleClass="aon-panelGrid-formatting"
+		columnClasses="aon-width-half aon-vertical-align-top,aon-width-half aon-vertical-align-top">
+		<aon:div>
+			<aon:div styleClass="aon-group">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{tasBundle.tas_projectTas_detail}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 
+					<aon:div styleClass="aon-group-body-internal">
+						<aon:panelGrid columns="2" styleClass="aon-width-all"
+							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+
+							<aon:outputLabel for="ProjectTas_number"
+								value="#{bundle.aon_series}/#{bundle.aon_number}" />
+							<aon:div>
+								<aon:selectOneMenu id="ProjectTas_series" 
+									value="#{controller.to.series}" rendered="#{controller.new}"
+									valueChangeListener="#{controller.onSeriesChanged}" 
+									reRender="ProjectTas_number">
+									<f:selectItem itemLabel=" " itemValue="#{null}" />
+									<f:selectItems value="#{configCollections.tasSeriesIds}" />
+								</aon:selectOneMenu>
+								<aon:inputText id="ProjectTas_number" styleClass="aon-margin-left"
+									value="#{controller.to.number}" rendered="#{controller.new}"
+									required="true" size="7" />
+								<aon:outputText styleClass="aon-bold aon-margin-right"
+									value="#{controller.to.referenceCode}"
+									rendered="#{!controller.new}" />
+							</aon:div>
+
+							<aon:outputLabel for="ProjectTas_project_date"
+								value="#{bundle.aon_date}" />
+							<aon:selectInputDate id="ProjectTas_project_date" 
+								value="#{controller.to.project.date}" required="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+							</aon:selectInputDate>
+
+							<aon:outputLabel for="ProjectTas_counter"
+								value="#{tasBundle.tas_odometer}" />
+							<aon:inputText id="ProjectTas_counter" 
+								value="#{controller.to.counter}">
+								<f:validateDoubleRange />
+							</aon:inputText>
+
+							<aon:outputLabel for="ProjectTas_taskHolder"
+								value="#{tasBundle.tas_projectTas_taskHolder}" />
+							<aon:selectOneMenu id="ProjectTas_taskHolder"
+								value="#{controller.to.taskHolder}">
+								<f:selectItem itemLabel="-" value="#{null}" />		
+								<f:selectItems value="#{projectCollections.taskHolders}" />
+							</aon:selectOneMenu>					
+
+							<aon:outputLabel for="ProjectTas_comments"
+								value="#{bundle.aon_description}" />
+							<aon:inputTextarea id="ProjectTas_comments" 
+								value="#{controller.to.comments}" cols="80" rows="4" >
+								<f:validateLength maximum="65536"/>
+							</aon:inputTextarea>
+
+						</aon:panelGrid>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+
+		</aon:div>
+
+		<aon:div>
+			<aon:div styleClass="aon-group">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{tasBundle.tas_projectTas_tasItemData}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 	
+					<aon:div styleClass="aon-group-body-internal">
+						<aon:panelGrid columns="2" styleClass="aon-width-all"
+							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+
+							<ui:include src="/com/code/aon/ui/tas/facelet/tasItem/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{controller.to.tasItem}" />
+								<ui:param name="idRequired" value="#{true}" />
+							</ui:include>
+
+							<aon:outputLabel value="#{tasBundle.tas_privateCode}" />
+							<aon:outputText value="#{controller.to.tasItem.privateCode}" />
+
+							<aon:outputLabel value="#{bundle.aon_description}" />
+							<aon:outputText value="#{controller.to.tasItem.description}">
+								<aon:abbreviateConverter maxWidth="50" />
+							</aon:outputText>
+
+						</aon:panelGrid>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+
+			<aon:div styleClass="aon-group aon-vertical-align-bottom">
+				<aon:div styleClass="aon-group-title">
+					<aon:outputText value="#{tasBundle.tas_projectTas_targetData}"/>
+				</aon:div>
+				<aon:div styleClass="aon-group-body"> 	
+					<aon:div styleClass="aon-group-body-internal">
+						<aon:panelGrid columns="2" styleClass="aon-width-all"
+							columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+
+							<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{controller.to.target}" />
+								<ui:param name="idRequired" value="#{true}" />
+							</ui:include>
+
+							<aon:outputText value="#{bundle.aon_company_document}" />
+							<aon:outputText value="#{controller.to.target.registry.document}" />
+
+							<aon:outputText value="#{registryBundle.registry_phone}" />
+							<aon:outputText value="#{controller.to.target.registry.phone.value}" />
+
+							<aon:outputText value="#{registryBundle.registry_cellular}" />
+							<aon:outputText value="#{controller.to.target.registry.cellular.value}" />
+
+						</aon:panelGrid>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+		</aon:div>
+	</aon:panelGrid>
+
+</ui:composition>
