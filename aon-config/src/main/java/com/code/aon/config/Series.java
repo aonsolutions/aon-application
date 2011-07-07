@@ -22,6 +22,7 @@ public class Series implements ITransferObject, IConfidentialable {
 
 	private String id;
 	private String description;
+	private boolean tas;
 	private boolean offer;
 	private boolean sales;
 	private boolean delivery;
@@ -47,6 +48,14 @@ public class Series implements ITransferObject, IConfidentialable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public boolean isTas() {
+		return tas;
+	}
+
+	public void setTas(boolean tas) {
+		this.tas = tas;
 	}
 
 	public boolean isOffer() {
@@ -132,6 +141,7 @@ public class Series implements ITransferObject, IConfidentialable {
 				.append(this.rectification, o.rectification)
 				.append(this.sales, o.sales)
 				.append(this.securityLevel, o.securityLevel)				
+				.append(this.tas, o.tas)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -149,6 +159,7 @@ public class Series implements ITransferObject, IConfidentialable {
 			.append(sales)		
 			.append(id)
 			.append(securityLevel)
+			.append(tas)		
 			.toHashCode();
 	}	
 

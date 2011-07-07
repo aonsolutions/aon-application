@@ -221,6 +221,12 @@ public interface IConfigAlias {
 	*/
 	String  SERIES_SECURITY_LEVEL = SERIES_ENTRY.getAliasNames()[8];
 
+	/** 
+	* Alias value: Series_tas
+	* Hibernate value: Series.tas
+	*/
+	String  SERIES_TAS = SERIES_ENTRY.getAliasNames()[9];
+
 
 
 	/** 
