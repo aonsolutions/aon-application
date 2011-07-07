@@ -227,7 +227,16 @@ public class AccountingCollectionsController {
 			return null;
 		}
 	}
-
+	public List<String> getConceptsDescriptions(Object prefix) {
+		List<String> subList = new LinkedList<String>();
+		for (String concept:getConceptsDescriptions()) {
+			if (concept.startsWith((String)prefix)) {
+				subList.add(concept);				
+			}
+		}
+		return subList;
+	}
+	
 	public List<SelectItem> getAccountTypes() {
 		if (accountEntryTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();

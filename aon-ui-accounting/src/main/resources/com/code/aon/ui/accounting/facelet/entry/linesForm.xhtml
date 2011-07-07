@@ -131,6 +131,30 @@
 						required="true" size="15" maxlength="32"/>
 					<f:facet name="footer">
 						<aon:div>
+					<aon:inputText id="AccountEntryDetail_concept-New"
+						value="#{accountEntryDetail.to.concept}"
+						rendered="#{accountEntryDetail.new}" 
+						required="true" size="15" maxlength="32" />
+
+					<a4j:region>
+						<rich:suggestionbox for="AccountEntryDetail_concept-New"
+							suggestionAction="#{accountingCollections.getConceptsDescriptions}" var="result"
+							minChars="3" immediate="true" limitToList="true" ajaxSingle="true"
+							eventsQueue="AccountEntryDetail_concept-New-Sug" ignoreDupResponses="true"
+							requestDelay="100" width="200" height="100"
+							nothingLabel="#{bundle.aon_search_no_results}">
+							<aon:column>
+								<aon:outputText value="#{result}" />
+							</aon:column>
+							<a4j:support event="onselect" limitToList="true" 
+								reRender="AccountEntryDetail_concept-New"
+								focus="AccountEntryDetail_concept-New">
+								<f:setPropertyActionListener target="#{accountEntryDetail.to.concept}" value="#{result}" />
+							</a4j:support>
+							
+						</rich:suggestionbox>
+					</a4j:region>						
+<!--						
 							<rich:comboBox
 								id="AccountEntryDetail_concept-New" 
 								suggestionValues="#{accountingCollections.conceptsDescriptions}"
@@ -144,6 +168,7 @@
 								buttonStyle="display:none;"	
 								rendered="#{accountEntryDetail.new}" 
 								required="true"/>
+  -->
 						</aon:div>
 					</f:facet>
 				</aon:column>
