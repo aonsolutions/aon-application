@@ -10,6 +10,7 @@ import com.code.aon.project.DossierType;
 import com.code.aon.project.JobType;
 import com.code.aon.project.Project;
 import com.code.aon.project.Task;
+import com.code.aon.project.TaskHolder;
 
 /** 
 * Interface for holding entity properties constants.
@@ -419,6 +420,43 @@ public interface IProjectAlias {
 	* Hibernate value: Task.dossier<customer.id
 	*/
 	String  TASK_CUSTOMER_ID = TASK_ENTRY.getAliasNames()[17];
+
+
+
+	/** 
+	* DAOConstantsEntry for TaskHolder entity.
+	*/ 
+	DAOConstantsEntry TASK_HOLDER_ENTRY = DAOConstants.getDAOConstant(TaskHolder.class);
+
+	/** 
+	* Alias value: TaskHolder_id
+	* Hibernate value: TaskHolder.id
+	*/
+	String  TASK_HOLDER_ID = TASK_HOLDER_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: TaskHolder_registry_id
+	* Hibernate value: TaskHolder.registry.id
+	*/
+	String  TASK_HOLDER_REGISTRY_ID = TASK_HOLDER_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: TaskHolder_type
+	* Hibernate value: TaskHolder.type
+	*/
+	String  TASK_HOLDER_TYPE = TASK_HOLDER_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: TaskHolder_active
+	* Hibernate value: TaskHolder.active
+	*/
+	String  TASK_HOLDER_ACTIVE = TASK_HOLDER_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: TaskHolder_registry_name
+	* Hibernate value: TaskHolder.registry.name
+	*/
+	String  TASK_HOLDER_REGISTRY_NAME = TASK_HOLDER_ENTRY.getAliasNames()[4];
 
 
 }

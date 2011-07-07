@@ -13,6 +13,7 @@ import com.code.aon.project.DossierType;
 import com.code.aon.project.JobType;
 import com.code.aon.project.Project;
 import com.code.aon.project.Task;
+import com.code.aon.project.TaskHolder;
 
 public class ProjectAliasWriter {
 
@@ -26,7 +27,8 @@ public class ProjectAliasWriter {
 			DossierType.class.getName(),
 	        JobType.class.getName(),
 	        Project.class.getName(),
-	        Task.class.getName()
+	        Task.class.getName(),
+	        TaskHolder.class.getName()
 		};
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.project.dao");

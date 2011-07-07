@@ -35,6 +35,7 @@
 		<mapping class="com.code.aon.project.JobType"/>
 		<mapping class="com.code.aon.project.Project"/>
 		<mapping class="com.code.aon.project.Task"/>
+		<mapping class="com.code.aon.project.TaskHolder"/>
 
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.Registry"/>
