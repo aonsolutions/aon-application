@@ -101,11 +101,8 @@ public class ContractBonusController extends ContractDetailAbstractController {
 	protected void initializeVariables(ActionEvent event) {
 		ContractBonus bonus = (ContractBonus)this.getTo();
 		Contract contract = bonus.getContract();
-		ContractSalaryCalculatorContext ctx;
 		List<ContractData> dataList;
 		try {
-			contract.setSalaryCalculatorContext(null);
-			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
 			setVariablesModel(null);
 			setUndefinedVariablesModel(null);
 			if(bonus.getExpression()!=null || bonus.getBonusConcept().getExpression()!=null){
@@ -129,6 +126,8 @@ public class ContractBonusController extends ContractDetailAbstractController {
 							data.setName(s);
 							data.setStartDate(startCal.getTime());
 							data.setEndDate(endCal.getTime());
+							contract.setSalaryCalculatorContext(null);
+							ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), new Date(), new Date());
 							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 							if(o==null){
 								undefined.add(data);

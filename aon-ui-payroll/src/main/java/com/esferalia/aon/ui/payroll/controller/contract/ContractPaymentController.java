@@ -42,6 +42,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.UndefinedVariableException;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class ContractPaymentController extends ContractDetailAbstractController {
 	
@@ -210,11 +211,11 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 	
 	private boolean isSystemPaymentVisible(IContractPayment p) {
 		SystemPayment sp = (SystemPayment) p;
-		IController master = FormUtil.getController("contract");
+		IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		Contract contract = (Contract) master.getTo();
 		ContractSalaryCalculatorContext ctx;
 		try {
-			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
+			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), new Date(), new Date());
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
 			startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
@@ -244,11 +245,8 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 	protected void initializeVariables(ActionEvent event) {
 		ContractPayment payment = (ContractPayment)this.getTo();
 		Contract contract = payment.getContract();
-		ContractSalaryCalculatorContext ctx;
 		List<ContractData> dataList;
 		try {
-			contract.setSalaryCalculatorContext(null);
-			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(new Date(), new Date(), new Date());
 			setVariablesModel(null);
 			setUndefinedVariablesModel(null);
 			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
@@ -272,6 +270,8 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 							data.setName(s);
 							data.setStartDate(startCal.getTime());
 							data.setEndDate(endCal.getTime());
+							contract.setSalaryCalculatorContext(null);
+							ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), new Date(), new Date());
 							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 							if(o==null){
 								undefined.add(data);
