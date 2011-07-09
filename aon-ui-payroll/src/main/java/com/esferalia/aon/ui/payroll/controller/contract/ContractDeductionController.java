@@ -88,6 +88,12 @@ public class ContractDeductionController extends ContractDetailAbstractControlle
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE), new Date());
 				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE));
 				getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			} else {
+				if(getInactiveDate()!=null){
+					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE), getInactiveDate());
+					Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_DEDUCTION_END_DATE));
+					getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+				}
 			}
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block

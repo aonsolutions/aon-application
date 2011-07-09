@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
@@ -33,6 +34,43 @@
 			</aon:div>
 		
 			<aon:div id="dataGrid" styleClass="aon-scroll-area">
+				
+				<aon:div styleClass="aon-panelGrid-search" 
+					style="width: 100%; margin-bottom:10px; padding:10px 0 10px 10px;">
+						
+					<aon:outputText value="#{payrollBundle.payroll_data_filter}" styleClass="aon-bold" />
+					
+					<aon:selectOneRadio value="#{contract.searchCurrent}" style="display:inline;">
+						<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
+						<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
+						<a4j:support event="onclick" reRender="dataGrid" ignoreDupResponses="true" >
+							<aon:actionListener method="#{contract.reloadData}" />
+						</a4j:support>
+					</aon:selectOneRadio>
+					
+					<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
+						value="#{bundle.aon_end_date}:" />
+					<aon:selectInputDate  
+						disabled="#{contract.searchCurrent}"
+						value="#{contract.inactiveDate}"
+						inputSize="10" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+						<a4j:support event="onchange" reRender="dataGrid" ignoreDupResponses="true">
+							<aon:actionListener method="#{contract.reloadData}" />
+						</a4j:support>
+					</aon:selectInputDate>
+					<aon:selectOneMenu 
+						disabled="#{contract.searchCurrent}"
+						value="#{contract.inactiveLastPeriod}" >
+						<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
+						<a4j:support event="onchange" reRender="dataGrid" ignoreDupResponses="true" >
+							<aon:actionListener method="#{contract.onChangeLastPeriod}" />
+							<aon:actionListener method="#{contract.reloadData}" />
+						</a4j:support>
+					</aon:selectOneMenu>
+	
+				</aon:div>	
 				
 				<ui:include 
 					src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >

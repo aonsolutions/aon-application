@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
@@ -18,6 +19,43 @@
 					
 				</ui:define>				
 			</ui:decorate>	
+			
+			<aon:div styleClass="aon-panelGrid-search" 
+				style="width: 100%; margin-bottom:10px; padding:10px 0 10px 10px;">
+					
+				<aon:outputText value="#{payrollBundle.payroll_data_filter}" styleClass="aon-bold" />
+				
+				<aon:selectOneRadio value="#{enterpriseTree.searchCurrent}" style="display:inline;">
+					<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
+					<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
+					<a4j:support event="onclick" reRender="contractMainDataForm" ignoreDupResponses="true" >
+						<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
+					</a4j:support>
+				</aon:selectOneRadio>
+				
+				<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
+					value="#{bundle.aon_end_date}:" />
+				<aon:selectInputDate  
+					disabled="#{enterpriseTree.searchCurrent}"
+					value="#{enterpriseTree.inactiveDate}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="onchange" reRender="contractMainDataForm" ignoreDupResponses="true">
+						<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
+					</a4j:support>
+				</aon:selectInputDate>
+				<aon:selectOneMenu 
+					disabled="#{enterpriseTree.searchCurrent}"
+					value="#{enterpriseTree.inactiveLastPeriod}" >
+					<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
+					<a4j:support event="onchange" reRender="contractMainDataForm" ignoreDupResponses="true" >
+						<aon:actionListener method="#{enterpriseTree.onChangeLastPeriod}" />
+						<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
+					</a4j:support>
+				</aon:selectOneMenu>
+
+			</aon:div>	
 			
 			<rich:simpleTogglePanel opened="#{contractPayment.paymentsModel.rowCount > 0}" 
 		        switchType="client"

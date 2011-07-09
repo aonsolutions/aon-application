@@ -31,7 +31,14 @@ public abstract class ContractDetailAbstractController extends VariablesAbstract
 	private List<SelectItem> concepts;
 	private boolean modalPanelVisible;
 	private boolean searchCurrent;
+	private Date inactiveDate;
 	
+	public Date getInactiveDate() {
+		return inactiveDate;
+	}
+	public void setInactiveDate(Date inactiveDate) {
+		this.inactiveDate = inactiveDate;
+	}
 	public boolean isSearchCurrent() {
 		return searchCurrent;
 	}

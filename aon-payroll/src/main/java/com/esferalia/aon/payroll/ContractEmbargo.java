@@ -16,6 +16,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
@@ -34,7 +35,7 @@ import com.esferalia.aon.payroll.enumeration.EmbargableType;
 public class ContractEmbargo implements ITransferObject {
 	
 	private static final long serialVersionUID = -6948493684689853167L;
-	private static String EXPRESSION_PATTERN = "{0} ? (( PENDIENTE > EMBARGABLE ) ? EMBARGABLE : PENDIENTE ) : 0.00";
+	private static String EXPRESSION_PATTERN = "{0}?((PENDIENTE>EMBARGABLE)?EMBARGABLE:PENDIENTE):0.00";
 	private static String SALARY = "NOMINA";
 	private static String EXTRA = "PAGA_EXTRA";
 	private static String BOTH = "( NOMINA || PAGA_EXTRA )";
@@ -159,7 +160,7 @@ public class ContractEmbargo implements ITransferObject {
 
 	private EmbargableType expressionToType(){
 		if(getExpression()!=null){
-			String s = (String) ((new MessageFormat(EXPRESSION_PATTERN)).parse(getExpression(),new ParsePosition(0))[0]);
+			String s = (String) ((new MessageFormat(EXPRESSION_PATTERN)).parse(StringUtils.deleteWhitespace(getExpression()),new ParsePosition(0))[0]);
 			if(s.equals(SALARY)){
 				return EmbargableType.SALARY;
 			} else if(s.equals(EXTRA)){

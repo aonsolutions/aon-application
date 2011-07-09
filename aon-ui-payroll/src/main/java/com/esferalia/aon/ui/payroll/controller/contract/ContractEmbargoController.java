@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractEmbargo;
 import com.esferalia.aon.payroll.SalaryEmbargo;
@@ -31,7 +33,14 @@ public class ContractEmbargoController extends BasicController {
 
 	private boolean modalPanelVisible;
 	private boolean searchCurrent;
+	private Date inactiveDate;
 	
+	public Date getInactiveDate() {
+		return inactiveDate;
+	}
+	public void setInactiveDate(Date inactiveDate) {
+		this.inactiveDate = inactiveDate;
+	}
 	public boolean isSearchCurrent() {
 		return searchCurrent;
 	}
@@ -81,15 +90,23 @@ public class ContractEmbargoController extends BasicController {
 	}
 	
 	protected void completeCiteria() {
-		if(isSearchCurrent()){
-			try {
+		try {
+			if(isSearchCurrent()){
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_EMBARGO_END_DATE), new Date());
 				Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_EMBARGO_END_DATE));
 				getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
-			} catch (ManagerBeanException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} else {
+				if(getInactiveDate()!=null){
+					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_EMBARGO_END_DATE), getInactiveDate());
+					Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_EMBARGO_END_DATE));
+					getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+				}
 			}
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible inicializar los embargos";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
 	}
 	

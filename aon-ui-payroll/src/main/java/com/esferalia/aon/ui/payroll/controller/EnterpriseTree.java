@@ -45,7 +45,10 @@ import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractBonusController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractDeductionController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractEmbargoController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractPaymentController;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 import com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard;
@@ -89,6 +92,15 @@ public class EnterpriseTree implements ICompanyConstants {
 	private Date inactiveDate;
 	
 	private InactiveLastPeriod inactiveLastPeriod;
+	
+	private boolean searchCurrent;
+	
+	public boolean isSearchCurrent() {
+		return searchCurrent;
+	}
+	public void setSearchCurrent(boolean searchCurrent) {
+		this.searchCurrent = searchCurrent;
+	}
 	
 	public InactiveLastPeriod getInactiveLastPeriod() {
 		return inactiveLastPeriod;
@@ -429,13 +441,34 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	public void onSelectTreeMainData(ActionEvent event) {
 		selectContract(event);
+//		ContractController contract = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+//		contract.onShowPayments(event);
+//		contract.onShowDeductions(event);
+//		contract.onShowBonus(event);
+//		contract.onShowEmbargos(event);
+//		ContractPaymentController payment = (ContractPaymentController) FormUtil.getController(IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER);
+//		payment.setSearchCurrent(true);
+		reloadTreeMainData(event);
+	}
+	public void reloadTreeMainData(ActionEvent event) {
+		ContractPaymentController payment = (ContractPaymentController) FormUtil.getController(IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER);
+		payment.setSearchCurrent(isSearchCurrent());
+		payment.setInactiveDate(getInactiveDate());
+		ContractDeductionController deduction = (ContractDeductionController) FormUtil.getController(IPayrollConstants.CONTRACT_DEDUCTION_CONTROLLER);
+		deduction.setSearchCurrent(isSearchCurrent());
+		deduction.setInactiveDate(getInactiveDate());
+		ContractBonusController bonus = (ContractBonusController) FormUtil.getController(IPayrollConstants.CONTRACT_BONUS_CONTROLLER);
+		bonus.setSearchCurrent(isSearchCurrent());
+		bonus.setInactiveDate(getInactiveDate());
+		ContractEmbargoController embargo = (ContractEmbargoController) FormUtil.getController(IPayrollConstants.CONTRACT_EMBARGO_CONTROLLER);
+		embargo.setSearchCurrent(isSearchCurrent());
+		embargo.setInactiveDate(getInactiveDate());
+		
 		ContractController contract = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		contract.onShowPayments(event);
 		contract.onShowDeductions(event);
 		contract.onShowBonus(event);
 		contract.onShowEmbargos(event);
-		ContractPaymentController payment = (ContractPaymentController) FormUtil.getController(IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER);
-		payment.setSearchCurrent(true);
 	}
 		
 	public void onSelectTreePayments(ActionEvent event) {
@@ -558,6 +591,7 @@ public class EnterpriseTree implements ICompanyConstants {
 
 	public void onChangeLastPeriod( ActionEvent event ) {
 		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_MONTH, 1);
 		if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
 			cal.add(Calendar.MONTH, -1);
 		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){

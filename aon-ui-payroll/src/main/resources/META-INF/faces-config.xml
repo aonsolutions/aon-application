@@ -24,6 +24,10 @@
 			<property-name>activeContract</property-name>
 			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>searchCurrent</property-name>
+			<value>true</value>
+		</managed-property>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>enterpriseTreeControllerListener</managed-bean-name>
@@ -235,6 +239,10 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Contract_workPlace_enterprise_registry_name,Contract_person_firstSurname,Contract_person_registry_name</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchCurrent</property-name>
+			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

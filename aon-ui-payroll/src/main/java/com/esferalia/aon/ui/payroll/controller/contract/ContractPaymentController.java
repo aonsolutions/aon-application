@@ -183,6 +183,12 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE), new Date());
 				expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE));
 				cCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			} else {
+				if(getInactiveDate()!=null){
+					expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE), getInactiveDate());
+					expr2 = ExpressionUtilities.getNullExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_END_DATE));
+					cCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+				}
 			}
 			List<?> sl = sBean.getList(sCriteria);
 			List<?> al = aBean.getList(aCriteria);
