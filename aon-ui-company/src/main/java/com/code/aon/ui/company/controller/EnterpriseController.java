@@ -119,47 +119,6 @@ public class EnterpriseController extends RegistryController implements ICompany
     	return addresses;
     }	
     
-    /**
-     * Gets the CCCs of the enterprise.
-     * 
-     * @return the CCCs of the enterprise
-     * @throws ManagerBeanException 
-     */
-//    public List<SelectItem> getCCCs() throws ManagerBeanException {
-//    	LinkedList<SelectItem> cccs = new LinkedList<SelectItem>();
-//    	Enterprise enterprise = (Enterprise) getTo();
-//		IManagerBean bean = BeanManager.getManagerBean(EnterpriseCCC.class);
-//		Criteria criteria = new Criteria();
-//		criteria.addEqualExpression(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ENTERPRISE_ID), enterprise.getId());
-//		criteria.addOrder(bean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_CCC));
-//		List<ITransferObject> list = bean.getList(criteria);
-//		for (ITransferObject to : list) {
-//			EnterpriseCCC ccc = (EnterpriseCCC)to;
-//			cccs.add(new SelectItem(ccc, ccc.getCcc()));
-//		}
-//    	return cccs;
-//    }	    
-
-//	private void loadMainActivity() throws ManagerBeanException {
-//		IManagerBean activityBean = BeanManager.getManagerBean(EnterpriseActivity.class);
-//		Criteria criteria = new Criteria();
-//		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_ENTERPRISE_ID), getEnterprise().getId());
-//		criteria.addEqualExpression(activityBean.getFieldName(ICompanyAlias.ENTERPRISE_ACTIVITY_TYPE), EnterpriseActivityType.PRINCIPAL);
-//		List<ITransferObject> activities = activityBean.getList(criteria);
-//		if (! activities.isEmpty() ) {
-//			setActivity( (EnterpriseActivity) activities.get(0) );
-//			IManagerBean cccBean = BeanManager.getManagerBean(EnterpriseCCC.class);
-//			Criteria cccCriteria = new Criteria();
-//			cccCriteria.addEqualExpression(cccBean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_ACTIVITY_ID), getActivity().getId());
-//			cccCriteria.addEqualExpression(cccBean.getFieldName(ICompanyAlias.ENTERPRISE_CCC_TYPE), CCCType.PRINCIPAL);
-//			List<ITransferObject> cccs = cccBean.getList(cccCriteria);
-//			if (! cccs.isEmpty() ) {
-//				setCcc( (EnterpriseCCC) cccs.get(0) );
-//			}
-//			this.showActivityNode = (activities.size() > 1) || (cccs.size() > 1);
-//		}
-//	}    
-	
 	public void reset() {
     	this.showActivityNode = false;
     	setWorkplace(null);
@@ -167,12 +126,6 @@ public class EnterpriseController extends RegistryController implements ICompany
     	setAonFile(null);
     	this.info.reset();
 	}
-    
-//    public void initMainActiviy() throws ManagerBeanException {
-//    	if (! isNew() ) {
-//    		loadMainActivity();
-//    	}
-//    }
     
     public Enterprise getEnterprise() {
     	return (Enterprise) getTo();
@@ -304,5 +257,30 @@ public class EnterpriseController extends RegistryController implements ICompany
 		controller.setCalendarId(e.getCalendar().getId());
 		controller.onInitialize(event);
 	}	
+	
+	private static final String FORM_TREE_SUFFIX = FORM_SUFFIX + "Tree";
+	
+	@Override
+	public String initialAction( ) {
+		try {
+			if(getRowCount()==1){
+				initializeModel();
+				getModel().setRowIndex(0);
+				select(null);
+				if(isTreeView()){
+					return getBeanName()+FORM_TREE_SUFFIX;
+				} else {
+					return getBeanName()+FORM_SUFFIX;
+				}
+			} else if(getRowCount()<LIMIT){
+				initializeModel();
+				return getBeanName()+LIST_SUFFIX;
+			} else {
+				return getBeanName()+SEARCH_SUFFIX;
+			}
+		} catch (ManagerBeanException e) {
+			return getBeanName()+SEARCH_SUFFIX;
+		}
+	}
 	
 }
