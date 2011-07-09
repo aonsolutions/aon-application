@@ -39,6 +39,8 @@ import com.esferalia.aon.ui.calendar.controller.CalendarController;
 
 public class EnterpriseController extends RegistryController implements ICompanyConstants {
 	
+	private static final String FORM_TREE_SUFFIX = FORM_SUFFIX + "Tree";
+	
 	private RegistryInfo info = new RegistryInfo();
 
 	private boolean showActivityNode;
@@ -257,8 +259,6 @@ public class EnterpriseController extends RegistryController implements ICompany
 		controller.setCalendarId(e.getCalendar().getId());
 		controller.onInitialize(event);
 	}	
-	
-	private static final String FORM_TREE_SUFFIX = FORM_SUFFIX + "Tree";
 	
 	@Override
 	public String initialAction( ) {
