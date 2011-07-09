@@ -18,15 +18,13 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.registry.controller.PersonController;
 
 public class PersonPayMethodFormListener extends RegistryPayMethodFormListener {
 	
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		try {
-			PersonController c = (PersonController) event.getController();
-			Person person = (Person) c.getTo();
+			Person person = (Person) event.getController().getTo();
 
 			IManagerBean rPayBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 			Criteria rPayBeanCriteria = new Criteria();
