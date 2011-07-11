@@ -48,6 +48,11 @@
 	</build>
 
 	<dependencies>
+		<dependency>
+			<groupId>izenpe</groupId>
+			<artifactId>izenpesigner-applet</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
 	<profiles>
@@ -96,6 +101,24 @@
 											<location>templates</location>
 										</source>
 									</sources>
+									<dependency>
+										<includes>
+											<include>izenpe:izenpesigner-applet:1.0</include>
+										</includes>
+									</dependency>
+								</mapping>
+								<mapping>
+									<filemode>755</filemode>
+									<username>jboss</username>
+									<groupname>jboss</groupname>
+									<directory>/home/COMMON-RESOURCES/aon-ui-sign</directory>
+									<sources>
+									</sources>
+									<dependency>
+										<includes>
+											<include>izenpe:izenpesigner-applet:1.0</include>
+										</includes>
+									</dependency>
 								</mapping>
 							</mappings>
 							<postinstallScriptlet>
