@@ -101,11 +101,6 @@
 											<location>templates</location>
 										</source>
 									</sources>
-									<dependency>
-										<includes>
-											<include>izenpe:izenpesigner-applet:1.0</include>
-										</includes>
-									</dependency>
 								</mapping>
 								<mapping>
 									<filemode>755</filemode>
@@ -113,6 +108,10 @@
 									<groupname>jboss</groupname>
 									<directory>/home/COMMON-RESOURCES/aon-ui-sign</directory>
 									<sources>
+                                                                                <softlinkSource>
+                                                                                        <location>izenpesigner-applet-1.0.jar</location>
+                                                                                        <destination>izenpesigner-applet.jar</destination>
+                                                                                </softlinkSource>
 									</sources>
 									<dependency>
 										<includes>
