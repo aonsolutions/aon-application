@@ -109,7 +109,7 @@
 									<directory>/home/COMMON-RESOURCES/aon-ui-sign</directory>
 									<sources>
                                                                                 <softlinkSource>
-                                                                                        <location>izenpesigner-applet-1.0.jar</location>
+                                                                                        <location>/home/COMMON-RESOURCES/aon-ui-sign/izenpesigner-applet-1.0.jar</location>
                                                                                         <destination>izenpesigner-applet.jar</destination>
                                                                                 </softlinkSource>
 									</sources>
