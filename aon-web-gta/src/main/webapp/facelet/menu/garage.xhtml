@@ -18,6 +18,21 @@
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
 
 					<aon:panelGroup>
+						<aon:panelGrid id="group_projectTas"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-car aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{tasBundle.tas_projectTas_module}"/>
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="projectTas" 
+										action="projectTas_search" actionListener="#{projectTas.onEditSearch}"
+										value="#{tasBundle.tas_projectTas_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+
 						<aon:panelGrid id="group_commercial_commercial-Garage"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-offer aon-direct-access-panel">
@@ -45,45 +60,6 @@
 										action="commercialTerm" actionListener="#{commercialTerm.onSearch}" 
 										value="#{commercialBundle.commercial_term_module}" />
 								</aon:div>								
-							</aon:div>
-						</aon:panelGrid>
-					
-						<c:if test="#{aonRole.config}">
-							<aon:panelGrid id="group_audatex"
-								styleClass="aon-width-all" columnClasses="aon-padding"
-								headerClass="aon-icon-audatex aon-direct-access-panel">
-								<f:facet name="header">
-									<aon:outputText value="Audatex"/>
-								</f:facet>
-								<aon:div styleClass="aon-direct-access-list">
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="audabridgeParams" action="audabridgeParams"
-											actionListener="#{audabridgeParams.onLoad}"
-											value="#{audabridgeBundle.audabridge_parameters_module}" />
-									</aon:div>
-<!-- 									
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="audabridgeOffer" action="audabridgeOffer"
-											actionListener="#{audabridgeOffer.onReset}"
-											value="#{audabridgeBundle.audabridge_offer_module}" />
-									</aon:div>
- -->
-								</aon:div>
-							</aon:panelGrid>
-						</c:if>
-
-						<aon:panelGrid id="group_projectTas"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-car aon-direct-access-panel">
-							<f:facet name="header">
-								<aon:outputText value="#{tasBundle.tas_projectTas_module}"/>
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="projectTas" 
-										action="projectTas_search" actionListener="#{projectTas.onEditSearch}"
-										value="#{tasBundle.tas_projectTas_module}" />
-								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 					</aon:panelGroup>
@@ -142,6 +118,29 @@
 							</aon:panelGrid>
 						</c:if>							
 						
+						<c:if test="#{aonRole.config}">
+							<aon:panelGrid id="group_audatex"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-audatex aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="Audatex"/>
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="audabridgeParams" action="audabridgeParams"
+											actionListener="#{audabridgeParams.onLoad}"
+											value="#{audabridgeBundle.audabridge_parameters_module}" />
+									</aon:div>
+<!-- 									
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="audabridgeOffer" action="audabridgeOffer"
+											actionListener="#{audabridgeOffer.onReset}"
+											value="#{audabridgeBundle.audabridge_offer_module}" />
+									</aon:div>
+ -->
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
 					</aon:panelGroup>
 				</h:panelGrid>
 				

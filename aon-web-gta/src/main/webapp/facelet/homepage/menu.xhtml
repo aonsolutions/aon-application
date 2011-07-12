@@ -9,12 +9,6 @@
 			value="#{appBundle.menu_garage}"
 			action="menu_garage" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-car" />
-		<c:if test="#{aonRole.commercialOperator}">
-			<aon:commandLink id="commercial"
-				value="#{commercialBundle.commercial_module_group}"
-				action="menu_commercial" immediate="true"
-				styleClass="aon-top-menu-item aon-icon-commercial" />
-		</c:if>
 		<c:if test="#{aonRole.saleOperator or aonRole.warehouseOperator or aonRole.financeOperator}">
 			<aon:commandLink id="sales"
 				value="#{appBundle.menu_sales}"
