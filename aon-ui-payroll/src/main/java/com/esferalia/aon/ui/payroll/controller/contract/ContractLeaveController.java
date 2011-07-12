@@ -137,8 +137,11 @@ public class ContractLeaveController extends BasicController {
 	public boolean isLeaveSelected(){
 		if(getReport()==null){
 			return false;
+		} else if(getReport().getType()==null || getReport().getType()==LeaveReportType.LEAVE){
+			return true;
 		}
-		return getReport().getType()==LeaveReportType.LEAVE;
+//		return getReport().getType()==LeaveReportType.LEAVE;
+		return false;
 	}
 	
 	public boolean isDischargeSelected(){

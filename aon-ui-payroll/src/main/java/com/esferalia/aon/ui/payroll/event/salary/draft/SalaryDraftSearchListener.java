@@ -10,9 +10,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
@@ -67,11 +65,11 @@ public class SalaryDraftSearchListener extends ControllerSearchListener {
 			Calendar endCal = Calendar.getInstance();
 			endCal.set(Calendar.YEAR, c.getYear());
 			endCal.set(Calendar.MONTH, c.getMonth().getValue());
-			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-			criteria.addLessThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_START_DATE), startCal.getTime());
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE), endCal.getTime());
-			Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE));
-			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+//			criteria.addLessThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_START_DATE), startCal.getTime());
+//			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE), endCal.getTime());
+//			Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE));
+//			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
 			c.setIssueDate(endCal.getTime());
 		}
 		if ( criteria.getExpression() == null ) {

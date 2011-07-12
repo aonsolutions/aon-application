@@ -13,6 +13,7 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class SalaryLauncherParams {
 
@@ -23,6 +24,9 @@ public class SalaryLauncherParams {
 	private Person person;
 	private Month issueMonth;
 	private int issueYear;
+	private SalaryType salaryType;
+	private Date startDate;
+	private Date endDate;
 
 	public SalaryLauncherParams() {
 		initialize();
@@ -50,6 +54,7 @@ public class SalaryLauncherParams {
 
 	public void setIssueMonth(Month issueMonth) {
 		this.issueMonth = issueMonth;
+		calculatePeriod();
 	}
 
 	public int getIssueYear() {
@@ -58,14 +63,69 @@ public class SalaryLauncherParams {
 
 	public void setIssueYear(int issueYear) {
 		this.issueYear = issueYear;
+		calculatePeriod();
+	}
+	
+	public SalaryType getSalaryType() {
+		return salaryType;
 	}
 
+	public void setSalaryType(SalaryType salaryType) {
+		this.salaryType = salaryType;
+	}
+
+//	public Date getStartDate() {
+//		return CommonUtil.getDate(getIssueYear(), getIssueMonth().getValue(), 1);
+//	}
+//
+//	public Date getEndDate() {
+//		return CommonUtil.getMonthLastDay(CommonUtil.getDate(getIssueYear(), getIssueMonth().getValue(), 1));
+//	}
+	
 	public Date getStartDate() {
-		return CommonUtil.getDate(getIssueYear(), getIssueMonth().getValue(), 1);
+		return startDate;
 	}
-
+	
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	
 	public Date getEndDate() {
-		return CommonUtil.getMonthLastDay(CommonUtil.getDate(getIssueYear(), getIssueMonth().getValue(), 1));
+		return endDate;
+	}
+	
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	
+	public boolean isStartDateDisabled(){
+		if(getSalaryType()==SalaryType.SALARY){
+			return true;
+		} else if(getSalaryType()==SalaryType.EXTRA){
+			return true;
+		} else if(getSalaryType()==SalaryType.DELAY){
+			return false;
+		} else if(getSalaryType()==SalaryType.SETTLE){
+			return true;
+		}
+		return true;
+	}
+	public boolean isEndDateDisabled(){
+		if(getSalaryType()==SalaryType.SALARY){
+			return true;
+		} else if(getSalaryType()==SalaryType.EXTRA){
+			return true;
+		} else if(getSalaryType()==SalaryType.DELAY){
+			return true;
+		} else if(getSalaryType()==SalaryType.SETTLE){
+			return false;
+		}
+		return true;
+	}
+	
+	private void calculatePeriod() {
+		setStartDate(CommonUtil.getDate(getIssueYear(), getIssueMonth().getValue(), 1));
+		setEndDate(CommonUtil.getMonthLastDay(CommonUtil.getDate(getIssueYear(), getIssueMonth().getValue(), 1)));
 	}
 
 	public void initialize() {
@@ -82,6 +142,8 @@ public class SalaryLauncherParams {
 		Date date = new Date();
 		setIssueMonth(Month.getMonthByValue(CommonUtil.getMonth(date)));
 		setIssueYear(CommonUtil.getYear(date));
+		setSalaryType(SalaryType.SALARY);
+		calculatePeriod();
 	}
 
 	public Criteria getCriteria() {

@@ -22,100 +22,134 @@
 				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_launcher_module}" />
 			</ui:decorate>
 			
-			<aon:div styleClass="aon-panelGrid-search">
-				<aon:div styleClass="aon-panelGrid-search-info">
-					<aon:outputText value="#{payrollBundle.payroll_launch_info}" styleClass="aon-panelGrid-search-info-internal"/>
-				</aon:div>			
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:div styleClass="aon-panelGrid-search">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{payrollBundle.payroll_launch_info}" styleClass="aon-panelGrid-search-info-internal"/>
+					</aon:div>			
+			
+					<aon:panelGrid id="salaryLauncherLaunchContent" columns="4">
 		
-				<aon:panelGrid id="salaryLauncherLaunchContent" columns="4">
-	
-					<aon:outputLabel for="Month" value="#{bundle.aon_month}" />
-					<h:panelGrid columns="3">
-						<aon:selectOneMenu id="Month" value="#{salaryLauncher.params.issueMonth}">
-							<f:selectItems value="#{commonCollections.months}"  />
+						<aon:outputLabel for="salaryType" value="#{bundle.aon_type}" />
+						<aon:selectOneMenu id="salaryType" value="#{salaryLauncher.params.salaryType}">
+							<f:selectItems value="#{salaryLauncher.salaryTypes}" />
+							<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
 						</aon:selectOneMenu>
 						<aon:outputText value="&#160;" />
-			   			<rich:inputNumberSpinner id="Year" value="#{salaryLauncher.params.issueYear}" inputSize="4" minValue="2009" maxValue="2020" />
-					</h:panelGrid>
-
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox value="#{salaryLauncher.saveLog}" />
-						<aon:outputText value="#{payrollBundle.payroll_launch_saveLog}" />
-					</aon:div>
-
-					<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{salaryLauncher.params.person}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>
-				
-
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox value="#{salaryLauncher.debugEnabled}" />
-						<aon:outputText value="#{payrollBundle.payroll_launch_debugEnabled}" />
-					</aon:div>
-
-					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{salaryLauncher.params.enterprise}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>
-					
-<!-- 
-					
-					<aon:outputText value="&#160;" />
-					<aon:div>
-						<aon:selectBooleanCheckbox value="#{salaryLauncher.refreshEnabled}" />
-						<aon:outputText value="#{payrollBundle.payroll_launch_refreshEnabled}" />
-					</aon:div>
-	
- -->
-					<aon:outputText value="&#160;" />
-					<aon:outputText value="&#160;" />
-
-					<aon:outputText value="&#160;" />
-					<aon:div >
-						<aon:commandButton id="launchSalaries"
-							value="#{payrollBundle.payroll_launch}" 
-							styleClass="aon-search-lookup-button"
-							disabled="#{salaryLauncher.pollEnabled}"
-							onclick="if (!confirm('Continuar con el lanzamiento de nominas?')) {return false;}"
-							reRender="poll,launchSalaries,messagesContainer"
-							actionListener="#{salaryLauncher.onExecute}">
-				     	</aon:commandButton>
-					</aon:div>
-					<aon:outputText value="&#160;" />
-					<aon:outputText value="&#160;" />
- 				</aon:panelGrid>
-			</aon:div>
-			
-			<aon:div id="messagesContainer" >
-				<c:if test="#{salaryLauncher.messages != null}">
-					
-					<aon:div style="margin-left: 50px; margin-top: 10px;">		
-						<aon:htmlCommandLink target="_blank"
-							title="DESCARGAR LOG"
-							value="DESCARGAR LOG"
-							style="border-width: 0px 0px 0px 0px;"
-							actionListener="#{salaryLauncher.downloadDisk}"
-							rendered="#{!salaryLauncher.emptyLog}"
-							styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
-					</aon:div>
+						<aon:outputText value="&#160;" />
 						
-					<aon:div  styleClass="aon-margin-left aon-margin-top aon-margin-bottom aon-margin-right"
-						style="background-color: #EEEEEE; border: solid black 1px;">
-						<aon:outputText value="#{salaryLauncher.style}" escape="false"/>
-						<ul>
-						<ui:repeat var="msg" value="#{salaryLauncher.messages}">
-							<aon:outputText value="#{msg}" escape="false"/>	
-						</ui:repeat>
-						</ul>
-						<aon:graphicImage
-							styleClass="aon-margin-left aon-margin-top" 
-							url="/css/images/processing.gif" 
-							rendered="#{salaryLauncher.pollEnabled}"/>
-					</aon:div>
-				</c:if>
+						<aon:outputLabel for="Month" value="#{bundle.aon_month}" />
+						<h:panelGrid columns="3">
+							<aon:selectOneMenu id="Month" value="#{salaryLauncher.params.issueMonth}">
+								<f:selectItems value="#{commonCollections.months}"  />
+								<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
+							</aon:selectOneMenu>
+							<aon:outputText value="&#160;" />
+				   			<rich:inputNumberSpinner id="Year" value="#{salaryLauncher.params.issueYear}" 
+				   				inputSize="4" minValue="2009" maxValue="2020" >
+				   				<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
+				   			</rich:inputNumberSpinner>
+						</h:panelGrid>
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
+						
+						<aon:outputLabel value="#{payrollBundle.payroll_contract_period}"/>
+						<aon:div id="salaryPeriod">
+							<aon:outputLabel for="startDate" styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_start_date}:" />
+							<aon:selectInputDate id="startDate"
+								disabled="#{salaryLauncher.params.startDateDisabled}" 
+								value="#{salaryLauncher.params.startDate}" required="true"
+								inputSize="10" renderAsPopup="true" enableManualInput="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+							</aon:selectInputDate>
+							<aon:outputLabel for="endDate" styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_end_date}:" />
+							<aon:selectInputDate id="endDate" 
+								disabled="#{salaryLauncher.params.endDateDisabled}" 
+								value="#{salaryLauncher.params.endDate}" required="true"
+								inputSize="10" renderAsPopup="true" enableManualInput="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+							</aon:selectInputDate>
+						</aon:div>
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
+	
+						<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{salaryLauncher.params.person}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+						<aon:outputText value="&#160;" />
+						<aon:div>
+							<aon:selectBooleanCheckbox value="#{salaryLauncher.saveLog}" />
+							<aon:outputText value="#{payrollBundle.payroll_launch_saveLog}" />
+						</aon:div>
+	
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{salaryLauncher.params.enterprise}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+						<aon:outputText value="&#160;" />
+						<aon:div>
+							<aon:selectBooleanCheckbox value="#{salaryLauncher.debugEnabled}" />
+							<aon:outputText value="#{payrollBundle.payroll_launch_debugEnabled}" />
+						</aon:div>
+						
+	<!-- 
+						<aon:outputText value="&#160;" />
+						<aon:div>
+							<aon:selectBooleanCheckbox value="#{salaryLauncher.refreshEnabled}" />
+							<aon:outputText value="#{payrollBundle.payroll_launch_refreshEnabled}" />
+						</aon:div>
+	 -->
+	
+						<aon:outputText value="&#160;" />
+						<aon:div >
+							<aon:commandButton id="launchSalaries"
+								value="#{payrollBundle.payroll_launch}" 
+								styleClass="aon-search-lookup-button"
+								disabled="#{salaryLauncher.pollEnabled}"
+								onclick="if (!confirm('Continuar con el lanzamiento de nominas?')) {return false;}"
+								reRender="poll,launchSalaries,messagesContainer"
+								actionListener="#{salaryLauncher.onExecute}">
+					     	</aon:commandButton>
+						</aon:div>
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
+	 				</aon:panelGrid>
+				</aon:div>
+				
+				<aon:div id="messagesContainer" >
+					<c:if test="#{salaryLauncher.messages != null}">
+						
+						<aon:div style="margin-left: 50px; margin-top: 10px;">		
+							<aon:htmlCommandLink target="_blank"
+								title="DESCARGAR LOG"
+								value="DESCARGAR LOG"
+								style="border-width: 0px 0px 0px 0px;"
+								actionListener="#{salaryLauncher.downloadDisk}"
+								rendered="#{!salaryLauncher.emptyLog}"
+								styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+						</aon:div>
+							
+						<aon:div  styleClass="aon-margin-left aon-margin-top aon-margin-bottom aon-margin-right"
+							style="background-color: #EEEEEE; border: solid black 1px;">
+							<aon:outputText value="#{salaryLauncher.style}" escape="false"/>
+							<ul>
+							<ui:repeat var="msg" value="#{salaryLauncher.messages}">
+								<aon:outputText value="#{msg}" escape="false"/>	
+							</ui:repeat>
+							</ul>
+							<aon:graphicImage
+								styleClass="aon-margin-left aon-margin-top" 
+								url="/css/images/processing.gif" 
+								rendered="#{salaryLauncher.pollEnabled}"/>
+						</aon:div>
+					</c:if>
+				</aon:div>
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{personLookup}" />

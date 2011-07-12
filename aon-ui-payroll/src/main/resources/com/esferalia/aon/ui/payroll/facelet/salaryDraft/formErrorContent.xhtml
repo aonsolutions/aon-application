@@ -8,9 +8,6 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 
-		<!--  
-		<c:if test="#{salaryDraft.validSalaryDraftPeriod}">
-		-->
 		<aon:panelGrid columns="2" style="background-color: #F6F6F6; width: 100%;"
 			columnClasses="aon-panelGrid-even aon-vertical-align-top aon-noborder
 			              ,aon-panelGrid-even aon-vertical-align-top aon-noborder">
@@ -22,22 +19,22 @@
 
 				<aon:div styleClass="aon-padding">
 					<aon:div styleClass="aon-bold">
-						<aon:outputText value="#{controller.salary.enterpriseName}"/>
+						<aon:outputText value="#{contract.to.workPlace.enteprise.registry.fullName}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic">
 						<aon:outputText value="#{companyBundle.company_workplace_address}:"/>
 					</aon:div>
 					<aon:div styleClass="aon-bold">
-						<aon:outputText styleClass="aon-margin-left" value="#{controller.salary.enterpriseAddress}"/>
+						<aon:outputText styleClass="aon-margin-left" value="#{contract.to.workPlace.enteprise.registry.defaultAddress.fullAddress}"/>
 					</aon:div>
 					<aon:div>
 						<aon:outputText styleClass="aon-italic" value="#{bundle.aon_company_document}:"/>
 						<aon:outputText styleClass="aon-margin-left aon-bold" 
-							value="#{controller.salary.enterpriseDocument}" />
+							value="#{contract.to.workPlace.enteprise.registry.document}" />
 					</aon:div>
 					<aon:div>
 						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_ccc}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.ccc}" />
+						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{contract.to.enterpriseCCC.ccc}" />
 					</aon:div>
 				</aon:div>
 			</aon:panel>
@@ -48,27 +45,27 @@
 				</f:facet>	
 				<aon:div styleClass="aon-padding aon-nowrap">
 					<aon:div styleClass="aon-bold">
-						<aon:outputText value="#{controller.salary.employeeName}"/>
+						<aon:outputText value="#{contract.to.person.fullName}"/>
 					</aon:div>
 					<aon:div>
 						<aon:outputText styleClass="aon-italic" value="#{bundle.aon_person_document}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.employeeDocument}" />
+						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{contract.to.person.registry.document}" />
 						<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_registration}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.registration}" />
+						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{contract.to.registration}" />
 					</aon:div>
 					<aon:div>
 						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_ss_number}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.socialSecurityNumber}" />
+						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{contract.to.person.socialSecurityNumber}" />
 					</aon:div>
 					<aon:div>
 						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_category}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.category}" />
+						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{contract.to.agreementLevelCategory.description}" />
 					</aon:div>
 					<aon:div>
 						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_group_category}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.quoteGroup}"/>
+						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{contract.to.quoteGroup}"/>
 						<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_seniority_date}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.seniorityDate}">
+						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{contract.to.seniorityDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
 					</aon:div>
@@ -135,21 +132,7 @@
 			<c:if test="#{!salaryDraft.validSalaryDraftPeriod}">
 			<aon:div styleClass="aon-panelGrid-search" style="width: 100%; margin-top:10px;">
 					<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-exception"/>
-					<aon:outputText value="#{payrollBundle.payroll_contract_undefined_variables}" styleClass="aon-bold"/>
-					<br />
-					<br />
-					<br />
-					<br />
-					<br />
-					<br />
-					<aon:outputText value="&#160;"/>
-					<aon:outputText value="&#160;"/>
-					<aon:outputText value="&#160;"/>
-					<aon:outputText value="&#160;"/>
-					<aon:outputText value="&#160;"/>
-					<aon:outputText value="&#160;"/>
-					<aon:outputText value="&#160;"/>
-					
+					<aon:outputText value="#{payrollBundle.payroll_salary_draft_no_data}" styleClass="aon-bold"/>
 					
 			</aon:div>	
 		</c:if>

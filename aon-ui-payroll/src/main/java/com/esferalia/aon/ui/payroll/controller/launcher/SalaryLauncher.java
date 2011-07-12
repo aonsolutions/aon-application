@@ -10,11 +10,14 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,12 +26,14 @@ import org.apache.commons.io.IOUtils;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester.UnExpectedValue;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
@@ -43,6 +48,8 @@ public class SalaryLauncher {
 	private boolean saveLog;
 	private boolean debugEnabled;
 	private boolean refreshEnabled;
+	
+	private List<SelectItem> salaryTypes;
 	
 	public boolean isPollEnabled() {
 		return pollEnabled;
@@ -92,8 +99,13 @@ public class SalaryLauncher {
 	}
 	
 	public void onExecute(ActionEvent event) {
-		pollEnabled = true;
-		(new TestThread()).start();
+		if(getParams().getSalaryType()==SalaryType.SALARY){
+			pollEnabled = true;
+			(new TestThread()).start();
+		} else {
+			String msg = "No implementado";
+			AonUtil.addInfoMessage(msg);
+		}
 	}
 	
 	private class TestThread extends Thread {
@@ -243,6 +255,21 @@ public class SalaryLauncher {
 		} catch (IOException e) {
 			throw new AbortProcessingException("Imposible descargar fichero");
 		}
+	}
+	
+	public List<SelectItem> getSalaryTypes() {
+		if (salaryTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			salaryTypes = new LinkedList<SelectItem>();
+			for( SalaryType salaryType : SalaryType.values() ) {
+				if(salaryType!=SalaryType.NOT_ENJOYED_VACATIONS){
+					String name = salaryType.getName(locale);
+					SelectItem item = new SelectItem(salaryType, name);
+					salaryTypes.add(item);			
+				}
+			}
+		}
+		return salaryTypes;
 	}
 
 }

@@ -443,8 +443,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Salary_issueDate
-				desc,Salary_enterpriseName,Salary_employeeName</value>
+			<value>Salary_endDate desc,Salary_enterpriseName,Salary_employeeName</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1513,11 +1512,11 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Contract_person_firstSurname,Contract_person_registry_name</value>
+			<value>Contract_person_firstSurname,Contract_person_secondSurname,Contract_person_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>suggestAlias</property-name>
-			<value>Contract_person_firstSurname</value>
+			<value>Contract_person_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
@@ -1532,7 +1531,9 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{contractSearch}</value>
+<!--  
 				<value>#{contractLookupList}</value>
+-->
 			</list-entries>
 		</managed-property>
 	</managed-bean>

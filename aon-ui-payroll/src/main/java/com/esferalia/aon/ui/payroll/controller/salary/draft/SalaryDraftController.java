@@ -135,7 +135,16 @@ public class SalaryDraftController extends BasicController {
 		}
 		return false;
 	}
-
+	
+	private boolean validSalaryDraftPeriod;
+	
+	public boolean isValidSalaryDraftPeriod() {
+		return validSalaryDraftPeriod;
+	}
+	public void setValidSalaryDraftPeriod(boolean validSalaryDraftPeriod) {
+		this.validSalaryDraftPeriod = validSalaryDraftPeriod;
+	}
+	
 	public void onChangeMonth(ActionEvent event) {
 		try {
 			Calendar c = Calendar.getInstance();
@@ -145,6 +154,7 @@ public class SalaryDraftController extends BasicController {
 			setSalary(null);
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireAfterBeanSelected(evt);
+			checkValidContractPeriod();
 		} catch (ControllerListenerException e) {
 			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
 		}
@@ -158,8 +168,46 @@ public class SalaryDraftController extends BasicController {
 			setSalary(null);
 			ControllerEvent evt = new ControllerEvent(this);
 			controllerListenerSupport.fireAfterBeanSelected(evt);
+			checkValidContractPeriod();
 		} catch (ControllerListenerException e) {
 			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
+		}
+	}
+	
+	public void checkValidContractPeriod() {
+		Contract contract = (Contract) this.getTo();
+		if(contract == null ){
+			setValidSalaryDraftPeriod(false);
+		} else {
+			if(getStartDate().after(getEndDate())){
+				setValidSalaryDraftPeriod(false);
+			} else {
+				if( contract.getEndDate() != null ){
+					Calendar draftEndDate = Calendar.getInstance();
+					Calendar contractEndDate = Calendar.getInstance();
+					draftEndDate.setTime(getEndDate());
+					contractEndDate.setTime(contract.getEndDate());
+					if(draftEndDate.get(Calendar.MONTH)==contractEndDate.get(Calendar.MONTH)){
+						if( getStartDate().after(contract.getStartDate())){
+							setValidSalaryDraftPeriod(true);
+						} else {
+							setValidSalaryDraftPeriod(false);
+						}
+					} else {
+						if( getStartDate().after(contract.getStartDate()) && getEndDate().before(contract.getEndDate())){
+							setValidSalaryDraftPeriod(true);
+						} else {
+							setValidSalaryDraftPeriod(false);
+						}
+					}
+				} else {
+					if( getStartDate().after(contract.getStartDate()) ){
+						setValidSalaryDraftPeriod(true);
+					} else {
+						setValidSalaryDraftPeriod(false);
+					}
+				}
+			}
 		}
 	}
 	
@@ -239,10 +287,21 @@ public class SalaryDraftController extends BasicController {
 	// *********************************
 	public ISalary getSalary() {
 		try {
-			if (salary == null) {
+			checkValidContractPeriod();
+			if (salary == null && isValidSalaryDraftPeriod()) {
+//			if (salary == null) {
 				Contract contract = (Contract) getTo();
 				Date startDate = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate(); 
 				Date endDate = (contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate();
+				if(startDate.after(endDate)){
+					Calendar startCal = Calendar.getInstance();
+					Calendar endCal = Calendar.getInstance();
+					endCal.setTime(endDate);
+					startCal.set(Calendar.DAY_OF_MONTH, 1);
+					startCal.set(Calendar.MONTH, endCal.get(Calendar.MONTH));
+					startCal.set(Calendar.YEAR, endCal.get(Calendar.YEAR));
+					startDate = startCal.getTime();
+				}
 				Date issueDate = getIssueDate(); 
 				ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate);
 				salary = ctx.getSalaryProxy().getSalary();

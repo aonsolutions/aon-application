@@ -6,18 +6,16 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<c:if test="#{aonConfiguration.bean.salary.showIssueDateColumn and !skipIssueDateColumn}">
-		<aon:column alias="Salary.issueDate"
-			styleClass="aon-editDataTable-dateColumn aon-width-130">
-			<f:facet name="header">
-				<aon:outputText value="#{payrollBundle.payroll_salary_issue_date}" />
-			</f:facet>
-			<aon:outputText value="#{to.month}" />
-			<aon:outputText value="/" />
-			<aon:outputText value="#{to.issueYear}" />
-		</aon:column>
-	</c:if>
-
+	<aon:column alias="Salary.endDate"
+		styleClass="aon-editDataTable-dateColumn aon-width-130">
+		<f:facet name="header">
+			<aon:outputText value="#{payrollBundle.payroll_salary_payment_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.month}" />
+		<aon:outputText value="/" />
+		<aon:outputText value="#{to.issueYear}" />
+	</aon:column>
+	
 	<aon:column alias="Salary.type" styleClass="aon-editDataTable-textColumn aon-width-80">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_type}" />

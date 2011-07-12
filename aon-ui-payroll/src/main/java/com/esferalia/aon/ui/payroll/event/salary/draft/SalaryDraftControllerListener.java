@@ -14,7 +14,10 @@ public class SalaryDraftControllerListener extends ControllerAdapter{
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		searchSavedSalary(event);
+		SalaryDraftController sc = (SalaryDraftController) event.getController();
+		if(sc.isValidSalaryDraftPeriod()){
+			searchSavedSalary(event);
+		}
 		resetSalary(event);
 	}
 	@Override
@@ -33,6 +36,12 @@ public class SalaryDraftControllerListener extends ControllerAdapter{
 		SalaryDraftController sc = (SalaryDraftController) event.getController();
 		sc.setYear(Calendar.getInstance().get(Calendar.YEAR));
 		sc.setMonth(Month.getMonthByValue(Calendar.getInstance().get(Calendar.MONTH)));
+	}
+	@Override
+	public void beforeBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+//		SalaryDraftController sc = (SalaryDraftController) event.getController();
+//		sc.checkValidContractPeriod();
 	}
 	
     private void resetSalary(ControllerEvent event) {

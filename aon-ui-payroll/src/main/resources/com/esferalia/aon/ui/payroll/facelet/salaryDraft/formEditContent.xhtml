@@ -17,6 +17,7 @@
 			
 			<ui:define name="beforeSpinToolbarContent">
 				<aon:htmlCommandLink id="currentSalary-report"
+					rendered="#{salaryDraft.validSalaryDraftPeriod}"
 					styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 					value="#{payrollBundle.payroll_salary_draft}"
 					action="#{report.onExecute}">
@@ -28,10 +29,22 @@
 		 
 		<aon:div ajaxRendered="true">
 			<aon:div style="width: 840px; margin:1em 0 0 1em;">
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formContent.xhtml" >
-					<ui:param name="controller" value="#{salaryDraft}" />
-				</ui:include>
+				<c:if test="#{salaryDraft.validSalaryDraftPeriod}">
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formContent.xhtml" >
+						<ui:param name="controller" value="#{salaryDraft}" />
+					</ui:include>
+				</c:if>
+					
+				<c:if test="#{!salaryDraft.validSalaryDraftPeriod}">
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formErrorContent.xhtml" >
+						<ui:param name="controller" value="#{salaryDraft}" />
+					</ui:include>
+				</c:if>
+				
+				
 			</aon:div>
+			
+			<c:if test="#{salaryDraft.validSalaryDraftPeriod}">
 			<c:if test="#{!salaryDraft.new}">
 				<aon:div>
 				
@@ -177,6 +190,7 @@
 					</aon:panelGrid>
 	
 				</aon:div>
+			</c:if>
 			</c:if>
 		</aon:div>
 	</aon:form>

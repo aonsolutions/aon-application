@@ -22,12 +22,14 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Enterprise;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
+import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 
 public class SalaryExpenseController implements Serializable, ICollectionProvider{
@@ -96,11 +98,11 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 	}
 	
 	public void loadList() throws ManagerBeanException, SalaryException {
-		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean("enterprise");
+		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_CONTROLLER_NAME);
 		Enterprise e = (Enterprise) controller.getTo();
 		Criteria criteria = new Criteria();
 		if(isExpenseDraft()){
-			SalaryDraftController draft = (SalaryDraftController) FormUtil.getController("salaryDraft");
+			SalaryDraftController draft = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 			String alias = draft.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 			draft.getCriteria().addEqualExpression(alias, e.getId());
 			draft.getCriteria().addOrder(draft.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ID));
@@ -128,9 +130,9 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			String alias = bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 			criteria.addEqualExpression(alias, e.getId());
-			alias = bean.getFieldName(IPayrollAlias.SALARY_ISSUE_DATE);
+			alias = bean.getFieldName(IPayrollAlias.SALARY_END_DATE);
 			criteria.addGreaterThanOrEqualExpression(alias, getStartDate());
-			alias = bean.getFieldName(IPayrollAlias.SALARY_ISSUE_DATE);
+			alias = bean.getFieldName(IPayrollAlias.SALARY_END_DATE);
 			criteria.addLessThanOrEqualExpression(alias, getEndDate());
 			criteria.addOrder(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ID));
 			criteria.addOrder(bean.getFieldName(IPayrollAlias.SALARY_EMPLOYEE_NAME));

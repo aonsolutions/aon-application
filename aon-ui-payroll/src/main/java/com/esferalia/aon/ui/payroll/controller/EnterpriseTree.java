@@ -430,8 +430,13 @@ public class EnterpriseTree implements ICompanyConstants {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
 			this.contract = (Contract) bean.get( parentNode.getId() );
-			SalaryDraftController c = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
-			c.select(event, this.contract.getId());
+			SalaryDraftController sc = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
+			sc.select(event, this.contract.getId());
+			sc.checkValidContractPeriod();
+			if(sc.isValidSalaryDraftPeriod()){
+				sc.setSalary(null);
+				sc.searchSavedDraftSalary();
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> selectSalaryDraft exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -441,13 +446,6 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	public void onSelectTreeMainData(ActionEvent event) {
 		selectContract(event);
-//		ContractController contract = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
-//		contract.onShowPayments(event);
-//		contract.onShowDeductions(event);
-//		contract.onShowBonus(event);
-//		contract.onShowEmbargos(event);
-//		ContractPaymentController payment = (ContractPaymentController) FormUtil.getController(IPayrollConstants.CONTRACT_PAYMENT_CONTROLLER);
-//		payment.setSearchCurrent(true);
 		reloadTreeMainData(event);
 	}
 	public void reloadTreeMainData(ActionEvent event) {
@@ -501,10 +499,6 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	public void onSelectTreeSalaryDraft(ActionEvent event) {
 		selectSalaryDraft(event);
-		SalaryDraftController sc = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
-		sc.setSalary(null);
-		sc.setSalary(null);
-    	sc.searchSavedDraftSalary();
 	}
 	
 	public void onSelectTreeDocuments(ActionEvent event) {
