@@ -14,6 +14,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.Tax;
 import com.code.aon.config.TaxDetail;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
@@ -167,17 +168,19 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		double surcharge = 0.0;
 		double quota = 0.0;
 
-		if (invoiceDetail.isTaxDataInDetail()) {
-			percentage = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatPercent() : invoiceDetail.getRetentionPercent();
-			quota = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatQuota() : invoiceDetail.getRetentionQuota();
-		} else {
-			Invoice invoice = (!invoiceDetail.getInvoice().isRectifier()) ? invoiceDetail.getInvoice() : invoiceDetail.getInvoice().getRectificationInvoice();
-			if (invoice.getIssueDate().before(tax.getStartDate())) {
-				tax = obtainTax(tax.getId(), invoice.getIssueDate());
-			}
-			percentage = tax.getPercentage();
-			if (invoice.isSurcharge()) {
-				surcharge = tax.getSurcharge();
+		Invoice invoice = (!invoiceDetail.getInvoice().isRectifier()) ? invoiceDetail.getInvoice() : invoiceDetail.getInvoice().getRectificationInvoice();
+		if (invoice.getTransaction() == InvoiceTransactionType.NATIONAL || invoice.getTransaction() == InvoiceTransactionType.INTRACOMMUNITY) {
+			if (invoiceDetail.isTaxDataInDetail()) {
+				percentage = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatPercent() : invoiceDetail.getRetentionPercent();
+				quota = (TaxType.VAT == tax.getType()) ? invoiceDetail.getVatQuota() : invoiceDetail.getRetentionQuota();
+			} else {
+				if (invoice.getIssueDate().before(tax.getStartDate())) {
+					tax = obtainTax(tax.getId(), invoice.getIssueDate());
+				}
+				percentage = tax.getPercentage();
+				if (invoice.isSurcharge()) {
+					surcharge = tax.getSurcharge();
+				}
 			}
 		}
 		invoiceTax.setPercentage(percentage);
