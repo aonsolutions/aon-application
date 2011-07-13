@@ -11,8 +11,4 @@
 		<ui:param name="controller" value="#{lookup}" />
 	</ui:include>
 
-	<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
-		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
-	</c:if>
-
 </ui:composition>

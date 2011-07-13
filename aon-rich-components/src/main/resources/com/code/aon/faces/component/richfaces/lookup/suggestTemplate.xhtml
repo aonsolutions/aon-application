@@ -15,12 +15,6 @@
 		<h:column>
 			<aon:outputText value="#{aon_lst_columnExpression}" />
 		</h:column>
-		<!--
-		<a4j:support event="onsubmit">
-			<f:setPropertyActionListener value="#{aon_lst_suggestAlias}" target="#{lookup.componentSuggestAlias}" />
-			<f:setPropertyActionListener value="#{aon_lst_matchBeginOnly}" target="#{lookup.suggestMatchBeginOnly}" />
-		</a4j:support>
-		-->
 		<a4j:support event="onselect" ajaxSingle="true"
 			reRender="#{aon_lst_selectReRender}" focus="#{aon_lst_focus}" >
 			<f:setPropertyActionListener value="#{lto}" target="#{lookup.suggestedTo}" />

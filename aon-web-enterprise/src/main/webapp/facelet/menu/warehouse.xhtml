@@ -50,25 +50,25 @@
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="stock_report_by_warehouse" 
-										action="stock_report_search" actionListener="#{stockReport.onReportByWarehouse}"
+										action="stock_report_search-warehouse" actionListener="#{stockReport.onReportByWarehouse}"
 										value="#{warehouseBundle.warehouse_stock_by_warehouse_module}" />
 								</aon:div>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="stock_report_by_item" 
-										action="stock_report_search" actionListener="#{stockReport.onReportByItem}"
+										action="stock_report_search-item" actionListener="#{stockReport.onReportByItem}"
 										value="#{warehouseBundle.warehouse_stock_by_item_module}" />
 								</aon:div>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="stock_report_by_warehouse_valued" 
-										action="stock_report_search" actionListener="#{stockReport.onReportByWarehouseValued}"
+										action="stock_report_search-warehouseValued" actionListener="#{stockReport.onReportByWarehouseValued}"
 										value="#{warehouseBundle.warehouse_stock_by_warehouse_valued_module}" />
 								</aon:div>
 								
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="stock_report_by_item_valued" 
-										action="stock_report_search" actionListener="#{stockReport.onReportByItemValued}"
+										action="stock_report_search-itemValued" actionListener="#{stockReport.onReportByItemValued}"
 										value="#{warehouseBundle.warehouse_stock_by_item_valued_module}" />
 								</aon:div>
 
