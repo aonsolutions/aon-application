@@ -19,7 +19,14 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.Criteria;
@@ -29,12 +36,16 @@ import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester.UnExpectedValue;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class SalaryLauncher {
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(SalaryLauncher.class);
+	
 	private static final String LOG_FORMAT = "[{0}] {1}, {2} : {3}";
 	
 	private SalaryLauncherParams params;
@@ -46,6 +57,33 @@ public class SalaryLauncher {
 	private boolean debugEnabled;
 	private boolean refreshEnabled;
 	
+	private boolean showLauncherConfirmWindow;
+	private List<ITransferObject> existingSalaries;
+	
+	public List<ITransferObject> getExistingSalaries() {
+		return existingSalaries;
+	}
+
+	public void setExistingSalaries(List<ITransferObject> existingSalaries) {
+		this.existingSalaries = existingSalaries;
+	}
+	
+	public boolean isExistSalariesToOverride(){
+		return !getExistingSalaries().isEmpty();
+	}
+	
+	public Integer getExistingSalariesSize() {
+		return getExistingSalaries().size();
+	}
+	
+	public boolean isShowLauncherConfirmWindow() {
+		return showLauncherConfirmWindow;
+	}
+
+	public void setShowLauncherConfirmWindow(boolean showLauncherConfirmWindow) {
+		this.showLauncherConfirmWindow = showLauncherConfirmWindow;
+	}
+
 	public boolean isPollEnabled() {
 		return pollEnabled;
 	}
@@ -95,6 +133,16 @@ public class SalaryLauncher {
 	
 	public void onExecute(ActionEvent event) {
 		if(getParams().getSalaryType()==SalaryType.SALARY){
+			if(isExistSalariesToOverride()){
+				try {
+					removeSalaryes();
+				} catch (ManagerBeanException e) {
+					String msg = "No se han podido borrar las nominas existentes";
+					LOGGER.error(msg);
+					AonUtil.addErrorMessage(msg);
+					throw new AbortProcessingException(msg);
+				}
+			}
 			pollEnabled = true;
 			(new TestThread()).start();
 		} else {
@@ -103,6 +151,43 @@ public class SalaryLauncher {
 		}
 	}
 	
+	private void removeSalaryes() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+		for(ITransferObject to: getExistingSalaries()){
+			bean.remove(to);
+		}
+	}
+
+	public void onShowLauncherConfirm(ActionEvent event) {
+		searchExistingSalaries();
+	}
+	
+	private void searchExistingSalaries() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), getParams().getSalaryType());
+			if(getParams().getPerson()!=null && getParams().getPerson().getId()!=null){
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_PERSON_ID), getParams().getPerson().getId());
+			}
+			if(getParams().getEnterprise()!=null && getParams().getEnterprise().getId()!=null){
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getParams().getEnterprise().getId());
+			}
+			if(getParams().getStartDate()!=null){
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), DateUtils.ceiling(getParams().getStartDate(), Calendar.HOUR));
+			}
+			if(getParams().getEndDate()!=null){
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), DateUtils.ceiling(getParams().getEndDate(), Calendar.HOUR));
+			}
+			setExistingSalaries(bean.getList(criteria));
+		} catch (ManagerBeanException e) {
+			String msg = "No se ha podido comprobar la existencia de nominas en este periodo";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
 	private class TestThread extends Thread {
 
 	    public void run() {

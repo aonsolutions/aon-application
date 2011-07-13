@@ -108,14 +108,17 @@
 	
 						<aon:outputText value="&#160;" />
 						<aon:div >
+								 
 							<aon:commandButton id="launchSalaries"
-								value="#{payrollBundle.payroll_launch}" 
+					     		value="#{payrollBundle.payroll_launch}" 
 								styleClass="aon-search-lookup-button"
 								disabled="#{salaryLauncher.pollEnabled}"
-								onclick="if (!confirm('Continuar con el lanzamiento de nominas?')) {return false;}"
-								reRender="poll,launchSalaries,messagesContainer"
-								actionListener="#{salaryLauncher.onExecute}">
-					     	</aon:commandButton>
+								reRender="showLauncherConfirmWindow"
+								actionListener="#{salaryLauncher.onShowLauncherConfirm}">
+								<f:setPropertyActionListener target="#{salaryLauncher.showLauncherConfirmWindow}"
+									value="#{true}" />								
+							</aon:commandButton>
+
 						</aon:div>
 						<aon:outputText value="&#160;" />
 						<aon:outputText value="&#160;" />
@@ -152,6 +155,7 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/confirmModal.xhtml" />
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 	</ui:define>

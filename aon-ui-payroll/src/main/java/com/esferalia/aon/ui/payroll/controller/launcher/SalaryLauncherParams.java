@@ -73,14 +73,6 @@ public class SalaryLauncherParams {
 	public void setSalaryType(SalaryType salaryType) {
 		this.salaryType = salaryType;
 	}
-
-//	public Date getStartDate() {
-//		return CommonUtil.getDate(getIssueYear(), getIssueMonth().getValue(), 1);
-//	}
-//
-//	public Date getEndDate() {
-//		return CommonUtil.getMonthLastDay(CommonUtil.getDate(getIssueYear(), getIssueMonth().getValue(), 1));
-//	}
 	
 	public Date getStartDate() {
 		return startDate;
