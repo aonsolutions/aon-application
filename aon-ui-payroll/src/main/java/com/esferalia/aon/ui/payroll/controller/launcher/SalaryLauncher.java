@@ -174,10 +174,10 @@ public class SalaryLauncher {
 				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getParams().getEnterprise().getId());
 			}
 			if(getParams().getStartDate()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), DateUtils.ceiling(getParams().getStartDate(), Calendar.HOUR));
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), getParams().getStartDate());
 			}
 			if(getParams().getEndDate()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), DateUtils.ceiling(getParams().getEndDate(), Calendar.HOUR));
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), getParams().getEndDate());
 			}
 			setExistingSalaries(bean.getList(criteria));
 		} catch (ManagerBeanException e) {
@@ -198,7 +198,7 @@ public class SalaryLauncher {
 				listener.onInfo(msg);
 			} catch (Throwable e) {
 				listener.onError(e.getLocalizedMessage());
-				String msg = "Se produjeron errores en el cálculo de nóminas.";
+				String msg = "Se produjeron errores en el cï¿½lculo de nï¿½minas.";
 				listener.onError(msg);
 			}
 			if (listener.getWarningCounter() > 0) {
@@ -244,7 +244,7 @@ public class SalaryLauncher {
 				Date startDate = parameters.getStartDate();  
 				Date endDate = parameters.getEndDate(); 
 				
-				String msg = MessageFormat.format("Test de cálculo de nóminas {0}:{1}",new Object[] {startDate, endDate});
+				String msg = MessageFormat.format("Test de cï¿½lculo de nï¿½minas {0}:{1}",new Object[] {startDate, endDate});
 				listener.onInfo(msg);
 				
 				Criteria criteria = null;
@@ -290,7 +290,7 @@ public class SalaryLauncher {
 					listener.onError(e.getLocalizedMessage());
 					salaryBuilder.rollback();
 				}
-				msg = MessageFormat.format("Total nóminas insertadas: {0} ",new Object[]{salaryBuilder.getInsertedSalaries()});
+				msg = MessageFormat.format("Total nï¿½minas insertadas: {0} ",new Object[]{salaryBuilder.getInsertedSalaries()});
 				listener.onInfo(msg);
 			} catch (ExpressionException e) {
 				throw new SalaryException(e);
