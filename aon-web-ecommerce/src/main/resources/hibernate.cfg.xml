@@ -101,6 +101,9 @@
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 		
+		<!-- AON-PROJECT Mapping files -->	
+		<mapping class="com.code.aon.project.Project"/>
+
 			<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.RegistryBank"/>

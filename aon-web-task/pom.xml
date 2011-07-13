@@ -3,13 +3,13 @@
 	<parent>
 		<artifactId>aon.web.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>6.7.0</version>
+		<version>6.7.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-task</artifactId>
 	<packaging>war</packaging>
-	<version>6.7.0</version>
+	<version>6.7.1</version>
 	<description>AON WEB TASK</description>
 	<name>AON WEB TASK</name>
 	<properties>
