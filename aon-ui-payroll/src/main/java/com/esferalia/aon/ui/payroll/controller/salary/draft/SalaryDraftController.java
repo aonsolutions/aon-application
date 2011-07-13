@@ -67,7 +67,19 @@ public class SalaryDraftController extends BasicController {
 	private boolean showSalaryDifference;
 	private ISalary bdSalary;
 	private SalaryDraftComparatorPrinter printer;
+	private SalaryType salaryType;
 	
+	public SalaryType getSalaryType() {
+		return salaryType;
+	}
+	public void setSalaryType(SalaryType salaryType) {
+		this.salaryType = salaryType;
+		setSalary(null);
+//		Contract c = (Contract) getTo();
+//		if (c != null) {
+//			c.setSalaryCalculatorContext(null);		
+//		}
+	}
 	public boolean isShowSalaryDifference() {
 		return showSalaryDifference;
 	}
@@ -303,7 +315,8 @@ public class SalaryDraftController extends BasicController {
 					startDate = startCal.getTime();
 				}
 				Date issueDate = getIssueDate(); 
-				ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate);
+				ISalaryCalculatorContext ctx;
+				ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate, getSalaryType()==SalaryType.EXTRA?true:false);
 				salary = ctx.getSalaryProxy().getSalary();
 				paymentsModel = null;
 				printer = null;

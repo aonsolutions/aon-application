@@ -10,14 +10,11 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,8 +45,6 @@ public class SalaryLauncher {
 	private boolean saveLog;
 	private boolean debugEnabled;
 	private boolean refreshEnabled;
-	
-	private List<SelectItem> salaryTypes;
 	
 	public boolean isPollEnabled() {
 		return pollEnabled;
@@ -257,19 +252,4 @@ public class SalaryLauncher {
 		}
 	}
 	
-	public List<SelectItem> getSalaryTypes() {
-		if (salaryTypes == null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			salaryTypes = new LinkedList<SelectItem>();
-			for( SalaryType salaryType : SalaryType.values() ) {
-				if(salaryType!=SalaryType.NOT_ENJOYED_VACATIONS){
-					String name = salaryType.getName(locale);
-					SelectItem item = new SelectItem(salaryType, name);
-					salaryTypes.add(item);			
-				}
-			}
-		}
-		return salaryTypes;
-	}
-
 }

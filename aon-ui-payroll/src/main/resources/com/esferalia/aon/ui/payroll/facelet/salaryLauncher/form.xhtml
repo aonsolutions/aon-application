@@ -33,7 +33,7 @@
 		
 						<aon:outputLabel for="salaryType" value="#{bundle.aon_type}" />
 						<aon:selectOneMenu id="salaryType" value="#{salaryLauncher.params.salaryType}">
-							<f:selectItems value="#{salaryLauncher.salaryTypes}" />
+							<f:selectItems value="#{payrollCollections.salaryTypesWithoutVacations}" />
 							<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
 						</aon:selectOneMenu>
 						<aon:outputText value="&#160;" />

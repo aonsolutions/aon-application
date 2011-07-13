@@ -8,9 +8,6 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 
-		<!--  
-		<c:if test="#{salaryDraft.validSalaryDraftPeriod}">
-		-->
 		<aon:panelGrid columns="2" style="background-color: #F6F6F6; width: 100%;"
 			columnClasses="aon-panelGrid-even aon-vertical-align-top aon-noborder
 			              ,aon-panelGrid-even aon-vertical-align-top aon-noborder">
@@ -76,13 +73,18 @@
 			</aon:panel>
 	
 		</aon:panelGrid>
-		<!--  
-		</c:if>
-		-->
-	
 		
 		<aon:div styleClass="aon-margin-top aon-text-right" style="width: 100%;">
-			<h:panelGrid columns="4" style="width: 100%;">
+			<h:panelGrid columns="5" style="width: 100%;">
+				<aon:div>
+					<aon:outputText value="#{bundle.aon_type}" styleClass="aon-italic" />
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:selectOneMenu value="#{controller.salaryType}">
+						<f:selectItems value="#{payrollCollections.salaryTypesWithoutVacations}" />
+						<a4j:support event="onchange" reRender="salaryDraftForm" ajaxSingle="true"/>
+					</aon:selectOneMenu>
+				</aon:div>
+				
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_simulation_date}"/>
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
@@ -98,29 +100,29 @@
 	   			  <a4j:support event="oninputkeyup" actionListener="#{controller.onChangeYear}" reRender="salaryDraftForm" ajaxSingle="true" focus="Contract_year"/>
 	   			</rich:inputNumberSpinner>
 
-					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period}"/>
-						<aon:outputText styleClass="aon-italic" value="&#160;"/>
-						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period_from}"/>
-						<aon:outputText styleClass="aon-italic" value="&#160;"/>
-						<aon:outputText value="#{controller.salary.startDate}" >
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>		
-						<aon:outputText styleClass="aon-italic" value="&#160;"/>
-						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period_to}"/>
-						<aon:outputText styleClass="aon-italic" value="&#160;"/>
-						<aon:outputText value="#{controller.salary.endDate}" >
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>		
-					</aon:div>
-					
-					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="&#160;"/>
-						<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_days}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" value="#{controller.salary.timeUnits}"/>
-					</aon:div>
+				<aon:div>
+					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period}"/>
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period_from}"/>
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:outputText value="#{controller.salary.startDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>		
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period_to}"/>
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:outputText value="#{controller.salary.endDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>		
+				</aon:div>
+				
+				<aon:div>
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_days}:"/>
+					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" value="#{controller.salary.timeUnits}"/>
+				</aon:div>
 			</h:panelGrid>
 			
 <!-- 			

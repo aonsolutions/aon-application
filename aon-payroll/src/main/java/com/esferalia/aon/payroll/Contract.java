@@ -302,6 +302,18 @@ public class Contract implements ITransferObject, ISalaryProxy {
 		return salary;
 	}
 
+	@Transient
+	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startDate, Date endDate, Date issueDate, boolean extra) throws SalaryException {
+		if (ctx == null) {
+			try {
+				ctx = new ContractSalaryCalculatorContext(this,startDate,endDate,issueDate, extra);
+			} catch (AonException e) {
+				throw new SalaryException(e.getMessage(), e);
+			}
+		}
+		return ctx;
+	}
+	
 	@Override
 	@Transient
 	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startDate, Date endDate, Date issueDate) throws SalaryException {

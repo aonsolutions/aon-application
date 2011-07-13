@@ -749,12 +749,9 @@ public class SalaryDraftComparatorPrinter {
 			for(ITransferObject to: draftBonus){
 				ContractBonus b = (ContractBonus) to;
 				SalaryBonus sb = getSameSalaryBonus(b, salaryBonus);
-				list.add(getDecorableAmount(sb==null?null:sb.getAmount(), b==null?null:Double.valueOf(b.getExpression())));
-//				setTotalAmount(getDecorableAmount(0.0, 0.0));
-//				getTotalAmount().set;
-//				setTotalAmount(getDecorableAmount(getTotalAmount()+Double.valueOf(b.getExpression())));
+				list.add(getDecorableAmount(sb==null?null:sb.getAmount(), (b==null||b.getExpression()==null)?null:Double.valueOf(b.getExpression())));
 				salaryTotal += sb==null?0.0:sb.getAmount();
-				draftTotal += b==null?0.0:Double.valueOf(b.getExpression());
+				draftTotal += (b==null||b.getExpression()==null)?0.0:Double.valueOf(b.getExpression());
 			}
 			setTotalAmount(getDecorableAmount(salaryTotal, draftTotal));
 			setAmounts(list);

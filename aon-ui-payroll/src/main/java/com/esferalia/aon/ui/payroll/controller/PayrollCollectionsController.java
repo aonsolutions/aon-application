@@ -53,6 +53,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> contractCalendarEventTypes;
 	private List<SelectItem> paymentTypes;
 	private List<SelectItem> deductionTypes;
+	private List<SelectItem> salaryTypesWithoutVacations;
 	private List<SelectItem> salaryTypes;
 	
 	private List<SelectItem> contractCodes;
@@ -111,6 +112,21 @@ public class PayrollCollectionsController {
 			}
 		}
 		return deductionTypes;
+	}
+
+	public List<SelectItem> getSalaryTypesWithoutVacations() {
+		if (salaryTypesWithoutVacations == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			salaryTypesWithoutVacations = new LinkedList<SelectItem>();
+			for( SalaryType salaryType : SalaryType.values() ) {
+				if(salaryType!=SalaryType.NOT_ENJOYED_VACATIONS){
+					String name = salaryType.getName(locale);
+					SelectItem item = new SelectItem(salaryType, name);
+					salaryTypesWithoutVacations.add(item);			
+				}
+			}
+		}
+		return salaryTypesWithoutVacations;
 	}
 	
 	public List<SelectItem> getSalaryTypes() {
