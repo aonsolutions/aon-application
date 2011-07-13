@@ -64,8 +64,11 @@
 							value="#{payrollBundle.payroll_contract_new}" 
 							reRender="#{contract.beanName}ModalContainer"
 							styleClass="aon-finding-toolbar-item aon-icon-reset" >
+							<aon:actionListener method="#{enterpriseTree.onResetContract}" />
+<!--  
 							<aon:actionListener method="#{contract.onReset}" />
 							<aon:actionListener method="#{contract.onShowNewContractModal}" />
+-->
 						</aon:commandButton>						
 					</c:if>										
 					<aon:spin id="enterpriseSpin" controller="#{enterprise}" />
@@ -165,6 +168,8 @@
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/modalNewContract.xhtml" >
 			<ui:param name="controller" value="#{contract}" />
+			<ui:param name="popupWindowTitle" value="#{payrollBundle.payroll_contract}" />
+			<ui:param name="lookupDisabled" value="true" />
 		</ui:include>
 	
 		

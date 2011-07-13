@@ -607,5 +607,13 @@ public class EnterpriseTree implements ICompanyConstants {
 			setInactiveDate(cal!=null?cal.getTime():null);
 		}
 	}
+
+	public void onResetContract( ActionEvent event ) {
+		EnterpriseController ec= (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		controller.onReset(event);
+		controller.setEnterprise((Enterprise) ec.getTo());
+		controller.onShowNewContractModal(event);
+	}
 	
 }
