@@ -52,6 +52,7 @@
 	<aon:outputLabel for="ContractPayment_salaryType" value="#{payrollBundle.payroll_salary_type}" />
 	<aon:selectOneMenu id="ContractPayment_salaryType" value="#{controller.to.salaryType}">
 		<f:selectItems value="#{payrollCollections.salaryTypes}" />
+		<a4j:support event="onchange" reRender="#{controller.beanName}ModalForm" />
 	</aon:selectOneMenu>
 	
 	<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />

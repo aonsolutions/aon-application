@@ -64,8 +64,8 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 		setPaymentsModel(null);
 	}
 	
-	public boolean isContractScope(){
-		return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()==ExpressionScope.CONTRACT;
+	public boolean isReadOnly(){
+		return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()!=ExpressionScope.CONTRACT;
 	}
 
 	public void initialize(ActionEvent event) {

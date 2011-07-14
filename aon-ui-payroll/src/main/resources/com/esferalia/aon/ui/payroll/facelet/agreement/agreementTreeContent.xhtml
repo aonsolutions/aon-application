@@ -23,10 +23,6 @@
 				reRender="aonContent"
 				styleClass="aon-finding-toolbar-item aon-icon-reset" >
 				<aon:actionListener method="#{agreementLevel.onReset}" />
-				<!--  
-				action="agreement_level_form"
-				<aon:actionListener method="#{contract.onShowNewContractModal}" />
-				-->
 			</aon:commandButton>		
 		</ui:define>
 		
@@ -45,7 +41,7 @@
 		
 		<c:if test="#{!agreement.new}">
 			<aon:panelTabSet>
-				<aon:panelTab id="payment" disabled="#{agreementLevel.model==null}"
+				<aon:panelTab id="payment" 
 					label="#{payrollBundle.payroll_salary_payment}">
 					<aon:div id="agreementPaymentGrid" style="font-size: 0.9em;">
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
@@ -55,13 +51,14 @@
 					</aon:div>
 				</aon:panelTab>
 
-				<aon:panelTab id="extra" disabled="#{agreementLevel.model==null}"
+				<aon:panelTab id="extra" 
 					label="#{payrollBundle.payroll_agreementExtra}">
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/extra/grid.xhtml" >
 					</ui:include>
 				</aon:panelTab>
 
-				<aon:panelTab id="group" label="#{payrollBundle.payroll_agreementLevel_module}">
+				<aon:panelTab id="group" disabled="#{agreementLevel.model==null}"
+					label="#{payrollBundle.payroll_agreementLevel_module}">
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/level/editGridSalaryTable.xhtml" >
 					</ui:include>
 				</aon:panelTab>

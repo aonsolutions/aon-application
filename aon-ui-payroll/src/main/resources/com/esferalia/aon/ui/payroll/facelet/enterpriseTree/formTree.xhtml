@@ -65,10 +65,6 @@
 							reRender="#{contract.beanName}ModalContainer"
 							styleClass="aon-finding-toolbar-item aon-icon-reset" >
 							<aon:actionListener method="#{enterpriseTree.onResetContract}" />
-<!--  
-							<aon:actionListener method="#{contract.onReset}" />
-							<aon:actionListener method="#{contract.onShowNewContractModal}" />
--->
 						</aon:commandButton>						
 					</c:if>										
 					<aon:spin id="enterpriseSpin" controller="#{enterprise}" />

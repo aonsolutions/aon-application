@@ -19,7 +19,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
+import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementPayment;
@@ -27,6 +30,8 @@ import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class AgreementPaymentController extends LinesController {
 	
@@ -94,7 +99,7 @@ public class AgreementPaymentController extends LinesController {
 		this.setModel(paymentsModel);
 	}
 	
-	public boolean isContractScope(){
+	public boolean isReadOnly(){
 		return false;
 	}
 	
@@ -216,6 +221,12 @@ public class AgreementPaymentController extends LinesController {
 			alp.setDescription(null);
 		}
 		super.onAccept(event);
+		try {
+			saveAgreementExtra();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		reset(false);
 		setPaymentsModel(null);
 	}
@@ -226,6 +237,12 @@ public class AgreementPaymentController extends LinesController {
 	}
 
 	public void onRemove(ActionEvent event) {
+		try {
+			removeAgreementExtra();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		super.onRemove(event);
 		reset(false);
 		setPaymentsModel(null);
@@ -238,6 +255,16 @@ public class AgreementPaymentController extends LinesController {
 	
 	public void reset(boolean panelVisible) {
 		setModalPanelVisible(panelVisible);
+	}
+	
+	private void saveAgreementExtra() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
+		bean.insertOrUpdate(getAgreementExtra());
+	}
+	
+	private void removeAgreementExtra() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
+		bean.remove(getAgreementExtra());
 	}
 	
 	
@@ -268,5 +295,45 @@ public class AgreementPaymentController extends LinesController {
 		}
 		return list;
 	}
+	
+	private void searchAgreementExtra(){
+		AgreementPayment ap = (AgreementPayment) this.getTo();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_ID), ap.getAgreement().getId());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_PAYMENT_ID), ap.getId());
+			List<ITransferObject> list = bean.getList(criteria);
+			if(list.isEmpty()){
+				AgreementExtra ae = new AgreementExtra();
+				ae.setAgreement(ap.getAgreement());
+				ae.setAgreementPayment(ap);
+				setAgreementExtra(ae);
+			} else {
+				setAgreementExtra((AgreementExtra) list.get(0));
+			}
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public boolean isSalaryExtra(){
+		if(((AgreementPayment)this.getTo()).getSalaryType()==SalaryType.EXTRA){
+			searchAgreementExtra();
+			return true;
+		}
+		return false;
+	}
+	
+	private AgreementExtra agreementExtra;
+
+	public AgreementExtra getAgreementExtra() {
+		return agreementExtra;
+	}
+	public void setAgreementExtra(AgreementExtra agreementExtra) {
+		this.agreementExtra = agreementExtra;
+	}
+	
 	
 }

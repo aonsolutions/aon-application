@@ -141,12 +141,21 @@ public class ContractControllerListener extends ControllerAdapter{
 		try {
 			ContractController controller = (ContractController) this.getController();
 			Contract contract = (Contract) controller.getTo();
-			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				controller.setAgreement(((PayrollWorkPlace)list.get(0)).getAgreement());
+			if(contract.getAgreementLevelCategory()!=null 
+					&& contract.getAgreementLevelCategory().getLevel()!=null 
+					&& contract.getAgreementLevelCategory().getLevel().getAgreement()!=null 
+					&& contract.getAgreementLevelCategory().getLevel().getAgreement().getId()!=null){
+				controller.setAgreement(contract.getAgreementLevelCategory().getLevel().getAgreement());
+			} else {
+				IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					controller.setAgreement(((PayrollWorkPlace)list.get(0)).getAgreement());
+				} else {
+					controller.setAgreement(null);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			// NADA, no se define ningun convenio

@@ -17,13 +17,27 @@
 				</c:if>
 			</aon:form>
 			
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
+			<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
 				<ui:param name="controller" value="#{agreementPayment}" />
 				<ui:param name="skipCurrentMonth" value="#{true}" />
 				<ui:param name="skipSearchOption" value="#{true}" />
 				<ui:param name="contextDisabled" value="#{true}" />
 				<ui:param name="container" value="agreementPaymentGrid" />
-			</ui:include>
+				
+				<ui:define name="afterVariablesContent">
+					<c:if test="#{agreementPayment.salaryExtra}" >
+						<aon:panel style="width:350px;">
+							<f:facet name="header" >
+								<aon:outputText
+									value="#{payrollBundle.payroll_agreement_calculation_period}" />
+							</f:facet>
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/extra/form.xhtml" >
+								<ui:param name="to" value="#{agreementPayment.agreementExtra}" />
+							</ui:include>
+						</aon:panel>
+					</c:if>
+				</ui:define>
+			</ui:decorate>
 			
 		</ui:define>
 
