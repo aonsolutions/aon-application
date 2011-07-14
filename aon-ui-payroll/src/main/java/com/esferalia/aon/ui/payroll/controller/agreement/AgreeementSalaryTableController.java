@@ -38,6 +38,8 @@ import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.salary.enumeration.PaymentType;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
 public class AgreeementSalaryTableController extends ControllerAdapter implements IController {
@@ -136,8 +138,9 @@ public class AgreeementSalaryTableController extends ControllerAdapter implement
 		Collection<IContractPayment> payments = factory.create(agreement.getId());
 		Set<String> userVariables = new LinkedHashSet<String>();
 		for (IContractPayment payment : payments) {
+			PaymentType type = payment.getType();
 			String expression = payment.getExpression();
-			if(expression!=null){
+			if( type == PaymentType.BASE_SALARY && expression!=null){
 				Set<String> expressionVariables = ExpressionContext.getVariables(expression);
 				for (String variable : expressionVariables) {
 					if ( this.isUserVariable( variable)) {

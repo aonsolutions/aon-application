@@ -280,7 +280,7 @@ public class ContractLeaveController extends BasicController {
 		getReport().getContractLeave().setDailyCgcBase(salary.getCommonBase()/30);
 		getReport().getContractLeave().setDailyCgpBase(salary.getProfessionalBase()/30);
 		// TODO de donde se obtiene la base reguladora?
-		getReport().getContractLeave().setDailyRegBase(null);
+		getReport().getContractLeave().setDailyRegBase(salary.getCommonBase()/30);
 	}
 	
 	private ISalary getLastSalary() {
