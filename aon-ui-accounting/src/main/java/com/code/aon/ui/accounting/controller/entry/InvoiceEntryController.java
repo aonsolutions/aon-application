@@ -811,6 +811,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 				updateInvoiceEntry(sessionName,invoiceTotal);
 			}
 			setNew(false);
+			insertOrUpdateInvoice(sessionName); //Grabar los totales de factura.
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
 			onViewAccountEntry(event);
