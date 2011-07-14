@@ -433,7 +433,7 @@ public class AccountEntryController extends BasicController {
 				invoiceViewer = IFinanceConstants.UNDEDUCTIBLE_INVOICE_FORM_NAME;
 			}
 			InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(invoiceControllerName);
-			invoiceController.onLoadInvoice(null, invoice, IAccountingConstants.ACCOUNT_ENTRY_FORM_NAVKEY, invoiceControllerName);
+			invoiceController.onLoadInvoice(null, invoice, IAccountingConstants.ACCOUNT_ENTRY_FORM_NAVKEY, "");
 		}
 		return invoiceViewer;
 	}
