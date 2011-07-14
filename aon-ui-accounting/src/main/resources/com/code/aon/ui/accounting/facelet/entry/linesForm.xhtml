@@ -346,6 +346,9 @@
 								actionListener="#{accountEntryDetail.onRemove}"
 								styleClass="aon-editDataTable-button aon-icon-delete"
 								accesskey="#{bundle.aon_key_remove_line}" />
+							<c:if test="#{!accountEntryDetail.new}">
+								<rich:jQuery timing="onload" selector="#Account_ClearButton" query="focus()"/>
+							</c:if>
 					</aon:div>
 					<f:facet name="footer">
 						<aon:div styleClass="aon-nowrap">
@@ -366,6 +369,14 @@
 								actionListener="#{accountEntryDetail.onCancel}"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
 								accesskey="#{bundle.aon_key_cancel_line}" />
+
+							<c:if test="#{accountEntryDetail.new and accountEntryDetail.to.account.id ==null}">
+								<rich:jQuery timing="onload" selector="#Account_id-New" query="focus()"/>
+							</c:if>
+							<c:if test="#{accountEntryDetail.new and accountEntryDetail.to.account.id !=null}">
+								<rich:jQuery timing="onload" selector="#Account_ClearButton-New" query="focus()"/>
+							</c:if>
+							
 						</aon:div>
 					</f:facet>
 				</aon:column>

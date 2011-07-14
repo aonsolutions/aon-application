@@ -36,7 +36,7 @@
 							actionListener="#{accountEntry.accept}"
 							rendered="#{accountEntry.new and accountEntry.manual and (accountEntry.model.rowCount > 0 or accountEntry.new)}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							focus="accountId-NEW">
+							focus="Account_Id">
 							<aon:actionListener method="#{accountEntryDetail.onReset}" />
 						</aon:commandButton>
 
@@ -368,7 +368,9 @@
 		</aon:div>
 		
 		<aon:lookupButtonPopup lookup="#{accountLookup}" />
-		
-		<rich:jQuery timing="onload" selector="#AccountEntry_accountPeriod" query="focus()"/>
+		 		
+		<c:if test="#{accountEntry.new}">
+			<rich:jQuery timing="onload" selector="#AccountEntry_accountPeriod" query="focus()"/>
+		</c:if>
 	</ui:define>
 </ui:composition>

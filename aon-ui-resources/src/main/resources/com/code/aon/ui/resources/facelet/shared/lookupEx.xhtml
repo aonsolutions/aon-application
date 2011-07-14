@@ -32,7 +32,7 @@
 			<aon:goToButton controller="#{controller}" property="#{lookupTo}"
 				backActionListener="#{goToBackActionListener}" />
 		</c:if>
-		<aon:lookupButton
+		<aon:lookupButton id="#{pojoName}_SearchButton#{lookupSuffix}"
 			windowTitle="#{searchButtonTitle}" property="#{lookupTo}"
 			minHeight="#{searchButtonHeight}" minWidth="#{searchButtonWidth}"
 			disabled="#{lookupDisabled}" actionType="#{lookupSelectType}"
@@ -42,7 +42,7 @@
 			selectReRender="#{lookup_reRender}" >
 			<ui:insert name="searchButtonContent"/>
 		</aon:lookupButton>
-		<aon:lookupButton
+		<aon:lookupButton id="#{pojoName}_ClearButton#{lookupSuffix}"
 			actionType="clear" disabled="#{lookupDisabled}" 
 			lookup="#{lookupBean}" property="#{lookupTo}"
 			lookupProperty="#{lookupProperty}" focus="#{clearButtonFocus}"
