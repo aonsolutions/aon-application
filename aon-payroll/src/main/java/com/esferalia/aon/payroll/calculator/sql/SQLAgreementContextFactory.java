@@ -125,11 +125,6 @@ public class SQLAgreementContextFactory
 		this.systemExpressionContext = 
 			new ExpressionContext();
 		
-		// TODO: Tiene que ir aqui ???
-		systemExpressionContext.addVariable(SALARY, true, startDate, endDate);
-		systemExpressionContext.addVariable(SETTLE, false, startDate, endDate);
-		systemExpressionContext.addVariable(DELAY, false, startDate, endDate);
-		systemExpressionContext.addVariable(EXTRA_PAY, false, startDate, endDate);
 
 		Long yearDays = getYearDays(startDate, endDate ); 
 		systemExpressionContext.addVariable(YEAR_DAYS, yearDays, startDate, endDate);

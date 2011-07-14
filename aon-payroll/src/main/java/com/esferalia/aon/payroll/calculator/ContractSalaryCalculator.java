@@ -292,6 +292,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			throw new SalaryException(e.getMessage(),e);			
 		}catch (AonException e) {
 			throw new SalaryException(e.getMessage(),e);			
+		}catch (Exception e) {
+			throw new SalaryException(e.getMessage(),e);			
 		}
 	}
 	

@@ -925,7 +925,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private double getSalaryMonths() {
 		double salaryDays = getSalaryDays();
 		double salaryMonths = salaryDays * 12 / 365;
-		return Math.round(salaryMonths);
+		return Math.max(1, Math.round(salaryMonths));
 	}
 	
 	private double getSalaryHours() {
@@ -1044,7 +1044,13 @@ public class SQLContractSalaryCalculatorContext implements
 		this.contractExpressionContext = 
 			new ExpressionContext(getAgreementContext(), this);
 		
-
+		LazyTimedVariable<Double> salaryDays = new LazyTimedVariable<Double>(){
+			@Override
+			public Double create(){
+				return getSalaryDays();
+			}
+		};
+		
 		ActiveTimedVariable<Double> workedDays =  new ActiveTimedVariable<Double>(){
 			@Override
 			public Double getValue(Period p) {
@@ -1073,6 +1079,13 @@ public class SQLContractSalaryCalculatorContext implements
 			}
 		};
 		
+		// TODO: Tiene que ir aqui ???
+		SalaryType salaryType = getSalaryType();
+		this.contractExpressionContext.addVariable(SALARY, salaryType == SalaryType.SALARY, startDate, endDate);
+		this.contractExpressionContext.addVariable(SETTLE, salaryType == SalaryType.SETTLE, startDate, endDate);
+		this.contractExpressionContext.addVariable(DELAY, salaryType == SalaryType.DELAY, startDate, endDate);
+		this.contractExpressionContext.addVariable(EXTRA_PAY, salaryType == SalaryType.EXTRA, startDate, endDate);
+
 		this.contractExpressionContext.addVariable(WORKED_DAYS, 
 				workedDays
 		);
@@ -1087,14 +1100,9 @@ public class SQLContractSalaryCalculatorContext implements
 				workedDays
 		);
 
-		this.contractExpressionContext.addVariable(SALARY_DAYS, 
-				new LazyTimedVariable<Double>(){
-					@Override
-					public Double create(){
-						return getSalaryDays();
-					}
-				}
-		);
+		this.contractExpressionContext.addVariable(SALARY_DAYS, salaryDays);
+		this.contractExpressionContext.addVariable(EXTRA_DAYS, salaryDays);
+
 		this.contractExpressionContext.addVariable(SALARY_MONTHS, 
 				new LazyTimedVariable<Double>(){
 					@Override
