@@ -53,6 +53,7 @@ public class AccountEntryController extends BasicController {
 	private String duplicatePeriod;
 	private Date duplicateDate;
 	private String duplicateConcept;
+	private boolean duplicateInvertible;
 	
 	private Double totalDebit;
 	private Double totalCredit;
@@ -377,6 +378,7 @@ public class AccountEntryController extends BasicController {
 				throw new AbortProcessingException(msg);
 	  		}
 	  		setDuplicateConcept(((AccountEntryDetail) list.get(0)).getConcept());
+	  		setDuplicateInvertible(false);
 			setDuplicateEntryPanelVisible(true);
 		} catch (ManagerBeanException e) {
 			String msg = "No se pudo duplicar el apunte. [" + e.getLocalizedMessage()+ "]";
@@ -407,6 +409,13 @@ public class AccountEntryController extends BasicController {
 	}
 	public void setDuplicateConcept(String duplicateConcept) {
 		this.duplicateConcept = duplicateConcept;
+	}
+	
+	public boolean isDuplicateInvertible() {
+		return duplicateInvertible;
+	}
+	public void setDuplicateInvertible(boolean duplicateInvertible) {
+		this.duplicateInvertible = duplicateInvertible;
 	}
 
 	public String onLoadInvoice() throws ManagerBeanException {
@@ -462,8 +471,8 @@ public class AccountEntryController extends BasicController {
     			dupDetail.setAccount(detail.getAccount());
     			dupDetail.setConcept(getDuplicateConcept());
     			dupDetail.setBalancingAccount(detail.getBalancingAccount());
-    			dupDetail.setDebit(detail.getDebit());
-    			dupDetail.setCredit(detail.getCredit());
+    			dupDetail.setDebit(isDuplicateInvertible()?detail.getCredit():detail.getDebit());
+    			dupDetail.setCredit(isDuplicateInvertible()?detail.getDebit():detail.getCredit());
     			dupDetail.setDocumentNumber(detail.getDocumentNumber());
     			
     			linesBean.insert(dupDetail);

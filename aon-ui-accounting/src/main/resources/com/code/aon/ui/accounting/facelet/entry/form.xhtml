@@ -106,19 +106,10 @@
 								immediate="true"
 								onclick="if (!confirm('#{accountingBundle.accounting_change_security}')) return false;" />
 						</c:if>
-<!-- 
-						<aon:commandButton id="duplicate" value="#{accountingBundle.accounting_duplicate}"
-							title="#{accountingBundle.accounting_duplicate}"
-							actionListener="#{accountEntry.onDuplicate}"
-							rendered="#{!accountEntry.new and accountEntry.updatable}"
-							styleClass="aon-finding-toolbar-item aon-icon-copy"
-							onclick="if (!confirm('#{accountingBundle.accounting_duplicate_confirm}')) return false;"
-							immediate="true" />
- -->						
 						<aon:commandButton id="duplicate" value="#{accountingBundle.accounting_duplicate}"
 							title="#{accountingBundle.accounting_duplicate}"
 							actionListener="#{accountEntry.showDuplicateEntryPanel}"
-							rendered="#{!accountEntry.new and accountEntry.updatable}"
+							rendered="#{!accountEntry.new and accountEntry.manual}"
 							reRender="duplicateEntryContainer"
 							styleClass="aon-finding-toolbar-item aon-icon-copy"
 							immediate="true" />
@@ -328,6 +319,7 @@
 											<aon:commandButton id="duplicateEntryAccept"
 												value="#{accountingBundle.accounting_duplicate}"
 												actionListener="#{accountEntry.onDuplicate}"
+												onclick="if (!confirm('#{accountingBundle.accounting_duplicate_confirm}')) return false;"
 												styleClass="aon-finding-toolbar-item aon-icon-accept">
 												<f:setPropertyActionListener
 													target="#{accountEntry.duplicateEntryPanelVisible}"
@@ -353,8 +345,16 @@
 
 												<aon:outputLabel for="AccountEntry_concept"
 													value="#{bundle.aon_concept}" />
-												<aon:inputText required="true" size="20"
+												<aon:inputText required="true" size="40" maxlength="32" 
 													id="AccountEntry_concept" value="#{accountEntry.duplicateConcept}"/>
+													
+												<aon:outputText value="&#160;"/>
+												<aon:div>
+													<aon:selectBooleanCheckbox id="AccountEntry_invert"
+														value="#{accountEntry.duplicateInvertible}"/>
+													<aon:outputLabel for="AccountEntry_invert"
+														value="#{accountingBundle.accounting_duplicate_invert_debit}" />
+												</aon:div>
 											</aon:panelGrid>
 										</aon:div>
 									</aon:div>
