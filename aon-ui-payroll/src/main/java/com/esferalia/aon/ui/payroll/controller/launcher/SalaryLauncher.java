@@ -19,7 +19,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,10 +173,10 @@ public class SalaryLauncher {
 				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_WORK_PLACE_ENTERPRISE_ID), getParams().getEnterprise().getId());
 			}
 			if(getParams().getStartDate()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), getParams().getStartDate());
+				criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), getParams().getStartDate());
 			}
 			if(getParams().getEndDate()!=null){
-				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), getParams().getEndDate());
+				criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), getParams().getEndDate());
 			}
 			setExistingSalaries(bean.getList(criteria));
 		} catch (ManagerBeanException e) {
