@@ -42,7 +42,16 @@ public class ConstantExpressionImpl implements ConstantExpression {
         return data;
     }
     
-    /* (non-Javadoc)
+    /**
+     * Sets the data.
+     *
+     * @param data the new data
+     */
+    public void setData(Object data) {
+		this.data = data;
+	}
+
+	/* (non-Javadoc)
      * @see com.code.aon.ql.ast.ConstantExpression#isLiteral()
      */
     public boolean isLiteral() {

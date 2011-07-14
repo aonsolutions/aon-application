@@ -10,7 +10,7 @@ import com.code.aon.ql.ast.RelationalExpression;
  * @since 1.0
  * 
  */
-class RelationalExpressionImpl extends AbstractBinaryExpressionImpl implements RelationalExpression {
+public class RelationalExpressionImpl extends AbstractBinaryExpressionImpl implements RelationalExpression {
 
 	private static final long serialVersionUID = 8072237133711671470L;
 
@@ -43,6 +43,15 @@ class RelationalExpressionImpl extends AbstractBinaryExpressionImpl implements R
 	 */
 	public int getType() {
 		return type;
+	}
+
+	/**
+	 * Sets the type.
+	 *
+	 * @param type the new type
+	 */
+	public void setType(int type) {
+		this.type = type;
 	}
 
 	/*

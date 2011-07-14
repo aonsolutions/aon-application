@@ -2,7 +2,6 @@ package com.code.aon.ui.form;
 
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.hibernate.TypeResolver;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -120,9 +119,8 @@ public class AbstractPojoController {
 	 * @throws ManagerBeanException 
 	 */
 	protected String getIdAlias() throws ManagerBeanException {
-		String factoryName = HibernateUtil.getSessionFactoryName(getPojo());
-		SessionFactory factory = HibernateUtil.getSessionFactory(factoryName);
-		ClassMetadata cmd = factory.getClassMetadata(getPojo());
+		TypeResolver typeResolver = new TypeResolver(getPojo());
+		ClassMetadata cmd = typeResolver.getClassMetdata();
 		String id = getPojoShortName() + "_" + cmd.getIdentifierPropertyName();
 		return getFieldName(id);
 	}
