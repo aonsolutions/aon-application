@@ -115,7 +115,6 @@ public class UndeductibleInvoiceDetailController extends InvoiceDetailController
 		invoiceDetail.setItem(item);
 		invoiceDetail.setDescription(item.getProduct().getName() + (item.getDetail() !=null ? " " + item.getDetail() : ""));
 		invoiceDetail.setQuantity(1);
-		invoiceDetail.setTaxableBase(item.getPurchasePrice());
 	}
 
 }

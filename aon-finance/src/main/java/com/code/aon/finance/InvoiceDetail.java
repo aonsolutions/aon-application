@@ -57,11 +57,16 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
     private double taxes;
 	private WorkPlace workPlace;
 
+	private boolean updateEnabled;
 	private boolean taxDataInDetail;
 	private double vatPercent;
 	private double vatQuota;
 	private double retentionPercent;
 	private double retentionQuota;
+
+	public InvoiceDetail() {
+		this.updateEnabled = true;
+	}
 
     @Id
     @GeneratedValue
@@ -179,6 +184,14 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 		this.workPlace = workPlace;
 	}
 	
+	@Transient
+	public boolean isUpdateEnabled() {
+		return updateEnabled;
+	}
+	public void setUpdateEnabled(boolean updateEnabled) {
+		this.updateEnabled = updateEnabled;
+	}
+
 	@Transient
 	public boolean isTaxDataInDetail() {
 		return taxDataInDetail;

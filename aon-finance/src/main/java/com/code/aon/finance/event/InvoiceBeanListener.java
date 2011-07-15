@@ -66,7 +66,7 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 			InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
 			double taxableBase = priceStrategy.getCalculatedTaxableBase(invoice);
 			double vatQuota = priceStrategy.getCalculatedTotalVatQuota(invoice, invoice);
-			double retentionQuota = CommonUtil.round(0 - priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice));
+			double retentionQuota = priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice);
 
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			invoice.setUpdateEnabled(false);

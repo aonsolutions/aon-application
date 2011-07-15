@@ -214,7 +214,7 @@ public class BasicPriceStrategy implements IPriceStrategy {
 		while(iter.hasNext()){
 			TaxBreakDown taxBreakDown = (TaxBreakDown)iter.next();
 			if(taxBreakDown.getTaxType().equals(TaxType.RETENTION)){
-				total -= taxBreakDown.getTaxQuota();
+				total += taxBreakDown.getTaxQuota();
 			}
 		}
 		return CommonUtil.round(total);

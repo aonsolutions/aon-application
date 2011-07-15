@@ -29,8 +29,6 @@ import com.code.aon.ql.Criteria;
 
 public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	
-	private boolean updating = false;
-
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
@@ -56,30 +54,32 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)to;
 			if (index == invoiceDetail.getLine()) {
 				invoiceDetail.setLine(index + 1);
+				invoiceDetail.setUpdateEnabled(false);
 				invoiceDetail.getInvoice().setUpdateEnabled(false);
 				detailBean.update(invoiceDetail);
 				++index;
 			}
 		}
 
-		updateInvoiceTotals((Invoice)BeanManager.getManagerBean(Invoice.class).get(detail.getInvoice().getId()));
+		Invoice invoice = (Invoice)BeanManager.getManagerBean(Invoice.class).get(detail.getInvoice().getId());
+		updateInvoiceTotals(invoice);
+		detail.setInvoice(invoice);
 	}
 	
 	@Override
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail detail = (InvoiceDetail)evt.getTo();
-		if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && detail.getItem() != null) {
-			InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat());
-			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
-			invoiceTaxBean.insert(detailVat);
-			if (detail.getInvoice().isWithholding() && detail.getItem().getProduct().getRetention() != null) {
-				InvoiceTax detailRetention = getInvoiceTax(detail, detail.getItem().getProduct().getRetention());
-				invoiceTaxBean.insert(detailRetention);
+		if (detail.isUpdateEnabled()) {
+			if (InvoiceType.UNDEDUCTIBLE != detail.getInvoice().getType() && detail.getItem() != null) {
+				InvoiceTax detailVat = getInvoiceTax(detail, detail.getItem().getProduct().getVat());
+				IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+				invoiceTaxBean.insert(detailVat);
+				if (detail.getInvoice().isWithholding() && detail.getItem().getProduct().getRetention() != null) {
+					InvoiceTax detailRetention = getInvoiceTax(detail, detail.getItem().getProduct().getRetention());
+					invoiceTaxBean.insert(detailRetention);
+				}
 			}
-		}
-
-		if (!updating) {
-			updating = true;
+	
 			IManagerBean detailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(detailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), detail.getInvoice().getId());
@@ -98,13 +98,13 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 						++index;
 					}
 					invoiceDetail.setLine(index);
+					invoiceDetail.setUpdateEnabled(false);
 					invoiceDetail.getInvoice().setUpdateEnabled(false);
 					detailBean.update(invoiceDetail);
 					++index;
 				}
 			}
-			updating = false;
-
+	
 			updateInvoiceTotals(detail.getInvoice());
 		}
 	}
@@ -131,6 +131,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)to;
 			if (index == invoiceDetail.getLine()) {
 				invoiceDetail.setLine(index - 1);
+				invoiceDetail.setUpdateEnabled(false);
 				invoiceDetail.getInvoice().setUpdateEnabled(false);
 				detailBean.update(invoiceDetail);
 				++ index;
@@ -145,7 +146,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
 			double taxableBase = priceStrategy.getCalculatedTaxableBase(invoice);
 			double vatQuota = priceStrategy.getCalculatedTotalVatQuota(invoice, invoice);
-			double retentionQuota = CommonUtil.round(0 - priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice));
+			double retentionQuota = priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice);
 
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			invoice.setUpdateEnabled(false);

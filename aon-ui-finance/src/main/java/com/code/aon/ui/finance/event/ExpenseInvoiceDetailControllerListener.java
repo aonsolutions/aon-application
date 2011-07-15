@@ -49,6 +49,7 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
 		invoiceDetail.setTaxDataInDetail(true);
 		try {
+			controller.setTotalChanged(0);
 			controller.loadExpenseItems();
 			if (controller.getExpenseItems().size() > 0) {
 				SelectItem selectItem = (SelectItem)controller.getExpenseItems().get(0);
@@ -69,6 +70,7 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 		invoiceDetail.setTaxDataInDetail(true);
 		fillTaxDataInDetail(invoiceDetail);
 		try {
+			controller.setTotalChanged(0);
 			controller.loadExpenseItems();
 		} catch(ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
@@ -77,37 +79,46 @@ public class ExpenseInvoiceDetailControllerListener extends InvoiceDetailControl
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
-		beforeSaveExpenseDetail(invoiceDetail);
+		beforeSaveExpenseDetail((ExpenseInvoiceDetailController)event.getController());
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
-		beforeSaveExpenseDetail(invoiceDetail);
+		beforeSaveExpenseDetail((ExpenseInvoiceDetailController)event.getController());
 	}
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		ExpenseInvoiceDetailController controller = (ExpenseInvoiceDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
-		afterSaveExpenseDetail(invoiceDetail, controller.getVatQuota(invoiceDetail), controller.getRetentionQuota(invoiceDetail));
+		afterSaveExpenseDetail((ExpenseInvoiceDetailController)event.getController());
+		super.afterBeanAdded(event);
 	}
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		ExpenseInvoiceDetailController controller = (ExpenseInvoiceDetailController)event.getController();
-		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
-		afterSaveExpenseDetail(invoiceDetail, controller.getVatQuota(invoiceDetail), controller.getRetentionQuota(invoiceDetail));
+		afterSaveExpenseDetail((ExpenseInvoiceDetailController)event.getController());
+		super.afterBeanUpdated(event);
 	}
 
-	private void beforeSaveExpenseDetail(InvoiceDetail invoiceDetail) {
+	private void beforeSaveExpenseDetail(ExpenseInvoiceDetailController controller) {
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		if (invoiceDetail.getTaxableBase() == 0 && controller.getTotalChanged() != 0) {
+			controller.totalChanged(invoiceDetail);
+		}
 		invoiceDetail.setQuantity(1);
 		invoiceDetail.setPrice(invoiceDetail.getTaxableBase());
 		invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
+		if (invoiceDetail.getVatQuota() == 0) {
+			invoiceDetail.setVatPercent(0);
+		}
+		if (invoiceDetail.getRetentionQuota() == 0) {
+			invoiceDetail.setRetentionPercent(0);
+		}
 	}
 
-	private void afterSaveExpenseDetail(InvoiceDetail invoiceDetail, double calculatedVatQuota, double calculatedRetentionQuota) {
+	private void afterSaveExpenseDetail(ExpenseInvoiceDetailController controller) {
+		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		double calculatedVatQuota = controller.getVatQuota(invoiceDetail);
+		double calculatedRetentionQuota = controller.getRetentionQuota(invoiceDetail);
 		if ((invoiceDetail.getVatQuota() != calculatedVatQuota) || (invoiceDetail.getRetentionQuota() != calculatedRetentionQuota)) {
 			String bundle = IFinanceMessages.BUNDLE_KEY;
 			String msg = IFinanceMessages.FINANCE_EXPENSE_INVOICE_QUOTA_WARNING;

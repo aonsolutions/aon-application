@@ -24,11 +24,13 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
-		if(!invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
-			try {
-				removeInvoiceTax(invoiceDetail);
-			} catch (ManagerBeanException e) {
-				LOGGER.error("Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
+		if (invoiceDetail.isUpdateEnabled()) {
+			if(!invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
+				try {
+					removeInvoiceTax(invoiceDetail);
+				} catch (ManagerBeanException e) {
+					LOGGER.error("Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
+				}
 			}
 		}
 	}
