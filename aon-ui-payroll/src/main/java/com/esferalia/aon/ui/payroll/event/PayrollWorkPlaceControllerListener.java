@@ -72,13 +72,23 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		insertOrUpdateChild();
+		PayrollWorkPlace pw = ((PayrollWorkPlaceController)this.getController()).getPayrollWorkPlace();
+		if((pw.getAgreement()!=null && pw.getAgreement().getId()!=null) 
+				|| (pw.getCalendar()!=null && pw.getCalendar().getId()!=null )
+				|| (pw.getEnterpriseActivity()!=null && pw.getEnterpriseActivity().getId()!=null)){
+			insertOrUpdateChild();
+		}
 	}
 	
 	@Override
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
-		insertOrUpdateChild();
+		PayrollWorkPlace pw = ((PayrollWorkPlaceController)this.getController()).getPayrollWorkPlace();
+		if((pw.getAgreement()!=null && pw.getAgreement().getId()!=null) 
+				|| (pw.getCalendar()!=null && pw.getCalendar().getId()!=null )
+				|| (pw.getEnterpriseActivity()!=null && pw.getEnterpriseActivity().getId()!=null)){
+			insertOrUpdateChild();
+		}
 	}
 	
 	@Override
@@ -90,7 +100,7 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 	private void insertOrUpdateChild() throws ControllerListenerException {
 		PayrollWorkPlaceController controller = (PayrollWorkPlaceController) this.getController();
 		if(controller.getPayrollWorkPlace().getId()==null){
-			controller.getPayrollWorkPlace().setWorkPlace((WorkPlace) this.getController().getTo());
+			controller.getPayrollWorkPlace().setWorkPlace((WorkPlace) controller.getTo());
 		}
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
@@ -103,16 +113,15 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 	}
 	private void removeChild() throws ControllerListenerException {
 		PayrollWorkPlaceController controller = (PayrollWorkPlaceController) this.getController();
-		if(controller.getPayrollWorkPlace().getId()==null){
-			controller.getPayrollWorkPlace().setWorkPlace((WorkPlace) this.getController().getTo());
-		}
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
-			bean.remove(controller.getPayrollWorkPlace());
-		} catch (ManagerBeanException e) {
-			String message = "Error al borrar el centro de trabajo";
-			AonUtil.addErrorMessage(message);
-			throw new ControllerListenerException(message, e);
+		if(controller.getPayrollWorkPlace().getId()!=null){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
+				bean.remove(controller.getPayrollWorkPlace());
+			} catch (ManagerBeanException e) {
+				String message = "Error al borrar el centro de trabajo";
+				AonUtil.addErrorMessage(message);
+				throw new ControllerListenerException(message, e);
+			}
 		}
 	}
 	

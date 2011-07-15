@@ -58,7 +58,6 @@ public class EnterpriseControllerListener extends ControllerAdapter {
 			controller.initRegistryInfo();
 			WorkPlace workPlace = insertWorkPlace(enterprise, controller.getMainAddress() );
 			controller.setWorkplace(workPlace);
-			acceptEnterpriseParams();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}
