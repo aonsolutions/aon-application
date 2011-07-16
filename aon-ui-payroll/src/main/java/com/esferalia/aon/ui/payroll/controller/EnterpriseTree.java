@@ -498,6 +498,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	public void onSelectTreeSalaryDraft(ActionEvent event) {
+		selectContract(event);
 		selectSalaryDraft(event);
 	}
 	

@@ -14,6 +14,8 @@
 			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.to.person}" />
 				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="idRequired" value="#{true}" />
+				<ui:param name="lookupDisabled" value="#{false}" />
 			</ui:include>
 
 			<aon:outputLabel for="ssRegime"
@@ -28,6 +30,7 @@
 				<ui:param name="lookupTo" value="#{contract.enterprise}" />
 				<ui:param name="skipNewButton" value="#{true}" />
 				<ui:param name="lookupReRender" value="workPlace,enterpriseActivities,enterpriseCCCs" />
+				<ui:param name="idRequired" value="#{true}" />
 				<aon:methodParam name="lookupChangeListener" 
 					value="#{contract.onEnterpriseChanged}" type="lookupChangeListener" />
 			</ui:include>

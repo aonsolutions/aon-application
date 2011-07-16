@@ -19,8 +19,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
 import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.AgreementLevel;
@@ -31,7 +29,6 @@ import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class AgreementPaymentController extends LinesController {
 	
@@ -44,6 +41,14 @@ public class AgreementPaymentController extends LinesController {
 	private DataModel variablesModel;
 	private DataModel undefinedVariablesModel;
 	private boolean searchCurrent;
+	private AgreementExtra agreementExtra;
+
+	public AgreementExtra getAgreementExtra() {
+		return agreementExtra;
+	}
+	public void setAgreementExtra(AgreementExtra agreementExtra) {
+		this.agreementExtra = agreementExtra;
+	}
 	
 	public boolean isSearchCurrent() {
 		return searchCurrent;
@@ -325,15 +330,5 @@ public class AgreementPaymentController extends LinesController {
 		}
 		return false;
 	}
-	
-	private AgreementExtra agreementExtra;
-
-	public AgreementExtra getAgreementExtra() {
-		return agreementExtra;
-	}
-	public void setAgreementExtra(AgreementExtra agreementExtra) {
-		this.agreementExtra = agreementExtra;
-	}
-	
 	
 }

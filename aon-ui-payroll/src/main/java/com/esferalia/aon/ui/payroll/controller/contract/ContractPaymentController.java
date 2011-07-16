@@ -65,7 +65,10 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 	}
 	
 	public boolean isReadOnly(){
-		return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()!=ExpressionScope.CONTRACT;
+		if(this.getPaymentsModel().getRowCount()>0){
+			return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()!=ExpressionScope.CONTRACT;
+		}
+		return true;
 	}
 
 	public void initialize(ActionEvent event) {

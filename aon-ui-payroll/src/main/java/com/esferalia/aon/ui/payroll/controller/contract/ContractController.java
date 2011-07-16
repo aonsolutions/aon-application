@@ -670,4 +670,33 @@ public class ContractController extends VariablesAbstractController {
 		initializeVariables(event);
 	}
 	
+	public List<?> expressionContext(Object suggest) {
+		try {
+			String filter = (String) suggest;
+			List<String> list = new LinkedList<String>();
+			Contract contract = (Contract) this.getTo();
+			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+			Criteria criteria = new Criteria();  
+			String alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID);
+			criteria.addEqualExpression(alias, contract.getId());
+			alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE);
+			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, new Date());
+			Expression expr2 = ExpressionUtilities.getNullExpression(alias);
+			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
+			criteria.addOrder(alias, false);
+			alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME);
+			criteria.addOrder(alias);
+			for(ITransferObject to: bean.getList(criteria)){
+				ContractData data = (ContractData) to;
+				if (data.getName().contains(filter.toUpperCase())) {
+					list.add(data.getName());		
+				}
+			}
+			return list;
+		} catch (ManagerBeanException e) {
+			LOGGER.error("error on expressionContext");
+			return null;
+		} 
+	}
+	
 }

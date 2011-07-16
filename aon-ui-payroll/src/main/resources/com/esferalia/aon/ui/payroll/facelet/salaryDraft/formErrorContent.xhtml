@@ -19,18 +19,18 @@
 
 				<aon:div styleClass="aon-padding">
 					<aon:div styleClass="aon-bold">
-						<aon:outputText value="#{contract.to.workPlace.enteprise.registry.fullName}"/>
+						<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}"/>
 					</aon:div>
 					<aon:div styleClass="aon-italic">
 						<aon:outputText value="#{companyBundle.company_workplace_address}:"/>
 					</aon:div>
 					<aon:div styleClass="aon-bold">
-						<aon:outputText styleClass="aon-margin-left" value="#{contract.to.workPlace.enteprise.registry.defaultAddress.fullAddress}"/>
+						<aon:outputText styleClass="aon-margin-left" value="#{contract.to.workPlace.enterprise.registry.defaultAddress.fullAddress}"/>
 					</aon:div>
 					<aon:div>
 						<aon:outputText styleClass="aon-italic" value="#{bundle.aon_company_document}:"/>
 						<aon:outputText styleClass="aon-margin-left aon-bold" 
-							value="#{contract.to.workPlace.enteprise.registry.document}" />
+							value="#{contract.to.workPlace.enterprise.registry.document}" />
 					</aon:div>
 					<aon:div>
 						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_ccc}:"/>
@@ -63,7 +63,9 @@
 					</aon:div>
 					<aon:div>
 						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_group_category}:"/>
+						<!--  
 						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{contract.to.quoteGroup}"/>
+						-->
 						<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_seniority_date}:"/>
 						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{contract.to.seniorityDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />

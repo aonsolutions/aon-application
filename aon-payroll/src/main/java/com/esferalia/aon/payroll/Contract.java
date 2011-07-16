@@ -204,7 +204,6 @@ public class Contract implements ITransferObject, ISalaryProxy {
 		return getStatus() == ContractStatus.PROCESSED;
 	}
 	
-	@Column(nullable = false )
 	public Integer getRegistration() {
 		return registration;
 	}
