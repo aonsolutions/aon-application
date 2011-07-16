@@ -1,6 +1,8 @@
 package com.esferalia.aon.payroll;
 
 
+import java.util.Calendar;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -17,6 +20,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.Month;
 
 @Entity
 @Table(name="agreement_extra")
@@ -122,5 +126,74 @@ public class AgreementExtra implements ITransferObject {
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
 	}
-
+	
+	
+	
+	@Transient
+	public Month getStartDateMonth(){
+		return Month.getMonthByValue(getMonth(getStartDate())!=null?getMonth(getStartDate()):0);
+	}
+	@Transient
+	public void setStartDateMonth(Month month){
+		setMonth(getStartDate(), month, true);
+	}
+	@Transient
+	public boolean getStartDatePrevious(){
+		return getPrevious(getStartDate());
+	}
+	@Transient
+	public void setStartDatePrevious(boolean previous){
+		setPrevious(getStartDate(), previous);
+	}
+	@Transient
+	public Month getEndDateMonth(){
+		return Month.getMonthByValue(getMonth(getEndDate())!=null?getMonth(getEndDate()):0);
+	}
+	@Transient
+	public void setEndDateMonth(Month month){
+		setMonth(getEndDate(), month, false);
+	}
+	@Transient
+	public boolean getEndDatePrevious(){
+		return getPrevious(getEndDate());
+	}
+	@Transient
+	public void setEndDatePrevious(boolean previous){
+		setPrevious(getEndDate(), previous);
+	}
+	
+	@Transient
+	private Integer getMonth(String date){
+		if(date!=null && date.length()>4){
+			return Integer.parseInt(date.substring(3, 5))-1;
+		}
+		return null;
+	}
+	@Transient
+	private void setMonth(String date, Month month, boolean startDate){
+		if(startDate){
+			date = "01"+(new Integer(month.ordinal()+1)).toString();//+date.substring(3, date.length());
+		} else {
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.MONTH, month.ordinal());
+			date = cal.getActualMaximum(Calendar.DAY_OF_MONTH)+(new Integer(month.ordinal()+1)).toString();//+date.substring(3, date.length());
+		}
+	}
+	@Transient
+	private boolean getPrevious(String date){
+		return date.endsWith("-1");
+	}
+	@Transient
+	private void setPrevious(String date, boolean previous){
+		if(previous){
+			if(!date.endsWith("-1")){
+				date = date.substring(0, date.length())+"-1";
+			}
+		} else {
+			if(date.endsWith("-1")){
+				date = date.substring(0, 5);
+			}
+		}
+	}
+	
 }
