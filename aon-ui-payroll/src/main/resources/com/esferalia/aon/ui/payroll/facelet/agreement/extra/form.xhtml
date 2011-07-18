@@ -31,6 +31,7 @@
 			<aon:selectOneMenu id="AgreementExtra_issueDate_day" value="#{to.issueDateDay}">
 				<f:selectItems value="#{agreementPayment.monthDays}"  />
 			</aon:selectOneMenu>
+			<aon:outputText styleClass="aon-italic aon-margin-left" value="#{payrollBundle.payroll_of}" />
 			<aon:selectOneMenu id="AgreementExtra_issueDate_month" value="#{agreementPayment.issueMonth}">
 				<f:selectItems value="#{commonCollections.months}"  />
 				<a4j:support event="onchange" reRender="AgreementExtra_issueDate_day" />

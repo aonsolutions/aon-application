@@ -60,7 +60,9 @@ public class AgreementPaymentController extends LinesController {
 	public void setIssueMonth(Month issueMonth) {
 		daysList = null;
 		this.issueMonth = issueMonth;
-		getAgreementExtra().setIssueDateMonth(issueMonth);
+		if(getAgreementExtra()!=null){
+			getAgreementExtra().setIssueDateMonth(issueMonth);
+		}
 	}
 
 	public AgreementExtra getAgreementExtra() {
