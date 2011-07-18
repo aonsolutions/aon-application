@@ -127,73 +127,100 @@ public class AgreementExtra implements ITransferObject {
 		return new PojoToStringBuilder(this).toString();
 	}
 	
-	
-	
 	@Transient
 	public Month getStartDateMonth(){
 		return Month.getMonthByValue(getMonth(getStartDate())!=null?getMonth(getStartDate()):0);
 	}
-	@Transient
-	public void setStartDateMonth(Month month){
-		setMonth(getStartDate(), month, true);
+	public void setStartDateMonth(Month startDateMonth){
+		startDate = setMonth(getStartDate(), startDateMonth, "01");
 	}
 	@Transient
 	public boolean getStartDatePrevious(){
 		return getPrevious(getStartDate());
 	}
-	@Transient
-	public void setStartDatePrevious(boolean previous){
-		setPrevious(getStartDate(), previous);
+	public void setStartDatePrevious(boolean startDatePrevious){
+		startDate = setPrevious(getStartDate(), startDatePrevious);
 	}
 	@Transient
 	public Month getEndDateMonth(){
 		return Month.getMonthByValue(getMonth(getEndDate())!=null?getMonth(getEndDate()):0);
 	}
-	@Transient
-	public void setEndDateMonth(Month month){
-		setMonth(getEndDate(), month, false);
+	public void setEndDateMonth(Month endDateMonth){
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.MONTH, endDateMonth.ordinal());
+		endDate = setMonth(getEndDate(), endDateMonth, String.valueOf(cal.getActualMaximum(Calendar.DAY_OF_MONTH)));
 	}
 	@Transient
 	public boolean getEndDatePrevious(){
 		return getPrevious(getEndDate());
 	}
+	public void setEndDatePrevious(boolean endDatePrevious){
+		endDate = setPrevious(getEndDate(), endDatePrevious);
+	}
 	@Transient
-	public void setEndDatePrevious(boolean previous){
-		setPrevious(getEndDate(), previous);
+	public Month getIssueDateMonth() {
+		return Month.getMonthByValue(getMonth(getIssueDate())!=null?getMonth(getIssueDate()):0);
+	}
+	public void setIssueDateMonth(Month issueDateMonth) {
+		if( issueDateMonth != null){
+			String m = (new Integer(issueDateMonth.ordinal()+1)).toString();
+			issueDate = "01/"+(m.length()==1?"0"+m:m);;
+		}
+	}
+	@Transient
+	public Integer getIssueDateDay() {
+		return getDay(getIssueDate());
+	}
+	public void setIssueDateDay(Integer issueDateDay) {
+		issueDate = setDay(issueDate, issueDateDay.toString());
 	}
 	
-	@Transient
 	private Integer getMonth(String date){
 		if(date!=null && date.length()>4){
 			return Integer.parseInt(date.substring(3, 5))-1;
 		}
 		return null;
 	}
-	@Transient
-	private void setMonth(String date, Month month, boolean startDate){
-		if(startDate){
-			date = "01"+(new Integer(month.ordinal()+1)).toString();//+date.substring(3, date.length());
-		} else {
-			Calendar cal = Calendar.getInstance();
-			cal.set(Calendar.MONTH, month.ordinal());
-			date = cal.getActualMaximum(Calendar.DAY_OF_MONTH)+(new Integer(month.ordinal()+1)).toString();//+date.substring(3, date.length());
+	private String setMonth(String date, Month month){
+		if(date==null || month==null){
+			return null;
 		}
+		String m = (new Integer(month.ordinal()+1)).toString();
+		return "01/"+(m.length()==1?"0"+m:m);//+date.substring(5, date.length());
 	}
-	@Transient
+	private String setMonth(String date, Month month, String dateDay){
+		String m = (new Integer(month.ordinal()+1)).toString();
+		return dateDay+"/"+(m.length()==1?"0"+m:m);
+	}
+	private Integer getDay(String date){
+		if(date!=null && date.length()>=2){
+			return Integer.parseInt(date.substring(0, 2));
+		}
+		return null;
+	}
+	private String setDay(String date, String dateDay){
+		if(date==null || dateDay==null){
+			return null;
+		}
+		return (dateDay.length()==1?"0"+dateDay:dateDay)+date.substring(2, date.length());
+	}
 	private boolean getPrevious(String date){
+		if(date == null){
+			return false;
+		}
 		return date.endsWith("-1");
 	}
-	@Transient
-	private void setPrevious(String date, boolean previous){
+	private String setPrevious(String date, boolean previous){
 		if(previous){
 			if(!date.endsWith("-1")){
-				date = date.substring(0, date.length())+"-1";
+				return date.substring(0, date.length())+" -1";
 			}
 		} else {
 			if(date.endsWith("-1")){
-				date = date.substring(0, 5);
+				return date.substring(0, 5);
 			}
 		}
+		return date;
 	}
 	
 }

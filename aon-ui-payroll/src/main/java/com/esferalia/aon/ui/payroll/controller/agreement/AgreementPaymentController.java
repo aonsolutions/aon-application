@@ -1,10 +1,12 @@
 package com.esferalia.aon.ui.payroll.controller.agreement;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
@@ -16,10 +18,14 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelData;
@@ -42,6 +48,20 @@ public class AgreementPaymentController extends LinesController {
 	private DataModel undefinedVariablesModel;
 	private boolean searchCurrent;
 	private AgreementExtra agreementExtra;
+	private List<SelectItem> daysList;
+	private Month issueMonth;
+	
+	public Month getIssueMonth() {
+		if(issueMonth==null){
+			issueMonth = getAgreementExtra().getIssueDateMonth();
+		}
+		return issueMonth;
+	}
+	public void setIssueMonth(Month issueMonth) {
+		daysList = null;
+		this.issueMonth = issueMonth;
+		getAgreementExtra().setIssueDateMonth(issueMonth);
+	}
 
 	public AgreementExtra getAgreementExtra() {
 		return agreementExtra;
@@ -225,15 +245,38 @@ public class AgreementPaymentController extends LinesController {
 		if(alp.getDescription().isEmpty()){
 			alp.setDescription(null);
 		}
-		super.onAccept(event);
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
-			saveAgreementExtra();
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// BEGIN operaciones de la transaccion
+				super.onAccept(event);
+				saveAgreementExtra();
+				reset(false);
+				setPaymentsModel(null);
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				String msg = e.getMessage();
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					msg = "Unable to rollback transaction! (" + msg + ")";
+				}
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(e);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-		reset(false);
-		setPaymentsModel(null);
 	}
 
 	public void onCancel(ActionEvent event) {
@@ -242,15 +285,38 @@ public class AgreementPaymentController extends LinesController {
 	}
 
 	public void onRemove(ActionEvent event) {
+		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+		boolean mustCloseSession = HibernateUtil.mustCloseSession();
+		String sessionName = HibernateUtil.getSessionFactoryName();
 		try {
-			removeAgreementExtra();
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try {
+				HibernateUtil.setBeginTransaction(false);
+				HibernateUtil.setCloseSession(false);
+				HibernateUtil.beginTransaction(sessionName);
+				// BEGIN operaciones de la transaccion
+				removeAgreementExtra();
+				super.onRemove(event);
+				reset(false);
+				setPaymentsModel(null);
+				// FIN operaciones de la transaccion
+				HibernateUtil.getSession(sessionName).flush();
+				HibernateUtil.commitTransaction(sessionName);
+			} catch (Exception e) {
+				String msg = e.getMessage();
+				try {
+					HibernateUtil.rollbackTransaction(sessionName);
+				} catch (DAOException daoe) {
+					msg = "Unable to rollback transaction! (" + msg + ")";
+				}
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(e);
+			} finally {
+				HibernateUtil.closeSession(sessionName);
+			}
+		} finally {
+			HibernateUtil.setCloseSession(mustCloseSession);
+			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-		super.onRemove(event);
-		reset(false);
-		setPaymentsModel(null);
 	}
 	
 	public void onReset(ActionEvent event) {
@@ -262,14 +328,26 @@ public class AgreementPaymentController extends LinesController {
 		setModalPanelVisible(panelVisible);
 	}
 	
+	@Override
+	public void onSelect(ActionEvent event) {
+		super.onSelect(event);
+		if(isSalaryExtra()){
+			searchAgreementExtra();
+		}
+	}
+	
 	private void saveAgreementExtra() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
-		bean.insertOrUpdate(getAgreementExtra());
+		if(getAgreementExtra()!=null){
+			IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
+			setAgreementExtra((AgreementExtra) bean.insertOrUpdate(getAgreementExtra()));
+		}
 	}
 	
 	private void removeAgreementExtra() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
-		bean.remove(getAgreementExtra());
+		if(getAgreementExtra()!=null){
+			IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
+			bean.remove(getAgreementExtra());
+		}
 	}
 	
 	
@@ -302,33 +380,50 @@ public class AgreementPaymentController extends LinesController {
 	}
 	
 	private void searchAgreementExtra(){
+		setIssueMonth(null);
 		AgreementPayment ap = (AgreementPayment) this.getTo();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_ID), ap.getAgreement().getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_PAYMENT_ID), ap.getId());
-			List<ITransferObject> list = bean.getList(criteria);
-			if(list.isEmpty()){
-				AgreementExtra ae = new AgreementExtra();
-				ae.setAgreement(ap.getAgreement());
-				ae.setAgreementPayment(ap);
-				setAgreementExtra(ae);
-			} else {
-				setAgreementExtra((AgreementExtra) list.get(0));
+		if(ap.getSalaryType()==SalaryType.EXTRA){
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_ID), ap.getAgreement().getId());
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_PAYMENT_ID), ap.getId());
+				List<ITransferObject> list = bean.getList(criteria);
+				if(list.isEmpty()){
+					AgreementExtra ae = new AgreementExtra();
+					ae.setAgreement(ap.getAgreement());
+					ae.setAgreementPayment(ap);
+					setAgreementExtra(ae);
+				} else {
+					setAgreementExtra((AgreementExtra) list.get(0));
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "error on searchAgreementExtra";
+				LOGGER.error(msg);
 			}
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} else {
+			setAgreementExtra(null);
 		}
 	}
 	
 	public boolean isSalaryExtra(){
-		if(((AgreementPayment)this.getTo()).getSalaryType()==SalaryType.EXTRA){
-			searchAgreementExtra();
+		if(this.getTo()!=null && ((AgreementPayment)this.getTo()).getSalaryType()==SalaryType.EXTRA){
 			return true;
 		}
 		return false;
+	}
+	
+	public List<SelectItem> getMonthDays() {
+		if(daysList==null){
+			daysList = new LinkedList<SelectItem>();
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.MONTH, getIssueMonth().ordinal());
+			for(int i=1; i<=cal.getActualMaximum(Calendar.DAY_OF_MONTH); i++){
+				SelectItem item = new SelectItem(i, String.valueOf(i));
+				daysList.add(item);			
+			}
+		}
+		return daysList;
 	}
 	
 }
