@@ -20,7 +20,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.sign.controller.CertificateController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.webmail.EmailSender;
 import com.code.aon.webmail.SecurityInfo;
 
 public class InvoicePrintController extends InvoiceController implements IFinanceConstants {
