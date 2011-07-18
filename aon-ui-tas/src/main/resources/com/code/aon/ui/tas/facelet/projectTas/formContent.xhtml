@@ -66,15 +66,19 @@
 						<aon:outputText value="#{tasBundle.tas_projectTas_tasItemData}"/>
 						<aon:panelGroup id="TasItemDiv" style="font-size: 0.9em;" styleClass="aon-italic aon-margin-left">
 							<aon:panelGroup rendered="#{controller.to.tasItem.id != null}">
-								<aon:outputLabel styleClass="aon-margin-left" value="#{tasBundle.tas_privateCode}" 
-										rendered="#{controller.to.tasItem.privateCode != null}"/>
-								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.tasItem.privateCode}" />
-	
-								<aon:outputLabel styleClass="aon-margin-left" value="#{bundle.aon_description}" 
-										rendered="#{controller.to.tasItem.description != null}"/>
-								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.tasItem.description}">
-									<aon:abbreviateConverter maxWidth="50" />
+								<aon:outputLabel value="#{tasBundle.tas_privateCode}:" />
+								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.tasItem.privateCode}"
+									rendered="#{controller.to.tasItem.privateCode != null and controller.to.tasItem.privateCode != ''}" />
+								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{bundle.aon_undefined}"
+									rendered="#{controller.to.tasItem.privateCode == null or controller.to.tasItem.privateCode == ''}" />
+
+								<aon:outputLabel styleClass="aon-margin-left" value="#{bundle.aon_description}:" />
+								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.tasItem.description}"
+									rendered="#{controller.to.tasItem.description != null and controller.to.tasItem.description != ''}">
+									<aon:abbreviateConverter maxWidth="64" />
 								</aon:outputText>
+								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{bundle.aon_undefined}"
+									rendered="#{controller.to.tasItem.description == null or controller.to.tasItem.description == ''}" />
 							</aon:panelGroup>
 						</aon:panelGroup>
 
@@ -85,21 +89,27 @@
 							<ui:param name="lookupReRender"	value="TasItemDiv,TargetDiv" />
 							<aon:methodParam name="lookupChangeListener" value="#{controller.targetData}" type="lookupChangeListener" />
 						</ui:include>
-						
+
 						<aon:outputText value="#{tasBundle.tas_projectTas_targetData}"/>
 						<aon:panelGroup id="TargetDiv" style="font-size: 0.9em;" styleClass="aon-italic aon-margin-left">
 							<aon:panelGroup rendered="#{controller.to.target.id != null}">
-								<aon:outputText value="#{bundle.aon_company_document}:" 
-									rendered="#{controller.to.target.registry.document != null}"/>
-								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.target.registry.document}" />
+								<aon:outputText value="#{bundle.aon_company_document}:" />
+								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.target.registry.document}"
+									rendered="#{controller.to.target.registry.document != null and controller.to.target.registry.document != ''}" />
+								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{bundle.aon_undefined}"
+									rendered="#{controller.to.target.registry.document == null or controller.to.target.registry.document == ''}" />
 								
-								<aon:outputText styleClass="aon-margin-left" value="#{registryBundle.registry_phone}:" 
-									rendered="#{controller.to.target.registry.phone.value != null}"/>
-								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.target.registry.phone.value}" />
+								<aon:outputText styleClass="aon-margin-left" value="#{registryBundle.registry_phone}:" />
+								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.target.registry.phone.value}"
+									rendered="#{controller.to.target.registry.phone.value != null}" />
+								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{bundle.aon_undefined}"
+									rendered="#{controller.to.target.registry.phone.value == null}" />
 								
-								<aon:outputText styleClass="aon-margin-left" value="#{registryBundle.registry_cellular}:" 
-									rendered="#{controller.to.target.registry.cellular.value != null}"/>
-								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.target.registry.cellular.value}" />
+								<aon:outputText styleClass="aon-margin-left" value="#{registryBundle.registry_cellular}:" />
+								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{controller.to.target.registry.cellular.value}"
+									rendered="#{controller.to.target.registry.cellular.value != null}" />
+								<aon:outputText styleClass="aon-bold aon-margin-left" value="#{bundle.aon_undefined}"
+									rendered="#{controller.to.target.registry.cellular.value == null}" />
 							</aon:panelGroup>
 						</aon:panelGroup>
 
@@ -118,7 +128,7 @@
 
 						<aon:outputLabel for="ProjectTas_comments" value="#{bundle.aon_description}" />
 						<aon:inputTextarea id="ProjectTas_comments" 
-							value="#{controller.to.comments}" cols="80" rows="6"
+							value="#{controller.to.comments}" cols="100" rows="6"
 							disabled="#{controller.finished}">
 							<f:validateLength maximum="65536"/>
 						</aon:inputTextarea>
