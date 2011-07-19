@@ -102,17 +102,9 @@
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="tasOwnerStat"
-											actionListener="#{tasStat.onResetOwnerStat}"
+											actionListener="#{tasStat.onEditSearch}"
 											action="tasStat_search" 
-											disabled="true"
-											value="#{statBundle.stat_menu_tas_owner}"/>
-									</aon:div>
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="tasItemStat"
-											actionListener="#{tasStat.onResetTasItemStat}"
-											disabled="true"
-											action="tasStat_search" 
-											value="#{statBundle.stat_menu_tas_tasItem}"/>
+											value="#{statBundle.stat_menu_tas_stat}"/>
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>
@@ -131,13 +123,6 @@
 											actionListener="#{audabridgeParams.onLoad}"
 											value="#{audabridgeBundle.audabridge_parameters_module}" />
 									</aon:div>
-<!-- 									
-									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="audabridgeOffer" action="audabridgeOffer"
-											actionListener="#{audabridgeOffer.onReset}"
-											value="#{audabridgeBundle.audabridge_offer_module}" />
-									</aon:div>
- -->
 								</aon:div>
 							</aon:panelGrid>
 						</c:if>
