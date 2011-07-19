@@ -274,6 +274,18 @@
 			<from-outcome>tasStat_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/stat/facelet/tasStat/search.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>tasStat_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/stat/facelet/tasStat/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tasStat_owner_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/stat/facelet/tasStat/owner_form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>tasStat_tasItem_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/stat/facelet/tasStat/tasItem_form.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 </faces-config>

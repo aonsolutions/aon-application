@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="contentForm">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{statBundle.stat_menu_tas_tasItem}" />
+				<ui:param name="controller" value="#{tasStat}" />
+
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="#{toolbarID}-search"
+						title="#{bundle.aon_key_search_accelerator}"
+						value="#{bundle.aon_search}"
+						immediate="true" action="tasStat_search"
+						actionListener="#{tasStat.onEditSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}" />
+					<aon:commandButton id="#{toolbarID}-back"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{bundle.aon_back}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						action="tasStat_list" accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="background-color:#f6f5e3; padding: 5px; margin-bottom: 5px;">
+					<aon:div>
+						<aon:outputText value="#{tasBundle.tas_publicCode}" styleClass="aon-margin-left aon-italic"/>
+						<aon:outputText value="#{tasStat.header.publicCode}" styleClass="aon-margin-left aon-bold" style="font-size: 1.3em;"/>
+						<aon:outputText value="#{tasBundle.tas_make}" styleClass="aon-margin-left aon-italic"/>
+						<aon:outputText value="#{tasStat.header.make}" styleClass="aon-margin-left aon-bold"/>
+						<aon:outputText value="#{tasBundle.tas_model}" styleClass="aon-margin-left aon-italic"/>
+						<aon:outputText value="#{tasStat.header.model}" styleClass="aon-margin-left aon-bold"/>
+					</aon:div>
+					<aon:div rendered="#{tasStat.header.tasItemDescription != null}">
+						<aon:outputText value="#{bundle.aon_description}" styleClass="aon-margin-left aon-italic"/>
+						<aon:outputText value="#{tasStat.header.tasItemDescription}" styleClass="aon-margin-left aon-bold"/>
+					</aon:div>
+					<aon:div rendered="#{tasStat.header.tasItemAdditionalInfo != null}">
+						<aon:outputText value="#{tasBundle.tas_add_info}" styleClass="aon-margin-left aon-italic"/>
+						<aon:outputText value="#{tasStat.header.tasItemAdditionalInfo}" styleClass="aon-margin-left aon-bold"/>
+					</aon:div>
+				</aon:div>
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{tasStat}" />
+					<ui:param name="dataTableId" value="ownerDataTable" />
+					<ui:param name="dataModel" value="#{tasStat.detailModel}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					
+					<ui:param name="rows" value="20" />
+					
+					<ui:define name="columns">
+ 					
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<aon:commandLink id="tasSelection" 
+								styleClass="aon-table-row-link aon-icon-rowSelector"
+								title="#{bundle.aon_detail}" 
+								value="&#160;"
+								immediate="true" ajaxSingle="true" requestDelay="100"
+								action="#{tasStat.selectDetail}">
+							</aon:commandLink>
+						</aon:column>
+
+						<aon:column styleClass="aon-width-50">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_type}" />
+							</f:facet> 
+							<aon:outputText value="#{to.type}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_series}/#{bundle.aon_number}" />
+							</f:facet> 
+							<aon:outputText value="#{to.referenceCode}" />
+						</aon:column>
+									
+						<aon:column styleClass="aon-width-100">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />	
+							</f:facet> 
+							<aon:outputText value="#{to.date}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+		
+						<aon:column styleClass="aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_document}" />	
+							</f:facet> 
+							<aon:outputText value="#{to.fullDocument}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-width-auto">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_name}" />	
+							</f:facet> 
+							<aon:outputText value="#{to.name}" />
+						</aon:column>
+
+						<aon:column styleClass="aon-width-200">
+							<f:facet name="header">
+								<aon:outputText value="#{tasBundle.tas_projectTas_taskHolder}" />	
+							</f:facet> 
+							<aon:outputText value="#{to.taskHolderName}">
+								<aon:abbreviateConverter maxWidth="20" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column styleClass="aon-width-150">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_comment}" />	
+							</f:facet> 
+							<aon:div rendered="#{to.comments != null and to.comments != ''}" ajaxRendered="true">
+								<aon:outputText value="#{to.comments}" style="padding-left:20px;" styleClass="aon-icon-comment">
+									<aon:abbreviateConverter maxWidth="15" />
+								</aon:outputText>
+								<rich:toolTip value="#{to.comments}" hideEvent="onmouseout" showDelay="200" />								
+							</aon:div>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
+				
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

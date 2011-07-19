@@ -10,4 +10,13 @@ public interface IStatConstants {
 
 	String TAS_STAT_CONTROLLER_NAME = "tasStat";
 
+	String PROJECT_TAS_CONTROLLER = "projectTas";
+	
+	String OFFER_CONTROLLER = "offer";
+
+	String TAS_STAT_TAS_ITEM_FORM = "tasStat_tasItem_form";
+
+	String PROJECT_TAS_FORM = PROJECT_TAS_CONTROLLER + "_form";
+	String OFFER_FORM = OFFER_CONTROLLER + "_form";
+
 }

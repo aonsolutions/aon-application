@@ -3,22 +3,19 @@ package com.code.aon.ui.stat.controller;
 
 import java.util.Date;
 
-import antlr.MakeGrammar;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.Target;
-import com.code.aon.tas.Make;
-import com.code.aon.tas.Model;
+import com.code.aon.tas.TasItem;
 
 public class TasStatParams {
 
+	private static String PERCENT = "%";
+	
 	private Date fromDate;
 	private Date toDate;
-	private String publicCode;
-	private String privateCode;
-	private Make make;
-	private Model model;
+	private TasItem tasItem;
 	private Target target;
-	private TasStatType statType;
 
 	public Date getFromDate() {
 		return fromDate;
@@ -34,34 +31,6 @@ public class TasStatParams {
 		this.toDate = toDate;
 	}
 	
-	public String getPublicCode() {
-		return publicCode;
-	}
-	public void setPublicCode(String publicCode) {
-		this.publicCode = publicCode;
-	}
-	
-	public String getPrivateCode() {
-		return privateCode;
-	}
-	public void setPrivateCode(String privateCode) {
-		this.privateCode = privateCode;
-	}
-
-	public Make getMake() {
-		return make;
-	}
-	public void setMake(Make make) {
-		this.make = make;
-	}
-
-	public Model getModel() {
-		return model;
-	}
-	public void setModel(Model model) {
-		this.model = model;
-	}
-	
 	public Target getTarget() {
 		return target;
 	}
@@ -69,11 +38,28 @@ public class TasStatParams {
 		this.target = target;
 	}
 	
-	public TasStatType getStatType() {
-		return statType;
+	public TasItem getTasItem() {
+		return tasItem;
 	}
-	public void setStatType(TasStatType statType) {
-		this.statType = statType;
+	public void setTasItem(TasItem tasItem) {
+		this.tasItem = tasItem;
 	}
 
+
+	public com.code.aon.stat.tas.TasStatParams getStatParams() {
+		com.code.aon.stat.tas.TasStatParams p = new com.code.aon.stat.tas.TasStatParams();
+		p.setFromDate(getFromDate());
+		p.setToDate(getToDate());
+		p.setTarget( getTarget() != null?getTarget().getId():null );
+		if (getTasItem() != null && getTasItem().getId() != null) {
+			p.setTasItem( getTasItem().getId() );	
+		} else  if (getTasItem() != null) {
+			p.setModel(getTasItem().getModel() != null? getTasItem().getModel().getId() : null);
+			p.setPublicCode(StringUtils.isNotBlank(getTasItem().getPublicCode())?PERCENT+getTasItem().getPublicCode()+PERCENT:null);
+			p.setPrivateCode(StringUtils.isNotBlank(getTasItem().getPrivateCode())?PERCENT+getTasItem().getPrivateCode()+PERCENT:null);
+			p.setDescription(StringUtils.isNotBlank(getTasItem().getDescription())?PERCENT+getTasItem().getDescription()+PERCENT:null);
+			p.setAddInfo(StringUtils.isNotBlank(getTasItem().getAddInfo())?PERCENT+getTasItem().getAddInfo()+PERCENT:null);
+		}
+		return p;
+	}
 }

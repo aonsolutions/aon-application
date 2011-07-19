@@ -9,28 +9,72 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form>
+		<aon:form id="contentForm">
 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
-				<ui:param name="toolbarTitle" value="#{tasStat.params.statType}" />
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
+				<ui:param name="toolbarTitle" value="#{statBundle.stat_menu_tas_stat}" />
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
-			</ui:include>
+				<ui:param name="skipClearButton" value="true" />
+				
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="#{toolbarID}-clear"
+							value="#{bundle.aon_clear}"
+							actionListener="#{tasStat.onClean}"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+				</ui:define>
+				
+			</ui:decorate>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{tasStat}" />
 			
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchAction" value="#{tasStat.action}" type="action" />
 					
 					<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{tasStat.params.target}" />
+						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
-					
 
+					<ui:include src="/com/code/aon/ui/tas/facelet/tasItem/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{tasStat.params.tasItem}" />
+						<ui:param name="lookupReRender"	value="contentForm" />
+					</ui:include>
+
+					<ui:include src="/com/code/aon/ui/tas/facelet/model/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{tasStat.params.tasItem.model}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupDisabled" value="#{tasStat.params.tasItem.id != null}" />
+					</ui:include>
+				
+					<aon:outputLabel for="TasItem_publicCode"
+						value="#{tasBundle.tas_publicCode}" />
+					<aon:inputText id="TasItem_publicCode" size="20"
+						disabled="#{tasStat.params.tasItem.id != null}"
+						value="#{tasStat.params.tasItem.publicCode}"/>
+				
+					<aon:outputLabel for="TasItem_privateCode"
+						value="#{tasBundle.tas_privateCode}" />
+					<aon:inputText id="TasItem_privateCode" size="20"
+						disabled="#{tasStat.params.tasItem.id != null}"
+						value="#{tasStat.params.tasItem.privateCode}" />
+				
+					<aon:outputLabel for="TasItem_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="TasItem_description" size="50"
+						disabled="#{tasStat.params.tasItem.id != null}"
+						value="#{tasStat.params.tasItem.description}" />
+				
+					<aon:outputLabel for="TasItem_addInfo"
+						value="#{tasBundle.tas_add_info}" />
+					<aon:inputText id="TasItem_addInfo" size="50"
+						disabled="#{tasStat.params.tasItem.id != null}"
+						value="#{tasStat.params.tasItem.addInfo}" />
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+		<aon:lookupButtonPopup lookup="#{modelLookup}" />
+		<aon:lookupButtonPopup lookup="#{tasItemLookup}" />
 	</ui:define>
 </ui:composition>
