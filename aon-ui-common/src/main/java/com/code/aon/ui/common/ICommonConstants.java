@@ -39,4 +39,22 @@ public interface ICommonConstants {
 	/** Logout action listener. */
 	String ON_LOGOUT = "onLogout";
 	
+	/** The ID. */
+	String ID = "aon_id";
+	
+	/** The Comment. */
+	String COMMENT = "aon_comment";
+	
+	/** The Status. */
+	String STATUS = "aon_status";
+	
+	/** The Company Document. */
+	String COMPANY_DOCUMENT = "aon_company_document";
+
+	/** The login user. */
+	String LOGIN_USER = "aon_login_user";
+	
+	/** The DATE. */
+	String DATE = "aon_date";
+	
 }

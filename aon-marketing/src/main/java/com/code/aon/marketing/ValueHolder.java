@@ -134,8 +134,11 @@ public abstract class ValueHolder implements ITransferObject {
 	 * @return true, if is boolean
 	 */
 	@Transient
-	public boolean isBoolean() {
-		return (this.number != null) && (this.number != 0);
+	public Boolean isBoolean() {
+		if ( this.number != null ) {
+			return (this.number != 0);
+		}
+		return null;
 	}
 
 	/**
@@ -143,8 +146,12 @@ public abstract class ValueHolder implements ITransferObject {
 	 * 
 	 * @param b the new boolean
 	 */
-	public void setBoolean(boolean b) {
-		this.number = b ? 1.0 : 0;
+	public void setBoolean(Boolean b) {
+		if ( b != null ) {
+			this.number = b ? 1.0 : 0;	
+		} else {
+			this.number = null;
+		}
 	}
 
 	@Transient

@@ -15,11 +15,17 @@
 
 		<aon:form id="campaignActionForm">		
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >		
 				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_actions}" />
 				<ui:param name="controller" value="#{campaignAction}" />
-				<ui:param name="skipSearchButton" value="true" />				
-			</ui:include>
+				<ui:param name="skipSearchButton" value="true" />	
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:htmlCommandLink id="campaignActionReport-excel-report"
+						value="#{bundle.aon_listing}" target="_blank" action="#{campaignActionReport.onExcelReport}"
+						styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>				
 
 			<aon:div styleClass="aon-scroll-area">
 			

@@ -1,6 +1,8 @@
 package com.code.aon.ui.commercial.controller;
 
 public interface ICommercialConstants {
+	
+	String BUNDLE_NAME = "commercialBundle";
 
 	// ************************************************************
 	// NAVIGATION
@@ -31,6 +33,12 @@ public interface ICommercialConstants {
 	String PROJECT_COMMERCIAL_TRACKING_CONTROLLER_NAME = "projectCommercialTracking";
 	String COLLECTIONS_CONTROLLER_NAME = "commercialCollections";
 
+	// ************************************************************
+	// MESSAGE
+	// ************************************************************
+
+	String TARGET = "commercial_target";
+	
 	// ************************************************************
 	// REPORT
 	// ************************************************************
