@@ -1,6 +1,5 @@
 package com.code.aon.stat.engine;
 
-import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,7 +25,7 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
+			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT YEAR(i.issue_date) YEAR,COUNT(DISTINCT i.id),");
 			stmt.append(" SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
@@ -107,9 +106,8 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),");
 			stmt.append(" SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
@@ -186,9 +184,8 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT i.issue_date DAY,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT i.issue_date DAY,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 
@@ -264,7 +261,7 @@ public class StatEngine {
 		ResultSet rs = null;
 
 		try {
-			StringWriter stmt = new StringWriter();
+			StringBuffer stmt = new StringBuffer();
 			stmt.append("SELECT r.id,r.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
@@ -332,9 +329,8 @@ public class StatEngine {
 		ResultSet rs = null;
 		try {
 
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append(" SELECT YEAR(i.issue_date) YEAR,c.id,c.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append(" SELECT YEAR(i.issue_date) YEAR,c.id,c.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
@@ -406,9 +402,8 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT p.id,p.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT p.id,p.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
@@ -491,9 +486,8 @@ public class StatEngine {
 		ResultSet rs = null;
 
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append("FROM invoice_detail id  ");
 			stmt.append("INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append("INNER JOIN registry r ON (i.registry = r.id)");
@@ -572,9 +566,8 @@ public class StatEngine {
 		ResultSet rs = null;
 
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT r.id,r.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append("FROM invoice_detail id  ");
 			stmt.append("INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append("INNER JOIN registry r ON (i.registry = r.id)");
@@ -658,9 +651,8 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),");
 			stmt.append(" SUM(id.taxable_base), YEAR(i.issue_date)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
@@ -735,9 +727,8 @@ public class StatEngine {
 		ResultSet rs = null;
 
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),SUM(id.taxable_base),YEAR(i.issue_date) YEAR");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT MONTH(i.issue_date) MONTH,COUNT(DISTINCT i.id),SUM(id.taxable_base),YEAR(i.issue_date) YEAR");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
@@ -812,9 +803,8 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT r.id,r.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT r.id,r.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN registry r ON (i.registry = r.id)");
@@ -886,9 +876,8 @@ public class StatEngine {
 		ResultSet rs = null;
 
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT p.id,p.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT p.id,p.name, COUNT(DISTINCT i.id), SUM(id.taxable_base)");
 			stmt.append("FROM invoice_detail id  ");
 			stmt.append("INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append("INNER JOIN registry r ON (i.registry = r.id)");
@@ -964,9 +953,8 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT p.id,p.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT p.id,p.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
@@ -1037,9 +1025,8 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT c.id,c.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT c.id,c.name,COUNT(DISTINCT i.id),SUM(id.taxable_base)");
 			stmt.append(" FROM invoice_detail id  ");
 			stmt.append(" INNER JOIN invoice i ON (id.invoice = i.id)");
 			stmt.append(" INNER JOIN item ON (item.id = id.item)");
@@ -1113,9 +1100,8 @@ public class StatEngine {
 		ResultSet rs = null;
 		try {
 
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append(" SELECT c.id,c.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append(" SELECT c.id,c.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od  ");
 			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
 			stmt.append(" INNER JOIN item ON (item.id = od.item)");
@@ -1200,9 +1186,8 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od  ");
 			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
 			stmt.append(" INNER JOIN seller s ON (o.seller = s.registry)");
@@ -1283,9 +1268,8 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append(" SELECT g.id,g.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append(" SELECT g.id,g.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od  ");
 			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
 			stmt.append(" INNER JOIN raddress s ON (o.address = s.id)");
@@ -1367,9 +1351,8 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
-			stmt
-					.append("SELECT p.id,p.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
+			StringBuffer stmt = new StringBuffer();
+			stmt.append("SELECT p.id,p.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od ");
 			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
 			stmt.append(" INNER JOIN item ON (item.id = od.item)");
@@ -1461,7 +1444,7 @@ public class StatEngine {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			StringWriter stmt = new StringWriter();
+			StringBuffer stmt = new StringBuffer();
 			stmt.append(" SELECT r.id,r.name,COUNT(DISTINCT o.id),SUM(od.price*od.quantity)");
 			stmt.append(" FROM offer_detail od  ");
 			stmt.append(" INNER JOIN offer o ON (od.offer = o.id)");
