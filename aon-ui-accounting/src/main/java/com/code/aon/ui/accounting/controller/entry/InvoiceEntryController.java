@@ -1078,8 +1078,8 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 	private Invoice mergeInvoice(Invoice invoice) throws ManagerBeanException {
 		invoice.setIssueDate(getHeader().getDate());
 		invoice.setTaxDate(getHeader().getTaxDate());
-		invoice.setSeries(getHeader().getSeries());
 		if (getHeader().getType().equals(InvoiceType.SALES)) {
+			invoice.setSeries(getHeader().getSeries());
 			if (getHeader().getNumber() == 0) {
 				invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader()
 						.getType()));
