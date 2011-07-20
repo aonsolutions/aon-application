@@ -19,9 +19,8 @@
 				
 				<ui:define name="additionalToolbarContent">
 					<aon:commandButton value="&#160;" id="sendEmail"
-						actionListener="#{invoicePrint.onSendInvoicesByEmail}"
-						onclick="Richfaces.showModalPanel('waitProccess')" 
-			     		oncomplete="Richfaces.hideModalPanel('waitProccess')"
+						actionListener="#{invoicePrint.onInitSendEmail}"
+						reRender="showNewMessageWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border">
 					</aon:commandButton>											
 					<aon:htmlCommandLink id="invoicePrint-excel-report"
@@ -143,7 +142,28 @@
 			
 		</aon:form>
 
-		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
+			<ui:decorate template="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" >
+				<ui:param name="skipSendButton" value="true" />
+				<ui:param name="skipRecipients" value="true" />
+				<ui:param name="skipAttachments" value="true" />
+				<ui:param name="windowHeight" value="420" />
+				<ui:define name="additionalToolbarContent">
+					<aon:commandButton id="send"
+						value="#{webmailBundle.webmail_send}"
+						styleClass="aon-icon-accept aon-finding-toolbar-item"
+						actionListener="#{invoicePrint.onSendInvoicesByEmail}"
+						reRender="#{sendButtonReRender}" >
+						<ui:include src="/com/code/aon/faces/logPanel/support.xhtml" />
+					</aon:commandButton>
+				</ui:define>
+			</ui:decorate>
+			
+			<ui:include src="/com/code/aon/faces/logPanel/modal.xhtml" >
+				<ui:param name="logPanelTitle" value="#{financeBundle.finance_invoice_send_email_title}" />
+			</ui:include>		
+			
+		</c:if>
 	</ui:define>
 
 </ui:composition>

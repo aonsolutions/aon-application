@@ -20,6 +20,7 @@ import com.code.aon.common.IAttachment;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.facturae.FacturaeWriter;
 import com.code.aon.finance.Invoice;
 import com.code.aon.report.ReportException;
@@ -29,7 +30,6 @@ import com.code.aon.ui.finance.controller.IFinanceConstants;
 import com.code.aon.ui.finance.controller.InvoiceController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.MessageController;
-import com.code.aon.webmail.SecurityInfo;
 
 public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessages, IFinanceConstants {
 
@@ -60,14 +60,30 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 	public String getEmailSubject( Invoice invoice ) {
 		String key = invoice.isSigned() ? FINANCE_EINVOICE_EMAIL_SUBJECT : FINANCE_INVOICE_EMAIL_SUBJECT; 
 		String message = AonUtil.getMessage(BUNDLE_KEY, key);
+		return formatEmailSubject(invoice, message);
+	}
+
+	private String formatEmailSubject( Invoice invoice, String message ) {
 		return MessageFormat.format(message, invoice.getReferenceCode() );
+	}
+	
+	public String getEmailSubject() {
+		return AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_SUBJECT);
 	}
 
 	public String getEmailBody( Invoice invoice )  {
-		String bodyMessage = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY); 
-		return MessageFormat.format(bodyMessage, invoice.getReferenceCode(), invoice.getIssueDate());
+		String message = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY); 
+		return formatEmailBody(invoice, message);
+	}
+	
+	public String getEmailBody()  {
+		return AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_EMAIL_BODY); 
 	}
 
+	private String formatEmailBody( Invoice invoice, String message )  {
+		return MessageFormat.format(message, invoice.getReferenceCode(), invoice.getIssueDate());
+	}
+	
 	private AonFile getInvoiceFile( Invoice invoice ) throws IOException, ReportException, ManagerBeanException {
 		InvoiceController controller = (InvoiceController) AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
 		IAttachment attach = controller.getInvoiceData(invoice);
@@ -102,32 +118,39 @@ public class FinanceEmailUtil extends CompanyEmailUtil implements IFinanceMessag
 		return aonFile;
 	}
 	
-	public void sendInvoice( Invoice invoice, SecurityInfo si ) {
+	public void sendInvoice( Invoice invoice, String subject, String content ) {
+		LogPanelController logger = LogPanelController.getInstance();
+		AonFile file = null;
+		AonFile xml = null;
 		try {
 			String[] emails = getEmails(invoice.getRegistry());
 			if ( ArrayUtils.isEmpty(emails) ) {
 				String text = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_WITHOUT_EMAIL);
 				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName() );				
-				AonUtil.addErrorMessage(message);				
+				logger.error( message );				
 			} else {
 				Address[] recipients = getEmailAddresses(emails, invoice.getRegistryName() );
-				String subject = getEmailSubject(invoice);
-				String content = getEmailContent( getEmailBody(invoice) );
-				AonFile file = getInvoiceFile(invoice);
-				AonFile xml = getInvoiceXml(invoice);
-				if ( si != null ) {
-					getEmailSender().sendMessage(recipients, subject, content, MimeType.MIME_HTML, si, file, xml );
-				} else {
-					getEmailSender().sendMessage(recipients, subject, content, MimeType.MIME_HTML, file, xml );
-				}
-				file.getFile().delete();
-				xml.getFile().delete();
+				String _subject = formatEmailSubject(invoice, subject);
+				String _content = formatEmailBody(invoice, content );
+				file = getInvoiceFile(invoice);
+				xml = getInvoiceXml(invoice);
+				getEmailSender().sendMessage(recipients, _subject, _content, MimeType.MIME_HTML, file, xml );
+				String text = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_SEND_EMAIL);
+				String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName(), ArrayUtils.toString(emails) );
+				logger.info( message );
 			}
 		} catch (Throwable th) {
 			LOGGER.error(th.getMessage(), th);
 			String text = AonUtil.getMessage(BUNDLE_KEY, FINANCE_INVOICE_SEND_EMAIL_ERROR);
-			String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName() );				
-			AonUtil.addErrorMessage(message);
+			String message = MessageFormat.format(text, invoice.getReferenceCode(), invoice.getRegistryName() );
+			logger.error( message );
+		} finally {
+			if ( file != null ) {
+				FileUtils.deleteQuietly(file.getFile());	
+			}
+			if ( xml != null ) {
+				FileUtils.deleteQuietly(xml.getFile());	
+			}
 		}
 	}
 	

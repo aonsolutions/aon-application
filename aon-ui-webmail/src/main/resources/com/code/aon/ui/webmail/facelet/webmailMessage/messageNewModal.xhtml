@@ -12,9 +12,10 @@
 
 	<aon:panelGroup id="showNewMessageWindow">
 		<c:if test="#{webmailMessage.showNewMessageWindow}">
+			<aon:valueParam name="windowHeight" default="600" />
 			<rich:modalPanel id="showNewMessageModalPanel" domElementAttachment="parent"
 				showWhenRendered="#{webmailMessage.showNewMessageWindow}"
-				minHeight="540" height="590" width="680" >
+				minHeight="420" height="#{windowHeight}" width="680" >
 				
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">

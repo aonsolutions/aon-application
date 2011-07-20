@@ -77,8 +77,7 @@ public class CompanyEmailUtil implements ICompanyConstants {
 			AuthPrincipal user = UserUtils.getInstance().getPrincipal();
 			MailAccount mailAccount = getDefaultMailAccount( user );
 			if ( mailAccount != null ) {
-				Address from = new InternetAddress( mailAccount.getEmail(), getCompany().getName() );
-				this.sender = new EmailSender( from, mailAccount );							
+				changeMailAccount(mailAccount);
 			} else {
 				String text = AonUtil.getMessage(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_MAIL_ACCOUNT); 
 				String message = MessageFormat.format(text, user.getShortName() );
@@ -88,6 +87,11 @@ public class CompanyEmailUtil implements ICompanyConstants {
 		return this.sender;
 	}
 	
+	public void changeMailAccount(MailAccount mailAccount) throws UnsupportedEncodingException {
+		Address from = new InternetAddress( mailAccount.getEmail(), getCompany().getName() );
+		this.sender = new EmailSender( from, mailAccount );							
+	}
+
 	public static String[] getEmails( Registry registry ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();

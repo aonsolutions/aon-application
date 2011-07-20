@@ -27,7 +27,9 @@ public interface IFinanceMessages {
 	String FINANCE_EINVOICE_EMAIL_SUBJECT = "finance_einvoice_email_subject";
 	String FINANCE_INVOICE_EMAIL_BODY = "finance_invoice_email_body";
 	String FINANCE_INVOICE_WITHOUT_EMAIL = "finance_invoice_without_email";
+	String FINANCE_INVOICE_SEND_EMAIL = "finance_invoice_send_email";
 	String FINANCE_INVOICE_SEND_EMAIL_ERROR = "finance_invoice_send_email_error";
+	String FINANCE_INVOICE_SEND_EMAIL_FNINISH = "finance_invoice_send_email_finish";
 	String FINANCE_CASH = "finance_cash";
 	String FINANCE_PENDING = "finance_pending";
 	String FINANCE_INVOICE_CHECKING_MODULE_NO_FINANCE = "finance_invoice_checking_module_no_finance";	
