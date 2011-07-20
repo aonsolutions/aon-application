@@ -79,7 +79,8 @@
 										<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 											<ui:param name="lookupTo" value="#{offer.offerTarget}" />
 											<ui:param name="skipNewButton" value="#{true}" />
-											<ui:param name="idRequired" value="#{true}" />						
+											<ui:param name="idRequired" value="#{true}" />
+											<ui:param name="lookupSuffix" value="-Copy" />
 											<aon:methodParam name="lookupChangeListener"
 												value="#{offer.offerCopyTargetData}" type="lookupChangeListener" />
 										</ui:include>
