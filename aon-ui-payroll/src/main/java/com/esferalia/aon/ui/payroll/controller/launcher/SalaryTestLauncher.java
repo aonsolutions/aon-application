@@ -31,7 +31,10 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 	private boolean testTotalLiquid;
 	private boolean testBaseIRPF;
 	private boolean testBaseCGC;
+	
 	private Integer contractId;
+	private Date startDate;
+	private Date endDate;
 	
 	public Integer getContractId() {
 		return contractId;
@@ -40,6 +43,21 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 		this.contractId = contractId;
 	}	
 	
+	public Date getStartDate() {
+		return startDate;
+	}
+	
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	
+	public Date getEndDate() {
+		return endDate;
+	}
+	
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
 	
 	public boolean isTestEnterpriseCost() {
 		return testEnterpriseCost;
@@ -131,15 +149,20 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 	
 	public void onSalaryDraft(ActionEvent event) {
 		try {
-			SalaryDraftController controller = (SalaryDraftController) FormUtil.getController("salaryDraft");
+			SalaryDraftController controller = 
+				(SalaryDraftController) FormUtil.getController("salaryDraft");
 			controller.onEditSearch(event);
 			Calendar c = Calendar.getInstance();
 			c.set(Calendar.YEAR, getParams().getIssueYear());
 			c.set(Calendar.MONTH, getParams().getIssueMonth().ordinal());
 			c.set(Calendar.DAY_OF_MONTH, 1);
+			
 			controller.setIssueDate(c.getTime());
-			controller.setStartDate(getParams().getStartDate());
-			controller.setEndDate(getParams().getEndDate());
+			
+			controller.setEndDate(getEndDate());
+			controller.setStartDate(getStartDate());
+			controller.setSalaryType(getParams().getSalaryType());
+			
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IPayrollAlias.CONTRACT_ID), getContractId());
 			controller.clearCriteria();

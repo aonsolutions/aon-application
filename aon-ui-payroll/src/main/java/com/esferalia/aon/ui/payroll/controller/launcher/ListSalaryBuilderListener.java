@@ -25,6 +25,8 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 		private String employeeName ;
 		private String enterpriseName;
 		
+		private Date startDate;
+		private Date endDate;
 		
 		public LogMessage(SalaryBuilderListenerLevel level, String msg) {
 			this.level = level;
@@ -66,6 +68,18 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 		}
 		public void setEnterpriseName(String companyName) {
 			this.enterpriseName = companyName;
+		}
+		public Date getStartDate() {
+			return startDate;
+		}
+		public void setStartDate(Date startDate) {
+			this.startDate = startDate;
+		}
+		public Date getEndDate() {
+			return endDate;
+		}
+		public void setEndDate(Date endDate) {
+			this.endDate = endDate;
 		}
 	}
 

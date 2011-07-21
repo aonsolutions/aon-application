@@ -27,7 +27,11 @@
 					<aon:outputText value="#{message.employeeName} " />
 					<f:setPropertyActionListener value="#{message.contractId}" 
 					target="#{salaryTestLauncher.contractId}" />
-						<aon:actionListener method="#{salaryTestLauncher.onSalaryDraft}" />
+					<f:setPropertyActionListener value="#{message.endDate}" 
+					target="#{salaryTestLauncher.endDate}" />
+					<f:setPropertyActionListener value="#{message.startDate}" 
+					target="#{salaryTestLauncher.startDate}" />
+					<aon:actionListener method="#{salaryTestLauncher.onSalaryDraft}" />
 				</aon:commandLink>	
 								
 				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.msg}" />

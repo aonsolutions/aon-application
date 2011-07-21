@@ -81,7 +81,7 @@
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
 					<aon:selectOneMenu value="#{controller.salaryType}">
 						<f:selectItems value="#{payrollCollections.salaryTypesWithoutVacations}" />
-						<a4j:support event="onchange" reRender="salaryDraftForm" ajaxSingle="true"/>
+						<a4j:support event="onchange" actionListener="#{controller.onChangeType}" reRender="salaryDraftForm" ajaxSingle="true"/>
 					</aon:selectOneMenu>
 				</aon:div>
 				

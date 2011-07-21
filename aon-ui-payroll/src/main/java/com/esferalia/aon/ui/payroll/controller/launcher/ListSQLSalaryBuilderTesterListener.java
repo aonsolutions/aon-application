@@ -46,6 +46,8 @@ public class ListSQLSalaryBuilderTesterListener extends
 				testMsg.setContractId(salaryDraft.getContract());
 				testMsg.setEmployeeName(salaryDraft.getEmployeeName());
 				testMsg.setEnterpriseName(salaryDraft.getEnterpriseName());
+				testMsg.setStartDate(salaryDraft.getStartDate());
+				testMsg.setEndDate(salaryDraft.getEndDate());
 			} catch (SQLException e) {
 				// TODO employee & enterprise name a null ???
 			}

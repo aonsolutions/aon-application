@@ -172,7 +172,7 @@ public class SalaryDraftComparatorPrinter {
 //		List<SalaryBonus> salaryBonus;
 //		List<ContractBonus> contractBonus;
 		Bonus bonuses = new Bonus();
-		bonuses.setAmounts(getSalaryBonuses(), getContractBonuses());
+		//bonuses.setAmounts(getSalaryBonuses(), getContractBonuses());
 		setBonuses(bonuses);
 	}
 

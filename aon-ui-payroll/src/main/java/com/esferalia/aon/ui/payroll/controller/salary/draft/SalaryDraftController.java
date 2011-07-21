@@ -101,15 +101,15 @@ public class SalaryDraftController extends BasicController {
 	}
 	public void setIssueDate(Date issueDate) {
 		this.issueDate = issueDate;
-		setStartDate(CommonUtil.getMonthFirstDay(issueDate));
-		setEndDate(CommonUtil.getMonthLastDay(issueDate));
+		//setStartDate(CommonUtil.getMonthFirstDay(issueDate));
+		//setEndDate(CommonUtil.getMonthLastDay(issueDate));
 		setMonth(Month.getMonthByValue(CommonUtil.getMonth(issueDate)));
 		setYear(CommonUtil.getYear(issueDate));
 	}
 
 	public Date getStartDate() {
 		if (startDate == null) {
-			startDate = CommonUtil.getMonthFirstDay(getIssueDate());
+			return CommonUtil.getMonthFirstDay(getIssueDate());
 		}
 		return startDate;
 	}
@@ -119,7 +119,7 @@ public class SalaryDraftController extends BasicController {
 
 	public Date getEndDate() {
 		if (endDate == null) {
-			endDate = CommonUtil.getMonthLastDay(getIssueDate());
+			return CommonUtil.getMonthLastDay(getIssueDate());
 		}
 		return endDate;
 	}
@@ -157,6 +157,16 @@ public class SalaryDraftController extends BasicController {
 		this.validSalaryDraftPeriod = validSalaryDraftPeriod;
 	}
 	
+	public void onChangeType(ActionEvent event) {
+		try {
+			setSalary(null);
+			ControllerEvent evt = new ControllerEvent(this);
+			controllerListenerSupport.fireAfterBeanSelected(evt);
+		} catch (ControllerListenerException e) {
+			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
+		}
+	}
+
 	public void onChangeMonth(ActionEvent event) {
 		try {
 			Calendar c = Calendar.getInstance();
@@ -188,39 +198,17 @@ public class SalaryDraftController extends BasicController {
 	
 	public void checkValidContractPeriod() {
 		Contract contract = (Contract) this.getTo();
-		if(contract == null ){
-			setValidSalaryDraftPeriod(false);
-		} else {
-			if(getStartDate().after(getEndDate())){
-				setValidSalaryDraftPeriod(false);
-			} else {
-				if( contract.getEndDate() != null ){
-					Calendar draftEndDate = Calendar.getInstance();
-					Calendar contractEndDate = Calendar.getInstance();
-					draftEndDate.setTime(getEndDate());
-					contractEndDate.setTime(contract.getEndDate());
-					if(draftEndDate.get(Calendar.MONTH)==contractEndDate.get(Calendar.MONTH)){
-						if( getStartDate().after(contract.getStartDate())){
-							setValidSalaryDraftPeriod(true);
-						} else {
-							setValidSalaryDraftPeriod(false);
-						}
-					} else {
-						if( getStartDate().after(contract.getStartDate()) && getEndDate().before(contract.getEndDate())){
-							setValidSalaryDraftPeriod(true);
-						} else {
-							setValidSalaryDraftPeriod(false);
-						}
-					}
-				} else {
-					if( getStartDate().after(contract.getStartDate()) ){
-						setValidSalaryDraftPeriod(true);
-					} else {
-						setValidSalaryDraftPeriod(false);
-					}
-				}
-			}
-		}
+		Date draftStart = getStartDate();
+		Date draftEnd = getEndDate();
+		Date contractStart = contract.getStartDate();
+		Date contractEnd = contract.getEndDate();
+		
+		boolean isValid	= ( contract != null ) && 
+			( draftStart.compareTo(draftEnd) <= 0 ) && 
+			( contractStart.compareTo(draftEnd) <= 0 ) &&
+			( contractEnd == null ||  ( contractEnd.compareTo(draftStart) >= 0 ) ) ;
+
+		setValidSalaryDraftPeriod(isValid);
 	}
 	
 	public void onShowPayments( ActionEvent event ) {
@@ -439,7 +427,7 @@ public class SalaryDraftController extends BasicController {
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), contract.getId());
 			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_START_DATE), getStartDate());
 			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), getEndDate());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), SalaryType.SALARY);
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), getSalaryType());
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				setBdSalary((ISalary) list.get(0));
