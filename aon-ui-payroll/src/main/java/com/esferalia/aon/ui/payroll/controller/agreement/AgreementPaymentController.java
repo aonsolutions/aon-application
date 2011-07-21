@@ -66,10 +66,19 @@ public class AgreementPaymentController extends LinesController {
 	}
 
 	public AgreementExtra getAgreementExtra() {
+		checkPaymentExtraStatus();
 		return agreementExtra;
 	}
 	public void setAgreementExtra(AgreementExtra agreementExtra) {
 		this.agreementExtra = agreementExtra;
+	}
+	private void checkPaymentExtraStatus() {
+		if(agreementExtra==null && this.getTo()!=null && ((AgreementPayment) this.getTo()).getSalaryType()==SalaryType.EXTRA){
+			AgreementPayment ap = (AgreementPayment) this.getTo();
+			agreementExtra = new AgreementExtra();
+			agreementExtra.setAgreement(ap.getAgreement());
+			agreementExtra.setAgreementPayment(ap);
+		}
 	}
 	
 	public boolean isSearchCurrent() {
@@ -324,6 +333,7 @@ public class AgreementPaymentController extends LinesController {
 	public void onReset(ActionEvent event) {
 		super.onReset(event);
 		reset(true);
+		setAgreementExtra(null);
 	}
 	
 	public void reset(boolean panelVisible) {
@@ -333,6 +343,7 @@ public class AgreementPaymentController extends LinesController {
 	@Override
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
+		setAgreementExtra(null);
 		if(isSalaryExtra()){
 			searchAgreementExtra();
 		}

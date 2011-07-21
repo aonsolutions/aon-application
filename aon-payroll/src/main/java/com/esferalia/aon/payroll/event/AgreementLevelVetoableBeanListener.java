@@ -12,7 +12,6 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
-import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class AgreementLevelVetoableBeanListener extends ManagerBeanVetoListenerAdapter {

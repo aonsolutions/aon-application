@@ -162,9 +162,9 @@ public class AgreementExtra implements ITransferObject {
 		return Month.getMonthByValue(getMonth(getIssueDate())!=null?getMonth(getIssueDate()):0);
 	}
 	public void setIssueDateMonth(Month issueDateMonth) {
-		if( issueDateMonth != null){
+		if( issueDateMonth != null ){
 			String m = (new Integer(issueDateMonth.ordinal()+1)).toString();
-			issueDate = "01/"+(m.length()==1?"0"+m:m);;
+			issueDate = (issueDate==null?"01":issueDate.substring(0, 2))+"/"+(m.length()==1?"0"+m:m);
 		}
 	}
 	@Transient
@@ -180,13 +180,6 @@ public class AgreementExtra implements ITransferObject {
 			return Integer.parseInt(date.substring(3, 5))-1;
 		}
 		return null;
-	}
-	private String setMonth(String date, Month month){
-		if(date==null || month==null){
-			return null;
-		}
-		String m = (new Integer(month.ordinal()+1)).toString();
-		return "01/"+(m.length()==1?"0"+m:m);//+date.substring(5, date.length());
 	}
 	private String setMonth(String date, Month month, String dateDay){
 		String m = (new Integer(month.ordinal()+1)).toString();
