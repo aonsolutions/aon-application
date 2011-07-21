@@ -142,7 +142,7 @@ public class SQLContractExtraCalculatorContext
 	 * @param string dd/mm [year offset]
 	 * @return
 	 */
-	private static Date parseAgreementDate ( String string, int year ) {
+	public static Date parseAgreementDate ( String string, int year ) {
 		
 		Matcher matcher = AGREEMENT_DATE_PATTERN.matcher(string);
 		

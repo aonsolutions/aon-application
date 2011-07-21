@@ -1,16 +1,9 @@
 package com.esferalia.aon.ui.payroll.controller.launcher;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.hibernate.cfg.search.CollectionSearchConfiguration;
-import org.richfaces.util.CollectionsUtils;
 
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester;
 import com.esferalia.aon.payroll.sql.AbstractSQL.ISalary;
@@ -21,7 +14,6 @@ public class ListSQLSalaryBuilderTesterListener extends
 
 	
 	private SQLSalaryBuilderTester sqlSalaryBuilderTester;
-	private List<TestLogMessage> list; // Usado como una pila FIFO.
 	
 	public ListSQLSalaryBuilderTesterListener( SQLSalaryBuilderTester sqlSalaryBuilderTester) {
 		super();
@@ -36,11 +28,8 @@ public class ListSQLSalaryBuilderTesterListener extends
 		return sqlSalaryBuilderTester.getDBSalary();
 	}
 	
-	public List<TestLogMessage> getTestList() {
-		if (list == null) {
-			list = Collections.synchronizedList(new LinkedList<TestLogMessage>());
-		}
-		return list;
+	public List<LogMessage> getTestList() {
+		return super.getList();
 	}
 	
 	@Override
@@ -48,18 +37,10 @@ public class ListSQLSalaryBuilderTesterListener extends
 		if (list.size() > 256 ) {
 			list.remove(0);
 		}
-		
-		buf = new StringBuffer(PREFIX0);
-		buf.append(level);
-		buf.append(PREFIX1);
-		buf.append(level);
-		buf.append(SPACE);
-		buf.append(msg);
-		buf.append(SUFIX);
 
 		ISalary salaryDraft = getSalaryDraft();
 
-		TestLogMessage testMsg = new TestLogMessage(level, msg );
+		LogMessage testMsg = new LogMessage(level, msg );
 		if ( salaryDraft != null ) {
 			try {
 				testMsg.setContractId(salaryDraft.getContract());
@@ -74,81 +55,5 @@ public class ListSQLSalaryBuilderTesterListener extends
 		saveToLog(testMsg);
 	}
 
-	public void onInfo(TestLogMessage msg) {
-		getTestList().add(msg);
-		saveToLog(msg);
-	}
-
 	
-	public static class TestLogMessage {
-		private String msg;
-		private Integer salaryId;
-		private Integer contractId;
-		
-		private SalaryBuilderListenerLevel level;
-		private String employeeName ;
-		private String enterpriseName;
-		
-		
-		public TestLogMessage(SalaryBuilderListenerLevel level, String msg) {
-			this.level = level;
-			this.msg = msg;
-		}
-		
-		public String getMsg() {
-			return msg;
-		}
-		public void setMsg(String msg) {
-			this.msg = msg;
-		}
-		public Integer getSalaryId() {
-			return salaryId;
-		}
-		public void setSalaryId(Integer salaryId) {
-			this.salaryId = salaryId;
-		}
-		public Integer getContractId() {
-			return contractId;
-		}
-		public void setContractId(Integer contractId) {
-			this.contractId = contractId;
-		}
-		public SalaryBuilderListenerLevel getLevel() {
-			return level;
-		}
-		public void setLevel(SalaryBuilderListenerLevel level) {
-			this.level = level;
-		}
-		public String getEmployeeName() {
-			return employeeName;
-		}
-		public void setEmployeeName(String employeeName) {
-			this.employeeName = employeeName;
-		}
-		public String getEnterpriseName() {
-			return enterpriseName;
-		}
-		public void setEnterpriseName(String companyName) {
-			this.enterpriseName = companyName;
-		}
-	}
-	
-	
-	private void saveToLog(TestLogMessage msg) {
-		if (isSaveLog()) {
-			try {
-				FileWriter fstream = new FileWriter(getFile(), true);
-				BufferedWriter out = new BufferedWriter(fstream);
-				out.write(DateFormat.getDateTimeInstance().format(new Date()));
-				out.write(SPACE);
-				out.write(msg.level.toString());
-				out.write(SPACE);
-				out.write(msg.getMsg());
-				out.write("\r\n");
-				out.close();
-			} catch (Exception e) {
-				System.err.println("Error: " + e.getMessage());
-			}
-		}
-	}
 }

@@ -60,7 +60,8 @@ import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 
 public class SQLContractSalaryCalculatorContext implements
-		IContractSalaryCalculatorContext, NotFoundHandler {
+		IContractSalaryCalculatorContext, NotFoundHandler, ISQLContractSalaryCalculatorContext{
+	
 	
 	public static final String PERSON_REGISTRY = "person_registry";
 	public static final String ENTERPRISE_REGISTRY = "enterprise_registry";
@@ -249,7 +250,7 @@ public class SQLContractSalaryCalculatorContext implements
 		
 	}
 	
-	protected static Criteria getPaymentsCriteria( SalaryType... types ) {
+	public static Criteria getPaymentsCriteria( SalaryType... types ) {
 		Criteria criteria = new Criteria();
 		for (SalaryType type : types) {
 			criteria.addOrExpression( ExpressionUtilities.getEqualExpression(ContractPaymentColumns.SALARY_TYPE, type.ordinal()));
@@ -294,7 +295,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private LRUCache<Integer, ExpressionContext> 			agreementExpressionContexts;
 	private SQLAgreementContextFactory 						agreementContextFactory ;
 	
-	private Criteria 										paymentsCriteria;				
+	private Criteria 										paymentsCriteria;			
 	
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate) 
 	throws SQLException, ExpressionException {

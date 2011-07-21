@@ -4,93 +4,102 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
+import com.esferalia.aon.payroll.sql.AbstractSQL.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryBuilderListenerLevel;
 
 public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 
-	protected static final String SPACE = " ";
-	protected static final String STYLE =
-		"<style type=\"text/css\">"
-		+"	.lst {margin-left: 20px; font-family: Courier; white-space: nowrap;}"
-		+"	.lst_ERROR {color:red; font-weight: bold;}"
-		+"	.lst_WARNING {color:red;}"
-		+"	.lst_INFO {color:black;}"
-		+"   .lst_DEBUG {color: blue;}"
-		+"<style>";
-	protected static final String PREFIX0 = "<span class=\"lst lst_";
-	protected static final String PREFIX1 = "\">";
-	protected static final String SUFIX = "</span>";
+	public static class LogMessage {
+		private String msg;
+		private Integer salaryId;
+		private Integer contractId;
+		
+		private SalaryBuilderListenerLevel level;
+		private String employeeName ;
+		private String enterpriseName;
+		
+		
+		public LogMessage(SalaryBuilderListenerLevel level, String msg) {
+			this.level = level;
+			this.msg = msg;
+		}
+		
+		public String getMsg() {
+			return msg;
+		}
+		public void setMsg(String msg) {
+			this.msg = msg;
+		}
+		public Integer getSalaryId() {
+			return salaryId;
+		}
+		public void setSalaryId(Integer salaryId) {
+			this.salaryId = salaryId;
+		}
+		public Integer getContractId() {
+			return contractId;
+		}
+		public void setContractId(Integer contractId) {
+			this.contractId = contractId;
+		}
+		public SalaryBuilderListenerLevel getLevel() {
+			return level;
+		}
+		public void setLevel(SalaryBuilderListenerLevel level) {
+			this.level = level;
+		}
+		public String getEmployeeName() {
+			return employeeName;
+		}
+		public void setEmployeeName(String employeeName) {
+			this.employeeName = employeeName;
+		}
+		public String getEnterpriseName() {
+			return enterpriseName;
+		}
+		public void setEnterpriseName(String companyName) {
+			this.enterpriseName = companyName;
+		}
+	}
 
-	private LinkedList<String> list; // Usado como una pila FIFO.
 	protected StringBuffer buf;
 	private File file;
 	
 	private int errorCounter;
 	private int warningCounter;
 	
-	private boolean debugEnabled;
 	private boolean saveLog;
+	private boolean debugEnabled;
+	
+	protected List<LogMessage> list; // Usado como una pila FIFO.
 	
 	public ListSalaryBuilderListener() {
 		errorCounter = 0;
 		warningCounter = 0;
+		list =  new LinkedList<LogMessage>();
 	}
 
 	public File getFile() {
 		return file;
 	}
-	public String getStyle() {
-		return STYLE;
-	}
+
 	public int getErrorCounter() {
 		return errorCounter;
 	}
 	public int getWarningCounter() {
 		return warningCounter;
 	}
-	public LinkedList<String> getList() {
-		if (list == null) {
-			list = new LinkedList<String>();
-		}
+	public List<LogMessage> getList() {
 		return list;
 	}
 	
-	protected void addMessage(SalaryBuilderListenerLevel level, String msg ) {
-		if (getList().size() > 256 ) {
-			getList().pop();
-		}
-		
-		buf = new StringBuffer(PREFIX0);
-		buf.append(level);
-		buf.append(PREFIX1);
-		buf.append(level);
-		buf.append(SPACE);
-		buf.append(msg);
-		buf.append(SUFIX);
-
-		getList().add(buf.toString());
-		if (isSaveLog()) {
-			try {
-				FileWriter fstream = new FileWriter(file, true);
-				BufferedWriter out = new BufferedWriter(fstream);
-				out.write(DateFormat.getDateTimeInstance().format(new Date()));
-				out.write(SPACE);
-				out.write(level.toString());
-				out.write(SPACE);
-				out.write(msg);
-				out.write("\r\n");
-				out.close();
-			} catch (Exception e) {
-				System.err.println("Error: " + e.getMessage());
-			}
-		}
-	}
-
 	@Override
 	public boolean isDebugEnabled() {
 		return debugEnabled;
@@ -138,5 +147,40 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 			addMessage(SalaryBuilderListenerLevel.DEBUG,msg);	
 		}
 	}
+
+	public void onMessage(LogMessage msg) {
+		list.add(msg);
+		saveToLog(msg);
+	}
+
+	protected void addMessage(SalaryBuilderListenerLevel level, String msg ) {
+		if (list.size() > 256 ) {
+			list.remove(0);
+		}
+
+		LogMessage logMsg = new LogMessage(level, msg );
+		list.add(logMsg);
+		saveToLog(logMsg);
+	}
+	
+	// TODO : What daemons is this ? . Use 'printf' or 'String.format' 
+	protected void saveToLog(LogMessage msg) {
+		if (isSaveLog()) {
+			try {
+				FileWriter fstream = new FileWriter(getFile(), true);
+				BufferedWriter out = new BufferedWriter(fstream);
+				out.write(DateFormat.getDateTimeInstance().format(new Date()));
+				out.write(" ");
+				out.write(msg.level.toString());
+				out.write(" ");
+				out.write(msg.getMsg());
+				out.write("\r\n");
+				out.close();
+			} catch (Exception e) {
+				System.err.println("Error: " + e.getMessage());
+			}
+		}
+	}
+	
 
 }

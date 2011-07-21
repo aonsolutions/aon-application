@@ -1,0 +1,242 @@
+package com.esferalia.aon.payroll.calculator.sql;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.code.aon.common.AonException;
+import com.code.aon.common.enumeration.Month;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractCost;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
+import com.esferalia.aon.payroll.calculator.IContractEmbargo;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelColumns;
+import com.esferalia.aon.salary.ISalaryProxy;
+import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionException;
+
+import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT_LEVEL;
+import static com.esferalia.aon.payroll.sql.SQLConstants.AGREEMENT_EXTRA;
+import static com.esferalia.aon.payroll.sql.SQLConstants.AgreementExtraColumns.*;
+
+public class SQLExtraSalaryCalculatorContext implements
+		ISQLContractSalaryCalculatorContext {
+
+	private static final String EXTRAS_SQL_FORMAT = "SELECT * "
+		+ " FROM " + AGREEMENT_EXTRA 
+		+ " WHERE " + ISSUE_DATE + " LIKE '%%/%02d'"
+		;
+	
+	private ResultSet rs;
+	private Statement stmt;
+
+	private int year;
+	private Month month;
+	private Date issueDate;
+	private Date chargeDate;
+	private Criteria criteria;
+	private Connection connection ;
+	private ISQLContractSalaryCalculatorContext ctx;
+	
+	public SQLExtraSalaryCalculatorContext(Connection connection,
+			int year,
+			Month month,
+			Date issueDate, 
+			Date chargeDate, 
+			Criteria criteria) 
+	throws SQLException {
+		
+		this.connection = connection;
+		this.month = month;
+		this.year = year;
+		this.issueDate = issueDate;
+		this.chargeDate = chargeDate;
+		this.criteria = criteria;
+
+		initExtrasResultSet();
+	}
+	
+	@Override
+	public void close() throws SQLException {
+		if (this.ctx != null)
+			this.ctx.close();
+		if ( this.rs != null ) 
+			this.rs.close();
+		if ( this.stmt != null )
+			this.stmt.close();
+	}
+	
+	@Override
+	public boolean next() throws SQLException, ExpressionException {
+		while ( ctx == null || !this.ctx.next() ) {
+			if ( ! nextContractSalaryCalculatorContext() ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private void initExtrasResultSet() throws SQLException{
+		int monthIndex = this.month.getValue() +1 ;
+		String sql = 
+			String.format(EXTRAS_SQL_FORMAT, monthIndex);
+		this.stmt = connection.createStatement();
+		this.rs = stmt.executeQuery(sql);
+	}
+	
+	private boolean nextContractSalaryCalculatorContext() throws SQLException, ExpressionException {
+		if ( this.ctx != null ) {
+			this.ctx.close();
+			this.ctx = null;
+		}
+		if ( !this.rs.next() ) {
+			return false;
+		}
+		
+		Date startDate = 
+			SQLContractExtraCalculatorContext.parseAgreementDate(this.rs.getString(START_DATE), this.year);
+		Date endDate  = 
+			SQLContractExtraCalculatorContext.parseAgreementDate(this.rs.getString(END_DATE), this.year);
+		
+		if ( startDate.after(endDate)) {
+			return nextContractSalaryCalculatorContext();
+		}
+		
+		Criteria agreementCriteria = new Criteria();
+		agreementCriteria.addExpression(this.criteria.getExpression());
+		agreementCriteria.addEqualExpression(
+						AGREEMENT_LEVEL + "." + AGREEMENT, 
+						rs.getInt(AGREEMENT));
+		
+		this.ctx = new SQLContractExtraCalculatorContext(
+				this.connection, 
+				startDate, 
+				endDate, 
+				endDate, 
+				agreementCriteria); 
+		
+		return true;
+	}
+	
+	
+	//-------------------------------------------
+	// Delegate methods
+	//-------------------------------------------
+	public Date getChargeDate() {
+		return ctx.getChargeDate();
+	}
+
+	public Date getIssueDate() {
+		return ctx.getIssueDate();
+	}
+
+	public Date getStartDate() {
+		return ctx.getStartDate();
+	}
+
+	public Date getEndDate() {
+		return ctx.getEndDate();
+	}
+
+
+	public ISalaryProxy getSalaryProxy() {
+		return ctx.getSalaryProxy();
+	}
+
+	public ExpressionContext getExpressionContext() {
+		return ctx.getExpressionContext();
+	}
+
+	public SalaryType getSalaryType() {
+		return ctx.getSalaryType();
+	}
+
+	public String getCcc() {
+		return ctx.getCcc();
+	}
+
+	public String getEnterpriseName() {
+		return ctx.getEnterpriseName();
+	}
+
+	public String getEnterpriseAddress() {
+		return ctx.getEnterpriseAddress();
+	}
+
+	public String getEnterpriseDocument() {
+		return ctx.getEnterpriseDocument();
+	}
+
+	public SSRegimeType getSSRegime() {
+		return ctx.getSSRegime();
+	}
+
+	public String getCategory() {
+		return ctx.getCategory();
+	}
+
+	public String getQuoteGroup() {
+		return ctx.getQuoteGroup();
+	}
+
+	public String getEmployeeName() {
+		return ctx.getEmployeeName();
+	}
+
+	public String getEmployeeDocument() {
+		return ctx.getEmployeeDocument();
+	}
+
+	public String getSocialSecurityNumber() {
+		return ctx.getSocialSecurityNumber();
+	}
+
+	public Integer getRegistration() {
+		return ctx.getRegistration();
+	}
+
+	public Date getSeniorityDate() {
+		return ctx.getSeniorityDate();
+	}
+
+	public Collection<IContractPayment> getContractPayments()
+			throws AonException {
+		return ctx.getContractPayments();
+	}
+
+	public Collection<IContractCost> getContractCosts() throws AonException {
+		return ctx.getContractCosts();
+	}
+
+	public Collection<IContractBonus> getContractBonus() throws AonException {
+		return ctx.getContractBonus();
+	}
+
+	public Collection<IContractEmbargo> getContractEmbargos()
+			throws AonException {
+		return ctx.getContractEmbargos();
+	}
+
+	public Collection<IContractDeduction> getContractDeductions()
+			throws AonException {
+		return ctx.getContractDeductions();
+	}
+	
+	
+	
+	
+	
+}

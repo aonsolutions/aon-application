@@ -84,7 +84,7 @@ public class SQLSalaryBuilderTester extends  AbstractSQLSalaryBuilder {
 			salaryReader.setStartDate(salary.getStartDate());
 			salaryReader.setEndDate(salary.getEndDate());
 			salaryReader.setContract(salary.getContract());
-			salaryReader.setType(enum2short(SalaryType.SALARY));
+			salaryReader.setType(salary.getType());
 			
 			++contractCount;
 			this.dbSalary = salaryReader.findSalary();

@@ -22,12 +22,14 @@ import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
 import org.mvel2.compiler.CompiledAccExpression;
 import org.mvel2.conversion.BigDecimalCH;
+import org.mvel2.integration.impl.ClassImportResolverFactory;
 import org.mvel2.templates.TemplateRegistry;
 import org.mvel2.templates.TemplateRuntime;
 import org.mvel2.templates.util.TemplateOutputStream;
 import org.mvel2.util.StringAppender;
 
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
@@ -42,7 +44,10 @@ public class ExpressionContext {
 		Set<String> names = new HashSet<String>(); 
 		Matcher matcher = VARIABLE_PATTERN.matcher(script);
 		while ( matcher.find() ) {
-			names.add(matcher.group());
+			String var = matcher.group();
+			if ( !RESERVED_WORDS.contains(var) ){
+				names.add( var );
+			}
 		}
 		return names;
 	}
@@ -175,5 +180,11 @@ public class ExpressionContext {
 	//Pattern pattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_]*");
 	private static final Pattern VARIABLE_PATTERN = 
 		Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
+	
+	private static final Set<String>  RESERVED_WORDS= new HashSet<String>(){
+		{
+			add("isdef");
+		}
+	};
 	
 }
