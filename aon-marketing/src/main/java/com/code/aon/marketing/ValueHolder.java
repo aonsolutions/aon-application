@@ -129,16 +129,26 @@ public abstract class ValueHolder implements ITransferObject {
 	}
 	
 	/**
+	 * Gets the Boolean value.
+	 *
+	 * @return the Boolean value
+	 */
+	@Transient
+	private Boolean getBooleanValue() {
+		if ( this.number != null ) {
+			return (this.number != 0);
+		}
+		return null;
+	}	
+	
+	/**
 	 * Checks if is boolean.
 	 * 
 	 * @return true, if is boolean
 	 */
 	@Transient
-	public Boolean isBoolean() {
-		if ( this.number != null ) {
-			return (this.number != 0);
-		}
-		return null;
+	public boolean isBoolean() {
+		return (this.number != null) && (this.number != 0);
 	}
 
 	/**
@@ -146,12 +156,8 @@ public abstract class ValueHolder implements ITransferObject {
 	 * 
 	 * @param b the new boolean
 	 */
-	public void setBoolean(Boolean b) {
-		if ( b != null ) {
-			this.number = b ? 1.0 : 0;	
-		} else {
-			this.number = null;
-		}
+	public void setBoolean(boolean b) {
+		this.number = b ? 1.0 : 0;
 	}
 
 	@Transient
@@ -169,7 +175,7 @@ public abstract class ValueHolder implements ITransferObject {
 	public Object getValue( QuestionType type ) {
 		switch ( type ) {
 			case BOOLEAN:
-				return isBoolean();
+				return getBooleanValue();
 			case DATE:
 				return getDate();
 			case NUMBER:
