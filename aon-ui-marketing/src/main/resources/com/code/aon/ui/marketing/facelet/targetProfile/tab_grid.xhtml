@@ -35,7 +35,7 @@
 					<f:facet name="header">
 						<aon:outputLabel for="Question_id" value="#{marketingBundle.marketing_question}" />
 					</f:facet>
-					<aon:outputText value="#{to.question.text}" />
+					<aon:outputText value="#{to.question.description}" />
 					<f:facet name="footer">
 						<ui:include src="/com/code/aon/ui/marketing/facelet/question/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{targetProfile.to.question}" />

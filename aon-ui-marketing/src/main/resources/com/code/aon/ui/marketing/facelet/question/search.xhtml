@@ -22,13 +22,13 @@
 					<aon:outputLabel for="Question_id"
 						value="#{bundle.aon_id}" />
 					<aon:inputText id="Question_id" size="60"
-						valueChangeListener="#{question.addExpression}" />		
+						valueChangeListener="#{controller.addExpression}" />		
 			
 					<aon:outputLabel for="Question_type"
 						value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="Question_type"
 						converter="aon.EnumConverter" 
-						valueChangeListener="#{question.addEqualExpression}">
+						valueChangeListener="#{controller.addEqualExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{marketingCollections.questionTypes}" />
 					</aon:selectOneMenu>		
@@ -36,20 +36,25 @@
 					<aon:outputLabel for="Question_text"
 						value="#{marketingBundle.marketing_question}" />
 					<aon:inputText id="Question_text" size="60"
-						valueChangeListener="#{question.addExpression}" />
+						valueChangeListener="#{controller.addExpression}" />
+
+					<aon:outputLabel for="Question_alias"
+						value="#{marketingBundle.marketing_question_label}" />
+					<aon:inputText id="Question_alias" size="60"
+						valueChangeListener="#{controller.addExpression}" />
 
 					<aon:outputLabel for="Question_argument"
 						value="#{marketingBundle.marketing_question_argument}" />
 					<aon:inputText id="Question_argument" size="60"
-						valueChangeListener="#{question.addExpression}" />
+						valueChangeListener="#{controller.addExpression}" />
 				
 					<aon:outputLabel for="Question_active"				
 						value="#{bundle.aon_status}"/>
 					<aon:selectOneMenu id="Question_active"
-						valueChangeListener="#{question.addExpression}">
+						valueChangeListener="#{controller.addExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItem itemLabel="#{marketingBundle.marketing_active}" itemValue="#{true}"/>
-						<f:selectItem itemLabel="#{marketingBundle.marketing_inactive}" itemValue="#{false}"/>
+						<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="#{true}"/>
+						<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}"/>
 					</aon:selectOneMenu>
 				</ui:define>
 			

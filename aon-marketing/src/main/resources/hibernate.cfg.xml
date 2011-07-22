@@ -46,8 +46,8 @@
 
 		<!-- AON-COMMERCIAL Mapping files -->
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
-		<mapping class="com.code.aon.commercial.CommercialTerm"/>
 		<mapping class="com.code.aon.commercial.CommercialTracking"/>
+		<mapping class="com.code.aon.commercial.CommercialTerm"/>
 		<mapping class="com.code.aon.commercial.Commission"/>
 		<mapping class="com.code.aon.commercial.CommissionCategory"/>
 		<mapping class="com.code.aon.commercial.CommissionItem"/>
@@ -57,10 +57,10 @@
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
 		<mapping class="com.code.aon.commercial.OfferDetailCommission"/>
 		<mapping class="com.code.aon.commercial.OfferTerm"/>
-		<mapping class="com.code.aon.commercial.Project"/>
+		<mapping class="com.code.aon.commercial.ProjectCommercial"/>		
 		<mapping class="com.code.aon.commercial.Target"/>
 		<mapping class="com.code.aon.commercial.TargetItem"/>
-		<mapping class="com.code.aon.commercial.TargetSeller"/>		
+		<mapping class="com.code.aon.commercial.TargetSeller"/>
 		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 		
 		<!-- AON-CONFIG Mapping files -->		
@@ -94,6 +94,7 @@
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>		
+
 		<!-- AON-SELLER Mapping files -->	
 		<mapping class="com.code.aon.seller.Seller"/>
 		
@@ -103,9 +104,7 @@
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
-		<mapping class="com.code.aon.company.EnterpriseActivity"/>
-		<mapping class="com.code.aon.company.EnterpriseCCC"/>				
-		<mapping class="com.code.aon.company.WorkPlace"/>				
+		<mapping class="com.code.aon.company.WorkPlace"/>		
 		
 		<!-- AON-CALENDAR Mapping files -->		
 		<mapping class="com.esferalia.aon.calendar.Calendar"/>
@@ -113,6 +112,9 @@
 		<mapping class="com.esferalia.aon.calendar.CalendarPeriod"/>
 		<mapping class="com.esferalia.aon.calendar.Holiday"/>	
 		<mapping class="com.esferalia.aon.calendar.HolidayDetail"/>			
+		
+		<!-- AON-PROJECT Mapping files -->
+		<mapping class="com.code.aon.project.Project"/>		
 		
 	</session-factory>
 

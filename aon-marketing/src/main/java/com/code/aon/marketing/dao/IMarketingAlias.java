@@ -157,28 +157,34 @@ public interface IMarketingAlias {
 	String  QUESTION_ACTIVE = QUESTION_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Question_alias
+	* Hibernate value: Question.alias
+	*/
+	String  QUESTION_ALIAS = QUESTION_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Question_argument
 	* Hibernate value: Question.argument
 	*/
-	String  QUESTION_ARGUMENT = QUESTION_ENTRY.getAliasNames()[1];
+	String  QUESTION_ARGUMENT = QUESTION_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Question_id
 	* Hibernate value: Question.id
 	*/
-	String  QUESTION_ID = QUESTION_ENTRY.getAliasNames()[2];
+	String  QUESTION_ID = QUESTION_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Question_text
 	* Hibernate value: Question.text
 	*/
-	String  QUESTION_TEXT = QUESTION_ENTRY.getAliasNames()[3];
+	String  QUESTION_TEXT = QUESTION_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Question_type
 	* Hibernate value: Question.type
 	*/
-	String  QUESTION_TYPE = QUESTION_ENTRY.getAliasNames()[4];
+	String  QUESTION_TYPE = QUESTION_ENTRY.getAliasNames()[5];
 
 
 

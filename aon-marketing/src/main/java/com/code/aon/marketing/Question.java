@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -43,6 +44,9 @@ public class Question implements ITransferObject {
 
 	@Column(name = "question_text", nullable = false, length = 255)
     private String text;
+
+	@Column(length = 64)
+    private String alias;
 	
 	@Column(nullable = false)
 	private QuestionType type;
@@ -169,6 +173,34 @@ public class Question implements ITransferObject {
 	}
 
 	/**
+	 * Gets the alias.
+	 *
+	 * @return the alias
+	 */
+	public String getAlias() {
+		return alias;
+	}
+
+	/**
+	 * Sets the alias.
+	 *
+	 * @param alias the new alias
+	 */
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+	
+	/**
+	 * Gets the description.
+	 *
+	 * @return the description
+	 */
+	@Transient
+	public String getDescription() {
+		return StringUtils.defaultString(this.alias, this.text);
+	}
+
+	/**
 	 * Gets the values.
 	 * 
 	 * @return the values
@@ -195,6 +227,7 @@ public class Question implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.active, o.active)
+				.append(this.alias, o.alias)
 				.append(this.argument, o.argument)				
 				.append(this.text, o.text)
 				.append(this.type, o.type)				
@@ -207,6 +240,7 @@ public class Question implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(active)
+			.append(alias)
 			.append(argument)
 			.append(id)	
 			.append(text)			
@@ -218,6 +252,7 @@ public class Question implements ITransferObject {
 	public String toString() {
 		return new ToStringBuilder(this).
 			append("active", active).
+			append("alias", alias).
 			append("argument", StringUtils.abbreviate(argument, 64)).			
 			append("id", id).
 			append("text", text).

@@ -43,6 +43,11 @@
 						value="#{question.to.text}" cols="80" rows="2" >
 						<f:validateLength  maximum="255"/>
 					</aon:inputTextarea>
+					
+					<aon:outputLabel for="Question_alias"
+						value="#{marketingBundle.marketing_question_label}" />
+					<aon:inputText id="Question_alias" 
+						value="#{question.to.alias}" size="60" maxlength="64" />
 
 					<aon:outputLabel for="Question_argument"
 						value="#{marketingBundle.marketing_question_argument}" />
@@ -52,7 +57,7 @@
 					</aon:inputTextarea>
 					
 					<aon:outputLabel for="Question_active"
-						value="#{marketingBundle.marketing_active}" />
+						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="Question_active" 
 						value="#{question.to.active}" />
 
