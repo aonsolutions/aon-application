@@ -154,7 +154,7 @@
 						value="#{bundle.aon_comment}" />
 					<aon:inputTextarea id="CommercialTracking_comments"
 						value="#{commercialTracking.to.comments}" cols="80" rows="4">
-						<f:validateLength maximum="255" />
+						<f:validateLength maximum="65535" />
 					</aon:inputTextarea>
 						
 					<aon:outputLabel for="CommercialTracking_location"
@@ -200,7 +200,7 @@
 									value="#{bundle.aon_comment}" />
 								<aon:inputTextarea id="CommercialTracking_next_comments"
 									value="#{commercialTracking.next.comments}" cols="80" rows="4" >
-									<f:validateLength maximum="255" />
+									<f:validateLength maximum="65535" />
 								</aon:inputTextarea>
 									
 								<aon:outputLabel for="CommercialTracking_next_location"

@@ -39,7 +39,9 @@
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_comment}" />
 		</f:facet>
-		<aon:outputText value="#{to.comments}"/>
+		<aon:outputText value="#{to.comments}" >
+			<aon:abbreviateConverter maxWidth="80" />
+		</aon:outputText>
 	</aon:column>
 
 	<aon:column styleClass="aon-editDataTable-textColumn"
