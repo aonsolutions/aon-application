@@ -242,11 +242,9 @@ public class VatTaxManager {
 			}
 		} else if (invoiceType == InvoiceType.EXPENSES) {
 			if (transaction == InvoiceTransactionType.NATIONAL || transaction == InvoiceTransactionType.CAN_CEU_MEL) {
-				//TODO	A la espera de saber si los gastos pueden ser Inversiones
-				return new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)}; 
-//				return investment?
-//					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
-//					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)};
+				return investment?
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B2),new VatTaxKeyEx(VatTaxKey.BI,percent)}:
+					new VatTaxKeyEx[]{new VatTaxKeyEx(VatTaxKey.B3),new VatTaxKeyEx(VatTaxKey.GT,percent)};
 			}
 			if (transaction == InvoiceTransactionType.EXTRACOMMUNITY) {
 				//TODO	A la espera de saber si los gastos pueden ser Inversiones

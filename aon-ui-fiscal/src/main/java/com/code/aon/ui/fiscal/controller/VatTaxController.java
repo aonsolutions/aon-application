@@ -197,7 +197,6 @@ public class VatTaxController extends BasicController {
 			VatTaxDeclarationController vtdc = (VatTaxDeclarationController) FormUtil.getController(VatTaxDeclarationController.BEAN_NAME);
 			vtdc.tryAutomaticCreation();
 
-			
 			HibernateUtil.getSession(sessionName).flush();
 			HibernateUtil.commitTransaction(sessionName);
 		} catch (Exception e) {

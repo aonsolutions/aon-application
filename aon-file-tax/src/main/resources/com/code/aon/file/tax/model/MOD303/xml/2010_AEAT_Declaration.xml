@@ -39,10 +39,10 @@
 	<field name="importedCommonOperationsQuota" value="bean" bean="DECLARATION" property="importedCommonOperationsQuota" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="importedInvestmentOperationsBase" value="bean" bean="DECLARATION" property="importedInvestmentOperationsBase" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="importedInvestmentOperationsQuota" value="bean" bean="DECLARATION" property="importedInvestmentOperationsQuota" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="intracommunitaryCommonOperationsBase" value="bean" bean="DECLARATION" property="intracommunitaryCommonOperationsBase" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="intracommunitaryCommonOperationsQuota" value="bean" bean="DECLARATION" property="intracommunitaryCommonOperationsQuota" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="investmentCommonOperationsBase" value="bean" bean="DECLARATION" property="investmentCommonOperationsBase" format="DefNumeric" pattern="S9(14)V99" />
-	<field name="investmentCommonOperationsQuota" value="bean" bean="DECLARATION" property="investmentCommonOperationsQuota" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="intracommunitaryOperationsBase" value="bean" bean="DECLARATION" property="intracommunitaryOperationsBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="intracommunitaryOperationsQuota" value="bean" bean="DECLARATION" property="intracommunitaryOperationsQuota" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="intracommunitaryInvestmentOperationsBase" value="bean" bean="DECLARATION" property="intracommunitaryInvestmentOperationsBase" format="DefNumeric" pattern="S9(14)V99" />
+	<field name="intracommunitaryInvestmentOperationsQuota" value="bean" bean="DECLARATION" property="intracommunitaryInvestmentOperationsQuota" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="agriculturalRegimeCompensation" value="bean" bean="DECLARATION" property="agriculturalRegimeCompensation" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="investmentNormalization" value="bean" bean="DECLARATION" property="investmentNormalization" format="DefNumeric" pattern="S9(14)V99" />
 	<field name="prorataNormalization" value="bean" bean="DECLARATION" property="prorataNormalization" format="DefNumeric" pattern="S9(14)V99" />

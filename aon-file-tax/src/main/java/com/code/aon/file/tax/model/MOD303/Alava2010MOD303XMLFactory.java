@@ -221,7 +221,7 @@ public class Alava2010MOD303XMLFactory implements IMOD303XMLFactory {
 		addClave(mod,"032",declaration.getImportedCommonOperationsQuota());
 		addClave(mod,"033",declaration.getImportedInvestmentOperationsQuota());
 		addClave(mod,"034",declaration.getIntracommunitaryCommonOperationsQuota());
-		addClave(mod,"035",declaration.getInvestmentCommonOperationsQuota());
+		addClave(mod,"035",declaration.getIntracommunitaryInvestmentOperationsQuota());
 		addClave(mod,"036",declaration.getAgriculturalRegimeCompensation());
 		addClave(mod,"037",declaration.getInvestmentNormalization());
 		addClave(mod,"038",declaration.getDeductTotal());

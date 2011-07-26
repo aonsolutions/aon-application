@@ -249,6 +249,8 @@ public class Numeric implements Format {
 	  num.applyPattern("S9(8)V99");
 	  Object str = new Double("-316.5457");
 	  System.out.println (num.format(str));
+	  str = new Double("316.5457");
+	  System.out.println (num.format(str));
 	}
 
 }

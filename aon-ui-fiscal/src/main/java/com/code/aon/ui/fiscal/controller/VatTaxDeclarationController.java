@@ -249,10 +249,15 @@ public class VatTaxDeclarationController extends LinesController {
     		FacesContext faces = FacesContext.getCurrentInstance();
             HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
             VatTaxDeclaration dec = (VatTaxDeclaration) getTo();
-	        response.setContentType(MimeType.MIME_TXT.getName());
-			String fileName = "MOD303"+ dec.getVatTax().getYear()
-				+dec.getVatTax().getPeriod()+"."
-				+getFormat(dec).getMimeType().getExtension();
+	        
+	        MOD303Format format = getFormat(dec);
+	        response.setContentType(format.getMimeType().getName());
+	        String year = dec.getVatTax().getYear().toString();
+	        String period = dec.getVatTax().getPeriod().toString();
+	        String fileName = format.getFileName(year, period); 
+//			String fileName = "MOD303"+ dec.getVatTax().getYear()
+//				+dec.getVatTax().getPeriod()+"."
+//				+getFormat(dec).getMimeType().getExtension();
 	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\";");
 
 	        ServletOutputStream output = response.getOutputStream();

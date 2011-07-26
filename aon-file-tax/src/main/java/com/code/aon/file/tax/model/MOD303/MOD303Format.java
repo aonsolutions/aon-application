@@ -12,9 +12,10 @@ public enum MOD303Format {
 //	,BIZKAIA_2010(2010
 //			,Administration.BIZKAIA
 //			,"/com/code/aon/file/tax/model/MOD303/xml/2010_ALAVA_Declaration.xml")
-//	,GIPUZKOA_2010(2010
-//			,Administration.GIPUZKOA
-//			,"/com/code/aon/file/tax/model/MOD303/xml/2010_ALAVA_Declaration.xml")
+	,GIPUZKOA_2010(2010
+			,Administration.GIPUZKOA
+			,MimeType.MIME_TXT
+			,"/com/code/aon/file/tax/model/MOD303/xml/2010_GIPUZKOA_Declaration.xml")
 //	,NAVARRA_2010(2010
 //			,Administration.NAVARRA
 //			,"/com/code/aon/file/tax/model/MOD303/xml/2010_ALAVA_Declaration.xml")
@@ -60,5 +61,13 @@ public enum MOD303Format {
 
 	public MimeType getMimeType() {
 		return mimeType;
+	}
+	
+	public String getFileName(String year, String period ) {
+		String prefix = "MOD303"; 
+		if (getAdministration() == Administration.GIPUZKOA) {
+			prefix = "MOD" + (period.contains("T")?"320":"300");	
+		}
+		return prefix + year + period +"."+getMimeType().getExtension();
 	}
 }

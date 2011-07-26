@@ -1,5 +1,7 @@
 package com.code.aon.file.tax.model.MOD303.data;
 
+import org.apache.commons.lang.StringUtils;
+
 
 public class Declaration {
 
@@ -82,8 +84,10 @@ public class Declaration {
 	private double importedInvestmentOperationsQuota;
 	private double intracommunitaryCommonOperationsBase;
 	private double intracommunitaryCommonOperationsQuota;
-	private double investmentCommonOperationsBase;
-	private double investmentCommonOperationsQuota;
+	private double intracommunitaryInvestmentOperationsBase;
+	private double intracommunitaryInvestmentOperationsQuota;
+	private double intracommunitaryExpensesOperationsBase;
+	private double intracommunitaryExpensesOperationsQuota;
 	private double agriculturalRegimeCompensation;
 	private double investmentNormalization;
 	private double prorataNormalization;
@@ -126,6 +130,10 @@ public class Declaration {
 	}
 	public void setPeriod(String period) {
 		this.period = period;
+	}
+	public String getGipuzkoaModel() {
+		// Si el periodo es trimestral (1T,2T ...) --> modelo 300.
+		return StringUtils.isNumeric(getPeriod())?"320":"300";
 	}
 	public boolean isReplacement() {
 		return replacement;
@@ -543,6 +551,12 @@ public class Declaration {
 	public void setOutputTotal(double outputTotal) {
 		this.outputTotal = outputTotal;
 	}
+	public double getInnerOperationsTotalBase() {
+		return innerCommonOperationsBase + innerExpensesOperationsBase + innerInvestmentOperationsBase;
+	}
+	public double getInnerOperationsTotalQuota() {
+		return innerCommonOperationsQuota + innerExpensesOperationsQuota + innerInvestmentOperationsQuota;
+	}
 	public double getInnerOperationsBase() {
 		return innerCommonOperationsBase + innerExpensesOperationsBase;
 	}
@@ -585,6 +599,12 @@ public class Declaration {
 	public void setInnerExpensesOperationsQuota(double innerExpensesOperationsQuota) {
 		this.innerExpensesOperationsQuota = innerExpensesOperationsQuota;
 	}
+	public double getImportedOperationsTotalBase() {
+		return importedCommonOperationsBase + importedInvestmentOperationsBase;
+	}
+	public double getImportedOperationsTotalQuota() {
+		return importedCommonOperationsQuota + importedInvestmentOperationsQuota;
+	}
 	public double getImportedCommonOperationsBase() {
 		return importedCommonOperationsBase;
 	}
@@ -609,6 +629,21 @@ public class Declaration {
 	public void setImportedInvestmentOperationsQuota(double importedInvestmentOperationsQuota) {
 		this.importedInvestmentOperationsQuota = importedInvestmentOperationsQuota;
 	}
+	
+	public double getIntracommunitaryOperationsBase() {
+		return intracommunitaryCommonOperationsBase + intracommunitaryExpensesOperationsBase;
+	}
+	public double getIntracommunitaryOperationsQuota() {
+		return intracommunitaryCommonOperationsQuota + intracommunitaryExpensesOperationsQuota;
+	}
+
+	public double getIntracommunitaryOperationsTotalBase() {
+		return intracommunitaryCommonOperationsBase + + intracommunitaryExpensesOperationsBase + intracommunitaryInvestmentOperationsBase;
+	}
+	public double getIntracommunitaryOperationsTotalQuota() {
+		return intracommunitaryCommonOperationsQuota + intracommunitaryExpensesOperationsQuota + intracommunitaryInvestmentOperationsQuota;
+	}
+
 	public double getIntracommunitaryCommonOperationsBase() {
 		return intracommunitaryCommonOperationsBase;
 	}
@@ -621,17 +656,29 @@ public class Declaration {
 	public void setIntracommunitaryCommonOperationsQuota(double intracommunitaryCommonOperationsQuota) {
 		this.intracommunitaryCommonOperationsQuota = intracommunitaryCommonOperationsQuota;
 	}
-	public double getInvestmentCommonOperationsBase() {
-		return investmentCommonOperationsBase;
+	public double getIntracommunitaryInvestmentOperationsBase() {
+		return intracommunitaryInvestmentOperationsBase;
 	}
-	public void setInvestmentCommonOperationsBase(double investmentCommonOperationsBase) {
-		this.investmentCommonOperationsBase = investmentCommonOperationsBase;
+	public void setIntracommunitaryInvestmentOperationsBase(double intracommunitaryInvestmentOperationsBase) {
+		this.intracommunitaryInvestmentOperationsBase = intracommunitaryInvestmentOperationsBase;
 	}
-	public double getInvestmentCommonOperationsQuota() {
-		return investmentCommonOperationsQuota;
+	public double getIntracommunitaryInvestmentOperationsQuota() {
+		return intracommunitaryInvestmentOperationsQuota;
 	}
-	public void setInvestmentCommonOperationsQuota(double investmentCommonOperationsQuota) {
-		this.investmentCommonOperationsQuota = investmentCommonOperationsQuota;
+	public void setIntracommunitaryInvestmentOperationsQuota(double intracommunitaryInvestmentOperationsQuota) {
+		this.intracommunitaryInvestmentOperationsQuota = intracommunitaryInvestmentOperationsQuota;
+	}
+	public double getIntracommunitaryExpensesOperationsBase() {
+		return intracommunitaryExpensesOperationsBase;
+	}
+	public void setIntracommunitaryExpensesOperationsBase(double intracommunitaryExpensesOperationsBase) {
+		this.intracommunitaryExpensesOperationsBase = intracommunitaryExpensesOperationsBase;
+	}
+	public double getIntracommunitaryExpensesOperationsQuota() {
+		return intracommunitaryExpensesOperationsQuota;
+	}
+	public void setIntracommunitaryExpensesOperationsQuota(double intracommunitaryExpensesOperationsQuota) {
+		this.intracommunitaryExpensesOperationsQuota = intracommunitaryExpensesOperationsQuota;
 	}
 	public double getAgriculturalRegimeCompensation() {
 		return agriculturalRegimeCompensation;
@@ -762,6 +809,9 @@ public class Declaration {
 	}
 	public int getWithoutActivityNumber() {
 		return isWithoutActivity()?1:0;
+	}
+	public String getWithoutActivityString() {
+		return isWithoutActivity()?"1":" ";
 	}
 	
 	public String getDepositBankEntity() {

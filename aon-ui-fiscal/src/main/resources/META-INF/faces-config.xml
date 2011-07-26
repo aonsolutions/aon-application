@@ -284,6 +284,10 @@
 					<key>VatTaxDeclaration_vatTax_id</key>
                     <value>id</value>
 				</map-entry>
+				<map-entry>
+					<key>VatTaxDeclaration_vatTax_id</key>
+                    <value>id</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
@@ -322,6 +326,14 @@
 				<map-entry>
 					<key>id</key>
 					<value>vatTax.id</value>
+				</map-entry>
+				<map-entry>
+					<key>year</key>
+					<value>vatTax.year</value>
+				</map-entry>
+				<map-entry>
+					<key>period</key>
+					<value>vatTax.period</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>

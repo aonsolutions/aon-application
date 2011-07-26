@@ -224,8 +224,11 @@ public class MOD303Writer implements IFinanceConstants{
 			declaration.setIntracommunitaryCommonOperationsQuota( detail.getQuota() );
 			declaration.setIntracommunitaryCommonOperationsBase( detail.getTaxableBase() );
 		} else if (key == VatTaxKey.D2) {
-			declaration.setInvestmentCommonOperationsQuota( detail.getQuota() );
-			declaration.setInvestmentCommonOperationsBase( detail.getTaxableBase() );
+			declaration.setIntracommunitaryInvestmentOperationsQuota( detail.getQuota() );
+			declaration.setIntracommunitaryInvestmentOperationsBase( detail.getTaxableBase() );
+		} else if (key == VatTaxKey.D3) {
+			declaration.setIntracommunitaryExpensesOperationsQuota( detail.getQuota() );
+			declaration.setIntracommunitaryExpensesOperationsBase( detail.getTaxableBase() );
 		} else if (key == VatTaxKey.ET) {
 			declaration.setAgriculturalRegimeCompensation( detail.getQuota() );
 		} else if (key == VatTaxKey.RI) {
