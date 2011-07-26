@@ -64,6 +64,12 @@ public class MarketingAction implements ITransferObject {
 	@ForeignKey(name = "FK_MK_ACTION_SURVEY")
 	@Index(name = "IDX_MK_ACTION_SURVEY")
 	private Survey survey;
+
+	@ManyToOne (fetch=FetchType.EAGER)
+    @JoinColumn( name="template" )	
+	@ForeignKey(name = "FK_MK_ACTION_MK_TEMPLATE")
+	@Index(name = "IDX_MK_ACTION_MK_TEMPLATE")
+	private Template template;
 	
     /**
      * The empty constructor.
@@ -188,6 +194,24 @@ public class MarketingAction implements ITransferObject {
 	public void setSurvey(Survey survey) {
 		this.survey = survey;
 	}
+	
+	/**
+	 * Gets the template.
+	 *
+	 * @return the template
+	 */
+	public Template getTemplate() {
+		return template;
+	}
+
+	/**
+	 * Sets the template.
+	 *
+	 * @param template the new template
+	 */
+	public void setTemplate(Template template) {
+		this.template = template;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -202,6 +226,7 @@ public class MarketingAction implements ITransferObject {
 				.append(this.mediaType, o.mediaType)
 				.append(this.startDate, o.startDate)				
 				.append(this.survey, o.survey)
+				.append(this.template, o.template)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -216,6 +241,7 @@ public class MarketingAction implements ITransferObject {
 			.append(mediaType)			
 			.append(startDate)
 			.append(survey)
+			.append(template)
 			.toHashCode();
 	}
 

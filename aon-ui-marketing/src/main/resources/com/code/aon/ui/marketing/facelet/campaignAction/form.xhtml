@@ -60,6 +60,10 @@
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 
+					<ui:include src="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{campaignAction.to.template}" />
+					</ui:include>					
+
 					<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 						<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{campaignAction.to.survey}" />
@@ -94,6 +98,7 @@
 			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 		</c:if>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+		<aon:lookupButtonPopup lookup="#{marketingTemplateLookup}" />
 	</ui:define>
 </ui:composition>
 

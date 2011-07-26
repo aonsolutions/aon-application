@@ -58,6 +58,7 @@
 								actionListener="#{webmailMessage.onNewMessage}"
 								value="#{webmailBundle.webmail_newmail}"
 								styleClass="aon-finding-toolbar-item aon-icon-newMail">
+								<aon:actionListener method="#{communicationCenter.onNewEmail}" />
 							</aon:commandButton>								
 						</c:if>
 						<c:if test="#{communicationCenter.action.mediaType  == 'SMS'}" >
@@ -96,6 +97,19 @@
 					</ui:include>	
 					
 					<c:if test="#{communicationCenter.actionSelected}" >
+						<c:if test="#{communicationCenter.templateSelected}" >
+							<ui:decorate template="/com/code/aon/ui/marketing/facelet/marketingTemplate/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{communicationCenter.template}" />
+								<ui:param name="lookupDisabled" value="#{true}" />
+								<ui:define name="afterLookupContent">
+									<aon:commandLink title="#{webmailBundle.webmail_send_email}" 
+										ajaxSingle="true" reRender="showNewMessageWindow"
+										actionListener="#{communicationCenter.onSendEmail}" value="&#160;"
+										styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border" />							
+								</ui:define>
+							</ui:decorate>
+						</c:if>					
+					
 						<c:if test="#{communicationCenter.surveySelected and aonConfiguration.bean.campaign.showSurvey}" >
 							<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
 								<ui:param name="lookupTo" value="#{communicationCenter.survey}" />
@@ -139,11 +153,15 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+		<aon:lookupButtonPopup lookup="#{marketingTemplateLookup}" />
 		<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
 			<aon:lookupButtonPopup lookup="#{surveyLookup}" />
 		</c:if>
 		<c:if test="#{aonConfiguration.bean.alarm.showNew}">
 			<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/newAlarm.xhtml" />
+		</c:if>
+		<c:if test="#{communicationCenter.templateSelected}">
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		</c:if>
 	</ui:define>
 </ui:composition>

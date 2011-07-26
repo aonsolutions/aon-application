@@ -16,9 +16,10 @@
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- AON-MARKETING Mapping files -->
-		<mapping class="com.code.aon.marketing.MarketingAction"/>
 		<mapping class="com.code.aon.marketing.ActionTarget"/>
 		<mapping class="com.code.aon.marketing.Campaign"/>
+		<mapping class="com.code.aon.marketing.MarketingAction"/>
+		<mapping class="com.code.aon.marketing.MarketingTarget"/>		
 		<mapping class="com.code.aon.marketing.Question"/>
 		<mapping class="com.code.aon.marketing.QuestionValue"/>
 		<mapping class="com.code.aon.marketing.Survey"/>
@@ -27,7 +28,7 @@
 		<mapping class="com.code.aon.marketing.SurveyResponseDetail"/>
 		<mapping class="com.code.aon.marketing.SurveyWorkflow"/>
 		<mapping class="com.code.aon.marketing.TargetProfile"/>
-		<mapping class="com.code.aon.marketing.MarketingTarget"/>
+		<mapping class="com.code.aon.marketing.Template"/>
 
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>

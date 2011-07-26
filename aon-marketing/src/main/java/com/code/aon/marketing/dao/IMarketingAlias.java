@@ -14,6 +14,7 @@ import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.marketing.SurveyWorkflow;
 import com.code.aon.marketing.TargetProfile;
 import com.code.aon.marketing.MarketingTarget;
+import com.code.aon.marketing.Template;
 
 /** 
 * Interface for holding entity properties constants.
@@ -517,6 +518,43 @@ public interface IMarketingAlias {
 	* Hibernate value: MarketingTarget.registry.document
 	*/
 	String  MARKETING_TARGET_REGISTRY_DOCUMENT = MARKETING_TARGET_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for Template entity.
+	*/ 
+	DAOConstantsEntry TEMPLATE_ENTRY = DAOConstants.getDAOConstant(Template.class);
+
+	/** 
+	* Alias value: Template_active
+	* Hibernate value: Template.active
+	*/
+	String  TEMPLATE_ACTIVE = TEMPLATE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Template_creationDate
+	* Hibernate value: Template.creationDate
+	*/
+	String  TEMPLATE_CREATION_DATE = TEMPLATE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Template_data
+	* Hibernate value: Template.data
+	*/
+	String  TEMPLATE_DATA = TEMPLATE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Template_id
+	* Hibernate value: Template.id
+	*/
+	String  TEMPLATE_ID = TEMPLATE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Template_name
+	* Hibernate value: Template.name
+	*/
+	String  TEMPLATE_NAME = TEMPLATE_ENTRY.getAliasNames()[4];
 
 
 }

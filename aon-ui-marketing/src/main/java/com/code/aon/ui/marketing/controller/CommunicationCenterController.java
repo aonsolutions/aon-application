@@ -1,6 +1,7 @@
 package com.code.aon.ui.marketing.controller;
 
 import static com.code.aon.ui.groupware.controller.IGroupWareConstants.ALARM_CONTROLLER_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
 import java.io.IOException;
 import java.util.Date;
@@ -37,6 +38,7 @@ import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.marketing.SurveyWorkflow;
 import com.code.aon.marketing.TargetProfile;
+import com.code.aon.marketing.Template;
 import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.marketing.enumeration.QuestionType;
@@ -49,6 +51,7 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.util.CompanyEmailUtil;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
@@ -56,6 +59,7 @@ import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.mailing.MailData;
 import com.code.aon.ui.mailing.MailingManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.MessageController;
 
 public class CommunicationCenterController implements IMarketingConstants {
 
@@ -66,6 +70,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private MarketingAction action;
 	
 	private Survey survey;
+	
+	private Template template;
 	
 	private Target target;
 	
@@ -100,6 +106,8 @@ public class CommunicationCenterController implements IMarketingConstants {
 	private boolean actionSelected;
 	
 	private boolean surveySelected;
+	
+	private boolean templateSelected;
 	
 	private int pendingTargets;
 	
@@ -156,6 +164,20 @@ public class CommunicationCenterController implements IMarketingConstants {
 		}
 		this.surveySelected = (this.survey.getId() != null);
 	}
+	
+	public Template getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(Template template) throws ManagerBeanException {
+		if ( template != null ) {
+			this.template = template;
+		} else {
+			IManagerBean templateBean = BeanManager.getManagerBean(Template.class);
+			this.template = (Template) templateBean.createNewTo();
+		}
+		this.templateSelected = (this.template.getId() != null);
+	}
 
 	public Target getTarget() {
 		return target;
@@ -191,6 +213,10 @@ public class CommunicationCenterController implements IMarketingConstants {
 		return surveySelected;
 	}
 	
+	public boolean isTemplateSelected() {
+		return templateSelected;
+	}
+
 	public int getPendingTargets() {
 		return pendingTargets;
 	}
@@ -259,6 +285,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			setAction(null);
 			setTarget(null);
 			setSurvey(null);
+			setTemplate(null);
 		} catch (ManagerBeanException e) {
 			LOGGER.error( e.getMessage(), e );
 		}
@@ -535,6 +562,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 			setAction(action);
 			try {				
 				setSurvey( action.getSurvey() );
+				setTemplate( action.getTemplate() );
 				nextActionTarget(false);
 			} catch (ManagerBeanException e) {
 				AonUtil.addErrorMessage(e.getMessage());
@@ -655,6 +683,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		updateActionTarget(true);
 		setAction(at.getAction());
 		setSurvey( action.getSurvey() );
+		setTemplate( action.getTemplate() );
 		nextActionTarget(true);
 	}	
 	
@@ -665,6 +694,26 @@ public class CommunicationCenterController implements IMarketingConstants {
 		Alarm alarm = (Alarm) controller.getTo();
 		alarm.setSource(AlarmSource.CALL_CENTER);
 		alarm.setSourceId(getActionTarget().getId());
+	}
+
+	public void onNewEmail( ActionEvent event ) {
+		if ( isTemplateSelected() ) {
+			MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+			controller.setAppendSignature(true);
+			controller.updateMessageBody(getTemplate().getData());
+		}
+	}
+
+	public void onSendEmail( ActionEvent event ) throws ManagerBeanException {
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onNewMessage(event);
+		controller.setShowNewMessageWindow(true);
+		controller.setAppendSignature(true);
+		controller.updateMessageBody(getTemplate().getData());
+		if ( isTargetSelected() ) {
+			String[] emails = CompanyEmailUtil.getEmails(getTarget().getRegistry());
+			CompanyEmailUtil.initMessageController(controller, emails);
+		}
 	}
 	
 }

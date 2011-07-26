@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="campaignActionForm">		
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >		
+				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_template_module}" />
+				<ui:param name="controller" value="#{marketingTemplate}" />
+			</ui:include>				
+
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:panelGrid id="menuGrid" columns="2">
+
+					<aon:outputLabel for="Template_id"
+						rendered="#{!marketingTemplate.new}" value="#{bundle.aon_id}" />
+					<aon:inputText id="Template_id" value="#{marketingTemplate.to.id}"
+						rendered="#{!marketingTemplate.new}" size="15" disabled="true" />
+
+					<aon:outputLabel for="Template_name"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="Template_name" required="true"
+						value="#{marketingTemplate.to.name}" size="60" maxlength="64" />
+										
+					<aon:outputLabel for="Template_creationDate"
+						value="#{marketingBundle.marketing_creationDate}" />
+					<aon:selectInputDate id="Template_creationDate" required="true"
+						value="#{marketingTemplate.to.creationDate}"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+					</aon:selectInputDate>
+
+					<aon:outputLabel for="Template_data"
+						value="#{marketingBundle.marketing_template}" />
+					<aon:inputRichText id="Template_data" required="true"
+						value="#{marketingTemplate.to.data}" 
+						configuration="tinyMCE" >	
+						<f:param name="theme_advanced_buttons2_add" value="|,code"/>
+					</aon:inputRichText>
+					
+					<aon:outputLabel for="Template_active"
+						value="#{bundle.aon_active}" />
+					<aon:selectBooleanCheckbox id="Template_active" required="true"
+						value="#{marketingTemplate.to.active}" />
+						
+				</aon:panelGrid>
+				
+			</aon:div>
+		</aon:form>	
+
+	</ui:define>
+</ui:composition>

@@ -64,6 +64,11 @@
 										value="#{marketingBundle.marketing_survey_module}" />
 								</aon:div>
 							</c:if>								
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="marketingTemplate"
+									action="marketingTemplate_list" actionListener="#{marketingTemplate.onSearch}" 
+									value="#{marketingBundle.marketing_template_module}" />
+							</aon:div>								
 						</aon:div>
 					</aon:panelGrid>							
 					

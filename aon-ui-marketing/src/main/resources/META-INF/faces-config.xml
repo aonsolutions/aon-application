@@ -274,7 +274,7 @@
 		</managed-property>																
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/com/code/aon/ui/marketing/facelet/lookup/survey/list.xhtml</value>
+			<value>/com/code/aon/ui/marketing/facelet/survey/listBasic.xhtml</value>
 		</managed-property>
 	</managed-bean>	
 
@@ -733,6 +733,63 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
+	<!-- ************ MARKETING TEMPLATE ************** -->
+	<managed-bean>
+		<managed-bean-name>marketingTemplate</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.marketing.Template</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>marketingTemplate</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Template_name</value>
+		</managed-property>								
+	</managed-bean>
+	
+	<!-- ************ MARKETING TEMPLATE LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>marketingTemplateLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>marketingTemplateLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.marketing.Template</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Template_active</key>
+					<value>#{true}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Template_name</value>
+		</managed-property>																
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/com/code/aon/ui/marketing/facelet/marketingTemplate/listBasic.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
 	<!-- =================== Question ================= -->	
 	<navigation-rule>
 		<navigation-case>
@@ -847,6 +904,22 @@
 			<from-outcome>communicationCenter_mail</from-outcome>
 			<to-view-id>/com/code/aon/ui/marketing/facelet/communicationCenter/mail.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>					
+	</navigation-rule>			
+	
+	<!-- =================== Marketing Template ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>marketingTemplate_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/marketingTemplate/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>marketingTemplate_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/marketingTemplate/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>marketingTemplate_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/marketingTemplate/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>				
 	
 </faces-config>

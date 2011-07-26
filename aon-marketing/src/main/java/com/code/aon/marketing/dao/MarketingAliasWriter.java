@@ -17,6 +17,7 @@ import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.marketing.SurveyWorkflow;
 import com.code.aon.marketing.TargetProfile;
+import com.code.aon.marketing.Template;
 
 /**
  * @author Consulting & Development. Aimar Tellitu - 19-sep-2008
@@ -42,7 +43,8 @@ public class MarketingAliasWriter {
 				SurveyResponseDetail.class.getName(),
 				SurveyWorkflow.class.getName(),
 				TargetProfile.class.getName(),
-				MarketingTarget.class.getName()};
+				MarketingTarget.class.getName(),
+				Template.class.getName()};
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.marketing.dao");
 		writer.write(classes, file);
