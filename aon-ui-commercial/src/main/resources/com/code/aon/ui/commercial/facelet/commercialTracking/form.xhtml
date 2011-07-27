@@ -216,9 +216,9 @@
 						
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{projectCommercialLookup}" />		
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />
 		<aon:lookupButtonPopup lookup="#{offerLookup}" />
-		<aon:lookupButtonPopup lookup="#{projectCommercialLookup}" />
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 		<c:if test="#{aonConfiguration.bean.alarm.showNew}">
 			<ui:include src="/com/code/aon/ui/groupware/facelet/alarm/newAlarm.xhtml" />

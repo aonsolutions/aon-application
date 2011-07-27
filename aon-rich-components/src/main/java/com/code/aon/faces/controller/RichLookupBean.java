@@ -536,7 +536,13 @@ public class RichLookupBean {
 				}				
 			}
 			event = new LookupChangeEvent(component, newValue );
-			getComponent().getLookupChangeListener().invoke(ctx.getELContext(), new Object[]{event});
+			try {
+				getComponent().getLookupChangeListener().invoke(ctx.getELContext(), new Object[]{event});
+			} catch (Throwable e) {
+				LOGGER.error(">>>> fireLookupChangeListener ",e);
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e.getMessage(), e);			
+			}
 		}
 	}
 
