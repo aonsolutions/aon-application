@@ -17,6 +17,8 @@ import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.ProjectCommercial;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Alarm;
@@ -205,13 +207,16 @@ public class CommercialTrackingController extends BasicController {
 		return this.getManagerBean().getList(criteria);
 	}
 
-	public void projectChanged( LookupChangeEvent event ) {
-		CommercialTracking ct = (CommercialTracking) getTo();
+	public void projectChanged( LookupChangeEvent event ) throws ManagerBeanException {
+		CommercialTracking ct = (CommercialTracking) getTo(); 
 		if ( event.getNewValue() != null ) {
-			ProjectCommercial project = (ProjectCommercial) event.getNewValue();
-			if ( project.getSeller().getId() != null ) {
-				ct.setSeller(project.getSeller());
+			Seller seller = ((ProjectCommercial) event.getNewValue()).getSeller();
+			if ( (seller != null) && (seller.getId() != null) ) {
+				ct.setSeller( seller );
 			}
+		} else {
+			IManagerBean sellerBean = BeanManager.getManagerBean(Seller.class);
+			ct.setSeller( (Seller) sellerBean.createNewTo() );			
 		}
 	}
 
