@@ -39,9 +39,9 @@ public class StatementDetailListener extends ControllerAdapter {
 				criteria.addEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL), params.getSecurityLevel());
 			}
 //			criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.OPENING));	
-			if (params.isExcludeClosingEntry()) {
-				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING));	
-			}
+//			if (params.isExcludeClosingEntry()) {
+//				criteria.addExpression(ExpressionUtilities.getNotEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING));	
+//			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(),e);
 		}

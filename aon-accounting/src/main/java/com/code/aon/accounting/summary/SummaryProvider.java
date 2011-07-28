@@ -127,7 +127,7 @@ public class SummaryProvider {
 						s.setInitialCredit(0);					
 						s.setInitialDebit(0);
 						
-						if (s.isLastLevel() && !StringUtils.startsWith(s.getId(), "6") && !StringUtils.startsWith(s.getId(), "7") ) {
+						if (s.isLastLevel()) {
 							Balance openingBalance = getOpeningEntryBalance(params.getStartDate(), account.getId(),params.getSecurityLevel());
 							Balance fromOpeningBalance = null;
 							Date dateTo = DateUtils.addDays(params.getStartDate(), -1);
@@ -156,7 +156,7 @@ public class SummaryProvider {
 							}
 							if (fromOpeningBalance!=null) {
 								if (openingBalance!=null) {
-									// Si exiten acumulados anteriores y asiento de apertura, éste se decuenta de los acumulados anteriores.
+									// Si exiten acumulados anteriores y asiento de apertura, éste se descuenta de los acumulados anteriores.
 									fromOpeningBalance.substractBalance(openingBalance);
 								}
 								s.setInitialDebit(s.getInitialDebit() + fromOpeningBalance.getDebit());
@@ -355,65 +355,77 @@ public class SummaryProvider {
 		params.setAccountExpression(accountExpression);
 		return getSummaryCollection(params);
 	}
-	
-	public Balance getOpeningEntryBalance(Date date, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
-		return getAccountEntryBalance(date, accountId, AccountEntryType.OPENING,securityLevel);
-	}
+
 	public Balance getOpeningEntryBalance(Period period, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
 		if (period == null) {
 			throw new IllegalArgumentException("Period param must not be null.");
 		}
-		return getAccountEntryBalance(period.getDeadline(), accountId, AccountEntryType.OPENING,securityLevel);
+		return getOpeningEntryBalance(period.getDeadline(), accountId,securityLevel);
 	}
 
 	@SuppressWarnings("deprecation")
-	private Balance getAccountEntryBalance(Date date, String accountId, AccountEntryType type,SecurityLevel securityLevel)
-			throws ManagerBeanException {
+	public Balance getOpeningEntryBalance(Date date, String accountId, SecurityLevel securityLevel) throws ManagerBeanException {
 		if (date == null) {
 			throw new IllegalArgumentException("date param must not be null.");
 		}
 		if (accountId == null) {
 			throw new IllegalArgumentException("accountId param must not be null.");
 		}
-		if (type == null) {
-			throw new IllegalArgumentException("type param must not be null.");
-		}
 		
 		PreparedStatement entryStmt = null;
 		ResultSet entrySet  = null;
 		try {
+			String sessionName = HibernateUtil.getSessionFactoryName(AccountEntry.class.getName());
+			
+			// Se busca la fecha de un asiento de apertura inmediatamanete anterior a la fecha requerida.
 			StringBuffer stmt = new StringBuffer();
-			stmt.append("SELECT a.id,a.entry_date,SUM(d.debit),SUM(d.credit)");
-			stmt.append(" FROM account_entry a,account_entry_detail d ");
-			stmt.append(" WHERE a.id = d.account_entry");
-			stmt.append(" AND a.entry_type = ?");
-			stmt.append(" AND a.entry_date <= ?");
+			stmt.append("SELECT MAX(a.entry_date)");
+			stmt.append(" FROM account_entry a ");
+			stmt.append(" WHERE a.entry_date <= ? ");
+			stmt.append(" AND a.entry_type = ? ");
 			if (securityLevel != null ) {
 				stmt.append(" AND a.security_level = ?");
-			}
-	 		stmt.append(" AND d.account LIKE ?");
-			stmt.append(" GROUP BY a.id,a.entry_date");
-	 		stmt.append(" ORDER BY a.entry_date desc");
-			String sessionName = HibernateUtil.getSessionFactoryName(AccountEntry.class.getName());
+			} 
 			entryStmt = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString());
 			int i = 0;
-			entryStmt.setInt(++i, type.ordinal());
 			entryStmt.setDate(++i, new java.sql.Date( date.getTime() ) );
+			entryStmt.setInt(++i, AccountEntryType.OPENING.ordinal());
 			if (securityLevel != null ) {
 				entryStmt.setInt(++i, securityLevel.ordinal() );
 			}
-			
-			entryStmt.setString(++i, accountId + PERCENT);
 			entrySet = entryStmt.executeQuery();
 			Balance b = null;
 			if (entrySet.next()) {
 				b = new Balance();
-				b.setAccountEntry(entrySet.getInt(1));
-				b.setFromDate(entrySet.getDate(2));
-				b.setDebit( CommonUtil.round(entrySet.getDouble(3)) );
-				b.setCredit(CommonUtil.round(entrySet.getDouble(4)) );
-				b.setUnpaidBalance(CommonUtil.round(entrySet.getDouble(3)) );
-				b.setCreditBalance(CommonUtil.round(entrySet.getDouble(4)) );
+				Date entryDate = entrySet.getDate(1);
+				b.setFromDate(entryDate);
+			}
+			if (b != null) {
+				entrySet.close();
+				entryStmt.close();
+				stmt = new StringBuffer();	
+				stmt.append("SELECT SUM(d.debit),SUM(d.credit)");
+				stmt.append(" FROM account_entry a,account_entry_detail d ");
+				stmt.append(" WHERE a.id = d.account_entry");
+				stmt.append(" AND a.entry_type = ?");
+				stmt.append(" AND a.entry_date = ?");
+				if (securityLevel != null ) {
+					stmt.append(" AND a.security_level = ?");
+				}
+		 		stmt.append(" AND d.account LIKE ?");
+				i = 0;
+				entryStmt = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString());
+				entryStmt.setInt(++i, AccountEntryType.OPENING.ordinal());
+				entryStmt.setDate(++i, new java.sql.Date( b.getFromDate().getTime() ) );
+				if (securityLevel != null ) {
+					entryStmt.setInt(++i, securityLevel.ordinal() );
+				}
+				entryStmt.setString(++i, accountId + PERCENT);
+				entrySet = entryStmt.executeQuery();
+				if (entrySet.next()) {
+					b.set(CommonUtil.round(entrySet.getDouble(1)), CommonUtil.round(entrySet.getDouble(2)));
+				}
+
 			}
 			return b;
 		} catch (Exception e) {

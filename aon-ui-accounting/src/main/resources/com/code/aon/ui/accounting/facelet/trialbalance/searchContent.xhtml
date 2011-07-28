@@ -28,8 +28,37 @@
 	<c:if test="#{!isOfficialBalance}">
 		<aon:outputLabel for="Account_id"
 			value="#{accountBundle.account_account}" />
-		<aon:inputText id="Account_id" value="#{controller.parameters.accountExpression}"
-			size="14" />
+			<aon:div id="links">
+				<aon:inputText id="Account_id" value="#{controller.parameters.accountExpression}" size="14" />
+				<aon:commandLink value="#{accountingBundle.accounting_treasury}" reRender="Account_id" tabindex="1000"
+					styleClass="aon-margin-left aon-dataTable-link-simple aon-italic">
+					<a4j:actionparam value="57*" assignTo="#{controller.parameters.accountExpression}"/>
+				</aon:commandLink>
+				<aon:commandLink value="#{accountingBundle.accounting_banks}" reRender="Account_id" tabindex="1001"  
+					styleClass="aon-dataTable-link-simple aon-italic" >
+					<a4j:actionparam value="572*" assignTo="#{controller.parameters.accountExpression}"/>
+				</aon:commandLink>
+				<aon:commandLink value="#{accountingBundle.accounting_cash}" reRender="Account_id" tabindex="1002"  
+					styleClass="aon-dataTable-link-simple aon-italic" >
+					<a4j:actionparam value="570*" assignTo="#{controller.parameters.accountExpression}"/>
+				</aon:commandLink>
+				<aon:commandLink value="#{accountingBundle.accounting_publicAdmon}" reRender="Account_id" tabindex="1003"  
+					styleClass="aon-dataTable-link-simple aon-italic">
+					<a4j:actionparam value="47*" assignTo="#{controller.parameters.accountExpression}"/>
+				</aon:commandLink>
+				<aon:commandLink value="#{accountingBundle.accounting_customer}" reRender="Account_id" tabindex="1004"  
+					styleClass="aon-dataTable-link-simple aon-italic" >
+					<a4j:actionparam value="430*" assignTo="#{controller.parameters.accountExpression}"/>
+				</aon:commandLink>
+				<aon:commandLink value="#{accountingBundle.accounting_supplier}" reRender="Account_id" tabindex="1005"  
+					styleClass="aon-dataTable-link-simple aon-italic">
+					<a4j:actionparam value="400*" assignTo="#{controller.parameters.accountExpression}"/>
+				</aon:commandLink>
+				<aon:commandLink value="#{accountingBundle.accounting_creditor}" reRender="Account_id" tabindex="1006"  
+					styleClass="aon-dataTable-link-simple aon-italic">
+					<a4j:actionparam value="410*" assignTo="#{controller.parameters.accountExpression}"/>
+				</aon:commandLink>
+			</aon:div>
 	
 		<aon:outputLabel for="Account_Description"
 			value="#{bundle.aon_description}" />

@@ -220,13 +220,22 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 		}
 	}
 
-	private void showAccountEntry(Balance balance) {
+	private void showAccountEntry(Balance balance,AccountEntryType type) {
 		try {
 			AccountEntryController entryController = (AccountEntryController) FormUtil
 					.getController(IAccountingConstants.ACCOUNT_ENTRY_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(entryController.getManagerBean().getFieldName(
-					IAccountingAlias.ACCOUNT_ENTRY_ID), balance.getAccountEntry());
+			if (balance.getAccountEntry() != null) {
+				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID), balance.getAccountEntry());
+			} else {
+				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ENTRY_DATE), balance.getFromDate());
+			}
+			if (type != null) {
+				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE), type);
+			}
+			if (getParameters().getSecurityLevel() != null) {
+				criteria.addEqualExpression(entryController.getManagerBean().getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), getParameters().getSecurityLevel());
+			}
 			entryController.setCriteria(criteria);
 			entryController.onSearch(null);
 			entryController.getModel().setRowIndex(0);
@@ -241,12 +250,12 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 	public void onOpeningEntry(ActionEvent event) {
 		StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 		Balance balance = c.getOpeningEntry();
-		showAccountEntry(balance);
+		showAccountEntry(balance,AccountEntryType.OPENING);
 	}
 	public void onAccountEntry(ActionEvent event) {
 		StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 		Balance balance = (Balance) c.getDetailModel().getRowData();
-		showAccountEntry(balance);
+		showAccountEntry(balance,null);
 	}
 
 	@Override
