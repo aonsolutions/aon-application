@@ -28,6 +28,7 @@
 					<aon:outputLabel for="Settle_dismissCause" 
 						value="#{payrollBundle.payroll_settle_dismissCause}" />
 					<aon:selectOneMenu id="Settle_dismissCause" value="#{settle.params.dismissCause}"
+						required="true"
 						reRender="settleForm" >
 						<f:selectItem value="#{null}" itemLabel=" - " />
 						<f:selectItems value="#{payrollCollections.dismissCauseList}"  />
@@ -38,6 +39,7 @@
 					<aon:panelGroup id="suspensionDateContainer">
 						<aon:selectInputDate id="Settle_suspensionDate" 
 							value="#{settle.params.suspensionDate}"
+							required="true"
 							timeZone="#{timeZoneController.timeZone}" 
 							popupDateFormat="#{bundle.aon_date_pattern}">
 							<a4j:support event="oninputchange" reRender="settleForm" ajaxSingle="true"/>
@@ -120,9 +122,20 @@
 					
 					<aon:outputLabel for="Settle_noticeDayAmount"
 						value="#{payrollBundle.payroll_settle_noticeDayAmount}" />
-					<aon:inputText id="Settle_noticeDayAmount"
-						size="10" maxlength="4"
-						value="#{settle.params.noticeDayAmount}" />
+					<aon:div>
+						<aon:inputText id="Settle_noticeDayAmount"
+							size="10" maxlength="4"
+							value="#{settle.params.noticeDayAmount}" />
+						<aon:outputText styleClass="aon-margin-left aon-margin-right" 
+							value="#{payrollBundle.payroll_with_concept}" />
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{settle.noticeDayConcept}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupSuffix" value="-noticeDayAmount" />
+						</ui:include>
+					</aon:div>
 
 					<aon:outputLabel for="Settle_dayAmount"
 						value="#{payrollBundle.payroll_settle_dayAmount}" />
@@ -132,19 +145,41 @@
 
 					<aon:outputLabel for="Settle_vacationAmount"
 						value="#{payrollBundle.payroll_settle_vacationAmount}" />
-					<aon:inputText id="Settle_vacationAmount"
-						size="10" maxlength="7"
-						value="#{settle.params.vacationAmount}" >
-						<a4j:support event="onchange" reRender="settleForm" ajaxSingle="true"/>
-					</aon:inputText>
+					<aon:div>
+						<aon:inputText id="Settle_vacationAmount"
+							size="10" maxlength="7"
+							value="#{settle.params.vacationAmount}" >
+							<a4j:support event="onchange" reRender="settleForm" ajaxSingle="true"/>
+						</aon:inputText>
+						<aon:outputText styleClass="aon-margin-left aon-margin-right" 
+							value="#{payrollBundle.payroll_with_concept}" />
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{settle.vacationConcept}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupSuffix" value="-vacationAmount" />
+						</ui:include>
+					</aon:div>
 
 					<aon:outputLabel for="Settle_compensation"
 						value="#{payrollBundle.payroll_settle_compensation}" />
-					<aon:inputText id="Settle_compensation"
-						size="10" maxlength="7"
-						value="#{settle.params.compensation}" >
-						<a4j:support event="onchange" reRender="settleForm" ajaxSingle="true"/>
-					</aon:inputText>
+					<aon:div>
+						<aon:inputText id="Settle_compensation"
+							size="10" maxlength="7"
+							value="#{settle.params.compensation}" >
+							<a4j:support event="onchange" reRender="settleForm" ajaxSingle="true"/>
+						</aon:inputText>
+						<aon:outputText styleClass="aon-margin-left aon-margin-right" 
+							value="#{payrollBundle.payroll_with_concept}" />
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{settle.compensationConcept}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<ui:param name="skipLabel" value="#{true}" />
+							<ui:param name="lookupSuffix" value="-compensation" />
+						</ui:include>
+					</aon:div>
 
 					<aon:outputLabel for="Settle_toalAmount"
 						value="#{payrollBundle.payroll_settle_total_amount}" />
@@ -158,6 +193,8 @@
 			
 		</aon:form>
 
+		<aon:lookupButtonPopup lookup="#{paymentConceptLookup}" />
+		
 	</ui:define>
 	
 </ui:composition>

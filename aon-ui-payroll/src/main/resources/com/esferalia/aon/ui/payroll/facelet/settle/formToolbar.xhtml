@@ -39,9 +39,12 @@
 					accesskey="#{bundle.aon_key_cancel}" />
 					
 				<aon:commandButton id="settle-generation" 
+					action="salaryDraft_form"
 					value="#{payrollBundle.payroll_settle_generation}"
-					actionListener="#{settle.onGenerate}"
-					styleClass="aon-finding-toolbar-item aon-icon-file-entrance" />
+					styleClass="aon-finding-toolbar-item aon-icon-file-entrance" >
+					<aon:actionListener method="#{settle.onGenerate}" />
+					<aon:actionListener method="#{settle.onSelectSettleDraft}" />
+				</aon:commandButton>
 					
 			</aon:div>
 			

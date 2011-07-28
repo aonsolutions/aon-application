@@ -1476,6 +1476,10 @@
 					<key>PAY_REPORT_salaryDraft_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
+				<map-entry>
+					<key>PAY_settle_concept_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>

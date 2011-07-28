@@ -75,13 +75,13 @@
 		</aon:panelGrid>
 		
 		<aon:div styleClass="aon-margin-top aon-text-right" style="width: 100%;">
-			<h:panelGrid columns="5" style="width: 100%;">
+			<h:panelGrid columns="5" style="width: 100%;" >
 				<aon:div>
 					<aon:outputText value="#{bundle.aon_type}" styleClass="aon-italic" />
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
 					<aon:selectOneMenu value="#{controller.salaryType}">
-						<f:selectItems value="#{payrollCollections.salaryTypesWithoutVacations}" />
-						<a4j:support event="onchange" actionListener="#{controller.onChangeType}" reRender="salaryDraftForm" ajaxSingle="true"/>
+						<f:selectItems value="#{controller.salaryDraftTypes}" />
+						<a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftForm" ajaxSingle="true"/>
 					</aon:selectOneMenu>
 				</aon:div>
 				
@@ -89,15 +89,15 @@
 					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_simulation_date}"/>
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
 					<aon:selectOneMenu id="Contract_month" value="#{controller.month}">
-						<f:selectItems value="#{commonCollections.months}"  />
-						<a4j:support event="onchange" actionListener="#{controller.onChangeMonth}" reRender="salaryDraftForm" ajaxSingle="true"/>
+						<f:selectItems value="#{controller.draftMonths}"  />
+						<a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftForm" ajaxSingle="true"/>
 					</aon:selectOneMenu>
 				</aon:div>
 
 	   			<rich:inputNumberSpinner id="Contract_year" value="#{controller.year}" inputSize="4" minValue="2009" maxValue="2020">
-	   			  <a4j:support event="onchange" actionListener="#{controller.onChangeYear}" reRender="salaryDraftForm" ajaxSingle="true"/>
-	   			  <a4j:support event="oninputkeydown" actionListener="#{controller.onChangeYear}" reRender="salaryDraftForm" ajaxSingle="true" focus="Contract_year"/>
-	   			  <a4j:support event="oninputkeyup" actionListener="#{controller.onChangeYear}" reRender="salaryDraftForm" ajaxSingle="true" focus="Contract_year"/>
+	   			  <a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftForm" ajaxSingle="true"/>
+	   			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftForm" ajaxSingle="true" focus="Contract_year"/>
+	   			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftForm" ajaxSingle="true" focus="Contract_year"/>
 	   			</rich:inputNumberSpinner>
 
 				<aon:div>

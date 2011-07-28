@@ -7,12 +7,13 @@ public interface IPayrollConstants {
 	// ************************************************************
 	
 	/** ResourceBundle name. */
+	String BUNDLE_BASE_NAME = "com.esferalia.aon.ui.payroll.i18n.messages";
 	String BUNDLE_NAME = "payrollBundle";
 	String SALARY_EMAIL_SUBJECT = "employee_email_subject";
 	String SALARY_EMAIL_BODY_HEADER = "employee_email_subject_header";
 	String SALARY_EMAIL_BODY_LINE = "employee_email_subject_line";
 	String SALARY_EMAIL_BODY_FOOTER = "employee_email_subject_footer";
-	String PAYROLL_DOCUMENTS= "payroll_documents";
+	String PAYROLL_DOCUMENTS = "payroll_documents";
 	String PAYROLL_ECONOMIC_DATA = "payroll_economic_data";
 	String PAYROLL_SALARY_PAYMENTS = "payroll_salary_payments_tab";
 	String PAYROLL_SALARY_DEDUCTIONS = "payroll_salary_deductions_tab";
@@ -20,6 +21,10 @@ public interface IPayrollConstants {
 	String PAYROLL_SALARY_EMBARGOS = "payroll_salary_embargos_tab";
 	String PAYROLL_SALARY = "payroll_salary";
 	String PAYROLL_SALARY_DRAFT = "payroll_salary_draft";
+	String PAYROLL_SETTLE_NOTICE_DAY_AMOUNT = "payroll_settle_noticeDayAmount";
+	String PAYROLL_SETTLE_VACATION_AMOUNT = "payroll_settle_vacationAmount";
+	String PAYROLL_SETTLE_COMPENSATION = "payroll_settle_compensation";
+	
 	
 	// ************************************************************
 	// CONTROLLERS

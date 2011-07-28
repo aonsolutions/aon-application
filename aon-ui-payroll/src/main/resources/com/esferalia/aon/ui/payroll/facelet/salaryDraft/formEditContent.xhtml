@@ -44,8 +44,7 @@
 				
 			</aon:div>
 			
-			<c:if test="#{salaryDraft.validSalaryDraftPeriod}">
-			<c:if test="#{!salaryDraft.new}">
+			<c:if test="#{!salaryDraft.new and salaryDraft.validSalaryDraftPeriod}">
 				<aon:div>
 				
 					<aon:panelTabSet>
@@ -190,7 +189,6 @@
 					</aon:panelGrid>
 	
 				</aon:div>
-			</c:if>
 			</c:if>
 		</aon:div>
 	</aon:form>

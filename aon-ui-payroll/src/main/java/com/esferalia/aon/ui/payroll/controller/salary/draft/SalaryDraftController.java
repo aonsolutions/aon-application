@@ -5,11 +5,14 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +36,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
@@ -62,12 +66,26 @@ public class SalaryDraftController extends BasicController {
 	private Date endDate;
 	private ISalary salary;
 	private DataModel paymentsModel;
-	private DataModel deductionsModel;
+//	private DataModel deductionsModel;
 	
 	private boolean showSalaryDifference;
 	private ISalary bdSalary;
 	private SalaryDraftComparatorPrinter printer;
 	private SalaryType salaryType;
+	private boolean validSalaryDraftPeriod;
+	private List<SelectItem> draftMonths;
+	private List<SelectItem> salaryDraftTypes;
+	
+	public List<SelectItem> getDraftMonths() {
+		return draftMonths;
+	}
+	
+	public boolean isValidSalaryDraftPeriod() {
+		return validSalaryDraftPeriod;
+	}
+	public void setValidSalaryDraftPeriod(boolean validSalaryDraftPeriod) {
+		this.validSalaryDraftPeriod = validSalaryDraftPeriod;
+	}
 	
 	public SalaryType getSalaryType() {
 		return salaryType;
@@ -75,10 +93,6 @@ public class SalaryDraftController extends BasicController {
 	public void setSalaryType(SalaryType salaryType) {
 		this.salaryType = salaryType;
 		setSalary(null);
-//		Contract c = (Contract) getTo();
-//		if (c != null) {
-//			c.setSalaryCalculatorContext(null);		
-//		}
 	}
 	public boolean isShowSalaryDifference() {
 		return showSalaryDifference;
@@ -146,69 +160,6 @@ public class SalaryDraftController extends BasicController {
 			return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()==ExpressionScope.CONTRACT;
 		}
 		return false;
-	}
-	
-	private boolean validSalaryDraftPeriod;
-	
-	public boolean isValidSalaryDraftPeriod() {
-		return validSalaryDraftPeriod;
-	}
-	public void setValidSalaryDraftPeriod(boolean validSalaryDraftPeriod) {
-		this.validSalaryDraftPeriod = validSalaryDraftPeriod;
-	}
-	
-	public void onChangeType(ActionEvent event) {
-		try {
-			setSalary(null);
-			ControllerEvent evt = new ControllerEvent(this);
-			controllerListenerSupport.fireAfterBeanSelected(evt);
-		} catch (ControllerListenerException e) {
-			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
-		}
-	}
-
-	public void onChangeMonth(ActionEvent event) {
-		try {
-			Calendar c = Calendar.getInstance();
-			c.setTime(getIssueDate());
-			c.set(Calendar.MONTH, getMonth().ordinal());
-			setIssueDate(c.getTime());
-			setSalary(null);
-			ControllerEvent evt = new ControllerEvent(this);
-			controllerListenerSupport.fireAfterBeanSelected(evt);
-			checkValidContractPeriod();
-		} catch (ControllerListenerException e) {
-			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
-		}
-	}
-	public void onChangeYear(ActionEvent event) {
-		try {
-			Calendar c = Calendar.getInstance();
-			c.setTime(getIssueDate());
-			c.set(Calendar.YEAR, getYear());
-			setIssueDate(c.getTime());
-			setSalary(null);
-			ControllerEvent evt = new ControllerEvent(this);
-			controllerListenerSupport.fireAfterBeanSelected(evt);
-			checkValidContractPeriod();
-		} catch (ControllerListenerException e) {
-			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
-		}
-	}
-	
-	public void checkValidContractPeriod() {
-		Contract contract = (Contract) this.getTo();
-		Date draftStart = getStartDate();
-		Date draftEnd = getEndDate();
-		Date contractStart = contract.getStartDate();
-		Date contractEnd = contract.getEndDate();
-		
-		boolean isValid	= ( contract != null ) && 
-			( draftStart.compareTo(draftEnd) <= 0 ) && 
-			( contractStart.compareTo(draftEnd) <= 0 ) &&
-			( contractEnd == null ||  ( contractEnd.compareTo(draftStart) >= 0 ) ) ;
-
-		setValidSalaryDraftPeriod(isValid);
 	}
 	
 	public void onShowPayments( ActionEvent event ) {
@@ -287,24 +238,26 @@ public class SalaryDraftController extends BasicController {
 	// *********************************
 	public ISalary getSalary() {
 		try {
-			checkValidContractPeriod();
-			if (salary == null && isValidSalaryDraftPeriod()) {
-//			if (salary == null) {
+//			rebuildDraftMonths();
+//			checkValidContractPeriod();
+//			if (salary == null && isValidSalaryDraftPeriod()) {
+			if (salary == null) {
 				Contract contract = (Contract) getTo();
 				Date startDate = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate(); 
 				Date endDate = (contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate();
-				if(startDate.after(endDate)){
-					Calendar startCal = Calendar.getInstance();
-					Calendar endCal = Calendar.getInstance();
-					endCal.setTime(endDate);
-					startCal.set(Calendar.DAY_OF_MONTH, 1);
-					startCal.set(Calendar.MONTH, endCal.get(Calendar.MONTH));
-					startCal.set(Calendar.YEAR, endCal.get(Calendar.YEAR));
-					startDate = startCal.getTime();
-				}
+//				if(startDate.after(endDate)){
+//					Calendar startCal = Calendar.getInstance();
+//					Calendar endCal = Calendar.getInstance();
+//					endCal.setTime(endDate);
+//					startCal.set(Calendar.DAY_OF_MONTH, 1);
+//					startCal.set(Calendar.MONTH, endCal.get(Calendar.MONTH));
+//					startCal.set(Calendar.YEAR, endCal.get(Calendar.YEAR));
+//					startDate = startCal.getTime();
+//				}
 				Date issueDate = getIssueDate(); 
 				ISalaryCalculatorContext ctx;
-				ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate, getSalaryType()==SalaryType.EXTRA?true:false);
+//				ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate, getSalaryType()==SalaryType.EXTRA?true:false);
+				ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate, getSalaryType());
 				salary = ctx.getSalaryProxy().getSalary();
 				paymentsModel = null;
 				printer = null;
@@ -313,9 +266,13 @@ public class SalaryDraftController extends BasicController {
 			}
 			return salary;
 		} catch (SalaryException e) {
-			String msg = "Imposible mostrar el borrador de la nómina";
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+			String msg = "Error en el calculo del borrador de la nómina";
+//			AonUtil.addErrorMessage(msg);
+//			throw new AbortProcessingException(msg, e);
+			setValidSalaryDraftPeriod(false);
+			setSalary(null);
+			LOGGER.error(msg, e);
+			return null;
 		}
 	}
 	public void setSalary(ISalary salary) {
@@ -444,9 +401,9 @@ public class SalaryDraftController extends BasicController {
 		}
 	}
 	
-	/*
-	 * Plantilla de impresion de la nomina
-	 */
+	// *********************************************************************
+	// Plantilla de impresion de la nomina
+	// *********************************************************************
 	public String getSalaryTemplate(){
 		try {
 			EnterpriseData enterpriseData = getEnterpriseDataTemplate();
@@ -487,4 +444,196 @@ public class SalaryDraftController extends BasicController {
 		}
 		return (EnterpriseData) dataBean.getList(criteria).get(0);
 	}
+
+	
+	// *********************************************************************
+	// *********************************************************************
+	// Filtro del borrador por tipo, mes y anio
+	// *********************************************************************
+	// *********************************************************************
+	
+	public void onReloadDraft(ActionEvent event) {
+		try {
+			ControllerEvent evt = new ControllerEvent(this);
+			controllerListenerSupport.fireAfterBeanSelected(evt);
+		} catch (ControllerListenerException e) {
+			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
+		}
+	}
+	
+	public void checkValidDraftPeriod() {
+		Contract contract = (Contract) this.getTo();
+		Date draftStart = CommonUtil.getDate(CommonUtil.getYear(getStartDate()), CommonUtil.getMonth(getStartDate()),CommonUtil.getDay(getStartDate()));
+		Date draftEnd = CommonUtil.getDate(CommonUtil.getYear(getEndDate()), CommonUtil.getMonth(getEndDate()),CommonUtil.getDay(getEndDate()));
+		Date contractStart = CommonUtil.getDate(CommonUtil.getYear(contract.getStartDate()), CommonUtil.getMonth(contract.getStartDate()),CommonUtil.getDay(contract.getStartDate()));
+		Date contractEnd = contract.getEndDate()==null?null:CommonUtil.getDate(CommonUtil.getYear(contract.getEndDate()), CommonUtil.getMonth(contract.getEndDate()),CommonUtil.getDay(contract.getEndDate()));
+
+		rebuildDraftMonths();
+		
+		boolean isValid	= ( contract != null ) && 
+			( draftStart.before(draftEnd) || draftStart.equals(draftEnd) ) && 
+			( draftStart.before(draftEnd) || draftStart.equals(draftEnd) ) && 
+			( contractStart.before(draftEnd) || contractStart.equals(draftEnd) ) &&
+			( contractEnd == null ||  ( contractEnd.after(draftStart) || contractEnd.equals(draftStart) ) ) &&
+			!draftMonths.isEmpty()
+			;
+		
+		if(getSalary()==null){
+			isValid = false;
+		}
+		setValidSalaryDraftPeriod(isValid);
+	}
+	
+	public List<SelectItem> getSalaryDraftTypes() {
+		Contract contract = (Contract) this.getTo();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		salaryDraftTypes = new LinkedList<SelectItem>();
+		for( SalaryType salaryType : SalaryType.values() ) {
+			if(salaryType==SalaryType.SETTLE){
+				if(contract.getEndDate()!=null){
+					String name = salaryType.getName(locale);
+					SelectItem item = new SelectItem(salaryType, name);
+					salaryDraftTypes.add(item);			
+				}
+			}else if(salaryType!=SalaryType.NOT_ENJOYED_VACATIONS){
+				String name = salaryType.getName(locale);
+				SelectItem item = new SelectItem(salaryType, name);
+				salaryDraftTypes.add(item);			
+			}
+		}
+		return salaryDraftTypes;
+	}
+	
+	public void rebuildDraftMonths(){
+		draftMonths = new LinkedList<SelectItem>();
+		if(getSalaryType()==SalaryType.SALARY){
+			draftMonths.addAll(getSalaryMonths());
+		} else if(getSalaryType()==SalaryType.EXTRA){
+			draftMonths.addAll(getExtraMonths());
+		} else if(getSalaryType()==SalaryType.SETTLE){
+			draftMonths.addAll(getSettleMonths());
+		} else if(getSalaryType()==SalaryType.DELAY){
+			draftMonths.addAll(getDelayMonths());
+		}
+		
+		Calendar c = Calendar.getInstance();
+		c.setTime(getIssueDate());
+		c.set(Calendar.YEAR, getYear());
+		c.set(Calendar.MONTH, getMonth().getValue());
+		setIssueDate(c.getTime());
+	}
+	
+	private List<SelectItem> getDelayMonths() {
+		// TODO Auto-generated method stub
+		AonUtil.addErrorMessage("no implementado");
+		setValidSalaryDraftPeriod(false);
+		return new LinkedList<SelectItem>();
+	}
+	private List<SelectItem> getSettleMonths() {
+		try {
+			Contract contract = (Contract) this.getTo();
+			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), SalaryType.SETTLE);
+			List<ITransferObject> salaries = bean.getList(criteria);
+			if(salaries.isEmpty()){
+				return new LinkedList<SelectItem>();
+			} else {
+				List<SelectItem> list = new LinkedList<SelectItem>();				
+				Salary settle = (Salary) salaries.get(0);
+				Month m = Month.getMonthByValue(settle.getIssueMonth()-1);
+				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+				String name = m.getName(locale);
+				SelectItem item = new SelectItem(m, name);
+				list.add(item);
+				setYear(settle.getIssueYear());
+				setMonth(Month.getMonthByValue(settle.getIssueMonth()-1));
+				return list;
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> getSettleMonths exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	private List<SelectItem> getExtraMonths() {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		List<Month> months = new LinkedList<Month>();
+		Contract contract = (Contract) this.getTo();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			for(ITransferObject to: bean.getList(criteria)){
+				AgreementExtra ae = (AgreementExtra) to;
+				if(ae.getAgreementPayment().getSalaryType()==SalaryType.EXTRA){
+					Date agreementStart = ae.getAgreementPayment().getStartDate();
+					Date agreementEnd = ae.getAgreementPayment().getEndDate();
+					Month month = ae.getAgreementPayment().getMonth();
+					if(CommonUtil.getYear(agreementStart)<=getYear()
+							&& ( agreementEnd==null || CommonUtil.getYear(agreementEnd)>=getYear() )
+							&& ( CommonUtil.getMonth(contract.getStartDate())<=month.ordinal() ) 
+							&& ( contract.getEndDate() == null || CommonUtil.getMonth(contract.getEndDate())>=month.ordinal() ) ){
+						months.add(month);
+					}
+				}
+			}
+			for(Month m: months){
+				String name = m.getName(locale);
+				SelectItem item = new SelectItem(m, name);
+				list.add(item);
+			}
+			if(!months.isEmpty() && !months.contains(getMonth())){
+				setMonth(months.get(months.size()-1));
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> getExtraMonths exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+		return list;
+	}
+	private List<SelectItem> getSalaryMonths() {
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		Contract contract = (Contract) this.getTo();
+		int maxMonth=11;
+		int skipMonth=0;
+		if(contract.getEndDate()!=null){
+			Date contractStart = contract.getStartDate();
+			Date contractEnd = contract.getEndDate();
+			if( CommonUtil.getYear(contractEnd) < getYear()
+					&& CommonUtil.getYear(contractStart) > getYear() ){
+				maxMonth=11;
+			}else if( CommonUtil.getYear(contractEnd)==getYear() ){
+				maxMonth = CommonUtil.getMonth(contractEnd);
+				if(getMonth().ordinal()>CommonUtil.getMonth(contractEnd)){
+					setMonth(Month.getMonthByValue(CommonUtil.getMonth(contractEnd)));
+				} else if(getMonth().ordinal()<CommonUtil.getMonth(contractStart)){
+					setMonth(Month.getMonthByValue(CommonUtil.getMonth(contractStart)));
+				}
+			}else{
+				maxMonth=0;
+			}
+			if( CommonUtil.getYear(contractStart) == getYear() ){
+				skipMonth = CommonUtil.getMonth(contractStart);
+			}
+		} 
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		for(int i=0; i<=maxMonth; i++){
+			if(skipMonth>0){
+				skipMonth--;
+			}else{
+				String name = Month.getMonthByValue(i).getName(locale);
+				SelectItem item = new SelectItem(Month.getMonthByValue(i), name);
+				list.add(item);
+			}
+		}
+		return list;
+	}
+	
+	
+	
+	
 }

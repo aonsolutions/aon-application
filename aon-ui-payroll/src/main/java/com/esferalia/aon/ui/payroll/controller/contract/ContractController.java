@@ -595,9 +595,9 @@ public class ContractController extends VariablesAbstractController {
 				}
 			}
 			List<ContractData> dataList = null;
+			dataList = new LinkedList<ContractData>();
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
-				dataList = new LinkedList<ContractData>();
 				for(ITransferObject to: list){
 					dataList.add((ContractData) to);
 				}

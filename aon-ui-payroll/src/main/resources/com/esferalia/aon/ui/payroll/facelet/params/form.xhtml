@@ -38,10 +38,22 @@
 						<f:selectItems value="#{companyCollections.salaryTemplates}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="PaymentConcept_id"
+						value="#{payrollBundle.payroll_settle_default_concept}" />
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/paymentConcept/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{payrollAppParams.paymentConcept}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="skipLabel" value="#{true}" />
+					</ui:include>
+
 				</aon:panelGrid>
 			</aon:div>
 
 		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{paymentConceptLookup}" />
+		
 	</ui:define>
 </ui:composition>
 

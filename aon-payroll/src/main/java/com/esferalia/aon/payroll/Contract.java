@@ -42,6 +42,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.SalaryCalculatorManager;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 
 @Entity
 @Table(name="contract")
@@ -300,12 +301,12 @@ public class Contract implements ITransferObject, ISalaryProxy {
 		ISalary salary = sc.calculate( getSalaryCalculatorContext() );
 		return salary;
 	}
-
+	
 	@Transient
-	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startDate, Date endDate, Date issueDate, boolean extra) throws SalaryException {
+	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startDate, Date endDate, Date issueDate, SalaryType salaryType) throws SalaryException {
 		if (ctx == null) {
 			try {
-				ctx = new ContractSalaryCalculatorContext(this,startDate,endDate,issueDate, extra);
+				ctx = new ContractSalaryCalculatorContext(this,startDate,endDate,issueDate, salaryType);
 			} catch (AonException e) {
 				throw new SalaryException(e.getMessage(), e);
 			}

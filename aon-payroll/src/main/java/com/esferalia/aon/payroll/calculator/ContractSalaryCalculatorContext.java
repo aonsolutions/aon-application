@@ -11,6 +11,7 @@ import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
@@ -23,17 +24,23 @@ public class ContractSalaryCalculatorContext implements IContractSalaryCalculato
 	private SQLContractSalaryCalculatorContext ctx;
 	private Contract contract;
 	
-	public ContractSalaryCalculatorContext(Contract contract, Date startDate, Date endDate, Date issueDate, boolean extra) throws SalaryException {
+	public ContractSalaryCalculatorContext(Contract contract, Date startDate, Date endDate, Date issueDate, SalaryType salaryType) throws SalaryException {
 		try {
 			this.contract = contract;
 			String sessionFactoryName = HibernateUtil.getSessionFactoryName(Contract.class.getName());
 			Connection c = HibernateUtil.getSQLConnection(sessionFactoryName);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression("contract.id", contract.getId());
-			if(extra){
-				this.ctx = new SQLContractExtraCalculatorContext(c, startDate, endDate, issueDate, criteria );
+			if(salaryType==SalaryType.SALARY){
+				this.ctx = new SQLContractSalaryCalculatorContext(c, startDate, endDate, issueDate, criteria);
+			} else if(salaryType==SalaryType.EXTRA){
+				this.ctx = new SQLContractExtraCalculatorContext(c, startDate, endDate, issueDate, criteria);
+			} else if(salaryType==SalaryType.SETTLE){
+				this.ctx = new SQLContractSettleCalculatorContext(c, startDate, endDate, issueDate, criteria);
+			} else if(salaryType==SalaryType.DELAY){
+				// TODO calculo de atrasos
 			} else {
-				this.ctx = new SQLContractSalaryCalculatorContext(c, startDate, endDate, issueDate, criteria );
+				throw new SalaryException("undefined salary type");
 			}
 			if (!this.ctx.next()) {
 				throw new SalaryException("¿?");	
@@ -45,7 +52,7 @@ public class ContractSalaryCalculatorContext implements IContractSalaryCalculato
 		}
 	}
 	public ContractSalaryCalculatorContext(Contract contract, Date startDate, Date endDate, Date issueDate) throws SalaryException {
-		this( contract, startDate, endDate, issueDate, false);
+		this( contract, startDate, endDate, issueDate, SalaryType.SALARY);
 	}
 	
 	@Override

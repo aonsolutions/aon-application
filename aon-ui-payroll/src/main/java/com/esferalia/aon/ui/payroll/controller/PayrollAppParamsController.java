@@ -15,15 +15,47 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.PaymentConcept;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
 public class PayrollAppParamsController{
+	
+	public final static String SETTLE_CONCEPT = "PAY_settle_concept_PAY";
+	
+	private PaymentConcept paymentConcept;
 	
 	private Map<String, ApplicationParameter> parameters;
 
 	private Map<String, String> defaultParameters;
-	
+
+	public PaymentConcept getPaymentConcept() {
+		if(paymentConcept==null){
+			initPaymentConcept();
+		}
+		return paymentConcept;
+	}
+
+	private void initPaymentConcept() {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
+			if(getParameter(SETTLE_CONCEPT).getValue()!=null){
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(getParameter(SETTLE_CONCEPT).getValue()));
+				setPaymentConcept((PaymentConcept) bean.getList(criteria).get(0));
+			} else {
+				setPaymentConcept((PaymentConcept) bean.createNewTo());
+			}
+		} catch (ManagerBeanException e) {
+			// NADA
+		}
+	}
+
+	public void setPaymentConcept(PaymentConcept paymentConcept) {
+		this.paymentConcept = paymentConcept;
+	}
 
 	public Map<String, ApplicationParameter> getParameters() {
 		return parameters;
@@ -99,6 +131,9 @@ public class PayrollAppParamsController{
 	}
 	
 	private void beforeBeanUpdate() throws ManagerBeanException {
+		if(getPaymentConcept()!=null && getPaymentConcept().getCode()!=null){
+			getParameter(SETTLE_CONCEPT).setValue(getPaymentConcept().getId().toString());
+		}
 		getParameter(ICompanyConstants.REPORT_SALARY_DRAFT_PARAM).setValue(getDraftTemplateName());
 	}
 

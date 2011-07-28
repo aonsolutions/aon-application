@@ -6,9 +6,14 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -19,6 +24,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryBuilderListenerLevel;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.launcher.ListSalaryBuilderListener.LogMessage;
@@ -176,6 +182,19 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
+	}
+	
+	public List<SelectItem> getSalaryTypes() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		List<SelectItem> salaryTypes = new LinkedList<SelectItem>();
+		for( SalaryType salaryType : SalaryType.values() ) {
+			if(salaryType!=SalaryType.NOT_ENJOYED_VACATIONS){
+				String name = salaryType.getName(locale);
+				SelectItem item = new SelectItem(salaryType, name);
+				salaryTypes.add(item);			
+			}
+		}
+		return salaryTypes;
 	}
 	
 }

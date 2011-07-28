@@ -5,10 +5,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +26,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
-import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilder;
-import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester.UnExpectedValue;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -159,6 +161,19 @@ public class SalaryLauncher extends AbstractSalaryLauncher{
 		} catch (SQLException e) {
 			throw new SalaryException(e);
 		}
+	}
+	
+	public List<SelectItem> getSalaryTypes() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		List<SelectItem> salaryTypes = new LinkedList<SelectItem>();
+		for( SalaryType salaryType : SalaryType.values() ) {
+			if(salaryType!=SalaryType.NOT_ENJOYED_VACATIONS){
+				String name = salaryType.getName(locale);
+				SelectItem item = new SelectItem(salaryType, name);
+				salaryTypes.add(item);			
+			}
+		}
+		return salaryTypes;
 	}
 
 }

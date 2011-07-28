@@ -44,6 +44,7 @@ import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractBonusController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
@@ -430,12 +431,14 @@ public class EnterpriseTree implements ICompanyConstants {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
 			this.contract = (Contract) bean.get( parentNode.getId() );
-			SalaryDraftController sc = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
-			sc.select(event, this.contract.getId());
-			sc.checkValidContractPeriod();
-			if(sc.isValidSalaryDraftPeriod()){
-				sc.setSalary(null);
-				sc.searchSavedDraftSalary();
+			SalaryDraftController controller = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
+			controller.select(event, this.contract.getId());
+			controller.setSalaryType(SalaryType.SALARY);
+			controller.rebuildDraftMonths();
+			controller.checkValidDraftPeriod();
+			controller.setSalary(null);
+			if(controller.isValidSalaryDraftPeriod()){
+				controller.searchSavedDraftSalary();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> selectSalaryDraft exception: ",e);
