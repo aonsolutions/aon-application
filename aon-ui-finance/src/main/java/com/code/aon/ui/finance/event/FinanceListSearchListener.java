@@ -23,7 +23,7 @@ public class FinanceListSearchListener extends RegistrySearchListener {
 
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
-		super.completeCriteria( criteria );
+		super.completeCriteria(criteria);
 		if (!ArrayUtils.isEmpty(getFinanceStatuses())) {
 			String status = getController().resolveAlias(IFinanceAlias.FINANCE_FINANCE_STATUS);
 			addEnumToCriteria(criteria, status, getFinanceStatuses());
