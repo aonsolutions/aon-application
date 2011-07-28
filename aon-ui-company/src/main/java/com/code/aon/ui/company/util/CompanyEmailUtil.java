@@ -12,6 +12,7 @@ import java.util.List;
 import javax.faces.event.AbortProcessingException;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -87,8 +88,18 @@ public class CompanyEmailUtil implements ICompanyConstants {
 		return this.sender;
 	}
 	
+    private String getPersonal( MailAccount account ) throws UnsupportedEncodingException {
+    	String personal = null;
+    	if ( ! StringUtils.isEmpty(account.getDisplayName()) ) {
+    		personal = account.getDisplayName();
+    	} else {
+        	personal = getCompany().getName();    	    		
+    	}
+    	return MimeUtility.encodeText(personal);
+    }	
+	
 	public void changeMailAccount(MailAccount mailAccount) throws UnsupportedEncodingException {
-		Address from = new InternetAddress( mailAccount.getEmail(), getCompany().getName() );
+		Address from = new InternetAddress( mailAccount.getEmail(), getPersonal(mailAccount) );
 		this.sender = new EmailSender( from, mailAccount );							
 	}
 

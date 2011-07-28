@@ -32,14 +32,18 @@
 				<aon:outputLabel for="MailAccount_email"
 					value="#{webmailBundle.webmail_mailAccount_email}" />
 				<aon:inputText id="MailAccount_email" disabled="#{!controller.editable}"
-					size="60" maxlength="45" required="true"
+					size="60" maxlength="256" required="true"
 					value="#{controller.to.email}" />
 					
+				<aon:outputLabel for="MailAccount_displayName"
+					value="#{bundle.aon_displayName}" />
+				<aon:inputText id="MailAccount_displayName"
+					size="60" value="#{controller.to.displayName}" />
+								
 				<aon:outputLabel for="MailAccount_replyToMail"
 					value="#{webmailBundle.webmail_mailAccount_replyToMail}" />
 				<aon:inputText id="MailAccount_replyToMail"
-					size="60" maxlength="45"
-					value="#{controller.to.replyToMail}" />
+					size="60" value="#{controller.to.replyToMail}" />
 
 				<aon:outputLabel for="MailAccount_signature"
 					value="#{webmailBundle.webmail_signature_signature}" />
@@ -52,8 +56,7 @@
 				<aon:outputLabel for="MailAccount_protocol"
 					value="#{webmailBundle.webmail_mailAccount_protocol}" />
 				<aon:inputText id="MailAccount_protocol"
-					size="60" maxlength="45"
-					disabled="true"
+					size="60" disabled="true"
 					value="#{controller.to.protocol}" />
 			</aon:panelGrid>
 		</aon:div>
@@ -68,19 +71,19 @@
 				<aon:outputLabel for="MailAccount_host"
 					value="#{webmailBundle.webmail_mailAccount_host}" />
 				<aon:inputText id="MailAccount_host"
-					size="60" maxlength="45" disabled="#{!controller.editable}"
+					size="60" maxlength="256" disabled="#{!controller.editable}"
 					value="#{controller.to.host}" />
 
 				<aon:outputLabel for="MailAccount_incomingHost"
 					value="#{webmailBundle.webmail_mailAccount_incomingHost}" />
 				<aon:inputText id="MailAccount_incomingHost"
-					size="60" maxlength="45" disabled="#{!controller.editable}"
+					size="60" disabled="#{!controller.editable}"
 					value="#{controller.to.incomingHost}" />
 
 				<aon:outputLabel for="MailAccount_incomingPort"
 					value="#{webmailBundle.webmail_mailAccount_incomingPort}" />
 				<aon:inputText id="MailAccount_incomingPort"
-					size="60" maxlength="45" disabled="#{!controller.editable}"
+					size="10" maxlength="10" disabled="#{!controller.editable}"
 					value="#{controller.to.incomingPort}" />
 
 				<aon:outputLabel for="MailAccount_incomingSsl"
@@ -107,13 +110,13 @@
 				<aon:outputLabel for="MailAccount_outgoingHost"
 					value="#{webmailBundle.webmail_mailAccount_outgoingHost}" />
 				<aon:inputText id="MailAccount_outgoingHost"
-					size="60" maxlength="45" disabled="#{!controller.editable}"
+					size="60" disabled="#{!controller.editable}"
 					value="#{controller.to.outgoingHost}" />
 
 				<aon:outputLabel for="MailAccount_outgoingPort"
 					value="#{webmailBundle.webmail_mailAccount_outgoingPort}" />
 				<aon:inputText id="MailAccount_outgoingPort"
-					size="60" maxlength="45" disabled="#{!controller.editable}"
+					size="10" maxlength="10" disabled="#{!controller.editable}"
 					value="#{controller.to.outgoingPort}" />
 
 				<aon:outputLabel for="MailAccount_outgoingSsl"
@@ -125,13 +128,13 @@
 				<aon:outputLabel for="MailAccount_mailUsername"
 					value="#{webmailBundle.webmail_mailAccount_mailUsername}" />
 				<aon:inputText id="MailAccount_mailUsername"
-					size="60" maxlength="45" disabled="#{!controller.editable}"
+					size="60" maxlength="256" disabled="#{!controller.editable}"
 					value="#{controller.to.mailUsername}" />
 
 				<aon:outputLabel for="MailAccount_password"
 					value="#{webmailBundle.webmail_mailAccount_password}" />
 				<aon:inputSecret id="MailAccount_password" redisplay="true"
-					size="60" maxlength="45" disabled="#{!controller.editable}"
+					size="60" maxlength="128" disabled="#{!controller.editable}"
 					value="#{controller.to.passwordString}" />							
 					
 			</aon:panelGrid>

@@ -491,9 +491,14 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     
     //*******************************************************************************************
     
-    private String getPersonal() throws UnsupportedEncodingException {
-    	LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);
-    	String personal = loggedUser.getLoggedUserName();    	
+    private String getPersonal( MailAccount account ) throws UnsupportedEncodingException {
+    	String personal = null;
+    	if ( ! StringUtils.isEmpty(account.getDisplayName()) ) {
+    		personal = account.getDisplayName();
+    	} else {
+        	LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);
+        	personal = loggedUser.getLoggedUserName();    	    		
+    	}
     	return MimeUtility.encodeText(personal);
     }
     
@@ -511,7 +516,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 			AonMessage parentAonMsg,
 			List<AonFile> fileList) 
 			throws MessagingException, WebmailException, UnsupportedEncodingException {
-		String personal = getPersonal();
+		String personal = getPersonal( senderMailAccount );
 		Address from = new InternetAddress(senderMailAccount.getEmail(), personal);
     	AonMessage newMessage = getWebMailController().getServer().createAonMessage( from );
     	if (! StringUtils.isEmpty(senderMailAccount.getReplyToMail())) {
