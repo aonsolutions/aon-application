@@ -3,7 +3,6 @@ package com.code.aon.ui.commercial.controller;
 import static com.code.aon.ui.groupware.controller.IGroupWareConstants.ALARM_CONTROLLER_NAME;
 
 import java.util.Collection;
-import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -42,10 +41,6 @@ public class CommercialTrackingController extends BasicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommercialTrackingController.class);
 	
-	private Date lastDate;
-	
-	private Seller lastSeller;
-	
 	private boolean nextAction;
 	
 	private CommercialTracking next;
@@ -62,22 +57,6 @@ public class CommercialTrackingController extends BasicController {
 
 	public void setOfferChecked(boolean offerChecked) {
 		this.offerChecked = offerChecked;
-	}
-
-	public Date getLastDate() {
-		return lastDate;
-	}
-
-	public void setLastDate(Date lastDate) {
-		this.lastDate = lastDate;
-	}
-
-	public Seller getLastSeller() {
-		return lastSeller;
-	}
-
-	public void setLastSeller(Seller lastSeller) {
-		this.lastSeller = lastSeller;
 	}
 
 	public boolean isNextAction() {
@@ -108,9 +87,6 @@ public class CommercialTrackingController extends BasicController {
 	public void onNextChanged( ActionEvent event ) {
 		if ( this.nextAction ) {
 			this.next = new CommercialTracking();
-			if ( getLastDate() != null ) {
-				this.next.setDate( getLastDate() );	
-			}
 			this.next.setStatus(CommercialTrackingStatus.PENDING);
 			CommercialTracking ct = (CommercialTracking) getTo();
 			this.next.setSeller(ct.getSeller());
