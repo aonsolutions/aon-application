@@ -53,6 +53,8 @@ public interface IPayrollConstants {
 	String SALARY_DRAFT_DEDUCTION_CONTROLLER = "salaryDraftDeduction";
 	String SALARY_DRAFT_PAYMENT_CONTROLLER = "salaryDraftPayment";
 	String SALARY_EMBARGO_CONTROLLER = "salaryEmbargo";
+	String SALARY_LAUNCHER_CONTROLLER = "salaryLauncher";
+	String SALARY_REMOVER_CONTROLLER = "salaryRemover";
 	String SALARY_TEST_LAUNCHER_NAME = "salaryTestLauncher";
 	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
 	String PAYROLL_WORK_PLACE_CONTROLLER = "payrollWorkPlace";

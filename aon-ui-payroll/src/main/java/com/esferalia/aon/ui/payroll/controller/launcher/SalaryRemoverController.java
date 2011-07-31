@@ -37,6 +37,14 @@ public class SalaryRemoverController {
 	
 	private DataModel model;
 	private SalaryType salaryType;
+	private List<Salary> selectedSalaries;
+	
+	public List<Salary> getSelectedSalaries(){
+		return selectedSalaries;
+	}
+	public void setSelectedSalaries(List<Salary> selectedSalaries) {
+		this.selectedSalaries = selectedSalaries;
+	}
 	
 	public DataModel getModel() {
 		if (model == null) {
@@ -110,7 +118,25 @@ public class SalaryRemoverController {
 		}
 	}
 	
+	private void buildSelectedSalaries(){
+		if(getSelectedSalaries()==null){
+			setSelectedSalaries(new ArrayList<Salary>());
+			for (int i = 0; i < getModel().getRowCount(); i++) {
+				getModel().setRowIndex(i);
+				SelectableSalary s = (SelectableSalary) getModel().getRowData();
+				if(s.isSelected()){
+					getSelectedSalaries().add(s.getSalary());
+				}
+			}
+		}
+	}
+	
 	public void onRemoveSelected(ActionEvent event){
+		removeSelected();
+		onSearch(event);
+	}
+	
+	public void removeSelected(){
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
@@ -120,18 +146,16 @@ public class SalaryRemoverController {
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
+				buildSelectedSalaries();
 				IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-				for (int i = 0; i < getModel().getRowCount(); i++) {
-					getModel().setRowIndex(i);
-					SelectableSalary r = (SelectableSalary) getModel().getRowData();
-					if(r.isSelected()){
-						removePayment(r.getSalary());
-						removeDeduction(r.getSalary());
-						removeCost(r.getSalary());
-						removeEmbargo(r.getSalary());
-						bean.remove(r.getSalary());
-					}
+				for(Salary s: getSelectedSalaries()){
+					removePayment(s);
+					removeDeduction(s);
+					removeCost(s);
+					removeEmbargo(s);
+					bean.remove(s);
 				}
+				setSelectedSalaries(null);
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
@@ -151,7 +175,6 @@ public class SalaryRemoverController {
 			HibernateUtil.setCloseSession(mustCloseSession);
 			HibernateUtil.setBeginTransaction(mustBeginTransaction);
 		}
-		onSearch(event);
 	}
 	
 	private void removePayment(Salary salary) throws ManagerBeanException{

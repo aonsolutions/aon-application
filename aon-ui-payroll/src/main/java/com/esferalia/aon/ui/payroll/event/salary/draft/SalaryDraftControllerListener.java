@@ -39,12 +39,6 @@ public class SalaryDraftControllerListener extends ControllerAdapter{
 		controller().setYear(Calendar.getInstance().get(Calendar.YEAR));
 		controller().setMonth(Month.getMonthByValue(Calendar.getInstance().get(Calendar.MONTH)));
 	}
-	@Override
-	public void beforeBeanSelected(ControllerEvent event)
-			throws ControllerListenerException {
-//		SalaryDraftController sc = (SalaryDraftController) event.getController();
-//		sc.checkValidContractPeriod();
-	}
 	
     private void resetSalary(ControllerEvent event) {
     	controller().setSalary(null);

@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.salary.draft;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -52,6 +53,9 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.SalarySupplements;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.launcher.SalaryLauncher;
+import com.esferalia.aon.ui.payroll.controller.launcher.SalaryLauncherParams;
+import com.esferalia.aon.ui.payroll.controller.launcher.SalaryRemoverController;
 import com.esferalia.aon.ui.payroll.event.salary.draft.SalaryDraftComparatorPrinter;
 
 public class SalaryDraftController extends BasicController {
@@ -238,25 +242,12 @@ public class SalaryDraftController extends BasicController {
 	// *********************************
 	public ISalary getSalary() {
 		try {
-//			rebuildDraftMonths();
-//			checkValidContractPeriod();
-//			if (salary == null && isValidSalaryDraftPeriod()) {
 			if (salary == null) {
 				Contract contract = (Contract) getTo();
-				Date startDate = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate(); 
-				Date endDate = (contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate();
-//				if(startDate.after(endDate)){
-//					Calendar startCal = Calendar.getInstance();
-//					Calendar endCal = Calendar.getInstance();
-//					endCal.setTime(endDate);
-//					startCal.set(Calendar.DAY_OF_MONTH, 1);
-//					startCal.set(Calendar.MONTH, endCal.get(Calendar.MONTH));
-//					startCal.set(Calendar.YEAR, endCal.get(Calendar.YEAR));
-//					startDate = startCal.getTime();
-//				}
+				Date startDate = getStartDate(); 
+				Date endDate = getEndDate();
 				Date issueDate = getIssueDate(); 
 				ISalaryCalculatorContext ctx;
-//				ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate, getSalaryType()==SalaryType.EXTRA?true:false);
 				ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate, getSalaryType());
 				salary = ctx.getSalaryProxy().getSalary();
 				paymentsModel = null;
@@ -267,8 +258,6 @@ public class SalaryDraftController extends BasicController {
 			return salary;
 		} catch (SalaryException e) {
 			String msg = "Error en el calculo del borrador de la nómina";
-//			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg, e);
 			setValidSalaryDraftPeriod(false);
 			setSalary(null);
 			LOGGER.error(msg, e);
@@ -614,7 +603,7 @@ public class SalaryDraftController extends BasicController {
 					setMonth(Month.getMonthByValue(CommonUtil.getMonth(contractStart)));
 				}
 			}else{
-				maxMonth=0;
+				maxMonth=-1;
 			}
 			if( CommonUtil.getYear(contractStart) == getYear() ){
 				skipMonth = CommonUtil.getMonth(contractStart);
@@ -633,7 +622,39 @@ public class SalaryDraftController extends BasicController {
 		return list;
 	}
 	
+	public void onSaveSalary(ActionEvent event){
+		Contract contract = (Contract) this.getTo();
+		SalaryLauncherParams params = new SalaryLauncherParams();
+		params.setStartDate(getStartDate());
+		params.setEndDate(getEndDate());
+		params.setIssueMonth(getMonth());
+		params.setIssueYear(getYear());
+		params.setSalaryType(getSalaryType());
+		params.setPerson(contract.getPerson());
+		SalaryLauncher launcher = (SalaryLauncher) AonUtil.getRegisteredBean(IPayrollConstants.SALARY_LAUNCHER_CONTROLLER);
+		try {
+			launcher.saveSalary(params);
+			searchSavedDraftSalary();
+			setSalary(null);
+			setShowSalaryDifference(true);
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onSaveSalary exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
 	
+	public void onUpdateSalary(ActionEvent event){
+		onDeleteSalary(event);
+		onSaveSalary(event);
+	}
 	
+	public void onDeleteSalary(ActionEvent event){
+		SalaryRemoverController controller = (SalaryRemoverController) AonUtil.getRegisteredBean(IPayrollConstants.SALARY_REMOVER_CONTROLLER);
+		controller.setSelectedSalaries(new ArrayList<Salary>());
+		controller.getSelectedSalaries().add((Salary)getBdSalary());
+		controller.removeSelected();
+		setShowSalaryDifference(false);
+	}
 	
 }

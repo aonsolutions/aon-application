@@ -126,6 +126,11 @@ public class SalaryLauncher extends AbstractSalaryLauncher{
 		}
 	}
 	
+	public void saveSalary(SalaryLauncherParams parameters) throws SalaryException {
+		setParams(parameters);
+		execute(parameters);
+	}
+	
 	@Override
 	protected void execute(SalaryLauncherParams parameters) throws SalaryException {
 		try {

@@ -16,6 +16,31 @@
 			<ui:param name="skipRemoveButton" value="true" />
 			
 			<ui:define name="beforeSpinToolbarContent">
+				<aon:commandButton id="save"
+					value="#{payrollBundle.payroll_salary_draft_save}" 
+					rendered="#{!salaryDraft.showSalaryDifference}"
+					actionListener="#{salaryDraft.onSaveSalary}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept"
+					onclick="if (!confirm('#{bundle.aon_confirm_title}')) return false;"
+					reRender="salaryDraftForm">
+				</aon:commandButton>	
+				<aon:commandButton id="update"
+					value="#{payrollBundle.payroll_salary_draft_update}" 
+					rendered="#{salaryDraft.showSalaryDifference}"
+					actionListener="#{salaryDraft.onUpdateSalary}"
+					styleClass="aon-finding-toolbar-item aon-icon-sincronize"
+					onclick="if (!confirm('#{bundle.aon_confirm_title}')) return false;"
+					reRender="salaryDraftForm">
+				</aon:commandButton>	
+				<aon:commandButton id="remove"
+					value="#{payrollBundle.payroll_salary_draft_remove}" 
+					rendered="#{salaryDraft.showSalaryDifference}"
+					actionListener="#{salaryDraft.onDeleteSalary}"
+					styleClass="aon-finding-toolbar-item aon-icon-delete"
+					onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
+					reRender="salaryDraftForm">
+				</aon:commandButton>	
+				
 				<aon:htmlCommandLink id="currentSalary-report"
 					rendered="#{salaryDraft.validSalaryDraftPeriod}"
 					styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
