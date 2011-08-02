@@ -22,8 +22,10 @@
 					action="#{rowSelectorAction}"
 					actionListener="#{rowSelectorActionListener}"
 					onkeyup="#{dataTableId}KeyUp(this)"
-					onfocus="#{dataTableId}SelectRow(this)"
-					onblur="#{dataTableId}DeselectRow(this)"
+					onfocus="disableRowSelector();#{dataTableId}SelectRow(this)"
+					onblur="enableRowSelector();#{dataTableId}DeselectRow(this)"
+					onmouseover="disableRowSelector();"
+					onmouseout="enableRowSelector();"				
 					focus="#{(focusOnSelect != null)?(focusOnSelect):''}"
 					reRender="#{rowSelectorReRender}" >
 				</aon:commandLink>
