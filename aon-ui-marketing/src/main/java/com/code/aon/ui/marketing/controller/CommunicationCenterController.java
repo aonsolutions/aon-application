@@ -1,5 +1,6 @@
 package com.code.aon.ui.marketing.controller;
 
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.TARGET_CONTROLLER_NAME;
 import static com.code.aon.ui.groupware.controller.IGroupWareConstants.ALARM_CONTROLLER_NAME;
 import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
 
@@ -355,6 +356,13 @@ public class CommunicationCenterController implements IMarketingConstants {
 		questionValue.copyValues(response);			
 	}
 
+	private void updateAction( MarketingAction action, boolean includeCurrentTarget ) throws ManagerBeanException {
+		setAction(action);
+		setSurvey( action.getSurvey() );
+		setTemplate( action.getTemplate() );
+		nextActionTarget( includeCurrentTarget );
+	}
+	
 	private void updateActionTarget( boolean resetUser ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
 		if ( resetUser ) {
@@ -555,15 +563,12 @@ public class CommunicationCenterController implements IMarketingConstants {
 		updateActionTarget(false);
 	}
 
-	public void onActionLookupChange(LookupChangeEvent event) throws ManagerBeanException {
+	public void onActionLookupChange(LookupChangeEvent event) {
 		this.actionSelected = (event.getNewValue() != null);	
 		if (this.actionSelected) {
 			MarketingAction action = (MarketingAction) event.getNewValue();
-			setAction(action);
 			try {				
-				setSurvey( action.getSurvey() );
-				setTemplate( action.getTemplate() );
-				nextActionTarget(false);
+				updateAction(action, false);
 			} catch (ManagerBeanException e) {
 				AonUtil.addErrorMessage(e.getMessage());
 				throw new AbortProcessingException(e);
@@ -637,8 +642,14 @@ public class CommunicationCenterController implements IMarketingConstants {
 		updateActionTarget(false);
 	}
 
-	public void onMarketingActionBackActionListener( ActionEvent event ) throws ManagerBeanException {
-		nextActionTarget(true);
+	public void onMarketingActionBackActionListener( ActionEvent event ) {
+		try {				
+			IController controller = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
+			updateAction((MarketingAction) controller.getTo(), true);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}		
 	}
 
 	public void onStartActionTarget( ActionEvent event ) {
@@ -709,11 +720,30 @@ public class CommunicationCenterController implements IMarketingConstants {
 		controller.onNewMessage(event);
 		controller.setShowNewMessageWindow(true);
 		controller.setAppendSignature(true);
-		controller.updateMessageBody(getTemplate().getData());
+		if ( isTemplateSelected() ) {
+			controller.updateMessageBody(getTemplate().getData());	
+		}
 		if ( isTargetSelected() ) {
 			String[] emails = CompanyEmailUtil.getEmails(getTarget().getRegistry());
 			CompanyEmailUtil.initMessageController(controller, emails);
 		}
+	}
+
+	public void onTargetBackActionListener( ActionEvent event ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(TARGET_CONTROLLER_NAME);
+		Target _target = (Target) controller.getTo();
+		setTarget( _target );
+		initTarget( _target );
+	}
+	
+	public void onSurveyBackActionListener( ActionEvent event ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(SURVEY_CONTROLLER_NAME);
+		setSurvey( (Survey) controller.getTo() );
+	}
+
+	public void onTemplateBackActionListener( ActionEvent event ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(MARKETING_TEMPLATE_CONTROLLER_NAME);
+		setTemplate( (Template) controller.getTo() );
 	}
 	
 }

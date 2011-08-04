@@ -27,6 +27,8 @@ public interface IMarketingConstants {
 	String COMMUNICATION_CENTER_CONTROLLER_NAME = "communicationCenter";
 	
 	String CAMPAIGN_CONTROLLER_NAME = "campaign";
+	
+	String MARKETING_TEMPLATE_CONTROLLER_NAME = "marketingTemplate";
 
 	// ************************************************************
 	// MESSAGE
