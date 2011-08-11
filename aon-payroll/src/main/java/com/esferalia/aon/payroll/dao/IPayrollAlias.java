@@ -30,6 +30,9 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
+import com.esferalia.aon.payroll.Mod145;
+import com.esferalia.aon.payroll.Mod145Ascendants;
+import com.esferalia.aon.payroll.Mod145Descendients;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.Salary;
@@ -1478,6 +1481,159 @@ public interface IPayrollAlias {
 	* Hibernate value: LeaveBatchDetail.leaveBatch.id
 	*/
 	String  LEAVE_BATCH_DETAIL_LEAVE_BATCH_ID = LEAVE_BATCH_DETAIL_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Mod145 entity.
+	*/ 
+	DAOConstantsEntry MOD145_ENTRY = DAOConstants.getDAOConstant(Mod145.class);
+
+	/** 
+	* Alias value: Mod145_contract_id
+	* Hibernate value: Mod145.contract.id
+	*/
+	String  MOD145_CONTRACT_ID = MOD145_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Mod145_date
+	* Hibernate value: Mod145.date
+	*/
+	String  MOD145_DATE = MOD145_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Mod145_dependence
+	* Hibernate value: Mod145.dependence
+	*/
+	String  MOD145_DEPENDENCE = MOD145_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Mod145_disabilityLevel
+	* Hibernate value: Mod145.disabilityLevel
+	*/
+	String  MOD145_DISABILITY_LEVEL = MOD145_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Mod145_familySituation
+	* Hibernate value: Mod145.familySituation
+	*/
+	String  MOD145_FAMILY_SITUATION = MOD145_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Mod145_id
+	* Hibernate value: Mod145.id
+	*/
+	String  MOD145_ID = MOD145_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Mod145_labourProlongation
+	* Hibernate value: Mod145.labourProlongation
+	*/
+	String  MOD145_LABOUR_PROLONGATION = MOD145_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Mod145_movingDate
+	* Hibernate value: Mod145.movingDate
+	*/
+	String  MOD145_MOVING_DATE = MOD145_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Mod145_spouseDocument
+	* Hibernate value: Mod145.spouseDocument
+	*/
+	String  MOD145_SPOUSE_DOCUMENT = MOD145_ENTRY.getAliasNames()[8];
+
+
+
+	/** 
+	* DAOConstantsEntry for Mod145Ascendants entity.
+	*/ 
+	DAOConstantsEntry MOD145ASCENDANTS_ENTRY = DAOConstants.getDAOConstant(Mod145Ascendants.class);
+
+	/** 
+	* Alias value: Mod145Ascendants_anotherDescendient
+	* Hibernate value: Mod145Ascendants.anotherDescendient
+	*/
+	String  MOD145ASCENDANTS_ANOTHER_DESCENDIENT = MOD145ASCENDANTS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Mod145Ascendants_birthYear
+	* Hibernate value: Mod145Ascendants.birthYear
+	*/
+	String  MOD145ASCENDANTS_BIRTH_YEAR = MOD145ASCENDANTS_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Mod145Ascendants_dependence
+	* Hibernate value: Mod145Ascendants.dependence
+	*/
+	String  MOD145ASCENDANTS_DEPENDENCE = MOD145ASCENDANTS_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Mod145Ascendants_disabilityLevel
+	* Hibernate value: Mod145Ascendants.disabilityLevel
+	*/
+	String  MOD145ASCENDANTS_DISABILITY_LEVEL = MOD145ASCENDANTS_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Mod145Ascendants_id
+	* Hibernate value: Mod145Ascendants.id
+	*/
+	String  MOD145ASCENDANTS_ID = MOD145ASCENDANTS_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Mod145Ascendants_mod145_id
+	* Hibernate value: Mod145Ascendants.mod145.id
+	*/
+	String  MOD145ASCENDANTS_MOD145_ID = MOD145ASCENDANTS_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for Mod145Descendients entity.
+	*/ 
+	DAOConstantsEntry MOD145DESCENDIENTS_ENTRY = DAOConstants.getDAOConstant(Mod145Descendients.class);
+
+	/** 
+	* Alias value: Mod145Descendients_adoptionYear
+	* Hibernate value: Mod145Descendients.adoptionYear
+	*/
+	String  MOD145DESCENDIENTS_ADOPTION_YEAR = MOD145DESCENDIENTS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Mod145Descendients_birthYear
+	* Hibernate value: Mod145Descendients.birthYear
+	*/
+	String  MOD145DESCENDIENTS_BIRTH_YEAR = MOD145DESCENDIENTS_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Mod145Descendients_dependence
+	* Hibernate value: Mod145Descendients.dependence
+	*/
+	String  MOD145DESCENDIENTS_DEPENDENCE = MOD145DESCENDIENTS_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Mod145Descendients_disabilityLevel
+	* Hibernate value: Mod145Descendients.disabilityLevel
+	*/
+	String  MOD145DESCENDIENTS_DISABILITY_LEVEL = MOD145DESCENDIENTS_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Mod145Descendients_id
+	* Hibernate value: Mod145Descendients.id
+	*/
+	String  MOD145DESCENDIENTS_ID = MOD145DESCENDIENTS_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Mod145Descendients_mod145_id
+	* Hibernate value: Mod145Descendients.mod145.id
+	*/
+	String  MOD145DESCENDIENTS_MOD145_ID = MOD145DESCENDIENTS_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Mod145Descendients_uniqueParent
+	* Hibernate value: Mod145Descendients.uniqueParent
+	*/
+	String  MOD145DESCENDIENTS_UNIQUE_PARENT = MOD145DESCENDIENTS_ENTRY.getAliasNames()[6];
 
 
 

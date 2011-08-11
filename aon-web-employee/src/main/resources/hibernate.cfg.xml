@@ -111,6 +111,9 @@
 		<mapping class="com.esferalia.aon.payroll.EnterpriseCCC"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatch"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatchDetail"/>
+		<mapping class="com.esferalia.aon.payroll.Mod145"/>
+		<mapping class="com.esferalia.aon.payroll.Mod145Ascendants"/>
+		<mapping class="com.esferalia.aon.payroll.Mod145Descendients"/>
 		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>
 		<mapping class="com.esferalia.aon.payroll.PayrollWorkPlace"/>
 		<mapping class="com.esferalia.aon.payroll.Salary"/>

@@ -33,6 +33,9 @@ import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
+import com.esferalia.aon.payroll.Mod145;
+import com.esferalia.aon.payroll.Mod145Ascendants;
+import com.esferalia.aon.payroll.Mod145Descendients;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.Salary;
@@ -87,6 +90,9 @@ public class PayrollAliasWriter {
 				EnterpriseActivity.class.getName(),
 				LeaveBatch.class.getName(),
 				LeaveBatchDetail.class.getName(),
+				Mod145.class.getName(),
+				Mod145Ascendants.class.getName(),
+				Mod145Descendients.class.getName(),
 				PaymentConcept.class.getName(),
 				PayrollWorkPlace.class.getName(),
 				Salary.class.getName(),
