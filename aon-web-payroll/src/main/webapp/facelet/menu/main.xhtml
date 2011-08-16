@@ -93,6 +93,13 @@
 										value="#{fiscalBundle.fiscal_model_190_module}">
 									</aon:commandLink>
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mod145" action="mod145_search"
+										value="#{payrollBundle.payroll_mod145_module}">
+										<aon:actionListener method="#{mod145.onEditSearch}" />
+										<aon:actionListener method="#{contract.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 

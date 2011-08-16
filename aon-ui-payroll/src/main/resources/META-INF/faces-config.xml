@@ -251,6 +251,7 @@
 				<value>#{contractCalendarEventLinesListener}</value>
 				<value>#{contractControllerListener}</value>
 				<value>#{contractSearch}</value>
+				<value>#{mod145LinesListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -908,6 +909,179 @@
 		<managed-bean-name>salaryExpense</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.salary.SalaryExpenseController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	
+	<!--  **** MOD 145 **** -->
+	<managed-bean>
+		<managed-bean-name>mod145LinesListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>mod145</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Mod145_contract_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>mod145</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.Mod145Controller</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.Mod145</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mod145</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Mod145_date</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>contract</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>contract.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{mod145ControllerListener}</value>
+				<value>#{mod145DescendientsLinesListener}</value>
+				<value>#{mod145AscendantsLinesListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>mod145ControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.Mod145ControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>mod145DescendientsLinesListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>mod145Descendients</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Mod145Descendients_mod145_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>mod145AscendantsLinesListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>mod145Ascendants</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Mod145Ascendants_mod145_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>mod145Descendients</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.Mod145Descendients</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mod145Descendients</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Mod145Descendients_birthYear</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>mod145</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>mod145.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>mod145Ascendants</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.Mod145Ascendants</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>mod145Ascendants</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Mod145Ascendants_birthYear</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>mod145</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>mod145.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
 	</managed-bean>
 	<!--  **** CONTRACT CALENDAR EVENT **** -->
 	<managed-bean>
@@ -1733,6 +1907,21 @@
 		<navigation-case>
 			<from-outcome>contractDocument_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/formDocumentTree.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+		<!-- =================== Mod145 ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mod145_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/mod145/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mod145_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/mod145/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mod145_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/mod145/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== Contract Payment ========================== -->

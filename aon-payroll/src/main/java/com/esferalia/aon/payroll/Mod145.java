@@ -38,6 +38,7 @@ public class Mod145 implements ITransferObject {
 	private boolean dependence;
 	private Date movingDate;
 	private boolean labourProlongation;
+	private Integer descendientCount;
 	
 	@Id
     @GeneratedValue
@@ -116,6 +117,14 @@ public class Mod145 implements ITransferObject {
 	public void setLabourProlongation(boolean labourProlongation) {
 		this.labourProlongation = labourProlongation;
 	}
+	
+	@Column(name = "descendient_count", length = 2)
+	public Integer getDescendientCount() {
+		return descendientCount;
+	}
+	public void setDescendientCount(Integer descendientCount) {
+		this.descendientCount = descendientCount;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -133,6 +142,7 @@ public class Mod145 implements ITransferObject {
 				.append(this.dependence, o.dependence)			
 				.append(this.movingDate, o.movingDate)			
 				.append(this.labourProlongation, o.labourProlongation)			
+				.append(this.descendientCount, o.descendientCount)			
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -150,6 +160,7 @@ public class Mod145 implements ITransferObject {
 			.append(this.dependence)		
 			.append(this.movingDate)		
 			.append(this.labourProlongation)
+			.append(this.descendientCount)
 			.toHashCode();
 	}	
 

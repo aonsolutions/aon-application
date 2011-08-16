@@ -25,6 +25,7 @@ import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.payroll.enumeration.DisabilityCode;
+import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.DischargeCause;
 import com.esferalia.aon.payroll.enumeration.DismissCause;
 import com.esferalia.aon.payroll.enumeration.DismissalCollective;
@@ -33,6 +34,7 @@ import com.esferalia.aon.payroll.enumeration.EmbargableType;
 import com.esferalia.aon.payroll.enumeration.EmployeeType;
 import com.esferalia.aon.payroll.enumeration.EmploymentProgram;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
+import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
@@ -86,6 +88,9 @@ public class PayrollCollectionsController {
 	
 	private List<SelectItem> cccTypes;
 	private List<SelectItem> enterpriseActivityTypes;
+
+	private List<SelectItem> familySityations;
+	private List<SelectItem> disabilityLevels;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -595,6 +600,32 @@ public class PayrollCollectionsController {
 			}
 		}
 		return inactiveLastPeriod;
+	}
+	
+	public List<SelectItem> getFamilySituations() {
+		if (familySityations == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			familySityations = new LinkedList<SelectItem>();
+			for( FamilySituation p : FamilySituation.values() ) {
+				String name = p.getName(locale);
+				SelectItem item = new SelectItem(p, name);
+				familySityations.add(item);			
+			}
+		}
+		return familySityations;
+	}
+	
+	public List<SelectItem> getDisabilityLevels() {
+		if (disabilityLevels == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			disabilityLevels = new LinkedList<SelectItem>();
+			for( DisabilityLevel p : DisabilityLevel.values() ) {
+				String name = p.getName(locale);
+				SelectItem item = new SelectItem(p, name);
+				disabilityLevels.add(item);			
+			}
+		}
+		return disabilityLevels;
 	}
 	
 	
