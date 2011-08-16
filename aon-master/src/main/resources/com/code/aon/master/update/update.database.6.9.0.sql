@@ -18,6 +18,7 @@ CREATE TABLE `mod145` (
   `dependence` boolean default false COMMENT 'Dependencia de terceras personas',
   `moving_date` date default NULL COMMENT 'Fecha de movilidad geografica',
   `labour_prolongation` boolean default false COMMENT 'Prolongacion de la actividad laboral',
+  `descendient_count` tinyint(2) default NULL COMMENT 'Numero de hijos',
   PRIMARY KEY  (`id`),
   KEY `IDX_MOD145_CONTRACT` (`contract`),
   CONSTRAINT `FK_MOD145_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
