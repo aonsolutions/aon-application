@@ -35,7 +35,6 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
-import com.esferalia.aon.salary.calculator.SalaryCalculatorManager;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 
@@ -185,12 +184,10 @@ public class PaymentUpdateController {
 
 	private void populateList(List<PaymentUpdate> dataList, Date date) throws SalaryException {
 		setColumns( new LinkedList<String>());
-		SalaryCalculatorManager factoryManager = SalaryCalculatorManager.getInstance();
 		for (PaymentUpdate pu: dataList) {
 			Date startDate= CommonUtil.getMonthFirstDay(date);
 			Date endDate = CommonUtil.getMonthLastDay(date);
 			ISalaryCalculatorContext scc = pu.getContract().getSalaryCalculatorContext(startDate,endDate,date);
-			factoryManager.getCalculator(scc);  // Fuerza a inicializar el contexto.
 			List<IExpression> exps = scc.getExpressionContext().getExpressionVariables();
 			for (IExpression exp: exps) {
 				if (!exp.isReadOnly()) {
@@ -262,11 +259,8 @@ public class PaymentUpdateController {
 		try {
 			PaymentUpdate pu = (PaymentUpdate) getModel().getRowData();
 			SalaryDraftController controller = (SalaryDraftController) FormUtil.getController("salaryDraft");
-			Calendar c = Calendar.getInstance();
-			c.set(Calendar.YEAR, getYear());
-			c.set(Calendar.MONTH, getMonth().ordinal());
-			c.set(Calendar.DAY_OF_MONTH, 1);
-			controller.setIssueDate(c.getTime());
+			controller.setYear(getYear());
+			controller.setMonth(getMonth());
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IPayrollAlias.CONTRACT_ID), pu.getContract().getId());
 			controller.setCriteria(criteria);

@@ -73,7 +73,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	
 	@Override
 	public boolean accept(ISalaryCalculatorContext ctx) {
-		return (ctx instanceof IContractSalaryCalculatorContext); 
+		return (ctx instanceof ContractSalaryCalculatorContext); 
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		ExpressionContext expressionContext = ctx.getExpressionContext();
 		
 		salaryBuilder.createNewSalary();
-		salaryBuilder.setContract(ctx.getSalaryProxy());
+		salaryBuilder.setContract(contractSalaryCalculatorContext.getSalaryProxy());
 		
 		fillEnterpriseData(contractSalaryCalculatorContext);
 		fillEmployeeData(contractSalaryCalculatorContext);

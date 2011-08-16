@@ -7,7 +7,6 @@ import com.code.aon.common.enumeration.Month;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 
 public class SalaryDraftControllerListener extends ControllerAdapter{
@@ -15,13 +14,7 @@ public class SalaryDraftControllerListener extends ControllerAdapter{
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		if(controller().getSalaryType()==null){
-			controller().setSalaryType(SalaryType.SALARY);
-		}
-		controller().checkValidDraftPeriod();
-		if(controller().isValidSalaryDraftPeriod()){
-			searchSavedSalary(event);
-		}
+		SalaryDraftController sc = (SalaryDraftController) event.getController();
 		resetSalary(event);
 	}
 	@Override
@@ -31,25 +24,25 @@ public class SalaryDraftControllerListener extends ControllerAdapter{
 	@Override
 	public void afterEditSearch(ControllerEvent event) throws ControllerListenerException {
 		resetSalary(event);
-		controller().setIssueDate(new Date());
+		SalaryDraftController sc = (SalaryDraftController) event.getController();
 	}
 	@Override
 	public void beforeEditSearch(ControllerEvent event)
 			throws ControllerListenerException {
-		controller().setYear(Calendar.getInstance().get(Calendar.YEAR));
-		controller().setMonth(Month.getMonthByValue(Calendar.getInstance().get(Calendar.MONTH)));
+		SalaryDraftController sc = (SalaryDraftController) event.getController();
+		sc.setYear(Calendar.getInstance().get(Calendar.YEAR));
+		sc.setMonth(Month.getMonthByValue(Calendar.getInstance().get(Calendar.MONTH)));
+	}
+	@Override
+	public void beforeBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+//		SalaryDraftController sc = (SalaryDraftController) event.getController();
+//		sc.checkValidContractPeriod();
 	}
 	
     private void resetSalary(ControllerEvent event) {
-    	controller().setSalary(null);
+    	SalaryDraftController sc = (SalaryDraftController) event.getController();
+		sc.reset();
     }
-    private void searchSavedSalary(ControllerEvent event) {
-    	controller().searchSavedDraftSalary();
-    }
-    
-    private SalaryDraftController controller() {
-    	return (SalaryDraftController) this.getController();
-    }
-    
     
 }

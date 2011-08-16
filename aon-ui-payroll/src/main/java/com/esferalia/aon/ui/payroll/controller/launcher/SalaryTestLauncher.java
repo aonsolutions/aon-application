@@ -16,6 +16,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -158,25 +160,24 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 			SalaryDraftController controller = 
 				(SalaryDraftController) FormUtil.getController("salaryDraft");
 			controller.onEditSearch(event);
-			Calendar c = Calendar.getInstance();
-			c.set(Calendar.YEAR, getParams().getIssueYear());
-			c.set(Calendar.MONTH, getParams().getIssueMonth().ordinal());
-			c.set(Calendar.DAY_OF_MONTH, 1);
-			
-			controller.setIssueDate(c.getTime());
-			
-			controller.setEndDate(getEndDate());
-			controller.setStartDate(getStartDate());
-			controller.setSalaryType(getParams().getSalaryType());
-			
+			int year = getParams().getIssueYear();
+			Month month = getParams().getIssueMonth();
+			controller.setYear(year);
+			controller.setMonth(month);
+			controller.setSalaryType(
+					getParams().getSalaryType());
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IPayrollAlias.CONTRACT_ID), getContractId());
+			criteria.addEqualExpression(
+					controller.getManagerBean().
+					getFieldName(IPayrollAlias.CONTRACT_ID), 
+					getContractId());
 			controller.clearCriteria();
 			controller.setCriteria(criteria);
 			controller.onSearch(event);
 			controller.getModel().setRowIndex(0);
 			controller.onSelect(event);
-			controller.setBackAction(IPayrollConstants.SALARY_TESTER_LAUNCHER_FORM);
+			controller.setBackAction(
+					IPayrollConstants.SALARY_TESTER_LAUNCHER_FORM);
 		} catch (ManagerBeanException e) {
 			String msg = "Error al el borrador de la nómina.";
 			AonUtil.addErrorMessage(msg);

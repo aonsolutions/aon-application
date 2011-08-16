@@ -164,7 +164,6 @@ public class SalaryDraftPaymentController extends ContractDetailAbstractControll
 							data.setName(s);
 							data.setStartDate(startCal.getTime());
 							data.setEndDate(endCal.getTime());
-							contract.setSalaryCalculatorContext(null);
 							ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), new Date(), new Date());
 							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 							if(o==null){

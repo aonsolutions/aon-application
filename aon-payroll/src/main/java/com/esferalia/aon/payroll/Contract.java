@@ -26,33 +26,23 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.person.Person;
 import com.esferalia.aon.calendar.Calendar;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
-import com.esferalia.aon.salary.ISalary;
-import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
-import com.esferalia.aon.salary.calculator.SalaryCalculatorManager;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 @Entity
 @Table(name="contract")
-public class Contract implements ITransferObject, ISalaryProxy {
+public class Contract implements ITransferObject{
 
-	static {
-		// CALCULADOR DEL BORRADOR DE NOMINA.
-		SalaryCalculatorManager scm = SalaryCalculatorManager.getInstance();
-		scm.addCalculator(new ContractSalaryCalculator());
-	}
 
 	private static final long serialVersionUID = -2662643961209110809L;
 	
@@ -73,8 +63,6 @@ public class Contract implements ITransferObject, ISalaryProxy {
 
 	private Set<ContractPayment> contractPayments = new HashSet<ContractPayment>();
 	private Set<ContractDeduction> contractDeductions = new HashSet<ContractDeduction>();
-	@Transient
-	private ISalaryCalculatorContext ctx;
 
 	@Id
 	@GeneratedValue
@@ -292,52 +280,23 @@ public class Contract implements ITransferObject, ISalaryProxy {
 		return !DateUtils.isSameDay(getStartDate(), getSeniorityDate());
 	}
 
-	@Override
-	@Transient
-	public ISalary getSalary() throws SalaryException {
-		SalaryCalculatorManager factoryManager = SalaryCalculatorManager.getInstance();
-		ISalaryCalculator sc = factoryManager.getCalculator(getSalaryCalculatorContext());
-		sc.setSalaryBuilder(new SalaryBuilder());
-		ISalary salary = sc.calculate( getSalaryCalculatorContext() );
-		return salary;
-	}
 	
 	@Transient
-	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startDate, Date endDate, Date issueDate, SalaryType salaryType) throws SalaryException {
-		if (ctx == null) {
-			try {
-				ctx = new ContractSalaryCalculatorContext(this,startDate,endDate,issueDate, salaryType);
-			} catch (AonException e) {
-				throw new SalaryException(e.getMessage(), e);
-			}
-		}
+	public ISalaryCalculatorContext getSalaryCalculatorContext(int year, Month month, SalaryType salaryType) throws SalaryException {
+		ISalaryCalculatorContext ctx = new ContractSalaryCalculatorContext(this,year, month,salaryType);
 		return ctx;
 	}
 	
-	@Override
 	@Transient
 	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startDate, Date endDate, Date issueDate) throws SalaryException {
-		if (ctx == null) {
-			try {
-				ctx = new ContractSalaryCalculatorContext(this,startDate,endDate,issueDate);
-			} catch (AonException e) {
-				throw new SalaryException(e.getMessage(), e);
-			}
-		}
-		return ctx;
+			// TODO : It's verry, very tricky and old. I hate this.  
+			java.util.Calendar  calendar = java.util.Calendar.getInstance();
+			calendar.setTime(issueDate);
+			int year = calendar.get(java.util.Calendar.YEAR);
+			Month month = Month.getMonthByValue(calendar.get(java.util.Calendar.MONTH));
+			ISalaryCalculatorContext ctx = new ContractSalaryCalculatorContext(this, year, month , SalaryType.SALARY);
+			return ctx;
 	}
 	
-	@Override
-	@Transient
-	public ISalaryCalculatorContext getSalaryCalculatorContext() throws SalaryException {
-		if (ctx == null) {
-			// TODO tratar esto.
-			throw new SalaryException("Contexto no inicializado!");
-		}
-		return ctx;
-	}
-	public void setSalaryCalculatorContext(ISalaryCalculatorContext ctx) {
-		this.ctx = ctx;
-	}
 
 }

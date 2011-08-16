@@ -7,15 +7,19 @@ import java.util.ResourceBundle;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
@@ -25,6 +29,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
@@ -187,32 +192,27 @@ public class SettleController {
 		try {
 			ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 			Contract contract = (Contract) controller.getTo();
-			contract.setSalaryCalculatorContext(null);
-			Date startDate = getParams().getSuspensionDate(); 
+			//Date startDate = getParams().getSuspensionDate(); 
 			Date endDate = getParams().getSuspensionDate();
-			Date issueDate = getParams().getSuspensionDate(); 
-			ISalaryCalculatorContext ctx;
-			ctx = contract.getSalaryCalculatorContext(startDate,endDate,issueDate, SalaryType.SETTLE);
+			//Date issueDate = getParams().getSuspensionDate(); 
+			int year = CommonUtil.getYear(endDate);
+			int month = CommonUtil.getMonth(endDate);
+			ISalaryCalculatorContext ctx = 
+				contract.getSalaryCalculatorContext(year, Month.values()[month], SalaryType.SETTLE);
 			settle = (Salary) ctx.getSalaryProxy().getSalary();
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			settle.setNonEstructuralOvertimeBase(0.0);
 			bean.insert((ITransferObject) settle);
-		} catch (SalaryException e) {
+		}catch (AonException e) {
 			String msg = "Error en el calculo del finiquito";
 			AonUtil.addErrorMessage(msg);
 			LOGGER.error(msg);
-		}
+		} 
 		setSettle(null);
 	}
 	
 	public void setSettle(Salary settle) {
 		this.settle = settle;
-		if (settle == null) {
-			Contract c = getParams().getContract();
-			if (c != null) {
-				c.setSalaryCalculatorContext(null);		
-			}
-		}
 	}
 	
 	private void finalizeContract(){

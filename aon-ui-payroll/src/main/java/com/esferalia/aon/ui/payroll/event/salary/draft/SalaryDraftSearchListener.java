@@ -70,7 +70,6 @@ public class SalaryDraftSearchListener extends ControllerSearchListener {
 //			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE), endCal.getTime());
 //			Expression expr2 = ExpressionUtilities.getNullExpression(getFieldName(IPayrollAlias.CONTRACT_END_DATE));
 //			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
-			c.setIssueDate(endCal.getTime());
 		}
 		if ( criteria.getExpression() == null ) {
 			throw new ManagerBeanException("Debe indicar algún criterio de búsqueda");

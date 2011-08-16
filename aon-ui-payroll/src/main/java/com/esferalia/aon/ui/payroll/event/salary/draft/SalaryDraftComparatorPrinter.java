@@ -54,7 +54,6 @@ public class SalaryDraftComparatorPrinter {
 		Contract c = null;
 		try {
 			c = (Contract) BeanManager.getManagerBean(Contract.class).get(contract.getId());
-			c.setSalaryCalculatorContext(null);
 			ISalaryCalculatorContext ctx;
 			ctx = c.getSalaryCalculatorContext(startDate,endDate,issueDate);
 			this.draft = ctx.getSalaryProxy().getSalary();

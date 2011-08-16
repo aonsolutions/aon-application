@@ -716,20 +716,4 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 		}
 		return payContext;
 	}
-	@Transient
-	@Override
-	public SalaryCalculatorContext getSalaryCalculatorContext() throws SalaryException {
-		SalaryCalculatorContext ctx = new SalaryCalculatorContext();
-		ctx.setSalaryProxy(this);
-		ctx.setIssueDate(this.getIssueDate());
-		ctx.setStartDate(this.getStartDate());
-		ctx.setEndDate(this.getEndDate());
-		return ctx;
-	}
-	@Override
-	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startDate, Date endDate, Date issueDate)
-			throws SalaryException {
-		SalaryCalculatorContext ctx = new SalaryCalculatorContext(getStartDate(),getEndDate(),getIssueDate());
-		return ctx;
-	}
 }

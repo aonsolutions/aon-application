@@ -21,6 +21,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
@@ -430,16 +432,26 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void selectSalaryDraft(ActionEvent event) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-			this.contract = (Contract) bean.get( parentNode.getId() );
-			SalaryDraftController controller = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
-			controller.select(event, this.contract.getId());
-			controller.setSalaryType(SalaryType.SALARY);
-			controller.rebuildDraftMonths();
-			controller.checkValidDraftPeriod();
-			controller.setSalary(null);
-			if(controller.isValidSalaryDraftPeriod()){
-				controller.searchSavedDraftSalary();
+			this.contract = 
+				(Contract) bean.get( parentNode.getId() );
+			SalaryDraftController sc = 
+				(SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
+
+			if ( sc.getMonth() == null ) {
+				Date drafDate = this.contract.getEndDate();
+				Date now = Calendar.getInstance().getTime();
+				if ( drafDate == null || drafDate.after(now)) {
+					drafDate = now;
+				} // If contract ends after now, show 'current' draft
+				
+				sc.setYear(CommonUtil.getYear(drafDate));
+				sc.setMonth(Month.getMonthByValue(CommonUtil.getMonth(drafDate)));
 			}
+			if ( sc.getSalaryType() == null ) {
+				sc.setSalaryType(SalaryType.SALARY); 
+			}
+			sc.select(event, this.contract.getId());
+
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> selectSalaryDraft exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());

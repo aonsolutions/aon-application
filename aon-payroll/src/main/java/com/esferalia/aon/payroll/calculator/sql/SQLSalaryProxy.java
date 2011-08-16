@@ -26,18 +26,5 @@ public class SQLSalaryProxy implements ISalaryProxy {
 		return null;
 	}
 
-	@Override
-	public SalaryCalculatorContext getSalaryCalculatorContext()
-			throws SalaryException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startDate, Date endDate, Date issueDate)
-			throws SalaryException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

@@ -19,6 +19,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
@@ -31,6 +32,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
+import com.sun.org.apache.bcel.internal.generic.ISUB;
 
 public class SalaryExpenseController implements Serializable, ICollectionProvider{
 
@@ -108,14 +110,11 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 			draft.getCriteria().addOrder(draft.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ID));
 			draft.getCriteria().addOrder(draft.getFieldName(IPayrollAlias.CONTRACT_PERSON_FIRST_SURNAME));
 			draft.initializeModel();
-			Calendar c = Calendar.getInstance();
-			c.setTime(draft.getIssueDate());
-			c.set(Calendar.YEAR, getYear());
-			c.set(Calendar.MONTH, getMonth().ordinal());
-			draft.setIssueDate(c.getTime());
-			draft.setSalary(null);
-			draft.setMonth(getMonth());
+			
 			draft.setYear(getYear());
+			draft.setMonth(getMonth());
+
+			draft.reset();
 			setList(new LinkedList<ISalary>());
 			while(!draft.isInLast()){
 				if(getList().isEmpty()){

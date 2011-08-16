@@ -27,7 +27,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 
 	@Override
 	public void setContract(Object contract) {
-		this.salary.setContract((Contract)contract);
+		//this.salary.setContract((Contract)contract);
 		
 	}
 
