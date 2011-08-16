@@ -48,6 +48,9 @@ CREATE TABLE `mod145_ascendants` (
   CONSTRAINT `FK_MOD145_ASCENDIENTS_MOD145` FOREIGN KEY (`mod145`) REFERENCES `mod145` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Ascendientes del modelo 145';
 
+UPDATE system_data SET start_date='2010-01-01' WHERE name='OCUPACION_IT';
+
+UPDATE system_data SET start_date='2010-01-01' WHERE name='OCUPACION_IMS';
 
 UPDATE `db_version` SET `version_number` = '6.10.0';
 
