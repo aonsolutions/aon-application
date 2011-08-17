@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components" >
 
 	<aon:column styleClass="aon-editDataTable-numberColumn">
@@ -14,15 +15,27 @@
 		</f:facet>
 		<aon:outputText value="#{to.birthYear}" 
 			rendered="#{formList}" />
+<!--  
 		<aon:inputText id="Mod145Descendients_birthYear" required="true"
 			rendered="#{formEdit}" 
 			size="4" maxlength="4"
 			value="#{to.birthYear}" />
+-->			
+		<rich:inputNumberSpinner id="Mod145Descendients_birthYear" required="true"
+			rendered="#{formEdit}" 
+			value="#{to.birthYear}" 
+			inputSize="4" minValue="1900" maxValue="2020" />
 		<f:facet name="footer">
+<!--  
 			<aon:inputText id="Mod145Descendients_birthYear-New" required="true"
 				rendered="#{formNew}"
 				size="4" maxlength="4"
 				value="#{controller.to.birthYear}" />
+-->
+			<rich:inputNumberSpinner id="Mod145Descendients_birthYear-New" required="true"
+				rendered="#{formNew}" 
+				value="#{controller.to.birthYear}" 
+				inputSize="4" minValue="1900" maxValue="2020" />
 		</f:facet>
 	</aon:column>
 
@@ -33,15 +46,15 @@
 		</f:facet>
 		<aon:outputText value="#{to.adoptionYear}" 
 			rendered="#{formList}" />
-		<aon:inputText id="Mod145Descendients_adoptionYear" 
+		<rich:inputNumberSpinner id="Mod145Descendients_adoptionYear"
 			rendered="#{formEdit}" 
-			size="4" maxlength="4"
-			value="#{to.adoptionYear}" />
+			value="#{to.adoptionYear}" 
+			inputSize="4" minValue="1900" maxValue="2020" />
 		<f:facet name="footer">
-			<aon:inputText id="Mod145Descendients_adoptionYear-New" 
-				rendered="#{formNew}"
-				size="4" maxlength="4"
-				value="#{controller.to.adoptionYear}" />
+			<rich:inputNumberSpinner id="Mod145Descendients_adoptionYear-New"
+				rendered="#{formNew}" 
+				value="#{controller.to.adoptionYear}" 
+				inputSize="4" minValue="1900" maxValue="2020" />
 		</f:facet>
 	</aon:column>
 
@@ -52,24 +65,12 @@
 		</f:facet>
 		<aon:outputText value="#{to.disabilityLevel}" 
 			rendered="#{formList}" />
-<!--  
-		<aon:inputText id="Mod145Descendients_disabilityLevel" 
-			rendered="#{formEdit}" 
-			size="4" maxlength="4"
-			value="#{to.disabilityLevel}" />
--->		
 		<aon:selectOneMenu id="Mod145Descendients_disabilityLevel" rendered="#{formEdit}"
 			value="#{to.disabilityLevel}">
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{payrollCollections.disabilityLevels}" />
 		</aon:selectOneMenu>
 		<f:facet name="footer">
-<!--  
-			<aon:inputText id="Mod145Descendients_disabilityLevel-New" 
-				rendered="#{formNew}"
-				size="4" maxlength="4"
-				value="#{controller.to.disabilityLevel}" />
--->
 			<aon:selectOneMenu id="Mod145Descendients_disabilityLevel-New" rendered="#{formNew}"
 				value="#{controller.to.disabilityLevel}">
 				<f:selectItem itemLabel="-" value="#{null}" />
@@ -86,20 +87,8 @@
 		<aon:outputText value="&#160;" style="padding-left: 15px;" rendered="#{formList}"
 			styleClass="#{to.dependence?'aon-icon-checked':'aon-icon-check'}"/>
 		<aon:selectBooleanCheckbox id="Mod145Descendients_dependence" rendered="#{formEdit}" value="#{to.dependence}"/>
-<!--  
-		<aon:inputText id="Mod145Descendients_dependence" 
-			rendered="#{formEdit}" 
-			size="4" maxlength="4"
-			value="#{to.dependence}" />
--->		
 		<f:facet name="footer">
-<!--  
-			<aon:inputText id="Mod145Descendients_dependence-New" 
-				rendered="#{formNew}"
-				size="4" maxlength="4"
-				value="#{controller.to.dependence}" />
--->
-		<aon:selectBooleanCheckbox id="Mod145Descendients_dependence-New" rendered="#{formNew}" value="#{controller.to.dependence}"/>
+			<aon:selectBooleanCheckbox id="Mod145Descendients_dependence-New" rendered="#{formNew}" value="#{controller.to.dependence}"/>
 		</f:facet>
 	</aon:column>
 
@@ -110,21 +99,9 @@
 		</f:facet>
 		<aon:outputText value="&#160;" style="padding-left: 15px;" rendered="#{formList}"
 			styleClass="#{to.uniqueParent?'aon-icon-checked':'aon-icon-check'}"/>
-<!--  
-		<aon:inputText id="Mod145Descendients_uniqueParent" 
-			rendered="#{formEdit}" 
-			size="4" maxlength="4"
-			value="#{to.uniqueParent}" />
--->
 		<aon:selectBooleanCheckbox id="Mod145Descendients_uniqueParent" rendered="#{formEdit}" value="#{to.uniqueParent}"/>
 		<f:facet name="footer">
-<!--  
-			<aon:inputText id="Mod145Descendients_uniqueParent-New" 
-				rendered="#{formNew}"
-				size="4" maxlength="4"
-				value="#{controller.to.uniqueParent}" />
--->
-		<aon:selectBooleanCheckbox id="Mod145Descendients_uniqueParent-New" rendered="#{formNew}" value="#{controller.to.uniqueParent}"/>
+			<aon:selectBooleanCheckbox id="Mod145Descendients_uniqueParent-New" rendered="#{formNew}" value="#{controller.to.uniqueParent}"/>
 		</f:facet>
 	</aon:column>
 

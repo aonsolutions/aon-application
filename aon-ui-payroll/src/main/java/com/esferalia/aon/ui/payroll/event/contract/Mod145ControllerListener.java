@@ -19,5 +19,13 @@ public class Mod145ControllerListener extends ControllerAdapter{
 		m.setDate(new Date());
 		m.setDescendientCount(controller.getDescendientCount());
 	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		Mod145Controller controller = (Mod145Controller) this.getController();
+		Mod145 m = (Mod145) controller.getTo();
+		m.setDescendientCount(controller.getDescendientCount());
+	}
 		
 }

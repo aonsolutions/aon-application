@@ -6,6 +6,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -17,53 +18,15 @@
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_mod145_module}" />
 					<ui:param name="controller" value="#{mod145}" />
-					<ui:param name="skipRemoveButton" value="true" />
-					<ui:param name="skipSearchButton" value="true" />
 					<ui:param name="skipSpin" value="false" />
 					<ui:param name="skipFocusFirst" value="true" />
-<!--  
-					<ui:param name="skipResetButton" value="true" />
-					<ui:param name="skipSaveButton" value="true" />
--->					
-
-					<ui:define name="toolbarActions">
-						<aon:methodParam name="backAction" value="mod145_list" />
-						<aon:methodParam name="saveAction" value="mod145_form" />
-					</ui:define>
-					
-<!--  
-					<ui:define name="beforeSpinToolbarContent">
-						<aon:commandButton id="multiple_tracking"
-							value="#{payrollBundle.payroll_multiple_tracking}"
-							immediate="#{true}" 
-							styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
-							actionListener="#{contractCalendarEvent.onMultipleTrackingShow}"
-							reRender="showMultipleTrackingWindow">
-							<f:setPropertyActionListener target="#{contractCalendarEvent.showMultipleTrackingWindow}"
-								value="#{true}" />
-						</aon:commandButton>
-					</ui:define>
-
-					<ui:define name="additionalToolbarContent">
-						<aon:commandButton id="multiple_tracking"
-							value="#{payrollBundle.payroll_multiple_tracking}"
-							immediate="#{true}" 
-							styleClass="aon-finding-toolbar-item aon-icon-open-popup" 
-							actionListener="#{contractTracking.onMultipleTrackingShow}"
-							reRender="showMultipleTrackingWindow">
-							<f:setPropertyActionListener target="#{contractTracking.showMultipleTrackingWindow}"
-								value="#{true}" />
-						</aon:commandButton>
-					</ui:define>
--->					
-					
 				</ui:decorate>
 			</aon:div>	
 
 			<aon:div ajaxRendered="true" layout="none">
 
 				<!--  aon-region-body -->
-				<aon:div styleClass="aon-scroll-area" id="mod145Contect">
+				<aon:div styleClass="aon-scroll-area" >
 					<aon:panelGrid columns="8" dir="true" width="100%">
 						
 						<aon:outputLabel value="#{registryBundle.registry_person}" />
@@ -84,7 +47,9 @@
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
 					</aon:panelGrid>
+				</aon:div>
 					
+				<aon:div styleClass="aon-scroll-area" id="mod145Contect">
 					<aon:panelGrid columns="2"  width="100%"
 						columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-auto">
 						
@@ -92,14 +57,13 @@
 						<aon:selectOneRadio id="mod145_familySituation" layout="pageDirection" 
 							value="#{mod145.to.familySituation}" >
 							<f:selectItems value="#{payrollCollections.familySituations}"  />
-							<a4j:support event="onchange" reRender="mod145Contect" inmediate="true" />
-							<a4j:support event="onclick" reRender="mod145Contect" inmediate="true" />
+							<a4j:support event="onchange" reRender="mod145Contect" ajaxSingle="true" />
+							<a4j:support event="onclick" reRender="mod145Contect" ajaxSingle="true" />
 						</aon:selectOneRadio>
 						
 						<aon:outputLabel for="mod145_spouseDocument" value="#{payrollBundle.payroll_mod145_spouseDocument}" 
 							rendered="#{mod145.to.familySituation=='MARRIED'}"/>
 						<aon:inputText id="mod145_spouseDocument" 
-							ajaxSingle="true"
 							value="#{mod145.to.spouseDocument}"
 							rendered="#{mod145.to.familySituation=='MARRIED'}" required="true"
 							size="10" maxlength="10" />
@@ -125,11 +89,10 @@
 						<aon:selectBooleanCheckbox id="mod145_labourProlongation" value="#{mod145.to.labourProlongation}"/>
 
 						<aon:outputLabel for="mod145_descendientCount" value="#{payrollBundle.payroll_mod145_descendientCount}" />
-						<aon:inputText id="mod145_descendientCount" 
-							ajaxSingle="true"
-							disabled="#{!mod145.new and mod145.to.descendientCount==null}"
-							value="#{mod145.descendientCount}"
-							size="2" maxlength="2" />
+						<rich:inputNumberSpinner id="mod145_descendientCount" 
+							disabled="#{mod145.descendientCount>0 and mod145.to.descendientCount==null}"
+							value="#{mod145.descendientCount}" 
+							inputSize="2" minValue="0" maxValue="20" />
 						
 					</aon:panelGrid>
 				</aon:div>
@@ -170,7 +133,6 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
-
 
 	</ui:define>
 

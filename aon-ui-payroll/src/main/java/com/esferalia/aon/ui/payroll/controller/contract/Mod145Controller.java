@@ -36,6 +36,8 @@ public class Mod145Controller extends LinesController {
 			List<ITransferObject> list = bean.getList(criteria);
 			if(list.size()>0){
 				descendientCount = list.size();
+			} else {
+				descendientCount = m.getDescendientCount();
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al obtener los descendientes";
@@ -47,6 +49,8 @@ public class Mod145Controller extends LinesController {
 
 	public void setDescendientCount(Integer descendientCount) {
 		this.descendientCount = descendientCount;
+		Mod145 m = (Mod145) getTo();
+		m.setDescendientCount(descendientCount);
 	}
 
 	public void onSelectContract(ActionEvent event){
@@ -67,7 +71,6 @@ public class Mod145Controller extends LinesController {
 			LOGGER.error(msg);
 			throw new AbortProcessingException(msg);
 		}
-		
 	}
 	
 }
