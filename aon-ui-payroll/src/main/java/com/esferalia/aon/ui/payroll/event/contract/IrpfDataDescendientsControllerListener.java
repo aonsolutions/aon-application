@@ -9,23 +9,23 @@ import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.esferalia.aon.payroll.Mod145;
+import com.esferalia.aon.payroll.IrpfData;
 
-public class Mod145DescendientsControllerListener extends ControllerAdapter{
+public class IrpfDataDescendientsControllerListener extends ControllerAdapter{
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(Mod145DescendientsControllerListener.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(IrpfDataDescendientsControllerListener.class.getName());
 	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		LinesController controller = (LinesController) this.getController();
 		try {
 			if(controller.getRowCount()==0){
-				Mod145 m = (Mod145) controller.getMasterController().getTo();
-				m.setDescendientCount(null);
-				controller.getManagerBean().update(m);
+				IrpfData data = (IrpfData) controller.getMasterController().getTo();
+				data.setDescendientCount(null);
+				controller.getManagerBean().update(data);
 			}
 		} catch (ManagerBeanException e) {
-			String msg = "Error al actualizar el modelo 145";
+			String msg = "Error al actualizar los datos de irpf";
 			LOGGER.error(msg);
 		}
 	}

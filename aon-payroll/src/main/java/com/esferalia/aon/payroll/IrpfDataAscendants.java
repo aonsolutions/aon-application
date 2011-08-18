@@ -19,18 +19,17 @@ import com.code.aon.common.ITransferObject;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 
 @Entity
-@Table(name = "mod145_descendients")
-public class Mod145Descendients implements ITransferObject {
+@Table(name = "irpf_data_ascendants")
+public class IrpfDataAscendants implements ITransferObject {
 	
-	private static final long serialVersionUID = 511613164148322475L;
+	private static final long serialVersionUID = -4436169609427812691L;
 
 	private Integer id;
-	private Mod145 mod145;
+	private IrpfData irpfData;
 	private Integer birthYear;
-	private Integer adoptionYear;
 	private DisabilityLevel disabilityLevel;
 	private boolean dependence;
-	private boolean uniqueParent;
+	private boolean anotherDescendient;
 	
 	@Id
     @GeneratedValue
@@ -42,14 +41,14 @@ public class Mod145Descendients implements ITransferObject {
     }
     
     @ManyToOne
-	@JoinColumn( name="mod145", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_MOD145_DESCENDIENTS_MOD145")
-	@Index(name = "IDX_MOD145_DESCENDIENTS_MOD145")
-	public Mod145 getMod145() {
-		return mod145;
+	@JoinColumn( name="irpf_data", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_IRPF_DATA_ASCENDIENTS_IRPF_DATA")
+	@Index(name = "IDX_IRPF_DATA_ASCENDIENTS_IRPF_DATA")
+	public IrpfData getIrpfData() {
+		return irpfData;
 	}
-	public void setMod145(Mod145 mod145) {
-		this.mod145 = mod145;
+	public void setIrpfData(IrpfData irpfData) {
+		this.irpfData = irpfData;
 	}
 	
 	@Column(name = "birth_year", length = 4)
@@ -58,14 +57,6 @@ public class Mod145Descendients implements ITransferObject {
 	}
 	public void setBirthYear(Integer birthYear) {
 		this.birthYear = birthYear;
-	}
-	
-	@Column(name = "adoption_year", length = 4)
-	public Integer getAdoptionYear() {
-		return adoptionYear;
-	}
-	public void setAdoptionYear(Integer adoptionYear) {
-		this.adoptionYear = adoptionYear;
 	}
 	
 	@Column( name = "disability_level")
@@ -84,12 +75,12 @@ public class Mod145Descendients implements ITransferObject {
 		this.dependence = dependence;
 	}
 	
-	@Column( name = "unique_parent" )
-	public boolean isUniqueParent() {
-		return uniqueParent;
+	@Column( name = "another_descendient" )
+	public boolean isAnotherDescendient() {
+		return anotherDescendient;
 	}
-	public void setUniqueParent(boolean uniqueParent) {
-		this.uniqueParent = uniqueParent;
+	public void setAnotherDescendient(boolean anotherDescendient) {
+		this.anotherDescendient = anotherDescendient;
 	}
 
 	@Override
@@ -97,30 +88,28 @@ public class Mod145Descendients implements ITransferObject {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final Mod145Descendients o = (Mod145Descendients) obj;
+		final IrpfDataAscendants o = (IrpfDataAscendants) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.mod145, o.mod145)			
+				.append(this.irpfData, o.irpfData)			
 				.append(this.birthYear, o.birthYear)			
-				.append(this.adoptionYear, o.adoptionYear)			
 				.append(this.disabilityLevel, o.disabilityLevel)			
 				.append(this.dependence, o.dependence)			
-				.append(this.uniqueParent, o.uniqueParent)			
+				.append(this.anotherDescendient, o.anotherDescendient)			
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)		
-			.append(this.mod145)		
+			.append(this.irpfData)		
 			.append(this.birthYear)		
-			.append(this.adoptionYear)		
 			.append(this.disabilityLevel)		
 			.append(this.dependence)		
-			.append(this.uniqueParent)
+			.append(this.anotherDescendient)
 			.toHashCode();
 	}	
 

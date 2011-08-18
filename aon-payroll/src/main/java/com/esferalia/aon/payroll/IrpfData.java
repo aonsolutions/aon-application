@@ -24,8 +24,8 @@ import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
 
 @Entity
-@Table(name = "mod145")
-public class Mod145 implements ITransferObject {
+@Table(name = "irpf_data")
+public class IrpfData implements ITransferObject {
 	
 	private static final long serialVersionUID = 2294092287841868968L;
 
@@ -131,7 +131,7 @@ public class Mod145 implements ITransferObject {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final Mod145 o = (Mod145) obj;
+		final IrpfData o =  (IrpfData) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.contract, o.contract)			

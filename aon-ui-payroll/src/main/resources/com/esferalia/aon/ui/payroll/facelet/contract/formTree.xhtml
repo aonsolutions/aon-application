@@ -23,6 +23,16 @@
 						<aon:actionListener method="#{contract.accept}" />
 						<aon:actionListener method="#{contract.onShowVariables}" />
 					</aon:commandButton>
+					<aon:commandButton id="IRPF-calculator"
+						value="#{payrollBundle.payroll_contract_irpf_refresh}"
+						disabled="true"
+						reRender="dataGrid"
+						styleClass="aon-finding-toolbar-item aon-icon-refresh">
+						<!--  
+						<aon:actionListener method="#{irpfCalculator.calculate}" />
+						-->
+						<aon:actionListener method="#{contract.onShowVariables}" />
+					</aon:commandButton>
 				</ui:define>				
 			</ui:decorate>	
 		

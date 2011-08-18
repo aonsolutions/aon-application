@@ -30,9 +30,9 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
-import com.esferalia.aon.payroll.Mod145;
-import com.esferalia.aon.payroll.Mod145Ascendants;
-import com.esferalia.aon.payroll.Mod145Descendients;
+import com.esferalia.aon.payroll.IrpfData;
+import com.esferalia.aon.payroll.IrpfDataAscendants;
+import com.esferalia.aon.payroll.IrpfDataDescendients;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.Salary;
@@ -1485,155 +1485,161 @@ public interface IPayrollAlias {
 
 
 	/** 
-	* DAOConstantsEntry for Mod145 entity.
+	* DAOConstantsEntry for IrpfData entity.
 	*/ 
-	DAOConstantsEntry MOD145_ENTRY = DAOConstants.getDAOConstant(Mod145.class);
+	DAOConstantsEntry IRPF_DATA_ENTRY = DAOConstants.getDAOConstant(IrpfData.class);
 
 	/** 
-	* Alias value: Mod145_contract_id
-	* Hibernate value: Mod145.contract.id
+	* Alias value: IrpfData_contract_id
+	* Hibernate value: IrpfData.contract.id
 	*/
-	String  MOD145_CONTRACT_ID = MOD145_ENTRY.getAliasNames()[0];
+	String  IRPF_DATA_CONTRACT_ID = IRPF_DATA_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Mod145_date
-	* Hibernate value: Mod145.date
+	* Alias value: IrpfData_date
+	* Hibernate value: IrpfData.date
 	*/
-	String  MOD145_DATE = MOD145_ENTRY.getAliasNames()[1];
+	String  IRPF_DATA_DATE = IRPF_DATA_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Mod145_dependence
-	* Hibernate value: Mod145.dependence
+	* Alias value: IrpfData_dependence
+	* Hibernate value: IrpfData.dependence
 	*/
-	String  MOD145_DEPENDENCE = MOD145_ENTRY.getAliasNames()[2];
+	String  IRPF_DATA_DEPENDENCE = IRPF_DATA_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Mod145_disabilityLevel
-	* Hibernate value: Mod145.disabilityLevel
+	* Alias value: IrpfData_descendientCount
+	* Hibernate value: IrpfData.descendientCount
 	*/
-	String  MOD145_DISABILITY_LEVEL = MOD145_ENTRY.getAliasNames()[3];
+	String  IRPF_DATA_DESCENDIENT_COUNT = IRPF_DATA_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: Mod145_familySituation
-	* Hibernate value: Mod145.familySituation
+	* Alias value: IrpfData_disabilityLevel
+	* Hibernate value: IrpfData.disabilityLevel
 	*/
-	String  MOD145_FAMILY_SITUATION = MOD145_ENTRY.getAliasNames()[4];
+	String  IRPF_DATA_DISABILITY_LEVEL = IRPF_DATA_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: Mod145_id
-	* Hibernate value: Mod145.id
+	* Alias value: IrpfData_familySituation
+	* Hibernate value: IrpfData.familySituation
 	*/
-	String  MOD145_ID = MOD145_ENTRY.getAliasNames()[5];
+	String  IRPF_DATA_FAMILY_SITUATION = IRPF_DATA_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: Mod145_labourProlongation
-	* Hibernate value: Mod145.labourProlongation
+	* Alias value: IrpfData_id
+	* Hibernate value: IrpfData.id
 	*/
-	String  MOD145_LABOUR_PROLONGATION = MOD145_ENTRY.getAliasNames()[6];
+	String  IRPF_DATA_ID = IRPF_DATA_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: Mod145_movingDate
-	* Hibernate value: Mod145.movingDate
+	* Alias value: IrpfData_labourProlongation
+	* Hibernate value: IrpfData.labourProlongation
 	*/
-	String  MOD145_MOVING_DATE = MOD145_ENTRY.getAliasNames()[7];
+	String  IRPF_DATA_LABOUR_PROLONGATION = IRPF_DATA_ENTRY.getAliasNames()[7];
 
 	/** 
-	* Alias value: Mod145_spouseDocument
-	* Hibernate value: Mod145.spouseDocument
+	* Alias value: IrpfData_movingDate
+	* Hibernate value: IrpfData.movingDate
 	*/
-	String  MOD145_SPOUSE_DOCUMENT = MOD145_ENTRY.getAliasNames()[8];
+	String  IRPF_DATA_MOVING_DATE = IRPF_DATA_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: IrpfData_spouseDocument
+	* Hibernate value: IrpfData.spouseDocument
+	*/
+	String  IRPF_DATA_SPOUSE_DOCUMENT = IRPF_DATA_ENTRY.getAliasNames()[9];
 
 
 
 	/** 
-	* DAOConstantsEntry for Mod145Ascendants entity.
+	* DAOConstantsEntry for IrpfDataAscendants entity.
 	*/ 
-	DAOConstantsEntry MOD145ASCENDANTS_ENTRY = DAOConstants.getDAOConstant(Mod145Ascendants.class);
+	DAOConstantsEntry IRPF_DATA_ASCENDANTS_ENTRY = DAOConstants.getDAOConstant(IrpfDataAscendants.class);
 
 	/** 
-	* Alias value: Mod145Ascendants_anotherDescendient
-	* Hibernate value: Mod145Ascendants.anotherDescendient
+	* Alias value: IrpfDataAscendants_anotherDescendient
+	* Hibernate value: IrpfDataAscendants.anotherDescendient
 	*/
-	String  MOD145ASCENDANTS_ANOTHER_DESCENDIENT = MOD145ASCENDANTS_ENTRY.getAliasNames()[0];
+	String  IRPF_DATA_ASCENDANTS_ANOTHER_DESCENDIENT = IRPF_DATA_ASCENDANTS_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Mod145Ascendants_birthYear
-	* Hibernate value: Mod145Ascendants.birthYear
+	* Alias value: IrpfDataAscendants_birthYear
+	* Hibernate value: IrpfDataAscendants.birthYear
 	*/
-	String  MOD145ASCENDANTS_BIRTH_YEAR = MOD145ASCENDANTS_ENTRY.getAliasNames()[1];
+	String  IRPF_DATA_ASCENDANTS_BIRTH_YEAR = IRPF_DATA_ASCENDANTS_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Mod145Ascendants_dependence
-	* Hibernate value: Mod145Ascendants.dependence
+	* Alias value: IrpfDataAscendants_dependence
+	* Hibernate value: IrpfDataAscendants.dependence
 	*/
-	String  MOD145ASCENDANTS_DEPENDENCE = MOD145ASCENDANTS_ENTRY.getAliasNames()[2];
+	String  IRPF_DATA_ASCENDANTS_DEPENDENCE = IRPF_DATA_ASCENDANTS_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Mod145Ascendants_disabilityLevel
-	* Hibernate value: Mod145Ascendants.disabilityLevel
+	* Alias value: IrpfDataAscendants_disabilityLevel
+	* Hibernate value: IrpfDataAscendants.disabilityLevel
 	*/
-	String  MOD145ASCENDANTS_DISABILITY_LEVEL = MOD145ASCENDANTS_ENTRY.getAliasNames()[3];
+	String  IRPF_DATA_ASCENDANTS_DISABILITY_LEVEL = IRPF_DATA_ASCENDANTS_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: Mod145Ascendants_id
-	* Hibernate value: Mod145Ascendants.id
+	* Alias value: IrpfDataAscendants_id
+	* Hibernate value: IrpfDataAscendants.id
 	*/
-	String  MOD145ASCENDANTS_ID = MOD145ASCENDANTS_ENTRY.getAliasNames()[4];
+	String  IRPF_DATA_ASCENDANTS_ID = IRPF_DATA_ASCENDANTS_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: Mod145Ascendants_mod145_id
-	* Hibernate value: Mod145Ascendants.mod145.id
+	* Alias value: IrpfDataAscendants_irpfData_id
+	* Hibernate value: IrpfDataAscendants.irpfData.id
 	*/
-	String  MOD145ASCENDANTS_MOD145_ID = MOD145ASCENDANTS_ENTRY.getAliasNames()[5];
+	String  IRPF_DATA_ASCENDANTS_IRPF_DATA_ID = IRPF_DATA_ASCENDANTS_ENTRY.getAliasNames()[5];
 
 
 
 	/** 
-	* DAOConstantsEntry for Mod145Descendients entity.
+	* DAOConstantsEntry for IrpfDataDescendients entity.
 	*/ 
-	DAOConstantsEntry MOD145DESCENDIENTS_ENTRY = DAOConstants.getDAOConstant(Mod145Descendients.class);
+	DAOConstantsEntry IRPF_DATA_DESCENDIENTS_ENTRY = DAOConstants.getDAOConstant(IrpfDataDescendients.class);
 
 	/** 
-	* Alias value: Mod145Descendients_adoptionYear
-	* Hibernate value: Mod145Descendients.adoptionYear
+	* Alias value: IrpfDataDescendients_adoptionYear
+	* Hibernate value: IrpfDataDescendients.adoptionYear
 	*/
-	String  MOD145DESCENDIENTS_ADOPTION_YEAR = MOD145DESCENDIENTS_ENTRY.getAliasNames()[0];
+	String  IRPF_DATA_DESCENDIENTS_ADOPTION_YEAR = IRPF_DATA_DESCENDIENTS_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Mod145Descendients_birthYear
-	* Hibernate value: Mod145Descendients.birthYear
+	* Alias value: IrpfDataDescendients_birthYear
+	* Hibernate value: IrpfDataDescendients.birthYear
 	*/
-	String  MOD145DESCENDIENTS_BIRTH_YEAR = MOD145DESCENDIENTS_ENTRY.getAliasNames()[1];
+	String  IRPF_DATA_DESCENDIENTS_BIRTH_YEAR = IRPF_DATA_DESCENDIENTS_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Mod145Descendients_dependence
-	* Hibernate value: Mod145Descendients.dependence
+	* Alias value: IrpfDataDescendients_dependence
+	* Hibernate value: IrpfDataDescendients.dependence
 	*/
-	String  MOD145DESCENDIENTS_DEPENDENCE = MOD145DESCENDIENTS_ENTRY.getAliasNames()[2];
+	String  IRPF_DATA_DESCENDIENTS_DEPENDENCE = IRPF_DATA_DESCENDIENTS_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Mod145Descendients_disabilityLevel
-	* Hibernate value: Mod145Descendients.disabilityLevel
+	* Alias value: IrpfDataDescendients_disabilityLevel
+	* Hibernate value: IrpfDataDescendients.disabilityLevel
 	*/
-	String  MOD145DESCENDIENTS_DISABILITY_LEVEL = MOD145DESCENDIENTS_ENTRY.getAliasNames()[3];
+	String  IRPF_DATA_DESCENDIENTS_DISABILITY_LEVEL = IRPF_DATA_DESCENDIENTS_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: Mod145Descendients_id
-	* Hibernate value: Mod145Descendients.id
+	* Alias value: IrpfDataDescendients_id
+	* Hibernate value: IrpfDataDescendients.id
 	*/
-	String  MOD145DESCENDIENTS_ID = MOD145DESCENDIENTS_ENTRY.getAliasNames()[4];
+	String  IRPF_DATA_DESCENDIENTS_ID = IRPF_DATA_DESCENDIENTS_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: Mod145Descendients_mod145_id
-	* Hibernate value: Mod145Descendients.mod145.id
+	* Alias value: IrpfDataDescendients_irpfData_id
+	* Hibernate value: IrpfDataDescendients.irpfData.id
 	*/
-	String  MOD145DESCENDIENTS_MOD145_ID = MOD145DESCENDIENTS_ENTRY.getAliasNames()[5];
+	String  IRPF_DATA_DESCENDIENTS_IRPF_DATA_ID = IRPF_DATA_DESCENDIENTS_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: Mod145Descendients_uniqueParent
-	* Hibernate value: Mod145Descendients.uniqueParent
+	* Alias value: IrpfDataDescendients_uniqueParent
+	* Hibernate value: IrpfDataDescendients.uniqueParent
 	*/
-	String  MOD145DESCENDIENTS_UNIQUE_PARENT = MOD145DESCENDIENTS_ENTRY.getAliasNames()[6];
+	String  IRPF_DATA_DESCENDIENTS_UNIQUE_PARENT = IRPF_DATA_DESCENDIENTS_ENTRY.getAliasNames()[6];
 
 
 
