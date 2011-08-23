@@ -10,17 +10,17 @@
 
 	<aon:column styleClass="aon-editDataTable-numberColumn">
 		<f:facet name="header">
-			<aon:outputLabel for="Mod145Ascendants_birthYear"
-				value="#{payrollBundle.payroll_mod145_birthYear}" />
+			<aon:outputLabel for="IrpfDataAscendants_birthYear"
+				value="#{payrollBundle.payroll_irpfData_birthYear}" />
 		</f:facet>
 		<aon:outputText value="#{to.birthYear}" 
 			rendered="#{formList}" />
-		<rich:inputNumberSpinner id="Mod145Ascendants_birthYear" required="true"
+		<rich:inputNumberSpinner id="IrpfDataAscendants_birthYear" required="true"
 			rendered="#{formEdit}" 
 			value="#{to.birthYear}" 
 			inputSize="4" minValue="1900" maxValue="2020" />
 		<f:facet name="footer">
-			<rich:inputNumberSpinner id="Mod145Ascendants_birthYear-New" required="true"
+			<rich:inputNumberSpinner id="IrpfDataAscendants_birthYear-New" required="true"
 				rendered="#{formNew}" 
 				value="#{controller.to.birthYear}" 
 				inputSize="4" minValue="1900" maxValue="2020" />
@@ -29,18 +29,18 @@
 	
 	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
-			<aon:outputLabel for="Mod145Ascendants_disabilityLevel"
-				value="#{payrollBundle.payroll_mod145_disabilityLevel}" />
+			<aon:outputLabel for="IrpfDataAscendants_disabilityLevel"
+				value="#{payrollBundle.payroll_irpfData_disabilityLevel}" />
 		</f:facet>
 		<aon:outputText value="#{to.disabilityLevel}" 
 			rendered="#{formList}" />
-		<aon:selectOneMenu id="Mod145Ascendants_disabilityLevel" rendered="#{formEdit}" 
+		<aon:selectOneMenu id="IrpfDataAscendants_disabilityLevel" rendered="#{formEdit}" 
 			value="#{to.disabilityLevel}">
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{payrollCollections.disabilityLevels}" />
 		</aon:selectOneMenu>
 		<f:facet name="footer">
-			<aon:selectOneMenu id="Mod145Ascendants_disabilityLevel-New" rendered="#{formNew}"
+			<aon:selectOneMenu id="IrpfDataAscendants_disabilityLevel-New" rendered="#{formNew}"
 				value="#{controller.to.disabilityLevel}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.disabilityLevels}" />
@@ -50,27 +50,27 @@
 
 	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
-			<aon:outputLabel for="Mod145Ascendants_dependence"
-				value="#{payrollBundle.payroll_mod145_dependence}" />
+			<aon:outputLabel for="IrpfDataAscendants_dependence"
+				value="#{payrollBundle.payroll_irpfData_dependence}" />
 		</f:facet>
 		<aon:outputText value="&#160;" style="padding-left: 15px;" rendered="#{formList}"
 			styleClass="#{to.dependence?'aon-icon-checked':'aon-icon-check'}"/>
-		<aon:selectBooleanCheckbox id="Mod145Ascendants_dependence" rendered="#{formEdit}" value="#{to.dependence}"/>
+		<aon:selectBooleanCheckbox id="IrpfDataAscendants_dependence" rendered="#{formEdit}" value="#{to.dependence}"/>
 		<f:facet name="footer">
-			<aon:selectBooleanCheckbox id="Mod145Ascendants_dependence-New" rendered="#{formNew}" value="#{controller.to.dependence}"/>
+			<aon:selectBooleanCheckbox id="IrpfDataAscendants_dependence-New" rendered="#{formNew}" value="#{controller.to.dependence}"/>
 		</f:facet>
 	</aon:column>
 
 	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
-			<aon:outputLabel for="Mod145Ascendants_anotherDescendient"
-				value="#{payrollBundle.payroll_mod145_anotherDescendient}" />
+			<aon:outputLabel for="IrpfDataAscendants_anotherDescendient"
+				value="#{payrollBundle.payroll_irpfData_anotherDescendient}" />
 		</f:facet>
 		<aon:outputText value="&#160;" style="padding-left: 15px;" rendered="#{formList}"
 			styleClass="#{to.anotherDescendient?'aon-icon-checked':'aon-icon-check'}"/>
-		<aon:selectBooleanCheckbox id="Mod145Ascendants_anotherDescendient" rendered="#{formEdit}" value="#{to.anotherDescendient}"/>
+		<aon:selectBooleanCheckbox id="IrpfDataAscendants_anotherDescendient" rendered="#{formEdit}" value="#{to.anotherDescendient}"/>
 		<f:facet name="footer">
-			<aon:selectBooleanCheckbox id="Mod145Ascendants_anotherDescendient-New" rendered="#{formNew}" value="#{controller.to.anotherDescendient}"/>
+			<aon:selectBooleanCheckbox id="IrpfDataAscendants_anotherDescendient-New" rendered="#{formNew}" value="#{controller.to.anotherDescendient}"/>
 		</f:facet>
 	</aon:column>
 

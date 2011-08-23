@@ -51,8 +51,8 @@ public class IrpfData implements ITransferObject {
     
     @ManyToOne
 	@JoinColumn( name="contract", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_MOD145_CONTRACT")
-	@Index(name = "IDX_MOD145_CONTRACT")
+	@ForeignKey(name = "FK_IRPF_DATA_CONTRACT")
+	@Index(name = "IDX_IRPF_DATA_CONTRACT")
 	public Contract getContract() {
 		return contract;
 	}

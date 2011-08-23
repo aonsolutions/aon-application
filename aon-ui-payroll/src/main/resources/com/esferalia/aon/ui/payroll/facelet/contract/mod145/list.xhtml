@@ -7,20 +7,20 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="mod145List">
+		<aon:form id="irpfDataList">
 
-			<aon:methodParam name="searchAction" value="mod145_search" />
+			<aon:methodParam name="searchAction" value="irpfData_search" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_mod145_module}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_irpfData_module}" />
 				<ui:param name="controller" value="#{contract}" />
 				<ui:param name="skipResetButton" value="true" />
 			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:methodParam name="rowSelectorAction" value="mod145_form" />
-				<aon:methodParam name="rowSelectorActionListener" value="#{mod145.onSelectContract}" type="actionListener" />
+				<aon:methodParam name="rowSelectorAction" value="irpfData_form" />
+				<aon:methodParam name="rowSelectorActionListener" value="#{irpfData.onSelectContract}" type="actionListener" />
 				
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{contract}" />

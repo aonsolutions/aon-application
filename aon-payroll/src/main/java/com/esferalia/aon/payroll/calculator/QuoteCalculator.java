@@ -24,6 +24,7 @@ import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.salary.expression.UndefinedVariableException;
 
 public abstract class QuoteCalculator {
 	
@@ -37,11 +38,11 @@ public abstract class QuoteCalculator {
 	protected double nonStructuralBase = 0;
 
 	
-	public double getItBase() {
+	public double getItBase() throws AonException{
 		return itBase;
 	}
 	
-	public double getCgcBase() {
+	public double getCgcBase() throws AonException{
 		return rawCgcBase;
 	}
 
@@ -49,25 +50,25 @@ public abstract class QuoteCalculator {
 		return rawCgcBase;
 	}
 
-	public double getCgpBase() {
+	public double getCgpBase() throws AonException{
 		return rawCgcBase + structuralBase  +nonStructuralBase ;
 	}
 
-	public double getProExtBase() {
+	public double getProExtBase() throws AonException{
 		return proExtBase;
 	}
 
 
-	public double getStructuralBase() {
+	public double getStructuralBase() throws AonException{
 		return structuralBase;
 	}
 
 
-	public double getNonStructuralBase() {
+	public double getNonStructuralBase() throws AonException{
 		return nonStructuralBase;
 	}
 	
-	public abstract double  getMaternityBase();
+	public abstract double  getMaternityBase()throws AonException;
 
 	public abstract void quote(IContractPayment payment, Date start, Date end, double amount ) throws AonException;
 	
@@ -83,7 +84,7 @@ public abstract class QuoteCalculator {
 		}
 		
 		@Override
-		public double getMaternityBase() {
+		public double getMaternityBase() throws AonException{
 			return 0.00;
 		}
 		
@@ -114,14 +115,16 @@ public abstract class QuoteCalculator {
 			bases = new HashMap<String, Double>();
 		}
 		
-		public double getCgcBase() {
+		@Override
+		public double getCgcBase() throws AonException {
 			if ( cgcBase == null ) {
 				cgcBase = getLimitedCgcBase(rawCgcBase, context, salaryStart, salaryEnd);
 			}
 			return cgcBase;
 		}
-
-		public double getCgpBase() {
+		
+		@Override
+		public double getCgpBase() throws AonException {
 			if ( cgpBase == null ) {
 				Double rawCgpBase = rawCgcBase + structuralBase + nonStructuralBase;
 				cgpBase = getLimitedCgpBase(rawCgpBase, context, salaryStart, salaryEnd);
@@ -130,7 +133,7 @@ public abstract class QuoteCalculator {
 		}
 		
 		@Override
-		public double getMaternityBase() {
+		public double getMaternityBase()throws AonException {
 			return bases.containsKey(MATERNITY.getName()) ? 
 				bases.get(MATERNITY.getName()) : 0.00;
 		}
@@ -331,11 +334,17 @@ public abstract class QuoteCalculator {
 	}
 	
 	
-	protected double getLimitedCgcBase(double rawCgcBase, ExpressionContext ctx , Date start, Date end) {
+	protected double getLimitedCgcBase(double rawCgcBase, ExpressionContext ctx , Date start, Date end) 
+	 throws ExpressionException{
 		String quoteGroup = ctx.getVariable(QUOTE_GROUP, start, end, String.class);
 	
 		Map<String, String> minLimits = 
 			ctx.getVariable(CGC_BASE_MIN, start, end, Map.class);
+		
+		if ( minLimits == null ) {
+			String variableName = CGC_BASE_MIN.getName();
+			throw new UndefinedVariableException(variableName);
+		}
 		
 		Double minLimit = getLimit(minLimits.get(quoteGroup), ctx, start, end);
 		
@@ -346,7 +355,13 @@ public abstract class QuoteCalculator {
 		Map<String, String> maxLimits = 
 			ctx.getVariable(CGC_BASE_MAX, start, end, Map.class);
 	
+		if ( maxLimits == null ) {
+			String variableName = CGC_BASE_MIN.getName();
+			throw new UndefinedVariableException(variableName);
+		}
+
 		Double maxLimit = getLimit(maxLimits.get(quoteGroup), ctx, start, end);
+
 		
 		if ( maxLimit != null && rawCgcBase > maxLimit ) {
 			return maxLimit;

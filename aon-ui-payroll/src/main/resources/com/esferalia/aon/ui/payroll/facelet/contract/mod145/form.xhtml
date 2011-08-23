@@ -11,13 +11,13 @@
 
 	<ui:define name="content">
 
-		<aon:form id="mod145Form">
+		<aon:form id="irpfDataForm">
 		
 			<aon:div id="menuExt"> 
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-					<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_mod145_module}" />
-					<ui:param name="controller" value="#{mod145}" />
+					<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_irpfData_module}" />
+					<ui:param name="controller" value="#{irpfData}" />
 					<ui:param name="skipSpin" value="false" />
 					<ui:param name="skipFocusFirst" value="true" />
 				</ui:decorate>
@@ -49,49 +49,49 @@
 					</aon:panelGrid>
 				</aon:div>
 					
-				<aon:div styleClass="aon-scroll-area" id="mod145Contect">
+				<aon:div styleClass="aon-scroll-area" id="irpfDataContect">
 					<aon:panelGrid columns="2"  width="100%"
 						columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-auto">
 						
-						<aon:outputLabel for="mod145_familySituation" value="#{payrollBundle.payroll_mod145_familySituation}" />
-						<aon:selectOneRadio id="mod145_familySituation" layout="pageDirection" 
-							value="#{mod145.to.familySituation}" >
+						<aon:outputLabel for="irpfData_familySituation" value="#{payrollBundle.payroll_irpfData_familySituation}" />
+						<aon:selectOneRadio id="irpfData_familySituation" layout="pageDirection" 
+							value="#{irpfData.to.familySituation}" >
 							<f:selectItems value="#{payrollCollections.familySituations}"  />
-							<a4j:support event="onchange" reRender="mod145Contect" ajaxSingle="true" />
-							<a4j:support event="onclick" reRender="mod145Contect" ajaxSingle="true" />
+							<a4j:support event="onchange" reRender="irpfDataContect" ajaxSingle="true" />
+							<a4j:support event="onclick" reRender="irpfDataContect" ajaxSingle="true" />
 						</aon:selectOneRadio>
 						
-						<aon:outputLabel for="mod145_spouseDocument" value="#{payrollBundle.payroll_mod145_spouseDocument}" 
-							rendered="#{mod145.to.familySituation=='MARRIED'}"/>
-						<aon:inputText id="mod145_spouseDocument" 
-							value="#{mod145.to.spouseDocument}"
-							rendered="#{mod145.to.familySituation=='MARRIED'}" required="true"
+						<aon:outputLabel for="irpfData_spouseDocument" value="#{payrollBundle.payroll_irpfData_spouseDocument}" 
+							rendered="#{irpfData.to.familySituation=='MARRIED'}"/>
+						<aon:inputText id="irpfData_spouseDocument" 
+							value="#{irpfData.to.spouseDocument}"
+							rendered="#{irpfData.to.familySituation=='MARRIED'}" required="true"
 							size="10" maxlength="10" />
 						
-						<aon:outputLabel for="mod145_disabilityLevel" value="#{payrollBundle.payroll_mod145_disabilityLevel}" />
-						<aon:selectOneMenu id="mod145_disabilityLevel" value="#{mod145.to.disabilityLevel}">
+						<aon:outputLabel for="irpfData_disabilityLevel" value="#{payrollBundle.payroll_irpfData_disabilityLevel}" />
+						<aon:selectOneMenu id="irpfData_disabilityLevel" value="#{irpfData.to.disabilityLevel}">
 							<f:selectItem value="#{null}" itemLabel=" - " />
 							<f:selectItems value="#{payrollCollections.disabilityLevels}" />
 						</aon:selectOneMenu>
 				
-						<aon:outputLabel for="mod145_dependence" value="#{payrollBundle.payroll_mod145_dependence}" />
-						<aon:selectBooleanCheckbox id="mod145_dependence" value="#{mod145.to.dependence}"/> 
+						<aon:outputLabel for="irpfData_dependence" value="#{payrollBundle.payroll_irpfData_dependence}" />
+						<aon:selectBooleanCheckbox id="irpfData_dependence" value="#{irpfData.to.dependence}"/> 
 
-						<aon:outputLabel for="mod145_movingDate" value="#{payrollBundle.payroll_mod145_movingDate}" />
-						<aon:selectInputDate id="mod145_movingDate" 
-							value="#{mod145.to.movingDate}" 
+						<aon:outputLabel for="irpfData_movingDate" value="#{payrollBundle.payroll_irpfData_movingDate}" />
+						<aon:selectInputDate id="irpfData_movingDate" 
+							value="#{irpfData.to.movingDate}" 
 							inputSize="10" renderAsPopup="true" enableManualInput="true"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}">
 						</aon:selectInputDate>
 
-						<aon:outputLabel for="mod145_labourProlongation" value="#{payrollBundle.payroll_mod145_labourProlongation}" />
-						<aon:selectBooleanCheckbox id="mod145_labourProlongation" value="#{mod145.to.labourProlongation}"/>
+						<aon:outputLabel for="irpfData_labourProlongation" value="#{payrollBundle.payroll_irpfData_labourProlongation}" />
+						<aon:selectBooleanCheckbox id="irpfData_labourProlongation" value="#{irpfData.to.labourProlongation}"/>
 
-						<aon:outputLabel for="mod145_descendientCount" value="#{payrollBundle.payroll_mod145_descendientCount}" />
-						<rich:inputNumberSpinner id="mod145_descendientCount" 
-							disabled="#{mod145.descendientCount>0 and mod145.to.descendientCount==null}"
-							value="#{mod145.descendientCount}" 
+						<aon:outputLabel for="irpfData_descendientCount" value="#{payrollBundle.payroll_irpfData_descendientCount}" />
+						<rich:inputNumberSpinner id="irpfData_descendientCount" 
+							disabled="#{irpfData.descendientCount>0 and irpfData.to.descendientCount==null}"
+							value="#{irpfData.descendientCount}" 
 							inputSize="2" minValue="0" maxValue="20" />
 						
 					</aon:panelGrid>
@@ -102,30 +102,30 @@
 
 		<aon:form>
 			<aon:div styleClass="aon-scroll-area">
-				<c:if test="#{!mod145.new}" >
+				<c:if test="#{!irpfData.new}" >
 						
 					<aon:panel>
 						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_mod145_descendients}" />
+							<aon:outputText value="#{payrollBundle.payroll_irpfData_descendients}" />
 						</f:facet>
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-							<ui:param name="controller" value="#{mod145Descendients}" />
+							<ui:param name="controller" value="#{irpfDataDescendients}" />
 							<ui:define name="columns">
 								<ui:include 
-									src="/com/esferalia/aon/ui/payroll/facelet/contract/mod145/descendients/gridContent.xhtml" />
+									src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/descendients/gridContent.xhtml" />
 							</ui:define>
 						</ui:decorate>
 					</aon:panel>
 										
 					<aon:panel>
 						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_mod145_ascendants}" />
+							<aon:outputText value="#{payrollBundle.payroll_irpfData_ascendants}" />
 						</f:facet>
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
-							<ui:param name="controller" value="#{mod145Ascendants}" />
+							<ui:param name="controller" value="#{irpfDataAscendants}" />
 							<ui:define name="columns">
 								<ui:include 
-									src="/com/esferalia/aon/ui/payroll/facelet/contract/mod145/ascendants/gridContent.xhtml" />
+									src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/ascendants/gridContent.xhtml" />
 							</ui:define>
 						</ui:decorate>
 					</aon:panel>

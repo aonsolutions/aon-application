@@ -34,8 +34,6 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.event.ControllerEvent;
-import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.AgreementPayment;
@@ -63,70 +61,54 @@ public class SalaryDraftController extends BasicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryDraftController.class.getName());
 
-	private Month month;
-	private int year;
+	private int 				year;		
+	private Month 				month;		 
+	private SalaryType 			salaryType ; 
 	
-	private Date issueDate;
-	private Date startDate;
-	private Date endDate;
-	private ISalary salary;
-	private DataModel paymentsModel;
-//	private DataModel deductionsModel;
 	
-	private ISalary bdSalary;
-	private SalaryDraftComparatorPrinter printer;
-	private SalaryType salaryType ;
-	private boolean validSalaryDraftPeriod = true;
-	private List<SelectItem> draftMonths;
-	private List<SelectItem> salaryDraftTypes;
+	private ISalary 			salary;				// online salary
+	private ISalary 			dbSalary;			// saved ( database ) salary
+	
+	private List<SelectItem> 	draftMonths;		
+	private List<SelectItem> 	salaryDraftTypes;	
+
+	private DataModel 						paymentsModel;
+//	private DataModel 						deductionsModel;
+	private SalaryDraftComparatorPrinter 	printer;
 	
 	public List<SelectItem> getDraftMonths() {
-		if ( draftMonths == null ) {
-			rebuildDraftMonths();
-		}
 		return draftMonths;
 	}
 	
 	public boolean isValidSalaryDraftPeriod() {
-		return validSalaryDraftPeriod;
-	}
-	public void setValidSalaryDraftPeriod(boolean validSalaryDraftPeriod) {
-		this.validSalaryDraftPeriod = validSalaryDraftPeriod;
+		return getSalary() != null;
 	}
 	
-	public SalaryType getSalaryType() {
-		return salaryType ;
-	}
-	public void setSalaryType(SalaryType salaryType) {
-		this.salaryType = salaryType;
-		reset();
-	}
 	public boolean isShowSalaryDifference() {
 		return getBdSalary() != null;
 	}
-	public ISalary getBdSalary() {
-		if ( bdSalary == null ){
-			searchSavedDraftSalary();
-		}
-		return bdSalary;
+	
+	public ISalary getSalary() {
+		return salary;
 	}
-	public void setBdSalary(ISalary bdSalary) {
-		this.bdSalary = bdSalary;
+	
+	public ISalary getBdSalary() {
+		return dbSalary;
 	}
 
 	public Date getIssueDate() {
-		return issueDate;
+		ISalary salary = getSalary();
+		return salary != null ? salary.getIssueDate() : null;
 	}
 
 	public Date getStartDate() {
-		return startDate;
+		return salary != null ? salary.getStartDate() : null;
 	}
 
 	public Date getEndDate() {
-		return endDate;
+		return salary != null ? salary.getEndDate() : null;
 	}
 	
-
 	public Month getMonth() {
 		return month;
 	}
@@ -141,6 +123,14 @@ public class SalaryDraftController extends BasicController {
 		this.year = year;
 	}
 	
+	public SalaryType getSalaryType() {
+		return salaryType ;
+	}
+	public void setSalaryType(SalaryType salaryType) {
+		this.salaryType = salaryType;
+	}
+
+
 	public boolean isContractScope(){
 		if(this.getPaymentsModel().isRowAvailable()){
 			return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()==ExpressionScope.CONTRACT;
@@ -148,48 +138,26 @@ public class SalaryDraftController extends BasicController {
 		return false;
 	}
 	
-	
-	public void onChangeType(ActionEvent event) {
-		try {
-			reset();
-			ControllerEvent evt = new ControllerEvent(this);
-			controllerListenerSupport.fireAfterBeanSelected(evt);
-		} catch (ControllerListenerException e) {
-			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
-		}
+	@Override
+	protected void accept() {
+		super.accept();
+		reset();
 	}
 
-	public void onChangeMonth(ActionEvent event) {
-		try {
-			reset();
-			ControllerEvent evt = new ControllerEvent(this);
-			controllerListenerSupport.fireAfterBeanSelected(evt);
-		} catch (ControllerListenerException e) {
-			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
-		}
+	@Override
+	public void select(ActionEvent event) {
+		super.select(event);
+		reset();
 	}
-	public void onChangeYear(ActionEvent event) {
-		try {
-			reset();
-			ControllerEvent evt = new ControllerEvent(this);
-			controllerListenerSupport.fireAfterBeanSelected(evt);
-		} catch (ControllerListenerException e) {
-			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
-		}
-	}
-	
-	public boolean checkValidContractPeriod(Date draftStart , Date draftEnd) {
-		Contract contract = (Contract) this.getTo();
-		
-		Date contractStart = contract.getStartDate();
-		Date contractEnd = contract.getEndDate();
-		
-		boolean isValid	= ( contract != null ) && 
-			( draftStart.compareTo(draftEnd) <= 0 ) && 
-			( contractStart.compareTo(draftEnd) <= 0 ) &&
-			( contractEnd == null ||  ( contractEnd.compareTo(draftStart) >= 0 ) ) ;
 
-		return isValid ;
+	@Override
+	protected void remove() throws ManagerBeanException {
+		super.remove();
+		reset();
+	}
+
+	public void onReloadDraft(ActionEvent event) {
+		reset();
 	}
 	
 	public void onShowPayments( ActionEvent event ) {
@@ -246,9 +214,9 @@ public class SalaryDraftController extends BasicController {
 		}						
 	}
 
-	// *********
+	// ------------------------------------------
 	// IMPRESION
-	// *********
+	// ------------------------------------------
 	@Override
 	public Collection<ITransferObject> getCollection() {
 		List<ITransferObject> l = new LinkedList<ITransferObject>();
@@ -266,12 +234,8 @@ public class SalaryDraftController extends BasicController {
 	// ------------------------------------------
 	// Gets ( calculate ) salary draft.
 	// ------------------------------------------
-	public ISalary getSalary() {
+	private ISalary calculateSalary() {
 		try {
-			if ( salary != null ) {
-				return salary;
-			}
-			
 			Contract contract = (Contract) getTo();
 
 			ISalaryCalculatorContext ctx;
@@ -282,34 +246,26 @@ public class SalaryDraftController extends BasicController {
 			
 			salary = ctx.getSalaryProxy().getSalary();
 			
-			endDate = salary.getEndDate();
-			startDate = salary.getStartDate();
-			issueDate = salary.getIssueDate();
-			
 			paymentsModel = null;
 			printer = null;
 			paymentsList = null;
 			initializePaymentModel();
 
-			setValidSalaryDraftPeriod(true);
-			
 			return salary;
 		} 
 		catch (OutOfDateException e) {
-			setValidSalaryDraftPeriod(false);
 			return null;
 		}catch (SalaryException e) {
 			String msg = "Error en el calculo del borrador de la nómina";
-			setValidSalaryDraftPeriod(false);
 			LOGGER.error(msg, e);
 			return null;
 		}
 	}
 
 	public void reset() {
-		this.salary = null;
-		this.bdSalary = null;
-		this.draftMonths = null;
+		rebuildDraftMonths();
+		calculateSalary();
+		searchSavedDraftSalary();
 	}
 	
 	public DataModel getPaymentsModel() {
@@ -402,10 +358,6 @@ public class SalaryDraftController extends BasicController {
 	}
 	
 	private void searchSavedDraftSalary(){
-		ISalary salary = getSalary();
-		if ( salary == null ) {
-			return;
-		}
 		Contract contract = (Contract) this.getTo();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
@@ -416,7 +368,7 @@ public class SalaryDraftController extends BasicController {
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), getSalaryType());
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
-				setBdSalary((ISalary) list.get(0));
+				this.dbSalary = (ISalary) list.get(0);
 			} 
 		} catch (ManagerBeanException e) {
 			String msg = "Fallo en la obtención de la nómina calculada";
@@ -470,45 +422,7 @@ public class SalaryDraftController extends BasicController {
 	}
 	
 	
-
 	
-	// *********************************************************************
-	// *********************************************************************
-	// Filtro del borrador por tipo, mes y anio
-	// *********************************************************************
-	// *********************************************************************
-	
-	public void onReloadDraft(ActionEvent event) {
-		try {
-			ControllerEvent evt = new ControllerEvent(this);
-			controllerListenerSupport.fireAfterBeanSelected(evt);
-		} catch (ControllerListenerException e) {
-			throw new AbortProcessingException("Imposible mostrar la simulación de la nómina");
-		}
-	}
-	
-	public void checkValidDraftPeriod() {
-		Contract contract = (Contract) this.getTo();
-		Date draftStart = CommonUtil.getDate(CommonUtil.getYear(getStartDate()), CommonUtil.getMonth(getStartDate()),CommonUtil.getDay(getStartDate()));
-		Date draftEnd = CommonUtil.getDate(CommonUtil.getYear(getEndDate()), CommonUtil.getMonth(getEndDate()),CommonUtil.getDay(getEndDate()));
-		Date contractStart = CommonUtil.getDate(CommonUtil.getYear(contract.getStartDate()), CommonUtil.getMonth(contract.getStartDate()),CommonUtil.getDay(contract.getStartDate()));
-		Date contractEnd = contract.getEndDate()==null?null:CommonUtil.getDate(CommonUtil.getYear(contract.getEndDate()), CommonUtil.getMonth(contract.getEndDate()),CommonUtil.getDay(contract.getEndDate()));
-
-		rebuildDraftMonths();
-		
-		boolean isValid	= ( contract != null ) && 
-			( draftStart.before(draftEnd) || draftStart.equals(draftEnd) ) && 
-			( draftStart.before(draftEnd) || draftStart.equals(draftEnd) ) && 
-			( contractStart.before(draftEnd) || contractStart.equals(draftEnd) ) &&
-			( contractEnd == null ||  ( contractEnd.after(draftStart) || contractEnd.equals(draftStart) ) ) &&
-			!draftMonths.isEmpty()
-			;
-		
-		if(getSalary()==null){
-			isValid = false;
-		}
-		setValidSalaryDraftPeriod(isValid);
-	}
 	
 	public List<SelectItem> getSalaryDraftTypes() {
 		Contract contract = (Contract) this.getTo();
@@ -530,8 +444,7 @@ public class SalaryDraftController extends BasicController {
 		return salaryDraftTypes;
 	}
 	
-	public void rebuildDraftMonths(){
-		getSalary();
+	private void rebuildDraftMonths(){
 		draftMonths = new LinkedList<SelectItem>();
 		if(getSalaryType()==SalaryType.SALARY){
 			draftMonths.addAll(getSalaryMonths());
@@ -542,20 +455,14 @@ public class SalaryDraftController extends BasicController {
 		} else if(getSalaryType()==SalaryType.DELAY){
 			draftMonths.addAll(getDelayMonths());
 		}
-		
-		Calendar c = Calendar.getInstance();
-		c.setTime(getIssueDate());
-		c.set(Calendar.YEAR, getYear());
-		c.set(Calendar.MONTH, getMonth().getValue());
-		this.issueDate = c.getTime();
 	}
 	
 	private List<SelectItem> getDelayMonths() {
-		// TODO Auto-generated method stub
+		// TODO no implementado
 		AonUtil.addErrorMessage("no implementado");
-		setValidSalaryDraftPeriod(false);
 		return new LinkedList<SelectItem>();
 	}
+	
 	private List<SelectItem> getSettleMonths() {
 		try {
 			Contract contract = (Contract) this.getTo();

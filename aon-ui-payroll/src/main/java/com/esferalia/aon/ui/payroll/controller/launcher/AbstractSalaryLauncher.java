@@ -35,6 +35,8 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
@@ -246,8 +248,15 @@ public abstract class AbstractSalaryLauncher
 	
 	private Criteria getCriteria() {
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(SQLConstants.CUSTOMER + "." + CustomerColumns.STATUS, 
-				CustomerStatus.ACTIVE );
+		
+		
+		Expression customerActive = 
+			ExpressionUtilities.getEqualExpression(SQLConstants.CUSTOMER + "." + CustomerColumns.STATUS, 
+					CustomerStatus.ACTIVE.ordinal());
+		Expression customerUnknown = 
+			ExpressionUtilities.getNullExpression((SQLConstants.CUSTOMER + "." + CustomerColumns.STATUS));
+		
+		criteria.addExpression(ExpressionUtilities.getOrExpression(customerActive, customerUnknown));
 		
 		if (params.getPerson() != null && params.getPerson().getId() != null ) {
 			criteria.addEqualExpression(

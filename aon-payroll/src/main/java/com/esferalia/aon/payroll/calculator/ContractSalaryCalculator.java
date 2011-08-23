@@ -220,14 +220,16 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			expressionContext.addVariable(IRPF_BASE, taxCalculator.getIrpfBase(), chargeDate, chargeDate);
 
 			salaryBuilder.setRawCgcBase(quoteCalculator.getRawCgcBase());
-
-			salaryBuilder.setCgcBase(quoteCalculator.getCgcBase());
-			double cgcBaseVar = quoteCalculator.getCgcBase() - quoteCalculator.getMaternityBase();
+			
+			double cgcBase = quoteCalculator.getCgcBase();
+			salaryBuilder.setCgcBase(cgcBase);
+			double cgcBaseVar = cgcBase - quoteCalculator.getMaternityBase();
 			expressionContext.addVariable(CGC_BASE, cgcBaseVar , start, end );
 			//System.out.printf("CGC_BASE=%.3f \r\n", cgcBaseVar);
 			
-			salaryBuilder.setCgpBase(quoteCalculator.getCgpBase());
-			double cgpBaseVar = quoteCalculator.getCgpBase() - quoteCalculator.getMaternityBase();
+			double cgpBase = quoteCalculator.getCgpBase();
+			salaryBuilder.setCgpBase(cgpBase);
+			double cgpBaseVar = cgpBase - quoteCalculator.getMaternityBase();
 			expressionContext.addVariable(CGP_BASE, cgpBaseVar, start, end );
 
 			salaryBuilder.setNonHExtraBase(quoteCalculator.getNonStructuralBase()); 
@@ -275,11 +277,15 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 							continue; //TODO : must be done in context ?
 						}
 					}
-					
-					totalDeduction += resolveDeduction(expressionContext, contractDeduction, deductionStart, deductionEnd );
-					
-					if ( type.isSsDeduction() ) {
-						ssContributions += totalDeduction;
+					try {
+						Double deduction = resolveDeduction(expressionContext, contractDeduction, deductionStart, deductionEnd );
+						totalDeduction += deduction;
+						
+						if ( type.isSsDeduction() ) {
+							ssContributions += deduction;
+						}
+					}catch ( UndefinedVariableException e ) {
+						// TODO : notificar ??? 
 					}
 			}
 			

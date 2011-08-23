@@ -71,7 +71,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	private Integer id;
 	private Contract contract;
 
-	// Empresa
+	// EmpresasalaryDraft.salary.salaryCosts
 	private String enterpriseName;
 	private String enterpriseAddress;
 	private String enterpriseDocument;

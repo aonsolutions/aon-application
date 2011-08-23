@@ -104,7 +104,8 @@ public class SalaryExpenseController implements Serializable, ICollectionProvide
 		Enterprise e = (Enterprise) controller.getTo();
 		Criteria criteria = new Criteria();
 		if(isExpenseDraft()){
-			SalaryDraftController draft = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
+			SalaryDraftController draft = 
+				(SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 			String alias = draft.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID);
 			draft.getCriteria().addEqualExpression(alias, e.getId());
 			draft.getCriteria().addOrder(draft.getFieldName(IPayrollAlias.CONTRACT_WORK_PLACE_ID));
