@@ -10,7 +10,7 @@
 	<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
 		<c:if test="#{enterprisePayroll.activity != null}" >	
 			<aon:outputText value="#{companyBundle.company_activity}" />
-			<aon:outputText value="#{enterprisePayroll.activity.cnae.code} - #{enterprisePayroll.activity.description}" />
+			<aon:outputText value="#{enterprisePayroll.activity.cnae2009.code} - #{enterprisePayroll.activity.description}" />
 		</c:if>
 	
 		<c:if test="#{enterprisePayroll.ccc != null}" >	

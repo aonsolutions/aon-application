@@ -498,20 +498,15 @@ public class SalaryDraftController extends BasicController {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_ID), 
+					contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			for(ITransferObject to: bean.getList(criteria)){
-				AgreementExtra ae = (AgreementExtra) to;
-				if(ae.getAgreementPayment().getSalaryType()==SalaryType.EXTRA){
-					Date agreementStart = ae.getAgreementPayment().getStartDate();
-					Date agreementEnd = ae.getAgreementPayment().getEndDate();
-					Month month = ae.getAgreementPayment().getMonth();
-					if(CommonUtil.getYear(agreementStart)<=getYear()
-							&& ( agreementEnd==null || CommonUtil.getYear(agreementEnd)>=getYear() )
-							&& ( CommonUtil.getMonth(contract.getStartDate())<=month.ordinal() ) 
-							&& ( contract.getEndDate() == null || CommonUtil.getMonth(contract.getEndDate())>=month.ordinal() ) ){
-						months.add(month);
-					}
+				AgreementExtra agreementExtra = (AgreementExtra) to;
+				AgreementPayment extraPayment = agreementExtra.getAgreementPayment();
+				if(extraPayment.getSalaryType() == SalaryType.EXTRA){
+					Month paymentMonth = extraPayment.getMonth();
+					months.add(paymentMonth);
 				}
 			}
 			for(Month m: months){

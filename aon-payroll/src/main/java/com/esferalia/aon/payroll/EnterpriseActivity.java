@@ -23,7 +23,7 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.Enterprise;
-import com.code.aon.config.CNAE;
+import com.code.aon.config.CNAE2009;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 
 @Entity
@@ -35,7 +35,7 @@ public class EnterpriseActivity implements ITransferObject {
 	private Integer id;
     private String description;
     private Enterprise enterprise; 
-    private CNAE cnae; 
+    private CNAE2009 cnae2009; 
 	private EnterpriseActivityType type;
 
 	private Set<EnterpriseCCC> cccs = new HashSet<EnterpriseCCC>();
@@ -70,14 +70,14 @@ public class EnterpriseActivity implements ITransferObject {
 	}
 
 	@ManyToOne
-    @JoinColumn(name="cnae", nullable = false, updatable = false )
-    @ForeignKey(name = "FK_ENTERPRICE_ACTIVITY_CNAE")
-    @Index(name = "IDX_ENTERPRICE_ACTIVITY_CNAE")    
-	public CNAE getCnae() {
-		return cnae;
+    @JoinColumn(name="cnae2009" )
+    @ForeignKey(name = "FK_ENTERPRICE_ACTIVITY_CNAE2009")
+    @Index(name = "IDX_ENTERPRICE_ACTIVITY_CNAE2009")    
+	public CNAE2009 getCnae2009() {
+		return cnae2009;
 	}
-	public void setCnae(CNAE cnae) {
-		this.cnae = cnae;
+	public void setCnae2009(CNAE2009 cnae2009) {
+		this.cnae2009 = cnae2009;
 	}
 	
 	@Column( nullable = false )
@@ -104,7 +104,7 @@ public class EnterpriseActivity implements ITransferObject {
 		final EnterpriseActivity o = (EnterpriseActivity) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.cnae, o.cnae)
+				.append(this.cnae2009, o.cnae2009)
 				.append(this.description, o.description)
 				.append(this.enterprise, o.enterprise)
 				.append(this.type, o.type)
@@ -116,7 +116,7 @@ public class EnterpriseActivity implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(cnae)
+			.append(cnae2009)
 			.append(description)
 			.append(enterprise)
 			.append(id)

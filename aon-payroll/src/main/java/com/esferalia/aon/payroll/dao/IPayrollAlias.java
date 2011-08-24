@@ -1409,10 +1409,10 @@ public interface IPayrollAlias {
 	DAOConstantsEntry ENTERPRISE_ACTIVITY_ENTRY = DAOConstants.getDAOConstant(EnterpriseActivity.class);
 
 	/** 
-	* Alias value: EnterpriseActivity_cnae_id
-	* Hibernate value: EnterpriseActivity.cnae.id
+	* Alias value: EnterpriseActivity_cnae2009_id
+	* Hibernate value: EnterpriseActivity.cnae2009.id
 	*/
-	String  ENTERPRISE_ACTIVITY_CNAE_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[0];
+	String  ENTERPRISE_ACTIVITY_CNAE2009_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: EnterpriseActivity_description

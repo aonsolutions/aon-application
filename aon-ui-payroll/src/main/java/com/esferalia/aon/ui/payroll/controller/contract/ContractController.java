@@ -348,7 +348,7 @@ public class ContractController extends VariablesAbstractController {
 				List<ITransferObject> ecList = ecBean.getList(criteria);
 				for(ITransferObject to: ecList){
 					EnterpriseActivity ea = (EnterpriseActivity) to;
-					String name = ea.getDescription() + " - (" + ea.getCnae().getCode() + ") " + ea.getCnae().getTitle();
+					String name = ea.getDescription() + " - (" + ea.getCnae2009().getCode() + ") " + ea.getCnae2009().getTitle();
 					SelectItem item = new SelectItem(ea, name);
 					getActivities().add(item);
 				}

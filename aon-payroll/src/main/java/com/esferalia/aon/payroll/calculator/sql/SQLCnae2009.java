@@ -1,7 +1,6 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import java.math.BigDecimal;
-import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,9 +9,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.code.aon.config.CNAE;
-import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.payroll.sql.SQLConstants.Cnae2009RateColumns;
 
 
