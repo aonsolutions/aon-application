@@ -24,6 +24,9 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
+import com.code.aon.bridge.plugin.UserManager;
+import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.bridge.session.DomainResolver;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -32,7 +35,10 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.dao.ldap.LdapDAO;
+import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.manager.Domain;
+import com.code.aon.manager.DomainUser;
 import com.code.aon.manager.dao.IManagerAlias;
 import com.code.aon.manager.enumeration.DomainType;
 import com.code.aon.ql.Criteria;
@@ -349,6 +355,16 @@ public class ManagerController implements IManagerConstants {
 		if ( force || (! ObjectUtils.equals(oldDN, currentDN)) ) {
 			controller.onSearch(null);	
 		}				
+	}
+
+	public void flushAuthenticationCache( Domain domain, DomainUser user ) {
+		try {
+			IConsoleAdmin console = Utils.getSecurityConsole();
+			AuthPrincipal principal = new AuthPrincipal( user.getUid() + "@" + domain.getCommonName() );			
+			console.flushAuthenticationCache(UserManager.LDAP_SECURITY_DOMAIN, principal);
+		} catch (DeploymentException e) {
+			LOGGER.error( "Error flushing authenticaction cache for " + user, e );
+		}
 	}
 	
 }

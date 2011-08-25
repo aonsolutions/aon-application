@@ -50,6 +50,7 @@ import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.NameResolver;
 import com.code.aon.manager.DBConnnection;
+import com.code.aon.manager.Domain;
 import com.code.aon.manager.DomainApplicationUser;
 import com.code.aon.manager.DomainUser;
 import com.code.aon.manager.dao.IManagerAlias;
@@ -221,10 +222,12 @@ public class DomainUserController extends LdapBasicController implements IManage
 		} finally {
 			ldap.closeSession();
 		}
+		flushPasswordCache();
 	}
 	
 	public void onResetPassword( ActionEvent event ) {
 		resetPassword( getDomainUser() );
+		flushPasswordCache();
 	}	
 	
 	public void resetPassword( DomainUser user ) {
@@ -512,6 +515,13 @@ public class DomainUserController extends LdapBasicController implements IManage
 
 	public boolean isValidName( String name ) {
 		return name.matches("\\p{Lower}[\\p{Lower}\\p{Digit}\\.\\-]*");
+	}
+	
+	private void flushPasswordCache() {
+		DomainController dc = (DomainController) AonUtil.getRegisteredBean(DOMAIN_CONTROLLER_NAME);
+		Domain domain = dc.getDomain();
+		DomainUser user = getDomainUser();
+		getManager().flushAuthenticationCache(domain, user);
 	}
 	
 }
