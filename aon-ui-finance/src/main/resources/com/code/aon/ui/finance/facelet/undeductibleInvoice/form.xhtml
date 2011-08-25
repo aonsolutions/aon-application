@@ -56,7 +56,7 @@
 							<ui:param name="signController" value="#{undeductibleInvoiceSigner}" />
 							<ui:param name="skipSignButton" value="#{undeductibleInvoice.new or (!undeductibleInvoiceAttachment.attachmentAvailable) or undeductibleInvoice.to.signed or (!certificate.signable)}" />
 							<ui:param name="skipCancelSignButton" value="#{undeductibleInvoice.new or (!undeductibleInvoiceAttachment.attachmentAvailable) or (!undeductibleInvoice.to.signed)}" />
-							<ui:param name="signButtonReRender" value="undeductibleInvoiceForm,showNewMessageWindow" />
+							<ui:param name="signButtonReRender" value="undeductibleInvoiceForm" />
 						</ui:include>
 					</ui:define>
 				</ui:decorate>
@@ -335,7 +335,7 @@
 			<ui:param name="invoiceAddress" value="#{undeductibleInvoiceAddress}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
-			<ui:param name="signButtonreRender" value="undeductibleInvoiceForm,showNewMessageWindow" />
+			<ui:param name="signButtonreRender" value="undeductibleInvoiceForm" />
 			<aon:methodParam name="signActionListener" value="#{undeductibleInvoiceSigner.onSign}" type="actionListener" />
 		</ui:include>
 	</ui:define>

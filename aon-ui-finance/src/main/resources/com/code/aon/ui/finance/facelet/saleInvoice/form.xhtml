@@ -92,7 +92,7 @@
 							<ui:param name="signController" value="#{saleInvoiceSigner}" />
 							<ui:param name="skipSignButton" value="#{saleInvoice.new or saleInvoice.to.signed or (!certificate.signable)}" />
 							<ui:param name="skipCancelSignButton" value="#{saleInvoice.new or (!saleInvoice.to.signed)}" />
-							<ui:param name="signButtonReRender" value="saleInvoiceForm,showNewMessageWindow" />
+							<ui:param name="signButtonReRender" value="saleInvoiceForm" />
 						</ui:include>
 					</ui:define>
 				</ui:decorate>
@@ -369,7 +369,7 @@
 			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 		</c:if>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
-			<ui:param name="signButtonreRender" value="saleInvoiceForm,showNewMessageWindow" />
+			<ui:param name="signButtonreRender" value="saleInvoiceForm" />
 			<aon:methodParam name="signActionListener" value="#{saleInvoiceSigner.onSign}" type="actionListener" />
 		</ui:include>
 	</ui:define>
