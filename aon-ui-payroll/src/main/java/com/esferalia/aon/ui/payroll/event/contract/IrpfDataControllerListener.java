@@ -16,7 +16,7 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		IrpfDataController controller = (IrpfDataController) this.getController();
 		IrpfData m = (IrpfData) controller.getTo();
-		m.setDate(new Date());
+		m.setStartDate(new Date());
 		m.setDescendientCount(controller.getDescendientCount());
 	}
 	

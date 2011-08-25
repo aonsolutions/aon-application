@@ -64,7 +64,7 @@ public class IrpfDataController extends LinesController {
 		Contract contract = (Contract) controller.getTo();
 		try {
 			this.getCriteria().addEqualExpression(this.getFieldName(IPayrollAlias.IRPF_DATA_CONTRACT_ID), contract.getId());
-			this.getCriteria().addOrder(this.getFieldName(IPayrollAlias.IRPF_DATA_DATE), false);
+			this.getCriteria().addOrder(this.getFieldName(IPayrollAlias.IRPF_DATA_START_DATE), false);
 			this.onSearch(event);
 			if(this.getRowCount()<=0){
 				this.onReset(event);

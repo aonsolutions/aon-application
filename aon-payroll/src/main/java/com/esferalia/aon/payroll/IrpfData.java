@@ -31,7 +31,8 @@ public class IrpfData implements ITransferObject {
 
 	private Integer id;
 	private Contract contract;
-	private Date date;
+	private Date startDate;
+	private Date endDate;
 	private FamilySituation familySituation;
 	private String spouseDocument;
 	private DisabilityLevel disabilityLevel;
@@ -61,12 +62,21 @@ public class IrpfData implements ITransferObject {
 	}
 	
 	@Temporal(TemporalType.DATE)
-	@Column( name = "date" )
-	public Date getDate() {
-		return date;
+	@Column( name = "start_date" )
+	public Date getStartDate() {
+		return startDate;
 	}
-	public void setDate(Date date) {
-		this.date = date;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	
+	@Temporal(TemporalType.DATE)
+	@Column( name = "end_date" )
+	public Date getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 	
 	@Column( name = "family_situation")
@@ -135,7 +145,8 @@ public class IrpfData implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.contract, o.contract)			
-				.append(this.date, o.date)			
+				.append(this.startDate, o.startDate)			
+				.append(this.endDate, o.endDate)			
 				.append(this.familySituation, o.familySituation)			
 				.append(this.spouseDocument, o.spouseDocument)			
 				.append(this.disabilityLevel, o.disabilityLevel)			
@@ -153,7 +164,8 @@ public class IrpfData implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(id)		
 			.append(this.contract)		
-			.append(this.date)		
+			.append(this.startDate)		
+			.append(this.endDate)		
 			.append(this.familySituation)		
 			.append(this.spouseDocument)		
 			.append(this.disabilityLevel)		

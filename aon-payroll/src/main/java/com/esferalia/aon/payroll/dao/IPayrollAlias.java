@@ -1409,10 +1409,10 @@ public interface IPayrollAlias {
 	DAOConstantsEntry ENTERPRISE_ACTIVITY_ENTRY = DAOConstants.getDAOConstant(EnterpriseActivity.class);
 
 	/** 
-	* Alias value: EnterpriseActivity_cnae2009_id
-	* Hibernate value: EnterpriseActivity.cnae2009.id
+	* Alias value: EnterpriseActivity_cnae_id
+	* Hibernate value: EnterpriseActivity.cnae.id
 	*/
-	String  ENTERPRISE_ACTIVITY_CNAE2009_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[0];
+	String  ENTERPRISE_ACTIVITY_CNAE_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: EnterpriseActivity_description
@@ -1496,28 +1496,28 @@ public interface IPayrollAlias {
 	String  IRPF_DATA_CONTRACT_ID = IRPF_DATA_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: IrpfData_date
-	* Hibernate value: IrpfData.date
-	*/
-	String  IRPF_DATA_DATE = IRPF_DATA_ENTRY.getAliasNames()[1];
-
-	/** 
 	* Alias value: IrpfData_dependence
 	* Hibernate value: IrpfData.dependence
 	*/
-	String  IRPF_DATA_DEPENDENCE = IRPF_DATA_ENTRY.getAliasNames()[2];
+	String  IRPF_DATA_DEPENDENCE = IRPF_DATA_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: IrpfData_descendientCount
 	* Hibernate value: IrpfData.descendientCount
 	*/
-	String  IRPF_DATA_DESCENDIENT_COUNT = IRPF_DATA_ENTRY.getAliasNames()[3];
+	String  IRPF_DATA_DESCENDIENT_COUNT = IRPF_DATA_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: IrpfData_disabilityLevel
 	* Hibernate value: IrpfData.disabilityLevel
 	*/
-	String  IRPF_DATA_DISABILITY_LEVEL = IRPF_DATA_ENTRY.getAliasNames()[4];
+	String  IRPF_DATA_DISABILITY_LEVEL = IRPF_DATA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: IrpfData_endDate
+	* Hibernate value: IrpfData.endDate
+	*/
+	String  IRPF_DATA_END_DATE = IRPF_DATA_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: IrpfData_familySituation
@@ -1548,6 +1548,12 @@ public interface IPayrollAlias {
 	* Hibernate value: IrpfData.spouseDocument
 	*/
 	String  IRPF_DATA_SPOUSE_DOCUMENT = IRPF_DATA_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: IrpfData_startDate
+	* Hibernate value: IrpfData.startDate
+	*/
+	String  IRPF_DATA_START_DATE = IRPF_DATA_ENTRY.getAliasNames()[10];
 
 
 

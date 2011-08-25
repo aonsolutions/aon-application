@@ -949,7 +949,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>IrpfData_date desc</value>
+			<value>IrpfData_startDate desc</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
@@ -1620,8 +1620,8 @@
 	</managed-bean>
 	<!-- ************ IRPF CALCULATOR ************** -->
 	<managed-bean>
-		<managed-bean-name>irpfCalculator</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.launcher.IrpfCalculator</managed-bean-class>
+		<managed-bean-name>irpfLauncher</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.launcher.IrpfLauncher</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<!-- ************ SALARY SETTLE ************** -->
@@ -2183,11 +2183,11 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- =================== IRPF CALCULATOR ========================== -->
+	<!-- =================== IRPF LAUNCHER ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>irpfCalculator_form</from-outcome>
-			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/irpfCalculator/form.xhtml</to-view-id>
+			<from-outcome>irpfLauncher_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/irpfLauncher/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== SALARY REMOVER ========================== -->

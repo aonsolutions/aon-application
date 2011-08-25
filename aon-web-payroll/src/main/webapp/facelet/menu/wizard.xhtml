@@ -36,6 +36,14 @@
 									actionListener="#{contractBatchWizard.onStart}"
 									value="#{payrollBundle.payroll_contractBatchWizard_module}" />
 							</aon:div>
+						
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="fanBatchWizard" 
+									disabled="true"
+									action="fanBatchWizard_step0"
+									actionListener="#{fanBatchWizard.onStart}"
+									value="#{payrollBundle.payroll_fanBatchWizard_module}" />
+							</aon:div>
 							
 						</aon:div>
 					</aon:panelGrid>
@@ -119,6 +127,22 @@
 								</aon:commandLink>
 							</aon:div>
 							
+						</aon:div>
+					</aon:panelGrid>
+					
+					<aon:panelGrid id="group_fiscal_payroll"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-aeat aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.fiscal_menu_group}" />
+						</f:facet>
+						<aon:div styleClass="aon-direct-access-list">
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="irpfLauncher" action="irpfLauncher_form"
+									value="#{payrollBundle.payroll_irpfLauncher_module}">
+									<aon:actionListener method="#{irpfLauncher.onStart}" />
+								</aon:commandLink>
+							</aon:div>
 						</aon:div>
 					</aon:panelGrid>
 

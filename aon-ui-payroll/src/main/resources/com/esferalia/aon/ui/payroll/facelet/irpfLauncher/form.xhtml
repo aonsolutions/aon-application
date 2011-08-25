@@ -12,50 +12,42 @@
 	<ui:define name="content">
 		
 		<ui:decorate
-			template="/com/esferalia/aon/ui/payroll/facelet/irpfCalculator/template.xhtml">
-			<ui:param name="salaryLauncher" value="#{salaryLauncher}" />
+			template="/com/esferalia/aon/ui/payroll/facelet/irpfLauncher/template.xhtml">
+			<ui:param name="irpfLauncher" value="#{irpfLauncher}" />
 			
 			<ui:define name="messageRow" >
 				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.level} : " />
 				<aon:outputText value="#{message.enterpriseName} " 
 					rendered="#{message.contractId!=null}" />
 								
-				<!--aon:commandLink  
-					rendered="#{message.contractId!=null}"
-					style="display: inline; text-decoration:underline;"
-					action="contract_form" >
-					<aon:outputText value="#{message.employeeName} " />
-					<f:setPropertyActionListener value="#{message.contractId}" 
-					target="#{salaryTestLauncher.contractId}" />
-					<aon:actionListener method="#{salaryLauncher.onContract}" />
-				</aon:commandLink-->	
 				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.msg}" />
 			</ui:define>			
 
 			<ui:define name="launchButton" >
-				<aon:commandButton id="launchSalaries"
+				<aon:commandButton id="launchIrpfs"
 					value="#{payrollBundle.payroll_launch}" 
 					styleClass="aon-search-lookup-button"
-					disabled="#{salaryLauncher.pollEnabled}"
+					reRender="poll,launchIrpfs,messagesContainer"
+					actionListener="#{irpfLauncher.onExecute}">
+					<!--  
 					reRender="showLauncherConfirmWindow"
-					actionListener="#{salaryLauncher.onShowLauncherConfirm}">
 						<f:setPropertyActionListener target="#{salaryLauncher.showLauncherConfirmWindow}"
 								value="#{true}" />								
+					-->
 				</aon:commandButton>
 			</ui:define>			
 
 			<ui:define name="addOnsFirstRow" >
-				<aon:selectBooleanCheckbox value="#{salaryLauncher.saveLog}" />
+				<aon:selectBooleanCheckbox value="#{irpfLauncher.saveLog}" />
 				<aon:outputText value="#{payrollBundle.payroll_launch_saveLog}" />
 			</ui:define>			
 			<ui:define name="addOnsSecondRow" >
-				<aon:selectBooleanCheckbox value="#{salaryLauncher.debugEnabled}" />
+				<aon:selectBooleanCheckbox value="#{irpfLauncher.debugEnabled}" />
 				<aon:outputText value="#{payrollBundle.payroll_launch_debugEnabled}" />
 			</ui:define>			
 		
 		</ui:decorate>
 		
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/confirmModal.xhtml" />
 	</ui:define>
 
 </ui:composition>
