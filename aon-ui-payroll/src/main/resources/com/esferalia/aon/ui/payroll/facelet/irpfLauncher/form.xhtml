@@ -38,12 +38,12 @@
 			</ui:define>			
 
 			<ui:define name="addOnsFirstRow" >
-				<aon:selectBooleanCheckbox value="#{irpfLauncher.saveLog}" />
-				<aon:outputText value="#{payrollBundle.payroll_launch_saveLog}" />
-			</ui:define>			
-			<ui:define name="addOnsSecondRow" >
 				<aon:selectBooleanCheckbox value="#{irpfLauncher.debugEnabled}" />
 				<aon:outputText value="#{payrollBundle.payroll_launch_debugEnabled}" />
+			</ui:define>			
+			<ui:define name="addOnsSecondRow" >
+				<aon:selectBooleanCheckbox value="#{irpfLauncher.saveEnabled}" />
+				<aon:outputText value="#{payrollBundle.payroll_launch_save_changes}" />
 			</ui:define>			
 		
 		</ui:decorate>

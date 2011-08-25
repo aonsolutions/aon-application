@@ -7,6 +7,7 @@ import javax.faces.event.AbortProcessingException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
@@ -22,6 +23,8 @@ public class IrpfLauncherParams {
 	private Enterprise enterprise;
 	private Person person;
 	private Date date;
+	private Integer year;
+	private Month month;
 	
 	public IrpfLauncherParams() {
 		initialize();
@@ -51,6 +54,21 @@ public class IrpfLauncherParams {
 		this.date = date;
 	}
 	
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+
+	public Month getMonth() {
+		return month;
+	}
+
+	public void setMonth(Month month) {
+		this.month = month;
+	}
 
 	public void initialize() {
 		try {

@@ -31,13 +31,18 @@ public class IrpfLauncher extends AbstractIrpfLauncher {
 			
 			calculate(calculator);
 			
-			try {
-				irpfBuilder.commit();
-			} catch (Throwable e) {
-				listener.onError(e.getLocalizedMessage());
+			if(isSaveEnabled()){
+				try {
+					irpfBuilder.commit();
+				} catch (Throwable e) {
+					listener.onError(e.getLocalizedMessage());
+					irpfBuilder.rollback();
+				}
+				msg = MessageFormat.format("Total variables insertadas: {0} ",new Object[]{irpfBuilder.getInsertedContractData()});
+			} else {
 				irpfBuilder.rollback();
+				msg = MessageFormat.format("Total variables calculadas: {0} ",new Object[]{irpfBuilder.getInsertedContractData()});
 			}
-			msg = MessageFormat.format("Total variables insertadas: {0} ",new Object[]{irpfBuilder.getInsertedContractData()});
 			listener.onInfo(msg);
 		} catch (ExpressionException e) {
 			throw new SalaryException(e);

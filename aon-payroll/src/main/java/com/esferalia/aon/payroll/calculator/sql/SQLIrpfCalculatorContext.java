@@ -13,6 +13,7 @@ import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.jaxb.irpf.AEATRetencionesEntrada2011;
 import com.esferalia.aon.payroll.jaxb.irpf.TipoRetenidoEntrada2011;
 import com.esferalia.aon.payroll.jaxb.irpf.TipoRetenidoEntrada2011.Descendiente;
@@ -41,6 +42,7 @@ public class SQLIrpfCalculatorContext {
 	private static final String MAIN_SQL = "SELECT * "
 		+" FROM contract"
 		+" LEFT JOIN irpf_data ON (contract.id = irpf_data.contract )"
+		+" LEFT JOIN contract_data ON (contract.id = contract_data.contract )"
 		+", person"
 		+", registry AS " + PERSON_REGISTRY
 		+", enterprise"
@@ -58,6 +60,9 @@ public class SQLIrpfCalculatorContext {
 		+" AND contract.start_date <= ? "					 
 		+" AND ( contract.end_date  IS NULL"
 		+" OR contract.end_date >= ? )"
+		+" AND contract_data.name like '" + ContractVariables.IRPF_PERCENT.getName()+"'"
+		+" AND ( contract_data.end_date IS NULL"
+		+" OR contract_data.end_date >= ? )"
 		;
 	
 	private static final String DESCENDIENTS_SQL =
@@ -262,6 +267,7 @@ public class SQLIrpfCalculatorContext {
 		stmt.setDate(1, toSqlDate( this.date ) );
 		stmt.setDate(2, toSqlDate( this.date ) );
 		stmt.setDate(3, toSqlDate( this.date ) );
+		stmt.setDate(4, toSqlDate( new Date() ) );
 //		stmt.setDate(3, toSqlDate(  new Date() ) );
 //		stmt.setDate(4, toSqlDate(  new Date() ) );
 		resultSet = stmt.executeQuery();

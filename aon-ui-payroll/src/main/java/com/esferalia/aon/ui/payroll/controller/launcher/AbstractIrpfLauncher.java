@@ -46,6 +46,7 @@ public abstract class AbstractIrpfLauncher {
 	private boolean pollEnabled;
 	private boolean debugEnabled;
 	private boolean refreshEnabled;
+	private boolean saveEnabled;
 
 	private IrpfLauncherParams params;
 	
@@ -65,6 +66,13 @@ public abstract class AbstractIrpfLauncher {
 	}
 	public final void setDebugEnabled(boolean debugEnabled) {
 		this.debugEnabled = debugEnabled;
+	}
+	
+	public final boolean isSaveEnabled() {
+		return saveEnabled;
+	}
+	public final void setSaveEnabled(boolean saveEnabled) {
+		this.saveEnabled = saveEnabled;
 	}
 	
 	public final boolean isRefreshEnabled() {
@@ -181,7 +189,7 @@ public abstract class AbstractIrpfLauncher {
 				listener.onInfo(msg);
 			} catch (Throwable e) {
 				listener.onError(e.getLocalizedMessage());
-				String msg = "Se produjeron errores en el calculo de nóminas.";
+				String msg = "Se produjeron errores en el calculo de IRPF.";
 				listener.onError(msg);
 			}
 			if (listener.getWarningCounter() > 0) {

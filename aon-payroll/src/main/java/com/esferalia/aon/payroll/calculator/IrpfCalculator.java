@@ -6,6 +6,7 @@ import java.util.Date;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.sql.SQLIrpfBuilder;
 import com.esferalia.aon.payroll.calculator.sql.SQLIrpfCalculatorContext;
+import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.jaxb.irpf.sql.SQLAEATRetencionesEntrada2011;
 import com.esferalia.aon.payroll.jaxb.irpf.sql.SQLTipoRetenedorEntrada2011;
 import com.esferalia.aon.payroll.jaxb.irpf.sql.SQLTipoRetenidoEntrada2011;
@@ -64,11 +65,13 @@ public class IrpfCalculator  {
 //				+ sqlCtx.getPercent()
 //				);
 				
+				
+				
 				irpfBuilder.createNewContractData();
 				irpfBuilder.setContract(sqlCtx.getContractId());
 				irpfBuilder.setStartDate(date);
 				irpfBuilder.setEndDate(null);
-				irpfBuilder.setName("PORCENTAJE_IRPF");
+				irpfBuilder.setName(ContractVariables.IRPF_PERCENT.getName());
 				irpfBuilder.setExpression(String.valueOf(CommonUtil.round(sqlCtx.getPercent())));
 				
 				irpfBuilder.saveIrpf();
