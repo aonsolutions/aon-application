@@ -11,7 +11,9 @@ import java.util.Date;
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.jaxb.irpf.AEATRetencionesEntrada2011;
@@ -20,6 +22,8 @@ import com.esferalia.aon.payroll.jaxb.irpf.TipoRetenidoEntrada2011.Descendiente;
 import com.esferalia.aon.payroll.jaxb.irpf.sql.SQLAEATRetencionesEntrada2011;
 import com.esferalia.aon.payroll.jaxb.irpf.sql.SQLTipoRetenidoEntrada2011;
 import com.esferalia.aon.payroll.sql.AbstractSQL;
+import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
@@ -238,11 +242,12 @@ public class SQLIrpfCalculatorContext {
 	
 	public void calculateGrossSalary(){
 		grossSalary = new Double(0);
+		Integer year = CommonUtil.getYear(date);
 		for(Month m: Month.values()){
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
-			startCal.set(2011, m.ordinal(), 1);
-			endCal.set(2011, m.ordinal(), startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			startCal.set(year, m.ordinal(), 1);
+			endCal.set(year, m.ordinal(), startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			
 			Criteria criteria = new Criteria();
 //			criteria.addEqualExpression("contract.id", getInt("contract", "id"));
@@ -252,7 +257,8 @@ public class SQLIrpfCalculatorContext {
 			
 			try {
 				ContractSalaryCalculator calculator = new ContractSalaryCalculator();
-				SQLSalaryBuilderTester salaryBuilder = new SQLSalaryBuilderTester(connection);
+				ISalaryBuilder salaryBuilder = 
+					new SalaryBuilder();
 				calculator.setSalaryBuilder(salaryBuilder);
 				
 				SQLContractSalaryCalculatorContext sqlCtx = 
@@ -264,9 +270,9 @@ public class SQLIrpfCalculatorContext {
 				
 				if(sqlCtx.next()){
 					calculator.calculate(sqlCtx);
-					AbstractSQL.Salary s = salaryBuilder.salary;
+					ISalary s = salaryBuilder.getSalary();
 					if(s!=null){
-						grossSalary += s.getTotalPayment();
+						grossSalary += s.getIrpfBase()+s.getExtraPayProration();
 					} 
 				}
 			} catch (ExpressionException e) {

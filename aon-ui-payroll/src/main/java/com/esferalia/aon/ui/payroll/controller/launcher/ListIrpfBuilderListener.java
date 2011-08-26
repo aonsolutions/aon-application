@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.esferalia.aon.payroll.calculator.sql.SQLIrpfBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
 import com.esferalia.aon.salary.SalaryBuilderListenerLevel;
 
@@ -82,13 +83,15 @@ public class ListIrpfBuilderListener implements ISalaryBuilderListener {
 	
 	private boolean saveLog;
 	private boolean debugEnabled;
+	private SQLIrpfBuilder sqlIrpfBuilder;
 	
 	protected List<LogMessage> list; // Usado como una pila FIFO.
 	
-	public ListIrpfBuilderListener() {
+	public ListIrpfBuilderListener(SQLIrpfBuilder sqlIrpfBuilder) {
 		errorCounter = 0;
 		warningCounter = 0;
 		list =  new LinkedList<LogMessage>();
+		this.sqlIrpfBuilder = sqlIrpfBuilder;
 	}
 
 	public File getFile() {
@@ -152,18 +155,32 @@ public class ListIrpfBuilderListener implements ISalaryBuilderListener {
 			addMessage(SalaryBuilderListenerLevel.DEBUG,msg);	
 		}
 	}
-
+	
 	public void onMessage(LogMessage msg) {
 		list.add(msg);
 		saveToLog(msg);
 	}
 
-	protected void addMessage(SalaryBuilderListenerLevel level, String msg ) {
+	protected void addMessage(SalaryBuilderListenerLevel level, String msg) {
 		if (list.size() > 256 ) {
 			list.remove(0);
 		}
 
 		LogMessage logMsg = new LogMessage(level, msg );
+		logMsg.setContractId(sqlIrpfBuilder.getContractId());
+//		if ( level == SalaryBuilderListenerLevel.DEBUG ) {
+//			try {
+//				logMsg.setContractId(salaryDraft.getContract());
+//				logMsg.setEmployeeName(salaryDraft.getEmployeeName());
+//				logMsg.setEnterpriseName(salaryDraft.getEnterpriseName());
+//				logMsg.setStartDate(salaryDraft.getStartDate());
+//				logMsg.setEndDate(salaryDraft.getEndDate());
+//			} catch (SQLException e) {
+//				// TODO employee & enterprise name a null ???
+//			}
+//		}
+		
+		
 		list.add(logMsg);
 		saveToLog(logMsg);
 	}

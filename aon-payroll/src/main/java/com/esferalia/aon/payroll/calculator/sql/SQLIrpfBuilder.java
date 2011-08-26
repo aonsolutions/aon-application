@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 
-import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.payroll.sql.SQLWriter;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -90,6 +89,17 @@ public class SQLIrpfBuilder  {
 
 	public void setContractId(Integer contract) {
 		contractData.setContract(contract);
+	}
+	public Integer getContractId() {
+		try {
+			if(contractData!=null){
+				return contractData.getContract();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public void setStartDate(Date date){
