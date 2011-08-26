@@ -615,10 +615,19 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{campaignActionLookupListener}</value>
 				<value>#{phoneActionFilterListener}</value>
 			</list-entries>
 		</managed-property>		
 	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>campaignActionLookupListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.event.CampaignActionLookupListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>phoneActionFilterListener</managed-bean-name>
