@@ -8,6 +8,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
@@ -22,7 +23,6 @@ public class IrpfLauncherParams {
 
 	private Enterprise enterprise;
 	private Person person;
-	private Date date;
 	private Integer year;
 	private Month month;
 	
@@ -45,14 +45,6 @@ public class IrpfLauncherParams {
 	public void setPerson(Person person) {
 		this.person = person;
 	}
-
-	public Date getDate() {
-		return date;
-	}
-	
-	public void setDate(Date date) {
-		this.date = date;
-	}
 	
 	public Integer getYear() {
 		return year;
@@ -69,6 +61,10 @@ public class IrpfLauncherParams {
 	public void setMonth(Month month) {
 		this.month = month;
 	}
+	
+	public Date getDate() {
+		return CommonUtil.getDate(getYear(), getMonth().ordinal(), 1);
+	}
 
 	public void initialize() {
 		try {
@@ -81,7 +77,8 @@ public class IrpfLauncherParams {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-		date = new Date();
+		setYear(CommonUtil.getYear(new Date()));
+		setMonth(Month.getMonthByValue(CommonUtil.getMonth(new Date())));
 	}
 
 	public Criteria getCriteria() {

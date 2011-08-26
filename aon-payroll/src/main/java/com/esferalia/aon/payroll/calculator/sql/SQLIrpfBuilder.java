@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
 
+import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.payroll.sql.SQLWriter;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -13,7 +14,7 @@ public class SQLIrpfBuilder  {
 	private ISalaryBuilderListener listener;
 	private SQLWriter sqlWriter;
 	private int insertedContractData;
-	private static final String FORMAT = "[%s]: %s - %s";
+	private static final String FORMAT = "[%s]: %s - %s - %s - %s";
 	
 	public SQLIrpfBuilder(Connection connection) 
 	throws SQLException
@@ -27,9 +28,12 @@ public class SQLIrpfBuilder  {
 			insertIrpf();
 			if (listener.isDebugEnabled()) {
 				String msg = String.format(FORMAT, 
-						contractData.getContract(),
-						contractData.getName(),
-						contractData.getExpression());
+						document,
+						fullName,
+						enterprise,
+						"salario bruto: "+grossSalary,
+						"IRPF ANTERIOR: "+oldPercent+" - "+contractData.getName()+": "+contractData.getExpression()
+						);
 				listener.onDebug(msg);
 			}
 			++insertedContractData;
@@ -73,14 +77,18 @@ public class SQLIrpfBuilder  {
 	//*********************************************************
 	
 	protected AbstractSQL.ContractData contractData;
+	protected String document;
+	protected String fullName;
+	protected String enterprise;
+	protected String grossSalary;
+	protected String oldPercent;
 	
 	public void createNewContractData() {
 		contractData = null;
-		
 		contractData = new AbstractSQL.ContractData();
 	}
 
-	public void setContract(Integer contract) {
+	public void setContractId(Integer contract) {
 		contractData.setContract(contract);
 	}
 	
@@ -98,6 +106,26 @@ public class SQLIrpfBuilder  {
 	
 	public void setName(String name){
 		contractData.setName(name);
+	}
+	
+	public void setDocument(String document){
+		this.document = document;
+	}
+	
+	public void setFullName(String fullName){
+		this.fullName = fullName;
+	}
+	
+	public void setEnterprise(String enterprise){
+		this.enterprise = enterprise;
+	}
+	
+	public void setGrossSalary(String grossSalary){
+		this.grossSalary = grossSalary;
+	}
+	
+	public void setOldPercent(String oldPercent){
+		this.oldPercent = oldPercent;
 	}
 
 

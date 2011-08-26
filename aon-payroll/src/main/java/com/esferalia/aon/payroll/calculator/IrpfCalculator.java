@@ -34,25 +34,11 @@ public class IrpfCalculator  {
 
 	public void calculate ( SQLIrpfCalculatorContext sqlCtx ) 
 		throws SalaryException, ExpressionException, SQLException {
-		
 			
 			SQLAEATRetencionesEntrada2011 entrada = (SQLAEATRetencionesEntrada2011) sqlCtx.getEntrada2011(); 
 			
 			while ( sqlCtx.next() ) {
 				SQLTipoRetenidoEntrada2011 retenido = (SQLTipoRetenidoEntrada2011) ((SQLTipoRetenedorEntrada2011)entrada.getRetenedorList()).getRetenidoList();
-				Integer ordinal = retenido.getComunidadAutonoma()!=null?Integer.parseInt(retenido.getComunidadAutonoma()):null;
-				
-//				if(ordinal==null || Administration.COMMON_TERRITORY.ordinal() == ordinal){
-//					calculateCommonPercent();
-//				} else if(Administration.ALAVA.ordinal() == ordinal){
-//					calculateAlavaPercent(retenido);
-//				} else if(Administration.BIZKAIA.ordinal() == ordinal){
-//					calculateBizkaiaPercent(retenido);
-//				} else if(Administration.GIPUZKOA.ordinal() == ordinal){
-//					calculateGipuzkoaPercent(retenido);
-//				} else if(Administration.NAVARRA.ordinal() == ordinal){
-//					calculateNafarroaPercent(retenido);
-//				}
 				
 //				System.out.println(retenido.getApellidosNombre() 
 //				+ " - hijos: " 
@@ -65,59 +51,21 @@ public class IrpfCalculator  {
 //				+ sqlCtx.getPercent()
 //				);
 				
-				
-				
 				irpfBuilder.createNewContractData();
-				irpfBuilder.setContract(sqlCtx.getContractId());
+				irpfBuilder.setContractId(sqlCtx.getContractId());
 				irpfBuilder.setStartDate(date);
 				irpfBuilder.setEndDate(null);
 				irpfBuilder.setName(ContractVariables.IRPF_PERCENT.getName());
 				irpfBuilder.setExpression(String.valueOf(CommonUtil.round(sqlCtx.getPercent())));
+				irpfBuilder.setDocument(retenido.getNif());
+				irpfBuilder.setFullName(retenido.getApellidosNombre());
+				irpfBuilder.setEnterprise(entrada.getRetenedorList().getApellidosNombre());
+				irpfBuilder.setGrossSalary(String.valueOf(CommonUtil.round(sqlCtx.getGrossSalary())));
+				irpfBuilder.setOldPercent(sqlCtx.getOldPercent());
 				
 				irpfBuilder.saveIrpf();
-//				sqlCtx.getDescendantCount();
-//				sqlCtx.getGeozone();
-//				sqlCtx.getGrossSalary();
-//				sqlCtx.getPercent();
 				
 			}
 	}
 	
-	private void calculateCommonPercent() {
-//		ModuloCalculo.procesarFicheroXml("", "", "", "");
-//		ModuloCalculo.procesarFicheroXml(arg0, arg1, arg2, arg3);
-//		(“entrada.xml”,“errores.xml”,“”,“salida.xml”);
-		
-	}
-
-	private void calculateAlavaPercent(SQLTipoRetenidoEntrada2011 retenido) {
-		String percent = null;
-		
-//		retenido.getDescendientsCount();
-//		if(retenido.getDiscapacidad().getGrado1()!=null){
-//			if(retenido.getDiscapacidad().getGrado1().getMovilidadReducida()!=null){
-//				
-//			}
-//		} else if(retenido.getDiscapacidad().getGrado2()!=null){
-//			
-//		} else {
-//			
-//		}
-	}
-
-	private void calculateBizkaiaPercent(SQLTipoRetenidoEntrada2011 retenido) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void calculateGipuzkoaPercent(SQLTipoRetenidoEntrada2011 retenido) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void calculateNafarroaPercent(SQLTipoRetenidoEntrada2011 retenido) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

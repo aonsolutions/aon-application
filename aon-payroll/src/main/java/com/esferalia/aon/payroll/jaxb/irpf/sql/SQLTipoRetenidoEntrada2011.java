@@ -93,11 +93,12 @@ public class SQLTipoRetenidoEntrada2011 extends SQLCollection<TipoRetenidoEntrad
 	}
 
     public String getNif() {
-        return nif;
+    	return getString("person_registry.document");
+//    	return nif;
     }
 
     public void setNif(String value) {
-        this.nif = value;
+//        this.nif = value;
     }
 
     public String getApellidosNombre() {

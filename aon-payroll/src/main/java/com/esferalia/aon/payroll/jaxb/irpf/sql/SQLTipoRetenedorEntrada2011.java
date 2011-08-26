@@ -53,7 +53,8 @@ public class SQLTipoRetenedorEntrada2011 extends SQLCollection<TipoRetenedorEntr
     }
 
     public String getApellidosNombre() {
-        return apellidosNombre;
+    	return getString("enterprise_registry.name");
+//        return apellidosNombre;
     }
 
     public void setApellidosNombre(String value) {

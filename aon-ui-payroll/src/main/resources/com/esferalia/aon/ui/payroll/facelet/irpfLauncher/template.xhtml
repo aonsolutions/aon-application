@@ -30,6 +30,7 @@
 			
 					<aon:panelGrid id="irpfLauncherLaunchContent" columns="4">
 		
+<!--  
 						<aon:outputLabel for="date" styleClass="aon-italic aon-margin-right"
 							value="#{bundle.aon_date}:" />
 						<aon:selectInputDate id="date"
@@ -41,21 +42,24 @@
 						</aon:selectInputDate>
 						<aon:outputText value="&#160;" />
 						<aon:outputText value="&#160;" />
-<!--  
+-->
+						
 						<aon:outputLabel for="year" value="#{payrollBundle.payroll_exercise}" />
-			   			<rich:inputNumberSpinner id="year" value="#{irpfCalculator.params.year}" 
+			   			<rich:inputNumberSpinner id="year" value="#{irpfLauncher.params.year}" 
 			   				inputSize="4" minValue="2010" maxValue="2020" >
+			   			<!--  
 			   				<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
+			   			-->
 			   			</rich:inputNumberSpinner>
 						<aon:outputText value="&#160;" />
 						<aon:outputText value="&#160;" />
 
-						<aon:outputLabel for="month" value="#{payrollBundle.payroll_exercise}" />
-						<aon:selectOneMenu id="month" value="#{irpfCalculator.params.month}">
-							<f:selectItem value="#{null}" itemLabel=" - " />
+						<aon:outputLabel for="month" value="#{bundle.aon_month}" />
+						<aon:selectOneMenu id="month" value="#{irpfLauncher.params.month}">
 							<f:selectItems value="#{commonCollections.months}"  />
 						</aon:selectOneMenu>
--->						
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
 						
 						<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{irpfLauncher.params.person}" />

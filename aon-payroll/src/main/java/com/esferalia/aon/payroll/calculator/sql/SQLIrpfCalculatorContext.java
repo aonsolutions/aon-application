@@ -22,6 +22,7 @@ import com.esferalia.aon.payroll.jaxb.irpf.sql.SQLTipoRetenidoEntrada2011;
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.NoFixedFacet;
 
 
 public class SQLIrpfCalculatorContext {
@@ -148,29 +149,41 @@ public class SQLIrpfCalculatorContext {
 		}
 	}
 	
+	public String getOldPercent(){
+		return getString("contract_data", "expression");
+	}
+	
 	public Double getPercent(){
 		Double percent = null;
-		try {
-			irpfDescendientsStmt.setInt(1, getGeozone());
-			irpfDescendientsStmt.setDouble(2, getGrossSalary());
-			irpfDescendientsStmt.setInt(3, getDescendantCount());
-			ResultSet rs1 = irpfDescendientsStmt.executeQuery();
-			if(rs1.first()){
-				percent = new Double(rs1.getDouble("percent"));
-			}
-			Integer handicap = getHandicap();
-			if(handicap!=null && handicap>0){
-				irpfHandicapStmt.setInt(1, getGeozone());
-				irpfHandicapStmt.setDouble(2, getGrossSalary());
-				irpfHandicapStmt.setInt(3, handicap);
-				ResultSet rs2 = irpfDescendientsStmt.executeQuery();
-				if(rs2.first()){
-					percent += rs2.getDouble("percent");
+		Integer geozone = getGeozone();
+		if(geozone.equals(NO_FORAL_ID)){
+//			ModuloCalculo.procesarFicheroXml(“entrada.xml”,“errores.xml”,“”,“salida.xml”);
+//			ModuloCalculo.procesarFicheroXml(arg0, arg1, arg2, arg3);
+			
+			percent = new Double(NO_FORAL_ID);
+		} else {
+			try {
+				irpfDescendientsStmt.setInt(1, geozone);
+				irpfDescendientsStmt.setDouble(2, getGrossSalary());
+				irpfDescendientsStmt.setInt(3, getDescendantCount());
+				ResultSet rs1 = irpfDescendientsStmt.executeQuery();
+				if(rs1.first()){
+					percent = new Double(rs1.getDouble("percent"));
 				}
+				Integer handicap = getHandicap();
+				if(handicap!=null && handicap>0){
+					irpfHandicapStmt.setInt(1, geozone);
+					irpfHandicapStmt.setDouble(2, getGrossSalary());
+					irpfHandicapStmt.setInt(3, handicap);
+					ResultSet rs2 = irpfDescendientsStmt.executeQuery();
+					if(rs2.first()){
+						percent += rs2.getDouble("percent");
+					}
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return percent;
 	}
@@ -183,20 +196,26 @@ public class SQLIrpfCalculatorContext {
 		return getInt("contract", "id");
 	}
 	
+	private final static Integer NO_FORAL_ID = -1;
+	private final static Integer ARABA_ID = 1;
+	private final static Integer BIZKAIA_ID = 20;
+	private final static Integer GIPUZKOA_ID = 31;
+	private final static Integer NAFARROA_ID = 48;
+	
 	public Integer getGeozone() {
 		Integer i = getInt("workplace", "economicAgreement");
 		if(i==null){
-			return 0;
+			return NO_FORAL_ID;
 		}else if(i.equals(0)){
-			return 1;
+			return ARABA_ID;
 		}else if(i.equals(1)){
-			return 20;
+			return BIZKAIA_ID;
 		}else if(i.equals(2)){
-			return 31;
+			return GIPUZKOA_ID;
 		}else if(i.equals(3)){
-			return 48;
+			return NAFARROA_ID;
 		}
-		return 0;
+		return NO_FORAL_ID;
 	}
 	
 	public Integer getDescendantCount() {
@@ -209,9 +228,17 @@ public class SQLIrpfCalculatorContext {
 		return i==null?0:i;
 	}
 	
+	private Double grossSalary = new Double(0);
+	
 	public Double getGrossSalary(){
-		Double total = new Double(0);
-		
+		if(grossSalary==null){
+			calculateGrossSalary();
+		}
+		return grossSalary;
+	}
+	
+	public void calculateGrossSalary(){
+		grossSalary = new Double(0);
 		for(Month m: Month.values()){
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
@@ -240,7 +267,7 @@ public class SQLIrpfCalculatorContext {
 					calculator.calculate(sqlCtx);
 					AbstractSQL.Salary s = salaryBuilder.salary;
 					if(s!=null){
-						total += s.getTotalLiquid();
+						grossSalary += s.getTotalPayment();
 					} 
 				}
 			} catch (ExpressionException e) {
@@ -254,7 +281,6 @@ public class SQLIrpfCalculatorContext {
 				e.printStackTrace();
 			}
 		}
-		return total;
 	}
 	
 	
@@ -297,7 +323,7 @@ public class SQLIrpfCalculatorContext {
 		
 		boolean next =  this.resultSet.next();
 		if ( next ) {
-//			initContractExpressionCtx();
+			initIrpfExpressionCtx();
 		}
 		else {
 			close();
@@ -305,6 +331,10 @@ public class SQLIrpfCalculatorContext {
 		return next;
 	}
 	
+	private void initIrpfExpressionCtx() {
+		grossSalary = null;
+	}
+
 	public void close() throws SQLException {
 		if ( this.resultSet != null ) {
 			this.resultSet.close();
@@ -340,6 +370,14 @@ public class SQLIrpfCalculatorContext {
 	private Integer getInt(String tableLabel, String columnLabel) {
 		try {
 			return this.resultSet.getInt(tableLabel +"."+columnLabel);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private String getString(String tableLabel, String columnLabel) {
+		try {
+			return this.resultSet.getString(tableLabel +"."+columnLabel);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
