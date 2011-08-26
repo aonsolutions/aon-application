@@ -746,7 +746,7 @@
 	<managed-bean>
 		<managed-bean-name>marketingTemplate</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.marketing.controller.TemplateController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>

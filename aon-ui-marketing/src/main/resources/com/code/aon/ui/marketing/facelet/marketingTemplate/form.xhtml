@@ -13,10 +13,17 @@
 
 		<aon:form id="campaignActionForm">		
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >		
 				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_template_module}" />
 				<ui:param name="controller" value="#{marketingTemplate}" />
-			</ui:include>				
+				<ui:define name="beforeSpinToolbarContent" >
+					<aon:commandButton id="sendEmail"
+						reRender="showNewMessageWindow" immediate="true"
+						value="#{webmailBundle.webmail_send}"
+						actionListener="#{marketingTemplate.onSendEmail}"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2" />	
+				</ui:define>				
+			</ui:decorate>				
 
 			<aon:div styleClass="aon-scroll-area">
 			
@@ -39,24 +46,27 @@
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
-
-					<aon:outputLabel for="Template_data"
-						value="#{marketingBundle.marketing_template}" />
-					<aon:inputRichText id="Template_data" required="true"
-						value="#{marketingTemplate.to.data}" 
-						configuration="tinyMCE" >	
-						<f:param name="theme_advanced_buttons2_add" value="|,code"/>
-					</aon:inputRichText>
-					
+				
 					<aon:outputLabel for="Template_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="Template_active" required="true"
 						value="#{marketingTemplate.to.active}" />
+
+					<aon:outputLabel for="Template_data"
+						value="#{marketingBundle.marketing_template}" />
+					<aon:inputRichText id="Template_data" required="true"
+						value="#{marketingTemplate.to.data}"
+						height="500" width="700"
+						configuration="tinyMCE" >	
+						<f:param name="theme_advanced_buttons2_add" value="|,code"/>
+					</aon:inputRichText>
 						
 				</aon:panelGrid>
 				
 			</aon:div>
 		</aon:form>	
+
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 
 	</ui:define>
 </ui:composition>
