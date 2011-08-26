@@ -3,12 +3,12 @@
   <parent>
     <groupId>com.code.aon</groupId>
     <artifactId>aon.parent</artifactId>
-    <version>6.11.0</version>
+    <version>6.12.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.esferalia.aon</groupId>
   <artifactId>aon.sql.payroll</artifactId>
-  <version>6.11.0</version>
+  <version>6.12.0-SNAPSHOT</version>
   <description>AON SQL PAYROLL</description>
   <name>AON SQL PAYROLL</name>
   <pluginRepositories>
