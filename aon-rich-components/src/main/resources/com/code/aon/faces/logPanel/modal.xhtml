@@ -7,6 +7,8 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 
+	<aon:methodParam name="closeButtonAction" default="" />
+
     <a4j:region>
         <h:form>
             <a4j:poll id="logPanel_poll" interval="2000" enabled="#{logPanel.activePoll}" 
@@ -23,8 +25,8 @@
 			</f:facet>
 	        <f:facet name="controls">
 				<aon:commandButton styleClass="aon-popupWindow-close"
-					actionListener="#{logPanel.onCloseWindow}"
-					immediate="true" reRender="aonStatus,logPanel_poll,logPanel_content">
+					action="#{closeButtonAction}" actionListener="#{logPanel.onCloseWindow}" immediate="true"
+					reRender="aonStatus,logPanel_poll,logPanel_content#{(closeButtonReRender != null)?',':''}#{closeButtonReRender}">
 					<rich:componentControl for="logPanel"
 						operation="hide" event="onclick" />
 				</aon:commandButton>

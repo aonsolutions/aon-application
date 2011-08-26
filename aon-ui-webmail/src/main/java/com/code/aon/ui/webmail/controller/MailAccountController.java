@@ -365,13 +365,16 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 
 	private List<SelectItem> getDomainMailAccounts() {
 		if ( domainMailAccounts == null ) {
+			Name _baseDN = getLdapDAO().getBaseDN();
 			DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
 			updateBaseDN( domainResolver.getDomain() );
 			try {
 				this.domainMailAccounts = loadMailAccountList();
 			} catch (ManagerBeanException e) {
 				LOGGER.error( "Error loading domain mail accounts", e );
-			}								
+			} finally {
+				getLdapDAO().setBaseDN(_baseDN);
+			}
 		}
 		return domainMailAccounts;
 	}

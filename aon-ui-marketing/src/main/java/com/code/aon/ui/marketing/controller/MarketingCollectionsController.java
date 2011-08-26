@@ -47,9 +47,11 @@ public class MarketingCollectionsController {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			actionMediaTypes = new LinkedList<SelectItem>();
 			for (ActionMediaType mediaType : ActionMediaType.values()) {
-				String name = mediaType.getName(locale);
-				SelectItem item = new SelectItem(mediaType, name);
-				actionMediaTypes.add(item);
+				if ( ActionMediaType.FAX != mediaType ) {
+					String name = mediaType.getName(locale);
+					SelectItem item = new SelectItem(mediaType, name);
+					actionMediaTypes.add(item);					
+				}
 			}
 		}
 		return actionMediaTypes;

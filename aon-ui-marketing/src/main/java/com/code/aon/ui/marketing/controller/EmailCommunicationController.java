@@ -1,5 +1,8 @@
 package com.code.aon.ui.marketing.controller;
 
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.SEND_EMAIL_FINISH;
+
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +19,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.faces.controller.LogPanelController;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.ql.Criteria;
@@ -36,17 +40,6 @@ public class EmailCommunicationController implements IMarketingConstants {
 	
 	private CommunicationCenterController getCommunicationController() {
 		return (CommunicationCenterController) AonUtil.getRegisteredBean(COMMUNICATION_CENTER_CONTROLLER_NAME);
-	}
-	
-	private ActionTarget getNextActionTarget() throws ManagerBeanException {
-    	CommunicationCenterController ccc = getCommunicationController();
-    	List<ActionTarget> list = ccc.getActionTargets();
-    	if (! list.isEmpty() ) {
-    		ActionTarget actionTarget = list.get(0);
-    		ccc.setActionTarget(actionTarget);
-    		return actionTarget;
-    	}
-    	return null;
 	}
 	
 	private List<String> getEmails( Target target ) throws ManagerBeanException {
@@ -96,26 +89,35 @@ public class EmailCommunicationController implements IMarketingConstants {
 	}	
 
     public void send(ActionEvent event) {
+		LogPanelController logger = LogPanelController.getInstance();
     	try {
-			ActionTarget actionTarget = getNextActionTarget();
-			while ( actionTarget != null ) {
+    		CommunicationCenterController ccc = getCommunicationController();
+    		for( ActionTarget actionTarget : ccc.getActionTargets() ) {    		
 				List<String> emails = getEmails(actionTarget.getTarget());
+    			String targetName = actionTarget.getTarget().getRegistry().getFullName();
 				if ( emails.isEmpty() ) {
-					actionTarget.setStatus(ActionTargetStatus.CANCEL);
+					actionTarget.setStatus(ActionTargetStatus.CANCEL);					
+					String text = AonUtil.getMessage(BUNDLE_NAME, TARGET_WITHOUT_EMAIL);
+					logger.error( MessageFormat.format(text, targetName) );					
 				} else {
 					if ( sendEmail(emails) ) {
+						String text = AonUtil.getMessage(BUNDLE_NAME, IMarketingConstants.TARGET_EMAIL_SENT);
+						logger.info( MessageFormat.format(text, targetName, emails) );											
 						actionTarget.setStatus(ActionTargetStatus.SENT);
 					} else {
+						String text = AonUtil.getMessage(BUNDLE_NAME, TARGET_SEND_EMAIL_ERROR);
+						logger.error( MessageFormat.format(text, targetName) );					
 						actionTarget.setStatus(ActionTargetStatus.INCORRECT);
 					}
 				}
 				updateActionTarget(actionTarget);
-				actionTarget = getNextActionTarget();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error retrieving next ActionTarget", e);
-			AonUtil.addErrorMessage(e.getMessage());
+			logger.error( e.getMessage() );
 			throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			logger.info( AonUtil.getMessage(IWebMailConstants.BUNDLE_NAME, SEND_EMAIL_FINISH) );			
 		}
 		getCommunicationController().onInit(event);
     }

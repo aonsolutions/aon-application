@@ -89,7 +89,9 @@
 							styleClass="aon-finding-toolbar-item aon-icon-file-entrance" />
 					</aon:div>
 									
-					<ui:include src="/com/code/aon/ui/marketing/facelet/campaignActionTarget/grid.xhtml" />
+					<ui:include src="/com/code/aon/ui/marketing/facelet/campaignActionTarget/grid.xhtml" >
+						<ui:param name="showSurveyColumn" value="#{campaignAction.to.mediaType == 'PHONE'}" />
+					</ui:include>
 				</aon:div>
 				
 			</aon:div>

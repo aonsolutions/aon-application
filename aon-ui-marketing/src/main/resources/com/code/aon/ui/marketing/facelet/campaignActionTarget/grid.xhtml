@@ -90,7 +90,7 @@
 					</ui:include>
 				</aon:column>					
 				
-				<c:if test="#{aonConfiguration.bean.campaign.showSurvey}" >
+				<c:if test="#{aonConfiguration.bean.campaign.showSurvey and showSurveyColumn}" >
 					<aon:column styleClass="aon-text-center aon-width-80">
 						<f:facet name="header">
 							<aon:outputText value="#{marketingBundle.marketing_survey_module}" />

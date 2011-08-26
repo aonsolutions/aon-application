@@ -41,6 +41,7 @@ import com.code.aon.marketing.SurveyWorkflow;
 import com.code.aon.marketing.TargetProfile;
 import com.code.aon.marketing.Template;
 import com.code.aon.marketing.dao.IMarketingAlias;
+import com.code.aon.marketing.enumeration.ActionMediaType;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.marketing.enumeration.QuestionType;
 import com.code.aon.ql.Criteria;
@@ -360,7 +361,11 @@ public class CommunicationCenterController implements IMarketingConstants {
 		setAction(action);
 		setSurvey( action.getSurvey() );
 		setTemplate( action.getTemplate() );
-		nextActionTarget( includeCurrentTarget );
+		if ( action.getMediaType() == ActionMediaType.PHONE ) {
+			nextActionTarget( includeCurrentTarget );	
+		} else {
+			refreshPendingTargets();			
+		}
 	}
 	
 	private void updateActionTarget( boolean resetUser ) throws ManagerBeanException {
@@ -564,6 +569,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	}
 
 	public void onActionLookupChange(LookupChangeEvent event) {
+		init();
 		this.actionSelected = (event.getNewValue() != null);	
 		if (this.actionSelected) {
 			MarketingAction action = (MarketingAction) event.getNewValue();
@@ -573,8 +579,6 @@ public class CommunicationCenterController implements IMarketingConstants {
 				AonUtil.addErrorMessage(e.getMessage());
 				throw new AbortProcessingException(e);
 			}
-		} else {
-			setActionTarget(null);
 		}
 	}
 
