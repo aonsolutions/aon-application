@@ -22,7 +22,6 @@ import com.esferalia.aon.payroll.jaxb.irpf.sql.SQLTipoRetenidoEntrada2011;
 import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.NoFixedFacet;
 
 
 public class SQLIrpfCalculatorContext {
