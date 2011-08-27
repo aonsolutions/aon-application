@@ -90,9 +90,9 @@ public class SQLIrpfCalculatorContext {
 		+" FROM geozone_irpf_descendant"
 		+" LEFT JOIN  geozone_irpf ON geozone_irpf = geozone_irpf.id"	
 		+" WHERE geozone_irpf.geozone = ? "
-		+" AND geozone_irpf.amount >= ? "
+		+" AND geozone_irpf.amount <= ? "
 		+" AND geozone_irpf_descendant.descendant like ? "
-		+" ORDER BY geozone_irpf.amount "
+		+" ORDER BY geozone_irpf.amount desc "
 		;
 	
 	private static final String GEOZONE_IRPF_HANDICAP_SQL =
@@ -100,9 +100,9 @@ public class SQLIrpfCalculatorContext {
 		+" FROM geozone_irpf_handicap"
 		+" LEFT JOIN  geozone_irpf ON geozone_irpf = geozone_irpf.id"	
 		+" WHERE geozone_irpf.geozone = ? "
-		+" AND geozone_irpf.amount >= ? "
+		+" AND geozone_irpf.amount <= ? "
 		+" AND geozone_irpf_handicap.handicap like ? "
-		+" ORDER BY geozone_irpf.amount "
+		+" ORDER BY geozone_irpf.amount desc "
 		;
 	
 	
