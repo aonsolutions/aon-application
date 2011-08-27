@@ -13,7 +13,10 @@ public class SQLIrpfBuilder  {
 	private ISalaryBuilderListener listener;
 	private SQLWriter sqlWriter;
 	private int insertedContractData;
-	private static final String FORMAT = "[%s]: %s - %s - %s - %s";
+	private static final String FORMAT = "[%s] - %s - %s - %s";
+	private static final String CURRENT_IRPF = "IRPF actual";
+	private static final String CALCULATED_IRPF = "IRPF calculado";
+	private static final String ANUAL_RETRIBUTION = "Retribucion anual";
 	
 	public SQLIrpfBuilder(Connection connection) 
 	throws SQLException
@@ -25,17 +28,21 @@ public class SQLIrpfBuilder  {
 	public void saveIrpf() {
 		try {
 			insertIrpf();
-			if (listener.isDebugEnabled()) {
-				String msg = String.format(FORMAT, 
-						document,
-						fullName,
-						enterprise,
-						"salario bruto: "+grossSalary,
-						"IRPF ANTERIOR: "+oldPercent+" - "+contractData.getName()+": "+contractData.getExpression()
-						);
-				listener.onDebug(msg);
-			}
+			String msg = String.format(FORMAT, 
+					document,
+					enterprise,
+					ANUAL_RETRIBUTION+": "+grossSalary,
+					CURRENT_IRPF+": "+oldPercent+" - "+CALCULATED_IRPF+": "+contractData.getExpression()
+					);
+			
+			if(isWarning()){
+				listener.onWarning(msg);
+			} else if(!isWarning() && listener.isDebugEnabled()){
+				listener.onInfo(msg);
+			} 
+			
 			++insertedContractData;
+			contractData = null;
 		} catch (SQLException e) {
 		}
 	}
@@ -67,6 +74,12 @@ public class SQLIrpfBuilder  {
 		return insertedContractData;
 	}
 	
+	private boolean isWarning() throws NumberFormatException, SQLException{
+		if(oldPercent==null || contractData==null){
+			throw new NumberFormatException("valor de irpf incorrecto");
+		}
+		return Double.parseDouble(oldPercent)!=Double.parseDouble(contractData.getExpression());
+	}
 	
 	
 	//*********************************************************
@@ -89,17 +102,6 @@ public class SQLIrpfBuilder  {
 
 	public void setContractId(Integer contract) {
 		contractData.setContract(contract);
-	}
-	public Integer getContractId() {
-		try {
-			if(contractData!=null){
-				return contractData.getContract();
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
 	}
 	
 	public void setStartDate(Date date){
@@ -136,6 +138,31 @@ public class SQLIrpfBuilder  {
 	
 	public void setOldPercent(String oldPercent){
 		this.oldPercent = oldPercent;
+	}
+
+	public Integer getContractId() {
+		try {
+			if(contractData!=null){
+				return contractData.getContract();
+			}
+		} catch (SQLException e) {
+			// TODO como tratar?
+		}
+		return null;
+	}
+	public String getNewIrpf() {
+		try {
+			return contractData.getExpression();
+		} catch (SQLException e) {
+			// TODO como tratar?
+		}
+		return null;
+	}
+	public String getCurrentIrpf() {
+		return oldPercent;
+	}
+	public String getFullName() {
+		return fullName;
 	}
 
 

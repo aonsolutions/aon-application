@@ -26,6 +26,9 @@ public class ListIrpfBuilderListener implements ISalaryBuilderListener {
 		private Date startDate;
 		private Date endDate;
 		
+		private String currentIrpf;
+		private String newIrpf;
+		
 		public LogMessage(SalaryBuilderListenerLevel level, String msg) {
 			this.level = level;
 			this.msg = msg;
@@ -73,6 +76,22 @@ public class ListIrpfBuilderListener implements ISalaryBuilderListener {
 		public void setEndDate(Date endDate) {
 			this.endDate = endDate;
 		}
+
+		public String getCurrentIrpf() {
+			return currentIrpf;
+		}
+		public void setCurrentIrpf(String currentIrpf) {
+			this.currentIrpf = currentIrpf;
+		}
+
+		public String getNewIrpf() {
+			return newIrpf;
+		}
+
+		public void setNewIrpf(String newIrpf) {
+			this.newIrpf = newIrpf;
+		}
+		
 	}
 
 	protected StringBuffer buf;
@@ -167,19 +186,13 @@ public class ListIrpfBuilderListener implements ISalaryBuilderListener {
 		}
 
 		LogMessage logMsg = new LogMessage(level, msg );
-		logMsg.setContractId(sqlIrpfBuilder.getContractId());
-//		if ( level == SalaryBuilderListenerLevel.DEBUG ) {
-//			try {
-//				logMsg.setContractId(salaryDraft.getContract());
-//				logMsg.setEmployeeName(salaryDraft.getEmployeeName());
-//				logMsg.setEnterpriseName(salaryDraft.getEnterpriseName());
-//				logMsg.setStartDate(salaryDraft.getStartDate());
-//				logMsg.setEndDate(salaryDraft.getEndDate());
-//			} catch (SQLException e) {
-//				// TODO employee & enterprise name a null ???
-//			}
-//		}
 		
+		if(sqlIrpfBuilder.getContractId()!=null){
+			logMsg.setContractId(sqlIrpfBuilder.getContractId());
+			logMsg.setEmployeeName(sqlIrpfBuilder.getFullName());
+			logMsg.setCurrentIrpf(sqlIrpfBuilder.getCurrentIrpf());
+			logMsg.setNewIrpf(sqlIrpfBuilder.getNewIrpf());
+		}
 		
 		list.add(logMsg);
 		saveToLog(logMsg);

@@ -21,7 +21,6 @@ import com.esferalia.aon.payroll.jaxb.irpf.TipoRetenidoEntrada2011;
 import com.esferalia.aon.payroll.jaxb.irpf.TipoRetenidoEntrada2011.Descendiente;
 import com.esferalia.aon.payroll.jaxb.irpf.sql.SQLAEATRetencionesEntrada2011;
 import com.esferalia.aon.payroll.jaxb.irpf.sql.SQLTipoRetenidoEntrada2011;
-import com.esferalia.aon.payroll.sql.AbstractSQL;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -158,11 +157,11 @@ public class SQLIrpfCalculatorContext {
 	
 	public Double getPercent(){
 		Double percent = null;
+		grossSalary = null;
 		Integer geozone = getGeozone();
 		if(geozone.equals(NO_FORAL_ID)){
 //			ModuloCalculo.procesarFicheroXml(“entrada.xml”,“errores.xml”,“”,“salida.xml”);
 //			ModuloCalculo.procesarFicheroXml(arg0, arg1, arg2, arg3);
-			
 			percent = new Double(NO_FORAL_ID);
 		} else {
 			try {
@@ -184,8 +183,7 @@ public class SQLIrpfCalculatorContext {
 					}
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// TODO como tratar?
 			}
 		}
 		return percent;
@@ -231,7 +229,7 @@ public class SQLIrpfCalculatorContext {
 		return i==null?0:i;
 	}
 	
-	private Double grossSalary = new Double(0);
+	private Double grossSalary;
 	
 	public Double getGrossSalary(){
 		if(grossSalary==null){
@@ -250,10 +248,7 @@ public class SQLIrpfCalculatorContext {
 			endCal.set(year, m.ordinal(), startCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			
 			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression("contract.id", getInt("contract", "id"));
-//			criteria.addEqualExpression("customer.status", CustomerStatus.ACTIVE);
-			criteria.addEqualExpression("customer.status", "ACTIVE");
-			criteria.addEqualExpression("person_registry.id", getInt("person_registry", "id"));
+			criteria.addEqualExpression("contract.id", getInt("contract", "id"));
 			
 			try {
 				ContractSalaryCalculator calculator = new ContractSalaryCalculator();
@@ -276,14 +271,11 @@ public class SQLIrpfCalculatorContext {
 					} 
 				}
 			} catch (ExpressionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// TODO como tratar?
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// TODO como tratar?
 			} catch (SalaryException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				// TODO como tratar?
 			}
 		}
 	}
@@ -299,8 +291,6 @@ public class SQLIrpfCalculatorContext {
 		stmt.setDate(2, toSqlDate( this.date ) );
 		stmt.setDate(3, toSqlDate( this.date ) );
 		stmt.setDate(4, toSqlDate( new Date() ) );
-//		stmt.setDate(3, toSqlDate(  new Date() ) );
-//		stmt.setDate(4, toSqlDate(  new Date() ) );
 		resultSet = stmt.executeQuery();
 	}
 	

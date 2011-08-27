@@ -19,18 +19,31 @@
 				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.level} : " />
 				<aon:outputText value="#{message.enterpriseName} " 
 					rendered="#{message.contractId!=null}" />
-					
+
 				<aon:commandLink  
 					rendered="#{message.contractId!=null}"
 					style="display: inline; text-decoration:underline;"
-					action="salaryDraft_form" >
+					action="contract_form" >
 					<aon:outputText value="#{message.employeeName} " />
 					<f:setPropertyActionListener value="#{message.contractId}" 
 					target="#{irpfLauncher.contractId}" />
-					<aon:actionListener method="#{irpfLauncher.onSalaryDraft}" />
+					<aon:actionListener method="#{irpfLauncher.onShowContract}" />
 				</aon:commandLink>	
 								
 				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.msg}" />
+				
+				<aon:commandLink  
+					rendered="#{message.contractId!=null and message.level=='WARNING' and !irpfLauncher.saveEnabled}"
+					style="display: inline; text-decoration:underline; margin-left:10px;" >
+					<aon:outputText value="#{payrollBundle.payroll_refresh}" />
+					<f:setPropertyActionListener value="#{message.contractId}" 
+						target="#{irpfLauncher.contractId}" />
+					<f:setPropertyActionListener value="#{message.newIrpf}" 
+						target="#{irpfLauncher.irpf}" />
+					<f:setPropertyActionListener value="#{message}" 
+						target="#{irpfLauncher.message}" />
+					<aon:actionListener method="#{irpfLauncher.onIrpfUpdate}" />
+				</aon:commandLink>	
 			</ui:define>			
 
 			<ui:define name="launchButton" >
