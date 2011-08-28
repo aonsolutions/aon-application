@@ -27,22 +27,37 @@
 
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area" >
-					<aon:panelGrid columns="8" dir="true" width="100%">
+					<aon:panelGrid columns="4" dir="true" width="100%">
 						
 						<aon:outputLabel value="#{registryBundle.registry_person}" />
 						<aon:outputText value="#{contract.to.person.registry.fullName}" />
+						
+						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_anual_retribution}" />
+						<aon:outputText value="-" />
 
 						<aon:outputLabel value="#{payrollBundle.payroll_enterprise}" />
 						<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}" />
 
+						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_current_irpf}" />
+						<aon:outputText value="&#160;" />
+						
 						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_date}" />
-						<aon:outputText value="#{irpfData.to.date}" style="margin-left: 5px;">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
+						<aon:div>
+							<aon:outputLabel value="#{bundle.aon_start_date}:" styleClass="aon-italic aon-bold"/>
+							<aon:outputText value="#{irpfData.to.startDate}" style="margin-left: 5px;">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							
+							<aon:outputLabel value="#{bundle.aon_end_date}:" styleClass="aon-italic aon-bold aon-margin-left"/>
+							<aon:outputText value="#{irpfData.to.endDate}" style="margin-left: 5px;">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:div>
 
-						<aon:outputLabel value="#{payrollBundle.payroll_contract_gross_salary}" />
-						<aon:outputText value="-" />
+						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_calculated_irpf}" />
+						<aon:outputText value="&#160;" />
 						
 					</aon:panelGrid>
 				</aon:div>

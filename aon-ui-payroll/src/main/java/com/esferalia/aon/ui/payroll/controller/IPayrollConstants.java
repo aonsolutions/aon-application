@@ -47,6 +47,7 @@ public interface IPayrollConstants {
 	String ENTERPRISE_ACTIVITY_CONTROLLER = "enterpriseActivity";
 	String ENTERPRISE_CCC_CONTROLLER = "enterpriseCCC";
 	String ENTERPRISE_TREE_CONTROLLER = "enterpriseTree";
+	String IRPF_DATA_CONTROLLER_NAME = "irpfData";
 	String SALARY_CONTROLLER = "salary";
 	String SALARY_DRAFT_BONUS_CONTROLLER = "salaryDraftBonus";
 	String SALARY_DRAFT_CONTROLLER = "salaryDraft";
@@ -79,6 +80,7 @@ public interface IPayrollConstants {
 	// ************************************************************
 	String AGREEMENT_FORM = "agreement_form";
 	String AGREEMENT_LEVEL_FORM = "agreement_level_form";
+	String ENTERPRISE_FORM_TREE = "enterprise_formTree";
 	String SALARY_TESTER_LAUNCHER_FORM = "salaryTestLauncher_form";
 	
 		

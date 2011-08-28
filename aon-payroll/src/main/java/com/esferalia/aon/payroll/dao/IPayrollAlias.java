@@ -28,6 +28,9 @@ import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.EnterpriseActivity;
+import com.esferalia.aon.payroll.GeozoneIrpf;
+import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
+import com.esferalia.aon.payroll.GeozoneIrpfHandicap;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.IrpfData;
@@ -1409,10 +1412,10 @@ public interface IPayrollAlias {
 	DAOConstantsEntry ENTERPRISE_ACTIVITY_ENTRY = DAOConstants.getDAOConstant(EnterpriseActivity.class);
 
 	/** 
-	* Alias value: EnterpriseActivity_cnae_id
-	* Hibernate value: EnterpriseActivity.cnae.id
+	* Alias value: EnterpriseActivity_cnae2009_id
+	* Hibernate value: EnterpriseActivity.cnae2009.id
 	*/
-	String  ENTERPRISE_ACTIVITY_CNAE_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[0];
+	String  ENTERPRISE_ACTIVITY_CNAE2009_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: EnterpriseActivity_description
@@ -1437,6 +1440,105 @@ public interface IPayrollAlias {
 	* Hibernate value: EnterpriseActivity.type
 	*/
 	String  ENTERPRISE_ACTIVITY_TYPE = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for GeozoneIrpf entity.
+	*/ 
+	DAOConstantsEntry GEOZONE_IRPF_ENTRY = DAOConstants.getDAOConstant(GeozoneIrpf.class);
+
+	/** 
+	* Alias value: GeozoneIrpf_amount
+	* Hibernate value: GeozoneIrpf.amount
+	*/
+	String  GEOZONE_IRPF_AMOUNT = GEOZONE_IRPF_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: GeozoneIrpf_endDate
+	* Hibernate value: GeozoneIrpf.endDate
+	*/
+	String  GEOZONE_IRPF_END_DATE = GEOZONE_IRPF_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: GeozoneIrpf_geozone_id
+	* Hibernate value: GeozoneIrpf.geozone.id
+	*/
+	String  GEOZONE_IRPF_GEOZONE_ID = GEOZONE_IRPF_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: GeozoneIrpf_id
+	* Hibernate value: GeozoneIrpf.id
+	*/
+	String  GEOZONE_IRPF_ID = GEOZONE_IRPF_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: GeozoneIrpf_startDate
+	* Hibernate value: GeozoneIrpf.startDate
+	*/
+	String  GEOZONE_IRPF_START_DATE = GEOZONE_IRPF_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for GeozoneIrpfDescendant entity.
+	*/ 
+	DAOConstantsEntry GEOZONE_IRPF_DESCENDANT_ENTRY = DAOConstants.getDAOConstant(GeozoneIrpfDescendant.class);
+
+	/** 
+	* Alias value: GeozoneIrpfDescendant_descendant
+	* Hibernate value: GeozoneIrpfDescendant.descendant
+	*/
+	String  GEOZONE_IRPF_DESCENDANT_DESCENDANT = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: GeozoneIrpfDescendant_geozoneIrpf_id
+	* Hibernate value: GeozoneIrpfDescendant.geozoneIrpf.id
+	*/
+	String  GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_ID = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: GeozoneIrpfDescendant_id
+	* Hibernate value: GeozoneIrpfDescendant.id
+	*/
+	String  GEOZONE_IRPF_DESCENDANT_ID = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: GeozoneIrpfDescendant_percent
+	* Hibernate value: GeozoneIrpfDescendant.percent
+	*/
+	String  GEOZONE_IRPF_DESCENDANT_PERCENT = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for GeozoneIrpfHandicap entity.
+	*/ 
+	DAOConstantsEntry GEOZONE_IRPF_HANDICAP_ENTRY = DAOConstants.getDAOConstant(GeozoneIrpfHandicap.class);
+
+	/** 
+	* Alias value: GeozoneIrpfHandicap_geozoneIrpf_id
+	* Hibernate value: GeozoneIrpfHandicap.geozoneIrpf.id
+	*/
+	String  GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_ID = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: GeozoneIrpfHandicap_handicap
+	* Hibernate value: GeozoneIrpfHandicap.handicap
+	*/
+	String  GEOZONE_IRPF_HANDICAP_HANDICAP = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: GeozoneIrpfHandicap_id
+	* Hibernate value: GeozoneIrpfHandicap.id
+	*/
+	String  GEOZONE_IRPF_HANDICAP_ID = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: GeozoneIrpfHandicap_percent
+	* Hibernate value: GeozoneIrpfHandicap.percent
+	*/
+	String  GEOZONE_IRPF_HANDICAP_PERCENT = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[3];
 
 
 

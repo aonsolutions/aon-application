@@ -87,6 +87,11 @@
 										action="cno_list" actionListener="#{cno.onSearch}" 
 										value="#{payrollBundle.payroll_cno_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="geozoneIrpf"
+										action="geozoneIrpf_search" actionListener="#{geozoneIrpf.onEditSearch}" 
+										value="#{payrollBundle.payroll_geozoneIrpf_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 	

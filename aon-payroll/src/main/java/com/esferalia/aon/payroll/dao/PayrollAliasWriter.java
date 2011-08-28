@@ -31,6 +31,9 @@ import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.GeozoneIrpf;
+import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
+import com.esferalia.aon.payroll.GeozoneIrpfHandicap;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.IrpfData;
@@ -88,6 +91,9 @@ public class PayrollAliasWriter {
 				DeductionConcept.class.getName(),
 				EnterpriseCCC.class.getName(),
 				EnterpriseActivity.class.getName(),
+				GeozoneIrpf.class.getName(),
+				GeozoneIrpfDescendant.class.getName(),
+				GeozoneIrpfHandicap.class.getName(),
 				LeaveBatch.class.getName(),
 				LeaveBatchDetail.class.getName(),
 				IrpfData.class.getName(),

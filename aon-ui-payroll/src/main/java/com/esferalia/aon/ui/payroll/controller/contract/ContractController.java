@@ -555,6 +555,26 @@ public class ContractController extends VariablesAbstractController {
 		controller.onInitialize(event);
 	}	
 	
+	public void onShowIrpfData( ActionEvent event ) {
+		Contract c = (Contract) getTo();
+		try {
+			IrpfDataController controller = (IrpfDataController) AonUtil.getRegisteredBean(IPayrollConstants.IRPF_DATA_CONTROLLER_NAME);
+			controller.onEditSearch(event);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(controller.getManagerBean().getFieldName(IPayrollAlias.IRPF_DATA_CONTRACT_ID),c.getId());
+			controller.clearCriteria();
+			controller.setCriteria(criteria);
+			controller.onSearch(event);
+			controller.getModel().setRowIndex(0);
+			controller.onSelect(event);
+			controller.setBackAction(IPayrollConstants.ENTERPRISE_FORM_TREE);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onIrpfCalculate exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
 	public List<SelectItem> getAgreementLevelCategories(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		try {
