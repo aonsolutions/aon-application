@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 6.14.0
+# Version: 6.11.0
 # Created by: girazu
-# Creation Date: 25/08/2011 14:20
+# Creation Date: 18/08/2011 14:20
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -1633,7 +1633,7 @@ CREATE TABLE `enterprise_activity` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion de la Actividad de la Empresa',
   `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
-  `cnae` int(4) default NULL COMMENT 'Identificador del CNAE',
+  `cnae` int(4) NOT NULL COMMENT 'Identificador del CNAE',
   `type` tinyint(2) NOT NULL COMMENT 'Tipo de Actividad de la Empresa',
   `cnae2009` int(4) default NULL COMMENT 'Identificador del CNAE 2009',
   PRIMARY KEY  (`id`),
@@ -3330,49 +3330,6 @@ CREATE TABLE `geotree` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Jerarquia de Zonas Geograficas';
 
 #
-# Structure for the `geozone_irpf` table : 
-#
-
-CREATE TABLE `geozone_irpf` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `geozone` int(4) NOT NULL COMMENT 'Identificador de la Zona Geografica',
-  `start_date` date NOT NULL COMMENT 'Fecha de inicio ',
-  `end_date` date default NULL COMMENT 'Fecha de finalizacion',
-  `amount` double(15,3) default '0.000' COMMENT 'Importe rendimiento anual',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_GEOZONE_IRPF_GEOZONE` (`geozone`),
-  CONSTRAINT `FK_GEOZONE_IRPF_GEOZONE` FOREIGN KEY (`geozone`) REFERENCES `geozone` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tabla de tramos del IRPF';
-
-#
-# Structure for the `geozone_irpf_descendant` table : 
-#
-
-CREATE TABLE `geozone_irpf_descendant` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `geozone_irpf` int(4) default NULL COMMENT 'Identificador del tramo de IRPF',
-  `descendant` tinyint(2) default '0' COMMENT 'Descendientes',
-  `percent` double(15,2) default '0.00' COMMENT 'Porcentaje',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF` (`geozone_irpf`),
-  CONSTRAINT `FK_GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF` FOREIGN KEY (`geozone_irpf`) REFERENCES `geozone_irpf` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tabla de porcentajes IRPF segun descendientes';
-
-#
-# Structure for the `geozone_irpf_handicap` table : 
-#
-
-CREATE TABLE `geozone_irpf_handicap` (
-  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
-  `geozone_irpf` int(4) default NULL COMMENT 'Identificador del tramo de IRPF',
-  `handicap` tinyint(2) default '0' COMMENT 'Grado Minusvalia',
-  `percent` double(15,2) default '0.00' COMMENT 'Porcentaje',
-  PRIMARY KEY  (`id`),
-  KEY `IDX_GEOZONE_IRPF_PERCENT_GEOZONE_IRPF` (`geozone_irpf`),
-  CONSTRAINT `FK_GEOZONE_IRPF_PERCENT_GEOZONE_IRPF` FOREIGN KEY (`geozone_irpf`) REFERENCES `geozone_irpf` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Tabla de  ';
-
-#
 # Structure for the `holiday_detail` table : 
 #
 
@@ -3718,6 +3675,7 @@ CREATE TABLE `invoicing_group_detail` (
 CREATE TABLE `irpf_data` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico',
   `contract` int(4) NOT NULL COMMENT 'Identificador del contrato',
+  `date` date default NULL COMMENT 'Fecha del modelo',
   `family_situation` tinyint(2) default '0' COMMENT 'Situacion familiar',
   `spouse_document` varchar(16) collate latin1_spanish_ci default NULL COMMENT 'Numero de Documento del conyuge',
   `disability_level` tinyint(2) default '0' COMMENT 'Grado de discapacidad',
@@ -3725,8 +3683,6 @@ CREATE TABLE `irpf_data` (
   `moving_date` date default NULL COMMENT 'Fecha de movilidad geografica',
   `labour_prolongation` tinyint(1) default '0' COMMENT 'Prolongacion de la actividad laboral',
   `descendient_count` tinyint(2) default NULL COMMENT 'Numero de hijos',
-  `start_date` date default NULL COMMENT 'Fecha inicio del modelo',
-  `end_date` date default NULL COMMENT 'Fecha fin del modelo',
   PRIMARY KEY  (`id`),
   KEY `IDX_IRPF_DATA_CONTRACT` (`contract`),
   CONSTRAINT `FK_IRPF_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
@@ -5500,7 +5456,7 @@ CREATE TABLE `web_info_style` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Estilos a utilizar en las plantillas para generar ficha web';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('6.14.0');
+INSERT INTO `db_version` (`version_number`) VALUES ('6.11.0');
 
 COMMIT;
 
