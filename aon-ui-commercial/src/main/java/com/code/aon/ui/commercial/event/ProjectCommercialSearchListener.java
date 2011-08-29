@@ -33,7 +33,7 @@ public class ProjectCommercialSearchListener extends ControllerSearchListener {
 	@Override
 	protected void init() throws ManagerBeanException {
 		setTarget((Target)BeanManager.getManagerBean(Target.class).createNewTo());
-		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo() );
+		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
 	}
 	
 	@Override
