@@ -30,6 +30,7 @@ import com.code.aon.product.ItemSupplier;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.project.Project;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.enumeration.IncomeDetailSource;
@@ -44,6 +45,7 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 
 	private Integer id;
 	private Income income;
+	private Project project;
     private Integer line;
 	private Item item;
 	private String description;
@@ -72,6 +74,15 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	}
 	public void setIncome(Income income) {
 		this.income = income;
+	}
+
+	@ManyToOne
+    @JoinColumn(name="project")
+	public Project getProject() {
+		return project;
+	}
+	public void setProject(Project project) {
+		this.project = project;
 	}
 
 	public Integer getLine() {
@@ -192,17 +203,18 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 		final IncomeDetail o = (IncomeDetail) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.income, o.income)
-				.append(this.line, o.line)
-				.append(this.item, o.item)
 				.append(this.description, o.description)
-				.append(this.warehouse, o.warehouse)
-				.append(this.quantity, o.quantity)
-				.append(this.price, o.price)
 				.append(this.discountExpression, o.discountExpression)
-				.append(this.type, o.type)
-				.append(this.source, o.source)
+				.append(this.income, o.income)
+				.append(this.item, o.item)
+				.append(this.line, o.line)
+				.append(this.price, o.price)
+				.append(this.project, o.project)
 				.append(this.purchaseDetail, o.purchaseDetail)
+				.append(this.quantity, o.quantity)
+				.append(this.source, o.source)
+				.append(this.type, o.type)
+				.append(this.warehouse, o.warehouse)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -211,18 +223,19 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(description)
+			.append(discountExpression)
 			.append(id)	
-			.append(this.income)
-			.append(this.line)
-			.append(this.item)
-			.append(this.description)
-			.append(this.warehouse)
-			.append(this.quantity)
-			.append(this.price)
-			.append(this.discountExpression)
-			.append(this.type)
-			.append(this.source)
-			.append(this.purchaseDetail)
+			.append(income)
+			.append(item)
+			.append(line)
+			.append(price)
+			.append(project)
+			.append(purchaseDetail)
+			.append(quantity)
+			.append(source)
+			.append(type)
+			.append(warehouse)
 			.toHashCode();
 	}
 

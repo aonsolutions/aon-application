@@ -15,7 +15,7 @@
 
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
-		<!-- Mapping files -->
+		<!-- AON-COMMERCIAL Mapping files -->
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
 		<mapping class="com.code.aon.commercial.CommercialTracking"/>
 		<mapping class="com.code.aon.commercial.CommercialTerm"/>
@@ -34,8 +34,10 @@
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
 		<mapping class="com.code.aon.commercial.TargetSupplier"/>
 		
+		<!-- AON-SELLER Mapping files -->
 		<mapping class="com.code.aon.seller.Seller"/>
 
+		<!-- AON-SUPPLIER Mapping files -->
 		<mapping class="com.code.aon.supplier.Supplier"/>
 
 		<!-- AON-REGISTRY Mapping files -->

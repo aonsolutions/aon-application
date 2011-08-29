@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_master?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://volga:3306/aon_master?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
@@ -15,40 +15,53 @@
 
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
-		<!-- Mapping files -->
+		<!-- AON-SALES Mapping files -->
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
 
+		<!-- AON-SUPPLIER Mapping files -->
 		<mapping class="com.code.aon.supplier.Supplier"/>
-		
-		<mapping class="com.code.aon.product.Brand"/>
-		<mapping class="com.code.aon.product.Item"/>
-		<mapping class="com.code.aon.product.ItemAttachment"/>
-		<mapping class="com.code.aon.product.ItemPos"/>
-		<mapping class="com.code.aon.product.Product"/>
-		<mapping class="com.code.aon.product.ProductCategory"/>
-		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
-		<mapping class="com.code.aon.product.ProductCategoryTree"/>
-		
-		<mapping class="com.code.aon.registry.Registry"/>
-		<mapping class="com.code.aon.registry.RegistryAddress"/>
+
+		<!-- AON-REGISTRY Mapping files -->
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.Registry"/>		
+		<mapping class="com.code.aon.registry.RegistryAddress"/>		
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.RegistryBank"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryPayMethod"/>
 		<mapping class="com.code.aon.registry.RegistrySegment"/>
 		<mapping class="com.code.aon.registry.Segment"/>
-		
+
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 
-		<mapping class="com.code.aon.company.WorkPlace"/>
-		<mapping class="com.code.aon.company.WorkActivity"/>
-		<mapping class="com.code.aon.company.resources.Employee"/>
-		<mapping class="com.code.aon.company.resources.Resource"/>
-
-		<mapping class="com.code.aon.config.Bank"/>
-		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemSupplier"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>		
+ 
+ 		<!-- AON-CONFIG Mapping files -->
+		<mapping class="com.code.aon.config.Bank"/> 		
+		<mapping class="com.code.aon.config.CNAE"/>
+		<mapping class="com.code.aon.config.CommissionType"/>
 		<mapping class="com.code.aon.config.PayMethod"/>
+		<mapping class="com.code.aon.config.Scope"/>
 		<mapping class="com.code.aon.config.Tariff"/>
-		<mapping class="com.code.aon.config.Tax"/>
-		<mapping class="com.code.aon.config.TaxDetail"/>
+		<mapping class="com.code.aon.config.Tax"/>		
+
+		<!-- AON-COMPANY Mapping files -->
+		<mapping class="com.code.aon.company.Enterprise"/>
+		<mapping class="com.code.aon.company.WorkPlace"/>		
+		
+		<!-- AON-PROJECT Mapping files -->
+		<mapping class="com.code.aon.project.Project"/>
+
+		<!-- AON-CALENDAR Mapping files -->		
+		<mapping class="com.esferalia.aon.calendar.Calendar"/>
+		<mapping class="com.esferalia.aon.calendar.Holiday"/>
+		
 	</session-factory>
 
 </hibernate-configuration>

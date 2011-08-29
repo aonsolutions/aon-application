@@ -30,6 +30,7 @@ import com.code.aon.product.ItemSupplier;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.project.Project;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
 
@@ -42,6 +43,7 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
 
 	private Integer id;
 	private Purchase purchase;
+	private Project project;
 	private Integer line;
 	private Item item;
     private String description;
@@ -64,12 +66,21 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
     }
 
 	@ManyToOne
-	@JoinColumn( name="purchase", nullable = false, updatable=false )
+	@JoinColumn(name="purchase", nullable = false, updatable=false)
 	public Purchase getPurchase() {
 		return purchase;
 	}
 	public void setPurchase(Purchase purchase) {
 		this.purchase = purchase;
+	}
+	
+	@ManyToOne
+	@JoinColumn(name="project")
+	public Project getProject() {
+		return project;
+	}
+	public void setProject(Project project) {
+		this.project = project;
 	}
 	
     public Integer getLine() {
@@ -80,7 +91,7 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
     }
 
 	@ManyToOne
-	@JoinColumn( name="item", nullable=false )
+	@JoinColumn(name="item", nullable=false)
     public Item getItem() {
         return item;
     }
@@ -179,17 +190,17 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
 		final PurchaseDetail o = (PurchaseDetail) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.item, o.item)
-				.append(this.purchase, o.purchase)
-				.append(this.line, o.line)			
-				.append(this.item, o.item)			
-				.append(this.description, o.description)
-				.append(this.quantity, o.quantity)
-				.append(this.price, o.price)
-				.append(this.discountExpression, o.discountExpression)
-				.append(this.taxes, o.taxes)
-				.append(this.status, o.status)
 				.append(this.delivered, o.delivered)
+				.append(this.description, o.description)
+				.append(this.discountExpression, o.discountExpression)
+				.append(this.item, o.item)
+				.append(this.line, o.line)			
+				.append(this.price, o.price)
+				.append(this.project, o.project)
+				.append(this.purchase, o.purchase)
+				.append(this.quantity, o.quantity)
+				.append(this.status, o.status)
+				.append(this.taxes, o.taxes)
 				.append(this.transfered, o.transfered)
 				.isEquals();
 		}
@@ -199,18 +210,19 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(delivered)
+			.append(description)
+			.append(discountExpression)
 			.append(id)	
-			.append(this.purchase)
-			.append(this.line)			
-			.append(this.item)			
-			.append(this.description)
-			.append(this.quantity)
-			.append(this.price)
-			.append(this.discountExpression)
-			.append(this.taxes)
-			.append(this.status)
-			.append(this.delivered)
-			.append(this.transfered)
+			.append(item)			
+			.append(line)			
+			.append(price)
+			.append(project)
+			.append(purchase)
+			.append(quantity)
+			.append(status)
+			.append(taxes)
+			.append(transfered)
 			.toHashCode();
 	}
 

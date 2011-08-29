@@ -59,9 +59,7 @@ import com.code.aon.supplier.Supplier;
 public class Offer implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IConfidentialable {
 	
 	private static final long serialVersionUID = 851446217271328802L;
-
     private static final String DELIM = " ";
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(Offer.class.getName());
 	
     private Integer id;
@@ -137,16 +135,6 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	public void setVersion(int version) {
 		this.version = version;
 	}
-
-    @Transient
-    public String getReferenceCode() {
-    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
-    	referenceCode += "/" + version;
-		if (!StringUtils.isEmpty(getSeries())) {
-			referenceCode = getSeries() + "/" + referenceCode;
-		}
-    	return referenceCode;
-    }
 
 	@ManyToOne
 	@JoinColumn(name="project")
@@ -324,11 +312,6 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
         this.paymentDaysArray = values;
     }
 
-    @Transient
-    public int[] getPaymentDaysArray() {
-    	return paymentDaysArray;
-    }
-
 	@ManyToOne
     @JoinColumn(name="bank")
 	public Bank getBank() {
@@ -406,6 +389,21 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	public void setTerms(Set<OfferTerm> terms) {
 		this.terms = terms;
 	}
+
+    @Transient
+    public String getReferenceCode() {
+    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+    	referenceCode += "/" + version;
+		if (!StringUtils.isEmpty(getSeries())) {
+			referenceCode = getSeries() + "/" + referenceCode;
+		}
+    	return referenceCode;
+    }
+
+    @Transient
+    public int[] getPaymentDaysArray() {
+    	return paymentDaysArray;
+    }
 
 	@Transient
 	public Date getDate() {

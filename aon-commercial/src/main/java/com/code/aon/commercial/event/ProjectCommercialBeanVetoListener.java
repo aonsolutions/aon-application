@@ -10,6 +10,7 @@ public class ProjectCommercialBeanVetoListener extends ManagerBeanVetoListenerAd
     @Override
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	ProjectCommercial to = (ProjectCommercial)evt.getTo();
+    	to.getProject().setRegistry(to.getTarget().getRegistry());
     	to.getProject().setCommercial(true);
     }
 

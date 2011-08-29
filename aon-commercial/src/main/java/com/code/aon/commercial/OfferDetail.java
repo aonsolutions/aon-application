@@ -50,7 +50,7 @@ public class OfferDetail implements ITransferObject, ICalculable {
 	}
 
 	@ManyToOne
-	@JoinColumn( name="offer", nullable=false , updatable=false)
+	@JoinColumn(name="offer", nullable=false , updatable=false)
 	public Offer getOffer() {
 		return offer;
 	}
@@ -66,7 +66,7 @@ public class OfferDetail implements ITransferObject, ICalculable {
 	}
 
 	@ManyToOne
-	@JoinColumn( name="item" )
+	@JoinColumn(name="item")
 	public Item getItem() {
 		return item;
 	}

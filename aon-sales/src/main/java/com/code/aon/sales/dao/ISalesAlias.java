@@ -96,46 +96,52 @@ public interface ISalesAlias {
 	String  SALES_PAYMENT_DAYS = SALES_ENTRY.getAliasNames()[12];
 
 	/** 
+	* Alias value: Sales_project_id
+	* Hibernate value: Sales.project.id
+	*/
+	String  SALES_PROJECT_ID = SALES_ENTRY.getAliasNames()[13];
+
+	/** 
 	* Alias value: Sales_scope_id
 	* Hibernate value: Sales.scope.id
 	*/
-	String  SALES_SCOPE_ID = SALES_ENTRY.getAliasNames()[13];
+	String  SALES_SCOPE_ID = SALES_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Sales_securityLevel
 	* Hibernate value: Sales.securityLevel
 	*/
-	String  SALES_SECURITY_LEVEL = SALES_ENTRY.getAliasNames()[14];
+	String  SALES_SECURITY_LEVEL = SALES_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Sales_seller_id
 	* Hibernate value: Sales.seller.id
 	*/
-	String  SALES_SELLER_ID = SALES_ENTRY.getAliasNames()[15];
+	String  SALES_SELLER_ID = SALES_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Sales_series
 	* Hibernate value: Sales.series
 	*/
-	String  SALES_SERIES = SALES_ENTRY.getAliasNames()[16];
+	String  SALES_SERIES = SALES_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Sales_shippingAddress_id
 	* Hibernate value: Sales.shippingAddress.id
 	*/
-	String  SALES_SHIPPING_ADDRESS_ID = SALES_ENTRY.getAliasNames()[17];
+	String  SALES_SHIPPING_ADDRESS_ID = SALES_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Sales_status
 	* Hibernate value: Sales.status
 	*/
-	String  SALES_STATUS = SALES_ENTRY.getAliasNames()[18];
+	String  SALES_STATUS = SALES_ENTRY.getAliasNames()[19];
 
 	/** 
 	* Alias value: Sales_workPlace_id
 	* Hibernate value: Sales.workPlace.id
 	*/
-	String  SALES_WORK_PLACE_ID = SALES_ENTRY.getAliasNames()[19];
+	String  SALES_WORK_PLACE_ID = SALES_ENTRY.getAliasNames()[20];
 
 
 

@@ -23,36 +23,29 @@ import com.code.aon.commercial.TargetSupplier;
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 
-/**
- * @author Consulting & Development. ecastellano - 22/01/2007
- *
- */
 public class CommercialAliasWriter {
 	
-	/**
-	 * @param args
-	 * @throws IOException
-	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-TRUNK/aon-commercial/src/main/java/com/code/aon/commercial/dao/ICommercialAlias.java");
 		String[] classes = new String[] { 
-				CommercialActivity.class.getName(),
-				CommercialTracking.class.getName(),
-				CommercialTerm.class.getName(),
-				Commission.class.getName(),
-				CommissionCategory.class.getName(),
-				CommissionItem.class.getName(),
-				CommissionTypeCommission.class.getName(),
-				Offer.class.getName(),
-				OfferAttachment.class.getName(),
-				OfferDetail.class.getName(),
-				OfferDetailCommission.class.getName(),
-				OfferTerm.class.getName(),
-				ProjectCommercial.class.getName(),
-				Target.class.getName(),
-				TargetItem.class.getName(),
-				TargetSeller.class.getName(),
-				TargetSupplier.class.getName()};
+			CommercialActivity.class.getName(),
+			CommercialTracking.class.getName(),
+			CommercialTerm.class.getName(),
+			Commission.class.getName(),
+			CommissionCategory.class.getName(),
+			CommissionItem.class.getName(),
+			CommissionTypeCommission.class.getName(),
+			Offer.class.getName(),
+			OfferAttachment.class.getName(),
+			OfferDetail.class.getName(),
+			OfferDetailCommission.class.getName(),
+			OfferTerm.class.getName(),
+			ProjectCommercial.class.getName(),
+			Target.class.getName(),
+			TargetItem.class.getName(),
+			TargetSeller.class.getName(),
+			TargetSupplier.class.getName()
+		};
 		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.commercial.dao");
 		writer.write(classes, file);

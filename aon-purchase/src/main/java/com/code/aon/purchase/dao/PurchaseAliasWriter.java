@@ -11,14 +11,15 @@ import com.code.aon.purchase.PurchaseDetail;
 public class PurchaseAliasWriter {
 
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-purchase/src/main/java/com/code/aon/purchase/dao/IPurchaseAlias.java");
+		File file = new File("/AON-TRUNK/aon-purchase/src/main/java/com/code/aon/purchase/dao/IPurchaseAlias.java");
 		String[] classes = new String[] {
 	        PurchaseDetail.class.getName(),
 	        Purchase.class.getName()
 	    };
 		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.purchase.dao");
-		writer.write(classes,file);
+		writer.write(classes, file);
+		System.out.println( file.getAbsolutePath() );
 		System.out.println("Alias generados");
 	}
 }

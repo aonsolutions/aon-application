@@ -11,13 +11,13 @@
 	</bean>
 
 	<bean class="com.code.aon.finance.Invoice" sqlName="invoice">
-		<alias names="id,series,number,referenceCode,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,taxableBase,vatQuota,retentionQuota,total" />
-		<hibernate names="id,series,number,referenceCode,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,taxableBase,vatQuota,retentionQuota,total" />
+		<alias names="id,series,number,referenceCode,project_id,registry_id,registryAddress_id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,investment,transaction,signed,scope_id,service,rectificationType,rectificationInvoice,rectificationInvoice_id,taxableBase,vatQuota,retentionQuota,total" />
+		<hibernate names="id,series,number,referenceCode,project.id,registry.id,registryAddress.id,issueDate,taxDate,securityLevel,status,registryName,registryDocument,registryDocumentType,registryDocumentCountry,type,taxFree,surcharge,withholding,comments,investment,transaction,signed,scope.id,service,rectificationType,rectificationInvoice,rectificationInvoice.id,taxableBase,vatQuota,retentionQuota,total" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
-		<alias names="sourceId,description,discountExpression,id,invoice_id,invoice_type,item_id,line,price,quantity,source,item_product_type,item_product_code,taxableBase,taxes,,workPlace_id" />
-		<hibernate names="sourceId,description,discountExpression,id,invoice.id,invoice.type,item.id,line,price,quantity,source,item.product.type,item.product.code,taxableBase,taxes,workPlace.id" />
+		<alias names="description,discountExpression,id,invoice_id,invoice_type,item_id,line,price,project_id,quantity,source,sourceId,item_product_type,item_product_code,taxableBase,taxes,workPlace_id" />
+		<hibernate names="description,discountExpression,id,invoice.id,invoice.type,item.id,line,price,project.id,quantity,source,sourceId,item.product.type,item.product.code,taxableBase,taxes,workPlace.id" />
 	</bean>
 	
 	<bean class="com.code.aon.finance.InvoiceTax" sqlName="invoice_tax">

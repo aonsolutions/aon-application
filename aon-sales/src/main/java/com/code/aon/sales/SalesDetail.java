@@ -56,7 +56,7 @@ public class SalesDetail implements ITransferObject, ICalculable {
     }
 
 	@ManyToOne
-	@JoinColumn( name="sales", nullable=false , updatable=false )
+	@JoinColumn(name="sales", nullable=false , updatable=false)
     public Sales getSales() {
         return sales;
     }
@@ -72,7 +72,7 @@ public class SalesDetail implements ITransferObject, ICalculable {
     }
 
 	@ManyToOne
-	@JoinColumn( name="item", nullable=false )
+	@JoinColumn(name="item", nullable=false)
     public Item getItem() {
         return item;
     }
@@ -136,7 +136,7 @@ public class SalesDetail implements ITransferObject, ICalculable {
 	}
 
 	@ManyToOne
-	@JoinColumn( name="offer_detail" )
+	@JoinColumn(name="offer_detail")
 	public OfferDetail getOfferDetail() {
 		return offerDetail;
 	}
@@ -171,18 +171,19 @@ public class SalesDetail implements ITransferObject, ICalculable {
 		final SalesDetail o = (SalesDetail) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+				.append(this.delivered, o.delivered)
+				.append(this.description, o.description)
+				.append(this.discountExpression, o.discountExpression)
 				.append(this.item, o.item)
-				.append(sales, o.sales)
-				.append(line, o.line)			
-				.append(item, o.item)			
-				.append(description, o.description)
-				.append(quantity, o.quantity)
-				.append(price, o.price)
-				.append(discountExpression, o.discountExpression)
-				.append(taxes, o.taxes)
-				.append(status, o.status)
-				.append(delivered, o.delivered)
-				.append(transfered, o.transfered)
+				.append(this.line, o.line)			
+				.append(this.offerDetail, o.offerDetail)
+				.append(this.price, o.price)
+				.append(this.quantity, o.quantity)
+				.append(this.sales, o.sales)
+				.append(this.source, o.source)
+				.append(this.status, o.status)
+				.append(this.taxes, o.taxes)
+				.append(this.transfered, o.transfered)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -191,17 +192,19 @@ public class SalesDetail implements ITransferObject, ICalculable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(id)	
-			.append(sales)
-			.append(line)			
-			.append(item)			
-			.append(description)
-			.append(quantity)
-			.append(price)
-			.append(discountExpression)
-			.append(taxes)
-			.append(status)
 			.append(delivered)
+			.append(description)
+			.append(discountExpression)
+			.append(id)	
+			.append(item)			
+			.append(line)			
+			.append(offerDetail)			
+			.append(price)
+			.append(quantity)
+			.append(sales)
+			.append(source)
+			.append(status)
+			.append(taxes)
 			.append(transfered)
 			.toHashCode();
 	}

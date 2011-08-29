@@ -34,6 +34,7 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.DeliveryDetail;
 
@@ -45,6 +46,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 
     private Integer id;
     private Invoice invoice;
+    private Project project;
     private int line;
     private Item item;
     private String description;
@@ -66,6 +68,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 
 	public InvoiceDetail() {
 		this.updateEnabled = true;
+		this.taxDataInDetail = false;
 	}
 
     @Id
@@ -86,6 +89,17 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
     }
     public void setInvoice(Invoice invoice) {
         this.invoice = invoice;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="project")
+    @ForeignKey(name="FK_INVOICE_DETAIL_PROJECT")
+    @Index(name="IDX_INVOICE_DETAIL_PROJECT")                                    
+    public Project getProject() {
+        return project;
+    }
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public int getLine() {
@@ -288,6 +302,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 			.append(this.line,o.line)
 			.append(this.quantity,o.quantity)
 			.append(this.price,o.price)
+			.append(this.project,o.project)
 			.append(this.source,o.source)
 			.append(this.sourceId,o.sourceId)
 			.append(this.taxableBase,o.taxableBase)
@@ -301,19 +316,20 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(description)
+			.append(discountExpression)
+			.append(invoice)
 			.append(id)		
-			.append(this.description)
-			.append(this.discountExpression)
-			.append(this.invoice)
-			.append(this.item)
-			.append(this.line)
-			.append(this.quantity)
-			.append(this.price)
-			.append(this.source)
-			.append(this.sourceId)
-			.append(this.taxableBase)
-			.append(this.taxes)
-			.append(this.workPlace)
+			.append(item)
+			.append(line)
+			.append(quantity)
+			.append(price)
+			.append(project)
+			.append(source)
+			.append(sourceId)
+			.append(taxableBase)
+			.append(taxes)
+			.append(workPlace)
 			.toHashCode();
 	}	
 

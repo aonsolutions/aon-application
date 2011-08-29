@@ -10,10 +10,11 @@ import com.code.aon.sales.SalesDetail;
 public class SalesAliasWriter {
 
 	public static void main(String[] args) throws Exception{
-		File file = new File("/AON-PROJECT/aon-sales/src/main/java/com/code/aon/sales/dao/ISalesAlias.java");
-		String[] classes = new String[2];
-		classes[0] = Sales.class.getName();
-		classes[1] = SalesDetail.class.getName();
+		File file = new File("/AON-TRUNK/aon-sales/src/main/java/com/code/aon/sales/dao/ISalesAlias.java");
+		String[] classes = new String[] {
+			Sales.class.getName(),
+			SalesDetail.class.getName()
+		};
 		HibernateUtil.getSessionFactory(null);
 		AliasWriter writer = new AliasWriter("com.code.aon.sales.dao");
 		writer.write(classes, file);

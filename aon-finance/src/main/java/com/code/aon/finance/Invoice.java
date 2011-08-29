@@ -52,6 +52,7 @@ import com.code.aon.finance.enumeration.RectificationType;
 import com.code.aon.finance.util.FinanceUtil;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
@@ -68,13 +69,13 @@ import com.code.aon.registry.enumeration.DocumentType;
 public class Invoice implements ITransferObject, IHeaderObject, ICalculableContainer, ITaxInfo, IConfidentialable, IScopable {
 	
 	private static final long serialVersionUID = 5692053383866684819L;
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(Invoice.class.getName());
 	
     private Integer id;
     private String series;
     private int number;
     private String referenceCode;
+    private Project project;
     private Registry registry;
     private String registryName;
     private String registryDocument;
@@ -152,6 +153,17 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.referenceCode = referenceCode;
 	}
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="project")
+    @ForeignKey(name="FK_INVOICE_PROJECT")
+    @Index(name="IDX_INVOICE_PROJECT")  
+    public Project getProject() {
+        return project;
+    }
+    public void setProject(Project project) {
+        this.project = project;
+    }
+    
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="registry", nullable = false)
     @ForeignKey(name="FK_INVOICE_REGISTRY")
@@ -370,6 +382,40 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.total = total;
 	}
 	
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	@OrderBy("line")
+	public Set<InvoiceDetail> getLines() {
+		return this.lines;
+	}
+	public void setLines(Set<InvoiceDetail> lines) {
+		this.lines = lines;
+	}
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	@OrderBy()
+	public Set<Finance> getFinances() {
+		return this.finances;
+	}
+	public void setFinances(Set<Finance> finances) {
+		this.finances = finances;
+	}
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	public Set<InvoiceAddress> getAddresses() {
+		return addresses;
+	}
+	public void setAddresses(Set<InvoiceAddress> addresses) {
+		this.addresses = addresses;
+	}
+
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	public Set<InvoiceAttachment> getAttachments() {
+		return attachments;
+	}
+	public void setAttachments(Set<InvoiceAttachment> attachments) {
+		this.attachments = attachments;
+	}
+
     @Formula("year(issue_date)")
 	public int getIssueYear() {
 	 return issueYear;	
@@ -408,40 +454,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 	public void setUpdateEnabled(boolean updateEnabled) {
 		this.updateEnabled = updateEnabled;
-	}
-
-	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	@OrderBy("line")
-	public Set<InvoiceDetail> getLines() {
-		return this.lines;
-	}
-	public void setLines( Set<InvoiceDetail> lines ) {
-		this.lines = lines;
-	}
-
-	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	@OrderBy()
-	public Set<Finance> getFinances() {
-		return this.finances;
-	}
-	public void setFinances( Set<Finance> finances ) {
-		this.finances = finances;
-	}
-
-	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	public Set<InvoiceAddress> getAddresses() {
-		return addresses;
-	}
-	public void setAddresses(Set<InvoiceAddress> addresses) {
-		this.addresses = addresses;
-	}
-
-	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	public Set<InvoiceAttachment> getAttachments() {
-		return attachments;
-	}
-	public void setAttachments(Set<InvoiceAttachment> attachments) {
-		this.attachments = attachments;
 	}
 
 	@Transient
@@ -622,18 +634,19 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(this.investment,o.investment)
 			.append(this.issueDate,o.issueDate)
 			.append(this.number,o.number)
+			.append(this.project,o.project)
+			.append(this.rectificationInvoice,o.rectificationInvoice)
+			.append(this.rectificationType,o.rectificationType)
 			.append(this.referenceCode,o.referenceCode)
 			.append(this.registry,o.registry)
 			.append(this.registryAddress,o.registryAddress)
 			.append(this.registryDocument,o.registryDocument)
-			.append(this.registryDocumentType,o.registryDocumentType)
 			.append(this.registryDocumentCountry,o.registryDocumentCountry)
+			.append(this.registryDocumentType,o.registryDocumentType)
 			.append(this.registryName,o.registryName)
 			.append(this.retentionQuota,o.retentionQuota)
-			.append(this.securityLevel,o.securityLevel)
 			.append(this.scope,o.scope)
-			.append(this.rectificationType,o.rectificationType)
-			.append(this.rectificationInvoice,o.rectificationInvoice)
+			.append(this.securityLevel,o.securityLevel)
 			.append(this.series,o.series)
 			.append(this.service,o.service)
 			.append(this.signed,o.signed)
@@ -655,35 +668,37 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(id)		
-			.append(this.comments)
-			.append(this.investment)
-			.append(this.issueDate)
-			.append(this.number)
-			.append(this.referenceCode)
-			.append(this.registry)
-			.append(this.registryAddress)
-			.append(this.registryDocument)
-			.append(this.registryDocumentType)
-			.append(this.registryDocumentCountry)
-			.append(this.registryName)
-			.append(this.retentionQuota)
-			.append(this.securityLevel)
-			.append(this.scope)
-			.append(this.rectificationType)
-			.append(this.series)
-			.append(this.service)
-			.append(this.signed)
-			.append(this.status)
-			.append(this.surcharge)
-			.append(this.taxableBase)
-			.append(this.taxDate)		
-			.append(this.taxFree)		
-			.append(this.total)
-			.append(this.transaction)		
-			.append(this.type)		
-			.append(this.vatQuota)
-			.append(this.withholding)		
+			.append(comments)
+			.append(id)
+			.append(investment)
+			.append(issueDate)
+			.append(number)
+			.append(project)
+			.append(rectificationInvoice)
+			.append(rectificationType)
+			.append(referenceCode)
+			.append(registry)
+			.append(registryAddress)
+			.append(registryDocument)
+			.append(registryDocumentCountry)
+			.append(registryDocumentType)
+			.append(registryName)
+			.append(retentionQuota)
+			.append(scope)
+			.append(securityLevel)
+			.append(series)
+			.append(service)
+			.append(signed)
+			.append(status)
+			.append(surcharge)
+			.append(taxableBase)
+			.append(taxDate)		
+			.append(taxFree)		
+			.append(total)
+			.append(transaction)		
+			.append(type)		
+			.append(vatQuota)
+			.append(withholding)		
 			.toHashCode();
 	}	
 

@@ -44,6 +44,7 @@ import com.code.aon.config.Scope;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
@@ -54,16 +55,13 @@ import com.code.aon.warehouse.enumeration.DeliveryStatus;
 public class Delivery implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IConfidentialable {
 	
 	private static final long serialVersionUID = 5865460388758611455L;
+	private static final String DELIM = " ";
 	private static final Logger LOGGER = LoggerFactory.getLogger(Delivery.class.getName());
-    private static final String DELIM = " ";
-	
-	public Delivery() {
-		this.issueTime = new Date();
-	}
 
 	private Integer id;
     private String series;
     private int number;
+    private Project project;
 	private Customer customer;
 	private RegistryAddress registryAddress;
 	private Date issueTime;
@@ -80,6 +78,10 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	private Bank bank;
 	private BankAccount bankAccount;
 	private Set<DeliveryDetail> lines = new HashSet<DeliveryDetail>();
+
+	public Delivery() {
+		this.issueTime = new Date();
+	}
 
 	@Id
 	@GeneratedValue
@@ -107,17 +109,18 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 		this.number = number;
 	}
 
-    @Transient
-    public String getReferenceCode() {
-    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
-		if (!StringUtils.isEmpty(getSeries())) {
-			referenceCode = getSeries() + "/" + referenceCode;
-		}
-    	return referenceCode;
-    }
+	@ManyToOne
+	@JoinColumn(name="project")
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
 
 	@ManyToOne
-	@JoinColumn( name="customer", nullable = false )
+	@JoinColumn(name="customer", nullable = false)
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -126,7 +129,7 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	}
 
 	@ManyToOne
-	@JoinColumn( name="address" )
+	@JoinColumn(name="address")
 	public RegistryAddress getRegistryAddress() {
 		return registryAddress;
 	}
@@ -143,7 +146,7 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	}
 
 	@ManyToOne
-	@JoinColumn( name="pay_method" )
+	@JoinColumn(name="pay_method")
 	public PayMethod getPayMethod() {
 		return payMethod;
 	}
@@ -223,11 +226,6 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
         this.paymentDaysArray = values;
     }
 
-    @Transient
-    public int[] getPaymentDaysArray() {
-    	return paymentDaysArray;
-    }
-
 	@ManyToOne
     @JoinColumn(name="bank")
 	public Bank getBank() {
@@ -251,10 +249,24 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	public Set<DeliveryDetail> getLines() {
 		return this.lines;
 	}
-	public void setLines( Set<DeliveryDetail> lines ) {
+	public void setLines(Set<DeliveryDetail> lines) {
 		this.lines = lines;
 	}
 	
+    @Transient
+    public String getReferenceCode() {
+    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+		if (!StringUtils.isEmpty(getSeries())) {
+			referenceCode = getSeries() + "/" + referenceCode;
+		}
+    	return referenceCode;
+    }
+
+    @Transient
+    public int[] getPaymentDaysArray() {
+    	return paymentDaysArray;
+    }
+
 	@Transient
 	public Date getDate() {
 		return this.issueTime;
@@ -315,22 +327,23 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 		final Delivery o = (Delivery) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-			.append(this.series, o.series)
-			.append(this.number, o.number)
-			.append(this.customer, o.customer)
-			.append(this.registryAddress, o.registryAddress)
-			.append(this.issueTime, o.issueTime)
-			.append(this.payMethod, o.payMethod)
-			.append(this.securityLevel, o.securityLevel)
-			.append(this.status, o.status)
-			.append(this.workPlace, o.workPlace)
-			.append(this.scope, o.scope)
-			.append(this.numberOfPayments, o.numberOfPayments)
-			.append(this.daysToFirstPayment, o.daysToFirstPayment)
-			.append(this.daysBetweenPayments, o.daysBetweenPayments)
-			.append(this.paymentDays, o.paymentDays)
 			.append(this.bank, o.bank)
 			.append(this.bankAccount, o.bankAccount)
+			.append(this.customer, o.customer)
+			.append(this.daysBetweenPayments, o.daysBetweenPayments)
+			.append(this.daysToFirstPayment, o.daysToFirstPayment)
+			.append(this.issueTime, o.issueTime)
+			.append(this.number, o.number)
+			.append(this.numberOfPayments, o.numberOfPayments)
+			.append(this.paymentDays, o.paymentDays)
+			.append(this.payMethod, o.payMethod)
+			.append(this.project, o.project)
+			.append(this.registryAddress, o.registryAddress)
+			.append(this.scope, o.scope)
+			.append(this.securityLevel, o.securityLevel)
+			.append(this.series, o.series)
+			.append(this.status, o.status)
+			.append(this.workPlace, o.workPlace)
 			.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -339,23 +352,24 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(id)	
-			.append(series)
-			.append(number)
-			.append(customer)
-			.append(registryAddress)
-			.append(issueTime)
-			.append(payMethod)
-			.append(securityLevel)
-			.append(status)
-			.append(workPlace)
-			.append(scope)
-			.append(numberOfPayments)
-			.append(daysToFirstPayment)
-			.append(daysBetweenPayments)
-			.append(paymentDays)
 			.append(bank)
 			.append(bankAccount)
+			.append(customer)
+			.append(daysBetweenPayments)
+			.append(daysToFirstPayment)
+			.append(id)	
+			.append(issueTime)
+			.append(number)
+			.append(numberOfPayments)
+			.append(paymentDays)
+			.append(payMethod)
+			.append(project)
+			.append(registryAddress)
+			.append(scope)
+			.append(securityLevel)
+			.append(series)
+			.append(status)
+			.append(workPlace)
 			.toHashCode();
 	}
 

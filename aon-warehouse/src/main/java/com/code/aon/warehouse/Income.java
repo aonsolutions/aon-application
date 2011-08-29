@@ -43,6 +43,7 @@ import com.code.aon.config.PayMethod;
 import com.code.aon.config.Scope;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.supplier.Supplier;
@@ -54,16 +55,13 @@ import com.code.aon.warehouse.enumeration.IncomeStatus;
 public class Income implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IConfidentialable {
 	
 	private static final long serialVersionUID = -2473825467680303195L;
-	private static final Logger LOGGER = LoggerFactory.getLogger(Income.class.getName());
     private static final String DELIM = " ";
+	private static final Logger LOGGER = LoggerFactory.getLogger(Income.class.getName());
     
-	public Income() {
-		this.issueTime = new Date();
-	}
-
 	private Integer id;
     private String series;
     private int number;
+	private Project project;
 	private Supplier supplier;
 	private RegistryAddress registryAddress;
 	private Date issueTime;
@@ -80,6 +78,10 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 	private Bank bank;
 	private BankAccount bankAccount;
 	private Set<IncomeDetail> lines = new HashSet<IncomeDetail>();
+
+	public Income() {
+		this.issueTime = new Date();
+	}
 
 	@Id
 	@GeneratedValue
@@ -107,17 +109,17 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 		this.number = number;
 	}
 
-    @Transient
-    public String getReferenceCode() {
-    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
-		if (!StringUtils.isEmpty(getSeries())) {
-			referenceCode = getSeries() + "/" + referenceCode;
-		}
-    	return referenceCode;
-    }
-
 	@ManyToOne
-    @JoinColumn( name="supplier", nullable = false )
+    @JoinColumn(name="project")
+	public Project getProject() {
+		return project;
+	}
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
+	@ManyToOne
+    @JoinColumn(name="supplier", nullable = false)
 	public Supplier getSupplier() {
 		return supplier;
 	}
@@ -126,7 +128,7 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 	}
 	
 	@ManyToOne
-	@JoinColumn( name="address" )
+	@JoinColumn(name="address")
 	public RegistryAddress getRegistryAddress() {
 		return registryAddress;
 	}
@@ -143,7 +145,7 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 	}
 
 	@ManyToOne
-	@JoinColumn( name="pay_method" )
+	@JoinColumn(name="pay_method")
 	public PayMethod getPayMethod() {
 		return payMethod;
 	}
@@ -222,11 +224,6 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
         this.paymentDaysArray = values;
     }
 
-    @Transient
-    public int[] getPaymentDaysArray() {
-    	return paymentDaysArray;
-    }
-
 	@ManyToOne
     @JoinColumn(name="bank")
 	public Bank getBank() {
@@ -250,10 +247,24 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 	public Set<IncomeDetail> getLines() {
 		return this.lines;
 	}
-	public void setLines( Set<IncomeDetail> lines ) {
+	public void setLines(Set<IncomeDetail> lines) {
 		this.lines = lines;
 	}
 	
+    @Transient
+    public String getReferenceCode() {
+    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+		if (!StringUtils.isEmpty(getSeries())) {
+			referenceCode = getSeries() + "/" + referenceCode;
+		}
+    	return referenceCode;
+    }
+
+    @Transient
+    public int[] getPaymentDaysArray() {
+    	return paymentDaysArray;
+    }
+
 	@Transient
 	public Date getDate() {
 		return this.issueTime;
@@ -316,22 +327,23 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 		final Income o = (Income) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-			.append(this.series, o.series)
-			.append(this.number, o.number)
-			.append(this.supplier, o.supplier)
-			.append(this.registryAddress, o.registryAddress)
-			.append(this.issueTime, o.issueTime)
-			.append(this.payMethod, o.payMethod)
-			.append(this.securityLevel, o.securityLevel)
-			.append(this.status, o.status)
-			.append(this.workPlace, o.workPlace)
-			.append(this.scope, o.scope)
-			.append(this.numberOfPayments, o.numberOfPayments)
-			.append(this.daysToFirstPayment, o.daysToFirstPayment)
-			.append(this.daysBetweenPayments, o.daysBetweenPayments)
-			.append(this.paymentDays, o.paymentDays)
 			.append(this.bank, o.bank)
 			.append(this.bankAccount, o.bankAccount)
+			.append(this.daysBetweenPayments, o.daysBetweenPayments)
+			.append(this.daysToFirstPayment, o.daysToFirstPayment)
+			.append(this.issueTime, o.issueTime)
+			.append(this.number, o.number)
+			.append(this.numberOfPayments, o.numberOfPayments)
+			.append(this.paymentDays, o.paymentDays)
+			.append(this.payMethod, o.payMethod)
+			.append(this.project, o.project)
+			.append(this.registryAddress, o.registryAddress)
+			.append(this.scope, o.scope)
+			.append(this.securityLevel, o.securityLevel)
+			.append(this.series, o.series)
+			.append(this.status, o.status)
+			.append(this.supplier, o.supplier)
+			.append(this.workPlace, o.workPlace)
 			.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -340,23 +352,24 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(id)	
-			.append(series)
-			.append(number)
-			.append(supplier)
-			.append(registryAddress)
-			.append(issueTime)
-			.append(payMethod)
-			.append(securityLevel)
-			.append(status)
-			.append(workPlace)
-			.append(scope)
-			.append(numberOfPayments)
-			.append(daysToFirstPayment)
-			.append(daysBetweenPayments)
-			.append(paymentDays)
 			.append(bank)
 			.append(bankAccount)
+			.append(daysBetweenPayments)
+			.append(daysToFirstPayment)
+			.append(id)	
+			.append(issueTime)
+			.append(number)
+			.append(numberOfPayments)
+			.append(paymentDays)
+			.append(payMethod)
+			.append(project)
+			.append(registryAddress)
+			.append(scope)
+			.append(securityLevel)
+			.append(series)
+			.append(status)
+			.append(supplier)
+			.append(workPlace)
 			.toHashCode();
 	}
 

@@ -60,28 +60,34 @@ public interface IPurchaseAlias {
 	String  PURCHASE_DETAIL_PRICE = PURCHASE_DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
+	* Alias value: PurchaseDetail_project_id
+	* Hibernate value: PurchaseDetail.project.id
+	*/
+	String  PURCHASE_DETAIL_PROJECT_ID = PURCHASE_DETAIL_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: PurchaseDetail_purchase_id
 	* Hibernate value: PurchaseDetail.purchase.id
 	*/
-	String  PURCHASE_DETAIL_PURCHASE_ID = PURCHASE_DETAIL_ENTRY.getAliasNames()[7];
+	String  PURCHASE_DETAIL_PURCHASE_ID = PURCHASE_DETAIL_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: PurchaseDetail_quantity
 	* Hibernate value: PurchaseDetail.quantity
 	*/
-	String  PURCHASE_DETAIL_QUANTITY = PURCHASE_DETAIL_ENTRY.getAliasNames()[8];
+	String  PURCHASE_DETAIL_QUANTITY = PURCHASE_DETAIL_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: PurchaseDetail_status
 	* Hibernate value: PurchaseDetail.status
 	*/
-	String  PURCHASE_DETAIL_STATUS = PURCHASE_DETAIL_ENTRY.getAliasNames()[9];
+	String  PURCHASE_DETAIL_STATUS = PURCHASE_DETAIL_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: PurchaseDetail_taxes
 	* Hibernate value: PurchaseDetail.taxes
 	*/
-	String  PURCHASE_DETAIL_TAXES = PURCHASE_DETAIL_ENTRY.getAliasNames()[10];
+	String  PURCHASE_DETAIL_TAXES = PURCHASE_DETAIL_ENTRY.getAliasNames()[11];
 
 
 
@@ -163,46 +169,52 @@ public interface IPurchaseAlias {
 	String  PURCHASE_PAYMENT_DAYS = PURCHASE_ENTRY.getAliasNames()[11];
 
 	/** 
+	* Alias value: Purchase_project_id
+	* Hibernate value: Purchase.project.id
+	*/
+	String  PURCHASE_PROJECT_ID = PURCHASE_ENTRY.getAliasNames()[12];
+
+	/** 
 	* Alias value: Purchase_registryAddress_id
 	* Hibernate value: Purchase.registryAddress.id
 	*/
-	String  PURCHASE_REGISTRY_ADDRESS_ID = PURCHASE_ENTRY.getAliasNames()[12];
+	String  PURCHASE_REGISTRY_ADDRESS_ID = PURCHASE_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Purchase_scope_id
 	* Hibernate value: Purchase.scope.id
 	*/
-	String  PURCHASE_SCOPE_ID = PURCHASE_ENTRY.getAliasNames()[13];
+	String  PURCHASE_SCOPE_ID = PURCHASE_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Purchase_securityLevel
 	* Hibernate value: Purchase.securityLevel
 	*/
-	String  PURCHASE_SECURITY_LEVEL = PURCHASE_ENTRY.getAliasNames()[14];
+	String  PURCHASE_SECURITY_LEVEL = PURCHASE_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Purchase_series
 	* Hibernate value: Purchase.series
 	*/
-	String  PURCHASE_SERIES = PURCHASE_ENTRY.getAliasNames()[15];
+	String  PURCHASE_SERIES = PURCHASE_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Purchase_status
 	* Hibernate value: Purchase.status
 	*/
-	String  PURCHASE_STATUS = PURCHASE_ENTRY.getAliasNames()[16];
+	String  PURCHASE_STATUS = PURCHASE_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Purchase_supplier_id
 	* Hibernate value: Purchase.supplier.id
 	*/
-	String  PURCHASE_SUPPLIER_ID = PURCHASE_ENTRY.getAliasNames()[17];
+	String  PURCHASE_SUPPLIER_ID = PURCHASE_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Purchase_workPlace_id
 	* Hibernate value: Purchase.workPlace.id
 	*/
-	String  PURCHASE_WORK_PLACE_ID = PURCHASE_ENTRY.getAliasNames()[18];
+	String  PURCHASE_WORK_PLACE_ID = PURCHASE_ENTRY.getAliasNames()[19];
 
 
 }

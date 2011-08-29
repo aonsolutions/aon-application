@@ -31,6 +31,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.project</artifactId>
+			<version>${pom.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.purchase</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>

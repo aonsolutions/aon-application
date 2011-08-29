@@ -45,6 +45,7 @@ import com.code.aon.config.Scope;
 import com.code.aon.customer.Customer;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.sales.dao.ISalesAlias;
@@ -57,22 +58,13 @@ import com.code.aon.seller.Seller;
 public class Sales implements ITransferObject, IHeaderObject, ICalculableContainer, IBankAccountContainer, IPayMethod, IConfidentialable {
 	
 	private static final long serialVersionUID = 2635528648512356470L;
-
 	private static final String DELIM = " ";
-
-	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(Sales.class);
-	
-	/**
-	 * The Constructor. Sets TODAY to issueDate
-	 */
-	public Sales() {
-		this.issueDate = new Date();
-	}
 	
     private Integer id;
     private String series;
     private int number;
+    private Project project;
     private Customer customer;
     private RegistryAddress shippingAddress;
     private Seller seller;
@@ -92,6 +84,10 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	private Bank bank;
 	private BankAccount bankAccount;
 	private Set<SalesDetail> lines = new HashSet<SalesDetail>();
+	
+	public Sales() {
+		this.issueDate = new Date();
+	}
 	
 	@Id
 	@GeneratedValue
@@ -119,17 +115,18 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 		this.number = number;
 	}
 
-    @Transient
-    public String getReferenceCode() {
-    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
-    	if (!StringUtils.isEmpty(getSeries())) {
-			referenceCode = getSeries() + "/" + referenceCode;
-		}
-    	return referenceCode;
-    }
+	@ManyToOne
+	@JoinColumn(name="project")
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
 
 	@ManyToOne
-	@JoinColumn( name="customer", nullable = false )
+	@JoinColumn(name="customer", nullable = false)
 	public Customer getCustomer() {
 		return customer;
 	}
@@ -138,7 +135,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	@ManyToOne
-	@JoinColumn( name="shipping_address" )
+	@JoinColumn(name="shipping_address")
 	public RegistryAddress getShippingAddress() {
 		return shippingAddress;
 	}
@@ -147,7 +144,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	@ManyToOne
-	@JoinColumn( name="seller" )
+	@JoinColumn(name="seller")
 	public Seller getSeller() {
 		return seller;
 	}
@@ -173,7 +170,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 
 	@ManyToOne
-	@JoinColumn( name="pay_method" )
+	@JoinColumn(name="pay_method")
 	public PayMethod getPayMethod() {
 		return payMethod;
 	}
@@ -260,11 +257,6 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
         this.paymentDaysArray = values;
     }
 
-    @Transient
-    public int[] getPaymentDaysArray() {
-    	return paymentDaysArray;
-    }
-
     @ManyToOne
     @JoinColumn(name="bank")
 	public Bank getBank() {
@@ -288,9 +280,23 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	public Set<SalesDetail> getLines() {
 		return this.lines;
 	}
-	public void setLines( Set<SalesDetail> lines ) {
+	public void setLines(Set<SalesDetail> lines) {
 		this.lines = lines;
 	}
+
+    @Transient
+    public String getReferenceCode() {
+    	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
+    	if (!StringUtils.isEmpty(getSeries())) {
+			referenceCode = getSeries() + "/" + referenceCode;
+		}
+    	return referenceCode;
+    }
+
+    @Transient
+    public int[] getPaymentDaysArray() {
+    	return paymentDaysArray;
+    }
 
 	@Transient
 	public Date getDate() {
@@ -324,7 +330,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -333,25 +339,26 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 		final Sales o = (Sales) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-			.append(this.series, o.series)
-			.append(this.number, o.number)
-			.append(this.customer, o.customer)
-			.append(this.shippingAddress, o.shippingAddress)
-			.append(this.issueDate, o.issueDate)
-			.append(this.payMethod, o.payMethod)
-			.append(this.securityLevel, o.securityLevel)
-			.append(this.status, o.status)
-			.append(this.workPlace, o.workPlace)
-			.append(this.scope, o.scope)
-			.append(this.numberOfPayments, o.numberOfPayments)
-			.append(this.daysToFirstPayment, o.daysToFirstPayment)
-			.append(this.daysBetweenPayments, o.daysBetweenPayments)
-			.append(this.paymentDays, o.paymentDays)
 			.append(this.bank, o.bank)
 			.append(this.bankAccount, o.bankAccount)
+			.append(this.customer, o.customer)
+			.append(this.daysBetweenPayments, o.daysBetweenPayments)
+			.append(this.daysToFirstPayment, o.daysToFirstPayment)
 			.append(this.discountExpression, o.discountExpression)
 			.append(this.documentType, o.documentType)
+			.append(this.issueDate, o.issueDate)
+			.append(this.number, o.number)
+			.append(this.numberOfPayments, o.numberOfPayments)
+			.append(this.paymentDays, o.paymentDays)
 			.append(this.payMethod, o.payMethod)
+			.append(this.project, o.project)
+			.append(this.scope, o.scope)
+			.append(this.securityLevel, o.securityLevel)
+			.append(this.seller, o.seller)
+			.append(this.series, o.series)
+			.append(this.shippingAddress, o.shippingAddress)
+			.append(this.status, o.status)
+			.append(this.workPlace, o.workPlace)
 			.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -360,26 +367,27 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(id)	
-			.append(series)
-			.append(number)
-			.append(customer)
-			.append(shippingAddress)
-			.append(issueDate)
-			.append(payMethod)
-			.append(securityLevel)
-			.append(status)
-			.append(workPlace)
-			.append(scope)
-			.append(numberOfPayments)
-			.append(daysToFirstPayment)
-			.append(daysBetweenPayments)
-			.append(paymentDays)
 			.append(bank)
 			.append(bankAccount)
+			.append(customer)
+			.append(daysBetweenPayments)
+			.append(daysToFirstPayment)
 			.append(discountExpression)
 			.append(documentType)
+			.append(id)	
+			.append(issueDate)
+			.append(number)
+			.append(numberOfPayments)
+			.append(paymentDays)
 			.append(payMethod)
+			.append(project)
+			.append(scope)
+			.append(securityLevel)
+			.append(series)
+			.append(seller)
+			.append(shippingAddress)
+			.append(status)
+			.append(workPlace)
 			.toHashCode();
 	}
 
