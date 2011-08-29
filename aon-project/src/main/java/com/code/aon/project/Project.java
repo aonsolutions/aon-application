@@ -4,8 +4,11 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -13,9 +16,12 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.registry.Registry;
 
 @Entity
 @Table(name="project")
@@ -26,13 +32,16 @@ public class Project implements ITransferObject {
 	private Integer id;
     private String name;
     private String alias;
+	private Registry registry;
 	private Date date;
 	private boolean tas;
 	private boolean commercial;
 	private boolean dossier;
+	private boolean active;
 
 	public Project() {
 		this.date = new Date();
+		this.active = true;
 	}
 
 	@Id
@@ -64,6 +73,17 @@ public class Project implements ITransferObject {
 		this.alias = alias;
 	}	
 	
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="registry", nullable = false)
+    @ForeignKey(name="FK_PROJECT_REGISTRY")
+    @Index(name="IDX_PROJECT_REGISTRY")  
+    public Registry getRegistry() {
+        return registry;
+    }
+    public void setRegistry(Registry registry) {
+        this.registry = registry;
+    }
+    
 	@Temporal(TemporalType.DATE)
 	@Column(nullable=false)
 	public Date getDate() {
@@ -98,6 +118,14 @@ public class Project implements ITransferObject {
 		this.dossier = dossier;
 	}	
 	
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -106,11 +134,13 @@ public class Project implements ITransferObject {
 		final Project o = (Project) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+				.append(this.active, o.active)
 				.append(this.alias, o.alias)
 				.append(this.commercial, o.commercial)
 				.append(this.date, o.date)
 				.append(this.dossier, o.dossier)
 				.append(this.name, o.name)
+				.append(this.registry, o.registry)
 				.append(this.tas, o.tas)
 				.isEquals();
 		}
@@ -120,12 +150,14 @@ public class Project implements ITransferObject {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
+			.append(active)
 			.append(alias)
 			.append(commercial)
 			.append(date)
 			.append(dossier)
+			.append(id)
 			.append(name)
-			.append(id)			
+			.append(registry)
 			.append(tas)
 			.toHashCode();
 	}
