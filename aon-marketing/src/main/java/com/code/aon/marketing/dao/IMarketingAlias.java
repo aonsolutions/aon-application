@@ -533,28 +533,40 @@ public interface IMarketingAlias {
 	String  TEMPLATE_ACTIVE = TEMPLATE_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Template_appendSignature
+	* Hibernate value: Template.appendSignature
+	*/
+	String  TEMPLATE_APPEND_SIGNATURE = TEMPLATE_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Template_creationDate
 	* Hibernate value: Template.creationDate
 	*/
-	String  TEMPLATE_CREATION_DATE = TEMPLATE_ENTRY.getAliasNames()[1];
+	String  TEMPLATE_CREATION_DATE = TEMPLATE_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Template_data
 	* Hibernate value: Template.data
 	*/
-	String  TEMPLATE_DATA = TEMPLATE_ENTRY.getAliasNames()[2];
+	String  TEMPLATE_DATA = TEMPLATE_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Template_id
 	* Hibernate value: Template.id
 	*/
-	String  TEMPLATE_ID = TEMPLATE_ENTRY.getAliasNames()[3];
+	String  TEMPLATE_ID = TEMPLATE_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Template_name
 	* Hibernate value: Template.name
 	*/
-	String  TEMPLATE_NAME = TEMPLATE_ENTRY.getAliasNames()[4];
+	String  TEMPLATE_NAME = TEMPLATE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Template_subject
+	* Hibernate value: Template.subject
+	*/
+	String  TEMPLATE_SUBJECT = TEMPLATE_ENTRY.getAliasNames()[6];
 
 
 }

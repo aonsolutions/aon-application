@@ -714,8 +714,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 	public void onNewEmail( ActionEvent event ) {
 		if ( isTemplateSelected() ) {
 			MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
-			controller.setAppendSignature(true);
-			controller.updateMessageBody(getTemplate().getData());
+			TemplateController.initController(controller, getTemplate());
 		}
 	}
 
@@ -725,7 +724,7 @@ public class CommunicationCenterController implements IMarketingConstants {
 		controller.setShowNewMessageWindow(true);
 		controller.setAppendSignature(true);
 		if ( isTemplateSelected() ) {
-			controller.updateMessageBody(getTemplate().getData());	
+			TemplateController.initController(controller, getTemplate());	
 		}
 		if ( isTargetSelected() ) {
 			String[] emails = CompanyEmailUtil.getEmails(getTarget().getRegistry());

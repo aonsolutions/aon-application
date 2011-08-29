@@ -53,6 +53,12 @@ public class Template implements ITransferObject {
 	
 	@Column(nullable = false)
 	private boolean active;
+
+	@Column(name = "append_signature", nullable = false)
+	private boolean appendSignature;
+	
+	@Column(length = 128)
+    private String subject;
 	
     /**
      * The empty constructor.
@@ -151,6 +157,42 @@ public class Template implements ITransferObject {
 		this.active = active;
 	}
 	
+	/**
+	 * Checks if is append signature.
+	 *
+	 * @return true, if is append signature
+	 */
+	public boolean isAppendSignature() {
+		return appendSignature;
+	}
+
+	/**
+	 * Sets the append signature.
+	 *
+	 * @param appendSignature the new append signature
+	 */
+	public void setAppendSignature(boolean appendSignature) {
+		this.appendSignature = appendSignature;
+	}
+
+	/**
+	 * Gets the subject.
+	 *
+	 * @return the subject
+	 */
+	public String getSubject() {
+		return subject;
+	}
+
+	/**
+	 * Sets the subject.
+	 *
+	 * @param subject the new subject
+	 */
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -160,9 +202,11 @@ public class Template implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.active, o.active)
+				.append(this.appendSignature, o.appendSignature)
 				.append(this.creationDate, o.creationDate)
 				.append(this.data, o.data)				
 				.append(this.name, o.name)			
+				.append(this.subject, o.subject)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -172,10 +216,12 @@ public class Template implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(active)
+			.append(appendSignature)
 			.append(creationDate)
 			.append(data)
 			.append(id)	
 			.append(name)			
+			.append(subject)
 			.toHashCode();
 	}
 
@@ -183,10 +229,12 @@ public class Template implements ITransferObject {
 	public String toString() {
 		return new ToStringBuilder(this).
 			append("active", active).
+			append("appendSignature", appendSignature).
 			append("creationDate", creationDate).
 			append("data", StringUtils.abbreviate(data, 64)).			
 			append("id", id).
 			append("name", name).
+			append("subject", subject).
 			toString();
 	}
 	

@@ -38,6 +38,11 @@
 						value="#{bundle.aon_name}" />
 					<aon:inputText id="Template_name" required="true"
 						value="#{marketingTemplate.to.name}" size="60" maxlength="64" />
+						
+					<aon:outputLabel for="Template_subject"
+						value="#{webmailBundle.webmail_subject}" />
+					<aon:inputText id="Template_subject" 
+						value="#{marketingTemplate.to.subject}" size="60" maxlength="128" />						
 										
 					<aon:outputLabel for="Template_creationDate"
 						value="#{marketingBundle.marketing_creationDate}" />
@@ -47,6 +52,11 @@
 						popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 				
+					<aon:outputLabel for="Template_appendSignature"
+						value="#{marketingBundle.marketing_template_append_signature}" />
+					<aon:selectBooleanCheckbox id="Template_appendSignature" required="true"
+						value="#{marketingTemplate.to.appendSignature}" />
+								
 					<aon:outputLabel for="Template_active"
 						value="#{bundle.aon_active}" />
 					<aon:selectBooleanCheckbox id="Template_active" required="true"

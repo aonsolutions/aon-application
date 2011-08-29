@@ -10,14 +10,21 @@
 		<aon:outputText value="#{to.id}"/>
 	</aon:column>
 
-		<aon:column styleClass="aon-editDataTable-textColumn">
+	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputText value="#{bundle.aon_name}" />
 		</f:facet>
 		<aon:outputText value="#{to.name}"/>
 	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputText value="#{webmailBundle.webmail_subject}" />
+		</f:facet>
+		<aon:outputText value="#{to.subject}"/>
+	</aon:column>
 	
-		<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
+	<aon:column styleClass="aon-editDataTable-textColumn aon-width-100">
 		<f:facet name="header">
 			<aon:outputText value="#{marketingBundle.marketing_creationDate}" />
 		</f:facet>
@@ -25,6 +32,6 @@
 			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 			timeZone="#{timeZoneController.timeZoneId}" />
 		</aon:outputText>					
-	</aon:column>						
+	</aon:column>
 					
 </ui:composition>

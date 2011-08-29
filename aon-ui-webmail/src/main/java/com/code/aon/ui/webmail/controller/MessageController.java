@@ -135,6 +135,8 @@ public class MessageController implements IWebMailConstants, BundleConstants {
     
     private boolean appendSignature;
     
+    private boolean skipSignature;
+    
 	/**
 	 * @return the message
 	 */
@@ -1005,8 +1007,12 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 		}
 	}	
 	
+	private boolean includeSignature( MailAccount mailAccount ) {
+		return (!skipSignature) && (!AonUtil.isAppleDevice()) && (mailAccount.getSignature() != null);
+	}
+	
 	private void updateContent( MailAccount mailAccount ) {
-		if ( (!AonUtil.isAppleDevice()) && (mailAccount.getSignature() != null) ) {
+		if ( includeSignature(mailAccount) ) {
 			if ( isAppendSignature() ) {
 				content = StringUtils.defaultString(messageBody) + mailAccount.getSignature().getSignature();
 			} else {
@@ -1162,6 +1168,14 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 
 	public void setAppendSignature(boolean appendSignature) {
 		this.appendSignature = appendSignature;
+	}
+
+	public boolean isSkipSignature() {
+		return skipSignature;
+	}
+
+	public void setSkipSignature(boolean skipSignature) {
+		this.skipSignature = skipSignature;
 	}
 	
 }

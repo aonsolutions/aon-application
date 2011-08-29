@@ -21,11 +21,16 @@ public class TemplateController extends BasicController {
 		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
 		controller.onNewMessage(event);
 		controller.setShowNewMessageWindow(true);
+		initController(controller, (Template) getTo());
+	}
+
+	public static void initController( MessageController controller, Template template ) {
 		controller.setAppendSignature(true);
-		Template template = (Template) getTo();
+		controller.setSkipSignature(!template.isAppendSignature());
+		controller.setSubject(template.getSubject());		
 		if (! StringUtils.isEmpty(template.getData()) ) {
 			controller.updateMessageBody(template.getData());	
-		}
+		}		
 	}
 	
 }
