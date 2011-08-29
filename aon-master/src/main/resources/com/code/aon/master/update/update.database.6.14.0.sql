@@ -66,6 +66,10 @@ UPDATE `project` SET `registry` = (SELECT `target` FROM `project_commercial` WHE
 
 UPDATE `project` SET `registry` = (SELECT `target` FROM `project_tas` WHERE `project` = `project`.`id`) WHERE `tas` = 1;
 
+DELETE FROM `project` WHERE `commercial` = 1 AND `id` NOT IN (SELECT `project` FROM `project_commercial`);
+
+DELETE FROM `project` WHERE `tas` = 1 AND `id` NOT IN (SELECT `project` FROM `project_tas`);
+
 ALTER TABLE `project` MODIFY `registry` int(4) NOT NULL COMMENT 'Identificador del Cliente (Potencial) asociado';
 
 ALTER TABLE `project` ADD KEY `IDX_PROJECT_REGISTRY` (`registry`);
