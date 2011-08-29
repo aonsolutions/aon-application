@@ -65,6 +65,15 @@
 		<f:selectItems value="#{projectCollections.taskHolders}" />
 	</aon:selectOneMenu>					
 
+	<aon:outputLabel for="ProjectTas_workPlace_id"
+		value="#{companyBundle.company_workplace}" />
+	<aon:selectOneMenu id="ProjectTas_workPlace_id"
+		value="#{companyCollections.workPlace}"
+		valueChangeListener="#{controller.addIdEqualExpression}">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{companyCollections.workPlaces}" />
+	</aon:selectOneMenu>					
+
 	<aon:outputLabel for="ProjectTas_comments"
 		value="#{bundle.aon_description}" />
 	<aon:inputText id="ProjectTas_comments" size="60"

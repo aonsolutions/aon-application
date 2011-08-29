@@ -126,6 +126,14 @@
 							<f:selectItems value="#{projectCollections.taskHolders}" />
 						</aon:selectOneMenu>					
 
+						<aon:outputLabel for="ProjectTas_workPlace" 
+							value="#{companyBundle.company_workplace}" />
+						<aon:selectOneMenu id="ProjectTas_workPlace" 
+							value="#{controller.to.workPlace}"
+							disabled="#{controller.finished}">
+							<f:selectItems value="#{companyCollections.workPlaces}" />
+						</aon:selectOneMenu>
+
 						<aon:outputLabel for="ProjectTas_comments" value="#{bundle.aon_description}" />
 						<aon:inputTextarea id="ProjectTas_comments" 
 							value="#{controller.to.comments}" cols="100" rows="6"
