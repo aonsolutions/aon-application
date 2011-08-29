@@ -33,6 +33,7 @@ import com.code.aon.common.IHeaderObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.project.Project;
 import com.code.aon.project.TaskHolder;
 import com.code.aon.tas.enumeration.ProjectStatus;
@@ -55,6 +56,7 @@ public class ProjectTas implements ITransferObject, IHeaderObject {
 	private String comments;
 	private ProjectStatus status;
 	private Date statusDate;
+	private WorkPlace workPlace;
 
 	public ProjectTas() {
 		this.status = ProjectStatus.PENDING;
@@ -173,6 +175,18 @@ public class ProjectTas implements ITransferObject, IHeaderObject {
 		this.statusDate = statusDate;
 	}
 
+	@ManyToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="workplace", nullable=false)
+	@ForeignKey(name = "FK_PROJECT_TAS_WORKPLACE")
+	@Index(name = "IDX_PROJECT_TAS_WORKPLACE")
+	public WorkPlace getWorkPlace() {
+		return workPlace;
+	}
+
+	public void setWorkPlace(WorkPlace workPlace) {
+		this.workPlace = workPlace;
+	}
+
     @Transient
     public String getReferenceCode() {
     	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
@@ -202,9 +216,10 @@ public class ProjectTas implements ITransferObject, IHeaderObject {
 				.append(this.series, o.series)
 				.append(this.status, o.status)
 				.append(this.statusDate, o.statusDate)
-				.append(this.target, o.target)				
-				.append(this.tasItem, o.tasItem)				
-				.append(this.taskHolder, o.taskHolder)				
+				.append(this.target, o.target)
+				.append(this.tasItem, o.tasItem)
+				.append(this.taskHolder, o.taskHolder)
+				.append(this.workPlace, o.workPlace)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -224,6 +239,7 @@ public class ProjectTas implements ITransferObject, IHeaderObject {
 			.append(target)
 			.append(tasItem)
 			.append(taskHolder)
+			.append(workPlace)
 			.toHashCode();
 	}
 

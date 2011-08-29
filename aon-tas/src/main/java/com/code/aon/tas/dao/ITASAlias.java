@@ -136,28 +136,34 @@ public interface ITASAlias {
 	String  PROJECT_TAS_STATUS_DATE = PROJECT_TAS_ENTRY.getAliasNames()[10];
 
 	/** 
+	* Alias value: ProjectTas_workPlace_id
+	* Hibernate value: ProjectTas.workPlace.id
+	*/
+	String  PROJECT_TAS_WORK_PLACE_ID = PROJECT_TAS_ENTRY.getAliasNames()[11];
+
+	/** 
 	* Alias value: ProjectTas_project_name
 	* Hibernate value: ProjectTas.project.name
 	*/
-	String  PROJECT_TAS_PROJECT_NAME = PROJECT_TAS_ENTRY.getAliasNames()[11];
+	String  PROJECT_TAS_PROJECT_NAME = PROJECT_TAS_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: ProjectTas_project_alias
 	* Hibernate value: ProjectTas.project.alias
 	*/
-	String  PROJECT_TAS_PROJECT_ALIAS = PROJECT_TAS_ENTRY.getAliasNames()[12];
+	String  PROJECT_TAS_PROJECT_ALIAS = PROJECT_TAS_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: ProjectTas_project_date
 	* Hibernate value: ProjectTas.project.date
 	*/
-	String  PROJECT_TAS_PROJECT_DATE = PROJECT_TAS_ENTRY.getAliasNames()[13];
+	String  PROJECT_TAS_PROJECT_DATE = PROJECT_TAS_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: ProjectTas_project_tas
 	* Hibernate value: ProjectTas.project.tas
 	*/
-	String  PROJECT_TAS_PROJECT_TAS = PROJECT_TAS_ENTRY.getAliasNames()[14];
+	String  PROJECT_TAS_PROJECT_TAS = PROJECT_TAS_ENTRY.getAliasNames()[15];
 
 
 
