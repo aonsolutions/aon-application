@@ -13,6 +13,7 @@ public class ProjectTasBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
     	ProjectTas to = (ProjectTas)evt.getTo();
     	to.getProject().setName(obtainProjectTasName(to));
+    	to.getProject().setRegistry(to.getTarget().getRegistry());
     	to.getProject().setTas(true);
     }
 
