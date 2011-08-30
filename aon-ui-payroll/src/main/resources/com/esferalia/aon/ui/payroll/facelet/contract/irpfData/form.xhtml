@@ -33,13 +33,13 @@
 						<aon:outputText value="#{contract.to.person.registry.fullName}" />
 						
 						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_anual_retribution}" />
-						<aon:outputText value="-" />
+						<aon:outputText value="#{irpfData.grossSalary}" />
 
 						<aon:outputLabel value="#{payrollBundle.payroll_enterprise}" />
 						<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}" />
 
 						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_current_irpf}" />
-						<aon:outputText value="&#160;" />
+						<aon:outputText value="#{irpfData.currentIrpf}" />
 						
 						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_date}" />
 						<aon:div>
@@ -57,7 +57,7 @@
 						</aon:div>
 
 						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_calculated_irpf}" />
-						<aon:outputText value="&#160;" />
+						<aon:outputText value="#{irpfData.newIrpf}" />
 						
 					</aon:panelGrid>
 				</aon:div>
@@ -125,8 +125,8 @@
 
 						<aon:outputLabel for="irpfData_descendientCount" value="#{payrollBundle.payroll_irpfData_descendientCount}" />
 						<rich:inputNumberSpinner id="irpfData_descendientCount" 
-							disabled="#{irpfData.descendientCount>0 and irpfData.to.descendientCount==null}"
-							value="#{irpfData.descendientCount}" 
+							disabled="#{irpfData.descendientLinesCount>0}"
+							value="#{irpfData.to.descendientCount}" 
 							inputSize="2" minValue="0" maxValue="20" />
 						
 					</aon:panelGrid>
@@ -139,12 +139,18 @@
 			<aon:div styleClass="aon-scroll-area">
 				<c:if test="#{!irpfData.new}" >
 						
+						
+						
+						
+						
 					<aon:panel>
 						<f:facet name="header">
 							<aon:outputText value="#{payrollBundle.payroll_irpfData_descendients}" />
 						</f:facet>
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 							<ui:param name="controller" value="#{irpfDataDescendients}" />
+							<ui:param name="saveButtonReRender" value="irpfDataForm" />
+							<ui:param name="removeButtonReRender" value="irpfDataForm" />
 							<ui:define name="columns">
 								<ui:include 
 									src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/descendients/gridContent.xhtml" />
@@ -158,6 +164,8 @@
 						</f:facet>
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 							<ui:param name="controller" value="#{irpfDataAscendants}" />
+							<ui:param name="saveButtonReRender" value="irpfDataForm" />
+							<ui:param name="removeButtonReRender" value="irpfDataForm" />
 							<ui:define name="columns">
 								<ui:include 
 									src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/ascendants/gridContent.xhtml" />

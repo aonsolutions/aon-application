@@ -14,24 +14,6 @@
 				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_module}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
 				<ui:define name="toolbarContent">
-					<aon:commandButton id="person"
-						value="#{registryBundle.registry_person}"
-						action="person_form" actionListener="#{enterpriseTree.onEditPerson}"
-						styleClass="aon-finding-toolbar-item aon-icon-contact" >
-						<f:setPropertyActionListener
-							target="#{person.backAction}" value="contract_formTree" />
-						<f:setPropertyActionListener
-							target="#{person.backActionListener}" value="person.onBack" />													
-					</aon:commandButton>
-					<aon:commandButton id="contract"
-						value="#{payrollBundle.payroll_contract}"
-						action="contract_form" actionListener="#{contract.onEdit}"
-						styleClass="aon-finding-toolbar-item aon-icon-category" >
-						<f:setPropertyActionListener
-							target="#{contract.backAction}" value="contract_formTree" />
-						<f:setPropertyActionListener
-							target="#{contract.backActionListener}" value="contract.onBack" />													
-					</aon:commandButton>
 					<c:if test="#{salary.model.rowCount > 0}" >
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/buttons.xhtml" />
 					</c:if>

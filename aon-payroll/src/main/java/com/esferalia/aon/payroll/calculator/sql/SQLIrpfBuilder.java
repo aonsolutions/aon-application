@@ -164,6 +164,9 @@ public class SQLIrpfBuilder  {
 	public String getFullName() {
 		return fullName;
 	}
+	public String getGrossSalary(){
+		return grossSalary;
+	}
 
 
 

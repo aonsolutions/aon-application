@@ -46,7 +46,9 @@
 									<aon:outputText
 										value="#{payrollBundle.payroll_irpfData_anual_retribution}" />
 								</f:facet>
-								<aon:outputText value="#{to.amount}" />
+								<aon:outputText value="#{to.amount}" >
+									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+								</aon:outputText>
 							</aon:column>
 	
 							<aon:column styleClass="aon-editDataTable-textColumn">

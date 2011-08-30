@@ -38,8 +38,10 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.ICompanyConstants;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
@@ -565,14 +567,29 @@ public class ContractController extends VariablesAbstractController {
 			controller.clearCriteria();
 			controller.setCriteria(criteria);
 			controller.onSearch(event);
-			controller.getModel().setRowIndex(0);
-			controller.onSelect(event);
-			controller.setBackAction(IPayrollConstants.ENTERPRISE_FORM_TREE);
+			if(controller.getRowCount()<=0){
+				controller.onReset(event);
+			} else {
+				controller.getModel().setRowIndex(0);
+				controller.onSelect(event);
+			}
+			controller.setBackAction(IPayrollConstants.CONTRACT_FORM_TREE);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onIrpfCalculate exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
+	}
+	
+	public void onEditPerson( ActionEvent event ) {
+		try {
+			BasicController controller = (BasicController) FormUtil.getController(IRegistryConstants.PERSON_CONTROLLER_NAME);
+			controller.select(event, ((Contract)this.getTo()).getPerson());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onEditPerson exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}				
 	}
 	
 	public List<SelectItem> getAgreementLevelCategories(){

@@ -25,6 +25,24 @@
 						<aon:actionListener method="#{contract.accept}" />
 						<aon:actionListener method="#{contract.onShowVariables}" />
 					</aon:commandButton>
+					<aon:commandButton id="person"
+						value="#{registryBundle.registry_person}"
+						action="person_form" actionListener="#{contract.onEditPerson}"
+						styleClass="aon-finding-toolbar-item aon-icon-contact" >
+						<f:setPropertyActionListener
+							target="#{person.backAction}" value="contract_formTree" />
+						<f:setPropertyActionListener
+							target="#{person.backActionListener}" value="person.onBack" />													
+					</aon:commandButton>
+					<aon:commandButton 
+						value="#{payrollBundle.payroll_contractCalendarEvent}"
+						styleClass="aon-finding-toolbar-item aon-icon-contract-calendar"
+						action="contractCalendarEvent_form" >
+						<f:setPropertyActionListener
+							target="#{contractCalendarEvent.backAction}" value="contract_formTree" />
+						<f:setPropertyActionListener
+							target="#{contractCalendarEvent.backActionListener}" value="contractCalendarEvent.onBack" />
+					</aon:commandButton>													
 					<aon:commandButton id="IRPF-calculator"
 						value="#{payrollBundle.payroll_contract_irpf_data}"
 						action="irpfData_form"

@@ -33,10 +33,8 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.controller.RegistryInfo;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBonus;
@@ -549,17 +547,6 @@ public class EnterpriseTree implements ICompanyConstants {
 		}		
 		return false;
 	}	
-
-	public void onEditPerson( ActionEvent event ) {
-		try {
-			BasicController controller = (BasicController) FormUtil.getController(IRegistryConstants.PERSON_CONTROLLER_NAME);
-			controller.select(event, this.contract.getPerson());
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onEditPerson exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}				
-	}
 
 	public void onInit( ActionEvent event ) {
 		this.currentNode = this.enterpriseNode.getData();

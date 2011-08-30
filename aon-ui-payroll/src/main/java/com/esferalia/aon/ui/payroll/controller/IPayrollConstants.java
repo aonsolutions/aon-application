@@ -80,8 +80,8 @@ public interface IPayrollConstants {
 	// ************************************************************
 	String AGREEMENT_FORM = "agreement_form";
 	String AGREEMENT_LEVEL_FORM = "agreement_level_form";
+	String CONTRACT_FORM_TREE = "contract_formTree";
 	String ENTERPRISE_FORM_TREE = "enterprise_formTree";
 	String SALARY_TESTER_LAUNCHER_FORM = "salaryTestLauncher_form";
-	
 		
 }
