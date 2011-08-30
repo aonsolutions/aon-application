@@ -8,7 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
 	<aon:div styleClass="aon-margin-top aon-border" 
-		style="width: 815px;margin-left: 5px;background-color:#f6f5e3;">
+		style="margin-left: 5px;background-color:#f6f5e3;">
 		
 		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
 			columnClasses="aon-noborder aon-padding-left aon-width-auto">
@@ -98,7 +98,7 @@
 			<aon:div style="margin-left: 20px;">
 				<aon:outputText value="&#160;"/>
 			</aon:div>
-			<aon:div style="border-bottom: solid #CCCCCC 1px; text-align: left;">
+			<aon:div style="border-bottom: solid #CCCCCC 1px; text-align: right;">
 				<aon:outputText value="#{payrollBundle.payroll_salary_total_contribution}" />
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
@@ -176,7 +176,7 @@
 			</c:forEach>
 
 			<aon:outputText value="&#160;"/>
-			<aon:div style="width: 100%;text-align: left; margin-left: 15px;">
+			<aon:div style="width: 100%;text-align: right; ">
 				<aon:outputText value="B. #{payrollBundle.payroll_salary_totalDeduction}" styleClass="aon-bold"/>
 			</aon:div>
 			<aon:div style="">

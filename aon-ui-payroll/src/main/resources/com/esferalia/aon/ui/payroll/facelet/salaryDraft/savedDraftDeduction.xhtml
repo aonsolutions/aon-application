@@ -7,24 +7,15 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<aon:panelGrid columns="2" style="width: 1000px;margin-right:10px;"
-		columnClasses="aon-noborder, aon-noborder">
 	
-	<aon:div style="width: 840px; margin-top: 10px;">
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/gridContent.xhtml" >
-			<ui:param name="controller" value="#{salaryDraft.salary.deductions}" />
-			<ui:param name="totalDeduction" value="#{salaryDraft.salary.totalDeduction}" />
-		</ui:include>
-	</aon:div>
-	
-	<aon:div styleClass="aon-margin-top aon-border" 
-		style="width: 155px; margin-top: 10px; margin-left: 5px;background-color: #F6F6F6;">
+	<aon:div styleClass="aon-border aon-margin-top" style="background-color: #F6F6F6;">
 		
 		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
+			
 			columnClasses="aon-noborder aon-padding-left aon-width-auto">
 			
-			<aon:outputText value="&#160;II. #{payrollBundle.payroll_salary_deductions}&#160;" 
-				styleClass="aon-bold" style="position: relative; top: -8px; margin-left: 5px; background-color: white;"/>
+			<aon:outputText value="&#160;&#160;" 
+				styleClass="aon-bold" style="position: relative; top: -8px; margin-left: 5px; "/>
 
 			<aon:div style="margin-left: 10px;">
 				<aon:outputText value="&#160;"/>
@@ -166,5 +157,4 @@
 			</aon:div>
 		</aon:panelGrid>		
 	</aon:div>
-	</aon:panelGrid>
 </ui:composition>

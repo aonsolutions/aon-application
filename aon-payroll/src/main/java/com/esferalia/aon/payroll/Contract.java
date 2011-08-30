@@ -298,5 +298,16 @@ public class Contract implements ITransferObject{
 			return ctx;
 	}
 	
+	
+	@Transient
+	public boolean isActive(Date start, Date end ) {
+		if ( this.startDate.after(end))
+			return false;
+		if ( this.endDate == null ) 
+			return true;
+		if ( this.endDate.before(start) )
+			return false;
+		return true;
+	}
 
 }

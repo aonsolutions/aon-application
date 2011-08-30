@@ -53,7 +53,7 @@ public abstract class SQLCollection <E>  extends AbstractIterator<E>
 	protected String getString(String ...columnLabels) {
 		for (String columnLabel : columnLabels) {
 			String value = getString(columnLabel);
-			if ( value != null ) {
+			if ( value != null && !value.isEmpty() ) {
 				return value;
 			}
 		}

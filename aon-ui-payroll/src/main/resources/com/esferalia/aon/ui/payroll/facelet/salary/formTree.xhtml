@@ -7,10 +7,9 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
-	<ui:define name="content">
-	
+	<ui:define name="header">
+
 		<aon:form id="salaryForm">
-		
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_module}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
@@ -49,8 +48,12 @@
 					<aon:spin id="enterpriseSpin" controller="#{salary}" />
 				</ui:define>				
 			</ui:decorate>		
-
-			<aon:div styleClass="aon-scroll-area">
+		</aon:form>
+		
+	</ui:define>
+		
+	<ui:define name="content">
+			<aon:div style="" >
 				
 				<c:if test="#{salary.model.rowCount == 0}" >
 					<aon:outputText value="#{payrollBundle.payroll_salary_no_salary_exist}" 
@@ -64,7 +67,6 @@
 				</c:if>
 
 			</aon:div>
-		</aon:form>
-		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 	</ui:define>
 </ui:composition>

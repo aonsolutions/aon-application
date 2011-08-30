@@ -7,18 +7,9 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 
-	<aon:panelGrid columns="2" style="width: 1000px;margin-right:10px;"
-		columnClasses="aon-noborder, aon-noborder">
+		<aon:div styleClass="aon-margin-top"  >
 
-		<aon:div style="width: 840px; margin-top: 10px;">
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formBases.xhtml" >
-				<ui:param name="salaryTO" value="#{salaryDraft.salary}" />
-			</ui:include>
-		</aon:div>
-
-		<aon:div style="width: 155px; margin-top: 10px; ">
-
-			<aon:div styleClass="aon-margin-top" 
+			<aon:div styleClass="" 
 				style="width: 100%;background-color: #F6F6F6;">
 
 				<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
@@ -43,7 +34,7 @@
 					<aon:outputText value="&#160;"/>
 			</aon:div>
 			
-			<aon:div style="width: 100%;background-color: #F6F6F6; ">
+			<aon:div style="width: 100%; background-color: #F6F6F6; ">
 
 				<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
 					styleClass="aon-border"
@@ -115,8 +106,5 @@
 			
 		</aon:div>
 
-	</aon:panelGrid>
-	
-	
-
 </ui:composition>
+

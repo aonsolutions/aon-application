@@ -10,8 +10,7 @@
 
 	<ui:define name="content">	
 
-		<aon:form id="enterpriseForm">
-		
+		<aon:form id="enterpriseForm" >
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise_module}" />
 				<ui:param name="toolbarDescription" value="&#160;" />
@@ -70,8 +69,8 @@
 					<aon:spin id="enterpriseSpin" controller="#{enterprise}" />
 				</ui:define>				
 			</ui:decorate>
-			
-			<aon:div styleClass="aon-scroll-area">
+
+			<aon:div styleClass="" >
 				<aon:div styleClass="aon-panelGrid-search" 
 					style="width: 100%; margin-bottom:10px; padding-top:10px; padding-left:10px;">
 						
@@ -158,7 +157,7 @@
 				</aon:panelGrid>
 	
 			</aon:div>
-		</aon:form>		
+		
 		
 		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/expenseModal.xhtml" />
 		
@@ -168,6 +167,7 @@
 			<ui:param name="lookupDisabled" value="true" />
 		</ui:include>
 	
+		</aon:form>		
 		
 	</ui:define>
 

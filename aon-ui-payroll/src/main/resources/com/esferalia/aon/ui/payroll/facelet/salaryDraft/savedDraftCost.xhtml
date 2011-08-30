@@ -7,15 +7,7 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<aon:panelGrid columns="2" style="width: 1000px;margin-right:10px;"
-		columnClasses="aon-noborder, aon-noborder">
-	
-		<aon:div style="width: 840px; margin-top: 10px;">
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cost/gridContent.xhtml" >
-				<ui:param name="sortedSalaryCosts" value="#{draftSortedSalaryCosts}" />
-				<ui:param name="total" value="#{salaryDraft.salary.totalEnterprise}" />
-			</ui:include>
-		</aon:div>
-	
-	</aon:panelGrid>
+	<aon:div styleClass="aon-border aon-margin-top" style="background-color: #F6F6F6;">
+	</aon:div> 
+
 </ui:composition>

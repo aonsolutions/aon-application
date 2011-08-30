@@ -7,32 +7,13 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<aon:panelGrid columns="2" style="width: 1000px;"
-		columnClasses="aon-noborder, aon-noborder">
-	
-	<aon:div styleClass="aon-width-all aon-text-center aon-bold aon-italic" style="text-transform:uppercase;">
-		<aon:outputText value="#{payrollBundle.payroll_salary_draft}"/>
-	</aon:div>
-	<aon:div styleClass="aon-width-all aon-text-center aon-bold aon-italic" style="text-transform:uppercase;">
-		<aon:outputText value="#{payrollBundle.payroll_salary}"/>
-	</aon:div>
-	
-	<aon:div style="width: 840px; margin-top: 10px;">
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/gridContent.xhtml" >
-			<ui:param name="controller" value="#{controller}" />
-			<ui:param name="totalPayment" value="#{totalPayment}" />
-		</ui:include>
-	</aon:div>
-	
-	<aon:div styleClass="aon-margin-top" 
-		style="width: 155px; margin-top: 10px; margin-left: 5px;background-color: #F6F6F6;">
+	<aon:div  styleClass="aon-border aon-margin-top" style="background-color: #F6F6F6;">
 		
 		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
-			styleClass="aon-border"
-			columnClasses="aon-noborder aon-padding-right aon-width-150 aon-text-right aon-bold">
+			columnClasses="aon-noborder aon-padding-right aon-text-right aon-bold">
 			
-			<aon:outputText value="&#160;I. #{payrollBundle.payroll_salary_payments}&#160;" 
-				styleClass="aon-bold aon-padding-left aon-text-left " style="position: relative; top: -8px;  margin-left: 5px; background-color: white;"/>
+			<aon:outputText value="&#160;&#160;" 
+				styleClass="aon-bold aon-padding-left aon-text-left " style="position: relative; top: -8px;  margin-left: 5px; "/>
 
 			<aon:outputText value="&#160;"/>
 			
@@ -197,5 +178,4 @@
 		</aon:panelGrid>		
 	</aon:div>
 
-	</aon:panelGrid>
 </ui:composition>

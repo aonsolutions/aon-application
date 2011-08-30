@@ -3,7 +3,11 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-
+	
+	<style>
+		body { overflow:hidden; }
+	</style>
+	
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 	
 	<ui:include src="/facelet/homepage/menu.xhtml" />
@@ -11,16 +15,75 @@
 	<aon:componentGroup
 		family="javax.faces.Command"
 		rendered="#{aonRole.guest}"
-		method="#{aonRole.renderedCommand}">
+		method="#{aonRole.renderedCommand}"
+		>
 		
-		<aon:panelGrid columns="2" styleClass="aon-width-all"
-			columnClasses="aon-background-shadow aon-width-350 aon-vertical-align-top,aon-vertical-align-top">
-
-			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/tree.xhtml" />
-
-			<ui:insert name="content" />
+		<aon:panelGrid 
+			columns="2"
+			styleClass="aon-width-all"
+			columnClasses="aon-background-shadow aon-width-250 aon-vertical-align-top aon-height-all,
+							aon-vertical-align-top aon-height-all"
+			
+		>
+			
+			<aon:div id="treeLeft" style="overflow:auto;" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/tree.xhtml" />
+			</aon:div>
+			
+			<aon:div>
+				<ui:insert name="header" />
+				<aon:div id="treeRight" style="overflow:auto;" >
+					<ui:insert name="content" />
+				</aon:div>
+			</aon:div>
 
 		</aon:panelGrid>		
+
+
 	</aon:componentGroup>
+
+
+	<script type="text/javascript"> 
+		
+		function getY( element )
+		{
+			var y = 0;
+			while( element != null ) {
+				y += element.offsetTop;
+				element = element.offsetParent;
+			}
+			return y;
+		}
+		
+		function getViewportHeight() {
+ 			var viewportheight;
+ 
+ 			if ( window.innerWidth )
+ 			{
+      			viewportheight = window.innerHeight;
+ 			}
+  			else if ( document.documentElement.clientHeight  )
+ 			{
+       			viewportheight = document.documentElement.clientHeight;
+ 			}
+			else
+ 			{
+       			viewportheight = document.body.clientHeight
+ 			}
+ 			return viewportheight;
+		}
+
+		function resizeTree(event){
+			var viewportheight = getViewportHeight();
+			var left = document.getElementById("aonContent:treeLeft");
+			left.style.height = ( viewportheight - getY(left))  + "px";
+			var right = document.getElementById("aonContent:treeRight");
+			right.style.height = ( viewportheight - getY(right))  + "px";
+		}
+		
+		resizeTree(null);
+		document.body.onresize=resizeTree;
+		
+	</script> 
 
 </ui:composition>

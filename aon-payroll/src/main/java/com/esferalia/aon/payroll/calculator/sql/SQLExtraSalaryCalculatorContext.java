@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import com.code.aon.common.AonException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
+import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
@@ -107,9 +108,11 @@ public class SQLExtraSalaryCalculatorContext implements
 		}
 		
 		Date startDate = 
-			SQLContractExtraCalculatorContext.parseAgreementDate(this.rs.getString(START_DATE), this.year);
+			AgreementExtra.parseAgreementDate(this.rs.getString(START_DATE), this.year);
 		Date endDate  = 
-			SQLContractExtraCalculatorContext.parseAgreementDate(this.rs.getString(END_DATE), this.year);
+			AgreementExtra.parseAgreementDate(this.rs.getString(END_DATE), this.year);
+		Date issueDate  = 
+			AgreementExtra.parseAgreementDate(this.rs.getString(ISSUE_DATE), this.year);
 		
 		if ( startDate.after(endDate)) {
 			return nextContractSalaryCalculatorContext();
@@ -125,7 +128,7 @@ public class SQLExtraSalaryCalculatorContext implements
 				this.connection, 
 				startDate, 
 				endDate, 
-				endDate, 
+				issueDate, 
 				agreementCriteria); 
 		
 		return true;

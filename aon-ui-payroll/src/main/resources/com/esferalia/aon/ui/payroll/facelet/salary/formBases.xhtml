@@ -8,7 +8,7 @@
 
 
 	<aon:div styleClass="aon-margin-top" 
-		style="width: 815px;margin-left: 5px;">
+		style="margin-left: 5px;">
 		
 		<aon:panelGrid columns="2" style="width: 100%;margin-right:10px;"
 			columnClasses="aon-noborder aon-padding-left aon-width-auto
@@ -30,22 +30,28 @@
 		<aon:outputText value="&#160;#{payrollBundle.payroll_salary_bases_desc}:&#160;"/>
 	</aon:div>
 
-	<aon:div style="width: 815px;margin-left: 5px;background-color:#f6f5e3;">
+	<aon:div styleClass="aon-border" style="margin-left: 5px;background-color:#f6f5e3;">
 		
-		<aon:panelGrid columns="2" style="width: 100%;margin-right:10px;"
-			styleClass="aon-border"
+		<aon:panelGrid columns="3" style="width: 100%;margin-right:10px;"
 			columnClasses="aon-noborder aon-padding-left aon-width-auto aon-vertical-align-bottom
-						  ,aon-noborder aon-padding-right aon-width-150 aon-vertical-align-bottom aon-text-right aon-bold">
+						  ,aon-noborder aon-padding-right aon-width-150 aon-text-right aon-vertical-align-bottom
+						  ,aon-noborder aon-padding-right aon-width-150 aon-text-right aon-bold aon-vertical-align-bottom">
+
 		
+			<aon:outputText value="&#160;"/>
 			<aon:outputText value="&#160;"/>
 			<aon:outputText value="&#160;"/>
 
+			<aon:outputText value="&#160;"/>
 			<aon:outputText value="&#160;"/>
 			<aon:outputText value="&#160;"/>
 
 			<aon:div style="margin-left: 20px; border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="#{payrollBundle.payroll_salary_bases_common_remuneration}" />
 			</aon:div>
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
 				<aon:outputText value="#{salaryTO.remuneration}">
@@ -56,6 +62,9 @@
 			<aon:div style="margin-left: 20px; border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="#{payrollBundle.payroll_salary_bases_common_extraPayProration}" />
 			</aon:div>
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
 				<aon:outputText value="#{salaryTO.extraPayProration}">
@@ -66,6 +75,9 @@
 			<aon:div style="margin-left: 500px; border-bottom: solid #CCCCCC 1px; text-align: right;">
 				<aon:outputText value="#{bundle.aon_total}" />
 			</aon:div>
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
 				<aon:outputText value="#{salaryTO.remuneration + salaryTO.extraPayProration}">
@@ -76,6 +88,9 @@
 			<aon:div style="margin-left: 10px;border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="1. #{payrollBundle.payroll_salary_bases_common}" styleClass="aon-bold"/>
 			</aon:div>
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
 				<aon:outputText value="#{salaryTO.commonBase}">
@@ -87,6 +102,9 @@
 				<aon:outputText value="2. #{payrollBundle.payroll_salary_bases_professional}" styleClass="aon-bold"/>
 			</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+			</aon:div>
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
 				<aon:outputText value="#{salaryTO.professionalBase}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
@@ -96,6 +114,9 @@
 			<aon:div style="margin-left: 10px; border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="3. #{payrollBundle.payroll_salary_bases_overtime}" styleClass="aon-bold"/>
 			</aon:div>
+				<aon:div style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
 				<aon:outputText value="#{salaryTO.overtimeBase}">
@@ -106,6 +127,9 @@
 			<aon:div style="margin-left: 10px; ">
 				<aon:outputText value="4. #{payrollBundle.payroll_salary_bases_irpf}" styleClass="aon-bold"/>
 			</aon:div>
+				<aon:div style="">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
 			<aon:div style="">
 				<aon:outputText value="&#160;"/>
 				<aon:outputText value="#{salaryTO.irpfBase}">

@@ -8,74 +8,13 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 
-		<aon:panelGrid columns="2" style="background-color: #F6F6F6; width: 100%;"
-			columnClasses="aon-panelGrid-even aon-vertical-align-top aon-noborder
-			              ,aon-panelGrid-even aon-vertical-align-top aon-noborder">
 
-			<aon:panel style="background-color: #F6F6F6;">
-				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
-				</f:facet>	
-
-				<aon:div styleClass="aon-padding">
-					<aon:div styleClass="aon-bold">
-						<aon:outputText value="#{controller.salary.enterpriseName}"/>
-					</aon:div>
-					<aon:div styleClass="aon-italic">
-						<aon:outputText value="#{companyBundle.company_workplace_address}:"/>
-					</aon:div>
-					<aon:div styleClass="aon-bold">
-						<aon:outputText styleClass="aon-margin-left" value="#{controller.salary.enterpriseAddress}"/>
-					</aon:div>
-					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="#{bundle.aon_company_document}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" 
-							value="#{controller.salary.enterpriseDocument}" />
-					</aon:div>
-					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_ccc}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.ccc}" />
-					</aon:div>
-				</aon:div>
-			</aon:panel>
-
-			<aon:panel style="background-color: #F6F6F6;">
-				<f:facet name="header">
-					<aon:outputText value="#{payrollBundle.payroll_employee_name}" />
-				</f:facet>	
-				<aon:div styleClass="aon-padding aon-nowrap">
-					<aon:div styleClass="aon-bold">
-						<aon:outputText value="#{controller.salary.employeeName}"/>
-					</aon:div>
-					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="#{bundle.aon_person_document}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.employeeDocument}" />
-						<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_registration}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.registration}" />
-					</aon:div>
-					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_ss_number}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.socialSecurityNumber}" />
-					</aon:div>
-					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_category}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.category}" />
-					</aon:div>
-					<aon:div>
-						<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_group_category}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.quoteGroup}"/>
-						<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_seniority_date}:"/>
-						<aon:outputText styleClass="aon-margin-left aon-bold" value="#{controller.salary.seniorityDate}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
-						</aon:outputText>
-					</aon:div>
-				</aon:div>
-			</aon:panel>
-	
-		</aon:panelGrid>
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/header.xhtml">
+			<ui:param name="salary" value="#{controller.salary}" />
+		</ui:include>
 		
-		<aon:div styleClass="aon-margin-top aon-text-right" style="width: 100%;">
-			<h:panelGrid columns="5" style="width: 100%;" >
+		<aon:div styleClass="aon-margin-top aon-text-right" style="width: 815px;">
+			<h:panelGrid columns="5" style="width: 815px;" >
 				<aon:div>
 					<aon:outputText value="#{bundle.aon_type}" styleClass="aon-italic" />
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
@@ -94,13 +33,14 @@
 					</aon:selectOneMenu>
 				</aon:div>
 
-	   			<rich:inputNumberSpinner id="Contract_year" value="#{controller.year}" inputSize="4" minValue="2009" maxValue="2020">
+	   			<rich:inputNumberSpinner id="Contract_year" value="#{controller.year}" inputSize="4" 
+	   				minValue="#{controller.minYear}" maxValue="#{controller.maxYear}">
 	   			  <a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftForm" ajaxSingle="true"/>
 	   			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftForm" ajaxSingle="true" focus="Contract_year"/>
 	   			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftForm" ajaxSingle="true" focus="Contract_year"/>
 	   			</rich:inputNumberSpinner>
 
-				<aon:div>
+				<aon:div style="">
 					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period}"/>
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
 					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period_from}"/>
@@ -118,7 +58,7 @@
 					</aon:outputText>		
 				</aon:div>
 				
-				<aon:div>
+				<aon:div style="">
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
 					<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_days}:"/>
 					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" value="#{controller.salary.timeUnits}"/>

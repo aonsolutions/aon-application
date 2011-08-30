@@ -3,6 +3,8 @@ package com.esferalia.aon.ui.payroll.controller.salary.draft;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +37,10 @@ import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementExtra;
+import com.esferalia.aon.payroll.AgreementLevel;
+import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
@@ -48,6 +53,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.OutOfDateException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.SalarySupplements;
@@ -100,7 +106,7 @@ public class SalaryDraftController extends BasicController {
 		ISalary salary = getSalary();
 		return salary != null ? salary.getIssueDate() : null;
 	}
-
+	
 	public Date getStartDate() {
 		return salary != null ? salary.getStartDate() : null;
 	}
@@ -109,6 +115,28 @@ public class SalaryDraftController extends BasicController {
 		return salary != null ? salary.getEndDate() : null;
 	}
 	
+	public int getMinYear() {
+		if ( this.salaryType  == SalaryType.SETTLE ) {
+			// current year...
+			return Calendar.getInstance().get(Calendar.YEAR);
+		}
+		else {
+			Contract contract = (Contract) getTo();
+			Date startDate = contract.getStartDate();
+			return startDate != null ?
+					CommonUtil.getYear(startDate):
+					Calendar.getInstance().getMinimum(Calendar.YEAR);
+		}
+	}
+	
+	public int getMaxYear() {
+		Contract contract = (Contract) getTo();
+		Date endDate = contract.getEndDate();
+		return endDate != null ?
+				CommonUtil.getYear(endDate):
+				Calendar.getInstance().getMaximum(Calendar.YEAR);
+	}
+
 	public Month getMonth() {
 		return month;
 	}
@@ -367,9 +395,12 @@ public class SalaryDraftController extends BasicController {
 			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_END_DATE), getEndDate());
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), getSalaryType());
 			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				this.dbSalary = (ISalary) list.get(0);
+			if(list.isEmpty()){
+				this.dbSalary = null;
 			} 
+			else {
+				this.dbSalary = (ISalary) list.get(0);
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "Fallo en la obtención de la nómina calculada";
 			AonUtil.addErrorMessage(msg);
@@ -428,138 +459,158 @@ public class SalaryDraftController extends BasicController {
 		Contract contract = (Contract) this.getTo();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		salaryDraftTypes = new LinkedList<SelectItem>();
-		for( SalaryType salaryType : SalaryType.values() ) {
-			if(salaryType==SalaryType.SETTLE){
-				if(contract.getEndDate()!=null){
-					String name = salaryType.getName(locale);
-					SelectItem item = new SelectItem(salaryType, name);
-					salaryDraftTypes.add(item);			
-				}
-			}else if(salaryType!=SalaryType.NOT_ENJOYED_VACATIONS){
+		SalaryType types [] = {SalaryType.SALARY, 
+					SalaryType.EXTRA, 
+					SalaryType.DELAY,
+					SalaryType.SETTLE};
+		for( SalaryType salaryType : types ) {
 				String name = salaryType.getName(locale);
 				SelectItem item = new SelectItem(salaryType, name);
 				salaryDraftTypes.add(item);			
-			}
 		}
 		return salaryDraftTypes;
 	}
 	
 	private void rebuildDraftMonths(){
-		draftMonths = new LinkedList<SelectItem>();
-		if(getSalaryType()==SalaryType.SALARY){
-			draftMonths.addAll(getSalaryMonths());
-		} else if(getSalaryType()==SalaryType.EXTRA){
-			draftMonths.addAll(getExtraMonths());
-		} else if(getSalaryType()==SalaryType.SETTLE){
-			draftMonths.addAll(getSettleMonths());
-		} else if(getSalaryType()==SalaryType.DELAY){
-			draftMonths.addAll(getDelayMonths());
-		}
-	}
-	
-	private List<SelectItem> getDelayMonths() {
-		// TODO no implementado
-		AonUtil.addErrorMessage("no implementado");
-		return new LinkedList<SelectItem>();
-	}
-	
-	private List<SelectItem> getSettleMonths() {
-		try {
-			Contract contract = (Contract) this.getTo();
-			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), SalaryType.SETTLE);
-			List<ITransferObject> salaries = bean.getList(criteria);
-			if(salaries.isEmpty()){
-				return new LinkedList<SelectItem>();
-			} else {
-				List<SelectItem> list = new LinkedList<SelectItem>();				
-				Salary settle = (Salary) salaries.get(0);
-				Month m = Month.getMonthByValue(settle.getIssueMonth()-1);
-				Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-				String name = m.getName(locale);
-				SelectItem item = new SelectItem(m, name);
-				list.add(item);
-				setYear(settle.getIssueYear());
-				setMonth(Month.getMonthByValue(settle.getIssueMonth()-1));
-				return list;
+		
+		// fix year, if it's out of range
+		this.year = Math.max(this.year, getMinYear());
+		this.year = Math.min(this.year, getMaxYear());
+		
+		List<Month> availableMonths ;
+
+		SalaryType salaryType = getSalaryType();
+		
+		availableMonths = 
+			salaryType.accept(new SalaryTypeVisitor<List<Month>>() {
+				@Override
+				public List<Month> visitSalary(SalaryType salaryType) {
+					return getSalaryMonths();
+				}
+				@Override
+				public List<Month> visitDelay(SalaryType salaryType) {
+					return getSalaryMonths();
+				}
+				@Override
+				public List<Month> visitExtra(SalaryType salaryType) {
+					return getExtraMonths();
+				}
+				@Override
+				public List<Month> visitSettle(SalaryType salaryType) {
+					return getSettleMonths();
+				}
+				@Override
+				public List<Month> visitNotEnjoyedVacations(
+						SalaryType salaryType) {
+					AonUtil.addErrorMessage("no implementado");
+					return Collections.emptyList();
+				}
+		});
+		
+		Collections.sort(availableMonths);
+		
+		// fix month, if it's out of range 
+		if ( !availableMonths.contains(month) ){
+			if ( availableMonths.isEmpty() ) {
+				this.month = null;
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> getSettleMonths exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
+			else {
+				int index = Collections.binarySearch(availableMonths, month);
+				int insertIndex = -( index + 1);
+				this.month = availableMonths.get(Math.min(insertIndex, availableMonths.size()-1));
+			}
+		}
+		
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		draftMonths = new LinkedList<SelectItem>();
+		for (Month month : availableMonths) {
+			draftMonths.add(new SelectItem(month, month.getName(locale)));
 		}
 	}
-	private List<SelectItem> getExtraMonths() {
-		List<SelectItem> list = new LinkedList<SelectItem>();
-		List<Month> months = new LinkedList<Month>();
+	
+	
+	private List<Month> getSettleMonths() {
 		Contract contract = (Contract) this.getTo();
+		Date contractStart = contract.getStartDate();
+		Date contractEnd = contract.getEndDate();
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, this.year);
+		Date draftStart = calendar.getTime(); 
+
+		calendar.set(Calendar.MONTH, calendar.getActualMaximum(Calendar.MONTH));
+		Date draftEnd = calendar.getTime(); 
+		
+		Date start = contractStart.after(draftStart) ? contractStart : draftStart;
+		Date end = contractEnd != null && contractEnd.before(draftEnd) ? contractEnd : draftEnd;
+		
+		List<Month> months = new LinkedList<Month>();
+		for ( int month = CommonUtil.getMonth(start);
+			month <= CommonUtil.getMonth(end); 
+			month++ )
+		{
+			months.add(Month.getMonthByValue(month));
+		}
+		return months;
+	}
+	private List<Month> getExtraMonths() {
+		Contract contract = (Contract) this.getTo();
+
+		List<Month> months = new LinkedList<Month>();
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
 			Criteria criteria = new Criteria();
+			AgreementLevelCategory category = contract.getAgreementLevelCategory();
+			AgreementLevel level = category.getLevel();
+			Agreement agreement = level.getAgreement(); 
+
+			IManagerBean bean = BeanManager.getManagerBean(AgreementExtra.class);
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_EXTRA_AGREEMENT_ID), 
-					contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+					agreement.getId());
+			
 			for(ITransferObject to: bean.getList(criteria)){
-				AgreementExtra agreementExtra = (AgreementExtra) to;
-				AgreementPayment extraPayment = agreementExtra.getAgreementPayment();
-				if(extraPayment.getSalaryType() == SalaryType.EXTRA){
-					Month paymentMonth = extraPayment.getMonth();
-					months.add(paymentMonth);
+				AgreementExtra extra = (AgreementExtra) to;
+				Date extraStart = extra.getStartDate(year);
+				Date extraEnd = extra.getEndDate(year);
+				if ( contract.isActive(extraStart, extraEnd))
+				{
+					Date extraDate = extra.getIssueDate(year);
+					int extraMonth = CommonUtil.getMonth( extraDate ); 
+					months.add( Month.getMonthByValue(extraMonth));
 				}
 			}
-			for(Month m: months){
-				String name = m.getName(locale);
-				SelectItem item = new SelectItem(m, name);
-				list.add(item);
-			}
-			if(!months.isEmpty() && !months.contains(getMonth())){
-				setMonth(months.get(months.size()-1));
-			}
+
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> getExtraMonths exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-		return list;
+		return months;
 	}
-	private List<SelectItem> getSalaryMonths() {
-		List<SelectItem> list = new LinkedList<SelectItem>();
+	
+	private List<Month> getSalaryMonths() {
 		Contract contract = (Contract) this.getTo();
-		int maxMonth=11;
-		int skipMonth=0;
-		if(contract.getEndDate()!=null){
-			Date contractStart = contract.getStartDate();
-			Date contractEnd = contract.getEndDate();
-			if( CommonUtil.getYear(contractEnd) < getYear()
-					&& CommonUtil.getYear(contractStart) > getYear() ){
-				maxMonth=11;
-			}else if( CommonUtil.getYear(contractEnd)==getYear() ){
-				maxMonth = CommonUtil.getMonth(contractEnd);
-				if(getMonth().ordinal()>CommonUtil.getMonth(contractEnd)){
-					setMonth(Month.getMonthByValue(CommonUtil.getMonth(contractEnd)));
-				} else if(getMonth().ordinal()<CommonUtil.getMonth(contractStart)){
-					setMonth(Month.getMonthByValue(CommonUtil.getMonth(contractStart)));
-				}
-			}else{
-				maxMonth=-1;
-			}
-			if( CommonUtil.getYear(contractStart) == getYear() ){
-				skipMonth = CommonUtil.getMonth(contractStart);
-			}
-		} 
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		for(int i=0; i<=maxMonth; i++){
-			if(skipMonth>0){
-				skipMonth--;
-			}else{
-				String name = Month.getMonthByValue(i).getName(locale);
-				SelectItem item = new SelectItem(Month.getMonthByValue(i), name);
-				list.add(item);
-			}
+		Date contractStart = contract.getStartDate();
+		Date contractEnd = contract.getEndDate();
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, this.year);
+		calendar.set(Calendar.MONTH, calendar.getActualMinimum(Calendar.MONTH));
+		Date draftStart = calendar.getTime(); 
+
+		calendar.set(Calendar.MONTH, calendar.getActualMaximum(Calendar.MONTH));
+		Date draftEnd = calendar.getTime(); 
+		
+		Date start = contractStart.after(draftStart) ? contractStart : draftStart;
+		Date end = contractEnd != null && contractEnd.before(draftEnd) ? contractEnd : draftEnd;
+		
+		List<Month> months = new LinkedList<Month>();
+		for ( int month = CommonUtil.getMonth(start);
+			month <= CommonUtil.getMonth(end); 
+			month++ )
+		{
+			months.add(Month.getMonthByValue(month));
 		}
-		return list;
+		return months;
 	}
 	
 	public void onSaveSalary(ActionEvent event){

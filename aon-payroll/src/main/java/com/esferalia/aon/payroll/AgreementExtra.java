@@ -2,6 +2,9 @@ package com.esferalia.aon.payroll;
 
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,12 +24,16 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.Month;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 
 @Entity
 @Table(name="agreement_extra")
 public class AgreementExtra implements ITransferObject {
 
 	private static final long serialVersionUID = -3253265204034502980L;
+
+	private static final Pattern AGREEMENT_DATE_PATTERN = 
+		Pattern.compile("(\\d+)/(\\d+)\\s*\\+?([-]?\\d+)?");
 
 	private Integer id;
 	private Agreement agreement;
@@ -35,6 +42,33 @@ public class AgreementExtra implements ITransferObject {
 	private String endDate;
 	private String issueDate;
 	
+	/**
+	 * 
+	 * @param string dd/mm [year offset]
+	 * @return
+	 */
+	public static Date parseAgreementDate ( String string, int year ) {
+		
+		Matcher matcher = AGREEMENT_DATE_PATTERN.matcher(string);
+		
+		if ( !matcher.matches() ) {
+			throw new  DateFormatException();
+		}
+
+		String days = matcher.group(1);
+		String month = matcher.group(2);
+		String yearOffset = matcher.group(3);
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(days));
+		calendar.set(Calendar.MONTH, Integer.parseInt(month)-1);
+		if ( yearOffset != null ) {
+			year += Integer.parseInt(yearOffset);
+		}
+		calendar.set(Calendar.YEAR,  year );
+		return calendar.getTime();
+	}
+
 	@Id
 	@GeneratedValue
 	@Column(nullable = false)
@@ -74,6 +108,10 @@ public class AgreementExtra implements ITransferObject {
 	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
+	
+	public Date getStartDate(int year ) {
+		return parseAgreementDate(startDate, year);
+	}
 
 	@Column( name = "end_date", length = 32, nullable = false )
     public String getEndDate() {
@@ -83,6 +121,11 @@ public class AgreementExtra implements ITransferObject {
 		this.endDate = endDate;
 	}	
 	
+	public Date getEndDate(int year ) {
+		return parseAgreementDate(endDate, year);
+	}
+	
+	
 	@Column( name = "issue_date", length = 32, nullable = false )
 	public String getIssueDate() {
 		return issueDate;
@@ -91,6 +134,9 @@ public class AgreementExtra implements ITransferObject {
 		this.issueDate = issueDate;
 	}	
 	
+	public Date getIssueDate(int year ) {
+		return parseAgreementDate(issueDate, year);
+	}
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -174,6 +220,7 @@ public class AgreementExtra implements ITransferObject {
 	public void setIssueDateDay(Integer issueDateDay) {
 		issueDate = setDay(issueDate, issueDateDay.toString());
 	}
+	
 	
 	private Integer getMonth(String date){
 		if(date!=null && date.length()>4){
