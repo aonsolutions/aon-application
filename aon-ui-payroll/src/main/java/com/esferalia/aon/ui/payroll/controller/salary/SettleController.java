@@ -7,29 +7,25 @@ import java.util.ResourceBundle;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
@@ -80,45 +76,22 @@ public class SettleController {
 	public void onSelectContract(ActionEvent event){
 		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		controller.onSelect(event);
-		setParams(new SettleParams());
-		getParams().setContract((Contract) controller.getTo());
-		getParams().setSeniorityDate(((Contract) controller.getTo()).getSeniorityDate());
 		initializeParams();
 		initializeConcepts();
 	}
 	
 	public void onGenerate(ActionEvent event){
 		if (settle == null) {
-			finalizeContract();
-			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-			boolean mustCloseSession = HibernateUtil.mustCloseSession();
-			String sessionName = HibernateUtil.getSessionFactoryName();
 			try {
-				try {
-					HibernateUtil.setBeginTransaction(false);
-					HibernateUtil.setCloseSession(false);
-					HibernateUtil.beginTransaction(sessionName);
-					// BEGIN operaciones de la transaccion
-					saveSettlePayments();
-					generateSettle();
-					// FIN operaciones de la transaccion
-					HibernateUtil.getSession(sessionName).flush();
-					HibernateUtil.commitTransaction(sessionName);
-				} catch (Exception e) {
-					String msg = e.getMessage();
-					try {
-						HibernateUtil.rollbackTransaction(sessionName);
-					} catch (DAOException daoe) {
-						msg = "Unable to rollback transaction! (" + msg + ")";
-					}
-					AonUtil.addErrorMessage(msg);
-					throw new AbortProcessingException(e);
-				} finally {
-					HibernateUtil.closeSession(sessionName);
-				}
-			} finally {
-				HibernateUtil.setCloseSession(mustCloseSession);
-				HibernateUtil.setBeginTransaction(mustBeginTransaction);
+				saveSettlePayments();
+				generateSettle();
+				finalizeContract();
+			} catch (ManagerBeanException e) {
+				LOGGER.error(">>>> onGenerate ",e);
+				throw new AbortProcessingException(e.getMessage(), e);
+			} catch (SalaryException e) {
+				LOGGER.error(">>>> onGenerate ",e);
+				throw new AbortProcessingException(e.getMessage(), e);
 			}
 		}
 	}
@@ -128,6 +101,8 @@ public class SettleController {
 			SalaryDraftController controller = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 			controller.setSalaryType(SalaryType.SETTLE);
 			controller.select(event, getParams().getContract().getId());
+			controller.setYear(CommonUtil.getYear(getParams().getSuspensionDate()));
+			controller.setMonth(Month.getMonthByValue(CommonUtil.getMonth(getParams().getSuspensionDate())));
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectSettleDraft ",e);
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -135,37 +110,48 @@ public class SettleController {
 	}
 	
 	private void initializeParams() {
-		// TODO inicializar los parametros obteniendo los datos del calculador
-		// salario diario, importe dia vacacion, etc.
+		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		setParams(new SettleParams((Contract) controller.getTo()));
 	}
 	
 	private void initializeConcepts() {
 		try {
 			IManagerBean dataBean = BeanManager.getManagerBean(ApplicationParameter.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(dataBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), PayrollAppParamsController.SETTLE_CONCEPT);
+			criteria.addEqualExpression(dataBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), PayrollAppParamsController.SETTLE_VACATION_CONCEPT);
+			criteria.addOrExpression(dataBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), PayrollAppParamsController.SETTLE_NOTICE_DAY_CONCEPT);
+			criteria.addOrExpression(dataBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), PayrollAppParamsController.SETTLE_COMPENSATION_CONCEPT);
 			List<ITransferObject> list = dataBean.getList(criteria);
 			if(!list.isEmpty()){
-				ApplicationParameter ap = (ApplicationParameter) list.get(0);
-				if(ap.getValue()!=null && !ap.getValue().isEmpty()){
-					IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
-					criteria = new Criteria();
-					criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(ap.getValue()));
-					PaymentConcept pc = (PaymentConcept) bean.getList(criteria).get(0);
-					setNoticeDayConcept(pc);
-					setVacationConcept(pc);
-					setCompensationConcept(pc);
+				for(ITransferObject to: list){
+					ApplicationParameter ap = (ApplicationParameter) to;
+					if(ap.getValue()!=null && !ap.getValue().isEmpty()){
+						IManagerBean bean = BeanManager.getManagerBean(PaymentConcept.class);
+						criteria = new Criteria();
+						criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYMENT_CONCEPT_ID), Integer.parseInt(ap.getValue()));
+						PaymentConcept pc = (PaymentConcept) bean.getList(criteria).get(0);
+						if(ap.getName().equals(PayrollAppParamsController.SETTLE_VACATION_CONCEPT)){
+							setVacationConcept(pc);
+						} else if(ap.getName().equals(PayrollAppParamsController.SETTLE_NOTICE_DAY_CONCEPT)){
+							setNoticeDayConcept(pc);
+						} else if(ap.getName().equals(PayrollAppParamsController.SETTLE_COMPENSATION_CONCEPT)){
+							setCompensationConcept(pc);
+						}
+					}
 				}
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> getSalaryTemplate ",e);
+			LOGGER.error(">>>> initializeConcepts ",e);
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (ExpressionException e) {
+			LOGGER.error(">>>> initializeConcepts ",e);
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
 	
 	private void saveSettlePayments() throws ManagerBeanException {
 		String bundleMsg = ResourceBundle.getBundle(IPayrollConstants.BUNDLE_BASE_NAME).getString(IPayrollConstants.PAYROLL_SETTLE_NOTICE_DAY_AMOUNT);
-		saveSettlePayment(getNoticeDayConcept(), getParams().getNoticeDayAmount(), bundleMsg);
+		saveSettlePayment(getNoticeDayConcept(), getParams().getNoticeAmount(), bundleMsg);
 		bundleMsg = ResourceBundle.getBundle(IPayrollConstants.BUNDLE_BASE_NAME).getString(IPayrollConstants.PAYROLL_SETTLE_VACATION_AMOUNT);
 		saveSettlePayment(getVacationConcept(), getParams().getVacationAmount(), bundleMsg);
 		bundleMsg = ResourceBundle.getBundle(IPayrollConstants.BUNDLE_BASE_NAME).getString(IPayrollConstants.PAYROLL_SETTLE_COMPENSATION);
@@ -173,37 +159,37 @@ public class SettleController {
 	}
 	
 	private void saveSettlePayment(PaymentConcept pc, Double amount, String description) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
-		ContractPayment payment = new ContractPayment();
-		payment.setContract(getParams().getContract());
-		payment.setSalaryType(SalaryType.SETTLE);
-		payment.setPaymentConcept(pc);
-		payment.setStartDate(getParams().getSuspensionDate());
-		payment.setEndDate(getParams().getSuspensionDate());
-		payment.setType(PaymentType.COMPENSATION_OR_PREPAID_EXPENSES);
-		payment.setExpression(amount.toString());
-//		payment.setIrpfExpression("0.00");
-//		payment.setQuoteExpression("0.00");
-		payment.setDescription(description);
-		bean.insert(payment);
+		if(amount!=0){
+			IManagerBean bean = BeanManager.getManagerBean(ContractPayment.class);
+			ContractPayment payment = new ContractPayment();
+			payment.setContract(getParams().getContract());
+			payment.setSalaryType(SalaryType.SETTLE);
+			payment.setPaymentConcept(pc);
+			payment.setStartDate(getParams().getSuspensionDate());
+			payment.setEndDate(getParams().getSuspensionDate());
+			payment.setType(PaymentType.COMPENSATION_OR_PREPAID_EXPENSES);
+			payment.setExpression(amount.toString());
+//			payment.setIrpfExpression("0.00");
+//			payment.setQuoteExpression("0.00");
+			payment.setDescription(description);
+			bean.insert(payment);
+		}
 	}
 		
-	private void generateSettle() throws ManagerBeanException {
+	private void generateSettle() throws SalaryException {
 		try {
-			ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
-			Contract contract = (Contract) controller.getTo();
-			//Date startDate = getParams().getSuspensionDate(); 
+			Contract contract = getParams().getContract();
 			Date endDate = getParams().getSuspensionDate();
-			//Date issueDate = getParams().getSuspensionDate(); 
 			int year = CommonUtil.getYear(endDate);
 			int month = CommonUtil.getMonth(endDate);
-			ISalaryCalculatorContext ctx = 
-				contract.getSalaryCalculatorContext(year, Month.values()[month], SalaryType.SETTLE);
+			ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(year, Month.values()[month], SalaryType.SETTLE);
 			settle = (Salary) ctx.getSalaryProxy().getSalary();
-			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			settle.setNonEstructuralOvertimeBase(0.0);
+			settle.setContract(contract);
+			
+			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			bean.insert((ITransferObject) settle);
-		}catch (AonException e) {
+		}catch (ManagerBeanException e) {
 			String msg = "Error en el calculo del finiquito";
 			AonUtil.addErrorMessage(msg);
 			LOGGER.error(msg);

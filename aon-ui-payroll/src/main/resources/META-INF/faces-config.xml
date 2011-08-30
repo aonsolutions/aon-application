@@ -1650,6 +1650,7 @@
 	</managed-bean>
 	
 	<!--  *************** ACCOUNT APP PARAMS ***************** -->
+	<!--  name max length is 32 -->
 	<managed-bean>
 		<managed-bean-name>payrollAppParams</managed-bean-name>
 		<managed-bean-class>
@@ -1669,7 +1670,15 @@
 					<value>[NULL]</value>
 				</map-entry>
 				<map-entry>
-					<key>PAY_settle_concept_PAY</key>
+					<key>PAY_settle_vacation_concept_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>PAY_settle_noticeDay_concept_PAY</key>
+					<value>[NULL]</value>
+				</map-entry>
+				<map-entry>
+					<key>PAY_settle_compens_concept_PAY</key>
 					<value>[NULL]</value>
 				</map-entry>
 			</map-entries>

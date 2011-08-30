@@ -14,6 +14,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSettleCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
@@ -286,8 +287,25 @@ public class ContractSalaryCalculatorContext
 		@Override
 		public ISQLContractSalaryCalculatorContext visitSettle(
 				SalaryType salaryType) {
-			// TODO Auto-generated method stub
-			return null;
+			Date startDate = getStartDate();
+			Date endDate = getEndDate();
+			Date issueDate = endDate; // By default isuue date is equal to end date
+			Connection connection = getConnection();
+			Criteria criteria = getCriteria();
+			ISQLContractSalaryCalculatorContext sqlCtx = null;
+			try {
+				sqlCtx = new SQLContractSettleCalculatorContext(
+						connection, 
+						startDate, 
+						endDate, 
+						issueDate, 
+						criteria);
+			}catch (SQLException e) {
+				throw new RuntimeException(e);
+			}catch (ExpressionException e) {
+				throw new RuntimeException(e);
+			} 
+			return sqlCtx;
 		}
 
 		@Override
