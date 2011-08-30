@@ -103,7 +103,7 @@
 			nodeFace="#{item.folderTypeName}">
 			<ui:decorate template="/com/code/aon/ui/webmail/facelet/webmailTree/treeNodes.xhtml" >
 				<ui:define name="nodeContent">
-					<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
+					<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}" rendered="#{webmail.enableDragAndDrop}"
 						dropListener="#{webmailFolder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 					<aon:outputText 
 		               	value="#{item.name} (#{item.unreadMessageCount})"

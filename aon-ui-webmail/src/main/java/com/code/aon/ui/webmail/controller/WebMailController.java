@@ -55,6 +55,8 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 	
 	private int maxAttachmentSize;
 	
+	private boolean enableDragAndDrop;
+	
 	public WebMailController() {
 		startWebmail();
 	}
@@ -232,6 +234,7 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		for( int i = 0; i < rejectedExtensions.size(); i++ ) {
 			rejectedExtensions.set(i, rejectedExtensions.get(i).toLowerCase());
 		}
+		setEnableDragAndDrop(!AonUtil.isChrome());
 	}
 
 	public String isValidFile( AonFile file ) {
@@ -263,6 +266,14 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
     	if ( isLogged() ) {
     		getServer().disconnect();
     	}
-    }	
-	
+    }
+
+	public boolean isEnableDragAndDrop() {
+		return enableDragAndDrop;
+	}
+
+	public void setEnableDragAndDrop(boolean enableDragAndDrop) {
+		this.enableDragAndDrop = enableDragAndDrop;
+	}	
+    
 }

@@ -11,7 +11,7 @@
 	</c:if>
 
 	<c:if test="#{webmail.logged}" >
-		<rich:dragIndicator id="messageIndicator">
+		<rich:dragIndicator id="messageIndicator" rendered="#{webmail.enableDragAndDrop}">
 			<f:facet name="single">
 				<aon:outputText value="&#160;"
 					styleClass="aon-icon aon-icon-mailInbox-read"

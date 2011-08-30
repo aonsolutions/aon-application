@@ -41,7 +41,7 @@
 							
 						<aon:column id="stateColumn" label="#{webmailBundle.webmail_message_selectEmail}"
 							styleClass="aon-nopadding aon-nomargin" width="70px" >
- 							<rich:dragSupport id="messageDrag"
+ 							<rich:dragSupport id="messageDrag" rendered="#{webmail.enableDragAndDrop}"
  								dragIndicator="messageIndicator" dragType="MESSAGE" dragValue="#{to}" />							
 							<f:facet name="header" >
 								<aon:div layout="none">

@@ -583,16 +583,37 @@ public class AonUtil {
     	}
     	return value;
     }
+    
+    private static String getUserAgent() {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	return context.getExternalContext().getRequestHeaderMap().get("User-Agent");
+    }
 
+    /**
+     * Checks if is Internet Explorer.
+     *
+     * @return true, if is Internet Explorer
+     */
+    public static boolean isMSIE() {
+		return StringUtils.contains(getUserAgent(), "MSIE");
+    }
+
+    /**
+     * Checks if is Google Chrome.
+     *
+     * @return true, if is Google Chrome
+     */
+    public static boolean isChrome() {
+		return StringUtils.contains(getUserAgent(), "Chrome");
+    }
+    
 	/**
 	 * Checks if is apple device.
 	 *
 	 * @return true, if is apple device
 	 */
 	public static boolean isAppleDevice() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		ExternalContext ectx = context.getExternalContext();
-		String userAgent = ectx.getRequestHeaderMap().get("user-agent");
+		String userAgent = getUserAgent();
 		return StringUtils.contains(userAgent, "iPad") ||
 				StringUtils.contains(userAgent, "iPod") ||
 				StringUtils.contains(userAgent, "iPhone");

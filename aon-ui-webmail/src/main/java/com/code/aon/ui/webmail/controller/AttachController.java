@@ -22,7 +22,6 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 import com.code.aon.webmail.WebmailException;
 import com.code.aon.webmail.bean.AonAttachment;
@@ -99,12 +99,6 @@ public class AttachController {
 		}
     }
     
-    private boolean isMSIE() {
-    	FacesContext context = FacesContext.getCurrentInstance();
-    	String browser = context.getExternalContext().getRequestHeaderMap().get("User-Agent");
-		return StringUtils.containsIgnoreCase(browser, "msie");
-    }
-    
     public void downloadZippedAttachments( ActionEvent event ) {
 		HttpServletResponse response = null;
 		OutputStream out = null;
@@ -137,7 +131,7 @@ public class AttachController {
         	out = DownloadUtil.initDownload(response, ATTACHMENTS_FILE_NAME, MimeType.MIME_ZIP, size);
 	        // Unico Content-Type que soporta Firefox para ficheros comprimidos
 	        response.setContentType("application/x-zip-compressed");
-	        if ( isMSIE() ) {
+	        if ( AonUtil.isMSIE() ) {
 	        	response.setHeader("Content-Encoding", "deflate");
 	        }			
             InputStream fileIn = new BufferedInputStream( new FileInputStream(tempFile) );
