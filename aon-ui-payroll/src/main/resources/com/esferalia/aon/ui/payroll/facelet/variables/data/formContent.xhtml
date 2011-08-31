@@ -34,9 +34,9 @@
 		
 		<aon:outputLabel for="#{controller.beanName}_name" 
 			value="#{bundle.aon_name}" />
-		<aon:selectOneMenu id="#{controller.beanName}_name" value="#{controller.data.name}">
-			<f:selectItems value="#{controller.newVariableList}"  />
-		</aon:selectOneMenu>
+		<aon:inputText id="#{controller.beanName}_name" required="true"
+			value="#{controller.data.name}" maxlength="128" size="32" 
+			disabled="#{controller.data.id!=null}" />
 
 		<aon:outputLabel for="#{controller.beanName}_expression"
 			value="#{payrollBundle.payroll_salary_expression}" />

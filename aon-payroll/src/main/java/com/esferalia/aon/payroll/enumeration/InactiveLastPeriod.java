@@ -21,7 +21,9 @@ public enum InactiveLastPeriod implements IResourceable {
     
 	LAST_YEAR,
 	
-	ALL
+	ALL,
+	
+	MANUAL
 	
 	;
     

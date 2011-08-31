@@ -67,8 +67,8 @@
 					style="width: 100%; margin-bottom:10px; padding:10px 0 10px 10px; ">
 					<aon:panelGrid columns="3" 
 						columnClasses="aon-panelGrid-odd aon-width-100
-									,aon-panelGrid-odd aon-width-150
-									,aon-panelGrid-odd aon-width-auto">
+									,aon-panelGrid-even aon-width-auto
+									,aon-panelGrid-even aon-width-auto">
 						
 					<aon:outputText value="#{payrollBundle.payroll_data_filter}" styleClass="aon-bold" />
 					
@@ -83,17 +83,8 @@
 					<aon:panelGroup >
 						<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
 							value="#{bundle.aon_end_date}:" />
-						<aon:selectInputDate  
-							disabled="#{contract.searchCurrent}"
-							value="#{contract.inactiveDate}"
-							inputSize="10" renderAsPopup="true" enableManualInput="true"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}">
-							<a4j:support event="onchange" reRender="dataGrid" ignoreDupResponses="true">
-								<aon:actionListener method="#{contract.reloadData}" />
-							</a4j:support>
-						</aon:selectInputDate>
 						<aon:selectOneMenu 
+							styleClass="aon-margin-right"
 							disabled="#{contract.searchCurrent}"
 							value="#{contract.inactiveLastPeriod}" >
 							<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
@@ -102,6 +93,16 @@
 								<aon:actionListener method="#{contract.reloadData}" />
 							</a4j:support>
 						</aon:selectOneMenu>
+						<aon:selectInputDate  
+							disabled="#{!(!contract.searchCurrent and contract.inactiveLastPeriod=='MANUAL')}"
+							value="#{contract.inactiveDate}"
+							inputSize="10" renderAsPopup="true" enableManualInput="true"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="onchanged" reRender="dataGrid" ignoreDupResponses="true">
+								<aon:actionListener method="#{contract.reloadData}" />
+							</a4j:support>
+						</aon:selectInputDate>
 					</aon:panelGroup>
 					
 					</aon:panelGrid>

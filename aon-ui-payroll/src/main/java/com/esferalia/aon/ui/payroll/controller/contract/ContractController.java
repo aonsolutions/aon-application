@@ -623,6 +623,7 @@ public class ContractController extends VariablesAbstractController {
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+			criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME));
 			if(isSearchCurrent()){
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), new Date());
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
@@ -648,6 +649,7 @@ public class ContractController extends VariablesAbstractController {
 				AgreementLevel level = contract.getAgreementLevelCategory().getLevel();
 				criteria = new Criteria();
 				criteria.addEqualExpression(label, level.getId());
+				criteria.addOrder(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_NAME));
 				list = bean.getList(criteria);
 				if(!list.isEmpty()){
 					for(ITransferObject to: list){
