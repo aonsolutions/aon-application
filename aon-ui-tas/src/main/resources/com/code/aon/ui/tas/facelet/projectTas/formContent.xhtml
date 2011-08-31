@@ -34,15 +34,6 @@
 									value="#{controller.to.referenceCode}"
 									rendered="#{!controller.new}" />
 							</aon:div>
-							<aon:div>
-								<aon:outputText value="#{controller.to.status}"
-									styleClass="aon-bold aon-margin-right" />
-								<aon:outputText value="#{controller.to.statusDate}"
-									styleClass="aon-bold">
-									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:outputText>
-							</aon:div>
 						</aon:panelGrid>
 
 						<aon:outputLabel for="ProjectTas_project_date"
@@ -133,6 +124,12 @@
 							disabled="#{controller.finished}">
 							<f:selectItems value="#{companyCollections.workPlaces}" />
 						</aon:selectOneMenu>
+
+						<aon:outputLabel for="ProjectTas_status" value="#{bundle.aon_status}" />
+						<aon:selectOneRadio id="ProjectTas_status"
+							value="#{controller.to.status}">
+							<f:selectItems value="#{tasCollections.projectStatuses}" />
+						</aon:selectOneRadio>					
 
 						<aon:outputLabel for="ProjectTas_comments" value="#{bundle.aon_description}" />
 						<aon:inputTextarea id="ProjectTas_comments" 
