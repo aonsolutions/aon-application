@@ -18,6 +18,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.ui.payroll.controller.contract.IrpfDataController;
 
 public class IrpfDataControllerListener extends ControllerAdapter{
 	
@@ -33,6 +34,12 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
 		closePrevious();
+	}
+	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		((IrpfDataController)getController()).onCalculateIrpf(null);
 	}
 	
 	private void closePrevious() {

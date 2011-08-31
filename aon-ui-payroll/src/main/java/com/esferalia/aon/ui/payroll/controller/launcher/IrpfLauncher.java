@@ -29,6 +29,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
+import com.esferalia.aon.ui.payroll.controller.contract.IrpfDataController;
 import com.esferalia.aon.ui.payroll.controller.launcher.ListIrpfBuilderListener.LogMessage;
 
 
@@ -102,8 +103,12 @@ public class IrpfLauncher extends AbstractIrpfLauncher {
 	}
 	
 	public void onIrpfUpdate(ActionEvent event) {
+		IrpfDataController controller = (IrpfDataController) FormUtil.getController(IPayrollConstants.IRPF_DATA_CONTROLLER_NAME);
+		controller.getParams().setContractId(contractId);
+		controller.getParams().setDate(getParams().getDate());
+		controller.getParams().setNewIrpf(Double.parseDouble(irpf));
 		try {
-			if(updateIrpf()){
+			if(controller.updateIrpf()){
 				ListIrpfBuilderListener.LogMessage msg = (LogMessage) getMessage();
 				msg.getLevel();
 				msg.setLevel(SalaryBuilderListenerLevel.INFO);
@@ -115,64 +120,64 @@ public class IrpfLauncher extends AbstractIrpfLauncher {
 		}
 	}
 	
-	private boolean updateIrpf() throws ManagerBeanException{
-		IManagerBean dataBean = BeanManager.getManagerBean(ContractData.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contractId);
-		criteria.addEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), ContractVariables.IRPF_PERCENT.getName());
-		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), getParams().getDate());
-		Expression expr2 = ExpressionUtilities.getNullExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
-		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
-		criteria.addOrder(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE), false);
-		List<ITransferObject> list = dataBean.getList(criteria);
-		ContractData existingData = (ContractData) list.get(0);
-		if(!existingData.getExpression().equals(irpf)){
-			// se crea el nuevo irpf
-			ContractData data = new ContractData();
-			data.setContract(existingData.getContract());
-			data.setStartDate(getParams().getDate());
-			data.setEndDate(null);
-			data.setName(ContractVariables.IRPF_PERCENT.getName());
-			data.setExpression(irpf);
-			// se cierra el irpf anterior
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(getParams().getDate());
-			cal.add(Calendar.DAY_OF_MONTH, -1);
-			existingData.setEndDate(cal.getTime());
-			// inicio de la transaccion
-			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
-			boolean mustCloseSession = HibernateUtil.mustCloseSession();
-			String sessionName = HibernateUtil.getSessionFactoryName();
-			try {
-				try {
-					HibernateUtil.setBeginTransaction(false);
-					HibernateUtil.setCloseSession(false);
-					HibernateUtil.beginTransaction(sessionName);
-					// BEGIN operaciones de la transaccion
-					dataBean.update(existingData);
-					dataBean.insert(data);
-					// FIN operaciones de la transaccion
-					HibernateUtil.getSession(sessionName).flush();
-					HibernateUtil.commitTransaction(sessionName);
-				} catch (Exception e) {
-					String msg = e.getMessage();
-					try {
-						HibernateUtil.rollbackTransaction(sessionName);
-					} catch (DAOException daoe) {
-						msg = "Unable to rollback transaction! (" + msg + ")";
-					}
-					AonUtil.addErrorMessage(msg);
-					return false;
-				} finally {
-					HibernateUtil.closeSession(sessionName);
-				}
-			} finally {
-				HibernateUtil.setCloseSession(mustCloseSession);
-				HibernateUtil.setBeginTransaction(mustBeginTransaction);
-			}
-		}
-		return true;
-	}
+//	private boolean updateIrpf() throws ManagerBeanException{
+//		IManagerBean dataBean = BeanManager.getManagerBean(ContractData.class);
+//		Criteria criteria = new Criteria();
+//		criteria.addEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contractId);
+//		criteria.addEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), ContractVariables.IRPF_PERCENT.getName());
+//		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), getParams().getDate());
+//		Expression expr2 = ExpressionUtilities.getNullExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
+//		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
+//		criteria.addOrder(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE), false);
+//		List<ITransferObject> list = dataBean.getList(criteria);
+//		ContractData existingData = (ContractData) list.get(0);
+//		if(!existingData.getExpression().equals(irpf)){
+//			// se crea el nuevo irpf
+//			ContractData data = new ContractData();
+//			data.setContract(existingData.getContract());
+//			data.setStartDate(getParams().getDate());
+//			data.setEndDate(null);
+//			data.setName(ContractVariables.IRPF_PERCENT.getName());
+//			data.setExpression(irpf);
+//			// se cierra el irpf anterior
+//			Calendar cal = Calendar.getInstance();
+//			cal.setTime(getParams().getDate());
+//			cal.add(Calendar.DAY_OF_MONTH, -1);
+//			existingData.setEndDate(cal.getTime());
+//			// inicio de la transaccion
+//			boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
+//			boolean mustCloseSession = HibernateUtil.mustCloseSession();
+//			String sessionName = HibernateUtil.getSessionFactoryName();
+//			try {
+//				try {
+//					HibernateUtil.setBeginTransaction(false);
+//					HibernateUtil.setCloseSession(false);
+//					HibernateUtil.beginTransaction(sessionName);
+//					// BEGIN operaciones de la transaccion
+//					dataBean.update(existingData);
+//					dataBean.insert(data);
+//					// FIN operaciones de la transaccion
+//					HibernateUtil.getSession(sessionName).flush();
+//					HibernateUtil.commitTransaction(sessionName);
+//				} catch (Exception e) {
+//					String msg = e.getMessage();
+//					try {
+//						HibernateUtil.rollbackTransaction(sessionName);
+//					} catch (DAOException daoe) {
+//						msg = "Unable to rollback transaction! (" + msg + ")";
+//					}
+//					AonUtil.addErrorMessage(msg);
+//					return false;
+//				} finally {
+//					HibernateUtil.closeSession(sessionName);
+//				}
+//			} finally {
+//				HibernateUtil.setCloseSession(mustCloseSession);
+//				HibernateUtil.setBeginTransaction(mustBeginTransaction);
+//			}
+//		}
+//		return true;
+//	}
 	
 	public void onShowContract(ActionEvent event) {
 		try {

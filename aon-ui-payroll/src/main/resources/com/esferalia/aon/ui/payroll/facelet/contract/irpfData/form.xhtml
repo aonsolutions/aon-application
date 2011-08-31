@@ -20,6 +20,16 @@
 					<ui:param name="controller" value="#{irpfData}" />
 					<ui:param name="skipSpin" value="false" />
 					<ui:param name="skipFocusFirst" value="true" />
+					
+					<ui:define name="beforeSpinToolbarContent">
+						<aon:commandButton 
+							value="#{payrollBundle.payroll_irpfData_update_irpf}"
+							styleClass="aon-finding-toolbar-item aon-icon-sincronize"
+							rendered="#{irpfData.irpfChanged}"
+							actionListener="#{irpfData.onIpdateIrpf}"
+							reRender="aonContent" />
+					</ui:define>
+					
 				</ui:decorate>
 			</aon:div>	
 
@@ -33,13 +43,13 @@
 						<aon:outputText value="#{contract.to.person.registry.fullName}" />
 						
 						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_anual_retribution}" />
-						<aon:outputText value="#{irpfData.grossSalary}" />
+						<aon:outputText value="#{irpfData.params.grossSalary}" />
 
 						<aon:outputLabel value="#{payrollBundle.payroll_enterprise}" />
 						<aon:outputText value="#{contract.to.workPlace.enterprise.registry.fullName}" />
 
 						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_current_irpf}" />
-						<aon:outputText value="#{irpfData.currentIrpf}" />
+						<aon:outputText value="#{irpfData.params.currentIrpf}" />
 						
 						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_date}" />
 						<aon:div>
@@ -57,7 +67,7 @@
 						</aon:div>
 
 						<aon:outputLabel value="#{payrollBundle.payroll_irpfData_calculated_irpf}" />
-						<aon:outputText value="#{irpfData.newIrpf}" />
+						<aon:outputText value="#{irpfData.params.newIrpf}" />
 						
 					</aon:panelGrid>
 				</aon:div>

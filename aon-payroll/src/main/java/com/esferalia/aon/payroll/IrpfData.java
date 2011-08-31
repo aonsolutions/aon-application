@@ -1,13 +1,17 @@
 package com.esferalia.aon.payroll;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -40,6 +44,9 @@ public class IrpfData implements ITransferObject {
 	private Date movingDate;
 	private boolean labourProlongation;
 	private Integer descendientCount;
+	
+	private Set<IrpfDataDescendients> descendients = new HashSet<IrpfDataDescendients>();
+	private Set<IrpfDataAscendants> ascendants = new HashSet<IrpfDataAscendants>();
 	
 	@Id
     @GeneratedValue
@@ -134,6 +141,22 @@ public class IrpfData implements ITransferObject {
 	}
 	public void setDescendientCount(Integer descendientCount) {
 		this.descendientCount = descendientCount;
+	}
+	
+	@OneToMany(mappedBy = "irpfData", cascade={CascadeType.REMOVE})
+	public Set<IrpfDataDescendients> getDescendients() {
+		return this.descendients;
+	}
+	public void setDescendients(Set<IrpfDataDescendients> descendients) {
+		this.descendients = descendients;
+	}
+	
+	@OneToMany(mappedBy = "irpfData", cascade={CascadeType.REMOVE})
+	public Set<IrpfDataAscendants> getAscendants() {
+		return this.ascendants;
+	}
+	public void setAscendants(Set<IrpfDataAscendants> ascendants) {
+		this.ascendants = ascendants;
 	}
 
 	@Override

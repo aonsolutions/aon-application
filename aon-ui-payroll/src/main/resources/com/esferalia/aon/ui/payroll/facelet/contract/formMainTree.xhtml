@@ -22,6 +22,10 @@
 			
 			<aon:div styleClass="aon-panelGrid-search" 
 				style="width: 100%; margin-bottom:10px; padding:10px 0 10px 10px;">
+				<aon:panelGrid columns="3" 
+						columnClasses="aon-panelGrid-odd aon-width-100
+									,aon-panelGrid-odd aon-width-150
+									,aon-panelGrid-odd aon-width-auto">
 					
 				<aon:outputText value="#{payrollBundle.payroll_data_filter}" styleClass="aon-bold" />
 				
@@ -33,27 +37,31 @@
 					</a4j:support>
 				</aon:selectOneRadio>
 				
-				<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
-					value="#{bundle.aon_end_date}:" />
-				<aon:selectInputDate  
-					disabled="#{enterpriseTree.searchCurrent}"
-					value="#{enterpriseTree.inactiveDate}"
-					inputSize="10" renderAsPopup="true" enableManualInput="true"
-					timeZone="#{timeZoneController.timeZone}"
-					popupDateFormat="#{bundle.aon_date_pattern}">
-					<a4j:support event="onchange" reRender="contractMainDataForm" ignoreDupResponses="true">
-						<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
-					</a4j:support>
-				</aon:selectInputDate>
-				<aon:selectOneMenu 
-					disabled="#{enterpriseTree.searchCurrent}"
-					value="#{enterpriseTree.inactiveLastPeriod}" >
-					<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
-					<a4j:support event="onchange" reRender="contractMainDataForm" ignoreDupResponses="true" >
-						<aon:actionListener method="#{enterpriseTree.onChangeLastPeriod}" />
-						<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
-					</a4j:support>
-				</aon:selectOneMenu>
+				<aon:panelGroup >
+					<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
+						value="#{bundle.aon_end_date}:" />
+					<aon:selectInputDate  
+						disabled="#{enterpriseTree.searchCurrent}"
+						value="#{enterpriseTree.inactiveDate}"
+						inputSize="10" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+						<a4j:support event="onchange" reRender="contractMainDataForm" ignoreDupResponses="true">
+							<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
+						</a4j:support>
+					</aon:selectInputDate>
+					<aon:selectOneMenu 
+						disabled="#{enterpriseTree.searchCurrent}"
+						value="#{enterpriseTree.inactiveLastPeriod}" >
+						<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
+						<a4j:support event="onchange" reRender="contractMainDataForm" ignoreDupResponses="true" >
+							<aon:actionListener method="#{enterpriseTree.onChangeLastPeriod}" />
+							<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
+						</a4j:support>
+					</aon:selectOneMenu>
+				</aon:panelGroup>
+				
+				</aon:panelGrid>
 
 			</aon:div>	
 			

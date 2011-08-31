@@ -573,6 +573,7 @@ public class ContractController extends VariablesAbstractController {
 				controller.getModel().setRowIndex(0);
 				controller.onSelect(event);
 			}
+			controller.onCalculateIrpf(event);
 			controller.setBackAction(IPayrollConstants.CONTRACT_FORM_TREE);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onIrpfCalculate exception: ",e);
