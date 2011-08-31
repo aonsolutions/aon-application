@@ -9,6 +9,7 @@ import java.util.Date;
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -230,6 +231,7 @@ public class ContractSalaryCalculatorContext
 
 		private Date getEndDate() {
 			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.DAY_OF_MONTH , 1);
 			calendar.set(Calendar.YEAR , year);
 			calendar.set(Calendar.MONTH , month.getValue());
 			calendar.set(Calendar.DAY_OF_MONTH , 
