@@ -125,8 +125,8 @@ public class ContractBonusController extends ContractDetailAbstractController {
 							data.setContract(contract);
 							data.setName(s);
 							data.setStartDate(startCal.getTime());
-							data.setEndDate(endCal.getTime());
-							ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), new Date(), new Date());
+							data.setEndDate(contract.getEndDate()!=null?contract.getEndDate():endCal.getTime());
+							ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), data.getEndDate(), data.getEndDate());
 							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 							if(o==null){
 								undefined.add(data);

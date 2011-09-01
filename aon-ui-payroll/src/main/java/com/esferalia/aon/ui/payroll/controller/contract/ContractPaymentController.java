@@ -216,9 +216,10 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 		SystemPayment sp = (SystemPayment) p;
 		IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		Contract contract = (Contract) master.getTo();
+		Date date = contract.getEndDate()!=null?contract.getEndDate():new Date();
 		ContractSalaryCalculatorContext ctx;
 		try {
-			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), new Date(), new Date());
+			ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), date, date);
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
 			startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
@@ -272,8 +273,8 @@ public class ContractPaymentController extends ContractDetailAbstractController 
 							data.setContract(contract);
 							data.setName(s);
 							data.setStartDate(startCal.getTime());
-							data.setEndDate(endCal.getTime());
-							ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), new Date(), new Date());
+							data.setEndDate(contract.getEndDate()!=null?contract.getEndDate():endCal.getTime());
+							ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), data.getEndDate(), data.getEndDate());
 							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 							if(o==null){
 								undefined.add(data);
