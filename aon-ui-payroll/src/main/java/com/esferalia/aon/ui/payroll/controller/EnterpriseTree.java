@@ -2,18 +2,22 @@ package com.esferalia.aon.ui.payroll.controller;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.ajax4jsf.model.DataComponentState;
 import org.apache.commons.lang.ObjectUtils;
 import org.richfaces.component.UITree;
+import org.richfaces.component.state.TreeState;
+import org.richfaces.event.NodeExpandedEvent;
 import org.richfaces.event.NodeSelectedEvent;
 import org.richfaces.model.ListRowKey;
 import org.richfaces.model.TreeNode;
 import org.richfaces.model.TreeNodeImpl;
+import org.richfaces.model.TreeRowKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,9 +68,9 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	private TreeNode<EnterpriseTreeData> enterpriseNode;
 	
-	private EnterpriseTreeData currentNode;
+	private TreeNode<EnterpriseTreeData> currentNode;
 
-	private EnterpriseTreeData parentNode;
+	private TreeNode<EnterpriseTreeData> parentNode;
 	
 	private WorkPlace workPlace;
 	
@@ -84,7 +88,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	private boolean showContractHeader;
 	
-	private DataComponentState state;
+	private TreeState state;
 	
 	private boolean activeContract;
 	
@@ -140,11 +144,11 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	public EnterpriseTreeData getCurrentNode() {
-		return currentNode;
+		return currentNode.getData();
 	}
 	
 	public EnterpriseTreeData getParentNode() {
-		return parentNode;
+		return parentNode.getData();
 	}
 	
 	public WorkPlace getWorkPlace() {
@@ -190,13 +194,9 @@ public class EnterpriseTree implements ICompanyConstants {
 	public boolean isShowContractHeader() {
 		return showContractHeader;
 	}
-
-	public void setCurrentNode(EnterpriseTreeData currentNode) {
-		this.currentNode = currentNode;
-	}
 	
-	public void setParentNode(EnterpriseTreeData parentNode) {
-		this.parentNode = parentNode;
+	public void setCurrentNode(TreeNode<EnterpriseTreeData> currentNode) {
+		this.currentNode = currentNode;
 	}
 	
 	public TreeNode<EnterpriseTreeData> getEnterpriseNode() {
@@ -220,36 +220,35 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	private void addMainNode( TreeNode<EnterpriseTreeData> contractNode ) {
-		String id = IPayrollConstants.CONTRACT_CONTROLLER;
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_ECONOMIC_DATA );
-		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.MAIN);
+		EnterpriseTreeData etd = new EnterpriseTreeData( contractNode.getData().getId(), label, EnterpriseTreeType.MAIN);
 		node.setData(etd);
-		contractNode.addChild( id, node);
+		contractNode.addChild( etd.getKey(), node);
 	}
+	
 	private void addSalaryNode( TreeNode<EnterpriseTreeData> contractNode ) {
-		String id = IPayrollConstants.SALARY_CONTROLLER;
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY );
-		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.SALARY);
+		EnterpriseTreeData etd = new EnterpriseTreeData( contractNode.getData().getId(), label, EnterpriseTreeType.SALARY);
 		node.setData(etd);
-		contractNode.addChild( id, node);
+		contractNode.addChild( etd.getKey(), node);
 	}
+
 	private void addSalaryDraftNode( TreeNode<EnterpriseTreeData> contractNode ) {
-		String id = IPayrollConstants.SALARY_DRAFT_CONTROLLER;
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_DRAFT );
-		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.SALARY_DRAFT);
+		EnterpriseTreeData etd = new EnterpriseTreeData( contractNode.getData().getId(), label, EnterpriseTreeType.SALARY_DRAFT);
 		node.setData(etd);
-		contractNode.addChild( id, node);
+		contractNode.addChild( etd.getKey(), node);
 	}
+
 	private void addDocumentNode( TreeNode<EnterpriseTreeData> contractNode ) {
-		String id = IPayrollConstants.CONTRACT_GENERATION_WIZARD_CONTROLLER;
 		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
 		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_DOCUMENTS);
-		EnterpriseTreeData etd = new EnterpriseTreeData( id+contractNode.getData().getId(), label, EnterpriseTreeType.DOCUMENT);
+		EnterpriseTreeData etd = new EnterpriseTreeData( contractNode.getData().getId(), label, EnterpriseTreeType.DOCUMENT);
 		node.setData(etd);
-		contractNode.addChild( id, node);
+		contractNode.addChild( etd.getKey(), node);
 	}
 	
 	private void loadContracts( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
@@ -266,7 +265,7 @@ public class EnterpriseTree implements ICompanyConstants {
 			TreeNodeImpl<EnterpriseTreeData> contractNode = new TreeNodeImpl<EnterpriseTreeData>();
 			EnterpriseTreeData etd = getTreeData(contract);
 			contractNode.setData(etd);
-			workPlaceNode.addChild( etd.getType().toString() + etd.getId(), contractNode );
+			workPlaceNode.addChild( etd.getKey(), contractNode );
 			addMainNode(contractNode);
 			addSalaryNode(contractNode);
 			addSalaryDraftNode(contractNode);
@@ -333,7 +332,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		enterpriseNode = new TreeNodeImpl<EnterpriseTreeData>();
 		EnterpriseTreeData etd = getTreeData(enterprise);
 		enterpriseNode.setData(etd);
-		rootNode.addChild( etd.getType().toString() + etd.getId(), enterpriseNode );
+		rootNode.addChild( etd.getKey(), enterpriseNode );
 		if ( controller.isShowActivityNode() ) {
 			addAcitivityNode(enterpriseNode);	
 		}
@@ -342,7 +341,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading work places for " + enterprise, e );
 		}
-		currentNode = etd;
+		setCurrentNode( enterpriseNode );
 	}
 	
 	public void reloadTree(ActionEvent event){
@@ -353,7 +352,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		boolean selected = false;
 		if ( tree.isRowAvailable() ) {
 			EnterpriseTreeData etd = (EnterpriseTreeData) tree.getRowData();
-			selected = ObjectUtils.equals(etd, currentNode);
+			selected = ObjectUtils.equals(etd, getCurrentNode());
 		}
 		return selected;
 	}	
@@ -367,15 +366,32 @@ public class EnterpriseTree implements ICompanyConstants {
 	}		
 
 	public void processSelection(NodeSelectedEvent event) {
-		UITree tree = (UITree) event.getComponent();
-		parentNode = (EnterpriseTreeData) tree.getTreeNode().getParent().getData();
-		currentNode = (EnterpriseTreeData) tree.getRowData();
+		UITree tree = (UITree) event.getComponent() ;
+		selectNode( tree );
+		TreeRowKey key = (TreeRowKey) tree.getRowKey();
+		ListRowKey<String> parentKey = (ListRowKey<String>) key.getParentKey();
+		TreeNode<EnterpriseTreeData> parent = tree.getTreeNode().getParent();
+		Iterator<Map.Entry<Object, TreeNode<EnterpriseTreeData>>> i = parent.getChildren();
+		while ( i.hasNext() ) {
+			Map.Entry<Object, TreeNode<EnterpriseTreeData>> entry = i.next();
+			String id = (String) entry.getKey();
+			ListRowKey<String> nodeKey = new ListRowKey<String>(parentKey, id);
+			if (! key.equals(nodeKey) ) {
+				if ( state.isExpanded(nodeKey) ) {
+					tree.queueNodeCollapse( nodeKey );	
+				}
+			} else {
+				if (! tree.isExpanded() ) {
+					tree.queueNodeExpand( key );
+				}				
+			}
+		}
 	}
 	
 	public void onSelectTreeWorkPlace( ActionEvent event ) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
-			this.workPlace = (WorkPlace) bean.get( currentNode.getId() );
+			this.workPlace = (WorkPlace) bean.get( getCurrentNode().getId() );
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectWorkPlace exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
@@ -386,7 +402,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	public void onSelectTreeContract( ActionEvent event ) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-			this.contract = (Contract) bean.get( currentNode.getId() );
+			this.contract = (Contract) bean.get( getCurrentNode().getId() );
 			this.personInfo.init( this.contract.getPerson().getRegistry() );
 			this.showContractHeader = this.personInfo.hasMedias();
 			this.showContractHeader |= selectSalaries(event, this.contract);
@@ -403,7 +419,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void selectContract(ActionEvent event) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-			this.contract = (Contract) bean.get( parentNode.getId() );
+			this.contract = (Contract) bean.get( getParentNode().getId() );
 			ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 			c.select(event, this.contract);
 		} catch (ManagerBeanException e) {
@@ -416,7 +432,7 @@ public class EnterpriseTree implements ICompanyConstants {
 	private void selectSalary(ActionEvent event) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-			this.contract = (Contract) bean.get( parentNode.getId() );
+			this.contract = (Contract) bean.get( getParentNode().getId() );
 			this.personInfo.init( this.contract.getPerson().getRegistry() );
 			this.showContractHeader = this.personInfo.hasMedias();
 			this.showContractHeader |= selectSalaries(event, this.contract);
@@ -431,7 +447,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
 			this.contract = 
-				(Contract) bean.get( parentNode.getId() );
+				(Contract) bean.get( getParentNode().getId() );
 			SalaryDraftController sc = 
 				(SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 
@@ -549,14 +565,15 @@ public class EnterpriseTree implements ICompanyConstants {
 	}	
 
 	public void onInit( ActionEvent event ) {
-		this.currentNode = this.enterpriseNode.getData();
+		setCurrentNode( this.enterpriseNode );
+		setState(null);
 	}
 	
-	public DataComponentState getState() {
+	public TreeState getState() {
 		return state;
 	}
 
-	public void setState(DataComponentState state) {
+	public void setState(TreeState state) {
 		this.state = state;
 	}
 	
@@ -612,11 +629,24 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 
 	public void onResetContract( ActionEvent event ) {
-		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+		EnterpriseController ec= (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		controller.onReset(event);
 		controller.setEnterprise((Enterprise) ec.getTo());
 		controller.onShowNewContractModal(event);
+	}
+	
+	public void expandChanged( NodeExpandedEvent event ) {
+		selectNode( (UITree) event.getComponent() );
+	}
+
+	private void selectNode( UITree tree ) {
+		EnterpriseTreeData node = (EnterpriseTreeData) tree.getRowData();
+		if ( node != getCurrentNode() ) {
+			parentNode = tree.getTreeNode().getParent();
+			setCurrentNode( (TreeNode<EnterpriseTreeData>) tree.getTreeNode() );
+			getCurrentNode().actionListener(null);
+		}
 	}
 	
 }

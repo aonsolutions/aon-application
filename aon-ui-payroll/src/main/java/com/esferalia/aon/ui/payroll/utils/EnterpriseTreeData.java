@@ -70,6 +70,10 @@ public class EnterpriseTreeData {
 		}
 	}
 	
+	public String getKey() {
+		return getType().toString() + getId();
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
