@@ -46,6 +46,8 @@ import com.code.aon.finance.invoicing.finance.FinanceGenerator;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.project.Project;
+import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
@@ -75,7 +77,9 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private FinanceGenerator financeGenerator;
 	private AccountEntryInvoiceWriter accountWriter;
 	private List<SelectItem> addresses;
+	private List<SelectItem> projects;
 	private boolean showInvoiceAddressWindow;
+	private boolean showInvoiceProjectWindow;
 	private boolean showRectificationWindow;
 	private String rectificationSeries;
 	private int rectificationNumber;
@@ -157,9 +161,9 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-			Iterator<?> iter = rAddressBean.getList(criteria).iterator();
-			while(iter.hasNext()) {
-				RegistryAddress address = (RegistryAddress)iter.next();
+			Iterator<?> iterator = rAddressBean.getList(criteria).iterator();
+			while(iterator.hasNext()) {
+				RegistryAddress address = (RegistryAddress)iterator.next();
 				String addressLabel = address.getFullAddress();
 				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
 				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
@@ -187,6 +191,82 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		return iAddress.getCity();
 	}
 
+    public List<SelectItem> getProjects() {
+		return projects;
+	}
+	
+	public void setProjects(List<SelectItem> projects) {
+		this.projects = projects;
+	}
+	
+	public int getProjectCount() {
+		if (projects != null) {
+			return projects.size();
+		}
+		return 0;
+	}
+	
+	public void loadProjects(Integer id) throws ManagerBeanException {
+		this.projects = new LinkedList<SelectItem>();
+		if (id != null) {
+			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID), id);
+			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addOrder(projectBean.getFieldName(IProjectAlias.PROJECT_NAME));
+			Iterator<?> iterator = projectBean.getList(criteria).iterator();
+			while(iterator.hasNext()) {
+				Project project = (Project)iterator.next();
+				SelectItem item = new SelectItem(project, project.getName());
+				projects.add(item);
+			}
+		}
+	}
+
+	public void addInvoiceProject(ActionEvent event) throws ManagerBeanException {
+		Project project = getInvoice().getProject();
+		if (project.isTas()) {
+			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+			project.setActive(false);
+			projectBean.update(project);
+		}
+
+		linkProject(project);
+	}
+
+	public void removeInvoiceProject(ActionEvent event) throws ManagerBeanException {
+		Project project = getInvoice().getProject();
+		if (project.isTas()) {
+			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+			project.setActive(true);
+			projectBean.update(project);
+		}
+
+		linkProject(null);
+	}
+
+	private void linkProject(Project project) throws ManagerBeanException {
+		Invoice to = getInvoice();
+		to.setProject(project);
+		to.setUpdateEnabled(false);
+		getManagerBean().restoreNullSubPOJOs(to);
+		getManagerBean().update(to);
+
+		to.setUpdateEnabled(true);
+		getManagerBean().initializePOJO(to);
+		loadProjects(to.getRegistry().getId());
+
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), to.getId());
+		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+			invoiceDetail.setProject(project);
+			invoiceDetail.getInvoice().setUpdateEnabled(false);
+			invoiceDetailBean.update(invoiceDetail);
+		}
+	}
+
 	public boolean isShowInvoiceAddressWindow() {
 		return showInvoiceAddressWindow;
 	}
@@ -201,6 +281,14 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		if (to == null) {
 			addressController.onReset(event);
 		}
+	}
+
+	public boolean isShowInvoiceProjectWindow() {
+		return showInvoiceProjectWindow;
+	}
+
+	public void setShowInvoiceProjectWindow(boolean value) {
+		this.showInvoiceProjectWindow = value;
 	}
 
 	public boolean isShowRectificationWindow() {
@@ -392,9 +480,9 @@ public class InvoiceController extends BasicController implements ISignatureCont
 				AonUtil.addInfoMessageFromBundle(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.VALIDATE_FINANCES_GENERATION_ERROR_KEY);
 				throw new AbortProcessingException();
 			}
-			Iterator<?> iter = financeList.iterator();
-			while(iter.hasNext()) {
-				Finance finance = (Finance)iter.next();
+			Iterator<?> iterator = financeList.iterator();
+			while(iterator.hasNext()) {
+				Finance finance = (Finance)iterator.next();
 				invoiceFinanceController.getManagerBean().remove(finance);
 			}
 			getFinanceGenerator().generateFinances(invoice, getToInvoiceTotalPrice());
@@ -408,10 +496,10 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	
 	private boolean existFinanceTrackings(List<?> financeList) throws ManagerBeanException {
 		IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
-		Iterator<?> iter = financeList.iterator();
-		while(iter.hasNext()) {
+		Iterator<?> iterator = financeList.iterator();
+		while(iterator.hasNext()) {
+			Finance finance = (Finance)iterator.next();
 			Criteria criteria = new Criteria();
-			Finance finance = (Finance)iter.next();
 			criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
 			criteria.addNotEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), FinanceTrackingType.FRACTIONED);
 			if (trackingBean.getCount(criteria) > 0) {

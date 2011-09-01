@@ -69,7 +69,7 @@
 		/>
 	</supplier:config>
 
-	<finance:config version="1.0" xmlns:finance="http://www.esferalia.com/finance">
+	<finance:config version="1.1" xmlns:finance="http://www.esferalia.com/finance">
 		<finance:creditor
 			showFinanceData="true" 
 			showTaxInfoData="true"
@@ -79,6 +79,7 @@
 		/>
 		<finance:invoice
 			showWarehouseData="true" 
+			showTasData="true" 
 			showSendEmail="true"
 		/>
 	</finance:config>

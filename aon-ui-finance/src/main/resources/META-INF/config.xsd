@@ -8,7 +8,7 @@
 		      <xs:element ref="creditor" />
 		      <xs:element ref="invoice" />
 		    </xs:sequence>		
-			<xs:attribute name="version" type="xs:string" use="required" fixed="1.0"/>		    
+			<xs:attribute name="version" type="xs:string" use="required" fixed="1.1"/>		    
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="creditor">
@@ -23,6 +23,7 @@
 	<xs:element name="invoice">
 		<xs:complexType>
 			<xs:attribute name="showWarehouseData" type="xs:boolean" use="required"/>
+			<xs:attribute name="showTasData" type="xs:boolean" use="required"/>
 			<xs:attribute name="showSendEmail" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>

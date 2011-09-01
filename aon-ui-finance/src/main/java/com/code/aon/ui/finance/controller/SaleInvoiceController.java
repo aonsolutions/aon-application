@@ -136,8 +136,10 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 			getInvoice().setRegistryDocumentCountry(customer.getRegistry().getDocumentCountry());
 			getInvoice().setRegistry(customer.getRegistry());
 			loadAddresses(customer.getId());
+			loadProjects(customer.getId());
 		} else {
 			setAddresses(null);	
+			setProjects(null);	
 		}
 	}
 

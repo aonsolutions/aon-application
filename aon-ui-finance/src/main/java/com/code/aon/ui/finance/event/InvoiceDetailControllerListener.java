@@ -24,10 +24,12 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetailController controller = (InvoiceDetailController)event.getController();
 		InvoiceDetail invoiceDetail = (InvoiceDetail)controller.getTo();
+		Invoice invoice = (Invoice)controller.getMasterController().getTo();
 
 		controller.setLongDescription(false);
 		try {
-			invoiceDetail.setLine(calculateNextLine((Invoice)controller.getMasterController().getTo()));
+			invoiceDetail.setProject((invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null);
+			invoiceDetail.setLine(calculateNextLine(invoice));
 
 			String companyCollections = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
 			CompanyCollectionsController compCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyCollections);

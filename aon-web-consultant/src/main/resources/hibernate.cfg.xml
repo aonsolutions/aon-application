@@ -179,6 +179,7 @@
 		<mapping class="com.code.aon.project.JobType"/>
 		<mapping class="com.code.aon.project.Project"/>
 		<mapping class="com.code.aon.project.Task"/>
+		<mapping class="com.code.aon.project.TaskHolder"/>
 
 		<!-- AON-PURCHASE Mapping files -->	
 		<mapping class="com.code.aon.purchase.Purchase"/>

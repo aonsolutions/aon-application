@@ -26,6 +26,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			invoice.setTaxDate(AonUtil.getRoleManager().isAccountingOperator() ? invoice.getIssueDate() : null);
 
 			invoiceController.loadAddresses(null);
+			invoiceController.loadProjects(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -38,6 +39,7 @@ public class InvoiceControllerListener extends ControllerAdapter {
 			Invoice invoice = (Invoice) invoiceController.getTo();
 
 			invoiceController.loadAddresses(invoice.getRegistry().getId());
+			invoiceController.loadProjects(invoice.getRegistry().getId());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
@@ -50,5 +52,4 @@ public class InvoiceControllerListener extends ControllerAdapter {
 		invoiceDetailController.onReset(null);
 	}
 	
-
 }
