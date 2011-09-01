@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +16,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +24,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.EnterpriseData;
@@ -45,6 +46,7 @@ import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
@@ -52,6 +54,7 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.OutOfDateException;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionScope;
@@ -61,26 +64,29 @@ import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.launcher.SalaryLauncher;
 import com.esferalia.aon.ui.payroll.controller.launcher.SalaryLauncherParams;
 import com.esferalia.aon.ui.payroll.controller.launcher.SalaryRemoverController;
+import com.esferalia.aon.ui.payroll.controller.salary.SortedSalaryItems;
 import com.esferalia.aon.ui.payroll.event.salary.draft.SalaryDraftComparatorPrinter;
 
 public class SalaryDraftController extends BasicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryDraftController.class.getName());
 
-	private int 				year;		
-	private Month 				month;		 
-	private SalaryType 			salaryType ; 
+	private int 								year;		
+	private Month 								month;		 
+	private SalaryType 							salaryType = SalaryType.SALARY ; 
 	
 	
-	private ISalary 			salary;				// online salary
-	private ISalary 			dbSalary;			// saved ( database ) salary
+	private ISalary 							salary;				// online salary
+	private ISalary 							dbSalary;			// saved ( database ) salary
 	
-	private List<SelectItem> 	draftMonths;		
-	private List<SelectItem> 	salaryDraftTypes;	
+	private SortedSalaryItems<PaymentType>		payments;
+	
+	private List<SelectItem> 					draftMonths;		
+	private List<SelectItem> 					salaryDraftTypes;	
 
-	private DataModel 						paymentsModel;
-//	private DataModel 						deductionsModel;
-	private SalaryDraftComparatorPrinter 	printer;
+	private DataModel 							paymentsModel;
+//	private DataModel 							deductionsModel;
+	private SalaryDraftComparatorPrinter 		printer;
 	
 	public List<SelectItem> getDraftMonths() {
 		return draftMonths;
@@ -294,6 +300,7 @@ public class SalaryDraftController extends BasicController {
 		rebuildDraftMonths();
 		calculateSalary();
 		searchSavedDraftSalary();
+		initPayments();
 	}
 	
 	public DataModel getPaymentsModel() {
@@ -304,6 +311,10 @@ public class SalaryDraftController extends BasicController {
 	}
 	public void setPaymentsModel(DataModel paymentsModel) {
 		this.paymentsModel = paymentsModel;
+	}
+	
+	public SortedSalaryItems<PaymentType> getSortedSalaryPayments() {
+		return payments;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -338,6 +349,8 @@ public class SalaryDraftController extends BasicController {
 			throw new AbortProcessingException(msg);
 		}
 	}
+	
+	
 	
 	// *********************************************************************
 	// OBTENCION DE LA DIFERENCIA DEL BORRADOR CON SU CORRESPONDIENTE NOMINA
@@ -406,7 +419,42 @@ public class SalaryDraftController extends BasicController {
 			AonUtil.addErrorMessage(msg);
 		}
 	}
-
+	
+	
+	private void initPayments() {
+		payments = new SortedSalaryItems<PaymentType>(PaymentType.values());
+		Collection<SalaryPayment> newSalaryItems = Collections.emptyList(); 
+		if ( salary != null )  {
+			newSalaryItems = ( ( Salary ) salary ).getSalaryPayments(); 
+		}
+		Collection<SalaryPayment> oldSalaryItems = Collections.emptyList();
+		if ( dbSalary != null )  {
+			try {
+				oldSalaryItems = getSalaryPayments ( ( Salary ) dbSalary );
+			} catch (ManagerBeanException e) {
+				String msg = "Fallo en la obtención de las percepcions calculadas";
+				AonUtil.addErrorMessage(msg);
+			} 
+		}
+		payments.setPayments(newSalaryItems, oldSalaryItems);
+	}
+	
+	private Collection<SalaryPayment> getSalaryPayments(Salary salary) throws ManagerBeanException {
+		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		Session session = HibernateUtil.getSession(sessionName);
+		// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
+		// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+		// el FrameWork.
+		if (  session.contains(salary)  || salary.getId() == null ) {
+			return  salary.getSalaryPayments();
+		} else {
+			IManagerBean bean = BeanManager.getManagerBean(SalaryPayment.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
+			List<?> list = bean.getList(c);
+			return (Collection<SalaryPayment>) list;
+		}
+	}
 	
 	// *********************************************************************
 	// Plantilla de impresion de la nomina

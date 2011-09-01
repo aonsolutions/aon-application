@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+		<c:if test="#{empty notitle}">
+			<aon:div style="margin-left: 20px;">
+				<aon:outputText value="&#160;"/>
+			</aon:div>
+		</c:if>
+			
+			
+			<c:forEach items="#{items.collection}" var="displayItem">
+				<aon:div styleClass="#{ ( displayItem.difference  > 0.01 )  ? 'aon-label-error': '' }" style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+					<c:if test="#{displayItem.oldAmount != null }" >
+						<aon:outputText value="#{displayItem.oldAmount}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</c:if>
+					<c:if test="#{displayItem.oldAmount == null }" >
+						<aon:outputText value="?" />
+					</c:if>
+				</aon:div>
+			</c:forEach>
+</ui:composition>			

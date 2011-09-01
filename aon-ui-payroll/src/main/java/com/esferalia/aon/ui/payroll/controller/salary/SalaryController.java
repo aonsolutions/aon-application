@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
@@ -53,6 +56,10 @@ import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryEmbargo;
+import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.salary.ISalaryItem;
+import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class SalaryController extends BasicController implements IPayrollConstants {
@@ -61,9 +68,45 @@ public class SalaryController extends BasicController implements IPayrollConstan
 	
 	private static final String SALARY_PATTERN = "Nomina {0} ({1,date,dd.MM.yyyy}-{2,date,dd.MM.yyyy})";
 
+	
 	public String getFileName( Salary salary ) {
 		String name = salary.getContract().getPerson().getFullName();
 		return MessageFormat.format(SALARY_PATTERN, name, salary.getStartDate(), salary.getEndDate());
+	}
+	
+	public SortedSalaryItems<PaymentType> getSortedSalaryPayments() 
+		throws ManagerBeanException{
+		
+		SortedSalaryItems<PaymentType> sortedSalaryPayments =
+			new SortedSalaryItems<PaymentType>(PaymentType.values());
+		
+		Collection<SalaryPayment> salaryPayments  = 
+			getSalaryPayments();
+		Collection<SalaryPayment> oldSalaryPayments = 
+			Collections.emptyList();
+		sortedSalaryPayments.setPayments(salaryPayments, oldSalaryPayments);
+		
+		return sortedSalaryPayments;
+	}
+	
+	
+	private Collection<SalaryPayment> getSalaryPayments () throws ManagerBeanException {
+		Salary salary = (Salary) getTo();
+		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		Session session = HibernateUtil.getSession(sessionName);
+		// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
+		// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+		// el FrameWork.
+		if (  session.contains(salary)  || salary.getId() == null ) {
+			return  salary.getSalaryPayments();
+		} else {
+			IManagerBean bean = BeanManager.getManagerBean(SalaryPayment.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
+			List<?> list = bean.getList(c);
+			return (Collection<SalaryPayment>) list;
+		}
+		
 	}
 
 	private void setRecipients( MessageController messageController, Enterprise enterprise ) throws ManagerBeanException {

@@ -20,7 +20,7 @@
 			columnClasses="aon-noborder, aon-noborder">
 			<aon:div style="width: 815px; margin-top: 10px;">
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/gridContent.xhtml" >
-					<ui:param name="controller" value="#{salary.to.payments}" />
+					<ui:param name="sortedSalaryPayments" value="#{salary.sortedSalaryPayments}" />
 					<ui:param name="totalPayment" value="#{salary.to.totalPayment}" />
 				</ui:include>
 			</aon:div>

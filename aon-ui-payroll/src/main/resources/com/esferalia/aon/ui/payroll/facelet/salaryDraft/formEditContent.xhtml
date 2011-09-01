@@ -86,16 +86,15 @@
 								columnClasses="aon-noborder, aon-noborder">
 								<aon:div style="width: 815px;">
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/gridContent.xhtml" >
-										<ui:param name="controller" value="#{salaryDraft.salary.payments}" />
 										<ui:param name="totalPayment" value="#{salaryDraft.salary.totalPayment}" />
+										<ui:param name="sortedSalaryPayments" value="#{salaryDraft.sortedSalaryPayments}" />
 									</ui:include>
 								</aon:div>
 								<c:if test="#{salaryDraft.showSalaryDifference}" >
 									<aon:div style="width: 150px; margin-left: 5px;">
 										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/savedDraftPayment.xhtml" >
-											<ui:param name="controller" value="#{salaryDraft.salary.payments}" />
-											<ui:param name="totalPayment" value="#{salaryDraft.salary.totalPayment}" />
-											<ui:param name="payments" value="#{salaryDraft.printer.payments}" />
+											<ui:param name="totalPayment" value="#{salaryDraft.bdSalary.totalPayment}" />
+											<ui:param name="sortedSalaryPayments" value="#{salaryDraft.sortedSalaryPayments}" />
 										</ui:include>
 									</aon:div>
 								</c:if>

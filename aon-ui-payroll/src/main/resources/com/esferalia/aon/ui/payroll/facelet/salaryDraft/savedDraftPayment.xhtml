@@ -7,175 +7,79 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<aon:div  styleClass="aon-border aon-margin-top" style="background-color: #F6F6F6;">
+	<aon:div styleClass="aon-margin-top aon-border" 
+		style="background-color:#F6F6F6;;">
 		
+		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
+			columnClasses="aon-noborder aon-padding-left aon-width-auto">
+			
+			<aon:outputText value="&#160;&#160;" 
+				styleClass="aon-bold" style="position: relative; top: -8px; margin-left: 5px; "/>
+			<aon:outputText value="&#160;"/>
+
+		</aon:panelGrid>
+
 		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
 			columnClasses="aon-noborder aon-padding-right aon-text-right aon-bold">
 			
-			<aon:outputText value="&#160;&#160;" 
-				styleClass="aon-bold aon-padding-left aon-text-left " style="position: relative; top: -8px;  margin-left: 5px; "/>
+			<aon:div style="margin-left: 10px;">
+				<aon:outputText value="&#160;"/>
+			</aon:div>
 
-			<aon:outputText value="&#160;"/>
-			
-			<aon:outputText value="&#160;"/>
-		
-			<c:forEach items="#{payments.baseSalary}" var="to">
-				<aon:div style="border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="&#160;"/>
-					<aon:outputText rendered="#{!to.showAmount}"
-						styleClass="#{to.style}" 
-						value="#{to.textValue}"/>
-					<aon:outputText value="#{to.doubleValue}"
-						rendered="#{to.showAmount}"
-						styleClass="#{to.style}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				</aon:div>
-			</c:forEach>
-			
-			<aon:outputText value="&#160;"/>
-		
-			<c:forEach items="#{payments.salarySupplements}" var="to">
-				<aon:div style="border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="&#160;"/>
-					<aon:outputText rendered="#{!to.showAmount}"
-						styleClass="#{to.style}" 
-						value="#{to.textValue}"/>
-					<aon:outputText value="#{to.doubleValue}"
-						rendered="#{to.showAmount}"
-						styleClass="#{to.style}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				</aon:div>
-			</c:forEach>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
+				<ui:param name="items" value="#{sortedSalaryPayments.payments['BASE_SALARY']}" />
+			</ui:include>
 
-			<aon:outputText value="&#160;"/>
-			
-			<c:forEach items="#{payments.overtimeHours}" var="to">
-				<aon:div style="border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="&#160;"/>
-					<aon:outputText rendered="#{!to.showAmount}"
-						styleClass="#{to.style}" 
-						value="#{to.textValue}"/>
-					<aon:outputText value="#{to.doubleValue}"
-						rendered="#{to.showAmount}"
-						styleClass="#{to.style}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				</aon:div>
-			</c:forEach>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
+				<ui:param name="items" value="#{sortedSalaryPayments.payments['SALARY_SUPPLEMENTS']}" />
+			</ui:include>
 
-			<aon:outputText value="&#160;"/>
-			
-			<c:forEach items="#{payments.specialBonuses}" var="to">
-				<aon:div style="border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="&#160;"/>
-					<aon:outputText rendered="#{!to.showAmount}"
-						styleClass="#{to.style}" 
-						value="#{to.textValue}"/>
-					<aon:outputText value="#{to.doubleValue}"
-						rendered="#{to.showAmount}"
-						styleClass="#{to.style}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				</aon:div>
-			</c:forEach>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
+				<ui:param name="title" value="#{payrollBundle.payroll_salary_overtime_hours}" />
+				<ui:param name="items" value="#{sortedSalaryPayments.payments['STRUCTURAL_HOURS']}" />
+			</ui:include> 	
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
+				<ui:param name="notitle" value="true" />
+				<ui:param name="items" value="#{sortedSalaryPayments.payments['NON_STRUCTURAL_HOURS']}" />
+			</ui:include> 	
 
-			<aon:outputText value="&#160;"/>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
+				<ui:param name="items" value="#{sortedSalaryPayments.payments['SPECIAL_BONUSES']}" />
+			</ui:include>
 			
-			<c:forEach items="#{payments.salaryInKind}" var="to">
-				<aon:div style="border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="&#160;"/>
-					<aon:outputText rendered="#{!to.showAmount}"
-						styleClass="#{to.style}" 
-						value="#{to.textValue}"/>
-					<aon:outputText value="#{to.doubleValue}"
-						rendered="#{to.showAmount}"
-						styleClass="#{to.style}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				</aon:div>
-			</c:forEach>
-			
-			<aon:outputText value="&#160;"/>
-			
-			<aon:outputText value="&#160;"/>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
+				<ui:param name="items" value="#{sortedSalaryPayments.payments['SALARY_IN_KIND']}" />
+			</ui:include>
 
-			<c:forEach items="#{payments.compensationOrPrepaidExpenses}" var="to">
-				<aon:div style="border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="&#160;"/>
-					<aon:outputText rendered="#{!to.showAmount}" 
-						value="#{to.textValue}"
-						styleClass="#{to.style}" />
-					<aon:outputText rendered="#{to.showAmount}"
-						value="#{to.doubleValue}"
-						styleClass="#{to.style}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				</aon:div>
-			</c:forEach>
+			<aon:div style="margin-left: 10px;">
+				<aon:outputText value="&#160;" styleClass="aon-bold"/>
+			</aon:div>
 
-			<aon:outputText value="&#160;"/>
-			
-			<c:forEach items="#{payments.specialSecurityBenefits}" var="to">
-				<aon:div style="border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="&#160;"/>
-					<aon:outputText rendered="#{!to.showAmount}"
-						styleClass="#{to.style}" 
-						value="#{to.textValue}"/>
-					<aon:outputText value="#{to.doubleValue}"
-						rendered="#{to.showAmount}"
-						styleClass="#{to.style}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				</aon:div>
-			</c:forEach>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
+				<ui:param name="items" value="#{sortedSalaryPayments.payments['COMPENSATION_OR_PREPAID_EXPENSES']}" />
+			</ui:include>
 
-			<aon:outputText value="&#160;"/>
-			
-			<c:forEach items="#{payments.movingCompensation}" var="to">
-				<aon:div style="border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="&#160;"/>
-					<aon:outputText rendered="#{!to.showAmount}"
-						styleClass="#{to.style}" 
-						value="#{to.textValue}"/>
-					<aon:outputText value="#{to.doubleValue}"
-						rendered="#{to.showAmount}"
-						styleClass="#{to.style}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				</aon:div>
-			</c:forEach>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
+				<ui:param name="items" value="#{sortedSalaryPayments.payments['SOCIAL_SECURITY_BENEFITS']}" />
+			</ui:include>
 
-			<aon:outputText value="&#160;"/>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
+				<ui:param name="items" value="#{sortedSalaryPayments.payments['MOVING_COMPENSATION']}" />
+			</ui:include>
 
-			<c:forEach items="#{payments.otherNonWages}" var="to">
-				<aon:div style="border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="&#160;"/>
-					<aon:outputText rendered="#{!to.showAmount}" 
-						value="#{to.textValue}"
-						styleClass="#{to.style}" />
-					<aon:outputText rendered="#{to.showAmount}"
-						value="#{to.doubleValue}"
-						styleClass="#{to.style}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				</aon:div>
-			</c:forEach>
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
+				<ui:param name="items" value="#{sortedSalaryPayments.payments['OTHER_NON_WAGE']}" />
+			</ui:include>
 
 			<aon:div style="">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText rendered="#{!payments.totalPayment.showAmount}" 
-					value="#{payments.totalPayment.textValue}"
-					styleClass="#{payments.totalPayment.style}" />
-				<aon:outputText rendered="#{payments.totalPayment.showAmount}"
-					value="#{payments.totalPayment.doubleValue}"
-					styleClass="#{payments.totalPayment.style}">
+				<aon:outputText value="#{totalPayment}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
-		
+
 		</aon:panelGrid>		
+
 	</aon:div>
 
 </ui:composition>
