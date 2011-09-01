@@ -38,6 +38,7 @@ public class SettleParams {
 	public SettleParams(Contract contract) {
 		this.contract = contract;
 		this.seniorityDate = contract.getSeniorityDate();
+		this.suspensionDate = contract.getEndDate();
 		try {
 			ISalary salary;
 			int year = CommonUtil.getYear(new Date());
@@ -45,8 +46,8 @@ public class SettleParams {
 			ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(year, Month.values()[month-1], SalaryType.SALARY);
 			salary = (ISalary) ctx.getSalaryProxy().getSalary();
 			// TODO ******* revisar el calculo del salario diario *******  
-			dayAmount = salary.getCommonBase()/30;
-			vacationDayAmount = salary.getCommonBase()/30;
+			dayAmount = CommonUtil.round(salary.getCommonBase()/30);
+			vacationDayAmount = CommonUtil.round(salary.getCommonBase()/30);
 		} catch (SalaryException e) {
 			// como tratar esto?
 		}
@@ -131,6 +132,8 @@ public class SettleParams {
 	}
 	public void setDaysPerYear(Integer daysPerYear) {
 		this.daysPerYear = daysPerYear;
+		calculateCompensationDays();
+		calculateCompensationAmount();
 	}
 	public Integer getPendingVacationDays() {
 		return pendingVacationDays;
@@ -222,6 +225,9 @@ public class SettleParams {
 //				compensationDays += noticeDays;
 //			}
 //		}
+		if(dismissCause!=null){
+			compensationDays = compensationDays>(getDismissCause().getMaximunMonths()*30)?(getDismissCause().getMaximunMonths()*30):compensationDays;
+		}
 	}
 	
 	private void calculateNoticeDays(){
@@ -235,7 +241,7 @@ public class SettleParams {
 	
 	private void calculateVacationAmount(){
 		if(pendingVacationDays!=null && vacationDayAmount!=null){
-			setVacationAmount(pendingVacationDays*vacationDayAmount);
+			setVacationAmount(CommonUtil.round(pendingVacationDays*vacationDayAmount));
 		}
 	}
 	
@@ -246,9 +252,8 @@ public class SettleParams {
 	}
 	
 	private void calculateCompensationAmount(){
-		if(compensationDays!=null && dayAmount!=null && daysPerYear!=null && getYears()!=null){
-			Integer days = new Double((getYears()*daysPerYear)).intValue();
-			setCompensation(CommonUtil.round(days*dayAmount));
+		if(compensationDays!=null && dayAmount!=null){
+			setCompensation(CommonUtil.round(compensationDays*dayAmount));
 		}
 	}
 	

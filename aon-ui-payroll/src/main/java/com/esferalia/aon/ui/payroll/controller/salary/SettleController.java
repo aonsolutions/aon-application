@@ -72,6 +72,9 @@ public class SettleController {
 	public void setParams(SettleParams params) {
 		this.params = params;
 	}
+	public void setSettle(Salary settle) {
+		this.settle = settle;
+	}
 	
 	public void onSelectContract(ActionEvent event){
 		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
@@ -165,7 +168,7 @@ public class SettleController {
 			payment.setContract(getParams().getContract());
 			payment.setSalaryType(SalaryType.SETTLE);
 			payment.setPaymentConcept(pc);
-			payment.setStartDate(getParams().getSuspensionDate());
+			payment.setStartDate(CommonUtil.getMonthFirstDay(getParams().getSuspensionDate()));
 			payment.setEndDate(getParams().getSuspensionDate());
 			payment.setType(PaymentType.COMPENSATION_OR_PREPAID_EXPENSES);
 			payment.setExpression(amount.toString());
@@ -197,9 +200,6 @@ public class SettleController {
 		setSettle(null);
 	}
 	
-	public void setSettle(Salary settle) {
-		this.settle = settle;
-	}
 	
 	private void finalizeContract(){
 		ContractController controller = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
