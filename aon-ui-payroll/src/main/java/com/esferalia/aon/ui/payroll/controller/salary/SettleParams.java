@@ -41,8 +41,8 @@ public class SettleParams {
 		this.suspensionDate = contract.getEndDate();
 		try {
 			ISalary salary;
-			int year = CommonUtil.getYear(new Date());
-			int month = CommonUtil.getMonth(new Date());
+			int year = CommonUtil.getYear(contract.getEndDate()!=null?contract.getEndDate():new Date());
+			int month = CommonUtil.getMonth(contract.getEndDate()!=null?contract.getEndDate():new Date());
 			ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(year, Month.values()[month-1], SalaryType.SALARY);
 			salary = (ISalary) ctx.getSalaryProxy().getSalary();
 			// TODO ******* revisar el calculo del salario diario *******  
