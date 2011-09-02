@@ -424,6 +424,7 @@ public class SalaryDraftController extends BasicController {
 	private void initPayments() {
 		payments = new SortedSalaryItems<PaymentType>(PaymentType.values());
 		Collection<SalaryPayment> newSalaryItems = Collections.emptyList(); 
+		
 		if ( salary != null )  {
 			newSalaryItems = ( ( Salary ) salary ).getSalaryPayments(); 
 		}

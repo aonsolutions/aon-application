@@ -46,7 +46,7 @@ public class SortedSalaryItems<T extends Enum<T> & IResourceable> {
 		
 		public Double getAmount(){
 			return newSalaryItem != null ? 
-					newSalaryItem.getAmount() : null;
+					CommonUtil.truncate(newSalaryItem.getAmount()) : null;
 		}
 
 		public String getDescription(){
@@ -61,12 +61,41 @@ public class SortedSalaryItems<T extends Enum<T> & IResourceable> {
 		}
 		
 		public Double getDifference() {
-			return Math.abs( getOldAmount() - getAmount() );
+			Double amount = getAmount();
+			if ( amount == null ) {
+				amount = 0.00;
+			}
+			Double oldAmount = getOldAmount();
+			if ( oldAmount == null ) {
+				oldAmount = 0.00;
+			}
+			
+			return Math.abs( oldAmount - amount );
 		}
 		
 		@Override
 		public String toString() {
-			return getDescription();
+			return String.format("%s [%f,%f]: %s.", getName(), getAmount(), getOldAmount(), getDescription() );
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if ( obj != null && obj instanceof DisplaySalaryItem<?>   ){
+				DisplaySalaryItem<?> item = ( DisplaySalaryItem<?> ) obj;
+				return equalsX(this.newSalaryItem, item.newSalaryItem) && 
+					equalsX(this.oldSalaryItem, item.oldSalaryItem);
+			}
+			return false;
+		}
+		
+		private static boolean equalsX ( Object obj1, Object obj2 ) {
+			if ( obj1 == obj2 ) {
+				return true;
+			}
+			if ( obj1 == null || obj2 == null ) {
+				return false;
+			}
+			return obj1.equals(obj2);
 		}
 	}
 
