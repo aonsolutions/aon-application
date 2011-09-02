@@ -234,12 +234,12 @@
 							value="(#{undeductibleInvoice.city})"
 							rendered="#{undeductibleInvoiceAddress.to.id != null or (undeductibleInvoice.readOnly and undeductibleInvoice.to.registryAddress.id != null)}" />
 						<aon:div layout="inline" styleClass="aon-margin-left">
-							<aon:commandButton id="popupButton"
-								reRender="showInvoiceAddressWindow"
+							<aon:commandButton id="invoiceAddressButton"
+								value="#{registryBundle.registry_address_other}"
+								styleClass="aon-icon-commandButton aon-icon-go"
 								rendered="#{!undeductibleInvoice.new and !undeductibleInvoice.readOnly}"
 								actionListener="#{undeductibleInvoice.onInvoiceAddressShow}"
-								styleClass="aon-icon-commandButton aon-icon-go"
-								value="#{registryBundle.registry_address_other}" >
+								reRender="showInvoiceAddressWindow">
 								<f:setPropertyActionListener target="#{undeductibleInvoice.showInvoiceAddressWindow}"
 									value="#{true}" />								
 							</aon:commandButton>

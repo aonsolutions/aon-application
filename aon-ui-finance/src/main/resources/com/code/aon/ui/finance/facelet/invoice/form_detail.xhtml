@@ -274,7 +274,15 @@
 									styleClass="aon-icon-transfer" style="padding-left:20px" />
 								<rich:toolTip value="#{controller.lineSourceInfo}" />
 							</aon:div>
-						</aon:column>
+							<aon:commandButton id="invoiceDetailProject"
+								value="&#160;" title="#{projectLabel} #{controller.project}"
+								styleClass="aon-icon-commandButton aon-icon-project"
+								rendered="#{controller.project != null}"
+								reRender="showInvoiceProjectWindow">
+								<f:setPropertyActionListener target="#{invoiceController.showInvoiceProjectWindow}"
+									value="#{invoiceController.projectCount > 0}" />								
+							</aon:commandButton>
+ 						</aon:column>
 					</ui:define>
 				</ui:decorate>
 			</aon:panel>

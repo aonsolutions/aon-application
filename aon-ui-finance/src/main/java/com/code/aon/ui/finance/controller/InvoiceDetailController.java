@@ -20,6 +20,7 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 
@@ -68,6 +69,17 @@ public class InvoiceDetailController extends LinesController {
 			}
 		}
 		return true;
+	}	
+
+	public String getProject() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
+			Project project = invoiceDetail.getProject();
+			if (project != null && project.getId() != null) {
+				return project.getName();
+			}
+		}
+		return null;
 	}	
 
 	public double getTaxableBase() {

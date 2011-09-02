@@ -211,7 +211,9 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		if (id != null) {
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID), id);
+			if (getInvoice().getType() == InvoiceType.SALES) {
+				criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID), id);
+			}
 			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), new Boolean(true));
 			criteria.addOrder(projectBean.getFieldName(IProjectAlias.PROJECT_NAME));
 			Iterator<?> iterator = projectBean.getList(criteria).iterator();
@@ -225,7 +227,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void addInvoiceProject(ActionEvent event) throws ManagerBeanException {
 		Project project = getInvoice().getProject();
-		if (project.isTas()) {
+		if (project.isTas() && getInvoice().getType() == InvoiceType.SALES) {
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			project.setActive(false);
 			projectBean.update(project);
@@ -236,7 +238,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void removeInvoiceProject(ActionEvent event) throws ManagerBeanException {
 		Project project = getInvoice().getProject();
-		if (project.isTas()) {
+		if (project.isTas() && getInvoice().getType() == InvoiceType.SALES) {
 			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
 			project.setActive(true);
 			projectBean.update(project);

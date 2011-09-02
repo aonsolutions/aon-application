@@ -393,6 +393,12 @@
 				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_detail.xhtml">
 					<ui:param name="invoiceController" value="#{saleInvoice}" />
 					<ui:param name="detailController" value="#{saleInvoiceDetail}" />
+					<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+						<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+					</c:if>
+					<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+						<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+					</c:if>
 				</ui:include>
 
 				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_finances.xhtml">

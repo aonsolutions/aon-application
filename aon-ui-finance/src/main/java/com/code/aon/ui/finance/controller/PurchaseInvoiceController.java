@@ -72,8 +72,10 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 			getInvoice().setRegistryDocumentCountry(supplier.getRegistry().getDocumentCountry());
 			getInvoice().setRegistry(supplier.getRegistry());
 			loadAddresses(supplier.getId());
+			loadProjects(supplier.getId());
 		} else {
 			setAddresses(null);	
+			setProjects(null);
 		}
 	}
 
