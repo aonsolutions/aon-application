@@ -41,18 +41,34 @@
 						<aon:div styleClass="aon-popupWindow-content-internal">
 							<aon:div style="width:99%">
 								<aon:div styleClass="aon-toolbar">
-									<aon:commandButton id="invoiceProject-save"
-										value="#{bundle.aon_save}"
-										reRender="showInvoiceProjectWindow,InvoiceProject"
-										actionListener="#{controller.addInvoiceProject}"
-										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										accesskey="#{bundle.aon_key_save}">
-										<rich:componentControl for="invoiceProjectModalPanel"
-											event="onclick" operation="hide"/>																					
-										<f:setPropertyActionListener
-											target="#{controller.showInvoiceProjectWindow}"
-											value="#{false}" />
-									</aon:commandButton>
+									<c:if test="#{!controller.showInvoiceDetailProjectWindow}">
+										<aon:commandButton id="invoiceProject-save"
+											value="#{bundle.aon_save}"
+											reRender="showInvoiceProjectWindow,InvoiceProject,invoiceDetailContainer"
+											actionListener="#{controller.addInvoiceProject}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept"
+											accesskey="#{bundle.aon_key_save}">
+											<rich:componentControl for="invoiceProjectModalPanel"
+												event="onclick" operation="hide"/>																					
+											<f:setPropertyActionListener
+												target="#{controller.showInvoiceProjectWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+									</c:if>
+									<c:if test="#{controller.showInvoiceDetailProjectWindow}">
+										<aon:commandButton id="invoiceProject-save"
+											value="#{bundle.aon_save}"
+											reRender="showInvoiceProjectWindow,invoiceDetails"
+											actionListener="#{detailController.addInvoiceDetailProject}"
+											styleClass="aon-finding-toolbar-item aon-icon-accept"
+											accesskey="#{bundle.aon_key_save}">
+											<rich:componentControl for="invoiceProjectModalPanel"
+												event="onclick" operation="hide"/>																					
+											<f:setPropertyActionListener
+												target="#{controller.showInvoiceProjectWindow}"
+												value="#{false}" />
+										</aon:commandButton>
+									</c:if>
 									<aon:commandButton id="invoiceProject-cancel"
 										value="#{bundle.aon_cancel}"
 										reRender="showInvoiceProjectWindow"
@@ -73,10 +89,19 @@
 											<aon:outputLabel for="InvoiceProject_project"
 												value="#{tasBundle.tas_projectTas}" />
 										</c:if>
-										<aon:selectOneMenu id="InvoiceProject_project"
-											value="#{controller.to.project}">
-											<f:selectItems value="#{controller.projects}" />
-										</aon:selectOneMenu>
+										<c:if test="#{!controller.showInvoiceDetailProjectWindow}">
+											<aon:selectOneMenu id="InvoiceProject_project"
+												value="#{controller.to.project}">
+												<f:selectItems value="#{controller.projects}" />
+											</aon:selectOneMenu>
+										</c:if>
+										<c:if test="#{controller.showInvoiceDetailProjectWindow}">
+											<aon:selectOneMenu id="InvoiceProject_project"
+												value="#{detailController.invoiceDetail.project}">
+												<f:selectItem itemLabel="-" value="#{null}" />
+												<f:selectItems value="#{controller.projects}" />
+											</aon:selectOneMenu>
+										</c:if>
 									</aon:panelGrid>
 								</aon:div>
 							</aon:div>

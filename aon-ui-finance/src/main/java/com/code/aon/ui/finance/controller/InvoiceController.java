@@ -53,6 +53,8 @@ import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.tas.ProjectTas;
+import com.code.aon.tas.enumeration.ProjectStatus;
 import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.finance.util.FinanceEmailUtil;
 import com.code.aon.ui.form.BasicController;
@@ -80,6 +82,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private List<SelectItem> projects;
 	private boolean showInvoiceAddressWindow;
 	private boolean showInvoiceProjectWindow;
+	private boolean showInvoiceDetailProjectWindow;
 	private boolean showRectificationWindow;
 	private String rectificationSeries;
 	private int rectificationNumber;
@@ -225,50 +228,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 
-	public void addInvoiceProject(ActionEvent event) throws ManagerBeanException {
-		Project project = getInvoice().getProject();
-		if (project.isTas() && getInvoice().getType() == InvoiceType.SALES) {
-			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
-			project.setActive(false);
-			projectBean.update(project);
-		}
-
-		linkProject(project);
-	}
-
-	public void removeInvoiceProject(ActionEvent event) throws ManagerBeanException {
-		Project project = getInvoice().getProject();
-		if (project.isTas() && getInvoice().getType() == InvoiceType.SALES) {
-			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
-			project.setActive(true);
-			projectBean.update(project);
-		}
-
-		linkProject(null);
-	}
-
-	private void linkProject(Project project) throws ManagerBeanException {
-		Invoice to = getInvoice();
-		to.setProject(project);
-		to.setUpdateEnabled(false);
-		getManagerBean().restoreNullSubPOJOs(to);
-		getManagerBean().update(to);
-
-		to.setUpdateEnabled(true);
-		getManagerBean().initializePOJO(to);
-		loadProjects(to.getRegistry().getId());
-
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), to.getId());
-		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
-			invoiceDetail.setProject(project);
-			invoiceDetail.getInvoice().setUpdateEnabled(false);
-			invoiceDetailBean.update(invoiceDetail);
-		}
-	}
-
 	public boolean isShowInvoiceAddressWindow() {
 		return showInvoiceAddressWindow;
 	}
@@ -291,6 +250,62 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public void setShowInvoiceProjectWindow(boolean value) {
 		this.showInvoiceProjectWindow = value;
+	}
+
+	public boolean isShowInvoiceDetailProjectWindow() {
+		return showInvoiceDetailProjectWindow;
+	}
+
+	public void setShowInvoiceDetailProjectWindow(boolean value) {
+		this.showInvoiceDetailProjectWindow = value;
+	}
+
+	public void addInvoiceProject(ActionEvent event) throws ManagerBeanException {
+		linkProject(getInvoice().getProject(), true);
+
+		IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
+		invoiceDetailController.onSearch(null);
+	}
+
+	public void removeInvoiceProject(ActionEvent event) throws ManagerBeanException {
+		Project project = getInvoice().getProject();
+		if (project.isTas() && getInvoice().getType() == InvoiceType.SALES) {
+			IManagerBean projectTasBean = BeanManager.getManagerBean(ProjectTas.class);
+			ProjectTas projectTas = (ProjectTas)projectTasBean.get(project.getId());
+			projectTas.setStatus(ProjectStatus.PENDING);
+			projectTasBean.update(projectTas);
+		}
+		linkProject(project, false);
+
+		IController invoiceDetailController = FormUtil.getController(invoiceDetailControllerName);
+		invoiceDetailController.onSearch(null);
+	}
+
+	private void linkProject(Project project, boolean link) throws ManagerBeanException {
+		Invoice to = getInvoice();
+		to.setProject((link) ? project : null);
+		to.setUpdateEnabled(false);
+		getManagerBean().restoreNullSubPOJOs(to);
+		getManagerBean().update(to);
+
+		to.setUpdateEnabled(true);
+		getManagerBean().initializePOJO(to);
+		loadProjects(to.getRegistry().getId());
+
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), to.getId());
+		if (link) {
+			criteria.addNullExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_PROJECT));
+		} else {
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_PROJECT_ID), project.getId());
+		}
+		for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+			InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+			invoiceDetail.setProject((link) ? project : null);
+			invoiceDetail.setUpdateEnabled(false);
+			invoiceDetailBean.update(invoiceDetail);
+		}
 	}
 
 	public boolean isShowRectificationWindow() {

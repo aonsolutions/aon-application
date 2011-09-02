@@ -12,51 +12,43 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.tas.ProjectTas;
+import com.code.aon.tas.enumeration.ProjectStatus;
 
 public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 	
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		Invoice invoice = (Invoice) evt.getTo();
-		if (invoice.isUpdateEnabled()) {
-			if (InvoiceType.SALES == invoice.getType() || InvoiceType.PURCHASE == invoice.getType()) {
-				Project project = ((Invoice)evt.getTo()).getProject();
-				if (project != null && project.isTas() && project.isActive()) {
-					IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
-					project.setActive(false);
-					projectBean.update(project);
-				}
-			}
+		if (InvoiceType.SALES == invoice.getType()) {
+			modifyProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.CLOSED);
 		}
 	}
 
 	@Override
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		Invoice invoice = (Invoice) evt.getTo();
-		if (invoice.isUpdateEnabled()) {
-			if (InvoiceType.SALES == invoice.getType() || InvoiceType.PURCHASE == invoice.getType()) {
-				Project project = (invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null;
-				if (project != null && project.isTas() && project.isActive()) {
-					IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
-					project.setActive(false);
-					projectBean.update(project);
-				}
+		if (InvoiceType.SALES == invoice.getType()) {
+			modifyProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.CLOSED);
+		}
 
+		if (invoice.isUpdateEnabled()) {
+			Project project = (invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null;
+			if (InvoiceType.SALES == invoice.getType() || InvoiceType.PURCHASE == invoice.getType()) {
 				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 				for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
 					InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
-					if(!invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
+					if (invoiceDetail.getProject() == null || invoiceDetail.getProject().getId() == null) {
 						invoiceDetail.setProject(project);
-						invoiceDetailBean.update(invoiceDetail);
-						invoiceDetail.getInvoice().setUpdateEnabled(false);
 					}
+					invoiceDetail.getInvoice().setUpdateEnabled(false);
+					invoiceDetailBean.update(invoiceDetail);
 				}
 			}
 
@@ -79,6 +71,26 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 
 			updateTotals(invoice);
 		}
+		invoice.setUpdateEnabled(true);
+	}
+
+	@Override
+	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
+		Invoice invoice = (Invoice) evt.getTo();
+		if (InvoiceType.SALES == invoice.getType()) {
+			modifyProjectStatus(((Invoice)evt.getTo()).getProject(), ProjectStatus.PENDING);
+		}
+	}
+
+	private void modifyProjectStatus(Project project, ProjectStatus status) throws ManagerBeanException {
+		if (project != null && project.isTas()) {
+			IManagerBean projectTasBean = BeanManager.getManagerBean(ProjectTas.class);
+			ProjectTas projectTas = (ProjectTas)projectTasBean.get(project.getId());
+			if (projectTas.getStatus() != status) {
+				projectTas.setStatus(status);
+				projectTasBean.update(projectTas);
+			}
+		}
 	}
 
 	private void updateTotals(Invoice invoice) throws ManagerBeanException {
@@ -96,21 +108,6 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 			invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
 			invoiceBean.update(invoice);
 			invoice.setUpdateEnabled(true);
-		}
-	}
-
-	@Override
-	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
-		Invoice invoice = (Invoice) evt.getTo();
-		if (invoice.isUpdateEnabled()) {
-			if (InvoiceType.SALES == invoice.getType() || InvoiceType.PURCHASE == invoice.getType()) {
-				Project project = ((Invoice)evt.getTo()).getProject();
-				if (project != null && project.isTas() && !project.isActive()) {
-					IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
-					project.setActive(true);
-					projectBean.update(project);
-				}
-			}
 		}
 	}
 

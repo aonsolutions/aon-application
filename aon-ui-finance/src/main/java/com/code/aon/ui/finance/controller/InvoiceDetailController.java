@@ -20,14 +20,21 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
-import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
 
 public class InvoiceDetailController extends LinesController {
 
-	private boolean longDescription;
 	private IPriceStrategy priceStrategy;
+	private boolean longDescription;
+	private InvoiceDetail invoiceDetail;
+
+	public IPriceStrategy getPriceStrategy() {
+		if (priceStrategy == null) {
+			priceStrategy = new InvoicePriceStrategy();
+		}
+		return priceStrategy;
+	}
 
 	public boolean isLongDescription() {
 		return longDescription;
@@ -35,13 +42,6 @@ public class InvoiceDetailController extends LinesController {
 
 	public void setLongDescription(boolean longDescription) {
 		this.longDescription = longDescription;
-	}
-
-	public IPriceStrategy getPriceStrategy() {
-		if (priceStrategy == null) {
-			priceStrategy = new InvoicePriceStrategy();
-		}
-		return priceStrategy;
 	}
 
 	public void onLongDescription(ActionEvent event) {
@@ -60,6 +60,25 @@ public class InvoiceDetailController extends LinesController {
 		setLongDescription(false);
 	}
 
+	public InvoiceDetail getInvoiceDetail() {
+		return invoiceDetail;
+	}
+
+	public void setInvoiceDetail(InvoiceDetail invoiceDetail) {
+		this.invoiceDetail = invoiceDetail;
+	}
+
+	public void onInvoiceDetailProjectShow(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			setInvoiceDetail((InvoiceDetail)this.getModel().getRowData());
+		}
+	}
+
+	public void addInvoiceDetailProject(ActionEvent event) throws ManagerBeanException {
+		invoiceDetail.setUpdateEnabled(false);
+		getManagerBean().update(invoiceDetail);
+	}
+
 	public boolean isEditable() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
@@ -69,17 +88,6 @@ public class InvoiceDetailController extends LinesController {
 			}
 		}
 		return true;
-	}	
-
-	public String getProject() throws ManagerBeanException {
-		if (getModel().isRowAvailable()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
-			Project project = invoiceDetail.getProject();
-			if (project != null && project.getId() != null) {
-				return project.getName();
-			}
-		}
-		return null;
 	}	
 
 	public double getTaxableBase() {

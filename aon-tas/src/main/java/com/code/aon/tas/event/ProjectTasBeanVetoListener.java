@@ -6,6 +6,7 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.tas.ProjectTas;
+import com.code.aon.tas.enumeration.ProjectStatus;
 
 public class ProjectTasBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
@@ -15,6 +16,16 @@ public class ProjectTasBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     	to.getProject().setName(obtainProjectTasName(to));
     	to.getProject().setRegistry(to.getTarget().getRegistry());
     	to.getProject().setTas(true);
+    	to.getProject().setActive(to.getStatus() == ProjectStatus.PENDING);
+    }
+
+    @Override
+    public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+    	ProjectTas to = (ProjectTas)evt.getTo();
+    	to.getProject().setName(obtainProjectTasName(to));
+    	to.getProject().setRegistry(to.getTarget().getRegistry());
+    	to.getProject().setTas(true);
+    	to.getProject().setActive(to.getStatus() == ProjectStatus.PENDING);
     }
 
     private String obtainProjectTasName(ProjectTas to) {

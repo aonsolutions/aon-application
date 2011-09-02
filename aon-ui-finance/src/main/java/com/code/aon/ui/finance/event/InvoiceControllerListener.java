@@ -52,4 +52,14 @@ public class InvoiceControllerListener extends ControllerAdapter {
 		invoiceDetailController.onReset(null);
 	}
 	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		InvoiceController invoiceController = (InvoiceController)this.getController();
+		Invoice invoice = (Invoice) invoiceController.getTo();
+		if (invoice.getProject() != null && invoice.getProject().getId() != null) {
+			IController invoiceDetailController = FormUtil.getController(invoiceController.getInvoiceDetailControllerName());
+			invoiceDetailController.onSearch(null);
+		}
+	}
+	
 }

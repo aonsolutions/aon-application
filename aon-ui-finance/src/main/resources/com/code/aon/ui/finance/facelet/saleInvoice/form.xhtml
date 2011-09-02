@@ -21,6 +21,7 @@
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{saleInvoice.readOnly}" />
 					<ui:param name="skipRemoveButton" value="#{!saleInvoice.removable or !saleInvoiceFinance.allPending}" />
+					<ui:param name="saveButtonReRender" value="saleInvoiceForm" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 							<aon:commandButton id="deliveryTransfer"
@@ -345,13 +346,15 @@
 								reRender="showInvoiceProjectWindow">
 								<f:setPropertyActionListener target="#{saleInvoice.showInvoiceProjectWindow}"
 									value="#{true}" />								
+								<f:setPropertyActionListener target="#{saleInvoice.showInvoiceDetailProjectWindow}"
+									value="#{false}" />								
 							</aon:commandButton>
 							<aon:commandButton id="removeInvoiceProject" 
 								value="&#160;" title="#{bundle.aon_remove}" 
 								styleClass="aon-icon-commandButton aon-icon-delete"
 								rendered="#{saleInvoice.to.project.id != null}"
 								actionListener="#{saleInvoice.removeInvoiceProject}" 
-								reRender="InvoiceProject" />
+								reRender="InvoiceProject,invoiceDetailContainer" />
 						</aon:div>
 					</aon:div>
 
@@ -420,6 +423,7 @@
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalProject.xhtml">
 			<ui:param name="controller" value="#{saleInvoice}" />
+			<ui:param name="detailController" value="#{saleInvoiceDetail}" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />

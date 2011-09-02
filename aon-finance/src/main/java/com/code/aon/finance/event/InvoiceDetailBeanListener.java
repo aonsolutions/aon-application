@@ -106,6 +106,8 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	
 			updateInvoiceTotals(detail.getInvoice());
 		}
+		detail.setUpdateEnabled(true);
+		detail.getInvoice().setUpdateEnabled(true);
 	}
 	
 	@Override
@@ -154,7 +156,6 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 			invoice.setRetentionQuota(retentionQuota);
 			invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
 			invoiceBean.update(invoice);
-			invoice.setUpdateEnabled(true);
 		}
 	}
 

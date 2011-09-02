@@ -14,7 +14,6 @@ import com.code.aon.common.event.ManagerBeanVetoListenerException;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.ql.Criteria;
 
 public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapter {
@@ -24,13 +23,11 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
-		if (invoiceDetail.isUpdateEnabled()) {
-			if(!invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
-				try {
-					removeInvoiceTax(invoiceDetail);
-				} catch (ManagerBeanException e) {
-					LOGGER.error("Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
-				}
+		if (invoiceDetail.isUpdateEnabled() && invoiceDetail.getItem() != null) {
+			try {
+				removeInvoiceTax(invoiceDetail);
+			} catch (ManagerBeanException e) {
+				LOGGER.error("Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
 			}
 		}
 	}
@@ -38,12 +35,10 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	@Override
 	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
-		if(!invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
-			try {
-				removeInvoiceTax(invoiceDetail);
-			} catch (ManagerBeanException e) {
-				LOGGER.error("Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
-			}
+		try {
+			removeInvoiceTax(invoiceDetail);
+		} catch (ManagerBeanException e) {
+			LOGGER.error("Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
 		}
 	}
 

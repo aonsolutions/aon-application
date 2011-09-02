@@ -8,8 +8,8 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<c:if test="#{!invoiceController.new}">
-		<aon:div styleClass="aon-padding-top">
+	<aon:div id="invoiceDetailContainer" styleClass="aon-padding-top">
+		<c:if test="#{!invoiceController.new}">
 			<aon:panel>
 				<f:facet name="header">
 					<aon:outputText value="#{financeBundle.finance_invoice_lines}" />
@@ -274,18 +274,21 @@
 									styleClass="aon-icon-transfer" style="padding-left:20px" />
 								<rich:toolTip value="#{controller.lineSourceInfo}" />
 							</aon:div>
-							<aon:commandButton id="invoiceDetailProject"
-								value="&#160;" title="#{projectLabel} #{controller.project}"
+							<aon:commandButton id="invoiceDetailProject" value="&#160;"
 								styleClass="aon-icon-commandButton aon-icon-project"
-								rendered="#{controller.project != null}"
+								rendered="#{to.project != null and to.project.id != null}"
+								actionListener="#{controller.onInvoiceDetailProjectShow}" 
 								reRender="showInvoiceProjectWindow">
+								<rich:toolTip value="#{projectLabel} #{to.project.name}" />
 								<f:setPropertyActionListener target="#{invoiceController.showInvoiceProjectWindow}"
+									value="#{invoiceController.projectCount > 0}" />								
+								<f:setPropertyActionListener target="#{invoiceController.showInvoiceDetailProjectWindow}"
 									value="#{invoiceController.projectCount > 0}" />								
 							</aon:commandButton>
  						</aon:column>
 					</ui:define>
 				</ui:decorate>
 			</aon:panel>
-		</aon:div>
-	</c:if>
+		</c:if>
+	</aon:div>
 </ui:composition>
