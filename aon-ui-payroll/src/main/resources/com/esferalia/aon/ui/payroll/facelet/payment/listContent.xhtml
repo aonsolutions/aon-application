@@ -14,19 +14,22 @@
 			<aon:outputText value="&#160;"/>
 		</c:if>
 			
-			<c:forEach items="#{payments.collection}" var="payment">
+			<c:forEach  var="payment" items="#{payments.collection}">
 				<aon:div style="margin-left: 30px; border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="#{payment.description}"/>
+					<aon:outputText>
+						#{payment.description}
+					</aon:outputText>
 				</aon:div>
 				<aon:div style="border-bottom: solid #CCCCCC 1px;">
 					<aon:outputText value="&#160;"/>
 				</aon:div>
 				<aon:div style="border-bottom: solid #CCCCCC 1px;">
 					<aon:outputText value="&#160;"/>
-					<aon:outputText value="#{payment.amount}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					<aon:outputText >
+						${payment.amount}
 					</aon:outputText>
 				</aon:div>
 			</c:forEach>
+			
 </ui:composition>			
 			

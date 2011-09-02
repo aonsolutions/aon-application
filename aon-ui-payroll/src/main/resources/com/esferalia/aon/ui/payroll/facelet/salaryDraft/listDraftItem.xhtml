@@ -5,25 +5,40 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:h="http://java.sun.com/jsf/html" >
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:fmt="http://java.sun.com/jstl/fmt">
 		<c:if test="#{empty notitle}">
 			<aon:div style="margin-left: 20px;">
 				<aon:outputText value="&#160;"/>
 			</aon:div>
 		</c:if>
 			
-			
-			<c:forEach items="#{items.collection}" var="displayItem">
-				<aon:div styleClass="#{ ( displayItem.difference  > 0.01 )  ? 'aon-label-error': '' }" style="border-bottom: solid #CCCCCC 1px;">
+			<c:forEach
+			step="1"
+			begin="0"
+			varStatus="status"
+			var="displayItem"
+			items="#{items.collection}" 
+			>
+				<c:if test="#{displayItem.difference ge 0.01}" >
+				<aon:div styleClass="aon-label-error" style="border-bottom: solid #CCCCCC 1px;">
+				
 					<aon:outputText value="&#160;"/>
-					<c:if test="#{displayItem.oldAmount != null }" >
-						<aon:outputText value="#{displayItem.oldAmount}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</c:if>
-					<c:if test="#{displayItem.oldAmount == null }" >
-						<aon:outputText value="?" />
-					</c:if>
+					<aon:outputText >
+						${empty displayItem.oldAmount ? '?' : displayItem.oldAmount }
+					</aon:outputText>
 				</aon:div>
+				</c:if>
+				<c:if test="#{displayItem.difference lt 0.01}" >
+				<aon:div  style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+					<aon:outputText >
+						${empty displayItem.oldAmount ? '?' : displayItem.oldAmount }
+					</aon:outputText>
+				</aon:div>
+				</c:if>
+				
 			</c:forEach>
+			
+			
 </ui:composition>			

@@ -7,6 +7,27 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
+	<ui:define name="paymentsTemplate" >
+			<c:if test="#{empty notitle}">
+				<aon:div style="margin-left: 20px;">
+					<aon:outputText value="&#160;"/>
+				</aon:div>
+			</c:if>
+			<c:forEach items="#{payments.collection}" var="payment">
+				<aon:div styleClass="#{ ( payment.difference  > 0.01 )  ? 'aon-label-error': '' }" style="border-bottom: solid #CCCCCC 1px;">
+					<aon:outputText value="&#160;"/>
+					<c:if test="#{payment.oldAmount != null }" >
+						<aon:outputText value="#{payment.oldAmount}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+					</c:if>
+					<c:if test="#{payment.oldAmount == null }" >
+						<aon:outputText value="?" />
+					</c:if>
+				</aon:div>
+			</c:forEach>
+	</ui:define>
+	
 	<aon:div styleClass="aon-margin-top aon-border" 
 		style="background-color:#F6F6F6;;">
 		
@@ -33,6 +54,7 @@
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
 				<ui:param name="items" value="#{sortedSalaryPayments.payments['SALARY_SUPPLEMENTS']}" />
 			</ui:include>
+			
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
 				<ui:param name="title" value="#{payrollBundle.payroll_salary_overtime_hours}" />
