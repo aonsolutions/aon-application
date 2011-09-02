@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +12,6 @@ import java.util.Map;
 import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.salary.ISalaryItem;
-import com.esferalia.aon.salary.enumeration.PaymentType;
-import com.esferalia.aon.salary.payment.IPayment;
 
 
 
