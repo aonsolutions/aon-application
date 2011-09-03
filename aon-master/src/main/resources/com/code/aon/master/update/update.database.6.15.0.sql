@@ -21,7 +21,7 @@ CREATE TABLE `fan_batch_detail` (
   PRIMARY KEY  (`id`),
   KEY `IDX_FAN_BATCH_DETAIL_FAN_BATCH` (`fan_batch`),
   KEY `IDX_FAN_BATCH_DETAIL_ENTERPRISE` (`enterprise`),
-  CONSTRAINT `FK_FAN_BATCH_DETAIL_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`id`),
+  CONSTRAINT `FK_FAN_BATCH_DETAIL_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
   CONSTRAINT `FK_FAN_BATCH_DETAIL_FAN_BATCH` FOREIGN KEY (`fan_batch`) REFERENCES `fan_batch` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas del fichero fan';
 
