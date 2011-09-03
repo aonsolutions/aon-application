@@ -75,6 +75,11 @@
 				<aon:div styleClass="aon-scroll-area" id="irpfDataContent">
 					<aon:panelGrid columns="2"  width="100%"
 						columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-auto">
+				
+						<aon:outputLabel for="irpfData_fiscal_exclusion"
+							value="#{payrollBundle.payroll_irpfData_fiscal_exclusion}" />
+						<aon:selectBooleanCheckbox id="irpfData_fiscal_exclusion" 
+							value="#{irpfData.to.fiscalExclusion}"/> 
 						
 						<aon:outputLabel for="irpfData_familySituation" value="#{payrollBundle.payroll_irpfData_familySituation}" />
 						<aon:selectOneRadio id="irpfData_familySituation" layout="pageDirection" 
@@ -114,13 +119,18 @@
 						</aon:panelGroup>
 						
 						<aon:outputLabel for="irpfData_disabilityLevel" value="#{payrollBundle.payroll_irpfData_disabilityLevel}" />
-						<aon:selectOneMenu id="irpfData_disabilityLevel" value="#{irpfData.to.disabilityLevel}">
+						<aon:selectOneMenu id="irpfData_disabilityLevel" value="#{irpfData.disabilityLevel}">
 							<f:selectItem value="#{null}" itemLabel=" - " />
 							<f:selectItems value="#{payrollCollections.disabilityLevels}" />
+							<a4j:support event="onchange" reRender="irpfDataContent" ajaxSingle="true" />
 						</aon:selectOneMenu>
 				
-						<aon:outputLabel for="irpfData_dependence" value="#{payrollBundle.payroll_irpfData_dependence}" />
-						<aon:selectBooleanCheckbox id="irpfData_dependence" value="#{irpfData.to.dependence}"/> 
+						<aon:outputLabel for="irpfData_dependence"
+							rendered="#{irpfData.disabilityLevel=='GT_EQ_33_LT_65'}" 
+							value="#{payrollBundle.payroll_irpfData_dependence}" />
+						<aon:selectBooleanCheckbox id="irpfData_dependence" 
+							rendered="#{irpfData.disabilityLevel=='GT_EQ_33_LT_65'}" 
+							value="#{irpfData.to.dependence}"/> 
 
 						<aon:outputLabel for="irpfData_movingDate" value="#{payrollBundle.payroll_irpfData_movingDate}" />
 						<aon:selectInputDate id="irpfData_movingDate" 

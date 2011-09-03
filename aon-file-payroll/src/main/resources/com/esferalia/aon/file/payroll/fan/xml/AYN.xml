@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="AYN">
+	<field name="cabecera" value="AYN" format="AlphaNumeric" pattern="X(3)" />
+	<field name="primer_apellido" value="bean" bean="AYN" property="primerApellido" format="AlphaNumeric" pattern="X(20)" />
+	<field name="segundo_apellido" value="bean" bean="AYN" property="segundoApellido" format="AlphaNumeric" pattern="X(20)" />
+	<field name="nombre" value="bean" bean="AYN" property="nombre" format="AlphaNumeric" pattern="X(15)" />
+	<field name="abreviado" value="bean" bean="AYN" property="abreviado" format="AlphaNumeric" pattern="X(5)" />
+	<field name="free1" value=" " format="AlphaNumeric" pattern="X(7)" />
+</register>

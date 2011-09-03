@@ -28,6 +28,8 @@ import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.EnterpriseActivity;
+import com.esferalia.aon.payroll.FanBatch;
+import com.esferalia.aon.payroll.FanBatchDetail;
 import com.esferalia.aon.payroll.GeozoneIrpf;
 import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
 import com.esferalia.aon.payroll.GeozoneIrpfHandicap;
@@ -1440,6 +1442,50 @@ public interface IPayrollAlias {
 	* Hibernate value: EnterpriseActivity.type
 	*/
 	String  ENTERPRISE_ACTIVITY_TYPE = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for FanBatch entity.
+	*/ 
+	DAOConstantsEntry FAN_BATCH_ENTRY = DAOConstants.getDAOConstant(FanBatch.class);
+
+	/** 
+	* Alias value: FanBatch_date
+	* Hibernate value: FanBatch.date
+	*/
+	String  FAN_BATCH_DATE = FAN_BATCH_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: FanBatch_id
+	* Hibernate value: FanBatch.id
+	*/
+	String  FAN_BATCH_ID = FAN_BATCH_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for FanBatchDetail entity.
+	*/ 
+	DAOConstantsEntry FAN_BATCH_DETAIL_ENTRY = DAOConstants.getDAOConstant(FanBatchDetail.class);
+
+	/** 
+	* Alias value: FanBatchDetail_enterprise_id
+	* Hibernate value: FanBatchDetail.enterprise.id
+	*/
+	String  FAN_BATCH_DETAIL_ENTERPRISE_ID = FAN_BATCH_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: FanBatchDetail_fanBatch_id
+	* Hibernate value: FanBatchDetail.fanBatch.id
+	*/
+	String  FAN_BATCH_DETAIL_FAN_BATCH_ID = FAN_BATCH_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: FanBatchDetail_id
+	* Hibernate value: FanBatchDetail.id
+	*/
+	String  FAN_BATCH_DETAIL_ID = FAN_BATCH_DETAIL_ENTRY.getAliasNames()[2];
 
 
 

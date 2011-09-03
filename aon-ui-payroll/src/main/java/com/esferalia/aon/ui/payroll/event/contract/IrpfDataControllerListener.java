@@ -18,16 +18,23 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.ui.payroll.controller.contract.IrpfDataController;
 
 public class IrpfDataControllerListener extends ControllerAdapter{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(IrpfDataControllerListener.class.getName());
 	
-	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		completeCurrent();
+		completeHandicap();
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+	throws ControllerListenerException {
+		completeHandicap();
 	}
 	
 	@Override
@@ -40,6 +47,16 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		((IrpfDataController)getController()).onCalculateIrpf(null);
+	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		IrpfDataController controller = (IrpfDataController) getController();
+		IrpfData data = ((IrpfData) getController().getTo());
+		if(data.getDisabilityLevel()==DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE){
+			controller.setDisabilityLevel(DisabilityLevel.GT_EQ_33_LT_65);
+		}
 	}
 	
 	private void closePrevious() {
@@ -66,6 +83,16 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 
 	private void completeCurrent() {
 		((IrpfData) getController().getTo()).setStartDate(new Date());
+	}
+	
+	private void completeHandicap() {
+		IrpfDataController controller = (IrpfDataController) getController();
+		IrpfData data = ((IrpfData) getController().getTo());
+		data.setDisabilityLevel(controller.getDisabilityLevel());
+		if(controller.getDisabilityLevel()==DisabilityLevel.GT_EQ_33_LT_65 && data.isDependence()){
+			data.setDisabilityLevel(DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE);
+		}
+		
 	}
 		
 }

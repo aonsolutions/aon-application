@@ -8,6 +8,7 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum DisabilityLevel implements IResourceable {
 	
 	GT_EQ_33_LT_65,
+	GT_EQ_33_LT_65_DEPENDENCE,
 	GT_EQ_65
 	;
 	

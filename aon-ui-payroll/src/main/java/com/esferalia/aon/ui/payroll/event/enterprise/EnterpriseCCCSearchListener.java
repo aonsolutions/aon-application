@@ -1,5 +1,7 @@
 package com.esferalia.aon.ui.payroll.event.enterprise;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.company.Enterprise;
@@ -51,7 +53,10 @@ public class EnterpriseCCCSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		// TODO Auto-generated method stub
+		IManagerBean cBean = BeanManager.getManagerBean(Customer.class);
+		setCustomer((Customer) cBean.createNewTo());
+		IManagerBean eBean = BeanManager.getManagerBean(Enterprise.class);
+		setEnterprise((Enterprise) eBean.createNewTo());
 		super.init();
 	}
 	

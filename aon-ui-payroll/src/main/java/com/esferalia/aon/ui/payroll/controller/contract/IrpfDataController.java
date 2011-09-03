@@ -37,6 +37,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLIrpfBuilder;
 import com.esferalia.aon.payroll.calculator.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
@@ -48,6 +49,7 @@ public class IrpfDataController extends LinesController {
 		'X', 'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E' };
 	
 	private IrpfDataParams params;
+	private DisabilityLevel disabilityLevel;
 	
 	public IrpfDataParams getParams() {
 		if(params==null){
@@ -58,7 +60,16 @@ public class IrpfDataController extends LinesController {
 	public void setParams(IrpfDataParams params) {
 		this.params = params;
 	}
-
+	public DisabilityLevel getDisabilityLevel() {
+		return disabilityLevel;
+	}
+	public void setDisabilityLevel(DisabilityLevel disabilityLevel) {
+		this.disabilityLevel = disabilityLevel;
+		if(this.disabilityLevel!=DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE){
+			((IrpfData)this.getTo()).setDependence(false);
+		}
+	}
+	
 	public boolean isIrpfChanged(){
 		return !getParams().getCurrentIrpf().equals(getParams().getNewIrpf());
 	}
@@ -80,10 +91,10 @@ public class IrpfDataController extends LinesController {
 	
 	public boolean isValidNIF() {
 		IrpfData m = (IrpfData) getTo();
-		if (m.getspouseDocument() == null || m.getspouseDocument().length() == 0) {
+		if (m.getSpouseDocument() == null || m.getSpouseDocument().length() == 0) {
 			return false;
 		}
-		char[] doc = m.getspouseDocument().toCharArray();
+		char[] doc = m.getSpouseDocument().toCharArray();
 		if (doc == null || doc.length == 0) {
 			return false;
 		}
@@ -99,15 +110,20 @@ public class IrpfDataController extends LinesController {
 	private static final String PERSON_ALIAS = "person_registry.id";
 	private void refreshIrpfData(){
 		setParams(null);
+		IrpfData data = (IrpfData) this.getTo();
 		try {
 			irpfBuilder = new SQLIrpfBuilder(getConnection());
 			IrpfCalculator calculator = new IrpfCalculator(new Date());
 			calculator.setIrpfBuilder(irpfBuilder);
 			SQLIrpfCalculatorContext sqlCtx = new SQLIrpfCalculatorContext(getConnection(),new Date(), getCtxCriteria());
 			while ( sqlCtx.next() ) {
-				getParams().setCurrentIrpf(Double.parseDouble(sqlCtx.getOldPercent()));
-				getParams().setNewIrpf(sqlCtx.getPercent());
 				getParams().setGrossSalary(CommonUtil.round(sqlCtx.getGrossSalary()));
+				getParams().setCurrentIrpf(Double.parseDouble(sqlCtx.getOldPercent()));
+				if(!data.isFiscalExclusion()){
+					getParams().setNewIrpf(sqlCtx.getPercent());
+				} else {
+					getParams().setNewIrpf(0.0);
+				}
 			}
 		} catch (ExpressionException e) {
 			String msg = "Error al calcular el irpf";

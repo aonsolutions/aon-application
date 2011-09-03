@@ -109,6 +109,8 @@
 		<mapping class="com.esferalia.aon.payroll.DeductionConcept"/>
 		<mapping class="com.esferalia.aon.payroll.EnterpriseActivity"/>
 		<mapping class="com.esferalia.aon.payroll.EnterpriseCCC"/>
+		<mapping class="com.esferalia.aon.payroll.FanBatch"/>
+		<mapping class="com.esferalia.aon.payroll.FanBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.GeozoneIrpf"/>
 		<mapping class="com.esferalia.aon.payroll.GeozoneIrpfDescendant"/>
 		<mapping class="com.esferalia.aon.payroll.GeozoneIrpfHandicap"/>

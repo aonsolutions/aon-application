@@ -799,6 +799,12 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.wizard.LeaveBatchWizard</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<!-- ************ FAN Wizard **************** -->
+	<managed-bean>
+		<managed-bean-name>fanBatchWizard</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.wizard.FanBatchWizard</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	<!-- ************ Remesa Certificado Empresa Wizard **************** -->
 	<managed-bean>
 		<managed-bean-name>certifica2BatchWizard</managed-bean-name>
@@ -806,8 +812,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<!--
-		************ Remesa Certificado Empresa Generation Wizard
-		****************
+		************ Remesa Certificado Empresa Generation Wizard ****************
 	-->
 	<managed-bean>
 		<managed-bean-name>certifica2FileWizard</managed-bean-name>
@@ -2516,6 +2521,25 @@
 		<navigation-case>
 			<from-outcome>contractBatchWizard_step3</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractBatch/step3.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- =================== FAN Batch ========================== -->
+	<navigation-rule id="fanBatchWizard">
+		<navigation-case>
+			<from-outcome>fanBatchWizard_step0</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/fanBatch/step0.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fanBatchWizard_step1</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/fanBatch/step1.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fanBatchWizard_step2</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/fanBatch/step2.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fanBatchWizard_step3</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/fanBatch/step3.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== CNO ========================== -->

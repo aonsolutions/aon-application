@@ -311,9 +311,9 @@ public class ContractLeaveController extends BasicController {
 	 */
 	
 	public void onInit(ActionEvent event) {
-		ContractController controller = ((ContractController)AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_CONTROLLER));
 		try {
-			setContract((Contract) controller.getManagerBean().createNewTo());
+			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			setContract((Contract) bean.createNewTo());
 		} catch (ManagerBeanException e) {
 			String msg = "No se puede inicializar el lookup.";
 			AonUtil.addErrorMessage(msg);

@@ -620,9 +620,11 @@ public class PayrollCollectionsController {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			disabilityLevels = new LinkedList<SelectItem>();
 			for( DisabilityLevel p : DisabilityLevel.values() ) {
-				String name = p.getName(locale);
-				SelectItem item = new SelectItem(p, name);
-				disabilityLevels.add(item);			
+				if(p!=DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE){
+					String name = p.getName(locale);
+					SelectItem item = new SelectItem(p, name);
+					disabilityLevels.add(item);			
+				}
 			}
 		}
 		return disabilityLevels;

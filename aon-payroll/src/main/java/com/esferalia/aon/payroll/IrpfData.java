@@ -44,6 +44,7 @@ public class IrpfData implements ITransferObject {
 	private Date movingDate;
 	private boolean labourProlongation;
 	private Integer descendientCount;
+	private boolean fiscalExclusion;
 	
 	private Set<IrpfDataDescendients> descendients = new HashSet<IrpfDataDescendients>();
 	private Set<IrpfDataAscendants> ascendants = new HashSet<IrpfDataAscendants>();
@@ -95,7 +96,7 @@ public class IrpfData implements ITransferObject {
 	}
 	
 	@Column(name = "spouse_document",length=16)
-	public String getspouseDocument() {
+	public String getSpouseDocument() {
 		return spouseDocument;
 	}
 	public void setSpouseDocument(String spouseDocument) {
@@ -141,6 +142,14 @@ public class IrpfData implements ITransferObject {
 	}
 	public void setDescendientCount(Integer descendientCount) {
 		this.descendientCount = descendientCount;
+	}
+	
+	@Column( name = "fiscal_exclusion" )
+	public boolean isFiscalExclusion() {
+		return fiscalExclusion;
+	}
+	public void setFiscalExclusion(boolean fiscalExclusion) {
+		this.fiscalExclusion = fiscalExclusion;
 	}
 	
 	@OneToMany(mappedBy = "irpfData", cascade={CascadeType.REMOVE})

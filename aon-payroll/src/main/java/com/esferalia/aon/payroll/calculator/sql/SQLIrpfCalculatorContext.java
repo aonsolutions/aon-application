@@ -100,9 +100,9 @@ public class SQLIrpfCalculatorContext {
 		+" FROM geozone_irpf_handicap"
 		+" LEFT JOIN  geozone_irpf ON geozone_irpf = geozone_irpf.id"	
 		+" WHERE geozone_irpf.geozone = ? "
-		+" AND geozone_irpf.amount <= ? "
+		+" AND geozone_irpf.amount > ? "
 		+" AND geozone_irpf_handicap.handicap like ? "
-		+" ORDER BY geozone_irpf.amount desc "
+		+" ORDER BY geozone_irpf.amount asc "
 		;
 	
 	
@@ -173,13 +173,14 @@ public class SQLIrpfCalculatorContext {
 					percent = new Double(rs1.getDouble("percent"));
 				}
 				Integer handicap = getHandicap();
-				if(handicap!=null && handicap>0){
+				if(handicap!=null){
 					irpfHandicapStmt.setInt(1, geozone);
 					irpfHandicapStmt.setDouble(2, getGrossSalary());
 					irpfHandicapStmt.setInt(3, handicap);
-					ResultSet rs2 = irpfDescendientsStmt.executeQuery();
+					ResultSet rs2 = irpfHandicapStmt.executeQuery();
 					if(rs2.first()){
-						percent += rs2.getDouble("percent");
+						percent -= rs2.getDouble("percent");
+						percent = percent<0?0:percent;
 					}
 				}
 			} catch (SQLException e) {
@@ -225,8 +226,7 @@ public class SQLIrpfCalculatorContext {
 	}
 	
 	public Integer getHandicap() {
-		Integer i = getInt("irpf_data", "disability_level");
-		return i==null?0:i;
+		return (Integer) getObject("irpf_data", "disability_level");
 	}
 	
 	private Double grossSalary;
@@ -365,6 +365,14 @@ public class SQLIrpfCalculatorContext {
 	private Integer getInt(String tableLabel, String columnLabel) {
 		try {
 			return this.resultSet.getInt(tableLabel +"."+columnLabel);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private Object getObject(String tableLabel, String columnLabel) {
+		try {
+			return this.resultSet.getObject(tableLabel +"."+columnLabel);
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
