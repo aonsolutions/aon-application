@@ -33,12 +33,33 @@
 
 				<aon:outputLabel value="#{payrollBundle.fanBatch_liquidation_type}" />
 				<aon:outputLabel value="#{payrollBundle.fanBatch_liquidation_type}" />
--->			
 				
 				<aon:outputLabel value="#{payrollBundle.fanBatch_liquidation_period}" />
 				<aon:selectOneMenu id="Fan_month" value="#{fanBatchWizard.month}" >
 					<f:selectItems value="#{commonCollections.months}"  />
 				</aon:selectOneMenu>
+-->			
+				
+				<aon:outputLabel value="#{payrollBundle.fanBatch_period}" />
+				<h:panelGrid columns="5">
+
+		   			<rich:inputNumberSpinner id="Fan_year" value="#{fanBatchWizard.year}"
+		   				inputSize="4" minValue="2009" maxValue="2020">
+		   			</rich:inputNumberSpinner>
+	
+					<aon:outputLabel for="Fan_month_from" styleClass="aon-form-date-label"
+						value="#{bundle.aon_date_from}:" />
+					<aon:selectOneMenu id="Fan_month_from" value="#{fanBatchWizard.startMonth}" >
+						<f:selectItems value="#{commonCollections.months}"  />
+					</aon:selectOneMenu>
+				
+					<aon:outputLabel for="Fan_month_to" styleClass="aon-form-date-label"
+						value="#{bundle.aon_date_to}:" />
+					<aon:selectOneMenu id="Fan_month_to" value="#{fanBatchWizard.endMonth}" >
+						<f:selectItems value="#{commonCollections.months}"  />
+					</aon:selectOneMenu>
+					
+				</h:panelGrid>
 											
 			</ui:define>
 		</ui:decorate>

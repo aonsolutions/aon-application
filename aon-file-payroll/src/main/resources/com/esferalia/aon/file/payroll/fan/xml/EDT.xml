@@ -3,13 +3,13 @@
 <register name="EDT">
 	<field name="cabecera" value="EDT" format="AlphaNumeric" pattern="X(3)" />
 	<field name="tipo_elemento" value="bean" bean="EDT" property="tipoElemento" format="AlphaNumeric" pattern="X(2)" />
-	<field name="clave" value="bean" bean="EDT" property="clave" format="AlphaNumeric" pattern="9(2)" />
-	<field name="calificador_clave" value="bean" bean="EDT" property="calificadorClave" format="AlphaNumeric" pattern="9(3)" />
-	<field name="base" value="bean" bean="EDT" property="base" format="AlphaNumeric" pattern="9(11)" />
+	<field name="clave" value="bean" bean="EDT" property="clave" format="Numeric" pattern="9(2)" />
+	<field name="calificador_clave" value="bean" bean="EDT" property="calificadorClave" format="Numeric" pattern="9(3)" />
+	<field name="base" value="bean" bean="EDT" property="base" format="Numeric" pattern="9(11)" />
 	<field name="ind_factor_tipo" value="bean" bean="EDT" property="indicadorFactorTipo" format="AlphaNumeric" pattern="X(1)" />
-	<field name="parte_entera_tipo" value="bean" bean="EDT" property="parteEnteraTipo" format="AlphaNumeric" pattern="9(3)" />
-	<field name="parte_decimal_factor_tipo" value="bean" bean="EDT" property="parteDecimalFactorTipo" format="AlphaNumeric" pattern="9(5)" />
-	<field name="importe" value="bean" bean="EDT" property="importe" format="AlphaNumeric" pattern="9(11)" />
+	<field name="parte_entera_tipo" value="bean" bean="EDT" property="parteEnteraTipo" format="Numeric" pattern="9(3)" />
+	<field name="parte_decimal_factor_tipo" value="bean" bean="EDT" property="parteDecimalFactorTipo" format="Numeric" pattern="9(5)" />
+	<field name="importe" value="bean" bean="EDT" property="importe" format="Numeric" pattern="9(11)" />
 	<field name="signo" value="bean" bean="EDT" property="signo" format="AlphaNumeric" pattern="X(1)" />
 	<field name="free1" value=" " format="AlphaNumeric" pattern="X(28)" />
 </register>

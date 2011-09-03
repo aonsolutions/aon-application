@@ -2541,6 +2541,10 @@
 			<from-outcome>fanBatchWizard_step3</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/fanBatch/step3.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>fanBatchWizard_step4</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/fanBatch/step4.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	<!-- =================== CNO ========================== -->
 	<navigation-rule>

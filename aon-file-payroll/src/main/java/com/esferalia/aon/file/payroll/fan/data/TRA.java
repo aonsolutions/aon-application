@@ -1,5 +1,6 @@
 package com.esferalia.aon.file.payroll.fan.data;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class TRA {
@@ -29,6 +30,9 @@ public class TRA {
 		this.ayn = ayn;
 	}
 	public List<DAT> getDat() {
+		if(dat==null){
+			dat = new LinkedList<DAT>();
+		}
 		return dat;
 	}
 	public void setDat(List<DAT> dat) {

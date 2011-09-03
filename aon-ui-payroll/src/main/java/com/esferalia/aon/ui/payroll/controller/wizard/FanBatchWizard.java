@@ -31,7 +31,6 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.FANWriter;
 
@@ -48,8 +47,10 @@ public class FanBatchWizard {
 	private int currentStep;
 	private FANWriter fanWriter;
 	private FileOutput fileOutput;
+	
 	private Integer year;
-	private Month month;
+	private Month startMonth;
+	private Month endMonth;
 
 	private DataModel model;
 	
@@ -60,24 +61,27 @@ public class FanBatchWizard {
 		return model;
 	}
 	
+	public void setModel(DataModel model) {
+		this.model = model;
+	}
+	
 	public Integer getYear() {
 		return year;
 	}
-
 	public void setYear(Integer year) {
 		this.year = year;
 	}
-
-	public Month getMonth() {
-		return month;
+	public Month getStartMonth() {
+		return startMonth;
 	}
-
-	public void setMonth(Month month) {
-		this.month = month;
+	public void setStartMonth(Month startMonth) {
+		this.startMonth = startMonth;
 	}
-
-	public void setModel(DataModel model) {
-		this.model = model;
+	public Month getEndMonth() {
+		return endMonth;
+	}
+	public void setEndMonth(Month endMonth) {
+		this.endMonth = endMonth;
 	}
 	
 	private FANWriter getFANWriter() {
@@ -220,7 +224,7 @@ public class FanBatchWizard {
 	private void processAll(boolean selected) {
 		for (int i = 0; i < getModel().getRowCount(); i++) {
 			getModel().setRowIndex(i);
-			RemesableContract c = (RemesableContract) getModel().getRowData();
+			RemesableEnterprise c = (RemesableEnterprise) getModel().getRowData();
 			c.setSelected(selected);
 		}
 	}

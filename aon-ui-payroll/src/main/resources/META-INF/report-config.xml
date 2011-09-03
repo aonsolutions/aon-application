@@ -123,5 +123,16 @@
 			<param id="month" value="#{salaryExpense.getMonth}" />
 		</params>
 	</report>
+
+	<!--  IMPRESION DE EL MODELO 145 -->
+	<report id="mod145Report" description="Salary Expense Report">
+		<template path="/com/esferalia/aon/ui/payroll/report/mod145.jasper" />
+		<collection provider="#{irpfData}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.aon.ui.payroll.i18n.report" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
 	
 </report-config>

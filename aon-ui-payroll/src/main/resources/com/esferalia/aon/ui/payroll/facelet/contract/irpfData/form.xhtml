@@ -28,6 +28,18 @@
 							rendered="#{irpfData.irpfChanged}"
 							actionListener="#{irpfData.onIpdateIrpf}"
 							reRender="aonContent" />
+						<aon:htmlCommandLink id="mod145_list"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+							value="#{payrollBundle.payroll_irpfData_mod145}"
+							rendered="#{!irpfData.new}"
+							action="#{report.onExecute}">
+							<!--  
+							<aon:actionListener method="#{enterpriseTree.onLoadWorkPlaceCalendar}" />						
+							<aon:actionListener method="#{calendarPrint.onLoad}" />						
+							-->
+							<f:param name="reportKey" value="mod145Report" />
+							<f:param name="outputFormat" value="PDF" />
+						</aon:htmlCommandLink>	
 					</ui:define>
 					
 				</ui:decorate>

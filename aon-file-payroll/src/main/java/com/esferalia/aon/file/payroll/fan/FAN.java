@@ -70,6 +70,7 @@ public class FAN extends AbstractFileFiller{
 //		input = FAN.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fan/xml/MPG.xml");
 //		DiskRegisterLoader.load(input, manager);
 		input = FAN.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fan/xml/ETF.xml");
+		DiskRegisterLoader.load(input, manager);
 	}
 	
 	@Override
