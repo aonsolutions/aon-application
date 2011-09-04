@@ -124,8 +124,10 @@ public class FANWriter {
 		List<ITransferObject> list = getContracts(enterprise); 
 		for(ITransferObject to: list){
 			Contract c = (Contract) to;
-			TRA tra = createTRARecord(c, year, startMonth, endMonth);
-			emp.getTrabajadores().add(tra);
+			if(getSalary(c, year, startMonth)!=null){
+				TRA tra = createTRARecord(c, year, startMonth, endMonth);
+				emp.getTrabajadores().add(tra);
+			}
 		}
 		return emp;
 	}
