@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -31,6 +34,8 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.file.format.output.FileOutput;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.FanBatch;
+import com.esferalia.aon.payroll.FanBatchDetail;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.FANWriter;
 
@@ -53,6 +58,9 @@ public class FanBatchWizard {
 	private Month endMonth;
 
 	private DataModel model;
+	private DataModel selectedModel;
+	
+	private FanBatch batch;
 	
 	public DataModel getModel() {
 		if (model == null) {
@@ -60,11 +68,22 @@ public class FanBatchWizard {
 		}
 		return model;
 	}
-	
 	public void setModel(DataModel model) {
 		this.model = model;
 	}
-	
+	public DataModel getSelectedModel() {
+		return selectedModel;
+	}
+
+	public void setSelectedModel(DataModel selectedModel) {
+		this.selectedModel = selectedModel;
+	}
+	public FanBatch getBatch() {
+		return batch;
+	}
+	public void setBatch(FanBatch batch) {
+		this.batch = batch;
+	}
 	public Integer getYear() {
 		return year;
 	}
@@ -107,32 +126,11 @@ public class FanBatchWizard {
 		this.currentStep = currentStep;
 	}
 	
-	
-	// Action Listeners
-	public void onNext(ActionEvent event) {
-		if (getCurrentStep() == 0) {
-			onEnterpriseSelect(event);
-			initializeModel();
-			setCurrentStep(getCurrentStep() + 1);
-		} else if (getCurrentStep() == 1) {
-			onValidate(event);
-			setCurrentStep(getCurrentStep() + 1);
-		} else if (getCurrentStep() == 2) {
-			setCurrentStep(getCurrentStep() + 1);
-		} else if (getCurrentStep() == 3) {
-			save();
-			onDiskGenerate(event);
-			setCurrentStep(getCurrentStep() + 1);
-		}  else if (getCurrentStep() == 4) {
-			onFinish(event);
-		}
-	}
-
 	private void initializeModel() {
-		BasicController c = getController();
+		BasicController c = ( BasicController ) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_CONTROLLER);
 		setModel(new ListDataModel(transformList( c.getWrappedList())));
 	}
-
+	
 	private List<RemesableEnterprise> transformList(List<ITransferObject> enterprises) {
 		List<RemesableEnterprise> list = new ArrayList<RemesableEnterprise>();
 		for (ITransferObject to : enterprises) {
@@ -143,23 +141,22 @@ public class FanBatchWizard {
 		}
 		return list;
 	}
-
-	public void onPrevious(ActionEvent event) {
-		setCurrentStep(getCurrentStep() - 1);
-	}
-
+	
+	//************************************
+	// Navigation
+	//************************************
 	public String previous() {
 		return STEPS[getCurrentStep()];
 	}
-
+	
 	public String next() {
 		return STEPS[getCurrentStep()];
 	}
-
+	
 	public boolean isPreviousAvailable() {
 		return (getCurrentStep() > 0);
 	}
-
+	
 	public boolean isNextAvailable() {
 		return (getCurrentStep() < 4);
 	}
@@ -167,13 +164,42 @@ public class FanBatchWizard {
 	public boolean isLast() {
 		return (getCurrentStep() == STEPS.length-1);
 	}
+	
+	//************************************
+	// Action Listeners 
+	//************************************
+	
+	public void onNext(ActionEvent event) {
+		if (getCurrentStep() == 0) {
+			onEnterpriseSearch(event);
+			initializeModel();
+			setCurrentStep(getCurrentStep() + 1);
+		} else if (getCurrentStep() == 1) {
+			onValidate(event);
+			setCurrentStep(getCurrentStep() + 1);
+		} else if (getCurrentStep() == 2) {
+			save();
+			setCurrentStep(getCurrentStep() + 1);
+		} else if (getCurrentStep() == 3) {
+			onDiskGenerate(event);
+			setCurrentStep(getCurrentStep() + 1);
+		}  else if (getCurrentStep() == 4) {
+			onFinish(event);
+		}
+	}
 
-	/*
-	 * ActionListeners
-	 */
+	public void onPrevious(ActionEvent event) {
+		setCurrentStep(getCurrentStep() - 1);
+	}
+
 	public void onStart(ActionEvent event) {
+		setSelectedModel(null);
+		Calendar cal = Calendar.getInstance();
+		setYear(cal.get(Calendar.YEAR));
+		setStartMonth(Month.getMonthByValue(cal.get(Calendar.MONTH)));
+		setEndMonth(Month.getMonthByValue(cal.get(Calendar.MONTH)));
 		setCurrentStep(0);
-		BasicController controller = getController();
+		BasicController controller = ( BasicController ) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_CONTROLLER);
 		controller.onEditSearch(event);
 	}
 	
@@ -181,12 +207,33 @@ public class FanBatchWizard {
 		setCurrentStep(1);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void onValidate(ActionEvent event) {
 		if(!isAnySelected()){
 			String msg = "Debe seleccionar alguna empresa";
 			AonUtil.addErrorMessage(msg);
 			setCurrentStep(getCurrentStep() - 1);
-//			throw new AbortProcessingException(msg);
+		} else {
+			List<RemesableEnterprise> list = new LinkedList<RemesableEnterprise>();
+			for (RemesableEnterprise remesable : (List<RemesableEnterprise>) getModel().getWrappedData()) {
+				if (remesable.isSelected()) {
+					list.add(remesable);
+				}
+			}
+			setSelectedModel(new ListDataModel(list));
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void onRemoveSelected(ActionEvent event) {
+		List<RemesableEnterprise> list = (List<RemesableEnterprise>) getSelectedModel().getWrappedData();
+		if(list.size()>1){
+			RemesableEnterprise r = (RemesableEnterprise) getSelectedModel().getRowData();
+			r.setSelected(false);
+			list.remove(r);
+		} else {
+			String msg = "No se puede generar una remesa sin ninguna empresa seleccionada";
+			AonUtil.addErrorMessage(msg);
 		}
 	}
 	
@@ -203,8 +250,8 @@ public class FanBatchWizard {
 		onStart(event);
 	}
 	
-	private void onEnterpriseSelect(ActionEvent event) {
-		BasicController controller = getController();
+	private void onEnterpriseSearch(ActionEvent event) {
+		BasicController controller = ( BasicController ) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_CONTROLLER);
 		try {
 			controller.onSearch(event);
 			controller.clearCriteria();
@@ -234,28 +281,26 @@ public class FanBatchWizard {
 		boolean mustBeginTransaction = HibernateUtil.mustBeginTransaction();
 		boolean mustCloseSession = HibernateUtil.mustCloseSession();
 		String sessionName = HibernateUtil.getSessionFactoryName();
-		List<RemesableContract> list;
+		List<RemesableEnterprise> list;
 		try {
 			try {
 				HibernateUtil.setBeginTransaction(false);
 				HibernateUtil.setCloseSession(false);
 				HibernateUtil.beginTransaction(sessionName);
 				// BEGIN operaciones de la transaccion
-//				ContractBatchDetail batchDetail;
-//				setBatch(new ContractBatch());
-//				getBatch().setDate(new Date());
-//				setBatch((ContractBatch)BeanManager.getManagerBean(ContractBatch.class).insert(getBatch()));
-//				list = (List<RemesableContract>) getModel().getWrappedData();
-//				for (RemesableContract r: list){
-//					if (r.isSelected()) {
-//						batchDetail = new ContractBatchDetail();
-//						batchDetail.setContractBatch(batch);
-//						r.getContract().setStatus(ContractStatus.PROCESSED);
-//						batchDetail.setContract(r.getContract());
-//						BeanManager.getManagerBean(ContractBatchDetail.class).insert(batchDetail);
-//						BeanManager.getManagerBean(Contract.class).update(batchDetail.getContract());
-//					}
-//				}
+				setBatch(new FanBatch());
+				getBatch().setDate(new Date());
+				FanBatchDetail batchDetail;
+				setBatch( (FanBatch) BeanManager.getManagerBean(FanBatch.class).insert(getBatch()) );
+				list = (List<RemesableEnterprise>) getModel().getWrappedData();
+				for (RemesableEnterprise r: list){
+					if (r.isSelected()) {
+						batchDetail = new FanBatchDetail();
+						batchDetail.setFanBatch(getBatch());
+						batchDetail.setEnterprise(r.getEnterprise());
+						BeanManager.getManagerBean(FanBatchDetail.class).insert(batchDetail);
+					}
+				}
 				// FIN operaciones de la transaccion
 				HibernateUtil.getSession(sessionName).flush();
 				HibernateUtil.commitTransaction(sessionName);
@@ -286,7 +331,7 @@ public class FanBatchWizard {
 					list.add(r.getEnterprise());
 				}
 			}
-			setFileOutput(getFANWriter().createFAN(list));
+			setFileOutput(getFANWriter().createFAN(list, getYear(), getStartMonth(), getStartMonth()));
 			if (getFileOutput() != null) {
 				if (getFileOutput().getErrors().size() > 0) {
 					AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
@@ -331,10 +376,6 @@ public class FanBatchWizard {
 		return (errors == 0);
 	}
 
-	private BasicController getController() {
-		return ( BasicController ) AonUtil.getRegisteredBean(IPayrollConstants.ENTERPRISE_CONTROLLER);
-	}
-
 	public class RemesableEnterprise implements Serializable {
 		
 		private static final long serialVersionUID = -3883614375241389901L;
@@ -357,5 +398,3 @@ public class FanBatchWizard {
 	}
 	
 }
-
-

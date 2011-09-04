@@ -9,12 +9,12 @@ public class EDL {
 	private String tipoElementoDatos;
 	private Integer clave;
 	private Integer elemento;
-	private Integer importe;
+	private String importe;
 	private String signo;
 	private Integer tipoResolucion;
-	private Integer fechaResolucion;
-	private Integer inicioPeriodo;
-	private Integer finPeriodo;
+	private String fechaResolucion;
+	private String inicioPeriodo;
+	private String finPeriodo;
 	private String referencia;
 
 	public String getTipoElementoDatos() {
@@ -35,10 +35,10 @@ public class EDL {
 	public void setElemento(Integer elemento) {
 		this.elemento = elemento;
 	}
-	public Integer getImporte() {
+	public String getImporte() {
 		return importe;
 	}
-	public void setImporte(Integer importe) {
+	public void setImporte(String importe) {
 		this.importe = importe;
 	}
 	public String getSigno() {
@@ -53,22 +53,22 @@ public class EDL {
 	public void setTipoResolucion(Integer tipoResolucion) {
 		this.tipoResolucion = tipoResolucion;
 	}
-	public Integer getFechaResolucion() {
+	public String getFechaResolucion() {
 		return fechaResolucion;
 	}
-	public void setFechaResolucion(Integer fechaResolucion) {
+	public void setFechaResolucion(String fechaResolucion) {
 		this.fechaResolucion = fechaResolucion;
 	}
-	public Integer getInicioPeriodo() {
+	public String getInicioPeriodo() {
 		return inicioPeriodo;
 	}
-	public void setInicioPeriodo(Integer inicioPeriodo) {
+	public void setInicioPeriodo(String inicioPeriodo) {
 		this.inicioPeriodo = inicioPeriodo;
 	}
-	public Integer getFinPeriodo() {
+	public String getFinPeriodo() {
 		return finPeriodo;
 	}
-	public void setFinPeriodo(Integer finPeriodo) {
+	public void setFinPeriodo(String finPeriodo) {
 		this.finPeriodo = finPeriodo;
 	}
 	public String getReferencia() {

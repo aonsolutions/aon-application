@@ -1,5 +1,6 @@
 package com.esferalia.aon.file.payroll.fan.data;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -191,6 +192,9 @@ public class DAT {
 	}
 
 	public List<EDL> getEdl() {
+		if(edl==null){
+			edl = new LinkedList<EDL>();
+		}
 		return edl;
 	}
 

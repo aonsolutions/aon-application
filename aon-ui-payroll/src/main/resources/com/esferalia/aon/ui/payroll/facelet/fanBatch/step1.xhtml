@@ -15,7 +15,7 @@
 
 	<ui:define name="step_content">
 	
-		<aon:dataTable id="contractData" value="#{fanBatchWizard.model}"
+		<aon:dataTable id="enterpriseList" value="#{fanBatchWizard.model}"
 			var="to" rows="20" rendered="#{fanBatchWizard.model.rowCount > 0}"
 			columnClasses="
 			aon-editDataTable-iconColumn, 
@@ -29,13 +29,13 @@
 						<aon:div layout="none">
 							<aon:commandButton id="selectButton" 
 								actionListener="#{fanBatchWizard.onSelectAll}"
-								reRender="contractData"
+								reRender="enterpriseList"
 								onclick="if (!confirm('Desea marcar #{fanBatchWizard.model.rowCount} filas?')) {return false;}"
 								value="&#160;" style="margin-right: 0px;"
 								styleClass="aon-editDataTable-button aon-icon-checkAll aon-vertical-align-top" />
 							<aon:commandButton id="deselectButton" 	
 								actionListener="#{fanBatchWizard.onDeselectAll}"
-								reRender="contractData"
+								reRender="enterpriseList"
 								onclick="if (!confirm('Desea desmarcar #{fanBatchWizard.model.rowCount} filas?')) {return false;}"
 								value="&#160;" style="margin-right: 0px;"
 								styleClass="aon-editDataTable-button aon-icon-checkNone aon-vertical-align-top" />
@@ -44,14 +44,14 @@
 					<aon:selectBooleanCheckbox id="checkMessage" value="#{to.selected}"
 						style="cursor: default;" styleClass="aon-vertical-align-middle">
 						<a4j:support event="onclick"
-							reRender="checkMessage, contractData"  />
+							reRender="checkMessage, enterpriseList"  />
 					</aon:selectBooleanCheckbox>
 				</aon:column>
 			
-                                <ui:include src="/com/esferalia/aon/ui/payroll/facelet/fanBatch/columns.xhtml" />
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/fanBatch/columns.xhtml" />
 
 			</aon:dataTable>	
-			<aon:dataScroller2 for="contractData" showNote="true" />
+			<aon:dataScroller2 for="enterpriseList" showNote="true" />
 
 	</ui:define>
 </ui:composition>

@@ -14,7 +14,50 @@
 	</ui:define>
 
 	<ui:define name="step_content">
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_fanBatch_batch}" />
+			</f:facet>
+				<aon:div styleClass="aon-nowrap">
+					<aon:outputText value="#{payrollBundle.payroll_fanBatch_batch_generation_hour}" />
+					<aon:outputText value="#{fanBatchWizard.batch.date}" style="margin-left: 5px;font-weight:bold;">
+						<f:convertDateTime pattern="#{bundle.aon_time_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+
+					<aon:outputText value="#{payrollBundle.payroll_fanBatch_batch_generation_day}" style="margin-left: 5px;"/>
+					<aon:outputText value="#{fanBatchWizard.batch.date}" style="margin-left: 5px;font-weight:bold;">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:div>
+		</aon:panel>
 		
+		<aon:div id="fanBatchListContainer" layout="none">
+		<aon:panel>
+			<f:facet name="header">
+				<aon:outputText value="#{payrollBundle.payroll_fanBatch_reports}" />
+			</f:facet>
+			<aon:dataTable id="fanBatchList" var="to" rows="20" width="auto"
+				value="#{fanBatchWizard.selectedModel}"
+				columnClasses="
+						aon-editDataTable-textColumn aon-width-50,
+						aon-editDataTable-textColumn aon-width-auto,
+						aon-editDataTable-textColumn aon-width-100,
+						aon-editDataTable-textColumn aon-width-auto,
+						aon-editDataTable-textColumn aon-width-80, 
+						aon-editDataTable-textColumn aon-width-80, 
+						aon-editDataTable-textColumn aon-width-50,
+						aon-editDataTable-textColumn aon-width-80,
+						aon-editDataTable-textColumn aon-width-150, 
+						aon-editDataTable-iconColumn">
+
+				<ui:include
+					src="/com/esferalia/aon/ui/payroll/facelet/fanBatch/columns.xhtml" />
+			</aon:dataTable>
+			<aon:dataScroller2 for="fanBatchList" showNote="true" />
+		</aon:panel>
+		</aon:div>
 	</ui:define>
 
 </ui:composition>
