@@ -79,6 +79,7 @@ public class OfferInvoicingManager {
 		Customer customer = getSalesBridgeUtil().obtainCustomer(offer);
 
 		Invoice invoice = new Invoice();
+		invoice.setProject(offer.getProject());
 		invoice.setSeries(series);
 		invoice.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		invoice.setRegistry(customer.getRegistry());
@@ -116,6 +117,7 @@ public class OfferInvoicingManager {
 			OfferDetail offerDetail = (OfferDetail)iterator.next();
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
+			invoiceDetail.setProject(offer.getProject());
 			invoiceDetail.setLine(offerDetail.getLine());
 			invoiceDetail.setItem(offerDetail.getItem());
 			invoiceDetail.setDescription(offerDetail.getDescription());

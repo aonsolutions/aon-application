@@ -52,6 +52,7 @@ public class SalesManager {
 		Customer customer = getSalesBridgeUtil().obtainCustomer(offer);
 
 		Sales sales = new Sales();
+		sales.setProject(offer.getProject());
 		sales.setSeries(series);
 		sales.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		sales.setCustomer(customer);

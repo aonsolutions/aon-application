@@ -32,6 +32,7 @@ public class OfferControllerListener extends ControllerAdapter {
 		((Offer)controller.getTo()).setStatus(OfferStatus.PENDING);
 		((Offer)controller.getTo()).setType(OfferType.NORMAL);
 		controller.setAddresses(null);
+		controller.setProjects(null);
 		controller.setDefaultPayMethod(null);
 		controller.resetOfferPayMethod();
 	}
@@ -41,6 +42,7 @@ public class OfferControllerListener extends ControllerAdapter {
 		OfferController controller = (OfferController)event.getController();
 		try {
 			controller.loadAddresses(((Offer)controller.getTo()).getTarget().getRegistry().getId());
+			controller.loadProjects(((Offer)controller.getTo()).getTarget().getRegistry().getId());
 			controller.loadDefaultPayMethod(((Offer)controller.getTo()).getTarget().getRegistry().getId(), true);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());

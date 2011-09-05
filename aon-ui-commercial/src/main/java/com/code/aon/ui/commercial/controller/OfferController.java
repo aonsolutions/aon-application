@@ -46,6 +46,8 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.project.Project;
+import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -92,6 +94,7 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	private String selectedTab;
 	private List<SelectItem> addresses;
+	private List<SelectItem> projects;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
 	private boolean showOfferCopyWindow;
@@ -132,6 +135,14 @@ public class OfferController extends BasicController implements ISignatureContro
 
 	public void setAddresses(List<SelectItem> addresses) {
 		this.addresses = addresses;
+	}
+
+	public List<SelectItem> getProjects() {
+		return projects;
+	}
+
+	public void setProjects(List<SelectItem> projects) {
+		this.projects = projects;
 	}
 
 	public Boolean getDefaultPayMethod() {
@@ -380,10 +391,12 @@ public class OfferController extends BasicController implements ISignatureContro
 			getOffer().setTarget(target);
 			getOffer().setTariff(target.getTariff());
 			loadAddresses(target.getId());
+			loadProjects(target.getId());
 			loadCommercial(target.getId());
 			loadDefaultPayMethod(target.getId(), false);
 		} else {
 			setAddresses(null);
+			setProjects(null);
 		}
 	}
 	
@@ -413,6 +426,30 @@ public class OfferController extends BasicController implements ISignatureContro
 		return 0;
 	}
 
+	public void loadProjects(Integer id) throws ManagerBeanException {
+		this.projects = new LinkedList<SelectItem>();
+		if (id != null) {
+			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID), id);
+			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addOrder(projectBean.getFieldName(IProjectAlias.PROJECT_NAME));
+			Iterator<?> iterator = projectBean.getList(criteria).iterator();
+			while(iterator.hasNext()) {
+				Project project = (Project)iterator.next();
+				SelectItem item = new SelectItem(project, project.getName());
+				projects.add(item);
+			}
+		}
+	}
+
+	public int getProjectCount() {
+		if (projects != null) {
+			return projects.size();
+		}
+		return 0;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void loadCommercial(Integer id) throws ManagerBeanException {
 		if (id != null) {
