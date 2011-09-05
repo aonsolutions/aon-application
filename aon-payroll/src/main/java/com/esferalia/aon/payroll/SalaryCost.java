@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -16,6 +17,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.salary.ISalaryItem;
 import com.esferalia.aon.salary.deduction.IDeduction;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 
@@ -25,7 +27,7 @@ import com.esferalia.aon.salary.enumeration.DeductionType;
  */
 @Entity
 @Table(name="salary_cost")
-public class SalaryCost implements ITransferObject {
+public class SalaryCost implements ITransferObject , ISalaryItem<DeductionType>{
 	
 	private static final long serialVersionUID = -4982015552581635450L;
 
@@ -97,6 +99,12 @@ public class SalaryCost implements ITransferObject {
 	}
 	public void setCostConcept(String costConcept) {
 		this.costConcept = costConcept;
+	}
+	
+	@Override
+	@Transient
+	public String getName() {
+		return getCostConcept();
 	}
 	
 	@Override

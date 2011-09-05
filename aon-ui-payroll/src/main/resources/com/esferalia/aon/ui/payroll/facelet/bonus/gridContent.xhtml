@@ -23,9 +23,8 @@
 						  ,aon-noborder aon-padding-right aon-width-150 aon-text-right
 						  ,aon-noborder aon-padding-right aon-width-150 aon-text-right aon-bold">
 
-			<c:set var="totalBonus" value="#{0.00}" />
-			
-			<c:forEach items="#{bonuses}" var="bonus">
+			<c:set var="total" value="#{0.00}" />
+			<c:forEach items="#{sortedSalaryBonuses.items['SOCIAL_SECURITY'].list}" var="bonus">
 				<aon:div style="margin-left: 30px; border-bottom: solid #CCCCCC 1px;">
 					<aon:outputText value="#{bonus.description}"/>
 				</aon:div>
@@ -38,16 +37,16 @@
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
 				</aon:div>
-				<c:set var="totalBonus" value="#{totalBonus + bonus.amount}" />
+				<c:set var="total" value="#{bonus.amount}" />
 			</c:forEach>
 			
 			<aon:outputText value="&#160;"/>
-			<aon:div style="width: 100%;text-align: left; margin-left: 15px;">
+			<aon:div style="width: 100%;text-align: right; ">
 				<aon:outputText value="D. #{payrollBundle.payroll_salary_totalBonus}" styleClass="aon-bold"/>
 			</aon:div>
 			<aon:div style="">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{totalBonus}">
+				<aon:outputText value="#{total}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>

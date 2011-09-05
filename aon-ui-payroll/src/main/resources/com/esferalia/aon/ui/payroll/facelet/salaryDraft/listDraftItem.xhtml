@@ -14,29 +14,15 @@
 		</c:if>
 			
 			<c:forEach
-			step="1"
-			begin="0"
-			varStatus="status"
 			var="displayItem"
 			items="#{items.collection}" 
 			>
-				<c:if test="#{displayItem.difference ge 0.01}" >
-				<aon:div styleClass="aon-label-error" style="border-bottom: solid #CCCCCC 1px;">
-				
+				<aon:div styleClass="#{displayItem.difference >= 0.01 ? 'aon-label-error' : ''}" style="border-bottom: solid #CCCCCC 1px;">
 					<aon:outputText value="&#160;"/>
-					<aon:outputText >
-						${empty displayItem.oldAmount ? '?' : displayItem.oldAmount }
+					<aon:outputText value="#{empty displayItem.oldAmount ? '?' : displayItem.oldAmount }" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
 				</aon:div>
-				</c:if>
-				<c:if test="#{displayItem.difference lt 0.01}" >
-				<aon:div  style="border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="&#160;"/>
-					<aon:outputText >
-						${empty displayItem.oldAmount ? '?' : displayItem.oldAmount }
-					</aon:outputText>
-				</aon:div>
-				</c:if>
 				
 			</c:forEach>
 			

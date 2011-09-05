@@ -14,11 +14,15 @@
 
 				<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
 					columnClasses="aon-border aon-width-150 aon-text-right aon-bold">
-
+					
+					
+					<c:set var="totalLiquidDiff" 
+					value="#{oldSalary.totalLiquid > salary.totalLiquid ? oldSalary.totalLiquid - salary.totalLiquid : salary.totalLiquid - oldSalary.totalLiquid}" />
+					
 					<aon:div styleClass="aon-padding-right" style="font-size: 1.1em;background-color: #F6F6F6;">
 						<aon:outputText value="&#160;"/>
-						<aon:outputText value="#{bases.totalLiquid.doubleValue}"
-							styleClass="#{bases.totalLiquid.style}">
+						<aon:outputText value="#{oldSalary.totalLiquid}"
+							styleClass="#{totalLiquidDiff >= 0.01 ? 'aon-label-error' : '' }">
 							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 						</aon:outputText>
 					</aon:div>
@@ -43,60 +47,73 @@
 						<aon:outputText value="&#160;"/>
 						<aon:outputText value="&#160;"/>
 			
+						<c:set var="remunerationDiff" 
+						value="#{oldSalary.remuneration > salary.remuneration ? oldSalary.remuneration - salary.remuneration : salary.remuneration - oldSalary.remuneration}" />
+
 						<aon:div style="border-bottom: solid #CCCCCC 1px;">
 							<aon:outputText value="&#160;"/>
-							<aon:outputText value="#{bases.remuneration.doubleValue}"
-								styleClass="#{bases.remuneration.style}">
+							<aon:outputText value="#{oldSalary.remuneration}"
+								styleClass="#{remunerationDiff >= 0.01 ? 'aon-label-error' : '' }" >
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:div>
+			
+						<c:set var="extraPayProrationDiff" 
+						value="#{oldSalary.extraPayProration > salary.extraPayProration ? oldSalary.extraPayProration - salary.extraPayProration : salary.extraPayProration - oldSalary.extraPayProration}" />
+						<aon:div style="border-bottom: solid #CCCCCC 1px;">
+							<aon:outputText value="&#160;"/>
+							<aon:outputText value="#{oldSalary.extraPayProration}"
+								styleClass="#{extraPayProrationDiff >= 0.01 ? 'aon-label-error' : '' }" >
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:div>
 			
 						<aon:div style="border-bottom: solid #CCCCCC 1px;">
 							<aon:outputText value="&#160;"/>
-							<aon:outputText value="#{bases.extraPayProration.doubleValue}"
-								styleClass="#{bases.extraPayProration.style}">
-								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-							</aon:outputText>
-						</aon:div>
-			
-						<aon:div style="border-bottom: solid #CCCCCC 1px;">
-							<aon:outputText value="&#160;"/>
-							<aon:outputText value=""
-								styleClass="#{bases.extraPayProration.style}">
+							<aon:outputText value="#{oldSalary.remuneration + oldSalary.extraPayProration}"
+								styleClass="#{remunerationDiff + extraPayProrationDiff  >= 0.01 ? 'aon-label-error' : '' }" >
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:div>
 
+						<c:set var="commonBaseDiff" 
+						value="#{oldSalary.commonBase > salary.commonBase ? oldSalary.commonBase - salary.commonBase : salary.commonBase - oldSalary.commonBase}" />
 						<aon:div style="border-bottom: solid #CCCCCC 1px;">
 							<aon:outputText value="&#160;"/>
-							<aon:outputText value="#{bases.commonBase.doubleValue}"
-								styleClass="#{bases.commonBase.style}">
+							<aon:outputText value="#{oldSalary.commonBase}"
+								styleClass="#{commonBaseDiff >= 0.01 ? 'aon-label-error' : '' }">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:div>
 			
 						<aon:outputText value="&#160;"/>
 			
+						<c:set var="professionalBaseDiff" 
+						value="#{oldSalary.professionalBase > salary.professionalBase ? oldSalary.professionalBase - salary.professionalBase : salary.professionalBase - oldSalary.professionalBase}" />
 						<aon:div style="border-bottom: solid #CCCCCC 1px;">
 							<aon:outputText value="&#160;"/>
-							<aon:outputText value="#{bases.professionalBase.doubleValue}"
-								styleClass="#{bases.professionalBase.style}">
+							<aon:outputText value="#{oldSalary.professionalBase}"
+								styleClass="#{professionalBaseDiff >= 0.01 ? 'aon-label-error' : '' }">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:div>
 			
+						<c:set var="overtimeBaseDiff" 
+						value="#{oldSalary.overtimeBase > salary.overtimeBase ? oldSalary.overtimeBase - salary.overtimeBase : salary.overtimeBase - oldSalary.overtimeBase}" />
 						<aon:div style="border-bottom: solid #CCCCCC 1px;">
 							<aon:outputText value="&#160;"/>
-							<aon:outputText value="#{bases.overtimeBase.doubleValue}"
-								styleClass="#{bases.overtimeBase.style}">
+							<aon:outputText value="#{oldSalary.overtimeBase}"
+								styleClass="#{overtimeBaseDiff >= 0.01 ? 'aon-label-error' : '' }" >
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:div>
 			
+						<c:set var="irpfBaseDiff" 
+						value="#{oldSalary.irpfBase > salary.irpfBase ? oldSalary.irpfBase - salary.irpfBase : salary.irpfBase - oldSalary.irpfBase}" />
 						<aon:div style="">
 							<aon:outputText value="&#160;"/>
-							<aon:outputText value="#{bases.irpfBase.doubleValue}"
-								styleClass="#{bases.irpfBase.style}">
+							<aon:outputText value="#{oldSalary.irpfBase}"
+								styleClass="#{irpfBaseDiff >= 0.01 ? 'aon-label-error' : '' }">
 								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 							</aon:outputText>
 						</aon:div>

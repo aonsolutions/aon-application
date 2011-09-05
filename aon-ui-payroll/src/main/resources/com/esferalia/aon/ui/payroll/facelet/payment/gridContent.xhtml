@@ -35,28 +35,28 @@
 			
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/listContent.xhtml" >
-				<ui:param name="payments" value="#{sortedSalaryPayments.payments['BASE_SALARY']}" />
+				<ui:param name="payments" value="#{sortedSalaryPayments.items['BASE_SALARY']}" />
 			</ui:include>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/listContent.xhtml" >
-				<ui:param name="payments" value="#{sortedSalaryPayments.payments['SALARY_SUPPLEMENTS']}" />
+				<ui:param name="payments" value="#{sortedSalaryPayments.items['SALARY_SUPPLEMENTS']}" />
 			</ui:include>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/listContent.xhtml" >
 				<ui:param name="title" value="#{payrollBundle.payroll_salary_overtime_hours}" />
-				<ui:param name="payments" value="#{sortedSalaryPayments.payments['STRUCTURAL_HOURS']}" />
+				<ui:param name="payments" value="#{sortedSalaryPayments.items['STRUCTURAL_HOURS']}" />
 			</ui:include> 	
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/listContent.xhtml" >
 				<ui:param name="notitle" value="true" />
-				<ui:param name="payments" value="#{sortedSalaryPayments.payments['NON_STRUCTURAL_HOURS']}" />
+				<ui:param name="payments" value="#{sortedSalaryPayments.items['NON_STRUCTURAL_HOURS']}" />
 			</ui:include> 	
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/listContent.xhtml" >
-				<ui:param name="payments" value="#{sortedSalaryPayments.payments['SPECIAL_BONUSES']}" />
+				<ui:param name="payments" value="#{sortedSalaryPayments.items['SPECIAL_BONUSES']}" />
 			</ui:include>
 			
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/listContent.xhtml" >
-				<ui:param name="payments" value="#{sortedSalaryPayments.payments['SALARY_IN_KIND']}" />
+				<ui:param name="payments" value="#{sortedSalaryPayments.items['SALARY_IN_KIND']}" />
 			</ui:include>
 
 			<aon:div style="margin-left: 10px;">
@@ -66,19 +66,19 @@
 			<aon:outputText value="&#160;"/>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/listContent.xhtml" >
-				<ui:param name="payments" value="#{sortedSalaryPayments.payments['COMPENSATION_OR_PREPAID_EXPENSES']}" />
+				<ui:param name="payments" value="#{sortedSalaryPayments.items['COMPENSATION_OR_PREPAID_EXPENSES']}" />
 			</ui:include>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/listContent.xhtml" >
-				<ui:param name="payments" value="#{sortedSalaryPayments.payments['SOCIAL_SECURITY_BENEFITS']}" />
+				<ui:param name="payments" value="#{sortedSalaryPayments.items['SOCIAL_SECURITY_BENEFITS']}" />
 			</ui:include>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/listContent.xhtml" >
-				<ui:param name="payments" value="#{sortedSalaryPayments.payments['MOVING_COMPENSATION']}" />
+				<ui:param name="payments" value="#{sortedSalaryPayments.items['MOVING_COMPENSATION']}" />
 			</ui:include>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/listContent.xhtml" >
-				<ui:param name="payments" value="#{sortedSalaryPayments.payments['OTHER_NON_WAGE']}" />
+				<ui:param name="payments" value="#{sortedSalaryPayments.items['OTHER_NON_WAGE']}" />
 			</ui:include>
 
 			<aon:outputText value="&#160;"/>

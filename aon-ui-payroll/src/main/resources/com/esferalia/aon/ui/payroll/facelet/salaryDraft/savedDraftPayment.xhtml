@@ -7,26 +7,6 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
-	<ui:define name="paymentsTemplate" >
-			<c:if test="#{empty notitle}">
-				<aon:div style="margin-left: 20px;">
-					<aon:outputText value="&#160;"/>
-				</aon:div>
-			</c:if>
-			<c:forEach items="#{payments.collection}" var="payment">
-				<aon:div styleClass="#{ ( payment.difference  > 0.01 )  ? 'aon-label-error': '' }" style="border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText value="&#160;"/>
-					<c:if test="#{payment.oldAmount != null }" >
-						<aon:outputText value="#{payment.oldAmount}">
-							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-						</aon:outputText>
-					</c:if>
-					<c:if test="#{payment.oldAmount == null }" >
-						<aon:outputText value="?" />
-					</c:if>
-				</aon:div>
-			</c:forEach>
-	</ui:define>
 	
 	<aon:div styleClass="aon-margin-top aon-border" 
 		style="background-color:#F6F6F6;;">
@@ -48,29 +28,29 @@
 			</aon:div>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
-				<ui:param name="items" value="#{sortedSalaryPayments.payments['BASE_SALARY']}" />
+				<ui:param name="items" value="#{sortedSalaryPayments.items['BASE_SALARY']}" />
 			</ui:include>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
-				<ui:param name="items" value="#{sortedSalaryPayments.payments['SALARY_SUPPLEMENTS']}" />
+				<ui:param name="items" value="#{sortedSalaryPayments.items['SALARY_SUPPLEMENTS']}" />
 			</ui:include>
 			
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
 				<ui:param name="title" value="#{payrollBundle.payroll_salary_overtime_hours}" />
-				<ui:param name="items" value="#{sortedSalaryPayments.payments['STRUCTURAL_HOURS']}" />
+				<ui:param name="items" value="#{sortedSalaryPayments.items['STRUCTURAL_HOURS']}" />
 			</ui:include> 	
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
 				<ui:param name="notitle" value="true" />
-				<ui:param name="items" value="#{sortedSalaryPayments.payments['NON_STRUCTURAL_HOURS']}" />
+				<ui:param name="items" value="#{sortedSalaryPayments.items['NON_STRUCTURAL_HOURS']}" />
 			</ui:include> 	
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
-				<ui:param name="items" value="#{sortedSalaryPayments.payments['SPECIAL_BONUSES']}" />
+				<ui:param name="items" value="#{sortedSalaryPayments.items['SPECIAL_BONUSES']}" />
 			</ui:include>
 			
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
-				<ui:param name="items" value="#{sortedSalaryPayments.payments['SALARY_IN_KIND']}" />
+				<ui:param name="items" value="#{sortedSalaryPayments.items['SALARY_IN_KIND']}" />
 			</ui:include>
 
 			<aon:div style="margin-left: 10px;">
@@ -78,24 +58,26 @@
 			</aon:div>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
-				<ui:param name="items" value="#{sortedSalaryPayments.payments['COMPENSATION_OR_PREPAID_EXPENSES']}" />
+				<ui:param name="items" value="#{sortedSalaryPayments.items['COMPENSATION_OR_PREPAID_EXPENSES']}" />
 			</ui:include>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
-				<ui:param name="items" value="#{sortedSalaryPayments.payments['SOCIAL_SECURITY_BENEFITS']}" />
+				<ui:param name="items" value="#{sortedSalaryPayments.items['SOCIAL_SECURITY_BENEFITS']}" />
 			</ui:include>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
-				<ui:param name="items" value="#{sortedSalaryPayments.payments['MOVING_COMPENSATION']}" />
+				<ui:param name="items" value="#{sortedSalaryPayments.items['MOVING_COMPENSATION']}" />
 			</ui:include>
 
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftItem.xhtml" >
-				<ui:param name="items" value="#{sortedSalaryPayments.payments['OTHER_NON_WAGE']}" />
+				<ui:param name="items" value="#{sortedSalaryPayments.items['OTHER_NON_WAGE']}" />
 			</ui:include>
-
-			<aon:div style="">
+			
+			<c:set var="totalDiff" 
+				value="#{ ( oldTotalPayment > totalPayment ? oldTotalPayment - totalPayment : totalPayment - oldTotalPayment )}" />
+			<aon:div styleClass="#{ totalDiff >= 0.01  ? 'aon-label-error' : ''}" style="">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{totalPayment}">
+				<aon:outputText value="#{oldTotalPayment}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>

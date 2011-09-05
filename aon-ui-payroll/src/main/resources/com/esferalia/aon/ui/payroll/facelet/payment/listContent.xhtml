@@ -16,8 +16,8 @@
 			
 			<c:forEach  var="payment" items="#{payments.collection}">
 				<aon:div style="margin-left: 30px; border-bottom: solid #CCCCCC 1px;">
-					<aon:outputText>
-						#{payment.description}
+					<aon:outputText value="#{payment.description}">
+						
 					</aon:outputText>
 				</aon:div>
 				<aon:div style="border-bottom: solid #CCCCCC 1px;">
@@ -25,8 +25,8 @@
 				</aon:div>
 				<aon:div style="border-bottom: solid #CCCCCC 1px;">
 					<aon:outputText value="&#160;"/>
-					<aon:outputText >
-						${payment.amount}
+					<aon:outputText value="#{payment.amount}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
 				</aon:div>
 			</c:forEach>

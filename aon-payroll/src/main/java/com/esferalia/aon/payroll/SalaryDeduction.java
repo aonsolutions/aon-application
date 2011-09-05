@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -113,6 +114,13 @@ public class SalaryDeduction implements ITransferObject, IDeduction {
 	public void setDeductionConcept(String deductionConcept) {
 		this.deductionConcept = deductionConcept;
 	}
+
+	@Override
+	@Transient
+	public String getName() {
+		return getDeductionConcept();
+	}
+	
 
 	@Override
 	public boolean equals(Object obj) {

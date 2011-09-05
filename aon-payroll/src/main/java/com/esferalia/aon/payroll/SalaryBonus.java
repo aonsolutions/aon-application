@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -16,6 +17,8 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.salary.ISalaryItem;
+import com.esferalia.aon.salary.enumeration.BonusType;
 
 /**
  * Transfer Object that represents the salary bonus.
@@ -23,7 +26,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
  */
 @Entity
 @Table(name="salary_bonus")
-public class SalaryBonus implements ITransferObject {
+public class SalaryBonus implements ITransferObject , ISalaryItem<BonusType>{
 	
 	private static final long serialVersionUID = 3117718151672116287L;
 
@@ -88,6 +91,18 @@ public class SalaryBonus implements ITransferObject {
 	
 	public void setBonusConcept(String bonusConcept) {
 		this.bonusConcept = bonusConcept;
+	}
+	
+	@Override
+	@Transient
+	public String getName() {
+		return getBonusConcept();
+	}
+	
+	@Override
+	@Transient
+	public BonusType getType() {
+		return BonusType.SOCIAL_SECURITY;
 	}
 	
 	@Override

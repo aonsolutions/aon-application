@@ -20,6 +20,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.hibernate.Session;
+import org.richfaces.util.CollectionsUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,12 +56,19 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBonus;
+import com.esferalia.aon.payroll.SalaryCost;
+import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.salary.ISalaryItem;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.BonusType;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+
+
 
 public class SalaryController extends BasicController implements IPayrollConstants {
 	
@@ -74,6 +82,21 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		return MessageFormat.format(SALARY_PATTERN, name, salary.getStartDate(), salary.getEndDate());
 	}
 	
+	public SortedSalaryItems<BonusType> getSortedSalaryBonuses() 
+	throws ManagerBeanException, SalaryException{
+	
+	SortedSalaryItems<BonusType> sortedSalaryBonuses =
+		new SortedSalaryItems<BonusType>();
+	
+	Collection<SalaryBonus> salaryBonuses  = 
+		((Salary) getTo() ).getBonus();
+	Collection<SalaryBonus> oldSalaryBonuses= 
+		Collections.emptyList();
+	sortedSalaryBonuses.setItems(salaryBonuses, oldSalaryBonuses);
+	
+	return sortedSalaryBonuses;
+}
+
 	public SortedSalaryItems<PaymentType> getSortedSalaryPayments() 
 		throws ManagerBeanException{
 		
@@ -84,11 +107,45 @@ public class SalaryController extends BasicController implements IPayrollConstan
 			getSalaryPayments();
 		Collection<SalaryPayment> oldSalaryPayments = 
 			Collections.emptyList();
-		sortedSalaryPayments.setPayments(salaryPayments, oldSalaryPayments);
+		sortedSalaryPayments.setItems(salaryPayments, oldSalaryPayments);
 		
 		return sortedSalaryPayments;
 	}
 	
+	public SortedSalaryItems<DeductionType> getSortedSalaryDeductions() 
+	throws ManagerBeanException{
+	
+		SortedSalaryItems<DeductionType> sortedSalaryDeductions=
+			new SortedSalaryItems<DeductionType>(DeductionType.values());
+		
+		Collection<SalaryDeduction> salaryDeductions =
+			getSalaryDeductions();
+		
+		Collection<SalaryDeduction> oldSalaryDeductions = 
+			Collections.emptyList();
+		
+		sortedSalaryDeductions.setItems(salaryDeductions, oldSalaryDeductions);
+		
+		return sortedSalaryDeductions;
+	}
+
+	public SortedSalaryItems<DeductionType> getSortedSalaryCosts() 
+	throws ManagerBeanException{
+	
+		SortedSalaryItems<DeductionType> sortedSalaryCosts=
+			new SortedSalaryItems<DeductionType>(DeductionType.values());
+		
+		Collection<SalaryCost> salaryCosts =
+			getSalaryCosts();
+		
+		Collection<SalaryCost> oldSalaryCosts = 
+			Collections.emptyList();
+		
+		sortedSalaryCosts.setItems(salaryCosts, oldSalaryCosts);
+		
+		return sortedSalaryCosts;
+	}
+
 	
 	private Collection<SalaryPayment> getSalaryPayments () throws ManagerBeanException {
 		Salary salary = (Salary) getTo();
@@ -105,6 +162,44 @@ public class SalaryController extends BasicController implements IPayrollConstan
 			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_PAYMENT_SALARY_ID), salary.getId());
 			List<?> list = bean.getList(c);
 			return (Collection<SalaryPayment>) list;
+		}
+		
+	}
+
+	private Collection<SalaryDeduction> getSalaryDeductions () throws ManagerBeanException {
+		Salary salary = (Salary) getTo();
+		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		Session session = HibernateUtil.getSession(sessionName);
+		// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
+		// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+		// el FrameWork.
+		if (  session.contains(salary)  || salary.getId() == null ) {
+			return  salary.getSalaryDeductions();
+		} else {
+			IManagerBean bean = BeanManager.getManagerBean(SalaryDeduction.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_DEDUCTION_SALARY_ID), salary.getId());
+			List<?> list = bean.getList(c);
+			return (Collection<SalaryDeduction>) list;
+		}
+		
+	}
+
+	private Collection<SalaryCost> getSalaryCosts() throws ManagerBeanException {
+		Salary salary = (Salary) getTo();
+		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		Session session = HibernateUtil.getSession(sessionName);
+		// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
+		// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+		// el FrameWork.
+		if (  session.contains(salary)  || salary.getId() == null ) {
+			return  salary.getSalaryCosts();
+		} else {
+			IManagerBean bean = BeanManager.getManagerBean(SalaryCost.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_COST_SALARY_ID), salary.getId());
+			List<?> list = bean.getList(c);
+			return (Collection<SalaryCost>) list;
 		}
 		
 	}

@@ -15,6 +15,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.AonException;
+import com.esferalia.aon.payroll.enumeration.AbstractSSRegimeTypeVisitor;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeTypeVisitor;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -269,13 +270,24 @@ public abstract class QuoteCalculator {
 		
 	}
 	
-	public static QuoteCalculator getQuoteCalculator(IContractSalaryCalculatorContext ctx) {
-		
-		if ( ctx.getSalaryType() == SalaryType.EXTRA ){
-			return NonQuote.getInstance();
+	public static class SettleQuote extends GeneralQuote {
+		public SettleQuote(ExpressionContext context, Date salaryStart, Date salaryEnd) {
+			super(context, salaryStart, salaryEnd);
 		}
 		
-		SSRegimeType ssRegimeType = ctx.getSSRegime();
+		@Override
+		public double getCgcBase() throws AonException {
+			return super.getRawCgcBase();
+		}
+
+		@Override
+		public double getCgpBase() throws AonException {
+			return super.getRawCgcBase() + getStructuralBase() + getNonStructuralBase();
+		}
+	}
+	
+	public static QuoteCalculator getQuoteCalculator(IContractSalaryCalculatorContext ctx) {
+		
 		
 		final ExpressionContext expressionContext = 
 			ctx.getExpressionContext();
@@ -283,54 +295,53 @@ public abstract class QuoteCalculator {
 		final Date startDate = ctx.getStartDate();
 		final Date endDate = ctx.getEndDate();
 		
-		return ssRegimeType.accept(new SSRegimeTypeVisitor<QuoteCalculator>() {
+		SSRegimeType ssRegimeType = ctx.getSSRegime();
 
-			@Override
-			public QuoteCalculator visitGeneralRegime(SSRegimeType ssRegimeType) {
-				return new GeneralQuote(expressionContext, startDate, endDate);
-			}
-
-			@Override
-			public QuoteCalculator visitAgriculturalRegime(
-					SSRegimeType ssRegimeType) {
-				return new GeneralQuote(expressionContext, startDate, endDate);
-			}
-
-			@Override
-			public QuoteCalculator visitDomesticEmployeesRegime(
-					SSRegimeType ssRegimeType) {
-				return new GeneralQuote(expressionContext, startDate, endDate);
-			}
+		QuoteCalculator quoteCalculator =  ssRegimeType.accept(new AbstractSSRegimeTypeVisitor<QuoteCalculator>() {
 
 			@Override
 			public QuoteCalculator visitSelfEmployedRegime(
 					SSRegimeType ssRegimeType) {
 				return NonQuote.getInstance();
 			}
-
-			@Override
-			public QuoteCalculator visitCoalMiningRegime(
-					SSRegimeType ssRegimeType) {
-				return new GeneralQuote(expressionContext, startDate, endDate);
-			}
-
-			@Override
-			public QuoteCalculator visitSeaWorkersRegime(
-					SSRegimeType ssRegimeType) {
-				return new GeneralQuote(expressionContext, startDate, endDate);
-			}
-
-			@Override
-			public QuoteCalculator visitStudentInsuranceRegime(
-					SSRegimeType ssRegimeType) {
-				return new GeneralQuote(expressionContext, startDate, endDate);
-			}
-
-			@Override
-			public QuoteCalculator visitArtistRegime(SSRegimeType ssRegimeType) {
-				return new GeneralQuote(expressionContext, startDate, endDate);
-			}
 		});
+		
+		if ( quoteCalculator != null ) {
+			return quoteCalculator;
+		}
+		
+		SalaryType salaryType = ctx.getSalaryType();
+		
+		quoteCalculator = salaryType.accept(new SalaryTypeVisitor<QuoteCalculator>() {
+
+			@Override
+			public QuoteCalculator visitSalary(SalaryType salaryType) {
+				return new GeneralQuote(expressionContext, startDate, endDate);
+			}
+
+			@Override
+			public QuoteCalculator visitExtra(SalaryType salaryType) {
+				return new NonQuote();
+			}
+
+			@Override
+			public QuoteCalculator visitSettle(SalaryType salaryType) {
+				return new SettleQuote(expressionContext, startDate, endDate);
+			}
+
+			@Override
+			public QuoteCalculator visitDelay(SalaryType salaryType) {
+				return new GeneralQuote(expressionContext, startDate, endDate);
+			}
+
+			@Override
+			public QuoteCalculator visitNotEnjoyedVacations(
+					SalaryType salaryType) {
+				return new GeneralQuote(expressionContext, startDate, endDate);
+			}
+			
+		});
+		return quoteCalculator;
 	}
 	
 	

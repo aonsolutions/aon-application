@@ -515,24 +515,6 @@
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>draftSortedSalaryCosts</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.salary.SortedSalaryCosts</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-		<managed-property>
-			<property-name>salaryCosts</property-name>
-			<value>#{salaryDraft.salary.salaryCosts}</value>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>beanSortedSalaryCosts</managed-bean-name>
-		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.salary.SortedSalaryCosts</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-		<managed-property>
-			<property-name>salaryCosts</property-name>
-			<value>#{salary.to.costs}</value>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
 		<managed-bean-name>salaryEmbargoLinesListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>

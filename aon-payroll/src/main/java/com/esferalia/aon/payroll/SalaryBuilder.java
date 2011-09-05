@@ -251,7 +251,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 		payment.setAmount(amount);
 		payment.setDescription(description);
 		payment.setExpression(expression);
-		 
+
 		this.salary.getSalaryPayments().add(payment);
 		
 	}

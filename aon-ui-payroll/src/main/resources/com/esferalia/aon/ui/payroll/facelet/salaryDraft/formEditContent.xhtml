@@ -94,7 +94,8 @@
 									<aon:div style="width: 150px; margin-left: 5px;">
 										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/savedDraftPayment.xhtml" >
 											<ui:param name="sortedSalaryPayments" value="#{salaryDraft.sortedSalaryPayments}" />
-											<ui:param name="totalPayment" value="#{salaryDraft.bdSalary.totalPayment}" />
+											<ui:param name="totalPayment" value="#{salaryDraft.salary.totalPayment}" />
+											<ui:param name="oldTotalPayment" value="#{salaryDraft.bdSalary.totalPayment}" />
 										</ui:include>
 									</aon:div>
 								</c:if>
@@ -118,17 +119,20 @@
 								style="margin-top: 10px;"
 								columnClasses="aon-noborder, aon-noborder">
 								<aon:div style="width: 815px;">
-									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/gridContent.xhtml" >
-										<ui:param name="controller" value="#{salaryDraft.salary.deductions}" />
+									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/_gridContent.xhtml" >
+										<ui:param name="sortedSalaryDeductions" value="#{salaryDraft.sortedSalaryDeductions}" />
 										<ui:param name="totalDeduction" value="#{salaryDraft.salary.totalDeduction}" />
+										<ui:param name="socialSecurityContributions" value="#{salaryDraft.salary.socialSecurityContributions}" />
 									</ui:include>
 								</aon:div>
 								<c:if test="#{salaryDraft.showSalaryDifference}" >
 									<aon:div style="width: 150px; margin-left: 5px;">
 										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/savedDraftDeduction.xhtml" >
-											<ui:param name="controller" value="#{salaryDraft.savedSalaryDraft.deductions}" />
-											<ui:param name="totalDeduction" value="#{salaryDraft.savedSalaryDraft.totalDeduction}" />
-											<ui:param name="deductions" value="#{salaryDraft.printer.deductions}" />
+											<ui:param name="sortedSalaryDeductions" value="#{salaryDraft.sortedSalaryDeductions}" />
+											<ui:param name="totalDeduction" value="#{salaryDraft.salary.totalDeduction}" />
+											<ui:param name="oldTotalDeduction" value="#{salaryDraft.bdSalary.totalDeduction}" />
+											<ui:param name="ssTotal" value="#{salaryDraft.salary.socialSecurityContributions}" />
+											<ui:param name="oldSsTotal" value="#{salaryDraft.bdSalary.socialSecurityContributions}" />
 										</ui:include>
 									</aon:div>
 								</c:if>
@@ -159,7 +163,8 @@
 						<c:if test="#{salaryDraft.showSalaryDifference}" >
 							<aon:div style="width: 150px; margin-left: 5px;" >
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/savedDraftBases.xhtml" >
-									<ui:param name="bases" value="#{salaryDraft.printer.bases}" />
+									<ui:param name="salary" value="#{salaryDraft.salary}" />
+									<ui:param name="oldSalary" value="#{salaryDraft.bdSalary}" />
 								</ui:include>
 							</aon:div>
 						</c:if>
@@ -170,18 +175,20 @@
 						columnClasses="aon-noborder">
 						<aon:div style="width: 815px; margin-top: 10px;">
 							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cost/gridContent.xhtml" >
-								<ui:param name="sortedSalaryCosts" value="#{draftSortedSalaryCosts}" />
+								<ui:param name="sortedSalaryCosts" value="#{salaryDraft.sortedSalaryCosts}" />
 								<ui:param name="total" value="#{salaryDraft.salary.totalEnterprise}" />
 							</ui:include>
 						</aon:div>
-
-						<!--c:if test="#{salaryDraft.showSalaryDifference}" >
+						<c:if test="#{salaryDraft.showSalaryDifference}" >
 							<aon:div style="width: 150px; margin-left: 5px;" >
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/savedDraftCost.xhtml" >
-									<ui:param name="deductions" value="#{salaryDraft.printer.deductions}" />
+									<ui:param name="sortedSalaryCosts" value="#{salaryDraft.sortedSalaryCosts}" />
+									<ui:param name="total" value="#{salaryDraft.salary.totalEnterprise}" />
+									<ui:param name="oldTotal" value="#{salaryDraft.bdSalary.totalEnterprise}" />
 								</ui:include>
 							</aon:div>
-						</c:if-->
+						</c:if>
+
 					</aon:panelGrid>
 					
 	
@@ -192,14 +199,13 @@
 								columnClasses="aon-noborder, aon-noborder">
 								<aon:div style="width: 815px; margin-top: 10px;">
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/gridContent.xhtml" >
-										<ui:param name="bonuses" value="#{salaryDraft.salary.salaryBonus}" />
+										<ui:param name="sortedSalaryBonuses" value="#{salaryDraft.sortedSalaryBonuses}" />
 									</ui:include>
 								</aon:div>
 							<c:if test="#{salaryDraft.showSalaryDifference}" >
 								<aon:div style="width: 150px; margin-left: 5px;" >
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/savedDraftBonus.xhtml" >
-										<ui:param name="bonuses" value="#{salaryDraft.savedSalaryDraft.salaryBonus}" />
-										<ui:param name="bonuses" value="#{salaryDraft.printer.bonuses }" />
+										<ui:param name="sortedSalaryBonuses" value="#{salaryDraft.sortedSalaryBonuses}" />
 									</ui:include>
 								</aon:div>
 							</c:if>
@@ -224,6 +230,14 @@
 								<ui:param name="salaryTO" value="#{salaryDraft.salary}" />
 							</ui:include>
 						</aon:div>
+						<c:if test="#{salaryDraft.showSalaryDifference}" >
+							<aon:div style="width: 150px; margin-left: 5px;" >
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/savedDraftCosts.xhtml" >
+									<ui:param name="salary" value="#{salaryDraft.salary}" />
+									<ui:param name="oldSalary" value="#{salaryDraft.bdSalary}" />
+								</ui:include>
+							</aon:div>
+						</c:if>
 					</aon:panelGrid>
 	
 				</aon:div>

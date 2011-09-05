@@ -1,6 +1,8 @@
 package com.esferalia.aon.ui.payroll.controller.salary;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -8,6 +10,7 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.sun.xml.internal.bind.v2.runtime.reflect.ListIterator;
 
 public class CollectionWrapper<T> {
 	
@@ -35,6 +38,10 @@ public class CollectionWrapper<T> {
 	
 	public void add( T e ) {
 		collection.add(e);
+	}
+
+	public List<T> getList() {
+		return collection;
 	}
 
 	public Collection<T> getCollection() {

@@ -46,6 +46,9 @@ import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.SalaryBonus;
+import com.esferalia.aon.payroll.SalaryCost;
+import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
@@ -54,6 +57,8 @@ import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.OutOfDateException;
+import com.esferalia.aon.salary.enumeration.BonusType;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
@@ -65,7 +70,6 @@ import com.esferalia.aon.ui.payroll.controller.launcher.SalaryLauncher;
 import com.esferalia.aon.ui.payroll.controller.launcher.SalaryLauncherParams;
 import com.esferalia.aon.ui.payroll.controller.launcher.SalaryRemoverController;
 import com.esferalia.aon.ui.payroll.controller.salary.SortedSalaryItems;
-import com.esferalia.aon.ui.payroll.event.salary.draft.SalaryDraftComparatorPrinter;
 
 public class SalaryDraftController extends BasicController {
 	
@@ -80,13 +84,15 @@ public class SalaryDraftController extends BasicController {
 	private ISalary 							dbSalary;			// saved ( database ) salary
 	
 	private SortedSalaryItems<PaymentType>		payments;
+	private SortedSalaryItems<DeductionType>	deductions;
+	private SortedSalaryItems<DeductionType>	costs;
+	private SortedSalaryItems<BonusType>	bonuses;
 	
 	private List<SelectItem> 					draftMonths;		
 	private List<SelectItem> 					salaryDraftTypes;	
 
 	private DataModel 							paymentsModel;
 //	private DataModel 							deductionsModel;
-	private SalaryDraftComparatorPrinter 		printer;
 	
 	public List<SelectItem> getDraftMonths() {
 		return draftMonths;
@@ -123,8 +129,10 @@ public class SalaryDraftController extends BasicController {
 	
 	public int getMinYear() {
 		if ( this.salaryType  == SalaryType.SETTLE ) {
-			// current year...
-			return Calendar.getInstance().get(Calendar.YEAR);
+			// contract end...
+			Contract contract = (Contract) getTo();
+			Date endDate = contract.getEndDate();
+			return CommonUtil.getYear(endDate);
 		}
 		else {
 			Contract contract = (Contract) getTo();
@@ -281,7 +289,6 @@ public class SalaryDraftController extends BasicController {
 			salary = ctx.getSalaryProxy().getSalary();
 			
 			paymentsModel = null;
-			printer = null;
 			paymentsList = null;
 			initializePaymentModel();
 
@@ -297,10 +304,14 @@ public class SalaryDraftController extends BasicController {
 	}
 
 	public void reset() {
+		initDraftTypes();
 		rebuildDraftMonths();
 		calculateSalary();
 		searchSavedDraftSalary();
 		initPayments();
+		initDeductions();
+		initCosts();
+		initBonuses();
 	}
 	
 	public DataModel getPaymentsModel() {
@@ -313,9 +324,22 @@ public class SalaryDraftController extends BasicController {
 		this.paymentsModel = paymentsModel;
 	}
 	
+	public SortedSalaryItems<BonusType> getSortedSalaryBonuses() {
+		return bonuses;
+	}
+
+	public SortedSalaryItems<DeductionType> getSortedSalaryCosts() {
+		return costs;
+	}
+
 	public SortedSalaryItems<PaymentType> getSortedSalaryPayments() {
 		return payments;
 	}
+	
+	public SortedSalaryItems<DeductionType> getSortedSalaryDeductions() {
+		return deductions;
+	}
+
 	
 	@SuppressWarnings("unchecked")
 	private void initializePaymentModel() {
@@ -384,20 +408,6 @@ public class SalaryDraftController extends BasicController {
 		}
 	}
 	
-	public SalaryDraftComparatorPrinter getPrinter() {
-		if(printer==null){
-			Contract contract = (Contract) getTo();
-			Date startDate = getStartDate().before(contract.getStartDate())?contract.getStartDate():getStartDate(); 
-			Date endDate = (contract.getEndDate() != null && getEndDate().after(contract.getEndDate()))?contract.getEndDate():getEndDate(); 
-			Date issueDate = getIssueDate(); 
-			printer = new SalaryDraftComparatorPrinter(contract, getBdSalary(), startDate, endDate, issueDate);
-		}
-		return printer;
-	}
-	public void setPrinter(SalaryDraftComparatorPrinter printer) {
-		this.printer = printer;
-	}
-	
 	private void searchSavedDraftSalary(){
 		Contract contract = (Contract) this.getTo();
 		try {
@@ -421,6 +431,46 @@ public class SalaryDraftController extends BasicController {
 	}
 	
 	
+	private void initCosts() {
+		costs = new SortedSalaryItems<DeductionType>();
+		
+		Collection<SalaryCost> newSalaryItems = Collections.emptyList(); 
+		
+		if ( salary != null )  {
+			newSalaryItems = ( ( Salary ) salary ).getSalaryCosts(); 
+		}
+		Collection<SalaryCost> oldSalaryItems = Collections.emptyList();
+		if ( dbSalary != null )  {
+			try {
+				oldSalaryItems = getSalaryCosts( ( Salary ) dbSalary );
+			} catch (ManagerBeanException e) {
+				String msg = "Fallo en la obtención de las deducciones calculadas";
+				AonUtil.addErrorMessage(msg);
+			} 
+		}
+		
+		costs.setItems(newSalaryItems, oldSalaryItems);
+	}
+
+	private void initBonuses() {
+		bonuses = new SortedSalaryItems<BonusType>(BonusType.values());
+		Collection<SalaryBonus> newSalaryItems = Collections.emptyList(); 
+		
+		if ( salary != null )  {
+			newSalaryItems = ( ( Salary ) salary ).getSalaryBonus(); 
+		}
+		Collection<SalaryBonus> oldSalaryItems = Collections.emptyList();
+		if ( dbSalary != null )  {
+			try {
+				oldSalaryItems = ( ( Salary ) dbSalary ).getBonus();
+			} catch (SalaryException e) {
+				String msg = "Fallo en la obtención de las bonificaciones calculadas";
+				AonUtil.addErrorMessage(msg);
+			} 
+		}
+		bonuses.setItems(newSalaryItems, oldSalaryItems);
+	}
+
 	private void initPayments() {
 		payments = new SortedSalaryItems<PaymentType>(PaymentType.values());
 		Collection<SalaryPayment> newSalaryItems = Collections.emptyList(); 
@@ -437,9 +487,29 @@ public class SalaryDraftController extends BasicController {
 				AonUtil.addErrorMessage(msg);
 			} 
 		}
-		payments.setPayments(newSalaryItems, oldSalaryItems);
+		payments.setItems(newSalaryItems, oldSalaryItems);
 	}
 	
+	private void initDeductions() {
+		deductions = new SortedSalaryItems<DeductionType>(DeductionType.values());
+		
+		Collection<SalaryDeduction> newSalaryItems = Collections.emptyList(); 
+		
+		if ( salary != null )  {
+			newSalaryItems = ( ( Salary ) salary ).getSalaryDeductions(); 
+		}
+		Collection<SalaryDeduction> oldSalaryItems = Collections.emptyList();
+		if ( dbSalary != null )  {
+			try {
+				oldSalaryItems = getSalaryDeductions( ( Salary ) dbSalary );
+			} catch (ManagerBeanException e) {
+				String msg = "Fallo en la obtención de las deducciones calculadas";
+				AonUtil.addErrorMessage(msg);
+			} 
+		}
+		deductions.setItems(newSalaryItems, oldSalaryItems);
+	}
+
 	private Collection<SalaryPayment> getSalaryPayments(Salary salary) throws ManagerBeanException {
 		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
 		Session session = HibernateUtil.getSession(sessionName);
@@ -457,6 +527,40 @@ public class SalaryDraftController extends BasicController {
 		}
 	}
 	
+	private Collection<SalaryDeduction> getSalaryDeductions(Salary salary) throws ManagerBeanException {
+		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		Session session = HibernateUtil.getSession(sessionName);
+		// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
+		// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+		// el FrameWork.
+		if (  session.contains(salary)  || salary.getId() == null ) {
+			return  salary.getSalaryDeductions();
+		} else {
+			IManagerBean bean = BeanManager.getManagerBean(SalaryDeduction.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_DEDUCTION_SALARY_ID), salary.getId());
+			List<?> list = bean.getList(c);
+			return (Collection<SalaryDeduction>) list;
+		}
+	}
+
+	private Collection<SalaryCost> getSalaryCosts(Salary salary) throws ManagerBeanException {
+		String sessionName = HibernateUtil.getSessionFactoryName(Salary.class.getName());
+		Session session = HibernateUtil.getSession(sessionName);
+		// Si el Salary está conectado a la session de Hibernate utilizamos la potencia
+		// que nos da la obtención de colecciones tipo LAZY. En caso contrario vamos por 
+		// el FrameWork.
+		if (  session.contains(salary)  || salary.getId() == null ) {
+			return  salary.getSalaryCosts();
+		} else {
+			IManagerBean bean = BeanManager.getManagerBean(SalaryCost.class);
+			Criteria c = new Criteria();
+			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_COST_SALARY_ID), salary.getId());
+			List<?> list = bean.getList(c);
+			return (Collection<SalaryCost>) list;
+		}
+	}
+
 	// *********************************************************************
 	// Plantilla de impresion de la nomina
 	// *********************************************************************
@@ -505,31 +609,40 @@ public class SalaryDraftController extends BasicController {
 	
 	
 	public List<SelectItem> getSalaryDraftTypes() {
-		Contract contract = (Contract) this.getTo();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		salaryDraftTypes = new LinkedList<SelectItem>();
-		SalaryType types [] = {SalaryType.SALARY, 
-					SalaryType.EXTRA, 
-					SalaryType.DELAY,
-					SalaryType.SETTLE};
-		for( SalaryType salaryType : types ) {
-				String name = salaryType.getName(locale);
-				SelectItem item = new SelectItem(salaryType, name);
-				salaryDraftTypes.add(item);			
-		}
 		return salaryDraftTypes;
 	}
 	
-	private void rebuildDraftMonths(){
+	private void initDraftTypes () {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		
-		// fix year, if it's out of range
-		this.year = Math.max(this.year, getMinYear());
-		this.year = Math.min(this.year, getMaxYear());
+		List<SalaryType> availableTypes = 
+			new LinkedList<SalaryType>();
 		
+		salaryDraftTypes = new LinkedList<SelectItem>();
+		for ( SalaryType salaryType: SalaryType.values() ) {
+			List<Month> availableMonths  = 
+				getAvailableMonths(salaryType);
+			if ( ! availableMonths.isEmpty() ) {
+				availableTypes.add(salaryType);
+				SelectItem selectItem = new SelectItem(salaryType, 
+						salaryType.getName(locale));
+				salaryDraftTypes.add( selectItem );
+			}
+		}
+		
+		//TODO: What happens if no available types ?.
+		
+		// fix type, if it's out of range 
+		if ( ! availableTypes.contains(this.salaryType) ){
+			this.salaryType = availableTypes.get(0);
+		}
+		
+		
+	}
+	
+	private List<Month> getAvailableMonths(SalaryType salaryType) {
 		List<Month> availableMonths ;
 
-		SalaryType salaryType = getSalaryType();
-		
 		availableMonths = 
 			salaryType.accept(new SalaryTypeVisitor<List<Month>>() {
 				@Override
@@ -538,7 +651,7 @@ public class SalaryDraftController extends BasicController {
 				}
 				@Override
 				public List<Month> visitDelay(SalaryType salaryType) {
-					return getSalaryMonths();
+					return getDelayMonths();
 				}
 				@Override
 				public List<Month> visitExtra(SalaryType salaryType) {
@@ -551,10 +664,23 @@ public class SalaryDraftController extends BasicController {
 				@Override
 				public List<Month> visitNotEnjoyedVacations(
 						SalaryType salaryType) {
-					AonUtil.addErrorMessage("no implementado");
 					return Collections.emptyList();
 				}
 		});
+		return availableMonths;
+	}
+	
+	private void rebuildDraftMonths(){
+		
+		// fix year, if it's out of range
+		this.year = Math.max(this.year, getMinYear());
+		this.year = Math.min(this.year, getMaxYear());
+		
+
+		SalaryType salaryType = getSalaryType();
+
+		List<Month> availableMonths  = 
+			getAvailableMonths(salaryType);
 		
 		Collections.sort(availableMonths);
 		
@@ -570,6 +696,7 @@ public class SalaryDraftController extends BasicController {
 			}
 		}
 		
+		
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		draftMonths = new LinkedList<SelectItem>();
 		for (Month month : availableMonths) {
@@ -580,26 +707,15 @@ public class SalaryDraftController extends BasicController {
 	
 	private List<Month> getSettleMonths() {
 		Contract contract = (Contract) this.getTo();
-		Date contractStart = contract.getStartDate();
 		Date contractEnd = contract.getEndDate();
 		
-		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, this.year);
-		Date draftStart = calendar.getTime(); 
-
-		calendar.set(Calendar.MONTH, calendar.getActualMaximum(Calendar.MONTH));
-		Date draftEnd = calendar.getTime(); 
-		
-		Date start = contractStart.after(draftStart) ? contractStart : draftStart;
-		Date end = contractEnd != null && contractEnd.before(draftEnd) ? contractEnd : draftEnd;
-		
 		List<Month> months = new LinkedList<Month>();
-		for ( int month = CommonUtil.getMonth(start);
-			month <= CommonUtil.getMonth(end); 
-			month++ )
-		{
-			months.add(Month.getMonthByValue(month));
+
+		if ( contractEnd != null ) {
+			int value = CommonUtil.getMonth(contractEnd);
+			months.add(Month.getMonthByValue(value));
 		}
+		
 		return months;
 	}
 	private List<Month> getExtraMonths() {
@@ -636,6 +752,9 @@ public class SalaryDraftController extends BasicController {
 		return months;
 	}
 	
+	private List<Month> getDelayMonths() {
+		return Collections.emptyList();
+	}
 	private List<Month> getSalaryMonths() {
 		Contract contract = (Contract) this.getTo();
 		Date contractStart = contract.getStartDate();

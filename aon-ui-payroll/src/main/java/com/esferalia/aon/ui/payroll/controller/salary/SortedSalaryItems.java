@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.code.aon.common.enumeration.IResourceable;
-import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.salary.ISalaryItem;
 
 
@@ -43,7 +42,7 @@ public class SortedSalaryItems<T extends Enum<T> & IResourceable> {
 		
 		public Double getAmount(){
 			return newSalaryItem != null ? 
-					CommonUtil.truncate(newSalaryItem.getAmount()) : null;
+					newSalaryItem.getAmount() : null;
 		}
 
 		public String getDescription(){
@@ -110,7 +109,7 @@ public class SortedSalaryItems<T extends Enum<T> & IResourceable> {
 		}
 	}
 
-	public void setPayments(Collection<? extends ISalaryItem<T>> newSalaryItems, 
+	public void setItems(Collection<? extends ISalaryItem<T>> newSalaryItems, 
 			Collection< ? extends ISalaryItem<T>> oldSalaryItems) {
 		
 		List<ISalaryItem<T>> newSalaryItemsList = new ArrayList<ISalaryItem<T>>(newSalaryItems);
@@ -126,7 +125,7 @@ public class SortedSalaryItems<T extends Enum<T> & IResourceable> {
 		
 	}
 	
-	public Map<String, CollectionWrapper<DisplaySalaryItem<T>>> getPayments(){
+	public Map<String, CollectionWrapper<DisplaySalaryItem<T>>> getItems(){
 		return salaryItemsMap;
 	}
 	

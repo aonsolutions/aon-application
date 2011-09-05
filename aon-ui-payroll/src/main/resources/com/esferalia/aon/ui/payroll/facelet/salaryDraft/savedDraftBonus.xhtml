@@ -8,7 +8,7 @@
 	xmlns:h="http://java.sun.com/jsf/html" >
 	
 	<aon:div styleClass="aon-margin-top aon-border" 
-		style="background-color: #F6F6F6;">
+		style="background-color:#F6F6F6;">
 		
 		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
 			columnClasses="aon-noborder aon-padding-left aon-width-auto">
@@ -20,34 +20,27 @@
 
 		<aon:panelGrid columns="1" style="width: 100%;margin-right:10px;"
 			columnClasses="aon-noborder aon-padding-right aon-width-150 aon-text-right aon-bold">
-			
-			<c:forEach items="#{bonuses.amounts}" var="to">
-			
+
+			<c:set var="total" value="#{0.00}" />
+			<c:set var="oldTotal" value="#{0.00}" />
+			<c:forEach items="#{sortedSalaryBonuses.items['SOCIAL_SECURITY'].list}" var="bonus">
 				<aon:div style="border-bottom: solid #CCCCCC 1px;">
 					<aon:outputText value="&#160;"/>
-					<aon:outputText rendered="#{!to.showAmount}"
-						styleClass="#{to.style}" 
-						value="#{to.textValue}"/>
-					<aon:outputText value="#{to.doubleValue}"
-						rendered="#{to.showAmount}"
-						styleClass="#{to.style}">
+					<aon:outputText value="#{bonus.oldAmount}">
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
 				</aon:div>
+				<c:set var="total" value="#{total + bonus.amount}" />
+				<c:set var="oldTotal" value="#{oldTotal + bonus.oldAmount}" />
 			</c:forEach>
-
+			
 			<aon:div style="">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText rendered="#{!bonuses.totalAmount.showAmount}" 
-					value="#{bonuses.totalAmount.textValue}"
-					styleClass="#{bonuses.totalAmount.style}" />
-				<aon:outputText rendered="#{bonuses.totalAmount.showAmount}" 
-					value="#{bonuses.totalAmount.doubleValue}"
-					styleClass="#{bonuses.totalAmount.style}">
+				<aon:outputText value="#{oldTotal}">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
 		</aon:panelGrid>		
+		
 	</aon:div>
-
 </ui:composition>

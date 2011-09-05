@@ -29,10 +29,10 @@
 		<aon:panelGrid columns="2" style="margin:1em 0 0 1em;"
 			columnClasses="aon-noborder, aon-noborder">
 			<aon:div style="width: 815px; margin-top: 10px;">
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/gridContent.xhtml" >
-					<ui:param name="controller" value="#{salary.to.deductions}" />
-					<ui:param name="embargo" value="#{salary.embargo}" />
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/_gridContent.xhtml" >
+					<ui:param name="sortedSalaryDeductions" value="#{salary.sortedSalaryDeductions}" />
 					<ui:param name="totalDeduction" value="#{salary.to.totalDeduction}" />
+					<ui:param name="socialSecurityContributions" value="#{salary.to.socialSecurityContributions}" />
 				</ui:include>
 			</aon:div>
 		</aon:panelGrid>
@@ -51,7 +51,7 @@
 			columnClasses="aon-noborder, aon-noborder">
 			<aon:div style="width: 815px; margin-top: 10px;">
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cost/gridContent.xhtml" >
-					<ui:param name="sortedSalaryCosts" value="#{beanSortedSalaryCosts}" />
+					<ui:param name="sortedSalaryCosts" value="#{salary.sortedSalaryCosts}" />
 					<ui:param name="total" value="#{salary.to.totalEnterprise}" />
 				</ui:include>
 			</aon:div>
