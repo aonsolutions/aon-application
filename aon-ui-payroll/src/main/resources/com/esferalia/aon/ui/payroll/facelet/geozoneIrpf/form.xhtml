@@ -12,78 +12,68 @@
 	<ui:define name="content">
 	
 		<aon:form id="geozoneIrpfForm">
-			<ui:include
-				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_geozoneIrpf_module}" />
-				<ui:param name="controller" value="#{geozoneIrpf}" />
-				<ui:param name="skipSaveButton" value="true" />
-				<ui:param name="skipResetButton" value="true" />
-				<ui:param name="skipRemoveButton" value="true" />
-			</ui:include>
-
-			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="dataTable" columns="8" >
-				
-					<aon:outputText value="#{bundle.aon_name}" />
-					<aon:outputText value="#{geozoneIrpf.to.geozone.name}"  />
-				
-					<aon:outputText value="#{payrollBundle.payroll_irpfData_anual_retribution}" />
-					<aon:outputText value="#{geozoneIrpf.to.amount}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				
-					<aon:outputText value="#{bundle.aon_start_date}" />
-					<aon:outputText value="#{geozoneIrpf.to.startDate}" >
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>		
-				
-					<aon:outputText value="#{bundle.aon_end_date}" />
-					<aon:outputText value="#{geozoneIrpf.to.endDate}" >
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-							timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>		
-							
-
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+		
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{payrollBundle.payroll_settle_module}" />
+					</aon:div>
+		
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_reset}" />
+					</aon:div>
+		
+					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
+					
+						<aon:commandButton id="geozoneIrpf-search" 
+							title="#{bundle.aon_key_search_accelerator}"
+							value="#{bundle.aon_search}" 
+							immediate="true"
+							action="geozoneIrpf_search" 
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" >
+							<aon:actionListener method="#{geozoneIrpf.onInitialize}" />
+						</aon:commandButton>
+						
+						<aon:commandButton id="geozoneIrpf-cancel" 
+							title="#{bundle.aon_key_cancel_accelerator}"
+							value="#{bundle.aon_list}"
+							reRender="aonContent"
+							inmediate="true"
+							action="geozoneIrpf_list"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel}" />
+						
+					</aon:div>
+					
 				</aon:panelGrid>
-				
 			</aon:div>
-				
+			
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2" style="width:100%;" 
-					columnClasses="
-					aon-panelGrid-even aon-noborder aon-vertical-align-top aon-width-auto, 
-					aon-panelGrid-even aon-noborder aon-vertical-align-top aon-width-auto">
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_geozoneIrpf_descendant}" />
-						</f:facet>
-						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-							<ui:param name="controller" value="#{geozoneIrpfDescendant}" />
-							<ui:param name="skipSelectButton" value="true" />
-							<ui:define name="columns">
-								<ui:include 
-									src="/com/esferalia/aon/ui/payroll/facelet/geozoneIrpf/descendant/listContent.xhtml" />
-							</ui:define>
-						</ui:decorate>
-					</aon:panel>
-										
-					<aon:panel>
-						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_irpfData_disability}" />
-						</f:facet>
-						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-							<ui:param name="controller" value="#{geozoneIrpfHandicap}" />
-							<ui:param name="skipSelectButton" value="true" />
-							<ui:define name="columns">
-								<ui:include 
-									src="/com/esferalia/aon/ui/payroll/facelet/geozoneIrpf/handicap/listContent.xhtml" />
-							</ui:define>
-						</ui:decorate>
-					</aon:panel>
-				</aon:panelGrid>
-<!--  
--->				
+				<aon:panel>
+					<h:panelGrid columns="4">
+						<aon:outputText styleClass="aon-margin-right aon-bold" 
+							value="#{payrollBundle.payroll_geozoneIrpf_irpf_of}" />
+						<aon:outputText styleClass="aon-margin-right"
+							value="#{geozoneIrpf.selectedIrpf.geozone.name}" />
+						<aon:outputText styleClass="aon-margin-right aon-bold"
+							value="#{payrollBundle.payroll_geozoneIrpf_financial_year}" />
+						<aon:outputText 
+							value="#{geozoneIrpf.selectedIrpf.year}" />
+					</h:panelGrid>
+				</aon:panel>
+			
+				<aon:panelTabSet>
+					<aon:panelTab label="#{payrollBundle.payroll_geozoneIrpf_descendant}">
+						<ui:include
+							src="/com/esferalia/aon/ui/payroll/facelet/geozoneIrpf/list_descendants.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab label="#{payrollBundle.payroll_geozoneIrpf_handicap_level}">
+						<ui:include
+							src="/com/esferalia/aon/ui/payroll/facelet/geozoneIrpf/list_handicap.xhtml" />
+					</aon:panelTab>
+				</aon:panelTabSet>
 			</aon:div>
 						
 		</aon:form>

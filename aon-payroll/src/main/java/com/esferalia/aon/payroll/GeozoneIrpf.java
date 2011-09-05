@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -20,6 +21,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.geozone.GeoZone;
 
 @Entity
@@ -78,6 +80,11 @@ public class GeozoneIrpf implements ITransferObject {
 	}
 	public void setAmount(Double amount) {
 		this.amount = amount;
+	}
+	
+	@Transient
+	public Integer getYear(){
+		return CommonUtil.getYear(getStartDate());
 	}
 
 	@Override

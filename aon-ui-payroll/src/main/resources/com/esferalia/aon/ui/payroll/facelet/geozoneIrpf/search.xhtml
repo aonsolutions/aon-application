@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -12,23 +13,29 @@
 				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_geozoneIrpf_module}" />
 				<ui:param name="controller" value="#{geozoneIrpf}" />
 				<ui:param name="skipResetButton" value="true" />
+				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
 			
+			<aon:methodParam name="searchAction" value="geozoneIrpf_list" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{geozoneIrpf}" />
 				<ui:define name="searchContent">
-					<!--  
-					<aon:outputLabel for="DeductionConcept_code"
-						value="#{bundle.aon_id}" />
-					<aon:inputText id="DeductionConcept_code" size="5" maxlength="5"
-						valueChangeListener="#{deductionConcept.addExpression}" />
-
-					<aon:outputLabel for="DeductionConcept_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="DeductionConcept_description" size="64" maxlength="64"
-						valueChangeListener="#{deductionConcept.addExpression}" />
-					-->
+					
+					<aon:outputLabel for="GeozoneIrpf_administration"
+						value="#{configBundle.config_administration}" />
+					<aon:selectOneMenu id="GeozoneIrpf_administration"
+						value="#{geozoneIrpf.administration}" >
+						<f:selectItem itemLabel="-" value="#{null}" />
+						<f:selectItems value="#{geozoneIrpf.administrationList}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="GeozoneIrpf_year"
+						value="#{payrollBundle.payroll_geozoneIrpf_financial_year}" />
+					<rich:inputNumberSpinner id="GeozoneIrpf_year" 
+						value="#{geozoneIrpf.year}"
+		   				inputSize="4" minValue="2009" maxValue="2020">
+		   			</rich:inputNumberSpinner>
 
 				</ui:define>
 			</ui:decorate>

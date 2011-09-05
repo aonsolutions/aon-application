@@ -200,9 +200,9 @@ public class SQLIrpfCalculatorContext {
 	
 	private final static Integer NO_FORAL_ID = -1;
 	private final static Integer ARABA_ID = 1;
-	private final static Integer BIZKAIA_ID = 20;
-	private final static Integer GIPUZKOA_ID = 31;
-	private final static Integer NAFARROA_ID = 48;
+	private final static Integer BIZKAIA_ID = 48;
+	private final static Integer GIPUZKOA_ID = 20;
+	private final static Integer NAFARROA_ID = 31;
 	
 	public Integer getGeozone() {
 		Integer i = getInt("workplace", "economicAgreement");

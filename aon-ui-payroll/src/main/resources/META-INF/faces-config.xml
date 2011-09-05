@@ -1658,8 +1658,7 @@
 	<!--  name max length is 32 -->
 	<managed-bean>
 		<managed-bean-name>payrollAppParams</managed-bean-name>
-		<managed-bean-class>
-			com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PayrollAppParamsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>defaultParameters</property-name>
@@ -1693,137 +1692,11 @@
 	<!-- ************ GEOZONE IRPF ************** -->
 	<managed-bean>
 		<managed-bean-name>geozoneIrpf</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.GeozoneIrpfController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.GeozoneIrpf</value>
-		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>geozoneIrpf</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>GeozoneIrpf_geozone, GeozoneIrpf_amount</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{geozoneIrpfDescendantLinesListener}</value>
-				<value>#{geozoneIrpfHandicapLinesListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>geozoneIrpfDescendantLinesListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>geozoneIrpfDescendant</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>GeozoneIrpfDescendant_geozoneIrpf_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>geozoneIrpfHandicapLinesListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>geozoneIrpfHandicap</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>GeozoneIrpfHandicap_geozoneIrpf_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	<!-- ************ GEOZONE IRPF DESCENDANTS ************** -->
-	<managed-bean>
-		<managed-bean-name>geozoneIrpfDescendant</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.GeozoneIrpfDescendant</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>geozoneIrpfDescendant</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>geozoneIrpf</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>geozoneIrpf.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>GeozoneIrpfDescendant_descendant</value>
-		</managed-property>
-	</managed-bean>
-	<!-- ************ GEOZONE IRPF HANDICAP ************** -->
-	<managed-bean>
-		<managed-bean-name>geozoneIrpfHandicap</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.esferalia.aon.payroll.GeozoneIrpfHandicap</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>geozoneIrpfHandicap</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>geozoneIrpf</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>geozoneIrpf.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>GeozoneIrpfHandicap_handicap</value>
 		</managed-property>
 	</managed-bean>
 

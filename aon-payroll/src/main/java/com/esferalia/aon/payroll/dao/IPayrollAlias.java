@@ -1538,22 +1538,34 @@ public interface IPayrollAlias {
 	String  GEOZONE_IRPF_DESCENDANT_DESCENDANT = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: GeozoneIrpfDescendant_geozoneIrpf_amount
+	* Hibernate value: GeozoneIrpfDescendant.geozoneIrpf.amount
+	*/
+	String  GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_AMOUNT = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: GeozoneIrpfDescendant_geozoneIrpf_id
 	* Hibernate value: GeozoneIrpfDescendant.geozoneIrpf.id
 	*/
-	String  GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_ID = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[1];
+	String  GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_ID = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: GeozoneIrpfDescendant_geozoneIrpf_geozone_id
+	* Hibernate value: GeozoneIrpfDescendant.geozoneIrpf.geozone.id
+	*/
+	String  GEOZONE_IRPF_DESCENDANT_GEOZONE_IRPF_GEOZONE_ID = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: GeozoneIrpfDescendant_id
 	* Hibernate value: GeozoneIrpfDescendant.id
 	*/
-	String  GEOZONE_IRPF_DESCENDANT_ID = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[2];
+	String  GEOZONE_IRPF_DESCENDANT_ID = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: GeozoneIrpfDescendant_percent
 	* Hibernate value: GeozoneIrpfDescendant.percent
 	*/
-	String  GEOZONE_IRPF_DESCENDANT_PERCENT = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[3];
+	String  GEOZONE_IRPF_DESCENDANT_PERCENT = GEOZONE_IRPF_DESCENDANT_ENTRY.getAliasNames()[5];
 
 
 
@@ -1563,28 +1575,40 @@ public interface IPayrollAlias {
 	DAOConstantsEntry GEOZONE_IRPF_HANDICAP_ENTRY = DAOConstants.getDAOConstant(GeozoneIrpfHandicap.class);
 
 	/** 
+	* Alias value: GeozoneIrpfHandicap_geozoneIrpf_amount
+	* Hibernate value: GeozoneIrpfHandicap.geozoneIrpf.amount
+	*/
+	String  GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_AMOUNT = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: GeozoneIrpfHandicap_geozoneIrpf_id
 	* Hibernate value: GeozoneIrpfHandicap.geozoneIrpf.id
 	*/
-	String  GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_ID = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[0];
+	String  GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_ID = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: GeozoneIrpfHandicap_geozoneIrpf_geozone_id
+	* Hibernate value: GeozoneIrpfHandicap.geozoneIrpf.geozone.id
+	*/
+	String  GEOZONE_IRPF_HANDICAP_GEOZONE_IRPF_GEOZONE_ID = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: GeozoneIrpfHandicap_handicap
 	* Hibernate value: GeozoneIrpfHandicap.handicap
 	*/
-	String  GEOZONE_IRPF_HANDICAP_HANDICAP = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[1];
+	String  GEOZONE_IRPF_HANDICAP_HANDICAP = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: GeozoneIrpfHandicap_id
 	* Hibernate value: GeozoneIrpfHandicap.id
 	*/
-	String  GEOZONE_IRPF_HANDICAP_ID = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[2];
+	String  GEOZONE_IRPF_HANDICAP_ID = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: GeozoneIrpfHandicap_percent
 	* Hibernate value: GeozoneIrpfHandicap.percent
 	*/
-	String  GEOZONE_IRPF_HANDICAP_PERCENT = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[3];
+	String  GEOZONE_IRPF_HANDICAP_PERCENT = GEOZONE_IRPF_HANDICAP_ENTRY.getAliasNames()[5];
 
 
 
@@ -1674,34 +1698,40 @@ public interface IPayrollAlias {
 	String  IRPF_DATA_FAMILY_SITUATION = IRPF_DATA_ENTRY.getAliasNames()[5];
 
 	/** 
+	* Alias value: IrpfData_fiscalExclusion
+	* Hibernate value: IrpfData.fiscalExclusion
+	*/
+	String  IRPF_DATA_FISCAL_EXCLUSION = IRPF_DATA_ENTRY.getAliasNames()[6];
+
+	/** 
 	* Alias value: IrpfData_id
 	* Hibernate value: IrpfData.id
 	*/
-	String  IRPF_DATA_ID = IRPF_DATA_ENTRY.getAliasNames()[6];
+	String  IRPF_DATA_ID = IRPF_DATA_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: IrpfData_labourProlongation
 	* Hibernate value: IrpfData.labourProlongation
 	*/
-	String  IRPF_DATA_LABOUR_PROLONGATION = IRPF_DATA_ENTRY.getAliasNames()[7];
+	String  IRPF_DATA_LABOUR_PROLONGATION = IRPF_DATA_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: IrpfData_movingDate
 	* Hibernate value: IrpfData.movingDate
 	*/
-	String  IRPF_DATA_MOVING_DATE = IRPF_DATA_ENTRY.getAliasNames()[8];
+	String  IRPF_DATA_MOVING_DATE = IRPF_DATA_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: IrpfData_spouseDocument
 	* Hibernate value: IrpfData.spouseDocument
 	*/
-	String  IRPF_DATA_SPOUSE_DOCUMENT = IRPF_DATA_ENTRY.getAliasNames()[9];
+	String  IRPF_DATA_SPOUSE_DOCUMENT = IRPF_DATA_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: IrpfData_startDate
 	* Hibernate value: IrpfData.startDate
 	*/
-	String  IRPF_DATA_START_DATE = IRPF_DATA_ENTRY.getAliasNames()[10];
+	String  IRPF_DATA_START_DATE = IRPF_DATA_ENTRY.getAliasNames()[11];
 
 
 
