@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -23,6 +24,7 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
@@ -283,6 +285,18 @@ public class IrpfDataController extends LinesController {
 		public void setNewIrpf(Double newIrpf) {
 			this.newIrpf = newIrpf;
 		}
+	}
+	
+	public List<ITransferObject> getDescentant(){
+		BasicController controller = (BasicController) FormUtil.getController("irpfDataDescendients");
+//		controller.getWrappedList();
+		List<ITransferObject> list = new LinkedList<ITransferObject>();
+		list.addAll(controller.getWrappedList());
+		list.add(new IrpfDataDescendients());
+		list.add(new IrpfDataDescendients());
+		list.add(new IrpfDataDescendients());
+		list.add(new IrpfDataDescendients());
+		return list;
 	}
 	
 }
