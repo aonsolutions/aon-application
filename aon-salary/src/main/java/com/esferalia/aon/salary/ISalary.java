@@ -53,6 +53,7 @@ public interface ISalary {
 	Double getExtraPayProration();
 	//Base de cotización por contigencias comunes
 	Double getCommonBase();
+	Double getRawCommonBase();
 	//Base de cotización por contigencias profesionales (A.T. y E.P.) y conceptos de recaudación conjunta (Desemp., F.P., F.G.S.)
 	Double getProfessionalBase();
 	//Base de cotización adicional por horas extraordinarias estructurales

@@ -23,6 +23,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 	@Override
 	public void createNewSalary() {
 		this.salary = new Salary();
+		// default ones 
 	}
 
 	@Override
@@ -158,18 +159,17 @@ public class SalaryBuilder implements ISalaryBuilder {
 
 	@Override
 	public void setNonHExtraBase(Double overtimeBase) {
-		
+		this.salary.setNonEstructuralOvertimeBase(overtimeBase);
 	}
 	
 	@Override
 	public void setItBase(Double itBase) {
-		// TODO Auto-generated method stub
+		this.salary.setIrpfBase(itBase);
 	}
 
 	@Override
 	public void setRawCgcBase(Double rawCgcBase) {
-		// TODO Auto-generated method stub
-		
+		this.salary.setRawCommonBase(rawCgcBase);
 	}
 
 	@Override

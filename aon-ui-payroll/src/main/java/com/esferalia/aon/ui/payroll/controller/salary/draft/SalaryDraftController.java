@@ -288,6 +288,8 @@ public class SalaryDraftController extends BasicController {
 			
 			salary = ctx.getSalaryProxy().getSalary();
 			
+			( ( Salary ) salary).setContract(contract);
+			
 			paymentsModel = null;
 			paymentsList = null;
 			initializePaymentModel();
@@ -781,7 +783,19 @@ public class SalaryDraftController extends BasicController {
 		return months;
 	}
 	
-	public void onSaveSalary(ActionEvent event){
+	public void onSaveSalary(ActionEvent event) throws ManagerBeanException{
+		
+		try {
+			saveSalary();
+			reset();
+		} catch (Throwable e) {
+			LOGGER.error(">>>> onSaveSalary exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+	private void saveSalary() throws SalaryException {
 		Contract contract = (Contract) this.getTo();
 		SalaryLauncherParams params = new SalaryLauncherParams();
 		params.setStartDate(getStartDate());
@@ -791,26 +805,25 @@ public class SalaryDraftController extends BasicController {
 		params.setSalaryType(getSalaryType());
 		params.setPerson(contract.getPerson());
 		SalaryLauncher launcher = (SalaryLauncher) AonUtil.getRegisteredBean(IPayrollConstants.SALARY_LAUNCHER_CONTROLLER);
-		try {
-			launcher.saveSalary(params);
-			searchSavedDraftSalary();
-		} catch (Throwable e) {
-			LOGGER.error(">>>> onSaveSalary exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
+		launcher.saveSalary(params);
 	}
 	
-	public void onUpdateSalary(ActionEvent event){
-		onDeleteSalary(event);
-		onSaveSalary(event);
+	public void onUpdateSalary(ActionEvent event) throws ManagerBeanException, SalaryException{
+		deleteSalary();
+		saveSalary();
+		reset();
 	}
 	
 	public void onDeleteSalary(ActionEvent event){
+		deleteSalary();
+		reset();
+	}
+	
+	private void deleteSalary(){
 		SalaryRemoverController controller = (SalaryRemoverController) AonUtil.getRegisteredBean(IPayrollConstants.SALARY_REMOVER_CONTROLLER);
 		controller.setSelectedSalaries(new ArrayList<Salary>());
 		controller.getSelectedSalaries().add((Salary)getBdSalary());
 		controller.removeSelected();
 	}
-	
+
 }

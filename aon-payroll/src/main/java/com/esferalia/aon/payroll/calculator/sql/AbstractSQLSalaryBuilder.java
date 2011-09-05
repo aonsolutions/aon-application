@@ -249,6 +249,7 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 		salaryPayment.setType(type);
 		salaryPayment.setAmount(amount);
 		salaryPayment.setExpression(expression);
+		salaryPayment.setPaymentConcept(concept);
 		salaryPayment.setDescription(description);
 
 		salaryPayments.add(salaryPayment);

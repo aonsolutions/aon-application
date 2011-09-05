@@ -129,6 +129,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	private Double remuneration; //Remuneración mensual
 	private Double extraPayProration; // Prorrata de pagas extraordinarias
 	private Double commonBase; //Base de cotización por contigencias comunes
+	private Double rawCommonBase; //Base de cotización 'completa' por contigencias comunes
 	private Double professionalBase; //Base de cotización por contigencias profesionales (A.T. y E.P.) y conceptos de recaudación conjunta (Desemp., F.P., F.G.S.)
 	private Double overtimeBase; //Base de cotización adicional por horas extraordinarias estructurales
 	private Double nonEstructuralOvertimeBase; //Base de cotización adicional por horas extraordinarias no estructurales
@@ -398,7 +399,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	// ****************** DEVENGOS ***************************
 	// *******************************************************
 	
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.ALL})
 	public Set<SalaryPayment> getSalaryPayments() {
 		return salaryPayments;
 	}
@@ -496,6 +497,15 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	}
 	public void setCommonBase(Double commonBase) {
 		this.commonBase = commonBase;
+	}
+
+	@Override
+	@Column(name = "raw_cgc_base", precision = 15, scale = 3, nullable = false)
+	public Double getRawCommonBase() {
+		return rawCommonBase;
+	}
+	public void setRawCommonBase(Double rawCommonBase) {
+		this.rawCommonBase = rawCommonBase;
 	}
 
 	@Override
