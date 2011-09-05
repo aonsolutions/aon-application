@@ -62,6 +62,7 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
+					styleClass="aon-margin-bottom"
 					columnClasses="aon-panelGrid-odd aon-width-150,
 						aon-panelGrid-even aon-width-auto,
 						aon-panelGrid-odd aon-width-150,
@@ -125,7 +126,7 @@
 						<ui:param name="lookupTo" value="#{delivery.to.customer}" />
 						<ui:param name="lookupDisabled" value="#{!delivery.pending}" />
 						<ui:param name="lookupReRender" 
-							value="Customer_registry_document,DeliveryAddress,Delivery_scope,Delivery_defaultPayMethod,payMethodDiv" />
+							value="Customer_registry_document,DeliveryAddress,DeliveryProject,Delivery_scope,Delivery_defaultPayMethod,payMethodDiv" />
 						<ui:param name="idRequired" value="#{true}" />						
 						<aon:methodParam name="lookupChangeListener"
 							value="#{delivery.customerData}" type="lookupChangeListener" />
@@ -191,6 +192,33 @@
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
  
+				</aon:panelGrid>
+
+				<aon:panelGrid columns="2" style="width: 100%;"
+					rendered="#{delivery.to.project.id != null or delivery.projectCount > 0}"
+					columnClasses="aon-panelGrid-odd aon-width-150,
+						aon-panelGrid-even aon-width-auto">
+
+					<c:if test="#{!aonConfiguration.bean.delivery.showTasData}">
+						<aon:outputLabel for="Delivery_project"
+							value="#{projectBundle.project_project}" />
+					</c:if>
+					<c:if test="#{aonConfiguration.bean.delivery.showTasData}">
+						<aon:outputLabel for="Delivery_project"
+							value="#{tasBundle.tas_projectTas}" />
+					</c:if>
+					<aon:div id="DeliveryProject">
+						<aon:selectOneMenu id="Delivery_project"
+							rendered="#{delivery.pending and delivery.to.project.id == null and delivery.projectCount > 0}"
+							value="#{delivery.to.project}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{delivery.projects}" />
+						</aon:selectOneMenu>
+						<aon:outputText styleClass="aon-bold"
+							value="#{delivery.to.project.name}" 
+							rendered="#{delivery.to.project.id != null}" />
+					</aon:div>
+
 				</aon:panelGrid>
 
 				<aon:div id="payMethodDiv" styleClass="aon-padding-top">

@@ -25,6 +25,7 @@ public class DeliveryControllerListener extends ControllerAdapter {
 		((Delivery)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
 		((Delivery)controller.getTo()).setStatus(DeliveryStatus.PENDING);
 		controller.setAddresses(null);
+		controller.setProjects(null);
 		controller.setWarehouse(null);
 		controller.setDefaultPayMethod(null);
 		controller.resetDeliveryPayMethod();
@@ -35,6 +36,7 @@ public class DeliveryControllerListener extends ControllerAdapter {
 		DeliveryController controller = (DeliveryController)event.getController();
 		try {
 			controller.loadAddresses(((Delivery)controller.getTo()).getCustomer().getRegistry().getId());
+			controller.loadProjects(((Delivery)controller.getTo()).getCustomer().getRegistry().getId());
 	        controller.setWarehouse(obtainWarehouseId((Delivery)controller.getTo()));
 			controller.loadDefaultPayMethod(((Delivery)controller.getTo()).getCustomer().getRegistry().getId(), true);
 		} catch (ManagerBeanException e) {

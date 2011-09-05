@@ -65,6 +65,7 @@ public class DeliveryInvoicingManager {
 
 	private Invoice createInvoice(Delivery delivery, String series, int number, Date issueDate) throws ManagerBeanException {
 		Invoice invoice = new Invoice();
+		invoice.setProject(delivery.getProject());
 		invoice.setSeries(series);
 		invoice.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		invoice.setRegistry(delivery.getCustomer().getRegistry());
@@ -101,6 +102,7 @@ public class DeliveryInvoicingManager {
 			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
+			invoiceDetail.setProject(delivery.getProject());
 			invoiceDetail.setLine(deliveryDetail.getLine());
 			invoiceDetail.setItem(deliveryDetail.getItem());
 			invoiceDetail.setDescription(deliveryDetail.getDescription());

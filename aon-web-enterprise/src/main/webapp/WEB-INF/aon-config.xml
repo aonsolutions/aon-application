@@ -131,6 +131,15 @@
 		/>
 	</commercial:config>
 
+	<warehouse:config version="1.0" xmlns:warehouse="http://www.esferalia.com/warehouse">
+		<warehouse:delivery
+			showTasData="false"
+		/>
+		<warehouse:income
+			showTasData="false"
+		/>
+	</warehouse:config>
+
 	<webmail:config version="1.2" xmlns:webmail="http://www.esferalia.com/webmail" >
 		<webmail:webmail
 			connect="true"

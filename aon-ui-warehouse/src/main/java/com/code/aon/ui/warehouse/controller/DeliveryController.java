@@ -33,6 +33,8 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.project.Project;
+import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
@@ -61,15 +63,13 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
-/**
- * Controller for Delivery.
- */
 public class DeliveryController extends BasicController {
 
 	private final String DELIVERY_DETAIL_CONTROLLER = "deliveryDetail";
 	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
 
 	private List<SelectItem> addresses;
+	private List<SelectItem> projects;
 	private Warehouse warehouse;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
@@ -92,6 +92,14 @@ public class DeliveryController extends BasicController {
 	
 	public void setAddresses(List<SelectItem> addresses) {
 		this.addresses = addresses;
+	}
+	
+    public List<SelectItem> getProjects() {
+		return projects;
+	}
+	
+	public void setProjects(List<SelectItem> projects) {
+		this.projects = projects;
 	}
 	
     public Warehouse getWarehouse() {
@@ -252,9 +260,11 @@ public class DeliveryController extends BasicController {
 			((Delivery)this.getTo()).setCustomer(customer);
 			((Delivery)this.getTo()).setScope(customer.getScope());
 			loadAddresses(customer.getId());
+			loadProjects(customer.getId());
 			loadDefaultPayMethod(customer.getId(), false);
 		} else {
 			setAddresses(null);
+			setProjects(null);
 		}
 	}
 	
@@ -284,6 +294,30 @@ public class DeliveryController extends BasicController {
 	public int getAddressCount() {
 		if (addresses != null){
 			return addresses.size();
+		}
+		return 0;
+	}
+	
+	public void loadProjects(Integer id) throws ManagerBeanException {
+		this.projects = new LinkedList<SelectItem>();
+		if (id != null) {
+			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID), id);
+			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addOrder(projectBean.getFieldName(IProjectAlias.PROJECT_NAME));
+			Iterator<?> iterator = projectBean.getList(criteria).iterator();
+			while(iterator.hasNext()) {
+				Project project = (Project)iterator.next();
+				SelectItem item = new SelectItem(project, project.getName());
+				projects.add(item);
+			}
+		}
+	}
+
+	public int getProjectCount() {
+		if (projects != null) {
+			return projects.size();
 		}
 		return 0;
 	}
