@@ -30,12 +30,7 @@
 									value="#{payrollBundle.payroll_leaveBatchWizard_module}" />
 							</aon:div>
 						
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="contractBatchWizard" 
-									action="contractBatchWizard_step0"
-									actionListener="#{contractBatchWizard.onStart}"
-									value="#{payrollBundle.payroll_contractBatchWizard_module}" />
-							</aon:div>
+							
 						
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="fanBatchWizard" 
@@ -55,6 +50,7 @@
 						</f:facet>					
 						<aon:div styleClass="aon-direct-access-list">
 														
+							<!--  
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="contractGenerationWizard" 
 									action="contractGenerationWizard_search"
@@ -62,6 +58,19 @@
 									<aon:actionListener method="#{contractGenerationWizard.onEditSearch}" />
 									<aon:actionListener method="#{contractGenerationWizard.onStart}" />
 								</aon:commandLink>
+							</aon:div>
+							-->
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="contract" action="contract_search"
+									actionListener="#{contract.onEditSearch}"
+									value="#{payrollBundle.payroll_contract_module}">
+								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="contractBatchWizard" 
+									action="contractBatchWizard_step0"
+									actionListener="#{contractBatchWizard.onStart}"
+									value="#{payrollBundle.payroll_contractBatchWizard_module}" />
 							</aon:div>
 							
 						</aon:div>
@@ -74,6 +83,13 @@
 							<aon:outputText value="#{appBundle.certificate_menu_group}" />
 						</f:facet>					
 						<aon:div styleClass="aon-direct-access-list">
+						
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="settle" action="settle_search"
+									value="#{payrollBundle.payroll_settle_module}">
+									<aon:actionListener method="#{contract.onEditSearch}" />
+								</aon:commandLink>
+							</aon:div>
 
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="certifica2BatchWizard"
