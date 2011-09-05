@@ -110,6 +110,11 @@ public class WarehouseTransfer implements ITransferObject, IHeaderObject {
 		this.comments = comments;
 	}
 
+    @Transient
+    public Date getDate() {
+    	return getIssueTime();
+    }
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

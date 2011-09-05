@@ -197,6 +197,11 @@ public class ProjectTas implements ITransferObject, IHeaderObject {
     }
 
     @Transient
+    public Date getDate() {
+    	return getProject().getDate();
+    }
+
+    @Transient
     public SecurityLevel getSecurityLevel() {
     	return SecurityLevel.OFFICIAL;
     }

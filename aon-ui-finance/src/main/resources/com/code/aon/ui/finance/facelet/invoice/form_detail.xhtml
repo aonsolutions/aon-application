@@ -275,7 +275,8 @@
 								<rich:toolTip value="#{controller.lineSourceInfo}" />
 							</aon:div>
 							<aon:commandButton id="invoiceDetailProject" value="&#160;"
-								styleClass="aon-icon-commandButton aon-icon-project"
+								styleClass="#{(to.project != null and to.project.id == invoiceController.to.project.id) ? 
+												('aon-icon-commandButton aon-icon-project-ok') : ('aon-icon-commandButton aon-icon-project-warn')}"
 								rendered="#{to.project != null and to.project.id != null}"
 								actionListener="#{controller.onInvoiceDetailProjectShow}" 
 								reRender="showInvoiceProjectWindow">

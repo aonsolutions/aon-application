@@ -36,7 +36,9 @@ import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
+import com.code.aon.tas.ProjectTas;
 import com.code.aon.warehouse.DeliveryDetail;
+import com.code.aon.warehouse.IncomeDetail;
 
 @Entity
 @Table(name = "invoice_detail")
@@ -278,12 +280,20 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 		if (getSourceId() != null) {
 			if (InvoiceSource.DIRECT_SALES == getSource() || InvoiceSource.DELIVERY == getSource()) {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
-				return (DeliveryDetail)deliveryDetailBean.get(getSourceId());
+				return ((DeliveryDetail)deliveryDetailBean.get(getSourceId())).getDelivery();
 			}
-			/*if (InvoiceSource.DIRECT_PURCHASE == getSource() || InvoiceSource.INCOME == getSource()) {
+			if (InvoiceSource.DIRECT_PURCHASE == getSource() || InvoiceSource.INCOME == getSource()) {
 				IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
-				return (IncomeDetail)incomeDetailBean.get(getSourceId());
-			}*/
+				return ((IncomeDetail)incomeDetailBean.get(getSourceId())).getIncome();
+			}
+		}
+		return null;
+	}
+
+	@Transient
+	public ITransferObject getSpecificProject() throws ManagerBeanException {
+		if (getProject() != null && getProject().isTas()) {
+			return (ProjectTas)BeanManager.getManagerBean(ProjectTas.class).get(getProject().getId());
 		}
 		return null;
 	}

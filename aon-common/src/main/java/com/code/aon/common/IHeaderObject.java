@@ -1,8 +1,6 @@
 package com.code.aon.common;
 
-import javax.persistence.Transient;
-
-import org.apache.commons.lang.StringUtils;
+import java.util.Date;
 
 import com.code.aon.common.enumeration.SecurityLevel;
 
@@ -56,5 +54,12 @@ public interface IHeaderObject {
      * @return the reference code
      */
     public String getReferenceCode();
+
+    /**
+     * Gets the date.
+     * 
+     * @return the date
+     */
+    public Date getDate();
 
 }
