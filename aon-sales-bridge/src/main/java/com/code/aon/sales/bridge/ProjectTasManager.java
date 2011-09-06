@@ -31,6 +31,7 @@ public class ProjectTasManager {
 		projectTas.setTarget(offer.getTarget());
 		projectTas.setTasItem(tasItem);
 		projectTas.setComments(offer.getComments());
+		projectTas.setWorkPlace(offer.getWorkPlace());
 
 		IManagerBean projectTasBean = BeanManager.getManagerBean(ProjectTas.class);
 		return (ProjectTas)projectTasBean.insert(projectTas);
