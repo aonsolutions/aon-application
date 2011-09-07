@@ -9,10 +9,10 @@ public interface IPayrollConstants {
 	/** ResourceBundle name. */
 	String BUNDLE_BASE_NAME = "com.esferalia.aon.ui.payroll.i18n.messages";
 	String BUNDLE_NAME = "payrollBundle";
-	String SALARY_EMAIL_SUBJECT = "employee_email_subject";
-	String SALARY_EMAIL_BODY_HEADER = "employee_email_subject_header";
-	String SALARY_EMAIL_BODY_LINE = "employee_email_subject_line";
-	String SALARY_EMAIL_BODY_FOOTER = "employee_email_subject_footer";
+	String SALARY_EMAIL_SUBJECT = "payroll_email_subject";
+	String SALARY_EMAIL_BODY_HEADER = "payroll_email_subject_header";
+	String SALARY_EMAIL_BODY_LINE = "payroll_email_subject_line";
+	String SALARY_EMAIL_BODY_FOOTER = "payroll_email_subject_footer";
 	String PAYROLL_DOCUMENTS = "payroll_documents";
 	String PAYROLL_ECONOMIC_DATA = "payroll_economic_data";
 	String PAYROLL_SALARY_PAYMENTS = "payroll_salary_payments_tab";
@@ -48,6 +48,7 @@ public interface IPayrollConstants {
 	String ENTERPRISE_CCC_CONTROLLER = "enterpriseCCC";
 	String ENTERPRISE_TREE_CONTROLLER = "enterpriseTree";
 	String IRPF_DATA_CONTROLLER_NAME = "irpfData";
+	String IRPF_LAUNCHER_CONTROLLER_NAME = "irpfLauncher";
 	String SALARY_CONTROLLER = "salary";
 	String SALARY_DRAFT_BONUS_CONTROLLER = "salaryDraftBonus";
 	String SALARY_DRAFT_CONTROLLER = "salaryDraft";
