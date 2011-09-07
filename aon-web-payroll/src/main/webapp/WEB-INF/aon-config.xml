@@ -58,5 +58,12 @@
 			showEnterpriseInSearch="true" 
 		/>
 	</payroll:config>
+	
+	<webmail:config version="1.2" xmlns:webmail="http://www.esferalia.com/webmail" >
+		<webmail:webmail
+			connect="true"
+			showDomainMailAccounts="true"			
+		/>
+	</webmail:config>		
 
 </config>
