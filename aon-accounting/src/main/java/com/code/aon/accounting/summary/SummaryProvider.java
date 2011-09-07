@@ -396,11 +396,13 @@ public class SummaryProvider {
 			entrySet = entryStmt.executeQuery();
 			Balance b = null;
 			if (entrySet.next()) {
-				b = new Balance();
 				Date entryDate = entrySet.getDate(1);
-				b.setFromDate(entryDate);
+				if (entryDate != null) {
+					b = new Balance();
+					b.setFromDate(entryDate);
+				}
 			}
-			if (b != null) {
+			if (b != null && b.getFromDate() != null) {
 				entrySet.close();
 				entryStmt.close();
 				stmt = new StringBuffer();	
