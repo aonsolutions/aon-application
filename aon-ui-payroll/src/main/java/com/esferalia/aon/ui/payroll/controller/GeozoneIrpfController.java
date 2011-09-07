@@ -224,7 +224,7 @@ public class GeozoneIrpfController {
 			endCal.set(Calendar.MONTH, Calendar.DECEMBER);
 			endCal.set(Calendar.DAY_OF_MONTH, 31);
 			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_START_DATE), startCal.getTime());
-			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_END_DATE), endCal.getTime());
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(IPayrollAlias.GEOZONE_IRPF_END_DATE), endCal.getTime());
 		}
 		if(getAdministration()!=null){
 			if(getAdministration()== Administration.ALAVA){
