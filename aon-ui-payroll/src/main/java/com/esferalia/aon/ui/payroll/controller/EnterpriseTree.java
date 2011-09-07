@@ -1,5 +1,8 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import static com.esferalia.aon.ui.payroll.controller.IPayrollConstants.IRPF_LAUNCHER_CONTROLLER_NAME;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -55,6 +58,7 @@ import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractDeductionController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractEmbargoController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractPaymentController;
+import com.esferalia.aon.ui.payroll.controller.launcher.IrpfLauncher;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 import com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard;
 import com.esferalia.aon.ui.payroll.utils.EnterpriseTreeData;
@@ -311,7 +315,7 @@ public class EnterpriseTree implements ICompanyConstants {
 			TreeNodeImpl<EnterpriseTreeData> wpNode = new TreeNodeImpl<EnterpriseTreeData>();
 			EnterpriseTreeData etd = getTreeData(wp);
 			wpNode.setData(etd);
-			enterpriseNode.addChild( etd.getType().toString() + etd.getId(), wpNode );
+			enterpriseNode.addChild( etd.getKey(), wpNode );
 			loadContracts(wpNode, wp);
 		}
 	}
@@ -325,7 +329,18 @@ public class EnterpriseTree implements ICompanyConstants {
 		enterpriseNode.addChild( id, node);
 	}
 	
+	private ListRowKey<String> getRowKey( TreeNode<EnterpriseTreeData> treeNode ) {
+		ArrayList<String> list = new ArrayList<String>();
+		TreeNode<EnterpriseTreeData> node = treeNode;
+		while ( node.getData() != null ) {
+			list.add( 0, node.getData().getKey() );
+			node = node.getParent();
+		}
+		return new ListRowKey<String>(list);
+	}
+	
 	public void loadTree() {
+		setState( new TreeState() );
 		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		Enterprise enterprise = (Enterprise) controller.getTo();
 		rootNode = new TreeNodeImpl<EnterpriseTreeData>();
@@ -402,19 +417,25 @@ public class EnterpriseTree implements ICompanyConstants {
 	public void onSelectTreeContract( ActionEvent event ) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
-			this.contract = (Contract) bean.get( getCurrentNode().getId() );
-			this.personInfo.init( this.contract.getPerson().getRegistry() );
-			this.showContractHeader = this.personInfo.hasMedias();
-			this.showContractHeader |= selectSalaries(event, this.contract);
-			ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
-			c.select(event, this.contract);
-			c.onShowVariables(event);
+			Contract contract = (Contract) bean.get( getCurrentNode().getId() );
+			onSelectTreeContract(event, contract);
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectTreeContract exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}	
+	
+	public void onSelectTreeContract( ActionEvent event, Contract contract ) throws ManagerBeanException {
+		this.contract = contract;
+		this.personInfo.init( this.contract.getPerson().getRegistry() );
+		this.showContractHeader = this.personInfo.hasMedias();
+		this.showContractHeader |= selectSalaries(event, this.contract);
+		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		c.select(event, this.contract);
+		c.onShowVariables(event);
+	}	
+	
 	
 	private void selectContract(ActionEvent event) {
 		try {
@@ -566,7 +587,6 @@ public class EnterpriseTree implements ICompanyConstants {
 
 	public void onInit( ActionEvent event ) {
 		setCurrentNode( this.enterpriseNode );
-		setState(null);
 	}
 	
 	public TreeState getState() {
@@ -647,6 +667,66 @@ public class EnterpriseTree implements ICompanyConstants {
 			setCurrentNode( (TreeNode<EnterpriseTreeData>) tree.getTreeNode() );
 			getCurrentNode().actionListener(null);
 		}
+	}
+	
+	private Contract getShowContract() throws ManagerBeanException {
+		IrpfLauncher launcher = (IrpfLauncher) AonUtil.getRegisteredBean(IRPF_LAUNCHER_CONTROLLER_NAME);
+		Integer id = launcher.getContractId();
+		IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+		return (Contract) bean.get(id);
+	}
+	
+	private TreeNode<EnterpriseTreeData> getTreeNode( WorkPlace workPlace ) {
+		TreeNode<EnterpriseTreeData> node = enterpriseNode;
+		Iterator<Map.Entry<Object, TreeNode<EnterpriseTreeData>>> i = node.getChildren();
+		while ( i.hasNext() ) {
+			Map.Entry<Object, TreeNode<EnterpriseTreeData>> entry = i.next();
+			EnterpriseTreeData etd = entry.getValue().getData();
+			if ( (etd.getType() == EnterpriseTreeType.WORKPLACE) && (etd.getId().equals(workPlace.getId()))) {
+				return entry.getValue();
+			}
+			
+		}
+		return null;
+	}	
+	
+	private TreeNode<EnterpriseTreeData> getTreeNode( Contract contract ) {
+		TreeNode<EnterpriseTreeData> node = getTreeNode(contract.getWorkPlace());
+		if ( node != null ) {
+			Iterator<Map.Entry<Object, TreeNode<EnterpriseTreeData>>> i = node.getChildren();
+			while ( i.hasNext() ) {
+				Map.Entry<Object, TreeNode<EnterpriseTreeData>> entry = i.next();
+				EnterpriseTreeData etd = entry.getValue().getData();
+				if ( (etd.getType() == EnterpriseTreeType.CONTRACT) && (etd.getId().equals(contract.getId()))) {
+					return entry.getValue();
+				}
+				
+			}			
+		}
+		return null;
+	}
+	
+	private void selectTreeNode( TreeNode<EnterpriseTreeData> node ) {
+		setCurrentNode(node);
+		ListRowKey<String> key = getRowKey(node);
+		getState().setSelected(key);
+		TreeRowKey<String> _key = key;
+		while ( _key != null ) {
+			if (! getState().isExpanded(_key) ) {
+				getState().makeExpanded(_key);		
+			}
+			_key = _key.getParentKey();
+		}
+	}	
+
+	public void onShowContract( ActionEvent event ) throws ManagerBeanException {
+		Contract contract = getShowContract();
+		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+		ec.setTreeView(true);
+		ec.select(event, contract.getWorkPlace().getEnterprise() );
+		onSelectTreeContract(event, contract);
+		TreeNode<EnterpriseTreeData> node = getTreeNode(contract);
+		selectTreeNode(node);
 	}
 	
 }
