@@ -7,6 +7,7 @@
 	<c:if test="#{lookupForRegistry}">
 		<aon:valueParam name="lookupProperty" default="registry"/>
 		<aon:valueParam name="lookupInputSuggestValue" default="#{lookupTo.name}"/>
+		<aon:valueParam name="lookupInputNameDisabled" default="#{lookupDisabled}"/>
 	</c:if>
 	<aon:valueParam name="lookupInputSuggestValue" default="#{lookupTo.registry.name}"/>
 
@@ -17,7 +18,7 @@
 			<c:if test="#{skipSuggestText}">
 				<aon:inputText id="#{pojoName}_name#{lookupSuffix}"
 					value="#{lookupInputNameValue}" 
-					disabled="#{lookupDisabled}" size="#{lookupInputSuggestSize}"
+					disabled="#{lookupInputNameDisabled}" size="#{lookupInputSuggestSize}"
 					rendered="#{lookupInputNameValue != null}" />
 			</c:if>
 			<ui:insert name="afterLookupContent2"/>
