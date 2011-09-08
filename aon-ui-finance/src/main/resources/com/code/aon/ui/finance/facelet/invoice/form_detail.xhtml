@@ -282,9 +282,9 @@
 								reRender="showInvoiceProjectWindow">
 								<rich:toolTip value="#{projectLabel} #{to.project.name}" />
 								<f:setPropertyActionListener target="#{invoiceController.showInvoiceProjectWindow}"
-									value="#{invoiceController.projectCount > 0}" />								
+									value="#{!invoiceController.to.sales and invoiceController.projectCount > 0}" />								
 								<f:setPropertyActionListener target="#{invoiceController.showInvoiceDetailProjectWindow}"
-									value="#{invoiceController.projectCount > 0}" />								
+									value="#{!invoiceController.to.sales and invoiceController.projectCount > 0}" />								
 							</aon:commandButton>
  						</aon:column>
 					</ui:define>
