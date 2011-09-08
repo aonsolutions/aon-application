@@ -214,7 +214,8 @@
 						<ui:param name="lookupTo" value="#{saleInvoice.to.registry}" />
 						<ui:param name="lookupForRegistry" value="#{true}" />
 						<ui:param name="lookupInputNameValue" value="#{saleInvoice.to.registryName}" />
-						<ui:param name="lookupDisabled" value="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" />
+						<ui:param name="lookupDisabled" value="#{saleInvoice.registryReadOnly or !saleInvoiceFinance.allPending}" />
+						<ui:param name="lookupInputNameDisabled" value="#{saleInvoice.readOnly or !saleInvoiceFinance.allPending}" />
 						<ui:param name="lookupReRender" value="Customer_lookup_document,InvoiceAddress,InvoiceProject" />
 						<ui:param name="idRequired" value="#{true}" />						
 						<ui:param name="skipSuggestText" 

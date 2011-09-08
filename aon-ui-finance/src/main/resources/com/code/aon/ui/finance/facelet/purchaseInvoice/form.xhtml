@@ -193,7 +193,8 @@
 						<ui:param name="lookupTo" value="#{purchaseInvoice.to.registry}" />
 						<ui:param name="lookupForRegistry" value="#{true}" />
 						<ui:param name="lookupInputNameValue" value="#{purchaseInvoice.to.registryName}" />
-						<ui:param name="lookupDisabled" value="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}" />
+						<ui:param name="lookupDisabled" value="#{purchaseInvoice.registryReadOnly or !purchaseInvoiceFinance.allPending}" />
+						<ui:param name="lookupInputNameDisabled" value="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}" />
 						<ui:param name="lookupReRender" value="Supplier_lookup_document,InvoiceAddress,InvoiceProject" />
 						<ui:param name="idRequired" value="#{true}" />						
 						<ui:param name="skipSuggestText" 

@@ -604,18 +604,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 
-	public boolean isReadOnly() {
-		return (isSigned() || isRecorded() || isRectified() || isSpecialRectifier());
-	}
-	
-	public boolean isSigned() {
-		return getInvoice().isSigned();
-	}
-
-	public boolean isRecorded() {
-		return getInvoice().isRecorded();
-	}
-
 	public Integer getAccountEntryId() throws ManagerBeanException {
     	Invoice invoice = getInvoice();
 		if (invoice != null && invoice.getId() != null) {
@@ -629,6 +617,18 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			}
 		}
     	return null;
+	}
+
+	public boolean isReadOnly() {
+		return (isSigned() || isRecorded() || isRectified() || isSpecialRectifier());
+	}
+	
+	public boolean isSigned() {
+		return getInvoice().isSigned();
+	}
+
+	public boolean isRecorded() {
+		return getInvoice().isRecorded();
 	}
 
 	public boolean isRectifier() {
@@ -645,6 +645,26 @@ public class InvoiceController extends BasicController implements ISignatureCont
 
 	public boolean isRectified() {
 		return getInvoice().isRectified();
+	}
+
+	public boolean isRegistryReadOnly() throws ManagerBeanException {
+		return isReadOnly() || isRegistryReadOnly(getInvoice());
+	}
+
+	private boolean isRegistryReadOnly(Invoice invoice) throws ManagerBeanException {
+		if (invoice.getType() == InvoiceType.SALES && invoice.getProject() != null && invoice.getProject().getId() != null) {
+			return true;
+		}
+
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_INVOICE);
+		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_SALES);
+		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_PURCHASE);
+		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_EXPENSE);
+		Iterator<?> iterator = invoiceDetailBean.getList(criteria).iterator();
+		return iterator.hasNext();
 	}
 
 	@Override
