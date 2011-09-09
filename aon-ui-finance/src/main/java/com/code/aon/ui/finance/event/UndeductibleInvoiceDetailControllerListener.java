@@ -31,7 +31,7 @@ public class UndeductibleInvoiceDetailControllerListener extends InvoiceDetailCo
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		super.afterBeanCreated(event);
+		super.afterBeanSelected(event);
 
 		UndeductibleInvoiceDetailController controller = (UndeductibleInvoiceDetailController)event.getController();
 		try {
