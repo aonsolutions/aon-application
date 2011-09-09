@@ -21,6 +21,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Type;
 
+import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -286,8 +287,17 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 				IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 				return ((IncomeDetail)incomeDetailBean.get(getSourceId())).getIncome();
 			}
+			if (InvoiceSource.OFFER == getSource()) {
+				IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+				return ((OfferDetail)offerDetailBean.get(getSourceId())).getOffer();
+			}
 		}
 		return null;
+	}
+
+	@Transient
+	public boolean isOfferSource() throws ManagerBeanException {
+		return (getSource() == InvoiceSource.OFFER);
 	}
 
 	@Transient

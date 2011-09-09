@@ -159,12 +159,39 @@ public class BasicController extends AbstractPojoController implements IControll
 	}
 
 	/**
+	 * Gets the back action.
+	 * 
+	 * @return the back action
+	 */
+	public String getBackAction() {
+		return backAction;
+	}
+
+	/**
 	 * Sets the back action.
 	 *
 	 * @param backAction the new back action
 	 */
 	public void setBackAction(String backAction) {
 		this.backAction = backAction;
+	}
+
+	/**
+	 * Gets the back action listener.
+	 * 
+	 * @return the back action listener
+	 */
+	public String getBackActionListener() {
+		return backActionListener;
+	}
+
+	/**
+	 * Sets the back action listener.
+	 *
+	 * @param expression the new back action listener
+	 */
+	public void setBackActionListener(String expression) {
+		this.backActionListener = expression;
 	}
 
 	/**
@@ -1157,24 +1184,6 @@ public class BasicController extends AbstractPojoController implements IControll
 		setBackActionListener(null);
 	}
 	
-	/**
-	 * Gets the back action listener.
-	 * 
-	 * @return the back action listener
-	 */
-	public String getBackActionListener() {
-		return backActionListener;
-	}
-
-	/**
-	 * Sets the back action listener.
-	 *
-	 * @param expression the new back action listener
-	 */
-	public void setBackActionListener(String expression) {
-		this.backActionListener = expression;
-	}
-
     /**
      * Execute default or defined back action.
      * 

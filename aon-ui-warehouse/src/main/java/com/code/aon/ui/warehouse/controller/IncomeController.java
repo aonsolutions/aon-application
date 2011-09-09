@@ -39,16 +39,15 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.event.IncomeSearchListener;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
 
-public class IncomeController extends BasicController {
-
-	private final String INCOME_DETAIL_CONTROLLER = "incomeDetail";
-	private final String PURCHASE_INVOICE_CONTROLLER = "purchaseInvoice";
+public class IncomeController extends BasicController implements IWarehouseConstants {
 
 	private List<SelectItem> addresses;
 	private Warehouse warehouse;
@@ -299,7 +298,7 @@ public class IncomeController extends BasicController {
 			}
 		}
 
-		IController detailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER);
+		IController detailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 	}
 
@@ -313,12 +312,25 @@ public class IncomeController extends BasicController {
 		IncomeInvoicingManager invoicingManager = new IncomeInvoicingManager();
 		Invoice invoice = invoicingManager.invoice(to, getInvoiceRefCode(), getInvoiceDate());
 
-		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER);
+		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER_NAME);
 		invoiceController.onEditSearch(event);
 		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
 		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
 		invoiceController.onSelect(event);
+	}
+
+	public void onLoadIncome(ActionEvent event, Income income, String backAction) throws ManagerBeanException {
+		IncomeSearchListener incomeSearch = (IncomeSearchListener)AonUtil.getRegisteredBean(INCOME_SEARCH_LISTENER_NAME);
+
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(IWarehouseAlias.INCOME_ID), income.getId());
+		incomeSearch.setIncomeStatuses(null);
+		onSearch(event);
+		getModel().setRowIndex(0);
+		onSelect(event);
+
+		setBackAction(backAction);
 	}
 
 }

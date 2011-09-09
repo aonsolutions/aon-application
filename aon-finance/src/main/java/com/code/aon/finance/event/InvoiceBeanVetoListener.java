@@ -131,7 +131,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		int thisYear = CommonUtil.getYear(new Date());
 		int invoiceYear = CommonUtil.getYear(invoice.getIssueDate());
 		if (invoiceYear < (thisYear-5) || invoiceYear > (thisYear+1)) {
-			throw new ManagerBeanVetoListenerException("La fecha de la factura no esta dentro del rango válido");
+			throw new ManagerBeanVetoListenerException("La fecha de la factura no es correcta.");
 		}
 		if (StringUtils.isEmpty(invoice.getRegistryName())) {
 			invoice.setRegistryName(invoice.getRegistry().getFullName());

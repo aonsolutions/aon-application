@@ -53,6 +53,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.event.DeliverySearchListener;
 import com.code.aon.ui.warehouse.util.WarehouseEmailUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
@@ -63,10 +64,7 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
-public class DeliveryController extends BasicController {
-
-	private final String DELIVERY_DETAIL_CONTROLLER = "deliveryDetail";
-	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
+public class DeliveryController extends BasicController implements IWarehouseConstants {
 
 	private List<SelectItem> addresses;
 	private List<SelectItem> projects;
@@ -393,7 +391,7 @@ public class DeliveryController extends BasicController {
 			}
 		}
 
-		IController detailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER);
+		IController detailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 	}
 
@@ -429,7 +427,7 @@ public class DeliveryController extends BasicController {
 		DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
 		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
-		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
+		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
 		invoiceController.onEditSearch(event);
 		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
 		invoiceController.onSearch(event);
@@ -449,4 +447,17 @@ public class DeliveryController extends BasicController {
 		}
 	}	
 	
+	public void onLoadDelivery(ActionEvent event, Delivery delivery, String backAction) throws ManagerBeanException {
+		DeliverySearchListener deliverySearch = (DeliverySearchListener)AonUtil.getRegisteredBean(DELIVERY_SEARCH_LISTENER_NAME);
+
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(IWarehouseAlias.DELIVERY_ID), delivery.getId());
+		deliverySearch.setDeliveryStatuses(null);
+		onSearch(event);
+		getModel().setRowIndex(0);
+		onSelect(event);
+
+		setBackAction(backAction);
+	}
+
 }

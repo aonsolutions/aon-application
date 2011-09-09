@@ -7,6 +7,7 @@ public interface ICommercialConstants {
 	// ************************************************************
 	// NAVIGATION
 	// ************************************************************
+	String NAVIGATION_OFFER_FORM = "offer_form"; 
 	String NAVIGATION_OFFER_LIST = "offer_list"; 
 	String NAVIGATION_COMMERCIAL_TRACKING_FORM = "commercialTracking_form";
 	String NAVIGATION_TARGET_FORM = "target_form";
@@ -20,6 +21,7 @@ public interface ICommercialConstants {
 	String OFFER_DETAIL_CONTROLLER_NAME = "offerDetail";
 	String OFFER_ATTACH_CONTROLLER_NAME = "offerAttachment";
 	String OFFER_SIGNER_CONTROLLER_NAME = "offerSigner";
+	String OFFER_SEARCH_LISTENER_NAME = "offerSearch";
 	String TARGET_CONTROLLER_NAME = "target";
 	String TARGET_MEDIA_CONTROLLER_NAME = "targetMedia";
 	String TARGET_ADDRESS_CONTROLLER_NAME = "targetAddress";
@@ -44,15 +46,14 @@ public interface ICommercialConstants {
 	// ************************************************************
 
 	String TARGET_LIST_DETAIL_EXCEL = "targetListDetailExcel";
-
 	String TARGET_LIST_DETAIL = "targetListDetail";
-
 	String TARGET_LIST = "targetList";	
-	
+
 	// ************************************************************
 	// CONFIGURATION
 	// ************************************************************
-	
+
 	String CONFIG_OFFER_BEAN = "offer";
 	String SHOW_TAS_DATA = "showTasData";
+
 }

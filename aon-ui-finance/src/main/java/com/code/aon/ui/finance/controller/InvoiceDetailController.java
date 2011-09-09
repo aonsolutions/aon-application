@@ -7,6 +7,8 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.OfferDetail;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -21,13 +23,24 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.commercial.controller.ICommercialConstants;
+import com.code.aon.ui.commercial.controller.OfferController;
 import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.warehouse.controller.DeliveryController;
+import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
+import com.code.aon.ui.warehouse.controller.IncomeController;
+import com.code.aon.warehouse.Delivery;
+import com.code.aon.warehouse.DeliveryDetail;
+import com.code.aon.warehouse.Income;
+import com.code.aon.warehouse.IncomeDetail;
 
-public class InvoiceDetailController extends LinesController {
+public class InvoiceDetailController extends LinesController implements IFinanceConstants {
 
 	private IPriceStrategy priceStrategy;
 	private boolean longDescription;
 	private InvoiceDetail invoiceDetail;
+	private String sourceViewer;
 
 	public IPriceStrategy getPriceStrategy() {
 		if (priceStrategy == null) {
@@ -77,6 +90,14 @@ public class InvoiceDetailController extends LinesController {
 	public void addInvoiceDetailProject(ActionEvent event) throws ManagerBeanException {
 		invoiceDetail.setUpdateEnabled(false);
 		getManagerBean().update(invoiceDetail);
+	}
+
+	public String getSourceViewer() {
+		return sourceViewer;
+	}
+
+	public void setSourceViewer(String sourceViewer) {
+		this.sourceViewer = sourceViewer;
 	}
 
 	public boolean isEditable() throws ManagerBeanException {
@@ -141,6 +162,64 @@ public class InvoiceDetailController extends LinesController {
 			}
 		}
 		return percent;
+	}
+
+	public String getLineSourceInfo() throws ManagerBeanException {
+		StringBuffer info = new StringBuffer(64);
+
+		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
+		if (!isEditable() && invoiceDetail.getSourceId() != null) {
+			String message = "";
+			String refCode = "";
+			int line = 0;
+			if (invoiceDetail.getSource() == InvoiceSource.OFFER) {
+				IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
+				OfferDetail offerDetail = (OfferDetail)offerDetailBean.get(invoiceDetail.getSourceId());
+				message = AonUtil.getMessage("commercialBundle", "commercial_offer");
+				refCode = offerDetail.getOffer().getReferenceCode();
+				line = offerDetail.getLine().intValue();
+			} else if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
+				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
+				message = AonUtil.getMessage("financeBundle", "finance_invoice_delivery");
+				refCode = deliveryDetail.getDelivery().getReferenceCode();
+				line = deliveryDetail.getLine().intValue();
+			} else if (invoiceDetail.getSource() == InvoiceSource.INCOME) {
+				IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+				IncomeDetail incomeDetail = (IncomeDetail)incomeDetailBean.get(invoiceDetail.getSourceId());
+				message = AonUtil.getMessage("financeBundle", "finance_invoice_delivery");
+				refCode = incomeDetail.getIncome().getReferenceCode();
+				line = incomeDetail.getLine().intValue();
+			}
+
+			info.append(AonUtil.getMessage("financeBundle", "finance_source"));
+			info.append(" ");
+			info.append(message);
+			info.append(" ");
+			info.append(refCode);
+			info.append(" - ");
+			info.append(AonUtil.getMessage("financeBundle", "finance_invoice_detail_line"));
+			info.append(" ");
+			info.append(line);
+		}
+		return info.toString();
+	}
+
+	public void onLoadSource(ActionEvent event) throws ManagerBeanException {
+		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
+		if (invoiceDetail.getSource() == InvoiceSource.OFFER) {
+			setSourceViewer(ICommercialConstants.NAVIGATION_OFFER_FORM);
+			OfferController offerController = (OfferController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_CONTROLLER_NAME);
+			offerController.onLoadOffer(event, (Offer)invoiceDetail.getSourceTo(), SALE_INVOICE_FORM_NAME);
+		} else if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
+			setSourceViewer(IWarehouseConstants.DELIVERY_FORM_NAME);
+			DeliveryController deliveryController = (DeliveryController) AonUtil.getRegisteredBean(IWarehouseConstants.DELIVERY_CONTROLLER_NAME);
+			deliveryController.onLoadDelivery(event, (Delivery)invoiceDetail.getSourceTo(), SALE_INVOICE_FORM_NAME);
+		} else if (invoiceDetail.getSource() == InvoiceSource.INCOME) {
+			setSourceViewer(IWarehouseConstants.INCOME_FORM_NAME);
+			IncomeController incomeController = (IncomeController) AonUtil.getRegisteredBean(IWarehouseConstants.INCOME_CONTROLLER_NAME);
+			incomeController.onLoadIncome(event, (Income)invoiceDetail.getSourceTo(), PURCHASE_INVOICE_FORM_NAME);
+		}
 	}
 
 }

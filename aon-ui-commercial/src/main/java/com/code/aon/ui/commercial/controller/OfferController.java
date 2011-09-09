@@ -67,6 +67,7 @@ import com.code.aon.supplier.Supplier;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.TasItem;
 import com.code.aon.tas.dao.ITASAlias;
+import com.code.aon.ui.commercial.event.OfferSearchListener;
 import com.code.aon.ui.commercial.util.CommercialEmailUtil;
 import com.code.aon.ui.commercial.util.OfferImportManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -757,38 +758,6 @@ public class OfferController extends BasicController implements ISignatureContro
 		return SeriesNumberUtil.obtainNumber(seriesId, "ProjectTas");
 	}
 
-/*
-	private TasItem obtainProjectTasItem(Offer offer) throws ManagerBeanException {
-		IManagerBean offerAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerAttachBean.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_OFFER_ID), offer.getId());
-		criteria.addEqualExpression(offerAttachBean.getFieldName(ICommercialAlias.OFFER_ATTACHMENT_MIME_TYPE), MimeType.MIME_XML);
-		Iterator<?> iterator = offerAttachBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			OfferAttachment offerAttach = (OfferAttachment)iterator.next();
-			String chasis = null;
-			try {
-				InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(offerAttach.getData())); 
-				AudaBridgeManager manager = new AudaBridgeManager();
-				CalculationDataResponse response =  manager.parseCalculationDataResponse(reader);
-				chasis = response.getTotalGeneral().getChasis();
-				reader.close();
-			} catch (Exception e) {
-			}
-
-			if (chasis != null) {
-				IManagerBean tasItemBean = BeanManager.getManagerBean(TasItem.class);
-				criteria = new Criteria();
-				criteria.addEqualExpression(tasItemBean.getFieldName(ITASAlias.TAS_ITEM_PRIVATE_CODE), chasis);
-				for (ITransferObject ito : tasItemBean.getList(criteria)) {
-					return (TasItem)ito;
-				}
-			}
-		}
-		return null;
-	}
-*/
-
 	public void onProjectTas(ActionEvent event) throws ManagerBeanException {
 		Offer to = getOffer();
 		ProjectTasManager tasManager = new ProjectTasManager();
@@ -944,4 +913,17 @@ public class OfferController extends BasicController implements ISignatureContro
 		return null;
 	}
 	
+	public void onLoadOffer(ActionEvent event, Offer offer, String backAction) throws ManagerBeanException {
+		OfferSearchListener offerSearch = (OfferSearchListener)AonUtil.getRegisteredBean(OFFER_SEARCH_LISTENER_NAME);
+
+		onEditSearch(event);
+		getCriteria().addEqualExpression(getFieldName(ICommercialAlias.OFFER_ID), offer.getId());
+		offerSearch.setOfferStatuses(null);
+		onSearch(event);
+		getModel().setRowIndex(0);
+		onSelect(event);
+
+		setBackAction(backAction);
+	}
+
 }
