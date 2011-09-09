@@ -355,7 +355,7 @@
 								styleClass="aon-icon-commandButton aon-icon-delete"
 								rendered="#{saleInvoice.to.project.id != null}"
 								actionListener="#{saleInvoice.removeInvoiceProject}" 
-								reRender="InvoiceProject,invoiceDetailContainer" />
+								reRender="saleInvoiceForm" />
 						</aon:div>
 					</aon:div>
 
@@ -425,6 +425,7 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalProject.xhtml">
 			<ui:param name="controller" value="#{saleInvoice}" />
 			<ui:param name="detailController" value="#{saleInvoiceDetail}" />
+			<ui:param name="parentForm" value="saleInvoiceForm" />
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalRectification.xhtml">
 			<ui:param name="invoiceController" value="#{saleInvoice}" />

@@ -44,7 +44,7 @@
 									<c:if test="#{!controller.showInvoiceDetailProjectWindow}">
 										<aon:commandButton id="invoiceProject-save"
 											value="#{bundle.aon_save}"
-											reRender="showInvoiceProjectWindow,InvoiceProject,invoiceDetailContainer"
+											reRender="showInvoiceProjectWindow,#{parentForm}"
 											actionListener="#{controller.addInvoiceProject}"
 											styleClass="aon-finding-toolbar-item aon-icon-accept"
 											accesskey="#{bundle.aon_key_save}">

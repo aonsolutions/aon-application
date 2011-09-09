@@ -334,7 +334,7 @@
 								styleClass="aon-icon-commandButton aon-icon-delete"
 								rendered="#{purchaseInvoice.to.project.id != null}"
 								actionListener="#{purchaseInvoice.removeInvoiceProject}" 
-								reRender="InvoiceProject,invoiceDetailContainer" />
+								reRender="purchaseInvoiceForm" />
 						</aon:div>
 					</aon:div>
 
@@ -418,6 +418,7 @@
 		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalProject.xhtml">
 			<ui:param name="controller" value="#{purchaseInvoice}" />
 			<ui:param name="detailController" value="#{purchaseInvoiceDetail}" />
+			<ui:param name="parentForm" value="purchaseInvoiceForm" />
 		</ui:include>
 		<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 			<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoice/income/modalTransfer.xhtml" />
