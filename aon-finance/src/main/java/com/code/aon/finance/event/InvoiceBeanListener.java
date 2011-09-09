@@ -38,22 +38,21 @@ public class InvoiceBeanListener extends ManagerBeanListenerAdapter {
 
 		if (invoice.isUpdateEnabled()) {
 			Project project = (invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null;
-			if (InvoiceType.SALES == invoice.getType() || InvoiceType.PURCHASE == invoice.getType()) {
-				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-				for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
-					InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
-					if (invoiceDetail.getProject() == null || invoiceDetail.getProject().getId() == null) {
-						invoiceDetail.setProject(project);
-					}
-					invoiceDetail.getInvoice().setUpdateEnabled(false);
-					invoiceDetailBean.update(invoiceDetail);
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+			for (ITransferObject ito : invoiceDetailBean.getList(criteria)) {
+				InvoiceDetail invoiceDetail = (InvoiceDetail)ito;
+				if (invoiceDetail.getProject() == null || invoiceDetail.getProject().getId() == null) {
+					invoiceDetail.setProject(project);
 				}
+				invoiceDetail.setUpdateEnabled(InvoiceType.SALES == invoice.getType() || InvoiceType.PURCHASE == invoice.getType());
+				invoiceDetail.getInvoice().setUpdateEnabled(false);
+				invoiceDetailBean.update(invoiceDetail);
 			}
 
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			Criteria criteria = new Criteria();
+			criteria = new Criteria();
 			criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
 			for (ITransferObject ito : financeBean.getList(criteria)) {
 				Finance finance = (Finance)ito;

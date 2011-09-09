@@ -50,8 +50,10 @@ public class ExpenseInvoiceController extends InvoiceController implements IFina
 			getInvoice().setRegistryDocumentCountry(creditor.getRegistry().getDocumentCountry());
 			getInvoice().setRegistry(creditor.getRegistry());
 			loadAddresses(creditor.getId());
+			loadProjects(creditor.getId());
 		} else {
 			setAddresses(null);	
+			setProjects(null);	
 		}
 	}
 
