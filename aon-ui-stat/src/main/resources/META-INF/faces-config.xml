@@ -29,6 +29,12 @@
 	</managed-bean>
 
 	<managed-bean>
+		<managed-bean-name>projectStat</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.stat.controller.ProjectStatEngineController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>commercialStat</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.stat.controller.CommercialStatEngineController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
@@ -193,6 +199,18 @@
 		<navigation-case>
 			<from-outcome>product_stats</from-outcome>
 			<to-view-id>/com/code/aon/ui/stat/facelet/productStat/productStat.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- *************Project Stats***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>project_search_stat</from-outcome>
+			<to-view-id>/com/code/aon/ui/stat/facelet/projectStat/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>project_stats</from-outcome>
+			<to-view-id>/com/code/aon/ui/stat/facelet/projectStat/projectStat.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 

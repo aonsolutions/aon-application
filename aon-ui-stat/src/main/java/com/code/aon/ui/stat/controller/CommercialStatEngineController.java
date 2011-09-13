@@ -47,8 +47,7 @@ import com.code.aon.seller.dao.ISellerAlias;
 import com.code.aon.stat.Stat;
 import com.code.aon.stat.StatParams;
 import com.code.aon.stat.engine.StatEngine;
-import com.code.aon.ui.commercial.controller.CommercialTrackingController;
-import com.code.aon.ui.commercial.controller.ICommercialConstants;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -1208,7 +1207,7 @@ public class CommercialStatEngineController {
 	}
 
 	public void onActivitySelect(ActionEvent e) throws ManagerBeanException {
-		CommercialTrackingController c = (CommercialTrackingController) AonUtil
+		BasicController c = (BasicController) AonUtil
 				.getRegisteredBean(COMMERCIAL_TRACKING_CONTROLLER_NAME);
 		Criteria criteria = new Criteria();
 		IManagerBean commercialTrackingBean = BeanManager
@@ -1227,35 +1226,35 @@ public class CommercialStatEngineController {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((Offer) this.getOffersModel().getRowData()).getId());
-		FormUtil.getController(ICommercialConstants.OFFER_CONTROLLER_NAME).setCriteria(criteria);
+		FormUtil.getController(OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 	
 	public void onDoneOfferPdf(ActionEvent e) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getDoneOffersModel().getRowData()).getOffer().getId());
-		FormUtil.getController(ICommercialConstants.OFFER_CONTROLLER_NAME).setCriteria(criteria);
+		FormUtil.getController(OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 	
 	public void onLostOfferPdf(ActionEvent e) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getLostOffersModel().getRowData()).getOffer().getId());
-		FormUtil.getController(ICommercialConstants.OFFER_CONTROLLER_NAME).setCriteria(criteria);
+		FormUtil.getController(OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 	
 	public void onPendingOfferPdf(ActionEvent e) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getPendingOffersModel().getRowData()).getOffer().getId());
-		FormUtil.getController(ICommercialConstants.OFFER_CONTROLLER_NAME).setCriteria(criteria);
+		FormUtil.getController(OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 	
 	public void onClosedOfferPdf(ActionEvent e) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_ID), ((OfferDetail) this.getClosedOffersModel().getRowData()).getOffer().getId());
-		FormUtil.getController(ICommercialConstants.OFFER_CONTROLLER_NAME).setCriteria(criteria);
+		FormUtil.getController(OFFER_CONTROLLER_NAME).setCriteria(criteria);
 	}
 
 	public void onActivityList(ActionEvent e) throws ManagerBeanException {

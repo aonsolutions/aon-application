@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml"
+	xmlns:a4j="http://richfaces.org/a4j">
+	<ui:define name="content">
+		<aon:form id="records">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="Informacion del Proyecto" />
+				<ui:define name="beforeToolbarContent">
+					<aon:commandButton value="#{bundle.aon_back}"
+						action="projectCommercial_form"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-group">
+					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="Datos Proyecto"/>
+					</aon:div>
+					<aon:div styleClass="aon-group-body"> 
+						<aon:div styleClass="aon-group-body-internal">
+							<aon:panelGrid columns="2" styleClass="aon-width-all"
+								columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+								<aon:outputLabel value="Proyecto" />
+								<aon:outputText value="#{projectStat.project.name}" />
+								<aon:outputLabel value="Cliente" />
+								<aon:outputText value="#{projectStat.project.registry.fullName}" />
+							</aon:panelGrid>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+
+				<aon:div styleClass="aon-group">
+					<aon:div styleClass="aon-group-title">
+						<aon:outputText value="Resumen Economico"/>
+					</aon:div>
+					<aon:div styleClass="aon-group-body"> 
+						<aon:div styleClass="aon-group-body-internal">
+							<aon:panelGrid columns="2" styleClass="aon-width-all"
+								columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
+								<aon:outputLabel value="Total Presupuestado" />
+								<aon:outputText value="#{projectStat.totalOffered}">
+									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+								</aon:outputText>
+								<aon:outputLabel value="Total Ingresos" />
+								<aon:outputText value="#{projectStat.totalSales}">
+									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+								</aon:outputText>
+								<aon:outputLabel value="Total Costos" />
+								<aon:outputText value="#{projectStat.totalCosts}">
+									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+								</aon:outputText>
+								<aon:outputLabel value="Resultado" />
+								<aon:outputText value="#{projectStat.totalResult}">
+									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
+								</aon:outputText>
+							</aon:panelGrid>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+
+
+
+<!-- 
+				<aon:panelTabSet switchType="client">
+					<aon:panelTab id="tab1"	label="Resumen">
+						
+					<aon:panelGrid columns="4">
+					<aon:outputLabel value="#{statBundle.product_stat_price}" />
+					<aon:outputText value="#{productStat.item.price}" size="70"
+						 >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:outputLabel value="#{statBundle.product_stat_stock}" />
+					<aon:outputText value="#{productStat.totalStock}" size="70">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:outputLabel value="#{statBundle.product_stat_puc}" />
+					<aon:outputText value="0" size="70"  >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:outputLabel value="#{statBundle.product_stat_pending}" />
+					<aon:outputText value="#{productStat.pendingSaleQuantity}" size="70"
+						disabled="true">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+						<aon:outputLabel value="#{statBundle.product_stat_ppc}" />
+					<aon:outputText value="#{productStat.averagePurchasePrice}" size="70">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:outputLabel value="#{statBundle.product_stat_recieve}" />
+					<aon:outputText value="#{productStat.pendingPurhaseQuantity}"
+						size="70" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>				
+					<aon:outputLabel value="#{statBundle.product_stat_puv}" />
+					<aon:outputText value="0" size="70"  >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+					<aon:outputLabel value="#{statBundle.product_stat_theoric_stock}" />
+					<aon:outputText value="#{productStat.theoricStock}" size="70">
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:panelGrid>
+					</aon:panelTab>
+					<aon:panelTab id="tab2"
+						label="#{statBundle.product_stat_latest_entries}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/productStat/latestEntriesList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="tab3"
+						label="#{statBundle.product_stat_latest_sales}">
+						<ui:include
+							src="/com/code/aon/ui/stat/facelet/productStat/latestShipmentsList.xhtml" />
+					</aon:panelTab>
+				</aon:panelTabSet>
+ -->
+ 			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

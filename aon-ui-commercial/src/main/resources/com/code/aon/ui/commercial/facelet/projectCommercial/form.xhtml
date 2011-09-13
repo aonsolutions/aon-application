@@ -15,10 +15,18 @@
 
 		<aon:form id="projectCommercialForm">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_operation_module}" />
 				<ui:param name="controller" value="#{projectCommercial}" />
-			</ui:include>
+				<ui:define name="beforeSpinToolbarContent">
+					<c:if test="#{!projectCommercial.new}">
+						<aon:commandButton id="ProjectHistory" 
+							action="project_stats" actionListener="#{projectCommercial.onProjectHistory}"
+							value="#{bundle.aon_history}"
+							styleClass="aon-finding-toolbar-item aon-icon-info" />
+					</c:if>		
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" width="100%"
