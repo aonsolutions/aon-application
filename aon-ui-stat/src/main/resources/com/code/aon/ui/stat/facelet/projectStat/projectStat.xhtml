@@ -66,62 +66,20 @@
 					</aon:div>
 				</aon:div>
 
-
-
-<!-- 
-				<aon:panelTabSet switchType="client">
-					<aon:panelTab id="tab1"	label="Resumen">
-						
-					<aon:panelGrid columns="4">
-					<aon:outputLabel value="#{statBundle.product_stat_price}" />
-					<aon:outputText value="#{productStat.item.price}" size="70"
-						 >
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-					<aon:outputLabel value="#{statBundle.product_stat_stock}" />
-					<aon:outputText value="#{productStat.totalStock}" size="70">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-					<aon:outputLabel value="#{statBundle.product_stat_puc}" />
-					<aon:outputText value="0" size="70"  >
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-					<aon:outputLabel value="#{statBundle.product_stat_pending}" />
-					<aon:outputText value="#{productStat.pendingSaleQuantity}" size="70"
-						disabled="true">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-						<aon:outputLabel value="#{statBundle.product_stat_ppc}" />
-					<aon:outputText value="#{productStat.averagePurchasePrice}" size="70">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-					<aon:outputLabel value="#{statBundle.product_stat_recieve}" />
-					<aon:outputText value="#{productStat.pendingPurhaseQuantity}"
-						size="70" >
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>				
-					<aon:outputLabel value="#{statBundle.product_stat_puv}" />
-					<aon:outputText value="0" size="70"  >
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-					<aon:outputLabel value="#{statBundle.product_stat_theoric_stock}" />
-					<aon:outputText value="#{productStat.theoricStock}" size="70">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
-				</aon:panelGrid>
+				<aon:panelTabSet id="projectHistoryTabSet">
+					<aon:panelTab id="approvedOffersTab" label="Presupuestos">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/approvedOfferList.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="tab2"
-						label="#{statBundle.product_stat_latest_entries}">
-						<ui:include
-							src="/com/code/aon/ui/stat/facelet/productStat/latestEntriesList.xhtml" />
+					<aon:panelTab id="saleInvoiceTab" label="Ingresos">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/saleInvoiceList.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="tab3"
-						label="#{statBundle.product_stat_latest_sales}">
-						<ui:include
-							src="/com/code/aon/ui/stat/facelet/productStat/latestShipmentsList.xhtml" />
+					<aon:panelTab id="costInvoiceTab" label="Costes">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/costInvoiceList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="manodeobraTab" label="Mano de Obra">
 					</aon:panelTab>
 				</aon:panelTabSet>
- -->
+
  			</aon:div>
 		</aon:form>
 	</ui:define>

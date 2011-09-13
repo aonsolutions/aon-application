@@ -1,5 +1,6 @@
 package com.code.aon.ui.stat.controller;
 
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -10,14 +11,20 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.commercial.Offer;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.project.Project;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 
 public class ProjectStatEngineController {
@@ -223,17 +230,50 @@ public class ProjectStatEngineController {
 		setTotalCosts(0);
 	}
 
+	public double getApprovedOfferTotal() throws ManagerBeanException {
+		Offer offer = (Offer)getApprovedOfferModel().getRowData();
+		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
+	}
+
+	public double getSaleInvoiceTotal() throws ManagerBeanException {
+		Invoice invoice = (Invoice)getSaleInvoiceModel().getRowData();
+		return getInvoicePriceStrategy().getTotalPrice(invoice, invoice);
+	}
+
+	public double getCostInvoiceTotal() throws ManagerBeanException {
+		Invoice invoice = (Invoice)getCostInvoiceModel().getRowData();
+		return getInvoicePriceStrategy().getTotalPrice(invoice, invoice);
+	}
+
+	public FinanceStatus getSaleInvoiceFinanceStatus() throws ManagerBeanException {
+		Invoice invoice = ((Invoice)this.getSaleInvoiceModel().getRowData());
+		return getInvoiceFinanceStatus(invoice);
+	}
+
+	public FinanceStatus getCostInvoiceFinanceStatus() throws ManagerBeanException {
+		Invoice invoice = ((Invoice)this.getCostInvoiceModel().getRowData());
+		return getInvoiceFinanceStatus(invoice);
+	}
+
+	private FinanceStatus getInvoiceFinanceStatus(Invoice invoice) throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
+		Iterator<?> iterator = financeBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			Finance finance = (Finance)iterator.next();
+			if (FinanceStatus.PAID != finance.getFinanceStatus() && FinanceStatus.SETTLED != finance.getFinanceStatus()) {
+				return FinanceStatus.PENDING;
+			}
+		}
+		return (financeBean.getCount(criteria) == 0) ? FinanceStatus.PENDING : FinanceStatus.PAID;
+	}
 
 
 
 
 
 /*
-	public double getPendingInvoicesTotalPrice() throws ManagerBeanException {
-		Invoice invoice = (Invoice) this.pendingInvoiceModel.getRowData();
-		return getPriceStrategy().getTotalPrice(invoice, invoice);
-	}
-
 	public double getSalesTotalPrice() throws ManagerBeanException {
 		Sales sales = (Sales) this.pendingSalesModel.getRowData();
 		return getPriceStrategy2().getTotalPrice(sales, sales.getCustomer());
@@ -429,21 +469,6 @@ public class ProjectStatEngineController {
 		Invoice invoice = (Invoice) this.pendingInvoiceModel.getRowData();
 		return invoice.getReferenceCode();
 	}
-	
-	public FinanceStatus getFinanceStatus() throws ManagerBeanException {
-		Invoice invoice = ((Invoice) this.getPendingInvoiceModel().getRowData());
-		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
-			if (FinanceStatus.PAID != finance.getFinanceStatus() && FinanceStatus.SETTLED != finance.getFinanceStatus()) {
-				return FinanceStatus.PENDING;
-			}
-		}
-		return (financeBean.getCount(criteria) == 0) ? FinanceStatus.PENDING : FinanceStatus.PAID;
-	}	
 	
 	public void onInvoicePdf(ActionEvent event) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
