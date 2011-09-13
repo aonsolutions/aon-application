@@ -11,10 +11,10 @@
 	<aon:panelGroup id="variableHelperModalContainer">
 		<c:if test="#{controller.modalHelperPanelVisible}">
 			<rich:modalPanel id="variableHelperModalPanel" minHeight="600"
-				minWidth="900" showWhenRendered="true" zindex="90">
+				minWidth="900" showWhenRendered="true" zindex="100">
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{popupWindowTitle}" />
+						<aon:outputText value="#{payrollBundle.payroll_variable_helper}" />
 					</aon:div>
 				</f:facet>
 				<aon:form id="variableHelperModalForm">
@@ -51,8 +51,6 @@
 						</aon:div>
 					</aon:div>
 				</aon:form>
-				
-				<ui:insert name="afterModalContent"/>
 				
 			</rich:modalPanel>
 		</c:if>

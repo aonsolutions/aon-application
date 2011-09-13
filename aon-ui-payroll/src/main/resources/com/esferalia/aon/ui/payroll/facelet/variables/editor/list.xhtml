@@ -6,10 +6,11 @@
 	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/listEx.xhtml" >
 		<aon:valueParam name="inputTextId" default="#{controller.beanName}_expression" />
 		<aon:valueParam name="required" default="true" />
-		<aon:valueParam name="cno" default="#{controller.cno}" />
-		<aon:valueParam name="contractCode" default="#{controller.contractCode}" />
-		<aon:valueParam name="quoteGroup" default="#{controller.quoteGroup}" />
+		<aon:valueParam name="variableType" value="#{data.variable.type}" />
 <!--  
+		<aon:valueParam name="cno" default="#{data.variableEnum}" />
+		<aon:valueParam name="contractCode" default="#{data.variableEnum}" />
+		<aon:valueParam name="quoteGroup" default="#{controller.quoteGroup}" />
 		<aon:valueParam name="variableType" default="#{variable.variable.type}" />
 -->
 	</ui:include>

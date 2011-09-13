@@ -55,12 +55,14 @@
 		<a4j:support event="onchange" reRender="#{controller.beanName}ModalForm" />
 	</aon:selectOneMenu>
 	
+<!--  
 	<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
 	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" >
 		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractPayment_PaymentConcept" ajaxSingle="true" limitToList="true"/>
 		<f:selectItem value="#{null}" itemLabel=" - " />
 		<f:selectItems value="#{payrollCollections.paymentTypes}" />
 	</aon:selectOneMenu>
+-->
 	
 	<aon:outputLabel for="ContractPayment_description" value="#{bundle.aon_description}" />
 	<aon:inputText id="ContractPayment_description" size="40" maxlength="64" 

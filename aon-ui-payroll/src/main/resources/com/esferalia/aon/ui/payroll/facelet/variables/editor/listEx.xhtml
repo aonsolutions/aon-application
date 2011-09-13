@@ -10,59 +10,35 @@
 	
 	<aon:div>
 		
-		<c:if test="#{data.type=='DOUBLE'}" >
-			<aon:outputText rendered="#{formList}" value="#{expression}" >
+			<aon:outputText rendered="#{formList and variableType=='DOUBLE'}" value="#{data.expression}" >
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
-		</c:if>
 		
-		<c:if test="#{variableType=='INTEGER'}" >
-			<aon:outputText rendered="#{formList}" value="#{expression}" />
-		</c:if>
+			<aon:outputText rendered="#{formList and variableType=='INTEGER'}" value="#{data.expression}" />
 		
-		<c:if test="#{variableType=='BOOLEAN'}" >
 			<aon:outputText value="&#160;"  
-				styleClass="#{(expression)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+				styleClass="#{(data.expression)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
 				style="padding-bottom: 5px;"
-				rendered="#{formList}"/>
-		</c:if>
+				rendered="#{formList and variableType=='BOOLEAN'}"/>
 		
-		<c:if test="#{variableType=='STRING'}" >
-			<aon:outputText rendered="#{formList}" styleClass="aon-italic" 
-				value="#{expression}" />
-		</c:if>
+			<aon:outputText rendered="#{formList and variableType=='STRING'}" styleClass="aon-italic" 
+				value="#{data.expression}" />
 		
-		<c:if test="#{variableType=='EXPRESSION'}" >
-			<aon:outputText rendered="#{formList}" value="#{expression}" />
-		</c:if>
+			<aon:outputText rendered="#{formList and variableType=='EXPRESSION'}" value="#{data.expression}" />
 		
-		<c:if test="#{variableType=='TABLE'}" >
-			<aon:outputText rendered="#{formList}" value="#{expression}" />
-		</c:if>
+			<aon:outputText rendered="#{formList and variableType=='TABLE'}" value="#{data.expression}" />
 		
-		<c:if test="#{variableType=='DROP'}" >
-			<aon:outputText rendered="#{formList}" value="#{expression}" />
-		</c:if>
+			<aon:outputText rendered="#{formList and variableType=='DROP'}" value="#{data.expression}" />
 		
-		<c:if test="#{variableType=='CNO_DROP'}" >
-			<aon:outputText rendered="#{formList}" value="#{cno}" />
-		</c:if>
+			<aon:outputText rendered="#{formList and variableType=='CNO_DROP'}" value="#{data.variableEnum}" />
 		
-		<c:if test="#{variableType=='TC2_DROP'}" >
-			<aon:outputText rendered="#{formList}" value="#{contractCode}" />
-		</c:if>
+			<aon:outputText rendered="#{formList and variableType=='TC2_DROP'}" value="#{data.variableEnum}" />
 		
-		<c:if test="#{variableType=='QUOTE_GROUP_DROP'}" >
-			<aon:outputText rendered="#{formList}" value="#{quoteGroup}" />
-		</c:if>
+			<aon:outputText rendered="#{formList and variableType=='QUOTE_GROUP_DROP'}" value="#{data.variableEnum}" />
 		
-		<c:if test="#{variableType=='UNKNOWN' or variableType==null}" >
-			<aon:outputText rendered="#{formList}" value="#{expression}" >
+			<aon:outputText rendered="#{formList and variableType=='UNKNOWN' or variableType==null}" value="#{data.expression}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
-			<!--  
-			<aon:outputText rendered="#{formList}" value="-#{variableType}" />
-			-->
-		</c:if>
 
 	</aon:div>
 

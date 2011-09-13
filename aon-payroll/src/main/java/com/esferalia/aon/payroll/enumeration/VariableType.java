@@ -36,5 +36,8 @@ public enum VariableType implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+    public String getName() {
+    	return name();
+    }
     
 }

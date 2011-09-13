@@ -70,13 +70,6 @@ public abstract class VariablesAbstractController extends BasicController {
 		return bean.getList(criteria);
 	}
 	
-	public ContractData getRowVariable(){
-		if(getVariablesModel().getRowIndex()>=0){
-			return (ContractData) getVariablesModel().getRowData();
-		}
-		return null;
-	}
-	
 	public void onResetVariable(ActionEvent event) {
 		setData(new ContractData());
 		IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
@@ -200,24 +193,42 @@ public abstract class VariablesAbstractController extends BasicController {
 		return expression;
 	}
 	
+	public VariableType getRowType(){
+//		if(getVariablesModel().getRowIndex()>=0){
+//			return ((ContractData)getVariablesModel().getRowData()).getVariable().getType();
+//		}
+		return null;
+	}
+	
 	private CNO cno;
 	private ContractCode contractCode;
 	private QuoteGroup quoteGroup;
 	private DataModel variableHelperModel;
 
 	public CNO getCno() {
+//		if(getData()!=null){
+//			handleEditorExpression(getData().getExpression());
+//		}
 		return cno;
 	}
 	public void setCno(CNO cno) {
 		this.cno = cno;
 	}
 	public ContractCode getContractCode() {
+//		if(getData()!=null){
+//			handleEditorExpression(getData().getExpression());
+//		}
+//		handleEditorExpression(((ContractData) getVariablesModel().getRowData()).getExpression());
 		return contractCode;
 	}
 	public void setContractCode(ContractCode contractCode) {
 		this.contractCode = contractCode;
 	}
 	public QuoteGroup getQuoteGroup() {
+//		if(getData()!=null){
+//			handleEditorExpression(getData().getExpression());
+//		}
+//		handleEditorExpression(((ContractData) getVariablesModel().getRowData()).getExpression());
 		return quoteGroup;
 	}
 	public void setQuoteGroup(QuoteGroup quoteGroup) {
@@ -280,7 +291,7 @@ public abstract class VariablesAbstractController extends BasicController {
 		}
 	}
 	
-	public class Variable2{
+	public class Variable2 extends ContractData{
 		private ContractData data;
 		private VariableType type;
 		public ContractData getData() {
@@ -294,6 +305,28 @@ public abstract class VariablesAbstractController extends BasicController {
 		}
 		public void setType(VariableType type) {
 			this.type = type;
+		}
+		
+		public ContractVariables getVariable(){
+			return ContractVariables.getVariable(getName());
+		}
+		
+		public Enum<?> getVariableEnum(){
+			if(getName().equals(ContractVariables.CNO.getName())){
+				return CNO.getCnoByValue(handleEditorExpression(getExpression()));
+			} else if(getName().equals(ContractVariables.TC2.getName())){
+				return ContractCode.getContractCodeByValue(handleEditorExpression(getExpression()));
+			} else if(getName().equals(ContractVariables.QUOTE_GROUP.getName())){
+				return QuoteGroup.getQuoteGroupByValue(handleEditorExpression(getExpression()));
+			}
+			return null;
+		}
+		
+		private String handleEditorExpression(String expression) {
+			if( StringUtils.startsWith(expression, "\"") && StringUtils.endsWith(expression, "\"")){
+				return expression = expression.substring(1, expression.length()-1);
+			}
+			return null;
 		}
 	}
 	

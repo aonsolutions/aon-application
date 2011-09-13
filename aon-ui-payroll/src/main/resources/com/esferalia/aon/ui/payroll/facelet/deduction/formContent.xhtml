@@ -33,12 +33,14 @@
 		</c:if>
 	</aon:selectOneMenu>
 
+<!--  
 	<aon:outputLabel for="ContractDeduction_type" value="#{bundle.aon_type}" />
 	<aon:selectOneMenu id="ContractDeduction_type" value="#{controller.to.type}" required="true">
 		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractDeduction_DeductionConcept" ajaxSingle="true"/>
 		<f:selectItem value="#{null}" itemLabel=" - " />
 		<f:selectItems value="#{payrollCollections.deductionTypes}" />
 	</aon:selectOneMenu>
+-->
 
 	<aon:outputLabel for="ContractDeduction_description" value="#{bundle.aon_description}" />
 	<aon:inputText id="ContractDeduction_description" size="40" maxlength="64" 

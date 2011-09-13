@@ -14,6 +14,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
@@ -21,7 +22,10 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.payroll.enumeration.CNO;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 
@@ -143,6 +147,25 @@ public class ContractData implements ITransferObject, IExpression {
 	@Transient
 	public ContractVariables getVariable(){
 		return ContractVariables.getVariable(getName());
+	}
+	
+	@Transient
+	public Enum<?> getVariableEnum(){
+		if(getName().equals(ContractVariables.CNO.getName())){
+			return CNO.getCnoByValue(handleEditorExpression(getExpression()));
+		} else if(getName().equals(ContractVariables.TC2.getName())){
+			return ContractCode.getContractCodeByValue(handleEditorExpression(getExpression()));
+		} else if(getName().equals(ContractVariables.QUOTE_GROUP.getName())){
+			return QuoteGroup.getQuoteGroupByValue(handleEditorExpression(getExpression()));
+		}
+		return null;
+	}
+	
+	private String handleEditorExpression(String expression) {
+		if( StringUtils.startsWith(expression, "\"") && StringUtils.endsWith(expression, "\"")){
+			return expression = expression.substring(1, expression.length()-1);
+		}
+		return null;
 	}
 	
 }

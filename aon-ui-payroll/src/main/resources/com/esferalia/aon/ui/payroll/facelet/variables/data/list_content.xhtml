@@ -71,21 +71,20 @@
 			src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/list.xhtml" >
 			<ui:param name="controller" value="#{controller}" />
 			<ui:param name="data" value="#{to}" />
-			<ui:param name="expression" value="#{to.expression}" />
-			<ui:param name="variable" value="#{to}" />
-			<ui:param name="variableType" value="#{to.variable.type}" />
 			<ui:param name="formList" value="#{formList}" />
 		</ui:include>
 		<f:facet name="footer">
+<!--  
 			<ui:include 
 				src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/list.xhtml" >
 				<ui:param name="controller" value="#{controller}" />
 				<ui:param name="data" value="#{to}" />
 				<ui:param name="expression" value="#{to.expression}" />
 				<ui:param name="variable" value="#{to}" />
-				<ui:param name="formEdit" value="#{formEdit}" />
+				<ui:param name="formNew" value="#{formNew}" />
 				<ui:param name="editorSuffix" value="_new" />
 			</ui:include>
+-->			
 		</f:facet>
 	</aon:column>  
 

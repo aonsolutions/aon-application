@@ -27,11 +27,6 @@ public enum CNO implements IResourceable {
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
 
-//    @Override
-//	public String getVariableValue() {
-//		return String.valueOf(ordinal());
-//	}
-    
     public static CNO getCnoByValue(String value){
     	for( CNO c : CNO.values() ) {
     		if ( c.ordinal() == Integer.parseInt(value) ) {

@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,6 +53,7 @@ import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -713,6 +715,7 @@ public class ContractController extends VariablesAbstractController {
 	}
 	
 	public List<?> expressionContext(Object suggest) {
+		// CONTRACT variables
 		try {
 			String filter = (String) suggest;
 			List<String> list = new LinkedList<String>();
@@ -730,6 +733,29 @@ public class ContractController extends VariablesAbstractController {
 			criteria.addOrder(alias);
 			for(ITransferObject to: bean.getList(criteria)){
 				ContractData data = (ContractData) to;
+				if (data.getName().contains(filter.toUpperCase())) {
+					list.add(data.getName());		
+				}
+			}
+			// system variables
+			for(String data: (Collection<? extends String>) getVariableHelperModel().getWrappedData()){
+				if (data.contains(filter.toUpperCase())) {
+					list.add(data);		
+				}
+			}
+			// system data variables
+			bean = BeanManager.getManagerBean(SystemData.class);
+			criteria = new Criteria();
+			
+			//TODO ¿Utilizar las fechas del pojo activo?
+			Date date = new Date();
+			
+			alias = bean.getFieldName(IPayrollAlias.SYSTEM_DATA_END_DATE);
+			Expression ex1 = ExpressionUtilities.getNullExpression(alias);
+			Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,date);
+			criteria.addOrExpression( ExpressionUtilities.getOrExpression(ex1, ex2));
+			for (ITransferObject to: bean.getList(criteria)) {
+				SystemData data = (SystemData) to;
 				if (data.getName().contains(filter.toUpperCase())) {
 					list.add(data.getName());		
 				}

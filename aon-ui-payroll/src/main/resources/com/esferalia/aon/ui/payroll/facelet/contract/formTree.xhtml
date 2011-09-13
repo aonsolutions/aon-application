@@ -119,12 +119,12 @@
 		</aon:form>
 		
 		<aon:lookupButtonPopup lookup="#{agreementLookup}" />
-		
+
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
 			<ui:param name="controller" value="#{contract}" />
-			<ui:param name="popupWindowTitle" value="#{payrollBundle.payroll_variable_helper}" />
 			<ui:param name="container" value="dataGrid" />
 		</ui:include>
+		
 		
 	</ui:define>
 </ui:composition>

@@ -38,7 +38,7 @@
 			<aon:inputText id="#{controller.beanName}_name" required="true" 
 				value="#{controller.data.name}" maxlength="128" size="32" 
 				disabled="#{controller.data.id!=null}" />
-			<aon:commandButton id="variableHelp-select"
+			<aon:commandButton id="variableHelpName-select"
 				title="#{payrollBundle.payroll_variable_helper}" ajaxSingle="true"
 				value="&#160;"
 				rendered="#{controller.data.id==null}"
@@ -49,7 +49,7 @@
 
 		<aon:outputLabel for="#{controller.beanName}_expression_#{controller.data.variable.type}"
 			value="#{payrollBundle.payroll_salary_expression}" />
-		<aon:panelGroup>
+		<aon:div>
 			<ui:include 
 				src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/grid.xhtml" >
 				<ui:param name="controller" value="#{controller}" />
@@ -59,7 +59,16 @@
 				<ui:param name="variableType" value="#{controller.data.variable.type}" />
 				<ui:param name="formEdit" value="true" />
 			</ui:include>
-		</aon:panelGroup>
+<!--  
+			<aon:commandButton id="variableHelpValue-select"
+				title="#{payrollBundle.payroll_variable_helper}" ajaxSingle="true"
+				value="&#160;"
+				rendered="#{controller.data.id==null}"
+				actionListener="#{controller.onShowVariableHelp}"
+				reRender="variableHelperModalContainer"
+				styleClass="aon-icon-commandButton aon-icon-question"/>
+-->			
+		</aon:div>
 		
 		<aon:outputLabel for="#{controller.beanName}_startDate" 
 			value="#{bundle.aon_start_date}" />

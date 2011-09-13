@@ -121,15 +121,30 @@
 		
 		<c:if test="#{variableType=='UNKNOWN' or variableType==null}" >
 			<aon:inputText id="#{inputTextId}_UNKNOWN#{editorSuffix}" required="#{required}"
-				rendered="#{formEdit}"
-				value="#{expression}" maxlength="128" size="64">
+				rendered="#{formEdit}" size="64"
+				value="#{data.expression}" maxlength="128" >
+				<f:validateLength maximum="64"/>
+				<a4j:region>
+					<rich:suggestionbox id="#{inputTextId}_UNKNOWN#{editorSuffix}_suggestion"
+						for="#{inputTextId}_UNKNOWN#{editorSuffix}"
+						onselect="suggestionBoxActive=false;"
+						suggestionAction="#{controller.expressionContext}" var="exp"
+						similarityGroupingId=""
+						tokens=" +-/*%()"
+						fetchValue="#{exp}"
+						immediate="true" limitToList="true" ajaxSingle="true"
+						eventsQueue="#{inputTextId}_UNKNOWN#{editorSuffix}_expressionSug" ignoreDupResponses="true"
+						requestDelay="100" width="500" height="200"
+						nothingLabel="#{bundle.aon_search_no_results}">
+						<aon:column>
+							<aon:outputText value="#{exp}">
+							</aon:outputText>
+						</aon:column>
+					</rich:suggestionbox>
+				</a4j:region>
 			</aon:inputText>
+
 			<aon:outputText rendered="#{formList}" value="#{expression}" />
-			<!--  
-			<aon:outputText rendered="#{formList}" value="-#{variable.name}" />
-			<aon:outputText rendered="#{formList}" value="-#{variable.type}" />
-			-->
-			<aon:outputText rendered="#{formList}" value="-#{variableType}" />
 		</c:if>
 
 	</aon:div>

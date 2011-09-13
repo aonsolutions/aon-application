@@ -67,7 +67,14 @@
 				
 				<ui:insert name="afterModalContent"/>
 				
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
+					<ui:param name="controller" value="#{controller}" />
+					<ui:param name="container" value="#{controller.beanName}VarContainer" />
+				</ui:include>
+				
 			</rich:modalPanel>
 		</c:if>
 	</aon:panelGroup>
+	
+				
 </ui:composition>
