@@ -62,8 +62,8 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 	
 	@ManyToOne
 	@JoinColumn(name = "contract", nullable = false, updatable = false)
-	@ForeignKey(name = "FK_DEDUCTION_CONTRACT")
-	@Index(name = "FK_DEDUCTION_CONTRACT")
+	@ForeignKey(name = "FK_PAYMENT_CONTRACT")
+	@Index(name = "FK_PAYMENT_CONTRACT")
 	public Contract getContract() {
 		return contract;
 	}

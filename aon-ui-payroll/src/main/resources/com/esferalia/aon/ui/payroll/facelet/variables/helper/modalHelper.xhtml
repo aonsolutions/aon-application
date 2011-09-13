@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="variableHelperModalContainer">
+		<c:if test="#{controller.modalHelperPanelVisible}">
+			<rich:modalPanel id="variableHelperModalPanel" minHeight="600"
+				minWidth="900" showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{popupWindowTitle}" />
+					</aon:div>
+				</f:facet>
+				<aon:form id="variableHelperModalForm">
+					<aon:div styleClass="aon-popupWindow-content">
+						<aon:div style="width:100%">
+							<aon:div styleClass="aon-popupWindow-content-internal">
+								<aon:div style="width:99%">
+									<aon:div styleClass="aon-toolbar">
+										<aon:commandButton id="variableHelperCancel"
+											value="#{bundle.aon_cancel}"
+											reRender="variableHelperModalContainer,#{container}"
+											actionListener="#{controller.onCancelVariableHelp}"
+											immediate="true"
+											styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										</aon:commandButton>
+									</aon:div>
+									
+									<aon:editDataTable id="variableHelperList"
+										value="#{controller.variableHelperModel}" var="to" rows="20" >
+										<aon:rowSelector toggleOnClick="#{true}" reRender="variableHelperModalContainer,#{container}"
+											actionListener="#{controller.onSelectHelpVariable}" />
+										<aon:column styleClass="aon-editDataTable-textColumn">
+											<f:facet name="header">
+												<aon:outputLabel for="#{controller.beanName}_expression"
+													value="#{payrollBundle.payroll_salary_expression}" />
+											</f:facet>
+											<aon:outputText value="#{to}" />
+										</aon:column>  
+									</aon:editDataTable>
+									<aon:dataScroller2 for="variableHelperList" showNote="false" />
+									
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:form>
+				
+				<ui:insert name="afterModalContent"/>
+				
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+</ui:composition>

@@ -61,7 +61,35 @@
 			</aon:inputText>
 		</f:facet>
 	</aon:column>
+	
+	<aon:column styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputLabel for="#{controller.beanName}_expression"
+				value="#{payrollBundle.payroll_salary_expression}" />
+		</f:facet>
+		<ui:include 
+			src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/list.xhtml" >
+			<ui:param name="controller" value="#{controller}" />
+			<ui:param name="data" value="#{to}" />
+			<ui:param name="expression" value="#{to.expression}" />
+			<ui:param name="variable" value="#{to}" />
+			<ui:param name="variableType" value="#{to.variable.type}" />
+			<ui:param name="formList" value="#{formList}" />
+		</ui:include>
+		<f:facet name="footer">
+			<ui:include 
+				src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/list.xhtml" >
+				<ui:param name="controller" value="#{controller}" />
+				<ui:param name="data" value="#{to}" />
+				<ui:param name="expression" value="#{to.expression}" />
+				<ui:param name="variable" value="#{to}" />
+				<ui:param name="formEdit" value="#{formEdit}" />
+				<ui:param name="editorSuffix" value="_new" />
+			</ui:include>
+		</f:facet>
+	</aon:column>  
 
+	<!--  
 	<aon:column styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
 			<aon:outputLabel for="#{controller.beanName}_expression"
@@ -115,7 +143,8 @@
 			</aon:inputText>
 		</f:facet>
 	</aon:column>
-	
+	-->
+
 	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
 		<f:facet name="header">
 			<aon:outputLabel for="#{controller.beanName}_startDate" value="#{bundle.aon_start_date}" />

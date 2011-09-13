@@ -81,6 +81,15 @@ public enum ContractCode implements IResourceable, IStringEnum {
 	public String getValue() {
 		return value;
 	}
+
+	public static ContractCode getContractCodeByValue(String expression) {
+		for( ContractCode c : ContractCode.values() ) {
+    		if ( c.getValue().equals(expression) ) {
+    			return c;
+    		}
+    	}
+    	return null;
+	}
 	
 	
 }

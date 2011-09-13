@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<aon:div>
+		
+		<c:if test="#{data.type=='DOUBLE'}" >
+			<aon:outputText rendered="#{formList}" value="#{expression}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</c:if>
+		
+		<c:if test="#{variableType=='INTEGER'}" >
+			<aon:outputText rendered="#{formList}" value="#{expression}" />
+		</c:if>
+		
+		<c:if test="#{variableType=='BOOLEAN'}" >
+			<aon:outputText value="&#160;"  
+				styleClass="#{(expression)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+				style="padding-bottom: 5px;"
+				rendered="#{formList}"/>
+		</c:if>
+		
+		<c:if test="#{variableType=='STRING'}" >
+			<aon:outputText rendered="#{formList}" styleClass="aon-italic" 
+				value="#{expression}" />
+		</c:if>
+		
+		<c:if test="#{variableType=='EXPRESSION'}" >
+			<aon:outputText rendered="#{formList}" value="#{expression}" />
+		</c:if>
+		
+		<c:if test="#{variableType=='TABLE'}" >
+			<aon:outputText rendered="#{formList}" value="#{expression}" />
+		</c:if>
+		
+		<c:if test="#{variableType=='DROP'}" >
+			<aon:outputText rendered="#{formList}" value="#{expression}" />
+		</c:if>
+		
+		<c:if test="#{variableType=='CNO_DROP'}" >
+			<aon:outputText rendered="#{formList}" value="#{cno}" />
+		</c:if>
+		
+		<c:if test="#{variableType=='TC2_DROP'}" >
+			<aon:outputText rendered="#{formList}" value="#{contractCode}" />
+		</c:if>
+		
+		<c:if test="#{variableType=='QUOTE_GROUP_DROP'}" >
+			<aon:outputText rendered="#{formList}" value="#{quoteGroup}" />
+		</c:if>
+		
+		<c:if test="#{variableType=='UNKNOWN' or variableType==null}" >
+			<aon:outputText rendered="#{formList}" value="#{expression}" >
+			</aon:outputText>
+			<!--  
+			<aon:outputText rendered="#{formList}" value="-#{variableType}" />
+			-->
+		</c:if>
+
+	</aon:div>
+
+</ui:composition>

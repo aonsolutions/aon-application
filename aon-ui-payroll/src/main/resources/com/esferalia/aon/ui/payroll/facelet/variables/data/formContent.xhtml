@@ -34,33 +34,32 @@
 		
 		<aon:outputLabel for="#{controller.beanName}_name" 
 			value="#{bundle.aon_name}" />
-		<aon:inputText id="#{controller.beanName}_name" required="true"
-			value="#{controller.data.name}" maxlength="128" size="32" 
-			disabled="#{controller.data.id!=null}" />
+		<aon:div>
+			<aon:inputText id="#{controller.beanName}_name" required="true" 
+				value="#{controller.data.name}" maxlength="128" size="32" 
+				disabled="#{controller.data.id!=null}" />
+			<aon:commandButton id="variableHelp-select"
+				title="#{payrollBundle.payroll_variable_helper}" ajaxSingle="true"
+				value="&#160;"
+				rendered="#{controller.data.id==null}"
+				actionListener="#{controller.onShowVariableHelp}"
+				reRender="variableHelperModalContainer"
+				styleClass="aon-icon-commandButton aon-icon-question"/>
+		</aon:div>
 
-		<aon:outputLabel for="#{controller.beanName}_expression"
+		<aon:outputLabel for="#{controller.beanName}_expression_#{controller.data.variable.type}"
 			value="#{payrollBundle.payroll_salary_expression}" />
-		<aon:inputText id="#{controller.beanName}_expression" required="true"
-			value="#{controller.data.expression}" maxlength="128" size="64">
-			<f:validateLength maximum="128"/>
-			<a4j:region>
-				<rich:suggestionbox id="#{controller.beanName}_expression_suggestion"
-					for="#{controller.beanName}_expression"
-					onselect="suggestionBoxActive=false;"
-					suggestionAction="#{controller.expressionContext}" var="exp"
-					similarityGroupingId=""
-					tokens=" +-/*%()"
-					fetchValue="#{exp}"
-					immediate="true" limitToList="true" ajaxSingle="true"
-					eventsQueue="#{controller.beanName}_expressionSug" ignoreDupResponses="true"
-					requestDelay="100" width="500" height="200"
-					nothingLabel="#{bundle.aon_search_no_results}">
-					<aon:column>
-						<aon:outputText value="#{exp}"/>
-					</aon:column>
-				</rich:suggestionbox>
-			</a4j:region>
-		</aon:inputText>
+		<aon:panelGroup>
+			<ui:include 
+				src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/grid.xhtml" >
+				<ui:param name="controller" value="#{controller}" />
+				<ui:param name="data" value="#{controller.data}" />
+				<ui:param name="expression" value="#{controller.expression}" />
+				<ui:param name="variable" value="#{controller.data}" />
+				<ui:param name="variableType" value="#{controller.data.variable.type}" />
+				<ui:param name="formEdit" value="true" />
+			</ui:include>
+		</aon:panelGroup>
 		
 		<aon:outputLabel for="#{controller.beanName}_startDate" 
 			value="#{bundle.aon_start_date}" />

@@ -287,6 +287,8 @@ public class IrpfDataController extends LinesController {
 		}
 	}
 	
+	
+	//TODO para la impresion del modelo 145, revisar
 	public List<ITransferObject> getDescentant(){
 		BasicController controller = (BasicController) FormUtil.getController("irpfDataDescendients");
 //		controller.getWrappedList();

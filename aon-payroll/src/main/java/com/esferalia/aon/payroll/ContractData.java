@@ -21,6 +21,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 
@@ -138,5 +139,10 @@ public class ContractData implements ITransferObject, IExpression {
 	public boolean isReadOnly() {
 		return false;
 	}
-
+	
+	@Transient
+	public ContractVariables getVariable(){
+		return ContractVariables.getVariable(getName());
+	}
+	
 }
