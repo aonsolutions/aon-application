@@ -149,6 +149,7 @@
 		<mapping class="com.code.aon.product.ItemAttachment"/>
 		<mapping class="com.code.aon.product.ItemComposition"/>
 		<mapping class="com.code.aon.product.ItemSupplier"/>
+		<mapping class="com.code.aon.product.ItemTariff"/>
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
