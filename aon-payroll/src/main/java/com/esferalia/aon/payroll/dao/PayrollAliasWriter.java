@@ -6,6 +6,7 @@ import java.io.IOException;
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.esferalia.aon.payroll.Agreement;
+import com.esferalia.aon.payroll.AgreementData;
 import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
@@ -68,6 +69,7 @@ public class PayrollAliasWriter {
 //		File file = new File("/home/rtrepiana/workspace/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] { 
 				Agreement.class.getName(),
+				AgreementData.class.getName(),
 				AgreementExtra.class.getName(),
 				AgreementLevel.class.getName(),
 				AgreementLevelCategory.class.getName(),

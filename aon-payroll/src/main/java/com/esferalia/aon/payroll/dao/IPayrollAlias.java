@@ -3,6 +3,7 @@ package com.esferalia.aon.payroll.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.esferalia.aon.payroll.Agreement;
+import com.esferalia.aon.payroll.AgreementData;
 import com.esferalia.aon.payroll.AgreementExtra;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
@@ -79,6 +80,49 @@ public interface IPayrollAlias {
 	* Hibernate value: Agreement.id
 	*/
 	String  AGREEMENT_ID = AGREEMENT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for AgreementData entity.
+	*/ 
+	DAOConstantsEntry AGREEMENT_DATA_ENTRY = DAOConstants.getDAOConstant(AgreementData.class);
+
+	/** 
+	* Alias value: AgreementData_agreement_id
+	* Hibernate value: AgreementData.agreement.id
+	*/
+	String  AGREEMENT_DATA_AGREEMENT_ID = AGREEMENT_DATA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AgreementData_endDate
+	* Hibernate value: AgreementData.endDate
+	*/
+	String  AGREEMENT_DATA_END_DATE = AGREEMENT_DATA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AgreementData_expression
+	* Hibernate value: AgreementData.expression
+	*/
+	String  AGREEMENT_DATA_EXPRESSION = AGREEMENT_DATA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AgreementData_id
+	* Hibernate value: AgreementData.id
+	*/
+	String  AGREEMENT_DATA_ID = AGREEMENT_DATA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AgreementData_name
+	* Hibernate value: AgreementData.name
+	*/
+	String  AGREEMENT_DATA_NAME = AGREEMENT_DATA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: AgreementData_startDate
+	* Hibernate value: AgreementData.startDate
+	*/
+	String  AGREEMENT_DATA_START_DATE = AGREEMENT_DATA_ENTRY.getAliasNames()[5];
 
 
 

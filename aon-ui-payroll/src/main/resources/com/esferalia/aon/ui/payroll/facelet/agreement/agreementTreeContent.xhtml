@@ -50,6 +50,19 @@
 						</ui:include>
 					</aon:div>
 				</aon:panelTab>
+				
+				<aon:panelTab id="agreementData" 
+					actionListener="#{agreement.onShowVariables}"
+					label="#{payrollBundle.payroll_agreement_data}">
+					<!--  
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/level/editGridSalaryTable.xhtml" >
+					</ui:include>
+					-->
+					<ui:include 
+						src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
+						<ui:param name="controller" value="#{agreement}" />
+					</ui:include>
+				</aon:panelTab>
 
 				<aon:panelTab id="extra" 
 					label="#{payrollBundle.payroll_agreementExtra}">
@@ -62,6 +75,7 @@
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/level/editGridSalaryTable.xhtml" >
 					</ui:include>
 				</aon:panelTab>
+				
 			</aon:panelTabSet>								
 		</c:if>
 	</aon:div>

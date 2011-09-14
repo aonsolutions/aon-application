@@ -24,6 +24,7 @@
 				<ui:param name="skipSearchOption" value="#{false}" />
 				<ui:param name="contextDisabled" value="#{true}" />
 				<ui:param name="container" value="agreementPaymentGrid" />
+				<ui:param name="skipModalHelper" value="true" />
 				
 				<ui:define name="afterFormContent">
 					<c:if test="#{agreementPayment.salaryExtra}" >
@@ -34,6 +35,13 @@
 				</ui:define>
 				
 			</ui:decorate>
+			
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
+				<ui:param name="controller" value="#{agreement}" />
+				<ui:param name="container" value="variablePanel" />
+			</ui:include>
+<!--  
+-->
 			
 		</ui:define>
 

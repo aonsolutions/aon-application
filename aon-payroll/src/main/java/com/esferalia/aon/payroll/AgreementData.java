@@ -27,19 +27,21 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
 
 @Entity
-@Table(name="agreement_level_data")
-public class AgreementLevelData implements ITransferObject {
-
-	private static final long serialVersionUID = -530558961144928580L;
+@Table(name="agreement_data")
+public class AgreementData implements ITransferObject, IExpression {
 	
+	private static final long serialVersionUID = -1985562229267143435L;
+
 	private Integer id;
-	private AgreementLevel level;
 	private String name;
+	private Agreement agreement;
 	private String expression;
 	private Date startDate;	
-	private Date endDate;
+	private Date endDate;	
 	
 	@Id
 	@GeneratedValue
@@ -52,32 +54,32 @@ public class AgreementLevelData implements ITransferObject {
 	}
 	
 	@ManyToOne
-    @JoinColumn( name="agreement_level", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_AGREEMENT_DATA_AGREEMENT_LEVEL")
-	@Index(name = "FK_AGREEMENT_DATA_AGREEMENT_LEVEL")
-	public AgreementLevel getLevel() {
-		return level;
+    @JoinColumn( name="agreement", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_AGREEMENT_DATA_AGREEMENT")
+	@Index(name = "IDX_AGREEMENT_DATA_AGREEMENT")
+	public Agreement getAgreement() {
+		return agreement;
 	}
-	public void setLevel(AgreementLevel level) {
-		this.level = level;
+	public void setAgreement(Agreement agreement) {
+		this.agreement = agreement;
 	}
 
-	@Column(length = 16)
+	@Column(length=16)
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	@Column(length = 128)
+
+	@Column(length=128)
 	public String getExpression() {
 		return expression;
 	}
 	public void setExpression(String expression) {
 		this.expression = expression;
 	}
-	
+
 	@Temporal(TemporalType.DATE)
 	@Column( name = "start_date", nullable = false )
     public Date getStartDate() {
@@ -96,21 +98,20 @@ public class AgreementLevelData implements ITransferObject {
 		this.endDate = endDate;
 	}	
 	
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final AgreementLevelData o = (AgreementLevelData) obj;
+		final AgreementData o = (AgreementData) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.level, o.level)
-				.append(this.name, o.name)
-				.append(this.expression, o.expression)
+				.append(this.agreement, o.agreement)			
+				.append(this.name, o.name)			
+				.append(this.expression, o.expression)			
 				.append(this.startDate, o.startDate)
 				.append(this.endDate, o.endDate)
-				.isEquals();	
+				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
 	}
@@ -119,11 +120,11 @@ public class AgreementLevelData implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)
-			.append(level)
-			.append(name)
-			.append(expression)
-			.append(startDate)
-			.append(endDate)
+			.append(this.agreement)			
+			.append(this.name)			
+			.append(this.expression)			
+			.append(this.startDate)
+			.append(this.endDate)
 			.toHashCode();
 	}
 
@@ -131,7 +132,20 @@ public class AgreementLevelData implements ITransferObject {
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
 	}
+
+	@Override
+	@Transient
+	public ExpressionScope getScope() {
+		return ExpressionScope.AGREEMENT;
+	}
 	
+	@Override
+	@Transient
+	public boolean isReadOnly() {
+		return false;
+	}
+	
+
 	@Transient
 	public ContractVariables getVariable(){
 		return ContractVariables.getVariable(getName());

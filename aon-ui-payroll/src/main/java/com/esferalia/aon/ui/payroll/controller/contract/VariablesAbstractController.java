@@ -3,7 +3,6 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -13,7 +12,6 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.mvel2.integration.impl.SimpleVariableResolverFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
