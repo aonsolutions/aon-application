@@ -7,13 +7,15 @@ import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.enumeration.IStringEnum;
 
 public enum OccupationType implements IResourceable , IStringEnum{
-	a,
-	b,
-	d,
-	e,
-	f,
-	g,
-	h;
+	
+	A("a"),
+	B("b"),
+	D("d"),
+	E("e"),
+	F("f"),
+	G("g"),
+	H("h")
+	;
 
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
@@ -26,10 +28,25 @@ public enum OccupationType implements IResourceable , IStringEnum{
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
 	}
+    
+    private String value;
+    
+    OccupationType( String value ) {
+      	this.value = value;
+  	}
 
 	@Override
 	public String getValue() {
-		return name();
+		return value;
 	}
+	
+	public static OccupationType getOccupationTypeByValue(String value){
+    	for( OccupationType c : OccupationType.values() ) {
+    		if ( c.getValue().equals(value) ) {
+    			return c;
+    		}
+    	}
+    	return null;
+    }
 	
 }

@@ -77,9 +77,9 @@ public enum ContractVariables implements IResourceable{
 	TC2("TC2", VariableType.TC2_DROP),
 	CNO("CNO", VariableType.CNO_DROP),
 	IPREM("IPREM", VariableType.DOUBLE),
-	CATEGORY("CATEGORIA", VariableType.CATEGORY_DROP),
+	CATEGORY("CATEGORIA", VariableType.STRING),
 	INDEFINITE("INDEFINIDO", VariableType.BOOLEAN),
-	OCCUPATION("OCUPACION", VariableType.STRING),
+	OCCUPATION("OCUPACION", VariableType.OCCUPATION_DROP),
 	GUARANTEED("GARANTIZADO", VariableType.DOUBLE),
 	IRREGULAR("IRREGULAR", VariableType.BOOLEAN),
 	FULL_TIME("TIEMPO_COMPLETO", VariableType.BOOLEAN),
@@ -93,7 +93,7 @@ public enum ContractVariables implements IResourceable{
 	
 	// Bajas, Incapacidad Temporal
 	MATERNITY("MTNAD", VariableType.BOOLEAN),
-	QUOTE_IT("COTIZACION_IT", VariableType.DOUBLE),
+	QUOTE_IT("COTIZACION_IT", VariableType.QUOTE_IT_DROP),
 	TOTAL_BENEFITS_IT("TOTAL_PRESTACIONES_IT", VariableType.DOUBLE),
 	
 	// Régimenes, cotizacion 

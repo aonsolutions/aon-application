@@ -20,6 +20,8 @@ public enum VariableType implements IResourceable {
 	TC2_DROP, 
 	CATEGORY_DROP, 
 	QUOTE_GROUP_DROP,
+	OCCUPATION_DROP, 
+	QUOTE_IT_DROP, 
 	
 	// COMPLEX
 	EXPRESSION,

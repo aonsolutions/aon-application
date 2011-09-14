@@ -50,7 +50,7 @@ public enum QuoteGroup implements IResourceable, IStringEnum {
 		return value;
 	}
     
-	 public static QuoteGroup getQuoteGroupByValue(String value){
+	public static QuoteGroup getQuoteGroupByValue(String value){
     	for( QuoteGroup c : QuoteGroup.values() ) {
     		if ( c.getValue().equals(value) ) {
     			return c;

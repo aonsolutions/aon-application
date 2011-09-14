@@ -25,6 +25,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
@@ -157,6 +158,10 @@ public class ContractData implements ITransferObject, IExpression {
 			return ContractCode.getContractCodeByValue(handleEditorExpression(getExpression()));
 		} else if(getName().equals(ContractVariables.QUOTE_GROUP.getName())){
 			return QuoteGroup.getQuoteGroupByValue(handleEditorExpression(getExpression()));
+		} else if(getName().equals(ContractVariables.OCCUPATION.getName())){
+			return OccupationType.getOccupationTypeByValue(handleEditorExpression(getExpression()));
+		} else if(getName().equals(ContractVariables.QUOTE_IT.getName())){
+			return null;
 		}
 		return null;
 	}
@@ -166,6 +171,11 @@ public class ContractData implements ITransferObject, IExpression {
 			return expression = expression.substring(1, expression.length()-1);
 		}
 		return null;
+	}
+	
+	@Transient
+	public Double getDoubleExpression(){
+		return Double.valueOf(getExpression());
 	}
 	
 }
