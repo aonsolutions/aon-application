@@ -12,6 +12,7 @@ import javax.faces.model.SelectItemGroup;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractType;
+import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 
 public class PayrollVariablesCollectionsController {
@@ -46,7 +47,7 @@ public class PayrollVariablesCollectionsController {
 	}
 	
 	public List<SelectItem> getCategoryList() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+//		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		List<SelectItem> list = new LinkedList<SelectItem>();
 //		for( DisabilityLevel p : DisabilityLevel.values() ) {
 //			String name = p.getName(locale);
@@ -64,6 +65,28 @@ public class PayrollVariablesCollectionsController {
 			SelectItem item = new SelectItem(p, name);
 			list.add(item);			
 		}
+		return list;
+	}
+
+	public List<SelectItem> getOccupationList() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		for( OccupationType p : OccupationType.values() ) {
+			String name = p.getName(locale);
+			SelectItem item = new SelectItem(p, name);
+			list.add(item);			
+		}
+		return list;
+	}
+
+	public List<SelectItem> getQuoteItList() {
+//		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		List<SelectItem> list = new LinkedList<SelectItem>();
+//		for( DisabilityLevel p : DisabilityLevel.values() ) {
+//			String name = p.getName(locale);
+//			SelectItem item = new SelectItem(p, name);
+//			list.add(item);			
+//		}
 		return list;
 	}
 	

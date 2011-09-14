@@ -1,8 +1,11 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
@@ -10,6 +13,7 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.mvel2.integration.impl.SimpleVariableResolverFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,16 +24,20 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.enumeration.IStringEnum;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.VariableType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -165,6 +173,10 @@ public abstract class VariablesAbstractController extends BasicController {
 			return c.getCategoryList();
 		}else if(getData().getVariable()==ContractVariables.QUOTE_GROUP){
 			 return c.getQuoteGroupList();
+		}else if(getData().getVariable()==ContractVariables.OCCUPATION){
+			return c.getOccupationList();
+		}else if(getData().getVariable()==ContractVariables.QUOTE_IT){
+			return c.getQuoteItList();
 		}
 		return null;
 	}
@@ -193,16 +205,10 @@ public abstract class VariablesAbstractController extends BasicController {
 		return expression;
 	}
 	
-	public VariableType getRowType(){
-//		if(getVariablesModel().getRowIndex()>=0){
-//			return ((ContractData)getVariablesModel().getRowData()).getVariable().getType();
-//		}
-		return null;
-	}
-	
 	private CNO cno;
 	private ContractCode contractCode;
 	private QuoteGroup quoteGroup;
+	private OccupationType occupationType;
 	private DataModel variableHelperModel;
 
 	public CNO getCno() {
@@ -235,6 +241,14 @@ public abstract class VariablesAbstractController extends BasicController {
 		this.quoteGroup = quoteGroup;
 	}
 	
+	
+	
+	public OccupationType getOccupationType() {
+		return occupationType;
+	}
+	public void setOccupationType(OccupationType occupationType) {
+		this.occupationType = occupationType;
+	}
 	public DataModel getVariableHelperModel() {
 		if(variableHelperModel == null){
 			variableHelperModel = new ListDataModel(getVariableHelpList());
@@ -244,22 +258,69 @@ public abstract class VariablesAbstractController extends BasicController {
 	public void setVariableHelperModel(DataModel variableHelperModel) {
 		this.variableHelperModel = variableHelperModel;
 	}
-	private List<String> getVariableHelpList() {
-		List<String> list = new LinkedList<String>();
+	private List<SimpleVariable> getVariableHelpList() {
+		List<SimpleVariable> list = new LinkedList<SimpleVariable>();
+		if(isExpressionHelp()){
+			// system data variables
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(SystemData.class);
+				Criteria criteria = new Criteria();
+				
+				//TODO ¿Utilizar las fechas del pojo activo?
+				Date date = new Date();
+				
+				String alias = bean.getFieldName(IPayrollAlias.SYSTEM_DATA_END_DATE);
+				Expression ex1 = ExpressionUtilities.getNullExpression(alias);
+				Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,date);
+				criteria.addOrExpression( ExpressionUtilities.getOrExpression(ex1, ex2));
+				for (ITransferObject to: bean.getList(criteria)) {
+					SystemData data = (SystemData) to;
+					SimpleVariable sv = new SimpleVariable();
+					sv.setName(data.getName());
+					sv.setDescription(data.getComments());
+					list.add(sv);		
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "Imposible mostrar las variables del sistema(" + e.getMessage() +")";
+				LOGGER.error(msg);
+			}
+		}
 		for(ContractVariables v: ContractVariables.values()){
-			list.add(v.getName());
+			SimpleVariable sv = new SimpleVariable();
+			sv.setName(v.getName());
+			sv.setDescription(v.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()));
+			list.add(sv);
 		}
 		return list;
 	}
-	public void onShowVariableHelp(ActionEvent event) {
+	private boolean expressionHelp;
+	public boolean isExpressionHelp() {
+		return expressionHelp;
+	}
+	public void setExpressionHelp(boolean expressionHelp) {
+		this.expressionHelp = expressionHelp;
+	}
+	public void onShowVariableNameHelp(ActionEvent event) {
+		setVariableHelperModel(null);
 		setModalHelperPanelVisible(true);
+		setExpressionHelp(false);
+	}
+	public void onShowVariableExpressionHelp(ActionEvent event) {
+		setVariableHelperModel(null);
+		setModalHelperPanelVisible(true);
+		setExpressionHelp(true);
 	}
 	public void onCancelVariableHelp(ActionEvent event) {
 		setModalHelperPanelVisible(false);
 	}
-	public void onSelectHelpVariable(ActionEvent event) {
+	public void onSelectVariableHelp(ActionEvent event) {
 		onCancelVariableHelp(event);
-		getData().setName((String) getVariableHelperModel().getRowData());
+		String var = ((SimpleVariable) getVariableHelperModel().getRowData()).getName();
+		if(isExpressionHelp()){
+			getData().setExpression((getData().getExpression()==null?"":getData().getExpression()) +" "+ var);
+		} else {
+			getData().setName(var);
+		}
 	}
 	
 	private void initEditor(){
@@ -276,8 +337,14 @@ public abstract class VariablesAbstractController extends BasicController {
 			setCno(CNO.getCnoByValue(expression));
 		}else if(getData().getVariable()==ContractVariables.TC2){
 			setContractCode(ContractCode.getContractCodeByValue(expression));
+		}else if(getData().getVariable()==ContractVariables.CATEGORY){
+			;
 		}else if(getData().getVariable()==ContractVariables.QUOTE_GROUP){
 			setQuoteGroup(QuoteGroup.getQuoteGroupByValue(expression));
+		}else if(getData().getVariable()==ContractVariables.OCCUPATION){
+			setOccupationType(OccupationType.getOccupationTypeByValue(expression));
+		}else if(getData().getVariable()==ContractVariables.QUOTE_IT){
+			;
 		}
 		
 	}
@@ -286,8 +353,31 @@ public abstract class VariablesAbstractController extends BasicController {
 			getData().setExpression("\""+String.valueOf(getCno().ordinal())+"\"");
 		}else if(getData().getVariable()==ContractVariables.TC2){
 			getData().setExpression("\""+getContractCode().getValue()+"\"");
+		}else if(getData().getVariable()==ContractVariables.CATEGORY){
+			;
 		}else if(getData().getVariable()==ContractVariables.QUOTE_GROUP){
 			getData().setExpression("\""+getQuoteGroup().getValue()+"\"");
+		}else if(getData().getVariable()==ContractVariables.OCCUPATION){
+			getData().setExpression("\""+getOccupationType().getValue()+"\"");
+		}else if(getData().getVariable()==ContractVariables.QUOTE_IT){
+			;
+		}
+	}
+	
+	public class SimpleVariable {
+		private String name;
+		private String description;
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public String getDescription() {
+			return description;
+		}
+		public void setDescription(String description) {
+			this.description = description;
 		}
 	}
 	

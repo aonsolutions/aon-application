@@ -42,7 +42,7 @@
 				title="#{payrollBundle.payroll_variable_helper}" ajaxSingle="true"
 				value="&#160;"
 				rendered="#{controller.data.id==null}"
-				actionListener="#{controller.onShowVariableHelp}"
+				actionListener="#{controller.onShowVariableNameHelp}"
 				reRender="variableHelperModalContainer"
 				styleClass="aon-icon-commandButton aon-icon-question"/>
 		</aon:div>
@@ -54,19 +54,16 @@
 				src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/grid.xhtml" >
 				<ui:param name="controller" value="#{controller}" />
 				<ui:param name="data" value="#{controller.data}" />
-				<ui:param name="expression" value="#{controller.expression}" />
-				<ui:param name="variable" value="#{controller.data}" />
-				<ui:param name="variableType" value="#{controller.data.variable.type}" />
 				<ui:param name="formEdit" value="true" />
 			</ui:include>
-<!--  
 			<aon:commandButton id="variableHelpValue-select"
 				title="#{payrollBundle.payroll_variable_helper}" ajaxSingle="true"
 				value="&#160;"
-				rendered="#{controller.data.id==null}"
-				actionListener="#{controller.onShowVariableHelp}"
+				rendered="#{controller.data.variable==null or controller.data.variable.type=='STRING' or controller.data.variable.type=='UNKNOWN'}"
+				actionListener="#{controller.onShowVariableExpressionHelp}"
 				reRender="variableHelperModalContainer"
 				styleClass="aon-icon-commandButton aon-icon-question"/>
+<!--  
 -->			
 		</aon:div>
 		

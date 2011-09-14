@@ -738,9 +738,9 @@ public class ContractController extends VariablesAbstractController {
 				}
 			}
 			// system variables
-			for(String data: (Collection<? extends String>) getVariableHelperModel().getWrappedData()){
-				if (data.contains(filter.toUpperCase())) {
-					list.add(data);		
+			for(SimpleVariable data: (Collection<? extends SimpleVariable>) getVariableHelperModel().getWrappedData()){
+				if (data.getName().contains(filter.toUpperCase())) {
+					list.add(data.getName());		
 				}
 			}
 			// system data variables

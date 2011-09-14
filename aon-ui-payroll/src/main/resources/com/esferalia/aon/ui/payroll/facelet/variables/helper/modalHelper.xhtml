@@ -35,13 +35,20 @@
 									<aon:editDataTable id="variableHelperList"
 										value="#{controller.variableHelperModel}" var="to" rows="20" >
 										<aon:rowSelector toggleOnClick="#{true}" reRender="variableHelperModalContainer,#{container}"
-											actionListener="#{controller.onSelectHelpVariable}" />
+											actionListener="#{controller.onSelectVariableHelp}" />
 										<aon:column styleClass="aon-editDataTable-textColumn">
 											<f:facet name="header">
-												<aon:outputLabel for="#{controller.beanName}_expression"
+												<aon:outputLabel 
 													value="#{payrollBundle.payroll_salary_expression}" />
 											</f:facet>
-											<aon:outputText value="#{to}" />
+											<aon:outputText value="#{to.name}" />
+										</aon:column>  
+										<aon:column styleClass="aon-editDataTable-textColumn">
+											<f:facet name="header">
+												<aon:outputLabel 
+													value="#{bundle.aon_description}" />
+											</f:facet>
+											<aon:outputText value="#{to.description}" />
 										</aon:column>  
 									</aon:editDataTable>
 									<aon:dataScroller2 for="variableHelperList" showNote="false" />
