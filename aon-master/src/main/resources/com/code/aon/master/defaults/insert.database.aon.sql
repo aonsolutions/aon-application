@@ -3824,7 +3824,6 @@ INSERT INTO `cno` VALUES (11,'0011','Oficiales de las fuerzas armadas'),
   (9812,'9812','Conductores de vehículos de tracción animal para el transporte de personas y similares'),
   (9820,'9820','Reponedores');
 
-INSERT INTO `db_version` VALUES ('6.17.0');
 
 INSERT INTO `deduction_concept` VALUES (1,'CGC','4.70 %',0,1,'BASE_CGC * 4.70/100'),
   (2,'CGP','(BASE_CGP/CGP*100)+\'%\'',1,0,NULL),
