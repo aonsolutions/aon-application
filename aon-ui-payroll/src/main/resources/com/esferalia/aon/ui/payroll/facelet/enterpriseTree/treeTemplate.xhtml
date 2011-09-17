@@ -11,7 +11,10 @@
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/messages.xhtml" />
 	
 	<ui:include src="/facelet/homepage/menu.xhtml" />
-	
+
+	<rich:jQuery timing="onload"
+		selector="body" query="addClass('aon-overflow-hidden')" />	
+		
 	<aon:componentGroup
 		family="javax.faces.Command"
 		rendered="#{aonRole.guest}"
