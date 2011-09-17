@@ -235,7 +235,7 @@ public class SettleParams {
 			setNoticeDays(null);
 		} else if( isNoticeLimitExceeded() && suspensionDate!=null && noticeDate!=null ){
 			Integer i = differenceBetweenDates(noticeDate, suspensionDate);
-			setNoticeDays(i<0?0:i);
+			setNoticeDays(i<0?0:15-i);
 		} 
 	}
 	
