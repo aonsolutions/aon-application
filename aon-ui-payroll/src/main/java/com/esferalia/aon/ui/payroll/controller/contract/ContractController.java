@@ -89,7 +89,7 @@ public class ContractController extends VariablesAbstractController {
 	
 	private ContractDuration contractDuration;
 	private ContractWorkingDay contractWorkingDay;
-	private String tc2Code;
+	private ContractCode tc2Code;
 	
 	private boolean modalPanelVisible;
 	
@@ -131,10 +131,10 @@ public class ContractController extends VariablesAbstractController {
 	public void setAgreement(Agreement agreement) {
 		this.agreement = agreement;
 	}
-	public String getTc2Code() {
+	public ContractCode getTc2Code() {
 		return tc2Code;
 	}
-	public void setTc2Code(String tc2Code) {
+	public void setTc2Code(ContractCode tc2Code) {
 		this.tc2Code = tc2Code;
 	}
 	public ContractDuration getContractDuration() {

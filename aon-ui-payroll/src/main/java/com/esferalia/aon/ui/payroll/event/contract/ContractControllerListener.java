@@ -128,7 +128,7 @@ public class ContractControllerListener extends ControllerAdapter{
 			data.setContract(contract);
 			data.setStartDate(contract.getStartDate());
 			data.setName( ContractVariables.TC2.getName() );
-			data.setExpression("\"" + controller.getTc2Code() + "\"");
+			data.setExpression("\"" + controller.getTc2Code().getValue() + "\"");
 			bean.insert(data);
 
 		} catch (ManagerBeanException e) {

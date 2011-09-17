@@ -11,15 +11,15 @@
 
 		<aon:panelGrid columns="2" style="width: 80%;" >
 			
-			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.to.person}" />
 <!--  
 				<ui:param name="skipNewButton" value="#{true}" />
 -->				
 				<ui:param name="idRequired" value="#{true}" />
 				<ui:param name="lookupDisabled" value="#{false}" />
-			</ui:include>
-
+			</ui:decorate>
+			
 			<aon:outputLabel for="ssRegime"
 				value="#{payrollBundle.payroll_contract_regime}" />
 			<aon:selectOneMenu id="ssRegime" required="true"
@@ -148,20 +148,22 @@
 
 			<aon:outputLabel for="Contract_tc2Code"
 				value="#{payrollBundle.payroll_contract_contract_code}" />
-			<aon:inputText id="Contract_tc2Code" size="10" 
-				value="#{contract.tc2Code}" >
-				<f:validateDoubleRange />
-			</aon:inputText>
+			<aon:selectOneMenu id="Contract_tc2Code" required="true"
+				value="#{contract.tc2Code}">
+				<f:selectItems value="#{payrollCollections.tc2List}" />
+			</aon:selectOneMenu>
 			
+<!--  
 			<aon:outputLabel for="registration" value="#{payrollBundle.payroll_salary_registration}" />
 			<aon:inputText id="registration" size="10" value="#{contract.to.registration}">
 				<f:validateDoubleRange />
 			</aon:inputText>
+-->			
 			
 
 			<aon:outputLabel for="quote_group"
 				value="#{payrollBundle.payroll_contract_quote_group}" />
-			<aon:selectOneMenu id="quote_group"
+			<aon:selectOneMenu id="quote_group" required="true"
 				value="#{contract.quoteGroup}" >
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.quoteGroups}" />
@@ -176,7 +178,7 @@
 				
 			<aon:outputLabel for="irpf"
 				value="#{payrollBundle.payroll_contract_irpf_percent}" />
-			<aon:inputText id="irpf" size="10" 
+			<aon:inputText id="irpf" size="10" required="true"
 				value="#{contract.irpf}" >
 				<f:validateDoubleRange />
 			</aon:inputText>

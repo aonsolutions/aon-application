@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -643,6 +645,22 @@ public class PayrollCollectionsController {
 			}
 		}
 		return irpfRegularizationReasons;
+	}
+	
+	public List<?> getTc2List() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		List<SelectItemGroup> list = new LinkedList<SelectItemGroup>();
+		for( ContractType p : ContractType.values() ) {
+			List<SelectItem> subList = new ArrayList<SelectItem>();
+			for( ContractCode c : p.getCodes() ) {
+				String name = c.getName(locale);
+				SelectItem item = new SelectItem(c, name);
+				subList.add(item);			
+			}
+			SelectItemGroup group = new SelectItemGroup(p.getName(locale), p.getName(locale), false, subList.toArray(new SelectItem[0]));
+			list.add(group);
+		}
+		return list;
 	}
 	
 	

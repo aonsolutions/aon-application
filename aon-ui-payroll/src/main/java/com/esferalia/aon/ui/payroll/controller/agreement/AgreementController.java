@@ -128,7 +128,14 @@ public class AgreementController extends VariablesAbstractController {
 	}
 	@Override
 	public void onSelectVariable(ActionEvent event) {
-		setData((ContractData) getVariablesModel().getRowData());
+		AgreementData aData = (AgreementData) getVariablesModel().getRowData();
+		ContractData cData = new ContractData();
+		cData.setId(aData.getId());
+		cData.setStartDate(aData.getStartDate());
+		cData.setEndDate(aData.getEndDate());
+		cData.setName(aData.getName());
+		cData.setExpression(aData.getExpression());
+		setData(cData);
 		handleEditorExpression(getData().getExpression());
 	}
 	@Override
@@ -139,7 +146,8 @@ public class AgreementController extends VariablesAbstractController {
 	public void onRemoveVariable(ActionEvent event) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(AgreementData.class);
-			bean.remove(getData());
+			AgreementData data = (AgreementData) bean.get(getData().getId());
+			bean.remove(data);
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible borrar la variable del convenio (" + e.getMessage() +")";
 			LOGGER.error(msg);
