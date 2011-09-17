@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +34,12 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.CNO;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
+import com.esferalia.aon.payroll.enumeration.OccupationType;
+import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.VariablesAbstractController;
 
@@ -114,6 +119,54 @@ public class AgreementController extends VariablesAbstractController {
 		}
 		initEditor();
 		initializeVariables(event);
+	}
+	@Override
+	public void onResetVariable(ActionEvent event) {
+		setData(new ContractData());
+//		IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+//		getData().setContract((Contract) master.getTo());
+	}
+	@Override
+	public void onSelectVariable(ActionEvent event) {
+		setData((ContractData) getVariablesModel().getRowData());
+		handleEditorExpression(getData().getExpression());
+	}
+	@Override
+	public void onCancelVariable(ActionEvent event) {
+		initEditor();
+	}
+	@Override
+	public void onRemoveVariable(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(AgreementData.class);
+			bean.remove(getData());
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible borrar la variable del convenio (" + e.getMessage() +")";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg,e);
+		}
+		initEditor();
+		initializeVariables(event);
+	}
+	private void handleEditorExpression(String expression) {
+		if( StringUtils.startsWith(expression, "\"") && StringUtils.endsWith(expression, "\"")){
+			expression = expression.substring(1, expression.length()-1);
+		}
+		if(getData().getVariable()==ContractVariables.CNO){
+			setCno(CNO.getCnoByValue(expression));
+		}else if(getData().getVariable()==ContractVariables.TC2){
+			setContractCode(ContractCode.getContractCodeByValue(expression));
+		}else if(getData().getVariable()==ContractVariables.CATEGORY){
+			;
+		}else if(getData().getVariable()==ContractVariables.QUOTE_GROUP){
+			setQuoteGroup(QuoteGroup.getQuoteGroupByValue(expression));
+		}else if(getData().getVariable()==ContractVariables.OCCUPATION){
+			setOccupationType(OccupationType.getOccupationTypeByValue(expression));
+		}else if(getData().getVariable()==ContractVariables.QUOTE_IT){
+			;
+		}
+		
 	}
 	
 	private void initEditor(){

@@ -51,6 +51,8 @@
 		<mapping class="com.esferalia.aon.payroll.IrpfData"/>
 		<mapping class="com.esferalia.aon.payroll.IrpfDataAscendants"/>
 		<mapping class="com.esferalia.aon.payroll.IrpfDataDescendients"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfRegularization"/>
+		<mapping class="com.esferalia.aon.payroll.IrpfResult"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatch"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>

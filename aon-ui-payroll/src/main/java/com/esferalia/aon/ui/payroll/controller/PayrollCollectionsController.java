@@ -37,6 +37,7 @@ import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
+import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.OtherLaws;
@@ -91,6 +92,7 @@ public class PayrollCollectionsController {
 
 	private List<SelectItem> familySityations;
 	private List<SelectItem> disabilityLevels;
+	private List<SelectItem> irpfRegularizationReasons;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -628,6 +630,19 @@ public class PayrollCollectionsController {
 			}
 		}
 		return disabilityLevels;
+	}
+	
+	public List<SelectItem> getIrpfRegularizationReasons() {
+		if (irpfRegularizationReasons == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			irpfRegularizationReasons = new LinkedList<SelectItem>();
+			for( IrpfRegularizationReason p : IrpfRegularizationReason.values() ) {
+					String name = p.getName(locale);
+					SelectItem item = new SelectItem(p, name);
+					irpfRegularizationReasons.add(item);			
+			}
+		}
+		return irpfRegularizationReasons;
 	}
 	
 	

@@ -39,6 +39,8 @@ import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.IrpfDataAscendants;
 import com.esferalia.aon.payroll.IrpfDataDescendients;
+import com.esferalia.aon.payroll.IrpfRegularization;
+import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.Salary;
@@ -1706,76 +1708,124 @@ public interface IPayrollAlias {
 	DAOConstantsEntry IRPF_DATA_ENTRY = DAOConstants.getDAOConstant(IrpfData.class);
 
 	/** 
+	* Alias value: IrpfData_annualRemuneration
+	* Hibernate value: IrpfData.annualRemuneration
+	*/
+	String  IRPF_DATA_ANNUAL_REMUNERATION = IRPF_DATA_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: IrpfData_contract_id
 	* Hibernate value: IrpfData.contract.id
 	*/
-	String  IRPF_DATA_CONTRACT_ID = IRPF_DATA_ENTRY.getAliasNames()[0];
+	String  IRPF_DATA_CONTRACT_ID = IRPF_DATA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: IrpfData_deducciblesExpenses
+	* Hibernate value: IrpfData.deducciblesExpenses
+	*/
+	String  IRPF_DATA_DEDUCCIBLES_EXPENSES = IRPF_DATA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: IrpfData_deductHomeLoan
+	* Hibernate value: IrpfData.deductHomeLoan
+	*/
+	String  IRPF_DATA_DEDUCT_HOME_LOAN = IRPF_DATA_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: IrpfData_dependence
 	* Hibernate value: IrpfData.dependence
 	*/
-	String  IRPF_DATA_DEPENDENCE = IRPF_DATA_ENTRY.getAliasNames()[1];
+	String  IRPF_DATA_DEPENDENCE = IRPF_DATA_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: IrpfData_descendientCount
 	* Hibernate value: IrpfData.descendientCount
 	*/
-	String  IRPF_DATA_DESCENDIENT_COUNT = IRPF_DATA_ENTRY.getAliasNames()[2];
+	String  IRPF_DATA_DESCENDIENT_COUNT = IRPF_DATA_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: IrpfData_disabilityLevel
 	* Hibernate value: IrpfData.disabilityLevel
 	*/
-	String  IRPF_DATA_DISABILITY_LEVEL = IRPF_DATA_ENTRY.getAliasNames()[3];
+	String  IRPF_DATA_DISABILITY_LEVEL = IRPF_DATA_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: IrpfData_endDate
 	* Hibernate value: IrpfData.endDate
 	*/
-	String  IRPF_DATA_END_DATE = IRPF_DATA_ENTRY.getAliasNames()[4];
+	String  IRPF_DATA_END_DATE = IRPF_DATA_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: IrpfData_familySituation
 	* Hibernate value: IrpfData.familySituation
 	*/
-	String  IRPF_DATA_FAMILY_SITUATION = IRPF_DATA_ENTRY.getAliasNames()[5];
+	String  IRPF_DATA_FAMILY_SITUATION = IRPF_DATA_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: IrpfData_fiscalExclusion
 	* Hibernate value: IrpfData.fiscalExclusion
 	*/
-	String  IRPF_DATA_FISCAL_EXCLUSION = IRPF_DATA_ENTRY.getAliasNames()[6];
+	String  IRPF_DATA_FISCAL_EXCLUSION = IRPF_DATA_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: IrpfData_foodAnnuity
+	* Hibernate value: IrpfData.foodAnnuity
+	*/
+	String  IRPF_DATA_FOOD_ANNUITY = IRPF_DATA_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: IrpfData_id
 	* Hibernate value: IrpfData.id
 	*/
-	String  IRPF_DATA_ID = IRPF_DATA_ENTRY.getAliasNames()[7];
+	String  IRPF_DATA_ID = IRPF_DATA_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: IrpfData_irregular18_2Reduction
+	* Hibernate value: IrpfData.irregular18_2Reduction
+	*/
+	String  IRPF_DATA_IRREGULAR18_2REDUCTION = IRPF_DATA_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: IrpfData_irregular18_3Reduction
+	* Hibernate value: IrpfData.irregular18_3Reduction
+	*/
+	String  IRPF_DATA_IRREGULAR18_3REDUCTION = IRPF_DATA_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: IrpfData_issueDate
+	* Hibernate value: IrpfData.issueDate
+	*/
+	String  IRPF_DATA_ISSUE_DATE = IRPF_DATA_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: IrpfData_labourProlongation
 	* Hibernate value: IrpfData.labourProlongation
 	*/
-	String  IRPF_DATA_LABOUR_PROLONGATION = IRPF_DATA_ENTRY.getAliasNames()[8];
+	String  IRPF_DATA_LABOUR_PROLONGATION = IRPF_DATA_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: IrpfData_movingDate
 	* Hibernate value: IrpfData.movingDate
 	*/
-	String  IRPF_DATA_MOVING_DATE = IRPF_DATA_ENTRY.getAliasNames()[9];
+	String  IRPF_DATA_MOVING_DATE = IRPF_DATA_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: IrpfData_spousalSupport
+	* Hibernate value: IrpfData.spousalSupport
+	*/
+	String  IRPF_DATA_SPOUSAL_SUPPORT = IRPF_DATA_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: IrpfData_spouseDocument
 	* Hibernate value: IrpfData.spouseDocument
 	*/
-	String  IRPF_DATA_SPOUSE_DOCUMENT = IRPF_DATA_ENTRY.getAliasNames()[10];
+	String  IRPF_DATA_SPOUSE_DOCUMENT = IRPF_DATA_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: IrpfData_startDate
 	* Hibernate value: IrpfData.startDate
 	*/
-	String  IRPF_DATA_START_DATE = IRPF_DATA_ENTRY.getAliasNames()[11];
+	String  IRPF_DATA_START_DATE = IRPF_DATA_ENTRY.getAliasNames()[19];
 
 
 
@@ -1868,6 +1918,386 @@ public interface IPayrollAlias {
 	* Hibernate value: IrpfDataDescendients.uniqueParent
 	*/
 	String  IRPF_DATA_DESCENDIENTS_UNIQUE_PARENT = IRPF_DATA_DESCENDIENTS_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for IrpfRegularization entity.
+	*/ 
+	DAOConstantsEntry IRPF_REGULARIZATION_ENTRY = DAOConstants.getDAOConstant(IrpfRegularization.class);
+
+	/** 
+	* Alias value: IrpfRegularization_contract_id
+	* Hibernate value: IrpfRegularization.contract.id
+	*/
+	String  IRPF_REGULARIZATION_CONTRACT_ID = IRPF_REGULARIZATION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: IrpfRegularization_effectiveDate
+	* Hibernate value: IrpfRegularization.effectiveDate
+	*/
+	String  IRPF_REGULARIZATION_EFFECTIVE_DATE = IRPF_REGULARIZATION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: IrpfRegularization_id
+	* Hibernate value: IrpfRegularization.id
+	*/
+	String  IRPF_REGULARIZATION_ID = IRPF_REGULARIZATION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: IrpfRegularization_paidIrpf
+	* Hibernate value: IrpfRegularization.paidIrpf
+	*/
+	String  IRPF_REGULARIZATION_PAID_IRPF = IRPF_REGULARIZATION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: IrpfRegularization_paidRemuneration
+	* Hibernate value: IrpfRegularization.paidRemuneration
+	*/
+	String  IRPF_REGULARIZATION_PAID_REMUNERATION = IRPF_REGULARIZATION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: IrpfRegularization_priorAnnualIrpf
+	* Hibernate value: IrpfRegularization.priorAnnualIrpf
+	*/
+	String  IRPF_REGULARIZATION_PRIOR_ANNUAL_IRPF = IRPF_REGULARIZATION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: IrpfRegularization_priorAnnualRemuneration
+	* Hibernate value: IrpfRegularization.priorAnnualRemuneration
+	*/
+	String  IRPF_REGULARIZATION_PRIOR_ANNUAL_REMUNERATION = IRPF_REGULARIZATION_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: IrpfRegularization_priorBaseIrpf
+	* Hibernate value: IrpfRegularization.priorBaseIrpf
+	*/
+	String  IRPF_REGULARIZATION_PRIOR_BASE_IRPF = IRPF_REGULARIZATION_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: IrpfRegularization_priorDeductHomeLoanAmount
+	* Hibernate value: IrpfRegularization.priorDeductHomeLoanAmount
+	*/
+	String  IRPF_REGULARIZATION_PRIOR_DEDUCT_HOME_LOAN_AMOUNT = IRPF_REGULARIZATION_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: IrpfRegularization_priorIrpf
+	* Hibernate value: IrpfRegularization.priorIrpf
+	*/
+	String  IRPF_REGULARIZATION_PRIOR_IRPF = IRPF_REGULARIZATION_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: IrpfRegularization_priorMinimunPersonalFamily
+	* Hibernate value: IrpfRegularization.priorMinimunPersonalFamily
+	*/
+	String  IRPF_REGULARIZATION_PRIOR_MINIMUN_PERSONAL_FAMILY = IRPF_REGULARIZATION_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: IrpfRegularization_reason
+	* Hibernate value: IrpfRegularization.reason
+	*/
+	String  IRPF_REGULARIZATION_REASON = IRPF_REGULARIZATION_ENTRY.getAliasNames()[11];
+
+
+
+	/** 
+	* DAOConstantsEntry for IrpfResult entity.
+	*/ 
+	DAOConstantsEntry IRPF_RESULT_ENTRY = DAOConstants.getDAOConstant(IrpfResult.class);
+
+	/** 
+	* Alias value: IrpfResult_annualIrpf
+	* Hibernate value: IrpfResult.annualIrpf
+	*/
+	String  IRPF_RESULT_ANNUAL_IRPF = IRPF_RESULT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: IrpfResult_annualRemuneration
+	* Hibernate value: IrpfResult.annualRemuneration
+	*/
+	String  IRPF_RESULT_ANNUAL_REMUNERATION = IRPF_RESULT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: IrpfResult_ascendents33_65Entirely
+	* Hibernate value: IrpfResult.ascendents33_65Entirely
+	*/
+	String  IRPF_RESULT_ASCENDENTS33_65ENTIRELY = IRPF_RESULT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: IrpfResult_ascendents33_65Total
+	* Hibernate value: IrpfResult.ascendents33_65Total
+	*/
+	String  IRPF_RESULT_ASCENDENTS33_65TOTAL = IRPF_RESULT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: IrpfResult_ascendents65Entirely
+	* Hibernate value: IrpfResult.ascendents65Entirely
+	*/
+	String  IRPF_RESULT_ASCENDENTS65ENTIRELY = IRPF_RESULT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: IrpfResult_ascendents65Total
+	* Hibernate value: IrpfResult.ascendents65Total
+	*/
+	String  IRPF_RESULT_ASCENDENTS65TOTAL = IRPF_RESULT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: IrpfResult_ascendentsMayor75Entirely
+	* Hibernate value: IrpfResult.ascendentsMayor75Entirely
+	*/
+	String  IRPF_RESULT_ASCENDENTS_MAYOR75ENTIRELY = IRPF_RESULT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: IrpfResult_ascendentsMayor75Total
+	* Hibernate value: IrpfResult.ascendentsMayor75Total
+	*/
+	String  IRPF_RESULT_ASCENDENTS_MAYOR75TOTAL = IRPF_RESULT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: IrpfResult_ascendentsMinor75Entirely
+	* Hibernate value: IrpfResult.ascendentsMinor75Entirely
+	*/
+	String  IRPF_RESULT_ASCENDENTS_MINOR75ENTIRELY = IRPF_RESULT_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: IrpfResult_ascendentsMinor75Total
+	* Hibernate value: IrpfResult.ascendentsMinor75Total
+	*/
+	String  IRPF_RESULT_ASCENDENTS_MINOR75TOTAL = IRPF_RESULT_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: IrpfResult_ascendentsMovingEntirely
+	* Hibernate value: IrpfResult.ascendentsMovingEntirely
+	*/
+	String  IRPF_RESULT_ASCENDENTS_MOVING_ENTIRELY = IRPF_RESULT_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: IrpfResult_ascendentsMovingTotal
+	* Hibernate value: IrpfResult.ascendentsMovingTotal
+	*/
+	String  IRPF_RESULT_ASCENDENTS_MOVING_TOTAL = IRPF_RESULT_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: IrpfResult_baseIrpf
+	* Hibernate value: IrpfResult.baseIrpf
+	*/
+	String  IRPF_RESULT_BASE_IRPF = IRPF_RESULT_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: IrpfResult_contract_id
+	* Hibernate value: IrpfResult.contract.id
+	*/
+	String  IRPF_RESULT_CONTRACT_ID = IRPF_RESULT_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: IrpfResult_deducciblesExpenses
+	* Hibernate value: IrpfResult.deducciblesExpenses
+	*/
+	String  IRPF_RESULT_DEDUCCIBLES_EXPENSES = IRPF_RESULT_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: IrpfResult_deduct80Bis
+	* Hibernate value: IrpfResult.deduct80Bis
+	*/
+	String  IRPF_RESULT_DEDUCT80BIS = IRPF_RESULT_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: IrpfResult_deductHomeLoanAmount
+	* Hibernate value: IrpfResult.deductHomeLoanAmount
+	*/
+	String  IRPF_RESULT_DEDUCT_HOME_LOAN_AMOUNT = IRPF_RESULT_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: IrpfResult_descendents33_65Entirely
+	* Hibernate value: IrpfResult.descendents33_65Entirely
+	*/
+	String  IRPF_RESULT_DESCENDENTS33_65ENTIRELY = IRPF_RESULT_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: IrpfResult_descendents33_65Total
+	* Hibernate value: IrpfResult.descendents33_65Total
+	*/
+	String  IRPF_RESULT_DESCENDENTS33_65TOTAL = IRPF_RESULT_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: IrpfResult_descendents65Entirely
+	* Hibernate value: IrpfResult.descendents65Entirely
+	*/
+	String  IRPF_RESULT_DESCENDENTS65ENTIRELY = IRPF_RESULT_ENTRY.getAliasNames()[19];
+
+	/** 
+	* Alias value: IrpfResult_descendents65Total
+	* Hibernate value: IrpfResult.descendents65Total
+	*/
+	String  IRPF_RESULT_DESCENDENTS65TOTAL = IRPF_RESULT_ENTRY.getAliasNames()[20];
+
+	/** 
+	* Alias value: IrpfResult_descendentsFirst
+	* Hibernate value: IrpfResult.descendentsFirst
+	*/
+	String  IRPF_RESULT_DESCENDENTS_FIRST = IRPF_RESULT_ENTRY.getAliasNames()[21];
+
+	/** 
+	* Alias value: IrpfResult_descendentsFourthSubsequentEntirely
+	* Hibernate value: IrpfResult.descendentsFourthSubsequentEntirely
+	*/
+	String  IRPF_RESULT_DESCENDENTS_FOURTH_SUBSEQUENT_ENTIRELY = IRPF_RESULT_ENTRY.getAliasNames()[22];
+
+	/** 
+	* Alias value: IrpfResult_descendentsFourthSubsequentTotal
+	* Hibernate value: IrpfResult.descendentsFourthSubsequentTotal
+	*/
+	String  IRPF_RESULT_DESCENDENTS_FOURTH_SUBSEQUENT_TOTAL = IRPF_RESULT_ENTRY.getAliasNames()[23];
+
+	/** 
+	* Alias value: IrpfResult_descendentsMinor3Entirely
+	* Hibernate value: IrpfResult.descendentsMinor3Entirely
+	*/
+	String  IRPF_RESULT_DESCENDENTS_MINOR3ENTIRELY = IRPF_RESULT_ENTRY.getAliasNames()[24];
+
+	/** 
+	* Alias value: IrpfResult_descendentsMinor3Total
+	* Hibernate value: IrpfResult.descendentsMinor3Total
+	*/
+	String  IRPF_RESULT_DESCENDENTS_MINOR3TOTAL = IRPF_RESULT_ENTRY.getAliasNames()[25];
+
+	/** 
+	* Alias value: IrpfResult_descendentsMovingEntirely
+	* Hibernate value: IrpfResult.descendentsMovingEntirely
+	*/
+	String  IRPF_RESULT_DESCENDENTS_MOVING_ENTIRELY = IRPF_RESULT_ENTRY.getAliasNames()[26];
+
+	/** 
+	* Alias value: IrpfResult_descendentsMovingTotal
+	* Hibernate value: IrpfResult.descendentsMovingTotal
+	*/
+	String  IRPF_RESULT_DESCENDENTS_MOVING_TOTAL = IRPF_RESULT_ENTRY.getAliasNames()[27];
+
+	/** 
+	* Alias value: IrpfResult_descendentsRemainderEntirely
+	* Hibernate value: IrpfResult.descendentsRemainderEntirely
+	*/
+	String  IRPF_RESULT_DESCENDENTS_REMAINDER_ENTIRELY = IRPF_RESULT_ENTRY.getAliasNames()[28];
+
+	/** 
+	* Alias value: IrpfResult_descendentsRemainderTotal
+	* Hibernate value: IrpfResult.descendentsRemainderTotal
+	*/
+	String  IRPF_RESULT_DESCENDENTS_REMAINDER_TOTAL = IRPF_RESULT_ENTRY.getAliasNames()[29];
+
+	/** 
+	* Alias value: IrpfResult_descendentsSecond
+	* Hibernate value: IrpfResult.descendentsSecond
+	*/
+	String  IRPF_RESULT_DESCENDENTS_SECOND = IRPF_RESULT_ENTRY.getAliasNames()[30];
+
+	/** 
+	* Alias value: IrpfResult_descendentsThird
+	* Hibernate value: IrpfResult.descendentsThird
+	*/
+	String  IRPF_RESULT_DESCENDENTS_THIRD = IRPF_RESULT_ENTRY.getAliasNames()[31];
+
+	/** 
+	* Alias value: IrpfResult_effectiveDate
+	* Hibernate value: IrpfResult.effectiveDate
+	*/
+	String  IRPF_RESULT_EFFECTIVE_DATE = IRPF_RESULT_ENTRY.getAliasNames()[32];
+
+	/** 
+	* Alias value: IrpfResult_foodAnnuity
+	* Hibernate value: IrpfResult.foodAnnuity
+	*/
+	String  IRPF_RESULT_FOOD_ANNUITY = IRPF_RESULT_ENTRY.getAliasNames()[33];
+
+	/** 
+	* Alias value: IrpfResult_id
+	* Hibernate value: IrpfResult.id
+	*/
+	String  IRPF_RESULT_ID = IRPF_RESULT_ENTRY.getAliasNames()[34];
+
+	/** 
+	* Alias value: IrpfResult_irpf
+	* Hibernate value: IrpfResult.irpf
+	*/
+	String  IRPF_RESULT_IRPF = IRPF_RESULT_ENTRY.getAliasNames()[35];
+
+	/** 
+	* Alias value: IrpfResult_irregular18_2Reduction
+	* Hibernate value: IrpfResult.irregular18_2Reduction
+	*/
+	String  IRPF_RESULT_IRREGULAR18_2REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[36];
+
+	/** 
+	* Alias value: IrpfResult_irregular18_3Reduction
+	* Hibernate value: IrpfResult.irregular18_3Reduction
+	*/
+	String  IRPF_RESULT_IRREGULAR18_3REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[37];
+
+	/** 
+	* Alias value: IrpfResult_minimunDescendents
+	* Hibernate value: IrpfResult.minimunDescendents
+	*/
+	String  IRPF_RESULT_MINIMUN_DESCENDENTS = IRPF_RESULT_ENTRY.getAliasNames()[38];
+
+	/** 
+	* Alias value: IrpfResult_minimunDisability
+	* Hibernate value: IrpfResult.minimunDisability
+	*/
+	String  IRPF_RESULT_MINIMUN_DISABILITY = IRPF_RESULT_ENTRY.getAliasNames()[39];
+
+	/** 
+	* Alias value: IrpfResult_minimunPersonal
+	* Hibernate value: IrpfResult.minimunPersonal
+	*/
+	String  IRPF_RESULT_MINIMUN_PERSONAL = IRPF_RESULT_ENTRY.getAliasNames()[40];
+
+	/** 
+	* Alias value: IrpfResult_minimunPersonalFamily
+	* Hibernate value: IrpfResult.minimunPersonalFamily
+	*/
+	String  IRPF_RESULT_MINIMUN_PERSONAL_FAMILY = IRPF_RESULT_ENTRY.getAliasNames()[41];
+
+	/** 
+	* Alias value: IrpfResult_socialSecurityPensioner
+	* Hibernate value: IrpfResult.socialSecurityPensioner
+	*/
+	String  IRPF_RESULT_SOCIAL_SECURITY_PENSIONER = IRPF_RESULT_ENTRY.getAliasNames()[42];
+
+	/** 
+	* Alias value: IrpfResult_spousalSupport
+	* Hibernate value: IrpfResult.spousalSupport
+	*/
+	String  IRPF_RESULT_SPOUSAL_SUPPORT = IRPF_RESULT_ENTRY.getAliasNames()[43];
+
+	/** 
+	* Alias value: IrpfResult_twoOrMoreDescendentsMin
+	* Hibernate value: IrpfResult.twoOrMoreDescendentsMin
+	*/
+	String  IRPF_RESULT_TWO_OR_MORE_DESCENDENTS_MIN = IRPF_RESULT_ENTRY.getAliasNames()[44];
+
+	/** 
+	* Alias value: IrpfResult_workDisabilityReduction
+	* Hibernate value: IrpfResult.workDisabilityReduction
+	*/
+	String  IRPF_RESULT_WORK_DISABILITY_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[45];
+
+	/** 
+	* Alias value: IrpfResult_workMovingReduction
+	* Hibernate value: IrpfResult.workMovingReduction
+	*/
+	String  IRPF_RESULT_WORK_MOVING_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[46];
+
+	/** 
+	* Alias value: IrpfResult_workProlongationReduction
+	* Hibernate value: IrpfResult.workProlongationReduction
+	*/
+	String  IRPF_RESULT_WORK_PROLONGATION_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[47];
+
+	/** 
+	* Alias value: IrpfResult_workRemunerationReduction
+	* Hibernate value: IrpfResult.workRemunerationReduction
+	*/
+	String  IRPF_RESULT_WORK_REMUNERATION_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[48];
 
 
 

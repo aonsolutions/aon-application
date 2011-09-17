@@ -13,12 +13,16 @@ import org.slf4j.LoggerFactory;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.IrpfDataController;
 
 public class IrpfDataControllerListener extends ControllerAdapter{
@@ -57,6 +61,7 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 		if(data.getDisabilityLevel()==DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE){
 			controller.setDisabilityLevel(DisabilityLevel.GT_EQ_33_LT_65);
 		}
+		filterIrpfRegularization();
 	}
 	
 	private void closePrevious() {
@@ -83,6 +88,7 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 
 	private void completeCurrent() {
 		((IrpfData) getController().getTo()).setStartDate(new Date());
+		((IrpfData) getController().getTo()).setIssueDate(new Date());
 	}
 	
 	private void completeHandicap() {
@@ -93,6 +99,36 @@ public class IrpfDataControllerListener extends ControllerAdapter{
 			data.setDisabilityLevel(DisabilityLevel.GT_EQ_33_LT_65_DEPENDENCE);
 		}
 		
+	}
+	
+	private void filterIrpfRegularization() {
+		LinesController regController = (LinesController) FormUtil.getController(IPayrollConstants.IRPF_REGULARIZATION_CONTROLLER_NAME);
+		IrpfData data = ((IrpfData) getController().getTo());
+		if(data!=null){
+			try {
+				regController.initializeModel();
+				regController.getCriteria().addGreaterThanOrEqualExpression(
+						regController.getFieldName(
+								IPayrollAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), data.getStartDate());
+				if(data.getEndDate()!=null){
+					regController.getCriteria().addLessThanOrEqualExpression(
+							regController.getFieldName(
+									IPayrollAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE), data.getStartDate());
+				}
+				regController.getCriteria().addOrder(regController.getFieldName(
+						IPayrollAlias.IRPF_REGULARIZATION_EFFECTIVE_DATE));
+				regController.onSearch(null);
+				if(regController.getRowCount()>0){
+					regController.getModel().setRowIndex(0);
+					regController.onSelect(null);
+				} else {
+					regController.onReset(null);
+				}
+			} catch (ManagerBeanException e) {
+				String msg = "Error al filtrar los datos de regularizacion";
+				LOGGER.error(msg);
+			}
+		}
 	}
 		
 }

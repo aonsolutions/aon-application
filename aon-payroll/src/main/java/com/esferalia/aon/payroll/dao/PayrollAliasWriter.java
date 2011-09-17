@@ -37,6 +37,8 @@ import com.esferalia.aon.payroll.FanBatchDetail;
 import com.esferalia.aon.payroll.GeozoneIrpf;
 import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
 import com.esferalia.aon.payroll.GeozoneIrpfHandicap;
+import com.esferalia.aon.payroll.IrpfRegularization;
+import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.IrpfData;
@@ -105,6 +107,8 @@ public class PayrollAliasWriter {
 				IrpfData.class.getName(),
 				IrpfDataAscendants.class.getName(),
 				IrpfDataDescendients.class.getName(),
+				IrpfRegularization.class.getName(),
+				IrpfResult.class.getName(),
 				PaymentConcept.class.getName(),
 				PayrollWorkPlace.class.getName(),
 				Salary.class.getName(),

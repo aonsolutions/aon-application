@@ -103,9 +103,9 @@ public class SettleController {
 		try {
 			SalaryDraftController controller = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
 			controller.setSalaryType(SalaryType.SETTLE);
-			controller.select(event, getParams().getContract().getId());
 			controller.setYear(CommonUtil.getYear(getParams().getSuspensionDate()));
 			controller.setMonth(Month.getMonthByValue(CommonUtil.getMonth(getParams().getSuspensionDate())));
+			controller.select(event, getParams().getContract().getId());
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectSettleDraft ",e);
 			throw new AbortProcessingException(e.getMessage(), e);
@@ -142,6 +142,11 @@ public class SettleController {
 						}
 					}
 				}
+			} else {
+				String msg = "";
+				LOGGER.error(">>>> initializeConcepts ",msg);
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg);
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> initializeConcepts ",e);
@@ -189,6 +194,11 @@ public class SettleController {
 			settle = (Salary) ctx.getSalaryProxy().getSalary();
 			settle.setNonEstructuralOvertimeBase(0.0);
 			settle.setContract(contract);
+			settle.getSalaryPayments().clear();
+			settle.getSalaryDeductions().clear();
+			settle.getSalaryBonus().clear();
+			settle.getSalaryCosts().clear();
+			settle.getSalaryEmbargos().clear();
 			
 			IManagerBean bean = BeanManager.getManagerBean(Salary.class);
 			bean.insert((ITransferObject) settle);

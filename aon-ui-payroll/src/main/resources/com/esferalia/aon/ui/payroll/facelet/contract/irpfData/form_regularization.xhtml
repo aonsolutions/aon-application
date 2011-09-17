@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	
+	
+	<aon:div styleClass="aon-scroll-area" id="regularizationContent">
+		<ui:decorate
+			template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+			<ui:param name="skipSpin" value="false" />
+			<ui:param name="skipFocusFirst" value="true" />
+			
+			<ui:param name="showDescription" value="false" />
+			<ui:param name="innerToolbar" value="true" />
+	
+			<ui:param name="skipSearchButton" value="true" />
+			<ui:param name="skipBackButton" value="true" />
+			<ui:param name="cancelButtonReRender" value="aonContent" />
+			
+			<ui:param name="controller" value="#{irpfRegularization}" />
+		</ui:decorate>
+		<!--  
+	<ui:include
+		src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+		<ui:param name="showDescription" value="false" />
+		<ui:param name="skipSearchButton" value="true" />
+		<ui:param name="innerToolbar" value="true" />
+
+		<aon:methodParam name="saveAction" value="" />
+		<ui:param name="saveButtonReRender" value="#{controller.beanName}Content" />
+		<aon:methodParam name="cancelAction" value="" />
+		<ui:param name="cancelButtonReRender" value="#{controller.beanName}Content" />
+		<aon:methodParam name="removeAction" value="" />
+		<ui:param name="removeButtonReRender" value="#{controller.beanName}Content" />
+		<aon:methodParam name="resetAction" value="" />
+		<ui:param name="resetButtonReRender" value="#{controller.beanName}Content" />
+		<aon:methodParam name="backAction" value="" />
+		<ui:param name="backButtonReRender" value="#{controller.beanName}Content" />
+		
+		<ui:param name="controller" value="#{irpfRegularization}" />
+
+	</ui:include>
+		-->
+	
+	
+		<aon:panelGrid columns="2"  width="100%"
+			columnClasses="aon-panelGrid-odd aon-width-150,	aon-panelGrid-even aon-width-auto">
+			
+			
+			<aon:outputLabel for="irpfData_reason"
+				value="#{payrollBundle.payroll_irpfData_reason}" />
+			<aon:selectOneMenu id="irpfData_reason" required="true"
+				label="#{registryBundle.registry_street_type}"
+				value="#{irpfRegularization.to.reason}">
+				<f:selectItems value="#{payrollCollections.irpfRegularizationReasons}" />
+			</aon:selectOneMenu>
+			
+			<aon:outputLabel for="irpfData_effectiveDate"
+				value="#{payrollBundle.payroll_irpfData_effectiveDate}" />
+			<aon:selectInputDate id="irpfData_effectiveDate" 
+				value="#{irpfRegularization.to.effectiveDate}" 
+				inputSize="10" renderAsPopup="true" enableManualInput="true"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+			</aon:selectInputDate>
+			
+			<aon:outputLabel for="irpfData_paidIrpf"
+				value="#{payrollBundle.payroll_irpfData_paidIrpf}" />
+			<aon:inputText id="irpfData_paidIrpf" 
+				value="#{irpfRegularization.to.paidIrpf}" maxlength="18" size="25">
+				<f:validateDoubleRange />
+			</aon:inputText>
+		
+			<aon:outputLabel for="irpfData_paidRemuneration"
+				value="#{payrollBundle.payroll_irpfData_paidRemuneration}" />
+			<aon:inputText id="irpfData_paidRemuneration" 
+				value="#{irpfRegularization.to.paidRemuneration}" maxlength="18" size="25">
+				<f:validateDoubleRange />
+			</aon:inputText>
+		
+			<aon:outputLabel for="irpfData_priorAnnualIrpf"
+				value="#{payrollBundle.payroll_irpfData_priorAnnualIrpf}" />
+			<aon:inputText id="irpfData_priorAnnualIrpf" 
+				value="#{irpfRegularization.to.priorAnnualIrpf}" maxlength="18" size="25">
+				<f:validateDoubleRange />
+			</aon:inputText>
+		
+			<aon:outputLabel for="irpfData_priorAnnualRemuneration"
+				value="#{payrollBundle.payroll_irpfData_priorAnnualRemuneration}" />
+			<aon:inputText id="irpfData_priorAnnualRemuneration" 
+				value="#{irpfRegularization.to.priorAnnualRemuneration}" maxlength="18" size="25">
+				<f:validateDoubleRange />
+			</aon:inputText>
+		
+			<aon:outputLabel for="irpfData_priorBaseIrpf"
+				value="#{payrollBundle.payroll_irpfData_priorBaseIrpf}" />
+			<aon:inputText id="irpfData_priorBaseIrpf" 
+				value="#{irpfRegularization.to.priorBaseIrpf}" maxlength="18" size="25">
+				<f:validateDoubleRange />
+			</aon:inputText>
+		
+			<aon:outputLabel for="irpfData_priorIrpf"
+				value="#{payrollBundle.payroll_irpfData_priorIrpf}" />
+			<aon:inputText id="irpfData_priorIrpf" 
+				value="#{irpfRegularization.to.priorIrpf}" maxlength="18" size="25">
+				<f:validateDoubleRange />
+			</aon:inputText>
+		
+<!--  
+			<aon:outputLabel for="irpfData_priorInCeutaMelilla"
+				value="#{payrollBundle.payroll_irpfData_priorInCeutaMelilla}" />
+			<aon:selectBooleanCheckbox id="irpfData_priorInCeutaMelilla" 
+				value="#{irpfRegularization.to.priorInCeutaMelilla}"  />
+-->  
+	
+			<aon:outputLabel for="irpfData_priorMinimunPersonalFamily"
+				value="#{payrollBundle.payroll_irpfData_priorMinimunPersonalFamily}" />
+			<aon:inputText id="irpfData_priorMinimunPersonalFamily" 
+				value="#{irpfRegularization.to.priorMinimunPersonalFamily}" maxlength="18" size="25">
+				<f:validateDoubleRange />
+			</aon:inputText>
+
+<!--  
+			<aon:outputLabel for="irpfData_priorDeductHomeLoan"
+				value="#{payrollBundle.payroll_irpfData_priorDeductHomeLoan}" />
+			<aon:selectBooleanCheckbox id="irpfData_priorDeductHomeLoan" 
+				value="#{irpfRegularization.to.priorDeductHomeLoan}"  />
+-->
+		
+			<aon:outputLabel for="irpfData_priorDeductHomeLoanAmount"
+				value="#{payrollBundle.payroll_irpfData_priorDeductHomeLoanAmount}" />
+			<aon:inputText id="irpfData_priorDeductHomeLoanAmount" 
+				value="#{irpfRegularization.to.priorDeductHomeLoanAmount}" maxlength="18" size="25">
+				<f:validateDoubleRange />
+			</aon:inputText>
+		
+		</aon:panelGrid>
+	
+	</aon:div>
+
+</ui:composition>

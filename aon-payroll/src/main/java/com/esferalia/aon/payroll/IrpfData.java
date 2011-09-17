@@ -24,6 +24,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
+import com.esferalia.aon.payroll.enumeration.DeductHomeLoan;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
 
@@ -45,6 +46,14 @@ public class IrpfData implements ITransferObject {
 	private boolean labourProlongation;
 	private Integer descendientCount;
 	private boolean fiscalExclusion;
+	private Date issueDate;
+	private Double annualRemuneration;
+	private Double irregular18_2Reduction;
+	private Double irregular18_3Reduction;
+	private Double deducciblesExpenses;
+	private Double spousalSupport;
+	private Double foodAnnuity;
+	private DeductHomeLoan deductHomeLoan;
 	
 	private Set<IrpfDataDescendients> descendients = new HashSet<IrpfDataDescendients>();
 	private Set<IrpfDataAscendants> ascendants = new HashSet<IrpfDataAscendants>();
@@ -128,6 +137,15 @@ public class IrpfData implements ITransferObject {
 		this.movingDate = movingDate;
 	}
 	
+	@Temporal(TemporalType.DATE)
+	@Column( name = "issue_date" )
+	public Date getIssueDate() {
+		return issueDate;
+	}
+	public void setIssueDate(Date issueDate) {
+		this.issueDate = issueDate;
+	}
+	
 	@Column( name = "labour_prolongation" )
 	public boolean isLabourProlongation() {
 		return labourProlongation;
@@ -150,6 +168,62 @@ public class IrpfData implements ITransferObject {
 	}
 	public void setFiscalExclusion(boolean fiscalExclusion) {
 		this.fiscalExclusion = fiscalExclusion;
+	}
+	
+	@Column(name = "annual_remuneration", precision = 15, scale = 3)
+	public Double getAnnualRemuneration() {
+		return annualRemuneration;
+	}
+	public void setAnnualRemuneration(Double annualRemuneration) {
+		this.annualRemuneration = annualRemuneration;
+	}
+	
+	@Column(name = "irregular_18_2_reduction", precision = 15, scale = 3)
+	public Double getIrregular18_2Reduction() {
+		return irregular18_2Reduction;
+	}
+	public void setIrregular18_2Reduction(Double irregular18_2Reduction) {
+		this.irregular18_2Reduction = irregular18_2Reduction;
+	}
+	
+	@Column(name = "irregular_18_3_reduction", precision = 15, scale = 3)
+	public Double getIrregular18_3Reduction() {
+		return irregular18_3Reduction;
+	}
+	public void setIrregular18_3Reduction(Double irregular18_3Reduction) {
+		this.irregular18_3Reduction = irregular18_3Reduction;
+	}
+	
+	@Column(name = "deduccibles_expenses", precision = 15, scale = 3)
+	public Double getDeducciblesExpenses() {
+		return deducciblesExpenses;
+	}
+	public void setDeducciblesExpenses(Double deducciblesExpenses) {
+		this.deducciblesExpenses = deducciblesExpenses;
+	}
+	
+	@Column(name = "spousal_support", precision = 15, scale = 3)
+	public Double getSpousalSupport() {
+		return spousalSupport;
+	}
+	public void setSpousalSupport(Double spousalSupport) {
+		this.spousalSupport = spousalSupport;
+	}
+	
+	@Column(name = "food_annuity", precision = 15, scale = 3)
+	public Double getFoodAnnuity() {
+		return foodAnnuity;
+	}
+	public void setFoodAnnuity(Double foodAnnuity) {
+		this.foodAnnuity = foodAnnuity;
+	}
+
+	@Column( name = "deduct_home_loan")
+	public DeductHomeLoan getDeductHomeLoan() {
+		return deductHomeLoan;
+	}
+	public void setDeductHomeLoan(DeductHomeLoan deductHomeLoan) {
+		this.deductHomeLoan = deductHomeLoan;
 	}
 	
 	@OneToMany(mappedBy = "irpfData", cascade={CascadeType.REMOVE})
@@ -186,6 +260,14 @@ public class IrpfData implements ITransferObject {
 				.append(this.movingDate, o.movingDate)			
 				.append(this.labourProlongation, o.labourProlongation)			
 				.append(this.descendientCount, o.descendientCount)			
+				.append(this.issueDate, o.issueDate)			
+				.append(this.annualRemuneration, o.annualRemuneration)			
+				.append(this.irregular18_2Reduction, o.irregular18_2Reduction)			
+				.append(this.irregular18_3Reduction, o.irregular18_3Reduction)			
+				.append(this.deducciblesExpenses, o.deducciblesExpenses)			
+				.append(this.spousalSupport, o.spousalSupport)			
+				.append(this.foodAnnuity, o.foodAnnuity)			
+				.append(this.deductHomeLoan, o.deductHomeLoan)			
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -205,6 +287,14 @@ public class IrpfData implements ITransferObject {
 			.append(this.movingDate)		
 			.append(this.labourProlongation)
 			.append(this.descendientCount)
+			.append(this.issueDate)
+			.append(this.annualRemuneration)
+			.append(this.irregular18_2Reduction)
+			.append(this.irregular18_3Reduction)
+			.append(this.deducciblesExpenses)
+			.append(this.spousalSupport)
+			.append(this.foodAnnuity)
+			.append(this.deductHomeLoan)
 			.toHashCode();
 	}	
 

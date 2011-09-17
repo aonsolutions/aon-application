@@ -39,6 +39,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLIrpfBuilder;
 import com.esferalia.aon.payroll.calculator.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.DeductHomeLoan;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
@@ -52,6 +53,8 @@ public class IrpfDataController extends LinesController {
 	
 	private IrpfDataParams params;
 	private DisabilityLevel disabilityLevel;
+	private boolean deductHomeLoanAfter;
+	private boolean deductHomeLoanBefore;
 	
 	public IrpfDataParams getParams() {
 		if(params==null){
@@ -71,8 +74,35 @@ public class IrpfDataController extends LinesController {
 			((IrpfData)this.getTo()).setDependence(false);
 		}
 	}
+	public boolean isDeductHomeLoanAfter() {
+		if(getTo()!=null){
+			deductHomeLoanAfter = ((IrpfData)getTo()).getDeductHomeLoan()==DeductHomeLoan.AFTER_01_01_2001;
+		}
+		return deductHomeLoanAfter;
+	}
+	public void setDeductHomeLoanAfter(boolean deductHomeLoanAfter) {
+		this.deductHomeLoanAfter = deductHomeLoanAfter;
+		if(getTo()!=null){
+			((IrpfData)getTo()).setDeductHomeLoan(DeductHomeLoan.AFTER_01_01_2001);
+		}
+	}
+	public boolean isDeductHomeLoanBefore() {
+		if(getTo()!=null){
+			deductHomeLoanBefore = ((IrpfData)getTo()).getDeductHomeLoan()==DeductHomeLoan.BEFORE_01_01_2001;
+		}
+		return deductHomeLoanBefore;
+	}
+	public void setDeductHomeLoanBefore(boolean deductHomeLoanBefore) {
+		this.deductHomeLoanBefore = deductHomeLoanBefore;
+		if(getTo()!=null){
+			((IrpfData)getTo()).setDeductHomeLoan(DeductHomeLoan.BEFORE_01_01_2001);
+		}
+	}
 	
 	public boolean isIrpfChanged(){
+		if(getParams().getCurrentIrpf()==null || getParams().getNewIrpf()==null){
+			return false;
+		}
 		return !getParams().getCurrentIrpf().equals(getParams().getNewIrpf());
 	}
 	
