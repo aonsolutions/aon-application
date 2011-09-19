@@ -33,7 +33,6 @@
 		</c:if>
 	</aon:selectOneMenu>
 
-<!--  
 	<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
 	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" required="true">
 		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractPayment_PaymentConcept" ajaxSingle="true" limitToList="true"/>
@@ -41,6 +40,7 @@
 		<f:selectItems value="#{payrollCollections.paymentTypes}" />
 	</aon:selectOneMenu>
 
+<!--  
 	<aon:outputLabel for="ContractPayment_PaymentConcept" value="#{bundle.aon_concept}" />
 	<aon:selectOneMenu id="ContractPayment_PaymentConcept" value="#{controller.to.paymentConcept}" style="width: 300px;">
 		<a4j:support event="onchange" actionListener="#{controller.onPaymentConceptChange}" reRender="ContractPayment_description" ajaxSingle="true" limitToList="true"/>
