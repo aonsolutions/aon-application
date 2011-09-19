@@ -266,6 +266,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 		deduction.setAmount(amount);
 		deduction.setDescription(description);
 		deduction.setExpression(expression);
+		deduction.setDeductionConcept(concept);
 		
 		this.salary.getSalaryDeductions().add(deduction);
 		
