@@ -19,6 +19,7 @@
 
 			<rich:treeNode styleClass="aon-width-all" 
 				icon="#{enterpriseNode.type.icon}"
+				onclick="storeTreeOffset();"
 				iconLeaf="#{enterpriseNode.type.icon}" >
 				<a4j:support event="onselected" reRender="aonContent"
 					action="#{enterpriseNode.type.action}" />
