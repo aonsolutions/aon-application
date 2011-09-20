@@ -20,7 +20,7 @@
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="Contract-Save"
 						value="#{bundle.aon_accept}"
-						reRender="dataGrid"
+						reRender="contractMainGrid, dataGrid"
 						styleClass="aon-finding-toolbar-item aon-icon-accept">
 						<aon:actionListener method="#{contract.accept}" />
 						<aon:actionListener method="#{contract.onShowVariables}" />

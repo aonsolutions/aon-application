@@ -174,8 +174,9 @@ public class ContractControllerListener extends ControllerAdapter{
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
 				List<ITransferObject> list = bean.getList(criteria);
-				if(!list.isEmpty()){
-					controller.setAgreement(((PayrollWorkPlace)list.get(0)).getAgreement());
+				Agreement agreement = ((PayrollWorkPlace)list.get(0)==null)?null:((PayrollWorkPlace)list.get(0)).getAgreement();
+				if(agreement!=null){
+					controller.setAgreement(agreement);
 				} else {
 					IManagerBean aBean = BeanManager.getManagerBean(Agreement.class);
 					controller.setAgreement((Agreement) aBean.createNewTo());
