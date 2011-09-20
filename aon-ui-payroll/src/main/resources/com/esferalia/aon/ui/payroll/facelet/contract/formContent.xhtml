@@ -76,6 +76,7 @@
 				<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
 			</aon:selectInputDate>
 			<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
+				title="#{payrollBundle.payroll_salary_start_date_seniority_date_difference}"
 				styleClass="aon-icon-info"
 				rendered="#{contract.to.seniorityDateDifferent}" />
 		</aon:panelGroup>
@@ -90,7 +91,6 @@
 		<aon:outputLabel for="agreementLevelCategory" 
 			value="#{payrollBundle.payroll_agreementLevel_category}" />
 		<aon:selectOneMenu id="agreementLevelCategory"
-			disabled="#{contract.to.activity==null or contract.to.activity.id==null}"
 			value="#{contract.to.agreementLevelCategory}" >
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{contract.agreementLevelCategories}" />

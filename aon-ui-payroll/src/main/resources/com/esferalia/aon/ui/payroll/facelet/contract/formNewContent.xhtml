@@ -11,14 +11,11 @@
 
 		<aon:panelGrid columns="2" style="width: 80%;" >
 			
-			<ui:decorate template="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.to.person}" />
-<!--  
-				<ui:param name="skipNewButton" value="#{true}" />
--->				
 				<ui:param name="idRequired" value="#{true}" />
 				<ui:param name="lookupDisabled" value="#{false}" />
-			</ui:decorate>
+			</ui:include>
 			
 			<aon:outputLabel for="ssRegime"
 				value="#{payrollBundle.payroll_contract_regime}" />
@@ -96,6 +93,7 @@
 					<a4j:support event="onchanged" reRender="seniorityDateContainer" ajaxSingle="true"/>
 				</aon:selectInputDate>
 				<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
+					title="#{payrollBundle.payroll_salary_start_date_seniority_date_difference}"
 					styleClass="aon-icon-info"
 					rendered="#{contract.to.seniorityDateDifferent}" />
 			</aon:panelGroup>

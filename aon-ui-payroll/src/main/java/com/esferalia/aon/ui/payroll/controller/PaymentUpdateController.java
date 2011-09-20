@@ -4,6 +4,7 @@ import static com.esferalia.aon.ui.payroll.controller.IPayrollConstants.PAYMENT_
 import static com.esferalia.aon.ui.payroll.controller.IPayrollConstants.SHOW_ENTERPRISE_IN_SEARCH;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -32,9 +34,12 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 
@@ -89,7 +94,14 @@ public class PaymentUpdateController {
 	
 	public void onEditSearch(ActionEvent event) {
 		if ( AonUtil.isBeanValue(PAYMENT_UPDATE_CONTROLLER, SHOW_ENTERPRISE_IN_SEARCH) ) {
-			setEnterprise(new Enterprise());	
+			try {
+				IManagerBean bean = BeanManager.getManagerBean(Enterprise.class);
+				setEnterprise((Enterprise) bean.createNewTo());
+			} catch (ManagerBeanException e) {
+				String msg = "Imposible realizar la búsqueda de los datos. [" + e.getMessage()+"]";
+				AonUtil.addErrorMessage(msg);
+				throw new AbortProcessingException(msg,e);
+			}	
 		}
 		Date date = new Date();
 		setMonth(Month.getMonthByValue(CommonUtil.getMonth(date)));
@@ -185,22 +197,31 @@ public class PaymentUpdateController {
 	private void populateList(List<PaymentUpdate> dataList, Date date) throws SalaryException {
 		setColumns( new LinkedList<String>());
 		for (PaymentUpdate pu: dataList) {
-			Date startDate= CommonUtil.getMonthFirstDay(date);
-			Date endDate = CommonUtil.getMonthLastDay(date);
-			ISalaryCalculatorContext scc = pu.getContract().getSalaryCalculatorContext(startDate,endDate,date);
-			List<IExpression> exps = scc.getExpressionContext().getExpressionVariables();
+			IContractSalaryCalculatorContext scc = (IContractSalaryCalculatorContext) pu.getContract().getSalaryCalculatorContext(CommonUtil.getYear(date),Month.getMonthByValue(CommonUtil.getMonth(date)),SalaryType.SALARY);
+//			List<IExpression> exps = scc.getExpressionContext().getExpressionVariables();
+			// TODO ¿a donde hay que ir a buscar las variables?
+			Collection<IContractPayment> exps = null;
+			try {
+				exps = scc.getContractPayments();
+			} catch (AonException e) {
+				// sigue...
+			}
+			
 			for (IExpression exp: exps) {
-				if (!exp.isReadOnly()) {
-					if (!getColumns().contains(exp.getName())){
-						getColumns().add(exp.getName());
+				try {
+					if (!exp.isReadOnly()) {
+						if (!getColumns().contains(exp.getName())){
+							getColumns().add(exp.getName());
+						}
+						ContractData ce = getContractContext(pu,exp,scc);
+						pu.getMap().put(exp.getName(),ce);
 					}
-					ContractData ce = getContractContext(pu,exp,scc);
-					pu.getMap().put(exp.getName(),ce);
+				} catch (Exception e) {
+					// sigue...
 				}
 			}
 			Collections.sort( getColumns() ); 
 		}
-		
 	}
 
 	private ContractData getContractContext(PaymentUpdate pu, IExpression exp, ISalaryCalculatorContext scc) throws SalaryException {

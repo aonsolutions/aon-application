@@ -12,6 +12,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
+import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -48,7 +49,16 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo(); 
-		controller.setEnterprise(new Enterprise());
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Person.class);
+			contract.setPerson((Person) bean.createNewTo());
+			bean = BeanManager.getManagerBean(Enterprise.class);
+			controller.setEnterprise((Enterprise) bean.createNewTo());
+		} catch (ManagerBeanException e) {
+			String msg = "Error on afterBeanCreated";
+			LOGGER.error(msg);
+			throw new ControllerListenerException(msg,e);
+		}
 		controller.setWorkPlaces(null);
 		controller.setActivities(null);
 		controller.setEnterpriseCCCs(null);
@@ -91,51 +101,63 @@ public class ContractControllerListener extends ControllerAdapter{
 	}
 	
 	private void saveContractData() throws ControllerListenerException {
+		ContractController controller = (ContractController) this.getController();
+		Contract contract = (Contract) controller.getTo();
+		IManagerBean bean;
+		ContractData data;
 		try {
-			ContractController controller = (ContractController) this.getController();
-			Contract contract = (Contract) controller.getTo();
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-	
-			ContractData data = new ContractData();
+			bean = BeanManager.getManagerBean(ContractData.class);
+		} catch (ManagerBeanException e) {
+			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
+			LOGGER.error(msg);
+			throw new ControllerListenerException(msg,e);
+		}
+		try {
+			data = new ContractData();
 			data.setContract(contract);
 			data.setStartDate(contract.getStartDate());
 			data.setName( ContractVariables.IRPF_PERCENT.getName() );
 			data.setExpression(controller.getIrpf().toString());
 			bean.insert(data);
-
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el porcentaje IRPF. (" +e.getMessage() + ")";
+			LOGGER.error(msg);
+		}
+		try {
 			data = new ContractData();
 			data.setContract(contract);
 			data.setStartDate(contract.getStartDate());
 			data.setName( ContractVariables.QUOTE_GROUP.getName() );
 			data.setExpression("\"" + controller.getQuoteGroup().getValue() + "\"");
 			bean.insert(data);
-
-//			data = new ContractData();
-//			data.setContract(contract);
-//			data.setStartDate(contract.getStartDate());
-//			data.setName( ContractVariables.FULL_TIME.getName() );
-//			data.setExpression("\"" + (controller.getContractWorkingDay()==ContractWorkingDay.FULL_TIME?true:false) + "\"");
-//			bean.insert(data);
-			
-//			data = new ContractData();
-//			data.setContract(contract);
-//			data.setStartDate(contract.getStartDate());
-//			data.setName( ContractVariables.INDEFINITE.getName() );
-//			data.setExpression("\"" + (controller.getContractDuration()==ContractDuration.UNSPECIFIED?true:false) + "\"");
-//			bean.insert(data);
-			
+		} catch (ManagerBeanException e) {
+			String msg = "Error al grabar el grupo de cotizacion. (" +e.getMessage() + ")";
+			LOGGER.error(msg);
+		}
+		try {
 			data = new ContractData();
 			data.setContract(contract);
 			data.setStartDate(contract.getStartDate());
 			data.setName( ContractVariables.TC2.getName() );
 			data.setExpression("\"" + controller.getTc2Code().getValue() + "\"");
 			bean.insert(data);
-
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible grabar los datos de contrato. (" +e.getMessage() + ")";
+			String msg = "Error al grabar el codigo TC2. (" +e.getMessage() + ")";
 			LOGGER.error(msg);
-			throw new ControllerListenerException(msg,e);
 		}
+//			data = new ContractData();
+//			data.setContract(contract);
+//			data.setStartDate(contract.getStartDate());
+//			data.setName( ContractVariables.FULL_TIME.getName() );
+//			data.setExpression("\"" + (controller.getContractWorkingDay()==ContractWorkingDay.FULL_TIME?true:false) + "\"");
+//			bean.insert(data);
+		
+//			data = new ContractData();
+//			data.setContract(contract);
+//			data.setStartDate(contract.getStartDate());
+//			data.setName( ContractVariables.INDEFINITE.getName() );
+//			data.setExpression("\"" + (controller.getContractDuration()==ContractDuration.UNSPECIFIED?true:false) + "\"");
+//			bean.insert(data);
 	}
 	
 	private void searchAgreement() {

@@ -118,7 +118,7 @@
 			
 				<aon:panelGrid columns="2" styleClass="aon-width-all"
 					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
-							
+					
 					<aon:outputText value="#{companyBundle.company_enterprise}" />
 					<aon:outputText value="#{enterprise.to.registry.name}" />
 						
@@ -160,6 +160,9 @@
 			</aon:div>
 	
 		</aon:form>		
+		
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		
 		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/expenseModal.xhtml" />
 		

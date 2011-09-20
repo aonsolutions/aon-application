@@ -62,6 +62,14 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 				createNewPayrollWorkPlace();
 			} else {
 				controller.setPayrollWorkPlace((PayrollWorkPlace) list.get(0));
+				if(controller.getPayrollWorkPlace().getAgreement()==null){
+					IManagerBean aBean = BeanManager.getManagerBean(Agreement.class);
+					controller.getPayrollWorkPlace().setAgreement((Agreement) aBean.createNewTo());
+				}
+				if(controller.getPayrollWorkPlace().getCalendar()==null){
+					IManagerBean cBean = BeanManager.getManagerBean(Calendar.class);
+					controller.getPayrollWorkPlace().setCalendar((Calendar) cBean.createNewTo());
+				}
 			}
 		} catch (ManagerBeanException e) {
 			// NADA, se inicializa a nulo
@@ -84,7 +92,8 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		PayrollWorkPlace pw = ((PayrollWorkPlaceController)this.getController()).getPayrollWorkPlace();
-		if((pw.getAgreement()!=null && pw.getAgreement().getId()!=null) 
+		if( pw.getId()!=null  
+				|| (pw.getAgreement()!=null && pw.getAgreement().getId()!=null) 
 				|| (pw.getCalendar()!=null && pw.getCalendar().getId()!=null )
 				|| (pw.getEnterpriseActivity()!=null && pw.getEnterpriseActivity().getId()!=null)){
 			insertOrUpdateChild();
@@ -101,6 +110,12 @@ public class PayrollWorkPlaceControllerListener extends ControllerAdapter {
 		PayrollWorkPlaceController controller = (PayrollWorkPlaceController) this.getController();
 		if(controller.getPayrollWorkPlace().getId()==null){
 			controller.getPayrollWorkPlace().setWorkPlace((WorkPlace) controller.getTo());
+		}
+		if(controller.getPayrollWorkPlace().getCalendar().getId()==null){
+			controller.getPayrollWorkPlace().setCalendar(null);
+		}
+		if(controller.getPayrollWorkPlace().getAgreement().getId()==null){
+			controller.getPayrollWorkPlace().setAgreement(null);
 		}
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
