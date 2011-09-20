@@ -97,6 +97,8 @@ public class BasicController extends AbstractPojoController implements IControll
 	
 	private String backAction;
 	private String backActionListener;
+	
+	private String afterSearchAction; 
 
 	/**
 	 * Constructor.
@@ -153,9 +155,60 @@ public class BasicController extends AbstractPojoController implements IControll
 	 */
 	public String backAction() {
 		if ( this.backAction == null ) {
-			return getBeanName() + LIST_SUFFIX;
+			return listAction();
 		}
 		return backAction;
+	}
+
+	/**
+	 * Gets the back action.
+	 *
+	 * @return the back action
+	 */
+	public String afterSearchAction() {
+		if ( this.afterSearchAction == null ) {
+			return listAction();
+		}
+		return afterSearchAction;
+	}
+
+	/**
+	 * On after search.
+	 *
+	 * @param event the event
+	 */
+	public void onAfterSearch( ActionEvent event ) {
+		try {
+			if ( getModel().getRowCount() == 1 ) {
+				getModel().setRowIndex(0);
+				onSelect(event);
+				setAfterSearchAction(formAction());
+			} else {
+				setAfterSearchAction(null);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onAfterSearch",e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}		
+	}	
+	
+	/**
+	 * Gets the after search action.
+	 *
+	 * @return the after search action
+	 */
+	public String getAfterSearchAction() {
+		return afterSearchAction;
+	}
+
+	/**
+	 * Sets the after search action.
+	 *
+	 * @param afterSearchAction the new after search action
+	 */
+	public void setAfterSearchAction(String afterSearchAction) {
+		this.afterSearchAction = afterSearchAction;
 	}
 
 	/**
@@ -1199,6 +1252,33 @@ public class BasicController extends AbstractPojoController implements IControll
 	}	
 	
 	/**
+	 * Form action.
+	 *
+	 * @return the string
+	 */
+	public String formAction() {
+		return getBeanName()+FORM_SUFFIX;
+	}
+
+	/**
+	 * List action.
+	 *
+	 * @return the string
+	 */
+	public String listAction() {
+		return getBeanName()+LIST_SUFFIX;
+	}
+
+	/**
+	 * Search action.
+	 *
+	 * @return the string
+	 */
+	public String searchAction() {
+		return getBeanName()+SEARCH_SUFFIX;
+	}
+	
+	/**
 	 * Gets the initial action
 	 * 
 	 * @return the initial action
@@ -1209,15 +1289,16 @@ public class BasicController extends AbstractPojoController implements IControll
 				initializeModel();
 				getModel().setRowIndex(0);
 				select(null);
-				return getBeanName()+FORM_SUFFIX;
+				return formAction();
 			} else if(getRowCount()<LIMIT){
 				initializeModel();
-				return getBeanName()+LIST_SUFFIX;
+				return listAction();
 			} else {
-				return getBeanName()+SEARCH_SUFFIX;
+				return searchAction();
 			}
 		} catch (ManagerBeanException e) {
-			return getBeanName()+SEARCH_SUFFIX;
+			LOGGER.error(e.getMessage(), e);
+			return searchAction();
 		}
 	}
 

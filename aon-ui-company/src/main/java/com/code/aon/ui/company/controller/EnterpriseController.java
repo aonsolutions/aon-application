@@ -261,26 +261,8 @@ public class EnterpriseController extends RegistryController implements ICompany
 	}	
 	
 	@Override
-	public String initialAction( ) {
-		try {
-			if(getRowCount()==1){
-				initializeModel();
-				getModel().setRowIndex(0);
-				select(null);
-				if(isTreeView()){
-					return getBeanName()+FORM_TREE_SUFFIX;
-				} else {
-					return getBeanName()+FORM_SUFFIX;
-				}
-			} else if(getRowCount()<LIMIT){
-				initializeModel();
-				return getBeanName()+LIST_SUFFIX;
-			} else {
-				return getBeanName()+SEARCH_SUFFIX;
-			}
-		} catch (ManagerBeanException e) {
-			return getBeanName()+SEARCH_SUFFIX;
-		}
+	public String formAction() {
+		return isTreeView() ? getBeanName()+FORM_TREE_SUFFIX : super.formAction();
 	}
 	
 }

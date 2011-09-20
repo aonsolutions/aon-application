@@ -8,7 +8,7 @@
 		<aon:valueParam name="searchContentID" default="aonSearchContent" />
 		<aon:valueParam name="searchButtonId" default="search" />	
 		<aon:methodParam name="searchActionListener" default="#{controller.onSearch}" type="actionListener" />
-		<aon:methodParam name="searchAction" default="#{controller.beanName}_list" resolve="true" />		
+		<aon:methodParam name="searchAction" default="#{controller.afterSearchAction}" />		
 	</ui:include>
 	
 </ui:composition>
