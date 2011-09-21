@@ -4,7 +4,8 @@ USE `aon_master`;
 SET FOREIGN_KEY_CHECKS=0;
 
 
-INSERT INTO `account` VALUES ('1','FINANCIACIÓN BÁSICA',NULL,0,1),
+INSERT INTO `account` VALUES 
+  ('1','FINANCIACIÓN BÁSICA',NULL,0,1),
   ('10','CAPITAL.',NULL,0,2),
   ('100','Capital social.',NULL,0,3),
   ('1000','Capital social.',NULL,0,4),
@@ -1021,7 +1022,8 @@ INSERT INTO `account` VALUES ('1','FINANCIACIÓN BÁSICA',NULL,0,1),
   ('994','Transferencia por deterioro de ajustes valorativos negativos previos, empresas asociadas.',NULL,0,3),
   ('9940','Transferencia por deterioro de ajustes valorativos negativos previos, empresas asociadas.',NULL,0,4);
 
-INSERT INTO `app_param` VALUES ('ACC_DEFAULT_CASH_ACC','570000000'),
+INSERT INTO `app_param` VALUES 
+  ('ACC_DEFAULT_CASH_ACC','570000000'),
   ('ACC_DEFAULT_CHARGED_RET_ACC','475100000'),
   ('ACC_DEFAULT_CHARGED_VAT_ACC','477000000'),
   ('ACC_DEFAULT_COMPANY_SOC_INS_ACC','642000000'),
@@ -1037,13 +1039,15 @@ INSERT INTO `app_param` VALUES ('ACC_DEFAULT_CASH_ACC','570000000'),
   ('APP_PRINT_HEADER_PARAM','false'),
   ('APP_PRINT_RECORD_DATA_PARAM','false');
 
-INSERT INTO `balance` VALUES (1,'BALANCE DE SITUACIÓN',0,0),
+INSERT INTO `balance` VALUES 
+  (1,'BALANCE DE SITUACIÓN',0,0),
   (2,'CUENTA DE EXPLOTACIÓN',0,1),
   (3,'BALANCE DE SITUACIÓN (ABREVIADO)',0,0),
   (4,'CUENTA DE EXPLOTACIÓN (ABREVIADA)',0,1),
   (5,'ESTADO ABRV. DE CAMBIOS EN EL PATRIMONIO NETO, INGRESOS Y GASTOS',0,2);
 
-INSERT INTO `balance_detail` VALUES (1,1,'A0',' ACTIVO','',0,1,0,1,0,1),
+INSERT INTO `balance_detail` VALUES 
+  (1,1,'A0',' ACTIVO','',0,1,0,1,0,1),
   (2,1,'A','A) ACTIVO NO CORRIENTE','',1,0,0,1,0,1),
   (3,1,'A.I','	I. Inmovilizado intangible.',NULL,2,0,0,1,0,0),
   (4,1,'A.I.1',' 1. Desarrollo.','201,2801,2901',3,0,0,1,0,0),
@@ -1343,7 +1347,8 @@ INSERT INTO `balance_detail` VALUES (1,1,'A0',' ACTIVO','',0,1,0,1,0,1),
   (298,5,'C','Total transferencias a la cuentad de P Y G','VI,VII,VIII,IX',13,0,1,1,0,0),
   (299,5,'D','TOTAL DE INGRESOS Y GASTOS RECONOCIDOS','A,B,C',14,0,1,1,0,0);
 
-INSERT INTO `bank` VALUES (1,'ALLFUNDS BANK, S.A.','0011'),
+INSERT INTO `bank` VALUES 
+  (1,'ALLFUNDS BANK, S.A.','0011'),
   (2,'ALTAE BANCO, S.A.','0099'),
   (3,'BANCA MARCH, S.A.','0061'),
   (4,'BANCA PUEYO, S.A.','0078'),
@@ -1547,8 +1552,8 @@ INSERT INTO `bank` VALUES (1,'ALLFUNDS BANK, S.A.','0011'),
   (202,'CREDIT VALENCIA, C.R.C.C.V.','3188'),
   (203,'IPAR KUTXA RURAL, S.C.C.','3084');
 
-INSERT INTO `cnae` VALUES (111,'0111','Cultivo de cereales (excepto arroz),
-   leguminosas y semillas oleaginosas'),
+INSERT INTO `cnae` VALUES 
+  (111,'0111','Cultivo de cereales (excepto arroz), leguminosas y semillas oleaginosas'),
   (112,'0112','Cultivo de arroz'),
   (113,'0113','Cultivo de hortalizas, raíces y tubérculos'),
   (114,'0114','Cultivo de cañaa de azúcar'),
@@ -2178,7 +2183,8 @@ INSERT INTO `cnae` VALUES (111,'0111','Cultivo de cereales (excepto arroz),
   (9820,'9820','Actividades de los hogares como productores de servicios para uso propio'),
   (9900,'9900','Actividades de organizaciones y organismos extraterritoriales');
 
-INSERT INTO `cnae2009` VALUES (10,'10','Industria de la alimentación'),
+INSERT INTO `cnae2009` VALUES 
+  (10,'10','Industria de la alimentación'),
   (11,'11','Fabricación de bebidas'),
   (12,'12','Industria del tabaco'),
   (13,'13','Industria textil'),
@@ -3169,7 +3175,8 @@ INSERT INTO `cnae2009` VALUES (10,'10','Industria de la alimentación'),
   (10000910,'0910','Actividades de apoyo a la extracción de petróleo y gas natural'),
   (10000990,'0990','Actividades de apoyo a otras industrias extractivas');
 
-INSERT INTO `cnae2009_rate` VALUES (1,100001,'2010-01-01',NULL,1.500,1.100),
+INSERT INTO `cnae2009_rate` VALUES 
+  (1,100001,'2010-01-01',NULL,1.500,1.100),
   (2,10000113,'2010-01-01',NULL,1.150,1.100),
   (3,10000119,'2010-01-01',NULL,1.150,1.100),
   (4,10000129,'2010-01-01',NULL,2.250,2.900),
@@ -3321,7 +3328,8 @@ INSERT INTO `cnae2009_rate` VALUES (1,100001,'2010-01-01',NULL,1.500,1.100),
   (150,97,'2010-01-01',NULL,0.650,0.450),
   (151,99,'2010-01-01',NULL,1.600,1.500);
 
-INSERT INTO `cno` VALUES (11,'0011','Oficiales de las fuerzas armadas'),
+INSERT INTO `cno` VALUES 
+  (11,'0011','Oficiales de las fuerzas armadas'),
   (12,'0012','Suboficiales de las fuerzas armadas'),
   (20,'0020','Tropa y marinería de las fuerzas armadas'),
   (1111,'1111','Miembros del poder ejecutivo (nacional, autonómico y local) y del poder legislativo'),
@@ -3825,7 +3833,8 @@ INSERT INTO `cno` VALUES (11,'0011','Oficiales de las fuerzas armadas'),
   (9820,'9820','Reponedores');
 
 
-INSERT INTO `deduction_concept` VALUES (1,'CGC','4.70 %',0,1,'BASE_CGC * 4.70/100'),
+INSERT INTO `deduction_concept` VALUES 
+  (1,'CGC','4.70 %',0,1,'BASE_CGC * 4.70/100'),
   (2,'CGP','(BASE_CGP/CGP*100)+\'%\'',1,0,NULL),
   (3,'DESMP','@{PORCENTAJE_DESMPL} %',2,1,'( TIEMPO_COMPLETO && ASIMILADO_REGIMEN_GRAL ) ? 0 : BASE_CGP * (PORCENTAJE_DESMPL=(INDEFINIDO ? 1.55 : 1.60 ))/100'),
   (4,'FP','0.10 %',3,1,'BASE_CGP * 0.10/100'),
@@ -3833,7 +3842,8 @@ INSERT INTO `deduction_concept` VALUES (1,'CGC','4.70 %',0,1,'BASE_CGC * 4.70/10
   (6,'ESTR','4.70 %',5,1,'BASE_NESTR * 4.70/100'),
   (7,'IRPF','@{PORCENTAJE_IRPF} %',6,1,'BASE_IRPF * PORCENTAJE_IRPF/100');
 
-INSERT INTO `geotree` VALUES (1,NULL,53),
+INSERT INTO `geotree` VALUES 
+  (1,NULL,53),
   (2,53,1),
   (3,53,2),
   (4,53,3),
@@ -3887,7 +3897,8 @@ INSERT INTO `geotree` VALUES (1,NULL,53),
   (52,53,51),
   (53,53,52);
 
-INSERT INTO `geozone` VALUES (1,'ARABA/ALAVA','01',1),
+INSERT INTO `geozone` VALUES 
+  (1,'ARABA/ALAVA','01',1),
   (2,'ALBACETE','02',1),
   (3,'ALICANTE','03',1),
   (4,'ALMERIA','04',1),
@@ -3941,7 +3952,8 @@ INSERT INTO `geozone` VALUES (1,'ARABA/ALAVA','01',1),
   (52,'MELILLA','52',1),
   (53,'ESPAÑA','ES',1);
 
-INSERT INTO `geozone_irpf` VALUES (1,1,'2011-01-01','2011-12-31',0.000),
+INSERT INTO `geozone_irpf` VALUES 
+  (1,1,'2011-01-01','2011-12-31',0.000),
   (2,20,'2011-01-01','2011-12-31',0.000),
   (3,48,'2011-01-01','2011-12-31',0.000),
   (4,1,'2011-01-01','2011-12-31',12230.010),
@@ -4089,7 +4101,8 @@ INSERT INTO `geozone_irpf` VALUES (1,1,'2011-01-01','2011-12-31',0.000),
   (146,31,'2011-01-01','2011-12-31',132750.010),
   (147,31,'2011-01-01','2011-12-31',146000.010);
 
-INSERT INTO `geozone_irpf_descendant` VALUES (1,1,0,0.00),
+INSERT INTO `geozone_irpf_descendant` VALUES 
+  (1,1,0,0.00),
   (2,1,1,0.00),
   (3,1,2,0.00),
   (4,1,3,0.00),
@@ -5215,7 +5228,8 @@ INSERT INTO `geozone_irpf_descendant` VALUES (1,1,0,0.00),
   (1124,147,9,30.50),
   (1125,147,10,30.00);
 
-INSERT INTO `geozone_irpf_handicap` VALUES (1,40,0,6.00),
+INSERT INTO `geozone_irpf_handicap` VALUES 
+  (1,40,0,6.00),
   (2,40,1,11.00),
   (3,40,2,11.00),
   (4,41,0,6.00),
@@ -5285,12 +5299,14 @@ INSERT INTO `geozone_irpf_handicap` VALUES (1,40,0,6.00),
   (68,143,1,2.00),
   (69,143,2,5.00);
 
-INSERT INTO `pay_method` VALUES (1,'EFECTIVO',1),
+INSERT INTO `pay_method` VALUES 
+  (1,'EFECTIVO',1),
   (2,'GIRO',2),
   (3,'CHEQUE',5),
   (4,'TRANSFERENCIA',6);
 
-INSERT INTO `payment_concept` VALUES (1,'ECEMP','PREST. IT A CARGO DE LA EMPRESA',7,1,'DIAS_ENFERMEDAD_COMUN_4_15 * BASE_REGULADORA * 0.60','ECEMP','( COTIZACION_IT == \"MENSUAL\" ? 30 - ( DIAS_MES - DIAS_ENFERMEDAD_COMUN) : DIAS_ENFERMEDAD_COMUN ) * BASE_REGULADORA'),
+INSERT INTO `payment_concept` VALUES 
+  (1,'ECEMP','PREST. IT A CARGO DE LA EMPRESA',7,1,'DIAS_ENFERMEDAD_COMUN_4_15 * BASE_REGULADORA * 0.60','ECEMP','( COTIZACION_IT == \"MENSUAL\" ? 30 - ( DIAS_MES - DIAS_ENFERMEDAD_COMUN) : DIAS_ENFERMEDAD_COMUN ) * BASE_REGULADORA'),
   (2,'ECSS','PREST. IT A CARGO DEL INSS',7,1,'DIAS_ENFERMEDAD_COMUN_16_20 * BASE_REGULADORA * 0.60 + DIAS_ENFERMEDAD_COMUN_21 * BASE_REGULADORA * 0.75','ECSS',NULL),
   (3,'MTNAD','PREST. MATERNIDAD Y/O R.E',7,1,'0','0','( COTIZACION_IT == \"MENSUAL\" ? 30 - ( DIAS_MES - DIAS_MATERNIDAD) : DIAS_MATERNIDAD ) * BASE_REGULADORA'),
   (4,'ATEP','PREST. A.T. y E.P. ',7,1,'DIAS_ENFERMEDAD_PROFESIONAL * BASE_REGULADORA * 0.75','ATEP','( COTIZACION_IT == \"MENSUAL\" ? 30 - ( DIAS_MES - DIAS_ENFERMEDAD_PROFESIONAL) : DIAS_ENFERMEDAD_PROFESIONAL ) * BASE_REGULADORA'),
@@ -5298,11 +5314,14 @@ INSERT INTO `payment_concept` VALUES (1,'ECEMP','PREST. IT A CARGO DE LA EMPRESA
   (6,'FIVAC','Vacaciones no disfrutadas',1,1,'DIAS_VACACIONES_NO_DISFRUTADAS * IMPORTE_DIA_VACACIONES','FIVAC','FIVAC'),
   (7,'INDEM','Indemnización',6,1,'IMPORTE_INDEMNIZACION','0.00','0.00');
 
-INSERT INTO `pcategory` VALUES (1,'GENERICA',NULL,NULL);
+INSERT INTO `pcategory` VALUES 
+  (1,'GENERICA',NULL,NULL);
 
-INSERT INTO `scope` VALUES (1,'GENERAL');
+INSERT INTO `scope` VALUES 
+  (1,'GENERAL');
 
-INSERT INTO `system_cost` VALUES (1,'2010-01-01',NULL,'23.60 %','( BASE_CGC_E=( BASE_CGC + ( isdef BASE_MTNAD ? BASE_MTNAD : 0.00 ) ) ) * 23.60/100',0,'CGC_E'),
+INSERT INTO `system_cost` VALUES 
+  (1,'2010-01-01',NULL,'23.60 %','( BASE_CGC_E=( BASE_CGC + ( isdef BASE_MTNAD ? BASE_MTNAD : 0.00 ) ) ) * 23.60/100',0,'CGC_E'),
   (2,'2010-01-01',NULL,'12.00 %','BASE_ESTR * 12.00/100',4,'EXTR_E'),
   (3,'2010-01-01',NULL,'23.60 %','BASE_NESTR * 23.60/100',5,'NEXTR_E'),
   (4,'2010-01-01',NULL,'@{PORCENTAJE_IT} %','( BASE_CGP_E=( BASE_CGP + ( isdef BASE_MTNAD ? BASE_MTNAD : 0.00 ) ) ) * (PORCENTAJE_IT=( isdef OCUPACION ? OCUPACION_IT[OCUPACION] : TARIFA_IT))/100',1,'IT_E'),
@@ -5314,7 +5333,8 @@ INSERT INTO `system_cost` VALUES (1,'2010-01-01',NULL,'23.60 %','( BASE_CGC_E=( 
   (10,'1970-01-01',NULL,'PREST. IT A CARGO DEL INSS','isdef ECSS ? -ECSS : 0.00',7,'ECSS_E'),
   (11,'1970-01-01',NULL,'PREST. A.T y E.P','isdef ATEP ? -ATEP : 0.00',7,'ATEP_E');
 
-INSERT INTO `system_data` VALUES (1,'BASE_CGC_MIN','[	\"01\":\"TIEMPO_COMPLETO ? 1031.70 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.22 * HORAS_NOMINA\", \"02\":\"TIEMPO_COMPLETO ? 855.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.16 * HORAS_NOMINA\", \"03\":\"TIEMPO_COMPLETO ? 744.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.49 * HORAS_NOMINA\", \"04\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"05\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"06\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"07\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"08\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\", \"09\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\", \"10\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\", \"11\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\"]','2010-01-01','2010-12-31',1,'Bases minimas'),
+INSERT INTO `system_data` VALUES 
+  (1,'BASE_CGC_MIN','[	\"01\":\"TIEMPO_COMPLETO ? 1031.70 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 6.22 * HORAS_NOMINA\", \"02\":\"TIEMPO_COMPLETO ? 855.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 5.16 * HORAS_NOMINA\", \"03\":\"TIEMPO_COMPLETO ? 744.60 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.49 * HORAS_NOMINA\", \"04\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"05\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"06\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"07\":\"TIEMPO_COMPLETO ? 738.90 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) : 4.45 * HORAS_NOMINA\", \"08\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\", \"09\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\", \"10\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\", \"11\":\"TIEMPO_COMPLETO ? 24.63 * DIAS_NOMINA : 4.45 * HORAS_NOMINA\"]','2010-01-01','2010-12-31',1,'Bases minimas'),
   (2,'BASE_CGC_MAX','[	\"01\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30) \", \"02\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"03\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"04\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"05\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"06\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"07\": \"3198.00 * (DIAS_NOMINA == DIAS_MES ? 1 : DIAS_NOMINA/30)\", \"08\": \"106.60 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"09\": \"106.60 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"10\": \"106.60 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\", \"11\": \"106.60 * (DIAS_NOMINA > 30 ? 30 : DIAS_NOMINA)\"]','2010-01-01','2010-12-31',1,'Bases maximas'),
   (3,'IPREM','516.90','2008-01-01','2008-12-31',1,'Indicador Público de Renta de Efectos Múltiples (IPREM) '),
   (4,'IPREM','527.24','2009-01-01','2009-12-31',1,'Indicador Público de Renta de Efectos Múltiples (IPREM) '),
@@ -5336,14 +5356,16 @@ INSERT INTO `system_data` VALUES (1,'BASE_CGC_MIN','[	\"01\":\"TIEMPO_COMPLETO ?
   (20,'OCUPACION_IT',' [\"a\": 0.65, \"b\": 1.00, \"d\": 3.35, \"e\": 1.80, \"f\": 3.35, \"g\": 2.10, \"h\": 1.40]','2010-01-01',NULL,1,'Tarifas de primas para I.T'),
   (21,'OCUPACION_IMS',' [\"a\": 0.35, \"b\": 1.00, \"d\": 3.35, \"e\": 1.50, \"f\": 3.35, \"g\": 1.50, \"h\": 2.20]','2010-01-01',NULL,1,'Tarifas de primas para I.M.S');
 
-INSERT INTO `system_deduction` VALUES (1,0,1,NULL,1,NULL,'2010-01-01',NULL,NULL),
+INSERT INTO `system_deduction` VALUES 
+  (1,0,1,NULL,1,NULL,'2010-01-01',NULL,NULL),
   (2,2,3,NULL,1,NULL,'2010-01-01',NULL,NULL),
   (3,3,4,NULL,1,NULL,'2010-01-01',NULL,NULL),
   (4,4,5,NULL,1,NULL,'2010-01-01',NULL,NULL),
   (5,5,6,NULL,1,NULL,'2010-01-01',NULL,NULL),
   (6,6,7,NULL,1,NULL,'2010-01-01',NULL,NULL);
 
-INSERT INTO `system_payment` VALUES (1,NULL,1,NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
+INSERT INTO `system_payment` VALUES 
+  (1,NULL,1,NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
   (2,NULL,2,NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
   (3,NULL,3,NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
   (4,NULL,4,NULL,0,NULL,NULL,NULL,'2010-01-01',NULL,NULL,0),
@@ -5351,13 +5373,15 @@ INSERT INTO `system_payment` VALUES (1,NULL,1,NULL,0,NULL,NULL,NULL,'2010-01-01'
   (6,NULL,6,NULL,1,NULL,NULL,NULL,'1970-01-01',NULL,NULL,2),
   (7,NULL,7,NULL,1,NULL,NULL,NULL,'1970-01-01',NULL,NULL,2);
 
-INSERT INTO `tax` VALUES (1,'GENERAL',1,18.000,4.000,'2010-07-01',0,0),
+INSERT INTO `tax` VALUES 
+  (1,'GENERAL',1,18.000,4.000,'2010-07-01',0,0),
   (2,'REDUCIDO',1,8.000,1.000,'2010-07-01',0,0),
   (3,'SUPERREDUCIDO',1,4.000,0.500,'2000-01-01',0,0),
   (4,'SIN IVA',1,0.000,0.000,'2000-01-01',0,0),
   (5,'IRPF',2,15.000,0.000,'2000-01-01',0,0);
 
-INSERT INTO `tax_detail` VALUES (1,1,'2000-01-01','2010-06-30',16.000,4.000),
+INSERT INTO `tax_detail` VALUES 
+  (1,1,'2000-01-01','2010-06-30',16.000,4.000),
   (2,2,'2000-01-01','2010-06-30',7.000,1.000);
 
 COMMIT;
