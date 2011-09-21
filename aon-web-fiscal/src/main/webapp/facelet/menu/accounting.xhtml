@@ -100,6 +100,13 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="endPeriodEntries"
+										action="endPeriodEntries_form"
+										actionListener="#{endPeriodEntries.onInit}"
+										value="#{accountingBundle.accounting_en_period_entries_management}" />
+								</aon:div>
+<!-- 
+								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="accountOperatingEntry"
 										action="accountOperatingEntry"
 										actionListener="#{endPeriodEntries.onInitOperatingEntry}"
@@ -117,6 +124,7 @@
 										actionListener="#{endPeriodEntries.onInitOpeningEntry}"
 										value="#{accountingBundle.accounting_opening_entry_module}" />
 								</aon:div>
+ -->
 							</aon:div>
 						</aon:panelGrid>
 

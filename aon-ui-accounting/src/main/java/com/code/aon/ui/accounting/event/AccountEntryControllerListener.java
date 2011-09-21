@@ -96,6 +96,8 @@ public class AccountEntryControllerListener extends ControllerAdapter {
             if (rowCount > 0) {
                 event.getController().getModel().setRowIndex(index);
                 event.getController().onSelect(null);
+            } else {
+            	event.getController().onEditSearch(null);
             }
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e);

@@ -1,5 +1,4 @@
-<faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
 	<application>
@@ -8,7 +7,7 @@
 			<var>accountingBundle</var>
 		</resource-bundle>
 	</application>
-	
+
 	<application>
 		<resource-bundle>
 			<base-name>com.code.aon.ui.accounting.i18n.report</base-name>
@@ -16,11 +15,10 @@
 		</resource-bundle>
 	</application>
 
-	<!--  *************** COLLECTIONS ***************** -->
+	<!-- *************** COLLECTIONS ***************** -->
 	<managed-bean>
 		<managed-bean-name>accountingCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AccountingCollectionsController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.AccountingCollectionsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -46,12 +44,11 @@
 	<!-- **************** ACCOUNTING BOOK ************************** -->
 	<managed-bean>
 		<managed-bean-name>accountingBook</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.report.AccountingBookController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.report.AccountingBookController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
-	<!-- **************** ANNUAL FINANCIAL STATEMENTS   ************************** -->
+
+	<!-- **************** ANNUAL FINANCIAL STATEMENTS ************************** -->
 	<managed-bean>
 		<managed-bean-name>annualFinancialStatements</managed-bean-name>
 		<managed-bean-class>
@@ -106,8 +103,7 @@
 
 	<managed-bean>
 		<managed-bean-name>balanceDetailListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -124,11 +120,10 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ****************  BALANCE DETAIL ************************** -->
+	<!-- **************** BALANCE DETAIL ************************** -->
 	<managed-bean>
 		<managed-bean-name>balanceDetail</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.balance.BalanceDetailController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceDetailController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -170,33 +165,29 @@
 	</managed-bean>
 
 	<!--**************** BALANCE SHEET CONTROLLER ************************** -->
-		<managed-bean>
+	<managed-bean>
 		<managed-bean-name>balanceSheet</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.balance.BalanceSheetController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceSheetController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
-	<!--  ********* BALANCE EXPORTER  ***************** -->
+
+	<!-- ********* BALANCE EXPORTER ***************** -->
 	<managed-bean>
 		<managed-bean-name>balanceExporter</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.balance.BalanceExporter</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceExporter</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<!--  ********* BALANCE IMPORTER  ***************** -->
+	<!-- ********* BALANCE IMPORTER ***************** -->
 	<managed-bean>
 		<managed-bean-name>balanceImporter</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.balance.BalanceImporter</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.balance.BalanceImporter</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- **************** AMORTIZATION ************************** -->
 	<managed-bean>
 		<managed-bean-name>amortization</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.amortization.AmortizationController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.amortization.AmortizationController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -226,8 +217,7 @@
 
 	<managed-bean>
 		<managed-bean-name>amortizationDetailListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -246,17 +236,15 @@
 
 	<managed-bean>
 		<managed-bean-name>amortizationControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.event.AmortizationListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.event.AmortizationListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-	<!--  AMORTIZATION DETAIL CONTROLLER -->
+	<!-- AMORTIZATION DETAIL CONTROLLER -->
 	<managed-bean>
 		<managed-bean-name>amortizationDetail</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.amortization.AmortizationDetailController
-		</managed-bean-class>
+			com.code.aon.ui.accounting.controller.amortization.AmortizationDetailController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -299,11 +287,10 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-		
+
 	<managed-bean>
 		<managed-bean-name>amortizationDetailControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.event.AmortizationDetailListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.event.AmortizationDetailListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
@@ -334,7 +321,7 @@
 			<value>AmortizationDetail_amortization_amortizationType_fixedAssetAccount_id,AmortizationDetail_amortization_fixedAssetAccount_id</value>
 		</managed-property>
 	</managed-bean>
-		
+
 	<!-- **************** AMORTIZATION TYPE ************************** -->
 	<managed-bean>
 		<managed-bean-name>amortizationType</managed-bean-name>
@@ -354,26 +341,23 @@
 		</managed-property>
 	</managed-bean>
 
-	<!--  ********* AMORTIZATION TYPE EXPORTER  ***************** -->
+	<!-- ********* AMORTIZATION TYPE EXPORTER ***************** -->
 	<managed-bean>
 		<managed-bean-name>amortizationTypeExporter</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.amortization.AmortizationTypeExporter</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.amortization.AmortizationTypeExporter</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<!--  ********* AMORTIZATION IMPORTER  ***************** -->
+	<!-- ********* AMORTIZATION IMPORTER ***************** -->
 	<managed-bean>
 		<managed-bean-name>amortizationTypeImporter</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.amortization.AmortizationTypeImporter</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.amortization.AmortizationTypeImporter</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- **************** END PERIOD ENTRIES ************************** -->
 	<managed-bean>
 		<managed-bean-name>endPeriodEntries</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.EndPeriodEntriesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.entry.EndPeriodEntriesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -415,8 +399,7 @@
 	<!-- **************** ACCOUNT ENTRY ************************** -->
 	<managed-bean>
 		<managed-bean-name>accountEntry</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.AccountEntryController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.entry.AccountEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -441,14 +424,12 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountEntryControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.event.AccountEntryControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.event.AccountEntryControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountEntryDetailListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -465,11 +446,10 @@
 		</managed-property>
 	</managed-bean>
 
-	<!--  ACCOUNT ENTRY DETAIL CONTROLLER -->
+	<!-- ACCOUNT ENTRY DETAIL CONTROLLER -->
 	<managed-bean>
 		<managed-bean-name>accountEntryDetail</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.AccountEntryDetailController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.entry.AccountEntryDetailController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -533,8 +513,7 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>accountEntryDetailControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.event.AccountEntryDetailControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.event.AccountEntryDetailControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
@@ -542,72 +521,63 @@
 	<!-- ********** ACCOUNT INVOICE CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>invoiceEntry</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.InvoiceEntryController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.entry.InvoiceEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** ACCOUNT FINANCE CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>financeEntry</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.FinanceEntryController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.entry.FinanceEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** ACCOUNT FINANCE TRACKING CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>financeTrackingEntry</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.FinanceTrackingEntryController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.entry.FinanceTrackingEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** ACCOUNT EXPENSE CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>expenseEntry</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.ExpenseEntryController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.entry.ExpenseEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** ACCOUNT SALARY CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>salaryEntry</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.SalaryEntryController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.entry.SalaryEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** ACCOUNT SOCIAL INSURANCE CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>socialInsuranceEntry</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.SocialInsuranceEntryController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.entry.SocialInsuranceEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** ACCOUNT LOAN CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>loanEntry</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.LoanEntryController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.entry.LoanEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** ACCOUNT LOAN FEE CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>loanFeeEntry</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.entry.LoanFeeEntryController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.entry.LoanFeeEntryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** JOURNAL BOOK REPORT CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>journalReport</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.report.JournalReportController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.report.JournalReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -622,8 +592,7 @@
 	<!-- ********** LEDGER REPORT CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>ledgerReport</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.report.LedgerReportController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.report.LedgerReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -638,8 +607,7 @@
 	<!-- ********** PROFIT AND LOSS REPORT CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>profitAndLossReport</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.report.ProfitAndLossReportController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.report.ProfitAndLossReportController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -654,24 +622,21 @@
 	<!-- ********** ACCOUNT REGENERATOR CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>accountRegenerator</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AccountRegeneratorController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.AccountRegeneratorController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** VAT REGENERATOR CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>vatRegenerator</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.VatRegeneratorController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.VatRegeneratorController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!--  *************** ACCOUNT APP PARAMS ***************** -->
+	<!-- *************** ACCOUNT APP PARAMS ***************** -->
 	<managed-bean>
 		<managed-bean-name>accAppParams</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AccountAppParamsController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.AccountAppParamsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>defaultParameters</property-name>
@@ -765,24 +730,21 @@
 	<!-- ********** TRIAL BALANCE REPORT CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>trialBalance</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.report.TrialBalanceController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.report.TrialBalanceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** OFFICIAL TRIAL BALANCE REPORT CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>officialTrialBalance</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.report.TrialBalanceController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.report.TrialBalanceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- **************** STATEMENT ACCOUNT ************************** -->
 	<managed-bean>
 		<managed-bean-name>statement</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.report.StatementController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.report.StatementController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -806,8 +768,7 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>statementAccountEntryDetailListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -866,24 +827,21 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>statementDetailFilterListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.event.StatementDetailListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.event.StatementDetailListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
-		<!-- ********** ACCOUNT CHANGE CONTROLLER ********* -->
+
+	<!-- ********** ACCOUNT CHANGE CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>accountChange</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AccountChangeController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.AccountChangeController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ********** ACCOUNT CHECK CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>accountCheck</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.accounting.controller.AccountCheckController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.accounting.controller.AccountCheckController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -926,9 +884,9 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-	<!--  ****************************************** -->
-	<!--  ******** Navigation Rules **************** -->
-	<!--  ****************************************** -->
+	<!-- ****************************************** -->
+	<!-- ******** Navigation Rules **************** -->
+	<!-- ****************************************** -->
 
 	<!-- **************** ACCOUNT BOOK ************************** -->
 	<navigation-rule>
@@ -938,7 +896,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- **************** ANNUAL FINANCIAL STATEMENTS  ************************** -->
+	<!-- **************** ANNUAL FINANCIAL STATEMENTS ************************** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>annualFinancialStatements_search</from-outcome>
@@ -957,33 +915,30 @@
 			<from-outcome>balance_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/list.xhtml</to-view-id>
 		</navigation-case>
-	   	
-	    <navigation-case>
+
+		<navigation-case>
 			<from-outcome>balance_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
-	
+
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>balance_sheet_search</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/balance/sheet/search.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/sheet/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>balance_sheet_list</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/balance/sheet/list.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/sheet/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- ****************** BALANCE EXPORTER **************** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>balance_exporter</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/balance/exporter/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/exporter/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -991,8 +946,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>balance_importer</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/balance/importer/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/balance/importer/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1008,20 +962,19 @@
 			<from-outcome>loan_list</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/loan/list.xhtml</to-view-id>
 		</navigation-case>
-	   	
-	    <navigation-case>
+
+		<navigation-case>
 			<from-outcome>loan_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/accounting/facelet/loan/search.xhtml</to-view-id>
 		</navigation-case>
-	
+
 	</navigation-rule>
 
 	<!-- ****************** AUT CONCEPT **************** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>autConcept</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/autConcept/grid.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/autConcept/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1029,18 +982,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>amortization_form</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/amortization/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/amortization/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>amortization_list</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/amortization/list.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/amortization/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>amortization_search</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/amortization/search.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/amortization/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1048,13 +998,11 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>periodAmortization_search</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/amortization/period/search.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/amortization/period/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>periodAmortization_list</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/amortization/period/list.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/amortization/period/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1062,18 +1010,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>amortizationType_form</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/amortization/type/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/amortization/type/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>amortizationType_list</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/amortization/type/list.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/amortization/type/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>amortizationType_search</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/amortization/type/search.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/amortization/type/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1081,8 +1026,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>amortization_exporter</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/amortization/exporter/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/amortization/exporter/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1090,8 +1034,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>amortization_importer</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/amortization/importer/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/amortization/importer/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1125,61 +1068,56 @@
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>account_invoice_entry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/invoice/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/invoice/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>account_finance_entry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/finance/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/finance/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>account_finance_tracking_entry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/finance/tracking/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/finance/tracking/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>account_expense_entry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/expense/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/expense/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>account_salary_entry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/salary/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/salary/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>account_social_insurance_entry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/social_insurance/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/social_insurance/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>endPeriodEntries_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/endPeriod/form.xhtml</to-view-id>
+		</navigation-case>
+<!-- 
+		<navigation-case>
 			<from-outcome>accountOpeningEntry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/opening/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/opening/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>accountClosingEntry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/closing/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/closing/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>accountOperatingEntry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/operating/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/operating/form.xhtml</to-view-id>
 		</navigation-case>
+ -->
 	</navigation-rule>
 	<!-- **************** LOAN ENTRY ********************* -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>account_loan_fee_entry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/loan/fee/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/loan/fee/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>account_loan_entry</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/entry/loan/open/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/entry/loan/open/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1187,17 +1125,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>regenerateAccount</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/util/regenerateAccount.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/util/regenerateAccount.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- **************** REGENERATE VAT SUMMARY ********************* -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>regenerateVat</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/util/regenerateVat.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/util/regenerateVat.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1205,65 +1141,55 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>accountLevelChange</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/util/levelChange/search.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/util/levelChange/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- **************** ACCOUNT STATEMENT ************************** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>account_statement_search</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/statement/search.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/statement/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>account_statement_account_list</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/statement/accountList.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/statement/accountList.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>account_statement_list</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/statement/statementList.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/statement/statementList.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- **************** TRIAL BALANCE ************************** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>trialBalance_search</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/trialbalance/search.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/trialbalance/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>trialBalance_list</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/trialbalance/list.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/trialbalance/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- **************** OFFICIAL TRIAL BALANCE ************************** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>officialTrialBalance_search</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/officialtrialbalance/search.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/officialtrialbalance/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>officialTrialBalance_list</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/officialtrialbalance/list.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/officialtrialbalance/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	<!-- ************ PROFIT AND LOSS BALANCE *******************	-->
+	<!-- ************ PROFIT AND LOSS BALANCE ******************* -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>profit_and_loss_list</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/profitAndLoss/list.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/profitAndLoss/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>profit_and_loss_search</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/profitAndLoss/search.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/profitAndLoss/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1289,12 +1215,12 @@
 			<to-view-id>/com/code/aon/ui/accounting/facelet/ledger/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- **************** ACCOUNT CHANGE ************************** -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>accountChange_form</from-outcome>
-		<to-view-id>/com/code/aon/ui/accounting/facelet/accountChange/form.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/accountChange/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -1309,7 +1235,7 @@
 			<to-view-id>/com/code/aon/ui/accounting/facelet/check/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- **************** REPORTS LAUNCHER ************************** -->
 	<navigation-rule>
 		<navigation-case>
@@ -1321,9 +1247,8 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>reportAttach_form</from-outcome>
-			<to-view-id>
-				/com/code/aon/ui/accounting/facelet/reports/grid.xhtml</to-view-id>
+			<to-view-id>/com/code/aon/ui/accounting/facelet/reports/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-		
+
 </faces-config>
