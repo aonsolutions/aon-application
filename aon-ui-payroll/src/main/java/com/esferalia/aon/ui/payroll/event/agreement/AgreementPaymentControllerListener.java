@@ -17,7 +17,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.agreement.AgreementPaymentController;
 
 public class AgreementPaymentControllerListener extends ControllerAdapter{
-
+	
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		AgreementPaymentController controller = (AgreementPaymentController) event.getController();

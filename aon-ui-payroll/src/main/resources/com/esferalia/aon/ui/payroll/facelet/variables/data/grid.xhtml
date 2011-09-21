@@ -10,6 +10,53 @@
 	
 	<aon:div id="#{controller.beanName}VarContainer"  
 		rendered="#{!controller.new and controller.variablesModel!=null}">
+
+		<aon:div styleClass="aon-panelGrid-search" 
+			style="width: 100%; margin-bottom:10px; padding:10px 0 10px 10px; ">
+			<aon:panelGrid columns="3" 
+				columnClasses="aon-panelGrid-odd aon-width-100
+							,aon-panelGrid-even aon-width-auto
+							,aon-panelGrid-even aon-width-auto">
+				
+				<aon:outputText value="#{payrollBundle.payroll_data_filter}" styleClass="aon-bold" />
+				
+				<aon:selectOneRadio value="#{controller.searchCurrentVariables}" style="display:inline;">
+					<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
+					<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
+					<a4j:support event="onclick" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true" >
+						<aon:actionListener method="#{controller.reloadData}" />
+					</a4j:support>
+				</aon:selectOneRadio>
+				
+				<aon:panelGroup >
+					<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
+						value="#{bundle.aon_end_date}:" />
+					<aon:selectOneMenu 
+						styleClass="aon-margin-right"
+						disabled="#{controller.searchCurrentVariables}"
+						value="#{controller.inactiveLastPeriod}" >
+						<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
+						<a4j:support event="onchange" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true" >
+							<aon:actionListener method="#{controller.onChangeLastPeriod}" />
+							<aon:actionListener method="#{controller.reloadData}" />
+						</a4j:support>
+					</aon:selectOneMenu>
+					<aon:selectInputDate  
+						disabled="#{!(!controller.searchCurrentVariables and controller.inactiveLastPeriod=='MANUAL')}"
+						value="#{controller.inactiveDate}"
+						inputSize="10" renderAsPopup="true" enableManualInput="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}">
+						<a4j:support event="onchanged" reRender="#{controller.beanName}VarContainer" ignoreDupResponses="true">
+							<aon:actionListener method="#{controller.reloadData}" />
+						</a4j:support>
+					</aon:selectInputDate>
+				</aon:panelGroup>
+			
+			</aon:panelGrid>
+			
+		</aon:div>	
+	
 		<aon:panelGrid columns="1" style="width: 100%; margin-top:10px;"
 			columnClasses="aon-panelGrid-even  aon-width-auto">
 			<aon:div>

@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -61,7 +60,6 @@ import com.esferalia.aon.payroll.enumeration.ContractDuration;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
-import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
@@ -90,31 +88,6 @@ public class ContractController extends VariablesAbstractController {
 	private ContractCode tc2Code;
 	
 	private boolean modalPanelVisible;
-	
-	private Date inactiveDate;
-	private InactiveLastPeriod inactiveLastPeriod;
-	private boolean searchCurrent;
-	
-	public boolean isSearchCurrent() {
-		return searchCurrent;
-	}
-	public void setSearchCurrent(boolean searchCurrent) {
-		this.searchCurrent = searchCurrent;
-	}
-	
-	public InactiveLastPeriod getInactiveLastPeriod() {
-		return inactiveLastPeriod;
-	}
-	public void setInactiveLastPeriod(InactiveLastPeriod inactiveLastPeriod) {
-		this.inactiveLastPeriod = inactiveLastPeriod;
-	}
-
-	public Date getInactiveDate() {
-		return inactiveDate;
-	}
-	public void setInactiveDate(Date inactiveDate) {
-		this.inactiveDate = inactiveDate;
-	}
 	
 	public boolean isModalPanelVisible() {
 		return modalPanelVisible;
@@ -616,6 +589,10 @@ public class ContractController extends VariablesAbstractController {
 		return list;
 	}
 	
+	
+//	 * ************************************
+//	 * 			VARIABLES (contractData)		
+//	 * ************************************	
 	@Override
 	protected void initializeVariables(ActionEvent event) {
 		try {
@@ -626,7 +603,7 @@ public class ContractController extends VariablesAbstractController {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
 			criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME));
-			if(isSearchCurrent()){
+			if(isSearchCurrentVariables()){
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), new Date());
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
@@ -685,35 +662,11 @@ public class ContractController extends VariablesAbstractController {
 		return false;
 	}
 	
-	public void onChangeLastPeriod( ActionEvent event ) {
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.DAY_OF_MONTH, 1);
-		if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
-			cal.add(Calendar.MONTH, -1);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
-			cal.add(Calendar.MONTH, -3);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
-			cal.add(Calendar.MONTH, -6);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
-			cal.add(Calendar.YEAR, -1);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
-			cal = null;
-		}
-		setInactiveDate(cal!=null?cal.getTime():null);
-	}
-	
-	public void onChangeInactiveDate( ActionEvent event ) {
-		if(getInactiveDate()==null && getInactiveLastPeriod()!=InactiveLastPeriod.ALL){
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.MONTH, -1);
-			setInactiveDate(cal!=null?cal.getTime():null);
-		}
-	}
-	
 	public void reloadData( ActionEvent event ) {
 		initializeVariables(event);
 	}
 	
+	@Override
 	public List<?> expressionContext(Object suggest) {
 		// CONTRACT variables
 		try {
@@ -765,6 +718,15 @@ public class ContractController extends VariablesAbstractController {
 			LOGGER.error("error on expressionContext");
 			return null;
 		} 
+	}
+	@Override
+	protected IManagerBean getVariableManagerBean() throws ManagerBeanException {
+		return BeanManager.getManagerBean(ContractData.class);
+	}
+	@Override
+	protected void resetVariable() {
+		setData(new ContractData());
+		((ContractData)getData()).setContract((Contract) getTo());
 	}
 	
 }

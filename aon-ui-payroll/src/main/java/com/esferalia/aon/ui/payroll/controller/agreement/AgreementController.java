@@ -1,7 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.agreement;
 
 
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
@@ -9,10 +8,8 @@ import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,24 +20,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementData;
-import com.esferalia.aon.payroll.AgreementLevel;
-import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.payroll.enumeration.CNO;
-import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
-import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
-import com.esferalia.aon.payroll.enumeration.OccupationType;
-import com.esferalia.aon.payroll.enumeration.QuoteGroup;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.VariablesAbstractController;
 
 public class AgreementController extends VariablesAbstractController {
@@ -49,31 +35,6 @@ public class AgreementController extends VariablesAbstractController {
 		
 	private boolean modalPanelVisible;
 	
-	private Date inactiveDate;
-	private InactiveLastPeriod inactiveLastPeriod;
-	private boolean searchCurrent;
-	
-	public boolean isSearchCurrent() {
-		return searchCurrent;
-	}
-	public void setSearchCurrent(boolean searchCurrent) {
-		this.searchCurrent = searchCurrent;
-	}
-	
-	public InactiveLastPeriod getInactiveLastPeriod() {
-		return inactiveLastPeriod;
-	}
-	public void setInactiveLastPeriod(InactiveLastPeriod inactiveLastPeriod) {
-		this.inactiveLastPeriod = inactiveLastPeriod;
-	}
-
-	public Date getInactiveDate() {
-		return inactiveDate;
-	}
-	public void setInactiveDate(Date inactiveDate) {
-		this.inactiveDate = inactiveDate;
-	}
-	
 	public boolean isModalPanelVisible() {
 		return modalPanelVisible;
 	}
@@ -81,123 +42,8 @@ public class AgreementController extends VariablesAbstractController {
 		this.modalPanelVisible = modalPanelVisible;
 	}
 	
-	
 	public void onShowVariables( ActionEvent event ) {
-//		try {
-//			Agreement to = (Agreement) getTo();
-//			IController c = FormUtil.getController(IPayrollConstants.CONTRACT_DATA_CONTROLLER);
-//			c.onEditSearch(event);
-//			c.getCriteria().addEqualExpression(c.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), to.getId());
-//			c.onSearch(event);
-//			this.initializeVariables(event);
-//		} catch (ManagerBeanException e) {
-//			String msg = "Imposible mostrar las variables del contrato (" + e.getMessage() +")";
-//			LOGGER.error(msg);
-//			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg,e);
-//		}						
 		this.initializeVariables(event);
-	}
-	
-	@Override
-	public void onSaveVariable(ActionEvent event) {
-		handleDataExpression();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(AgreementData.class);
-			AgreementData d = new AgreementData();
-			d.setAgreement((Agreement) getTo());
-			d.setStartDate(getData().getStartDate());
-			d.setEndDate(getData().getEndDate());
-			d.setName(getData().getName());
-			d.setExpression(getData().getExpression());
-			bean.insertOrUpdate(d);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible guardar la variable del convenio (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-		initEditor();
-		initializeVariables(event);
-	}
-	@Override
-	public void onResetVariable(ActionEvent event) {
-		setData(new ContractData());
-//		IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
-//		getData().setContract((Contract) master.getTo());
-	}
-	@Override
-	public void onSelectVariable(ActionEvent event) {
-		AgreementData aData = (AgreementData) getVariablesModel().getRowData();
-		ContractData cData = new ContractData();
-		cData.setId(aData.getId());
-		cData.setStartDate(aData.getStartDate());
-		cData.setEndDate(aData.getEndDate());
-		cData.setName(aData.getName());
-		cData.setExpression(aData.getExpression());
-		setData(cData);
-		handleEditorExpression(getData().getExpression());
-	}
-	@Override
-	public void onCancelVariable(ActionEvent event) {
-		initEditor();
-	}
-	@Override
-	public void onRemoveVariable(ActionEvent event) {
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(AgreementData.class);
-			AgreementData data = (AgreementData) bean.get(getData().getId());
-			bean.remove(data);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible borrar la variable del convenio (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-		initEditor();
-		initializeVariables(event);
-	}
-	private void handleEditorExpression(String expression) {
-		if( StringUtils.startsWith(expression, "\"") && StringUtils.endsWith(expression, "\"")){
-			expression = expression.substring(1, expression.length()-1);
-		}
-		if(getData().getVariable()==ContractVariables.CNO){
-			setCno(CNO.getCnoByValue(expression));
-		}else if(getData().getVariable()==ContractVariables.TC2){
-			setContractCode(ContractCode.getContractCodeByValue(expression));
-		}else if(getData().getVariable()==ContractVariables.CATEGORY){
-			;
-		}else if(getData().getVariable()==ContractVariables.QUOTE_GROUP){
-			setQuoteGroup(QuoteGroup.getQuoteGroupByValue(expression));
-		}else if(getData().getVariable()==ContractVariables.OCCUPATION){
-			setOccupationType(OccupationType.getOccupationTypeByValue(expression));
-		}else if(getData().getVariable()==ContractVariables.QUOTE_IT){
-			;
-		}
-		
-	}
-	
-	private void initEditor(){
-		setData(null);
-		setCno(null);
-		setQuoteGroup(null);
-		setContractCode(null);
-	}
-	
-	private void handleDataExpression() {
-		if(getData().getVariable()==ContractVariables.CNO){
-			getData().setExpression("\""+String.valueOf(getCno().ordinal())+"\"");
-		}else if(getData().getVariable()==ContractVariables.TC2){
-			getData().setExpression("\""+getContractCode().getValue()+"\"");
-		}else if(getData().getVariable()==ContractVariables.CATEGORY){
-			;
-		}else if(getData().getVariable()==ContractVariables.QUOTE_GROUP){
-			getData().setExpression("\""+getQuoteGroup().getValue()+"\"");
-		}else if(getData().getVariable()==ContractVariables.OCCUPATION){
-			getData().setExpression("\""+getOccupationType().getValue()+"\"");
-		}else if(getData().getVariable()==ContractVariables.QUOTE_IT){
-			;
-		}
 	}
 	
 	@Override
@@ -210,7 +56,7 @@ public class AgreementController extends VariablesAbstractController {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_AGREEMENT_ID), agreement.getId());
 			criteria.addOrder(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_NAME));
-			if(isSearchCurrent()){
+			if(isSearchCurrentVariables()){
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_END_DATE), new Date());
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_END_DATE));
 				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
@@ -229,68 +75,12 @@ public class AgreementController extends VariablesAbstractController {
 					dataList.add((AgreementData) to);
 				}
 			}
-//			bean = BeanManager.getManagerBean(AgreementLevelData.class);
-//			String label = bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID);
-//			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
-//				AgreementLevel level = contract.getAgreementLevelCategory().getLevel();
-//				criteria = new Criteria();
-//				criteria.addEqualExpression(label, level.getId());
-//				criteria.addOrder(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_NAME));
-//				list = bean.getList(criteria);
-//				if(!list.isEmpty()){
-//					for(ITransferObject to: list){
-//						AgreementLevelData d = (AgreementLevelData) to;
-//						if(!existVariable(d, dataList)){
-//							ContractData data = new ContractData();
-//							data.setContract((Contract) this.getTo());
-//							data.setName(d.getName());
-//							data.setStartDate(d.getStartDate());
-//							data.setEndDate(d.getEndDate());
-//							data.setExpression(d.getExpression());
-//							dataList.add(data);
-//						}
-//					}
-//				}
-//			}
 			setVariablesModel(new ListDataModel(dataList));
 		} catch (ManagerBeanException e) {
-			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
+			String msg = "Imposible cargar las variables del convenio (" + e.getMessage() +")";
 			LOGGER.error(msg);
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
-		}
-	}
-	private boolean existVariable(AgreementLevelData d, List<ContractData> dataList) {
-		for(ContractData data: dataList){
-			if(data.getName().equals(d.getName())){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public void onChangeLastPeriod( ActionEvent event ) {
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.DAY_OF_MONTH, 1);
-		if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
-			cal.add(Calendar.MONTH, -1);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
-			cal.add(Calendar.MONTH, -3);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
-			cal.add(Calendar.MONTH, -6);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
-			cal.add(Calendar.YEAR, -1);
-		} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
-			cal = null;
-		}
-		setInactiveDate(cal!=null?cal.getTime():null);
-	}
-	
-	public void onChangeInactiveDate( ActionEvent event ) {
-		if(getInactiveDate()==null && getInactiveLastPeriod()!=InactiveLastPeriod.ALL){
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.MONTH, -1);
-			setInactiveDate(cal!=null?cal.getTime():null);
 		}
 	}
 	
@@ -298,6 +88,7 @@ public class AgreementController extends VariablesAbstractController {
 		initializeVariables(event);
 	}
 	
+	@Override
 	public List<?> expressionContext(Object suggest) {
 		// CONTRACT variables
 		try {
@@ -351,13 +142,14 @@ public class AgreementController extends VariablesAbstractController {
 		} 
 	}
 	
-	private DataModel variablesModel;
-	
-	public DataModel getVariablesModel() {
-		return variablesModel;
+	@Override
+	protected IManagerBean getVariableManagerBean() throws ManagerBeanException {
+		return BeanManager.getManagerBean(AgreementData.class);
 	}
-	public void setVariablesModel(DataModel variablesModel) {
-		this.variablesModel = variablesModel;
+	@Override
+	protected void resetVariable() {
+		setData(new AgreementData());
+		((AgreementData)getData()).setAgreement((Agreement) getTo());
 	}
 	
 }

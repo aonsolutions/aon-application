@@ -32,6 +32,7 @@ public interface IPayrollConstants {
 	String AGREEMENT_CONTROLLER_NAME = "agreement";
 	String AGREEMENT_EXTRA_CONTROLLER_NAME = "agreementExtra";
 	String AGREEMENT_LEVEL_CONTROLLER_NAME = "agreementLevel";
+	String AGREEMENT_PAYMENT_CONTROLLER_NAME = "agreementPayment";
 	String AGREEMENT_TREE_CONTROLLER_NAME = "agreementTree";
 	String CERTIFICATE_FILE_WIZARD = "certifica2FileWizard";
 	String CONTRACT_CONTROLLER = "contract";

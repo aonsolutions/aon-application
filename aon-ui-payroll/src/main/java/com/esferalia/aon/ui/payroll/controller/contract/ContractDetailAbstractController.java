@@ -139,4 +139,22 @@ public abstract class ContractDetailAbstractController extends VariablesAbstract
 	protected abstract void initialiceConcepts();
 	protected abstract void completeCiteria();
 	
+	protected List<ITransferObject> existingContractData(String name, Contract contract) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), name);
+		return bean.getList(criteria);
+	}
+	
+	@Override
+	protected IManagerBean getVariableManagerBean() throws ManagerBeanException {
+		return BeanManager.getManagerBean(ContractData.class);
+	}
+	@Override
+	protected void resetVariable() {
+		setData(new ContractData());
+		((ContractData)getData()).setContract((Contract) getTo());
+	}
+	
 }

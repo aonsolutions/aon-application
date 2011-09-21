@@ -14,7 +14,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
@@ -22,17 +21,12 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.esferalia.aon.payroll.enumeration.CNO;
-import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
-import com.esferalia.aon.payroll.enumeration.OccupationType;
-import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 
 @Entity
 @Table(name="agreement_data")
-public class AgreementData implements ITransferObject, IExpression {
+public class AgreementData extends AbstractVariableData implements ITransferObject, IExpression {
 	
 	private static final long serialVersionUID = -1985562229267143435L;
 
@@ -143,40 +137,6 @@ public class AgreementData implements ITransferObject, IExpression {
 	@Transient
 	public boolean isReadOnly() {
 		return false;
-	}
-	
-
-	@Transient
-	public ContractVariables getVariable(){
-		return ContractVariables.getVariable(getName());
-	}
-	
-	@Transient
-	public Enum<?> getVariableEnum(){
-		if(getName().equals(ContractVariables.CNO.getName())){
-			return CNO.getCnoByValue(handleEditorExpression(getExpression()));
-		} else if(getName().equals(ContractVariables.TC2.getName())){
-			return ContractCode.getContractCodeByValue(handleEditorExpression(getExpression()));
-		} else if(getName().equals(ContractVariables.QUOTE_GROUP.getName())){
-			return QuoteGroup.getQuoteGroupByValue(handleEditorExpression(getExpression()));
-		} else if(getName().equals(ContractVariables.OCCUPATION.getName())){
-			return OccupationType.getOccupationTypeByValue(handleEditorExpression(getExpression()));
-		} else if(getName().equals(ContractVariables.QUOTE_IT.getName())){
-			return null;
-		}
-		return null;
-	}
-	
-	private String handleEditorExpression(String expression) {
-		if( StringUtils.startsWith(expression, "\"") && StringUtils.endsWith(expression, "\"")){
-			return expression = expression.substring(1, expression.length()-1);
-		}
-		return null;
-	}
-	
-	@Transient
-	public Double getDoubleExpression(){
-		return Double.valueOf(getExpression());
 	}
 	
 }

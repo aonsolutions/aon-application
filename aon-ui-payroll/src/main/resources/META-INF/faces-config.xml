@@ -263,7 +263,7 @@
 			<value>Contract_workPlace_enterprise_registry_name,Contract_person_firstSurname,Contract_person_registry_name</value>
 		</managed-property>
 		<managed-property>
-			<property-name>searchCurrent</property-name>
+			<property-name>searchCurrentVariables</property-name>
 			<value>true</value>
 		</managed-property>
 		<managed-property>
@@ -1331,12 +1331,14 @@
 			<value>Agreement_description</value>
 		</managed-property>
 		<managed-property>
+			<property-name>searchCurrentVariables</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{agreementSalaryTable}</value>
-				<value>#{agreementLevelListener}</value>
-				<value>#{agreementPaymentLinesListener}</value>
 				<value>#{agreementExtraListener}</value>
 				<value>#{agreementTreeControlerListener}</value>
 			</list-entries>
@@ -1347,29 +1349,11 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.agreement.AgreementTreeControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<!-- ************ AGREEMENT LEVEL LISTENER ************** -->
-	<managed-bean>
-		<managed-bean-name>agreementLevelListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>agreementLevel</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>AgreementLevel_agreement_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
+	
 	<!-- ************ AGREEMENT LEVEL ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementLevel</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.agreement.AgreementLevelController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -1380,25 +1364,12 @@
 			<value>agreementLevel</value>
 		</managed-property>
 		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>agreement</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>agreement.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>AgreementLevel_description</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchCurrentVariables</property-name>
+			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1556,25 +1527,7 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.agreement.AgreementLevelDataSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<!-- ************ AGREEMENT PAYMENT LINES LISTENER ************** -->
-	<managed-bean>
-		<managed-bean-name>agreementPaymentLinesListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>agreementPayment</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>AgreementPayment_agreement_id</key>
-					<value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
+	
 	<!-- ************ AGREEMENT PAYMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementPayment</managed-bean-name>
@@ -1589,21 +1542,8 @@
 			<value>agreementPayment</value>
 		</managed-property>
 		<managed-property>
-			<property-name>cascadeDelete</property-name>
+			<property-name>searchCurrentVariables</property-name>
 			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>agreement</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>agreement.id</value>
-				</map-entry>
-			</map-entries>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

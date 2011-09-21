@@ -46,8 +46,12 @@
 				
 
 				<aon:panelTab id="levelData" disabled="#{agreementLevel.model==null}"
+					actionListener="#{agreementLevel.onShowVariables}"
 					label="#{payrollBundle.payroll_agreement_data}">
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementLevelData.xhtml" />
+					<ui:include 
+						src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
+						<ui:param name="controller" value="#{agreementLevel}" />
+					</ui:include>
 				</aon:panelTab>
 
 				<aon:panelTab id="category" label="#{payrollBundle.payroll_agreementLevel_category}">

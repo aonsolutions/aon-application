@@ -27,10 +27,12 @@ import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
 
 @Entity
 @Table(name="agreement_level_data")
-public class AgreementLevelData implements ITransferObject {
+public class AgreementLevelData extends AbstractVariableData implements ITransferObject, IExpression  {
 
 	private static final long serialVersionUID = -530558961144928580L;
 	
@@ -163,6 +165,18 @@ public class AgreementLevelData implements ITransferObject {
 	@Transient
 	public Double getDoubleExpression(){
 		return Double.valueOf(getExpression());
+	}
+	
+	@Override
+	@Transient
+	public ExpressionScope getScope() {
+		return ExpressionScope.AGREEMENT;
+	}
+
+	@Override
+	@Transient
+	public boolean isReadOnly() {
+		return false;
 	}
 	
 }

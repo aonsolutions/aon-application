@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,34 +26,54 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.FormUtil;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.AbstractVariableData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
-import com.esferalia.aon.payroll.enumeration.VariableType;
-import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.PayrollVariablesCollectionsController;
 
 public abstract class VariablesAbstractController extends BasicController {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(VariablesAbstractController.class.getName());
 	
-	private ContractData data;
+	private AbstractVariableData data;
 	private DataModel variablesModel;
 	private DataModel undefinedVariablesModel;
 	
-	public ContractData getData() {
+	private Date inactiveDate;
+	private InactiveLastPeriod inactiveLastPeriod;
+	private boolean searchCurrentVariables;
+	
+	public boolean isSearchCurrentVariables() {
+		return searchCurrentVariables;
+	}
+	public void setSearchCurrentVariables(boolean searchCurrentVariables) {
+		this.searchCurrentVariables = searchCurrentVariables;
+	}
+	public InactiveLastPeriod getInactiveLastPeriod() {
+		return inactiveLastPeriod;
+	}
+	public void setInactiveLastPeriod(InactiveLastPeriod inactiveLastPeriod) {
+		this.inactiveLastPeriod = inactiveLastPeriod;
+	}
+
+	public Date getInactiveDate() {
+		return inactiveDate;
+	}
+	public void setInactiveDate(Date inactiveDate) {
+		this.inactiveDate = inactiveDate;
+	}
+	
+	public AbstractVariableData getData() {
 		return data;
 	}
-	public void setData(ContractData data) {
+	public void setData(AbstractVariableData data) {
 		this.data = data;
 	}
 	public DataModel getVariablesModel() {
@@ -68,29 +89,18 @@ public abstract class VariablesAbstractController extends BasicController {
 		this.undefinedVariablesModel = undefinedVariablesModel;
 	}
 	
-	protected List<ITransferObject> existingContractData(String name, Contract contract) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), name);
-		return bean.getList(criteria);
-	}
-	
 	public void onResetVariable(ActionEvent event) {
-		setData(new ContractData());
-		IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
-		getData().setContract((Contract) master.getTo());
+		resetVariable();
 	}
 	public void onSelectVariable(ActionEvent event) {
-		setData((ContractData) getVariablesModel().getRowData());
+		setData((AbstractVariableData) getVariablesModel().getRowData());
 		handleEditorExpression(getData().getExpression());
 	}
 	
 	public void onSaveVariable(ActionEvent event) {
 		handleDataExpression();
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			bean.insertOrUpdate(getData());
+			getVariableManagerBean().insertOrUpdate((ITransferObject) getData());
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible guardar la variable del contrato (" + e.getMessage() +")";
 			LOGGER.error(msg);
@@ -105,8 +115,7 @@ public abstract class VariablesAbstractController extends BasicController {
 	}
 	public void onRemoveVariable(ActionEvent event) {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			bean.remove(getData());
+			getVariableManagerBean().remove((ITransferObject) getData());
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible borrar la variable del contrato (" + e.getMessage() +")";
 			LOGGER.error(msg);
@@ -117,21 +126,21 @@ public abstract class VariablesAbstractController extends BasicController {
 		initializeVariables(event);
 	}
 	public void onAddUndefinedVariable(ActionEvent event) {
-		setData((ContractData) getUndefinedVariablesModel().getRowData());
+		setData((AbstractVariableData) getUndefinedVariablesModel().getRowData());
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getNewVariableList(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		if(getVariablesModel()!=null){
-			for(ContractData data: (List<ContractData>)getVariablesModel().getWrappedData()){
+			for(AbstractVariableData data: (List<AbstractVariableData>)getVariablesModel().getWrappedData()){
 				String name = data.getName();
 				SelectItem item = new SelectItem(name, name);
 				list.add(item);
 			}
 		}
 		if(getUndefinedVariablesModel()!=null){
-			for(ContractData data: (List<ContractData>)getUndefinedVariablesModel().getWrappedData()){
+			for(AbstractVariableData data: (List<AbstractVariableData>)getUndefinedVariablesModel().getWrappedData()){
 				String name = data.getName();
 				SelectItem item = new SelectItem(name, name);
 				list.add(item);
@@ -141,6 +150,41 @@ public abstract class VariablesAbstractController extends BasicController {
 	}
 	
 	protected abstract void initializeVariables(ActionEvent event);
+	
+	public abstract List<?> expressionContext(Object suggest); 
+	
+	protected abstract IManagerBean getVariableManagerBean() throws ManagerBeanException;
+	
+	protected abstract void resetVariable();
+	
+	
+	//******************************************************
+	// VARIABLEs FILTER
+	//******************************************************
+	public void onChangeInactiveDate( ActionEvent event ) {
+		if(getInactiveDate()==null && getInactiveLastPeriod()!=InactiveLastPeriod.ALL){
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.MONTH, -1);
+			setInactiveDate(cal!=null?cal.getTime():null);
+		}
+	}
+	
+	public void onChangeLastPeriod( ActionEvent event ) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
+			cal.add(Calendar.MONTH, -1);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
+			cal.add(Calendar.MONTH, -3);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
+			cal.add(Calendar.MONTH, -6);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
+			cal.add(Calendar.YEAR, -1);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
+			cal = null;
+		}
+		setInactiveDate(cal!=null?cal.getTime():null);
+	}
 	
 	
 	//******************************************************
@@ -210,36 +254,23 @@ public abstract class VariablesAbstractController extends BasicController {
 	private DataModel variableHelperModel;
 
 	public CNO getCno() {
-//		if(getData()!=null){
-//			handleEditorExpression(getData().getExpression());
-//		}
 		return cno;
 	}
 	public void setCno(CNO cno) {
 		this.cno = cno;
 	}
 	public ContractCode getContractCode() {
-//		if(getData()!=null){
-//			handleEditorExpression(getData().getExpression());
-//		}
-//		handleEditorExpression(((ContractData) getVariablesModel().getRowData()).getExpression());
 		return contractCode;
 	}
 	public void setContractCode(ContractCode contractCode) {
 		this.contractCode = contractCode;
 	}
 	public QuoteGroup getQuoteGroup() {
-//		if(getData()!=null){
-//			handleEditorExpression(getData().getExpression());
-//		}
-//		handleEditorExpression(((ContractData) getVariablesModel().getRowData()).getExpression());
 		return quoteGroup;
 	}
 	public void setQuoteGroup(QuoteGroup quoteGroup) {
 		this.quoteGroup = quoteGroup;
 	}
-	
-	
 	
 	public OccupationType getOccupationType() {
 		return occupationType;
@@ -378,45 +409,5 @@ public abstract class VariablesAbstractController extends BasicController {
 			this.description = description;
 		}
 	}
-	
-	public class Variable2 extends ContractData{
-		private ContractData data;
-		private VariableType type;
-		public ContractData getData() {
-			return data;
-		}
-		public void setData(ContractData data) {
-			this.data = data;
-		}
-		public VariableType getType() {
-			return type;
-		}
-		public void setType(VariableType type) {
-			this.type = type;
-		}
-		
-		public ContractVariables getVariable(){
-			return ContractVariables.getVariable(getName());
-		}
-		
-		public Enum<?> getVariableEnum(){
-			if(getName().equals(ContractVariables.CNO.getName())){
-				return CNO.getCnoByValue(handleEditorExpression(getExpression()));
-			} else if(getName().equals(ContractVariables.TC2.getName())){
-				return ContractCode.getContractCodeByValue(handleEditorExpression(getExpression()));
-			} else if(getName().equals(ContractVariables.QUOTE_GROUP.getName())){
-				return QuoteGroup.getQuoteGroupByValue(handleEditorExpression(getExpression()));
-			}
-			return null;
-		}
-		
-		private String handleEditorExpression(String expression) {
-			if( StringUtils.startsWith(expression, "\"") && StringUtils.endsWith(expression, "\"")){
-				return expression = expression.substring(1, expression.length()-1);
-			}
-			return null;
-		}
-	}
-	
 	
 }

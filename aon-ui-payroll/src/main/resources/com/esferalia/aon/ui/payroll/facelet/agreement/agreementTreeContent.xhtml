@@ -42,6 +42,7 @@
 		<c:if test="#{!agreement.new}">
 			<aon:panelTabSet>
 				<aon:panelTab id="payment" 
+					actionListener="#{agreementPayment.initialize}"
 					label="#{payrollBundle.payroll_salary_payment}">
 					<aon:div id="agreementPaymentGrid" style="font-size: 0.9em;">
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
@@ -54,10 +55,6 @@
 				<aon:panelTab id="agreementData" 
 					actionListener="#{agreement.onShowVariables}"
 					label="#{payrollBundle.payroll_agreement_data}">
-					<!--  
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/level/editGridSalaryTable.xhtml" >
-					</ui:include>
-					-->
 					<ui:include 
 						src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
 						<ui:param name="controller" value="#{agreement}" />
