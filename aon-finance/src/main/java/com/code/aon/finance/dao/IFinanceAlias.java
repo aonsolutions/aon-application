@@ -1141,76 +1141,82 @@ public interface IFinanceAlias {
 	String  INVOICE_COMMENTS = INVOICE_ENTRY.getAliasNames()[20];
 
 	/** 
+	* Alias value: Invoice_remarks
+	* Hibernate value: Invoice.remarks
+	*/
+	String  INVOICE_REMARKS = INVOICE_ENTRY.getAliasNames()[21];
+
+	/** 
 	* Alias value: Invoice_investment
 	* Hibernate value: Invoice.investment
 	*/
-	String  INVOICE_INVESTMENT = INVOICE_ENTRY.getAliasNames()[21];
+	String  INVOICE_INVESTMENT = INVOICE_ENTRY.getAliasNames()[22];
 
 	/** 
 	* Alias value: Invoice_transaction
 	* Hibernate value: Invoice.transaction
 	*/
-	String  INVOICE_TRANSACTION = INVOICE_ENTRY.getAliasNames()[22];
+	String  INVOICE_TRANSACTION = INVOICE_ENTRY.getAliasNames()[23];
 
 	/** 
 	* Alias value: Invoice_signed
 	* Hibernate value: Invoice.signed
 	*/
-	String  INVOICE_SIGNED = INVOICE_ENTRY.getAliasNames()[23];
+	String  INVOICE_SIGNED = INVOICE_ENTRY.getAliasNames()[24];
 
 	/** 
 	* Alias value: Invoice_scope_id
 	* Hibernate value: Invoice.scope.id
 	*/
-	String  INVOICE_SCOPE_ID = INVOICE_ENTRY.getAliasNames()[24];
+	String  INVOICE_SCOPE_ID = INVOICE_ENTRY.getAliasNames()[25];
 
 	/** 
 	* Alias value: Invoice_service
 	* Hibernate value: Invoice.service
 	*/
-	String  INVOICE_SERVICE = INVOICE_ENTRY.getAliasNames()[25];
+	String  INVOICE_SERVICE = INVOICE_ENTRY.getAliasNames()[26];
 
 	/** 
 	* Alias value: Invoice_rectificationType
 	* Hibernate value: Invoice.rectificationType
 	*/
-	String  INVOICE_RECTIFICATION_TYPE = INVOICE_ENTRY.getAliasNames()[26];
+	String  INVOICE_RECTIFICATION_TYPE = INVOICE_ENTRY.getAliasNames()[27];
 
 	/** 
 	* Alias value: Invoice_rectificationInvoice
 	* Hibernate value: Invoice.rectificationInvoice
 	*/
-	String  INVOICE_RECTIFICATION_INVOICE = INVOICE_ENTRY.getAliasNames()[27];
+	String  INVOICE_RECTIFICATION_INVOICE = INVOICE_ENTRY.getAliasNames()[28];
 
 	/** 
 	* Alias value: Invoice_rectificationInvoice_id
 	* Hibernate value: Invoice.rectificationInvoice.id
 	*/
-	String  INVOICE_RECTIFICATION_INVOICE_ID = INVOICE_ENTRY.getAliasNames()[28];
+	String  INVOICE_RECTIFICATION_INVOICE_ID = INVOICE_ENTRY.getAliasNames()[29];
 
 	/** 
 	* Alias value: Invoice_taxableBase
 	* Hibernate value: Invoice.taxableBase
 	*/
-	String  INVOICE_TAXABLE_BASE = INVOICE_ENTRY.getAliasNames()[29];
+	String  INVOICE_TAXABLE_BASE = INVOICE_ENTRY.getAliasNames()[30];
 
 	/** 
 	* Alias value: Invoice_vatQuota
 	* Hibernate value: Invoice.vatQuota
 	*/
-	String  INVOICE_VAT_QUOTA = INVOICE_ENTRY.getAliasNames()[30];
+	String  INVOICE_VAT_QUOTA = INVOICE_ENTRY.getAliasNames()[31];
 
 	/** 
 	* Alias value: Invoice_retentionQuota
 	* Hibernate value: Invoice.retentionQuota
 	*/
-	String  INVOICE_RETENTION_QUOTA = INVOICE_ENTRY.getAliasNames()[31];
+	String  INVOICE_RETENTION_QUOTA = INVOICE_ENTRY.getAliasNames()[32];
 
 	/** 
 	* Alias value: Invoice_total
 	* Hibernate value: Invoice.total
 	*/
-	String  INVOICE_TOTAL = INVOICE_ENTRY.getAliasNames()[32];
+	String  INVOICE_TOTAL = INVOICE_ENTRY.getAliasNames()[33];
 
 
 

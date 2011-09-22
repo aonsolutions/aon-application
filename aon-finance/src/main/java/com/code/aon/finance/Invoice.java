@@ -91,6 +91,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     private boolean surcharge;
     private boolean withholding;
     private String comments;
+    private String remarks;
     private boolean investment;
     private InvoiceTransactionType transaction;
     private boolean signed;    
@@ -289,6 +290,14 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	@Lob
+	public String getRemarks() {
+		return remarks;
+	}
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 	public boolean isInvestment() {
@@ -644,6 +653,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(this.registryDocumentCountry,o.registryDocumentCountry)
 			.append(this.registryDocumentType,o.registryDocumentType)
 			.append(this.registryName,o.registryName)
+			.append(this.remarks,o.remarks)
 			.append(this.retentionQuota,o.retentionQuota)
 			.append(this.scope,o.scope)
 			.append(this.securityLevel,o.securityLevel)
@@ -683,6 +693,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(registryDocumentCountry)
 			.append(registryDocumentType)
 			.append(registryName)
+			.append(remarks)
 			.append(retentionQuota)
 			.append(scope)
 			.append(securityLevel)
@@ -692,11 +703,11 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(status)
 			.append(surcharge)
 			.append(taxableBase)
-			.append(taxDate)		
-			.append(taxFree)		
+			.append(taxDate)
+			.append(taxFree)
 			.append(total)
-			.append(transaction)		
-			.append(type)		
+			.append(transaction)
+			.append(type)
 			.append(vatQuota)
 			.append(withholding)		
 			.toHashCode();
