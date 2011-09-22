@@ -137,26 +137,33 @@ public class LdapRenderer implements CriterionVisitor {
 
 		expression.getRightExpression().accept(this);		
 		
-		int type = expression.getType();
-		if ((type & RelationalExpression.LT) > 0) {
-			currentOut.append("<");
-		} else if ((type & RelationalExpression.GT) > 0) {
-			currentOut.append(">");
-		} else if ((type & RelationalExpression.EQ) > 0) {
-			currentOut.append("=");
-		} else if ((type & RelationalExpression.NEQ) > 0) {
-			currentOut.append(" <> ");
-		} else if ((type & RelationalExpression.LIKE) > 0) {
-			if ( this.forceLike ) {
-				currentOut.append("~=");
-				this.forceLike = false;
-			} else {
-				currentOut.append("=");				
-			}
-		} else if ((type & RelationalExpression.GTE) > 0) {
-			currentOut.append(">=");
-		} else if ((type & RelationalExpression.LTE) > 0) {
-			currentOut.append("<=");
+		switch ( expression.getType() ) {
+			case LESS_THAN:
+				currentOut.append("<");
+				break;
+			case GREATER_THAN:
+				currentOut.append(">");
+				break;
+			case EQUAL:
+				currentOut.append("=");
+				break;
+			case NOT_EQUAL:
+				currentOut.append(" <> ");
+				break;
+			case GREATER_THAN_OR_EQUAL:
+				currentOut.append(">=");
+				break;
+			case LESS_THAN_OR_EQUAL:
+				currentOut.append("<=");
+				break;
+			case LIKE:
+				if ( this.forceLike ) {
+					currentOut.append("~=");
+					this.forceLike = false;
+				} else {
+					currentOut.append("=");				
+				}
+				break;
 		}
 
 		this.out = currentOut.append(this.out);
