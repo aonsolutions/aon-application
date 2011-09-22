@@ -35,6 +35,7 @@
 			standalone="true"
 			showEnterpriseParams="true"
 			showPayrollData="true"
+			showPersonInSearch="false"
 		/>
 	</company:config>
 	

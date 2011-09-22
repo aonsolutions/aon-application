@@ -23,5 +23,12 @@ public class EnterpriseTreeControllerListener extends ControllerAdapter {
 			tree.loadTree();			
 		}
 	}
+
+	@Override
+	public void afterEditSearch(ControllerEvent event)
+			throws ControllerListenerException {
+		EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ICompanyConstants.ENTERPRISE_TREE_CONTROLLER_NAME);
+		tree.setContract(null);
+	}
 	
 }

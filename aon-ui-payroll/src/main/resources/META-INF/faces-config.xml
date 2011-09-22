@@ -37,6 +37,14 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.PayrollCollectionsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	
+	<!--  **** ENTERPRISE SEARCH EXTENDED **** -->
+	<managed-bean>
+		<managed-bean-name>enterpriseSearchEx</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.enterprise.EnterpriseSearchExListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!--  **** ENTERPRISE TREE **** -->
 	<managed-bean>
 		<managed-bean-name>enterpriseTree</managed-bean-name>

@@ -3,6 +3,7 @@ package com.code.aon.ql.ast.impl;
 import com.code.aon.ql.ast.CriterionVisitor;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.RelationalExpression;
+import com.code.aon.ql.ast.RelationalType;
 
 /**
  * Binary expression that will be evaluated with a supported relational operator. 
@@ -18,7 +19,7 @@ public class RelationalExpressionImpl extends AbstractBinaryExpressionImpl imple
 	 * Supported relational operator.
 	 * 
 	 */
-	private int type;
+	private RelationalType type;
 
 	/**
 	 * Constructor. indicado.
@@ -31,7 +32,7 @@ public class RelationalExpressionImpl extends AbstractBinaryExpressionImpl imple
 	 *            A supported relational operator.
 	 * 
 	 */
-	public RelationalExpressionImpl(Expression left, Expression rigth, int type) {
+	public RelationalExpressionImpl(Expression left, Expression rigth, RelationalType type) {
 		super(left, rigth);
 		this.type = type;
 	}
@@ -41,7 +42,7 @@ public class RelationalExpressionImpl extends AbstractBinaryExpressionImpl imple
 	 * 
 	 * @see com.code.aon.ql.ast.RelationalExpression#getType()
 	 */
-	public int getType() {
+	public RelationalType getType() {
 		return type;
 	}
 
@@ -50,7 +51,7 @@ public class RelationalExpressionImpl extends AbstractBinaryExpressionImpl imple
 	 *
 	 * @param type the new type
 	 */
-	public void setType(int type) {
+	public void setType(RelationalType type) {
 		this.type = type;
 	}
 
@@ -66,20 +67,22 @@ public class RelationalExpressionImpl extends AbstractBinaryExpressionImpl imple
 	@Override
 	protected String getOperator() {
 		switch ( type ) {
-			case RelationalExpression.LT:
+			case LESS_THAN:
 				return "<";
-			case RelationalExpression.GT:
+			case GREATER_THAN:
 				return ">";
-			case RelationalExpression.EQ:
+			case EQUAL:
 				return "==";
-			case RelationalExpression.NEQ:
+			case NOT_EQUAL:
 				return "<>";
-			case RelationalExpression.LIKE:
+			case LIKE:
 				return "like";
-			case RelationalExpression.LTE:
+			case LESS_THAN_OR_EQUAL:
 				return "<=";
-			case RelationalExpression.GTE:
+			case GREATER_THAN_OR_EQUAL:
 				return ">=";
+			case IN:
+				return "in";
 		}
 		return null;
 	}

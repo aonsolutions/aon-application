@@ -95,7 +95,7 @@ public abstract class AbstractExpressionFactory {
      * @see com.code.aon.ql.ast.RelationalExpression
      */
     public abstract RelationalExpression newRelationalExpression(
-            Expression left, Expression rigth, int type);
+            Expression left, Expression rigth, RelationalType type);
 
     /**
      * Returns an implementation of a <code>BetweenExpression</code> for the given elements.

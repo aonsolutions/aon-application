@@ -36,6 +36,7 @@ import com.code.aon.ql.ast.ConstantExpression;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.ast.IdentExpression;
 import com.code.aon.ql.ast.RelationalExpression;
+import com.code.aon.ql.ast.RelationalType;
 import com.code.aon.ql.ast.impl.ConstantExpressionImpl;
 import com.code.aon.ql.ast.impl.RelationalExpressionImpl;
 import com.code.aon.ql.util.ExpressionException;
@@ -714,7 +715,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	private boolean isOnlyTextExpression( Expression expression, String fieldName ) {
 		if ( expression instanceof RelationalExpression ) {
 			RelationalExpression re = (RelationalExpression) expression;
-			if ( (re.getType() == RelationalExpression.EQ) &&  
+			if ( (re.getType() == RelationalType.EQUAL) &&  
 				(re.getLeftExpression() instanceof IdentExpression) &&
 				(re.getRightExpression() instanceof ConstantExpression) ) {
 				TypeResolver typeResolver = new TypeResolver(getPojo());
@@ -727,7 +728,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	
 	private void updateTextExpression( Expression expression ) {
 		RelationalExpressionImpl re = (RelationalExpressionImpl) expression;
-		re.setType(RelationalExpression.LIKE);
+		re.setType(RelationalType.LIKE);
 		ConstantExpressionImpl ce = (ConstantExpressionImpl) re.getRightExpression();
 		ce.setData( "%" + ce.getData().toString() + "%" );
 	}

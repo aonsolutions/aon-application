@@ -199,22 +199,31 @@ public class SqlRenderer implements CriterionVisitor {
 	public void visitRelationalExpression(RelationalExpression expression) {
 		expression.getLeftExpression().accept(this);
 
-		int type = expression.getType();
-
-		if ((type & RelationalExpression.LT) > 0) {
-			write(" < ");
-		} else if ((type & RelationalExpression.GT) > 0) {
-			write(" > ");
-		} else if ((type & RelationalExpression.EQ) > 0) {
-			write(" = ");
-		} else if ((type & RelationalExpression.NEQ) > 0) {
-			write(" <> ");
-		} else if ((type & RelationalExpression.LIKE) > 0) {
-			write(" LIKE ");
-		} else if ((type & RelationalExpression.GTE) > 0) {
-			write(" >= ");
-		} else if ((type & RelationalExpression.LTE) > 0) {
-			write(" <= ");
+		switch ( expression.getType() ) {
+			case LESS_THAN:
+				write(" < ");
+				break;
+			case GREATER_THAN:
+				write(" > ");
+				break;
+			case EQUAL:
+				write(" = ");
+				break;
+			case NOT_EQUAL:
+				write(" <> ");
+				break;
+			case LIKE:
+				write(" LIKE ");
+				break;
+			case GREATER_THAN_OR_EQUAL:
+				write(" >= ");
+				break;
+			case LESS_THAN_OR_EQUAL:
+				write(" <= ");
+				break;
+			case IN:
+				write(" IN ");
+				break;
 		}
 		expression.getRightExpression().accept(this);
 	}

@@ -7,13 +7,20 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:outputText value="" />
-	<aon:div style="width:550px;">
+	<aon:div styleClass="aon-width-600">
 		<aon:panelCollapsible expanded="true" label="#{companyBundle.company_enterprise}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<ui:include src="/com/code/aon/ui/company/facelet/enterprise/searchBasicContent.xhtml" />
+	
+				<c:if test="#{aonConfiguration.bean.enterprise.showPersonInSearch}">
+					<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{enterpriseSearchEx.person}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>	
+				</c:if>
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
-					
+							
 		<aon:panelCollapsible expanded="false" label="#{registryBundle.registry_address_module}" >
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 				<ui:include src="/com/code/aon/ui/registry/facelet/raddress/searchContent.xhtml">

@@ -29,6 +29,7 @@
 			<xs:attribute name="standalone" type="xs:boolean" use="required"/>
 			<xs:attribute name="showEnterpriseParams" type="xs:boolean" use="required"/>
 			<xs:attribute name="showPayrollData" type="xs:boolean" use="required"/>
+			<xs:attribute name="showPersonInSearch" type="xs:boolean" use="required"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

@@ -5,14 +5,16 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:outputLabel for="#{controller.pojoShortName}_registry_alias"
-		value="#{bundle.aon_company_alias}" />
-	<aon:inputText id="#{controller.pojoShortName}_registry_alias" size="40"
-		valueChangeListener="#{controller.addExpression}" />
-
 	<aon:outputLabel for="#{controller.pojoShortName}_registry_name"
+		styleClass="aon-outputLabel aon-nowrap"
 		value="#{bundle.aon_company_name}" />
 	<aon:inputText id="#{controller.pojoShortName}_registry_name" size="40"
+		valueChangeListener="#{controller.addExpression}" />
+
+	<aon:outputLabel for="#{controller.pojoShortName}_registry_alias"
+		styleClass="aon-outputLabel aon-nowrap"
+		value="#{bundle.aon_company_alias}" />
+	<aon:inputText id="#{controller.pojoShortName}_registry_alias" size="40"
 		valueChangeListener="#{controller.addExpression}" />
 	
 	<aon:outputLabel for="#{controller.pojoShortName}_registry_nationality"

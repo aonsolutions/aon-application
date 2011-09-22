@@ -1,5 +1,7 @@
 package com.code.aon.ql;
 
+import java.util.Collection;
+
 import com.code.aon.ql.ast.Criterion;
 import com.code.aon.ql.ast.CriterionVisitor;
 import com.code.aon.ql.ast.Expression;
@@ -220,6 +222,20 @@ public class Criteria implements Criterion {
 		addOrExpression(expression);
 	}
 
+	/**
+	 * Adds a in expression to this Criteria (a in b).
+	 * 
+	 * @param identifier
+	 *            The left side of the operation.
+	 * @param data
+	 *            The right side of the operation.
+	 */
+	@SuppressWarnings("rawtypes")
+	public void addInExpression(String identifier, Collection data) {
+		Expression expression = ExpressionUtilities.getInExpression(identifier, data);
+		addExpression(expression);
+	}
+	
 	/**
 	 * Adds this identifier to the order list.
 	 * 

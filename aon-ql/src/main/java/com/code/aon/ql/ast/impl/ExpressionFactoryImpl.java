@@ -10,6 +10,7 @@ import com.code.aon.ql.ast.LogicalOrExpression;
 import com.code.aon.ql.ast.NotNullExpression;
 import com.code.aon.ql.ast.NullExpression;
 import com.code.aon.ql.ast.RelationalExpression;
+import com.code.aon.ql.ast.RelationalType;
 
 /**
  * Provides different implementations of <code>Expression</code>.
@@ -68,7 +69,7 @@ public class ExpressionFactoryImpl extends AbstractExpressionFactory {
      * @see com.code.aon.ql.ast.AbstractExpressionFactory#newRelationalExpression(com.code.aon.ql.ast.Expression, com.code.aon.ql.ast.Expression, int)
      */
     public RelationalExpression newRelationalExpression(Expression left,
-            Expression rigth, int type) {
+            Expression rigth, RelationalType type) {
         return new RelationalExpressionImpl(left, rigth, type);
     }
 

@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ import com.code.aon.ql.ast.LogicalOrExpression;
 import com.code.aon.ql.ast.NotNullExpression;
 import com.code.aon.ql.ast.NullExpression;
 import com.code.aon.ql.ast.RelationalExpression;
+import com.code.aon.ql.ast.RelationalType;
 
 /**
  * Expression visitor that obtains an SQL WHERE clause.
@@ -445,44 +447,63 @@ public class HibernateRenderer implements CriterionVisitor {
 	 * @param expression
 	 * @see com.code.aon.ql.ast.CriterionVisitor#visitRelationalExpression(RelationalExpression)
 	 */
+	@SuppressWarnings("rawtypes")
 	public void visitRelationalExpression(RelationalExpression expression) {
 		expression.getLeftExpression().accept(this);
 		String propertyId = this.identifier;
 
 		expression.getRightExpression().accept(this);
-		int type = expression.getType();
+		RelationalType type = expression.getType();
 		
 		if ( expression.getRightExpression() instanceof IdentExpression ) {
 			String secondePropertyId = this.identifier;
-			if ((type & RelationalExpression.LT) > 0) {
-				this.criterion = Restrictions.ltProperty(propertyId, secondePropertyId);
-			} else if ((type & RelationalExpression.GT) > 0) {
-				this.criterion = Restrictions.gtProperty(propertyId, secondePropertyId);
-			} else if ((type & RelationalExpression.EQ) > 0) {
-				this.criterion = Restrictions.eqProperty(propertyId, secondePropertyId);
-			} else if ((type & RelationalExpression.NEQ) > 0) {
-				this.criterion = Restrictions.neProperty(propertyId, secondePropertyId);
-			} else if ((type & RelationalExpression.LTE) > 0) {
-				this.criterion = Restrictions.leProperty(propertyId, secondePropertyId);
-			} else if ((type & RelationalExpression.GTE) > 0) {
-				this.criterion = Restrictions.geProperty(propertyId, secondePropertyId);
+			switch ( type ) {
+				case LESS_THAN:
+					this.criterion = Restrictions.ltProperty(propertyId, secondePropertyId);
+					break;
+				case GREATER_THAN:
+					this.criterion = Restrictions.gtProperty(propertyId, secondePropertyId);
+					break;
+				case EQUAL:
+					this.criterion = Restrictions.eqProperty(propertyId, secondePropertyId);
+					break;
+				case NOT_EQUAL:
+					this.criterion = Restrictions.neProperty(propertyId, secondePropertyId);
+					break;
+				case LESS_THAN_OR_EQUAL:
+					this.criterion = Restrictions.leProperty(propertyId, secondePropertyId);
+					break;
+				case GREATER_THAN_OR_EQUAL:
+					this.criterion = Restrictions.geProperty(propertyId, secondePropertyId);
+					break;
 			}
 		} else {
 			Object value = this.literal;
-			if ((type & RelationalExpression.LT) > 0) {
-				this.criterion = Restrictions.lt(propertyId, value);
-			} else if ((type & RelationalExpression.GT) > 0) {
-				this.criterion = Restrictions.gt(propertyId, value);
-			} else if ((type & RelationalExpression.EQ) > 0) {
-				this.criterion = Restrictions.eq(propertyId, value);
-			} else if ((type & RelationalExpression.NEQ) > 0) {
-				this.criterion = Restrictions.ne(propertyId, value);
-			} else if ((type & RelationalExpression.LIKE) > 0) {
-				this.criterion = Restrictions.like(propertyId, value);
-			} else if ((type & RelationalExpression.LTE) > 0) {
-				this.criterion = Restrictions.le(propertyId, value);
-			} else if ((type & RelationalExpression.GTE) > 0) {
-				this.criterion = Restrictions.ge(propertyId, value);
+			switch ( type ) {
+				case LESS_THAN:
+					this.criterion = Restrictions.lt(propertyId, value);
+					break;
+				case GREATER_THAN:
+					this.criterion = Restrictions.gt(propertyId, value);
+					break;
+				case EQUAL:
+					this.criterion = Restrictions.eq(propertyId, value);
+					break;
+				case NOT_EQUAL:
+					this.criterion = Restrictions.ne(propertyId, value);
+					break;
+				case LIKE:
+					this.criterion = Restrictions.like(propertyId, value);
+					break;
+				case LESS_THAN_OR_EQUAL:
+					this.criterion = Restrictions.le(propertyId, value);
+					break;
+				case GREATER_THAN_OR_EQUAL:
+					this.criterion = Restrictions.ge(propertyId, value);
+					break;
+				case IN:
+					this.criterion = Restrictions.in(propertyId, (Collection) value);
+					break;
 			}
 		}
 	}
@@ -502,7 +523,7 @@ public class HibernateRenderer implements CriterionVisitor {
 	
 	private Object stringToDateTime( Type type, String value ) throws Exception {
 		Object result = null;
-		Class _class = type.getReturnedClass();
+		Class<?> _class = type.getReturnedClass();
 		if ( Date.class.isAssignableFrom(_class) ) {
 			boolean time = TimeType.class.isAssignableFrom(_class);
 			String pattern = System.getProperty(time ? TIME_PATTERN_PROPERTY : DATE_PATTERN_PROPERTY);	

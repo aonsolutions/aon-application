@@ -163,6 +163,9 @@ public class EnterpriseTree implements ICompanyConstants {
 		return contract;
 	}
 	
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
 	public ContractPayment getContractPayment() {
 		return contractPayment;
 	}
@@ -353,10 +356,16 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 		try {
 			loadWorkPlaces(enterpriseNode, enterprise);
+			if ( contract == null ) {
+				setCurrentNode( enterpriseNode );	
+			} else {
+				onSelectTreeContract(null, contract);
+				TreeNode<EnterpriseTreeData> node = getTreeNode(contract);
+				selectTreeNode(node);			
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading work places for " + enterprise, e );
 		}
-		setCurrentNode( enterpriseNode );
 	}
 	
 	public void reloadTree(ActionEvent event){
@@ -720,13 +729,10 @@ public class EnterpriseTree implements ICompanyConstants {
 	}	
 
 	public void onShowContract( ActionEvent event ) throws ManagerBeanException {
-		Contract contract = getShowContract();
+		setContract( getShowContract() );
 		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		ec.setTreeView(true);
-		ec.select(event, contract.getWorkPlace().getEnterprise() );
-		onSelectTreeContract(event, contract);
-		TreeNode<EnterpriseTreeData> node = getTreeNode(contract);
-		selectTreeNode(node);
+		ec.select(event, contract.getWorkPlace().getEnterprise() );			
 	}
 	
 }

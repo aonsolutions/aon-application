@@ -10,45 +10,10 @@ package com.code.aon.ql.ast;
 public interface RelationalExpression extends BinaryExpression {
 
     /**
-     * EQUAL
-     */
-    int EQ = 1;
-
-    /**
-     * NOT EQUAL
-     */
-    int NEQ = 2;
-
-    /**
-     * LESS THAN
-     */
-    int LT = 4;
-
-    /**
-     * GREATER THAN
-     */
-    int GT = 8;
-
-    /**
-     * LIKE
-     */
-    int LIKE = 16;
-
-    /**
-     * LESS THAN OR EQUAL
-     */
-    int LTE = 32;
-
-    /**
-     * GREATER THAN OR EQUAL
-     */
-    int GTE = 64;
-    
-    /**
      * Returns the supported type.
      * 
      * @return Returns the supported type.
      */
-    int getType();
+    RelationalType getType();
 
 }

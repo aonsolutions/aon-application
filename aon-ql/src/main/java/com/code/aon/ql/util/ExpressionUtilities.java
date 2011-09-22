@@ -1,6 +1,7 @@
 package com.code.aon.ql.util;
 
 import java.io.StringReader;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ import com.code.aon.ql.ast.IdentExpression;
 import com.code.aon.ql.ast.NotNullExpression;
 import com.code.aon.ql.ast.NullExpression;
 import com.code.aon.ql.ast.RelationalExpression;
+import com.code.aon.ql.ast.RelationalType;
 
 /**
  * Clase que facilita la formación de objectos del tipo <code>Expression</code>.
@@ -49,7 +51,7 @@ public class ExpressionUtilities {
 	 * @return The implementation of a <code>RelationalExpression</code>.
 	 * @see com.code.aon.ql.ast.RelationalExpression
 	 */
-	private static RelationalExpression getRelationalExpression(String identifier, Expression expression, int type) {
+	private static RelationalExpression getRelationalExpression(String identifier, Expression expression, RelationalType type) {
 		IdentExpression ie = getIdentifierExpression(identifier);
 		return EXPRESSION_FACTORY.newRelationalExpression(ie, expression, type);
 	}
@@ -69,7 +71,7 @@ public class ExpressionUtilities {
 	 * @return The implementation of a <code>RelationalExpression</code>.
 	 * @see com.code.aon.ql.ast.RelationalExpression
 	 */
-	private static RelationalExpression getRelationalExpression(String identifier, Object data, int type) {
+	private static RelationalExpression getRelationalExpression(String identifier, Object data, RelationalType type) {
 		ConstantExpression ce = getConstantExpression(data);
 		IdentExpression ie = getIdentifierExpression(identifier);
 		return EXPRESSION_FACTORY.newRelationalExpression(ie, ce, type);
@@ -83,7 +85,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getEqualExpression(String identifier, Object data) {
-		return getRelationalExpression(identifier, data, RelationalExpression.EQ);
+		return getRelationalExpression(identifier, data, RelationalType.EQUAL);
 	}
 
 	/**
@@ -94,7 +96,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getEqualExpression(String identifier, Expression expression) {
-		return getRelationalExpression(identifier, expression, RelationalExpression.EQ);
+		return getRelationalExpression(identifier, expression, RelationalType.EQUAL);
 	}
 
 	/**
@@ -105,7 +107,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getNotEqualExpression(String identifier, Object data) {
-		return getRelationalExpression(identifier, data, RelationalExpression.NEQ);
+		return getRelationalExpression(identifier, data, RelationalType.NOT_EQUAL);
 	}
 
 	/**
@@ -116,7 +118,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getNotEqualExpression(String identifier, Expression expression) {
-		return getRelationalExpression(identifier, expression, RelationalExpression.NEQ);
+		return getRelationalExpression(identifier, expression, RelationalType.NOT_EQUAL);
 	}
 
 	/**
@@ -127,7 +129,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getLessThanExpression(String identifier, Object data) {
-		return getRelationalExpression(identifier, data, RelationalExpression.LT);
+		return getRelationalExpression(identifier, data, RelationalType.LESS_THAN);
 	}
 
 	/**
@@ -138,7 +140,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getLessThanExpression(String identifier, Expression expression) {
-		return getRelationalExpression(identifier, expression, RelationalExpression.LT);
+		return getRelationalExpression(identifier, expression, RelationalType.LESS_THAN);
 	}
 
 	/**
@@ -150,7 +152,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getLessThanOrEqualExpression(String identifier, Object data) {
-		return getRelationalExpression(identifier, data, RelationalExpression.LTE);
+		return getRelationalExpression(identifier, data, RelationalType.LESS_THAN_OR_EQUAL);
 	}
 
 	/**
@@ -162,22 +164,22 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getLessThanOrEqualExpression(String identifier, Expression expression) {
-		return getRelationalExpression(identifier, expression, RelationalExpression.LTE);
+		return getRelationalExpression(identifier, expression, RelationalType.LESS_THAN_OR_EQUAL);
 	}
 
 	/**
-	 * Returns an greather than expression for the given identifier and data.
+	 * Returns an greater than expression for the given identifier and data.
 	 * 
 	 * @param identifier
 	 * @param data
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getGreaterThanExpression(String identifier, Object data) {
-		return getRelationalExpression(identifier, data, RelationalExpression.GT);
+		return getRelationalExpression(identifier, data, RelationalType.GREATER_THAN);
 	}
 
 	/**
-	 * Returns an greather than expression for the given identifier and
+	 * Returns an greater than expression for the given identifier and
 	 * expression.
 	 * 
 	 * @param identifier
@@ -185,7 +187,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getGreaterThanExpression(String identifier, Expression expression) {
-		return getRelationalExpression(identifier, expression, RelationalExpression.GT);
+		return getRelationalExpression(identifier, expression, RelationalType.GREATER_THAN);
 	}
 
 	/**
@@ -197,7 +199,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getGreaterThanOrEqualExpression(String identifier, Object data) {
-		return getRelationalExpression(identifier, data, RelationalExpression.GTE);
+		return getRelationalExpression(identifier, data, RelationalType.GREATER_THAN_OR_EQUAL);
 	}
 
 	/**
@@ -209,7 +211,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getGreaterThanOrEqualExpression(String identifier, Expression expression) {
-		return getRelationalExpression(identifier, expression, RelationalExpression.GTE);
+		return getRelationalExpression(identifier, expression, RelationalType.GREATER_THAN_OR_EQUAL);
 	}
 
 	/**
@@ -220,7 +222,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getLikeExpression(String identifier, Object data) {
-		return getRelationalExpression(identifier, data, RelationalExpression.LIKE);
+		return getRelationalExpression(identifier, data, RelationalType.LIKE);
 	}
 
 	/**
@@ -231,7 +233,7 @@ public class ExpressionUtilities {
 	 * @return a <code>RelationalExpression</code>.
 	 */
 	public static RelationalExpression getLikeExpression(String identifier, Expression expression) {
-		return getRelationalExpression(identifier, expression, RelationalExpression.LIKE);
+		return getRelationalExpression(identifier, expression, RelationalType.LIKE);
 	}
 
 	/**
@@ -415,6 +417,18 @@ public class ExpressionUtilities {
 		return (expr1 == null) ? expr2 : EXPRESSION_FACTORY.newLogicalOrExpression(expr1, expr2);
 	}
 
+	/**
+	 * Returns an in expression for the given identifier and data.
+	 * 
+	 * @param identifier
+	 * @param data
+	 * @return a <code>RelationalExpression</code>.
+	 */
+	@SuppressWarnings("rawtypes")
+	public static RelationalExpression getInExpression(String identifier, Collection data) {
+		return getRelationalExpression(identifier, data, RelationalType.IN);
+	}
+	
 	/**
 	 * Document Me!
 	 * 
