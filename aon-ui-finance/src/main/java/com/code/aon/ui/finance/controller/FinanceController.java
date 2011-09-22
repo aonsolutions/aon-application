@@ -44,7 +44,7 @@ import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
-import com.code.aon.ui.finance.event.FinanceSearchListener;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.registry.controller.RegistryCollectionsController;
@@ -635,22 +635,8 @@ public class FinanceController extends FinanceListController {
 			setInvoiceViewer(UNDEDUCTIBLE_INVOICE_FORM_NAME);
 		}
 
-		InvoiceController invoiceController = (InvoiceController) AonUtil.getRegisteredBean(invoiceControllerName);
-		invoiceController.onLoadInvoice(event, finance.getInvoice(), FINANCE_FORM_NAME, FINANCE_CONTROLLER_NAME + ".refresh");
-	}
-
-	public void onLoadFinance(ActionEvent event, Finance finance, String backAction, String backActionListener) throws ManagerBeanException {
-		FinanceSearchListener financeSearch = (FinanceSearchListener)AonUtil.getRegisteredBean(FINANCE_SEARCH_LISTENER_NAME);
-
-		onEditSearch(event);
-		getCriteria().addEqualExpression(getFieldName(IFinanceAlias.FINANCE_ID), finance.getId());
-		financeSearch.setFinanceStatuses(null);
-		onSearch(event);
-		getModel().setRowIndex(0);
-		onSelect(event);
-
-		setBackAction(backAction);
-		setBackActionListener(backActionListener);
+		BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(invoiceControllerName);
+		invoiceController.onLoad(event, finance.getInvoice().getId(), FINANCE_FORM_NAME, FINANCE_CONTROLLER_NAME + ".refresh");
 	}
 
 }

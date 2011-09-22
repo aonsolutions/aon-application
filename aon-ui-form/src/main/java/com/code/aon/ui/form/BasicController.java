@@ -1302,4 +1302,19 @@ public class BasicController extends AbstractPojoController implements IControll
 		}
 	}
 
+    /**
+     * Execute load action when navigation comes from other controller.
+     * 
+	 * @param event the event
+	 * @param id the id of the TransferObject
+	 * @param backAction the backAction
+	 * @param backActionListener the backActionListener
+ 	 * @throws ManagerBeanException the manager bean exception
+    */
+	public void onLoad(ActionEvent event, Serializable id, String backAction, String backActionListener) throws ManagerBeanException {
+		select(event, id);
+		setBackAction(backAction);
+		setBackActionListener(backActionListener);
+	}
+
 }

@@ -39,8 +39,6 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
-import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.warehouse.event.IncomeSearchListener;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -318,19 +316,6 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
 		invoiceController.onSelect(event);
-	}
-
-	public void onLoadIncome(ActionEvent event, Income income, String backAction) throws ManagerBeanException {
-		IncomeSearchListener incomeSearch = (IncomeSearchListener)AonUtil.getRegisteredBean(INCOME_SEARCH_LISTENER_NAME);
-
-		onEditSearch(event);
-		getCriteria().addEqualExpression(getFieldName(IWarehouseAlias.INCOME_ID), income.getId());
-		incomeSearch.setIncomeStatuses(null);
-		onSearch(event);
-		getModel().setRowIndex(0);
-		onSelect(event);
-
-		setBackAction(backAction);
 	}
 
 }

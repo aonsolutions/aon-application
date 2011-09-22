@@ -12,10 +12,9 @@ public class FBatchDetailController extends FBatchDetailListController implement
 	public void onLoadFinance(ActionEvent event) throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
 			Finance finance = ((FinanceBatchDetail)this.getModel().getRowData()).getFinance();
-
 			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
 			financeController.setPayment(finance.isPayment());
-			financeController.onLoadFinance(event, finance, FINANCE_BATCH_FORM_NAME, FINANCE_BATCH_CONTROLLER_NAME + ".onBackFinanceBatch");
+			financeController.onLoad(event, finance.getId(), FINANCE_BATCH_FORM_NAME, FINANCE_BATCH_CONTROLLER_NAME + ".onBackFinanceBatch");
 		}
 	}
 

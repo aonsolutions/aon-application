@@ -67,7 +67,6 @@ import com.code.aon.supplier.Supplier;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.tas.TasItem;
 import com.code.aon.tas.dao.ITASAlias;
-import com.code.aon.ui.commercial.event.OfferSearchListener;
 import com.code.aon.ui.commercial.util.CommercialEmailUtil;
 import com.code.aon.ui.commercial.util.OfferImportManager;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -911,19 +910,6 @@ public class OfferController extends BasicController implements ISignatureContro
 			return rpay;
 		}
 		return null;
-	}
-	
-	public void onLoadOffer(ActionEvent event, Offer offer, String backAction) throws ManagerBeanException {
-		OfferSearchListener offerSearch = (OfferSearchListener)AonUtil.getRegisteredBean(OFFER_SEARCH_LISTENER_NAME);
-
-		onEditSearch(event);
-		getCriteria().addEqualExpression(getFieldName(ICommercialAlias.OFFER_ID), offer.getId());
-		offerSearch.setOfferStatuses(null);
-		onSearch(event);
-		getModel().setRowIndex(0);
-		onSelect(event);
-
-		setBackAction(backAction);
 	}
 
 }

@@ -190,7 +190,7 @@ public class InvoiceFinanceController extends LinesController implements IFinanc
 
 			FinanceController financeController = (FinanceController) AonUtil.getRegisteredBean(FINANCE_CONTROLLER_NAME);
 			financeController.setPayment(finance.isPayment());
-			financeController.onLoadFinance(event, finance, backAction, backActionListener + ".onSearch");
+			financeController.onLoad(event, finance.getId(), backAction, backActionListener + ".onSearch");
 		}
 	}
 

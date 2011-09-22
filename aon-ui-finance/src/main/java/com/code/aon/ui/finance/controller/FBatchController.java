@@ -423,20 +423,8 @@ public class FBatchController extends BasicController implements ICollectionProv
 
 	public void onLoadBankStatement(ActionEvent event) throws ManagerBeanException {
         BankStatement statement = ((FinanceBatch)this.getTo()).getBankStatementLink().getBankStatement();
-		BankStatementController statementController = (BankStatementController) AonUtil.getRegisteredBean(BANK_STATEMENT_CONTROLLER_NAME);
-		statementController.onLoadBankStatement(event, statement, FINANCE_BATCH_FORM_NAME, FINANCE_BATCH_CONTROLLER_NAME + ".onBackFinanceBatch");
-	}
-
-	public void onLoadFinanceBatch(ActionEvent event, FinanceBatch fBatch, String backAction, String backActionListener) 
-		throws ManagerBeanException{
-		onEditSearch(event);
-		getCriteria().addEqualExpression(getFieldName(IFinanceAlias.FINANCE_BATCH_ID), fBatch.getId());
-		onSearch(event);
-		getModel().setRowIndex(0);
-		onSelect(event);
-
-		setBackAction(backAction);
-		setBackActionListener(backActionListener);
+        BankStatementController statementController = (BankStatementController) AonUtil.getRegisteredBean(BANK_STATEMENT_CONTROLLER_NAME);
+		statementController.onLoad(event, statement, FINANCE_BATCH_FORM_NAME, FINANCE_BATCH_CONTROLLER_NAME + ".onBackFinanceBatch");
 	}
 
 	public void onBackFinanceBatch(ActionEvent event) throws ManagerBeanException {

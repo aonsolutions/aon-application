@@ -160,7 +160,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 			if (fBatch != null) {
 				FBatchController fBatchController = (FBatchController) AonUtil.getRegisteredBean(FINANCE_BATCH_CONTROLLER_NAME);
 				fBatchController.setPayment(fBatch.isPayment());
-				fBatchController.onLoadFinanceBatch(event, fBatch, FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackTracking");
+				fBatchController.onLoad(event, fBatch.getId(), FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackTracking");
 			}
 		}
 	}
@@ -182,7 +182,7 @@ public class FinanceTrackingController extends LinesController implements IFinan
 		if (getModel().isRowAvailable()) {
 			BankStatement statement = ((FinanceTracking)this.getModel().getRowData()).getBankStatementLink().getBankStatement();
 			BankStatementController statementController = (BankStatementController) AonUtil.getRegisteredBean(BANK_STATEMENT_CONTROLLER_NAME);
-			statementController.onLoadBankStatement(event, statement, FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackTracking");
+			statementController.onLoad(event, statement, FINANCE_FORM_NAME, FINANCE_TRACKING_CONTROLLER_NAME + ".onBackTracking");
 		}
 	}
 

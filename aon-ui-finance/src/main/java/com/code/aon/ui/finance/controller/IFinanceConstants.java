@@ -62,4 +62,11 @@ public interface IFinanceConstants {
 	String ACCOUNT_ENTRY_SEARCH_PAGE = "accountEntry_search";
 	String ACCOUNT_ENTRY_ON_EDIT_SEARCH_ACTION = "accountEntry.onEditSearch";
 	
+	String OFFER_FORM_NAME = "offer_form";
+	String OFFER_CONTROLLER_NAME = "offer";
+	String DELIVERY_FORM_NAME = "delivery_form";
+	String DELIVERY_CONTROLLER_NAME = "delivery";
+	String INCOME_FORM_NAME = "income_form";
+	String INCOME_CONTROLLER_NAME = "income";
+
 }

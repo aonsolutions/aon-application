@@ -23,13 +23,9 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.commercial.controller.ICommercialConstants;
-import com.code.aon.ui.commercial.controller.OfferController;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.warehouse.controller.DeliveryController;
-import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
-import com.code.aon.ui.warehouse.controller.IncomeController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Income;
@@ -208,17 +204,17 @@ public class InvoiceDetailController extends LinesController implements IFinance
 	public void onLoadSource(ActionEvent event) throws ManagerBeanException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
 		if (invoiceDetail.getSource() == InvoiceSource.OFFER) {
-			setSourceViewer(ICommercialConstants.NAVIGATION_OFFER_FORM);
-			OfferController offerController = (OfferController) AonUtil.getRegisteredBean(ICommercialConstants.OFFER_CONTROLLER_NAME);
-			offerController.onLoadOffer(event, (Offer)invoiceDetail.getSourceTo(), SALE_INVOICE_FORM_NAME);
+			setSourceViewer(OFFER_FORM_NAME);
+			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(OFFER_CONTROLLER_NAME);
+			sourceController.onLoad(event, ((Offer)invoiceDetail.getSourceTo()).getId(), SALE_INVOICE_FORM_NAME, null);
 		} else if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
-			setSourceViewer(IWarehouseConstants.DELIVERY_FORM_NAME);
-			DeliveryController deliveryController = (DeliveryController) AonUtil.getRegisteredBean(IWarehouseConstants.DELIVERY_CONTROLLER_NAME);
-			deliveryController.onLoadDelivery(event, (Delivery)invoiceDetail.getSourceTo(), SALE_INVOICE_FORM_NAME);
+			setSourceViewer(DELIVERY_FORM_NAME);
+			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(DELIVERY_CONTROLLER_NAME);
+			sourceController.onLoad(event, ((Delivery)invoiceDetail.getSourceTo()).getId(), SALE_INVOICE_FORM_NAME, null);
 		} else if (invoiceDetail.getSource() == InvoiceSource.INCOME) {
-			setSourceViewer(IWarehouseConstants.INCOME_FORM_NAME);
-			IncomeController incomeController = (IncomeController) AonUtil.getRegisteredBean(IWarehouseConstants.INCOME_CONTROLLER_NAME);
-			incomeController.onLoadIncome(event, (Income)invoiceDetail.getSourceTo(), PURCHASE_INVOICE_FORM_NAME);
+			setSourceViewer(INCOME_FORM_NAME);
+			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(INCOME_CONTROLLER_NAME);
+			sourceController.onLoad(event, ((Income)invoiceDetail.getSourceTo()).getId(), PURCHASE_INVOICE_FORM_NAME, null);
 		}
 	}
 

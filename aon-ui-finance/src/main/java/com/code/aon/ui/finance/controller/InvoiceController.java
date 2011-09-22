@@ -757,16 +757,5 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
 		}
 	}
-	
-	public void onLoadInvoice(ActionEvent event, Invoice invoice, String backAction, String backActionListener) throws ManagerBeanException {
-		onEditSearch(event);
-		getCriteria().addEqualExpression(getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
-		onSearch(event);
-		getModel().setRowIndex(0);
-		onSelect(event);
-
-		setBackAction(backAction);
-		setBackActionListener(backActionListener);
-	}
 
 }
