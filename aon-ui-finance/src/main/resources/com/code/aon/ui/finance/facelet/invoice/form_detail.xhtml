@@ -271,6 +271,7 @@
 							<aon:commandLink id="invoiceDetailSourceLink" immediate="true"
 								styleClass="aon-button-goto" style="padding-right: 20px;"
 								value="&#160;" title="#{bundle.aon_go}" 
+								rendered="#{!controller.editable}" 
 								actionListener="#{controller.onLoadSource}"
 								action="#{controller.getSourceViewer}"
 								reRender="aonContent">
