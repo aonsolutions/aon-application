@@ -1,7 +1,9 @@
 package com.esferalia.aon.ui.payroll.controller;
 
+import static com.esferalia.aon.payroll.dao.IPayrollAlias.CONTRACT_WORK_PLACE_ENTERPRISE_ID;
 import static com.esferalia.aon.ui.payroll.controller.IPayrollConstants.IRPF_LAUNCHER_CONTROLLER_NAME;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,11 +39,16 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.company.controller.RegistryInfo;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.event.ControllerAdapter;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractBonus;
@@ -103,6 +110,8 @@ public class EnterpriseTree implements ICompanyConstants {
 	private InactiveLastPeriod inactiveLastPeriod;
 	
 	private boolean searchCurrent;
+	
+	private IControllerListener contractListener;
 	
 	public boolean isSearchCurrent() {
 		return searchCurrent;
@@ -716,6 +725,11 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	private void selectTreeNode( TreeNode<EnterpriseTreeData> node ) {
+		try {
+			getState().collapseAll(null);
+		} catch (IOException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
 		setCurrentNode(node);
 		ListRowKey<String> key = getRowKey(node);
 		getState().setSelected(key);
@@ -734,5 +748,43 @@ public class EnterpriseTree implements ICompanyConstants {
 		ec.setTreeView(true);
 		ec.select(event, contract.getWorkPlace().getEnterprise() );			
 	}
-	
+
+	public IControllerListener getContractListener() {
+		if ( contractListener == null ) {
+			contractListener = new ControllerAdapter() {
+
+				@Override
+				public void afterEditSearch(ControllerEvent event) throws ControllerListenerException {
+					try {
+						IController controller = event.getController();
+						Criteria criteria = controller.getCriteria();
+						completeContractCriteria(controller.getManagerBean(), criteria);
+						EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+						Enterprise enterprise = (Enterprise) ec.getTo();
+						String alias = controller.getFieldName(CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+						criteria.addEqualExpression(alias, enterprise.getId());
+					} catch (ManagerBeanException e) {
+						LOGGER.error( e.getMessage(), e );
+						throw new ControllerListenerException(e.getMessage(), e);
+					}
+				}
+				
+			};
+		}
+		return contractListener;
+	}
+
+	public void onContractChanged(LookupChangeEvent event) {
+		if(event.getNewValue()!=null){
+			Contract contract = (Contract) event.getNewValue();
+			try {			
+				onSelectTreeContract(null, contract);
+				TreeNode<EnterpriseTreeData> node = getTreeNode(contract);
+				selectTreeNode(node); 
+			} catch (ManagerBeanException e) {
+				LOGGER.error( e.getMessage(), e );
+			}
+		}
+	}
+
 }

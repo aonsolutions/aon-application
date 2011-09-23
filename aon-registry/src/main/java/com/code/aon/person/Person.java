@@ -135,7 +135,20 @@ public class Person implements ITransferObject, IRegistry {
 	
 	@Transient
     public String getFullName() {
-		return getFirstSurname() + ((StringUtils.isEmpty(getSecondSurname())) ? "" : " " + getSecondSurname()) + ", " + getName();
+		StringBuffer sb = new StringBuffer();
+		if (! StringUtils.isEmpty(getFirstSurname()) ) {
+			sb.append(getFirstSurname());
+		}
+		if (! StringUtils.isEmpty(getSecondSurname()) ) {
+			sb.append(" ").append(getSecondSurname());
+		}
+		if (! StringUtils.isEmpty(getName()) ) {
+			if ( sb.length() > 0 ) {
+				sb.append(", ");
+			}
+			sb.append(getName());
+		}
+		return sb.toString();
     }
 	
 	@Override

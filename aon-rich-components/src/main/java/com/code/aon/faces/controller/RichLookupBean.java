@@ -840,8 +840,9 @@ public class RichLookupBean {
 			String text = value.toString();
 			if (! StringUtils.isBlank(text) ) {
 				try {
+					HtmlLookupSuggestText st = (HtmlLookupSuggestText) component.getParent();					
+					setBindings( st );
 					getController().onEditSearch(null);
-					HtmlLookupSuggestText st = (HtmlLookupSuggestText) component.getParent();
 					String search = (st.getMatchBeginOnly() ? "" : "%") + text + "%"; 
 					Expression exp = ExpressionUtilities.getLikeExpression(getSuggestAlias(st), search);
 					getController().getCriteria().addExpression(exp);

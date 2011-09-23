@@ -32,16 +32,18 @@
 			<aon:goToButton controller="#{controller}" property="#{lookupTo}"
 				backActionListener="#{goToBackActionListener}" />
 		</c:if>
-		<aon:lookupButton id="#{pojoName}_SearchButton#{lookupSuffix}"
-			windowTitle="#{searchButtonTitle}" property="#{lookupTo}"
-			minHeight="#{searchButtonHeight}" minWidth="#{searchButtonWidth}"
-			disabled="#{lookupDisabled}" actionType="#{lookupSelectType}"
-			lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
-			lookupChangeListener="#{lookupChangeListener}"
-			controllerListener="#{lookupControllerListener}"
-			selectReRender="#{lookup_reRender}" >
-			<ui:insert name="searchButtonContent"/>
-		</aon:lookupButton>
+		<c:if test="#{!skipSearchButton}">
+			<aon:lookupButton id="#{pojoName}_SearchButton#{lookupSuffix}"
+				windowTitle="#{searchButtonTitle}" property="#{lookupTo}"
+				minHeight="#{searchButtonHeight}" minWidth="#{searchButtonWidth}"
+				disabled="#{lookupDisabled}" actionType="#{lookupSelectType}"
+				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
+				lookupChangeListener="#{lookupChangeListener}"
+				controllerListener="#{lookupControllerListener}"
+				selectReRender="#{lookup_reRender}" >
+				<ui:insert name="searchButtonContent"/>
+			</aon:lookupButton>
+		</c:if>
 		<aon:lookupButton id="#{pojoName}_ClearButton#{lookupSuffix}"
 			actionType="clear" disabled="#{lookupDisabled}" 
 			lookup="#{lookupBean}" property="#{lookupTo}"

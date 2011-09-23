@@ -70,51 +70,71 @@
 				</ui:define>				
 			</ui:decorate>
 
-			<aon:div styleClass="" >
-				<aon:div styleClass="aon-panelGrid-search" 
-					style="width: 100%; margin-bottom:10px; padding-top:10px; padding-left:10px;">
-						
-					<aon:outputText value="#{payrollBundle.payroll_contract_filter}" styleClass="aon-bold" />
-						
-					<aon:outputText value="#{payrollBundle.payroll_active}" styleClass="aon-margin-left" />
-					<aon:selectBooleanCheckbox value="#{enterpriseTree.activeContract}"  >
-						<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true"
-							actionListener="#{enterpriseTree.reloadTree}" />
-					</aon:selectBooleanCheckbox>
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{payrollBundle.payroll_contract_filter}" styleClass="aon-panelGrid-search-info-internal"/>
+					</aon:div>			
 					
-					<aon:outputText value="#{payrollBundle.payroll_inactive}" styleClass="aon-margin-left" />
-					<aon:selectBooleanCheckbox value="#{enterpriseTree.inactiveContract}"  >
-						<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true">
-							<aon:actionListener method="#{enterpriseTree.onChangeInactiveDate}" />
-							<aon:actionListener method="#{enterpriseTree.reloadTree}" />
-						</a4j:support>
-					</aon:selectBooleanCheckbox>
-					
-					<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
-						value="#{bundle.aon_end_date}:" />
-					<aon:selectOneMenu 
-						styleClass="aon-margin-right"
-						disabled="#{!enterpriseTree.inactiveContract}"
-						value="#{enterpriseTree.inactiveLastPeriod}" >
-						<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
-						<a4j:support event="onchange" reRender="aonContent" ignoreDupResponses="true" >
-							<aon:actionListener method="#{enterpriseTree.onChangeLastPeriod}" />
-							<aon:actionListener method="#{enterpriseTree.reloadTree}" />
-						</a4j:support>
-					</aon:selectOneMenu>
-					<aon:selectInputDate  
-						disabled="#{!(enterpriseTree.inactiveContract and enterpriseTree.inactiveLastPeriod=='MANUAL')}"
-						value="#{enterpriseTree.inactiveDate}"
-						inputSize="10" renderAsPopup="true" enableManualInput="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}">
-						<a4j:support event="onchanged" reRender="aonContent" ignoreDupResponses="true">
-							<aon:actionListener method="#{enterpriseTree.onChangeInactiveDate}" />
-							<aon:actionListener method="#{enterpriseTree.reloadTree}" />
-						</a4j:support>
-					</aon:selectInputDate>
-
-				</aon:div>	
+					<h:panelGrid>
+						<aon:panelGroup>
+							<aon:outputText value="#{payrollBundle.payroll_active}" styleClass="aon-margin-left" />
+							<aon:selectBooleanCheckbox value="#{enterpriseTree.activeContract}"  >
+								<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true"
+									actionListener="#{enterpriseTree.reloadTree}" />
+							</aon:selectBooleanCheckbox>
+							
+							<aon:outputText value="#{payrollBundle.payroll_inactive}" styleClass="aon-margin-left" />
+							<aon:selectBooleanCheckbox value="#{enterpriseTree.inactiveContract}"  >
+								<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true">
+									<aon:actionListener method="#{enterpriseTree.onChangeInactiveDate}" />
+									<aon:actionListener method="#{enterpriseTree.reloadTree}" />
+								</a4j:support>
+							</aon:selectBooleanCheckbox>
+							
+							<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
+								value="#{bundle.aon_end_date}:" />
+							<aon:selectOneMenu 
+								styleClass="aon-margin-right"
+								disabled="#{!enterpriseTree.inactiveContract}"
+								value="#{enterpriseTree.inactiveLastPeriod}" >
+								<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
+								<a4j:support event="onchange" reRender="aonContent" ignoreDupResponses="true" >
+									<aon:actionListener method="#{enterpriseTree.onChangeLastPeriod}" />
+									<aon:actionListener method="#{enterpriseTree.reloadTree}" />
+								</a4j:support>
+							</aon:selectOneMenu>
+							<aon:selectInputDate  
+								disabled="#{!(enterpriseTree.inactiveContract and enterpriseTree.inactiveLastPeriod=='MANUAL')}"
+								value="#{enterpriseTree.inactiveDate}"
+								inputSize="10" renderAsPopup="true" enableManualInput="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+								<a4j:support event="onchanged" reRender="aonContent" ignoreDupResponses="true">
+									<aon:actionListener method="#{enterpriseTree.onChangeInactiveDate}" />
+									<aon:actionListener method="#{enterpriseTree.reloadTree}" />
+								</a4j:support>
+							</aon:selectInputDate>
+						</aon:panelGroup>
+						<aon:panelGroup>
+							<aon:outputText value="#{payrollBundle.payroll_employee_name}"
+								styleClass="aon-margin-left aon-margin-right" />
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{enterpriseTree.contract}" />
+								<ui:param name="skipLabel" value="#{true}" />
+								<ui:param name="skipInputText" value="#{true}" />
+								<ui:param name="skipSearchButton" value="#{true}" />
+								<ui:param name="skipGoToButton" value="#{true}" />
+								<ui:param name="skipNewButton" value="#{true}" />
+								<ui:param name="lookupReRender" value="aonContent" />
+								<ui:param name="lookupControllerListener" value="#{enterpriseTree.contractListener}" />
+								<aon:methodParam name="lookupChangeListener" 
+									value="#{enterpriseTree.onContractChanged}" type="lookupChangeListener" />
+							</ui:include>							
+						</aon:panelGroup>
+					</h:panelGrid>
+				</aon:div>		
 			
 				<aon:panelGrid columns="2" styleClass="aon-width-all"
 					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
@@ -163,6 +183,7 @@
 		
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
 		
 		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/expenseModal.xhtml" />
 		
