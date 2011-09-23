@@ -278,10 +278,14 @@
 
 					<aon:outputLabel for="Invoice_total" 
 						value="#{bundle.aon_total}" />
-					<aon:outputText id="Invoice_total" size="15" styleClass="aon-bold"
-						value="#{purchaseInvoice.toInvoiceTotalPrice}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
+					<aon:div>
+						<aon:outputText id="Invoice_total" size="15" styleClass="aon-bold"
+							value="#{purchaseInvoice.toInvoiceTotalPrice}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputLabel styleClass="aon-margin-left aon-italic"
+							value="(#{bundle.aon_tax_included})" />
+					</aon:div>
 
 				</aon:panelGrid>
 
