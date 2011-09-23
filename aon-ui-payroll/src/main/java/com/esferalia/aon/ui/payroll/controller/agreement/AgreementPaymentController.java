@@ -2,10 +2,8 @@ package com.esferalia.aon.ui.payroll.controller.agreement;
 
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -24,10 +22,9 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementData;
@@ -36,22 +33,19 @@ import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
-import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
-import com.esferalia.aon.ui.payroll.controller.contract.VariablesAbstractController;
+import com.esferalia.aon.ui.payroll.controller.contract.IVariablesHandler;
 
-public class AgreementPaymentController extends VariablesAbstractController {
+public class AgreementPaymentController extends LinesController implements IVariablesHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(AgreementPaymentController.class.getName());
 
 	private boolean modalPanelVisible;
 	private List<SelectItem> concepts;
-	private List<String> systemDataVariables;
+	
 	private List<String> paymentConcepts;
 	private DataModel paymentsModel;
 	
@@ -59,6 +53,17 @@ public class AgreementPaymentController extends VariablesAbstractController {
 	private List<SelectItem> daysList;
 	private Month issueMonth;
 	
+	private AgreementPaymentVariablesHandler handler;
+	
+	public AgreementPaymentVariablesHandler getHandler() {
+		if(handler==null){
+			handler = new AgreementPaymentVariablesHandler(this);
+		}
+		return handler;
+	}
+	public void setHandler(AgreementPaymentVariablesHandler handler) {
+		this.handler = handler;
+	}
 	public Month getIssueMonth() {
 		if(issueMonth==null){
 			issueMonth = getAgreementExtra().getIssueDateMonth();
@@ -167,35 +172,9 @@ public class AgreementPaymentController extends VariablesAbstractController {
 		this.concepts = concepts;
 	}
 	
-	public List<String> getSystemDataVariables() {
-		if (systemDataVariables == null) {
-			systemDataVariables = new LinkedList<String>();
-			try {
-				IManagerBean bean = BeanManager.getManagerBean(SystemData.class);
-				Criteria criteria = new Criteria();
-				
-				//TODO ¿Utilizar las fechas del pojo activo?
-				Date date = new Date();
-				
-				String alias = bean.getFieldName(IPayrollAlias.SYSTEM_DATA_END_DATE);
-				Expression ex1 = ExpressionUtilities.getNullExpression(alias);
-				Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,date);
-				criteria.addOrExpression( ExpressionUtilities.getOrExpression(ex1, ex2));
-				List<ITransferObject> list = bean.getList(criteria);
-				for (ITransferObject to:list) {
-					SystemData sd = (SystemData) to;
-					systemDataVariables.add(sd.getName());					
-				}
-			} catch (ManagerBeanException e) {
-				// TODO como tratar esto?
-			}
-		}
-		return systemDataVariables;
-	}
+	
 
-	public void setSystemDataVariables(List<String> systemDataVariables) {
-		this.systemDataVariables = systemDataVariables;
-	}
+	
 	
 	private List<String> getPaymentConcetps() {
 		if (paymentConcepts == null) {
@@ -215,23 +194,7 @@ public class AgreementPaymentController extends VariablesAbstractController {
 		return paymentConcepts;
 	}
 
-	@Override
-	public List<?> expressionContext(Object suggest) {
-		List<String> list = new LinkedList<String>();
-		String filter = (String) suggest;
-		for (String systemDataVariable :getSystemDataVariables()){
-			if (systemDataVariable.startsWith(filter)) {
-				list.add(systemDataVariable);
-			}
-		}
-		for (ContractVariables cv :ContractVariables.values() ){
-			if (cv.getName().startsWith(filter)) {
-				list.add(cv.getName());		
-			}
-		}
-		Collections.sort(list);
-		return list;
-	}
+	
 	
 	public List<?> conceptContext(Object suggest) {
 		List<String> list = new LinkedList<String>();
@@ -257,14 +220,13 @@ public class AgreementPaymentController extends VariablesAbstractController {
 		IContractPayment row = (IContractPayment) getPaymentsModel().getRowData();
 		try {
 			this.select(event, (ITransferObject) row);
+			initializeVariables(event);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "Imposible seleccionar la percepcion";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
 		}
-		
 		reset(true);
-		
-//		this.onSelect(event);
 	}
 
 	public void onSave(ActionEvent event) {
@@ -435,80 +397,24 @@ public class AgreementPaymentController extends VariablesAbstractController {
 		return daysList;
 	}
 	
-
 	@Override
-	protected void initializeVariables(ActionEvent event) {
-		AgreementPayment payment = (AgreementPayment)this.getTo();
-		Agreement agreement = payment.getAgreement();
-		List<AgreementData> dataList;
-		try {
-			setVariablesModel(null);
-			setUndefinedVariablesModel(null);
-			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
-				dataList = new LinkedList<AgreementData>();
-				Set<String> vl = ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
-				List<AgreementData> undefined = new LinkedList<AgreementData>();
-				if(!vl.isEmpty()){
-					for(String s: vl){
-						List<ITransferObject> list = existingAgreementData(s, agreement);
-						if(!list.isEmpty()){
-							for(ITransferObject to: list){
-								dataList.add((AgreementData) to);
-							}
-						} else {
-							Calendar startCal = Calendar.getInstance();
-							Calendar endCal = Calendar.getInstance();
-							startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
-							endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-							AgreementData data = new AgreementData();
-							data.setAgreement(agreement);
-							data.setName(s);
-							data.setStartDate(startCal.getTime());
-//							data.setEndDate(agreement.getEndDate()!=null?contract.getEndDate():endCal.getTime());
-//							ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), data.getEndDate(), data.getEndDate());
-//							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
-//							if(o==null){
-								undefined.add(data);
-//							} else {
-//								data.setExpression(o.toString());
-//								dataList.add(data);
-//							}
-						}
-					}
-				}
-				setVariablesModel(new ListDataModel(dataList));
-				if(!undefined.isEmpty()){
-					setUndefinedVariablesModel(new ListDataModel(undefined));
-				}
-			}
-//		} catch (SalaryException e) {
-//			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
-//			LOGGER.error(msg);
-//			AonUtil.addErrorMessage(msg);
-//			throw new AbortProcessingException(msg,e);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
+	public List<?> expressionContext(Object suggest) {
+		return getHandler().expressionContext(suggest);
+	}
+	@Override
+	public IManagerBean getVariableManagerBean() throws ManagerBeanException {
+		return getHandler().getVariableManagerBean();
+	}
+	@Override
+	public void initializeVariables(ActionEvent event) {
+		getHandler().initializeVariables(event);
+	}
+	@Override
+	public void resetVariable() {
+		getHandler().resetVariable();
 	}
 	
-	protected List<ITransferObject> existingAgreementData(String name, Agreement agreement) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(AgreementData.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_AGREEMENT_ID), agreement.getId());
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_NAME), name);
-		return bean.getList(criteria);
-	}
-	@Override
-	protected IManagerBean getVariableManagerBean() throws ManagerBeanException {
-		return BeanManager.getManagerBean(AgreementData.class);
-	}
-	@Override
-	protected void resetVariable() {
-		setData(new AgreementData());
-		((AgreementData)getData()).setAgreement(((AgreementPayment) getTo()).getAgreement());
-	}
+
+	
 	
 }

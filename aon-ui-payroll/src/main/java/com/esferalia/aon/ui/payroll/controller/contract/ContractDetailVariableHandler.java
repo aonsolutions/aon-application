@@ -24,34 +24,15 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
-public abstract class ContractDetailAbstractController extends VariablesAbstractController {
+public class ContractDetailVariableHandler extends AbstractVariableController {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ContractDetailAbstractController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ContractDetailVariableHandler.class.getName());
 	
-	private List<SelectItem> concepts;
-	private boolean modalPanelVisible;
-	private boolean searchCurrent;
-	private Date inactiveDate;
-	
-	public Date getInactiveDate() {
-		return inactiveDate;
-	}
-	public void setInactiveDate(Date inactiveDate) {
-		this.inactiveDate = inactiveDate;
-	}
-	public boolean isSearchCurrent() {
-		return searchCurrent;
-	}
-	public void setSearchCurrent(boolean searchCurrent) {
-		this.searchCurrent = searchCurrent;
-	}
-	public boolean isModalPanelVisible() {
-		return modalPanelVisible;
-	}
-	public void setModalPanelVisible(boolean modalPanelVisible) {
-		this.modalPanelVisible = modalPanelVisible;
+	public ContractDetailVariableHandler(IController controller) {
+		super(controller);
 	}
 
+	@Override
 	public List<?> expressionContext(Object suggest) {
 		try {
 			String filter = (String) suggest;
@@ -81,65 +62,8 @@ public abstract class ContractDetailAbstractController extends VariablesAbstract
 			return null;
 		} 
 	}
-	public void onEdit(ActionEvent event) {
-		super.onSelect(event);
-		reset(true);
-		initializeVariables(event);
-	}
 	
-	public void onSave(ActionEvent event) {
-		super.onAccept(event);
-		reset(false);
-	}
-	
-	@Override
-	public void onSearch(ActionEvent event) {
-		completeCiteria();
-		super.onSearch(event);
-	}
-	
-	@Override
-	public void onCancel(ActionEvent event) {
-		super.onCancel(event);
-		reset(false);
-	}
-
-	@Override
-	public void onRemove(ActionEvent event) {
-		super.onRemove(event);
-		reset(false);
-	}
-	
-	@Override
-	public void onReset(ActionEvent event) {
-		super.onReset(event);
-		reset(true);
-	}
-	
-	public void reset(boolean panelVisible) {
-		setModalPanelVisible(panelVisible);
-		setConcepts(null);
-	}
-	
-	public void onTypeChange(ActionEvent event) {
-		setConcepts(null);
-	}
-	
-	public List<SelectItem> getConcepts() {
-		if (concepts == null) {
-			initialiceConcepts();
-		}
-		return concepts;
-		
-	}
-	public void setConcepts(List<SelectItem> concepts) {
-		this.concepts = concepts;
-	}
-
-	protected abstract void initialiceConcepts();
-	protected abstract void completeCiteria();
-	
-	protected List<ITransferObject> existingContractData(String name, Contract contract) throws ManagerBeanException {
+	public List<ITransferObject> existingContractData(String name, Contract contract) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
@@ -148,13 +72,19 @@ public abstract class ContractDetailAbstractController extends VariablesAbstract
 	}
 	
 	@Override
-	protected IManagerBean getVariableManagerBean() throws ManagerBeanException {
+	public IManagerBean getVariableManagerBean() throws ManagerBeanException {
 		return BeanManager.getManagerBean(ContractData.class);
 	}
 	@Override
-	protected void resetVariable() {
-		setData(new ContractData());
-		((ContractData)getData()).setContract((Contract) getTo());
+	public void resetVariable() {
+//		setData(new ContractData());
+//		((ContractData)getData()).setContract((Contract) getController().getTo());
+	}
+	@Override
+	public void initializeVariables(ActionEvent event) {
+		// TODO Auto-generated method stub
+		
+		
 	}
 	
 }

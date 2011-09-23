@@ -6,15 +6,12 @@
 	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/gridEx.xhtml" >
 		<aon:valueParam name="inputTextId" default="#{controller.beanName}_expression" />
 		<aon:valueParam name="required" default="true" />
-		<aon:valueParam name="cno" default="#{controller.cno}" />
-		<aon:valueParam name="contractCode" default="#{controller.contractCode}" />
-		<aon:valueParam name="quoteGroup" default="#{controller.quoteGroup}" />
-		<aon:valueParam name="occupationType" default="#{controller.occupationType}" />
+		<aon:valueParam name="cno" default="#{controller.handler.cno}" />
+		<aon:valueParam name="contractCode" default="#{controller.handler.contractCode}" />
+		<aon:valueParam name="quoteGroup" default="#{controller.handler.quoteGroup}" />
+		<aon:valueParam name="occupationType" default="#{controller.handler.occupationType}" />
 		<aon:valueParam name="variableType" default="#{data.variable.type}" />
 		
-<!--  
-		<aon:valueParam name="variableType" default="#{variable.variable.type}" />
--->
 	</ui:include>
 
 </ui:composition>

@@ -90,6 +90,7 @@ public class SettleParams {
 	}
 	public void setNoticeDays(Integer noticeDays) {
 		this.noticeDays = noticeDays;
+		calculateNoticeDayAmount();
 	}
 	public Double getNoticeAmount() {
 		return noticeAmount==null?0.0:noticeAmount;

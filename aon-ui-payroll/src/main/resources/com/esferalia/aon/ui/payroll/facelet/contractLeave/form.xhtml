@@ -18,7 +18,7 @@
 				<ui:param name="skipSpin" value="true" />
 				<ui:param name="skipSearchButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
-				<ui:param name="skipCancelButton" value="true" />
+				<ui:param name="skipCancelButton" value="#{contractLeave.backAction==null}" />
 			</ui:decorate>
 					
 			<aon:div styleClass="aon-scroll-area">

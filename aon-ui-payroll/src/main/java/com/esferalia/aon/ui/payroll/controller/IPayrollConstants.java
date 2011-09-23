@@ -43,6 +43,7 @@ public interface IPayrollConstants {
 	String CONTRACT_DEDUCTION_CONTROLLER = "contractDeduction";
 	String CONTRACT_DATA_CONTROLLER = "contractData";
 	String CONTRACT_GENERATION_WIZARD_CONTROLLER = "contractGenerationWizard";
+	String CONTRACT_LEAVE_CONTROLLER_NAME = "contractLeave";
 	String ENTERPRISE_CONTROLLER="enterprise";
 	String ENTERPRISE_DIR_STAFF_CONTROLLER="enterpriseDirStaff";
 	String ENTERPRISE_ACTIVITY_CONTROLLER = "enterpriseActivity";
@@ -60,6 +61,7 @@ public interface IPayrollConstants {
 	String SALARY_LAUNCHER_CONTROLLER = "salaryLauncher";
 	String SALARY_REMOVER_CONTROLLER = "salaryRemover";
 	String SALARY_TEST_LAUNCHER_NAME = "salaryTestLauncher";
+	String SETTLE_CONTROLLER_NAME = "settle";
 	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
 	String PAYROLL_WORK_PLACE_CONTROLLER = "payrollWorkPlace";
 

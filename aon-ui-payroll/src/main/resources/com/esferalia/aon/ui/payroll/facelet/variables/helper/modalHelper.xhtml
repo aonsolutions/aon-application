@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:panelGroup id="variableHelperModalContainer">
-		<c:if test="#{controller.modalHelperPanelVisible}">
+		<c:if test="#{controller.handler.modalHelperPanelVisible}">
 			<rich:modalPanel id="variableHelperModalPanel" minHeight="600"
 				minWidth="900" showWhenRendered="true" zindex="100">
 				<f:facet name="header">
@@ -26,16 +26,16 @@
 										<aon:commandButton id="variableHelperCancel"
 											value="#{bundle.aon_cancel}"
 											reRender="variableHelperModalContainer,#{container}"
-											actionListener="#{controller.onCancelVariableHelp}"
+											actionListener="#{controller.handler.onCancelVariableHelp}"
 											immediate="true"
 											styleClass="aon-finding-toolbar-item aon-icon-cancel">
 										</aon:commandButton>
 									</aon:div>
 									
 									<aon:editDataTable id="variableHelperList"
-										value="#{controller.variableHelperModel}" var="to" rows="20" >
+										value="#{controller.handler.variableHelperModel}" var="to" rows="20" >
 										<aon:rowSelector toggleOnClick="#{true}" reRender="variableHelperModalContainer,#{container}"
-											actionListener="#{controller.onSelectVariableHelp}" />
+											actionListener="#{controller.handler.onSelectVariableHelp}" />
 										<aon:column styleClass="aon-editDataTable-textColumn">
 											<f:facet name="header">
 												<aon:outputLabel 

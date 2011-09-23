@@ -68,7 +68,7 @@
 						<aon:outputLabel for="Settle_dismissCause" 
 							value="#{payrollBundle.payroll_settle_dismissCause}" />
 						<aon:selectOneMenu id="Settle_dismissCause" value="#{settle.params.dismissCause}"
-							required="true"
+							required="true" ajaxSingle="true"
 							reRender="settleForm" >
 							<f:selectItem value="#{null}" itemLabel=" - " />
 							<f:selectItems value="#{payrollCollections.dismissCauseList}"  />

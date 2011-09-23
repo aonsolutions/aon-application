@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.ast.Expression;
@@ -32,9 +33,9 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
-import com.esferalia.aon.ui.payroll.controller.contract.ContractDetailAbstractController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractDetailVariableController;
 
-public class SalaryDraftPaymentController extends ContractDetailAbstractController {
+public class SalaryDraftPaymentController extends ContractDetailVariableController{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryDraftPaymentController.class.getName());
 
@@ -136,20 +137,20 @@ public class SalaryDraftPaymentController extends ContractDetailAbstractControll
 	//**********************************************
 	
 	@Override
-	protected void initializeVariables(ActionEvent event) {
+	public void initializeVariables(ActionEvent event) {
 		ContractPayment payment = (ContractPayment)this.getTo();
 		Contract contract = payment.getContract();
 		List<ContractData> dataList;
 		try {
-			setVariablesModel(null);
-			setUndefinedVariablesModel(null);
+			getHandler().setVariablesModel(null);
+			getHandler().setUndefinedVariablesModel(null);
 			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
 				dataList = new LinkedList<ContractData>();
 				Set<String> vl = ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
 				List<ContractData> undefined = new LinkedList<ContractData>();
 				if(!vl.isEmpty()){
 					for(String s: vl){
-						List<ITransferObject> list = existingContractData(s, contract);
+						List<ITransferObject> list = getHandler().existingContractData(s, contract);
 						if(!list.isEmpty()){
 							for(ITransferObject to: list){
 								dataList.add((ContractData) to);
@@ -175,9 +176,9 @@ public class SalaryDraftPaymentController extends ContractDetailAbstractControll
 						}
 					}
 				}
-				setVariablesModel(new ListDataModel(dataList));
+				getHandler().setVariablesModel(new ListDataModel(dataList));
 				if(!undefined.isEmpty()){
-					setUndefinedVariablesModel(new ListDataModel(undefined));
+					getHandler().setUndefinedVariablesModel(new ListDataModel(undefined));
 				}
 			}
 		} catch (SalaryException e) {
@@ -191,6 +192,19 @@ public class SalaryDraftPaymentController extends ContractDetailAbstractControll
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
+	}
+
+	@Override
+	public List<?> expressionContext(Object suggest) {
+		return getHandler().expressionContext(suggest);
+	}
+	@Override
+	public IManagerBean getVariableManagerBean() throws ManagerBeanException {
+		return getHandler().getVariableManagerBean();
+	}
+	@Override
+	public void resetVariable() {
+		getHandler().resetVariable();
 	}
 		
 }

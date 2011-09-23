@@ -69,15 +69,4 @@ public class PaymentConceptController extends BasicController {
 		return list;
 	}
 	
-	@Override
-	public void onReset(ActionEvent arg0) {
-		super.onReset(arg0);
-		// Defaults
-		PaymentConcept paymentConcept = getPaymentConcept();
-		paymentConcept.setType(PaymentType.SALARY_SUPPLEMENTS);
-	}
-	
-	private PaymentConcept getPaymentConcept() {
-		return ( PaymentConcept ) getTo();
-	}
 }

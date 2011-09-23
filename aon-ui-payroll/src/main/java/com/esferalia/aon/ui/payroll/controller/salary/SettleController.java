@@ -48,6 +48,14 @@ public class SettleController {
 	
 	private Salary settle;
 	
+	private String backAction;
+	
+	public String getBackAction() {
+		return backAction;
+	}
+	public void setBackAction(String backAction) {
+		this.backAction = backAction;
+	}
 	public PaymentConcept getNoticeDayConcept() {
 		return noticeDayConcept;
 	}
@@ -218,4 +226,5 @@ public class SettleController {
 		controller.accept(null);
 		controller.getBeanName();
 	}
+	
 }

@@ -271,10 +271,6 @@
 			<value>Contract_workPlace_enterprise_registry_name,Contract_person_firstSurname,Contract_person_registry_name</value>
 		</managed-property>
 		<managed-property>
-			<property-name>searchCurrentVariables</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -903,6 +899,18 @@
 			<property-name>beanName</property-name>
 			<value>paymentConcept</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{paymentConceptControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>paymentConceptControllerListener</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.PaymentConceptControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	<!-- ************ DeductionConcept ************** -->
 	<managed-bean>
@@ -920,6 +928,24 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>deductionConcept</value>
+		</managed-property>
+	</managed-bean>
+	<!-- ************ BonusConcept ************** -->
+	<managed-bean>
+		<managed-bean-name>bonusConcept</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.BonusConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>bonusConcept</value>
 		</managed-property>
 	</managed-bean>
 	<!-- ************ SALARY EXPENSE ************** -->
@@ -1339,14 +1365,12 @@
 			<value>Agreement_description</value>
 		</managed-property>
 		<managed-property>
-			<property-name>searchCurrentVariables</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{agreementSalaryTable}</value>
+				<value>#{agreementLevelListener}</value>
+				<value>#{agreementPaymentLinesListener}</value>
 				<value>#{agreementExtraListener}</value>
 				<value>#{agreementTreeControlerListener}</value>
 			</list-entries>
@@ -1357,7 +1381,25 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.agreement.AgreementTreeControllerListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+	<!-- ************ AGREEMENT LEVEL LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementLevelListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>agreementLevel</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AgreementLevel_agreement_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
 	<!-- ************ AGREEMENT LEVEL ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementLevel</managed-bean-name>
@@ -1372,12 +1414,25 @@
 			<value>agreementLevel</value>
 		</managed-property>
 		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>AgreementLevel_description</value>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
 		</managed-property>
 		<managed-property>
-			<property-name>searchCurrentVariables</property-name>
-			<value>true</value>
+			<property-name>masterControllerName</property-name>
+			<value>agreement</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>agreement.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>AgreementLevel_description</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1535,7 +1590,25 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.event.agreement.AgreementLevelDataSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+	<!-- ************ AGREEMENT PAYMENT LINES LISTENER ************** -->
+	<managed-bean>
+		<managed-bean-name>agreementPaymentLinesListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>agreementPayment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>AgreementPayment_agreement_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
 	<!-- ************ AGREEMENT PAYMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>agreementPayment</managed-bean-name>
@@ -1550,8 +1623,22 @@
 			<value>agreementPayment</value>
 		</managed-property>
 		<managed-property>
-			<property-name>searchCurrentVariables</property-name>
+
+			<property-name>cascadeDelete</property-name>
 			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>agreement</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>agreement.id</value>
+				</map-entry>
+			</map-entries>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -2182,6 +2269,21 @@
 		<navigation-case>
 			<from-outcome>deductionConcept_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/deductionConcept/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- =================== BonusConcept ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>bonusConcept_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/bonusConcept/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bonusConcept_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/bonusConcept/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bonusConcept_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/bonusConcept/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== Payment Update ========================== -->

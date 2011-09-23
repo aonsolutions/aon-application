@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,8 +32,6 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
@@ -44,15 +40,11 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
-import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
-import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
-import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
-import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -64,8 +56,9 @@ import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.salary.SettleController;
 
-public class ContractController extends VariablesAbstractController {
+public class ContractController extends BasicController implements IVariablesHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractController.class.getName());
 	private static final int MAX_FILE_SIZE_MB = 3;
@@ -89,6 +82,17 @@ public class ContractController extends VariablesAbstractController {
 	
 	private boolean modalPanelVisible;
 	
+	private ContractVariableHandler handler;
+	
+	public ContractVariableHandler getHandler() {
+		if(handler==null){
+			handler = new ContractVariableHandler(this);
+		}
+		return handler;
+	}
+	public void setHandler(ContractVariableHandler handler) {
+		this.handler = handler;
+	}
 	public boolean isModalPanelVisible() {
 		return modalPanelVisible;
 	}
@@ -557,6 +561,30 @@ public class ContractController extends VariablesAbstractController {
 		}
 	}
 	
+	public void onShowSettle( ActionEvent event ) {
+		if(getTo()==null){
+			String msg = "Error al obtener los datos de contrato.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		SettleController controller = (SettleController) AonUtil.getRegisteredBean(IPayrollConstants.SETTLE_CONTROLLER_NAME);
+		controller.onSelectContract(event);
+		controller.setBackAction(IPayrollConstants.CONTRACT_FORM_TREE);
+	}
+	
+	public void onShowContractLeave( ActionEvent event ) {
+		Contract c = (Contract) getTo();
+		if(c==null){
+			String msg = "Error al obtener los datos de contrato.";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		ContractLeaveController controller = (ContractLeaveController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_LEAVE_CONTROLLER_NAME);
+		controller.setContract(c);
+		controller.initialize();
+		controller.setBackAction(IPayrollConstants.CONTRACT_FORM_TREE);
+	}
+	
 	public void onEditPerson( ActionEvent event ) {
 		try {
 			BasicController controller = (BasicController) FormUtil.getController(IRegistryConstants.PERSON_CONTROLLER_NAME);
@@ -588,145 +616,26 @@ public class ContractController extends VariablesAbstractController {
 		}
 		return list;
 	}
-	
+
 	
 //	 * ************************************
 //	 * 			VARIABLES (contractData)		
 //	 * ************************************	
 	@Override
-	protected void initializeVariables(ActionEvent event) {
-		try {
-			Contract contract = ((Contract)getTo());
-			setVariablesModel(null);
-			setUndefinedVariablesModel(null);
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME));
-			if(isSearchCurrentVariables()){
-				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), new Date());
-				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
-				criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
-			} else {
-				if(getInactiveDate()!=null){
-					Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), getInactiveDate());
-					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
-					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
-				}
-			}
-			List<ContractData> dataList = null;
-			dataList = new LinkedList<ContractData>();
-			List<ITransferObject> list = bean.getList(criteria);
-			if(!list.isEmpty()){
-				for(ITransferObject to: list){
-					dataList.add((ContractData) to);
-				}
-			}
-			bean = BeanManager.getManagerBean(AgreementLevelData.class);
-			String label = bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID);
-			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
-				AgreementLevel level = contract.getAgreementLevelCategory().getLevel();
-				criteria = new Criteria();
-				criteria.addEqualExpression(label, level.getId());
-				criteria.addOrder(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_NAME));
-				list = bean.getList(criteria);
-				if(!list.isEmpty()){
-					for(ITransferObject to: list){
-						AgreementLevelData d = (AgreementLevelData) to;
-						if(!existVariable(d, dataList)){
-							ContractData data = new ContractData();
-							data.setContract((Contract) this.getTo());
-							data.setName(d.getName());
-							data.setStartDate(d.getStartDate());
-							data.setEndDate(d.getEndDate());
-							data.setExpression(d.getExpression());
-							dataList.add(data);
-						}
-					}
-				}
-			}
-			setVariablesModel(new ListDataModel(dataList));
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
-	}
-	private boolean existVariable(AgreementLevelData d, List<ContractData> dataList) {
-		for(ContractData data: dataList){
-			if(data.getName().equals(d.getName())){
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public void reloadData( ActionEvent event ) {
-		initializeVariables(event);
-	}
-	
-	@Override
 	public List<?> expressionContext(Object suggest) {
-		// CONTRACT variables
-		try {
-			String filter = (String) suggest;
-			List<String> list = new LinkedList<String>();
-			Contract contract = (Contract) this.getTo();
-			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
-			Criteria criteria = new Criteria();  
-			String alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID);
-			criteria.addEqualExpression(alias, contract.getId());
-			alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE);
-			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias, new Date());
-			Expression expr2 = ExpressionUtilities.getNullExpression(alias);
-			criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
-			criteria.addOrder(alias, false);
-			alias = bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME);
-			criteria.addOrder(alias);
-			for(ITransferObject to: bean.getList(criteria)){
-				ContractData data = (ContractData) to;
-				if (data.getName().contains(filter.toUpperCase())) {
-					list.add(data.getName());		
-				}
-			}
-			// system variables
-			for(SimpleVariable data: (Collection<? extends SimpleVariable>) getVariableHelperModel().getWrappedData()){
-				if (data.getName().contains(filter.toUpperCase())) {
-					list.add(data.getName());		
-				}
-			}
-			// system data variables
-			bean = BeanManager.getManagerBean(SystemData.class);
-			criteria = new Criteria();
-			
-			//TODO ¿Utilizar las fechas del pojo activo?
-			Date date = new Date();
-			
-			alias = bean.getFieldName(IPayrollAlias.SYSTEM_DATA_END_DATE);
-			Expression ex1 = ExpressionUtilities.getNullExpression(alias);
-			Expression ex2 = ExpressionUtilities.getGreaterThanOrEqualExpression(alias,date);
-			criteria.addOrExpression( ExpressionUtilities.getOrExpression(ex1, ex2));
-			for (ITransferObject to: bean.getList(criteria)) {
-				SystemData data = (SystemData) to;
-				if (data.getName().contains(filter.toUpperCase())) {
-					list.add(data.getName());		
-				}
-			}
-			return list;
-		} catch (ManagerBeanException e) {
-			LOGGER.error("error on expressionContext");
-			return null;
-		} 
+		return getHandler().expressionContext(suggest);
 	}
 	@Override
-	protected IManagerBean getVariableManagerBean() throws ManagerBeanException {
-		return BeanManager.getManagerBean(ContractData.class);
+	public IManagerBean getVariableManagerBean() throws ManagerBeanException {
+		return getHandler().getVariableManagerBean();
 	}
 	@Override
-	protected void resetVariable() {
-		setData(new ContractData());
-		((ContractData)getData()).setContract((Contract) getTo());
+	public void initializeVariables(ActionEvent event) {
+		getHandler().initializeVariables(event);
+	}
+	@Override
+	public void resetVariable() {
+		getHandler().resetVariable();
 	}
 	
 }

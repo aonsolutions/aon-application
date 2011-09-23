@@ -267,6 +267,8 @@ public class ContractLeaveController extends BasicController {
 			throw new AbortProcessingException(msg, e);
 		}
 		buildLeaveReport(true);
+		checkCollegeNumber();
+		checkCiasNumber();
 	}
 	
 	public void calculateBases(){
@@ -332,9 +334,6 @@ public class ContractLeaveController extends BasicController {
 			setContract((Contract) event.getNewValue());
 		} 
 		initialize();
-		buildLeaveReport(true);
-		checkCollegeNumber();
-		checkCiasNumber();
 	}
 	
 	public void onSearchContract(ActionEvent event) {
@@ -359,9 +358,6 @@ public class ContractLeaveController extends BasicController {
 		}
 		controller.onSelect(event);
 		initialize();
-		buildLeaveReport(true);
-		checkCollegeNumber();
-		checkCiasNumber();
 	}
 	
 	public void onSelectLeave(ActionEvent event) {

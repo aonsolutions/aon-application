@@ -36,11 +36,21 @@
 					reRender="aonContent"
 					inmediate="true"
 					action="settle_list"
+					rendered="#{settle.backAction==null}"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					accesskey="#{bundle.aon_key_cancel}" />
+					
+				<aon:commandButton id="settle-back" 
+					title="#{bundle.aon_key_cancel_accelerator}"
+					value="#{bundle.aon_back}"
+					inmediate="true" ajaxSingle="true"
+					rendered="#{settle.backAction!=null}"
+					action="#{settle.getBackAction}"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
 					accesskey="#{bundle.aon_key_cancel}" />
 					
 				<aon:commandButton id="settle-generation" 
-					action="salaryDraft_form"
+					action="salaryDraft_formTree"
 					value="#{payrollBundle.payroll_settle_generation}"
 					styleClass="aon-finding-toolbar-item aon-icon-file-entrance" >
 					<aon:actionListener method="#{settle.onGenerate}" />

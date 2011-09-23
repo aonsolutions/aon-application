@@ -125,7 +125,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-offer aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{payrollBundle.payroll_payment_deductions}" />
+								<aon:outputText value="#{payrollBundle.payroll_concepts}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
@@ -142,7 +142,13 @@
 										value="#{payrollBundle.payroll_deductionConcept_module}">
 									</aon:commandLink>
 								</aon:div>
-								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="bonusConcept"
+										action="bonusConcept_search"
+										actionListener="#{bonusConcept.onEditSearch}"
+										value="#{payrollBundle.payroll_bonusConcept_module}">
+									</aon:commandLink>
+								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="systemData" action="systemData_grid"
 										actionListener="#{systemData.onSearch}"

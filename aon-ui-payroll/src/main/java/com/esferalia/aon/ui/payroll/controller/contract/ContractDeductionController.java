@@ -36,7 +36,7 @@ import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
-public class ContractDeductionController extends ContractDetailAbstractController {
+public class ContractDeductionController extends ContractDetailVariableController{
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractDeductionController.class.getName());
 	
@@ -114,20 +114,20 @@ public class ContractDeductionController extends ContractDetailAbstractControlle
 	//**********************************************
 	
 	@Override
-	protected void initializeVariables(ActionEvent event) {
+	public void initializeVariables(ActionEvent event) {
 		ContractDeduction deduction = (ContractDeduction)this.getTo();
 		Contract contract = deduction.getContract();
 		List<ContractData> dataList;
 		try {
-			setVariablesModel(null);
-			setUndefinedVariablesModel(null);
+			getHandler().setVariablesModel(null);
+			getHandler().setUndefinedVariablesModel(null);
 			if(deduction.getExpression()!=null || deduction.getDeductionConcept().getExpression()!=null){
 				dataList = new LinkedList<ContractData>();
 				Set<String> vl = ExpressionContext.getVariables(deduction.getExpression()==null?deduction.getDeductionConcept().getExpression():deduction.getExpression());
 				List<ContractData> undefined = new LinkedList<ContractData>();
 				if(!vl.isEmpty()){
 					for(String s: vl){
-						List<ITransferObject> list = existingContractData(s, contract);
+						List<ITransferObject> list = getHandler().existingContractData(s, contract);
 						if(!list.isEmpty()){
 							for(ITransferObject to: list){
 								dataList.add((ContractData) to);
@@ -153,9 +153,9 @@ public class ContractDeductionController extends ContractDetailAbstractControlle
 						}
 					}
 				}
-				setVariablesModel( new ListDataModel(dataList) );
+				getHandler().setVariablesModel( new ListDataModel(dataList) );
 				if(!undefined.isEmpty()){
-					setUndefinedVariablesModel( new ListDataModel(undefined) );
+					getHandler().setUndefinedVariablesModel( new ListDataModel(undefined) );
 				}
 			}
 		} catch (SalaryException e) {
@@ -169,6 +169,18 @@ public class ContractDeductionController extends ContractDetailAbstractControlle
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
+	}
+	@Override
+	public List<?> expressionContext(Object suggest) {
+		return getHandler().expressionContext(suggest);
+	}
+	@Override
+	public IManagerBean getVariableManagerBean() throws ManagerBeanException {
+		return getHandler().getVariableManagerBean();
+	}
+	@Override
+	public void resetVariable() {
+		getHandler().resetVariable();
 	}
 	
 	
