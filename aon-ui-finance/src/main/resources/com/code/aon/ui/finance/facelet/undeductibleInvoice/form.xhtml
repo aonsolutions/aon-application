@@ -313,15 +313,35 @@
 
 				</aon:panelGrid>
 
-				<aon:panelGrid columns="2" style="width: 100%;"
+				<aon:panelGrid columns="4" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-140,
+						aon-panelGrid-even aon-width-500,
+						aon-panelGrid-odd aon-width-100,
 						aon-panelGrid-even aon-width-auto">
 
-					<aon:outputLabel for="Invoice_comments"
-						value="#{bundle.aon_comment}" />
-					<aon:inputTextarea id="Invoice_comments" cols="130" rows="2"
+					<aon:div>
+						<aon:outputLabel for="Invoice_comments"
+							value="#{bundle.aon_comment}" />
+						<aon:div>
+							<aon:outputLabel styleClass="aon-form-date-label"
+								value="(#{bundle.aon_comment_description})" />
+						</aon:div>
+					</aon:div>
+					<aon:inputTextarea id="Invoice_comments" cols="80" rows="3"
 						disabled="#{undeductibleInvoice.readOnly}"
 						value="#{undeductibleInvoice.to.comments}" />
+
+					<aon:div>
+						<aon:outputLabel for="Invoice_remarks"
+							value="#{bundle.aon_remark}" />
+						<aon:div>
+							<aon:outputLabel styleClass="aon-form-date-label"
+								value="(#{bundle.aon_remark_description})" />
+						</aon:div>
+					</aon:div>
+					<aon:inputTextarea id="Invoice_remarks" cols="80" rows="3"
+						disabled="#{undeductibleInvoice.readOnly}"
+						value="#{undeductibleInvoice.to.remarks}" />
 
 				</aon:panelGrid>
 
