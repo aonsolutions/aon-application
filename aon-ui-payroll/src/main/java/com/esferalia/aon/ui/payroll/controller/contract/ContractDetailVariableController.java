@@ -20,17 +20,8 @@ public abstract class ContractDetailVariableController extends BasicController i
 	private boolean searchCurrent;
 	private Date inactiveDate;
 	
-	private ContractDetailVariableHandler handler;
+	public abstract AbstractVariableHandler getHandler() ;
 	
-	public ContractDetailVariableHandler getHandler() {
-		if(handler==null){
-			handler = new ContractDetailVariableHandler(this);
-		}
-		return handler;
-	}
-	public void setHandler(ContractDetailVariableHandler handler) {
-		this.handler = handler;
-	}
 	public Date getInactiveDate() {
 		return inactiveDate;
 	}

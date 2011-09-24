@@ -183,6 +183,16 @@ public class ContractDeductionController extends ContractDetailVariableControlle
 		getHandler().resetVariable();
 	}
 	
+	private ContractDeductionVariableHandler handler;
+	
+	@Override
+	public ContractDeductionVariableHandler getHandler() {
+		if(handler==null){
+			handler = new ContractDeductionVariableHandler(this);
+		}
+		return handler;
+	}
+	
 	
 	
 }

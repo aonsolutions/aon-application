@@ -34,6 +34,7 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractBonusVariableHandler;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractDetailVariableController;
 
 public class SalaryDraftBonusController extends ContractDetailVariableController{
@@ -153,6 +154,16 @@ public class SalaryDraftBonusController extends ContractDetailVariableController
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
+	}
+
+	private ContractBonusVariableHandler handler;
+	
+	@Override
+	public ContractBonusVariableHandler getHandler() {
+		if(handler==null){
+			handler = new ContractBonusVariableHandler(this);
+		}
+		return handler;
 	}
 	@Override
 	public List<?> expressionContext(Object suggest) {

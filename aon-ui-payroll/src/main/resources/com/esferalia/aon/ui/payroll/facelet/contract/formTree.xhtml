@@ -43,11 +43,11 @@
 						<f:setPropertyActionListener
 							target="#{contractCalendarEvent.backActionListener}" value="contractCalendarEvent.onBack" />
 					</aon:commandButton>													
-					<aon:commandButton id="IRPF-calculator"
-						value="#{payrollBundle.payroll_contract_irpf_data}"
-						action="irpfData_form"
-						styleClass="aon-finding-toolbar-item aon-icon-aeat">
-						<aon:actionListener method="#{contract.onShowIrpfData}" />
+					<aon:commandButton id="contract_leave"
+						value="#{payrollBundle.payroll_contractLeave_module}"
+						action="contractLeave_form"
+						styleClass="aon-finding-toolbar-item aon-icon-copy">
+						<aon:actionListener method="#{contract.onShowContractLeave}" />
 					</aon:commandButton>
 					<aon:commandButton id="settle"
 						value="#{payrollBundle.payroll_settle_module}"
@@ -56,11 +56,11 @@
 						styleClass="aon-finding-toolbar-item aon-icon-black-list">
 						<aon:actionListener method="#{contract.onShowSettle}" />
 					</aon:commandButton>
-					<aon:commandButton id="contract_leave"
-						value="#{payrollBundle.payroll_contractLeave_module}"
-						action="contractLeave_form"
-						styleClass="aon-finding-toolbar-item aon-icon-copy">
-						<aon:actionListener method="#{contract.onShowContractLeave}" />
+					<aon:commandButton id="IRPF-calculator"
+						value="#{payrollBundle.payroll_contract_irpf_data}"
+						action="irpfData_form"
+						styleClass="aon-finding-toolbar-item aon-icon-aeat">
+						<aon:actionListener method="#{contract.onShowIrpfData}" />
 					</aon:commandButton>
 				</ui:define>				
 			

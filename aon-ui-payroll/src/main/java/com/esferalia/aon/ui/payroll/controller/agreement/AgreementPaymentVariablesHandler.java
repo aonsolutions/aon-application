@@ -31,9 +31,9 @@ import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.salary.expression.ExpressionContext;
-import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableController;
+import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler;
 
-public class AgreementPaymentVariablesHandler extends AbstractVariableController {
+public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AgreementPaymentVariablesHandler.class.getName());
 

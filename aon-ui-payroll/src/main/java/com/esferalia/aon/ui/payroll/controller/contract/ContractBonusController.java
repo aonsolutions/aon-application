@@ -165,9 +165,17 @@ public class ContractBonusController extends ContractDetailVariableController{
 	}
 	@Override
 	public void resetVariable() {
-//		getHandler().resetVariable();
-		getHandler().setData(new ContractData());
-		((ContractData)getHandler().getData()).setContract(((ContractBonus) getTo()).getContract());
+		getHandler().resetVariable();
+	}
+
+	private ContractBonusVariableHandler handler;
+	
+	@Override
+	public ContractBonusVariableHandler getHandler() {
+		if(handler==null){
+			handler = new ContractBonusVariableHandler(this);
+		}
+		return handler;
 	}
 	
 }

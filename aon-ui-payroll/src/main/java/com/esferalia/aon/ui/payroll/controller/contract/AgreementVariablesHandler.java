@@ -28,7 +28,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
-public class AgreementVariablesHandler extends AbstractVariableController {
+public class AgreementVariablesHandler extends AbstractVariableHandler{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AgreementVariablesHandler.class.getName());
 

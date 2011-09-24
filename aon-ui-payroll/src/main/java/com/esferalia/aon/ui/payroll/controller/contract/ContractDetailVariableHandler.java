@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
-public class ContractDetailVariableHandler extends AbstractVariableController {
+public abstract class ContractDetailVariableHandler extends AbstractVariableHandler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ContractDetailVariableHandler.class.getName());
 	
@@ -75,16 +74,11 @@ public class ContractDetailVariableHandler extends AbstractVariableController {
 	public IManagerBean getVariableManagerBean() throws ManagerBeanException {
 		return BeanManager.getManagerBean(ContractData.class);
 	}
+	
 	@Override
-	public void resetVariable() {
-//		setData(new ContractData());
-//		((ContractData)getData()).setContract((Contract) getController().getTo());
-	}
+	public abstract void resetVariable() ;
+	
 	@Override
-	public void initializeVariables(ActionEvent event) {
-		// TODO Auto-generated method stub
-		
-		
-	}
+	public abstract void initializeVariables(ActionEvent event) ;
 	
 }

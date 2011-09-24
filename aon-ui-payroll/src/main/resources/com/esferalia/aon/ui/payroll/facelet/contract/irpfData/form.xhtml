@@ -12,8 +12,9 @@
 	<ui:define name="content">
 
 		<aon:form id="irpfDataForm">
-		
-			<aon:div id="menuExt"> 
+			
+			<aon:div id="menuExt">
+				<aon:methodParam name="removeAction" value="#{irpfData.backAction}" /> 
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 					<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_irpfData_module}" />

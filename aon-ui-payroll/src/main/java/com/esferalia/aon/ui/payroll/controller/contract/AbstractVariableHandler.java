@@ -25,7 +25,7 @@ import com.code.aon.common.enumeration.IStringEnum;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.AbstractVariableData;
 import com.esferalia.aon.payroll.SystemData;
@@ -38,9 +38,9 @@ import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.payroll.controller.PayrollVariablesCollectionsController;
 
-public abstract class VariablesAbstractController extends BasicController {
+public abstract class AbstractVariableHandler {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(VariablesAbstractController.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractVariableHandler.class.getName());
 	
 	private AbstractVariableData data;
 	private DataModel variablesModel;
@@ -48,9 +48,25 @@ public abstract class VariablesAbstractController extends BasicController {
 	
 	private Date inactiveDate;
 	private InactiveLastPeriod inactiveLastPeriod;
-	private boolean searchCurrentVariables;
+	private Boolean searchCurrentVariables;
 	
+	private IController controller;
+	
+	public AbstractVariableHandler(IController controller) {
+		this.controller = controller;
+	}
+	
+	public IController getController() {
+		return controller;
+	}
+	public void setController(IController controller) {
+		this.controller = controller;
+	}
+
 	public boolean isSearchCurrentVariables() {
+		if(searchCurrentVariables == null){
+			searchCurrentVariables = true;
+		}
 		return searchCurrentVariables;
 	}
 	public void setSearchCurrentVariables(boolean searchCurrentVariables) {
@@ -149,6 +165,10 @@ public abstract class VariablesAbstractController extends BasicController {
 		return list;
 	}
 	
+	public void reloadData( ActionEvent event ) {
+		initializeVariables(event);
+	}
+	
 	protected abstract void initializeVariables(ActionEvent event);
 	
 	public abstract List<?> expressionContext(Object suggest); 
@@ -186,7 +206,44 @@ public abstract class VariablesAbstractController extends BasicController {
 		setInactiveDate(cal!=null?cal.getTime():null);
 	}
 	
+	private String variableFilter;
 	
+	public List<SelectItem> getVariablesFilterList(){
+		List<SelectItem> list = new LinkedList<SelectItem>();
+		if(getVariablesModel()!=null){
+			for(AbstractVariableData data: (List<AbstractVariableData>)getVariablesModel().getWrappedData()){
+				String name = data.getName();
+				SelectItem item = new SelectItem(name, name);
+				list.add(item);
+			}
+		}
+		if(getUndefinedVariablesModel()!=null){
+			for(AbstractVariableData data: (List<AbstractVariableData>)getUndefinedVariablesModel().getWrappedData()){
+				String name = data.getName();
+				SelectItem item = new SelectItem(name, name);
+				list.add(item);
+			}
+		}
+		
+//		List<SelectItem> list = new LinkedList<SelectItem>();
+//		for( PaymentType paymentType : getVariablesModel().getWrappedData() ) {
+//			String name = paymentType.getName(locale);
+//			SelectItem item = new SelectItem(paymentType, name);
+//			list.add(item);			
+//		}
+//		
+//		
+//		getVariablesCollection();
+		return list;
+	}
+	
+	public String getVariableFilter() {
+		return variableFilter;
+	}
+	public void setVariableFilter(String variableFilter) {
+		this.variableFilter = variableFilter;
+	}
+
 	//******************************************************
 	// VARIABLEs EDITOR
 	//******************************************************

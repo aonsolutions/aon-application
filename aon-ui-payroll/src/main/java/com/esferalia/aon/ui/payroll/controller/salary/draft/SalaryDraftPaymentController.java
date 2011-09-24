@@ -34,6 +34,7 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractDetailVariableController;
+import com.esferalia.aon.ui.payroll.controller.contract.ContractPaymentVariableHandler;
 
 public class SalaryDraftPaymentController extends ContractDetailVariableController{
 	
@@ -194,6 +195,15 @@ public class SalaryDraftPaymentController extends ContractDetailVariableControll
 		}
 	}
 
+	private ContractPaymentVariableHandler handler;
+	
+	@Override
+	public ContractPaymentVariableHandler getHandler() {
+		if(handler==null){
+			handler = new ContractPaymentVariableHandler(this);
+		}
+		return handler;
+	}
 	@Override
 	public List<?> expressionContext(Object suggest) {
 		return getHandler().expressionContext(suggest);

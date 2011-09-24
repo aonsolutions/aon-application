@@ -305,6 +305,16 @@ public class ContractPaymentController extends ContractDetailVariableController 
 			throw new AbortProcessingException(msg,e);
 		}
 	}
+	
+	private ContractPaymentVariableHandler handler;
+	
+	@Override
+	public ContractPaymentVariableHandler getHandler() {
+		if(handler==null){
+			handler = new ContractPaymentVariableHandler(this);
+		}
+		return handler;
+	}
 	@Override
 	public List<?> expressionContext(Object suggest) {
 		return getHandler().expressionContext(suggest);

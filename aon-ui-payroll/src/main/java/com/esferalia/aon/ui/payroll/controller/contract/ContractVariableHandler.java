@@ -29,7 +29,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
-public class ContractVariableHandler extends AbstractVariableController {
+public class ContractVariableHandler extends AbstractVariableHandler{
 	
 	public ContractVariableHandler(IController controller) {
 		super(controller);
