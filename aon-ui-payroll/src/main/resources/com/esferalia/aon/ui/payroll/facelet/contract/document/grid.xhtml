@@ -7,17 +7,13 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/contract/form.xhtml">
 
-	<ui:param name="variablesSelected" value="#{true}" />
+	<ui:param name="documentsSelected" value="#{true}" />
 	<ui:define name="contractDetail">
-		<aon:form id="contractDataForm">
-			<aon:div id="dataGrid" styleClass="aon-scroll-area">
+		<aon:form id="contractDocumentForm">
+			<aon:div id="documentGrid" styleClass="aon-scroll-area">
 		
-				<ui:include 
-					src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
-					<ui:param name="controller" value="#{contract}" />
-					<ui:param name="showVariableFilter" value="true" />
-				</ui:include>
-
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/document/gridContent.xhtml" />	
+			
 			</aon:div>
 		</aon:form>
 	</ui:define>

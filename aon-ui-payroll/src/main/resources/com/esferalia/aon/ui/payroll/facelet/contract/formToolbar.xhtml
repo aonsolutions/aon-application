@@ -11,7 +11,7 @@
 			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_module}" />
 			<ui:param name="controller" value="#{contract}" />
 			<ui:param name="skipSaveButton" value="true" />
-			<ui:param name="skipRemoveButton" value="true" />
+			<ui:param name="skipRemoveButton" value="#{contract.to.status!='PENDING'}" />
 			<ui:define name="beforeSpinToolbarContent">
 				<aon:commandButton 
 					value="#{payrollBundle.payroll_contractCalendarEvent}"

@@ -48,7 +48,7 @@ public class ContractGenerationControllerListener extends ControllerAdapter{
 		controller.setParams(new ContrataParams());
 		controller.getContractBuilder().setContractFields(null);
 		if(getContractDataMap().get(ContractVariables.TC2.getName())!=null){
-			controller.setCode(ContractCode.valueOf("C"+getContractDataMap().get(ContractVariables.TC2.getName())));
+			controller.setCode(ContractCode.getContractCodeByValue(getContractDataMap().get(ContractVariables.TC2.getName())));
 			// TODO EN DESARROLLO, solo se contempla cuando el TC2 es 100
 			if(controller.getCode()==ContractCode.C100){
 				for (ContractOption contractOption:ContractOption.values()) {

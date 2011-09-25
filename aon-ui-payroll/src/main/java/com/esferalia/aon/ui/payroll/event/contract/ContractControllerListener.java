@@ -78,7 +78,7 @@ public class ContractControllerListener extends ControllerAdapter{
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ContractController controller = (ContractController) this.getController();
 		Contract contract = (Contract) controller.getTo();
-		contract.setStatus(ContractStatus.PROCESSED);
+		contract.setStatus(ContractStatus.PENDING);
 		if(controller.getAonFile()!=null){
 			contract.setDocument(controller.getAonFile().getData());
 		}

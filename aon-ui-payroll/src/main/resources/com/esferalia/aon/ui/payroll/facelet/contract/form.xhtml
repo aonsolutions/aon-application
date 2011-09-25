@@ -14,7 +14,74 @@
 			
 			<c:if test="#{!contract.new}" >
 				<aon:div styleClass="aon-scroll-area">		
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/gridContent.xhtml" />
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
+					
+					<aon:panelGrid columns="7" style="width: 100%; margin-top:10px;"
+						columnClasses="aon-panelGrid-even aon-width-200 #{variablesSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-200 #{paymentsSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-200 #{deductionsSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-200 #{bonusSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-200 #{embargosSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-200 #{documentsSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-auto">
+					
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowVariables}"
+								action="contractData_list"
+								styleClass="aon-dataTable-link #{variablesSelected?'aon-bold':''}"
+								value="#{payrollBundle.payroll_contract_data_variables}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-fraction"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowPayments}"
+								styleClass="aon-dataTable-link #{paymentsSelected?'aon-bold':''}"
+								action="contractPayment_list"
+								value="#{payrollBundle.payroll_salary_payments_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-settle"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowDeductions}"
+								styleClass="aon-dataTable-link #{deductionsSelected?'aon-bold':''}"
+								action="contractDeduction_list"
+								value="#{payrollBundle.payroll_salary_deductions_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-fraction"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowBonus}"
+								styleClass="aon-dataTable-link #{bonusSelected?'aon-bold':''}"
+								action="contractBonus_list"
+								value="#{payrollBundle.payroll_salary_bonus_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-settle"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowEmbargos}"
+								styleClass="aon-dataTable-link #{embargosSelected?'aon-bold':''}"
+								action="contractEmbargo_list"
+								value="#{payrollBundle.payroll_salary_embargos_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-attach-file"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowDocuments}"
+								styleClass="aon-dataTable-link #{documentsSelected?'aon-bold':''}"
+								action="contractDocuments_grid"
+								value="#{payrollBundle.payroll_documents}" />
+						</aon:div>	
+				
+						<aon:outputText value="&#160;" />
+					</aon:panelGrid>
+					
 				</aon:div>
 			</c:if>
 			<c:if test="#{contract.new}" >
@@ -24,7 +91,9 @@
 			</c:if>
 			
 		</aon:form>
+		
 		<ui:insert name="contractDetail" />
+		
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 	</ui:define>

@@ -572,13 +572,8 @@ public class EnterpriseTree implements ICompanyConstants {
 	
 	public void onSelectTreeDocuments(ActionEvent event) {
 		selectContract(event);
-		ContractGenerationWizard c = (ContractGenerationWizard) FormUtil.getController(IPayrollConstants.CONTRACT_GENERATION_WIZARD_CONTROLLER);
-		try {
-			c.select(event, this.contract);
-		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ContractController c = (ContractController) FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		c.onShowDocuments(event);
 	}
 	
 	public boolean selectSalaries( ActionEvent event, Contract contract ) {

@@ -57,6 +57,7 @@ import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SettleController;
+import com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard;
 
 public class ContractController extends BasicController implements IVariablesHandler {
 
@@ -271,6 +272,16 @@ public class ContractController extends BasicController implements IVariablesHan
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}						
+	}
+	public void onShowDocuments( ActionEvent event ) {
+		Contract to = (Contract) getTo();
+		ContractGenerationWizard c = (ContractGenerationWizard) FormUtil.getController(IPayrollConstants.CONTRACT_GENERATION_WIZARD_CONTROLLER);
+		try {
+			c.select(event, to);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void onEnterpriseChanged( LookupChangeEvent event ) {
