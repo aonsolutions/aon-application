@@ -613,44 +613,44 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 
 	private <T> T getContract ( ResultSet rs, String col ) 
 	throws SQLException {
-		return get(rs, SQLConstants.CONTRACT, col);
+		return ( T ) get(rs, SQLConstants.CONTRACT, col);
 	}
 
 	private <T> T getPerson ( ResultSet rs, String col ) 
 	throws SQLException {
-		return get(rs, SQLConstants.PERSON, col);
+		return ( T )get(rs, SQLConstants.PERSON, col);
 	}
 
 	private <T> T getIrpfData ( ResultSet rs, String col ) 
 	throws SQLException {
-		return get(rs, SQLConstants.IRPF_DATA, col);
+		return ( T )get(rs, SQLConstants.IRPF_DATA, col);
 	}
 
 	private <T> T getWorplace ( ResultSet rs, String col ) 
 	throws SQLException {
-		return get(rs, SQLConstants.WORKPLACE, col);
+		return ( T )get(rs, SQLConstants.WORKPLACE, col);
 	}
 
 
 	private <T> T getPersonRegistry ( ResultSet rs, String col ) 
 	throws SQLException {
-		return get(rs, PERSON_REGISTRY, col);
+		return ( T )get(rs, PERSON_REGISTRY, col);
 	}
 
 	private <T> T getEnterpriseRegistry ( ResultSet rs, String col ) 
 	throws SQLException {
-		return get(rs, ENTERPRISE_REGISTRY, col);
+		return ( T )get(rs, ENTERPRISE_REGISTRY, col);
 	}
 	
 	
 	private <T> T getIrpfResult ( ResultSet rs, String col ) 
 	throws SQLException {
-		return get(rs, SQLConstants.IRPF_RESULT, col);
+		return ( T )get(rs, SQLConstants.IRPF_RESULT, col);
 	}
 
 	private <T> T getIrpfRegularization ( ResultSet rs, String col ) 
 	throws SQLException {
-		return get(rs, SQLConstants.IRPF_REGULARIZATION , col);
+		return ( T ) get(rs, SQLConstants.IRPF_REGULARIZATION , col);
 	}
 	
 	private Regularizacion getRegularizacion ( ResultSet rs, ISalary paidSalary , TipoRetenedorError2011 retenedorError2011, CallbackHandler cb) 
