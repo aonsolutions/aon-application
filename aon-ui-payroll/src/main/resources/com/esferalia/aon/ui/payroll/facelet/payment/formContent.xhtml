@@ -70,8 +70,30 @@
 	
 	<c:if test="#{!aonRole.sisAdmin}">
 		<aon:outputLabel for="ContractPayment_amount" value="#{payrollBundle.payroll_salary_expression}" />
-		<aon:outputText id="ContractPayment_amount" size="40" maxlength="64"
+		<aon:outputText id="ContractPayment_amount"  
 			value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.paymentConcept.expression)}" />
+			
+			
+		<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_simulation_date}"/>
+		<h:panelGrid columns="2">
+			<aon:selectOneMenu value="#{controller.month}">
+				<f:selectItems value="#{commonCollections.months}"  />
+				<a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			</aon:selectOneMenu>
+
+   			<rich:inputNumberSpinner value="#{controller.year}" inputSize="4" 
+   				minValue="2000" maxValue="2100">
+   			  <a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+   			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+   			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true" />
+   			</rich:inputNumberSpinner>
+		</h:panelGrid>
+
+		<aon:outputLabel for="ContractPayment_result" value="#{payrollBundle.payroll_result}" />
+		<aon:outputText id="ContractPayment_result" value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}" 
+			style="color:#{(controller.result!=null)?('black'):('red')};" >
+			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+		</aon:outputText>
 	</c:if>
 	
 	<c:if test="#{aonRole.sisAdmin}">

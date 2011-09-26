@@ -10,20 +10,6 @@
 	<aon:div id="contract_new_panel">
 
 		<aon:panelGrid columns="2" style="width: 80%;" >
-			
-			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
-				<ui:param name="lookupTo" value="#{contract.to.person}" />
-				<ui:param name="idRequired" value="#{true}" />
-				<ui:param name="lookupDisabled" value="#{false}" />
-			</ui:include>
-			
-			<aon:outputLabel for="ssRegime"
-				value="#{payrollBundle.payroll_contract_regime}" />
-			<aon:selectOneMenu id="ssRegime" required="true"
-				value="#{contract.to.regimeType}" >
-				<f:selectItem itemLabel="-" value="#{null}" />
-				<f:selectItems value="#{payrollCollections.ssRegimes}" />
-			</aon:selectOneMenu>
 
 			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.enterprise}" />
@@ -57,6 +43,20 @@
 				disabled="#{contract.to.activity==null or contract.to.activity.id==null}"
 				value="#{contract.to.enterpriseCCC}" >
 				<f:selectItems value="#{contract.enterpriseCCCs}" />
+			</aon:selectOneMenu>
+			
+			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.to.person}" />
+				<ui:param name="idRequired" value="#{true}" />
+				<ui:param name="lookupDisabled" value="#{false}" />
+			</ui:include>
+			
+			<aon:outputLabel for="ssRegime"
+				value="#{payrollBundle.payroll_contract_regime}" />
+			<aon:selectOneMenu id="ssRegime" required="true"
+				value="#{contract.to.regimeType}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{payrollCollections.ssRegimes}" />
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel value="#{payrollBundle.payroll_contract_period}"/>

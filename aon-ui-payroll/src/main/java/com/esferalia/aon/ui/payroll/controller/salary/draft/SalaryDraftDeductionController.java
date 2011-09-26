@@ -33,6 +33,7 @@ import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractDeductionVariableHandler;
@@ -187,6 +188,10 @@ public class SalaryDraftDeductionController extends ContractDetailVariableContro
 	@Override
 	public void resetVariable() {
 		getHandler().resetVariable();
+	}
+	@Override
+	public SalaryType getSalaryType() {
+		return SalaryType.SALARY;
 	}
 	
 }

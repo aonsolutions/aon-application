@@ -31,6 +31,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 
 public class ContractBonusController extends ContractDetailVariableController{
@@ -176,6 +177,10 @@ public class ContractBonusController extends ContractDetailVariableController{
 			handler = new ContractBonusVariableHandler(this);
 		}
 		return handler;
+	}
+	@Override
+	public SalaryType getSalaryType() {
+		return SalaryType.SALARY;
 	}
 	
 }

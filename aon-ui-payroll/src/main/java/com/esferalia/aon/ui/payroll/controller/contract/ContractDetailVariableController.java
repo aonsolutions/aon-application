@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.contract;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -9,7 +10,19 @@ import javax.faces.model.SelectItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
+import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedObject;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public abstract class ContractDetailVariableController extends BasicController implements IVariablesHandler {
 	
@@ -21,6 +34,7 @@ public abstract class ContractDetailVariableController extends BasicController i
 	private Date inactiveDate;
 	
 	public abstract AbstractVariableHandler getHandler() ;
+	public abstract SalaryType getSalaryType() ;
 	
 	public Date getInactiveDate() {
 		return inactiveDate;
@@ -79,6 +93,8 @@ public abstract class ContractDetailVariableController extends BasicController i
 	public void reset(boolean panelVisible) {
 		setModalPanelVisible(panelVisible);
 		setConcepts(null);
+		setMonth(Month.getMonthByValue(CommonUtil.getMonth(new Date())));
+		setYear( CommonUtil.getYear(new Date()));
 	}
 	
 	public void onTypeChange(ActionEvent event) {
@@ -98,6 +114,73 @@ public abstract class ContractDetailVariableController extends BasicController i
 
 	protected abstract void initialiceConcepts();
 	protected abstract void completeCiteria();
+	
+	public Contract getContract(){
+		IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
+		return (Contract) master.getTo();
+	}
+	
+	private Month month;
+	private Integer year;
+	private Double result;
+
+	public Month getMonth() {
+		if(month==null){
+			month = Month.getMonthByValue(CommonUtil.getMonth(new Date()));
+		}
+		return month;
+	}
+	public void setMonth(Month month) {
+		this.month = month;
+	}
+	public Integer getYear() {
+		if(month==null){
+			year = CommonUtil.getYear(new Date());
+		}
+		return year;
+	}
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+	public Double getResult() {
+		return result;
+	}
+	public void setResult(Double result) {
+		this.result = result;
+	}
+	
+	public void onReloadExpression(ActionEvent event){
+		IExpression expression = (IExpression) getTo();
+		try {
+			Calendar startCal = Calendar.getInstance();
+			Calendar endCal = Calendar.getInstance();
+			startCal.set(Calendar.HOUR_OF_DAY, 0);
+			startCal.set(Calendar.YEAR, year);
+			startCal.set(Calendar.MONTH, month.ordinal());
+			startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
+			endCal.set(Calendar.HOUR_OF_DAY, 0);
+			endCal.set(Calendar.YEAR, year);
+			endCal.set(Calendar.MONTH, month.ordinal());
+			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) getContract().getSalaryCalculatorContext(year, month, getSalaryType());
+			
+			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(expression.getExpression(), startCal.getTime(), endCal.getTime());
+			result = (Double) list.get(0).getValue();
+		
+		
+		} catch (SalaryException e) {
+			result = null;
+			getHandler().setVariablesModel(null);
+			getHandler().setUndefinedVariablesModel(null);
+//			throw new AbortProcessingException("error evaluating expression.");
+		} catch (ExpressionException e) {
+			result = null;
+			getHandler().setVariablesModel(null);
+			getHandler().setUndefinedVariablesModel(null);
+//			throw new AbortProcessingException("error evaluating expression.");
+		}
+		initializeVariables(event);
+	}
 	
 	
 }

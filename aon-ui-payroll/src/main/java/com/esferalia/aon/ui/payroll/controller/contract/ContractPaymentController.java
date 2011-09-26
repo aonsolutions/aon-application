@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -20,8 +19,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -30,7 +27,6 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.SystemPayment;
@@ -40,7 +36,6 @@ import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
-import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.ITimedObject;
@@ -120,7 +115,7 @@ public class ContractPaymentController extends ContractDetailVariableController 
 		try {
 			if(row.getScope()==ExpressionScope.CONTRACT){
 				this.select(event, (ITransferObject) row);
-				initializeVariables(event);
+				onReloadExpression(event);
 			} else {
 				super.onReset(event);
 				IController master = FormUtil.getController("contract");
@@ -250,60 +245,7 @@ public class ContractPaymentController extends ContractDetailVariableController 
 	
 	@Override
 	public void initializeVariables(ActionEvent event) {
-		ContractPayment payment = (ContractPayment)this.getTo();
-		Contract contract = payment.getContract();
-		List<ContractData> dataList;
-		try {
-			getHandler().setVariablesModel(null);
-			getHandler().setUndefinedVariablesModel(null);
-			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
-				dataList = new LinkedList<ContractData>();
-				Set<String> vl = ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
-				List<ContractData> undefined = new LinkedList<ContractData>();
-				if(!vl.isEmpty()){
-					for(String s: vl){
-						List<ITransferObject> list = getHandler().existingContractData(s, contract);
-						if(!list.isEmpty()){
-							for(ITransferObject to: list){
-								dataList.add((ContractData) to);
-							}
-						} else {
-							Calendar startCal = Calendar.getInstance();
-							Calendar endCal = Calendar.getInstance();
-							startCal.set(Calendar.DAY_OF_MONTH, startCal.getActualMinimum(Calendar.DAY_OF_MONTH));
-							endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
-							ContractData data = new ContractData();
-							data.setContract(contract);
-							data.setName(s);
-							data.setStartDate(startCal.getTime());
-							data.setEndDate(contract.getEndDate()!=null?contract.getEndDate():endCal.getTime());
-							ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(CommonUtil.getYear(new Date()), Month.getMonthByValue(CommonUtil.getMonth(new Date())), SalaryType.SALARY);
-							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
-							if(o==null){
-								undefined.add(data);
-							} else {
-								data.setExpression(o.toString());
-								dataList.add(data);
-							}
-						}
-					}
-				}
-				getHandler().setVariablesModel(new ListDataModel(dataList));
-				if(!undefined.isEmpty()){
-					getHandler().setUndefinedVariablesModel(new ListDataModel(undefined));
-				}
-			}
-		} catch (SalaryException e) {
-			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		} catch (ManagerBeanException e) {
-			String msg = "Imposible cargar las variables del contrato (" + e.getMessage() +")";
-			LOGGER.error(msg);
-			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg,e);
-		}
+		getHandler().initializeVariables(event);
 	}
 	
 	private ContractPaymentVariableHandler handler;
@@ -326,6 +268,10 @@ public class ContractPaymentController extends ContractDetailVariableController 
 	@Override
 	public void resetVariable() {
 		getHandler().resetVariable();
+	}
+	@Override
+	public SalaryType getSalaryType() {
+		return ((ContractPayment)getTo()).getSalaryType();
 	}
 		
 }
