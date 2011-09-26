@@ -1,4 +1,4 @@
-var treeOffset;
+var treeOffset = 0;
 
 function storeTreeOffset() {
 	treeOffset = jQuery('.treeLeftContent').scrollTop();

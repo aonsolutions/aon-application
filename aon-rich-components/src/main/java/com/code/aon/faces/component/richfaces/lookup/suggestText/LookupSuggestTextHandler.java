@@ -65,7 +65,14 @@ public class LookupSuggestTextHandler extends LookupBasicInputHandler {
 		TagAttribute focus = getAttribute(FOCUS);
 		if ( focus != null ) {
 			mapper.setVariable(PREFFIX + FOCUS, focus.getValueExpression(ctx, Object.class));				
+		}
+		ValueExpression action = FaceletUtil.getMethodExpression(ctx,
+				getAttribute(ACTION),String.class, FaceletUtil.ACTION_SIG);
+		if (action == null) {
+			action = FaceletUtil.getMethodEmptyExpression(ctx, ACTION,
+					String.class, FaceletUtil.ACTION_SIG);
 		}		
+		mapper.setVariable(PREFFIX + ACTION, action);
 	}
 	
 	@Override

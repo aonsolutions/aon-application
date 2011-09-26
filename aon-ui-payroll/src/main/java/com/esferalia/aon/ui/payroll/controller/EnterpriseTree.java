@@ -67,7 +67,6 @@ import com.esferalia.aon.ui.payroll.controller.contract.ContractEmbargoControlle
 import com.esferalia.aon.ui.payroll.controller.contract.ContractPaymentController;
 import com.esferalia.aon.ui.payroll.controller.launcher.IrpfLauncher;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
-import com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard;
 import com.esferalia.aon.ui.payroll.utils.EnterpriseTreeData;
 import com.esferalia.aon.ui.payroll.utils.EnterpriseTreeType;
 

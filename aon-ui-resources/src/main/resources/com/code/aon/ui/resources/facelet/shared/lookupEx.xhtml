@@ -24,7 +24,7 @@
 				required="#{idRequired}" disabled="#{lookupDisabled}"
 				size="#{lookupInputSize}" maxlength="#{lookupInputMaxLength}"  
 				onsubmit="#{lookupInputOnSubmit}" focus="#{lookupInputOnFocus}"
-				reRender="#{lookup_reRender}" >
+				reRender="#{lookup_reRender}">
 				<ui:insert name="lookupInputTextContent"/>
 			</aon:lookupInputText>
 		</c:if>
@@ -68,6 +68,7 @@
 				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
 				lookupChangeListener="#{lookupChangeListener}"
 				controllerListener="#{lookupControllerListener}"
+				action="#{lookupAction}"
 				value="#{lookupInputSuggestValue}" property="#{lookupTo}" 
 				columnExpression="#{lookupInputSuggestExpression}"
 				size="#{lookupInputSuggestSize}" disabled="#{lookupDisabled}"

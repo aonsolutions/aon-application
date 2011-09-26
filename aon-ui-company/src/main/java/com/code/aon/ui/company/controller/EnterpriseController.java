@@ -52,6 +52,8 @@ public class EnterpriseController extends RegistryController implements ICompany
 	private AonFile aonFile;
 	private RegistryAttachment attach;
 	
+	private String formAction;
+	
     public boolean isTreeView() {
 		return treeView;
 	}
@@ -260,9 +262,16 @@ public class EnterpriseController extends RegistryController implements ICompany
 		controller.onInitialize(event);
 	}	
 	
+	public void setFormAction(String formAction) {
+		this.formAction = formAction;
+	}
+
 	@Override
 	public String formAction() {
-		return isTreeView() ? getBeanName()+FORM_TREE_SUFFIX : super.formAction();
+		if ( isTreeView() ) {
+			return (formAction != null) ? formAction : getBeanName()+FORM_TREE_SUFFIX;	
+		}
+		return super.formAction();
 	}
 	
 }

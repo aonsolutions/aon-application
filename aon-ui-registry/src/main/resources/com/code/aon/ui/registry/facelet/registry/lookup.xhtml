@@ -12,7 +12,7 @@
 	<aon:valueParam name="lookupInputSuggestValue" default="#{lookupTo.registry.name}"/>
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
-		<ui:param name="lookupInputSuggestExpression" value="#{lto.registry.name} (#{lto.id})"/>	
+		<aon:valueParam name="lookupInputSuggestExpression" default="#{lto.registry.name} (#{lto.id})"/>	
 
 		<ui:define name="afterLookupContent">
 			<c:if test="#{skipSuggestText}">
