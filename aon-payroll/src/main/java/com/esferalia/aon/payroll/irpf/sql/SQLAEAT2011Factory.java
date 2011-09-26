@@ -29,7 +29,6 @@ import org.apache.commons.beanutils.converters.SqlDateConverter;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import sun.awt.CausedFocusEvent.Cause;
 
 import com.aeat.jaxb.AEATRetencionesEntrada2011;
 import com.aeat.jaxb.ObjectFactory;
