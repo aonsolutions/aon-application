@@ -1734,6 +1734,12 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.launcher.IrpfLauncher</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<!-- ************ IRPF TEST CALCULATOR ************** -->
+	<managed-bean>
+		<managed-bean-name>irpfTestLauncher</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.launcher.IrpfTestLauncher</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	<!-- ************ SALARY SETTLE ************** -->
 	<managed-bean>
 		<managed-bean-name>settle</managed-bean-name>
@@ -2340,6 +2346,13 @@
 		<navigation-case>
 			<from-outcome>irpfLauncher_form</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/irpfLauncher/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- =================== IRPF TEST LAUNCHER ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>irpfTestLauncher_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/irpfTestLauncher/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== SALARY REMOVER ========================== -->
