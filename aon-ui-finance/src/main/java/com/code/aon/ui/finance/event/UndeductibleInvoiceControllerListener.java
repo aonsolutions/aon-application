@@ -11,6 +11,8 @@ public class UndeductibleInvoiceControllerListener extends InvoiceControllerList
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		Invoice invoice = (Invoice)event.getController().getTo();
 		invoice.setType(InvoiceType.UNDEDUCTIBLE);
+
+		super.afterBeanCreated(event);
 	}
 
 	@Override

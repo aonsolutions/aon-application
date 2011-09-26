@@ -11,6 +11,8 @@ public class ExpenseInvoiceControllerListener extends InvoiceControllerListener 
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		Invoice invoice = (Invoice)event.getController().getTo();
 		invoice.setType(InvoiceType.EXPENSES);
+
+		super.afterBeanCreated(event);
 	}
 
 	@Override
