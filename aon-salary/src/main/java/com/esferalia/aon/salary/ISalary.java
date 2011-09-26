@@ -40,6 +40,8 @@ public interface ISalary {
 	Double getSocialSecurityContributions();
 	Double getTotalDeduction();
 	
+	Double getTotalIrpf();
+
 	// TOTAL LIQUIDO
 	Double getTotalLiquid();
 	

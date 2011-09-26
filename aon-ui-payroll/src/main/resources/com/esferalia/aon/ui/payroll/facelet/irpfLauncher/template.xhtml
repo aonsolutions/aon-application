@@ -18,7 +18,7 @@
     	
 		<aon:form id="irpfLauncherForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_irpfLauncher_module}" />
+				<ui:param name="toolbarTitle" value="#{title}" />
 			</ui:decorate>
 			
 			<aon:div styleClass="aon-scroll-area">
@@ -30,11 +30,9 @@
 			
 					<aon:panelGrid id="irpfLauncherLaunchContent" columns="4">
 		
-<!--  
 						<aon:outputLabel for="date" styleClass="aon-italic aon-margin-right"
 							value="#{bundle.aon_date}:" />
 						<aon:selectInputDate id="date"
-						disabled="true"
 							value="#{irpfLauncher.params.date}" required="true"
 							inputSize="10" renderAsPopup="true" enableManualInput="true"
 							timeZone="#{timeZoneController.timeZone}"
@@ -42,24 +40,7 @@
 						</aon:selectInputDate>
 						<aon:outputText value="&#160;" />
 						<aon:outputText value="&#160;" />
--->
 						
-						<aon:outputLabel for="year" value="#{payrollBundle.payroll_exercise}" />
-			   			<rich:inputNumberSpinner id="year" value="#{irpfLauncher.params.year}" 
-			   				inputSize="4" minValue="2010" maxValue="2020" >
-			   			<!--  
-			   				<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
-			   			-->
-			   			</rich:inputNumberSpinner>
-						<aon:outputText value="&#160;" />
-						<aon:outputText value="&#160;" />
-
-						<aon:outputLabel for="month" value="#{bundle.aon_month}" />
-						<aon:selectOneMenu id="month" value="#{irpfLauncher.params.month}">
-							<f:selectItems value="#{commonCollections.months}"  />
-						</aon:selectOneMenu>
-						<aon:outputText value="&#160;" />
-						<aon:outputText value="&#160;" />
 						
 						<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 							<ui:param name="lookupTo" value="#{irpfLauncher.params.person}" />

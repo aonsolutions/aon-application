@@ -119,6 +119,8 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	private Double socialSecurityContributions;
 	private Double totalDeduction;
 
+	private Double totalIrpf;
+
 	// TOTAL LIQUIDO
 	private Double totalLiquid;
 	
@@ -445,7 +447,18 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	public void setTotalDeduction(Double totalDeduction) {
 		this.totalDeduction = totalDeduction;
 	}
-
+	
+	
+	@Override
+	@Column(name = "total_irpf", precision = 15, scale = 3, nullable = true)
+	public Double getTotalIrpf() {
+		return totalIrpf;
+	}
+	public void setTotalIrpf(Double totalIrpf) {
+		this.totalIrpf = totalIrpf;
+	}
+	
+	
 	// *******************************************************
 	// **************** TOTAL LIQUIDO ************************
 	// *******************************************************

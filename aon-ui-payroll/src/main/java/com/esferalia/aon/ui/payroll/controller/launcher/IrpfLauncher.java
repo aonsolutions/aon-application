@@ -1,35 +1,30 @@
 package com.esferalia.aon.ui.payroll.controller.launcher;
 
-import java.sql.SQLException;
-import java.text.MessageFormat;
-
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import com.aeat.jaxb.TipoRetenedorError2011;
+import com.aeat.jaxb.TipoRetenedorSalida2011;
+import com.aeat.jaxb.TipoRetenidoError2011;
+import com.aeat.jaxb.TipoRetenidoSalida2011;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.calculator.IrpfCalculator;
-import com.esferalia.aon.payroll.calculator.sql.SQLIrpfBuilder;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.salary.SalaryBuilderListenerLevel;
-import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.IrpfDataController;
-import com.esferalia.aon.ui.payroll.controller.launcher.ListIrpfBuilderListener.LogMessage;
 
 
 
 public class IrpfLauncher extends AbstractIrpfLauncher {
 	
 
-	private Integer contractId;
 	private String irpf;
-	private SQLIrpfBuilder irpfBuilder;
 	private Object message;
+	private Integer contractId;
+
 	
 	public Object getMessage() {
 		return message;
@@ -51,45 +46,6 @@ public class IrpfLauncher extends AbstractIrpfLauncher {
 		this.irpf = irpf;
 	}
 
-
-	
-	@Override
-	protected void execute(IrpfLauncherParams params)
-			throws SalaryException {
-		try {
-
-			irpfBuilder = new SQLIrpfBuilder(getConnection());
-			listener = new ListIrpfBuilderListener(irpfBuilder);
-			listener.setDebugEnabled(isDebugEnabled());
-			listener.setSaveLog(isSaveLog());
-			irpfBuilder.setListener(listener);
-			IrpfCalculator calculator = new IrpfCalculator(params.getDate());
-			calculator.setIrpfBuilder(irpfBuilder);
-			
-			String msg = MessageFormat.format("Cálculo de IRPF {0}:{1}",new Object[] {params.getDate(), params.getDate()});
-			listener.onInfo(msg);
-			
-			calculate(calculator);
-			
-			if(isSaveEnabled()){
-				try {
-					irpfBuilder.commit();
-				} catch (Throwable e) {
-					listener.onError(e.getLocalizedMessage());
-					irpfBuilder.rollback();
-				}
-				msg = MessageFormat.format("Total variables insertadas: {0} ",new Object[]{irpfBuilder.getInsertedContractData()});
-			} else {
-				irpfBuilder.rollback();
-				msg = MessageFormat.format("Total variables calculadas: {0} ",new Object[]{irpfBuilder.getInsertedContractData()});
-			}
-			listener.onInfo(msg);
-		} catch (ExpressionException e) {
-			throw new SalaryException(e);
-		} catch (SQLException e) {
-			throw new SalaryException(e);
-		}
-	}
 	
 	public void onIrpfUpdate(ActionEvent event) {
 		IrpfDataController controller = (IrpfDataController) FormUtil.getController(IPayrollConstants.IRPF_DATA_CONTROLLER_NAME);
@@ -98,9 +54,8 @@ public class IrpfLauncher extends AbstractIrpfLauncher {
 		controller.getParams().setNewIrpf(Double.parseDouble(irpf));
 		try {
 			if(controller.updateIrpf()){
-				ListIrpfBuilderListener.LogMessage msg = (LogMessage) getMessage();
-				msg.getLevel();
-				msg.setLevel(SalaryBuilderListenerLevel.INFO);
+				LogMessage msg = (LogMessage) getMessage();
+				//msg.setLevel( LogMessage.Level.INFO);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al actualizar el irpf.";
@@ -127,5 +82,19 @@ public class IrpfLauncher extends AbstractIrpfLauncher {
 			throw new AbortProcessingException(msg);
 		}
 	}
+	@Override
+	public void onError(TipoRetenedorError2011 retenedorError2011,
+			TipoRetenidoError2011 retenidoError2011) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onSalida(TipoRetenedorSalida2011 retenedorSalida2011,
+			TipoRetenidoSalida2011 retenidoSalida2011) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 
 }

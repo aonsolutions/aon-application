@@ -114,7 +114,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		
 		return salaryBuilder.getSalary();
 	}
-
+	
 	private void fillEnterpriseData(IContractSalaryCalculatorContext ctx) {
 		salaryBuilder.setCcc(ctx.getCcc());
 		salaryBuilder.setEnterpriseName(ctx.getEnterpriseName());
@@ -188,7 +188,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 						Double value = amount.getValue();
 						total += value;
 						Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, issueDate, value);
-
+						
 						if ( payment != 0.00 ){
 							try  {
 								description = expressionContext.evalTemplate(contractPayment.getDescription(), amountStart, amountEnd);

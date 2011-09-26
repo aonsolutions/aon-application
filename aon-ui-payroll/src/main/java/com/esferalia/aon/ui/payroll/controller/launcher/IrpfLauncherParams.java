@@ -21,10 +21,9 @@ public class IrpfLauncherParams {
 	final static String ENTERPRISE_REGISTRY_COLUMN_NAME = "enterprise.registry";
 	final static String PERSON_REGISTRY_COLUMN_NAME = "person.registry";
 
+	private Date date;
 	private Enterprise enterprise;
 	private Person person;
-	private Integer year;
-	private Month month;
 	
 	public IrpfLauncherParams() {
 		initialize();
@@ -46,24 +45,14 @@ public class IrpfLauncherParams {
 		this.person = person;
 	}
 	
-	public Integer getYear() {
-		return year;
-	}
-
-	public void setYear(Integer year) {
-		this.year = year;
-	}
-
-	public Month getMonth() {
-		return month;
-	}
-
-	public void setMonth(Month month) {
-		this.month = month;
-	}
 	
 	public Date getDate() {
-		return CommonUtil.getDate(getYear(), getMonth().ordinal(), 1);
+		return date;
+	}
+	
+	
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	public void initialize() {
@@ -77,8 +66,7 @@ public class IrpfLauncherParams {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg);
 		}
-		setYear(CommonUtil.getYear(new Date()));
-		setMonth(Month.getMonthByValue(CommonUtil.getMonth(new Date())));
+		setDate(new Date());
 	}
 
 	public Criteria getCriteria() {

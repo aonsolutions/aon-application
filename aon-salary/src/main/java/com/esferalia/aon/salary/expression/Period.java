@@ -91,7 +91,7 @@ public class Period implements Comparable<Period>{
     	if ( b == null ){
     		return a == null ? 0 : 1; 
     	}
-    	return  a == null ? -1 : a.compareTo(b);
+    	return  compare(a.end, b.end);
     		
     }
     

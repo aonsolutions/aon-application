@@ -29,7 +29,7 @@
 					<aon:outputLabel for="PaymentConcept_type"
 						value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="PaymentConcept_type" 
-						value="#{paymentConcept.to.type}">
+						value="#{paymentConcept.to.type}" converter="aon.EnumConverter" >
 						<f:selectItems value="#{payrollCollections.paymentTypes}" />
 					</aon:selectOneMenu>	
 

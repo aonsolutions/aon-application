@@ -26,23 +26,25 @@
 	</c:if>			
 	
 	<c:if test="#{deductions.count > 1}" >
-		<aon:div >
+		<aon:div>
 		</aon:div>
 		<c:set var="subTotal" value="#{0.00}" />
+		<c:set var="oldSubTotal" value="#{0.00}" />
 		<c:forEach var="deduction" items="#{deductions.list}">
 		
 			<aon:div styleClass="#{deduction.difference >= 0.01 ? 'aon-label-error' : ''}" style="border-bottom: solid #CCCCCC 1px;">
 				<aon:outputText value="&#160;"/>
-				<aon:outputText value="#{deduction.oldAmount}">
+				<aon:outputText value="#{empty deduction.oldAmount ? '?' : deduction.oldAmount }">
 					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				</aon:outputText>
 			</aon:div>
 			<c:set var="total" value="#{total + deduction.oldAmount}" />
-			<c:set var="subTotal" value="#{subTotal + cost.oldAmount}" />
+			<c:set var="subTotal" value="#{subTotal + deduction.aAmount}" />
+			<c:set var="oldSubTotal" value="#{oldSubTotal + deduction.oldAmount}" />
 		</c:forEach>
 		<aon:div style="border-bottom: solid #CCCCCC 1px;">
 			<aon:outputText value="&#160;"/>
-			<aon:outputText value="#{subTotal}">
+			<aon:outputText value="#{oldSubTotal}">
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>
 		</aon:div>

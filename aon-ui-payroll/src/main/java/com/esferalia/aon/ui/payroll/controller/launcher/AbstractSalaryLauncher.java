@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
@@ -39,6 +42,8 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLExtraSalaryCalculatorContext;
@@ -46,6 +51,7 @@ import com.esferalia.aon.payroll.calculator.sql.SQLSalaryBuilderTester.UnExpecte
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
+import com.esferalia.aon.salary.SalaryBuilderListenerLevel;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
@@ -204,20 +210,20 @@ public abstract class AbstractSalaryLauncher
 			try {
 				execute(getParams());
 				String msg = "Proceso Finalizado correctamente.";
-				listener.onInfo(msg);
+				listener.onMessage(new LogMessage(SalaryBuilderListenerLevel.INFO, msg));
 			} catch (Throwable e) {
 				listener.onError(e.getLocalizedMessage());
 				String msg = "Se produjeron errores en el calculo de nóminas.";
-				listener.onError(msg);
+				listener.onMessage(new LogMessage(SalaryBuilderListenerLevel.ERROR, msg));
 			}
 			if (listener.getWarningCounter() > 0) {
 				String msg = "Se produjeron " + listener.getWarningCounter() + " mesajes de aviso.";
-				listener.onInfo(msg);	
+				listener.onMessage(new LogMessage(SalaryBuilderListenerLevel.WARNING, msg));
 			}
 			
 			if (listener.getErrorCounter() > 0) {
 				String msg = "Se produjeron " + listener.getErrorCounter() + " mesajes de error.";
-				listener.onInfo(msg);	
+				listener.onMessage(new LogMessage(SalaryBuilderListenerLevel.ERROR, msg));
 			}
 			
 			Date endTime = new Date();
@@ -246,7 +252,7 @@ public abstract class AbstractSalaryLauncher
 		return salaryType.accept(this);
 	}
 	
-	private Criteria getCriteria() {
+	protected Criteria getCriteria() {
 		Criteria criteria = new Criteria();
 		
 		

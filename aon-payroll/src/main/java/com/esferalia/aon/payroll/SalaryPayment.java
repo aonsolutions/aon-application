@@ -1,5 +1,10 @@
 package com.esferalia.aon.payroll;
 
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +22,7 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.IResourceable;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
@@ -171,4 +177,16 @@ public class SalaryPayment implements ITransferObject, IPayment, IExpression {
 		return true;
 	}
 	
+	
+	public static void main(String[] args) throws SecurityException, NoSuchMethodException, IntrospectionException {
+		Method type = SalaryPayment.class.getMethod("getType");
+		System.out.println ( IResourceable.class.isAssignableFrom(type.getReturnType()) );
+		PropertyDescriptor descriptors [] = 
+			Introspector.getBeanInfo(SalaryPayment.class).getPropertyDescriptors();
+		for (PropertyDescriptor propertyDescriptor : descriptors) {
+			if ( propertyDescriptor.getName().equals("type") ) 
+				System.out.println ( propertyDescriptor.getPropertyType() );
+		}
+		
+	}
 }

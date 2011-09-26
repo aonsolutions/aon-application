@@ -34,13 +34,11 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.IrpfDataDescendients;
 import com.esferalia.aon.payroll.Salary;
-import com.esferalia.aon.payroll.calculator.IrpfCalculator;
-import com.esferalia.aon.payroll.calculator.sql.SQLIrpfBuilder;
-import com.esferalia.aon.payroll.calculator.sql.SQLIrpfCalculatorContext;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.enumeration.DeductHomeLoan;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
+import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
@@ -138,11 +136,12 @@ public class IrpfDataController extends LinesController {
 		return (doc[8] == DNI_LETTERS[(Integer.parseInt(numbers) % 23)]);
 	}
 	
-	private SQLIrpfBuilder irpfBuilder;
+	//private SQLIrpfBuilder irpfBuilder;
 	private static final String PERSON_ALIAS = "person_registry.id";
 	private void refreshIrpfData(){
 		setParams(null);
 		IrpfData data = (IrpfData) this.getTo();
+		/*
 		try {
 			irpfBuilder = new SQLIrpfBuilder(getConnection());
 			IrpfCalculator calculator = new IrpfCalculator(new Date());
@@ -163,7 +162,7 @@ public class IrpfDataController extends LinesController {
 		} catch (SQLException e) {
 			String msg = "Error al calcular el irpf";
 			LOGGER.error(msg);
-		}
+		}*/
 	}
 	protected Connection getConnection(){
 		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());

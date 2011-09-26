@@ -57,7 +57,7 @@
 	
 <!--  
 	<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
-	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" >
+	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" converter="aon.EnumConverter" >
 		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractPayment_PaymentConcept" ajaxSingle="true" limitToList="true"/>
 		<f:selectItem value="#{null}" itemLabel=" - " />
 		<f:selectItems value="#{payrollCollections.paymentTypes}" />

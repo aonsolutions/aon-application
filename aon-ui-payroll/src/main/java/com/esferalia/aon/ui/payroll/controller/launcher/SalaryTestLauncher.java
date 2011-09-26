@@ -4,7 +4,6 @@ package com.esferalia.aon.ui.payroll.controller.launcher;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.MessageFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +16,6 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
@@ -138,6 +136,7 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 			
 			calculate(calculator);
 			
+			
 			msg = MessageFormat.format("Total contratos procesados: {0} ",new Object[]{salaryBuilder.getContractCount()});
 			listener.onMessage(new LogMessage(SalaryBuilderListenerLevel.INFO, msg));
 			msg = MessageFormat.format("Total nóminas comparadas: {0} ",new Object[]{salaryBuilder.getSalaryCount()});
@@ -152,8 +151,6 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 			
 		}
 	}
-
-
 	
 	public void onSalaryDraft(ActionEvent event) {
 		try {
@@ -197,5 +194,7 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 		}
 		return salaryTypes;
 	}
+	
+	
 	
 }

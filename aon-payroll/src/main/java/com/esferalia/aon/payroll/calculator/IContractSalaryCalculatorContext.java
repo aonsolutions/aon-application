@@ -11,6 +11,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 public interface IContractSalaryCalculatorContext extends ISalaryCalculatorContext {
 
 	
+	
 	public SalaryType getSalaryType();
 	
 	public String getCcc();
@@ -22,7 +23,6 @@ public interface IContractSalaryCalculatorContext extends ISalaryCalculatorConte
 	public String getEnterpriseDocument();
 	
 	public SSRegimeType getSSRegime();
-	
 	
 	public String getCategory();
 
@@ -38,7 +38,6 @@ public interface IContractSalaryCalculatorContext extends ISalaryCalculatorConte
 	
 	public Date getSeniorityDate();
 
-	
 	public Collection<IContractPayment> getContractPayments() throws AonException;
 
 	public Collection<IContractCost> getContractCosts() throws AonException;

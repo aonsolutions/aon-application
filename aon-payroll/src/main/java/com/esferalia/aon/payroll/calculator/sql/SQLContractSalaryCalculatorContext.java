@@ -279,7 +279,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private SQLContractBonus								sqlContractBonus;  
 	private SQLContractEmbargo 								sqlContractEmbargo;  
 	private ExpressionContext 								contractExpressionContext;
-	private SQLContractLeaveLoader 							leaveLoader;
+	private SQLContractLeaveLoader 						leaveLoader;
 	
 	private Date 											contractStartDate;
 	private Date 											contractEndDate;
@@ -464,7 +464,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public String getCategory() {
-		return contractExpressionContext.getVariable(ContractVariables.CATEGORY, startDate, endDate, String.class);
+		return getString(SQLConstants.AGREEMENT_LEVEL_CATEGORY, AgreementLevelCategoryColumns.DESCRIPTION);
 	}
 
 	@Override
@@ -516,7 +516,7 @@ public class SQLContractSalaryCalculatorContext implements
 	public Date getSeniorityDate() {
 		return getDate(SQLConstants.CONTRACT,ContractColumns.SENIORITY_DATE);
 	}
-
+	
 	@Override
 	public Collection<IContractPayment> getContractPayments()
 			throws AonException {
@@ -886,13 +886,17 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 		return days;
 	}
-
+	
+	protected Long getLeaveDays(Period p ) {
+		return leaveLoader.getLeavesDays();
+	}
 	
 	private double getWorkDays(Period p) {
 
 		Long availableDays = 
 			getAvailableDays(p.getStart(), p.getEnd());
-		Long leaveDays = leaveLoader.getLeavesDays();  
+		
+		Long leaveDays = getLeaveDays(p);  
 		
 		Long workedDays = availableDays - leaveDays; 
 		

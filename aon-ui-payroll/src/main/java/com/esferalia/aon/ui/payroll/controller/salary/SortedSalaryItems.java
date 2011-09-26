@@ -192,6 +192,7 @@ public class SortedSalaryItems<T extends Enum<T> & IResourceable> {
 			if ( o2 == null ) {
 				return -1; 
 			}
+			
 			int compare = compare(o1.getType(), o2.getType());
 			if ( compare != 0 ) {
 				return compare ;

@@ -171,7 +171,7 @@ public class ContractSalaryCalculatorContext
 	public Date getSeniorityDate() {
 		return ctx.getSeniorityDate();
 	}
-
+	
 	@Override
 	public Collection<IContractPayment> getContractPayments() throws AonException {
 		return ctx.getContractPayments();

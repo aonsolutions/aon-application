@@ -98,6 +98,7 @@ public enum PaymentType implements IResourceable {
      * @return String a <code>String</code>.
      */
     public String getName(Locale locale) {
+    	
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
