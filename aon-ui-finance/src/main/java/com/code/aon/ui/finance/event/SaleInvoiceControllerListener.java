@@ -8,6 +8,12 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class SaleInvoiceControllerListener extends InvoiceControllerListener {
 	
 	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		Invoice invoice = (Invoice)event.getController().getTo();
+		invoice.setType(InvoiceType.SALES);
+	}
+
+	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Invoice invoice = (Invoice)event.getController().getTo();
 		invoice.setType(InvoiceType.SALES);
