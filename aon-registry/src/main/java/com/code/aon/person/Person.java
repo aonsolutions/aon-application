@@ -151,6 +151,11 @@ public class Person implements ITransferObject, IRegistry {
 		return sb.toString();
     }
 	
+	@Transient
+	public void setFullName( String value ) {
+		// Necesario para que no falle en los lookup
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

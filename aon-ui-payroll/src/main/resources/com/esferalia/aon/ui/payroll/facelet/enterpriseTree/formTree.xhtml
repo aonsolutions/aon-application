@@ -79,43 +79,45 @@
 					
 					<h:panelGrid>
 						<aon:panelGroup>
-							<aon:outputText value="#{payrollBundle.payroll_active}" styleClass="aon-margin-left" />
-							<aon:selectBooleanCheckbox value="#{enterpriseTree.activeContract}"  >
-								<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true"
-									actionListener="#{enterpriseTree.reloadTree}" />
-							</aon:selectBooleanCheckbox>
-							
-							<aon:outputText value="#{payrollBundle.payroll_inactive}" styleClass="aon-margin-left" />
-							<aon:selectBooleanCheckbox value="#{enterpriseTree.inactiveContract}"  >
-								<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true">
-									<aon:actionListener method="#{enterpriseTree.onChangeInactiveDate}" />
-									<aon:actionListener method="#{enterpriseTree.reloadTree}" />
-								</a4j:support>
-							</aon:selectBooleanCheckbox>
-							
-							<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
-								value="#{bundle.aon_end_date}:" />
-							<aon:selectOneMenu 
-								styleClass="aon-margin-right"
-								disabled="#{!enterpriseTree.inactiveContract}"
-								value="#{enterpriseTree.inactiveLastPeriod}" >
-								<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
-								<a4j:support event="onchange" reRender="aonContent" ignoreDupResponses="true" >
-									<aon:actionListener method="#{enterpriseTree.onChangeLastPeriod}" />
-									<aon:actionListener method="#{enterpriseTree.reloadTree}" />
-								</a4j:support>
-							</aon:selectOneMenu>
-							<aon:selectInputDate  
-								disabled="#{!(enterpriseTree.inactiveContract and enterpriseTree.inactiveLastPeriod=='MANUAL')}"
-								value="#{enterpriseTree.inactiveDate}"
-								inputSize="10" renderAsPopup="true" enableManualInput="true"
-								timeZone="#{timeZoneController.timeZone}"
-								popupDateFormat="#{bundle.aon_date_pattern}">
-								<a4j:support event="onchanged" reRender="aonContent" ignoreDupResponses="true">
-									<aon:actionListener method="#{enterpriseTree.onChangeInactiveDate}" />
-									<aon:actionListener method="#{enterpriseTree.reloadTree}" />
-								</a4j:support>
-							</aon:selectInputDate>
+							<a4j:region>
+								<aon:outputText value="#{payrollBundle.payroll_active}" styleClass="aon-margin-left" />
+								<aon:selectBooleanCheckbox value="#{enterpriseTree.activeContract}"  >
+									<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true"
+										actionListener="#{enterpriseTree.reloadTree}" />
+								</aon:selectBooleanCheckbox>
+								
+								<aon:outputText value="#{payrollBundle.payroll_inactive}" styleClass="aon-margin-left" />
+								<aon:selectBooleanCheckbox value="#{enterpriseTree.inactiveContract}"  >
+									<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true">
+										<aon:actionListener method="#{enterpriseTree.onChangeInactiveDate}" />
+										<aon:actionListener method="#{enterpriseTree.reloadTree}" />
+									</a4j:support>
+								</aon:selectBooleanCheckbox>
+								
+								<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
+									value="#{bundle.aon_end_date}:" />
+								<aon:selectOneMenu 
+									styleClass="aon-margin-right"
+									disabled="#{!enterpriseTree.inactiveContract}"
+									value="#{enterpriseTree.inactiveLastPeriod}" >
+									<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
+									<a4j:support event="onchange" reRender="aonContent" ignoreDupResponses="true" >
+										<aon:actionListener method="#{enterpriseTree.onChangeLastPeriod}" />
+										<aon:actionListener method="#{enterpriseTree.reloadTree}" />
+									</a4j:support>
+								</aon:selectOneMenu>
+								<aon:selectInputDate  
+									disabled="#{!(enterpriseTree.inactiveContract and enterpriseTree.inactiveLastPeriod=='MANUAL')}"
+									value="#{enterpriseTree.inactiveDate}"
+									inputSize="10" renderAsPopup="true" enableManualInput="true"
+									timeZone="#{timeZoneController.timeZone}"
+									popupDateFormat="#{bundle.aon_date_pattern}">
+									<a4j:support event="onchanged" reRender="aonContent" ignoreDupResponses="true">
+										<aon:actionListener method="#{enterpriseTree.onChangeInactiveDate}" />
+										<aon:actionListener method="#{enterpriseTree.reloadTree}" />
+									</a4j:support>
+								</aon:selectInputDate>
+							</a4j:region>
 						</aon:panelGroup>
 						<aon:panelGroup>
 							<aon:outputText value="#{payrollBundle.payroll_employee_name}"

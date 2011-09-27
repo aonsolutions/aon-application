@@ -28,6 +28,12 @@ public class LookupSuggestTextHandler extends LookupBasicInputHandler {
 	
 	private static final String PREFFIX = "aon_lst_";
 	
+	private static final String WIDTH_DEFAULT = "300";
+	
+	private static final String HEIGHT_DEFAULT = "150";
+	
+	private static final String FRECUENCY_DEFAULT = "0.6";
+	
 	private static final String MIN_CHARS_DEFAULT = "3";
 	
 	private TagAttribute lookup;
@@ -42,6 +48,17 @@ public class LookupSuggestTextHandler extends LookupBasicInputHandler {
 		lookup = getRequiredAttribute(LOOKUP);
 	}
 	
+	private void addAttribue( FaceletContext ctx, VariableMapper mapper, String name, String defaultValue, Class<?> _class ) {
+		ValueExpression ve = null;
+		TagAttribute tagAttribute = getAttribute(name);
+		if (tagAttribute != null) {
+			ve = tagAttribute.getValueExpression(ctx, Object.class);
+		} else {
+			ve = FaceletUtil.getValueExpression(ctx, defaultValue, _class);
+		}
+		mapper.setVariable(PREFFIX + name, ve);
+	}
+	
 	private void addAttribues( FaceletContext ctx, UIComponent component ) {
 		VariableMapper mapper = ctx.getVariableMapper();
 		mapper.setVariable(LOOKUP, lookup.getValueExpression(ctx, Object.class));
@@ -54,14 +71,10 @@ public class LookupSuggestTextHandler extends LookupBasicInputHandler {
 		if (columns != null) {
 			mapper.setVariable(PREFFIX + COLUMN_EXPRESSION, columns.getValueExpression(ctx, Object.class));
 		}
-		ValueExpression minCharsVE = null;
-		TagAttribute minChars = getAttribute(MIN_CHARS);
-		if (minChars != null) {
-			minCharsVE = minChars.getValueExpression(ctx, Object.class);
-		} else {
-			minCharsVE = FaceletUtil.getValueExpression(ctx, MIN_CHARS_DEFAULT, Integer.class);
-		}
-		mapper.setVariable(PREFFIX + MIN_CHARS, minCharsVE);
+		addAttribue(ctx, mapper, WIDTH, WIDTH_DEFAULT, String.class);		
+		addAttribue(ctx, mapper, HEIGHT, HEIGHT_DEFAULT, String.class);
+		addAttribue(ctx, mapper, FREQUENCY, FRECUENCY_DEFAULT, Double.class);
+		addAttribue(ctx, mapper, MIN_CHARS, MIN_CHARS_DEFAULT, Integer.class);
 		TagAttribute focus = getAttribute(FOCUS);
 		if ( focus != null ) {
 			mapper.setVariable(PREFFIX + FOCUS, focus.getValueExpression(ctx, Object.class));				

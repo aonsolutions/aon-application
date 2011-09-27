@@ -46,7 +46,11 @@ public interface IRichFacesTags {
 	
 	String NODE_SELECT_LISTENER = "nodeSelectListener";
 		
+	String WIDTH = "width";
+
 	String MIN_WIDTH = "minWidth";
+	
+	String HEIGHT = "height";
 	
 	String MIN_HEIGHT = "minHeight";
 	
@@ -63,5 +67,7 @@ public interface IRichFacesTags {
 	String IMMEDIATE = "immediate";
 	
 	String PROCESS = "process";
+	
+	String FREQUENCY = "frequency";
 	
 }

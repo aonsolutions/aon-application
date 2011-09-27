@@ -8,8 +8,9 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:suggestionBox 
-		width="300" height="150" frequency="0.6" minChars="#{aon_lst_minChars}"
+	<aon:suggestionBox
+		width="#{aon_lst_width}" height="#{aon_lst_height}" 
+		frequency="#{aon_lst_frequency}" minChars="#{aon_lst_minChars}"
 		nothingLabel="#{bundle.aon_search_no_results}" fetchValue=""
 		var="lto" suggestionAction="#{lookup.autocomplete}" >		
 		<h:column>
