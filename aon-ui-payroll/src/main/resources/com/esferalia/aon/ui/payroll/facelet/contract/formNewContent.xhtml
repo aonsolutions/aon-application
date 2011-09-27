@@ -14,7 +14,7 @@
 			<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{contract.enterprise}" />
 				<ui:param name="skipNewButton" value="#{true}" />
-				<ui:param name="lookupReRender" value="workPlace,enterpriseActivities,enterpriseCCCs" />
+				<ui:param name="lookupReRender" value="contract_new_panel" />
 				<ui:param name="idRequired" value="#{true}" />
 				<aon:methodParam name="lookupChangeListener" 
 					value="#{contract.onEnterpriseChanged}" type="lookupChangeListener" />
@@ -26,6 +26,7 @@
 				disabled="#{contract.enterprise==null or contract.enterprise.id==null}"
 				value="#{contract.to.workPlace}" >
 				<f:selectItems value="#{contract.workPlaces}" />
+				<a4j:support event="onchange" actionListener="#{contract.loadWorkplaceAgreement}" ajaxSingle="true" reRender="contract_new_panel" />
 			</aon:selectOneMenu>
 			
 			<aon:outputLabel for="enterpriseActivities" value="#{companyBundle.company_activity}" 
@@ -133,6 +134,20 @@
 				</c:if>
 			</aon:selectOneMenu>
 -->
+			<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/agreement/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{contract.agreement}" />
+				<ui:param name="skipNewButton" value="#{true}" />
+				<ui:param name="lookupInputSuggestSize" value="40" />
+				<ui:param name="lookupReRender" value="agreementLevelCategory" />
+			</ui:decorate>
+			
+			<aon:outputLabel for="agreementLevelCategory" 
+				value="#{payrollBundle.payroll_agreementLevel_category}" />
+			<aon:selectOneMenu id="agreementLevelCategory"
+				value="#{contract.to.agreementLevelCategory}" >
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{contract.agreementLevelCategories}" />
+			</aon:selectOneMenu>
 			
 			<aon:outputLabel for="Contract_contractDuration" value="#{payrollBundle.payroll_contract_contract_type}" />
 			<aon:selectOneRadio id="Contract_contractDuration" value="#{contract.contractDuration}">
