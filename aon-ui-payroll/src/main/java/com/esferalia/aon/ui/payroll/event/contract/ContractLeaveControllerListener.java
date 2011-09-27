@@ -80,12 +80,12 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 			if(detail.getType()==LeaveReportType.LEAVE && hasMoreLines(detail.getContractLeave())){
 				String msg = "No se puede borrar una baja que tiene confirmaciones.";
 				AonUtil.addErrorMessage(msg);
-				throw new AbortProcessingException(msg);
+				throw new ControllerListenerException(msg);
 			}
 		} catch (ManagerBeanException e) {
 			String msg = "Error al buscar los partes.";
 			AonUtil.addErrorMessage(msg);
-			throw new AbortProcessingException(msg);
+			throw new ControllerListenerException(msg);
 		}
 	}
 
@@ -108,6 +108,7 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 		if(detail.getType()==LeaveReportType.LEAVE){
 			try {
 				removeMaster(detail.getContractLeave());
+				getController().onReset(null);
 			} catch (ManagerBeanException e) {
 				String msg = "Error al borrar la cabecera.";
 				AonUtil.addErrorMessage(msg);

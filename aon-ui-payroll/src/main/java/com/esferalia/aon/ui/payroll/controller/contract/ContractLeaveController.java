@@ -120,7 +120,10 @@ public class ContractLeaveController extends BasicController {
 			leave = (ContractLeave) getLeaveList().get(0);
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID), leave.getId());
 			criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_DATE), false);
-			return (ContractLeaveDetail) bean.getList(criteria).get(0);
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				return (ContractLeaveDetail) list.get(0);
+			}
 		} catch (ManagerBeanException e) {
 			// NADA, no se sugiere ninguna informacion
 		}
@@ -234,8 +237,8 @@ public class ContractLeaveController extends BasicController {
 					detail.setType(LeaveReportType.LEAVE);
 					detail.setContractLeave(new ContractLeave());
 					detail.getContractLeave().setParent(new ContractLeave());
-					detail.setCias(lastLeave.getCias());
-					detail.setCollegeNumber(lastLeave.getCollegeNumber());
+					detail.setCias(null);
+					detail.setCollegeNumber(null);
 					detail.setProcessed(false);
 					detail.setDate(null);
 				}
