@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
@@ -73,6 +75,8 @@ public class SalaryDraftPaymentController extends ContractDetailVariableControll
 	
 	public void reset(boolean panelVisible) {
 		setModalPanelVisible(panelVisible);
+		setMonth(Month.getMonthByValue(CommonUtil.getMonth(new Date())));
+		setYear( CommonUtil.getYear(new Date()));
 	}
 	
 	private void setSelectedPayment(ActionEvent event){

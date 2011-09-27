@@ -139,6 +139,7 @@ public class ContractPaymentController extends ContractDetailVariableController 
 					SystemPayment sp = (SystemPayment) row;
 					payment.setPaymentConcept(sp.getPaymentConcept());
 				}
+				onReloadExpression(event);
 			}
 			reset(true);
 		} catch (ManagerBeanException e) {

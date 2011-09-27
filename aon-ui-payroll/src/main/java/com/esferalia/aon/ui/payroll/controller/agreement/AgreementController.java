@@ -30,10 +30,7 @@ public class AgreementController extends BasicController implements IVariablesHa
 
 	@Override
 	public String formAction() {
-//		if ( isTreeView() ) {
-			return (formAction != null) ? formAction : getBeanName()+FORM_TREE_SUFFIX;	
-//		}
-//		return super.formAction();
+		return (formAction != null) ? formAction : getBeanName()+FORM_TREE_SUFFIX;	
 	}
 	
 	public boolean isModalPanelVisible() {
