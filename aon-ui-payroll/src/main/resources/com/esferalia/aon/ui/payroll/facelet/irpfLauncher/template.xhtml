@@ -75,13 +75,14 @@
 					<c:if test="#{irpfLauncher.messages != null}">
 					
 						<aon:div style="margin-left: 50px; margin-top: 10px;">		
-							<aon:htmlCommandLink target="_blank"
+							<!--aon:htmlCommandLink target="_blank"
 								title="DESCARGAR LOG"
 								value="DESCARGAR LOG"
 								style="border-width: 0px 0px 0px 0px;"
 								actionListener="#{irpfLauncher.downloadDisk}"
 								rendered="#{!irpfLauncher.emptyLog}"
-								styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+								styleClass="aon-finding-toolbar-item aon-icon-mail-save" /-->
+								<aon:outputText value="&#160;" />
 						</aon:div>
 						
 						<aon:div  id="console" 

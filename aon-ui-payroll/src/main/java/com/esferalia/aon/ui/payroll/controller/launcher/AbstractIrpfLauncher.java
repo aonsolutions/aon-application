@@ -28,10 +28,18 @@ import com.aeat.jaxb.TipoRetenidoError2011;
 import com.aeat.jaxb.TipoRetenidoSalida2011;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.enumeration.Administration;
+import com.code.aon.customer.enumeration.CustomerStatus;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.payroll.Salary;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.IrpfException;
 import com.esferalia.aon.payroll.irpf.sql.SQLAEAT2011Factory;
+import com.esferalia.aon.payroll.sql.SQLConstants;
+import com.esferalia.aon.payroll.sql.SQLConstants.CustomerColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionException;
 
@@ -335,11 +343,39 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 	protected  SQLAEAT2011Factory getSQLAEAT2011Factory() throws SQLException {
 		Date date = params.getDate();
 		Connection connection = getConnection();
-
+		
+		Criteria criteria = getCriteria();
+		
 		SQLAEAT2011Factory sqlaeat2011Factory = 
-			new SQLAEAT2011Factory(connection, date);
+			new SQLAEAT2011Factory(connection, date, criteria);
 		
 		return sqlaeat2011Factory;
+	}
+
+	protected Criteria getCriteria() {
+		Criteria criteria = new Criteria();
+		
+		
+		Expression customerActive = 
+			ExpressionUtilities.getEqualExpression(SQLConstants.CUSTOMER + "." + CustomerColumns.STATUS, 
+					CustomerStatus.ACTIVE.ordinal());
+		Expression customerUnknown = 
+			ExpressionUtilities.getNullExpression((SQLConstants.CUSTOMER + "." + CustomerColumns.STATUS));
+		
+		criteria.addExpression(ExpressionUtilities.getOrExpression(customerActive, customerUnknown));
+		
+		if (params.getPerson() != null && params.getPerson().getId() != null ) {
+			criteria.addEqualExpression(
+					SQLContractSalaryCalculatorContext.PERSON_REGISTRY + "." + RegistryColumns.ID, 
+					params.getPerson().getId());
+		}
+
+		if (params.getEnterprise() != null && params.getEnterprise().getId() != null ) {
+			criteria.addEqualExpression(
+					SQLContractSalaryCalculatorContext.ENTERPRISE_REGISTRY + "." + RegistryColumns.ID, 
+					params.getEnterprise().getId());
+		}
+		return criteria;
 	}
 
 	protected void execute(IrpfLauncherParams params) throws SalaryException, ExpressionException, SQLException {
