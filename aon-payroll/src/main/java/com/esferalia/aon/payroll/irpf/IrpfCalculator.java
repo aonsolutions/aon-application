@@ -216,7 +216,9 @@ public abstract class IrpfCalculator  {
 			Criteria criteria = new Criteria();
 			//criteria.addEqualExpression(SQLAEAT2011Factory.PERSON_REGISTRY + "." + RegistryColumns.DOCUMENT,"44867183W" );
 			//criteria.addEqualExpression(SQLAEAT2011Factory.PERSON_REGISTRY + "." + RegistryColumns.DOCUMENT,"00388921Z" );
-			criteria.addEqualExpression(SQLAEAT2011Factory.ENTERPRISE_REGISTRY + "." + RegistryColumns.DOCUMENT,"A28671600" );
+			//criteria.addEqualExpression(SQLAEAT2011Factory.ENTERPRISE_REGISTRY + "." + RegistryColumns.DOCUMENT,"A28671600" );
+			criteria.addEqualExpression(SQLAEAT2011Factory.ENTERPRISE_REGISTRY + "." + RegistryColumns.DOCUMENT,"A82724089" );
+			
 			
 			SQLAEAT2011Factory factory = new SQLAEAT2011Factory(connection, date, criteria);
 			//SQLAEAT2011Factory factory = new SQLAEAT2011Factory(connection, date);
@@ -240,13 +242,16 @@ public abstract class IrpfCalculator  {
 						TipoRetenidoSalida2011 retenidoSalida2011) {
 					try {
 						super.onSalida(retenedorSalida2011, retenidoSalida2011);
-					} catch ( AbstractIrpfTester.UnExpectedValue e ) {
+					} catch (NotFoundException e) {
+					} 
+					catch ( AbstractIrpfTester.UnExpectedValue e ) {
 						System.out.printf("[%s]: %s \r\n",retenidoSalida2011.getNif(), e.getMessage());
 						System.out.printf("\t %s %f = %f %tF \r\n",
 								IrpfResultColumns.ANNUAL_REMUNERATION,
-								( Double ) getIrpfResult(IrpfResultColumns.ANNUAL_REMUNERATION), 
+								e.getAnnualRemuneration(), 
 								retenidoSalida2011.getRetribAnuales() , 
-								( Date ) getContract(ContractColumns.END_DATE));
+								e.getContractEnd());
+								
 					}
 				}
 			};

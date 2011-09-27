@@ -22,6 +22,10 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 
 import com.aeat.jaxb.AEATRetencionesEntrada2011;
+import com.aeat.jaxb.TipoRetenedorError2011;
+import com.aeat.jaxb.TipoRetenedorSalida2011;
+import com.aeat.jaxb.TipoRetenidoError2011;
+import com.aeat.jaxb.TipoRetenidoSalida2011;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.config.enumeration.Administration;
 import com.esferalia.aon.payroll.Salary;
@@ -301,11 +305,26 @@ public abstract class AbstractIrpfLauncher implements IrpfCalculator.CallbackHan
 		IrpfCalculator irpfCalculator = 
 			IrpfCalculator.getCalculator(administration);
 		AEATRetencionesEntrada2011 aeatRetencionesEntrada2011 = 
-			sqlaeat2011Factory.getAeatRetencionesEntrada2011(administration, this);
+			sqlaeat2011Factory.getAeatRetencionesEntrada2011(administration, new IrpfCalculator.CallbackHandler() {
+				
+				@Override
+				public void onSalida(TipoRetenedorSalida2011 retenedorSalida2011,
+						TipoRetenidoSalida2011 retenidoSalida2011) {
+				}
+				
+				@Override
+				public void onError(TipoRetenedorError2011 retenedorError2011,
+						TipoRetenidoError2011 retenidoError2011) {
+					onWarn(retenedorError2011, retenidoError2011);
+				}
+			});
+		
 		irpfCalculator.calculate(aeatRetencionesEntrada2011, this );
 			
 	}
 	
+	public abstract void onWarn(TipoRetenedorError2011 retenedorError2011,
+			TipoRetenidoError2011 retenidoError2011) ;
 	
 	protected Connection getConnection(){
 		String sessionFactory = HibernateUtil.getSessionFactoryName(Salary.class.getName());

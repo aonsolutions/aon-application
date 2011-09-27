@@ -82,6 +82,14 @@ public class IrpfLauncher extends AbstractIrpfLauncher {
 			throw new AbortProcessingException(msg);
 		}
 	}
+	
+	@Override
+	public void onWarn(TipoRetenedorError2011 retenedorError2011,
+			TipoRetenidoError2011 retenidoError2011) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public void onError(TipoRetenedorError2011 retenedorError2011,
 			TipoRetenidoError2011 retenidoError2011) {

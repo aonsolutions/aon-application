@@ -54,46 +54,88 @@ public abstract class AbstractIrpfTester implements IrpfCalculator.CallbackHandl
 			statement.setString(3, retenidoSalida2011.getNif());	// person_registry.document = ?
 			resultSet = statement.executeQuery();
 			if ( resultSet.next() ) {
+				Integer resultId = getIrpfResult(IrpfResultColumns.ID);
+				if ( resultId == null ) {
+					throw new NotFoundException(this);
+				}
+				
 				double savedIrpf = getDouble(SQLConstants.IRPF_RESULT, IrpfResultColumns.IRPF);
 				BigDecimal tipoRetencion = retenidoSalida2011.getTipoRetencion();
-				double irpf = tipoRetencion != null ? tipoRetencion.doubleValue() : 0.00;
-				testEquals("Tipo Retencion",savedIrpf, irpf, 0.011);
-				resultSet.close();
-				resultSet = null;
-			}
-			else {
+				double calculatedIrpf = tipoRetencion != null ? tipoRetencion.doubleValue() : 0.00;
+				if ( !testEquals(savedIrpf, calculatedIrpf, 0.011) ) {
+					throw new UnExpectedValue(this, 
+							format("Tipo Retencion", 
+									savedIrpf, 
+									calculatedIrpf));
+				}
 			}
 		} catch (SQLException e) {
 		} 
+		finally {
+			try {
+				if ( resultSet != null )
+					resultSet.close();
+			} catch (SQLException e) {
+			}
+		}
 	}
 	
-	public void testEquals(String message, double expected, double actual, double delta) {
+	public boolean testEquals(double expected, double actual, double delta) {
 		if (Double.compare(expected, actual) == 0)
-			return;
-		if ((Math.abs(expected - actual) > delta)) {
-			unExpectedValue(message, expected, actual);
-		}
+			return true;
+		return (Math.abs(expected - actual) <= delta);
 	}
 	
 	public static class UnExpectedValue extends Error{
 		
-		private static final long serialVersionUID = -3256215858427420045L;
+		private Date 	contractEnd;
+		private Integer contractId;
+		private double 	annualRemuneration;
 
-		public UnExpectedValue(String message) {
+		public UnExpectedValue(AbstractIrpfTester tester, String message) 
+		throws SQLException{
 			super(message);
+			this.contractId = tester.getContract(ContractColumns.ID);
+			this.contractEnd = tester.getContract(ContractColumns.END_DATE);
+			this.annualRemuneration = tester.getIrpfResult(IrpfResultColumns.ANNUAL_REMUNERATION);
+		}
+		
+		public Integer getContractId() {
+			return contractId;
+		}
+		
+		public Date getContractEnd() {
+			return contractEnd;
+		}
+		
+		public double getAnnualRemuneration() {
+			return annualRemuneration;
 		}
 	}
 	
+	public static class NotFoundException extends Error{
+		
+		private Integer contractId;
+
+		public NotFoundException(AbstractIrpfTester tester) {
+			super();
+			this.contractId = tester.getContract(ContractColumns.ID);
+		}
+		
+		public Integer getContractId() {
+			return contractId;
+		}
+	}
 	
-	protected <T> T get(String table, String col) throws SQLException {
+	private <T> T get(String table, String col) throws SQLException {
 		return ( T ) resultSet.getObject( table + "." + col );
 	}
 	
-	protected double getDouble(String table, String col) throws SQLException {
+	private double getDouble(String table, String col) throws SQLException {
 		return resultSet.getDouble( table + "." + col );
 	}
 
-	protected <T> T getContract(String col) {
+	private <T> T getContract(String col) {
 		try {
 			return ( T ) get( SQLConstants.CONTRACT, col );
 		} catch (SQLException e) {
@@ -101,7 +143,7 @@ public abstract class AbstractIrpfTester implements IrpfCalculator.CallbackHandl
 		}
 	}
 
-	protected <T> T getIrpfResult(String col) {
+	private <T> T getIrpfResult(String col) {
 		try {
 			return ( T ) get( SQLConstants.IRPF_RESULT , col );
 		} catch (SQLException e) {
@@ -109,9 +151,6 @@ public abstract class AbstractIrpfTester implements IrpfCalculator.CallbackHandl
 		}
 	}
 
-	private static void unExpectedValue(String message, double expected,double actual) {
-		throw new UnExpectedValue(format(message, expected, actual));
-	}
 
 	private static String format(String message, double expected, double actual) {
 		return String.format("%s diferente. En la base de datos '%.2f', en el calculado '%.2f'", 
