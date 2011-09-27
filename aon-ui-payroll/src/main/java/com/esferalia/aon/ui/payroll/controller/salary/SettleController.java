@@ -151,7 +151,7 @@ public class SettleController {
 					}
 				}
 			} else {
-				String msg = "";
+				String msg = "No esta definidos los conceptos para los finiquitos.";
 				LOGGER.error(">>>> initializeConcepts ",msg);
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg);
