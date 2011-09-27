@@ -7,13 +7,12 @@
 	<c:if test="#{lookupForRegistry}">
 		<aon:valueParam name="lookupProperty" default="registry"/>
 		<aon:valueParam name="lookupInputSuggestValue" default="#{lookupTo.name}"/>
-		<aon:valueParam name="lookupInputNameDisabled" default="#{lookupDisabled}"/>
 	</c:if>
 	<aon:valueParam name="lookupInputSuggestValue" default="#{lookupTo.registry.name}"/>
+	<aon:valueParam name="lookupInputSuggestExpression" default="#{lto.registry.name} (#{lto.id})"/>
+	<aon:valueParam name="lookupInputNameDisabled" default="#{lookupDisabled}"/>
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
-		<aon:valueParam name="lookupInputSuggestExpression" default="#{lto.registry.name} (#{lto.id})"/>	
-
 		<ui:define name="afterLookupContent">
 			<c:if test="#{skipSuggestText}">
 				<aon:inputText id="#{pojoName}_name#{lookupSuffix}"
