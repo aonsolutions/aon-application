@@ -25,8 +25,8 @@
 				</ui:define>
 			</ui:decorate>
 
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="skipAfterSearch" value="true" />
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener"
 						value="#{journalReport.onSearch}" type="actionListener" />

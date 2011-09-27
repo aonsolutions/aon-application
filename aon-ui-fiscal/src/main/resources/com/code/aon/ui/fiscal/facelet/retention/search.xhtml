@@ -11,8 +11,7 @@
 	<ui:define name="content">
 		<aon:form>
 
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
 					value="#{fiscalBundle.fiscal_retention_report_module}" />
 				<ui:param name="skipResetButton" value="true" />
@@ -27,8 +26,8 @@
 				</ui:define>
 			</ui:decorate>
 
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="skipAfterSearch" value="true" />
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener"
 						value="#{retentionReport.onSearch}" type="actionListener" />
