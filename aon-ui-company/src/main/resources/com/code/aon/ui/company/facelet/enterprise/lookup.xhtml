@@ -7,6 +7,7 @@
 	<ui:include src="/com/code/aon/ui/registry/facelet/registry/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{enterpriseLookup}" />
 		<ui:param name="controller" value="#{enterprise}" />
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.registry.fullName}"/>
 		<ui:param name="lookupLabel" value="#{companyBundle.company_enterprise}" />
 		<ui:param name="searchButtonTitle" value="#{companyBundle.company_enterprise_selection}" />
 		<ui:param name="newButtonHeight" value="600"/>
