@@ -17,9 +17,24 @@ import com.esferalia.aon.ui.payroll.controller.contract.IVariablesHandler;
 public class AgreementController extends BasicController implements IVariablesHandler{
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AgreementController.class.getName());
-		
+	private static final String FORM_TREE_SUFFIX = FORM_SUFFIX + "Tree";
+	
 	private boolean modalPanelVisible;
 	private AgreementVariablesHandler handler;
+
+	private String formAction;
+	
+	public void setFormAction(String formAction) {
+		this.formAction = formAction;
+	}
+
+	@Override
+	public String formAction() {
+//		if ( isTreeView() ) {
+			return (formAction != null) ? formAction : getBeanName()+FORM_TREE_SUFFIX;	
+//		}
+//		return super.formAction();
+	}
 	
 	public boolean isModalPanelVisible() {
 		return modalPanelVisible;
