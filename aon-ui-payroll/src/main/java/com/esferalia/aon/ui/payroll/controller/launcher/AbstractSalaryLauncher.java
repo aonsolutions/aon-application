@@ -235,18 +235,19 @@ public abstract class AbstractSalaryLauncher
 			long restominuto = restohora%60000;
 			long segundo = restominuto/1000;
 			long restosegundo = restominuto%1000;
-			listener.onInfo("Tiempo de proceso: " + 
+			String msg = "Tiempo de proceso: " + 
 						(hora>0?""+hora + " hora"+(hora==1?"":"s"):"")
 						+(minuto>0?" "+minuto + " minuto"+(minuto==1?"":"s"):"")
 						+(segundo>0?" "+segundo + " segundo"+(segundo==1?"":"s"):"")
-						+" " + restosegundo + " milisegundos.");				
+						+" " + restosegundo + " milisegundos.";				
+			listener.onMessage(new LogMessage(SalaryBuilderListenerLevel.INFO, msg));
 			setPollEnabled(false);
 			
 	    }
 
 	}
 
-	private ISQLContractSalaryCalculatorContext getSQLContractSalaryCalculatorContext() 
+	protected ISQLContractSalaryCalculatorContext getSQLContractSalaryCalculatorContext() 
 	throws ExpressionException, SQLException {
 		SalaryType  salaryType = params.getSalaryType();
 		return salaryType.accept(this);
