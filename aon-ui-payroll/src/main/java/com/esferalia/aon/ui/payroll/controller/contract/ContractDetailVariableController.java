@@ -16,6 +16,8 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -164,10 +166,14 @@ public abstract class ContractDetailVariableController extends BasicController i
 			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) getContract().getSalaryCalculatorContext(year, month, getSalaryType());
 			
-			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(expression.getExpression(), startCal.getTime(), endCal.getTime());
-			result = (Double) list.get(0).getValue();
-		
-		
+			ContractPayment p = (ContractPayment) expression;
+			String exp = p.getExpression()!=null?p.getExpression():p.getPaymentConcept().getExpression();
+			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(exp, startCal.getTime(), endCal.getTime());
+			if(list.isEmpty()){
+				result = null;
+			} else {
+				result = (Double) list.get(0).getValue();
+			}
 		} catch (SalaryException e) {
 			result = null;
 			getHandler().setVariablesModel(null);
