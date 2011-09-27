@@ -90,7 +90,7 @@ public abstract class AbstractIrpfTester implements IrpfCalculator.CallbackHandl
 		
 		private Date 	contractEnd;
 		private Integer contractId;
-		private double 	annualRemuneration;
+		private Double 	annualRemuneration;
 
 		public UnExpectedValue(AbstractIrpfTester tester, String message) 
 		throws SQLException{
