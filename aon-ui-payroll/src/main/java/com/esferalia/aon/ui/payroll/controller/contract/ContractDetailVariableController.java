@@ -17,7 +17,6 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
-import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -37,6 +36,7 @@ public abstract class ContractDetailVariableController extends BasicController i
 	
 	public abstract AbstractVariableHandler getHandler() ;
 	public abstract SalaryType getSalaryType() ;
+	public abstract String getExpression();
 	
 	public Date getInactiveDate() {
 		return inactiveDate;
@@ -152,7 +152,7 @@ public abstract class ContractDetailVariableController extends BasicController i
 	}
 	
 	public void onReloadExpression(ActionEvent event){
-		IExpression expression = (IExpression) getTo();
+//		IExpression expression = (IExpression) getTo();
 		try {
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
@@ -166,9 +166,7 @@ public abstract class ContractDetailVariableController extends BasicController i
 			endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) getContract().getSalaryCalculatorContext(year, month, getSalaryType());
 			
-			ContractPayment p = (ContractPayment) expression;
-			String exp = p.getExpression()!=null?p.getExpression():p.getPaymentConcept().getExpression();
-			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(exp, startCal.getTime(), endCal.getTime());
+			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(getExpression(), startCal.getTime(), endCal.getTime());
 			if(list.isEmpty()){
 				result = null;
 			} else {

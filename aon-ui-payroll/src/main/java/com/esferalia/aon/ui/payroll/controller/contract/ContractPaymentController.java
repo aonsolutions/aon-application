@@ -273,5 +273,9 @@ public class ContractPaymentController extends ContractDetailVariableController 
 	public SalaryType getSalaryType() {
 		return ((ContractPayment)getTo()).getSalaryType();
 	}
+	@Override
+	public String getExpression(){
+		return ((ContractPayment)getTo()).getExpression()!=null?((ContractPayment)getTo()).getExpression():((ContractPayment)getTo()).getPaymentConcept().getExpression();
+	}
 		
 }

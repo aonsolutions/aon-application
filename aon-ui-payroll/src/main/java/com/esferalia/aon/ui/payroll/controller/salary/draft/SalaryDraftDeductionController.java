@@ -193,5 +193,9 @@ public class SalaryDraftDeductionController extends ContractDetailVariableContro
 	public SalaryType getSalaryType() {
 		return SalaryType.SALARY;
 	}
+	@Override
+	public String getExpression(){
+		return ((ContractDeduction)getTo()).getExpression()!=null?((ContractDeduction)getTo()).getExpression():((ContractDeduction)getTo()).getDeductionConcept().getExpression();
+	}
 	
 }

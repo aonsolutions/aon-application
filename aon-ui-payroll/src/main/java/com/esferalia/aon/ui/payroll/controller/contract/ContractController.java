@@ -45,6 +45,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
+import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
@@ -318,6 +319,7 @@ public class ContractController extends BasicController implements IVariablesHan
 				}
 				if ( list.size() > 0 ) {
 					contract.setWorkPlace((WorkPlace)list.get(0));
+					loadWorkplaceAgreement(null);
 				}
 			} catch (ManagerBeanException e) {
 				String msg = "Imposible cargar los Centros de Trabajo de la empresa. (" + e.getMessage() +")";
@@ -385,6 +387,25 @@ public class ContractController extends BasicController implements IVariablesHan
 				AonUtil.addErrorMessage(msg);
 				throw new AbortProcessingException(msg,e);
 			}						
+		}
+	}
+	
+	public void loadWorkplaceAgreement(ActionEvent event){
+		Contract contract = (Contract) getTo(); 
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(PayrollWorkPlace.class);
+			Criteria  criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.PAYROLL_WORK_PLACE_WORK_PLACE_ID), contract.getWorkPlace().getId());
+			List<ITransferObject> list = bean.getList(criteria);
+			if(!list.isEmpty()){
+				PayrollWorkPlace pw = (PayrollWorkPlace) list.get(0);
+				if(pw.getAgreement()!=null){
+					setAgreement(pw.getAgreement());
+				}
+			}
+		} catch (ManagerBeanException e) {
+			String msg = "error loading workplace agreement";
+			LOGGER.error(msg);
 		}
 	}
 

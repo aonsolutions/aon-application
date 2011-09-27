@@ -182,5 +182,9 @@ public class SalaryDraftBonusController extends ContractDetailVariableController
 	public SalaryType getSalaryType() {
 		return SalaryType.SALARY;
 	}
+	@Override
+	public String getExpression(){
+		return ((ContractBonus)getTo()).getExpression()!=null?((ContractBonus)getTo()).getExpression():((ContractBonus)getTo()).getBonusConcept().getExpression();
+	}
 	
 }

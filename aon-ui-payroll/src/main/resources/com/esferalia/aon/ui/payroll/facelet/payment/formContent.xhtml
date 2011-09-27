@@ -67,6 +67,12 @@
 	<aon:outputLabel for="ContractPayment_description" value="#{bundle.aon_description}" />
 	<aon:inputText id="ContractPayment_description" size="40" maxlength="64" 
 		value="#{controller.to.description}" />
+		
+	<aon:outputText value="&#160;"/>
+	<aon:panelGroup>
+		<aon:selectBooleanCheckbox id="ContractPayment_decorateDescription" value="#{controller.to.descriptionDecorable}" />
+		<aon:outputLabel for="ContractPayment_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
+	</aon:panelGroup>
 	
 	<c:if test="#{!aonRole.sisAdmin}">
 		<aon:outputLabel for="ContractPayment_amount" value="#{payrollBundle.payroll_salary_expression}" />
@@ -167,12 +173,5 @@
 			</a4j:region>
 		</aon:inputTextarea>
 	</c:if>
-	
-	<aon:outputText value="&#160;"/>
-	<aon:panelGroup>
-		<aon:selectBooleanCheckbox id="ContractPayment_decorateDescription" value="#{controller.to.descriptionDecorable}" />
-		<aon:outputLabel for="ContractPayment_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
-	</aon:panelGroup>
-	
 	
 </ui:composition>
