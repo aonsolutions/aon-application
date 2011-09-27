@@ -2025,7 +2025,7 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/agreement/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>agreement_tree</from-outcome>
+			<from-outcome>agreement_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/agreement/treeContent.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
