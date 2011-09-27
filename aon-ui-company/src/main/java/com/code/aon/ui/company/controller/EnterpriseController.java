@@ -39,7 +39,7 @@ import com.esferalia.aon.ui.calendar.controller.CalendarController;
 
 public class EnterpriseController extends RegistryController implements ICompanyConstants {
 	
-	private static final String FORM_TREE_SUFFIX = FORM_SUFFIX + "Tree";
+	private static final String TREE_SUFFIX = "Tree";
 	
 	private RegistryInfo info = new RegistryInfo();
 
@@ -265,13 +265,18 @@ public class EnterpriseController extends RegistryController implements ICompany
 	public void setFormAction(String formAction) {
 		this.formAction = formAction;
 	}
-
+	
 	@Override
 	public String formAction() {
 		if ( isTreeView() ) {
-			return (formAction != null) ? formAction : getBeanName()+FORM_TREE_SUFFIX;	
+			return (formAction != null) ? formAction : super.formAction() + TREE_SUFFIX;	
 		}
 		return super.formAction();
+	}
+
+	@Override
+	public String searchAction() {
+		return isTreeView() ? super.searchAction() + TREE_SUFFIX : super.searchAction();
 	}
 	
 }

@@ -2313,6 +2313,10 @@
 	<!-- =================== Enterprise Tree  ========================== -->
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>enterprise_searchTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/searchTree.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>enterprise_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/formTree.xhtml</to-view-id>
 		</navigation-case>

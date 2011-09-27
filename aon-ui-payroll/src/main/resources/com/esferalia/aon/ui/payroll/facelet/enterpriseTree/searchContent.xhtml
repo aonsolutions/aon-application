@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html">
+	
+	<aon:outputLabel value="#{payrollBundle.payroll_employee_name}"
+		for="Contract_id" />	
+	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{enterpriseTree.contract}" />
+		<ui:param name="skipLabel" value="#{true}" />
+		<ui:param name="skipInputText" value="#{true}" />
+		<ui:param name="skipSearchButton" value="#{true}" />
+		<ui:param name="skipGoToButton" value="#{true}" />
+		<ui:param name="skipNewButton" value="#{true}" />
+		<ui:param name="lookupReRender" value="aonContent" />
+		<ui:param name="lookupControllerListener" value="#{enterpriseTree.contractListener}" />
+		<aon:methodParam name="lookupAction" value="contract_formTree" />								
+		<aon:methodParam name="lookupChangeListener" 
+			value="#{enterpriseSearchEx.onContractChanged}" type="lookupChangeListener" />				
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.person.fullName} (#{lto.workPlace.enterprise.registry.name})"/>							
+	</ui:include>						
+
+	<aon:outputText value="" />
+	<aon:div>
+		<aon:outputText value="#{payrollBundle.payroll_active}" />
+		<aon:selectBooleanCheckbox value="#{enterpriseTree.activeContract}" >
+			<a4j:support event="onclick" reRender="aonSearchContent" ignoreDupResponses="true" />
+		</aon:selectBooleanCheckbox>
+		
+		<aon:outputText value="#{payrollBundle.payroll_inactive}" styleClass="aon-margin-left" />
+		<aon:selectBooleanCheckbox value="#{enterpriseTree.inactiveContract}"  >
+			<a4j:support event="onclick" reRender="aonSearchContent" ignoreDupResponses="true"
+				actionListener="#{enterpriseTree.onChangeInactiveDate}" />
+		</aon:selectBooleanCheckbox>
+		
+		<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
+			value="#{bundle.aon_end_date}:" />
+		<aon:selectOneMenu 
+			styleClass="aon-margin-right"
+			disabled="#{!enterpriseTree.inactiveContract}"
+			value="#{enterpriseTree.inactiveLastPeriod}" >
+			<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
+			<a4j:support event="onclick" reRender="aonSearchContent" ignoreDupResponses="true"
+				actionListener="#{enterpriseTree.onChangeLastPeriod}" />
+		</aon:selectOneMenu>
+		<aon:selectInputDate  
+			disabled="#{!(enterpriseTree.inactiveContract and enterpriseTree.inactiveLastPeriod=='MANUAL')}"
+			value="#{enterpriseTree.inactiveDate}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}">
+			<a4j:support event="onclick" reRender="aonSearchContent" ignoreDupResponses="true"
+				actionListener="#{enterpriseTree.onChangeInactiveDate}" />
+		</aon:selectInputDate>
+	</aon:div>
+
+</ui:composition>

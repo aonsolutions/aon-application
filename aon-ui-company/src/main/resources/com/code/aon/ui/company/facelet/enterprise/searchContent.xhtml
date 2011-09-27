@@ -11,14 +11,6 @@
 		<aon:panelCollapsible expanded="true" label="#{companyBundle.company_enterprise}">
 			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 				<ui:include src="/com/code/aon/ui/company/facelet/enterprise/searchBasicContent.xhtml" />
-	
-				<c:if test="#{aonConfiguration.bean.enterprise.showPersonInSearch}">
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{enterpriseSearchEx.contract}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="lookupInputSuggestExpression" value="#{lto.person.fullName} (#{lto.workPlace.enterprise.registry.name})"/>
-					</ui:include>						
-				</c:if>
 			</aon:panelGrid>
 		</aon:panelCollapsible>					
 							

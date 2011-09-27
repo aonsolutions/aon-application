@@ -364,12 +364,12 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 		try {
 			loadWorkPlaces(enterpriseNode, enterprise);
-			if ( contract == null ) {
-				setCurrentNode( enterpriseNode );	
-			} else {
+			if ( (contract != null) && (contract.getId() != null) ) {
 				onSelectTreeContract(null, contract);
 				TreeNode<EnterpriseTreeData> node = getTreeNode(contract);
 				selectTreeNode(node);			
+			} else {
+				setCurrentNode( enterpriseNode );	
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading work places for " + enterprise, e );
@@ -386,12 +386,13 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	public void reloadTree(ActionEvent event){
+		setContract(null);
 		loadTree();
 	}
 
 	public Boolean adviseNodeSelected(UITree tree) {
 		boolean selected = false;
-		if ( tree.isRowAvailable() ) {
+		if ( tree.isRowAvailable() && (currentNode != null) ) {
 			EnterpriseTreeData etd = (EnterpriseTreeData) tree.getRowData();
 			selected = ObjectUtils.equals(etd, getCurrentNode());
 		}
@@ -718,7 +719,7 @@ public class EnterpriseTree implements ICompanyConstants {
 			while ( i.hasNext() ) {
 				Map.Entry<Object, TreeNode<EnterpriseTreeData>> entry = i.next();
 				EnterpriseTreeData etd = entry.getValue().getData();
-				if ( (etd.getType() == EnterpriseTreeType.CONTRACT) && (etd.getId().equals(contract.getId()))) {
+				if ( etd.getId().equals(contract.getId()) ) {
 					return entry.getValue();
 				}
 				
@@ -764,8 +765,10 @@ public class EnterpriseTree implements ICompanyConstants {
 						completeContractCriteria(controller.getManagerBean(), criteria);
 						EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 						Enterprise enterprise = (Enterprise) ec.getTo();
-						String alias = controller.getFieldName(CONTRACT_WORK_PLACE_ENTERPRISE_ID);
-						criteria.addEqualExpression(alias, enterprise.getId());
+						if ((enterprise != null) && (enterprise.getId() != null)) {
+							String alias = controller.getFieldName(CONTRACT_WORK_PLACE_ENTERPRISE_ID);
+							criteria.addEqualExpression(alias, enterprise.getId());							
+						}
 					} catch (ManagerBeanException e) {
 						LOGGER.error( e.getMessage(), e );
 						throw new ControllerListenerException(e.getMessage(), e);

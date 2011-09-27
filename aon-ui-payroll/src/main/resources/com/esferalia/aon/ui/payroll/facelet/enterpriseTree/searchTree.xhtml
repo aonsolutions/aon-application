@@ -16,9 +16,22 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{enterprise}" />
 				<ui:define name="searchContent">
-					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/searchContent.xhtml" />
+
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{enterpriseSearchEx.enterprise}" />
+						<ui:param name="lookupReRender" value="aonContent" />
+						<aon:methodParam name="lookupAction" value="enterprise_formTree" />								
+						<ui:param name="skipNewButton" value="#{true}" />
+						<aon:methodParam name="lookupChangeListener" 
+							value="#{enterpriseSearchEx.onEnterpriseChanged}" type="lookupChangeListener" />						
+					</ui:include>	
+					
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/searchContent.xhtml" />
+					
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
 	</ui:define>
 </ui:composition>
