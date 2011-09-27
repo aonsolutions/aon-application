@@ -34,7 +34,7 @@
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ContractPayment_type" value="#{bundle.aon_type}" />
-	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" required="true">
+	<aon:selectOneMenu id="ContractPayment_type" value="#{controller.to.type}" >
 		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractPayment_PaymentConcept" ajaxSingle="true" limitToList="true"/>
 		<f:selectItem value="#{null}" itemLabel=" - " />
 		<f:selectItems value="#{payrollCollections.paymentTypes}" />
@@ -78,34 +78,12 @@
 		<aon:outputLabel for="ContractPayment_amount" value="#{payrollBundle.payroll_salary_expression}" />
 		<aon:outputText id="ContractPayment_amount"  
 			value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.paymentConcept.expression)}" />
-			
-			
-		<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_simulation_date}"/>
-		<h:panelGrid columns="2">
-			<aon:selectOneMenu value="#{controller.month}">
-				<f:selectItems value="#{commonCollections.months}"  />
-				<a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
-			</aon:selectOneMenu>
-
-   			<rich:inputNumberSpinner value="#{controller.year}" inputSize="4" 
-   				minValue="2000" maxValue="2100">
-   			  <a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
-   			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
-   			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true" />
-   			</rich:inputNumberSpinner>
-		</h:panelGrid>
-
-		<aon:outputLabel for="ContractPayment_result" value="#{payrollBundle.payroll_result}" />
-		<aon:outputText id="ContractPayment_result" value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}" 
-			style="color:#{(controller.result!=null)?('black'):('red')};" >
-			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-		</aon:outputText>
 	</c:if>
 	
 	<c:if test="#{aonRole.sisAdmin}">
 		<aon:outputLabel for="ContractPayment_expression" value="#{payrollBundle.payroll_salary_expression}" />
 		<aon:inputTextarea id="ContractPayment_expression" cols="60" rows="3" maxlength="128"
-			value="#{controller.to.expression}" required="true">
+			value="#{controller.to.expression}" >
 			<f:validateLength maximum="128"/>
 			<c:if test="#{!contextDisabled}">
 				<a4j:region>
@@ -172,6 +150,31 @@
 				</rich:suggestionbox>
 			</a4j:region>
 		</aon:inputTextarea>
+	</c:if>
+	
+	<c:if test="#{skipResult}">
+		<aon:outputLabel for="ContractPayment_result" value="#{payrollBundle.payroll_result}" />
+		<h:panelGrid columns="4">
+			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}" 
+				style="color:#{(controller.result!=null)?('black'):('red')};" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+	
+			<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right" 
+				value="#{payrollBundle.payroll_on}" />
+		
+			<aon:selectOneMenu value="#{controller.month}">
+				<f:selectItems value="#{commonCollections.months}"  />
+				<a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			</aon:selectOneMenu>
+	
+			<rich:inputNumberSpinner value="#{controller.year}" inputSize="4" 
+				minValue="2000" maxValue="2100">
+			  <a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true" />
+			</rich:inputNumberSpinner>
+		</h:panelGrid>
 	</c:if>
 	
 </ui:composition>
