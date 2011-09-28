@@ -16,7 +16,7 @@
 		<h:column>
 			<aon:outputText value="#{aon_lst_columnExpression}" />
 		</h:column>
-		<a4j:support event="onselect" ajaxSingle="true" action="#{aon_lst_action}"
+		<a4j:support event="onselect" ajaxSingle="true" action="#{aon_lst_lookupAction}"
 			reRender="#{aon_lst_selectReRender}" focus="#{aon_lst_focus}" >
 			<f:setPropertyActionListener value="#{lto}" target="#{lookup.suggestedTo}" />
 			<aon:actionListener method="#{lookup.onSuggestSelect}" />

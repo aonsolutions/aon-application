@@ -24,6 +24,7 @@
 		<aon:commandButton id="closeLookup" value="#{bundle.aon_close}"  
 			actionListener="#{lookup.onFormSelect}" rendered="#{!lookup.new}"
 			focus="#{lookup.windowCloseFocus}" immediate="true"
+			action="#{lookup.lookupAction}"
 			reRender="#{lookup.component.selectReRender}"
 			styleClass="aon-finding-toolbar-item aon-icon-cancel"
 			accesskey="#{bundle.aon_key_close}" >

@@ -80,12 +80,12 @@ public class LookupSuggestTextHandler extends LookupBasicInputHandler {
 			mapper.setVariable(PREFFIX + FOCUS, focus.getValueExpression(ctx, Object.class));				
 		}
 		ValueExpression action = FaceletUtil.getMethodExpression(ctx,
-				getAttribute(ACTION),String.class, FaceletUtil.ACTION_SIG);
+				getAttribute(LOOKUP_ACTION),String.class, FaceletUtil.ACTION_SIG);
 		if (action == null) {
-			action = FaceletUtil.getMethodEmptyExpression(ctx, ACTION,
+			action = FaceletUtil.getMethodEmptyExpression(ctx, LOOKUP_ACTION,
 					String.class, FaceletUtil.ACTION_SIG);
 		}		
-		mapper.setVariable(PREFFIX + ACTION, action);
+		mapper.setVariable(PREFFIX + LOOKUP_ACTION, action);
 	}
 	
 	@Override

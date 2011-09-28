@@ -218,10 +218,6 @@
 			<value>personLookup</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>-1</value>
-		</managed-property>
-		<managed-property>
 			<property-name>foreignPojo</property-name>
 			<value>com.code.aon.person.Person</value>
 		</managed-property>

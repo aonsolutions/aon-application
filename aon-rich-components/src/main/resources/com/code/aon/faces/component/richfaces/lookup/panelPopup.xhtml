@@ -41,17 +41,17 @@
 								
 									<c:if
 										test="#{(lookup.listPagePath != null) and (lookup.selectedPanel == 'list')}">
-										<a4j:include viewId="listContent.xhtml" />
+										<ui:include src="listContent.xhtml" />
 									</c:if>
 	
 									<c:if
 										test="#{(lookup.searchPagePath != null) and (lookup.selectedPanel == 'search')}">
-										<a4j:include viewId="searchContent.xhtml" />
+										<ui:include src="searchContent.xhtml" />
 									</c:if>
 	
 									<c:if
 										test="#{(lookup.newPagePath != null) and (lookup.selectedPanel == 'new')}">
-										<a4j:include viewId="formContent.xhtml" />
+										<ui:include src="formContent.xhtml" />
 									</c:if>
 								</aon:form>
 							</aon:div>

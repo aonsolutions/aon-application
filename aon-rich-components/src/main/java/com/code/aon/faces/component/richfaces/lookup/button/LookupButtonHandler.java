@@ -131,6 +131,15 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 		}
 	}	
 	
+	private void setLookupAction( FaceletContext ctx, HtmlLookupButton button ) {
+		TagAttribute lookupActionTag = getAttribute(LOOKUP_ACTION);
+		if ( lookupActionTag != null ) {
+			MethodExpression lookupAction = lookupActionTag.getMethodExpression(ctx, 
+					String.class, FaceletUtil.ACTION_SIG);
+			button.setLookupAction(lookupAction);
+		} 
+	}
+	
 	private void configureButton( FaceletContext ctx, HtmlLookupButton button) {
 		setActionListener(ctx, button);		
 		if (! FaceletUtil.hasValue(ctx, tag, HTML.TITLE_ATTR) ) {
@@ -138,6 +147,7 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.TITLE_ATTR, title );			
 		}		
 		setReRender(ctx, button);
+		setLookupAction(ctx, button);
 	}
 	
 	private void updateDisabled( FaceletContext ctx, HtmlLookupButton button, boolean resolved ) {

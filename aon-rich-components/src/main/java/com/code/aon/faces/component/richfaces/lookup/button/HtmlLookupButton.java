@@ -49,6 +49,8 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupCo
     
     private String windowCloseFocus;
     
+    private MethodExpression lookupAction;
+    
 	private Object[] _state;    
 	
 	public LookupButtonType getButtonType() {
@@ -77,6 +79,14 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupCo
 
 	public void setLookupChangeListener(MethodExpression lookupChangeListener) {
 		this.lookupChangeListener = lookupChangeListener;
+	}
+	
+	public MethodExpression getLookupAction() {
+		return lookupAction;
+	}
+
+	public void setLookupAction(MethodExpression lookupAction) {
+		this.lookupAction = lookupAction;
 	}
 
 	public ValueExpression getProperty() {
@@ -199,6 +209,7 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupCo
   		controllerListener = (IControllerListener) this._state[9];
   		windowCloseFocus = (String) this._state[10];
   		buttonType = (LookupButtonType) this._state[11];
+  		lookupAction = (MethodExpression) this._state[12];
   	}  
    
     /**
@@ -210,7 +221,7 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupCo
      */
   	public Object saveState(FacesContext _context) {  
   		if (_state == null) {  
-  			_state = new Object[12];  
+  			_state = new Object[13];  
   		}  
   		_state[0] = super.saveState(_context);  
   		_state[1] = lookup;
@@ -224,6 +235,7 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupCo
   		_state[9] = controllerListener;
   		_state[10] = windowCloseFocus;
   		_state[11] = buttonType;
+  		_state[12] = lookupAction;
   		return _state;  
   	}
 	

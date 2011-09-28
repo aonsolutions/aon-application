@@ -21,6 +21,7 @@
 				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}" 
 				lookupChangeListener="#{lookupChangeListener}"
 				controllerListener="#{lookupControllerListener}"
+				lookupAction="#{lookupAction}"
 				required="#{idRequired}" disabled="#{lookupDisabled}"
 				size="#{lookupInputSize}" maxlength="#{lookupInputMaxLength}"  
 				onsubmit="#{lookupInputOnSubmit}" focus="#{lookupInputOnFocus}"
@@ -40,6 +41,7 @@
 				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
 				lookupChangeListener="#{lookupChangeListener}"
 				controllerListener="#{lookupControllerListener}"
+				lookupAction="#{lookupAction}"
 				selectReRender="#{lookup_reRender}" >
 				<ui:insert name="searchButtonContent"/>
 			</aon:lookupButton>
@@ -60,6 +62,7 @@
 				lookupProperty="#{lookupProperty}"
 				lookupChangeListener="#{lookupChangeListener}"
 				controllerListener="#{lookupControllerListener}"
+				lookupAction="#{lookupAction}"
 				selectReRender="#{lookup_reRender}" >
 				<ui:insert name="newButtonContent"/>
 			</aon:lookupButton>
@@ -69,7 +72,7 @@
 				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
 				lookupChangeListener="#{lookupChangeListener}"
 				controllerListener="#{lookupControllerListener}"
-				action="#{lookupAction}"
+				lookupAction="#{lookupAction}"
 				width="#{lookupInputSuggestWidth}"
 				height="#{lookupInputSuggestHeight}"
 				frequency="#{lookupInputSuggestFrequency}"

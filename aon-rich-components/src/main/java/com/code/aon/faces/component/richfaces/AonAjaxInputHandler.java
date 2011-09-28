@@ -95,6 +95,9 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 		return HTML.ONCHANGE_ATTR;
 	}
 	
+	protected void initAjaxSupport( List<TagAttribute> attributes ) {
+	}
+	
 	@Override
 	protected void applyNextHandler(FaceletContext ctx, UIComponent c)
 			throws IOException, FacesException, ELException {
@@ -102,6 +105,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 		if ( isAjaxNeeded() ) {
 			if ( this.ajaxSupportHandler == null ) {
 				List<TagAttribute> attributes = new ArrayList<TagAttribute>();
+				initAjaxSupport(attributes);
 				String event = getAjaxEvent();
 				if ( partialSubmit != null ) {
 					String value = partialSubmit.getValue(ctx);

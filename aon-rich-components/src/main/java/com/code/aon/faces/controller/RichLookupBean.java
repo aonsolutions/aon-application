@@ -1,5 +1,7 @@
 package com.code.aon.faces.controller;
 
+import static com.code.aon.faces.controller.IRichConstants.SEARCH_NO_RESULTS;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -462,7 +464,7 @@ public class RichLookupBean {
 	public ITransferObject getTo() {
 		return getController().getTo();
 	}
-
+	
 	/**
 	 * Checks if is show window.
 	 * 
@@ -586,11 +588,14 @@ public class RichLookupBean {
 			resolved = true;
 		} else {
 			onReset(event);
-			AonUtil.addErrorMessageFromBundle(IRichConstants.SEARCH_NO_RESULTS);
 		}
 		fireLookupChangeListener(component, resolved);
 		updateSourcePojo();
 		removeControllerListener();
+		if (! resolved) {
+			String message = AonUtil.addErrorMessageFromBundle(SEARCH_NO_RESULTS);
+			throw new AbortProcessingException(message);
+		}
 	}	
 
 	private void setBindings(UIComponent component) {
@@ -880,5 +885,22 @@ public class RichLookupBean {
 		updateSourcePojo();
 		removeControllerListener();
 	}
-	
+		
+	public String lookupAction() {
+		String action = "";
+		if ( (this.component != null) && (this.component instanceof HtmlLookupButton) ) {
+			HtmlLookupButton lookupButton = (HtmlLookupButton) this.component;
+			if ( lookupButton.getLookupAction() != null ) {
+				try {
+					FacesContext ctx = FacesContext.getCurrentInstance();
+					action = (String) lookupButton.getLookupAction().invoke(ctx.getELContext(), new Object[]{});
+				} catch (Throwable e) {
+					LOGGER.error(">>>> lookupAction ",e);
+					throw new AbortProcessingException(e.getMessage(), e);			
+				}							
+			}
+		}
+		return action;
+	}
+
 }

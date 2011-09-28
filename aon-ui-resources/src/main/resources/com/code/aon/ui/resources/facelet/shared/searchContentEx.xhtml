@@ -30,7 +30,7 @@
 							reRender="#{searchReRender}" oncomplete="#{searchOnComplete}"
 							requestDelay="100" accesskey="#{bundle.aon_key_search}" >
 							<c:if test="#{!skipAfterSearch}" >
-								<aon:actionListener method="#{controller.onAfterSearch}" />
+								<aon:actionListener method="#{afterSearchActionListener}" />
 							</c:if>
 							<c:if test="#{!disableSearchHotKey}" >
 								<aon:actionHotKey key="return" />
