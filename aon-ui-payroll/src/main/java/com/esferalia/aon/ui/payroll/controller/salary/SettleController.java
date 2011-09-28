@@ -201,6 +201,7 @@ public class SettleController {
 			ISalaryCalculatorContext ctx = contract.getSalaryCalculatorContext(year, Month.values()[month], SalaryType.SETTLE);
 			settle = (Salary) ctx.getSalaryProxy().getSalary();
 			settle.setNonEstructuralOvertimeBase(0.0);
+			settle.setTotalIrpf(0.0);
 			settle.setContract(contract);
 			settle.getSalaryPayments().clear();
 			settle.getSalaryDeductions().clear();
