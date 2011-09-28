@@ -24,6 +24,7 @@
 			
 			<ui:param name="controller" value="#{irpfRegularization}" />
 		</ui:decorate>
+		
 		<!--  
 	<ui:include
 		src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
@@ -55,8 +56,8 @@
 			<aon:outputLabel for="irpfData_reason"
 				value="#{payrollBundle.payroll_irpfData_reason}" />
 			<aon:selectOneMenu id="irpfData_reason" required="true"
-				label="#{registryBundle.registry_street_type}"
 				value="#{irpfRegularization.to.reason}">
+				<f:selectItem value="#{null}" itemLabel=" - " />
 				<f:selectItems value="#{payrollCollections.irpfRegularizationReasons}" />
 			</aon:selectOneMenu>
 			
