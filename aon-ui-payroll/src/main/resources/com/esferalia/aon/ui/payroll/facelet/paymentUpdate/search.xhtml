@@ -16,27 +16,48 @@
 				<ui:param name="skipResetButton" value="true" />
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{paymentUpdate}" />
-				<ui:define name="searchContent">
-					<c:if test="#{aonConfiguration.bean.paymentUpdate.showEnterpriseInSearch}">				
-						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{paymentUpdate.enterprise}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-							<ui:param name="idRequired" value="#{true}" />
-						</ui:include>
-					</c:if>
+			
+			<aon:div styleClass="aon-scroll-area">
+		
+				<aon:div styleClass="aon-panelGrid-search">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+					</aon:div>			
 					
-					<aon:outputText value="#{bundle.aon_date}"/>
-					<h:panelGrid columns="2">
-						<aon:selectOneMenu id="PaymentUpdate_month" value="#{paymentUpdate.month}" required="true">
-							<f:selectItems value="#{commonCollections.months}"  />
-						</aon:selectOneMenu>
-			   			<rich:inputNumberSpinner id="PaymentUpdate_year" value="#{paymentUpdate.year}" 
-			   				inputSize="4" minValue="2009" maxValue="2020" required="true"/>
-					</h:panelGrid>
-				</ui:define>
-			</ui:decorate>
+					<aon:panelGrid columns="2">
+			
+						<c:if test="#{aonConfiguration.bean.paymentUpdate.showEnterpriseInSearch}">				
+							<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+								<ui:param name="lookupTo" value="#{paymentUpdate.enterprise}" />
+								<ui:param name="skipNewButton" value="#{true}" />
+								<ui:param name="idRequired" value="#{true}" />
+							</ui:include>
+						</c:if>
+						
+						<aon:outputText value="#{bundle.aon_date}"/>
+						<h:panelGrid columns="2">
+							<aon:selectOneMenu id="PaymentUpdate_month" value="#{paymentUpdate.month}" required="true">
+								<f:selectItems value="#{commonCollections.months}"  />
+							</aon:selectOneMenu>
+				   			<rich:inputNumberSpinner id="PaymentUpdate_year" value="#{paymentUpdate.year}" 
+				   				inputSize="4" minValue="2009" maxValue="2020" required="true"/>
+						</h:panelGrid>
+						
+						<aon:outputText value="" />
+						<aon:div >
+							<aon:commandButton
+								title="#{bundle.aon_key_search_accelerator}"
+								value="#{bundle.aon_search}" styleClass="aon-search-lookup-button"
+								action="paymentUpdate_list" actionListener="#{paymentUpdate.onSearch}"
+								requestDelay="100" accesskey="#{bundle.aon_key_search}" >
+							</aon:commandButton> 
+						</aon:div>	
+					
+					</aon:panelGrid>
+					
+				</aon:div>		
+			</aon:div>
+			
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 	</ui:define>
