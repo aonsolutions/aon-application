@@ -152,7 +152,7 @@
 		</aon:inputTextarea>
 	</c:if>
 	
-	<c:if test="#{skipResult}">
+	<c:if test="#{!skipResult}">
 		<aon:outputLabel for="ContractPayment_result" value="#{payrollBundle.payroll_result}" />
 		<h:panelGrid columns="4">
 			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}" 

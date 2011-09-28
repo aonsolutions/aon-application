@@ -58,15 +58,15 @@
 					<ui:include 
 						src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
 						<ui:param name="controller" value="#{agreement}" />
-						<ui:param name="skipResult" value="true" />
 					</ui:include>
 				</aon:panelTab>
-
+<!--  
 				<aon:panelTab id="extra" 
 					label="#{payrollBundle.payroll_agreementExtra}">
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/extra/grid.xhtml" >
 					</ui:include>
 				</aon:panelTab>
+-->
 
 				<aon:panelTab id="group" disabled="#{agreementLevel.model==null}"
 					label="#{payrollBundle.payroll_agreementLevel_module}">
