@@ -25,10 +25,8 @@
  	<ui:insert name="head" />
 </head>
 <body onbeforeunload="$('logout').onclick();">
-	<aon:div id="aon-content">			
-		<ui:insert name="mainHeader" />
-		<ui:insert name="mainContent" />
-	</aon:div>
+	<ui:insert name="mainHeader" />
+	<ui:insert name="mainContent" />
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/sessionExpired.xhtml" />
 </body>
 </f:view>
