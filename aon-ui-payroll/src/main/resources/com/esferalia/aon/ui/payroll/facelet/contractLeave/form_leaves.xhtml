@@ -15,7 +15,7 @@
 		<aon:rowSelector actionListener="#{contractLeave.onSelectLeave}" />
 		
 		<aon:column alias="ContractLeave.id"
-			styleClass="aon-editDataTable-numberColumn aon-width-100">
+			styleClass="aon-editDataTable-numberColumn aon-width-50">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_id}" />
 			</f:facet>
@@ -25,7 +25,7 @@
 		</aon:column>
 	
 		<aon:column alias="ContractLeave.type"
-			styleClass="aon-editDataTable-textColumn aon-width-250">
+			styleClass="aon-editDataTable-textColumn aon-width-150">
 			<f:facet name="header">
 				<aon:outputText value="#{payrollBundle.payroll_contractLeave_type}" />
 			</f:facet>
@@ -33,7 +33,7 @@
 		</aon:column>
 		
 		<aon:column alias="ContractLeave.description"
-			styleClass="aon-editDataTable-numberColumn aon-width-auto">
+			styleClass="aon-editDataTable-textColumn aon-width-auto">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_description}" />
 			</f:facet>
@@ -43,7 +43,7 @@
 		</aon:column>
 		
 		<aon:column alias="ContractLeave.startDate"
-			styleClass="aon-editDataTable-dateColumn aon-width-200">
+			styleClass="aon-editDataTable-dateColumn aon-width-150">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_date_from}" />
 			</f:facet>
@@ -54,7 +54,7 @@
 		</aon:column>
 		
 		<aon:column alias="ContractLeave.endDate"
-			styleClass="aon-editDataTable-dateColumn aon-width-200">
+			styleClass="aon-editDataTable-dateColumn aon-width-150">
 			<f:facet name="header">
 				<aon:outputText value="#{bundle.aon_date_to}" />
 			</f:facet>
@@ -65,31 +65,37 @@
 		</aon:column>
 		
 		<aon:column alias="ContractLeave.dailyCgcBase"
-			styleClass="aon-editDataTable-numberColumn aon-width-200">
+			styleClass="aon-editDataTable-numberColumn aon-width-100">
 			<f:facet name="header">
 				<aon:outputText value="#{payrollBundle.payroll_contractLeave_dailyCgcBase}" />
 			</f:facet>
-			<aon:outputText value="#{leave.dailyCgcBase}" />
+			<aon:outputText value="#{leave.dailyCgcBase}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
 		</aon:column>
 		
 		<aon:column alias="ContractLeave.dailyCgpBase"
-			styleClass="aon-editDataTable-numberColumn aon-width-200">
+			styleClass="aon-editDataTable-numberColumn aon-width-100">
 			<f:facet name="header">
 				<aon:outputText value="#{payrollBundle.payroll_contractLeave_dailyCgpBase}" />
 			</f:facet>
-			<aon:outputText value="#{leave.dailyCgpBase}" />
+			<aon:outputText value="#{leave.dailyCgpBase}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
 		</aon:column>
 		
 		<aon:column alias="ContractLeave.dailyRegBase"
-			styleClass="aon-editDataTable-numberColumn aon-width-200">
+			styleClass="aon-editDataTable-numberColumn aon-width-100">
 			<f:facet name="header">
 				<aon:outputText value="#{payrollBundle.payroll_contractLeave_dailyRegBase}" />
 			</f:facet>
-			<aon:outputText value="#{leave.dailyRegBase}" />
+			<aon:outputText value="#{leave.dailyRegBase}" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
 		</aon:column>
 		
 		<aon:column alias="ContractLeave.parent.id"
-			styleClass="aon-editDataTable-iconColumn aon-width-200">
+			styleClass="aon-editDataTable-iconColumn aon-width-50">
 			<f:facet name="header">
 				<aon:outputText value="#{payrollBundle.payroll_contractLeave_relapse}" />
 			</f:facet>

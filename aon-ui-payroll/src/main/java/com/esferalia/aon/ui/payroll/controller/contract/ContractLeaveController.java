@@ -19,6 +19,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -32,6 +34,9 @@ import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.salary.ISalary;
+import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
+import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.utils.NumberValidation;
 
@@ -50,6 +55,14 @@ public class ContractLeaveController extends BasicController {
 	private Boolean validCollegeNumber;
 	private Boolean validCias;
 	private Integer selectedLeaveIndex;
+	private boolean treeOutcome;
+
+	public boolean isTreeOutcome() {
+		return treeOutcome;
+	}
+	public void setTreeOutcome(boolean treeOutcome) {
+		this.treeOutcome = treeOutcome;
+	}
 	
 	public Contract getContract() {
 		return contract;
@@ -222,6 +235,7 @@ public class ContractLeaveController extends BasicController {
 				setReport(new ContractLeaveDetail());
 				getReport().setContractLeave(new ContractLeave());
 				getReport().getContractLeave().setParent(new ContractLeave());
+				calculateBases();
 			} else {
 				ContractLeaveDetail detail = new ContractLeaveDetail();
 				ContractLeaveDetail lastLeave = getLastLeave();
@@ -270,8 +284,6 @@ public class ContractLeaveController extends BasicController {
 			throw new AbortProcessingException(msg, e);
 		}
 		buildLeaveReport(true);
-		checkCollegeNumber();
-		checkCiasNumber();
 	}
 	
 	public void calculateBases(){
@@ -282,10 +294,12 @@ public class ContractLeaveController extends BasicController {
 		if(salary==null){
 			salary = getCurrentSalary();
 		}
-		getReport().getContractLeave().setDailyCgcBase(salary.getCommonBase()/30);
-		getReport().getContractLeave().setDailyCgpBase(salary.getProfessionalBase()/30);
-		// TODO de donde se obtiene la base reguladora?
-		getReport().getContractLeave().setDailyRegBase(salary.getCommonBase()/30);
+		if(salary!=null){
+			getReport().getContractLeave().setDailyCgcBase(salary.getCommonBase()/30);
+			getReport().getContractLeave().setDailyCgpBase(salary.getProfessionalBase()/30);
+			// TODO de donde se obtiene la base reguladora?
+			getReport().getContractLeave().setDailyRegBase(salary.getCommonBase()/30);
+		}
 	}
 	
 	private ISalary getLastSalary() {
@@ -307,7 +321,12 @@ public class ContractLeaveController extends BasicController {
 	}
 	
 	private ISalary getCurrentSalary() {
-		// TODO calcular la nomina actual?
+		try {
+			ISalaryCalculatorContext ctx = getContract().getSalaryCalculatorContext(CommonUtil.getYear(new Date()), Month.getMonthByValue(CommonUtil.getMonth(new Date())), SalaryType.SALARY);
+			return ctx.getSalaryProxy().getSalary();
+		} catch (SalaryException e) {
+			// sigue ...
+		}
 		return null;
 	}
 	
@@ -329,6 +348,7 @@ public class ContractLeaveController extends BasicController {
 		setLeaveModel(null);
 		setLeaveDetailModel(null);
 		this.onReset(null);
+		setTreeOutcome(false);
 	}
 	
 	public void onContractChanged(LookupChangeEvent event) {
@@ -380,7 +400,7 @@ public class ContractLeaveController extends BasicController {
 		}
 	}
 	
-	public void onSelectDetail(ActionEvent event) {
+	public void onSelectLeaveDetail(ActionEvent event) {
 		this.onCancel(event);
 		ContractLeaveDetail detail = (ContractLeaveDetail) getLeaveDetailModel().getRowData();
 		try {
@@ -447,6 +467,22 @@ public class ContractLeaveController extends BasicController {
 		} else {
 			setValidCias(null);
 		}
+	}
+	
+	@Override
+	public String backAction() {
+		if(isTreeOutcome()){
+			return IPayrollConstants.CONTRACT_FORM_TREE;
+		}
+		return super.backAction();
+	}
+	
+	@Override
+	public String getBackAction() {
+		if(isTreeOutcome()){
+			return IPayrollConstants.CONTRACT_FORM_TREE;
+		}
+		return super.getBackAction();
 	}
 
 }

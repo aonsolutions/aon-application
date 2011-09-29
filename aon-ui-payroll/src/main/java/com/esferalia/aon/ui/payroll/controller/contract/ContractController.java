@@ -614,7 +614,7 @@ public class ContractController extends BasicController implements IVariablesHan
 		ContractLeaveController controller = (ContractLeaveController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_LEAVE_CONTROLLER_NAME);
 		controller.setContract(c);
 		controller.initialize();
-		controller.setBackAction(IPayrollConstants.CONTRACT_FORM_TREE);
+		controller.setTreeOutcome(true);
 	}
 	
 	public void onEditPerson( ActionEvent event ) {

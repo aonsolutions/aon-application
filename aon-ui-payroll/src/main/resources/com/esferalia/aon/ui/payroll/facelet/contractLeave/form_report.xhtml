@@ -16,7 +16,7 @@
 			value="#{contractLeave.report.type}">
 			<f:selectItems value="#{payrollCollections.leaveReportTypes}" />
 			<a4j:support event="onchange" reRender="report_panel"
-				actionListener="#{contractLeave.onChangeType}" />
+				actionListener="#{contractLeave.onChangeType}" ajaxSingle="true" />
 		</aon:selectOneMenu>
 		<aon:outputLabel for="ContractLeaveDetail_it_id"
 			styleClass="aon-italic aon-padding"
@@ -27,7 +27,7 @@
 			disabled="#{contractLeave.report.id!=null}"
 			value="#{contractLeave.report.contractLeave.id}">
 			<f:selectItems value="#{contractLeave.availableITList}" />
-			<a4j:support event="onchange" reRender="report_panel" />
+			<a4j:support event="onchange" reRender="report_panel" ajaxSingle="true" />
 		</aon:selectOneMenu>
 		<aon:outputLabel for="ContractLeave_relapse"
 			styleClass="aon-italic aon-padding"
@@ -37,9 +37,9 @@
 			rendered="#{contractLeave.leaveSelected}"
 			disabled="#{contractLeave.report.id!=null}"
 			value="#{contractLeave.report.contractLeave.parent.id}">
-			<f:selectItem itemLabel="No" value="#{null}"/>
+			<f:selectItem itemLabel="No" value="#{null}" itemValue ="#{null}" />
 			<f:selectItems value="#{contractLeave.relapseITList}" />
-			<a4j:support event="onchange" reRender="report_panel" />
+			<a4j:support event="onchange" reRender="report_panel" ajaxSingle="true" />
 		</aon:selectOneMenu>
 	</aon:div>
 	
@@ -49,16 +49,23 @@
 	<aon:inputText id="ContractLeaveDetail_confirmfOrder"
 		rendered="#{contractLeave.confirmSelected}"
 		value="#{contractLeave.report.confirmOrder}" size="2" maxLenght="2" >
-		<a4j:support event="onchange" reRender="report_panel" 
+		<a4j:support event="onchange" reRender="report_panel" ajaxSingle="true"
 			actionListener="#{contractLeave.onChangeConfirmOrder}"/>
 	</aon:inputText>
+	
+	<aon:outputLabel for="ContractLeaveDetail_date"
+		value="#{bundle.aon_date}" />
+	<aon:selectInputDate id="ContractLeaveDetail_date" required="true"
+		renderAsPopup="true" value="#{contractLeave.report.date}"
+		popupDateFormat="dd/MM/yyyy">
+	</aon:selectInputDate>
 	
 	<aon:outputLabel for="ContractLeaveDetail_collegeNumber"
 		value="#{payrollBundle.payroll_contractLeave_collegeNumber}" />
 	<aon:div id="collegeNumber">
 		<aon:inputText id="ContractLeaveDetail_collegeNumber"
 			value="#{contractLeave.report.collegeNumber}" >
-			<a4j:support event="onchange" reRender="collegeNumber" 
+			<a4j:support event="onchange" reRender="collegeNumber" ajaxSingle="true"
 				actionListener="#{contractLeave.onChangeCollegeNumber}"/>
 		</aon:inputText>
 		<aon:outputText value="&#160;" 
@@ -74,7 +81,7 @@
 	<aon:div id="cias">
 		<aon:inputText id="ContractLeaveDetail_cias"
 			value="#{contractLeave.report.cias}" >
-			<a4j:support event="onchange" reRender="cias" 
+			<a4j:support event="onchange" reRender="cias" ajaxSingle="true"
 				actionListener="#{contractLeave.onChangeCias}"/>
 		</aon:inputText>
 		<aon:outputText value="&#160;" 
@@ -100,14 +107,33 @@
 	<aon:inputText id="ContractLeave_description"
 		rendered="#{contractLeave.leaveSelected}" size="60" maxlength="64"
 		value="#{contractLeave.report.contractLeave.description}" />
-
-	<aon:outputLabel for="ContractLeaveDetail_date"
-		value="#{bundle.aon_date}" />
-	<aon:selectInputDate id="ContractLeaveDetail_date" 
-		renderAsPopup="true" value="#{contractLeave.report.date}"
-		popupDateFormat="dd/MM/yyyy">
-	</aon:selectInputDate>
-	
+		
+	<aon:outputText 
+		rendered="#{contractLeave.leaveSelected}"
+		value="#{payrollBundle.payroll_contractLeave_bases}" />
+	<aon:div rendered="#{contractLeave.leaveSelected}">
+		<aon:outputLabel for="ContractLeave_dailyCgcBase" value="#{payrollBundle.payroll_contractLeave_dailyCgcBase}:" 
+			styleClass="aon-italic" />
+		<aon:inputText id="ContractLeave_dailyCgcBase" value="#{contractLeave.report.contractLeave.dailyCgcBase}" 
+			rendered="#{contractLeave.leaveSelected}" size="7" >
+			<f:validateDoubleRange />
+		</aon:inputText>
+		
+		<aon:outputLabel for="ContractLeave_dailyCgpBase" value="#{payrollBundle.payroll_contractLeave_dailyCgpBase}:"  
+			styleClass="aon-italic aon-margin-left" />
+		<aon:inputText id="ContractLeave_dailyCgpBase" value="#{contractLeave.report.contractLeave.dailyCgpBase}" 
+			rendered="#{contractLeave.leaveSelected}" size="7" >
+			<f:validateDoubleRange />
+		</aon:inputText>
+		
+		<aon:outputLabel for="ContractLeave_dailyRegBase" value="#{payrollBundle.payroll_contractLeave_dailyRegBase}:"  
+			styleClass="aon-italic aon-margin-left" />
+		<aon:inputText id="ContractLeave_dailyRegBase" value="#{contractLeave.report.contractLeave.dailyRegBase}" 
+			rendered="#{contractLeave.leaveSelected}" size="7" >
+			<f:validateDoubleRange />
+		</aon:inputText>
+	</aon:div>
+		
 	<aon:outputLabel for="ContractLeave_dischargeCause"
 		rendered="#{contractLeave.dischargeSelected}"
 		value="#{payrollBundle.payroll_contractLeave_dischargeCause}" />
