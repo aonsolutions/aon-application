@@ -19,9 +19,12 @@
 
 					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{enterpriseSearchEx.enterprise}" />
+						<ui:param name="lookupSuffix" value="-Integral" />						
+						<ui:param name="skipGoToButton" value="#{true}" />
+						<ui:param name="skipClearButton" value="#{true}" />
+						<ui:param name="skipNewButton" value="#{true}" />
 						<ui:param name="lookupReRender" value="aonContent" />
 						<aon:methodParam name="lookupAction" value="enterprise_formTree" />								
-						<ui:param name="skipNewButton" value="#{true}" />
 						<aon:methodParam name="lookupChangeListener" 
 							value="#{enterpriseSearchEx.onEnterpriseChanged}" type="lookupChangeListener" />						
 					</ui:include>	

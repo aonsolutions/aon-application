@@ -40,6 +40,8 @@ public class EnterpriseTreeData {
 	private String label;
 	
 	private EnterpriseTreeType type;
+	
+	private int count;
 
 	public EnterpriseTreeData(Serializable id, String label, EnterpriseTreeType type) {
 		this.id = id;
@@ -74,6 +76,14 @@ public class EnterpriseTreeData {
 		return getType().toString() + getId();
 	}
 	
+	public int getCount() {
+		return count;
+	}
+
+	public void setCount(int count) {
+		this.count = count;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

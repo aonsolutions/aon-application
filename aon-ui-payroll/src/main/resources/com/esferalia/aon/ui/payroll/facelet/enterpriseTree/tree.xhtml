@@ -27,8 +27,11 @@
 					value="#{enterpriseNode.label}" >
 					<aon:abbreviateConverter maxWidth="45" />
 				</aon:outputText>
+				<aon:outputText style="font-size: 0.8em;"
+					rendered="#{enterpriseNode.count>0}"
+					value=" (#{enterpriseNode.count})" >
+				</aon:outputText>
 			</rich:treeNode>
-
 		</rich:tree>
 	</aon:form>	
 	

@@ -275,7 +275,8 @@ public class EnterpriseTree implements ICompanyConstants {
 		criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_PERSON_FIRST_SURNAME));
 		criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_PERSON_SECOND_SURNAME));
 		criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_PERSON_REGISTRY_NAME));
-		for( ITransferObject to : bean.getList(criteria) ) {
+		List<ITransferObject> list = bean.getList(criteria);
+		for( ITransferObject to : list ) {
 			Contract contract = (Contract) to;
 			TreeNodeImpl<EnterpriseTreeData> contractNode = new TreeNodeImpl<EnterpriseTreeData>();
 			EnterpriseTreeData etd = getTreeData(contract);
@@ -286,6 +287,7 @@ public class EnterpriseTree implements ICompanyConstants {
 			addSalaryDraftNode(contractNode);
 			addDocumentNode(contractNode);
 		}	
+		workPlaceNode.getData().setCount(list.size());
 	}		
 	
 	private void completeContractCriteria(IManagerBean bean, Criteria criteria) throws ManagerBeanException{
@@ -321,7 +323,8 @@ public class EnterpriseTree implements ICompanyConstants {
 		Criteria criteria = new Criteria();
 		String enterpriseId = bean.getFieldName(ICompanyAlias.WORK_PLACE_ENTERPRISE_ID);
 		criteria.addEqualExpression(enterpriseId, enterprise.getId());
-		for( ITransferObject to : bean.getList(criteria) ) {
+		List<ITransferObject> list = bean.getList(criteria);
+		for( ITransferObject to : list ) {
 			WorkPlace wp = (WorkPlace) to;
 			TreeNodeImpl<EnterpriseTreeData> wpNode = new TreeNodeImpl<EnterpriseTreeData>();
 			EnterpriseTreeData etd = getTreeData(wp);
@@ -329,6 +332,7 @@ public class EnterpriseTree implements ICompanyConstants {
 			enterpriseNode.addChild( etd.getKey(), wpNode );
 			loadContracts(wpNode, wp);
 		}
+		enterpriseNode.getData().setCount(list.size());
 	}
 
 	private void addAcitivityNode( TreeNode<EnterpriseTreeData> rootNode ) {

@@ -46,13 +46,15 @@
 				<ui:insert name="searchButtonContent"/>
 			</aon:lookupButton>
 		</c:if>
-		<aon:lookupButton id="#{pojoName}_ClearButton#{lookupSuffix}"
-			actionType="clear" disabled="#{lookupDisabled}" 
-			lookup="#{lookupBean}" property="#{lookupTo}"
-			lookupProperty="#{lookupProperty}" focus="#{clearButtonFocus}"
-			lookupChangeListener="#{lookupChangeListener}"
-			controllerListener="#{lookupControllerListener}"
-			selectReRender="#{lookup_reRender}" />			
+		<c:if test="#{!skipClearButton}">
+			<aon:lookupButton id="#{pojoName}_ClearButton#{lookupSuffix}"
+				actionType="clear" disabled="#{lookupDisabled}" 
+				lookup="#{lookupBean}" property="#{lookupTo}"
+				lookupProperty="#{lookupProperty}" focus="#{clearButtonFocus}"
+				lookupChangeListener="#{lookupChangeListener}"
+				controllerListener="#{lookupControllerListener}"
+				selectReRender="#{lookup_reRender}" />
+		</c:if>			
 		<c:if test="#{!skipNewButton}">
 			<aon:lookupButton 
 				windowTitle="#{newButtonTitle}"
