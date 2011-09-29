@@ -1313,9 +1313,26 @@ public class BasicController extends AbstractPojoController implements IControll
  	 * @throws ManagerBeanException the manager bean exception
     */
 	public void onLoad(ActionEvent event, Serializable id, String backAction, String backActionListener) throws ManagerBeanException {
-		select(event, id);
+		load(event, id);
 		setBackAction(backAction);
 		setBackActionListener(backActionListener);
+	}
+
+    /**
+     * Execute load action.
+     * 
+	 * @param event the event
+	 * @param id the id of the TransferObject
+ 	 * @throws ManagerBeanException the manager bean exception
+    */
+	public void load(ActionEvent event, Serializable id) throws ManagerBeanException {
+		clearCriteria();
+		Criteria criteria = getCriteria();
+		String alias = getIdAlias();
+		criteria.addEqualExpression(alias, id);
+		this.model = new ExtendedPageDataModel(this);
+		getModel().setRowIndex(0);
+		select(event);		
 	}
 
 }
