@@ -89,7 +89,8 @@
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="agreement" action="agreement_search"
+									<aon:commandLink id="agreement" 
+										action="#{agreement.initialAction}"
 										actionListener="#{agreement.onEditSearch}"
 										value="#{payrollBundle.payroll_agreement_module}">
 									</aon:commandLink>
