@@ -260,10 +260,12 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 			String description, String expression) {
 		AbstractSQL.SalaryDeduction salaryDeduction = 
 			new AbstractSQL.SalaryDeduction();
+		
 		salaryDeduction.setType(type);
 		salaryDeduction.setAmount(amount);
 		salaryDeduction.setExpression(expression);
 		salaryDeduction.setDescription(description);
+		salaryDeduction.setDeductionConcept(concept);
 		
 		salaryDeductions.add(salaryDeduction);
 	}
