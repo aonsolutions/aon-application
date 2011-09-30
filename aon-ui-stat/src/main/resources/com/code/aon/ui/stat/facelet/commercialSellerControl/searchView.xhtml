@@ -36,6 +36,7 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="skipAfterSearch" value="#{true}" />
 				<ui:define name="searchContent">
 					<c:if test="#{commercialStat.controlType==0}">
 						<aon:methodParam name="searchActionListener"
