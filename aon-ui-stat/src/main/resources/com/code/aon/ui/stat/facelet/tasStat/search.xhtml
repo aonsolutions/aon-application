@@ -27,6 +27,7 @@
 			</ui:decorate>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="skipAfterSearch" value="#{true}" />
 				<ui:param name="controller" value="#{tasStat}" />
 			
 				<ui:define name="searchContent">
