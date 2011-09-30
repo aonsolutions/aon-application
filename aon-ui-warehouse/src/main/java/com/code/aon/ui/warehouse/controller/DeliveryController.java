@@ -319,6 +319,14 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		return 0;
 	}
 	
+	public void removeDeliveryProject(ActionEvent event) throws ManagerBeanException {
+		Delivery to = (Delivery)this.getTo();
+		to.setProject(null);
+		getManagerBean().restoreNullSubPOJOs(to);
+		getManagerBean().update(to);
+		getManagerBean().initializePOJO(to);
+	}
+
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
 			if (((Delivery)this.getTo()).getPayMethod() != null && ((Delivery)this.getTo()).getPayMethod().getId() != null) {

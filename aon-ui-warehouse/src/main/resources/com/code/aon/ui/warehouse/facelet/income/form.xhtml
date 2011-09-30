@@ -56,10 +56,11 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
-					columnClasses="aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-auto,
-						aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-200">
+					styleClass="aon-margin-bottom"
+					columnClasses="aon-panelGrid-odd aon-width-140,
+						aon-panelGrid-even aon-width-500,
+						aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel for="Income_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
@@ -176,11 +177,82 @@
 
 					<aon:outputLabel for="Income_total" 
 						value="#{bundle.aon_total}" />
-					<aon:outputText id="Income_total" styleClass="aon-bold" 
-						value="#{income.totalPrice}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
+					<aon:div>
+						<aon:outputText id="Income_total" styleClass="aon-bold" 
+							value="#{income.totalPrice}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputLabel styleClass="aon-margin-left aon-italic"
+							value="(#{bundle.aon_tax_included})" />
+					</aon:div>
  
+				</aon:panelGrid>
+
+				<aon:panelGrid columns="2" style="width: 100%;"
+					rendered="#{income.to.project.id != null or (income.pending and income.projectCount > 0)}"
+					columnClasses="aon-panelGrid-odd aon-width-140,
+						aon-panelGrid-even aon-width-auto">
+
+					<c:if test="#{!aonConfiguration.bean.income.showTasData}">
+						<aon:outputLabel for="Income_project"
+							value="#{projectBundle.project_project}" />
+					</c:if>
+					<c:if test="#{aonConfiguration.bean.income.showTasData}">
+						<aon:outputLabel for="Income_project"
+							value="#{tasBundle.tas_projectTas}" />
+					</c:if>
+					<aon:div id="IncomeProject">
+						<aon:selectOneMenu id="Income_project"
+							rendered="#{income.pending and income.to.project.id == null and income.projectCount > 0}"
+							value="#{income.to.project}">
+							<f:selectItem itemLabel="-" value="#{null}" />
+							<f:selectItems value="#{income.projects}" />
+						</aon:selectOneMenu>
+						<aon:outputText styleClass="aon-bold"
+							value="#{income.to.project.name}" 
+							rendered="#{income.to.project.id != null}" />
+						<aon:div layout="inline" styleClass="aon-margin-left">
+							<aon:commandButton id="removeIncomeProject" 
+								value="&#160;" title="#{bundle.aon_remove}" 
+								styleClass="aon-icon-commandButton aon-icon-delete"
+								rendered="#{income.pending and income.to.project.id != null}"
+								actionListener="#{income.removeIncomeProject}" 
+								reRender="incomeForm" />
+						</aon:div>
+					</aon:div>
+
+				</aon:panelGrid>
+
+				<aon:panelGrid columns="4" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-140,
+						aon-panelGrid-even aon-width-500,
+						aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-even aon-width-auto">
+
+					<aon:div>
+						<aon:outputLabel for="Income_comments"
+							value="#{bundle.aon_comment}" />
+						<aon:div>
+							<aon:outputLabel styleClass="aon-form-date-label"
+								value="(#{bundle.aon_comment_description})" />
+						</aon:div>
+					</aon:div>
+					<aon:inputTextarea id="Income_comments" cols="80" rows="3"
+						disabled="#{!income.pending}"
+						value="#{income.to.comments}" />
+
+					<aon:div>
+						<aon:outputLabel for="Income_remarks"
+							value="#{bundle.aon_remark}" />
+						<aon:div>
+							<aon:outputLabel styleClass="aon-form-date-label"
+								value="(#{bundle.aon_remark_description})" />
+						</aon:div>
+					</aon:div>
+					<aon:inputTextarea id="Income_remarks" cols="80" rows="3"
+						disabled="#{!income.pending}"
+						value="#{income.to.remarks}" />
+
 				</aon:panelGrid>
 
 				<aon:div id="payMethodDiv" styleClass="aon-padding-top">

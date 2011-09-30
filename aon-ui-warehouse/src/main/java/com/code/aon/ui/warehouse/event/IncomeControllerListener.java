@@ -25,6 +25,7 @@ public class IncomeControllerListener extends ControllerAdapter {
 		((Income)controller.getTo()).setSecurityLevel(SecurityLevel.OFFICIAL);
 		((Income)controller.getTo()).setStatus(IncomeStatus.PENDING);
 		controller.setAddresses(null);
+		controller.setProjects(null);
 		controller.setWarehouse(null);
 		controller.setDefaultPayMethod(null);
 		controller.resetIncomePayMethod();
@@ -35,6 +36,7 @@ public class IncomeControllerListener extends ControllerAdapter {
 		IncomeController controller = (IncomeController)event.getController();
 		try {
 			controller.loadAddresses(((Income)controller.getTo()).getSupplier().getRegistry().getId());
+			controller.loadProjects(((Income)controller.getTo()).getSupplier().getRegistry().getId());
 	        controller.setWarehouse(obtainWarehouseId((Income)controller.getTo()));
 			controller.loadDefaultPayMethod(((Income)controller.getTo()).getSupplier().getRegistry().getId(), true);
 		} catch (ManagerBeanException e) {

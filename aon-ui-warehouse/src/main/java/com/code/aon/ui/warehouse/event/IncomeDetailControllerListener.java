@@ -22,9 +22,11 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		IncomeDetailController controller = (IncomeDetailController)event.getController();
 		IncomeDetail incomeDetail = (IncomeDetail)controller.getTo();
+		Income income = (Income)controller.getMasterController().getTo();
 
 		controller.setLongDescription(false);
 		try {
+			incomeDetail.setProject((income.getProject() != null && income.getProject().getId() != null) ? income.getProject() : null);
 			incomeDetail.setLine(calculateNextLine((Income)controller.getMasterController().getTo()));
 			incomeDetail.setType(IncomeDetailType.MANUAL);
 			incomeDetail.setSource(IncomeDetailSource.DIRECT);

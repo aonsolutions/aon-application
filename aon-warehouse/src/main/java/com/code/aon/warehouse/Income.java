@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -68,6 +69,8 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 	private PayMethod payMethod;
 	private SecurityLevel securityLevel;
 	private IncomeStatus status;
+    private String comments;
+    private String remarks;
 	private WorkPlace workPlace;
 	private Scope scope;
     private int numberOfPayments;
@@ -166,6 +169,22 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 	}
 	public void setStatus(IncomeStatus status) {
 		this.status = status;
+	}
+
+	@Lob
+	public String getComments() {
+		return comments;
+	}
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	@Lob
+	public String getRemarks() {
+		return remarks;
+	}
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 	@ManyToOne
@@ -329,6 +348,7 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 			return new EqualsBuilder()
 			.append(this.bank, o.bank)
 			.append(this.bankAccount, o.bankAccount)
+			.append(this.comments, o.comments)
 			.append(this.daysBetweenPayments, o.daysBetweenPayments)
 			.append(this.daysToFirstPayment, o.daysToFirstPayment)
 			.append(this.issueTime, o.issueTime)
@@ -338,6 +358,7 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 			.append(this.payMethod, o.payMethod)
 			.append(this.project, o.project)
 			.append(this.registryAddress, o.registryAddress)
+			.append(this.remarks, o.remarks)
 			.append(this.scope, o.scope)
 			.append(this.securityLevel, o.securityLevel)
 			.append(this.series, o.series)
@@ -354,6 +375,7 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 		return new HashCodeBuilder()
 			.append(bank)
 			.append(bankAccount)
+			.append(comments)
 			.append(daysBetweenPayments)
 			.append(daysToFirstPayment)
 			.append(id)	
@@ -364,6 +386,7 @@ public class Income implements ITransferObject, IHeaderObject, ICalculableContai
 			.append(payMethod)
 			.append(project)
 			.append(registryAddress)
+			.append(remarks)
 			.append(scope)
 			.append(securityLevel)
 			.append(series)

@@ -64,6 +64,7 @@ public class IncomeInvoicingManager {
 
 	private Invoice createInvoice(Income income, String referenceCode, Date issueDate) throws ManagerBeanException {
 		Invoice invoice = new Invoice();
+		invoice.setProject(income.getProject());
 		invoice.setReferenceCode(referenceCode);
 		invoice.setRegistry(income.getSupplier().getRegistry());
 		invoice.setRegistryDocument(income.getSupplier().getRegistry().getDocument());
@@ -93,6 +94,7 @@ public class IncomeInvoicingManager {
 			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
+			invoiceDetail.setProject(incomeDetail.getProject());
 			invoiceDetail.setLine(incomeDetail.getLine());
 			invoiceDetail.setItem(incomeDetail.getItem());
 			invoiceDetail.setDescription(incomeDetail.getDescription());

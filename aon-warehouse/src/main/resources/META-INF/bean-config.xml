@@ -27,6 +27,9 @@
 	
 	<bean description="">
 		<pojo>com.code.aon.warehouse.Income</pojo>
+		<listeners>
+	        <listener>com.code.aon.warehouse.event.IncomeBeanListener</listener>
+		</listeners>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.warehouse.event.IncomeBeanVetoListener</vetoListener>
 		</vetoListeners>

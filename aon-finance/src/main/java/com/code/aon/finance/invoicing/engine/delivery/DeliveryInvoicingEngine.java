@@ -90,6 +90,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PROJECT_ID));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_REGISTRY_ADDRESS));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PAY_METHOD));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_BANK));
@@ -346,6 +347,9 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 		if (!ObjectUtils.equals(delivery.getCustomer(), previousDelivery.getCustomer())) {
 			return false;
 		}
+		if (!ObjectUtils.equals(delivery.getProject(), previousDelivery.getProject())) {
+			return false;
+		}
 		if (!ObjectUtils.equals(delivery.getRegistryAddress(), previousDelivery.getRegistryAddress())) {
 			return false;
 		}
@@ -380,6 +384,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 
 	private Invoice createInvoice(InvoicingGroup group, Delivery delivery, int counter, InvoicingParameters params) throws ManagerBeanException {
 		Invoice invoice = new Invoice();
+		invoice.setProject(delivery.getProject());
 		invoice.setNumber(counter);
 		invoice.setIssueDate(params.getInvoiceDate());
 		invoice.setRegistry(group.getParent());
@@ -400,6 +405,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 
 	private Invoice createInvoice(Delivery delivery, int counter, InvoicingParameters params) {
 		Invoice invoice = new Invoice();
+		invoice.setProject(delivery.getProject());
 		invoice.setNumber(counter);
 		invoice.setIssueDate(params.getInvoiceDate());
 		Registry registry = delivery.getCustomer().getRegistry();
@@ -438,6 +444,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
+			invoiceDetail.setProject(deliveryDetail.getDelivery().getProject());
 			invoiceDetail.setLine(++detailLine);
 			invoiceDetail.setItem(deliveryDetail.getItem());
 			invoiceDetail.setDescription(deliveryDetail.getDescription());

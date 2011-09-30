@@ -63,10 +63,10 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
 					styleClass="aon-margin-bottom"
-					columnClasses="aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-auto,
-						aon-panelGrid-odd aon-width-150,
-						aon-panelGrid-even aon-width-200">
+					columnClasses="aon-panelGrid-odd aon-width-140,
+						aon-panelGrid-even aon-width-500,
+						aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-even aon-width-auto">
 
 					<aon:outputLabel for="Delivery_series"
 						value="#{bundle.aon_series}/#{bundle.aon_number}" />
@@ -187,16 +187,20 @@
 
 					<aon:outputLabel for="Delivery_total" 
 						value="#{bundle.aon_total}" />
-					<aon:outputText id="Delivery_total" styleClass="aon-bold" 
-						value="#{delivery.totalPrice}">
-						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-					</aon:outputText>
+					<aon:div>
+						<aon:outputText id="Delivery_total" styleClass="aon-bold" 
+							value="#{delivery.totalPrice}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputLabel styleClass="aon-margin-left aon-italic"
+							value="(#{bundle.aon_tax_included})" />
+					</aon:div>
  
 				</aon:panelGrid>
 
 				<aon:panelGrid columns="2" style="width: 100%;"
-					rendered="#{delivery.to.project.id != null or delivery.projectCount > 0}"
-					columnClasses="aon-panelGrid-odd aon-width-150,
+					rendered="#{delivery.to.project.id != null or (delivery.pending and delivery.projectCount > 0)}"
+					columnClasses="aon-panelGrid-odd aon-width-140,
 						aon-panelGrid-even aon-width-auto">
 
 					<c:if test="#{!aonConfiguration.bean.delivery.showTasData}">
@@ -217,7 +221,47 @@
 						<aon:outputText styleClass="aon-bold"
 							value="#{delivery.to.project.name}" 
 							rendered="#{delivery.to.project.id != null}" />
+						<aon:div layout="inline" styleClass="aon-margin-left">
+							<aon:commandButton id="removeDeliveryProject" 
+								value="&#160;" title="#{bundle.aon_remove}" 
+								styleClass="aon-icon-commandButton aon-icon-delete"
+								rendered="#{delivery.pending and delivery.to.project.id != null}"
+								actionListener="#{delivery.removeDeliveryProject}" 
+								reRender="deliveryForm" />
+						</aon:div>
 					</aon:div>
+
+				</aon:panelGrid>
+
+				<aon:panelGrid columns="4" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-140,
+						aon-panelGrid-even aon-width-500,
+						aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-even aon-width-auto">
+
+					<aon:div>
+						<aon:outputLabel for="Delivery_comments"
+							value="#{bundle.aon_comment}" />
+						<aon:div>
+							<aon:outputLabel styleClass="aon-form-date-label"
+								value="(#{bundle.aon_comment_description})" />
+						</aon:div>
+					</aon:div>
+					<aon:inputTextarea id="Delivery_comments" cols="80" rows="3"
+						disabled="#{!delivery.pending}"
+						value="#{delivery.to.comments}" />
+
+					<aon:div>
+						<aon:outputLabel for="Delivery_remarks"
+							value="#{bundle.aon_remark}" />
+						<aon:div>
+							<aon:outputLabel styleClass="aon-form-date-label"
+								value="(#{bundle.aon_remark_description})" />
+						</aon:div>
+					</aon:div>
+					<aon:inputTextarea id="Delivery_remarks" cols="80" rows="3"
+						disabled="#{!delivery.pending}"
+						value="#{delivery.to.remarks}" />
 
 				</aon:panelGrid>
 

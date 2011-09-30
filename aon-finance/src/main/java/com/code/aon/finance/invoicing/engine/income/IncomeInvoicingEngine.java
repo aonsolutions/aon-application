@@ -64,6 +64,7 @@ public class IncomeInvoicingEngine implements IInvoicingEngine {
 			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setInvoice(invoice);
+			invoiceDetail.setProject(incomeDetail.getProject());
 			invoiceDetail.setLine(++line);
 			invoiceDetail.setItem(incomeDetail.getItem());
 			invoiceDetail.setDescription(incomeDetail.getDescription());

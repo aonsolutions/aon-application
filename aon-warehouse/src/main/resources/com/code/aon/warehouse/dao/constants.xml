@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.warehouse.Delivery">
-		<alias names="id,series,number,project_id,customer_id,registryAddress,registryAddress_id,issueTime,payMethod,payMethod_id,securityLevel,status,workPlace_id,scope_id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank_id,bankAccount"/>
-		<hibernate names="id,series,number,project.id,customer.id,registryAddress,registryAddress.id,issueTime,payMethod,payMethod.id,securityLevel,status,workPlace.id,scope.id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank.id,bankAccount"/>
+		<alias names="id,series,number,project_id,customer_id,registryAddress,registryAddress_id,issueTime,payMethod,payMethod_id,securityLevel,status,comments,remarks,workPlace_id,scope_id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank_id,bankAccount"/>
+		<hibernate names="id,series,number,project.id,customer.id,registryAddress,registryAddress.id,issueTime,payMethod,payMethod.id,securityLevel,status,comments,remarks,workPlace.id,scope.id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank.id,bankAccount"/>
 	</bean>
 	
 	<bean class="com.code.aon.warehouse.DeliveryDetail">

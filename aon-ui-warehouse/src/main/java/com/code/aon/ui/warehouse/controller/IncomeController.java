@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
@@ -22,6 +23,8 @@ import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.project.Project;
+import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.bridge.IncomeManager;
@@ -48,6 +51,7 @@ import com.code.aon.warehouse.enumeration.IncomeStatus;
 public class IncomeController extends BasicController implements IWarehouseConstants {
 
 	private List<SelectItem> addresses;
+	private List<SelectItem> projects;
 	private Warehouse warehouse;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
@@ -64,6 +68,14 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	
 	public void setAddresses(List<SelectItem> addresses) {
 		this.addresses = addresses;
+	}
+	
+    public List<SelectItem> getProjects() {
+		return projects;
+	}
+	
+	public void setProjects(List<SelectItem> projects) {
+		this.projects = projects;
 	}
 	
     public Warehouse getWarehouse() {
@@ -189,9 +201,11 @@ public class IncomeController extends BasicController implements IWarehouseConst
 			((Income)this.getTo()).setSupplier(supplier);
 			((Income)this.getTo()).setScope(supplier.getScope());
 			loadAddresses(supplier.getId());
+			loadProjects(supplier.getId());
 			loadDefaultPayMethod(supplier.getId(), false);
 		} else {
 			setAddresses(null);
+			setProjects(null);
 		}
 	}
 	
@@ -225,6 +239,48 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		return 0;
 	}
 	
+	public void loadProjects(Integer id) throws ManagerBeanException {
+		this.projects = new LinkedList<SelectItem>();
+		if (id != null) {
+			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addOrder(projectBean.getFieldName(IProjectAlias.PROJECT_NAME));
+			Iterator<?> iterator = projectBean.getList(criteria).iterator();
+			while(iterator.hasNext()) {
+				Project project = (Project)iterator.next();
+				SelectItem item = new SelectItem(project, project.getName());
+				projects.add(item);
+			}
+		}
+	}
+
+	public int getProjectCount() {
+		if (projects != null) {
+			return projects.size();
+		}
+		return 0;
+	}
+	
+	public void removeIncomeProject(ActionEvent event) throws ManagerBeanException {
+		Income to = (Income)this.getTo();
+		Project project = to.getProject();
+		to.setProject(null);
+		getManagerBean().restoreNullSubPOJOs(to);
+		getManagerBean().update(to);
+		getManagerBean().initializePOJO(to);
+
+		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_INCOME_ID), to.getId());
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_PROJECT_ID), project.getId());
+		for (ITransferObject ito : incomeDetailBean.getList(criteria)) {
+			IncomeDetail incomeDetail = (IncomeDetail)ito;
+			incomeDetail.setProject(null);
+			incomeDetailBean.update(incomeDetail);
+		}
+	}
+
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
 			if (((Income)this.getTo()).getPayMethod() != null && ((Income)this.getTo()).getPayMethod().getId() != null) {
