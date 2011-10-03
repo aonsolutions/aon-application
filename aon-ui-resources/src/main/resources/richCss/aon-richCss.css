@@ -340,6 +340,12 @@ color:#000;
    	color:#666;
 	}
 /* general */
+.aon-icon-up{
+	background:transparent url(images/aon-icon/aon-icon-arrow-up.gif) scroll left center no-repeat;	
+ }
+.aon-icon-down{
+	background:transparent url(images/aon-icon/aon-icon-arrow-down.gif) scroll left center no-repeat;	
+ }
 .aon-icon-accept{
 	background:transparent url(images/aon-icon/aon-icon-save.png) scroll left center no-repeat;	
  }
