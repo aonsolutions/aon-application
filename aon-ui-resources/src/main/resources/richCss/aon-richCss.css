@@ -814,6 +814,15 @@ color:#000;
 .aon-icon-aeat{
 	background:transparent url(images/aon-icon/aon-aeat.png) scroll left center no-repeat;	
 }
+.aon-icon-tree-units{
+	background:transparent url(images/aon-icon/aon-tree-units.png) scroll left center no-repeat;	
+}
+.aon-icon-daily-tracking{
+	background:transparent url(images/aon-icon/aon-daily-tracking.gif) scroll left center no-repeat;	
+}
+.aon-icon-task{
+	background:transparent url(images/aon-icon/aon-icon-task.gif) scroll left center no-repeat;	
+}
 
 /******* GROUP  **********/
 .aon-form-group{
