@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="salary" columnCount="2" pageWidth="595" pageHeight="842" columnWidth="277" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="19"/>
-	<property name="ireport.y" value="48"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<reportFont name="default" isDefault="true" fontName="SansSerif" size="7"/>
 	<style name="Default"/>
 	<style name="complements_TABLE">
@@ -547,8 +547,8 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 					<rightPen lineStyle="Dotted"/>
 				</box>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getCommonContingency().getExpression()]]></textFieldExpression>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getCommonContingency().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="267" width="70" height="11"/>
@@ -577,8 +577,8 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 					<rightPen lineStyle="Dotted"/>
 				</box>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getUnemployment().getExpression()]]></textFieldExpression>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getUnemployment().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="279" width="70" height="11"/>
@@ -607,8 +607,8 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 					<rightPen lineStyle="Dotted"/>
 				</box>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getJobTraining().getExpression()]]></textFieldExpression>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getJobTraining().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="291" width="70" height="11"/>
@@ -642,8 +642,8 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 					<rightPen lineStyle="Dotted"/>
 				</box>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getExpression()]]></textFieldExpression>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getStructuralOvertime().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="303" width="70" height="11"/>
@@ -672,8 +672,8 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 					<rightPen lineStyle="Dotted"/>
 				</box>
-				<textElement/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getExpression()]]></textFieldExpression>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getNonStructuralOvertime().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="315" width="70" height="11"/>
@@ -724,10 +724,10 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 					<rightPen lineStyle="Dotted"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getIrpf().getExpression()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getIrpf().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement x="480" y="342" width="69" height="11"/>
@@ -921,10 +921,10 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 					<rightPen lineStyle="Dotted"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getAdvancePayment().getExpression()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getAdvancePayment().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="255" y="372" width="220" height="11"/>
@@ -935,10 +935,10 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 					<rightPen lineStyle="Dotted"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getInKind().getExpression()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getInKind().getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="255" y="387" width="220" height="11"/>
@@ -949,10 +949,10 @@ $V{formatter}.format($F{salary}.getEndDate())]]></textFieldExpression>
 					<bottomPen lineWidth="0.5" lineStyle="Dotted"/>
 					<rightPen lineStyle="Dotted"/>
 				</box>
-				<textElement>
+				<textElement textAlignment="Right">
 					<font isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getOther().getExpression()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salary}.getDeductions().getOther().getDescription()]]></textFieldExpression>
 			</textField>
 			<componentElement>
 				<reportElement key="table" positionType="Float" mode="Transparent" x="0" y="115" width="555" height="11"/>

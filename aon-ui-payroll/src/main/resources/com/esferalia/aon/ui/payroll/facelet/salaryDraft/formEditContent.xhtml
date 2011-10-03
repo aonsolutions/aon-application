@@ -141,7 +141,7 @@
 						<c:if test="#{aonConfiguration.bean.payroll.showDeductionEditionTab}">
 							<aon:panelTab id="deductionsEditTab" label="#{bundle.aon_edit}"
 								actionListener="#{salaryDraft.onShowDeductions}">
-								<aon:div style="margin-top: 10px;">
+								<aon:div style="margin-top: 10px; width: 815px;">
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/editGridContent.xhtml" >
 										<ui:param name="controller" value="#{salaryDraftDeduction}" />
 										<ui:param name="skipCurrentMonth" value="#{true}" />
@@ -214,7 +214,7 @@
 						<c:if test="#{aonConfiguration.bean.payroll.showDeductionEditionTab}">
 							<aon:panelTab id="bonusEditTab" label="#{bundle.aon_edit}"
 								actionListener="#{salaryDraft.onShowBonus}">
-								<aon:div style="margin-top: 10px;">
+								<aon:div style="margin-top: 10px; width: 815px;">
 									<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/editGridContent.xhtml" >
 										<ui:param name="controller" value="#{salaryDraftBonus}" />
 									</ui:include>
