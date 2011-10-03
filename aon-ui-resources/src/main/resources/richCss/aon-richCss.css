@@ -102,6 +102,9 @@ color:#000;
 .aon-vertical-align-middle	{vertical-align:middle;}
 .aon-vertical-align-bottom	{vertical-align:bottom;}
 
+.aon-overflow-hidden		{overflow:hidden;}
+.aon-overflow-auto			{overflow:auto;}
+
 .aon-noborder{border:0 !important;}
 .aon-border{border:#ccc 1px solid;}
 

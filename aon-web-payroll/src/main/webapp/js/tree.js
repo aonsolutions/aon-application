@@ -1,4 +1,13 @@
 var treeOffset = 0;
+var splitterPosition = 250;
+
+function getSplitterPosition() {
+	return splitterPosition;
+}
+
+function setSplitterPosition( pos ) {
+	splitterPosition = pos;
+}
 
 function storeTreeOffset() {
 	treeOffset = jQuery('.treeLeftContent').scrollTop();
