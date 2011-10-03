@@ -773,6 +773,16 @@ color:#000;
 .aon-icon-task-reopen{
 	background:transparent url(images/aon-icon/aon-icon-task-reopen.gif) scroll left center no-repeat;
 	}
+.aon-icon-low-priority{
+	background:transparent url(images/aon-icon/aon-icon-low-prty.png) scroll left center no-repeat;
+	}
+.aon-icon-medium-priority{
+	background:transparent url(images/aon-icon/aon-icon-medium-prty.png) scroll left center no-repeat;
+	}
+.aon-icon-high-priority{
+	background:transparent url(images/aon-icon/aon-icon-high-prty.png) scroll left center no-repeat;
+	}
+
 			
 /*  document  */
 .aon-icon-document-lock{
