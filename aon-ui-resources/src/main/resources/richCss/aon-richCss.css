@@ -752,6 +752,9 @@ color:#000;
 	background:transparent url(images/aon-icon/aon-icon-webmail2.png) scroll left center no-repeat;
 }	
 /*  task icon  */
+.aon-icon-task{
+	background:transparent url(images/aon-main-menu/aon-icon-task.png) no-repeat scroll center left;
+}
 .aon-icon-task-assume{
 	background:transparent url(images/aon-icon/aon-icon-task-assume.png) scroll left center no-repeat;
 	}
@@ -761,6 +764,16 @@ color:#000;
 .aon-icon-task-finish{
 	background:transparent url(images/aon-icon/aon-icon-task-finish.png) scroll left center no-repeat;
 	}
+.aon-icon-task-start{
+	background:transparent url(images/aon-icon/aon-icon-task-start.gif) scroll left center no-repeat;
+	}
+.aon-icon-task-stop{
+	background:transparent url(images/aon-icon/aon-icon-task-stop.gif) scroll left center no-repeat;
+	}
+.aon-icon-task-reopen{
+	background:transparent url(images/aon-icon/aon-icon-task-reopen.gif) scroll left center no-repeat;
+	}
+			
 /*  document  */
 .aon-icon-document-lock{
 	background:transparent url(images/aon-icon/aon-icon-document-lock.png) scroll left center no-repeat;
@@ -819,9 +832,6 @@ color:#000;
 }
 .aon-icon-daily-tracking{
 	background:transparent url(images/aon-icon/aon-daily-tracking.gif) scroll left center no-repeat;	
-}
-.aon-icon-task{
-	background:transparent url(images/aon-icon/aon-icon-task.gif) scroll left center no-repeat;	
 }
 
 /******* GROUP  **********/
@@ -2344,9 +2354,6 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 }
 .aon-icon-audit{
 	background:transparent url(images/aon-main-menu/aon-icon-audit.png) no-repeat scroll center left;
-}
-.aon-icon-task{
-	background:transparent url(images/aon-main-menu/aon-icon-task.png) no-repeat scroll center left;
 }
 .aon-icon-menu-user{
 	background:transparent url(images/aon-main-menu/aon-icon-user.png) no-repeat scroll center left;
