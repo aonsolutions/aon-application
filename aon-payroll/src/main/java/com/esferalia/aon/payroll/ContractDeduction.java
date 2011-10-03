@@ -215,7 +215,8 @@ public class ContractDeduction implements ITransferObject, IContractDeduction {
 	public String getFullDescription() {
 		return (getDeductionConcept() == null || StringUtils.isEmpty(getDeductionConcept().getCode()))?
 				getDescription():
-				getDeductionConcept().getCode()+ " - " + getDescription();
+				getDeductionConcept().getCode()+ " - " + (StringUtils.isEmpty(getDescription())?getDeductionConcept().getDescription():
+					getDescription());
 	}
 
 	@Override

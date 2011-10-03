@@ -16,12 +16,10 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionException;
-import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
@@ -61,6 +59,7 @@ public abstract class ContractDetailVariableController extends BasicController i
 		super.onSelect(event);
 		reset(true);
 		getHandler().initializeVariables(event);
+		onReloadExpression(event);
 	}
 	
 	public void onSave(ActionEvent event) {
@@ -90,6 +89,7 @@ public abstract class ContractDetailVariableController extends BasicController i
 	public void onReset(ActionEvent event) {
 		super.onReset(event);
 		reset(true);
+		getHandler().setVariablesModel(null);
 	}
 	
 	public void reset(boolean panelVisible) {
@@ -152,7 +152,6 @@ public abstract class ContractDetailVariableController extends BasicController i
 	}
 	
 	public void onReloadExpression(ActionEvent event){
-//		IExpression expression = (IExpression) getTo();
 		try {
 			Calendar startCal = Calendar.getInstance();
 			Calendar endCal = Calendar.getInstance();
@@ -167,21 +166,21 @@ public abstract class ContractDetailVariableController extends BasicController i
 			ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) getContract().getSalaryCalculatorContext(year, month, getSalaryType());
 			
 			List<ITimedObject<Object>> list = ctx.getExpressionContext().eval(getExpression(), startCal.getTime(), endCal.getTime());
-			if(list.isEmpty()){
+			if(list.isEmpty() || list.get(0).getValue()==null){
 				result = null;
 			} else {
-				result = (Double) list.get(0).getValue();
+				result = new Double(list.get(0).getValue().toString());
 			}
 		} catch (SalaryException e) {
 			result = null;
 			getHandler().setVariablesModel(null);
 			getHandler().setUndefinedVariablesModel(null);
-//			throw new AbortProcessingException("error evaluating expression.");
+			LOGGER.error("error evaluating expression.");
 		} catch (ExpressionException e) {
 			result = null;
 			getHandler().setVariablesModel(null);
 			getHandler().setUndefinedVariablesModel(null);
-//			throw new AbortProcessingException("error evaluating expression.");
+			LOGGER.error("error evaluating expression.");
 		}
 		initializeVariables(event);
 	}

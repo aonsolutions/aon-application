@@ -240,7 +240,7 @@ public class ContractPayment implements ITransferObject, IContractPayment {
 	public String getFullDescription() {
 		return (getPaymentConcept() == null || StringUtils.isEmpty(getPaymentConcept().getCode()))?
 				getDescription():
-				getPaymentConcept().getCode()+ " - " + (getDescription()==null?getPaymentConcept().getDescription():
+				getPaymentConcept().getCode()+ " - " + (StringUtils.isEmpty(getDescription())?getPaymentConcept().getDescription():
 					getDescription());
 	}
 	

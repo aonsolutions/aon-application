@@ -17,6 +17,16 @@
 						<aon:outputText value="#{payrollBundle.payroll_salary_embargos_tab}" />
 					</aon:div>
 				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							actionListener="#{controller.onCancel}"
+							reRender="embargoModalContainer,#{container}" immediate="true">
+							<aon:actionHotKey key="esc" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
 				<aon:form id="embargoModalForm">
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div style="width:100%">

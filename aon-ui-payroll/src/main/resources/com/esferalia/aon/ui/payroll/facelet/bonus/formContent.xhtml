@@ -36,35 +36,66 @@
 	<aon:inputText id="ContractBonus_description" size="64" maxlength="64" 
 		value="#{controller.to.description}" />
 	
-	<aon:outputLabel for="ContractBonus_expression" value="#{payrollBundle.payroll_salary_expression}" />
-	<aon:inputText id="ContractBonus_expression" size="64" maxlength="128" 
-		value="#{controller.to.expression}" />
+	<c:if test="#{!aonRole.sisAdmin}">
+		<aon:outputLabel for="ContractBonus_expression" value="#{payrollBundle.payroll_salary_expression}" />
+		<aon:outputText id="ContractBonus_expression" size="64" 
+			value="#{(controller.to.expression!=null and controller.to.expression!='')?(controller.to.expression):(controller.to.bonusConcept.expression)}" />
+	</c:if>
+	
 <!--  
-	<aon:outputText value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.bonusConcept.expression)}" 
-		rendered="#{!aonRole.sisAdmin}" />
-	<aon:inputTextarea id="ContractBonus_expression" cols="64" rows="2" maxlength="128"
-		rendered="#{aonRole.sisAdmin}"
-		value="#{controller.to.expression}" required="true">
-		<f:validateLength maximum="128"/>
-		<a4j:region>
-			<rich:suggestionbox id="ContractBonus_expression_suggestion"
-				for="ContractBonus_expression"
-				onselect="suggestionBoxActive=false;"
-				suggestionAction="#{controller.expressionContext}" var="exp"
-				similarityGroupingId=""
-				tokens=" +-/*%()"
-				fetchValue="#{exp.name}"
-				immediate="true" limitToList="true" ajaxSingle="true"
-				eventsQueue="ContractBonus_expressionSug" ignoreDupResponses="true"
-				requestDelay="100" width="500" height="200"
-				nothingLabel="#{bundle.aon_search_no_results}">
-				<aon:column>
-					<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
-					<aon:outputText value=" (#{exp.expression})"/>
-				</aon:column>
-			</rich:suggestionbox>
-		</a4j:region>
-	</aon:inputTextarea>
+	<c:if test="#{aonRole.sisAdmin}">
+		<aon:outputText value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.bonusConcept.expression)}" 
+			rendered="#{!aonRole.sisAdmin}" />
+		<aon:inputTextarea id="ContractBonus_expression" cols="64" rows="2" maxlength="128"
+			rendered="#{aonRole.sisAdmin}"
+			value="#{controller.to.expression}" required="true">
+			<f:validateLength maximum="128"/>
+			<a4j:region>
+				<rich:suggestionbox id="ContractBonus_expression_suggestion"
+					for="ContractBonus_expression"
+					onselect="suggestionBoxActive=false;"
+					suggestionAction="#{controller.expressionContext}" var="exp"
+					similarityGroupingId=""
+					tokens=" +-/*%()"
+					fetchValue="#{exp.name}"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					eventsQueue="ContractBonus_expressionSug" ignoreDupResponses="true"
+					requestDelay="100" width="500" height="200"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{exp.name}" styleClass="aon-bold"/>
+						<aon:outputText value=" (#{exp.expression})"/>
+					</aon:column>
+				</rich:suggestionbox>
+			</a4j:region>
+		</aon:inputTextarea>
+	</c:if>
 -->	
+
+	
+	<c:if test="#{!skipResult}">
+		<aon:outputLabel for="ContractPayment_result" value="#{payrollBundle.payroll_result}" />
+		<h:panelGrid columns="4">
+			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}" 
+				style="color:#{(controller.result!=null)?('black'):('red')};" >
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+	
+			<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right" 
+				value="#{payrollBundle.payroll_on}" />
+		
+			<aon:selectOneMenu value="#{controller.month}">
+				<f:selectItems value="#{commonCollections.months}"  />
+				<a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			</aon:selectOneMenu>
+	
+			<rich:inputNumberSpinner value="#{controller.year}" inputSize="4" 
+				minValue="2000" maxValue="2100">
+			  <a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true" />
+			</rich:inputNumberSpinner>
+		</h:panelGrid>
+	</c:if>
 
 </ui:composition>

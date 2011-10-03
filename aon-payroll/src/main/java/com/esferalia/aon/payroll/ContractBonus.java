@@ -11,8 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
@@ -145,6 +147,14 @@ public class ContractBonus implements ITransferObject {
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
+	}
+	
+	@Transient
+	public String getFullDescription() {
+		return (getBonusConcept() == null || getBonusConcept().getId()==null )?
+				getDescription():
+					getBonusConcept().getId()+ " - " + (StringUtils.isEmpty(getDescription())?getBonusConcept().getDescription():
+					getDescription());
 	}
 	
 }

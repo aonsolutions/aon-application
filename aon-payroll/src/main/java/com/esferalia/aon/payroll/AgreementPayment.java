@@ -15,6 +15,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.ForeignKey;
@@ -217,6 +218,13 @@ public class AgreementPayment implements ITransferObject, IContractPayment  {
 	@Transient
 	public ExpressionScope getScope() {
 		return ExpressionScope.AGREEMENT;
+	}
+	@Transient
+	public String getFullDescription() {
+		return (getPaymentConcept() == null || StringUtils.isEmpty(getPaymentConcept().getCode()))?
+				getDescription():
+				getPaymentConcept().getCode()+ " - " + (StringUtils.isEmpty(getDescription())?getPaymentConcept().getDescription():
+					getDescription());
 	}
 	@Override
 	@Transient

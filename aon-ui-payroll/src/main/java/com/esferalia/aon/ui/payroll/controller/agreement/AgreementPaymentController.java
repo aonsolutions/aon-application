@@ -221,6 +221,10 @@ public class AgreementPaymentController extends LinesController implements IVari
 		try {
 			this.select(event, (ITransferObject) row);
 			initializeVariables(event);
+			setAgreementExtra(null);
+			if(isSalaryExtra()){
+				searchAgreementExtra();
+			}
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible seleccionar la percepcion";
 			AonUtil.addErrorMessage(msg);
@@ -321,10 +325,7 @@ public class AgreementPaymentController extends LinesController implements IVari
 	@Override
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
-		setAgreementExtra(null);
-		if(isSalaryExtra()){
-			searchAgreementExtra();
-		}
+		
 	}
 	
 	private void saveAgreementExtra() throws ManagerBeanException {

@@ -75,7 +75,7 @@ public class ContractPaymentController extends ContractDetailVariableController 
 	
 	@Override
 	public void onSave(ActionEvent event) {
-		IController master = FormUtil.getController("contract");
+		IController master = FormUtil.getController(IPayrollConstants.CONTRACT_CONTROLLER);
 		Contract contract = (Contract) master.getTo();
 		ContractPayment cd  = (ContractPayment) getTo();
 		cd.setContract(contract);
@@ -173,12 +173,15 @@ public class ContractPaymentController extends ContractDetailVariableController 
 			Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(sBean.getFieldName(IPayrollAlias.SYSTEM_PAYMENT_END_DATE), new Date());
 			Expression expr2 = ExpressionUtilities.getNullExpression(sBean.getFieldName(IPayrollAlias.SYSTEM_PAYMENT_END_DATE));
 			sCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
-			Criteria aCriteria = new Criteria();
-			aCriteria.addEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
-			aCriteria.addOrder(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_START_DATE), false);
-			expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
-			expr2 = ExpressionUtilities.getNullExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE));
-			aCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			Criteria aCriteria = null;
+			if(contract.getAgreementLevelCategory()!=null){
+				aCriteria = new Criteria();
+				aCriteria.addEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), contract.getAgreementLevelCategory().getLevel().getAgreement().getId());
+				aCriteria.addOrder(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_START_DATE), false);
+				expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
+				expr2 = ExpressionUtilities.getNullExpression(aBean.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE));
+				aCriteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+			}
 			Criteria cCriteria = new Criteria();
 			cCriteria.addEqualExpression(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_CONTRACT_ID), contract.getId());
 			cCriteria.addOrder(cBean.getFieldName(IPayrollAlias.CONTRACT_PAYMENT_START_DATE), false);
@@ -194,7 +197,7 @@ public class ContractPaymentController extends ContractDetailVariableController 
 				}
 			}
 			List<?> sl = sBean.getList(sCriteria);
-			List<?> al = aBean.getList(aCriteria);
+			List<?> al = aCriteria!=null?aBean.getList(aCriteria):new LinkedList<ITransferObject>();
 			List<?> cl = cBean.getList(cCriteria);
 			HierarchyPayments payments = new HierarchyPayments( ((List<IContractPayment>) cl).iterator(), ((List<IContractPayment>) al).iterator(), ((List<IContractPayment>) sl).iterator());
 			List<IContractPayment> list = new LinkedList<IContractPayment>();
@@ -274,9 +277,12 @@ public class ContractPaymentController extends ContractDetailVariableController 
 	public SalaryType getSalaryType() {
 		return ((ContractPayment)getTo()).getSalaryType();
 	}
+
 	@Override
-	public String getExpression(){
-		return ((ContractPayment)getTo()).getExpression()!=null?((ContractPayment)getTo()).getExpression():((ContractPayment)getTo()).getPaymentConcept().getExpression();
+	public String getExpression() {
+		return ((ContractPayment) getTo()).getExpression() != null ? 
+				((ContractPayment) getTo()).getExpression()
+				: ((ContractPayment) getTo()).getPaymentConcept().getExpression();
 	}
 		
 }

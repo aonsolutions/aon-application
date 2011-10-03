@@ -17,6 +17,16 @@
 						<aon:outputText value="#{payrollBundle.payroll_variable_helper}" />
 					</aon:div>
 				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							actionListener="#{controller.handler.onCancelVariableHelp}"
+							reRender="variableHelperModalContainer,#{container}" immediate="true">
+							<aon:actionHotKey key="esc" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
 				<aon:form id="variableHelperModalForm">
 					<aon:div styleClass="aon-popupWindow-content">
 						<aon:div style="width:100%">

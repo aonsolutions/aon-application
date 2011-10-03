@@ -6,16 +6,13 @@
 	
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/lookup.xhtml" >
 		<ui:param name="lookupBean" value="#{bonusConceptLookup}" />
-<!--  
-		<ui:param name="controller" value="#{bonusConceptLookup}" />
--->
+		<ui:param name="controller" value="#{bonusConcept}" />
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}" />
-		<ui:param name="lookupInputSuggestExpression" value="#{lookupTo.description}"/>
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.description}"/>
 		<ui:param name="skipNewButton" value="true" />
 		<ui:param name="skipGoToButton" value="true" />
 		<ui:param name="lookupLabel" value="#{bundle.aon_concept}" />
 		<ui:param name="searchButtonTitle" value="#{payrollBundle.payroll_bonusConcept_selection}" />
-
 	</ui:decorate>
 
 </ui:composition>

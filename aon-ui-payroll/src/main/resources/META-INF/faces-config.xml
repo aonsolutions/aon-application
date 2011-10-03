@@ -9,28 +9,6 @@
 			<var>payrollBundle</var>
 		</resource-bundle>
 	</application>
-	<!-- ************** PAYROLL CONVERTERS ****************** -->
-<!--  
-	<converter>
-		<converter-id>variableDoubleConverter</converter-id>
-		<converter-class>com.esferalia.aon.ui.payroll.converter.VariableDoubleConverter</converter-class>
-	</converter>
-	<converter>
-		<description>Conversor for String type of variables value</description>
-		<converter-id>variableStringConverter</converter-id>
-		<converter-class>com.esferalia.aon.ui.payroll.converter.VariableStringConverter</converter-class>
-	</converter>
-	<converter>  
-		<converter-id>variableBooleanConverter</converter-id>  
-		<converter-class>com.esferalia.aon.ui.payroll.converter.VariableBooleanConverter</converter-class>
-	</converter> 
--->
-<!--  
-	<converter>  
-		<converter-id>variableDropConverter</converter-id>  
-		<converter-class>com.esferalia.aon.ui.payroll.converter.VariableDropConverter</converter-class>
-	</converter> 
--->
 	<!-- ************** PAYROLL COLLECTIONS ****************** -->
 	<managed-bean>
 		<managed-bean-name>payrollCollections</managed-bean-name>

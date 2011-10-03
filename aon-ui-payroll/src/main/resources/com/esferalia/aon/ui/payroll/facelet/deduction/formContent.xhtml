@@ -34,7 +34,7 @@
 	</aon:selectOneMenu>
 
 	<aon:outputLabel for="ContractDeduction_type" value="#{bundle.aon_type}" />
-	<aon:selectOneMenu id="ContractDeduction_type" value="#{controller.to.type}" required="true">
+	<aon:selectOneMenu id="ContractDeduction_type" value="#{controller.to.type}" >
 		<a4j:support event="onchange" actionListener="#{controller.onTypeChange}" reRender="ContractDeduction_DeductionConcept" ajaxSingle="true"/>
 		<f:selectItem value="#{null}" itemLabel=" - " />
 		<f:selectItems value="#{payrollCollections.deductionTypes}" />
@@ -43,6 +43,12 @@
 	<aon:outputLabel for="ContractDeduction_description" value="#{bundle.aon_description}" />
 	<aon:inputText id="ContractDeduction_description" size="40" maxlength="64" 
 		value="#{controller.to.description}" />
+	
+	<aon:outputText value="&#160;"/>
+	<aon:panelGroup>
+		<aon:selectBooleanCheckbox id="ContractDeduction_decorateDescription" value="#{controller.to.descriptionDecorable}" />
+		<aon:outputLabel for="ContractDeduction_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
+	</aon:panelGroup>
 		
 	<c:if test="#{!aonRole.sisAdmin}">
 		<aon:outputLabel for="ContractDeduction_amount" value="#{payrollBundle.payroll_salary_expression}" />
@@ -78,9 +84,27 @@
 		</aon:inputTextarea>
 	</c:if>
 	
-	<aon:outputText value="&#160;"/>
-	<aon:panelGroup>
-		<aon:selectBooleanCheckbox id="ContractDeduction_decorateDescription" value="#{controller.to.descriptionDecorable}" />
-		<aon:outputLabel for="ContractDeduction_decorateDescription" value="#{payrollBundle.payroll_salary_show_expression}" />
-	</aon:panelGroup>
+	<aon:outputLabel for="ContractPayment_result" value="#{payrollBundle.payroll_result}" />
+	<h:panelGrid columns="4">
+		<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}" 
+			style="color:#{(controller.result!=null)?('black'):('red')};" >
+			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+		</aon:outputText>
+
+		<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right" 
+			value="#{payrollBundle.payroll_on}" />
+	
+		<aon:selectOneMenu value="#{controller.month}">
+			<f:selectItems value="#{commonCollections.months}"  />
+			<a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+		</aon:selectOneMenu>
+
+		<rich:inputNumberSpinner value="#{controller.year}" inputSize="4" 
+			minValue="2000" maxValue="2100">
+		  <a4j:support event="onchange" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+		  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true"/>
+		  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadExpression}" reRender="#{controller.beanName}ModalForm" ajaxSingle="true" />
+		</rich:inputNumberSpinner>
+	</h:panelGrid>
+	
 </ui:composition>
