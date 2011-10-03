@@ -44,9 +44,11 @@ import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.OtherLaws;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
+import com.esferalia.aon.payroll.enumeration.QuoteType;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.SchoolWorkshop;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
+import com.esferalia.aon.payroll.enumeration.TaxationType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -95,6 +97,8 @@ public class PayrollCollectionsController {
 	private List<SelectItem> familySityations;
 	private List<SelectItem> disabilityLevels;
 	private List<SelectItem> irpfRegularizationReasons;
+	private List<SelectItem> taxationTypes;
+	private List<SelectItem> quoteTypes;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -661,6 +665,32 @@ public class PayrollCollectionsController {
 			list.add(group);
 		}
 		return list;
+	}
+	
+	public List<SelectItem> getTaxationTypes() {
+		if (taxationTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			taxationTypes = new LinkedList<SelectItem>();
+			for( TaxationType p : TaxationType.values() ) {
+				String name = p.getName(locale);
+				SelectItem item = new SelectItem(p, name);
+				taxationTypes.add(item);			
+			}
+		}
+		return taxationTypes;
+	}
+	
+	public List<SelectItem> getQuoteTypes() {
+		if (quoteTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			quoteTypes = new LinkedList<SelectItem>();
+			for( QuoteType p : QuoteType.values() ) {
+				String name = p.getName(locale);
+				SelectItem item = new SelectItem(p, name);
+				quoteTypes.add(item);			
+			}
+		}
+		return quoteTypes;
 	}
 	
 	
