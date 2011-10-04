@@ -11,7 +11,6 @@
 		<aon:form id="cashFlowForecastReportForm">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{financeBundle.finance_cashflow_forecast_report_module}" />
-				<ui:param name="controller" value="#{cashFlowForecastReport}" />
 				<ui:param name="skipResetButton" value="#{true}" />
 				<ui:param name="skipBackButton" value="#{true}" />
 				<ui:param name="skipClearButton" value="true" />
@@ -26,13 +25,16 @@
 			
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{cashFlowForecastReport}" />
+				<ui:param name="skipAfterSearch" value="#{true}" />
 				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener"
+						value="#{cashFlowForecastReport.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="cashFlowForecastReport_list" />
 
 					<aon:outputLabel for="CashFlowForecastReport_fromDate" 
 						value="#{financeBundle.finance_cashflow_from_date}" />
 					<aon:selectInputDate id="CashFlowForecastReport_fromDate"
-						value="#{controller.fromDate}" required="true"
+						value="#{cashFlowForecastReport.fromDate}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}">
 						<a4j:support event="oninputchange" reRender="fromContainer"/>
@@ -42,14 +44,14 @@
 					<aon:outputLabel for="CashFlowForecastReport_toDate" 
 						 value="#{financeBundle.finance_cashflow_to_date}" />
 					<aon:selectInputDate id="CashFlowForecastReport_toDate"
-						value="#{controller.toDate}" required="true"
+						value="#{cashFlowForecastReport.toDate}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
 						popupDateFormat="#{bundle.aon_date_pattern}" />
 
 					<aon:outputText value="&#160;"/>
 					<aon:div>
 						<aon:selectBooleanCheckbox id="CashFlowForecastReport_include_returned"
-							value="#{controller.returnedFinanceIncluded}"/>
+							value="#{cashFlowForecastReport.returnedFinanceIncluded}"/>
 						<aon:outputLabel for="CashFlowForecastReport_include_returned" 
 							value="#{financeBundle.finance_cashflow_include_returned}" />
 					</aon:div>
@@ -57,7 +59,7 @@
 					<aon:outputText value="&#160;"/>
 					<aon:div id="fromContainer">
 						<aon:selectBooleanCheckbox id="CashFlowForecastReport_include_pending" 
-							value="#{controller.pendingFinanceIncluded}"/>
+							value="#{cashFlowForecastReport.pendingFinanceIncluded}"/>
 						<aon:outputLabel for="CashFlowForecastReport_include_pending" 
 							value="#{financeBundle.finance_cashflow_include_pending} " />
 						<aon:outputText value="#{cashFlowForecastReport.fromDate}">
