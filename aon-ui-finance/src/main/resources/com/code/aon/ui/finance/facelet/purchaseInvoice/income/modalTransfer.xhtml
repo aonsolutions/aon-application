@@ -54,7 +54,7 @@
 									<aon:commandButton id="incomeTransfer-accept"
 										value="#{financeBundle.finance_invoice_to_transfer}"
 										rendered="#{purchaseInvoice.incomeTransferManager.incomeModel.rowCount > 0}"
-										reRender="showIncomeTransferWindow,invoiceDetails,menuExt"
+										reRender="showIncomeTransferWindow,purchaseInvoiceForm"
 										actionListener="#{purchaseInvoice.onIncomeTransfer}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
 										<rich:componentControl for="incomeTransferModalPanel"

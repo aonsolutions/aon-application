@@ -234,6 +234,7 @@ public class SaleInvoiceController extends InvoiceController implements ISignatu
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 
+		refresh(null);
 		IController detailController = FormUtil.getController(IFinanceConstants.SALE_INVOICE_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 	}

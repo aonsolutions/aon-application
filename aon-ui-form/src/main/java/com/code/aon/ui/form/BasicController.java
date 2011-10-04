@@ -1201,8 +1201,12 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	public void refresh( ActionEvent event ) throws ManagerBeanException {
-		setTo( getManagerBean().get( getManagerBean().getId( getTo() ) ) );
-		setRowData( getTo() );
+		setTo(getManagerBean().get(getManagerBean().getId(getTo())));
+		getManagerBean().initializePOJO(getTo());
+		selectedIndex = (getSelectedIndex() != -1) ? getSelectedIndex() : getSelectedTOIndex();
+		if (getSelectedIndex() != -1) {
+			setRowData(getTo());
+		}
 	}
 	
 	/**

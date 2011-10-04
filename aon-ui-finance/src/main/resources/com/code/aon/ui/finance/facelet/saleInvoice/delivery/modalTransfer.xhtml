@@ -54,7 +54,7 @@
 									<aon:commandButton id="deliveryTransfer-accept"
 										value="#{financeBundle.finance_invoice_to_transfer}"
 										rendered="#{saleInvoice.deliveryTransferManager.deliveryModel.rowCount > 0}"
-										reRender="showDeliveryTransferWindow,invoiceDetails,menuExt"
+										reRender="showDeliveryTransferWindow,saleInvoiceForm"
 										actionListener="#{saleInvoice.onDeliveryTransfer}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
 										<rich:componentControl for="deliveryTransferModalPanel"

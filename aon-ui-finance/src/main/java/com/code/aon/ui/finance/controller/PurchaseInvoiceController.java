@@ -157,6 +157,7 @@ public class PurchaseInvoiceController extends InvoiceController implements IFin
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
 
+		refresh(null);
 		IController detailController = FormUtil.getController(IFinanceConstants.PURCHASE_INVOICE_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 	}
