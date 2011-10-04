@@ -8,6 +8,7 @@
  *   http://www.gnu.org/licenses/gpl.html 
  */
  
+
 /**
  * The splitter() plugin implements a two-pane resizable splitter window.
  * The selected elements in the jQuery object are converted to a splitter;
@@ -96,6 +97,7 @@ var splitterCounter = 0;
 			if ( (opts.dockPane == A && pos < Math.max(A._min, bar._DA)) ||
 				 (opts.dockPane == B && pos > Math.min(pos, A._max, splitter._DA - bar._DA - B._min)) ) {
 				bar.addClass(opts.barDockedClass);
+				buttonDock.addClass(opts.buttonDockedClass);
 				bar._DA = bar[0][opts.pxSplit];
 				pos = opts.dockPane == A? 0 : splitter._DA - bar._DA;
 				if ( bar._pos == null )
@@ -103,6 +105,7 @@ var splitterCounter = 0;
 			}
 			else {
 				bar.removeClass(opts.barDockedClass);
+				buttonDock.removeClass(opts.buttonDockedClass);
 				bar._DA = bar[0][opts.pxSplit];
 				bar._pos = null;
 				pos = Math.max(A._min, splitter._DA - B._max, 
@@ -111,10 +114,13 @@ var splitterCounter = 0;
 			// Resize/position the two panes
 			bar.css(opts.origin, pos).css(opts.fixed, splitter._DF);
 			A.css(opts.origin, 0).css(opts.split, pos).css(opts.fixed,  splitter._DF);
+			if ( pos == 0 ) {
+				A.css(opts.fixed, 0);
+			}			
 			B.css(opts.origin, pos+bar._DA)
 				.css(opts.split, splitter._DA-bar._DA-pos).css(opts.fixed,  splitter._DF);
 			// IE fires resize for us; all others pay cash
-			if ( !$.browser.msie )
+			if ( browser_resize() )
 				panes.trigger("resize");
 		}
 		function dimSum(jq, dims) {
@@ -123,6 +129,13 @@ var splitterCounter = 0;
 			for ( var i=1; i < arguments.length; i++ )
 				sum += Math.max(parseInt(jq.css(arguments[i]),10) || 0, 0);
 			return sum;
+		}
+		function browser_resize() {
+		   if (!$.browser.msie)
+		      return true;
+		   if (parseInt($.browser.version)<8)
+		      return false;
+		   return true;
 		}
 		
 		// Determine settings based on incoming opts, element classes, and defaults
@@ -140,7 +153,9 @@ var splitterCounter = 0;
 			eventNamespace:	".splitter"+(++splitterCounter),
 			pxPerKey: 8,			// splitter px moved per keypress
 			tabIndex: 0,			// tab order indicator
-			accessKey: ''			// accessKey for splitbar
+			accessKey: '',			// accessKey for splitbar
+			buttonClass:	"splitter-button",
+			buttonDockedClass:	"splitter-button-docked",
 		},{
 			// user can override
 			v: {					// Vertical splitters:
@@ -209,6 +224,8 @@ var splitterCounter = 0;
 		if ( /^(auto|default|)$/.test(bar.css("cursor")) )
 			bar.css("cursor", opts.cursor);
 
+		var buttonDock = $('<div></div>').appendTo(bar).addClass(opts.buttonClass);
+		
 		// Cache several dimensions for speed, rather than re-querying constantly
 		// These are saved on the A/B/bar/splitter jQuery vars, which are themselves cached
 		// DA=dimension adjustable direction, PBF=padding/border fixed, PBA=padding/border adjustable
@@ -252,10 +269,10 @@ var splitterCounter = 0;
 				var top = splitter.offset().top;
 				var eh = $(opts.resizeTo).height();
 				splitter.css("height", Math.max(eh-top-splitter._hadjust, splitter._hmin)+"px");
-				if ( !$.browser.msie ) splitter.trigger("resize");
+				if ( browser_resize() ) splitter.trigger("resize");
 			}).trigger("resize"+opts.eventNamespace);
 		}
-		else if ( opts.resizeToWidth && !$.browser.msie ) {
+		else if ( opts.resizeToWidth && browser_resize() ) {
 			$(window).bind("resize"+opts.eventNamespace, function(){
 				splitter.trigger("resize");
 			});
@@ -277,13 +294,15 @@ var splitterCounter = 0;
 						splitter[0][opts.pxSplit] - splitter._PBA - bar[0][opts.pxSplit];
 					bar.animate(x, opts.dockSpeed||1, opts.dockEasing, function(){
 						bar.addClass(opts.barDockedClass);
+						buttonDock.addClass(opts.buttonDockedClass);
 						resplit(x[opts.origin]);
 					});
 				})
 				.bind("undock"+opts.eventNamespace, function(){
 					var pw = opts.dockPane[0][opts.pxSplit];
-					if ( pw ) return;
+					if ( pw && !$.browser.msie ) return;
 					var x={}; x[opts.origin]=bar._pos+"px";
+					buttonDock.removeClass(opts.buttonDockedClass);
 					bar.removeClass(opts.barDockedClass)
 						.animate(x, opts.undockSpeed||opts.dockSpeed||1, opts.undockEasing||opts.dockEasing, function(){
 							resplit(bar._pos);
@@ -296,7 +315,13 @@ var splitterCounter = 0;
 					.bind($.browser.opera?"click":"focus", function(){ 
 						splitter.trigger("toggleDock"); this.blur();
 					});
-			bar.bind("dblclick", function(){ splitter.trigger("toggleDock"); })
+			buttonDock.bind("click", function(){
+				if ( buttonDock.hasClass(opts.buttonDockedClass) ) {
+					splitter.trigger("undock");
+				} else {
+					splitter.trigger("toggleDock");
+				} 
+			})
 		}
 
 		

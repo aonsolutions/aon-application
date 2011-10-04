@@ -2,35 +2,31 @@
 
 .ui-state-default { background-color: #CBE1FB }
 .ui-state-hover { background-color: #66CCFF }
-.ui-state-highlight { background-color: #68f }
-.ui-state-error { background-color: #eaa }
+.ui-state-highlight { background-color: #6DF }
+.ui-state-error { background-color: #f55 }
 
 .splitter-pane {
 	overflow: auto;
 }
 .splitter-bar-vertical {
-	width: 6px;
-	background-image: url(images/vgrabber.gif);
-	background-repeat: no-repeat;
-	background-position: center;
+	width:6px;
+	border-left:solid 1px #9cbdff;
+	border-right:solid 1px #9cbdff;
+	background:#cbe1fb url(images/panev.gif) 0% 50%;
 }
-.splitter-bar-vertical-docked {
-	width: 10px;
-	background-image: url(img/vdockbar-trans.gif);
-	background-repeat: no-repeat;
-	background-position: center;
+.splitter-button {
+	cursor: pointer;
+	background:transparent url(images/panevc.gif) 10px 50%;
+	margin-top:-41px;
+	margin-left:-4px;
+	height:83px;
+	width:10px;
+	top:50%;
+	position:relative;
 }
-.splitter-bar-horizontal {
-	height: 6px;
-	background-image: url(img/hgrabber.gif);
-	background-repeat: no-repeat;
-	background-position: center;
-}
-.splitter-bar-horizontal-docked {
-	height: 10px;
-	background-image: url(img/hdockbar-trans.gif);
-	background-repeat: no-repeat;
-	background-position: center;
+.splitter-button-docked {
+	background:transparent url(images/panevc.gif) 0px 50%;
+	margin-left:0px;
 }
 .splitter-bar.ui-state-highlight {
 	opacity: 0.7;
