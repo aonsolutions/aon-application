@@ -269,60 +269,62 @@
 
 				</aon:panelGrid>
 
-				<aon:panelGrid columns="2" style="width: 100%;"
-					rendered="#{expenseInvoice.to.project.id != null or expenseInvoice.projectCount > 0}"
-					columnClasses="aon-panelGrid-odd aon-width-140,
-						aon-panelGrid-even aon-width-auto">
+				<aon:div id="InvoiceProject">
+					<aon:panelGrid columns="2" style="width: 100%;"
+						rendered="#{expenseInvoice.to.project.id != null or expenseInvoice.projectCount > 0}"
+						columnClasses="aon-panelGrid-odd aon-width-140,
+							aon-panelGrid-even aon-width-auto">
 
-					<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
-						<aon:outputLabel for="Invoice_project_id"
-							value="#{projectBundle.project_project}" />
-					</c:if>
-					<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
-						<aon:outputLabel for="Invoice_project_id"
-							value="#{tasBundle.tas_projectTas}" />
-					</c:if>
-					<aon:div id="InvoiceProject">
-						<aon:selectOneMenu id="Invoice_project_id"
-							rendered="#{!expenseInvoice.readOnly and expenseInvoice.to.project.id == null and expenseInvoice.projectCount > 0}"
-							value="#{expenseInvoice.to.project}">
-							<f:selectItem itemLabel="-" value="#{null}" />
-							<f:selectItems value="#{expenseInvoice.projects}" />
-						</aon:selectOneMenu>
 						<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
-							<aon:outputLabel styleClass="aon-italic"
-								value="#{projectBundle.project_no_project_linked}"
-								rendered="#{expenseInvoice.readOnly and expenseInvoice.to.project.id == null and expenseInvoice.projectCount > 0}" />
+							<aon:outputLabel for="Invoice_project_id"
+								value="#{projectBundle.project_project}" />
 						</c:if>
 						<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
-							<aon:outputLabel styleClass="aon-italic"
-								value="#{tasBundle.tas_no_projectTas_linked}"
-								rendered="#{expenseInvoice.readOnly and expenseInvoice.to.project.id == null and expenseInvoice.projectCount > 0}" />
+							<aon:outputLabel for="Invoice_project_id"
+								value="#{tasBundle.tas_projectTas}" />
 						</c:if>
-						<aon:outputText styleClass="aon-bold"
-							value="#{expenseInvoice.to.project.name}" 
-							rendered="#{expenseInvoice.to.project.id != null}" />
-						<aon:div layout="inline" styleClass="aon-margin-left">
-							<aon:commandButton id="newInvoiceProject"
-								value="&#160;" title="#{bundle.aon_reset}"
-								styleClass="aon-icon-commandButton aon-icon-reset"
-								rendered="#{expenseInvoice.readOnly and expenseInvoice.to.project.id == null and expenseInvoice.projectCount > 0}"
-								reRender="showInvoiceProjectWindow">
-								<f:setPropertyActionListener target="#{expenseInvoice.showInvoiceProjectWindow}"
-									value="#{true}" />								
-								<f:setPropertyActionListener target="#{expenseInvoice.showInvoiceDetailProjectWindow}"
-									value="#{false}" />								
-							</aon:commandButton>
-							<aon:commandButton id="removeInvoiceProject" 
-								value="&#160;" title="#{bundle.aon_remove}" 
-								styleClass="aon-icon-commandButton aon-icon-delete"
-								rendered="#{expenseInvoice.to.project.id != null}"
-								actionListener="#{expenseInvoice.removeInvoiceProject}" 
-								reRender="expenseInvoiceForm" />
+						<aon:div>
+							<aon:selectOneMenu id="Invoice_project_id"
+								rendered="#{!expenseInvoice.readOnly and expenseInvoice.to.project.id == null and expenseInvoice.projectCount > 0}"
+								value="#{expenseInvoice.to.project}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{expenseInvoice.projects}" />
+							</aon:selectOneMenu>
+							<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+								<aon:outputLabel styleClass="aon-italic"
+									value="#{projectBundle.project_no_project_linked}"
+									rendered="#{expenseInvoice.readOnly and expenseInvoice.to.project.id == null and expenseInvoice.projectCount > 0}" />
+							</c:if>
+							<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+								<aon:outputLabel styleClass="aon-italic"
+									value="#{tasBundle.tas_no_projectTas_linked}"
+									rendered="#{expenseInvoice.readOnly and expenseInvoice.to.project.id == null and expenseInvoice.projectCount > 0}" />
+							</c:if>
+							<aon:outputText styleClass="aon-bold"
+								value="#{expenseInvoice.to.project.name}" 
+								rendered="#{expenseInvoice.to.project.id != null}" />
+							<aon:div layout="inline" styleClass="aon-margin-left">
+								<aon:commandButton id="newInvoiceProject"
+									value="&#160;" title="#{bundle.aon_reset}"
+									styleClass="aon-icon-commandButton aon-icon-reset"
+									rendered="#{expenseInvoice.readOnly and expenseInvoice.to.project.id == null and expenseInvoice.projectCount > 0}"
+									reRender="showInvoiceProjectWindow">
+									<f:setPropertyActionListener target="#{expenseInvoice.showInvoiceProjectWindow}"
+										value="#{true}" />								
+									<f:setPropertyActionListener target="#{expenseInvoice.showInvoiceDetailProjectWindow}"
+										value="#{false}" />								
+								</aon:commandButton>
+								<aon:commandButton id="removeInvoiceProject" 
+									value="&#160;" title="#{bundle.aon_remove}" 
+									styleClass="aon-icon-commandButton aon-icon-delete"
+									rendered="#{expenseInvoice.to.project.id != null}"
+									actionListener="#{expenseInvoice.removeInvoiceProject}" 
+									reRender="expenseInvoiceForm" />
+							</aon:div>
 						</aon:div>
-					</aon:div>
 
-				</aon:panelGrid>
+					</aon:panelGrid>
+				</aon:div>
 
 				<aon:panelGrid columns="4" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-140,
