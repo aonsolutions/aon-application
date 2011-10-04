@@ -47,9 +47,11 @@ public class ConfigCollectionsController {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 			taxTypes = new LinkedList<SelectItem>();
 			for(TaxType type : TaxType.values()) {
-				String name = type.getName(locale);
-				SelectItem item = new SelectItem(type, name);
-				taxTypes.add(item);
+				if (type != TaxType.UNKNOWN) {
+					String name = type.getName(locale);
+					SelectItem item = new SelectItem(type, name);
+					taxTypes.add(item);
+				}
 			}
 		}
 		return taxTypes;

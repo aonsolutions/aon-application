@@ -28,18 +28,8 @@ public enum TaxType implements IResourceable {
     /**
      * Retention
      */
-    RETENTION,
+    RETENTION;
 
-    /**
-     * I.G.I.C.
-     */
-    IGIC,
-
-    /**
-     * Green point.
-     */
-    GREEN_POINT;
-   
     /**
      * Message file base path.
      */
