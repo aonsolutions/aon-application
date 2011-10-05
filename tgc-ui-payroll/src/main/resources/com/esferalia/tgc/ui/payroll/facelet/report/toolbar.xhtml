@@ -22,18 +22,15 @@
 				accesskey="#{bundle.aon_key_search}" />
 		</ui:define>
 		
-		<!--  
-		-->
 		<ui:define name="toolbarContent">
 		
 			<aon:outputText styleClass="aon-bold" 
-				value="#{tgcPayrollBundle.tgcPayroll_report}:&#160;" /> 
+				value="#{bundle.aon_type}:&#160;" /> 
 			<aon:selectOneMenu value="#{tgcReport.reportName}">
 				<f:selectItem itemLabel=" - " value="#{null}" />
 				<f:selectItems value="#{reportNames}" />
 				<a4j:support event="onchange" reRender="aonToolbar" />
 			</aon:selectOneMenu>
-			
 			
 			<aon:htmlCommandLink id="excel_report"
 				styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
@@ -53,11 +50,7 @@
 			</aon:htmlCommandLink>
 			
 		</ui:define>
-		<!--  
-		-->
 		
 	</ui:decorate>
-					
-					
 	
 </ui:composition>
