@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<faces-config version="1.2" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+	
+	<application>
+		<resource-bundle>
+			<base-name>com.esferalia.tgc.ui.payroll.i18n.messages</base-name>
+			<var>tgcPayrollBundle</var>
+		</resource-bundle>
+	</application>
+	
+	<!-- ************** PAYROLL COLLECTIONS ****************** -->
+	<managed-bean>
+		<managed-bean-name>tgcPayrollCollections</managed-bean-name>
+		<managed-bean-class>com.esferalia.tgc.ui.payroll.controller.TgcPayrollCollectionsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	
+	<!--  **** REPORTS CONTROLLER **** -->
+	<managed-bean>
+		<managed-bean-name>tgcReport</managed-bean-name>
+		<managed-bean-class>com.esferalia.tgc.ui.payroll.controller.TgcReportController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	
+	<!--
+		============================================= 
+		============== NAVIGATION ==================
+		============================================= 
+	-->
+	
+	<!-- =================== Enterprise report ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>enterpriseReport_search</from-outcome>
+			<to-view-id>/com/esferalia/tgc/ui/payroll/facelet/enterprise/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>enterpriseReport_list</from-outcome>
+			<to-view-id>/com/esferalia/tgc/ui/payroll/facelet/enterprise/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== CCC report ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>cccReport_search</from-outcome>
+			<to-view-id>/com/esferalia/tgc/ui/payroll/facelet/ccc/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>cccReport_list</from-outcome>
+			<to-view-id>/com/esferalia/tgc/ui/payroll/facelet/ccc/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Contract report ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contractReport_search</from-outcome>
+			<to-view-id>/com/esferalia/tgc/ui/payroll/facelet/contract/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contractReport_list</from-outcome>
+			<to-view-id>/com/esferalia/tgc/ui/payroll/facelet/contract/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Person report ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>personReport_search</from-outcome>
+			<to-view-id>/com/esferalia/tgc/ui/payroll/facelet/person/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>personReport_list</from-outcome>
+			<to-view-id>/com/esferalia/tgc/ui/payroll/facelet/person/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	
+</faces-config>
