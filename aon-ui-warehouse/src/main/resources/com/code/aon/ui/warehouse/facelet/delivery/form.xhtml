@@ -124,7 +124,7 @@
 
 					<ui:include src="/com/code/aon/ui/customer/facelet/customer/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{delivery.to.customer}" />
-						<ui:param name="lookupDisabled" value="#{!delivery.pending}" />
+						<ui:param name="lookupDisabled" value="#{!delivery.pending or delivery.to.project.id != null}" />
 						<ui:param name="lookupReRender" 
 							value="Customer_registry_document,DeliveryAddress,DeliveryProject,Delivery_scope,Delivery_defaultPayMethod,payMethodDiv" />
 						<ui:param name="idRequired" value="#{true}" />						

@@ -156,18 +156,12 @@ public class IncomeController extends BasicController implements IWarehouseConst
 
 	public boolean isPending(){
 		Income income = (Income)this.getTo();
-		if (income.getStatus() != null) {
-			return income.getStatus().equals(IncomeStatus.PENDING);
-		}
-		return false;
+		return income.getStatus() == IncomeStatus.PENDING;
 	}
 
 	public boolean isInvoiced(){
 		Income income = (Income)this.getTo();
-		if (income.getStatus() != null) {
-			return income.getStatus().equals(IncomeStatus.INVOICED);
-		}
-		return false;
+		return income.getStatus() == IncomeStatus.INVOICED;
 	}
 
 	public String getInvoiceCode() throws ManagerBeanException {

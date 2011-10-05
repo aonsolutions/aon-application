@@ -185,18 +185,12 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 	
 	public boolean isPending(){
 		Delivery delivery = (Delivery)this.getTo();
-		if (delivery.getStatus() != null) {
-			return delivery.getStatus().equals(DeliveryStatus.PENDING);
-		}
-		return false;
+		return delivery.getStatus() == DeliveryStatus.PENDING;
 	}
 
 	public boolean isInvoiced(){
 		Delivery delivery = (Delivery)this.getTo();
-		if (delivery.getStatus() != null) {
-			return delivery.getStatus().equals(DeliveryStatus.INVOICED);
-		}
-		return false;
+		return delivery.getStatus() == DeliveryStatus.INVOICED;
 	}
 
 	public String getInvoiceCode() throws ManagerBeanException {
