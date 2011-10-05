@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.warehouse.Delivery">
-		<alias names="id,series,number,project_id,customer_id,registryAddress,registryAddress_id,issueTime,payMethod,payMethod_id,securityLevel,status,comments,remarks,workPlace_id,scope_id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank_id,bankAccount"/>
-		<hibernate names="id,series,number,project.id,customer.id,registryAddress,registryAddress.id,issueTime,payMethod,payMethod.id,securityLevel,status,comments,remarks,workPlace.id,scope.id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank.id,bankAccount"/>
+		<alias names="id,series,number,project,project_id,customer_id,registryAddress,registryAddress_id,issueTime,payMethod,payMethod_id,securityLevel,status,comments,remarks,workPlace_id,scope_id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank_id,bankAccount"/>
+		<hibernate names="id,series,number,project,project.id,customer.id,registryAddress,registryAddress.id,issueTime,payMethod,payMethod.id,securityLevel,status,comments,remarks,workPlace.id,scope.id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank.id,bankAccount"/>
 	</bean>
 	
 	<bean class="com.code.aon.warehouse.DeliveryDetail">
@@ -10,6 +10,11 @@
 		<hibernate names="delivery.id,description,discountExpression,id,item.id,line,price,quantity,salesDetail.id,source,type,warehouse.id,item.product.type"/>
 	</bean>
 	
+	<bean class="com.code.aon.warehouse.Income">
+		<alias names="id,series,number,project,project_id,supplier_id,registryAddress,registryAddress_id,issueTime,payMethod,payMethod_id,securityLevel,status,comments,remarks,workPlace_id,scope_id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank_id,bankAccount"/>
+		<hibernate names="id,series,number,project,project.id,supplier.id,registryAddress,registryAddress.id,issueTime,payMethod,payMethod.id,securityLevel,status,comments,remarks,workPlace.id,scope.id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank.id,bankAccount"/>
+	</bean>
+
 	<bean class="com.code.aon.warehouse.IncomeDetail">
 		<alias names="description,discountExpression,id,income_id,item_id,line,price,project_id,purchaseDetail_id,quantity,source,type,warehouse_id,item_product_type"/>
 		<hibernate names="description,discountExpression,id,income.id,item.id,line,price,project.id,purchaseDetail.id,quantity,source,type,warehouse.id,item.product.type"/>
