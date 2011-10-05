@@ -90,7 +90,7 @@ public class DeliveryInvoicingEngine implements IInvoicingEngine {
 			criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_WORK_PLACE_ID), params.getWorkPlace().getId());
 		}
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_CUSTOMER_ID));
-		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PROJECT_ID));
+		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PROJECT));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_REGISTRY_ADDRESS));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_PAY_METHOD));
 		criteria.addOrder(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_BANK));

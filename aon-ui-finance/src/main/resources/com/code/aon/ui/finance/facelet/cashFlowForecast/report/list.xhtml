@@ -11,6 +11,7 @@
 	<ui:define name="content">
 		<aon:form>
 			<aon:methodParam name="searchActionListener" default="#{cashFlowForecastReport.onReset}" type="actionListener" />
+			<aon:methodParam name="searchAction" default="cashFlowForecastReport_search" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
 				<ui:param name="toolbarTitle"
