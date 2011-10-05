@@ -6,7 +6,7 @@ public enum TaxTypeCode {
 
 	IVA("01", TaxType.VAT),
 	IPSI("02"),
-	IGIC("03", TaxType.IGIC),
+	IGIC("03"),
 	Otro("05"),
 	ITPAJD("06"),
 	IE("07"),
