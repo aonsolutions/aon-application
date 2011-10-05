@@ -27,6 +27,12 @@
 				action="menu_config" immediate="true"
 				styleClass="aon-top-menu-item aon-icon-config" />
 		</c:if>
+		<c:if test="#{aonRole.tgc}">
+			<aon:commandLink id="tgc-report"
+				value="#{appBundle.menu_tgc_report}"
+				action="menu_tgc_report" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-folder" />
+		</c:if>
 		<rich:jQuery timing="onload"
 			selector="body" query="removeClass('aon-overflow-hidden')" />				
 	</ui:define>

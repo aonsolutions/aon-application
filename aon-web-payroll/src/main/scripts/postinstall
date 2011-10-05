@@ -9,10 +9,11 @@ if ! aondir_has_app $APP; then
 
         aondir-addrole User $APP &>/dev/null
         aondir-addrole Guest $APP &>/dev/null
+        aondir-addrole Tgc $APP &>/dev/null
         aondir-addrole Admin $APP &>/dev/null
         aondir-addrole SisAdmin $APP &>/dev/null
 
-        aondir-addprofile Programador $APP Admin SisAdmin User &>/dev/null
+        aondir-addprofile Programador $APP Admin SisAdmin User Tgc &>/dev/null
         aondir-addprofile Administrador $APP Admin User &>/dev/null
         aondir-addprofile Invitado $APP Guest User &>/dev/null
 

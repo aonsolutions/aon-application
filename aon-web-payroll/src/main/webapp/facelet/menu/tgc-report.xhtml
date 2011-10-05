@@ -1,0 +1,58 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="tgcReportMenu">
+			<aon:div styleClass="aon-scroll-area">		
+		
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+						
+					<aon:panelGrid id="enterprise_report"
+						styleClass="aon-width-all" columnClasses="aon-padding"
+						headerClass="aon-icon-file-download aon-direct-access-panel">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.report_menu_group}" />
+						</f:facet>					
+						<aon:div styleClass="aon-direct-access-list">
+								
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="enterpriseReport" 
+									action="enterpriseReport_search"
+									value="#{tgcPayrollBundle.tgcPayroll_enterprise_report_module}" >
+									<aon:actionListener method="#{enterprise.onEditSearch}" />
+									<aon:actionListener method="#{tgcReport.initialize}" />
+								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="contractReport" 
+									action="contractReport_search"
+									value="#{tgcPayrollBundle.tgcPayroll_contract_report_module}" >
+									<aon:actionListener method="#{contract.onEditSearch}" />
+									<aon:actionListener method="#{tgcReport.initialize}" />
+								</aon:commandLink>
+							</aon:div>
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="personReport" 
+									action="personReport_search"
+									value="#{tgcPayrollBundle.tgcPayroll_person_report_module}" >
+									<aon:actionListener method="#{person.onEditSearch}" />
+									<aon:actionListener method="#{tgcReport.initialize}" />
+								</aon:commandLink>
+							</aon:div>
+						
+						</aon:div>
+					</aon:panelGrid>
+					
+				</h:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

@@ -63,6 +63,12 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.esferalia.tgc</groupId>
+			<artifactId>tgc.ui.payroll</artifactId>
+			<version>${pom.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.fiscal</artifactId>
 			<version>${pom.version}</version>
