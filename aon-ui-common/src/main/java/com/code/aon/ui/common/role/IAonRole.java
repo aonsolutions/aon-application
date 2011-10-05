@@ -93,4 +93,9 @@ public interface IAonRole {
 	 * Role para dar capacidad de modificar las expresiones de las percepciones y deducciones.
 	 */
 	String SIS_ADMIN = "SisAdmin";
+	
+	/**
+	 * Role de acceso a los informes de nominas.
+	 */
+	String TGC = "Tgc";
 }

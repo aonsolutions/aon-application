@@ -144,6 +144,13 @@ public class RoleManager {
 	}
 	
 	/**
+	 * @return TRUE if user has IAonRole.TGC role, false otherwise.
+	 */
+	public boolean isTgc() {
+		return isUserInRole(IAonRole.TGC);
+	}
+	
+	/**
 	 * Rendered command.
 	 * 
 	 * @param component the component
