@@ -13,6 +13,13 @@ public class PurchaseDetailBeanVetoListener extends ManagerBeanVetoListenerAdapt
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		PurchaseDetail purchaseDetail = (PurchaseDetail) evt.getTo();
 		setDefaultValues(purchaseDetail);
+		checkPurchaseDetail(purchaseDetail);
+	}
+
+	@Override
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		PurchaseDetail purchaseDetail = (PurchaseDetail) evt.getTo();
+		checkPurchaseDetail(purchaseDetail);
 	}
 
 	private void setDefaultValues(PurchaseDetail purchaseDetail) {
@@ -21,6 +28,15 @@ public class PurchaseDetailBeanVetoListener extends ManagerBeanVetoListenerAdapt
 		}
 		if (purchaseDetail.getStatus() == null) {
 			purchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
+		}
+	}
+
+	private void checkPurchaseDetail(PurchaseDetail purchaseDetail) throws ManagerBeanVetoListenerException {
+		if (purchaseDetail.getQuantity() < 0) {
+			throw new ManagerBeanVetoListenerException("La Cantidad del Pedido no puede ser negativa.");
+		}
+		if (purchaseDetail.getQuantity() < purchaseDetail.getDelivered()) {
+			purchaseDetail.setQuantity(purchaseDetail.getDelivered());
 		}
 	}
 
