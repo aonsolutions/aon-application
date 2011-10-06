@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -16,6 +17,8 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.salary.ISalaryItem;
+import com.esferalia.aon.salary.enumeration.DeductionType;
 
 /**
  * Transfer Object that represents the salary embargo.
@@ -23,7 +26,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
  */
 @Entity
 @Table(name="salary_embargo")
-public class SalaryEmbargo implements ITransferObject {
+public class SalaryEmbargo implements ITransferObject , ISalaryItem<DeductionType> {
 	
 	private static final long serialVersionUID = 2810974860730292917L;
 
@@ -119,6 +122,18 @@ public class SalaryEmbargo implements ITransferObject {
 	@Override
 	public String toString() {
 		return new PojoToStringBuilder(this).toString();
+	}
+
+	@Override
+	@Transient
+	public String getName() {
+		return getDescription();
+	}
+
+	@Override
+	@Transient
+	public DeductionType getType() {
+		return DeductionType.OTHER;
 	}
 		
 }

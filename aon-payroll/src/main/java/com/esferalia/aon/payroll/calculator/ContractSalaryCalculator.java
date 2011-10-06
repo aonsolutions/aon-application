@@ -1,19 +1,26 @@
 package com.esferalia.aon.payroll.calculator;
 
 
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGP_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.EMBARGO_LEFT;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.EMBARGO_LIMIT;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.EMBARGO_MAX;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.EMBARGO_PAID;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.EMPLOYEE_QUOTA;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.ENTERPRISE_QUOTA;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.TOTAL_LIQUID;
+import static com.esferalia.aon.payroll.enumeration.ContractVariables.TOTAL_PAYMENT;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.payroll.calculator.sql.SQLSalaryProxy;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -21,7 +28,6 @@ import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
-import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
@@ -392,6 +398,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				}
 				total += embargo;
 				
+			}
+			if ( total > 0.00 )  {
+				salaryBuilder.setTotalDeduction( salaryBuilder.getSalary().getTotalDeduction() + total);
 			}
 			
 		} catch ( ExpressionException e ) {
