@@ -37,7 +37,7 @@
 						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 					</aon:outputText>
 				</aon:div>
-				<c:set var="total" value="#{bonus.amount}" />
+				<c:set var="total" value="#{total + bonus.amount}" />
 			</c:forEach>
 			
 			<aon:outputText value="&#160;"/>
