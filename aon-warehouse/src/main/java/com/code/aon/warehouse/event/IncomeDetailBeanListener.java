@@ -8,6 +8,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
@@ -78,7 +79,7 @@ public class IncomeDetailBeanListener extends ManagerBeanListenerAdapter {
 	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
 		IncomeDetail detail = (IncomeDetail)evt.getTo();
 		if (detail.getPurchaseDetail() != null && detail.getPurchaseDetail().getId() != null) {
-			updateRelatedPurchase(detail.getPurchaseDetail());
+			updateRelatedPurchase(detail.getPurchaseDetail(), detail.getQuantity());
 		}
 
 		IManagerBean detailBean = BeanManager.getManagerBean(IncomeDetail.class);
@@ -99,10 +100,10 @@ public class IncomeDetailBeanListener extends ManagerBeanListenerAdapter {
 		}
 	}
 
-	private void updateRelatedPurchase(PurchaseDetail purchaseDetail) throws ManagerBeanException {
+	private void updateRelatedPurchase(PurchaseDetail purchaseDetail, double quantity) throws ManagerBeanException {
 		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-		purchaseDetail.setDelivered(0);
-		purchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
+		purchaseDetail.setDelivered(CommonUtil.round(purchaseDetail.getDelivered() - quantity, 3));
+		purchaseDetail.setStatus((purchaseDetail.getDelivered() > 0) ? PurchaseDetailStatus.PARTIAL_SETTLED : PurchaseDetailStatus.PENDING);
 		purchaseDetailBean.update(purchaseDetail);
 
 		IManagerBean purchaseBean = BeanManager.getManagerBean(Purchase.class);

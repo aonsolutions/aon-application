@@ -8,6 +8,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
@@ -78,7 +79,7 @@ public class DeliveryDetailBeanListener extends ManagerBeanListenerAdapter {
 	public void beanRemoved(ManagerBeanEvent evt) throws ManagerBeanException {
 		DeliveryDetail detail = (DeliveryDetail)evt.getTo();
 		if (detail.getSalesDetail() != null && detail.getSalesDetail().getId() != null) {
-			updateRelatedSales(detail.getSalesDetail());
+			updateRelatedSales(detail.getSalesDetail(), detail.getQuantity());
 		}
 
 		IManagerBean detailBean = BeanManager.getManagerBean(DeliveryDetail.class);
@@ -99,10 +100,10 @@ public class DeliveryDetailBeanListener extends ManagerBeanListenerAdapter {
 		}
 	}
 
-	private void updateRelatedSales(SalesDetail salesDetail) throws ManagerBeanException {
+	private void updateRelatedSales(SalesDetail salesDetail, double quantity) throws ManagerBeanException {
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
-		salesDetail.setDelivered(0);
-		salesDetail.setStatus(SalesDetailStatus.PENDING);
+		salesDetail.setDelivered(CommonUtil.round(salesDetail.getDelivered() - quantity, 3));
+		salesDetail.setStatus((salesDetail.getDelivered() > 0) ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.PENDING);
 		salesDetailBean.update(salesDetail);
 
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
