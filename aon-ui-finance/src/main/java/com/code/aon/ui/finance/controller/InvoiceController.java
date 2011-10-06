@@ -663,8 +663,7 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_SALES);
 		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_PURCHASE);
 		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_EXPENSE);
-		Iterator<?> iterator = invoiceDetailBean.getList(criteria).iterator();
-		return iterator.hasNext();
+		return invoiceDetailBean.getCount(criteria) > 0;
 	}
 
 	@Override

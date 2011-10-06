@@ -183,6 +183,11 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		this.invoiceDate = invoiceDate;
 	}
 	
+	public boolean isCustomerReadOnly() {
+		Delivery delivery = (Delivery)this.getTo();
+		return (delivery.getProject() != null && delivery.getProject().getId() != null);
+	}
+
 	public boolean isPending(){
 		Delivery delivery = (Delivery)this.getTo();
 		return delivery.getStatus() == DeliveryStatus.PENDING;

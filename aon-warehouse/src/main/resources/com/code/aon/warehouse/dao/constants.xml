@@ -6,8 +6,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.warehouse.DeliveryDetail">
-		<alias names="delivery_id,description,discountExpression,id,item_id,line,price,quantity,salesDetail_id,source,type,warehouse_id,item_product_type"/>
-		<hibernate names="delivery.id,description,discountExpression,id,item.id,line,price,quantity,salesDetail.id,source,type,warehouse.id,item.product.type"/>
+		<alias names="delivery_id,description,discountExpression,id,item_id,line,price,quantity,salesDetail_id,source,type,warehouse_id,item_product_type,salesDetail_sales_id"/>
+		<hibernate names="delivery.id,description,discountExpression,id,item.id,line,price,quantity,salesDetail.id,source,type,warehouse.id,item.product.type,salesDetail.sales.id"/>
 	</bean>
 	
 	<bean class="com.code.aon.warehouse.Income">
@@ -16,8 +16,8 @@
 	</bean>
 
 	<bean class="com.code.aon.warehouse.IncomeDetail">
-		<alias names="description,discountExpression,id,income_id,item_id,line,price,project_id,purchaseDetail_id,quantity,source,type,warehouse_id,item_product_type"/>
-		<hibernate names="description,discountExpression,id,income.id,item.id,line,price,project.id,purchaseDetail.id,quantity,source,type,warehouse.id,item.product.type"/>
+		<alias names="description,discountExpression,id,income_id,item_id,line,price,project_id,purchaseDetail_id,quantity,source,type,warehouse_id,item_product_type,purchaseDetail_purchase_id"/>
+		<hibernate names="description,discountExpression,id,income.id,item.id,line,price,project.id,purchaseDetail.id,quantity,source,type,warehouse.id,item.product.type,purchaseDetail.purchase.id"/>
 	</bean>
 
 	<bean class="com.code.aon.warehouse.InventoryDetail">

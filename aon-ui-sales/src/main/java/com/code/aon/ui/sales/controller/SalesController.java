@@ -52,6 +52,7 @@ import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.warehouse.Delivery;
+import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryDetailType;
@@ -195,6 +196,18 @@ public class SalesController extends BasicController {
 
 	public void setInvoiceWarehouse(Warehouse invoiceWarehouse) {
 		this.invoiceWarehouse = invoiceWarehouse;
+	}
+
+	public boolean isCustomerReadOnly() throws ManagerBeanException {
+		Sales sales = (Sales)this.getTo();
+		if (sales.getProject() != null && sales.getProject().getId() != null) {
+			return true;
+		}
+
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_SALES_DETAIL_SALES_ID), sales.getId());
+		return deliveryDetailBean.getCount(criteria) > 0;
 	}
 
 	public boolean isPending(){

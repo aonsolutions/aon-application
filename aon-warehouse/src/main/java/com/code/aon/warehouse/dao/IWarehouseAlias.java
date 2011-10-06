@@ -255,6 +255,12 @@ public interface IWarehouseAlias {
 	*/
 	String  DELIVERY_DETAIL_ITEM_PRODUCT_TYPE = DELIVERY_DETAIL_ENTRY.getAliasNames()[12];
 
+	/** 
+	* Alias value: DeliveryDetail_salesDetail_sales_id
+	* Hibernate value: DeliveryDetail.salesDetail.sales.id
+	*/
+	String  DELIVERY_DETAIL_SALES_DETAIL_SALES_ID = DELIVERY_DETAIL_ENTRY.getAliasNames()[13];
+
 
 
 	/** 
@@ -496,6 +502,12 @@ public interface IWarehouseAlias {
 	* Hibernate value: IncomeDetail.item.product.type
 	*/
 	String  INCOME_DETAIL_ITEM_PRODUCT_TYPE = INCOME_DETAIL_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: IncomeDetail_purchaseDetail_purchase_id
+	* Hibernate value: IncomeDetail.purchaseDetail.purchase.id
+	*/
+	String  INCOME_DETAIL_PURCHASE_DETAIL_PURCHASE_ID = INCOME_DETAIL_ENTRY.getAliasNames()[14];
 
 
 
