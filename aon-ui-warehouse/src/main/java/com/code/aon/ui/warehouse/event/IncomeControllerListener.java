@@ -7,9 +7,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.code.aon.ui.warehouse.controller.IncomeController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
@@ -17,7 +20,7 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
 
-public class IncomeControllerListener extends ControllerAdapter {
+public class IncomeControllerListener extends ControllerAdapter implements IWarehouseConstants {
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -42,6 +45,12 @@ public class IncomeControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
+	}
+	
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
+		incomeDetailController.onReset(null);
 	}
 	
 	private Warehouse obtainWarehouseId(Income income) throws ControllerListenerException {

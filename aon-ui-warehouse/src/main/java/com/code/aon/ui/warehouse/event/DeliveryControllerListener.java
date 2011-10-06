@@ -7,17 +7,20 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.warehouse.controller.DeliveryController;
+import com.code.aon.ui.warehouse.controller.IWarehouseConstants;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
-public class DeliveryControllerListener extends ControllerAdapter {
+public class DeliveryControllerListener extends ControllerAdapter implements IWarehouseConstants {
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -42,6 +45,12 @@ public class DeliveryControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
+	}
+	
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		IController deliveryDetailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
+		deliveryDetailController.onReset(null);
 	}
 	
 	private Warehouse obtainWarehouseId(Delivery delivery) throws ControllerListenerException {
