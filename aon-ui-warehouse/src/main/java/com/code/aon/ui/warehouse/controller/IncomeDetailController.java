@@ -1,46 +1,38 @@
 package com.code.aon.ui.warehouse.controller;
 
-import java.util.Iterator;
-
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.IncomeDetail;
 
-public class IncomeDetailController extends LinesController {
-
-	private boolean longDescription;
+public class IncomeDetailController extends LinesController implements IWarehouseConstants {
 
 	private IPriceStrategy priceStrategy;
+	private boolean longDescription;
 	
+	public IPriceStrategy getPriceStrategy(){
+		if(priceStrategy == null){
+			priceStrategy = PriceStrategyFactory.getPriceStrategy();
+		}
+		return priceStrategy;
+	}
+
 	public boolean isLongDescription() {
 		return longDescription;
 	}
 
 	public void setLongDescription(boolean longDescription) {
 		this.longDescription = longDescription;
-	}
-
-	public IPriceStrategy getPriceStrategy(){
-		if(priceStrategy == null){
-			priceStrategy = PriceStrategyFactory.getPriceStrategy();
-		}
-		return priceStrategy;
 	}
 
 	public void onLongDescription(ActionEvent event) {
@@ -59,12 +51,12 @@ public class IncomeDetailController extends LinesController {
 		setLongDescription(false);
 	}
 
-	public boolean isPurchaseSource() throws ManagerBeanException {
-		IncomeDetail incomeDetail = (IncomeDetail)getTo();
-		if (incomeDetail != null) {
-			return (incomeDetail.getPurchaseDetail() != null && incomeDetail.getPurchaseDetail().getId() != null);
+	public boolean isEditable() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			IncomeDetail incomeDetail = (IncomeDetail)this.getModel().getRowData();
+			return (incomeDetail.getPurchaseDetail() == null || incomeDetail.getPurchaseDetail().getId() == null);
 		}
-		return false;
+		return true;
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
@@ -109,28 +101,10 @@ public class IncomeDetailController extends LinesController {
 		return info.toString();
 	}
 
-	public String getLineStatusInfo() throws ManagerBeanException {
-		StringBuffer info = new StringBuffer(64);
-
+	public void onLoadPurchase(ActionEvent event) throws ManagerBeanException {
 		IncomeDetail incomeDetail = (IncomeDetail)this.getModel().getRowData();
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.INCOME);
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), incomeDetail.getId());
-		Iterator<?> iterator = invoiceDetailBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_income_transfered_to"));
-			info.append(" ");
-			info.append(AonUtil.getMessage("financeBundle", "finance_invoice"));
-			info.append(" ");
-			info.append(invoiceDetail.getInvoice().getReferenceCode());
-			info.append(" - ");
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_income_detail_line"));
-			info.append(" ");
-			info.append(invoiceDetail.getLine());
-		}
-		return info.toString();
+		BasicController purchaseController = (BasicController)AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
+		purchaseController.onLoad(event, incomeDetail.getPurchaseDetail().getPurchase().getId(), INCOME_FORM_NAME, null);
 	}
 
 }

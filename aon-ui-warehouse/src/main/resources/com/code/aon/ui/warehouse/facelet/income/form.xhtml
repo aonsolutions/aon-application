@@ -100,6 +100,12 @@
 									rendered="#{income.invoiced}" />
 								<aon:outputText styleClass="aon-italic" value=")"
 									rendered="#{income.invoiced}" />
+								<aon:commandLink id="invoice_link" immediate="true"
+									styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+									value="&#160;" title="#{bundle.aon_go}"
+									rendered="#{income.invoiced}"
+									actionListener="#{income.onLoadInvoice}"
+									action="purchaseInvoice_form" />
 							</aon:div>
 						</h:panelGrid>
  					</aon:div>

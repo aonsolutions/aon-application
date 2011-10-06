@@ -193,7 +193,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		return delivery.getStatus() == DeliveryStatus.INVOICED;
 	}
 
-	public String getInvoiceCode() throws ManagerBeanException {
+	public Invoice getInvoice() throws ManagerBeanException {
 		Delivery delivery = (Delivery)this.getTo();
 		if (delivery != null && delivery.getId() != null) {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
@@ -210,11 +210,16 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-					return invoiceDetail.getInvoice().getReferenceCode();
+					return invoiceDetail.getInvoice();
 				}
 			}
 		}
     	return null;
+	}
+
+	public String getInvoiceCode() throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		return (invoice != null) ? invoice.getReferenceCode() : null;
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -447,5 +452,13 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
 		}
 	}	
+
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		if (invoice != null) {
+			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onLoad(event, invoice.getId(), DELIVERY_FORM_NAME, DELIVERY_CONTROLLER_NAME + ".refresh");
+		}
+	}
 
 }

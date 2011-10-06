@@ -42,6 +42,7 @@ import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.registry.util.RegistryValidationManager;
 import com.code.aon.ui.supplier.util.SupplierValidationManager;
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
@@ -164,7 +165,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		return income.getStatus() == IncomeStatus.INVOICED;
 	}
 
-	public String getInvoiceCode() throws ManagerBeanException {
+	public Invoice getInvoice() throws ManagerBeanException {
 		Income income = (Income)this.getTo();
 		if (income != null && income.getId() != null) {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
@@ -181,11 +182,16 @@ public class IncomeController extends BasicController implements IWarehouseConst
 				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-					return invoiceDetail.getInvoice().getReferenceCode();
+					return invoiceDetail.getInvoice();
 				}
 			}
 		}
     	return null;
+	}
+
+	public String getInvoiceCode() throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		return (invoice != null) ? invoice.getReferenceCode() : null;
 	}
 
 	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {
@@ -366,6 +372,14 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
 		invoiceController.onSelect(event);
+	}
+
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		if (invoice != null) {
+			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(PURCHASE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onLoad(event, invoice.getId(), INCOME_FORM_NAME, INCOME_CONTROLLER_NAME + ".refresh");
+		}
 	}
 
 }

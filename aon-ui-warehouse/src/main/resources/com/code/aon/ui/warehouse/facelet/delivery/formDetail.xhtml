@@ -18,7 +18,7 @@
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
 		<ui:param name="skipResetButton" value="#{!delivery.pending}" />
-		<ui:param name="skipLineEdition" value="#{!delivery.pending}" />
+		<ui:param name="skipLineEdition" value="#{true}" />
 		<ui:param name="rowSelectorReRender" value="menuExt" />
 		<ui:param name="resetButtonReRender" value="menuExt" />
 		<ui:param name="newCancelButtonReRender" value="menuExt" />
@@ -28,7 +28,19 @@
 		<ui:param name="removeButtonReRender" value="menuExt,Delivery_total" />
 		<ui:param name="focusOnAdd" value="Item_id-New" />
 		<ui:param name="focusOnSelect" value="Item_id" />
-	
+		<ui:define name="beginFormListContent">
+			<aon:commandLink id="#{dataTableId}-selectButton"
+				styleClass="aon-table-row-link" value="&#160;"
+				immediate="true" ajaxSingle="true" requestDelay="100"
+				rendered="#{delivery.pending}"
+				actionListener="#{deliveryDetail.onSelect}"
+				onkeyup="#{dataTableId}KeyUp(this)"
+				onfocus="#{dataTableId}SelectRow(this)"
+				onblur="#{dataTableId}DeselectRow(this)"
+				focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+			</aon:commandLink>
+		</ui:define>
+
 		<ui:define name="columns">
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
@@ -62,6 +74,7 @@
 					<ui:param name="skipSuggestText" value="#{deliveryDetail.to.item != null and deliveryDetail.to.item.id != null}" />
 					<ui:param name="lookupInputOnFocus" value="DeliveryDetail_description" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<ui:param name="lookupDisabled" value="#{!controller.editable}" />
 					<ui:param name="lookupReRender" 
 						value="deliveryDetailItemEdit,DeliveryDetail_quantity,DeliveryDetail_price,DeliveryDetail_discount,
 								DeliveryDetail_amount" />
@@ -155,11 +168,11 @@
 					<aon:outputLabel for="DeliveryDetail_quantity" value="#{bundle.aon_quantity}" />
 				</f:facet>
 				<aon:outputText value="#{to.quantity}"
-					rendered="#{formList}">
+					rendered="#{formList or !controller.editable}">
 					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="DeliveryDetail_quantity" 
-					value="#{controller.to.quantity}" rendered="#{formEdit}"
+					value="#{controller.to.quantity}" rendered="#{formEdit and controller.editable}"
 					valueChangeListener="#{controller.onQuantityChanged}" 
 					reRender="DeliveryDetail_price,DeliveryDetail_discount,DeliveryDetail_amount" 
 					required="true" size="5" focus="DeliveryDetail_price" />
@@ -242,17 +255,15 @@
 				<f:facet name="header">
 					<aon:outputLabel value="INFO" />
 				</f:facet>
-				<aon:div rendered="#{to.salesDetail != null and to.salesDetail.id != null}" 
-					style="display:inline;cursor:pointer;">
-					<aon:outputText value="&#160;"
-						styleClass="aon-icon-transfer" style="padding-left:20px" />
+				<aon:commandLink id="deliveryDetailSourceLink" immediate="true"
+					styleClass="aon-button-goto" style="padding-right: 20px;"
+					value="&#160;" title="#{bundle.aon_go}" 
+					rendered="#{to.salesDetail != null and to.salesDetail.id != null}" 
+					actionListener="#{controller.onLoadSales}"
+					action="sales_form"
+					reRender="aonContent">
 					<rich:toolTip value="#{controller.lineSourceInfo}" />
-				</aon:div>
-				<aon:div rendered="#{delivery.invoiced}" style="display:inline;cursor:pointer;">
-					<aon:outputText value="&#160;"
-						styleClass="aon-icon-predetermine" style="padding-left:20px" />
-					<rich:toolTip value="#{controller.lineStatusInfo}" />
-				</aon:div>
+				</aon:commandLink>
 			</aon:column>
 		</ui:define>
 	

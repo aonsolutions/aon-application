@@ -12,15 +12,13 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tariff;
-import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
@@ -28,7 +26,7 @@ import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 
-public class DeliveryDetailController extends LinesController {
+public class DeliveryDetailController extends LinesController implements IWarehouseConstants {
 
 	private IPriceStrategy priceStrategy;
 	private boolean stockWarning;
@@ -73,12 +71,12 @@ public class DeliveryDetailController extends LinesController {
 		setLongDescription(false);
 	}
 
-	public boolean isSalesSource() throws ManagerBeanException {
-		DeliveryDetail deliveryDetail = (DeliveryDetail)getTo();
-		if (deliveryDetail != null) {
-			return (deliveryDetail.getSalesDetail() != null && deliveryDetail.getSalesDetail().getId() != null);
+	public boolean isEditable() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			DeliveryDetail deliveryDetail = (DeliveryDetail)this.getModel().getRowData();
+			return (deliveryDetail.getSalesDetail() == null || deliveryDetail.getSalesDetail().getId() == null);
 		}
-		return false;
+		return true;
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
@@ -188,28 +186,10 @@ public class DeliveryDetailController extends LinesController {
 		return info.toString();
 	}
 
-	public String getLineStatusInfo() throws ManagerBeanException {
-		StringBuffer info = new StringBuffer(64);
-
+	public void onLoadSales(ActionEvent event) throws ManagerBeanException {
 		DeliveryDetail deliveryDetail = (DeliveryDetail)this.getModel().getRowData();
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DELIVERY);
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), deliveryDetail.getId());
-		Iterator<?> iterator = invoiceDetailBean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_delivery_transfered_to"));
-			info.append(" ");
-			info.append(AonUtil.getMessage("financeBundle", "finance_invoice"));
-			info.append(" ");
-			info.append(invoiceDetail.getInvoice().getReferenceCode());
-			info.append(" - ");
-			info.append(AonUtil.getMessage("warehouseBundle", "warehouse_delivery_detail_line"));
-			info.append(" ");
-			info.append(invoiceDetail.getLine());
-		}
-		return info.toString();
+		BasicController salesController = (BasicController)AonUtil.getRegisteredBean(SALES_CONTROLLER_NAME);
+		salesController.onLoad(event, deliveryDetail.getSalesDetail().getSales().getId(), DELIVERY_FORM_NAME, null);
 	}
 
 }
