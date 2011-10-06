@@ -1248,11 +1248,13 @@ public class BasicController extends AbstractPojoController implements IControll
      * @param event
      */
 	public void onBackActionListener(ActionEvent event) {
-		if ( this.backActionListener == null ) {
-			onCancel(event);
-		} else if (! StringUtils.isEmpty(this.backActionListener) ) {
+		if (!StringUtils.isEmpty(this.backActionListener) ) {
 			String expression = "#{" + this.backActionListener + "}";
 			AonUtil.actionListener(expression, event);
+		} else if (!StringUtils.isEmpty(this.backAction) ) {
+			onBack(event);
+		} else {
+			onCancel(event);
 		}
 	}	
 	
