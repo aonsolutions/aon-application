@@ -141,6 +141,18 @@
 		/>
 	</warehouse:config>
 
+	<sales:config version="1.0" xmlns:sales="http://www.esferalia.com/sales">
+		<sales:sales
+			showTasData="false"
+		/>
+	</sales:config>
+
+	<purchase:config version="1.0" xmlns:purchase="http://www.esferalia.com/purchase">
+		<purchase:purchase
+			showTasData="false"
+		/>
+	</purchase:config>
+
 	<webmail:config version="1.2" xmlns:webmail="http://www.esferalia.com/webmail" >
 		<webmail:webmail
 			connect="true"

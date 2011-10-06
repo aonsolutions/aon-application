@@ -352,6 +352,7 @@ public class IncomeController extends BasicController implements IWarehouseConst
 			}
 		}
 
+		refresh(null);
 		IController detailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 	}

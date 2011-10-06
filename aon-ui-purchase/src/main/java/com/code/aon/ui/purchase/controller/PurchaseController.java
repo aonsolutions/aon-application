@@ -13,6 +13,7 @@ import org.xml.sax.SAXException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
@@ -24,8 +25,12 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.project.Project;
+import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.purchase.Purchase;
+import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.bridge.IncomeManager;
+import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
@@ -45,19 +50,15 @@ import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.warehouse.Income;
+import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.IncomeDetailType;
 
-/**
- * Controller used in the purchase maintenance.
- */
-public class PurchaseController extends BasicController {
-
-	private final String INCOME_CONTROLLER = "income";
-	private final String PURCHASE_INVOICE_CONTROLLER = "purchaseInvoice";
+public class PurchaseController extends BasicController implements IPurchaseConstants {
 
 	private List<SelectItem> addresses;
+	private List<SelectItem> projects;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
 	private RegistryValidationManager vm;
@@ -82,6 +83,14 @@ public class PurchaseController extends BasicController {
 	
 	public void setAddresses(List<SelectItem> addresses) {
 		this.addresses = addresses;
+	}
+	
+    public List<SelectItem> getProjects() {
+		return projects;
+	}
+	
+	public void setProjects(List<SelectItem> projects) {
+		this.projects = projects;
 	}
 	
 	public Boolean getDefaultPayMethod() {
@@ -181,6 +190,18 @@ public class PurchaseController extends BasicController {
 		this.invoiceWarehouse = invoiceWarehouse;
 	}
 
+	public boolean isInIncome() throws ManagerBeanException {
+		Purchase purchase = (Purchase)this.getTo();
+		return isInIncome(purchase);
+	}
+
+	private boolean isInIncome(Purchase purchase) throws ManagerBeanException {
+		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+		return incomeDetailBean.getCount(criteria) > 0;
+	}
+
 	public boolean isPending(){
 		Purchase purchase = (Purchase)this.getTo();
 		return purchase.getStatus() == PurchaseStatus.PENDING;
@@ -203,9 +224,11 @@ public class PurchaseController extends BasicController {
 			((Purchase)this.getTo()).setSupplier(supplier);
 			((Purchase)this.getTo()).setScope(supplier.getScope());
 			loadAddresses(supplier.getId());
+			loadProjects(supplier.getId());
 			loadDefaultPayMethod(supplier.getId(), false);
 		} else {
 			setAddresses(null);
+			setProjects(null);
 		}
 	}
 
@@ -239,6 +262,48 @@ public class PurchaseController extends BasicController {
 		return 0;
 	}
 	
+	public void loadProjects(Integer id) throws ManagerBeanException {
+		this.projects = new LinkedList<SelectItem>();
+		if (id != null) {
+			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addOrder(projectBean.getFieldName(IProjectAlias.PROJECT_NAME));
+			Iterator<?> iterator = projectBean.getList(criteria).iterator();
+			while(iterator.hasNext()) {
+				Project project = (Project)iterator.next();
+				SelectItem item = new SelectItem(project, project.getName());
+				projects.add(item);
+			}
+		}
+	}
+
+	public int getProjectCount() {
+		if (projects != null) {
+			return projects.size();
+		}
+		return 0;
+	}
+	
+	public void removePurchaseProject(ActionEvent event) throws ManagerBeanException {
+		Purchase to = (Purchase)this.getTo();
+		Project project = to.getProject();
+		to.setProject(null);
+		getManagerBean().restoreNullSubPOJOs(to);
+		getManagerBean().update(to);
+		getManagerBean().initializePOJO(to);
+
+		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), to.getId());
+		criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PROJECT_ID), project.getId());
+		for (ITransferObject ito : purchaseDetailBean.getList(criteria)) {
+			PurchaseDetail purchaseDetail = (PurchaseDetail)ito;
+			purchaseDetail.setProject(null);
+			purchaseDetailBean.update(purchaseDetail);
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
@@ -306,7 +371,7 @@ public class PurchaseController extends BasicController {
 		IncomeManager incomeManager = new IncomeManager();
 		Income income = incomeManager.purchaseIncome(to, getIncomeSeries(), getIncomeNumber(), getIncomeDate(), getIncomeWarehouse(), IncomeDetailType.MANUAL);
 
-		IController incomeController = FormUtil.getController(INCOME_CONTROLLER);
+		IController incomeController = FormUtil.getController(INCOME_CONTROLLER_NAME);
 		incomeController.onEditSearch(event);
 		incomeController.getCriteria().addEqualExpression(incomeController.getFieldName(IWarehouseAlias.INCOME_ID), income.getId());
 		incomeController.onSearch(event);
@@ -329,7 +394,7 @@ public class PurchaseController extends BasicController {
 		IncomeInvoicingManager invoicingManager = new IncomeInvoicingManager();
 		Invoice invoice = invoicingManager.invoice(income, getInvoiceRefCode(), getInvoiceDate());
 
-		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER);
+		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER_NAME);
 		invoiceController.onEditSearch(event);
 		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
 		invoiceController.onSearch(event);

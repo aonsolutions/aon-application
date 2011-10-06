@@ -379,6 +379,9 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_CUSTOMER_ID), to.getCustomer().getId());
+		if (to.getProject() != null && to.getProject().getId() != null) {
+			criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_PROJECT_ID), to.getProject().getId());
+		}
 		if (to.getRegistryAddress() != null && to.getRegistryAddress().getId() != null) {
 			criteria.addEqualExpression(salesBean.getFieldName(ISalesAlias.SALES_SHIPPING_ADDRESS_ID), to.getRegistryAddress().getId());
 		}
@@ -402,6 +405,7 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 			}
 		}
 
+		refresh(null);
 		IController detailController = FormUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
 		detailController.onSearch(null);
 	}

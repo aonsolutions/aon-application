@@ -19,7 +19,7 @@
 					<ui:param name="controller" value="#{purchase}" />
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!purchase.pending}" />
-					<ui:param name="skipRemoveButton" value="#{!purchase.pending}" />
+					<ui:param name="skipRemoveButton" value="#{!purchase.pending or purchase.inIncome}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonRole.warehouseOperator}">
 							<aon:commandButton id="income"
@@ -127,7 +127,7 @@
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{purchase.to.supplier}" />
 						<ui:param name="lookupDisabled" value="#{!purchase.pending}" />
-						<ui:param name="lookupReRender" value="PurchaseAddress,Purchase_scope,Purchase_defaultPayMethod,payMethodDiv" />
+						<ui:param name="lookupReRender" value="PurchaseAddress,PurchaseProject,Purchase_scope,Purchase_defaultPayMethod,payMethodDiv" />
 						<ui:param name="idRequired" value="#{true}" />						
 						<aon:methodParam name="lookupChangeListener"
 							value="#{purchase.supplierData}" type="lookupChangeListener" />
@@ -184,6 +184,43 @@
 					</aon:div>
 
 				</aon:panelGrid>
+
+				<aon:div id="PurchaseProject">
+					<aon:panelGrid columns="2" style="width: 100%;"
+						rendered="#{purchase.to.project.id != null or (purchase.pending and purchase.projectCount > 0)}"
+						columnClasses="aon-panelGrid-odd aon-width-140,
+							aon-panelGrid-even aon-width-auto">
+
+						<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
+							<aon:outputLabel for="Purchase_project"
+								value="#{projectBundle.project_project}" />
+						</c:if>
+						<c:if test="#{aonConfiguration.bean.purchase.showTasData}">
+							<aon:outputLabel for="Purchase_project"
+								value="#{tasBundle.tas_projectTas}" />
+						</c:if>
+						<aon:div>
+							<aon:selectOneMenu id="Purchase_project"
+								rendered="#{purchase.pending and purchase.to.project.id == null and purchase.projectCount > 0}"
+								value="#{purchase.to.project}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{purchase.projects}" />
+							</aon:selectOneMenu>
+							<aon:outputText styleClass="aon-bold"
+								value="#{purchase.to.project.name}" 
+								rendered="#{purchase.to.project.id != null}" />
+							<aon:div layout="inline" styleClass="aon-margin-left">
+								<aon:commandButton id="removePurchaseProject" 
+									value="&#160;" title="#{bundle.aon_remove}" 
+									styleClass="aon-icon-commandButton aon-icon-delete"
+									rendered="#{purchase.pending and purchase.to.project.id != null}"
+									actionListener="#{purchase.removePurchaseProject}" 
+									reRender="purchaseForm" />
+							</aon:div>
+						</aon:div>
+
+					</aon:panelGrid>
+				</aon:div>
 
 				<aon:panelGrid columns="4" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-140,

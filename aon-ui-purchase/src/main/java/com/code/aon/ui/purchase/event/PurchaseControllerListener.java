@@ -25,6 +25,7 @@ public class PurchaseControllerListener extends ControllerAdapter {
 		((Purchase)controller.getTo()).setStatus(PurchaseStatus.PENDING);
 		((Purchase)controller.getTo()).setDocumentType(PurchaseDocumentType.NORMAL);
 		controller.setAddresses(null);
+		controller.setProjects(null);
 		controller.setDefaultPayMethod(null);
 		controller.resetPurchasePayMethod();
 	}
@@ -34,6 +35,7 @@ public class PurchaseControllerListener extends ControllerAdapter {
 		PurchaseController controller = (PurchaseController)event.getController();
 		try {
 			controller.loadAddresses(((Purchase)controller.getTo()).getSupplier().getRegistry().getId());
+			controller.loadProjects(((Purchase)controller.getTo()).getSupplier().getRegistry().getId());
 			controller.loadDefaultPayMethod(((Purchase)controller.getTo()).getSupplier().getRegistry().getId(), true);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());

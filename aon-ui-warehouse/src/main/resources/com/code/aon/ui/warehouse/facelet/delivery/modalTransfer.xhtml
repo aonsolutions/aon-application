@@ -54,7 +54,7 @@
 									<aon:commandButton id="salesTransfer-accept"
 										value="#{warehouseBundle.warehouse_delivery_to_transfer}"
 										rendered="#{delivery.salesTransferManager.salesModel.rowCount > 0}"
-										reRender="showSalesTransferWindow,deliveryDetails,menuExt"
+										reRender="showSalesTransferWindow,deliveryForm"
 										actionListener="#{delivery.onSalesTransfer}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept">
 										<rich:componentControl for="salesTransferModalPanel"

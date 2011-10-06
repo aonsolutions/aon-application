@@ -8,6 +8,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.sales.Sales;
@@ -42,6 +43,7 @@ public class DeliveryManager {
 
 	private Delivery createDelivery(Sales sales, String series, int number, Date issueDate) throws ManagerBeanException {
 		Delivery delivery = new Delivery();
+		delivery.setProject(sales.getProject());
 		delivery.setSeries(series);
 		delivery.setNumber((number > 0) ? number : obtainMaxNumber(series));
 		delivery.setCustomer(sales.getCustomer());
@@ -115,8 +117,16 @@ public class DeliveryManager {
 		deliveryDetail.setSalesDetail(salesDetail);
 		deliveryDetail = (DeliveryDetail)deliveryDetailBean.insert(deliveryDetail);
 
+		Project salesProject = salesDetail.getSales().getProject();
+		if ((delivery.getProject() == null || delivery.getProject().getId() == null) && salesProject != null && salesProject.getId() != null ) {
+			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+			delivery.setProject(salesProject);
+			deliveryBean.restoreNullSubPOJOs(delivery);
+			delivery = (Delivery)deliveryBean.update(delivery);
+		}
+
 		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
-		salesDetail.setDelivered(salesDetail.getDelivered() + salesDetail.getTransfered());
+		salesDetail.setDelivered(CommonUtil.round(salesDetail.getDelivered() + salesDetail.getTransfered(), 3));
 		salesDetail.setStatus((salesDetail.getQuantity() > salesDetail.getDelivered()) ? SalesDetailStatus.PARTIAL_SETTLED : SalesDetailStatus.SETTLED);
 		salesDetailBean.update(salesDetail);
 

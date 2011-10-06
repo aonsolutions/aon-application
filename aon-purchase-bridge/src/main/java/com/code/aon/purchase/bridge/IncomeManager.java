@@ -7,6 +7,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.project.Project;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.dao.IPurchaseAlias;
@@ -41,6 +42,7 @@ public class IncomeManager {
 
 	private Income createIncome(Purchase purchase, String series, int number, Date issueDate) throws ManagerBeanException {
 		Income income = new Income();
+		income.setProject(purchase.getProject());
 		income.setSeries(series);
 		income.setNumber(number);
 		income.setSupplier(purchase.getSupplier());
@@ -76,6 +78,7 @@ public class IncomeManager {
 			PurchaseDetail purchaseDetail = (PurchaseDetail)iterator.next();
 			IncomeDetail incomeDetail = new IncomeDetail();
 			incomeDetail.setIncome(income);
+			incomeDetail.setProject(purchaseDetail.getProject());
 			incomeDetail.setLine(++line);
 			incomeDetail.setItem(purchaseDetail.getItem());
 			incomeDetail.setDescription(purchaseDetail.getDescription());
@@ -110,8 +113,16 @@ public class IncomeManager {
 		incomeDetail.setPurchaseDetail(purchaseDetail);
 		incomeDetail = (IncomeDetail)incomeDetailBean.insert(incomeDetail);
 
+		Project purchaseProject = purchaseDetail.getPurchase().getProject();
+		if ((income.getProject() == null || income.getProject().getId() == null) && purchaseProject != null && purchaseProject.getId() != null ) {
+			IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
+			income.setProject(purchaseProject);
+			incomeBean.restoreNullSubPOJOs(income);
+			income = (Income)incomeBean.update(income);
+		}
+
 		IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
-		purchaseDetail.setDelivered(purchaseDetail.getDelivered() + purchaseDetail.getTransfered());
+		purchaseDetail.setDelivered(CommonUtil.round(purchaseDetail.getDelivered() + purchaseDetail.getTransfered(), 3));
 		purchaseDetail.setStatus((purchaseDetail.getQuantity() > purchaseDetail.getDelivered()) ? PurchaseDetailStatus.PARTIAL_SETTLED : PurchaseDetailStatus.SETTLED);
 		purchaseDetailBean.update(purchaseDetail);
 

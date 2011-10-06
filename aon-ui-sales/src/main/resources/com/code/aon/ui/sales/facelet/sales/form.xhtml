@@ -19,7 +19,7 @@
 					<ui:param name="controller" value="#{sales}" />
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!sales.pending}" />
-					<ui:param name="skipRemoveButton" value="#{!sales.pending}" />
+					<ui:param name="skipRemoveButton" value="#{!sales.pending or sales.inDelivery}" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonRole.warehouseOperator}">
 							<aon:commandButton id="delivery"
@@ -132,7 +132,7 @@
 						<ui:param name="lookupTo" value="#{sales.to.customer}" />
 						<ui:param name="lookupDisabled" value="#{!sales.pending or sales.customerReadOnly}" />
 						<ui:param name="lookupReRender" 
-							value="Customer_registry_document,SalesAddress,Sales_scope,Sales_defaultPayMethod,payMethodDiv" />
+							value="Customer_registry_document,SalesAddress,SalesProject,Sales_scope,Sales_defaultPayMethod,payMethodDiv" />
 						<ui:param name="idRequired" value="#{true}" />						
 						<aon:methodParam name="lookupChangeListener"
 							value="#{sales.customerData}" type="lookupChangeListener" />
@@ -202,6 +202,43 @@
 					</aon:div>
 
 				</aon:panelGrid>
+
+				<aon:div id="SalesProject">
+					<aon:panelGrid columns="2" style="width: 100%;"
+						rendered="#{sales.to.project.id != null or (sales.pending and sales.projectCount > 0)}"
+						columnClasses="aon-panelGrid-odd aon-width-140,
+							aon-panelGrid-even aon-width-auto">
+
+						<c:if test="#{!aonConfiguration.bean.sales.showTasData}">
+							<aon:outputLabel for="Sales_project"
+								value="#{projectBundle.project_project}" />
+						</c:if>
+						<c:if test="#{aonConfiguration.bean.sales.showTasData}">
+							<aon:outputLabel for="Sales_project"
+								value="#{tasBundle.tas_projectTas}" />
+						</c:if>
+						<aon:div>
+							<aon:selectOneMenu id="Sales_project"
+								rendered="#{sales.pending and sales.to.project.id == null and sales.projectCount > 0}"
+								value="#{sales.to.project}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{sales.projects}" />
+							</aon:selectOneMenu>
+							<aon:outputText styleClass="aon-bold"
+								value="#{sales.to.project.name}" 
+								rendered="#{sales.to.project.id != null}" />
+							<aon:div layout="inline" styleClass="aon-margin-left">
+								<aon:commandButton id="removeSalesProject" 
+									value="&#160;" title="#{bundle.aon_remove}" 
+									styleClass="aon-icon-commandButton aon-icon-delete"
+									rendered="#{sales.pending and sales.to.project.id != null}"
+									actionListener="#{sales.removeSalesProject}" 
+									reRender="salesForm" />
+							</aon:div>
+						</aon:div>
+
+					</aon:panelGrid>
+				</aon:div>
 
 				<aon:panelGrid columns="4" style="width: 100%;"
 					columnClasses="aon-panelGrid-odd aon-width-140,

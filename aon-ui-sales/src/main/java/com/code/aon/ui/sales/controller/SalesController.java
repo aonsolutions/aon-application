@@ -31,6 +31,8 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
+import com.code.aon.project.Project;
+import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryPayMethod;
@@ -57,15 +59,10 @@ import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryDetailType;
 
-/**
- * Controller used in the sales maintenance.
- */
-public class SalesController extends BasicController {
-
-	private final String DELIVERY_CONTROLLER = "delivery";
-	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
+public class SalesController extends BasicController implements ISalesConstants {
 
 	private List<SelectItem> addresses;
+	private List<SelectItem> projects;
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
 	private RegistryValidationManager vm;
@@ -91,6 +88,14 @@ public class SalesController extends BasicController {
 	
 	public void setAddresses(List<SelectItem> addresses) {
 		this.addresses = addresses;
+	}
+	
+    public List<SelectItem> getProjects() {
+		return projects;
+	}
+	
+	public void setProjects(List<SelectItem> projects) {
+		this.projects = projects;
 	}
 	
 	public Boolean getDefaultPayMethod() {
@@ -203,7 +208,15 @@ public class SalesController extends BasicController {
 		if (sales.getProject() != null && sales.getProject().getId() != null) {
 			return true;
 		}
+		return isInDelivery(sales);
+	}
 
+	public boolean isInDelivery() throws ManagerBeanException {
+		Sales sales = (Sales)this.getTo();
+		return isInDelivery(sales);
+	}
+
+	private boolean isInDelivery(Sales sales) throws ManagerBeanException {
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_SALES_DETAIL_SALES_ID), sales.getId());
@@ -260,9 +273,11 @@ public class SalesController extends BasicController {
 			((Sales)this.getTo()).setCustomer(customer);
 			((Sales)this.getTo()).setScope(customer.getScope());
 			loadAddresses(customer.getId());
+			loadProjects(customer.getId());
 			loadDefaultPayMethod(customer.getId(), false);
 		} else {
 			setAddresses(null);
+			setProjects(null);
 		}
 	}
 
@@ -296,6 +311,38 @@ public class SalesController extends BasicController {
 		return 0;
 	}
 	
+	public void loadProjects(Integer id) throws ManagerBeanException {
+		this.projects = new LinkedList<SelectItem>();
+		if (id != null) {
+			IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID), id);
+			criteria.addEqualExpression(projectBean.getFieldName(IProjectAlias.PROJECT_ACTIVE), new Boolean(true));
+			criteria.addOrder(projectBean.getFieldName(IProjectAlias.PROJECT_NAME));
+			Iterator<?> iterator = projectBean.getList(criteria).iterator();
+			while(iterator.hasNext()) {
+				Project project = (Project)iterator.next();
+				SelectItem item = new SelectItem(project, project.getName());
+				projects.add(item);
+			}
+		}
+	}
+
+	public int getProjectCount() {
+		if (projects != null) {
+			return projects.size();
+		}
+		return 0;
+	}
+	
+	public void removeSalesProject(ActionEvent event) throws ManagerBeanException {
+		Sales to = (Sales)this.getTo();
+		to.setProject(null);
+		getManagerBean().restoreNullSubPOJOs(to);
+		getManagerBean().update(to);
+		getManagerBean().initializePOJO(to);
+	}
+
 	@SuppressWarnings("unchecked")
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {
 		if (id != null) {
@@ -389,7 +436,7 @@ public class SalesController extends BasicController {
 		DeliveryManager deliveryManager = new DeliveryManager();
 		Delivery delivery = deliveryManager.salesDelivery(to, getDeliverySeries(), getDeliveryNumber(), getDeliveryDate(), getDeliveryWarehouse(), DeliveryDetailType.MANUAL);
 
-		IController deliveryController = FormUtil.getController(DELIVERY_CONTROLLER);
+		IController deliveryController = FormUtil.getController(DELIVERY_CONTROLLER_NAME);
 		deliveryController.onEditSearch(event);
 		deliveryController.getCriteria().addEqualExpression(deliveryController.getFieldName(IWarehouseAlias.DELIVERY_ID), delivery.getId());
 		deliveryController.onSearch(event);
@@ -434,7 +481,7 @@ public class SalesController extends BasicController {
 		DeliveryInvoicingManager invoicingManager = new DeliveryInvoicingManager();
 		Invoice invoice = invoicingManager.invoice(delivery, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
-		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
+		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
 		invoiceController.onEditSearch(event);
 		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
 		invoiceController.onSearch(event);

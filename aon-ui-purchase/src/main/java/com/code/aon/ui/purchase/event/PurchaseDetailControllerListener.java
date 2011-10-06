@@ -20,9 +20,11 @@ public class PurchaseDetailControllerListener extends ControllerAdapter {
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		PurchaseDetailController controller = (PurchaseDetailController)event.getController();
 		PurchaseDetail purchaseDetail = (PurchaseDetail)controller.getTo();
+		Purchase purchase = (Purchase)controller.getMasterController().getTo();
 
 		controller.setLongDescription(false);
 		try {
+			purchaseDetail.setProject((purchase.getProject() != null && purchase.getProject().getId() != null) ? purchase.getProject() : null);
 			purchaseDetail.setLine(calculateNextLine((Purchase)controller.getMasterController().getTo()));
 			purchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
 		} catch (ManagerBeanException e) {
