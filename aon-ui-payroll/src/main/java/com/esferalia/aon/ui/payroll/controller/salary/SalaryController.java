@@ -179,7 +179,10 @@ public class SalaryController extends BasicController implements IPayrollConstan
 			Criteria c = new Criteria();
 			c.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_DEDUCTION_SALARY_ID), salary.getId());
 			List<SalaryDeduction> list = new LinkedList<SalaryDeduction>();
-			list.addAll((Collection<? extends SalaryDeduction>) bean.getList(c));
+			for(ITransferObject to: bean.getList(c)){
+				SalaryDeduction d = (SalaryDeduction) to;
+				list.add( d );
+			}
 			list.addAll(getSalaryEmbargos());
 			return (Collection<SalaryDeduction>) list;
 		}
