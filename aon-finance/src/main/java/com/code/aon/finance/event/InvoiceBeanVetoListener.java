@@ -119,8 +119,8 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 					updateRectifiedInvoices(invoice);
 				}
 			} else {
-				throw new ManagerBeanVetoListenerException("La factura " + invoice.getReferenceCode() + " no se puede borrar. " +
-															"Tiene vencimientos con movimientos.");
+				throw new ManagerBeanVetoListenerException("La Factura " + invoice.getReferenceCode() + " no se puede borrar. " +
+															"Tiene Vencimientos con movimientos.");
 			}
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
@@ -131,7 +131,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		int thisYear = CommonUtil.getYear(new Date());
 		int invoiceYear = CommonUtil.getYear(invoice.getIssueDate());
 		if (invoiceYear < (thisYear-5) || invoiceYear > (thisYear+1)) {
-			throw new ManagerBeanVetoListenerException("La fecha de la factura no es correcta.");
+			throw new ManagerBeanVetoListenerException("La Fecha de la Factura no es correcta.");
 		}
 		if (StringUtils.isEmpty(invoice.getRegistryName())) {
 			invoice.setRegistryName(invoice.getRegistry().getFullName());
