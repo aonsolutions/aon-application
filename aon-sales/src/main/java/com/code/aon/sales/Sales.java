@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
@@ -71,9 +72,11 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
     private DiscountExpression discountExpression;
     private Date issueDate;
     private PayMethod payMethod;
+    private DocumentType documentType;
     private SecurityLevel securityLevel;
     private SalesStatus status;
-    private DocumentType documentType;
+    private String comments;
+    private String remarks;
 	private WorkPlace workPlace;
 	private Scope scope;
     private int numberOfPayments;
@@ -178,6 +181,14 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 		this.payMethod = payMethod;
 	}
 
+	@Column(name="document_type")
+	public DocumentType getDocumentType() {
+		return documentType;
+	}
+	public void setDocumentType(DocumentType documentType) {
+		this.documentType = documentType;
+	}
+
 	@Column(name="security_level")
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
@@ -193,12 +204,20 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 		this.status = status;
 	}
 
-	@Column(name="document_type")
-	public DocumentType getDocumentType() {
-		return documentType;
+	@Lob
+	public String getComments() {
+		return comments;
 	}
-	public void setDocumentType(DocumentType documentType) {
-		this.documentType = documentType;
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+
+	@Lob
+	public String getRemarks() {
+		return remarks;
+	}
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
     @ManyToOne
@@ -341,6 +360,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 			return new EqualsBuilder()
 			.append(this.bank, o.bank)
 			.append(this.bankAccount, o.bankAccount)
+			.append(this.comments, o.comments)
 			.append(this.customer, o.customer)
 			.append(this.daysBetweenPayments, o.daysBetweenPayments)
 			.append(this.daysToFirstPayment, o.daysToFirstPayment)
@@ -352,6 +372,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 			.append(this.paymentDays, o.paymentDays)
 			.append(this.payMethod, o.payMethod)
 			.append(this.project, o.project)
+			.append(this.remarks, o.remarks)
 			.append(this.scope, o.scope)
 			.append(this.securityLevel, o.securityLevel)
 			.append(this.seller, o.seller)
@@ -369,6 +390,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 		return new HashCodeBuilder()
 			.append(bank)
 			.append(bankAccount)
+			.append(comments)
 			.append(customer)
 			.append(daysBetweenPayments)
 			.append(daysToFirstPayment)
@@ -381,6 +403,7 @@ public class Sales implements ITransferObject, IHeaderObject, ICalculableContain
 			.append(paymentDays)
 			.append(payMethod)
 			.append(project)
+			.append(remarks)
 			.append(scope)
 			.append(securityLevel)
 			.append(series)

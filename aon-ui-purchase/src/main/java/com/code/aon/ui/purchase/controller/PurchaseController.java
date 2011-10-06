@@ -183,26 +183,17 @@ public class PurchaseController extends BasicController {
 
 	public boolean isPending(){
 		Purchase purchase = (Purchase)this.getTo();
-		if (purchase.getStatus() != null) {
-			return purchase.getStatus().equals(PurchaseStatus.PENDING);
-		}
-		return false;
+		return purchase.getStatus() == PurchaseStatus.PENDING;
 	}
 
 	public boolean isBlocked(){
 		Purchase purchase = (Purchase)this.getTo();
-		if (purchase.getStatus() != null) {
-			return purchase.getStatus().equals(PurchaseStatus.BLOCKED);
-		}
-		return false;
+		return purchase.getStatus() == PurchaseStatus.BLOCKED;
 	}
 
 	public boolean isClosed(){
 		Purchase purchase = (Purchase)this.getTo();
-		if (purchase.getStatus() != null) {
-			return purchase.getStatus().equals(PurchaseStatus.CLOSED);
-		}
-		return false;
+		return purchase.getStatus() == PurchaseStatus.CLOSED;
 	}
 
 	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {

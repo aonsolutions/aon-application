@@ -30,118 +30,130 @@ public interface ISalesAlias {
 	String  SALES_BANK_ID = SALES_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: Sales_comments
+	* Hibernate value: Sales.comments
+	*/
+	String  SALES_COMMENTS = SALES_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: Sales_customer_id
 	* Hibernate value: Sales.customer.id
 	*/
-	String  SALES_CUSTOMER_ID = SALES_ENTRY.getAliasNames()[2];
+	String  SALES_CUSTOMER_ID = SALES_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Sales_daysBetweenPayments
 	* Hibernate value: Sales.daysBetweenPayments
 	*/
-	String  SALES_DAYS_BETWEEN_PAYMENTS = SALES_ENTRY.getAliasNames()[3];
+	String  SALES_DAYS_BETWEEN_PAYMENTS = SALES_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Sales_daysToFirstPayment
 	* Hibernate value: Sales.daysToFirstPayment
 	*/
-	String  SALES_DAYS_TO_FIRST_PAYMENT = SALES_ENTRY.getAliasNames()[4];
+	String  SALES_DAYS_TO_FIRST_PAYMENT = SALES_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Sales_discountExpression
 	* Hibernate value: Sales.discountExpression
 	*/
-	String  SALES_DISCOUNT_EXPRESSION = SALES_ENTRY.getAliasNames()[5];
+	String  SALES_DISCOUNT_EXPRESSION = SALES_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Sales_documentType
 	* Hibernate value: Sales.documentType
 	*/
-	String  SALES_DOCUMENT_TYPE = SALES_ENTRY.getAliasNames()[6];
+	String  SALES_DOCUMENT_TYPE = SALES_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Sales_id
 	* Hibernate value: Sales.id
 	*/
-	String  SALES_ID = SALES_ENTRY.getAliasNames()[7];
+	String  SALES_ID = SALES_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Sales_issueDate
 	* Hibernate value: Sales.issueDate
 	*/
-	String  SALES_ISSUE_DATE = SALES_ENTRY.getAliasNames()[8];
+	String  SALES_ISSUE_DATE = SALES_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Sales_number
 	* Hibernate value: Sales.number
 	*/
-	String  SALES_NUMBER = SALES_ENTRY.getAliasNames()[9];
+	String  SALES_NUMBER = SALES_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Sales_numberOfPayments
 	* Hibernate value: Sales.numberOfPayments
 	*/
-	String  SALES_NUMBER_OF_PAYMENTS = SALES_ENTRY.getAliasNames()[10];
+	String  SALES_NUMBER_OF_PAYMENTS = SALES_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Sales_payMethod_id
 	* Hibernate value: Sales.payMethod.id
 	*/
-	String  SALES_PAY_METHOD_ID = SALES_ENTRY.getAliasNames()[11];
+	String  SALES_PAY_METHOD_ID = SALES_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Sales_paymentDays
 	* Hibernate value: Sales.paymentDays
 	*/
-	String  SALES_PAYMENT_DAYS = SALES_ENTRY.getAliasNames()[12];
+	String  SALES_PAYMENT_DAYS = SALES_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Sales_project_id
 	* Hibernate value: Sales.project.id
 	*/
-	String  SALES_PROJECT_ID = SALES_ENTRY.getAliasNames()[13];
+	String  SALES_PROJECT_ID = SALES_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: Sales_remarks
+	* Hibernate value: Sales.remarks
+	*/
+	String  SALES_REMARKS = SALES_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Sales_scope_id
 	* Hibernate value: Sales.scope.id
 	*/
-	String  SALES_SCOPE_ID = SALES_ENTRY.getAliasNames()[14];
+	String  SALES_SCOPE_ID = SALES_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Sales_securityLevel
 	* Hibernate value: Sales.securityLevel
 	*/
-	String  SALES_SECURITY_LEVEL = SALES_ENTRY.getAliasNames()[15];
+	String  SALES_SECURITY_LEVEL = SALES_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Sales_seller_id
 	* Hibernate value: Sales.seller.id
 	*/
-	String  SALES_SELLER_ID = SALES_ENTRY.getAliasNames()[16];
+	String  SALES_SELLER_ID = SALES_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Sales_series
 	* Hibernate value: Sales.series
 	*/
-	String  SALES_SERIES = SALES_ENTRY.getAliasNames()[17];
+	String  SALES_SERIES = SALES_ENTRY.getAliasNames()[19];
 
 	/** 
 	* Alias value: Sales_shippingAddress_id
 	* Hibernate value: Sales.shippingAddress.id
 	*/
-	String  SALES_SHIPPING_ADDRESS_ID = SALES_ENTRY.getAliasNames()[18];
+	String  SALES_SHIPPING_ADDRESS_ID = SALES_ENTRY.getAliasNames()[20];
 
 	/** 
 	* Alias value: Sales_status
 	* Hibernate value: Sales.status
 	*/
-	String  SALES_STATUS = SALES_ENTRY.getAliasNames()[19];
+	String  SALES_STATUS = SALES_ENTRY.getAliasNames()[21];
 
 	/** 
 	* Alias value: Sales_workPlace_id
 	* Hibernate value: Sales.workPlace.id
 	*/
-	String  SALES_WORK_PLACE_ID = SALES_ENTRY.getAliasNames()[20];
+	String  SALES_WORK_PLACE_ID = SALES_ENTRY.getAliasNames()[22];
 
 
 

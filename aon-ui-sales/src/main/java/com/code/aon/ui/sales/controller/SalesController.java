@@ -199,26 +199,17 @@ public class SalesController extends BasicController {
 
 	public boolean isPending(){
 		Sales sales = (Sales)this.getTo();
-		if (sales.getStatus() != null) {
-			return sales.getStatus().equals(SalesStatus.PENDING);
-		}
-		return false;
+		return sales.getStatus() == SalesStatus.PENDING;
 	}
 
 	public boolean isBlocked(){
 		Sales sales = (Sales)this.getTo();
-		if (sales.getStatus() != null) {
-			return sales.getStatus().equals(SalesStatus.BLOCKED);
-		}
-		return false;
+		return sales.getStatus() == SalesStatus.BLOCKED;
 	}
 
 	public boolean isClosed(){
 		Sales sales = (Sales)this.getTo();
-		if (sales.getStatus() != null) {
-			return sales.getStatus().equals(SalesStatus.CLOSED);
-		}
-		return false;
+		return sales.getStatus() == SalesStatus.CLOSED;
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
