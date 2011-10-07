@@ -5,18 +5,15 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.purchase.controller.IPurchaseConstants;
 import com.code.aon.ui.purchase.controller.PurchaseController;
 
-/**
- * Listener Added to the OfferController.
- * 
- * @author Consulting & Development. Joseba Urkiri - 6-sept-2006
- * @since 1.0
- */
-public class PurchaseControllerListener extends ControllerAdapter {
+public class PurchaseControllerListener extends ControllerAdapter implements IPurchaseConstants {
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -42,4 +39,10 @@ public class PurchaseControllerListener extends ControllerAdapter {
 		}
 	}
 
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
+		purchaseDetailController.onReset(null);
+	}
+	
 }
