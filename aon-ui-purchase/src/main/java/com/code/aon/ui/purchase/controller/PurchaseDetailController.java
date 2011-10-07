@@ -18,30 +18,30 @@ import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.enumeration.PurchaseDetailStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 
-public class PurchaseDetailController extends LinesController {
-
-	private boolean longDescription;
+public class PurchaseDetailController extends LinesController implements IPurchaseConstants {
 
 	private IPriceStrategy priceStrategy;
+	private boolean longDescription;
 	
+	public IPriceStrategy getPriceStrategy(){
+		if(priceStrategy == null){
+			priceStrategy = PriceStrategyFactory.getPriceStrategy();
+		}
+		return priceStrategy;
+	}
+
 	public boolean isLongDescription() {
 		return longDescription;
 	}
 
 	public void setLongDescription(boolean longDescription) {
 		this.longDescription = longDescription;
-	}
-
-	public IPriceStrategy getPriceStrategy(){
-		if(priceStrategy == null){
-			priceStrategy = PriceStrategyFactory.getPriceStrategy();
-		}
-		return priceStrategy;
 	}
 
 	public void onLongDescription(ActionEvent event) {
@@ -135,6 +135,27 @@ public class PurchaseDetailController extends LinesController {
 			info.append("</p>");
 		}
 		return info.toString();
+	}
+
+	public void onLoadIncome(ActionEvent event) throws ManagerBeanException {
+		PurchaseDetail purchaseDetail = (PurchaseDetail)this.getModel().getRowData();
+		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_PURCHASE_DETAIL_ID), purchaseDetail.getId());
+		criteria.addOrder(incomeDetailBean.getFieldName(IWarehouseAlias.INCOME_DETAIL_ID), false);
+		Iterator<?> iterator = incomeDetailBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			IncomeDetail incomeDetail = (IncomeDetail)iterator.next();
+			BasicController incomeController = (BasicController)AonUtil.getRegisteredBean(INCOME_CONTROLLER_NAME);
+			incomeController.onLoad(event, incomeDetail.getIncome().getId(), PURCHASE_FORM_NAME, PURCHASE_DETAIL_CONTROLLER_NAME + ".onBackPurchase");
+		}
+	}
+
+	public void onBackPurchase(ActionEvent event) throws ManagerBeanException {
+		PurchaseController purchaseController = (PurchaseController) AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
+		purchaseController.refresh(event);
+
+		onSearch(event);
 	}
 
 }

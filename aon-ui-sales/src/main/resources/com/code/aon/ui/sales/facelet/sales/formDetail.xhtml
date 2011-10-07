@@ -250,19 +250,25 @@
 				<f:facet name="header">
 					<aon:outputLabel value="INFO" />
 				</f:facet>
-				<aon:div rendered="#{to.offerDetail != null and to.offerDetail.id != null}" 
-					style="display:inline;cursor:pointer;">
-					<aon:outputText value="&#160;"
-						styleClass="aon-icon-transfer" style="padding-left:20px" />
+				<aon:commandLink id="salesDetailSourceLink" immediate="true"
+					styleClass="aon-button-goto" style="padding-right: 20px;"
+					value="&#160;" title="#{bundle.aon_go}" 
+					rendered="#{to.offerDetail != null and to.offerDetail.id != null}" 
+					actionListener="#{controller.onLoadOffer}"
+					action="offer_form"
+					reRender="aonContent">
 					<rich:toolTip value="#{controller.lineSourceInfo}" />
-				</aon:div>
-				<aon:div rendered="#{!controller.pending}" 
-					style="display:inline;cursor:pointer;">
-					<aon:outputText value="&#160;"
-						styleClass="#{controller.settled ? 'aon-icon-predetermine' : 'aon-icon-predetermine2'}" 
-						style="padding-left:20px" />
+				</aon:commandLink>
+				<aon:commandLink id="salesDetailDeliveryLink" immediate="true"
+					styleClass="#{controller.settled ? 'aon-icon-predetermine' : 'aon-icon-predetermine2'}"
+					style="padding-right: 20px;" 
+					value="&#160;" title="#{bundle.aon_go}" 
+					rendered="#{!controller.pending}" 
+					actionListener="#{controller.onLoadDelivery}"
+					action="delivery_form"
+					reRender="aonContent">
 					<rich:toolTip value="#{controller.lineStatusInfo}" />
-				</aon:div>
+				</aon:commandLink>
 			</aon:column>
 		</ui:define>
 	</ui:decorate>

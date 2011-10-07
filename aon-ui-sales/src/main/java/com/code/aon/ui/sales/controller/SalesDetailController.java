@@ -22,30 +22,30 @@ import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 
-public class SalesDetailController extends LinesController {
-
-	private boolean longDescription;
+public class SalesDetailController extends LinesController implements ISalesConstants {
 
 	private IPriceStrategy priceStrategy;
+	private boolean longDescription;
 	
+	public IPriceStrategy getPriceStrategy(){
+		if(priceStrategy == null){
+			priceStrategy = PriceStrategyFactory.getPriceStrategy();
+		}
+		return priceStrategy;
+	}
+
 	public boolean isLongDescription() {
 		return longDescription;
 	}
 
 	public void setLongDescription(boolean longDescription) {
 		this.longDescription = longDescription;
-	}
-
-	public IPriceStrategy getPriceStrategy(){
-		if(priceStrategy == null){
-			priceStrategy = PriceStrategyFactory.getPriceStrategy();
-		}
-		return priceStrategy;
 	}
 
 	public void onLongDescription(ActionEvent event) {
@@ -195,6 +195,33 @@ public class SalesDetailController extends LinesController {
 			info.append("</p>");
 		}
 		return info.toString();
+	}
+
+	public void onLoadOffer(ActionEvent event) throws ManagerBeanException {
+		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
+		BasicController offerController = (BasicController)AonUtil.getRegisteredBean(OFFER_CONTROLLER_NAME);
+		offerController.onLoad(event, salesDetail.getOfferDetail().getOffer().getId(), SALES_FORM_NAME, null);
+	}
+
+	public void onLoadDelivery(ActionEvent event) throws ManagerBeanException {
+		SalesDetail salesDetail = (SalesDetail)this.getModel().getRowData();
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_SALES_DETAIL_ID), salesDetail.getId());
+		criteria.addOrder(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_ID), false);
+		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			DeliveryDetail deliveryDetail = (DeliveryDetail)iterator.next();
+			BasicController deliveryController = (BasicController)AonUtil.getRegisteredBean(DELIVERY_CONTROLLER_NAME);
+			deliveryController.onLoad(event, deliveryDetail.getDelivery().getId(), SALES_FORM_NAME, SALES_DETAIL_CONTROLLER_NAME + ".onBackSales");
+		}
+	}
+
+	public void onBackSales(ActionEvent event) throws ManagerBeanException {
+		SalesController salesController = (SalesController) AonUtil.getRegisteredBean(SALES_CONTROLLER_NAME);
+		salesController.refresh(event);
+
+		onSearch(event);
 	}
 
 }
