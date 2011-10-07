@@ -84,12 +84,23 @@ public class SalesDetailController extends LinesController {
 		return false;
 	}
 
-	public boolean isOfferSource() throws ManagerBeanException {
-		SalesDetail salesDetail = (SalesDetail)getTo();
+	public boolean isEditable() throws ManagerBeanException {
+		SalesDetail salesDetail = (SalesDetail)this.getTo();
 		if (salesDetail != null) {
-			return (salesDetail.getOfferDetail() != null && salesDetail.getOfferDetail().getId() != null);
+			return isEditable(salesDetail);
 		}
 		return false;
+	}
+
+	public boolean isModelEditable() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			return isEditable((SalesDetail)this.getModel().getRowData());
+		}
+		return false;
+	}
+
+	private boolean isEditable(SalesDetail salesDetail) throws ManagerBeanException {
+		return (salesDetail.getOfferDetail() == null || salesDetail.getOfferDetail().getId() == null);
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {

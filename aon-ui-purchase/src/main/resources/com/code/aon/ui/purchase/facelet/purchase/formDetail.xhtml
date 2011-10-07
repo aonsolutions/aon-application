@@ -16,17 +16,29 @@
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
 		<ui:param name="skipResetButton" value="#{!purchase.pending}" />
-		<ui:param name="skipLineEdition" value="#{!purchase.pending or !purchaseDetail.pending}" />
+		<ui:param name="skipLineEdition" value="#{true}" />
 		<ui:param name="rowSelectorReRender" value="menuExt" />
 		<ui:param name="resetButtonReRender" value="menuExt" />
 		<ui:param name="newCancelButtonReRender" value="menuExt" />
 		<ui:param name="cancelButtonReRender" value="menuExt" />
-		<ui:param name="newSaveButtonReRender" value="menuExt,headerData,Purchase_total" />
-		<ui:param name="saveButtonReRender" value="menuExt,headerData,Purchase_total" />
-		<ui:param name="removeButtonReRender" value="menuExt,headerData,Purchase_total" />
+		<ui:param name="newSaveButtonReRender" value="menuExt,Purchase_total" />
+		<ui:param name="saveButtonReRender" value="menuExt,Purchase_total" />
+		<ui:param name="removeButtonReRender" value="menuExt,Purchase_total" />
 		<ui:param name="focusOnAdd" value="Item_id-New" />
 		<ui:param name="focusOnSelect" value="Item_id" />
-	
+		<ui:define name="beginFormListContent">
+			<aon:commandLink id="#{dataTableId}-selectButton"
+				styleClass="aon-table-row-link" value="&#160;"
+				immediate="true" ajaxSingle="true" requestDelay="100"
+				rendered="#{purchase.pending}"
+				actionListener="#{purchaseDetail.onSelect}"
+				onkeyup="#{dataTableId}KeyUp(this)"
+				onfocus="#{dataTableId}SelectRow(this)"
+				onblur="#{dataTableId}DeselectRow(this)"
+				focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+			</aon:commandLink>
+		</ui:define>
+
 		<ui:define name="columns">
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
@@ -60,6 +72,7 @@
 					<ui:param name="skipSuggestText" value="#{purchaseDetail.to.item != null and purchaseDetail.to.item.id != null}" />
 					<ui:param name="lookupInputOnFocus" value="PurchaseDetail_description" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<ui:param name="lookupDisabled" value="#{!controller.to.pending}" />
 					<ui:param name="lookupReRender" 
 						value="purchaseDetailItemEdit,PurchaseDetail_quantity,PurchaseDetail_price,PurchaseDetail_amount" />
 					<aon:methodParam name="lookupChangeListener"

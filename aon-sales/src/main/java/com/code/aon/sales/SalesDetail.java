@@ -163,6 +163,19 @@ public class SalesDetail implements ITransferObject, ICalculable {
 		this.transfered = transfered;
 	}
 
+	@Transient
+	public boolean isPending() {
+		return getStatus() == SalesDetailStatus.PENDING;
+	}
+	@Transient
+	public boolean isPartialSettled() {
+		return getStatus() == SalesDetailStatus.PARTIAL_SETTLED;
+	}
+	@Transient
+	public boolean isSettled() {
+		return getStatus() == SalesDetailStatus.SETTLED;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

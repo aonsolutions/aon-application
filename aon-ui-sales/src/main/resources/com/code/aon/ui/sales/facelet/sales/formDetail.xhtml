@@ -16,18 +16,29 @@
 		<ui:param name="showNote" value="false" />
 		<ui:param name="showDataScroller" value="false" />
 		<ui:param name="skipResetButton" value="#{!sales.pending}" />
-		<ui:param name="skipLineEdition" value="#{!sales.pending or !salesDetail.pending}" />
-		<ui:param name="skipSaveButton" value="#{salesDetail.offerSource}" />
+		<ui:param name="skipLineEdition" value="#{true}" />
 		<ui:param name="rowSelectorReRender" value="menuExt" />
 		<ui:param name="resetButtonReRender" value="menuExt" />
 		<ui:param name="newCancelButtonReRender" value="menuExt" />
 		<ui:param name="cancelButtonReRender" value="menuExt" />
-		<ui:param name="newSaveButtonReRender" value="menuExt,headerData,Sales_total" />
-		<ui:param name="saveButtonReRender" value="menuExt,headerData,Sales_total" />
-		<ui:param name="removeButtonReRender" value="menuExt,headerData,Sales_total" />
+		<ui:param name="newSaveButtonReRender" value="menuExt,Sales_total" />
+		<ui:param name="saveButtonReRender" value="menuExt,Sales_total" />
+		<ui:param name="removeButtonReRender" value="menuExt,Sales_total" />
 		<ui:param name="focusOnAdd" value="Item_id-New" />
 		<ui:param name="focusOnSelect" value="Item_id" />
-	
+		<ui:define name="beginFormListContent">
+			<aon:commandLink id="#{dataTableId}-selectButton"
+				styleClass="aon-table-row-link" value="&#160;"
+				immediate="true" ajaxSingle="true" requestDelay="100"
+				rendered="#{sales.pending}"
+				actionListener="#{salesDetail.onSelect}"
+				onkeyup="#{dataTableId}KeyUp(this)"
+				onfocus="#{dataTableId}SelectRow(this)"
+				onblur="#{dataTableId}DeselectRow(this)"
+				focus="#{(focusOnSelect != null)?(focusOnSelect):''}">
+			</aon:commandLink>
+		</ui:define>
+
 		<ui:define name="columns">
 	
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-60">
@@ -61,6 +72,7 @@
 					<ui:param name="skipSuggestText" value="#{salesDetail.to.item != null and salesDetail.to.item.id != null}" />
 					<ui:param name="lookupInputOnFocus" value="SalesDetail_description" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<ui:param name="lookupDisabled" value="#{!controller.editable or !controller.to.pending}" />
 					<ui:param name="lookupReRender" 
 						value="salesDetailItemEdit,SalesDetail_quantity,SalesDetail_price,SalesDetail_discount,SalesDetail_amount" />
 					<aon:methodParam name="lookupChangeListener"
@@ -151,11 +163,11 @@
 					<aon:outputLabel for="SalesDetail_quantity" value="#{bundle.aon_quantity}" />
 				</f:facet>
 				<aon:outputText value="#{to.quantity}"
-					rendered="#{formList}">
+					rendered="#{formList or !controller.modelEditable}">
 					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="SalesDetail_quantity" 
-					value="#{controller.to.quantity}" rendered="#{formEdit}"
+					value="#{controller.to.quantity}" rendered="#{formEdit and controller.editable}"
 					valueChangeListener="#{controller.onQuantityChanged}" 
 					reRender="SalesDetail_price,SalesDetail_discount,SalesDetail_amount" 
 					required="true" size="5" focus="SalesDetail_price" />

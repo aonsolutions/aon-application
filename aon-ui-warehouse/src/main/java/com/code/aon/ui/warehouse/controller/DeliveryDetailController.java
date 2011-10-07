@@ -72,11 +72,22 @@ public class DeliveryDetailController extends LinesController implements IWareho
 	}
 
 	public boolean isEditable() throws ManagerBeanException {
-		if (getModel().isRowAvailable()) {
-			DeliveryDetail deliveryDetail = (DeliveryDetail)this.getModel().getRowData();
-			return (deliveryDetail.getSalesDetail() == null || deliveryDetail.getSalesDetail().getId() == null);
+		DeliveryDetail deliveryDetail = (DeliveryDetail)this.getTo();
+		if (deliveryDetail != null) {
+			return isEditable(deliveryDetail);
 		}
-		return true;
+		return false;
+	}
+
+	public boolean isModelEditable() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			return isEditable((DeliveryDetail)this.getModel().getRowData());
+		}
+		return false;
+	}
+
+	private boolean isEditable(DeliveryDetail deliveryDetail) throws ManagerBeanException {
+		return (deliveryDetail.getSalesDetail() == null || deliveryDetail.getSalesDetail().getId() == null);
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {

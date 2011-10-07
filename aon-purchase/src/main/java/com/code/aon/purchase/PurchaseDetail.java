@@ -182,6 +182,19 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
 		return getItem().getProduct().getCode();
 	}   		
    
+	@Transient
+	public boolean isPending() {
+		return getStatus() == PurchaseDetailStatus.PENDING;
+	}
+	@Transient
+	public boolean isPartialSettled() {
+		return getStatus() == PurchaseDetailStatus.PARTIAL_SETTLED;
+	}
+	@Transient
+	public boolean isSettled() {
+		return getStatus() == PurchaseDetailStatus.SETTLED;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

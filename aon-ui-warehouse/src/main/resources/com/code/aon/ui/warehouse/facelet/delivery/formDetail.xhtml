@@ -168,7 +168,7 @@
 					<aon:outputLabel for="DeliveryDetail_quantity" value="#{bundle.aon_quantity}" />
 				</f:facet>
 				<aon:outputText value="#{to.quantity}"
-					rendered="#{formList or !controller.editable}">
+					rendered="#{formList or !controller.modelEditable}">
 					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 				</aon:outputText>
 				<aon:inputText id="DeliveryDetail_quantity" 

@@ -35,8 +35,14 @@ public class SalesDetailBeanVetoListener extends ManagerBeanVetoListenerAdapter 
 		if (salesDetail.getQuantity() < 0) {
 			throw new ManagerBeanVetoListenerException("La Cantidad del Pedido no puede ser negativa.");
 		}
-		if (salesDetail.getQuantity() < salesDetail.getDelivered()) {
+
+		if (salesDetail.getDelivered() == 0) {
+			salesDetail.setStatus(SalesDetailStatus.PENDING);
+		} else if (salesDetail.getDelivered() >= salesDetail.getQuantity()) {
 			salesDetail.setQuantity(salesDetail.getDelivered());
+			salesDetail.setStatus(SalesDetailStatus.SETTLED);
+		} else {
+			salesDetail.setStatus(SalesDetailStatus.PARTIAL_SETTLED);
 		}
 	}
 

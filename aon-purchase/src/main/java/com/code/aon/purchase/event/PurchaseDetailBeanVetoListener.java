@@ -35,8 +35,14 @@ public class PurchaseDetailBeanVetoListener extends ManagerBeanVetoListenerAdapt
 		if (purchaseDetail.getQuantity() < 0) {
 			throw new ManagerBeanVetoListenerException("La Cantidad del Pedido no puede ser negativa.");
 		}
-		if (purchaseDetail.getQuantity() < purchaseDetail.getDelivered()) {
+
+		if (purchaseDetail.getDelivered() == 0) {
+			purchaseDetail.setStatus(PurchaseDetailStatus.PENDING);
+		} else if (purchaseDetail.getDelivered() >= purchaseDetail.getQuantity()) {
 			purchaseDetail.setQuantity(purchaseDetail.getDelivered());
+			purchaseDetail.setStatus(PurchaseDetailStatus.SETTLED);
+		} else {
+			purchaseDetail.setStatus(PurchaseDetailStatus.PARTIAL_SETTLED);
 		}
 	}
 

@@ -52,11 +52,22 @@ public class IncomeDetailController extends LinesController implements IWarehous
 	}
 
 	public boolean isEditable() throws ManagerBeanException {
-		if (getModel().isRowAvailable()) {
-			IncomeDetail incomeDetail = (IncomeDetail)this.getModel().getRowData();
-			return (incomeDetail.getPurchaseDetail() == null || incomeDetail.getPurchaseDetail().getId() == null);
+		IncomeDetail incomeDetail = (IncomeDetail)this.getTo();
+		if (incomeDetail != null) {
+			return isEditable(incomeDetail);
 		}
-		return true;
+		return false;
+	}
+
+	public boolean isModelEditable() throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			return isEditable((IncomeDetail)this.getModel().getRowData());
+		}
+		return false;
+	}
+
+	private boolean isEditable(IncomeDetail incomeDetail) throws ManagerBeanException {
+		return (incomeDetail.getPurchaseDetail() == null || incomeDetail.getPurchaseDetail().getId() == null);
 	}
 
 	public void onItemChanged(LookupChangeEvent event) {
