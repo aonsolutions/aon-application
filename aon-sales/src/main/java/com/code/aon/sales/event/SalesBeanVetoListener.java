@@ -1,9 +1,12 @@
 package com.code.aon.sales.event;
 
+import java.util.Date;
+
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.enumeration.DocumentType;
@@ -15,6 +18,13 @@ public class SalesBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Sales sales = (Sales) evt.getTo();
 		setDefaultValues(sales);
+		checkSales(sales);
+	}
+
+	@Override
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		Sales sales = (Sales) evt.getTo();
+		checkSales(sales);
 	}
 
 	private void setDefaultValues(Sales sales) {
@@ -34,4 +44,13 @@ public class SalesBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			sales.setScope(sales.getCustomer().getScope());
 		}
 	}
+
+	private void checkSales(Sales sales) throws ManagerBeanVetoListenerException {
+		int thisYear = CommonUtil.getYear(new Date());
+		int salesYear = CommonUtil.getYear(sales.getIssueDate());
+		if (salesYear < (thisYear-5) || salesYear > (thisYear+1)) {
+			throw new ManagerBeanVetoListenerException("La Fecha del Pedido no es correcta.");
+		}
+	}
+
 }
