@@ -111,6 +111,15 @@ public class EnterpriseTree implements ICompanyConstants {
 	private boolean searchCurrent;
 	
 	private IControllerListener contractListener;
+
+	private String splitterPosition = "250";
+
+	public String getSplitterPosition() {
+		return splitterPosition;
+	}
+	public void setSplitterPosition(String splitterPosition) {
+		this.splitterPosition = splitterPosition;
+	}
 	
 	public boolean isSearchCurrent() {
 		return searchCurrent;
@@ -796,5 +805,5 @@ public class EnterpriseTree implements ICompanyConstants {
 			}
 		}
 	}
-
+	
 }

@@ -1,3 +1,16 @@
+.treeLeftContent {
+	position: absolute;
+	outline-style: none;
+	left: 0px;
+	z-index: 1;
+}
+
+.treeRightContent {
+	position: absolute;
+	outline-style: none;
+	z-index: 1;
+}
+
 /* Splitbar styles; these are the default class names */
 
 .ui-state-default { background-color: #CBE1FB }

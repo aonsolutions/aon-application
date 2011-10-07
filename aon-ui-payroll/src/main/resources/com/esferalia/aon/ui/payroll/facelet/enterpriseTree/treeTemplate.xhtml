@@ -24,11 +24,13 @@
 		>
 		
 		<aon:div styleClass="treeContentDiv">
-			<aon:div styleClass="treeLeftContent">
+			<aon:div styleClass="treeLeftContent"
+				style="width: #{enterpriseTree.splitterPosition}px">
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/tree.xhtml" />
 			</aon:div>
 			
-			<aon:div styleClass="treeRightContent">
+			<aon:div styleClass="treeRightContent"
+				style="left: #{enterpriseTree.splitterPosition+8}px">
 				<ui:insert name="header" />
 				<ui:insert name="content" />
 			</aon:div>
@@ -44,14 +46,14 @@
 				outline: true,
 				anchorToWindow: true,
 				resizeToWidth: true,
-				sizeLeft: getSplitterPosition(),
+				sizeLeft: #{enterpriseTree.splitterPosition},
 				minLeft: 150,
 				minRight: 600
 			});
 			goToTreeOffset();
 		});
 		jQuery('.treeLeftContent').resize(function() {
-			setSplitterPosition( jQuery(this).width() );
+			jQuery('.aon-splitter-position').val( jQuery(this).width() );
 		});
 	</script>
 
