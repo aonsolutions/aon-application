@@ -57,14 +57,11 @@ public class SalaryDraftPaymentController extends ContractDetailVariableControll
 		cp.setContract((Contract) master.getTo());
 		super.onAccept(event);
 		reset(false);
-		master.setPaymentsModel(null);
 	}
 
 	public void onRemove(ActionEvent event) {
 		super.onRemove(event);
 		reset(false);
-		SalaryDraftController master = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
-		master.setPaymentsModel(null);
 	}
 	
 	public void onReset(ActionEvent event) {
@@ -77,6 +74,8 @@ public class SalaryDraftPaymentController extends ContractDetailVariableControll
 		setModalPanelVisible(panelVisible);
 		setMonth(Month.getMonthByValue(CommonUtil.getMonth(new Date())));
 		setYear( CommonUtil.getYear(new Date()));
+		SalaryDraftController master = (SalaryDraftController) FormUtil.getController(IPayrollConstants.SALARY_DRAFT_CONTROLLER);
+		master.reset();
 	}
 	
 	private void setSelectedPayment(ActionEvent event){

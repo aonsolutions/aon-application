@@ -109,6 +109,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		expressionContext.addVariable(TOTAL_LIQUID, totalPayment - totalDeduction, start,end);
 		Double totalEmbargos = fillEmbargos(contractSalaryCalculatorContext);
 		
+		salaryBuilder.setTotalDeduction( totalDeduction + totalEmbargos);
+		
 		Double totalCost = fillCosts(contractSalaryCalculatorContext);
 		expressionContext.addVariable(ENTERPRISE_QUOTA, totalCost, start, end);
 		Double totalBonus = fillBonus(contractSalaryCalculatorContext);
@@ -398,9 +400,6 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				}
 				total += embargo;
 				
-			}
-			if ( total > 0.00 )  {
-				salaryBuilder.setTotalDeduction( salaryBuilder.getSalary().getTotalDeduction() + total);
 			}
 			
 		} catch ( ExpressionException e ) {

@@ -150,19 +150,19 @@ public class ContractEmbargoController extends BasicController {
 	public Date getEstimatedEndDate(){
 		try {
 			ContractEmbargo embargo = (ContractEmbargo) this.getTo();
-			if(embargo==null){
+			if(embargo==null && this.getModel().isRowAvailable()){
 				embargo = (ContractEmbargo) this.getModel().getRowData();
+				IManagerBean bean = BeanManager.getManagerBean(SalaryEmbargo.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_EMBARGO_CONTRACT_EMBARGO_ID), embargo.getId());
+				List<ITransferObject> list = bean.getList(criteria);
+				Double media = getEmbargedAmount()/list.size();
+				Double month = getPendingAmount()/media;
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(embargo.getStartDate());
+				cal.add(Calendar.MONTH, cal.get(Calendar.MONTH)+(int) (Math.floor(month)));
+				return cal.getTime();
 			}
-			IManagerBean bean = BeanManager.getManagerBean(SalaryEmbargo.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_EMBARGO_CONTRACT_EMBARGO_ID), embargo.getId());
-			List<ITransferObject> list = bean.getList(criteria);
-			Double media = getEmbargedAmount()/list.size();
-			Double month = getPendingAmount()/media;
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(embargo.getStartDate());
-			cal.add(Calendar.MONTH, cal.get(Calendar.MONTH)+(int) (Math.floor(month)));
-			return cal.getTime();
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible calcular la fecha final estimada del embargo (" + e.getMessage() +")";
 			LOGGER.error(msg);

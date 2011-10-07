@@ -59,7 +59,7 @@
 	<c:if test="#{aonRole.sisAdmin}">
 		<aon:outputLabel for="ContractDeduction_expression" value="#{payrollBundle.payroll_salary_expression}" />
 		<aon:inputTextarea id="ContractDeduction_expression" cols="38" rows="2" maxlength="128"
-			value="#{controller.to.expression}" required="true">
+			value="#{controller.to.expression}" >
 			<f:validateLength maximum="128"/>
 			<c:if test="#{!contextDisabled}">
 				<a4j:region>

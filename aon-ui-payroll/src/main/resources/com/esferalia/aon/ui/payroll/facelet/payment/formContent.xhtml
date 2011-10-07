@@ -155,7 +155,8 @@
 	<c:if test="#{!skipResult}">
 		<aon:outputLabel for="ContractPayment_result" value="#{payrollBundle.payroll_result}" />
 		<h:panelGrid columns="4">
-			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}" 
+			<aon:outputText value="#{(controller.result!=null)?(controller.result):('Imposible evaluar la expresion')}"
+				title="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.paymentConcept.expression)}" 
 				style="color:#{(controller.result!=null)?('black'):('red')};" >
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 			</aon:outputText>

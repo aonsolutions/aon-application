@@ -75,7 +75,10 @@
 											</aon:div>
 										</aon:panelGrid>
 										<ui:include 
-											src="/com/esferalia/aon/ui/payroll/facelet/salary/embargo/list_detail.xhtml" />
+											src="/com/esferalia/aon/ui/payroll/facelet/salary/embargo/list_detail.xhtml" >
+											<ui:param name="skipSelectButton" value="true" />
+											<ui:param name="rowSelectorToggleOnClick" value="false" />
+										</ui:include>
 									</aon:div>
 
 								</aon:div>
