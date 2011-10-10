@@ -5,7 +5,7 @@ import org.apache.commons.lang.ArrayUtils;
 import com.code.aon.commercial.Target;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.project.TaskHolder;
+import com.code.aon.groupware.TaskHolder;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.tas.TasItem;
