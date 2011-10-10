@@ -6,6 +6,7 @@ public abstract class Detail {
 
 	private Receiver receiver;
 	private Account account;
+	private String mode;
 	private double amount;
 	private String concept;
 
@@ -23,6 +24,13 @@ public abstract class Detail {
 	}
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	public String getMode() {
+		return mode;
+	}
+	public void setMode(String mode) {
+		this.mode = mode;
 	}
 
 	public double getAmount() {
