@@ -22,7 +22,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.groupware.Alarm;
-import com.code.aon.groupware.dao.IGroupWareAlias;
+import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.DelayTime;
 import com.code.aon.groupware.enumeration.Priority;
@@ -97,7 +97,7 @@ public class AlarmController extends BasicController {
 	
 	private Criteria getCriteria(IManagerBean bean, Date from, Date to, boolean onlyPending) throws ManagerBeanException {
     	Criteria criteria = new Criteria();
-    	String statusAlias = bean.getFieldName(IGroupWareAlias.ALARM_STATUS);
+    	String statusAlias = bean.getFieldName(IGroupwareAlias.ALARM_STATUS);
     	Expression expr1 = ExpressionUtilities.getEqualExpression(statusAlias, AlarmStatus.PENDING);
     	if ( onlyPending ) {
     		criteria.addExpression(expr1);
@@ -105,9 +105,9 @@ public class AlarmController extends BasicController {
         	Expression expr2 = ExpressionUtilities.getEqualExpression(statusAlias, AlarmStatus.READ);
         	criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));    		
     	}
-    	String userAlias = bean.getFieldName(IGroupWareAlias.ALARM_USER_ID);
+    	String userAlias = bean.getFieldName(IGroupwareAlias.ALARM_USER_ID);
     	criteria.addEqualExpression(userAlias, UserUtils.getInstance().getLoggedUser().getId());
-    	String dateAlias = bean.getFieldName(IGroupWareAlias.ALARM_ALARM_DATE);
+    	String dateAlias = bean.getFieldName(IGroupwareAlias.ALARM_ALARM_DATE);
     	if ( from != null ) {
         	criteria.addGreaterThanOrEqualExpression(dateAlias, from);	
     	}
@@ -208,7 +208,8 @@ public class AlarmController extends BasicController {
     
     private void updateModel( ListDataModel model, ITransferObject alarm ) {
     	if ( model.isRowAvailable() ) {
-        	List<ITransferObject> list = (List) model.getWrappedData();	
+    		@SuppressWarnings("unchecked")
+			List<ITransferObject> list = (List<ITransferObject>) model.getWrappedData();	
         	int index = model.getRowIndex();
         	list.set(index, alarm);
     	}

@@ -5,30 +5,20 @@ import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.aon.project.Activity;
 import com.code.aon.project.ActivityType;
-import com.code.aon.project.DailyTracking;
-import com.code.aon.project.Dossier;
-import com.code.aon.project.DossierType;
-import com.code.aon.project.JobType;
 import com.code.aon.project.Project;
-import com.code.aon.project.Task;
-import com.code.aon.project.TaskHolder;
+import com.code.aon.project.ProjectActivity;
+import com.code.aon.project.ProjectType;
 
 public class ProjectAliasWriter {
 
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-TRUNK/aon-project/src/main/java/com/code/aon/project/dao/IProjectAlias.java");
+		File file = new File("/home/ecastellano/AON-PROJECT/aon-project/src/main/java/com/code/aon/project/dao/IProjectAlias.java");
 		String[] classes = new String[] { 
-			Activity.class.getName(),
 			ActivityType.class.getName(),
-	        DailyTracking.class.getName(),
-			Dossier.class.getName(),
-			DossierType.class.getName(),
-	        JobType.class.getName(),
 	        Project.class.getName(),
-	        Task.class.getName(),
-	        TaskHolder.class.getName()
+	        ProjectActivity.class.getName(),
+	        ProjectType.class.getName()
 		};
 		HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName());
 		AliasWriter writer = new AliasWriter("com.code.aon.project.dao");
@@ -37,3 +27,4 @@ public class ProjectAliasWriter {
 		System.out.println("Alias generados");
 	}
 }
+

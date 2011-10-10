@@ -25,10 +25,13 @@ public class ActivityType implements ITransferObject {
 	private static final long serialVersionUID = 4810421114437119111L;
 
 	private Integer id;
-	
 	private String description;
+	private ProjectType projectType;
+	private boolean active;
 	
-	private DossierType dossierType;
+	public ActivityType() {
+		this.active = true;
+	}
 	
 	@Id
 	@GeneratedValue
@@ -36,7 +39,6 @@ public class ActivityType implements ITransferObject {
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -45,21 +47,27 @@ public class ActivityType implements ITransferObject {
 	public String getDescription() {
 		return description;
 	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 	@ManyToOne
-	@JoinColumn(name="dossier_type")
-	@ForeignKey(name = "FK_ACTIVITY_TYPE_DOSSIER_TYPE")
-	@Index(name = "IDX_ACTIVITY_TYPE_DOSSIER_TYPE")					
-	public DossierType getDossierType() {
-		return dossierType;
+	@JoinColumn(name="project_type")
+	@ForeignKey(name = "FK_ACTIVITY_TYPE_PROJECT_TYPE")
+	@Index(name = "IDX_ACTIVITY_TYPE_PROJECT_TYPE")					
+	public ProjectType getProjectType() {
+		return projectType;
+	}
+	public void setProjectType(ProjectType projectType) {
+		this.projectType = projectType;
 	}
 
-	public void setDossierType(DossierType dossierType) {
-		this.dossierType = dossierType;
+	@Column(nullable=false)
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	@Override	
@@ -71,7 +79,8 @@ public class ActivityType implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.description, o.description)
-				.append(this.dossierType, o.dossierType)
+				.append(this.projectType, o.projectType)
+				.append(this.active, o.active)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -79,9 +88,11 @@ public class ActivityType implements ITransferObject {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().
-			append(description).append(dossierType).
-			append(id).toHashCode();
+		return new HashCodeBuilder().append(id)
+			.append(description)
+			.append(projectType)
+			.append(active)
+			.toHashCode();
 	}
 
 	@Override

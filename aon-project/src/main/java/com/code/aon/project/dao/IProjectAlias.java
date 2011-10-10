@@ -2,75 +2,15 @@ package com.code.aon.project.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
-import com.code.aon.project.Activity;
 import com.code.aon.project.ActivityType;
-import com.code.aon.project.DailyTracking;
-import com.code.aon.project.Dossier;
-import com.code.aon.project.DossierType;
-import com.code.aon.project.JobType;
 import com.code.aon.project.Project;
-import com.code.aon.project.Task;
-import com.code.aon.project.TaskHolder;
+import com.code.aon.project.ProjectActivity;
+import com.code.aon.project.ProjectType;
 
 /** 
 * Interface for holding entity properties constants.
 */ 
 public interface IProjectAlias {
-
-
-
-	/** 
-	* DAOConstantsEntry for Activity entity.
-	*/ 
-	DAOConstantsEntry ACTIVITY_ENTRY = DAOConstants.getDAOConstant(Activity.class);
-
-	/** 
-	* Alias value: Activity_id
-	* Hibernate value: Activity.id
-	*/
-	String  ACTIVITY_ID = ACTIVITY_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Activity_dossier_id
-	* Hibernate value: Activity.dossier.id
-	*/
-	String  ACTIVITY_DOSSIER_ID = ACTIVITY_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Activity_activityType_id
-	* Hibernate value: Activity.activityType.id
-	*/
-	String  ACTIVITY_ACTIVITY_TYPE_ID = ACTIVITY_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Activity_workgroup_id
-	* Hibernate value: Activity.workgroup.id
-	*/
-	String  ACTIVITY_WORKGROUP_ID = ACTIVITY_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Activity_dossier_number
-	* Hibernate value: Activity.dossier.number
-	*/
-	String  ACTIVITY_DOSSIER_NUMBER = ACTIVITY_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: Activity_customer_document
-	* Hibernate value: Activity.dossier.customer.registry.document
-	*/
-	String  ACTIVITY_CUSTOMER_DOCUMENT = ACTIVITY_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: Activity_customer_name
-	* Hibernate value: Activity.dossier.customer.registry.name
-	*/
-	String  ACTIVITY_CUSTOMER_NAME = ACTIVITY_ENTRY.getAliasNames()[6];
-
-	/** 
-	* Alias value: Activity_dossier_status
-	* Hibernate value: Activity.dossier.status
-	*/
-	String  ACTIVITY_DOSSIER_STATUS = ACTIVITY_ENTRY.getAliasNames()[7];
 
 
 
@@ -92,170 +32,16 @@ public interface IProjectAlias {
 	String  ACTIVITY_TYPE_DESCRIPTION = ACTIVITY_TYPE_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: ActivityType_dossierType_id
-	* Hibernate value: ActivityType.dossierType<id
+	* Alias value: ActivityType_projectType_id
+	* Hibernate value: ActivityType.projectType<id
 	*/
-	String  ACTIVITY_TYPE_DOSSIER_TYPE_ID = ACTIVITY_TYPE_ENTRY.getAliasNames()[2];
-
-
+	String  ACTIVITY_TYPE_PROJECT_TYPE_ID = ACTIVITY_TYPE_ENTRY.getAliasNames()[2];
 
 	/** 
-	* DAOConstantsEntry for DailyTracking entity.
-	*/ 
-	DAOConstantsEntry DAILY_TRACKING_ENTRY = DAOConstants.getDAOConstant(DailyTracking.class);
-
-	/** 
-	* Alias value: DailyTracking_id
-	* Hibernate value: DailyTracking.id
+	* Alias value: ActivityType_active
+	* Hibernate value: ActivityType.active
 	*/
-	String  DAILY_TRACKING_ID = DAILY_TRACKING_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: DailyTracking_user_id
-	* Hibernate value: DailyTracking.user.id
-	*/
-	String  DAILY_TRACKING_USER_ID = DAILY_TRACKING_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: DailyTracking_trackingDate
-	* Hibernate value: DailyTracking.trackingDate
-	*/
-	String  DAILY_TRACKING_TRACKING_DATE = DAILY_TRACKING_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: DailyTracking_trackingDuration
-	* Hibernate value: DailyTracking.trackingDuration
-	*/
-	String  DAILY_TRACKING_TRACKING_DURATION = DAILY_TRACKING_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: DailyTracking_jobType_id
-	* Hibernate value: DailyTracking.jobType.id
-	*/
-	String  DAILY_TRACKING_JOB_TYPE_ID = DAILY_TRACKING_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: DailyTracking_customer_id
-	* Hibernate value: DailyTracking.customer.id
-	*/
-	String  DAILY_TRACKING_CUSTOMER_ID = DAILY_TRACKING_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: DailyTracking_customer_registry_name
-	* Hibernate value: DailyTracking.customer.registry.name
-	*/
-	String  DAILY_TRACKING_CUSTOMER_REGISTRY_NAME = DAILY_TRACKING_ENTRY.getAliasNames()[6];
-
-	/** 
-	* Alias value: DailyTracking_customer_status
-	* Hibernate value: DailyTracking.customer.status
-	*/
-	String  DAILY_TRACKING_CUSTOMER_STATUS = DAILY_TRACKING_ENTRY.getAliasNames()[7];
-
-	/** 
-	* Alias value: DailyTracking_dossier_id
-	* Hibernate value: DailyTracking.dossier.id
-	*/
-	String  DAILY_TRACKING_DOSSIER_ID = DAILY_TRACKING_ENTRY.getAliasNames()[8];
-
-	/** 
-	* Alias value: DailyTracking_dossier_number
-	* Hibernate value: DailyTracking.dossier.number
-	*/
-	String  DAILY_TRACKING_DOSSIER_NUMBER = DAILY_TRACKING_ENTRY.getAliasNames()[9];
-
-	/** 
-	* Alias value: DailyTracking_activity_id
-	* Hibernate value: DailyTracking.activity.id
-	*/
-	String  DAILY_TRACKING_ACTIVITY_ID = DAILY_TRACKING_ENTRY.getAliasNames()[10];
-
-	/** 
-	* Alias value: DailyTracking_comments
-	* Hibernate value: DailyTracking.comments
-	*/
-	String  DAILY_TRACKING_COMMENTS = DAILY_TRACKING_ENTRY.getAliasNames()[11];
-
-
-
-	/** 
-	* DAOConstantsEntry for Dossier entity.
-	*/ 
-	DAOConstantsEntry DOSSIER_ENTRY = DAOConstants.getDAOConstant(Dossier.class);
-
-	/** 
-	* Alias value: Dossier_customer_id
-	* Hibernate value: Dossier.customer.id
-	*/
-	String  DOSSIER_CUSTOMER_ID = DOSSIER_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Dossier_dossierType_id
-	* Hibernate value: Dossier.dossierType.id
-	*/
-	String  DOSSIER_DOSSIER_TYPE_ID = DOSSIER_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Dossier_id
-	* Hibernate value: Dossier.id
-	*/
-	String  DOSSIER_ID = DOSSIER_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Dossier_location
-	* Hibernate value: Dossier.location
-	*/
-	String  DOSSIER_LOCATION = DOSSIER_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Dossier_number
-	* Hibernate value: Dossier.number
-	*/
-	String  DOSSIER_NUMBER = DOSSIER_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: Dossier_status
-	* Hibernate value: Dossier.status
-	*/
-	String  DOSSIER_STATUS = DOSSIER_ENTRY.getAliasNames()[5];
-
-
-
-	/** 
-	* DAOConstantsEntry for DossierType entity.
-	*/ 
-	DAOConstantsEntry DOSSIER_TYPE_ENTRY = DAOConstants.getDAOConstant(DossierType.class);
-
-	/** 
-	* Alias value: DossierType_description
-	* Hibernate value: DossierType.description
-	*/
-	String  DOSSIER_TYPE_DESCRIPTION = DOSSIER_TYPE_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: DossierType_id
-	* Hibernate value: DossierType.id
-	*/
-	String  DOSSIER_TYPE_ID = DOSSIER_TYPE_ENTRY.getAliasNames()[1];
-
-
-
-	/** 
-	* DAOConstantsEntry for JobType entity.
-	*/ 
-	DAOConstantsEntry JOB_TYPE_ENTRY = DAOConstants.getDAOConstant(JobType.class);
-
-	/** 
-	* Alias value: JobType_description
-	* Hibernate value: JobType.description
-	*/
-	String  JOB_TYPE_DESCRIPTION = JOB_TYPE_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: JobType_id
-	* Hibernate value: JobType.id
-	*/
-	String  JOB_TYPE_ID = JOB_TYPE_ENTRY.getAliasNames()[1];
+	String  ACTIVITY_TYPE_ACTIVE = ACTIVITY_TYPE_ENTRY.getAliasNames()[3];
 
 
 
@@ -295,180 +81,102 @@ public interface IProjectAlias {
 	String  PROJECT_DOSSIER = PROJECT_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: Project_enterprise_id
+	* Hibernate value: Project.enterprise.id
+	*/
+	String  PROJECT_ENTERPRISE_ID = PROJECT_ENTRY.getAliasNames()[5];
+
+	/** 
 	* Alias value: Project_id
 	* Hibernate value: Project.id
 	*/
-	String  PROJECT_ID = PROJECT_ENTRY.getAliasNames()[5];
+	String  PROJECT_ID = PROJECT_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Project_name
 	* Hibernate value: Project.name
 	*/
-	String  PROJECT_NAME = PROJECT_ENTRY.getAliasNames()[6];
+	String  PROJECT_NAME = PROJECT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Project_projectType_id
+	* Hibernate value: Project.projectType.id
+	*/
+	String  PROJECT_PROJECT_TYPE_ID = PROJECT_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Project_registry_id
 	* Hibernate value: Project.registry.id
 	*/
-	String  PROJECT_REGISTRY_ID = PROJECT_ENTRY.getAliasNames()[7];
+	String  PROJECT_REGISTRY_ID = PROJECT_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Project_tas
 	* Hibernate value: Project.tas
 	*/
-	String  PROJECT_TAS = PROJECT_ENTRY.getAliasNames()[8];
+	String  PROJECT_TAS = PROJECT_ENTRY.getAliasNames()[10];
 
 
 
 	/** 
-	* DAOConstantsEntry for Task entity.
+	* DAOConstantsEntry for ProjectActivity entity.
 	*/ 
-	DAOConstantsEntry TASK_ENTRY = DAOConstants.getDAOConstant(Task.class);
+	DAOConstantsEntry PROJECT_ACTIVITY_ENTRY = DAOConstants.getDAOConstant(ProjectActivity.class);
 
 	/** 
-	* Alias value: Task_id
-	* Hibernate value: Task.id
+	* Alias value: ProjectActivity_active
+	* Hibernate value: ProjectActivity.active
 	*/
-	String  TASK_ID = TASK_ENTRY.getAliasNames()[0];
+	String  PROJECT_ACTIVITY_ACTIVE = PROJECT_ACTIVITY_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Task_description
-	* Hibernate value: Task.description
+	* Alias value: ProjectActivity_activityType_id
+	* Hibernate value: ProjectActivity.activityType.id
 	*/
-	String  TASK_DESCRIPTION = TASK_ENTRY.getAliasNames()[1];
+	String  PROJECT_ACTIVITY_ACTIVITY_TYPE_ID = PROJECT_ACTIVITY_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Task_startDate
-	* Hibernate value: Task.startDate
+	* Alias value: ProjectActivity_id
+	* Hibernate value: ProjectActivity.id
 	*/
-	String  TASK_START_DATE = TASK_ENTRY.getAliasNames()[2];
+	String  PROJECT_ACTIVITY_ID = PROJECT_ACTIVITY_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Task_endDate
-	* Hibernate value: Task.endDate
+	* Alias value: ProjectActivity_project_id
+	* Hibernate value: ProjectActivity.project.id
 	*/
-	String  TASK_END_DATE = TASK_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Task_dueDate
-	* Hibernate value: Task.dueDate
-	*/
-	String  TASK_DUE_DATE = TASK_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: Task_priority
-	* Hibernate value: Task.priority
-	*/
-	String  TASK_PRIORITY = TASK_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: Task_status
-	* Hibernate value: Task.status
-	*/
-	String  TASK_STATUS = TASK_ENTRY.getAliasNames()[6];
-
-	/** 
-	* Alias value: Task_percent
-	* Hibernate value: Task.percent
-	*/
-	String  TASK_PERCENT = TASK_ENTRY.getAliasNames()[7];
-
-	/** 
-	* Alias value: Task_user_id
-	* Hibernate value: Task.user<id
-	*/
-	String  TASK_USER_ID = TASK_ENTRY.getAliasNames()[8];
-
-	/** 
-	* Alias value: Task_user_name
-	* Hibernate value: Task.user<name
-	*/
-	String  TASK_USER_NAME = TASK_ENTRY.getAliasNames()[9];
-
-	/** 
-	* Alias value: Task_workGroup_id
-	* Hibernate value: Task.workGroup.id
-	*/
-	String  TASK_WORK_GROUP_ID = TASK_ENTRY.getAliasNames()[10];
-
-	/** 
-	* Alias value: Task_source
-	* Hibernate value: Task.source
-	*/
-	String  TASK_SOURCE = TASK_ENTRY.getAliasNames()[11];
-
-	/** 
-	* Alias value: Task_dossier_id
-	* Hibernate value: Task.dossier<id
-	*/
-	String  TASK_DOSSIER_ID = TASK_ENTRY.getAliasNames()[12];
-
-	/** 
-	* Alias value: Task_dossier_number
-	* Hibernate value: Task.dossier<number
-	*/
-	String  TASK_DOSSIER_NUMBER = TASK_ENTRY.getAliasNames()[13];
-
-	/** 
-	* Alias value: Task_activity_id
-	* Hibernate value: Task.activity.id
-	*/
-	String  TASK_ACTIVITY_ID = TASK_ENTRY.getAliasNames()[14];
-
-	/** 
-	* Alias value: Task_sender_id
-	* Hibernate value: Task.sender.id
-	*/
-	String  TASK_SENDER_ID = TASK_ENTRY.getAliasNames()[15];
-
-	/** 
-	* Alias value: Task_comments
-	* Hibernate value: Task.comments
-	*/
-	String  TASK_COMMENTS = TASK_ENTRY.getAliasNames()[16];
-
-	/** 
-	* Alias value: Task_customer_id
-	* Hibernate value: Task.dossier<customer.id
-	*/
-	String  TASK_CUSTOMER_ID = TASK_ENTRY.getAliasNames()[17];
+	String  PROJECT_ACTIVITY_PROJECT_ID = PROJECT_ACTIVITY_ENTRY.getAliasNames()[3];
 
 
 
 	/** 
-	* DAOConstantsEntry for TaskHolder entity.
+	* DAOConstantsEntry for ProjectType entity.
 	*/ 
-	DAOConstantsEntry TASK_HOLDER_ENTRY = DAOConstants.getDAOConstant(TaskHolder.class);
+	DAOConstantsEntry PROJECT_TYPE_ENTRY = DAOConstants.getDAOConstant(ProjectType.class);
 
 	/** 
-	* Alias value: TaskHolder_id
-	* Hibernate value: TaskHolder.id
+	* Alias value: ProjectType_active
+	* Hibernate value: ProjectType.active
 	*/
-	String  TASK_HOLDER_ID = TASK_HOLDER_ENTRY.getAliasNames()[0];
+	String  PROJECT_TYPE_ACTIVE = PROJECT_TYPE_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: TaskHolder_registry_id
-	* Hibernate value: TaskHolder.registry.id
+	* Alias value: ProjectType_description
+	* Hibernate value: ProjectType.description
 	*/
-	String  TASK_HOLDER_REGISTRY_ID = TASK_HOLDER_ENTRY.getAliasNames()[1];
+	String  PROJECT_TYPE_DESCRIPTION = PROJECT_TYPE_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: TaskHolder_type
-	* Hibernate value: TaskHolder.type
+	* Alias value: ProjectType_enterprise_id
+	* Hibernate value: ProjectType.enterprise.id
 	*/
-	String  TASK_HOLDER_TYPE = TASK_HOLDER_ENTRY.getAliasNames()[2];
+	String  PROJECT_TYPE_ENTERPRISE_ID = PROJECT_TYPE_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: TaskHolder_active
-	* Hibernate value: TaskHolder.active
+	* Alias value: ProjectType_id
+	* Hibernate value: ProjectType.id
 	*/
-	String  TASK_HOLDER_ACTIVE = TASK_HOLDER_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: TaskHolder_registry_name
-	* Hibernate value: TaskHolder.registry.name
-	*/
-	String  TASK_HOLDER_REGISTRY_NAME = TASK_HOLDER_ENTRY.getAliasNames()[4];
+	String  PROJECT_TYPE_ID = PROJECT_TYPE_ENTRY.getAliasNames()[3];
 
 
 }

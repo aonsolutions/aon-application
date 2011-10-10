@@ -33,13 +33,9 @@ public class Note implements ITransferObject {
 	private static final long serialVersionUID = -4521279825663201587L;
 
 	private Integer id;
-	
     private String subject;
-    
     private Date date;
-    
 	private User owner;
-	
 	private String note;
 	
 	
@@ -49,7 +45,6 @@ public class Note implements ITransferObject {
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -58,7 +53,6 @@ public class Note implements ITransferObject {
     public String getSubject() {
         return subject;
     }
-
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -68,7 +62,6 @@ public class Note implements ITransferObject {
 	public Date getDate() {
 		return date;
 	}
-
 	public void setDate(Date date) {
 		this.date = date;
 	}
@@ -81,7 +74,6 @@ public class Note implements ITransferObject {
 	public User getOwner() {
 		return owner;
 	}
-
 	public void setOwner(User owner) {
 		this.owner = owner;
 	}
@@ -91,7 +83,6 @@ public class Note implements ITransferObject {
 	public String getNote() {
 		return note;
 	}
-
 	public void setNote(String note) {
 		this.note = note;
 	}
@@ -115,11 +106,12 @@ public class Note implements ITransferObject {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().
-			append(date).append(id).
-			append(note).append(owner).
-			append(subject).
-			toHashCode();
+		return new HashCodeBuilder().append(id)
+			.append(date)
+			.append(note)
+			.append(owner)
+			.append(subject)
+			.toHashCode();
 	}
 	
 	@Override

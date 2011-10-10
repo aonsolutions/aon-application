@@ -1,181 +1,105 @@
 package com.code.aon.ui.project.controller;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.faces.model.SelectItemGroup;
+
+import org.apache.commons.lang.ObjectUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.groupware.enumeration.Priority;
 import com.code.aon.project.ActivityType;
-import com.code.aon.project.DossierType;
-import com.code.aon.project.JobType;
-import com.code.aon.project.TaskHolder;
+import com.code.aon.project.Project;
+import com.code.aon.project.ProjectType;
 import com.code.aon.project.dao.IProjectAlias;
-import com.code.aon.project.enumeration.DossierStatus;
-import com.code.aon.project.enumeration.TaskPeriod;
-import com.code.aon.project.enumeration.TaskSource;
-import com.code.aon.project.enumeration.TaskStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 
 public class ProjectCollectionsController {
-
-	public ActivityType getActivityType() {
-		return null;
-	}
-	public void setActivityType( ActivityType activityType) {
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getDossierTypes() throws ManagerBeanException {
-		List<SelectItem> dossierTypeList = new LinkedList<SelectItem>();
-		IManagerBean dossierTypeBean = BeanManager.getManagerBean(DossierType.class);
+	
+	public List<SelectItem> getProjects( Integer registryId ) throws ManagerBeanException {
+		List<SelectItem> projects = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Project.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(dossierTypeBean.getFieldName(IProjectAlias.DOSSIER_TYPE_DESCRIPTION));
-		Iterator iter = dossierTypeBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			DossierType type = (DossierType)iter.next();
+		if (registryId != null) {
+			criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_REGISTRY_ID),registryId);
+		}
+		criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(IProjectAlias.PROJECT_NAME));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to:list) {
+			Project project = (Project) to;
+			SelectItem item = new SelectItem(project, project.getName());
+			projects.add(item);
+		}
+		return projects;
+	}
+
+	public List<SelectItem> getActivityTypes(Integer projectTypeId) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActivityType.class);
+		Criteria criteria = new Criteria();
+		Expression expr1 = ExpressionUtilities.getNullExpression(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID)); 
+		if (projectTypeId != null) {
+			Expression expr2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID),projectTypeId);
+			criteria.addOrExpression(ExpressionUtilities.getOrExpression(expr1, expr2));
+		} else {
+			criteria.addExpression(expr1);
+		}
+		criteria.addEqualExpression(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_PROJECT_TYPE_ID));
+		criteria.addOrder(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DESCRIPTION));
+		List<ITransferObject> list = bean.getList(criteria);
+		Integer oldId = null;
+		boolean first = true;
+		List<SelectItem> activityTypes = new LinkedList<SelectItem>();
+		for (ITransferObject to:list) {
+			ActivityType activityType = (ActivityType) to;
+			Integer id = activityType.getProjectType() == null?null: activityType.getProjectType().getId();
+			if (!ObjectUtils.equals(oldId,id)) {
+				if (!first) {
+					activityTypes.add(new SelectItem(null," -----"," -----",true));	
+				}
+				oldId = id;
+			}
+			SelectItem item = new SelectItem(activityType, activityType.getDescription());
+			activityTypes.add(item);
+			first = false;
+		}
+		return activityTypes;
+	}
+
+	public List<SelectItem> getActivityTypes() throws ManagerBeanException {
+		List<SelectItem> activityTypes = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(ActivityType.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DESCRIPTION));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to:list) {
+			ActivityType activityType = (ActivityType) to;
+			SelectItem item = new SelectItem(activityType, activityType.getDescription() + "(" + activityType.getId() + ")");
+			activityTypes.add(item);
+		}
+		return activityTypes;
+	}
+
+	public List<SelectItem> getProjectTypes( ) throws ManagerBeanException {
+		List<SelectItem> projectTypes = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(ProjectType.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_TYPE_ACTIVE),true);
+		criteria.addOrder(bean.getFieldName(IProjectAlias.PROJECT_TYPE_DESCRIPTION));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to:list) {
+			ProjectType type = (ProjectType) to;
 			SelectItem item = new SelectItem(type, type.getDescription());
-			dossierTypeList.add(item);
+			projectTypes.add(item);
 		}
-		return dossierTypeList;
+		return projectTypes;
 	}
-
-	public List<SelectItem> getDossierStatus() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> dossierStatusList = new LinkedList<SelectItem>();
-		DossierStatus[] dossierStatuses = DossierStatus.values();
-		for (int i = 0; i < dossierStatuses.length; i++) {
-			DossierStatus status = dossierStatuses[i];
-			String name = status.getName(locale);
-			SelectItem item = new SelectItem(status, name);
-            dossierStatusList.add(item);
-		}
-		return dossierStatusList;
-	}
-
-    @SuppressWarnings("unchecked")
-    public List<SelectItem> getActivityTypes() throws ManagerBeanException {
-        List<SelectItem> activityTypeList = new LinkedList<SelectItem>();
-        IManagerBean dossierTypeBean = BeanManager.getManagerBean(DossierType.class);
-        Criteria criteria = new Criteria();
-        criteria.addOrder(dossierTypeBean.getFieldName(IProjectAlias.DOSSIER_TYPE_DESCRIPTION));
-        Iterator iter = dossierTypeBean.getList(criteria).iterator();
-        while(iter.hasNext()){
-            DossierType dossierType = (DossierType)iter.next();
-            SelectItemGroup activityType = new SelectItemGroup(dossierType.getDescription());
-            activityType.setSelectItems(obtainActivityTypes(dossierType));
-            activityTypeList.add(activityType);
-        }
-        return activityTypeList;
-    }
-
-    @SuppressWarnings("unchecked")
-    private SelectItem[] obtainActivityTypes(DossierType dossierType) throws ManagerBeanException {
-        List<SelectItem> activityTypes = new LinkedList<SelectItem>();
-        IManagerBean activityTypeBean = BeanManager.getManagerBean(ActivityType.class);
-        Criteria criteria = new Criteria();
-        criteria.addEqualExpression(activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DOSSIER_TYPE_ID), dossierType.getId());
-        criteria.addOrder(activityTypeBean.getFieldName(IProjectAlias.ACTIVITY_TYPE_DESCRIPTION));
-        Iterator iter = activityTypeBean.getList(criteria).iterator();
-        while(iter.hasNext()){
-            ActivityType activityType = (ActivityType)iter.next();
-            SelectItem item = new SelectItem(activityType, activityType.getDescription());
-            activityTypes.add(item);
-        }
-        return activityTypes.toArray(new SelectItem[activityTypes.size()]);
-    }
-
-    @SuppressWarnings("unchecked")
-	public List<SelectItem> getJobTypes() throws ManagerBeanException {
-		List<SelectItem> jobTypeList = new LinkedList<SelectItem>();
-		IManagerBean jobTypeBean = BeanManager.getManagerBean(JobType.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(jobTypeBean.getFieldName(IProjectAlias.JOB_TYPE_DESCRIPTION));
-		Iterator iter = jobTypeBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			JobType type = (JobType)iter.next();
-			SelectItem item = new SelectItem(type, type.getDescription());
-			jobTypeList.add(item);
-		}
-		return jobTypeList;
-	}
-
-    public List<SelectItem> getTaskPriorities() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        LinkedList<SelectItem> taskPriorityList = new LinkedList<SelectItem>();
-        Priority[] taskPriorities = Priority.values();
-        for (int i = 0; i < taskPriorities.length; i++) {
-            Priority taskPriority = taskPriorities[i];
-            String name = taskPriority.getName(locale);
-            SelectItem item = new SelectItem(taskPriority, name);
-            taskPriorityList.add(item);
-        }
-        return taskPriorityList;
-    }
-    
-    public List<SelectItem> getTaskStatus() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        LinkedList<SelectItem> taskStatusList = new LinkedList<SelectItem>();
-        TaskStatus[] taskStatuses = TaskStatus.values();
-        for (int i = 0; i < taskStatuses.length; i++) {
-            TaskStatus taskStatus = taskStatuses[i];
-            String name = taskStatus.getName(locale);
-            SelectItem item = new SelectItem(taskStatus, name);
-            taskStatusList.add(item);
-        }
-        return taskStatusList;
-    }
-    
-    public List<SelectItem> getTaskSources() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        LinkedList<SelectItem> taskSourcesList = new LinkedList<SelectItem>();
-        for (TaskSource taskSource: TaskSource.values()) {
-            String name = taskSource.getName(locale);
-            SelectItem item = new SelectItem(taskSource, name);
-            taskSourcesList.add(item);
-        }
-        return taskSourcesList;
-    }
-
-    public List<SelectItem> getTaskPeriods() {
-        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-        LinkedList<SelectItem> taskPeriodList = new LinkedList<SelectItem>();
-        TaskPeriod[] taskPeriods = TaskPeriod.values();
-        for (int i = 0; i < taskPeriods.length; i++) {
-            TaskPeriod taskPeriod = taskPeriods[i];
-            String name = taskPeriod.getName(locale);
-            SelectItem item = new SelectItem(taskPeriod, name);
-            taskPeriodList.add(item);
-        }
-        return taskPeriodList;
-    }
-
-	public TaskHolder getTaskHolder() {
-		return null;
-	}
-	public void setTaskHolder(TaskHolder taskHolder) {
-	}
-
-	public List<SelectItem> getTaskHolders() throws ManagerBeanException {
-		List<SelectItem> taskHolderList = new LinkedList<SelectItem>();
-		IManagerBean taskHolderBean = BeanManager.getManagerBean(TaskHolder.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(taskHolderBean.getFieldName(IProjectAlias.TASK_HOLDER_ACTIVE), new Boolean(true));
-		criteria.addOrder(taskHolderBean.getFieldName(IProjectAlias.TASK_HOLDER_REGISTRY_NAME));
-		for (ITransferObject ito : taskHolderBean.getList(criteria)) {
-			TaskHolder taskHolder = (TaskHolder)ito;
-			SelectItem item = new SelectItem(taskHolder, taskHolder.getRegistry().getName());
-			taskHolderList.add(item);
-		}
-		return taskHolderList;
-	}
-
+	
 }

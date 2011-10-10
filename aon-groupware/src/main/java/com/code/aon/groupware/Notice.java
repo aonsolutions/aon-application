@@ -37,29 +37,17 @@ public class Notice implements ITransferObject {
 	private static final long serialVersionUID = 8420760868787119520L;
 
 	private Integer id;
-	
 	private Date date;
-	
 	private User sender;
-	
 	private WorkGroup workGroup;
-	
 	private User recipient;
-	
 	private String source;
-	
 	private String company;
-	
 	private String phone;
-	
 	private String subject;
-	
 	private NoticeStatus status;
-	
 	private NoticeType type;
-	
 	private Priority priority;
-
 	
 	@Id
 	@GeneratedValue
@@ -67,7 +55,6 @@ public class Notice implements ITransferObject {
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -77,7 +64,6 @@ public class Notice implements ITransferObject {
 	public Date getDate() {
 		return date;
 	}
-
 	public void setDate(Date date) {
 		this.date = date;
 	}
@@ -90,7 +76,6 @@ public class Notice implements ITransferObject {
 	public User getSender() {
 		return sender;
 	}
-
 	public void setSender(User sender) {
 		this.sender = sender;
 	}
@@ -102,7 +87,6 @@ public class Notice implements ITransferObject {
 	public WorkGroup getWorkGroup() {
 		return workGroup;
 	}
-
 	public void setWorkGroup(WorkGroup workGroup) {
 		this.workGroup = workGroup;
 	}
@@ -115,7 +99,6 @@ public class Notice implements ITransferObject {
 	public User getRecipient() {
 		return recipient;
 	}
-
 	public void setRecipient(User recipient) {
 		this.recipient = recipient;
 	}
@@ -124,7 +107,6 @@ public class Notice implements ITransferObject {
 	public String getSource() {
 		return source;
 	}
-
 	public void setSource(String source) {
 		this.source = source;
 	}
@@ -133,7 +115,6 @@ public class Notice implements ITransferObject {
 	public String getCompany() {
 		return company;
 	}
-
 	public void setCompany(String company) {
 		this.company = company;
 	}
@@ -142,7 +123,6 @@ public class Notice implements ITransferObject {
 	public String getPhone() {
 		return phone;
 	}
-
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
@@ -152,7 +132,6 @@ public class Notice implements ITransferObject {
 	public String getSubject() {
 		return subject;
 	}
-
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
@@ -161,7 +140,6 @@ public class Notice implements ITransferObject {
 	public NoticeStatus getStatus() {
 		return status;
 	}
-
 	public void setStatus(NoticeStatus status) {
 		this.status = status;
 	}
@@ -170,7 +148,6 @@ public class Notice implements ITransferObject {
 	public NoticeType getType() {
 		return type;
 	}
-
 	public void setType(NoticeType type) {
 		this.type = type;
 	}
@@ -179,7 +156,6 @@ public class Notice implements ITransferObject {
 	public Priority getPriority() {
 		return priority;
 	}
-
 	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
