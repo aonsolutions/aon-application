@@ -10,7 +10,6 @@
   <name>AON PARENT</name>
 
   <modules>
-
     <!-- PARENT MODULES -->
 	  <module>aon-web-parent</module>	
 	
