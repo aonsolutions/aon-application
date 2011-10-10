@@ -788,8 +788,20 @@ color:#000;
 .aon-icon-task-none-priority{
 	background:transparent url(images/aon-icon/aon-icon-priority-none.gif) scroll left center no-repeat;
 	}
+.aon-icon-monitor{
+	background:transparent url(images/aon-icon/aon-icon-monitor.gif) scroll left center no-repeat;
+	}
+.aon-icon-launcher{
+	background:transparent url(images/aon-icon/aon-icon-launcher.gif) scroll left center no-repeat;
+	}
 
-			
+.aon-icon-page{
+	background:transparent url(images/aon-icon/aon-icon-page.gif) scroll left center no-repeat;
+	}
+.aon-icon-new-page{
+	background:transparent url(images/aon-icon/aon-icon-new-page.gif) scroll left center no-repeat;
+	}
+
 /*  document  */
 .aon-icon-document-lock{
 	background:transparent url(images/aon-icon/aon-icon-document-lock.png) scroll left center no-repeat;
@@ -1117,6 +1129,14 @@ color:#000;
 .aon-selectBooleanCheckbox{
 }
 .aon-selectManyCheckbox{
+}
+
+.aon-inplace-select {
+ width: 200px; 
+ border:none; 
+ cursor:pointer; 
+ text-decoration:none; 
+ background-color: default;
 }
 
 
