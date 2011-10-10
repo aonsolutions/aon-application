@@ -48,7 +48,7 @@ import com.code.aon.registry.enumeration.RegistryType;
 @Table(name="registry")
 @Inheritance(strategy=InheritanceType.JOINED )
 @org.hibernate.annotations.Table( appliesTo = "registry", indexes = { @Index(name="IDX_REGISTRY", columnNames={"name"})})
-public class Registry implements ITransferObject, IConfidentialable {
+public class Registry implements ITransferObject, IConfidentialable, IRegistry {
 	
 	private static final long serialVersionUID = 8635760095705923309L;
 
@@ -339,5 +339,15 @@ public class Registry implements ITransferObject, IConfidentialable {
 			phones += media.getValue()+", ";
 		}
 		return (phones=="")?"":phones.substring(0, phones.length()-2);
+	}
+
+	@Override
+	@Transient 
+	public Registry getRegistry() {
+		return this;
+	}
+	@Override
+	public void setRegistry(Registry registry) {
+		throw new IllegalStateException("Ups en Registry no se puede hacer eso!");
 	}
 }
