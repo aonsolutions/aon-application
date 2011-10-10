@@ -73,7 +73,6 @@
 	  <module>aon-warehouse</module>
 	  <module>aon-warehouse-bridge</module>
 	  <module>aon-asset</module>
-	  <module>aon-campaign</module>
 	  <module>aon-ebackoffice</module>
 	  <module>aon-infoweb</module>
 	  <module>aon-infoweb-templates</module>
@@ -105,7 +104,6 @@
 	  <module>aon-ui-stat</module>
 	  <module>aon-ui-supplier</module>
 	  <module>aon-ui-asset</module>
-	  <module>aon-ui-campaign</module>
 	  <module>aon-ui-ebackoffice</module>
 	  <module>aon-ui-ecommerce</module>
 	  <module>aon-ui-infoweb</module>
@@ -142,7 +140,7 @@
 	  <module>aon-web-asset</module>
 	  <module>aon-web-commercial</module>
 	  <module>aon-web-communicator</module>
-	  <module>aon-web-consultant</module>
+	  <module>aon-web-project</module>
 	  <module>aon-web-ebackoffice</module>
 	  <module>aon-web-ecommerce</module>
 	  <module>aon-web-enterprise</module>
@@ -152,7 +150,6 @@
 	  <module>aon-web-infoweb</module>
 	  <module>aon-web-manager</module>
 	  <module>aon-web-publisher</module>
-	  <module>aon-web-task</module>
 	  <module>aon-web-webmail</module>
   
     <!-- OTHER -->
