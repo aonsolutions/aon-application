@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.13.0</version>
+		<version>6.13.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-master</artifactId>
-	<version>6.13.0</version>
+	<version>6.13.1</version>
 	<description>AON MASTER</description>
 	<name>AON-MASTER</name>
 
