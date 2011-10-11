@@ -76,7 +76,7 @@ INSERT INTO `task_holder` (`registry`,`enterprise`,`user_id`) (SELECT `id`,(SELE
 UPDATE `registry` SET `alias` = null, `document` = null WHERE `alias` = "###{@$&}###";
 ALTER TABLE `task_holder` ADD KEY `IDX_TASK_HOLDER_USER` (`user_id`);
 ALTER TABLE `task_holder` ADD CONSTRAINT `FK_TASK_HOLDER_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
-UPDATE `task_holder` SET `active` = (SELECT `active` FROM `user` WHERE `id` = `task_holder`.`user_id`);
+UPDATE `task_holder` SET `active` = (SELECT `active` FROM `user` WHERE `user`.`id` = `task_holder`.`user_id`);
 
 #
 # TABLE `task_holder_workgroup`
@@ -193,14 +193,14 @@ ALTER TABLE `daily_tracking` CHANGE `user_id` `task_holder` int(4) NOT NULL COMM
 ALTER TABLE `daily_tracking` CHANGE `customer` `registry` int(4) default NULL COMMENT 'Identificador del Cliente asociado al Parte';
 ALTER TABLE `daily_tracking` CHANGE `dossier` `project` int(4) default NULL COMMENT 'Identificador del Expediente asociado al Parte';
 ALTER TABLE `daily_tracking` CHANGE `activity` `activity_type` int(4) default NULL COMMENT 'Identificador de la Actividad asociada al Parte';
-UPDATE `daily_tracking` SET `activity_type` = (SELECT `activity_type` FROM `activity` WHERE `id` = `activity_type`);
+UPDATE `daily_tracking` SET `activity_type` = (SELECT `activity_type` FROM `activity` WHERE `activity`.`id` = `daily_tracking`.`activity_type`);
 ALTER TABLE `daily_tracking` ADD KEY `IDX_DT_ACT_TYPE` (`activity_type`);
 ALTER TABLE `daily_tracking` ADD KEY `IDX_DT_JOB_TYPE` (`job_type`);
 ALTER TABLE `daily_tracking` ADD KEY `IDX_DT_PROJECT` (`project`);
 ALTER TABLE `daily_tracking` ADD KEY `IDX_DT_REGISTRY` (`registry`);
 ALTER TABLE `daily_tracking` ADD KEY `IDX_DT_TASK` (`task`);
 ALTER TABLE `daily_tracking` ADD KEY `IDX_DT_TASK_HOLDER` (`task_holder`); 
-UPDATE `daily_tracking` SET `task_holder` = (SELECT `registry` FROM `task_holder` WHERE `task_holder` = `user_id`);
+UPDATE `daily_tracking` SET `task_holder` = (SELECT `registry` FROM `task_holder` WHERE `task_holder`.`user_id` = `daily_tracking`.`task_holder`);
 ALTER TABLE `daily_tracking` ADD CONSTRAINT `FK_DT_ACT_TYPE` FOREIGN KEY (`activity_type`) REFERENCES `activity_type` (`id`);
 ALTER TABLE `daily_tracking` ADD CONSTRAINT `FK_DT_JOB_TYPE` FOREIGN KEY (`job_type`) REFERENCES `job_type` (`id`);
 ALTER TABLE `daily_tracking` ADD CONSTRAINT `FK_DT_PROJECT` FOREIGN KEY (`project`) REFERENCES `project` (`id`);
@@ -236,9 +236,9 @@ ALTER TABLE `task` ADD `registry` int(4) default NULL AFTER `project`;
 UPDATE `task` set 
  `enterprise` = (SELECT MIN(`registry`) FROM `company`),
  `registry` = (SELECT `registry` FROM `project` WHERE `project`.`id` = `task`.`project`),
- `task_holder` = (SELECT `registry` FROM `task_holder` WHERE `task_holder` = `user_id`),
- `sender` = (SELECT `registry` FROM `task_holder` WHERE `sender` = `user_id`),
- `activity_type` = (SELECT `activity_type` FROM `activity` WHERE `id` = `activity_type`);
+ `task_holder` = (SELECT `registry` FROM `task_holder` WHERE `task_holder`.`user_id` = `task`.`task_holder`),
+ `sender` = (SELECT `registry` FROM `task_holder` WHERE `task_holder`.`user_id` = `task`.`sender`),
+ `activity_type` = (SELECT `activity_type` FROM `activity` WHERE `activity`.`id` = `task`.`activity_type`);
 ALTER TABLE `task` MODIFY `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa';
 ALTER TABLE `task` ADD KEY `IDX_TASK_ACTIVITY_TYPE` (`activity_type`);
 ALTER TABLE `task` ADD KEY `IDX_TASK_ENTERPRISE` (`enterprise`);
