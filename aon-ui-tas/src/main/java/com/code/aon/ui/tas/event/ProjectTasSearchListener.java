@@ -11,9 +11,9 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.tas.TasItem;
 import com.code.aon.tas.dao.ITASAlias;
 import com.code.aon.tas.enumeration.ProjectStatus;
-import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.project.controller.event.ProjectSearchListener;
 
-public class ProjectTasSearchListener extends ControllerSearchListener {
+public class ProjectTasSearchListener extends ProjectSearchListener {
 
 	private Target target;
 	private TasItem tasItem;
@@ -54,6 +54,7 @@ public class ProjectTasSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
+		super.init();
 		setTarget((Target)BeanManager.getManagerBean(Target.class).createNewTo());
 		setTasItem((TasItem)BeanManager.getManagerBean(TasItem.class).createNewTo());
 		setTaskHolder((TaskHolder)BeanManager.getManagerBean(TaskHolder.class).createNewTo());
@@ -63,6 +64,7 @@ public class ProjectTasSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
+		super.completeCriteria(criteria);
 		if ((getTarget() != null) && (getTarget().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(ITASAlias.PROJECT_TAS_TARGET_ID), getTarget().getId());			
 		}

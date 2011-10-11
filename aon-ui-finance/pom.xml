@@ -44,18 +44,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.file.bank</artifactId>
-			<version>${pom.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.file.tax</artifactId>
-			<version>${pom.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.customer</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
@@ -63,6 +51,18 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.facturae</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.file.bank</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.file.tax</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>

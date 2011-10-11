@@ -7,9 +7,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.seller.Seller;
-import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.project.controller.event.ProjectSearchListener;
 
-public class ProjectCommercialSearchListener extends ControllerSearchListener {
+public class ProjectCommercialSearchListener extends ProjectSearchListener {
 
 	private Target target;
 	private Seller seller;
@@ -32,12 +32,14 @@ public class ProjectCommercialSearchListener extends ControllerSearchListener {
 
 	@Override
 	protected void init() throws ManagerBeanException {
+		super.init();
 		setTarget((Target)BeanManager.getManagerBean(Target.class).createNewTo());
 		setSeller((Seller)BeanManager.getManagerBean(Seller.class).createNewTo());
 	}
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
+		super.completeCriteria(criteria);
 		if ((getTarget() != null) && (getTarget().getId() != null)) {
 			String alias = getFieldName(ICommercialAlias.PROJECT_COMMERCIAL_TARGET_ID);
 			criteria.addEqualExpression(alias, getTarget().getId());			
