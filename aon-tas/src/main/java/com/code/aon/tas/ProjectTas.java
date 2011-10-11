@@ -34,8 +34,8 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
-import com.code.aon.groupware.TaskHolder;
 import com.code.aon.project.Project;
+import com.code.aon.project.TaskHolder;
 import com.code.aon.tas.enumeration.ProjectStatus;
 
 @Entity
