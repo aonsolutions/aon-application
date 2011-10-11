@@ -30,14 +30,12 @@ public class ProjectSearchListener extends ControllerSearchListener {
 	
 	@Override
 	protected void init() throws ManagerBeanException {
-		super.init();
 		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
 		setProjectType((ProjectType)BeanManager.getManagerBean(ProjectType.class).createNewTo());
 	}
 	
 	@Override
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
-		super.completeCriteria( criteria );
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IProjectAlias.PROJECT_REGISTRY_ID), getRegistry().getId());
 		}		
