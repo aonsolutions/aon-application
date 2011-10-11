@@ -40,7 +40,7 @@ import com.code.aon.company.Company;
 import com.code.aon.desktop.DesktopNoticeSummary;
 import com.code.aon.desktop.IDesktopConstants;
 import com.code.aon.groupware.Note;
-import com.code.aon.groupware.dao.IGroupWareAlias;
+import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.groupware.enumeration.NoticeType;
@@ -123,8 +123,8 @@ public class DesktopController implements IDesktopConstants {
     private void updateRecentNoteModel() throws ManagerBeanException {
     	IManagerBean noteBean = BeanManager.getManagerBean(Note.class);
     	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(noteBean.getFieldName(IGroupWareAlias.NOTE_OWNER_ID), UserUtils.getInstance().getLoggedUser().getId());
-    	criteria.addOrder(noteBean.getFieldName(IGroupWareAlias.NOTE_DATE), false);
+    	criteria.addEqualExpression(noteBean.getFieldName(IGroupwareAlias.NOTE_OWNER_ID), UserUtils.getInstance().getLoggedUser().getId());
+    	criteria.addOrder(noteBean.getFieldName(IGroupwareAlias.NOTE_DATE), false);
     	this.recentNoteModel = new ListDataModel(noteBean.getList(criteria));
     }
     
@@ -137,7 +137,7 @@ public class DesktopController implements IDesktopConstants {
         Note note = (Note)recentNoteModel.getRowData();
         Criteria criteria = new Criteria();
         try {
-            criteria.addEqualExpression(noteController.getFieldName(IGroupWareAlias.NOTE_ID), note.getId());
+            criteria.addEqualExpression(noteController.getFieldName(IGroupwareAlias.NOTE_ID), note.getId());
             noteController.setCriteria(criteria);
             noteController.onSearch(null);
             noteController.getModel().setRowIndex(0);
@@ -160,8 +160,8 @@ public class DesktopController implements IDesktopConstants {
         NoticeController noticeController = (NoticeController)FormUtil.getController(NOTICE_CONTROLLER_NAME);
         Criteria criteria = new Criteria();
         try {
-            criteria.addEqualExpression(noticeController.getFieldName(IGroupWareAlias.NOTICE_RECIPIENT_ID), UserUtils.getInstance().getLoggedUser().getId());
-            criteria.addBetweenExpression(noticeController.getFieldName(IGroupWareAlias.NOTICE_DATE), from.getTime(), to.getTime());
+            criteria.addEqualExpression(noticeController.getFieldName(IGroupwareAlias.NOTICE_RECIPIENT_ID), UserUtils.getInstance().getLoggedUser().getId());
+            criteria.addBetweenExpression(noticeController.getFieldName(IGroupwareAlias.NOTICE_DATE), from.getTime(), to.getTime());
             noticeController.setCriteria(criteria);
             noticeController.onSearch(null);
         } catch (ManagerBeanException e) {

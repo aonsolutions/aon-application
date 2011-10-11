@@ -1,6 +1,5 @@
 package com.code.aon.ui.project.controller;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +8,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,14 +16,13 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.project.Activity;
-import com.code.aon.project.Dossier;
+import com.code.aon.project.Project;
+import com.code.aon.project.ProjectActivity;
+import com.code.aon.project.ProjectType;
 import com.code.aon.project.dao.IProjectAlias;
-import com.code.aon.project.enumeration.DossierStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
 public class ImportActivitiesController {
@@ -31,7 +30,7 @@ public class ImportActivitiesController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(ImportActivitiesController.class);
 	
 	private boolean importPanel;
-	private Integer dossierId;
+	private Integer projectId;
 	private DataModel model;
 
 	public boolean isImportPanel() {
@@ -42,12 +41,12 @@ public class ImportActivitiesController {
 		this.importPanel = importPanel;
 	}
 
-	public Integer getDossierId() {
-		return dossierId;
+	public Integer getProjectId() {
+		return projectId;
 	}
 
-	public void setDossierId(Integer dossierId) {
-		this.dossierId = dossierId;
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
 	}
 
 	public DataModel getModel() {
@@ -62,7 +61,7 @@ public class ImportActivitiesController {
 	}
 
 	public void onShowImportPanel(ActionEvent event) {
-		setDossierId(null);
+		setProjectId(null);
 		setModel(null);
 		setImportPanel(true);
 	}
@@ -76,13 +75,12 @@ public class ImportActivitiesController {
 		int i = 0;
 		try {
 			List<CustomActivity> list = (List<CustomActivity>) getModel().getWrappedData();
-			IManagerBean bean = BeanManager.getManagerBean(Activity.class);
+			IManagerBean bean = BeanManager.getManagerBean(ProjectActivity.class);
 			for (CustomActivity ca : list) {
 				if (ca.isSelected()) {
-					Activity a = new Activity();
-					a.setDossier(getDossier());
-					a.setActivityType(ca.getActivity().getActivityType());
-					a.setWorkgroup(ca.getActivity().getWorkgroup());
+					ProjectActivity a = new ProjectActivity();
+					a.setProject(getProject());
+					a.setActivityType(ca.getProjectActivity().getActivityType());
 					i++;
 					bean.insert(a);
 				}
@@ -90,55 +88,59 @@ public class ImportActivitiesController {
 		} catch (ManagerBeanException e) {
 			LOGGER.error("Error importing activities", e);
 		} finally {
-			FormUtil.getController("activity").onSearch(event);
-			AonUtil.addInfoMessage("" + i + " activities imported");			
+			FormUtil.getController(IProjectConstants.PROJECT_ACTIVITY_CONTROLLER_NAME).onSearch(event);
+			AonUtil.addInfoMessage("" + i + " actividades importadas.");			
 			setImportPanel(false);
 		}
 	}
 
-	public List<SelectItem> getDossiers() {
-		List<SelectItem> dossiers = new LinkedList<SelectItem>();
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Dossier.class);
-			Criteria criteria = new Criteria();
-			String identifier = bean.getFieldName(IProjectAlias.DOSSIER_ID);
-			Expression exp = ExpressionUtilities.getNotEqualExpression(identifier, getDossier()
-					.getId());
-			criteria.addExpression(exp);
-			criteria.addOrder(bean.getFieldName(IProjectAlias.DOSSIER_NUMBER));
-			Iterator<ITransferObject> iterator = bean.getList(criteria).iterator();
-			while (iterator.hasNext()) {
-				Dossier dossier = (Dossier) iterator.next();
-				StringBuilder sb = new StringBuilder(dossier.getNumber());
-				sb.append(" (");
-				sb.append(dossier.getCustomer().getRegistry().getAlias());
-				sb.append(")");
-				if (dossier.getStatus() == DossierStatus.INACTIVE) {
-					sb.append(" (");
-					sb.append(dossier.getStatus());
-					sb.append(")");
-				}
-				SelectItem item = new SelectItem(dossier.getId(), sb.toString());
-				dossiers.add(item);
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.error("Error loading dossiers", e);
+	public List<SelectItem> getProjects() throws ManagerBeanException {
+		List<SelectItem> projects = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Project.class);
+		Criteria criteria = new Criteria();
+		String identifier = bean.getFieldName(IProjectAlias.PROJECT_ID);
+		criteria.addNotEqualExpression(identifier, getProject().getId());
+		ProjectType projectType = getProject().getProjectType();
+		if (projectType == null || projectType.getId() == null) {
+			criteria.addNullExpression( bean.getFieldName(IProjectAlias.PROJECT_PROJECT_TYPE_ID));	
+		} else {
+			criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_PROJECT_TYPE_ID),projectType.getId());
 		}
-		return dossiers;
+		criteria.addOrder(bean.getFieldName(IProjectAlias.PROJECT_NAME));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to:list) {
+			Project project = (Project) to;
+			projects.add(getProjectSelectItem(project));
+		}
+		return projects;
 	}
 
-	public void onChangeDossier(ActionEvent event) {
+	private SelectItem getProjectSelectItem(Project project) {
+		StringBuilder sb = new StringBuilder(project.getName());
+		sb.append(" (");
+		String alias = StringUtils.isNotEmpty(project.getRegistry().getAlias())?
+				project.getRegistry().getAlias() :
+				StringUtils.abbreviate(project.getRegistry().getFullName(), 25);			
+		sb.append(alias);
+		sb.append(")");
+		if (!project.isActive()) {
+			sb.append(" ( inactv.)");
+		}
+		return new SelectItem(project.getId(), sb.toString());
+	}
+
+	public void onChangeProject(ActionEvent event) {
 		List<CustomActivity> list = new LinkedList<CustomActivity>();
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(Activity.class);
+			IManagerBean bean = BeanManager.getManagerBean(ProjectActivity.class);
 			Criteria criteria = new Criteria();
-			String alias = bean.getFieldName(IProjectAlias.ACTIVITY_DOSSIER_ID);
-			criteria.addEqualExpression(alias, getDossierId());
-			Iterator<ITransferObject> iterator = bean.getList(criteria).iterator();
-			while (iterator.hasNext()) {
-				Activity act = (Activity) iterator.next();
+			String alias = bean.getFieldName(IProjectAlias.PROJECT_ACTIVITY_PROJECT_ID);
+			criteria.addEqualExpression(alias, getProjectId());
+			List<ITransferObject> beanList = bean.getList(criteria);
+			for (ITransferObject to:beanList) {
+				ProjectActivity act = (ProjectActivity) to;
 				CustomActivity ca = new CustomActivity();
-				ca.setActivity(act);
+				ca.setProjectActivity(act);
 				ca.setSelected( ca.isClickable() );
 				list.add(ca);
 			}
@@ -148,25 +150,34 @@ public class ImportActivitiesController {
 		setModel(new ListDataModel(list));
 	}
 
-	private DossierController getDossierController() {
-		return (DossierController) FormUtil.getController("dossier");
-	}
-
-	private Dossier getDossier() {
-		return (Dossier) getDossierController().getTo();
+	
+	private Project getProject() {
+		return (Project) FormUtil.getController(IProjectConstants.PROJECT_CONTROLLER_NAME).getTo();
 	}
 
 	public class CustomActivity {
 		private boolean selected;
-		private Activity activity;
+		private ProjectActivity projectActivity;
 
+		@SuppressWarnings("unchecked")
 		public boolean isClickable() {
-			Integer a = null;
-			if (this.activity.getActivityType().getDossierType() != null) {
-				a = this.activity.getActivityType().getDossierType().getId();
+			try {
+				IController controller =  FormUtil.getController(IProjectConstants.PROJECT_ACTIVITY_CONTROLLER_NAME);	
+				List<ProjectActivity> list = (List<ProjectActivity>) controller.getModel().getWrappedData();
+				for (ProjectActivity pa : list ){
+					if (this.projectActivity.getActivityType().getId().equals(pa.getActivityType().getId())) {
+						return false;
+					}
+				}
+				Integer a = null;
+				if (this.projectActivity.getActivityType().getProjectType() != null) {
+					a = this.projectActivity.getActivityType().getProjectType().getId();
+				}
+				Integer b = getProject().getProjectType().getId();
+				return (a== null || a.equals(b));
+			} catch (ManagerBeanException e) {
+				return false;
 			}
-			Integer b = getDossier().getDossierType().getId();
-			return (a== null || a.equals(b));
 		}
 		
 		public boolean isSelected() {
@@ -177,12 +188,12 @@ public class ImportActivitiesController {
 			this.selected = selected;
 		}
 
-		public Activity getActivity() {
-			return activity;
+		public ProjectActivity getProjectActivity() {
+			return projectActivity;
 		}
 
-		public void setActivity(Activity activity) {
-			this.activity = activity;
+		public void setProjectActivity(ProjectActivity projectActivity) {
+			this.projectActivity = projectActivity;
 		}
 
 	}

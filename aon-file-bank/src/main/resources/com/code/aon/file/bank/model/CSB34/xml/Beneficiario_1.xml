@@ -11,7 +11,7 @@
  <field name="importe" value="bean" bean="DETAIL" property="amount" format="Numeric" pattern="9(10)V99" />
  <field name="ccc" value="bean" bean="DETAIL_ACCOUNT" property="ccc" format="CCC" pattern="ESC" />
  <field name="constant1" value="1" format="AlphaNumeric" pattern="X(1)" />
- <field name="constant2" value="9" format="AlphaNumeric" pattern="X(1)" />
+ <field name="mode" value="bean" bean="DETAIL" property="mode" format="AlphaNumeric" pattern="X(1)" />
  <field name="free1" value=" " format="Alphabetic" pattern="X(2)" />
  <field name="ccc" value="bean" bean="DETAIL_ACCOUNT" property="ccc" format="CCC" pattern="D" />
  <field name="free2" value=" " format="Alphabetic" pattern="X(7)" />

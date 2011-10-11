@@ -27,9 +27,7 @@ public class FavoriteCategory implements ITransferObject {
 	private static final long serialVersionUID = -6923645771997989214L;
 
 	private Integer id;
-	
 	private String description;
-	
 	private User user;
 
 	@Id
@@ -38,7 +36,6 @@ public class FavoriteCategory implements ITransferObject {
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -47,7 +44,6 @@ public class FavoriteCategory implements ITransferObject {
 	public String getDescription() {
 		return description;
 	}
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
@@ -60,7 +56,6 @@ public class FavoriteCategory implements ITransferObject {
 	public User getUser() {
 		return user;
 	}
-
 	public void setUser(User user) {
 		this.user = user;
 	}

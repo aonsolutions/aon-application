@@ -97,6 +97,7 @@ public class AEB34Writer implements IFinanceConstants {
 		Detail detail = (finance.getPayMethod().getType() == PayMethodType.BANK_TRANSFER) ? new Transfer() : new Check();
 		detail.setReceiver(receiver);
 		detail.setAccount(account);
+		detail.setMode("9");
 		detail.setAmount(new Double(finance.getTotalAmount()));
 		detail.setConcept((!finance.isEmptyInvoice()) ? "PAGO FACTURA: " + finance.getInvoice().getReferenceCode() : finance.getConcept());
 		return detail;

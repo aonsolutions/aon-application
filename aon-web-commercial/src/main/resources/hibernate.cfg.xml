@@ -91,13 +91,26 @@
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
 	
-		<!-- AON-GROUPWARE Mapping files -->
+		<!-- AON-GROUPWARE Mapping files --> 
 		<mapping class="com.code.aon.groupware.Alarm"/>
+		<mapping class="com.code.aon.groupware.Campaign"/>
+		<mapping class="com.code.aon.groupware.CampaignProject"/>
+		<mapping class="com.code.aon.groupware.CampaignType"/>
+		<mapping class="com.code.aon.groupware.DailyTracking"/>
+		<mapping class="com.code.aon.groupware.Favorite"/>
+		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
+		<mapping class="com.code.aon.groupware.JobType"/>
 		<mapping class="com.code.aon.groupware.Note"/>
 		<mapping class="com.code.aon.groupware.Notice"/>
-		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
-		<mapping class="com.code.aon.groupware.Favorite"/>	
-				
+		<mapping class="com.code.aon.groupware.Process"/>
+		<mapping class="com.code.aon.groupware.ProcessDetail"/>
+		<mapping class="com.code.aon.groupware.ProcessDetailTransition"/>
+		<mapping class="com.code.aon.groupware.ProcessTask"/>
+		<mapping class="com.code.aon.groupware.ProcessTransitionType"/>
+		<mapping class="com.code.aon.groupware.Task"/>
+		<mapping class="com.code.aon.groupware.TaskHolder"/>
+		<mapping class="com.code.aon.groupware.TaskHolderWorkgroup"/>
+
 		<!-- AON-MARKETING Mapping files -->
 		<mapping class="com.code.aon.marketing.ActionTarget"/>
 		<mapping class="com.code.aon.marketing.Campaign"/>
@@ -134,8 +147,11 @@
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 
-		<!-- AON-PROJECT Mapping files -->
-		<mapping class="com.code.aon.project.Project"/>	
+		<!-- AON-PROJECT Mapping files -->  
+		<mapping class="com.code.aon.project.ActivityType"/>
+		<mapping class="com.code.aon.project.Project"/>
+		<mapping class="com.code.aon.project.ProjectActivity"/>
+		<mapping class="com.code.aon.project.ProjectType"/>
 				
 		<!-- AON-REGISTRY Mapping files -->
 		<mapping class="com.code.aon.registry.Category"/>

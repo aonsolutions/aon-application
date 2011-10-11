@@ -28,7 +28,6 @@ public class NoteController extends BasicController {
 	public List<SelectItem> getUsers() {
 		return users;
 	}
-
 	public void setUsers(List<SelectItem> users) {
 		this.users = users;
 	}
@@ -41,14 +40,13 @@ public class NoteController extends BasicController {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void loadUsers(Integer workGroupId) {
     	users = new LinkedList<SelectItem>();
         try {
             IManagerBean managerBean = BeanManager.getManagerBean(UserWorkGroup.class);
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroupId);
-            Iterator iterator = managerBean.getList(criteria).iterator();
+            Iterator<?> iterator = managerBean.getList(criteria).iterator();
             while (iterator.hasNext()) {
                 UserWorkGroup userWorkGroup = (UserWorkGroup)iterator.next();
                 SelectItem item = new SelectItem(userWorkGroup.getId(), userWorkGroup.getUser().getName());

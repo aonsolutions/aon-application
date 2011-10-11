@@ -10,15 +10,16 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.UserWorkGroup;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.desktop.IDesktopConstants;
-import com.code.aon.project.Task;
-import com.code.aon.project.dao.IProjectAlias;
-import com.code.aon.project.enumeration.TaskStatus;
+import com.code.aon.groupware.Task;
+import com.code.aon.groupware.TaskHolderWorkgroup;
+import com.code.aon.groupware.dao.IGroupwareAlias;
+import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.util.AonUtil;
 
 public class TaskManager implements IServices, IDesktopConstants {
@@ -26,6 +27,14 @@ public class TaskManager implements IServices, IDesktopConstants {
 	private ApplicationsManager.App app;
 	
 	private Integer userId;
+	private GroupwareUtils groupwareUtils;
+	
+	private GroupwareUtils getGroupwareUtils() {
+		if (groupwareUtils==null) {
+			groupwareUtils = new GroupwareUtils();
+		}
+		return groupwareUtils;
+	}
 
 	public TaskManager() {
 		ApplicationsManager apps = 
@@ -35,14 +44,14 @@ public class TaskManager implements IServices, IDesktopConstants {
 	}
 
 	private List<Integer> getUserWorkgroups() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(UserWorkGroup.class);
+		IManagerBean bean = BeanManager.getManagerBean(TaskHolderWorkgroup.class);
 		Criteria criteria = new Criteria();
-		String user = bean.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_ID);
-		criteria.addEqualExpression(user, userId);
+		String user = bean.getFieldName(IGroupwareAlias.TASK_HOLDER_WORKGROUP_TASK_HOLDER_ID);
+		criteria.addEqualExpression(user, getGroupwareUtils().getCurrentTaskHolder().getId());
 		List<Integer> result = new LinkedList<Integer>();
 		for( ITransferObject to : bean.getList(criteria) ) {
-			UserWorkGroup uwg = (UserWorkGroup) to;
-			result.add( uwg.getUser().getId() );
+			TaskHolderWorkgroup uwg = (TaskHolderWorkgroup) to;
+			result.add( uwg.getTaskHolder().getId() );
 		}
 		return result;
 	}
@@ -50,9 +59,9 @@ public class TaskManager implements IServices, IDesktopConstants {
 	private int getUserWorkgroupCount() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Task.class);
 		Criteria criteria = new Criteria();
-		String user = bean.getFieldName(IProjectAlias.TASK_USER_ID);
+		String user = bean.getFieldName(IGroupwareAlias.TASK_TASK_HOLDER_ID);
 		criteria.addNullExpression(user);
-		String workGroup = bean.getFieldName(IProjectAlias.TASK_WORK_GROUP_ID);
+		String workGroup = bean.getFieldName(IGroupwareAlias.TASK_WORK_GROUP_ID);
 		Expression expression = null;
 		for( Integer id : getUserWorkgroups() ) {
 			if ( expression == null ) {
@@ -71,13 +80,13 @@ public class TaskManager implements IServices, IDesktopConstants {
 	private int getExpiredCount() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Task.class);
 		Criteria criteria = new Criteria();
-		String user = bean.getFieldName(IProjectAlias.TASK_USER_ID);
-		criteria.addEqualExpression(user, userId);
-		String statusAlias = bean.getFieldName(IProjectAlias.TASK_STATUS);
+		String user = bean.getFieldName(IGroupwareAlias.TASK_TASK_HOLDER_ID);
+		criteria.addEqualExpression(user, getGroupwareUtils().getCurrentTaskHolder().getId());
+		String statusAlias = bean.getFieldName(IGroupwareAlias.TASK_STATUS);
 		Expression exp1  = ExpressionUtilities.getEqualExpression(statusAlias, TaskStatus.IN_PROGRESS);
 		Expression exp2  = ExpressionUtilities.getEqualExpression(statusAlias, TaskStatus.PENDING);
 		criteria.addExpression( ExpressionUtilities.getOrExpression(exp1, exp2) );
-		String dueDate = bean.getFieldName(IProjectAlias.TASK_DUE_DATE);
+		String dueDate = bean.getFieldName(IGroupwareAlias.TASK_DUE_DATE);
 		criteria.addLessThanExpression(dueDate, new Date());
 		return bean.getCount(criteria);
 	}
@@ -85,9 +94,9 @@ public class TaskManager implements IServices, IDesktopConstants {
 	private int getTaskCount( TaskStatus status ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Task.class);
 		Criteria criteria = new Criteria();
-		String user = bean.getFieldName(IProjectAlias.TASK_USER_ID);
-		criteria.addEqualExpression(user, userId);
-		String statusAlias = bean.getFieldName(IProjectAlias.TASK_STATUS);
+		String user = bean.getFieldName(IGroupwareAlias.TASK_TASK_HOLDER_ID);
+		criteria.addEqualExpression(user, getGroupwareUtils().getCurrentTaskHolder().getId());
+		String statusAlias = bean.getFieldName(IGroupwareAlias.TASK_STATUS);
 		criteria.addEqualExpression(statusAlias, status);
 		return bean.getCount(criteria);
 	}
