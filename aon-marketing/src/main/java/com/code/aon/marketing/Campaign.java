@@ -26,7 +26,7 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
  * @since 1.0
  * @version 1.0
  */
-@Entity
+@Entity(name="MarketingCampaign")
 @Table(name = "mk_campaign")
 public class Campaign implements ITransferObject {
 
