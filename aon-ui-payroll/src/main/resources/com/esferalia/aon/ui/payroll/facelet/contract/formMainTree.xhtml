@@ -9,108 +9,111 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
+	<ui:define name="header">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_economic_data}" />
+			<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+			<ui:define name="toolbarContent">
+				
+			</ui:define>				
+		</ui:decorate>	
+	</ui:define>
+
 	<ui:define name="content">
 			
-		<aon:form id="contractMainDataForm">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_economic_data}" />
-				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
-				<ui:define name="toolbarContent">
-					
-				</ui:define>				
-			</ui:decorate>	
-			
-			<aon:div styleClass="aon-panelGrid-search" 
-				style="width: 100%; margin-bottom:10px; padding:10px 0 10px 10px;">
-				<aon:panelGrid columns="3" 
-						columnClasses="aon-panelGrid-odd aon-width-100
-									,aon-panelGrid-even aon-width-auto
-									,aon-panelGrid-even aon-width-auto">
-					
-				<aon:outputText value="#{payrollBundle.payroll_data_filter}" styleClass="aon-bold" />
+		<aon:div styleClass="aon-panelGrid-search" 
+			style="width: 100%; margin-bottom:10px; padding:10px 0 10px 10px;">
+			<aon:panelGrid columns="3" 
+					columnClasses="aon-panelGrid-odd aon-width-100
+								,aon-panelGrid-even aon-width-auto
+								,aon-panelGrid-even aon-width-auto">
 				
-				<aon:selectOneRadio value="#{enterpriseTree.searchCurrent}" style="display:inline;">
-					<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
-					<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
-					<a4j:support event="onclick" reRender="contractMainDataForm" ignoreDupResponses="true" >
+			<aon:outputText value="#{payrollBundle.payroll_data_filter}" styleClass="aon-bold" />
+			
+			<aon:selectOneRadio value="#{enterpriseTree.searchCurrent}" style="display:inline;">
+				<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
+				<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
+				<a4j:support event="onclick" reRender="contractMainDataForm" ignoreDupResponses="true" >
+					<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
+				</a4j:support>
+			</aon:selectOneRadio>
+			
+			<aon:panelGroup >
+				<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
+					value="#{bundle.aon_end_date}:" />
+				<aon:selectOneMenu 
+					styleClass="aon-margin-right"
+					disabled="#{enterpriseTree.searchCurrent}"
+					value="#{enterpriseTree.inactiveLastPeriod}" >
+					<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
+					<a4j:support event="onchange" reRender="contractMainDataForm" ignoreDupResponses="true" >
+						<aon:actionListener method="#{enterpriseTree.onChangeLastPeriod}" />
 						<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
 					</a4j:support>
-				</aon:selectOneRadio>
-				
-				<aon:panelGroup >
-					<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
-						value="#{bundle.aon_end_date}:" />
-					<aon:selectOneMenu 
-						styleClass="aon-margin-right"
-						disabled="#{enterpriseTree.searchCurrent}"
-						value="#{enterpriseTree.inactiveLastPeriod}" >
-						<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
-						<a4j:support event="onchange" reRender="contractMainDataForm" ignoreDupResponses="true" >
-							<aon:actionListener method="#{enterpriseTree.onChangeLastPeriod}" />
-							<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
-						</a4j:support>
-					</aon:selectOneMenu>
-					<aon:selectInputDate  
-						disabled="#{!(!enterpriseTree.searchCurrent and enterpriseTree.inactiveLastPeriod=='MANUAL')}"
-						value="#{enterpriseTree.inactiveDate}"
-						inputSize="10" renderAsPopup="true" enableManualInput="true"
-						timeZone="#{timeZoneController.timeZone}"
-						popupDateFormat="#{bundle.aon_date_pattern}">
-						<a4j:support event="onchanged" reRender="contractMainDataForm" ignoreDupResponses="true">
-							<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
-						</a4j:support>
-					</aon:selectInputDate>
-				</aon:panelGroup>
-				
-				</aon:panelGrid>
-
-			</aon:div>	
+				</aon:selectOneMenu>
+				<aon:selectInputDate  
+					disabled="#{!(!enterpriseTree.searchCurrent and enterpriseTree.inactiveLastPeriod=='MANUAL')}"
+					value="#{enterpriseTree.inactiveDate}"
+					inputSize="10" renderAsPopup="true" enableManualInput="true"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+					<a4j:support event="onchanged" reRender="contractMainDataForm" ignoreDupResponses="true">
+						<aon:actionListener method="#{enterpriseTree.reloadTreeMainData}" />
+					</a4j:support>
+				</aon:selectInputDate>
+			</aon:panelGroup>
 			
-			<rich:simpleTogglePanel opened="#{contractPayment.paymentsModel.rowCount > 0}" 
-		        switchType="client"
-		        style="margin-top:5px;"
-				label="#{payrollBundle.payroll_salary_payments_tab}">
-				<aon:div id="paymentGrid" >
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
-						<ui:param name="controller" value="#{contractPayment}" />
-					</ui:include>
-				</aon:div>       
-		    </rich:simpleTogglePanel>   
+			</aon:panelGrid>
 
-			<rich:simpleTogglePanel opened="#{contractDeduction.model.rowCount > 0}"
-				switchType="client"
-		        style="margin-top:5px;"
-		        label="#{payrollBundle.payroll_salary_deductions_tab}" >
-				<aon:div id="deductionGrid" >
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/editGridContent.xhtml" >
-						<ui:param name="controller" value="#{contractDeduction}" />
-					</ui:include>
-				</aon:div>
-			</rich:simpleTogglePanel>
-						
-			<rich:simpleTogglePanel opened="#{contractBonus.model.rowCount > 0}" 
-				switchType="client"
-		        style="margin-top:5px;"
-		        label="#{payrollBundle.payroll_salary_bonus_tab}">
-				<aon:div id="bonusGrid" >
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/editGridContent.xhtml" >
-						<ui:param name="controller" value="#{contractBonus}" />
-					</ui:include>
-				</aon:div>
-			</rich:simpleTogglePanel>
+		</aon:div>	
 		
-			<rich:simpleTogglePanel opened="#{contractEmbargo.model.rowCount > 0}"
-				switchType="client"
-		        style="margin-top:5px;"
-		        label="#{payrollBundle.payroll_salary_embargos_tab}">
-				<aon:div id="embargoGrid" >
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/listContent.xhtml">
-						<ui:param name="controller" value="#{contractEmbargo}" />
-					</ui:include>
-				</aon:div>
-			</rich:simpleTogglePanel>
-		</aon:form>
+		<rich:simpleTogglePanel opened="#{contractPayment.paymentsModel.rowCount > 0}" 
+	        switchType="client"
+	        style="margin-top:5px;"
+			label="#{payrollBundle.payroll_salary_payments_tab}">
+			<aon:div id="paymentGrid" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
+					<ui:param name="controller" value="#{contractPayment}" />
+				</ui:include>
+			</aon:div>       
+	    </rich:simpleTogglePanel>   
 
+		<rich:simpleTogglePanel opened="#{contractDeduction.model.rowCount > 0}"
+			switchType="client"
+	        style="margin-top:5px;"
+	        label="#{payrollBundle.payroll_salary_deductions_tab}" >
+			<aon:div id="deductionGrid" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/editGridContent.xhtml" >
+					<ui:param name="controller" value="#{contractDeduction}" />
+				</ui:include>
+			</aon:div>
+		</rich:simpleTogglePanel>
+					
+		<rich:simpleTogglePanel opened="#{contractBonus.model.rowCount > 0}" 
+			switchType="client"
+	        style="margin-top:5px;"
+	        label="#{payrollBundle.payroll_salary_bonus_tab}">
+			<aon:div id="bonusGrid" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/editGridContent.xhtml" >
+					<ui:param name="controller" value="#{contractBonus}" />
+				</ui:include>
+			</aon:div>
+		</rich:simpleTogglePanel>
+	
+		<rich:simpleTogglePanel opened="#{contractEmbargo.model.rowCount > 0}"
+			switchType="client"
+	        style="margin-top:5px;"
+	        label="#{payrollBundle.payroll_salary_embargos_tab}">
+			<aon:div id="embargoGrid" >
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/listContent.xhtml">
+					<ui:param name="controller" value="#{contractEmbargo}" />
+				</ui:include>
+			</aon:div>
+		</rich:simpleTogglePanel>
+		
+	</ui:define>
+
+	<ui:define name="additionalContent">
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
 			<ui:param name="controller" value="#{contractPayment}" />
 			<ui:param name="skipCurrentMonth" value="#{true}" />
@@ -136,6 +139,6 @@
 			<ui:param name="controller" value="#{contractEmbargo}" />
 			<ui:param name="container" value="embargoGrid" />
 		</ui:include>
-		
 	</ui:define>
+		
 </ui:composition>

@@ -97,7 +97,9 @@ var splitterCounter = 0;
 			if ( (opts.dockPane == A && pos < Math.max(A._min, bar._DA)) ||
 				 (opts.dockPane == B && pos > Math.min(pos, A._max, splitter._DA - bar._DA - B._min)) ) {
 				bar.addClass(opts.barDockedClass);
-				buttonDock.addClass(opts.buttonDockedClass);
+				if ( opts.showButtonDock ) {
+					buttonDock.addClass(opts.buttonDockedClass);
+				}
 				bar._DA = bar[0][opts.pxSplit];
 				pos = opts.dockPane == A? 0 : splitter._DA - bar._DA;
 				if ( bar._pos == null )
@@ -105,7 +107,9 @@ var splitterCounter = 0;
 			}
 			else {
 				bar.removeClass(opts.barDockedClass);
-				buttonDock.removeClass(opts.buttonDockedClass);
+				if ( opts.showButtonDock ) {
+					buttonDock.removeClass(opts.buttonDockedClass);
+				}
 				bar._DA = bar[0][opts.pxSplit];
 				bar._pos = null;
 				pos = Math.max(A._min, splitter._DA - B._max, 
@@ -224,7 +228,9 @@ var splitterCounter = 0;
 		if ( /^(auto|default|)$/.test(bar.css("cursor")) )
 			bar.css("cursor", opts.cursor);
 
-		var buttonDock = $('<div></div>').appendTo(bar).addClass(opts.buttonClass);
+		if ( opts.showButtonDock ) {
+			var buttonDock = $('<div></div>').appendTo(bar).addClass(opts.buttonClass);
+		}
 		
 		// Cache several dimensions for speed, rather than re-querying constantly
 		// These are saved on the A/B/bar/splitter jQuery vars, which are themselves cached
@@ -294,7 +300,9 @@ var splitterCounter = 0;
 						splitter[0][opts.pxSplit] - splitter._PBA - bar[0][opts.pxSplit];
 					bar.animate(x, opts.dockSpeed||1, opts.dockEasing, function(){
 						bar.addClass(opts.barDockedClass);
-						buttonDock.addClass(opts.buttonDockedClass);
+						if ( opts.showButtonDock ) {
+							buttonDock.addClass(opts.buttonDockedClass);
+						}
 						resplit(x[opts.origin]);
 					});
 				})
@@ -302,7 +310,9 @@ var splitterCounter = 0;
 					var pw = opts.dockPane[0][opts.pxSplit];
 					if ( pw && !$.browser.msie ) return;
 					var x={}; x[opts.origin]=bar._pos+"px";
-					buttonDock.removeClass(opts.buttonDockedClass);
+					if ( opts.showButtonDock ) {
+						buttonDock.removeClass(opts.buttonDockedClass);
+					}
 					bar.removeClass(opts.barDockedClass)
 						.animate(x, opts.undockSpeed||opts.dockSpeed||1, opts.undockEasing||opts.dockEasing, function(){
 							resplit(bar._pos);
@@ -315,13 +325,15 @@ var splitterCounter = 0;
 					.bind($.browser.opera?"click":"focus", function(){ 
 						splitter.trigger("toggleDock"); this.blur();
 					});
-			buttonDock.bind("click", function(){
-				if ( buttonDock.hasClass(opts.buttonDockedClass) ) {
-					splitter.trigger("undock");
-				} else {
-					splitter.trigger("toggleDock");
-				} 
-			})
+			if ( opts.showButtonDock ) {			
+				buttonDock.bind("click", function(){
+					if ( buttonDock.hasClass(opts.buttonDockedClass) ) {
+						splitter.trigger("undock");
+					} else {
+						splitter.trigger("toggleDock");
+					} 
+				});
+			}
 		}
 
 		

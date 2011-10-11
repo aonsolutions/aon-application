@@ -3,6 +3,7 @@
 	outline-style: none;
 	left: 0px;
 	z-index: 1;
+	overflow: auto;
 }
 
 .treeRightContent {
@@ -18,22 +19,19 @@
 .ui-state-highlight { background-color: #6DF }
 .ui-state-error { background-color: #f55 }
 
-.splitter-pane {
-	overflow: auto;
-}
 .splitter-bar-vertical {
-	width:6px;
-	border-left:solid 1px #9cbdff;
-	border-right:solid 1px #9cbdff;
+	width:4px;
+	border-left:solid 1px #7f7b73;
+	border-right:solid 1px #7f7b73;
 	background:#cbe1fb url(images/panev.gif) 0% 50%;
 }
 .splitter-button {
 	cursor: pointer;
-	background:transparent url(images/panevc.gif) 10px 50%;
+	background:transparent url(images/panevc.gif) 8px 50%;
 	margin-top:-41px;
 	margin-left:-4px;
-	height:83px;
-	width:10px;
+	height:79px;
+	width:8px;
 	top:50%;
 	position:relative;
 }

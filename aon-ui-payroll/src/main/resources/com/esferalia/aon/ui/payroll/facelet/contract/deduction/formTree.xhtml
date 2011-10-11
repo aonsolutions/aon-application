@@ -7,29 +7,28 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
+	<ui:define name="header">
+		<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_deductions_tab}" />
+			<ui:param name="toolbarDescription" value="&#160;" />
+		</ui:include>	
+	</ui:define>
+	
 	<ui:define name="content">
-
-		<aon:form id="contractDeductionForm">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_deductions_tab}" />
-				<ui:param name="toolbarDescription" value="&#160;" />
-				<ui:define name="toolbarContent">
-					
-				</ui:define>				
-			</ui:decorate>	
-		
-			<aon:div id="deductionGrid" styleClass="aon-scroll-area">
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/editGridContent.xhtml" >
-					<ui:param name="controller" value="#{contractDeduction}" />
-				</ui:include>
-			</aon:div>
-		</aon:form>
+		<aon:div id="deductionGrid" styleClass="aon-scroll-area">
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/editGridContent.xhtml" >
+				<ui:param name="controller" value="#{contractDeduction}" />
+			</ui:include>
+		</aon:div>
+	</ui:define>
+	
+	<ui:define name="additionalContent">
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/modalDeduction.xhtml">
 			<ui:param name="controller" value="#{contractDeduction}" />
 			<ui:param name="skipCurrentMonth" value="#{true}" />
 			<ui:param name="contextDisabled" value="#{true}" />
 			<ui:param name="container" value="contractDeductionForm" />
 		</ui:include>
-		
 	</ui:define>
+
 </ui:composition>

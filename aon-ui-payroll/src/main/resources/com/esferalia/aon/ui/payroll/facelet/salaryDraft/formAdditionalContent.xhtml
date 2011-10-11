@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
+		<ui:param name="controller" value="#{salaryDraftPayment}" />
+		<ui:param name="skipCurrentMonth" value="#{true}" />
+		<ui:param name="contextDisabled" value="#{true}" />
+		<ui:param name="skipSearchButton" value="false" />
+		<ui:param name="container" value="paymentsEditGrid" />
+	</ui:include>
+	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/modalDeduction.xhtml">
+		<ui:param name="controller" value="#{salaryDraftDeduction}" />
+		<ui:param name="skipSearchButton" value="false" />
+		<ui:param name="container" value="deductionsEditGrid" />
+	</ui:include>
+	<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/modalBonus.xhtml">
+		<ui:param name="controller" value="#{salaryDraftBonus}" />
+		<ui:param name="skipCurrentMonth" value="#{true}" />
+		<ui:param name="contextDisabled" value="#{true}" />
+		<ui:param name="skipSearchButton" value="false" />
+		<ui:param name="container" value="bonusEditGrid" />
+	</ui:include>
+
+</ui:composition>

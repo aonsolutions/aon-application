@@ -8,47 +8,43 @@
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
 	<ui:define name="header">
-
-		<aon:form id="salaryForm">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_module}" />
-				<ui:param name="toolbarDescription" value="&#160;" />
-				<ui:define name="toolbarContent">
-					<c:if test="#{salary.model.rowCount > 0}" >
-						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/buttons.xhtml" />
-					</c:if>
-					<aon:htmlCommandLink id="calendarReport_list"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="#{calendarBundle.aon_calendar_calendar}"
-						rendered="#{contract.to.calendar.id!=null}"
-						action="#{report.onExecute}">
-						<aon:actionListener method="#{contract.onLoadCalendar}" />						
-						<aon:actionListener method="#{calendarPrint.onLoad}" />						
-						<f:param name="reportKey" value="calendarReport" />
-						<f:param name="outputFormat" value="PDF" />
-					</aon:htmlCommandLink>	
-					<aon:spin id="enterpriseSpin" controller="#{salary}" />
-				</ui:define>				
-			</ui:decorate>		
-		</aon:form>
-		
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_module}" />
+			<ui:param name="toolbarDescription" value="&#160;" />
+			<ui:define name="toolbarContent">
+				<c:if test="#{salary.model.rowCount > 0}" >
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/buttons.xhtml" />
+				</c:if>
+				<aon:htmlCommandLink id="calendarReport_list"
+					styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+					value="#{calendarBundle.aon_calendar_calendar}"
+					rendered="#{contract.to.calendar.id!=null}"
+					action="#{report.onExecute}">
+					<aon:actionListener method="#{contract.onLoadCalendar}" />						
+					<aon:actionListener method="#{calendarPrint.onLoad}" />						
+					<f:param name="reportKey" value="calendarReport" />
+					<f:param name="outputFormat" value="PDF" />
+				</aon:htmlCommandLink>	
+				<aon:spin id="enterpriseSpin" controller="#{salary}" />
+			</ui:define>				
+		</ui:decorate>		
 	</ui:define>
 		
 	<ui:define name="content">
-			<aon:div style="" >
-				
-				<c:if test="#{salary.model.rowCount == 0}" >
-					<aon:outputText value="#{payrollBundle.payroll_salary_no_salary_exist}" 
-						styleClass="aon-bold aon-italic"/>
-				</c:if>
-				
-				<c:if test="#{salary.model.rowCount > 0}" >
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formSalary.xhtml" >
-						<ui:param name="controller" value="#{salary}" />
-					</ui:include>
-				</c:if>
-
-			</aon:div>
-			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		<c:if test="#{salary.model.rowCount == 0}" >
+			<aon:outputText value="#{payrollBundle.payroll_salary_no_salary_exist}" 
+				styleClass="aon-bold aon-italic"/>
+		</c:if>
+		
+		<c:if test="#{salary.model.rowCount > 0}" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formSalary.xhtml" >
+				<ui:param name="controller" value="#{salary}" />
+			</ui:include>
+		</c:if>
 	</ui:define>
+	
+	<ui:define name="additionalContent">
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+	</ui:define>
+
 </ui:composition>

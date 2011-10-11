@@ -31,8 +31,17 @@
 			
 			<aon:div styleClass="treeRightContent"
 				style="left: #{enterpriseTree.splitterPosition+8}px">
-				<ui:insert name="header" />
-				<ui:insert name="content" />
+				<aon:form>
+					<aon:div styleClass="treeRightContentInner">
+						<aon:div>
+							<ui:insert name="header" />
+						</aon:div>
+						<aon:div styleClass="aon-overflow-auto">
+							<ui:insert name="content" />
+						</aon:div>
+					</aon:div>
+				</aon:form>
+				<ui:insert name="additionalContent" />
 			</aon:div>
 		</aon:div>
 
@@ -46,9 +55,17 @@
 				outline: true,
 				anchorToWindow: true,
 				resizeToWidth: true,
+				showButtonDock: true,
 				sizeLeft: #{enterpriseTree.splitterPosition},
 				minLeft: 150,
 				minRight: 600
+			});
+			jQuery('.treeRightContentInner').splitter({
+				splitHorizontal: true,
+				anchorToWindow: true,
+				resizeToWidth: true,
+				sizeTop: true,
+				minTop: 24
 			});
 			goToTreeOffset();
 		});
