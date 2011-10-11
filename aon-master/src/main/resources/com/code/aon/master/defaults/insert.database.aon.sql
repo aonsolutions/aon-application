@@ -2282,7 +2282,7 @@ INSERT INTO `cnae2009` VALUES
   (141,'141','Confección de prendas de vestir, excepto de peletería'),
   (142,'142','Fabricación de artículos de peletería'),
   (143,'143','Confección de prendas de vestir de punto'),
-  (151,'151','Preparación, curtido y acabado del cuero: fabricación de artículos de marroquinería, viaje y de guarnicionería y talabartería; preparación y teñido de pieles'),
+  (151,'151','Preparación, curtido y acabado del cuero: fabricación de artículos de marroquinería, viaje y de guarnicionería y talabartería: preparación y teñido de pieles'),
   (152,'152','Fabricación de calzado'),
   (161,'161','Aserrado y cepillado de la madera'),
   (162,'162','Fabricación de productos de madera, corcho, cestería y espartería'),
