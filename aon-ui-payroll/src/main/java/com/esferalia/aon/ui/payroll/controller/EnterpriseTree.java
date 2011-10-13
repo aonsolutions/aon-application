@@ -387,15 +387,6 @@ public class EnterpriseTree implements ICompanyConstants {
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading work places for " + enterprise, e );
 		}
-		IManagerBean bean;
-		try {
-			bean = BeanManager.getManagerBean(Contract.class);
-			setContract((Contract) bean.createNewTo());
-		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onInit exception: ",e);
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
 	}
 	
 	public void reloadTree(ActionEvent event){
@@ -441,6 +432,10 @@ public class EnterpriseTree implements ICompanyConstants {
 				}				
 			}
 		}
+	}
+	
+	public void onSelectTreeEnterprise( ActionEvent event ) {
+		setContract(null);
 	}
 	
 	public void onSelectTreeWorkPlace( ActionEvent event ) {

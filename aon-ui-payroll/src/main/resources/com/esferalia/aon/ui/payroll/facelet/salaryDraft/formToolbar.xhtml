@@ -21,7 +21,7 @@
 				actionListener="#{salaryDraft.onSaveSalary}"
 				styleClass="aon-finding-toolbar-item aon-icon-accept"
 				onclick="if (!confirm('#{bundle.aon_confirm_title}')) return false;"
-				reRender="salaryDraftForm">
+				reRender="salaryDraftContent, #{controller.beanName}Toolbar">
 			</aon:commandButton>	
 			<aon:commandButton id="update"
 				value="#{payrollBundle.payroll_salary_draft_update}" 
@@ -29,7 +29,7 @@
 				actionListener="#{salaryDraft.onUpdateSalary}"
 				styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 				onclick="if (!confirm('#{bundle.aon_confirm_title}')) return false;"
-				reRender="salaryDraftForm">
+				reRender="salaryDraftContent, #{controller.beanName}Toolbar">
 			</aon:commandButton>	
 			<aon:commandButton id="remove"
 				value="#{payrollBundle.payroll_salary_draft_remove}" 
@@ -37,7 +37,7 @@
 				actionListener="#{salaryDraft.onDeleteSalary}"
 				styleClass="aon-finding-toolbar-item aon-icon-delete"
 				onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
-				reRender="salaryDraftForm">
+				reRender="salaryDraftContent, #{controller.beanName}Toolbar">
 			</aon:commandButton>	
 			
 			<aon:htmlCommandLink id="currentSalary-report"

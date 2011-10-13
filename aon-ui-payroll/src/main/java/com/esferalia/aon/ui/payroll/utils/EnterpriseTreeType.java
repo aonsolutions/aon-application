@@ -10,7 +10,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public enum EnterpriseTreeType {
 	
-	ENTERPRISE( EnterpriseTreeData.ENTERPRISE_ICON, "enterprise_formTree", null ),
+	ENTERPRISE( EnterpriseTreeData.ENTERPRISE_ICON, "enterprise_formTree", "onSelectTreeEnterprise" ),
 	WORKPLACE( EnterpriseTreeData.WORKPLACE_ICON, "enterpriseWorkPlace_formTree", "onSelectTreeWorkPlace" ),
 	CONTRACT( EnterpriseTreeData.CONTRACT_ICON, "contract_formTree", "onSelectTreeContract" ),
 	END_CONTRACT( EnterpriseTreeData.END_CONTRACT_ICON, "contract_formTree", "onSelectTreeContract" ),

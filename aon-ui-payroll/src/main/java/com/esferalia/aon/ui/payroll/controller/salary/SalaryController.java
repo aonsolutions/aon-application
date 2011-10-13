@@ -383,20 +383,6 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		return null;
 	}
 	
-	//TODO los embargos los debe dar el propio salary
-	//     al implementar esto, borrar este metodo que alimenta tanto a la pantalla como a la impresion 
-	@SuppressWarnings("unchecked")
-	public List<SalaryEmbargo> getEmbargo(){
-		IController controller = FormUtil.getController(IPayrollConstants.SALARY_EMBARGO_CONTROLLER);
-		try {
-			return (List<SalaryEmbargo>) controller.getModel().getWrappedData();
-		} catch (ManagerBeanException e) {
-			String msg = "Error al buscar los embargos";
-			LOGGER.error(msg);
-		}
-		return null;
-	}
-	
 	/*
 	 * Plantilla de impresion de la nomina
 	 */
