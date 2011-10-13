@@ -304,6 +304,7 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{dailyTrackingSearchControllerListener}</value>
 				<value>#{dailyTrackingControllerListener}</value>
 			</list-entries>
 		</managed-property>
@@ -317,6 +318,14 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>dailyTrackingSearchControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.groupware.event.DailyTrackingSearchControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************* DAILY TRACKING REPORT ***************** -->
 	<managed-bean>
 		<managed-bean-name>dailyTrackingReport</managed-bean-name>

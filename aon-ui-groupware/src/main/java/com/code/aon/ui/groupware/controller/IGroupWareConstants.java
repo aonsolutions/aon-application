@@ -23,5 +23,6 @@ public interface IGroupWareConstants {
     String NOTICE_CONTROLLER_NAME = "notice";
     String PROCESS_DETAIL_CONTROLLER_NAME = "processDetail";
 	String TASK_CONTROLLER_NAME = "task";
+	String DAILY_TRACKING_CONTROLLER_NAME = "dailyTracking";
 
 }
