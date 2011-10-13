@@ -89,6 +89,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	private BankAccount bankAccount;
     private boolean signed;    
 	private String comments;
+	private String remarks;
 	private String externalReference;
 	private Set<OfferDetail> lines = new HashSet<OfferDetail>();
 	private Set<OfferAttachment> attachments = new HashSet<OfferAttachment>();	
@@ -342,7 +343,6 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	}	
 
 	@Lob
-	@Column(name="comments")	
 	@Type(type="stringClob")
 	public String getComments() {
 		return comments;
@@ -350,6 +350,16 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+	
+	@Lob
+	@Type(type="stringClob")
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 	
 	@Column(name="external_reference")	
@@ -470,6 +480,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 				.append(this.paymentDays, o.paymentDays)
 				.append(this.payMethod, o.payMethod)				
 				.append(this.project, o.project)				
+				.append(this.remarks, o.remarks)
 				.append(this.scope, o.scope)
 				.append(this.securityLevel, o.securityLevel)				
 				.append(this.seller, o.seller)				
@@ -493,7 +504,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 			.append(address)
 			.append(bank)
 			.append(bankAccount)
-			.append(comments)	
+			.append(comments)
 			.append(daysBetweenPayments)
 			.append(daysToFirstPayment)
 			.append(discountExpression)
@@ -505,6 +516,7 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 			.append(paymentDays)
 			.append(payMethod)
 			.append(project)
+			.append(remarks)
 			.append(scope)
 			.append(securityLevel)
 			.append(seller)

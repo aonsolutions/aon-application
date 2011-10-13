@@ -75,6 +75,7 @@
 		
 		<!-- AON-PROJECT Mapping files -->
 		<mapping class="com.code.aon.project.Project"/>
+		<mapping class="com.code.aon.project.ProjectType"/>
 
 		<!-- AON-CALENDAR Mapping files -->		
 		<mapping class="com.esferalia.aon.calendar.Calendar"/>
