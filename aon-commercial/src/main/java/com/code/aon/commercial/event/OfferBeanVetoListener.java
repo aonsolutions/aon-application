@@ -1,5 +1,7 @@
 package com.code.aon.commercial.event;
 
+import java.util.Date;
+
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
@@ -7,6 +9,7 @@ import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.util.DiscountExpression;
 
 public class OfferBeanVetoListener extends ManagerBeanVetoListenerAdapter {
@@ -15,13 +18,13 @@ public class OfferBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Offer offer = (Offer) evt.getTo();
 		setDefaultValues(offer);
-		checkDealership(offer);
+		checkOffer(offer);
 	}
 
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Offer offer = (Offer) evt.getTo();
-		checkDealership(offer);
+		checkOffer(offer);
 	}
 
 	private void setDefaultValues(Offer offer) {
@@ -39,9 +42,15 @@ public class OfferBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 	}
 
-	private void checkDealership(Offer offer) {
+	private void checkOffer(Offer offer) throws ManagerBeanVetoListenerException {
 		if (OfferType.DEALERSHIP != offer.getType()) {
 			offer.setSupplier(null);
+		}
+
+		int thisYear = CommonUtil.getYear(new Date());
+		int offerYear = CommonUtil.getYear(offer.getIssueDate());
+		if (offerYear < (thisYear-5) || offerYear > (thisYear+1)) {
+			throw new ManagerBeanVetoListenerException("La Fecha del Presupuesto no es correcta.");
 		}
 	}
 
