@@ -140,6 +140,7 @@
 	  <module>aon-web-asset</module>
 	  <module>aon-web-commercial</module>
 	  <module>aon-web-communicator</module>
+	  <module>aon-web-consultant</module>
 	  <module>aon-web-project</module>
 	  <module>aon-web-ebackoffice</module>
 	  <module>aon-web-ecommerce</module>
