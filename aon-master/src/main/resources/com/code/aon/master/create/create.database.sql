@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 6.18.1
+# Version: 6.18.2
 # Created by: girazu
-# Creation Date: 10/10/2011 19:20
+# Creation Date: 14/10/2011 10:55
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3796,6 +3796,9 @@ CREATE TABLE `irpf_data` (
   `spousal_support` double(15,3) default NULL COMMENT 'Pension compensatoria a favor del cónyuge. Importe fijado judicialmente',
   `food_annuity` double(15,3) default NULL COMMENT 'Anualidades por alimentos en favor de los hijos. Importe fijado judicialmente',
   `deduct_home_loan` tinyint(2) default NULL COMMENT 'Comunicación de pagos por la adquisión o rehabilitación de la vivienda habitual utilizando financiación ajena',
+  `request_irpf` double(15,2) default NULL COMMENT 'Tipo de retención solicitado',
+  `contract_type` tinyint(2) NOT NULL default '0' COMMENT 'Contrato o relación',
+  `ceuta_melilla` tinyint(1) NOT NULL default '0' COMMENT 'Los datos anteriores corresponden a rendimientos obtenidos en Ceuta o Melilla',
   PRIMARY KEY  (`id`),
   KEY `IDX_IRPF_DATA_CONTRACT` (`contract`),
   CONSTRAINT `FK_IRPF_DATA_CONTRACT` FOREIGN KEY (`contract`) REFERENCES `contract` (`id`)
@@ -5741,7 +5744,7 @@ CREATE TABLE `web_info_style` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Estilos a utilizar en las plantillas para generar ficha web';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('6.18.1');
+INSERT INTO `db_version` (`version_number`) VALUES ('6.18.2');
 
 COMMIT;
 
