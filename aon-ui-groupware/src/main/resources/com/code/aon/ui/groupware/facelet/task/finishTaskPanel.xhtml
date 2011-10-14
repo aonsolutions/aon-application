@@ -35,11 +35,36 @@
 								</aon:div>
 							</aon:panelGrid>
 						</aon:div>
-						
-						<aon:selectOneRadio id="task_transitionSelected"
-							value="#{task.transitionSelected}" layout="pageDirection">
-							<f:selectItems value="#{task.transitions}" />
-						</aon:selectOneRadio>
+						<h:panelGrid columns="1" dir="true" style="width: 100%;" styleClass="aon-margin-top" 
+							columnClasses="aon-panelGrid-even aon-width-all">
+							
+							<aon:div id="optionDetail" style="width: 100%;  background-color:#f6f5e3;">
+								<aon:div columns="1" dir="true" style="width: 100%;">
+									<aon:div>
+										<aon:panelGroup rendered="#{task.transitionSelected.processDetail != null}">
+											<aon:outputText value="#{groupwareBundle.groupware_process_next_process}" styleClass="aon-form-date-label"/>
+											<aon:outputText value="#{task.transitionSelected.processDetail.description}" styleClass="aon-bold aon-margin-left"/>
+										</aon:panelGroup>
+										<aon:outputText value="&#160;"/>
+									</aon:div>
+	
+									<aon:div>
+										<aon:panelGroup rendered="#{task.transitionSelected.processDetail != null}">
+											<aon:outputText value="#{groupwareBundle.groupware_send_group}" styleClass="aon-form-date-label"/>
+											<aon:outputText value="#{task.transitionSelected.processDetail.workgroup.description}" styleClass="aon-bold aon-margin-left"/>
+										</aon:panelGroup>
+										<aon:outputText value="&#160;"/>
+									</aon:div>
+								</aon:div>
+							</aon:div>
+							
+							<aon:selectOneRadio id="task_transitionSelected" reRender="optionDetail"
+								ajaxSingle="true"
+								value="#{task.transitionSelected}" layout="pageDirection">
+								<f:selectItems value="#{task.transitions}" />
+							</aon:selectOneRadio>
+							
+						</h:panelGrid>
 					</aon:div>
 				</rich:modalPanel>
 			</c:if>

@@ -52,7 +52,77 @@
 		</ui:decorate>
 		<!--  aon-region-body -->
 		<aon:div id="taskTableContainer" styleClass="aon-scroll-area">
-		
+
+			<aon:panel style="background-color:#f6f5e3; padding: 0px; margin-bottom: 5px;">
+				<f:facet name="header">
+					<aon:outputText styleClass="aon-bold" value="#{groupwareBundle.groupware_filter_by}"/>
+				</f:facet>
+				
+				<aon:div style="text-align:left; padding: 0px; margin: 0px;">
+					<aon:div>
+						<aon:outputText styleClass="aon-italic aon-margin-right" 
+							value="#{groupwareBundle.groupware_due_date_task_of} "/>
+						<aon:commandLink value="#{groupwareBundle.groupware_today}"
+							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.thisToday?'font-weight:bold;':''}"
+							actionListener="#{task.onFilterToday}"
+							reRender="taskTableContainer"/>
+						<aon:commandLink value="#{groupwareBundle.groupware_week}"
+							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.thisWeek?'font-weight:bold;':''}"
+							actionListener="#{task.onFilterWeek}"
+							reRender="taskTableContainer"/>
+						<aon:commandLink value="#{groupwareBundle.groupware_two_weeks}"
+							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.thisTwoWeeks?'font-weight:bold;':''}"
+							actionListener="#{task.onFilterTwoWeeks}"
+							reRender="taskTableContainer"/>
+						<aon:commandLink value="#{groupwareBundle.groupware_month}"
+							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.thisMonth?'font-weight:bold;':''}"
+							actionListener="#{task.onFilterMonth}"
+							reRender="taskTableContainer"/>
+						<aon:commandLink value="#{groupwareBundle.groupware_any_moment}"
+							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.anyMoment?'font-weight:bold;':''}"
+							actionListener="#{task.onFilterAll}"
+							reRender="taskTableContainer"/>
+					</aon:div>
+					
+					<aon:div styleClass="aon-margin-top aon-margin-bottom">
+						<aon:outputLabel for="Task_projectType"
+							styleClass="aon-italic aon-margin-right" 
+							value="#{projectBundle.project_project_type}"/>
+						<aon:selectOneMenu id="Task_projectType"
+							value="#{taskSearchControllerListener.projectType}">
+							<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
+							<f:selectItems value="#{projectCollections.projectTypes}" />
+							<a4j:support event="onchange" actionListener="#{task.onFilter}"
+								reRender="taskTableContainer"/>
+						</aon:selectOneMenu>
+
+						<aon:outputLabel for="Task_process"
+							styleClass="aon-italic aon-margin-right aon-margin-left" 
+							value="#{groupwareBundle.groupware_process}"/>
+						<aon:selectOneMenu id="Task_process"
+							disabled="#{taskSearchControllerListener.processDetail != null}"
+							value="#{taskSearchControllerListener.process}">
+							<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
+							<f:selectItems value="#{groupWareCollections.processes}" />
+							<a4j:support event="onchange" actionListener="#{task.onFilter}"
+								reRender="taskTableContainer"/>
+						</aon:selectOneMenu>
+						
+						<aon:outputLabel for="Task_processDetail"
+							styleClass="aon-italic aon-margin-right aon-margin-left" 
+							value="#{groupwareBundle.groupware_process_detail}"/>
+						<aon:selectOneMenu id="Task_processDetail"
+							disabled="#{taskSearchControllerListener.process == null}"
+							value="#{taskSearchControllerListener.processDetail}">
+							<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
+							<f:selectItems value="#{taskSearchControllerListener.processDetails}" />
+							<a4j:support event="onchange" actionListener="#{task.onFilter}"
+								reRender="taskTableContainer"/>
+						</aon:selectOneMenu>
+					</aon:div>				
+				</aon:div>
+			</aon:panel>
+
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 				<ui:param name="controller" value="#{task}" />
 				<ui:param name="rowSelectorToggleOnClick" value="#{false}" />

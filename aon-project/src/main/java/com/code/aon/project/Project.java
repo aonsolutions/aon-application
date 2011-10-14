@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -140,9 +141,13 @@ public class Project implements ITransferObject, IEnterprise {
 	public boolean isActive() {
 		return active;
 	}
-
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	@Transient
+	public boolean isExtended() {
+		return (isCommercial() || isTas());
 	}
 
 	@Override

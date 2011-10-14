@@ -20,6 +20,7 @@ import com.code.aon.groupware.CampaignType;
 import com.code.aon.groupware.FavoriteCategory;
 import com.code.aon.groupware.JobType;
 import com.code.aon.groupware.Process;
+import com.code.aon.groupware.ProcessDetail;
 import com.code.aon.groupware.ProcessTransitionType;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.TaskHolderWorkgroup;
@@ -312,5 +313,21 @@ public class GroupWareCollectionsController {
 	    }
         return campaignStatuses;
     }
+
+	public List<SelectItem> getProcessDetails(Process process) throws ManagerBeanException {
+		List<SelectItem> processDetailList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(ProcessDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_PROCESS_ID), process.getId());
+		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_POSITION));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to:list) {
+			ProcessDetail processDetail = (ProcessDetail) to;
+			SelectItem item = new SelectItem(processDetail, processDetail.getDescription());
+			processDetailList.add(item);
+		}
+		return processDetailList;
+	}
 	
 }

@@ -901,19 +901,6 @@
 			<from-outcome>customer_search</from-outcome>
 			<to-view-id>/com/code/aon/ui/customer/facelet/customer/search.xhtml</to-view-id>
 		</navigation-case>
-		<!-- =================== Customer Consultant ========================== -->
-		<navigation-case>
-			<from-outcome>customer_consultant_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/customer/facelet/customer/form_consultant.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>customer_consultant_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/customer/facelet/customer/list_consultant.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>customer_consultant_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/customer/facelet/customer/search_consultant.xhtml</to-view-id>
-		</navigation-case>
 		<!-- =================== CustomerRecordData ========================== -->
 		<navigation-case>
 			<from-outcome>customerRecordData_form</from-outcome>

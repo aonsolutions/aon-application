@@ -77,7 +77,7 @@
 							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
 							value="#{bundle.aon_date_from}" />
 						<aon:selectInputDate id="Task_dueDate-From"
-							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+							value="#{taskSearchControllerListener.fromDueDate}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 						
@@ -85,7 +85,7 @@
 							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
 							value="#{bundle.aon_date_to}" />
 						<aon:selectInputDate id="Task_dueDate-To"
-							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+							value="#{taskSearchControllerListener.toDueDate}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 					</aon:div>
@@ -117,6 +117,13 @@
 							<a4j:support event="onchange" reRender="workgroup" ajaxSingle="true" />
 						</aon:selectOneMenu>
 					</aon:div>
+
+					<aon:outputLabel for="Task_projectType" value="#{projectBundle.project_project_type}"/>
+					<aon:selectOneMenu id="Task_projectType"
+						value="#{taskSearchControllerListener.projectType}">
+						<f:selectItem itemLabel="-" value="#{null}"/>
+						<f:selectItems value="#{projectCollections.projectTypes}" />
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Task_project" value="#{projectBundle.project_project}"/>
 					<aon:panelGrid columns="2"

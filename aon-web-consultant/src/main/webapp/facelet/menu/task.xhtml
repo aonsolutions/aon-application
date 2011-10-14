@@ -27,6 +27,7 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="task"
+										actionListener="#{task.onLaunch}"
 										value="#{groupwareBundle.groupware_task_inbox}" action="task_list" />
 								</aon:div>
 								<c:if test="#{aonRole.taskMonitor}">

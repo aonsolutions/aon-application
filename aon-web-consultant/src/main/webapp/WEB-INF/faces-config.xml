@@ -125,7 +125,7 @@
 			<!--  aon.ui.account.bridge -->
 			<value>#{customerAccount}</value>
 			<!-- aon-ui-project-->
-			<value>#{customerDossierListener}</value>
+			<value>#{customerProjectListener}</value>
 		</list-entries>
 	</managed-bean>
 
