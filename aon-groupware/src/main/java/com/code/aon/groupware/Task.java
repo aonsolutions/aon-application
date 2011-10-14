@@ -3,6 +3,7 @@ package com.code.aon.groupware;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -61,6 +62,8 @@ public class Task implements ITransferObject, IEnterprise {
 	private TaskHolder sender;
 	private String comments;
 	private TaskPeriod repeatPeriod;
+	
+	private ProcessTask processTask;
 	
 	public Task() {
 		this.setStartDate(new Date());
@@ -238,6 +241,14 @@ public class Task implements ITransferObject, IEnterprise {
 	}
 	public void setRepeatPeriod(TaskPeriod repeatPeriod) {
 		this.repeatPeriod = repeatPeriod;
+	}
+
+	@OneToOne(mappedBy = "task", cascade={CascadeType.REFRESH})
+	public ProcessTask getProcessTask() {
+		return this.processTask;
+	}
+	public void setProcessTask(ProcessTask processTask) {
+		this.processTask = processTask;
 	}
 
 	@Transient

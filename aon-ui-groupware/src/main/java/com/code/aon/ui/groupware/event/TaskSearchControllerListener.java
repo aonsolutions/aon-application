@@ -1,5 +1,7 @@
 package com.code.aon.ui.groupware.event;
 
+
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,15 +11,19 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.util.CompanyUtil;
 import com.code.aon.config.WorkGroup;
+import com.code.aon.groupware.Process;
+import com.code.aon.groupware.ProcessDetail;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.Priority;
-import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.groupware.enumeration.TaskSource;
+import com.code.aon.groupware.enumeration.TaskStatus;
 import com.code.aon.project.ActivityType;
 import com.code.aon.project.Project;
+import com.code.aon.project.ProjectType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
@@ -37,11 +43,16 @@ import com.code.aon.ui.util.AonUtil;
 
 public class TaskSearchControllerListener extends ControllerSearchListener {
 
+	private Date fromDueDate;
+	private Date toDueDate;
 	private Registry registry;
 	private TaskHolder taskHolder;
 	private WorkGroup workGroup;
 	private Project project;
+	private ProjectType projectType;
 	private ActivityType activityType;
+	private Process process;
+	private ProcessDetail processDetail;
 	private boolean statusPending;
 	private boolean statusInProgress;
 	private boolean statusFinished;
@@ -51,6 +62,11 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 	private boolean normalPriority;
 	private boolean lowPriority;
 	private boolean nonePriority;
+	private boolean thisWeek;
+	private boolean thisTwoWeeks;
+	private boolean thisMonth;
+	private boolean thisToday;
+	private boolean filterOpened;	
 	
 	private  List<SelectItem> projects;
 	private  List<SelectItem> activityTypes;
@@ -62,6 +78,20 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 			groupwareUtils = new GroupwareUtils();
 		}
 		return groupwareUtils;
+	}
+	
+	public Date getFromDueDate() {
+		return fromDueDate;
+	}
+	public void setFromDueDate(Date fromDueDate) {
+		this.fromDueDate = fromDueDate;
+	}
+
+	public Date getToDueDate() {
+		return toDueDate;
+	}
+	public void setToDueDate(Date toDueDate) {
+		this.toDueDate = toDueDate;
 	}
 
 	public Registry getRegistry() {
@@ -134,6 +164,13 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		this.project = project;
 	}
 	
+	public ProjectType getProjectType() {
+		return projectType;
+	}
+	public void setProjectType(ProjectType projectType) {
+		this.projectType = projectType;
+	}
+
 	public boolean isHighPriority() {
 		return highPriority;
 	}
@@ -162,10 +199,92 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		this.nonePriority = nonePriority;
 	}
 
+	public boolean isThisWeek() {
+		return thisWeek;
+	}
+	public void setThisWeek(boolean thisWeek) {
+		this.thisWeek = thisWeek;
+		if (isThisWeek()) {
+			setThisTwoWeeks(false);
+			setThisMonth(false);
+			setThisToday(false);
+		}
+	}
+
+	public boolean isThisTwoWeeks() {
+		return thisTwoWeeks;
+	}
+	public void setThisTwoWeeks(boolean thisTwoWeeks) {
+		this.thisTwoWeeks = thisTwoWeeks;
+		if (isThisTwoWeeks()) {
+			setThisWeek(false);
+			setThisMonth(false);
+			setThisToday(false);
+		}
+	}
+
+	public boolean isThisMonth() {
+		return thisMonth;
+	}
+	public void setThisMonth(boolean thisMonth) {
+		this.thisMonth = thisMonth;
+		if (isThisMonth()) {
+			setThisWeek(false);
+			setThisTwoWeeks(false);
+			setThisToday(false);
+		}
+	}
+	
+	public boolean isThisToday() {
+		return thisToday;
+	}
+	public void setThisToday(boolean thisToday) {
+		this.thisToday = thisToday;
+		if (isThisToday()) {
+			setThisWeek(false);
+			setThisTwoWeeks(false);
+			setThisMonth(false);
+		}
+	}
+
+	public boolean isAnyMoment() {
+		return (!isThisWeek() && !isThisTwoWeeks() && !isThisMonth());
+	}
+
+	public boolean isFilterOpened() {
+		return filterOpened;
+	}
+	public void setFilterOpened(boolean filterOpened) {
+		this.filterOpened = filterOpened;
+	}
+
+	public Process getProcess() {
+		return process;
+	}
+	public void setProcess(Process process) {
+		this.process = process;
+	}
+
+	public ProcessDetail getProcessDetail() {
+		return processDetail;
+	}
+	public void setProcessDetail(ProcessDetail processDetail) {
+		this.processDetail = processDetail;
+	}
+
 	public List<SelectItem> getTaskHolderWorkgroups() throws ManagerBeanException {
 		GroupWareCollectionsController gcc = (GroupWareCollectionsController) 
 			AonUtil.getRegisteredBean( IGroupWareConstants.GROUPWARE_COLLECTIONS_CONTROLLER_NAME);
 		return gcc.getTaskHolderWorkgroups(getWorkGroup());
+	}
+
+	public List<SelectItem> getProcessDetails() throws ManagerBeanException {
+		if (getProcess() != null && getProcess().getId() != null) {
+			GroupWareCollectionsController gcc = (GroupWareCollectionsController) 
+			AonUtil.getRegisteredBean( IGroupWareConstants.GROUPWARE_COLLECTIONS_CONTROLLER_NAME);
+			return gcc.getProcessDetails(getProcess());
+		} 
+		return new LinkedList<SelectItem>();
 	}
 
 	private void loadProjects(Integer registryId) throws ManagerBeanException {
@@ -236,16 +355,23 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 	public List<SelectItem> getActivityTypes() throws ManagerBeanException {
 		return activityTypes;
 	}
-	
+	public void onExpandFilter(ActionEvent event) {
+		setFilterOpened( !isFilterOpened() );
+	}
 	
 	@Override
 	protected void init() throws ManagerBeanException {
 		super.init();
+		setFromDueDate(null);
+		setToDueDate(null);
 		setRegistry((Registry)BeanManager.getManagerBean(Registry.class).createNewTo());
 		setTaskHolder(null);
 		setWorkGroup(null);
 		setProject(null);
+		setProcess(null);
+		setProcessDetail(null);
 		setActivityType(null);
+		setProjectType(null);
 		setStatusPending(true);
 		setStatusInProgress(true);
 		setStatusFinished(false);
@@ -255,6 +381,10 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		setLowPriority(true);
 		setNonePriority(true);
 		setProcessTask(false);
+		setThisWeek(false);
+		setThisTwoWeeks(false);
+		setThisMonth(false);
+		setFilterOpened(false);
 		loadProjects(null);
 		loadActivityTypes(null);
 	}
@@ -281,6 +411,28 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 				criteria.addEqualExpression( getFieldName(IGroupwareAlias.TASK_TASK_HOLDER_ID), getTaskHolder().getId() ); 	
 			}
 		}
+		if (isThisWeek()) {
+			Date[] range = CommonUtil.getWeekDateRange(new Date());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[0]);
+			criteria.addLessThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[1]);
+		} else if (isThisTwoWeeks()) {
+			Date[] range = CommonUtil.getTwoWeekDateRange(new Date());
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[0]);
+			criteria.addLessThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[1]);
+		} else if (isThisMonth()) {
+			Date today = new Date();
+			criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), CommonUtil.getMonthFirstDay(today));
+			criteria.addLessThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), CommonUtil.getMonthLastDay(today));
+		} else if (isThisToday()) {
+			criteria.addEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), new Date());
+		} else {
+			if (getFromDueDate() != null) {
+				criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), getFromDueDate());
+			}
+			if (getToDueDate() != null) {
+				criteria.addLessThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), getToDueDate());
+			}
+		}
 		if ((getRegistry() != null) && (getRegistry().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IGroupwareAlias.TASK_REGISTRY_ID), getRegistry().getId());
 		}		
@@ -290,10 +442,18 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		if ((getActivityType() != null) && (getActivityType().getId() != null)) {
 			criteria.addEqualExpression(getFieldName(IGroupwareAlias.TASK_ACTIVITY_TYPE_ID), getActivityType().getId());
 		}		
-		
+		if ((getProjectType() != null) && (getProjectType().getId() != null)) {
+			criteria.addEqualExpression(getFieldName(IGroupwareAlias.TASK_PROJECT_PROJECT_TYPE_ID), getProjectType().getId());
+		}		
 		if (isProcessTask()) {
 			criteria.addEqualExpression( getFieldName(IGroupwareAlias.TASK_SOURCE), TaskSource.PROCESS );
 		}
+		if ((getProcess() != null) && (getProcess().getId() != null)) {
+			criteria.addEqualExpression("Task.processTask.processDetail.process.id", getProcess().getId());
+		}		
+		if ((getProcessDetail() != null) && (getProcessDetail().getId() != null)) {
+			criteria.addEqualExpression("Task.processTask.processDetail.id", getProcessDetail().getId());
+		}		
 		loadStatusCriteria(criteria);
 		loadPriorityCriteria(criteria);
 	}
@@ -383,5 +543,4 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		}
 		criteria.addExpression(expToAdd);
 	}	
-	
 }

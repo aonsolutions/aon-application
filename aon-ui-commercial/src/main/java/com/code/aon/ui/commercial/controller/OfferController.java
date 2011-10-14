@@ -81,17 +81,10 @@ import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.SecurityInfo;
 
-/**
- * Controller used in the offer maintenance.
- */
 public class OfferController extends BasicController implements ISignatureController, ICommercialConstants {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(OfferController.class.getName());
 	
-	private final String SALES_CONTROLLER = "sales";
-	private final String SALE_INVOICE_CONTROLLER = "saleInvoice";
-	private final String PROJECT_TAS_CONTROLLER = "projectTas";
-
 	private String selectedTab;
 	private List<SelectItem> addresses;
 	private List<SelectItem> projects;
@@ -311,14 +304,21 @@ public class OfferController extends BasicController implements ISignatureContro
 		return (Offer) this.getTo();
 	}
 	
-	public boolean isPending() {
-		return OfferStatus.PENDING == getOffer().getStatus();
-	}
-	
 	public boolean isReadOnly() {
 		return !isPending() || getOffer().isSigned(); 
 	}	
 
+	public boolean isTargetReadOnly() throws ManagerBeanException {
+		if (getOffer().getProject() != null && getOffer().getProject().getId() != null) {
+			return true;
+		}
+		return isReadOnly();
+	}
+
+	public boolean isPending() {
+		return OfferStatus.PENDING == getOffer().getStatus();
+	}
+	
 	public boolean isApproved() {
 		return OfferStatus.APPROVED == getOffer().getStatus();		
 	}
@@ -343,6 +343,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_OFFER_ID), getOffer().getId());
+		criteria.addNotNullExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_ITEM_ID));
 		criteria.addEqualExpression(offerDetailBean.getFieldName(ICommercialAlias.OFFER_DETAIL_STATUS), OfferDetailStatus.PENDING);
 		return (offerDetailBean.getCount(criteria) > 0);
 	}
@@ -450,6 +451,14 @@ public class OfferController extends BasicController implements ISignatureContro
 		return 0;
 	}
 	
+	public void removeOfferProject(ActionEvent event) throws ManagerBeanException {
+		Offer to = getOffer();
+		to.setProject(null);
+		getManagerBean().restoreNullSubPOJOs(to);
+		getManagerBean().update(to);
+		getManagerBean().initializePOJO(to);
+	}
+
 	@SuppressWarnings("unchecked")
 	public void loadCommercial(Integer id) throws ManagerBeanException {
 		if (id != null) {
@@ -658,7 +667,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		SalesManager salesManager = new SalesManager();
 		Sales sales = salesManager.salesOrder(to, getSalesSeries(), getSalesNumber(), getSalesDate());
 
-		IController salesController = FormUtil.getController(SALES_CONTROLLER);
+		IController salesController = FormUtil.getController(SALES_CONTROLLER_NAME);
 		salesController.onEditSearch(event);
 		salesController.getCriteria().addEqualExpression(salesController.getFieldName(ISalesAlias.SALES_ID), sales.getId());
 		salesController.onSearch(event);
@@ -698,7 +707,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		OfferInvoicingManager invoicingManager = new OfferInvoicingManager();
 		Invoice invoice = invoicingManager.invoice(to, getInvoiceSeries(), getInvoiceNumber(), getInvoiceDate());
 
-		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER);
+		IController invoiceController = FormUtil.getController(SALE_INVOICE_CONTROLLER_NAME);
 		invoiceController.onEditSearch(event);
 		invoiceController.getCriteria().addEqualExpression(invoiceController.getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId());
 		invoiceController.onSearch(event);
@@ -706,7 +715,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		invoiceController.onSelect(event);
 	}
 
-	public String getInvoiceCode() throws ManagerBeanException {
+	public Invoice getInvoice() throws ManagerBeanException {
 		Offer offer = getOffer();
 		if (offer != null && offer.getId() != null) {
 			IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
@@ -724,11 +733,16 @@ public class OfferController extends BasicController implements ISignatureContro
 				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-					return invoiceDetail.getInvoice().getReferenceCode();
+					return invoiceDetail.getInvoice();
 				}
 			}
 		}
     	return null;
+	}
+
+	public String getInvoiceCode() throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		return (invoice != null) ? invoice.getReferenceCode() : null;
 	}
 
 	public void onProjectTasShow(ActionEvent event) throws ManagerBeanException {
@@ -762,7 +776,7 @@ public class OfferController extends BasicController implements ISignatureContro
 		ProjectTasManager tasManager = new ProjectTasManager();
 		ProjectTas projectTas = tasManager.projectTas(to, getProjectTasSeries(), getProjectTasNumber(), getProjectTasDate(), getProjectTasItem());
 
-		IController projectTasController = FormUtil.getController(PROJECT_TAS_CONTROLLER);
+		IController projectTasController = FormUtil.getController(PROJECT_TAS_CONTROLLER_NAME);
 		projectTasController.onEditSearch(event);
 		projectTasController.getCriteria().addEqualExpression(projectTasController.getFieldName(ITASAlias.PROJECT_TAS_ID), projectTas.getId());
 		projectTasController.onSearch(event);
@@ -910,6 +924,14 @@ public class OfferController extends BasicController implements ISignatureContro
 			return rpay;
 		}
 		return null;
+	}
+
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		if (invoice != null) {
+			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onLoad(event, invoice.getId(), NAVIGATION_OFFER_FORM, OFFER_CONTROLLER_NAME + ".refresh");
+		}
 	}
 
 }

@@ -22,22 +22,23 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-task aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{projectBundle.aon_task_management_module}" />
+								<aon:outputText value="#{groupwareBundle.groupware_task_management}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="task"
-										value="#{projectBundle.aon_task_inbox_module}" action="task_list" />
+										actionListener="#{task.onLaunch}"
+										value="#{groupwareBundle.groupware_task_inbox}" action="task_list" />
 								</aon:div>
 								<c:if test="#{aonRole.taskMonitor}">
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="process_wizard_step0"
-											value="#{campaignBundle.aon_process_wizard_module}"
+											value="#{groupwareBundle.groupware_process_launcher}"
 											action="#{processWizard.start}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="process_monitor" 
-											value="#{campaignBundle.aon_process_monitor_module}"
+											value="#{groupwareBundle.groupware_campaign_monitor}"
 											actionListener="#{campaign.onEditSearch}"
 											action="campaign_search" />
 									</aon:div>
@@ -49,14 +50,14 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-time aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{projectBundle.aon_time_management_module}" />
+								<aon:outputText value="#{groupwareBundle.aon_daily_tracking_module}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="daily_tracking"
-										value="#{projectBundle.aon_daily_tracking_module}"
+										value="#{groupwareBundle.aon_daily_tracking_module}"
 										action="dailyTracking_form"
-										actionListener="#{dailyTracking.onLaunch}" />
+										actionListener="#{dailyTracking.onReset}" />
 								</aon:div>
 								<c:if test="#{aonRole.taskMonitor}">
 									<aon:div styleClass="aon-direct-access-list-element">
@@ -80,28 +81,34 @@
 								</f:facet>					
 								<aon:div styleClass="aon-direct-access-list">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="dossier_type"
-											value="#{projectBundle.aon_dossier_type_module}"
-											action="dossierType_list" />
+										<aon:commandLink id="project_type"
+											value="#{projectBundle.project_project_type}"
+											action="projectType_list" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="activity_type"
-											value="#{projectBundle.aon_activity_type_module}"
-											action="activity_type_standalone" />
+											value="#{projectBundle.project_activity_type}"
+											action="activityType_standalone" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="job_type"
-											value="#{projectBundle.aon_job_type_module}" action="job_type" />
+											value="#{groupwareBundle.groupware_job_type}" action="job_type" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="process_module" 
-											value="#{campaignBundle.aon_process_module}"
+											value="#{groupwareBundle.groupware_process_module}"
 											action="process_list" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
 										<aon:commandLink id="process_transition_type" 
-											value="#{campaignBundle.aon_process_transition_type_module}"
+											value="#{groupwareBundle.groupware_process_transition_types}"
 											action="process_transition_type" />
+									</aon:div>
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="groupware_campaignTypes"
+											action="campaign_type"
+											actionListener="#{campaignType.onSearch}"
+											value="#{groupwareBundle.groupware_campaign_types}" />
 									</aon:div>
 								</aon:div>
 							</aon:panelGrid>

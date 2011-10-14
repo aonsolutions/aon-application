@@ -62,6 +62,8 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	private Boolean defaultPayMethod;
 	private IPriceStrategy priceStrategy;
 	private RegistryValidationManager vm;
+	private boolean showProjectWindow;
+	private boolean showDetailProjectWindow;
 	private boolean showIncomeWindow;
 	private String incomeSeries;
 	private int incomeNumber;
@@ -118,6 +120,22 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		return vm;
 	}
 	
+	public boolean isShowProjectWindow() {
+		return showProjectWindow;
+	}
+
+	public void setShowProjectWindow(boolean value) {
+		this.showProjectWindow = value;
+	}
+
+	public boolean isShowDetailProjectWindow() {
+		return showDetailProjectWindow;
+	}
+
+	public void setShowDetailProjectWindow(boolean value) {
+		this.showDetailProjectWindow = value;
+	}
+
 	public boolean isShowIncomeWindow() {
 		return showIncomeWindow;
 	}
@@ -302,6 +320,9 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 			purchaseDetail.setProject(null);
 			purchaseDetailBean.update(purchaseDetail);
 		}
+
+		IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
+		purchaseDetailController.onSearch(null);
 	}
 
 	@SuppressWarnings("unchecked")

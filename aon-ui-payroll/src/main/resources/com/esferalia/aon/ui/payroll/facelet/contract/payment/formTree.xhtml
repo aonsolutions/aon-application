@@ -7,29 +7,28 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
+	<ui:define name="header">
+		<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_payments_tab}" />
+			<ui:param name="toolbarDescription" value="&#160;" />
+		</ui:include>	
+	</ui:define>
+	
 	<ui:define name="content">
-
-		<aon:form id="contractPaymentForm">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_payments_tab}" />
-				<ui:param name="toolbarDescription" value="&#160;" />
-				<ui:define name="toolbarContent">
-					
-				</ui:define>				
-			</ui:decorate>	
-			
-			<aon:div id="paymentGrid" styleClass="aon-scroll-area">
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
-					<ui:param name="controller" value="#{contractPayment}" />
-				</ui:include>
-			</aon:div>
-		</aon:form>
+		<aon:div id="paymentGrid" styleClass="aon-scroll-area">
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
+				<ui:param name="controller" value="#{contractPayment}" />
+			</ui:include>
+		</aon:div>
+	</ui:define>
+	
+	<ui:define name="additionalContent">
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/modalPayment.xhtml">
 			<ui:param name="controller" value="#{contractPayment}" />
 			<ui:param name="skipCurrentMonth" value="#{true}" />
 			<ui:param name="contextDisabled" value="#{true}" />
 			<ui:param name="container" value="contractPaymentForm" />
 		</ui:include>
-
 	</ui:define>
+
 </ui:composition>

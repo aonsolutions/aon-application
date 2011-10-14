@@ -237,43 +237,49 @@ public class Payments {
 		List<IPayment> list = new LinkedList<IPayment>();
 		IPayment p;
 
-		p = map.get(PaymentType.BASE_SALARY);
-		if (p != null) {
-			list.add(map.get(PaymentType.BASE_SALARY));
+		if(!getBaseSalary().getValues().isEmpty()){
+			for(IPayment payment: getBaseSalary().getValues()){
+				list.add(payment);
+			}
 		}
 		if(!getSalarySupplements().getValues().isEmpty()){
 			for(IPayment payment: getSalarySupplements().getValues()){
 				list.add(payment);
 			}
 		}
-		p = map.get(PaymentType.STRUCTURAL_HOURS);
-		if (p != null) {
-			list.add(map.get(PaymentType.STRUCTURAL_HOURS));
+		if(!getOvertimeHours().getValues().isEmpty()){
+			for(IPayment payment: getOvertimeHours().getValues()){
+				list.add(payment);
+			}
 		}
 		p = map.get(PaymentType.NON_STRUCTURAL_HOURS);
 		if (p != null) {
 			list.add(map.get(PaymentType.NON_STRUCTURAL_HOURS));
 		}
-		p = map.get(PaymentType.SPECIAL_BONUSES);
-		if (p != null) {
-			list.add(map.get(PaymentType.SPECIAL_BONUSES));
+		if(!getSpecialBonuses().getValues().isEmpty()){
+			for(IPayment payment: getSpecialBonuses().getValues()){
+				list.add(payment);
+			}
 		}
-		p = map.get(PaymentType.SALARY_IN_KIND);
-		if (p != null) {
-			list.add(map.get(PaymentType.SALARY_IN_KIND));
+		if(!getSalaryInKind().getValues().isEmpty()){
+			for(IPayment payment: getSalaryInKind().getValues()){
+				list.add(payment);
+			}
 		}
 		if(!getCompensationOrPrepaidExpenses().getValues().isEmpty()){
 			for(IPayment payment: getCompensationOrPrepaidExpenses().getValues()){
 				list.add(payment);
 			}
 		}
-		p = map.get(PaymentType.SOCIAL_SECURITY_BENEFITS);
-		if (p != null) {
-			list.add(map.get(PaymentType.SOCIAL_SECURITY_BENEFITS));
+		if(!getSpecialSecurityBenefits().getValues().isEmpty()){
+			for(IPayment payment: getSpecialSecurityBenefits().getValues()){
+				list.add(payment);
+			}
 		}
-		p = map.get(PaymentType.MOVING_COMPENSATION);
-		if (p != null) {
-			list.add(map.get(PaymentType.MOVING_COMPENSATION));
+		if(!getMovingCompensation().getValues().isEmpty()){
+			for(IPayment payment: getMovingCompensation().getValues()){
+				list.add(payment);
+			}
 		}
 		if(!getOtherNonWages().getValues().isEmpty()){
 			for(IPayment payment: getOtherNonWages().getValues()){

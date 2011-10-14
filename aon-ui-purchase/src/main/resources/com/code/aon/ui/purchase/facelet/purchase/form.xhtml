@@ -20,6 +20,7 @@
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!purchase.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!purchase.pending or purchase.inIncome}" />
+					<ui:param name="saveButtonReRender" value="purchaseForm" />
 					<ui:define name="beforeSpinToolbarContent">
 						<c:if test="#{aonRole.warehouseOperator}">
 							<aon:commandButton id="income"
@@ -331,7 +332,14 @@
 						<f:facet name="header">
 							<aon:outputText value="#{purchaseBundle.purchase_detail}" />
 						</f:facet>
-						<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formDetail.xhtml" />
+						<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/formDetail.xhtml">
+							<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
+								<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+							</c:if>
+							<c:if test="#{aonConfiguration.bean.purchase.showTasData}">
+								<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+							</c:if>
+						</ui:include>
 					</aon:panel>
 				</aon:div>
 			</aon:div>
@@ -343,5 +351,17 @@
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalIncome.xhtml" />
 		<ui:include src="/com/code/aon/ui/purchase/facelet/purchase/modalInvoice.xhtml" />
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
+			<ui:param name="controller" value="#{purchase}" />
+			<ui:param name="detailReRender" value="purchaseDetails" />
+			<aon:methodParam name="detailActionListener" value="#{purchaseDetail.addPurchaseDetailProject}" type="actionListener" />
+			<ui:param name="detailValue" value="#{purchaseDetail.purchaseDetail.project}" />
+			<c:if test="#{!aonConfiguration.bean.purchase.showTasData}">
+				<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.purchase.showTasData}">
+				<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+			</c:if>
+		</ui:include>
 	</ui:define>
 </ui:composition>

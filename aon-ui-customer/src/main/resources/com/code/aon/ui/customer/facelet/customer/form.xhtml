@@ -162,16 +162,13 @@
 								<ui:include	src="/com/code/aon/ui/finance/facelet/fee/tab_grid.xhtml" />
 							</aon:panelTab>
 						</c:if>
-						
+
 						<c:if test="#{aonConfiguration.bean.customer.showProjectData}">
-							<aon:panelTab id="dossiers"
-								label="#{projectBundle.dossier_dossiers}">
-								<aon:div rendered="#{!customer.new and dossier.form}">
-									<ui:include src="/com/code/aon/ui/project/facelet/dossier/form.xhtml" />
-								</aon:div>
-								<aon:div rendered="#{!customer.new and !dossier.form}">
-									<ui:include src="/com/code/aon/ui/project/facelet/dossier/list.xhtml" />
-								</aon:div>
+							<aon:panelTab id="projects" label="#{projectBundle.project_projects}">
+								<ui:include src="/com/code/aon/ui/project/facelet/project/tab_grid.xhtml">
+									<ui:param name="controller" value="#{customerProject}" />
+									<ui:param name="skipAssignedColumn" value="#{true}" />
+								</ui:include>
 							</aon:panelTab>
 						</c:if>
 
@@ -252,9 +249,11 @@
 			<c:if test="#{aonConfiguration.bean.customer.showFinanceFeeData}">
 				<aon:lookupButtonPopup lookup="#{itemLookup}" />
 			</c:if>
+<!-- 			
 			<c:if test="#{aonConfiguration.bean.customer.showProjectData}">
 				<ui:include src="/com/code/aon/ui/project/facelet/dossier/import.xhtml" />
 			</c:if>
+ -->
 			<c:if test="#{aonConfiguration.bean.customer.showRelationship}">
 				<aon:lookupButtonPopup lookup="#{registryLookup}" />
 			</c:if>

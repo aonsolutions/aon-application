@@ -757,58 +757,64 @@ public interface IGroupwareAlias {
 	String  TASK_PROJECT_NAME = TASK_ENTRY.getAliasNames()[10];
 
 	/** 
+	* Alias value: Task_project_projectType_id
+	* Hibernate value: Task.project.projectType<id
+	*/
+	String  TASK_PROJECT_PROJECT_TYPE_ID = TASK_ENTRY.getAliasNames()[11];
+
+	/** 
 	* Alias value: Task_registry_id
 	* Hibernate value: Task.registry<id
 	*/
-	String  TASK_REGISTRY_ID = TASK_ENTRY.getAliasNames()[11];
+	String  TASK_REGISTRY_ID = TASK_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Task_registry_name
 	* Hibernate value: Task.registry<name
 	*/
-	String  TASK_REGISTRY_NAME = TASK_ENTRY.getAliasNames()[12];
+	String  TASK_REGISTRY_NAME = TASK_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Task_repeatPeriod
 	* Hibernate value: Task.repeatPeriod
 	*/
-	String  TASK_REPEAT_PERIOD = TASK_ENTRY.getAliasNames()[13];
+	String  TASK_REPEAT_PERIOD = TASK_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Task_sender_id
 	* Hibernate value: Task.sender.id
 	*/
-	String  TASK_SENDER_ID = TASK_ENTRY.getAliasNames()[14];
+	String  TASK_SENDER_ID = TASK_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Task_source
 	* Hibernate value: Task.source
 	*/
-	String  TASK_SOURCE = TASK_ENTRY.getAliasNames()[15];
+	String  TASK_SOURCE = TASK_ENTRY.getAliasNames()[16];
 
 	/** 
 	* Alias value: Task_startDate
 	* Hibernate value: Task.startDate
 	*/
-	String  TASK_START_DATE = TASK_ENTRY.getAliasNames()[16];
+	String  TASK_START_DATE = TASK_ENTRY.getAliasNames()[17];
 
 	/** 
 	* Alias value: Task_status
 	* Hibernate value: Task.status
 	*/
-	String  TASK_STATUS = TASK_ENTRY.getAliasNames()[17];
+	String  TASK_STATUS = TASK_ENTRY.getAliasNames()[18];
 
 	/** 
 	* Alias value: Task_taskHolder_id
 	* Hibernate value: Task.taskHolder<id
 	*/
-	String  TASK_TASK_HOLDER_ID = TASK_ENTRY.getAliasNames()[18];
+	String  TASK_TASK_HOLDER_ID = TASK_ENTRY.getAliasNames()[19];
 
 	/** 
 	* Alias value: Task_workGroup_id
 	* Hibernate value: Task.workGroup.id
 	*/
-	String  TASK_WORK_GROUP_ID = TASK_ENTRY.getAliasNames()[19];
+	String  TASK_WORK_GROUP_ID = TASK_ENTRY.getAliasNames()[20];
 
 
 

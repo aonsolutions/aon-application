@@ -35,6 +35,11 @@ public interface ICommercialConstants {
 	String PROJECT_COMMERCIAL_TRACKING_CONTROLLER_NAME = "projectCommercialTracking";
 	String COLLECTIONS_CONTROLLER_NAME = "commercialCollections";
 
+	String SALES_CONTROLLER_NAME = "sales";
+	String SALE_INVOICE_CONTROLLER_NAME = "saleInvoice";
+	String PROJECT_TAS_CONTROLLER_NAME = "projectTas";
+
+
 	// ************************************************************
 	// MESSAGE
 	// ************************************************************

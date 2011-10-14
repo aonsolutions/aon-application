@@ -6,13 +6,13 @@
 
 	<ui:define name="menuContent">
 		<aon:commandLink value="#{appBundle.menu_dossiers}"
-			actionListener="#{customer.onEditSearch}"
+			actionListener="#{project.onEditSearch}"
 			styleClass="aon-top-menu-item aon-icon-customer"
 			style="text-transform: uppercase;" 
-			action="customer_consultant_search">
+			action="project_search">
 		</aon:commandLink>
 		<aon:commandLink id="task"
-			value="#{projectBundle.aon_task_management_module}"
+			value="#{groupwareBundle.groupware_task_management}"
 			action="menu_task" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-task" />
 		<c:if test="#{aonRole.financeOperator}">

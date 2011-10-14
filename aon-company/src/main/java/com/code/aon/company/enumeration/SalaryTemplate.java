@@ -7,9 +7,11 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum SalaryTemplate implements IResourceable {
 
-	DEFAULT("salary"),
+	DEFAULT("salaryExtended"),
 	
-	TEMPLATE1("salaryTemplate1")
+	TEMPLATE1("salaryTemplate1"),
+	
+	TEMPLATE2("salary")
 	
 	;      
 	

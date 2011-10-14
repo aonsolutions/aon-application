@@ -12,18 +12,15 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.commercial.controller.ICommercialConstants;
 import com.code.aon.ui.commercial.controller.OfferController;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
-/**
- * Listener Added to the OfferController.
- * 
- * @author Consulting & Development. Joseba Urkiri - 6-sept-2006
- * @since 1.0
- */
-public class OfferControllerListener extends ControllerAdapter {
+public class OfferControllerListener extends ControllerAdapter implements ICommercialConstants {
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -70,6 +67,9 @@ public class OfferControllerListener extends ControllerAdapter {
 				offerTerm.setGeneral(commercialTerm.isGeneral());
 				offerTermBean.insert(offerTerm);
 			}
+
+			IController offerDetailController = FormUtil.getController(OFFER_DETAIL_CONTROLLER_NAME);
+			offerDetailController.onReset(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}

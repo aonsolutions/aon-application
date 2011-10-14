@@ -9,8 +9,11 @@
 
 	<ui:define name="content">
 	
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formEditContent.xhtml">
-		</ui:include>
+		<aon:form>	
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formToolbar.xhtml" />
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formEditContent.xhtml" />
+		</aon:form>
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formAdditionalContent.xhtml" />
 	
 	</ui:define>
 </ui:composition>

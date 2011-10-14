@@ -1,6 +1,7 @@
 package com.code.aon.ui.groupware.controller;
 
 
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -19,6 +20,7 @@ import com.code.aon.groupware.CampaignType;
 import com.code.aon.groupware.FavoriteCategory;
 import com.code.aon.groupware.JobType;
 import com.code.aon.groupware.Process;
+import com.code.aon.groupware.ProcessDetail;
 import com.code.aon.groupware.ProcessTransitionType;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.TaskHolderWorkgroup;
@@ -33,7 +35,6 @@ import com.code.aon.groupware.enumeration.NoticeStatus;
 import com.code.aon.groupware.enumeration.NoticeType;
 import com.code.aon.groupware.enumeration.Priority;
 import com.code.aon.groupware.enumeration.TaskPeriod;
-import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 
@@ -217,18 +218,6 @@ public class GroupWareCollectionsController {
 		return taskHolderWorkgroups;
 	}
 
-	public List<SelectItem> getProjects( Integer registryId ) throws ManagerBeanException {
-		List<SelectItem> projects = new LinkedList<SelectItem>();
-		IManagerBean bean = BeanManager.getManagerBean(Project.class);
-		List<ITransferObject> list = bean.getList(null);
-		for (ITransferObject to:list) {
-			TaskHolder taskHolder = (TaskHolder) to;
-			SelectItem item = new SelectItem(taskHolder, taskHolder.getRegistry().getFullName());
-			projects.add(item);
-		}
-		return projects;
-	}
-	
 	public List<SelectItem> getJobTypes() throws ManagerBeanException {
 		List<SelectItem> jobTypeList = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(JobType.class);
@@ -289,7 +278,7 @@ public class GroupWareCollectionsController {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_ACTIVE), true);
 		criteria.addOrder(bean.getFieldName(IGroupwareAlias.PROCESS_DESCRIPTION));
-		List<ITransferObject> list = bean.getList(null);
+		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			Process process = (Process) to;
 			SelectItem item = new SelectItem(process, process.getDescription());
@@ -303,7 +292,7 @@ public class GroupWareCollectionsController {
 		IManagerBean bean = BeanManager.getManagerBean(CampaignType.class);
 		Criteria criteria = new Criteria();
 		criteria.addOrder(bean.getFieldName(IGroupwareAlias.CAMPAIGN_TYPE_DESCRIPTION));
-		List<ITransferObject> list = bean.getList(null);
+		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			CampaignType campaignType = (CampaignType) to;
 			SelectItem item = new SelectItem(campaignType, campaignType.getDescription());
@@ -324,5 +313,21 @@ public class GroupWareCollectionsController {
 	    }
         return campaignStatuses;
     }
+
+	public List<SelectItem> getProcessDetails(Process process) throws ManagerBeanException {
+		List<SelectItem> processDetailList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(ProcessDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_PROCESS_ID), process.getId());
+		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(IGroupwareAlias.PROCESS_DETAIL_POSITION));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to:list) {
+			ProcessDetail processDetail = (ProcessDetail) to;
+			SelectItem item = new SelectItem(processDetail, processDetail.getDescription());
+			processDetailList.add(item);
+		}
+		return processDetailList;
+	}
 	
 }

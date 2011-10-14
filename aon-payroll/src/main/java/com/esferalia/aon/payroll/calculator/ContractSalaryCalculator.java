@@ -15,6 +15,7 @@ import static com.esferalia.aon.payroll.enumeration.ContractVariables.STRUCTURAL
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.TOTAL_LIQUID;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.TOTAL_PAYMENT;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -200,6 +201,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 						if ( payment != 0.00 ){
 							try  {
 								description = expressionContext.evalTemplate(contractPayment.getDescription(), amountStart, amountEnd);
+								// TODO ¿ concatenar el periodo en la descripcion ?
+								description = getDescriptionPeriod(description, paymentStart, paymentEnd, amountStart, amountEnd );
 							} catch (Exception e ) {
 								//TODO : Log ???
 							}
@@ -254,6 +257,48 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		}catch (AonException e) {
 			throw new SalaryException(e.getMessage(),e);			
 		}
+	}
+	
+	public static final String SPACE = " ";
+	public static final String DASH = "-";
+	public static final String OPEN_BRACKET = "(";
+	public static final String CLOSE_BRACKET = ")";
+	private SimpleDateFormat sdf;
+	
+	private SimpleDateFormat getSdf(){
+		if(sdf==null){
+			sdf = new SimpleDateFormat("dd/MM/yyyy");
+		}
+		return sdf;
+	}
+
+	private String getDescriptionPeriod(String description, Date paymentStart,
+			Date paymentEnd, Date amountStart, Date amountEnd) {
+		if( !( amountStart.equals(paymentStart) && amountEnd.equals(paymentEnd) ) ){
+			StringBuffer d = new StringBuffer(description);
+			if( amountStart.after(paymentStart) || amountEnd.before(paymentEnd) ){
+				if( amountStart.equals(amountEnd) ){
+					d.append(SPACE).append(OPEN_BRACKET).append(SPACE);
+					d.append(CommonUtil.getDay(amountEnd));
+					d.append(SPACE).append(CLOSE_BRACKET);
+				} else {
+					d.append(SPACE).append(OPEN_BRACKET).append(SPACE);
+					d.append(CommonUtil.getDay(amountStart));
+					d.append(SPACE).append(DASH).append(SPACE);
+					d.append(CommonUtil.getDay(amountEnd));
+					d.append(SPACE).append(CLOSE_BRACKET);
+				}
+			}
+			if( amountStart.before(paymentStart)){
+				d.append(SPACE).append(OPEN_BRACKET).append(SPACE);
+				d.append(getSdf().format(amountStart));
+				d.append(SPACE).append(DASH).append(SPACE);
+				d.append(getSdf().format(amountEnd));
+				d.append(SPACE).append(CLOSE_BRACKET);
+			}
+			return d.toString();
+		}
+		return description;
 	}
 
 	private Double fillDeductions(IContractSalaryCalculatorContext ctx) 

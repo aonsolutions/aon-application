@@ -45,4 +45,14 @@ public class PurchaseControllerListener extends ControllerAdapter implements IPu
 		purchaseDetailController.onReset(null);
 	}
 	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		PurchaseController purchaseController = (PurchaseController)this.getController();
+		Purchase purchase = (Purchase)purchaseController.getTo();
+		if (purchase.getProject() != null && purchase.getProject().getId() != null) {
+			IController purchaseDetailController = FormUtil.getController(PURCHASE_DETAIL_CONTROLLER_NAME);
+			purchaseDetailController.onSearch(null);
+		}
+	}
+	
 }

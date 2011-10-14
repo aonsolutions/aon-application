@@ -7,28 +7,26 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
-	<ui:define name="content">
+	<ui:define name="header">
+		<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_embargos_tab}" />
+			<ui:param name="toolbarDescription" value="&#160;" />
+		</ui:include>
+	</ui:define>
 	
-		<aon:form id="contractEmbargoForm">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_embargos_tab}" />
-				<ui:param name="toolbarDescription" value="&#160;" />
-				<ui:define name="toolbarContent">
-					
-				</ui:define>				
-			</ui:decorate>
-		
-			<aon:div id="embargoGrid" styleClass="aon-scroll-area">
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/listContent.xhtml">
-					<ui:param name="controller" value="#{contractEmbargo}" />
-				</ui:include>
-			</aon:div>
-		</aon:form>
-		
+	<ui:define name="content">
+		<aon:div id="embargoGrid" styleClass="aon-scroll-area">
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/listContent.xhtml">
+				<ui:param name="controller" value="#{contractEmbargo}" />
+			</ui:include>
+		</aon:div>
+	</ui:define>
+	
+	<ui:define name="additionalContent">
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/embargo/modalEmbargo.xhtml">
 			<ui:param name="controller" value="#{contractEmbargo}" />
 			<ui:param name="container" value="embargoGrid" />
 		</ui:include>
-		
 	</ui:define>
+
 </ui:composition>

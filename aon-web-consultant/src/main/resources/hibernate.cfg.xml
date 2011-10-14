@@ -56,15 +56,6 @@
 		<mapping class="com.code.aon.account.bridge.SupplierAccount"/>
 		<mapping class="com.code.aon.account.bridge.TaxAccount"/>
 
-		<!-- AON-CAMPAIGN Mapping files --> 
-		<mapping class="com.code.aon.campaign.ActivityProcess"/>
-		<mapping class="com.code.aon.campaign.Campaign"/>
-		<mapping class="com.code.aon.campaign.CampaignDossier"/>
-		<mapping class="com.code.aon.campaign.Process"/>
-		<mapping class="com.code.aon.campaign.ProcessDetail"/>
-		<mapping class="com.code.aon.campaign.ProcessDetailTransition"/>
-		<mapping class="com.code.aon.campaign.ProcessTransitionType"/>
-
 		<!-- AON-COMMERCIAL Mapping files -->
 		<mapping class="com.code.aon.commercial.CommercialActivity"/>
 		<mapping class="com.code.aon.commercial.CommercialTerm"/>
@@ -142,12 +133,26 @@
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 		
+
 		<!-- AON-GROUPWARE Mapping files --> 
 		<mapping class="com.code.aon.groupware.Alarm"/>
+		<mapping class="com.code.aon.groupware.Campaign"/>
+		<mapping class="com.code.aon.groupware.CampaignProject"/>
+		<mapping class="com.code.aon.groupware.CampaignType"/>
+		<mapping class="com.code.aon.groupware.DailyTracking"/>
+		<mapping class="com.code.aon.groupware.Favorite"/>
+		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
+		<mapping class="com.code.aon.groupware.JobType"/>
 		<mapping class="com.code.aon.groupware.Note"/>
 		<mapping class="com.code.aon.groupware.Notice"/>
-		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
-		<mapping class="com.code.aon.groupware.Favorite"/>
+		<mapping class="com.code.aon.groupware.Process"/>
+		<mapping class="com.code.aon.groupware.ProcessDetail"/>
+		<mapping class="com.code.aon.groupware.ProcessDetailTransition"/>
+		<mapping class="com.code.aon.groupware.ProcessTask"/>
+		<mapping class="com.code.aon.groupware.ProcessTransitionType"/>
+		<mapping class="com.code.aon.groupware.Task"/>
+		<mapping class="com.code.aon.groupware.TaskHolder"/>
+		<mapping class="com.code.aon.groupware.TaskHolderWorkgroup"/>
 
 		<!-- AON-MESSAGING Mapping files --> 
 		<mapping class="com.code.aon.messaging.Message"/>
@@ -171,15 +176,10 @@
 		<mapping class="com.code.aon.product.TariffCatalogue"/>
 
 		<!-- AON-PROJECT Mapping files -->  
-		<mapping class="com.code.aon.project.Activity"/>
 		<mapping class="com.code.aon.project.ActivityType"/>
-		<mapping class="com.code.aon.project.DailyTracking"/>
-		<mapping class="com.code.aon.project.Dossier"/>
-		<mapping class="com.code.aon.project.DossierType"/>
-		<mapping class="com.code.aon.project.JobType"/>
 		<mapping class="com.code.aon.project.Project"/>
-		<mapping class="com.code.aon.project.Task"/>
-		<mapping class="com.code.aon.project.TaskHolder"/>
+		<mapping class="com.code.aon.project.ProjectActivity"/>
+		<mapping class="com.code.aon.project.ProjectType"/>
 
 		<!-- AON-PURCHASE Mapping files -->	
 		<mapping class="com.code.aon.purchase.Purchase"/>

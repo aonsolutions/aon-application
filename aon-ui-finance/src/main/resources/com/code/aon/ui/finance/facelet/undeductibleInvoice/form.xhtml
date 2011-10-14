@@ -300,10 +300,10 @@
 									value="&#160;" title="#{bundle.aon_reset}"
 									styleClass="aon-icon-commandButton aon-icon-reset"
 									rendered="#{undeductibleInvoice.readOnly and undeductibleInvoice.to.project.id == null and undeductibleInvoice.projectCount > 0}"
-									reRender="showInvoiceProjectWindow">
-									<f:setPropertyActionListener target="#{undeductibleInvoice.showInvoiceProjectWindow}"
+									reRender="showProjectWindow">
+									<f:setPropertyActionListener target="#{undeductibleInvoice.showProjectWindow}"
 										value="#{true}" />								
-									<f:setPropertyActionListener target="#{undeductibleInvoice.showInvoiceDetailProjectWindow}"
+									<f:setPropertyActionListener target="#{undeductibleInvoice.showDetailProjectWindow}"
 										value="#{false}" />								
 								</aon:commandButton>
 								<aon:commandButton id="removeInvoiceProject" 
@@ -422,10 +422,20 @@
 			<ui:param name="invoiceController" value="#{undeductibleInvoice}" />
 			<ui:param name="invoiceAddress" value="#{undeductibleInvoiceAddress}" />
 		</ui:include>
-		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalProject.xhtml">
+		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
 			<ui:param name="controller" value="#{undeductibleInvoice}" />
-			<ui:param name="detailController" value="#{undeductibleInvoiceDetail}" />
-			<ui:param name="parentForm" value="undeductibleInvoiceForm" />
+			<ui:param name="parentReRender" value="undeductibleInvoiceForm" />
+			<aon:methodParam name="parentActionListener" value="#{undeductibleInvoice.addInvoiceProject}" type="actionListener" />
+			<ui:param name="parentValue" value="#{undeductibleInvoice.to.project}" />
+			<ui:param name="detailReRender" value="invoiceDetails" />
+			<aon:methodParam name="detailActionListener" value="#{undeductibleInvoiceDetail.addInvoiceDetailProject}" type="actionListener" />
+			<ui:param name="detailValue" value="#{undeductibleInvoiceDetail.invoiceDetail.project}" />
+			<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+				<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+				<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+			</c:if>
 		</ui:include>
 		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
 			<ui:param name="signButtonreRender" value="undeductibleInvoiceForm" />

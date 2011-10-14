@@ -14,16 +14,28 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.tas</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.tas</artifactId>
+			<artifactId>aon.ui.project</artifactId>
 			<version>${pom.version}</version>
 			<scope>compile</scope>
-		</dependency>
+		</dependency> 
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.stat</artifactId>
+			<version>${pom.version}</version>
+			<scope>compile</scope>
+		</dependency> 
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>

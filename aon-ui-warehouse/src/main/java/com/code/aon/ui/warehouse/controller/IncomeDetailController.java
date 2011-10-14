@@ -19,6 +19,7 @@ public class IncomeDetailController extends LinesController implements IWarehous
 
 	private IPriceStrategy priceStrategy;
 	private boolean longDescription;
+	private IncomeDetail incomeDetail;
 	
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -49,6 +50,24 @@ public class IncomeDetailController extends LinesController implements IWarehous
 
 	public void onShortDescription(ActionEvent event) {
 		setLongDescription(false);
+	}
+
+	public IncomeDetail getIncomeDetail() {
+		return incomeDetail;
+	}
+
+	public void setIncomeDetail(IncomeDetail incomeDetail) {
+		this.incomeDetail = incomeDetail;
+	}
+
+	public void onIncomeDetailProjectShow(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			setIncomeDetail((IncomeDetail)this.getModel().getRowData());
+		}
+	}
+
+	public void addIncomeDetailProject(ActionEvent event) throws ManagerBeanException {
+		getManagerBean().update(incomeDetail);
 	}
 
 	public boolean isEditable() throws ManagerBeanException {

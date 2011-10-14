@@ -7,19 +7,19 @@ import java.util.GregorianCalendar;
 import org.apache.commons.lang.time.DateUtils;
 
 /**
- * Clase CommonUtil para incluir métodos útiles comunes a los proyectos Aon-ui y
+ * Clase CommonUtil para incluir mï¿½todos ï¿½tiles comunes a los proyectos Aon-ui y
  * Aon-no-ui.
  */
 public class CommonUtil {
 
 	/**
-	 * Redondea un valor decimal a la precisión requerida
+	 * Redondea un valor decimal a la precisiï¿½n requerida
 	 * 
 	 * @param value
 	 *            el valor a redondear
 	 * 
 	 * @param precision
-	 *            la precisión de la parte decimal
+	 *            la precisiï¿½n de la parte decimal
 	 * @return double el valor redondeado
 	 */
 	public static double round(double value, int precision) {
@@ -27,7 +27,7 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Redondea un valor decimal a 2 dígitos en la parte decimal
+	 * Redondea un valor decimal a 2 dï¿½gitos en la parte decimal
 	 * 
 	 * @param value
 	 *            el valor a redondear
@@ -39,13 +39,13 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Trunca un valor decimal a la precisión requerida
+	 * Trunca un valor decimal a la precisiï¿½n requerida
 	 * 
 	 * @param value
 	 *            el valor a truncar
 	 * 
 	 * @param precision
-	 *            la precisión de la parte decimal
+	 *            la precisiï¿½n de la parte decimal
 	 * @return double el valor truncado
 	 */
 	public static double truncate(double value, int precision) {
@@ -53,7 +53,7 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Trunca un valor decimal a 2 dígitos en la parte decimal
+	 * Trunca un valor decimal a 2 dï¿½gitos en la parte decimal
 	 * 
 	 * @param value
 	 *            el valor a truncar
@@ -65,12 +65,12 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Devuelve el último dia del año en función de año pasado por parámetro.
+	 * Devuelve el ï¿½ltimo dia del aï¿½o en funciï¿½n de aï¿½o pasado por parï¿½metro.
 	 * 
 	 * @param year
-	 *            El año del que se desea el último dia.
+	 *            El aï¿½o del que se desea el ï¿½ltimo dia.
 	 * 
-	 * @return Un java.util.Date con el último dia de ese año.
+	 * @return Un java.util.Date con el ï¿½ltimo dia de ese aï¿½o.
 	 */
 	public static Date getYearLastDay(int year) {
 		Calendar calendar = Calendar.getInstance();
@@ -81,13 +81,13 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Devuelve el último dia del año en función de la fecha pasada por
-	 * parámetro.
+	 * Devuelve el ï¿½ltimo dia del aï¿½o en funciï¿½n de la fecha pasada por
+	 * parï¿½metro.
 	 * 
 	 * @param date
-	 *            La fecha de la que se se desea saber el último dia del año.
+	 *            La fecha de la que se se desea saber el ï¿½ltimo dia del aï¿½o.
 	 * 
-	 * @return Un java.util.Date con el último dia de ese año.
+	 * @return Un java.util.Date con el ï¿½ltimo dia de ese aï¿½o.
 	 */
 	public static Date getYearLastDay(Date date) {
 		Calendar calendar = Calendar.getInstance();
@@ -98,12 +98,12 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Devuelve el primer dia del año en función de año pasado por parámetro.
+	 * Devuelve el primer dia del aï¿½o en funciï¿½n de aï¿½o pasado por parï¿½metro.
 	 * 
 	 * @param year
-	 *            El año del que se desea el primer dia.
+	 *            El aï¿½o del que se desea el primer dia.
 	 * 
-	 * @return Un java.util.Date con el primer dia de ese año.
+	 * @return Un java.util.Date con el primer dia de ese aï¿½o.
 	 */
 	public static Date getYearFirstDay(int year) {
 		Calendar calendar = Calendar.getInstance();
@@ -114,12 +114,12 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Devuelve el primer dia del año en función de año pasado por parámetro.
+	 * Devuelve el primer dia del aï¿½o en funciï¿½n de aï¿½o pasado por parï¿½metro.
 	 * 
 	 * @param date
-	 *            La fecha de la que se se desea saber el primer dia del año.
+	 *            La fecha de la que se se desea saber el primer dia del aï¿½o.
 	 * 
-	 * @return Un java.util.Date con el primer dia de ese año.
+	 * @return Un java.util.Date con el primer dia de ese aï¿½o.
 	 */
 	public static Date getYearFirstDay(Date date) {
 		Calendar calendar = Calendar.getInstance();
@@ -130,8 +130,8 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Devuelve el número de dias que hay entre las fechas pasadas por
-	 * parámetro.
+	 * Devuelve el nï¿½mero de dias que hay entre las fechas pasadas por
+	 * parï¿½metro.
 	 * 
 	 * @param from
 	 *            Fecha inicial.
@@ -143,9 +143,29 @@ public class CommonUtil {
 		return getDaysBetweenDates(from, to, true);
 	}
 
+	public static Date[] getWeekDateRange(Date date) {
+	    Calendar cal = Calendar.getInstance();
+	    cal.setTime(date);
+	    cal.add(Calendar.DAY_OF_YEAR, (cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY) * (-1));
+	    Date start = cal.getTime();
+	    cal.add(Calendar.DAY_OF_YEAR, +6);
+	    Date end = cal.getTime();
+		return new Date[]{start,end};
+	}
+    
+	public static Date[] getTwoWeekDateRange(Date date) {
+	    Calendar cal = Calendar.getInstance();
+	    cal.setTime(date);
+	    cal.add(Calendar.DAY_OF_YEAR, (cal.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY) * (-1));
+	    Date start = cal.getTime();
+	    cal.add(Calendar.DAY_OF_YEAR, +13);
+	    Date end = cal.getTime();
+		return new Date[]{start,end};
+	}
+
 	/**
-	 * Devuelve el número de dias que hay entre las fechas pasadas por
-	 * parámetro.
+	 * Devuelve el nï¿½mero de dias que hay entre las fechas pasadas por
+	 * parï¿½metro.
 	 * 
 	 * @param from
 	 *            Fecha inicial.
@@ -175,11 +195,11 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Devuelve el año de la fecha indicada.
+	 * Devuelve el aï¿½o de la fecha indicada.
 	 * 
 	 * @param date
-	 *            La fecha de la que se desea saber el año.
-	 * @return El año.
+	 *            La fecha de la que se desea saber el aï¿½o.
+	 * @return El aï¿½o.
 	 */
 	public static int getYear(Date date) {
 		Calendar c = Calendar.getInstance();
@@ -214,11 +234,11 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Devuelve el número de dias del mes en curso indicado en la fecha.
+	 * Devuelve el nï¿½mero de dias del mes en curso indicado en la fecha.
 	 * 
 	 * @param date
-	 *            Fecha de la que se desea saber el número de dias del mes.
-	 * @return int El número de dias del mes.
+	 *            Fecha de la que se desea saber el nï¿½mero de dias del mes.
+	 * @return int El nï¿½mero de dias del mes.
 	 */
 	public static int daysInMonth(Date date) {
 		Calendar c1 = Calendar.getInstance();
@@ -229,10 +249,10 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Si el año indicado por parámetro es bisiesto.
+	 * Si el aï¿½o indicado por parï¿½metro es bisiesto.
 	 * 
 	 * @param year
-	 *            Año.
+	 *            Aï¿½o.
 	 * @return boolean TRUE si es bisiesto.
 	 */
 	public static boolean isLeapYear(int year) {
@@ -241,15 +261,15 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Devuelve una fecha con los parámetros indicados.
+	 * Devuelve una fecha con los parï¿½metros indicados.
 	 * 
 	 * @param year
-	 *            El año de la fecha.
+	 *            El aï¿½o de la fecha.
 	 * @param month
 	 *            El mes de la fecha. (0-11).
 	 * @param day
 	 *            El dia de la fecha.
-	 * @return Date La fecha construída.
+	 * @return Date La fecha construï¿½da.
 	 */
 	public static Date getDate(int year, int month, int day) {
 		Calendar c = Calendar.getInstance();
@@ -266,7 +286,7 @@ public class CommonUtil {
 	 * @param date
 	 *            La fecha de la que se se desea saber el primer dia del mes.
 	 * 
-	 * @return Un java.util.Date con el primer dia de ese año.
+	 * @return Un java.util.Date con el primer dia de ese aï¿½o.
 	 */
 	public static Date getMonthFirstDay(Date date) {
 		Calendar calendar = Calendar.getInstance();
@@ -276,13 +296,13 @@ public class CommonUtil {
 	}
 
 	/**
-	 * Devuelve el último dia del mes en función de la fecha pasada por
-	 * parámetro.
+	 * Devuelve el ï¿½ltimo dia del mes en funciï¿½n de la fecha pasada por
+	 * parï¿½metro.
 	 * 
 	 * @param date
-	 *            La fecha de la que se se desea saber el último dia del mes.
+	 *            La fecha de la que se se desea saber el ï¿½ltimo dia del mes.
 	 * 
-	 * @return Un java.util.Date con el último dia de ese año.
+	 * @return Un java.util.Date con el ï¿½ltimo dia de ese aï¿½o.
 	 */
 	public static Date getMonthLastDay(Date date) {
 		Calendar calendar = Calendar.getInstance();

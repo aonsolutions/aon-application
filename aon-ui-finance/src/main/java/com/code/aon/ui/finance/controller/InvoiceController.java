@@ -81,8 +81,8 @@ public class InvoiceController extends BasicController implements ISignatureCont
 	private List<SelectItem> addresses;
 	private List<SelectItem> projects;
 	private boolean showInvoiceAddressWindow;
-	private boolean showInvoiceProjectWindow;
-	private boolean showInvoiceDetailProjectWindow;
+	private boolean showProjectWindow;
+	private boolean showDetailProjectWindow;
 	private boolean showRectificationWindow;
 	private String rectificationSeries;
 	private int rectificationNumber;
@@ -244,20 +244,20 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		}
 	}
 
-	public boolean isShowInvoiceProjectWindow() {
-		return showInvoiceProjectWindow;
+	public boolean isShowProjectWindow() {
+		return showProjectWindow;
 	}
 
-	public void setShowInvoiceProjectWindow(boolean value) {
-		this.showInvoiceProjectWindow = value;
+	public void setShowProjectWindow(boolean value) {
+		this.showProjectWindow = value;
 	}
 
-	public boolean isShowInvoiceDetailProjectWindow() {
-		return showInvoiceDetailProjectWindow;
+	public boolean isShowDetailProjectWindow() {
+		return showDetailProjectWindow;
 	}
 
-	public void setShowInvoiceDetailProjectWindow(boolean value) {
-		this.showInvoiceDetailProjectWindow = value;
+	public void setShowDetailProjectWindow(boolean value) {
+		this.showDetailProjectWindow = value;
 	}
 
 	public void addInvoiceProject(ActionEvent event) throws ManagerBeanException {

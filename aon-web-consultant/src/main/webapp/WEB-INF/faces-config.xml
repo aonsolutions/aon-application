@@ -40,7 +40,6 @@
 			<property-name>styleSheets</property-name>
 			<list-entries>
 				<value>#{aonResource.resolve['/aon-richCss.css']}</value>
-				<value>#{aonResource.resolveLocal['/css/consultant.css']}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -126,7 +125,7 @@
 			<!--  aon.ui.account.bridge -->
 			<value>#{customerAccount}</value>
 			<!-- aon-ui-project-->
-			<value>#{customerDossierListener}</value>
+			<value>#{customerProjectListener}</value>
 		</list-entries>
 	</managed-bean>
 

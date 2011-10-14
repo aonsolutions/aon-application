@@ -7,41 +7,40 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
-	<ui:define name="content">
-	
-		<aon:form id="contractDataForm">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_variables}" />
-				<ui:param name="toolbarDescription" value="&#160;" />
-				<ui:define name="toolbarContent">
-					<aon:commandButton id="current"
-						value="En curso"
-						actionListener="#{contractData.onSearchCurrent}"
-						styleClass="aon-finding-toolbar-item aon-icon-category" >
-					</aon:commandButton>
-					<aon:commandButton id="history"
-						value="Historico"
-						actionListener="#{contractData.onSearchAll}"
-						styleClass="aon-finding-toolbar-item aon-icon-category" >
-					</aon:commandButton>
-				</ui:define>				
-			</ui:decorate>	
-		
-			<aon:div id="dataGrid" styleClass="aon-scroll-area">
-				<ui:decorate	
-					template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-					<ui:param name="controller" value="#{contractData}" />
-					<ui:define name="columns">
-				
-						<ui:include 
-							src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" >
-							<ui:param name="controller" value="#{contractData}" />
-						</ui:include>
-							
-					</ui:define>
-				</ui:decorate>
-			</aon:div>
-		</aon:form>
-		
+	<ui:define name="header">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contract_variables}" />
+			<ui:param name="toolbarDescription" value="&#160;" />
+			<ui:define name="toolbarContent">
+				<aon:commandButton id="current"
+					value="En curso"
+					actionListener="#{contractData.onSearchCurrent}"
+					styleClass="aon-finding-toolbar-item aon-icon-category" >
+				</aon:commandButton>
+				<aon:commandButton id="history"
+					value="Historico"
+					actionListener="#{contractData.onSearchAll}"
+					styleClass="aon-finding-toolbar-item aon-icon-category" >
+				</aon:commandButton>
+			</ui:define>				
+		</ui:decorate>	
 	</ui:define>
+
+	<ui:define name="content">
+		<aon:div id="dataGrid" styleClass="aon-scroll-area">
+			<ui:decorate	
+				template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
+				<ui:param name="controller" value="#{contractData}" />
+				<ui:define name="columns">
+			
+					<ui:include 
+						src="/com/esferalia/aon/ui/payroll/facelet/contract/data/list_content.xhtml" >
+						<ui:param name="controller" value="#{contractData}" />
+					</ui:include>
+						
+				</ui:define>
+			</ui:decorate>
+		</aon:div>
+	</ui:define>
+	
 </ui:composition>

@@ -7,13 +7,20 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
-	<ui:define name="content">
-	
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formEditContent.xhtml">
+	<ui:define name="header">
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formToolbar.xhtml">
 			<ui:param name="skipSearchButton" value="true" />
 			<ui:param name="skipCancelButton" value="true" />
 			<ui:param name="skipBackButton" value="true" />
 		</ui:include>
-		
 	</ui:define>
+
+	<ui:define name="content">	
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formEditContent.xhtml" />
+	</ui:define>		
+
+	<ui:define name="additionalContent">	
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formAdditionalContent.xhtml" />
+	</ui:define>
+
 </ui:composition>

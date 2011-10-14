@@ -23,6 +23,7 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
+import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.PaymentConcept;
 import com.esferalia.aon.payroll.Salary;
@@ -184,14 +185,26 @@ public class SettleController {
 			payment.setStartDate(CommonUtil.getMonthFirstDay(getParams().getSuspensionDate()));
 			payment.setEndDate(getParams().getSuspensionDate());
 			payment.setType(PaymentType.COMPENSATION_OR_PREPAID_EXPENSES);
-			payment.setExpression(amount.toString());
+			payment.setExpression("IMPORTE_"+pc.getCode());
 //			payment.setIrpfExpression("0.00");
 //			payment.setQuoteExpression("0.00");
 			payment.setDescription(description);
 			bean.insert(payment);
+			savePaymentVariable(pc.getCode(), amount);
 		}
 	}
 		
+	private void savePaymentVariable(String name, Double amount) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
+		ContractData data = new ContractData();
+		data.setContract(getParams().getContract());
+		data.setStartDate(CommonUtil.getMonthFirstDay(getParams().getSuspensionDate()));
+		data.setEndDate(getParams().getSuspensionDate());
+		data.setName("IMPORTE_"+name);
+		data.setExpression(amount.toString());
+		bean.insert(data);
+	}
+	
 	private void generateSettle() throws SalaryException {
 		try {
 			Contract contract = getParams().getContract();

@@ -7,65 +7,65 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
 
+	<ui:define name="header">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{companyBundle.company_workplace}" />
+			<ui:param name="toolbarDescription" value="&#160;" />
+			<ui:define name="toolbarContent">
+				<aon:htmlCommandLink id="calendarReport_list"
+					styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+					value="#{calendarBundle.aon_calendar_calendar}"
+					rendered="#{enterpriseTree.payrollWorkPlace.calendar.id!=null}"
+					action="#{report.onExecute}">
+					<aon:actionListener method="#{enterpriseTree.onLoadWorkPlaceCalendar}" />						
+					<aon:actionListener method="#{calendarPrint.onLoad}" />						
+					<f:param name="reportKey" value="calendarReport" />
+					<f:param name="outputFormat" value="PDF" />
+				</aon:htmlCommandLink>	
+			</ui:define>				
+		</ui:decorate>		
+	</ui:define>
+	
 	<ui:define name="content">
 	
-		<aon:form id="enterpriseWorkPlaceForm">
-		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{companyBundle.company_workplace}" />
-				<ui:param name="toolbarDescription" value="&#160;" />
-				<ui:define name="toolbarContent">
-					<aon:htmlCommandLink id="calendarReport_list"
-						styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
-						value="#{calendarBundle.aon_calendar_calendar}"
-						rendered="#{enterpriseTree.payrollWorkPlace.calendar.id!=null}"
-						action="#{report.onExecute}">
-						<aon:actionListener method="#{enterpriseTree.onLoadWorkPlaceCalendar}" />						
-						<aon:actionListener method="#{calendarPrint.onLoad}" />						
-						<f:param name="reportKey" value="calendarReport" />
-						<f:param name="outputFormat" value="PDF" />
-					</aon:htmlCommandLink>	
-				</ui:define>				
-			</ui:decorate>		
+		<aon:div styleClass="aon-scroll-area">
+			<aon:panelGrid columns="2" styleClass="aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
+				
+				<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
+				<aon:outputText value="#{enterprise.to.registry.name}" />
 
-			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2" styleClass="aon-width-all"
-					columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
-					
-					<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
-					<aon:outputText value="#{enterprise.to.registry.name}" />
+				<aon:outputText value="#{companyBundle.company_workplace}" />
+				<aon:outputText value="#{enterpriseTree.workPlace.description}" />
 
-					<aon:outputText value="#{companyBundle.company_workplace}" />
-					<aon:outputText value="#{enterpriseTree.workPlace.description}" />
+				<aon:outputText value="#{registryBundle.registry_address}" />
+				<aon:outputText value="#{enterpriseTree.workPlace.address.fullAddress}"  />
+	
+				<aon:outputText value="#{registryBundle.registry_zip}" />
+				<aon:outputText value="#{enterpriseTree.workPlace.address.zip}"  />
 
-					<aon:outputText value="#{registryBundle.registry_address}" />
-					<aon:outputText value="#{enterpriseTree.workPlace.address.fullAddress}"  />
-		
-					<aon:outputText value="#{registryBundle.registry_zip}" />
-					<aon:outputText value="#{enterpriseTree.workPlace.address.zip}"  />
+				<aon:outputText value="#{registryBundle.registry_city}" />
+				<aon:outputText value="#{enterpriseTree.workPlace.address.city}"  />
 
-					<aon:outputText value="#{registryBundle.registry_city}" />
-					<aon:outputText value="#{enterpriseTree.workPlace.address.city}"  />
+				<aon:outputText value="#{registryBundle.registry_geozone}" />
+				<aon:outputText value="#{enterpriseTree.workPlace.address.geozone.name}"  />
 
-					<aon:outputText value="#{registryBundle.registry_geozone}" />
-					<aon:outputText value="#{enterpriseTree.workPlace.address.geozone.name}"  />
+				<aon:outputText value="#{configBundle.config_administration}" />
+				<aon:outputText value="#{enterpriseTree.workPlace.economicAgreement}" />
+				
+				<aon:outputText value="#{calendarBundle.aon_calendar_calendar}" />
+				<aon:outputText value="#{enterpriseTree.payrollWorkPlace.calendar.description}" />
+				
+				<aon:outputText value="#{payrollBundle.payroll_agreement}" />
+				<aon:outputText value="#{enterpriseTree.payrollWorkPlace.agreement.description}" />
+				
+				<aon:outputText value="#{payrollBundle.payroll_activity}" />
+				<aon:outputText value="#{enterpriseTree.payrollWorkPlace.enterpriseActivity.description}" />
+				
+			</aon:panelGrid>
 
-					<aon:outputText value="#{configBundle.config_administration}" />
-					<aon:outputText value="#{enterpriseTree.workPlace.economicAgreement}" />
-					
-					<aon:outputText value="#{calendarBundle.aon_calendar_calendar}" />
-					<aon:outputText value="#{enterpriseTree.payrollWorkPlace.calendar.description}" />
-					
-					<aon:outputText value="#{payrollBundle.payroll_agreement}" />
-					<aon:outputText value="#{enterpriseTree.payrollWorkPlace.agreement.description}" />
-					
-					<aon:outputText value="#{payrollBundle.payroll_activity}" />
-					<aon:outputText value="#{enterpriseTree.payrollWorkPlace.enterpriseActivity.description}" />
-					
-				</aon:panelGrid>
+		</aon:div>
 
-			</aon:div>
-		</aon:form>
 	</ui:define>
 
 </ui:composition>

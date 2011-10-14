@@ -23,10 +23,11 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
-public class OfferDetailController extends LinesController {
+public class OfferDetailController extends LinesController implements ICommercialConstants {
 
 	private boolean longDescription;
 
@@ -80,6 +81,9 @@ public class OfferDetailController extends LinesController {
 			Item item = (Item)event.getNewValue();
 			offerDetail.setItem(item);
 			offerDetail.setDescription(item.getProduct().getName() + (item.getDetail() != null ? " " + item.getDetail() : ""));
+			if (offerDetail.getQuantity() == 0) {
+				offerDetail.setQuantity(1);
+			}
 
 			Date date = offerDetail.getOffer().getIssueDate();
 			OfferController master = (OfferController)getMasterController();
@@ -134,6 +138,26 @@ public class OfferDetailController extends LinesController {
 			info.append(salesDetail.getLine());
 		}
 		return info.toString();
+	}
+
+	public void onLoadSales(ActionEvent event) throws ManagerBeanException {
+		OfferDetail offerDetail = (OfferDetail)this.getModel().getRowData();
+		IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_OFFER_DETAIL_ID), offerDetail.getId());
+		Iterator<?> iterator = salesDetailBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			SalesDetail salesDetail = (SalesDetail)iterator.next();
+			BasicController salesController = (BasicController)AonUtil.getRegisteredBean(SALES_CONTROLLER_NAME);
+			salesController.onLoad(event, salesDetail.getSales().getId(), NAVIGATION_OFFER_FORM, OFFER_DETAIL_CONTROLLER_NAME + ".onBackOffer");
+		}
+	}
+
+	public void onBackOffer(ActionEvent event) throws ManagerBeanException {
+		OfferController offerController = (OfferController) AonUtil.getRegisteredBean(OFFER_CONTROLLER_NAME);
+		offerController.refresh(event);
+
+		onSearch(event);
 	}
 
 }

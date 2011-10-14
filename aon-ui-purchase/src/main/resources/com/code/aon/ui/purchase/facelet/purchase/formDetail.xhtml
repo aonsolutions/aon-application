@@ -227,6 +227,18 @@
 					reRender="aonContent">
 					<rich:toolTip value="#{controller.lineStatusInfo}" />
 				</aon:commandLink>
+				<aon:commandButton id="purchaseDetailProject" value="&#160;"
+					styleClass="#{(to.project != null and to.project.id == purchase.to.project.id) ? 
+									('aon-icon-commandButton aon-icon-project-ok') : ('aon-icon-commandButton aon-icon-project-warn')}"
+					rendered="#{to.project != null and to.project.id != null}"
+					actionListener="#{controller.onPurchaseDetailProjectShow}" 
+					reRender="showProjectWindow">
+					<rich:toolTip value="#{projectLabel} #{to.project.name}" />
+					<f:setPropertyActionListener target="#{purchase.showProjectWindow}"
+						value="#{purchase.pending and purchase.projectCount > 0}" />								
+					<f:setPropertyActionListener target="#{purchase.showDetailProjectWindow}"
+						value="#{purchase.pending and purchase.projectCount > 0}" />								
+				</aon:commandButton>
 			</aon:column>
 		</ui:define>
 	</ui:decorate>

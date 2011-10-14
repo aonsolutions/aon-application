@@ -25,10 +25,9 @@
 				</aon:div>
 				<aon:div styleClass="aon-italic">
 					<aon:outputText value="#{companyBundle.company_workplace_address}:"/>
-					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{salary.contract.workPlace.address.fullAddress}"/>
-					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{salary.contract.workPlace.address.zip}"/>
-					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{salary.contract.workPlace.address.city}"/>
-					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{salary.contract.workPlace.address.geozone.name}"/>
+				</aon:div>
+				<aon:div styleClass="aon-bold">
+					<aon:outputText styleClass="aon-margin-left" value="#{salary.enterpriseAddress}"/>
 				</aon:div>
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="#{bundle.aon_company_document}:"/>
@@ -48,8 +47,6 @@
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="#{bundle.aon_person_document}:"/>
 					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{salary.employeeDocument}" />
-					<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_registration}:"/>
-					<aon:outputText styleClass="aon-margin-left aon-bold" value="#{salary.registration}" />
 				</aon:div>
 				<aon:div>
 					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_ss_number}:"/>

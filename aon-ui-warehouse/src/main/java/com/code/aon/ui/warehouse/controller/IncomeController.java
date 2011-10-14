@@ -59,6 +59,8 @@ public class IncomeController extends BasicController implements IWarehouseConst
 	private RegistryValidationManager vm;
 	private PurchaseTransferManager purchaseTransferManager;
 	private boolean showPurchaseTransferWindow;
+	private boolean showProjectWindow;
+	private boolean showDetailProjectWindow;
 	private boolean showInvoiceWindow;
 	private String invoiceRefCode;
 	private Date invoiceDate;
@@ -131,6 +133,22 @@ public class IncomeController extends BasicController implements IWarehouseConst
 		this.showPurchaseTransferWindow = value;
 	}
 	
+	public boolean isShowProjectWindow() {
+		return showProjectWindow;
+	}
+
+	public void setShowProjectWindow(boolean value) {
+		this.showProjectWindow = value;
+	}
+
+	public boolean isShowDetailProjectWindow() {
+		return showDetailProjectWindow;
+	}
+
+	public void setShowDetailProjectWindow(boolean value) {
+		this.showDetailProjectWindow = value;
+	}
+
 	public boolean isShowInvoiceWindow() {
 		return showInvoiceWindow;
 	}
@@ -279,6 +297,9 @@ public class IncomeController extends BasicController implements IWarehouseConst
 			incomeDetail.setProject(null);
 			incomeDetailBean.update(incomeDetail);
 		}
+
+		IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
+		incomeDetailController.onSearch(null);
 	}
 
 	public void loadDefaultPayMethod(Integer id, boolean forceDefault) throws ManagerBeanException {

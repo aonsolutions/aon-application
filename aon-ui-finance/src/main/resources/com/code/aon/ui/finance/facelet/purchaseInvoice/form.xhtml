@@ -327,10 +327,10 @@
 									value="&#160;" title="#{bundle.aon_reset}"
 									styleClass="aon-icon-commandButton aon-icon-reset"
 									rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}"
-									reRender="showInvoiceProjectWindow">
-									<f:setPropertyActionListener target="#{purchaseInvoice.showInvoiceProjectWindow}"
+									reRender="showProjectWindow">
+									<f:setPropertyActionListener target="#{purchaseInvoice.showProjectWindow}"
 										value="#{true}" />								
-									<f:setPropertyActionListener target="#{purchaseInvoice.showInvoiceDetailProjectWindow}"
+									<f:setPropertyActionListener target="#{purchaseInvoice.showDetailProjectWindow}"
 										value="#{false}" />								
 								</aon:commandButton>
 								<aon:commandButton id="removeInvoiceProject" 
@@ -440,10 +440,20 @@
 			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
 			<ui:param name="invoiceAddress" value="#{purchaseInvoiceAddress}" />
 		</ui:include>
-		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalProject.xhtml">
+		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
 			<ui:param name="controller" value="#{purchaseInvoice}" />
-			<ui:param name="detailController" value="#{purchaseInvoiceDetail}" />
-			<ui:param name="parentForm" value="purchaseInvoiceForm" />
+			<ui:param name="parentReRender" value="purchaseInvoiceForm" />
+			<aon:methodParam name="parentActionListener" value="#{purchaseInvoice.addInvoiceProject}" type="actionListener" />
+			<ui:param name="parentValue" value="#{purchaseInvoice.to.project}" />
+			<ui:param name="detailReRender" value="invoiceDetails" />
+			<aon:methodParam name="detailActionListener" value="#{purchaseInvoiceDetail.addInvoiceDetailProject}" type="actionListener" />
+			<ui:param name="detailValue" value="#{purchaseInvoiceDetail.invoiceDetail.project}" />
+			<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+				<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+				<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+			</c:if>
 		</ui:include>
 		<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
 			<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoice/income/modalTransfer.xhtml" />

@@ -428,11 +428,14 @@ public class SQLContractSalaryCalculatorContext implements
 	public String getEnterpriseAddress() {
 		/* TODO Añadir la tabla y columnas a las constantes.		*/
 
-		String streetType = getString("raddress","street_type");
-		String address = getString("raddress","address");
-		String number = getString("raddress","number");
-		String address2 = getString("raddress","address2");
-		String address3 = getString("raddress","address3");
+		String streetType = getString(SQLConstants.RADDRESS, SQLConstants.RaddressColumns.STREET_TYPE);
+		String address = getString(SQLConstants.RADDRESS,SQLConstants.RaddressColumns.ADDRESS);
+		String number = getString(SQLConstants.RADDRESS,SQLConstants.RaddressColumns.NUMBER);
+		String address2 = getString(SQLConstants.RADDRESS,SQLConstants.RaddressColumns.ADDRESS2);
+		String address3 = getString(SQLConstants.RADDRESS,SQLConstants.RaddressColumns.ADDRESS3);
+		String zip = getString(SQLConstants.RADDRESS,SQLConstants.RaddressColumns.ZIP);
+		String city = getString(SQLConstants.RADDRESS,SQLConstants.RaddressColumns.CITY);
+		String geozone = getString(SQLConstants.RADDRESS,SQLConstants.RaddressColumns.GEOZONE);
 		
     	StringBuffer buf = new StringBuffer();
     	buf.append(streetType==null?EMPTY:streetType);
@@ -448,6 +451,13 @@ public class SQLContractSalaryCalculatorContext implements
     	buf.append(StringUtils.isEmpty(address3)?EMPTY:OPEN_BRACKET);
     	buf.append(StringUtils.isEmpty(address3)?EMPTY:address3);
     	buf.append(StringUtils.isEmpty(address3)?EMPTY:CLOSE_BRACKET);
+    	buf.append(StringUtils.isEmpty(zip)?EMPTY:SPACE);
+    	buf.append(StringUtils.isEmpty(zip)?EMPTY:OPEN_BRACKET);
+    	buf.append(StringUtils.isEmpty(zip)?EMPTY:zip);
+    	buf.append(StringUtils.isEmpty(zip)?EMPTY:CLOSE_BRACKET);
+    	buf.append(StringUtils.isEmpty(city)?EMPTY:SPACE);
+    	buf.append(StringUtils.isEmpty(city)?EMPTY:city);
+    	
     	return StringUtils.abbreviate(buf.toString(), 64); // Avoid truncate
 	}
 
