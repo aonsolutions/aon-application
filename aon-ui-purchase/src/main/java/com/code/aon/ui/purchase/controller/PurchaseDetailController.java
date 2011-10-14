@@ -28,6 +28,7 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 
 	private IPriceStrategy priceStrategy;
 	private boolean longDescription;
+	private PurchaseDetail purchaseDetail;
 	
 	public IPriceStrategy getPriceStrategy(){
 		if(priceStrategy == null){
@@ -58,6 +59,24 @@ public class PurchaseDetailController extends LinesController implements IPurcha
 
 	public void onShortDescription(ActionEvent event) {
 		setLongDescription(false);
+	}
+
+	public PurchaseDetail getPurchaseDetail() {
+		return purchaseDetail;
+	}
+
+	public void setPurchaseDetail(PurchaseDetail purchaseDetail) {
+		this.purchaseDetail = purchaseDetail;
+	}
+
+	public void onPurchaseDetailProjectShow(ActionEvent event) throws ManagerBeanException {
+		if (getModel().isRowAvailable()) {
+			setPurchaseDetail((PurchaseDetail)this.getModel().getRowData());
+		}
+	}
+
+	public void addPurchaseDetailProject(ActionEvent event) throws ManagerBeanException {
+		getManagerBean().update(purchaseDetail);
 	}
 
 	public boolean isPending() throws ManagerBeanException {

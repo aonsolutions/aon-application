@@ -53,6 +53,16 @@ public class IncomeControllerListener extends ControllerAdapter implements IWare
 		incomeDetailController.onReset(null);
 	}
 	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		IncomeController incomeController = (IncomeController)this.getController();
+		Income income = (Income)incomeController.getTo();
+		if (income.getProject() != null && income.getProject().getId() != null) {
+			IController incomeDetailController = FormUtil.getController(INCOME_DETAIL_CONTROLLER_NAME);
+			incomeDetailController.onSearch(null);
+		}
+	}
+	
 	private Warehouse obtainWarehouseId(Income income) throws ControllerListenerException {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);

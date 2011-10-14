@@ -20,6 +20,7 @@
 					<ui:param name="skipFocusFirst" value="true" />
 					<ui:param name="skipSaveButton" value="#{!income.pending}" />
 					<ui:param name="skipRemoveButton" value="#{!income.pending}" />
+					<ui:param name="saveButtonReRender" value="incomeForm" />
 					<ui:define name="beforeSpinToolbarContent">
 						<aon:commandButton id="purchaseTransfer"
 							value="#{warehouseBundle.warehouse_income_purchase}"
@@ -340,7 +341,14 @@
 						<f:facet name="header">
 							<aon:outputText value="#{warehouseBundle.warehouse_income_detail}" />
 						</f:facet>
-						<ui:include src="/com/code/aon/ui/warehouse/facelet/income/formDetail.xhtml" />
+						<ui:include src="/com/code/aon/ui/warehouse/facelet/income/formDetail.xhtml">
+							<c:if test="#{!aonConfiguration.bean.income.showTasData}">
+								<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+							</c:if>
+							<c:if test="#{aonConfiguration.bean.income.showTasData}">
+								<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+							</c:if>
+						</ui:include>
 					</aon:panel>
 				</aon:div>
 			</aon:div>
@@ -350,5 +358,17 @@
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/income/modalTransfer.xhtml" />
 		<ui:include src="/com/code/aon/ui/warehouse/facelet/income/modalInvoice.xhtml" />
+		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
+			<ui:param name="controller" value="#{income}" />
+			<ui:param name="detailReRender" value="incomeDetails" />
+			<aon:methodParam name="detailActionListener" value="#{incomeDetail.addIncomeDetailProject}" type="actionListener" />
+			<ui:param name="detailValue" value="#{incomeDetail.incomeDetail.project}" />
+			<c:if test="#{!aonConfiguration.bean.income.showTasData}">
+				<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.income.showTasData}">
+				<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+			</c:if>
+		</ui:include>
  	</ui:define>
 </ui:composition>

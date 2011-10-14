@@ -226,6 +226,18 @@
 					reRender="aonContent">
 					<rich:toolTip value="#{controller.lineSourceInfo}" />
 				</aon:commandLink>
+				<aon:commandButton id="incomeDetailProject" value="&#160;"
+					styleClass="#{(to.project != null and to.project.id == income.to.project.id) ? 
+									('aon-icon-commandButton aon-icon-project-ok') : ('aon-icon-commandButton aon-icon-project-warn')}"
+					rendered="#{to.project != null and to.project.id != null}"
+					actionListener="#{controller.onIncomeDetailProjectShow}" 
+					reRender="showProjectWindow">
+					<rich:toolTip value="#{projectLabel} #{to.project.name}" />
+					<f:setPropertyActionListener target="#{income.showProjectWindow}"
+						value="#{income.pending and income.projectCount > 0}" />								
+					<f:setPropertyActionListener target="#{income.showDetailProjectWindow}"
+						value="#{income.pending and income.projectCount > 0}" />								
+				</aon:commandButton>
 			</aon:column>
 		</ui:define>
 	</ui:decorate>
