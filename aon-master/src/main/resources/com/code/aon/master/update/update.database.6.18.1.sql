@@ -1,5 +1,5 @@
 # Database: aon_master
-# Version: Actualizacion de la version 6.18.0 a la version 6.18.1.
+# Version: Actualizacion de la version 6.18.1 a la version 6.18.2.
 # Created by: rtrepiana
 # Creation Date: 03/10/2011 07:00
 # Comentarios: esta actualización no contiene cambios invalidantes de base de datos.
