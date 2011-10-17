@@ -14,7 +14,7 @@
 				<ui:param name="toolbarTitle" value="Informacion del Proyecto" />
 				<ui:define name="beforeToolbarContent">
 					<aon:commandButton value="#{bundle.aon_back}"
-						action="projectCommercial_form"
+						action="#{projectStat.backAction}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_cancel}" />
 				</ui:define>
@@ -77,6 +77,7 @@
 						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/costInvoiceList.xhtml" />
 					</aon:panelTab>
 					<aon:panelTab id="manodeobraTab" label="Mano de Obra">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/labourList.xhtml" />
 					</aon:panelTab>
 				</aon:panelTabSet>
 

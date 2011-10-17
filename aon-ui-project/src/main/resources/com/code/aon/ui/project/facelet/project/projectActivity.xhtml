@@ -8,8 +8,7 @@
 
 		<aon:div styleClass="aon-form-group" rendered="#{!project.new}">
 			<aon:div styleClass="aon-form-group-title">
-				<aon:outputLabel for="projectActivityDataList"
-					value="#{projectBundle.project_activity_type}" />
+				<aon:outputText value="#{projectBundle.project_activity_type}" />
 			</aon:div>
 			<aon:div styleClass="aon-form-group-body">
 
@@ -23,7 +22,7 @@
 								<aon:outputLabel for="ProjectActivity_activityType" value="#{bundle.aon_description}" />
 							</f:facet>
 							<aon:outputText value="#{to.activityType.description}" rendered="#{formList}"/>
-							<aon:selectOneMenu id="ProjectActivity_activityType-Edit" rendered="#{formEdit}"
+							<aon:selectOneMenu id="ProjectActivity_activityType" rendered="#{formEdit}"
 								required="true" value="#{controller.to.activityType}">
 								<f:selectItem itemValue="-" value="#{null}" />
 								<f:selectItems value="#{controller.activityTypes}" />

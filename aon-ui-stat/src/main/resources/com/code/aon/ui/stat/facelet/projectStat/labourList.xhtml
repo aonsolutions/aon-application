@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:rich="http://richfaces.org/rich">
+
+	<aon:dataTable id="dailyTrackingDataList" value="#{projectStat.dailyTrackingModel}"
+		rows="20" var="to"
+		columnClasses="aon-editDataTable-dateColumn,aon-editDataTable-textColumn, 
+						aon-editDataTable-textColumn,aon-editDataTable-textColumn,
+						aon-editDataTable-numberColumn">
+
+		<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.trackingDate">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.trackingDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-iconColumn" alias="DailyTracking.comments">
+			<f:facet name="header">
+				<aon:outputText value="C" />
+			</f:facet>
+			<aon:div style="display:inline;cursor:pointer;"
+				rendered="#{to.comments != null and to.comments!=''	}">
+				<aon:graphicImage url="/css/images/icons/aon-task-comment.gif" />
+				<rich:toolTip value="#{to.comments}" showEvent="onclick"
+					hideDelay="2000">
+					<f:facet name="defaultContent">
+						<aon:outputText value="#{projectBundle.aon_wait}" />
+					</f:facet>
+				</rich:toolTip>
+			</aon:div>
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.taskHolder.registry.name"
+			rendered="#{dailyTracking.monitor}">
+			<f:facet name="header">
+				<aon:outputText value="#{groupwareBundle.groupware_user}" />
+			</f:facet>
+			<aon:outputText value="#{to.taskHolder.registry.fullName}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.jobType.description">
+			<f:facet name="header">
+				<aon:outputText
+					value="#{groupwareBundle.groupware_job_type}" />
+			</f:facet>
+			<aon:outputText value="#{to.jobType.description}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-text" alias="DailyTracking.registry.name">
+			<f:facet name="header">
+				<aon:outputText value="#{projectBundle.project_assigned}" />
+			</f:facet>
+			<aon:outputText value="#{to.registry.fullName}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-number" alias="DailyTracking.trackingDuration">
+			<f:facet name="header">
+				<aon:outputText
+					value="#{groupwareBundle.groupware_duration}" />
+			</f:facet>
+			<aon:outputText value="#{to.trackingDuration}">
+				<f:convertNumber pattern="#,##0.00" />
+			</aon:outputText>
+		</aon:column>
+	</aon:dataTable>
+	<aon:dataScroller2 for="dailyTrackingDataList" showNote="true" />
+</ui:composition>

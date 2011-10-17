@@ -14,4 +14,9 @@ public interface IProjectConstants {
 	String PROJECT_CONTROLLER_NAME = "project";
 	String PROJECT_ACTIVITY_CONTROLLER_NAME = "projectActivity";
 
+	// ************************************************************
+	// PAGES
+	// ************************************************************
+	String PROJECT_FORM_PAGE = "project_form";
+
 }
