@@ -14,6 +14,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractLeaveController;
 
@@ -39,7 +40,7 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ContractLeave.class);
 			if(detail.getType()==LeaveReportType.LEAVE || detail.getType()==LeaveReportType.DISCHARGE){
-				bean.update(completeMaster(getController(event).getReport().getContractLeave(), detail));
+				bean.update(completeMaster(event, getController(event).getReport().getContractLeave(), detail));
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException();
@@ -55,14 +56,16 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 			ContractLeave leave;
 			if(detail.getType()==LeaveReportType.LEAVE){
 //				getController(event).calculateBases();
-				leave = (ContractLeave) bean.insert(completeMaster(getController(event).getReport().getContractLeave(), detail));
+				leave = (ContractLeave) bean.insert(completeMaster(event, getController(event).getReport().getContractLeave(), detail));
 				detail.setContractLeave(leave);
+				detail.setStatus(ContractLeaveStatus.PENDING);
 			} else if(detail.getType()==LeaveReportType.CONFIRM){
 				leave = (ContractLeave) bean.get(detail.getContractLeave().getId());
 				detail.setContractLeave(leave);
 			} else if(detail.getType()==LeaveReportType.DISCHARGE){
 				leave = (ContractLeave) bean.get(detail.getContractLeave().getId());
 				leave.setEndDate(detail.getDate());
+				leave.setDischargeCause(getController(event).getReport().getContractLeave().getDischargeCause());
 				leave = (ContractLeave) bean.update(leave);
 				detail.setContractLeave(leave);
 			}
@@ -131,12 +134,13 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 		
 	}
 	
-	private ITransferObject completeMaster(ContractLeave leave, ContractLeaveDetail detail) {
+	private ITransferObject completeMaster(ControllerEvent event, ContractLeave leave, ContractLeaveDetail detail) {
 		leave.setContract(((ContractLeaveController)getController()).getContract());
 		if(detail.getType()==LeaveReportType.LEAVE){
 			leave.setStartDate(detail.getDate());
 		} else if(detail.getType()==LeaveReportType.DISCHARGE){
 			leave.setEndDate(detail.getDate());
+			leave.setDischargeCause(getController(event).getReport().getContractLeave().getDischargeCause());
 		}
 		return leave;
 	}
@@ -150,6 +154,7 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 		to.setType(detail.getType());
 		to.setConfirmOrder(detail.getConfirmOrder());
 		to.setDate(detail.getDate());
+		to.setStatus(detail.getStatus());
 	}
 	
 	private ContractLeaveController getController(ControllerEvent event){

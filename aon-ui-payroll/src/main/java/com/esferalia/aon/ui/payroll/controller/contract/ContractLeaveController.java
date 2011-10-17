@@ -236,6 +236,7 @@ public class ContractLeaveController extends BasicController {
 				setReport(new ContractLeaveDetail());
 				getReport().setContractLeave(new ContractLeave());
 				getReport().getContractLeave().setParent(new ContractLeave());
+				
 				calculateBases();
 			} else {
 				ContractLeaveDetail detail = new ContractLeaveDetail();

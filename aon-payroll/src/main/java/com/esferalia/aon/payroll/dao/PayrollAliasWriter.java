@@ -40,6 +40,7 @@ import com.esferalia.aon.payroll.GeozoneIrpfHandicap;
 import com.esferalia.aon.payroll.IrpfRegularization;
 import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.LeaveBatch;
+import com.esferalia.aon.payroll.LeaveBatchAttachment;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.IrpfDataAscendants;
@@ -67,8 +68,8 @@ public class PayrollAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-//		File file = new File("/AON-TRUNK/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
-		File file = new File("/home/rtrepiana/workspace/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
+		File file = new File("/AON-TRUNK/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
+//		File file = new File("/home/rtrepiana/workspace/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] { 
 				Agreement.class.getName(),
 				AgreementData.class.getName(),
@@ -103,6 +104,7 @@ public class PayrollAliasWriter {
 				GeozoneIrpfDescendant.class.getName(),
 				GeozoneIrpfHandicap.class.getName(),
 				LeaveBatch.class.getName(),
+				LeaveBatchAttachment.class.getName(),
 				LeaveBatchDetail.class.getName(),
 				IrpfData.class.getName(),
 				IrpfDataAscendants.class.getName(),

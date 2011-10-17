@@ -55,9 +55,15 @@
 							</aon:panelTab>
 						</c:if>
 	
-							<aon:panelTab id="leaveTab" label="#{payrollBundle.payroll_not_batched_parteit}">
-								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/fdi/formLeave.xhtml" />
+						<aon:panelTab id="leaveTab" label="#{payrollBundle.payroll_not_batched_parteit}">
+							<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/fdi/formLeave.xhtml" />
+						</aon:panelTab>
+	
+						<c:if test="#{leaveBatchAttach.model.rowCount > 0}" >
+							<aon:panelTab id="documentTab" label="#{payrollBundle.payroll_tracing}">
+								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/fdi/formDocument.xhtml" />
 							</aon:panelTab>
+						</c:if>
 	
 					</aon:panelTabSet>
 				</aon:div>

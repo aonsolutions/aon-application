@@ -35,6 +35,7 @@ import com.esferalia.aon.payroll.GeozoneIrpf;
 import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
 import com.esferalia.aon.payroll.GeozoneIrpfHandicap;
 import com.esferalia.aon.payroll.LeaveBatch;
+import com.esferalia.aon.payroll.LeaveBatchAttachment;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.IrpfDataAscendants;
@@ -1686,6 +1687,67 @@ public interface IPayrollAlias {
 	* Hibernate value: LeaveBatch.id
 	*/
 	String  LEAVE_BATCH_ID = LEAVE_BATCH_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for LeaveBatchAttachment entity.
+	*/ 
+	DAOConstantsEntry LEAVE_BATCH_ATTACHMENT_ENTRY = DAOConstants.getDAOConstant(LeaveBatchAttachment.class);
+
+	/** 
+	* Alias value: LeaveBatchAttachment_attachDate
+	* Hibernate value: LeaveBatchAttachment.attachDate
+	*/
+	String  LEAVE_BATCH_ATTACHMENT_ATTACH_DATE = LEAVE_BATCH_ATTACHMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: LeaveBatchAttachment_attachmentType
+	* Hibernate value: LeaveBatchAttachment.attachmentType
+	*/
+	String  LEAVE_BATCH_ATTACHMENT_ATTACHMENT_TYPE = LEAVE_BATCH_ATTACHMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: LeaveBatchAttachment_data
+	* Hibernate value: LeaveBatchAttachment.data
+	*/
+	String  LEAVE_BATCH_ATTACHMENT_DATA = LEAVE_BATCH_ATTACHMENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: LeaveBatchAttachment_description
+	* Hibernate value: LeaveBatchAttachment.description
+	*/
+	String  LEAVE_BATCH_ATTACHMENT_DESCRIPTION = LEAVE_BATCH_ATTACHMENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: LeaveBatchAttachment_id
+	* Hibernate value: LeaveBatchAttachment.id
+	*/
+	String  LEAVE_BATCH_ATTACHMENT_ID = LEAVE_BATCH_ATTACHMENT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: LeaveBatchAttachment_leaveBatch_id
+	* Hibernate value: LeaveBatchAttachment.leaveBatch.id
+	*/
+	String  LEAVE_BATCH_ATTACHMENT_LEAVE_BATCH_ID = LEAVE_BATCH_ATTACHMENT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: LeaveBatchAttachment_mimeType
+	* Hibernate value: LeaveBatchAttachment.mimeType
+	*/
+	String  LEAVE_BATCH_ATTACHMENT_MIME_TYPE = LEAVE_BATCH_ATTACHMENT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: LeaveBatchAttachment_scope_id
+	* Hibernate value: LeaveBatchAttachment.scope.id
+	*/
+	String  LEAVE_BATCH_ATTACHMENT_SCOPE_ID = LEAVE_BATCH_ATTACHMENT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: LeaveBatchAttachment_size
+	* Hibernate value: LeaveBatchAttachment.size
+	*/
+	String  LEAVE_BATCH_ATTACHMENT_SIZE = LEAVE_BATCH_ATTACHMENT_ENTRY.getAliasNames()[8];
 
 
 
