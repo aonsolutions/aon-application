@@ -5,8 +5,10 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
+	
 	<ui:define name="content">
 
 		<aon:form id="projectForm">
@@ -24,6 +26,12 @@
 						rendered="#{!project.new}"
 						actionListener="#{activitiesImporter.onShowImportPanel}"
 						styleClass="aon-finding-toolbar-item aon-icon-mailReply" />
+					<c:if test="#{!project.new}">
+						<aon:commandButton id="ProjectHistory" 
+							action="project_stats" actionListener="#{project.onProjectHistory}"
+							value="#{bundle.aon_history}"
+							styleClass="aon-finding-toolbar-item aon-icon-info" />
+					</c:if>		
 				</ui:define>
 			</ui:decorate>
 

@@ -1258,28 +1258,40 @@ public interface IPayrollAlias {
 	String  CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: ContractLeaveDetail_contractLeave_contract_person_id
+	* Hibernate value: ContractLeaveDetail.contractLeave.contract.person.id
+	*/
+	String  CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_CONTRACT_PERSON_ID = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContractLeaveDetail_contractLeave_contract_workPlace_enterprise_id
+	* Hibernate value: ContractLeaveDetail.contractLeave.contract.workPlace.enterprise.id
+	*/
+	String  CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_CONTRACT_WORK_PLACE_ENTERPRISE_ID = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
 	* Alias value: ContractLeaveDetail_date
 	* Hibernate value: ContractLeaveDetail.date
 	*/
-	String  CONTRACT_LEAVE_DETAIL_DATE = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[4];
+	String  CONTRACT_LEAVE_DETAIL_DATE = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: ContractLeaveDetail_id
 	* Hibernate value: ContractLeaveDetail.id
 	*/
-	String  CONTRACT_LEAVE_DETAIL_ID = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[5];
+	String  CONTRACT_LEAVE_DETAIL_ID = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[7];
 
 	/** 
-	* Alias value: ContractLeaveDetail_processed
-	* Hibernate value: ContractLeaveDetail.processed
+	* Alias value: ContractLeaveDetail_status
+	* Hibernate value: ContractLeaveDetail.status
 	*/
-	String  CONTRACT_LEAVE_DETAIL_PROCESSED = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[6];
+	String  CONTRACT_LEAVE_DETAIL_STATUS = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: ContractLeaveDetail_type
 	* Hibernate value: ContractLeaveDetail.type
 	*/
-	String  CONTRACT_LEAVE_DETAIL_TYPE = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[7];
+	String  CONTRACT_LEAVE_DETAIL_TYPE = CONTRACT_LEAVE_DETAIL_ENTRY.getAliasNames()[9];
 
 
 

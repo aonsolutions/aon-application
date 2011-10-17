@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+	
+	<aon:div styleClass="aon-toolbar" >
+		<aon:commandButton title="#{bundle.aon_check_all}"
+			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+			value="#{bundle.aon_check_all}"
+			actionListener="#{leaveBatchDetail.checkAll}" reRender="leaveBatchDetailDataDiv"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+		<aon:commandButton title="#{bundle.aon_uncheck_all}"
+			styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+			value="#{bundle.aon_uncheck_all}"
+			actionListener="#{leaveBatchDetail.checkNone}" reRender="leaveBatchDetailDataDiv"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+		<aon:commandButton title="#{payrollBundle.payroll_remove_batch}"
+			styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
+			value="#{payrollBundle.payroll_remove_batch}"
+			actionListener="#{leaveBatch.onRemoveSelected}" reRender="leaveBatchForm, leaveBatchPanelTabSet"
+			onclick="Richfaces.showModalPanel('waitProccess')" 
+     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+<!--  
+		<aon:htmlCommandLink target="_blank"
+			title="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
+			value="#{fbatch.diskOk?(financeBundle.finance_download_disk):(financeBundle.finance_download_error)}"
+			actionListener="#{fbatch.downloadDisk}" rendered="#{fbatch.aebOutput!=null}"
+			styleClass="aon-finding-toolbar-item aon-icon-mail-save"
+			onclick="this.style.display='none';" />
+-->			
+	</aon:div>
+	
+	<aon:div id="leaveBatchDetailDataDiv">
+		<aon:dataTable id="leaveBatchDetailData" value="#{leaveBatchDetail.model}"
+			var="to" rows="20" rendered="#{leaveBatchDetail.model.rowCount > 0}"
+			columnClasses="
+				aon-editDataTable-iconColumn,
+				aon-editDataTable-iconColumn, aon-editDataTable-textColumn aon-width-auto,
+				aon-editDataTable-textColumn aon-width-100, aon-editDataTable-textColumn aon-width-auto,
+				aon-editDataTable-dateColumn aon-width-80, aon-editDataTable-dateColumn aon-width-80, 
+				aon-editDataTable-numberColumn aon-width-50, aon-editDataTable-dateColumn aon-width-80,
+				aon-editDataTable-textColumn aon-width-150, aon-editDataTable-iconColumn,
+				aon-editDataTable-textColumn aon-width-100
+				">			
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:selectBooleanCheckbox id="Included_Row_checked"
+					value="#{leaveBatchDetail.rowChecked}"
+					valueChangeListener="#{leaveBatchDetail.rowSelected}" />	
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="B" title="Baja" 
+					rendered="#{to.contractLeaveDetail.type=='LEAVE'}"/>
+				<aon:outputText value="A" title="Alta"
+					rendered="#{to.contractLeaveDetail.type=='DISCHARGE'}"/>
+				<aon:outputText value="C" title="Confirmacion"
+					rendered="#{to.contractLeaveDetail.type=='CONFIRM'}"/>
+			</aon:column>
+		
+			<aon:column style="font-size: 0.8em;" styleClass="aon-nowrap">
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_enterprise}" />
+				</f:facet>
+				<aon:outputText value="#{to.contractLeaveDetail.contractLeave.contract.workPlace.enterprise.registry.fullName}">
+					<aon:abbreviateConverter maxWidth="50" />
+				</aon:outputText>
+			</aon:column>
+		
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_document}" />
+				</f:facet>
+				<aon:outputText value="#{to.contractLeaveDetail.contractLeave.contract.person.registry.document}" />
+			</aon:column>
+		
+			<aon:column style="font-size: 0.8em;" styleClass="aon-nowrap">
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_employee_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.contractLeaveDetail.contractLeave.contract.person.registry.fullName}" />
+			</aon:column>
+		
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_leaveBatch_leave_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.contractLeaveDetail.contractLeave.startDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+		
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_leaveBatch_discharge_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.contractLeaveDetail.contractLeave.endDate}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+		
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_leaveBatch_parent_increment}" />
+				</f:facet>
+				<aon:outputText rendered="#{to.contractLeaveDetail.confirm}"
+					value="#{to.contractLeaveDetail.confirmOrder}" />
+			</aon:column>
+		
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_leaveBatch_confirm_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.contractLeaveDetail.date}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+		
+			<aon:column  styleClass="aon-nowrap">
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_contractLeave_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.contractLeaveDetail.contractLeave.type}" />
+			</aon:column>
+		
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{payrollBundle.payroll_contractLeave_relapse}" />
+				</f:facet>
+				<aon:outputText value="&#160;" style="padding-left: 15px;"
+					styleClass="aon-icon-check" rendered="#{to.contractLeaveDetail.contractLeave.parent.id==null}" />
+				<aon:outputText value="&#160;" style="padding-left: 15px;"
+					styleClass="aon-icon-checked" rendered="#{to.contractLeaveDetail.contractLeave.parent.id!=null}" />
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_status}" />
+				</f:facet>
+				<aon:outputText value="#{to.contractLeaveDetail.status}"  />
+			</aon:column>
+			
+		</aon:dataTable>
+	</aon:div>
+
+</ui:composition>

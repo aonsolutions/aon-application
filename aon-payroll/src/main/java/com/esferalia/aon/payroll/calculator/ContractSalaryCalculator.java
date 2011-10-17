@@ -259,44 +259,23 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		}
 	}
 	
-	public static final String SPACE = " ";
-	public static final String DASH = "-";
-	public static final String OPEN_BRACKET = "(";
-	public static final String CLOSE_BRACKET = ")";
-	private SimpleDateFormat sdf;
+	public static final String DAY_FOMAT = "%s ( %te )";
+	public static final String DAY_PERIOD_FOMAT = "%s ( %te - %te )";
+	public static final String COMPLETE_PERIOD_FOMAT = "%s ( %te/%<tm - %te/%<tm )";
 	
-	private SimpleDateFormat getSdf(){
-		if(sdf==null){
-			sdf = new SimpleDateFormat("dd/MM/yyyy");
-		}
-		return sdf;
-	}
-
 	private String getDescriptionPeriod(String description, Date paymentStart,
 			Date paymentEnd, Date amountStart, Date amountEnd) {
 		if( !( amountStart.equals(paymentStart) && amountEnd.equals(paymentEnd) ) ){
-			StringBuffer d = new StringBuffer(description);
 			if( amountStart.after(paymentStart) || amountEnd.before(paymentEnd) ){
 				if( amountStart.equals(amountEnd) ){
-					d.append(SPACE).append(OPEN_BRACKET).append(SPACE);
-					d.append(CommonUtil.getDay(amountEnd));
-					d.append(SPACE).append(CLOSE_BRACKET);
+					return String.format(DAY_FOMAT, description, amountEnd);
 				} else {
-					d.append(SPACE).append(OPEN_BRACKET).append(SPACE);
-					d.append(CommonUtil.getDay(amountStart));
-					d.append(SPACE).append(DASH).append(SPACE);
-					d.append(CommonUtil.getDay(amountEnd));
-					d.append(SPACE).append(CLOSE_BRACKET);
+					return String.format(DAY_PERIOD_FOMAT, description, amountStart, amountEnd);
 				}
 			}
 			if( amountStart.before(paymentStart)){
-				d.append(SPACE).append(OPEN_BRACKET).append(SPACE);
-				d.append(getSdf().format(amountStart));
-				d.append(SPACE).append(DASH).append(SPACE);
-				d.append(getSdf().format(amountEnd));
-				d.append(SPACE).append(CLOSE_BRACKET);
+				return String.format(COMPLETE_PERIOD_FOMAT, description, amountStart, amountEnd);
 			}
-			return d.toString();
 		}
 		return description;
 	}

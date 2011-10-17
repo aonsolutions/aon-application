@@ -32,6 +32,7 @@ import com.esferalia.aon.payroll.ContractLeave;
 import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -245,7 +246,7 @@ public class ContractLeaveController extends BasicController {
 					detail.setContractLeave(lastLeave.getContractLeave());
 					detail.setCias(lastLeave.getCias());
 					detail.setCollegeNumber(lastLeave.getCollegeNumber());
-					detail.setProcessed(lastLeave.isProcessed());
+					detail.setStatus(lastLeave.getStatus());
 					detail.setDate(getConfirmSuggestedDate(detail.getContractLeave().getStartDate(),getLastLeave().getConfirmOrder()));
 				} else {
 					detail.setType(LeaveReportType.LEAVE);
@@ -253,8 +254,9 @@ public class ContractLeaveController extends BasicController {
 					detail.getContractLeave().setParent(new ContractLeave());
 					detail.setCias(null);
 					detail.setCollegeNumber(null);
-					detail.setProcessed(false);
+					detail.setStatus(ContractLeaveStatus.PENDING);
 					detail.setDate(null);
+					calculateBases();
 				}
 				setReport(detail);
 			}

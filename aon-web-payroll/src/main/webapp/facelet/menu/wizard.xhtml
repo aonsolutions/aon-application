@@ -24,13 +24,19 @@
 						<aon:div styleClass="aon-direct-access-list">
 								
 							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="leaveBatch" 
+									action="leaveBatch_search"
+									actionListener="#{leaveBatch.onEditSearch}"
+									value="#{payrollBundle.payroll_leaveBatchWizard_module}" />
+							</aon:div>
+<!--  
+							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="leaveBatchWizard" 
 									action="leaveBatchWizard_step0"
 									actionListener="#{leaveBatchWizard.onStart}"
 									value="#{payrollBundle.payroll_leaveBatchWizard_module}" />
 							</aon:div>
-						
-							
+-->
 						
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="fanBatchWizard" 

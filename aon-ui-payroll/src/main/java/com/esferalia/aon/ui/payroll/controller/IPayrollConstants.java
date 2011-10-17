@@ -52,6 +52,9 @@ public interface IPayrollConstants {
 	String IRPF_DATA_CONTROLLER_NAME = "irpfData";
 	String IRPF_LAUNCHER_CONTROLLER_NAME = "irpfLauncher";
 	String IRPF_REGULARIZATION_CONTROLLER_NAME = "irpfRegularization";
+	String LEAVE_BATCH_DETAIL_CONTROLLER_NAME = "leaveBatchDetail";
+	String LEAVE_BATCH_CONTROLLER_NAME = "leaveBatch";
+	String LEAVE_LIST_CONTROLLER_NAME = "leaveList";
 	String SALARY_CONTROLLER = "salary";
 	String SALARY_DRAFT_BONUS_CONTROLLER = "salaryDraftBonus";
 	String SALARY_DRAFT_CONTROLLER = "salaryDraft";
