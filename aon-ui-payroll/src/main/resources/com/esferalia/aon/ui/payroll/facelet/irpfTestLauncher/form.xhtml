@@ -33,18 +33,6 @@
 								
 				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.msg}" />
 				
-				<aon:commandLink  
-					rendered="#{message.contractId!=null and message.level=='WARNING' and !irpfLauncher.saveEnabled}"
-					style="display: inline; text-decoration:underline; margin-left:10px;" >
-					<aon:outputText value="#{payrollBundle.payroll_refresh}" />
-					<f:setPropertyActionListener value="#{message.contractId}" 
-						target="#{message.contractId}" />
-					<f:setPropertyActionListener value="#{message.newIrpf}" 
-						target="#{irpfLauncher.irpf}" />
-					<f:setPropertyActionListener value="#{message}" 
-						target="#{irpfLauncher.message}" />
-					<aon:actionListener method="#{irpfLauncher.onIrpfUpdate}" />
-				</aon:commandLink>	
 			</ui:define>			
 
 			<ui:define name="launchButton" >

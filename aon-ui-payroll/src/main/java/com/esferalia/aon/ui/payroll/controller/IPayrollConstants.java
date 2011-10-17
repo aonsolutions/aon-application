@@ -24,6 +24,7 @@ public interface IPayrollConstants {
 	String PAYROLL_SETTLE_NOTICE_DAY_AMOUNT = "payroll_settle_noticeDayAmount";
 	String PAYROLL_SETTLE_VACATION_AMOUNT = "payroll_settle_vacationAmount";
 	String PAYROLL_SETTLE_COMPENSATION = "payroll_settle_compensation";
+	String PAYROLL_IRPF = "payroll_irpf";
 	
 	
 	// ************************************************************
@@ -52,6 +53,7 @@ public interface IPayrollConstants {
 	String IRPF_DATA_CONTROLLER_NAME = "irpfData";
 	String IRPF_LAUNCHER_CONTROLLER_NAME = "irpfLauncher";
 	String IRPF_REGULARIZATION_CONTROLLER_NAME = "irpfRegularization";
+	String IRPF_RESULT_CONTROLLER_NAME = "irpfResult";
 	String LEAVE_BATCH_DETAIL_CONTROLLER_NAME = "leaveBatchDetail";
 	String LEAVE_BATCH_CONTROLLER_NAME = "leaveBatch";
 	String LEAVE_LIST_CONTROLLER_NAME = "leaveList";

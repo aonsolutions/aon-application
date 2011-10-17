@@ -35,6 +35,8 @@ public class EnterpriseTreeData {
 	
 	public static final String DOCUMENT_ICON = "/images/aon-icon/aon-icon-file.png";
 	
+	public static final String AEAT_ICON = "/images/aon-icon/aon-aeat.png";
+
 	private Serializable id;
 	
 	private String label;

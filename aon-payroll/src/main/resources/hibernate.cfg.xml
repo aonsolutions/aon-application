@@ -54,6 +54,7 @@
 		<mapping class="com.esferalia.aon.payroll.IrpfRegularization"/>
 		<mapping class="com.esferalia.aon.payroll.IrpfResult"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatch"/>
+		<mapping class="com.esferalia.aon.payroll.LeaveBatchAttachment"/>
 		<mapping class="com.esferalia.aon.payroll.LeaveBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.PaymentConcept"/>
 		<mapping class="com.esferalia.aon.payroll.PayrollWorkPlace"/>

@@ -40,6 +40,7 @@ import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
+import com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.OtherLaws;
@@ -100,6 +101,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> taxationTypes;
 	private List<SelectItem> quoteTypes;
 	private List<SelectItem> reportTypes;
+	private List<SelectItem> leaveBatchAttachTypes;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -705,6 +707,19 @@ public class PayrollCollectionsController {
 			}
 		}
 		return reportTypes;
+	}
+	
+	public List<SelectItem> getLeaveBatchAttachTypes() {
+		if (leaveBatchAttachTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			leaveBatchAttachTypes = new LinkedList<SelectItem>();
+			for( LeaveBatchAttachmentType type : LeaveBatchAttachmentType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				leaveBatchAttachTypes.add(item);			
+			}
+		}
+		return leaveBatchAttachTypes;
 	}
 	
 	

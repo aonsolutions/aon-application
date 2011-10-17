@@ -1,5 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.launcher;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Date;
@@ -17,9 +18,6 @@ public class IrpfTestLauncher extends AbstractIrpfLauncher {
 	
 	private IrpfTester irpfTester;
 	
-	private int attempted;
-	private int success;
-
 	@Override
 	protected void execute(IrpfLauncherParams params) throws SalaryException,
 			ExpressionException, SQLException {
@@ -27,14 +25,11 @@ public class IrpfTestLauncher extends AbstractIrpfLauncher {
 		Date date = getParams().getDate();
 		irpfTester = new IrpfTester(connection, date);
 		
-		success = 0;
-		attempted = 0;
-		
 		super.execute(params);
 		
-		String msg = String.format("Total contratos procesados: %d ", attempted);
+		String msg = String.format("Total contratos procesados: %d ", irpfTester.getAttempted());
 		onMessage(new InfoMessage( msg));
-		msg = String.format("Total I.R.P.F chequeados sin detectar problemas: %d ", success);
+		msg = String.format("Total I.R.P.F chequeados sin detectar problemas: %d ", irpfTester.getSuccess());
 		onMessage(new InfoMessage(msg));
 		
 	}
@@ -71,6 +66,12 @@ public class IrpfTestLauncher extends AbstractIrpfLauncher {
 	
 	private class IrpfTester extends AbstractIrpfTester {
 	
+		private int warnings = 0;
+		
+		public int getWarnings() {
+			return warnings;
+		}
+
 		public IrpfTester(Connection connection, Date date) 
 		throws SQLException {
 			super( connection, date );
@@ -85,10 +86,27 @@ public class IrpfTestLauncher extends AbstractIrpfLauncher {
 		public void onSalida(TipoRetenedorSalida2011 retenedorSalida2011,
 				TipoRetenidoSalida2011 retenidoSalida2011) {
 			try {
-				attempted++;
 				super.onSalida(retenedorSalida2011, retenidoSalida2011);
-				success++;
+
 			} catch ( UnExpectedValue e ) {
+
+				Double priorIrpf = e.getPriorIrpf();
+				BigDecimal tipoRetencion = retenidoSalida2011.getTipoRetencion();
+				
+				if ( priorIrpf != null ) {
+					double dbIrpf = e.getIrpf();
+					double calcIrpf = tipoRetencion.doubleValue();
+					if ( calcIrpf < priorIrpf && priorIrpf == dbIrpf ){
+						warnings++;
+						WarnMessage warnMessage = new WarnMessage(e.getMessage());
+						warnMessage.setContractId(e.getContractId());
+						warnMessage.setEmployeeName(retenidoSalida2011.getApellidosNombre());
+						warnMessage.setEnterpriseName(retenedorSalida2011.getApellidosNombre());
+						onMessage(warnMessage);
+						return;
+					} // Min prior I.R.P.F ?
+				}
+
 				ErrorMessage errorMessage = 
 					new ErrorMessage(e.getMessage());
 				errorMessage.setContractId(e.getContractId());

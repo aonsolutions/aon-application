@@ -51,7 +51,7 @@
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area" >
 					<aon:panelGrid columns="4" dir="true" width="100%">
-						
+
 						<aon:outputLabel value="#{registryBundle.registry_person}" />
 						<aon:outputText value="#{contract.to.person.registry.fullName}" />
 						
@@ -89,12 +89,20 @@
 					<aon:panelTab label="#{payrollBundle.payroll_irpfData_general_data}">
 						<ui:include 
 							src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/form_person.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab label="#{payrollBundle.payroll_irpfData_descendants_data}">
+						<ui:include 
+							src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/form_descendants.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab label="#{payrollBundle.payroll_irpfData_economic_data}">
 						<ui:include 
 							src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/form_economic.xhtml" />
 					</aon:panelTab>
 					<aon:panelTab label="#{payrollBundle.payroll_irpfData_regularization_data}">
 						<ui:include 
 							src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfData/form_regularization.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab label="#{payrollBundle.payroll_irpfData_result_data}">
 					</aon:panelTab>
 				</aon:panelTabSet>
 

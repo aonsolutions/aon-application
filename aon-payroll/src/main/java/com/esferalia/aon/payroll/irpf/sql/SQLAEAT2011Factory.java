@@ -1,16 +1,10 @@
 package com.esferalia.aon.payroll.irpf.sql;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,15 +14,11 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.beanutils.converters.SqlDateConverter;
 import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
-
 
 import com.aeat.jaxb.AEATRetencionesEntrada2011;
 import com.aeat.jaxb.ObjectFactory;
@@ -40,9 +30,7 @@ import com.aeat.jaxb.TipoError;
 import com.aeat.jaxb.TipoRetenciones;
 import com.aeat.jaxb.TipoRetenedorEntrada2011;
 import com.aeat.jaxb.TipoRetenedorError2011;
-import com.aeat.jaxb.TipoRetenedorSalida2011;
 import com.aeat.jaxb.TipoRetenidoEntrada2011;
-import com.aeat.jaxb.TipoRetenidoSalida2011;
 import com.aeat.jaxb.TipoRetenidoEntrada2011.Ascendiente;
 import com.aeat.jaxb.TipoRetenidoEntrada2011.Descendiente;
 import com.aeat.jaxb.TipoRetenidoEntrada2011.Descendiente.ComputadoEntero;
@@ -61,7 +49,6 @@ import com.aeat.jaxb.TipoRetenidoEntrada2011.SituacionLaboral.TrabajadorActivo;
 import com.aeat.jaxb.TipoRetenidoEntrada2011.SituacionLaboral.TrabajadorActivo.MovilidadGeografica;
 import com.aeat.jaxb.TipoRetenidoEntrada2011.SituacionLaboral.TrabajadorActivo.ProlongacionLaboral;
 import com.aeat.jaxb.TipoRetenidoError2011;
-import com.aeat.modulo.retenciones.ModuloCalculo;
 import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.Country;
@@ -78,24 +65,27 @@ import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.sql.SQLCollection;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
+import com.esferalia.aon.payroll.enumeration.IrpfContractType;
 import com.esferalia.aon.payroll.enumeration.IrpfDeductHomeLoan;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
-import com.esferalia.aon.payroll.irpf.DelegateContractPayment;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
-import com.esferalia.aon.payroll.irpf.IrpfCalculator.CallbackHandler;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataAscendantsColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfDataDescendientsColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.IrpfRegularizationColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.IrpfResultColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.PaymentConceptColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.PersonColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SalaryColumns;
+import com.esferalia.aon.payroll.sql.SQLConstants.SalaryPaymentColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
@@ -105,9 +95,16 @@ import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.Period;
+import com.sun.net.ssl.internal.www.protocol.https.Handler;
 
 public class SQLAEAT2011Factory extends ObjectFactory {
 	
+	
+	public static interface Entrada2011Handler {
+		void onAEATRetencionesEntrada2011(AEATRetencionesEntrada2011 entrada2011);
+		void onTipoRetenedorEntrada2011(TipoRetenedorEntrada2011 retenedorEntrada2011);
+		void onTipoRetenidoEntrada2011 ( Administration administration, TipoRetenidoEntrada2011 retenidoEntrada2011);
+	}
 	
 	public static final String PERSON_REGISTRY = "person_registry";
 	public static final String ENTERPRISE_REGISTRY = "enterprise_registry";
@@ -199,12 +196,10 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		prepareStatements();
 	}
 	
-	
-	public AEATRetencionesEntrada2011 getAeatRetencionesEntrada2011(
-			Administration administration, IrpfCalculator.CallbackHandler cb) 
+	public void forEachTipoRetenidoEntrada2011( Entrada2011Handler handler ) 
 	throws SQLException, ExpressionException, SalaryException {
-		
-		initContractSalaryCalculatorContext(administration);
+
+		initContractSalaryCalculatorContext();
 		
 		AEATRetencionesEntrada2011 aeatRetencionesEntrada2011 =
 			createAEATRetencionesEntrada2011();
@@ -216,12 +211,22 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		
 		aeatRetencionesEntrada2011.setIdDoc(tipoRetenciones);
 		
-		List<TipoRetenedorEntrada2011>  retenedorList = 
-			aeatRetencionesEntrada2011.getRetenedor();
+		handler.onAEATRetencionesEntrada2011(aeatRetencionesEntrada2011);
 		
-		fillRetenedor(retenedorList, administration, cb );
+		forEachTipoRetenedorEntrada2011(handler);
 		
-		return aeatRetencionesEntrada2011;
+	}
+	
+	protected AEATRetencionesEntrada2011 getAeatRetencionesEntrada2011() 
+	throws SQLException, ExpressionException, SalaryException {
+		
+		Entrada2011Builder entrada2011Builder = 
+			new Entrada2011Builder();
+		
+		forEachTipoRetenidoEntrada2011(entrada2011Builder);
+		entrada2011Builder.onTipoRetenedorEntrada2011(null);
+		
+		return entrada2011Builder.getEntrada2011();
 	}
 	
 
@@ -231,12 +236,11 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		return calendar.get(Calendar.YEAR);
 	}
 	
-	private void fillRetenedor ( List<TipoRetenedorEntrada2011> retenedorList, Administration administration, IrpfCalculator.CallbackHandler cb) 
+	private void forEachTipoRetenedorEntrada2011 ( Entrada2011Handler handler) 
 	throws SQLException, ExpressionException, SalaryException {
 		ResultSet resultSet = null ;
 		try {
 			TipoRetenedorEntrada2011 tipoRetenedorEntrada2011 = null;
-			
 			resultSet = this.mainStmt.executeQuery();
 			while (resultSet.next()) {
 
@@ -251,11 +255,6 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 
 				if ( tipoRetenedorEntrada2011 == null || 
 					!tipoRetenedorEntrada2011.getNif().equalsIgnoreCase(enterpriseNif) ) {
-					if ( tipoRetenedorEntrada2011 != null 
-							&& tipoRetenedorEntrada2011.getRetenido().size() > 0)
-					{
-						retenedorList.add(tipoRetenedorEntrada2011);
-					}
 					
 					tipoRetenedorEntrada2011 =
 						createTipoRetenedorEntrada2011();
@@ -264,12 +263,11 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 					tipoRetenedorEntrada2011.setNif(enterpriseNif);
 					String name = getEnterpriseRegistry(resultSet, RegistryColumns.NAME);
 					tipoRetenedorEntrada2011.setApellidosNombre(toTipoApellidosyNombre(name));
+
+					handler.onTipoRetenedorEntrada2011(tipoRetenedorEntrada2011);
 				}
 				
-				fillRetenido(resultSet, tipoRetenedorEntrada2011, cb );
-			}
-			if ( tipoRetenedorEntrada2011 != null ) {
-				retenedorList.add(tipoRetenedorEntrada2011);
+				forEachTipoRetenidoEntrada2011(resultSet, handler );
 			}
 		}
 		finally {
@@ -279,11 +277,8 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		}
 	}
 	
-	private void fillRetenido ( ResultSet rs,  TipoRetenedorEntrada2011 retenedorEntrada2011, IrpfCalculator.CallbackHandler cb ) 
+	private void forEachTipoRetenidoEntrada2011 ( ResultSet rs,  Entrada2011Handler handler) 
 	throws SQLException, ExpressionException, SalaryException{
-		
-		List<TipoRetenidoEntrada2011> retenidoList = 
-			retenedorEntrada2011.getRetenido();
 		
 		TipoRetenidoEntrada2011 tipoRetenidoEntrada2011 = 
 			createTipoRetenidoEntrada2011();
@@ -360,67 +355,23 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		// Not required : 
 		//tipoRetenidoEntrada2011.setRdtosObtenidosCeutaMelilla(paramRdtosObtenidosCeutaMelilla); 
 		
-		PagoPrestamosVivienda pagoPrestamosVivienda = getPagoPrestamosVivienda(rs);
+		PagoPrestamosVivienda pagoPrestamosVivienda = null; //getPagoPrestamosVivienda(rs);
 		tipoRetenidoEntrada2011.setPagoPrestamosVivienda(pagoPrestamosVivienda);
 		
-		
-		TipoRetenedorError2011 retenedorError2011 = 
-			createTipoRetenedorError2011();
-		retenedorError2011.setNif(retenedorEntrada2011.getNif());
-		TipoRetenidoError2011 retenidoError2011 = 
-			createTipoRetenidoError2011();
-		retenidoError2011.setNif(tipoRetenidoEntrada2011.getNif());
-		TipoError tipoError = createTipoError();
-		retenidoError2011.getError().add(tipoError);
-		retenedorError2011.getRetenido().add(retenidoError2011);
-		
-		Regularizacion regularizacion = getRegularizacion(rs, paidSalary, retenedorError2011, cb);
-
-		if ( regularizacion != null ) {
-			BigDecimal retribSatisfechas = regularizacion.getRetribSatisfechas();
-			if (  retribAnuales.compareTo(retribSatisfechas) <= 0 )  {
-				
-				String description =  String.format( "Las Retribuciones totales ( %f ) consignadas en Datos económicos (importes anuales)"+
-					" no pueden ser inferiores o iguales a las Retribuciones ya satisfechas ( %f ) con anterioridad a la regularización.", 
-					retribAnuales, retribSatisfechas );
-				tipoError.setDescripcion(description);
-				cb.onError(retenedorError2011, retenidoError2011);
-				return;
-			}
-			List<Integer> causas = regularizacion.getCausa();
-			if ( causas.get(0) !=  IrpfRegularizationReason.OTHER.getCausa() ) {
-				BigDecimal retribAnualesIniciales = regularizacion.getRetribAnualesIniciales();
-				if ( retribAnualesIniciales.compareTo(retribSatisfechas) < 0) {
-					String description = String.format( "Las Retribuciones ya satisfechas ( %f ) con anterioridad a la regularización"+
-							" no pueden ser superiores a las retribuciones anuales ( %f ) consideradas con anterioridad.", 
-							retribSatisfechas, retribAnualesIniciales );
-					tipoError.setDescripcion(description);
-					cb.onError(retenedorError2011, retenidoError2011);
-					return;
-				}
-				if ( causas.contains(( IrpfRegularizationReason.BASE_IRPF_CHANGE.getCausa()) ) ) {
-					if ( retribAnualesIniciales.compareTo(retribAnuales) == 0 ) {
-						causas.remove(IrpfRegularizationReason.BASE_IRPF_CHANGE.getCausa());
-						
-						String description = String.format(  "De los datos introducidos no se desprende que se hayan producido variaciones en la base ( %f )"
-								+" para determinar el tipo de retención, lo cual es incompatible con la causa de regularización consignada.", 
-								regularizacion.getBaseRetencion() );
-						tipoError.setDescripcion(description);
-						//cb.onError(retenedorError2011, retenidoError2011);
-					}
-				}
-				if ( causas.size() == 0 ) {
-					regularizacion = null;
-				}
-			}
-		}
+		Regularizacion regularizacion = getRegularizacion(rs, paidSalary, handler);
 
 		tipoRetenidoEntrada2011.setRegularizacion(regularizacion);
+		Administration administration = getAdminitratio(rs);
+		handler.onTipoRetenidoEntrada2011(administration, tipoRetenidoEntrada2011);
 		
-		
-		
-		retenidoList.add(tipoRetenidoEntrada2011);
-		
+	}
+	
+	private Administration getAdminitratio( ResultSet rs ) throws SQLException {
+		Integer economicAgreement = getWorplace(rs, WorkplaceColumns.ECONOMICAGREEMENT);
+		Administration values [] = Administration.values();
+		return ( economicAgreement == null || economicAgreement < 0 || economicAgreement >= values.length ) ? 
+			null : values[economicAgreement];
+
 	}
 	
 	private void fillDescendiente(List<Descendiente> descendientes, Integer irpfDataId) 
@@ -531,7 +482,7 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		this.descendientsStmt = this.connection.prepareStatement(DESCENDIENTS_SQL);
 	}
 	
-	private void initContractSalaryCalculatorContext(Administration administration) throws ExpressionException, SQLException {
+	private void initContractSalaryCalculatorContext() throws ExpressionException, SQLException {
 		
 		Date startDate = CommonUtil.getMonthFirstDay(date);
 		Date endDate = CommonUtil.getYearLastDay(date);
@@ -542,7 +493,6 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		ctxCriteria.addLessThanOrEqualExpression(SQLConstants.CONTRACT + "." + ContractColumns.START_DATE , sqlDate);
 		ctxCriteria.setOrderByList(criteria.getOrderByList());
 		
-		System.out.println(CriteriaUtilities.toSQLString(ctxCriteria, ""));
 		
 		this.sqlContractSalaryCalculatorContext	=
 			new SQLAnnualRemunerationCalculatorContext(connection, startDate, endDate, ctxCriteria);
@@ -550,6 +500,38 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 	}
 	
 	
+	private Salary _calculateAnnualRemuneration (int contractId) throws SQLException, ExpressionException, SalaryException {
+		
+		ResultSet rs = null;
+		try {
+			
+			resultsStmt.setInt(2, contractId); // contract = ?
+			
+			rs = resultsStmt.executeQuery();
+			
+			Salary salary = new Salary();
+
+			double irpfBase = 0.00;  
+			double socialSecurityContributions = 0.00;
+			if ( rs.next() ){
+				irpfBase =  
+					rs.getDouble(IrpfResultColumns.ANNUAL_REMUNERATION);
+				socialSecurityContributions = 
+					rs.getDouble(IrpfResultColumns.DEDUCCIBLES_EXPENSES);
+			}
+
+			salary.setIrpfBase(irpfBase);
+			salary.setSocialSecurityContributions(socialSecurityContributions);
+			return salary;
+			
+			
+			
+		} finally {
+			if ( rs != null ) {
+				rs.close();
+			}
+		}
+	}
 	private ISalary calculateRemainAnnualRemuneration (int contractId) throws SQLException, ExpressionException, SalaryException {
 		
 		ContractSalaryCalculator calculator = 
@@ -564,7 +546,6 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		
 		ISalary salary = salaryBuilder.getSalary();
 
-		//System.out.println(contractId + "-. [ " + salary.getEmployeeDocument() + " ]" + salary.getEmployeeName() + " : " + salary.getIrpfBase() + ", " + salary.getSocialSecurityContributions());
 		
 		return salary;
 	}
@@ -653,7 +634,7 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		return ( T ) get(rs, SQLConstants.IRPF_REGULARIZATION , col);
 	}
 	
-	private Regularizacion getRegularizacion ( ResultSet rs, ISalary paidSalary , TipoRetenedorError2011 retenedorError2011, CallbackHandler cb) 
+	private Regularizacion getRegularizacion ( ResultSet rs, ISalary paidSalary , Entrada2011Handler handler) 
 	throws SQLException {
 		Regularizacion regularizacion = null;
 		
@@ -677,11 +658,13 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 			if ( retribSatisfechas == null ) {
 				return null;
 			} // Las Retribuciones ya satisfechas con anterioridad a la regularización son obligatorias
+			//System.out.println("Retribuciones ya satisfechas " + retribSatisfechas);
 			regularizacion.setRetribSatisfechas(retribSatisfechas);
 			
 			Double paidIrpf = 
 				getIrpfRegularization(rs, IrpfRegularizationColumns.PAID_IRPF);
 			regularizacion.setRetencionPracticada(toTipoImpositivo(paidIrpf));
+			//System.out.println("Retenciones ya paracticadas " + paidIrpf);
 			
 
 			if ( reason == 11 /*IrpfRegularizationReason.OTHER */ ) {
@@ -692,17 +675,6 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 			Double startMinPersonal = 
 				getIrpfRegularization(rs, IrpfRegularizationColumns.PRIOR_MINIMUN_PERSONAL_FAMILY);
 			BigDecimal minimoPersonalFamiliarInicial = toTipoImpositivo(startMinPersonal);
-			if ( reason < 9   && minimoPersonalFamiliarInicial == null ) {
-				
-				TipoRetenidoError2011 retenidoError2011 = retenedorError2011.getRetenido().get(0);
-				String description = String.format(
-						"Mínimo personal y familiar determinado antes de la regularización es obligatorio Causa %d.",
-						reason);
-				retenidoError2011.getError().get(0).setDescripcion(description );
-				
-				cb.onError(retenedorError2011, retenidoError2011 );
-				return null;
-			}// Mínimo personal y familiar determinado antes de la regularización es obligatorio ( Causas 1-8)
 			
 			if ( minimoPersonalFamiliarInicial != null ) {
 				regularizacion.setMinimoPersonalFamiliarInicial(minimoPersonalFamiliarInicial);
@@ -728,7 +700,7 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 			
 			Integer ordinal = 
 				getIrpfRegularization(rs, IrpfRegularizationColumns.PRIOR_DEDUCT_HOME_LOAN);
-			PagoPrestamosVivienda pagoPrestamosVivienda = getPagoPrestamosVivienda(ordinal);
+			PagoPrestamosVivienda pagoPrestamosVivienda = null; //getPagoPrestamosVivienda(ordinal);
 			if ( pagoPrestamosVivienda != null ) {
 				Double deductHomeLoanAmount = 
 					getIrpfRegularization(rs, IrpfRegularizationColumns.PRIOR_DEDUCT_HOME_LOAN_AMOUNT);
@@ -773,15 +745,23 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		
 		int contrato = 1; 
 
-		Date contractEnd = getContract(rs, ContractColumns.END_DATE);
-		Date contractStart = getContract(rs, ContractColumns.START_DATE);
-		if ( contractEnd != null ) {
-			long contractDays = CommonUtil.getDaysBetweenDates(contractStart, contractEnd);
-			int yearDays = Calendar.getInstance().getActualMaximum(Calendar.YEAR);
-			if ( contractDays < yearDays ) {
+		Integer contractTypeOrdinal = 
+			getIrpfData(rs, IrpfDataColumns.CONTRACT_TYPE);
+		if (contractTypeOrdinal != null ) {
+			IrpfContractType types [] = IrpfContractType.values();
+			if ( contractTypeOrdinal >= 0 
+					&& contractTypeOrdinal < types.length ){
+				contrato = contractTypeOrdinal + 1;
+			}
+		}
+		else {
+			Date contractStart = getContract(rs, ContractColumns.START_DATE);
+			Date contractEnd = getContract(rs, ContractColumns.END_DATE);
+			if ( isLessThanOneYear(contractStart, contractEnd ) ) {
 				contrato = 2;
 			}
-		} 
+		}
+		
 		return contrato;
 	}
 	
@@ -803,8 +783,9 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		case NO_MARRIED_WITH_SONS:
 			for (Descendiente descendiente: descendientes) {
 				int age = getAge(descendiente.getAñoNacimiento());
-				if ( age < 18 && descendiente.getComputadoEntero() != null ){
+				if ( age < 18 ){
 					situacionFamiliar.setSituacion1(new Situacion1());
+					break;
 				} // TODO: La situación familiar "1" exige que el contribuyente tenga descendientes que den derecho a mínimo.
 			}
 			if ( situacionFamiliar.getSituacion1() == null ) {
@@ -925,6 +906,12 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 	}
 
 	private Salary getRetribucionesAnuales(ResultSet rs, ISalary paidSalary) throws SQLException, ExpressionException, SalaryException {
+		Integer contractId = getContract(rs, ContractColumns.ID);
+		return _calculateAnnualRemuneration(contractId);
+		
+	}
+
+	private Salary _getRetribucionesAnuales(ResultSet rs, ISalary paidSalary) throws SQLException, ExpressionException, SalaryException {
 		
 		Salary salary = new Salary(); 
 		
@@ -1087,6 +1074,16 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 					
 					return   null;
 				}
+				
+				@Override
+				public String getDescription() {
+					return null;
+				}
+				
+				@Override
+				public boolean isDescriptionDecorable() {
+					return false;
+				}
 			};
 		}
 
@@ -1100,11 +1097,25 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 	
 	
 	private static class SQLAnnualRemunerationCalculatorContext extends SQLContractSalaryCalculatorContext {
+		
+		private static final String SALARY_PAYMENT_SQL =
+			"SELECT *"
+			+" FROM salary"
+			+",salary_payment"
+			+" LEFT JOIN  payment_concept" 							// LEFT JOIN: payment_concept puede ser NULL
+			+" ON salary_payment.payment_concept = payment_concept.code"	
+			+" WHERE salary.id = salary_payment.salary"
+			+" AND salary.type = ? "
+			+" AND salary.contract = ? "
+			+" AND salary.end_date <= ? "
+			+" AND salary.start_date >= ? ";
+		
+		private PreparedStatement salaryPaymentsStmt;
+		
 		public SQLAnnualRemunerationCalculatorContext(Connection connection, Date startDate, Date endDate, Criteria criteria) 
-		
-		
 		throws ExpressionException, SQLException {
 			super ( connection, startDate, endDate, endDate , criteria);
+			initSalaryPayment(connection);
 		}
 		
 		@Override
@@ -1141,7 +1152,21 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		@Override
 		public Collection<IContractPayment> getContractPayments()
 				throws AonException {
-			return new DelegatePaymentsCollection( super.getContractPayments(), getStartDate(), getEndDate());
+			Collection<IContractPayment>  salaryPayments = getSalaryPayments();
+			Collection<IContractPayment>  contractPayments =
+				new DelegatePaymentsCollection( super.getContractPayments() , getStartDate(), getEndDate());
+			return new HierarchyMonthPayments(contractPayments.iterator(), salaryPayments.iterator() );
+			
+ 			//return new DelegatePaymentsCollection( super.getContractPayments() , getStartDate(), getEndDate());
+		}
+		
+		@Override
+		public void close() throws SQLException {
+			super.close();
+			if ( salaryPaymentsStmt != null ){
+				salaryPaymentsStmt .close();
+			}
+				
 		}
 		
 		// TODO: This FIX over MOTNH_DAYS, must be present at super class SQLContractSalaryCalculatorContext
@@ -1168,6 +1193,199 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 			}
 			
 		}
+		
+		private void initSalaryPayment(Connection connection) throws SQLException {
+			salaryPaymentsStmt = connection.prepareStatement(SALARY_PAYMENT_SQL);
+			salaryPaymentsStmt.setInt(1, SalaryType.SALARY.ordinal()); // salary.type = ?
+		}
+		
+		private Collection<IContractPayment> getSalaryPayments() throws AonException {
+			ResultSet rs = null;
+			try {
+				Collection<IContractPayment> payments  = null;
+				
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(getStartDate());
+				calendar.add(Calendar.YEAR, -1);
+				java.sql.Date startDate = new java.sql.Date(calendar.getTimeInMillis()); 
+				
+				calendar.setTime(getEndDate());
+				calendar.add(Calendar.YEAR, -1);
+				java.sql.Date endDate = new java.sql.Date(calendar.getTimeInMillis());
+				
+				salaryPaymentsStmt.setInt(2, getId()) ; 	// salary.contract = ?
+				salaryPaymentsStmt.setDate(3, endDate) ; 	// salary.end_date <= ? 
+				salaryPaymentsStmt.setDate(4, startDate) ; 	// salary.start_date >= ?  
+				
+				rs = salaryPaymentsStmt.executeQuery();
+				
+				payments = new SalaryPayments(rs);
+				
+				return payments;
+			} catch ( SQLException e ) {
+				throw new AonException(e);
+			} 
+		}
+		
+		
+	}
+	
+	private static boolean isLessThanOneYear(Date start, Date end ) {
+		if ( end == null ) {
+			return false;
+		}
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(start);
+		calendar.add(Calendar.YEAR, 1);
+
+		Date nextYear = calendar.getTime();
+		
+		return end.before(nextYear);
+	}
+	
+	private static class SalaryPayments extends SQLCollection<IContractPayment> implements IContractPayment{
+		
+		public SalaryPayments( ResultSet rs ) {
+			super(rs);
+		}
+		
+		
+		@Override
+		public IContractPayment next() {
+			return this;
+		}
+
+		@Override
+		public String getExpression() {
+
+			ResultSet rs = getResultSet();
+			try {
+				double amount;
+				amount = rs.getDouble(SalaryPaymentColumns.AMOUNT);
+				return String.valueOf (amount);
+			} catch (SQLException e) {
+				return null;
+			}
+		}
+
+		@Override
+		public PaymentType getType() {
+			return PaymentType.SALARY_SUPPLEMENTS;
+		}
+
+		@Override
+		public String getName() {
+			return getString(PaymentConceptColumns.CODE);
+		}
+
+
+		@Override
+		public String getDescription() {
+			return null;
+		}
+
+		@Override
+		public Month getMonth() {
+			return null;
+		}
+
+		@Override
+		public Date getStartDate() {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(getDate(SalaryColumns.START_DATE));
+			calendar.add(Calendar.YEAR, 1 );
+			return calendar.getTime();			
+		}
+
+		@Override
+		public Date getEndDate() {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(getDate(SalaryColumns.END_DATE));
+			calendar.add(Calendar.YEAR, 1 );
+			return calendar.getTime();			
+		}
+
+		@Override
+		public String getIrpfExpression() {
+			return getString(PaymentConceptColumns.IRPF_EXPRESSION);
+		}
+
+		@Override
+		public String getQuoteExpression() {
+			return getString(PaymentConceptColumns.QUOTE_EXPRESSION);
+		}
+
+		@Override
+		public SalaryType getSalaryType() {
+			return SalaryType.SALARY;
+		}
+
+		@Override
+		public boolean isDescriptionDecorable() {
+			return false;
+		}
+		
+		@Override
+		public double getAmount() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public ExpressionScope getScope() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean isReadOnly() {
+			throw new UnsupportedOperationException();
+		}
+		
+		
+		
+	}
+	
+	private static class Entrada2011Builder implements Entrada2011Handler {
+		
+		private AEATRetencionesEntrada2011 entrada2011;
+		
+		private TipoRetenedorEntrada2011 retenedorEntrada2011;
+		
+		public AEATRetencionesEntrada2011 getEntrada2011() {
+			return entrada2011;
+		}
+		
+		@Override
+		public void onAEATRetencionesEntrada2011(
+				AEATRetencionesEntrada2011 entrada2011) {
+			this.entrada2011 = entrada2011;
+		}
+
+		@Override
+		public void onTipoRetenedorEntrada2011(
+				TipoRetenedorEntrada2011 retenedorEntrada2011) {
+			
+			if ( this.retenedorEntrada2011 != null && 
+					this.retenedorEntrada2011.getRetenido().size() > 0 ){
+				List<TipoRetenedorEntrada2011> retenedor = 
+					entrada2011.getRetenedor();
+				retenedor.add(this.retenedorEntrada2011);
+			}
+
+			this.retenedorEntrada2011 = 
+				retenedorEntrada2011;
+		}
+
+		@Override
+		public void onTipoRetenidoEntrada2011(Administration administration,
+				TipoRetenidoEntrada2011 retenidoEntrada2011) {
+			
+			List<TipoRetenidoEntrada2011> retenido =  
+				retenedorEntrada2011.getRetenido();
+			retenido.add(retenidoEntrada2011);
+		}
+		
+		
 		
 	}
 
