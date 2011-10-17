@@ -367,9 +367,9 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 	}
 	
 	private Administration getAdminitratio( ResultSet rs ) throws SQLException {
-		int economicAgreement = getWorplace(rs, WorkplaceColumns.ECONOMICAGREEMENT);
+		Integer economicAgreement = getWorplace(rs, WorkplaceColumns.ECONOMICAGREEMENT);
 		Administration values [] = Administration.values();
-		return ( economicAgreement < 0 || economicAgreement >= values.length ) ? 
+		return ( economicAgreement == null || economicAgreement < 0 || economicAgreement >= values.length ) ? 
 			null : values[economicAgreement];
 
 	}
