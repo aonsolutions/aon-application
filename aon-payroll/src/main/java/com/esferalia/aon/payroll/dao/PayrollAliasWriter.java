@@ -67,8 +67,8 @@ public class PayrollAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-TRUNK/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
-//		File file = new File("/home/rtrepiana/workspace/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
+//		File file = new File("/AON-TRUNK/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
+		File file = new File("/home/rtrepiana/workspace/aon-payroll/src/main/java/com/esferalia/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] { 
 				Agreement.class.getName(),
 				AgreementData.class.getName(),

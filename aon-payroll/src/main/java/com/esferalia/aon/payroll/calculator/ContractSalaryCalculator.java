@@ -179,6 +179,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				}
 				try {
 
+
 					List<ITimedObject<Double>> amounts = 
 						expressionContext.addExpression(contractPayment, paymentStart, paymentEnd, Double.class ) ;
 					

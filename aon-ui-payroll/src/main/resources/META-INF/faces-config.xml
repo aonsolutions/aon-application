@@ -1288,6 +1288,35 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+	<!--  **** I.R.P.F RESULT **** -->
+	<managed-bean>
+		<managed-bean-name>irpfResult</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.IrpfResultController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.IrpfResult</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>irpfResult</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>IrpfResult_effectiveDate desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<!--value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{irpfResultControllerListener}</value-->
+			</list-entries>
+		</managed-property>
+	</managed-bean>
 	<!--  **** CONTRACT CALENDAR EVENT **** -->
 	<managed-bean>
 		<managed-bean-name>contractCalendarEventLinesListener</managed-bean-name>
@@ -2147,6 +2176,18 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/formDocumentTree.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+		<!-- =================== IrpfResult ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>irpfResult_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>irpfResult_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formTree.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+		
 		<!-- =================== IirpfData ========================== -->
 	<navigation-rule>
 		<navigation-case>

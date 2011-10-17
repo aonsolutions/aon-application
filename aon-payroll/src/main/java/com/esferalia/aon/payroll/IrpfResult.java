@@ -416,7 +416,7 @@ public class IrpfResult implements ITransferObject {
 	}
 	
 	@Column(name = "minimun_ascendents", precision = 15, scale = 3)
-	public Double minimunAscendents() {
+	public Double getMinimunAscendents() {
 		return minimunAscendents;
 	}
 	public void setMinimunAscendents(Double minimunAscendents) {
@@ -640,6 +640,9 @@ public class IrpfResult implements ITransferObject {
 	public void setAscendents65Entirely(Integer ascendents65Entirely) {
 		this.ascendents65Entirely = ascendents65Entirely;
 	}
+	
+	
+	
 	
 	@Override
 	public boolean equals(Object obj) {

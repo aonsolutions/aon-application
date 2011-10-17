@@ -275,6 +275,14 @@ public class EnterpriseTree implements ICompanyConstants {
 		contractNode.addChild( etd.getKey(), node);
 	}
 	
+	private void addIrpfNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_IRPF);
+		EnterpriseTreeData etd = new EnterpriseTreeData( contractNode.getData().getId(), label, EnterpriseTreeType.IRPF);
+		node.setData(etd);
+		contractNode.addChild( etd.getKey(), node);
+	}
+
 	private void loadContracts( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Contract.class);		
 		Criteria criteria = new Criteria();
@@ -294,6 +302,7 @@ public class EnterpriseTree implements ICompanyConstants {
 			addMainNode(contractNode);
 			addSalaryNode(contractNode);
 			addSalaryDraftNode(contractNode);
+			addIrpfNode(contractNode);
 			addDocumentNode(contractNode);
 		}	
 		workPlaceNode.getData().setCount(list.size());
@@ -506,6 +515,20 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 	}
 	
+	private void selectIrpf(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			this.contract = (Contract) bean.get( getParentNode().getId() );
+			this.personInfo.init( this.contract.getPerson().getRegistry() );
+			this.showContractHeader = this.personInfo.hasMedias();
+			this.showContractHeader |= selectIrpfs(event, this.contract);
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSelectTreeContract exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+
 	private void selectSalaryDraft(ActionEvent event) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
@@ -600,6 +623,11 @@ public class EnterpriseTree implements ICompanyConstants {
 		c.onShowDocuments(event);
 	}
 	
+	public void onSelectTreeIrpf(ActionEvent event) {
+		selectContract(event);
+		selectIrpf(event);
+	}
+
 	public boolean selectSalaries( ActionEvent event, Contract contract ) {
 		try {
 			IController controller = FormUtil.getController(SALARY_CONTROLLER_NAME);
@@ -616,6 +644,28 @@ public class EnterpriseTree implements ICompanyConstants {
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> selectSalaries exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}		
+		return false;
+	}	
+
+	public boolean selectIrpfs( ActionEvent event, Contract contract ) {
+		try {
+			IController controller = FormUtil.getController(IPayrollConstants.IRPF_RESULT_CONTROLLER_NAME);
+			controller.clearCriteria();
+			Criteria criteria = controller.getCriteria();
+			String contractAlias = controller.getFieldName(IPayrollAlias.IRPF_RESULT_CONTRACT_ID);
+			criteria.addEqualExpression(contractAlias, contract.getId());
+			criteria.addOrder(controller.getFieldName(IPayrollAlias.IRPF_RESULT_EFFECTIVE_DATE), false);
+			controller.initializeModel();
+			if ( controller.getModel().getRowCount() > 0 ) {
+				controller.getModel().setRowIndex(0);
+				controller.onSelect(event);
+				return true;
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> selectIrpfd exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}		
