@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showLeaveSearchWindow">
+		<c:if test="#{leaveList.showLeaveSearchWindow}">
+			<rich:modalPanel id="leaveSearchModalPanel" minHeight="280"
+				minWidth="650" rendered="#{leaveList.showLeaveSearchWindow}"
+				showWhenRendered="true" zindex="100">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{payrollBundle.payroll_refine_search}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showLeaveSearchWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{leaveList.showLeaveSearchWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="leaveSearchForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="leaveSearch-search"
+										value="#{bundle.aon_search}"
+										reRender="showLeaveSearchWindow,#{searchReRender}"
+										actionListener="#{controller.onSearch}"
+										styleClass="aon-finding-toolbar-item aon-icon-search">
+										<rich:componentControl for="leaveSearchModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{leaveList.showLeaveSearchWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="leaveSearch-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showLeaveSearchWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{leaveList.showLeaveSearchWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 100%;">
+
+										<!--  
+										<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/searchContent.xhtml" />
+										-->
+										<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+											<ui:param name="lookupTo" value="#{leaveList.person}" />
+											<ui:param name="skipNewButton" value="#{true}" />
+										</ui:include>
+									
+										<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+											<ui:param name="lookupTo" value="#{leaveList.enterprise}" />
+											<ui:param name="skipNewButton" value="#{true}" />
+										</ui:include>
+										
+										<aon:outputLabel for="LeaveBatch_detailType"
+											value="#{payrollBundle.payroll_leaveBatch_pending_report_type}" />
+										<aon:selectManyCheckbox id="LeaveBatch_detailType" layout="lineDirection"
+											value="#{controller.reportTypes}" >
+											<f:selectItems value="#{payrollCollections.reportTypesList}" />
+										</aon:selectManyCheckbox>
+										<!--  
+										<c:if test="#{showType}">
+											<aon:outputLabel for="Finance_payment"
+												value="#{bundle.aon_type}" />
+											<aon:selectOneRadio id="Finance_payment"
+												valueChangeListener="#{controller.addExpression}">
+												<f:selectItem itemLabel="#{financeBundle.finance_charge}" itemValue="false" />
+												<f:selectItem itemLabel="#{financeBundle.finance_payment}" itemValue="true" />
+											</aon:selectOneRadio>				
+										</c:if>
+
+										<aon:outputLabel for="Finance_amount"
+											value="#{bundle.aon_amount}" />
+										<aon:inputText id="Finance_amount"
+											valueChangeListener="#{controller.addExpression}"
+											size="15">
+										</aon:inputText>
+
+										<aon:outputLabel for="Finance_registryName" 
+											value="#{financeBundle.finance_debtor} / #{financeBundle.finance_creditor}" />
+										<aon:inputText id="Finance_registryName"
+											onblur="toUpperCase(this);"
+											valueChangeListener="#{controller.addExpression}"
+											size="45">
+										</aon:inputText>
+
+										<aon:outputLabel for="Finance_concept" 
+											value="#{financeBundle.finance_invoice_document_number}" />
+										<aon:inputText id="Finance_concept"
+											onblur="toUpperCase(this);"
+											valueChangeListener="#{controller.addExpression}"
+											size="30">
+										</aon:inputText>
+
+										<aon:outputLabel 
+											value="#{financeBundle.finance_finance_date_abbrv}" />
+										<aon:div>
+											<aon:outputLabel for="Finance_dueDate-From" styleClass="aon-form-date-label aon-padding-right"
+												value="#{bundle.aon_date_from}:" />
+											<aon:selectInputDate id="Finance_dueDate-From"
+												valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+												timeZone="#{timeZoneController.timeZone}"
+												popupDateFormat="#{bundle.aon_date_pattern}">
+											</aon:selectInputDate>
+
+											<aon:outputLabel for="Finance_dueDate-To" styleClass="aon-form-date-label aon-padding-right"
+												value="#{bundle.aon_date_to}:" />
+											<aon:selectInputDate id="Finance_dueDate-To"
+												valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+												timeZone="#{timeZoneController.timeZone}"
+												popupDateFormat="#{bundle.aon_date_pattern}">
+											</aon:selectInputDate>
+										</aon:div>
+
+										<aon:outputLabel for="Finance_payMethod_id"
+											value="#{configBundle.config_pay_method}" />
+										<aon:selectOneMenu id="Finance_payMethod_id"
+											value="#{configCollections.payMethod}"
+											valueChangeListener="#{controller.addIdEqualExpression}">
+											<f:selectItem itemLabel="-" value="#{null}"/>
+											<f:selectItems value="#{payMethodSearchList}" />
+										</aon:selectOneMenu>
+
+										<c:if test="#{aonRole.confidentiality}">
+											<aon:outputLabel for="Finance_securityLevel"
+												value="#{bundle.aon_confidential}" />
+											<aon:selectOneRadio id="Finance_securityLevel"
+												valueChangeListener="#{controller.addExpression}">
+												<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="1" />
+												<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="0" />
+											</aon:selectOneRadio>				
+										</c:if>
+										-->
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+				
+				<aon:lookupButtonPopup lookup="#{personLookup}" />
+				<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+				
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

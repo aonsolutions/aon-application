@@ -37,6 +37,7 @@ import com.esferalia.aon.payroll.ContractLeaveDetail;
 import com.esferalia.aon.payroll.LeaveBatch;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.ui.payroll.file.FDIWriter;
 
@@ -97,7 +98,9 @@ public class LeaveBatchWizard implements Serializable {
 			}
 		}
 		criteria.addExpression(expr);
-		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_PROCESSED), false);
+		Expression expr1 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_STATUS), ContractLeaveStatus.PENDING );
+		Expression expr2 = ExpressionUtilities.getEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_STATUS), ContractLeaveStatus.RETURNED );
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));		
 		criteria.addOrder(bean.getFieldName(IPayrollAlias.CONTRACT_LEAVE_DETAIL_CONTRACT_LEAVE_ID));
 		List<RemesableLeave> list =  new LinkedList<RemesableLeave>();
 		for (ITransferObject to : bean.getList(criteria)) {
@@ -271,7 +274,7 @@ public class LeaveBatchWizard implements Serializable {
 					batchDetail.setLeaveBatch(getBatch());
 					batchDetail.setContractLeaveDetail(r.getLeaveDetail());
 					bdb.insert(batchDetail);
-					r.getLeaveDetail().setProcessed(true);
+					r.getLeaveDetail().setStatus(ContractLeaveStatus.PROCESSED);
 					ldb.update(r.getLeaveDetail());
 				}
 				// FIN operaciones de la transaccion

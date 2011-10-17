@@ -435,7 +435,14 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	public void onSelectTreeEnterprise( ActionEvent event ) {
-		setContract(null);
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			setContract((Contract) bean.createNewTo());
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSelectTreeEnterprise exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
 	
 	public void onSelectTreeWorkPlace( ActionEvent event ) {

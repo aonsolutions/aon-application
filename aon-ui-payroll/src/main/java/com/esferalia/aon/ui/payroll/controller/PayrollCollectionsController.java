@@ -99,6 +99,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> irpfRegularizationReasons;
 	private List<SelectItem> taxationTypes;
 	private List<SelectItem> quoteTypes;
+	private List<SelectItem> reportTypes;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -691,6 +692,19 @@ public class PayrollCollectionsController {
 			}
 		}
 		return quoteTypes;
+	}
+	
+	public List<SelectItem> getReportTypesList() {
+		if (reportTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			reportTypes = new LinkedList<SelectItem>();
+			for( LeaveReportType type : LeaveReportType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				reportTypes.add(item);			
+			}
+		}
+		return reportTypes;
 	}
 	
 	

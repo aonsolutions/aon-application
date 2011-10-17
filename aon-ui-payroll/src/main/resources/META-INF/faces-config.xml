@@ -786,6 +786,112 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.wizard.LeaveBatchWizard</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>leaveBatch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.LeaveBatchController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.LeaveBatch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>leaveBatch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>LeaveBatch_date desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{leaveBatchDetailChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>leaveBatchDetailChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>leaveBatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>LeaveBatchDetail_leaveBatch_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>leaveBatchDetail</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.LeaveBatchDetailController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.LeaveBatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>leaveBatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>LeaveBatchDetail_contractLeaveDetail_contractLeave_contract_person_firstSurname, LeaveBatchDetail_contractLeaveDetail_date desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>leaveBatch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>leaveBatch.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<!-- ************* CONTRACT LEAVE LIST ***************** -->
+	<managed-bean>
+		<managed-bean-name>leaveList</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.ContractLeaveDetailListController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.ContractLeaveDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>leaveList</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContractLeaveDetail_contractLeave_contract_person_firstSurname, ContractLeaveDetail_date desc</value>
+		</managed-property>				
+	</managed-bean>
 	<!-- ************ FAN Wizard **************** -->
 	<managed-bean>
 		<managed-bean-name>fanBatchWizard</managed-bean-name>
@@ -2384,7 +2490,7 @@
 	</navigation-rule>
 
 	<!--
-		=================== LeaveBatch Wizard Management==========================
+		=================== Wizard Management==========================
 	-->
 	<navigation-rule id="leaveBatchWizard">
 		<navigation-case>
@@ -2406,6 +2512,20 @@
 		<navigation-case>
 			<from-outcome>leaveBatchWizard_step4</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/leaveBatch/step4.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule id="leaveBatch">
+		<navigation-case>
+			<from-outcome>leaveBatch_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/fdi/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>leaveBatch_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/fdi/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>leaveBatch_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/fdi/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule id="certifica2BatchWizard">

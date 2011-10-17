@@ -20,6 +20,7 @@ import org.hibernate.annotations.ForeignKey;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 
 @Entity
@@ -35,7 +36,7 @@ public class ContractLeaveDetail implements ITransferObject {
 	private Integer confirmOrder;
 	private String cias;
 	private Date date;
-	private boolean processed;
+	private ContractLeaveStatus status;
 
 	@Id     
 	@GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
@@ -95,12 +96,12 @@ public class ContractLeaveDetail implements ITransferObject {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-
-	public boolean isProcessed() {
-		return processed;
+	
+	public ContractLeaveStatus getStatus() {
+		return status;
 	}
-	public void setProcessed(boolean processed) {
-		this.processed = processed;
+	public void setStatus(ContractLeaveStatus status) {
+		this.status = status;
 	}
 	
 	@Override
@@ -116,7 +117,7 @@ public class ContractLeaveDetail implements ITransferObject {
 				.append(this.collegeNumber, o.collegeNumber)
 				.append(this.cias, o.cias)
 				.append(this.date, o.date)
-				.append(this.processed, o.processed)
+				.append(this.status, o.status)
 				.isEquals();	
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -130,7 +131,7 @@ public class ContractLeaveDetail implements ITransferObject {
 			.append(collegeNumber)
 			.append(cias)
 			.append(date)
-			.append(processed)
+			.append(status)
 			.toHashCode();
 	}
 

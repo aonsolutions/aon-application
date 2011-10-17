@@ -58,8 +58,7 @@
 				</aon:div>
 				
 				<aon:div styleClass="aon-width-150 aon-editDataTable-textColumn aon-noborder">
-					<aon:outputText 
-						value="#{(detail.processed)?(payrollBundle.payroll_processed):(payrollBundle.payroll_not_processed)}" />
+					<aon:outputText value="#{detail.status}" />
 				</aon:div>
 			
 			</h:panelGrid>
