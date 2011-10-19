@@ -33,7 +33,7 @@ public class DeliveryManager {
 
 	private void updateSalesStatus(Sales sales) throws ManagerBeanException {
 		IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
-		sales.setStatus(SalesStatus.CLOSED);
+		sales.setStatus(SalesStatus.SERVED);
 		salesBean.restoreNullSubPOJOs(sales);
 		salesBean.update(sales);
 	}

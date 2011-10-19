@@ -16,6 +16,9 @@ public enum SalesStatus implements IResourceable{
     /** BLOCKED. */
     BLOCKED,
     
+    /** SERVED. */
+    SERVED,
+	
     /** CLOSED. */
     CLOSED,
 	

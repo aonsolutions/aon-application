@@ -223,9 +223,19 @@ public class SalesController extends BasicController implements ISalesConstants 
 		return sales.getStatus() == SalesStatus.BLOCKED;
 	}
 
+	public boolean isServed (){
+		Sales sales = (Sales)this.getTo();
+		return sales.getStatus() == SalesStatus.SERVED;
+	}
+
 	public boolean isClosed(){
 		Sales sales = (Sales)this.getTo();
 		return sales.getStatus() == SalesStatus.CLOSED;
+	}
+
+	public boolean isInvoiced(){
+		Sales sales = (Sales)this.getTo();
+		return sales.getStatus() == SalesStatus.INVOICED;
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {

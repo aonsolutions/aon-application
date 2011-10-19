@@ -16,6 +16,9 @@ public enum PurchaseStatus implements IResourceable {
     /** BLOCKED. */
     BLOCKED,
     
+    /** SERVED. */
+    SERVED,
+	
     /** CLOSED. */
     CLOSED,
 	

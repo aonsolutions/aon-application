@@ -219,9 +219,19 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		return purchase.getStatus() == PurchaseStatus.BLOCKED;
 	}
 
+	public boolean isServed(){
+		Purchase purchase = (Purchase)this.getTo();
+		return purchase.getStatus() == PurchaseStatus.SERVED;
+	}
+
 	public boolean isClosed(){
 		Purchase purchase = (Purchase)this.getTo();
 		return purchase.getStatus() == PurchaseStatus.CLOSED;
+	}
+
+	public boolean isInvoiced(){
+		Purchase purchase = (Purchase)this.getTo();
+		return purchase.getStatus() == PurchaseStatus.INVOICED;
 	}
 
 	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {

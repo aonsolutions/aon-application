@@ -32,7 +32,7 @@ public class IncomeManager {
 
 	private void updatePurchaseStatus(Purchase purchase) throws ManagerBeanException {
 		IManagerBean purchaseBean = BeanManager.getManagerBean(Purchase.class);
-		purchase.setStatus(PurchaseStatus.CLOSED);
+		purchase.setStatus(PurchaseStatus.SERVED);
 		purchaseBean.restoreNullSubPOJOs(purchase);
 		purchaseBean.update(purchase);
 	}
