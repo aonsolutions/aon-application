@@ -582,6 +582,31 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************* COST PROFILE  ***************** -->
+	<managed-bean>
+		<managed-bean-name>costProfile</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>costProfile</value>
+		</managed-property>												
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.groupware.CostProfile</value>
+		</managed-property>
+		<managed-property>
+	         <property-name>defaultOrder</property-name>
+    	     <value>CostProfile_description</value>
+      	</managed-property>
+	</managed-bean>
+
 	<!-- ************* CAMPAIGN TYPE ***************** -->
 	<managed-bean>
 		<managed-bean-name>campaignType</managed-bean-name>
@@ -764,6 +789,27 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************* TASK HOLDER ***************** -->
+	<managed-bean>
+		<managed-bean-name>taskHolder</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.groupware.controller.TaskHolderController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>taskHolder</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.groupware.TaskHolder</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- .............................................. -->
 	<!-- ............... NAVIGATION ................... -->
 	<!-- .............................................. -->
@@ -903,6 +949,13 @@
 	        <to-view-id>/com/code/aon/ui/groupware/facelet/campaignType/grid.xhtml</to-view-id>
 	    </navigation-case>
     </navigation-rule>    
+	<!-- =================== COST PROFILE ================= -->	
+	<navigation-rule>
+	    <navigation-case>
+	        <from-outcome>costProfile_list</from-outcome>
+	        <to-view-id>/com/code/aon/ui/groupware/facelet/costProfile/grid.xhtml</to-view-id>
+	    </navigation-case>
+    </navigation-rule>    
 	<!-- =================== Campaign ================= --> 
 	<navigation-rule>
 		<navigation-case>
@@ -939,6 +992,21 @@
 		<navigation-case>
 			<from-outcome>process_wizard_step3</from-outcome>
 			<to-view-id>/com/code/aon/ui/groupware/facelet/processLauncher/step3.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+		<!-- =================== Campaign ================= --> 
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>taskHolder_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/groupware/facelet/taskHolder/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>taskHolder_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/groupware/facelet/taskHolder/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>taskHolder_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/groupware/facelet/taskHolder/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 </faces-config>

@@ -27,19 +27,29 @@
 			</ui:decorate>				
 
 			<aon:div styleClass="aon-scroll-area">
+				
 				<aon:panelGrid id="dataTable" columns="2">
  
-					<aon:outputLabel for="DailyTracking_user" rendered="#{dailyTracking.monitor}"
-						value="#{groupwareBundle.groupware_user}" />
-					<aon:selectOneMenu id="DailyTracking_user"
-						rendered="#{dailyTracking.monitor}"
-						value="#{dailyTracking.to.taskHolder}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{groupWareCollections.taskHolders}" />
-					</aon:selectOneMenu>
-
+					<aon:outputLabel for="DailyTracking_user" rendered="#{dailyTracking.monitor}" value="#{groupwareBundle.groupware_user}" />
 					<aon:outputText rendered="#{!dailyTracking.monitor}" value="#{groupwareBundle.groupware_user}" />
-					<aon:outputText rendered="#{!dailyTracking.monitor}" value="#{dailyTracking.to.taskHolder.registry.fullName}" />
+
+					<aon:panelGroup>
+						<aon:outputText rendered="#{!dailyTracking.monitor}" value="#{dailyTracking.to.taskHolder.registry.fullName}"/>
+						<aon:panelGroup id="taskHolderWarning">
+							<aon:selectOneMenu id="DailyTracking_user"
+								rendered="#{dailyTracking.monitor}"
+								reRender="taskHolderWarning"
+								value="#{dailyTracking.to.taskHolder}">
+								<f:selectItem itemLabel="-" value="#{null}"/>
+								<f:selectItems value="#{groupWareCollections.taskHolders}" />
+							</aon:selectOneMenu>
+							<aon:outputText
+								style="color:red; margin: 1em; padding: 1em; font-weight: bold;" 
+								rendered="#{dailyTracking.to.taskHolder.id != null and dailyTracking.to.taskHolder.costProfile.id == null}" 
+								value="Sin perfil de coste asignado." />					
+						</aon:panelGroup>
+					</aon:panelGroup>
+					
 
 
 					<aon:outputLabel for="DailyTracking_trackingDate" value="#{bundle.aon_date}" />
@@ -92,6 +102,11 @@
 						value="#{groupwareBundle.groupware_duration}"/>
 					<aon:inputText id="DailyTracking_trackingDuration"
 						value="#{dailyTracking.to.trackingDuration}" required="#{true}" size="5" />
+
+					<aon:outputLabel for="DailyTracking_cost" rendered="#{dailyTracking.monitor}"
+						value="#{groupwareBundle.groupware_cost}"/>
+					<aon:inputText id="DailyTracking_cost" rendered="#{dailyTracking.monitor}"
+						value="#{dailyTracking.to.cost}" size="15" />
 
 					<aon:outputLabel for="DailyTracking_comments"
 						value="#{bundle.aon_comment}"/>

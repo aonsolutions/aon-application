@@ -62,25 +62,29 @@
 					<aon:div>
 						<aon:outputText styleClass="aon-italic aon-margin-right" 
 							value="#{groupwareBundle.groupware_due_date_task_of} "/>
+						<aon:commandLink value="#{groupwareBundle.groupware_before}"
+							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsBefore?'font-weight:bold;':''}"
+							actionListener="#{taskSearchControllerListener.onFilterBefore}"
+							reRender="taskTableContainer"/>
 						<aon:commandLink value="#{groupwareBundle.groupware_today}"
-							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.thisToday?'font-weight:bold;':''}"
-							actionListener="#{task.onFilterToday}"
+							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsToday?'font-weight:bold;':''}"
+							actionListener="#{taskSearchControllerListener.onFilterToday}"
 							reRender="taskTableContainer"/>
 						<aon:commandLink value="#{groupwareBundle.groupware_week}"
-							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.thisWeek?'font-weight:bold;':''}"
-							actionListener="#{task.onFilterWeek}"
+							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsWeek?'font-weight:bold;':''}"
+							actionListener="#{taskSearchControllerListener.onFilterWeek}"
 							reRender="taskTableContainer"/>
 						<aon:commandLink value="#{groupwareBundle.groupware_two_weeks}"
-							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.thisTwoWeeks?'font-weight:bold;':''}"
-							actionListener="#{task.onFilterTwoWeeks}"
+							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsTwoWeeks?'font-weight:bold;':''}"
+							actionListener="#{taskSearchControllerListener.onFilterTwoWeeks}"
 							reRender="taskTableContainer"/>
 						<aon:commandLink value="#{groupwareBundle.groupware_month}"
-							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.thisMonth?'font-weight:bold;':''}"
-							actionListener="#{task.onFilterMonth}"
+							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsMonth?'font-weight:bold;':''}"
+							actionListener="#{taskSearchControllerListener.onFilterMonth}"
 							reRender="taskTableContainer"/>
 						<aon:commandLink value="#{groupwareBundle.groupware_any_moment}"
-							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.anyMoment?'font-weight:bold;':''}"
-							actionListener="#{task.onFilterAll}"
+							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsAlways?'font-weight:bold;':''}"
+							actionListener="#{taskSearchControllerListener.onFilterAll}"
 							reRender="taskTableContainer"/>
 					</aon:div>
 					

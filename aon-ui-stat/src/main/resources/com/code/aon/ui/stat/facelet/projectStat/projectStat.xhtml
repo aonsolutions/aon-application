@@ -5,13 +5,13 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
-	template="/facelet/templates/aon.ui.content.xhtml"
-	xmlns:a4j="http://richfaces.org/a4j">
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 		<aon:form id="records">
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="Informacion del Proyecto" />
+				<ui:param name="toolbarTitle" value="#{statBundle.stat_project_info}" />
 				<ui:define name="beforeToolbarContent">
 					<aon:commandButton value="#{bundle.aon_back}"
 						action="#{projectStat.backAction}"
@@ -20,53 +20,40 @@
 				</ui:define>
 			</ui:decorate>
 			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-group">
-					<aon:div styleClass="aon-group-title">
-						<aon:outputText value="Datos Proyecto"/>
-					</aon:div>
-					<aon:div styleClass="aon-group-body"> 
-						<aon:div styleClass="aon-group-body-internal">
-							<aon:panelGrid columns="2" styleClass="aon-width-all"
-								columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
-								<aon:outputLabel value="Proyecto" />
-								<aon:outputText value="#{projectStat.project.name}" />
-								<aon:outputLabel value="Cliente" />
-								<aon:outputText value="#{projectStat.project.registry.fullName}" />
-							</aon:panelGrid>
-						</aon:div>
-					</aon:div>
-				</aon:div>
+				<aon:panelGrid columns="4" styleClass="aon-width-all" 
+					columnClasses="aon-panelGrid-odd aon-width-120
+									,aon-panelGrid-even aon-width-auto
+									,aon-panelGrid-odd  aon-width-120
+									,aon-panelGrid-even aon-width-300">
+					
+					
+					<aon:outputText value="#{projectBundle.project_project}" />
+					<aon:outputText value="#{projectStat.project.name}" />
 
-				<aon:div styleClass="aon-group">
-					<aon:div styleClass="aon-group-title">
-						<aon:outputText value="Resumen Economico"/>
-					</aon:div>
-					<aon:div styleClass="aon-group-body"> 
-						<aon:div styleClass="aon-group-body-internal">
-							<aon:panelGrid columns="2" styleClass="aon-width-all"
-								columnClasses="aon-panelGrid-odd aon-width-120,aon-panelGrid-even aon-width-auto">
-								<aon:outputLabel value="Total Presupuestado" />
-								<aon:outputText value="#{projectStat.totalOffered}">
-									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-								</aon:outputText>
-								<aon:outputLabel value="Total Ingresos" />
-								<aon:outputText value="#{projectStat.totalSales}">
-									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-								</aon:outputText>
-								<aon:outputLabel value="Total Costos" />
-								<aon:outputText value="#{projectStat.totalCosts}">
-									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-								</aon:outputText>
-								<aon:outputLabel value="Resultado" />
-								<aon:outputText value="#{projectStat.totalResult}">
-									<f:convertNumber pattern="#{bundle.aon_price_pattern}" />
-								</aon:outputText>
-							</aon:panelGrid>
-						</aon:div>
-					</aon:div>
-				</aon:div>
+					<aon:outputText value="#{bundle.aon_alias}" />
+					<aon:outputText value="#{projectStat.project.alias}" />
+					
+					<aon:outputText value="#{projectBundle.project_assigned}" />
+					<aon:outputText value="#{projectStat.project.registry.fullName}" />
+					
+					<aon:outputText value="#{projectBundle.project_project_type}" />
+					<aon:outputText value="#{projectStat.project.projectType.description}" />
+				</aon:panelGrid>
 
 				<aon:panelTabSet id="projectHistoryTabSet">
+					<aon:panelTab id="chartTab" label="#{statBundle.stat_economic_summary}">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="ganttTab" label="Gantt">
+						<aon:div styleClass="aon-width-all aon-text-center">
+							<a4j:mediaOutput element="img" cacheable="false" session="false"
+	    					    createContent="#{projectStat.paintGanttChart}" 
+	    					    mimeType="image/jpeg">
+	    					    <!-- Se agrega este param para que no cachee el resultado -->
+	    					    <f:param name="value" value="#{projectStat.lastModified}" />
+	    					</a4j:mediaOutput>
+						</aon:div>
+					</aon:panelTab>
 					<aon:panelTab id="approvedOffersTab" label="Presupuestos">
 						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/approvedOfferList.xhtml" />
 					</aon:panelTab>

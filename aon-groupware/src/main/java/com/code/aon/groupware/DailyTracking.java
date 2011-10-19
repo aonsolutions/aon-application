@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -23,6 +24,7 @@ import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.IEnterprise;
 import com.code.aon.project.ActivityType;
@@ -45,6 +47,7 @@ public class DailyTracking implements ITransferObject, IEnterprise {
     private Project project;
     private ActivityType activityType;
 	private String comments;
+    private Double cost;
 	
 	@Id
 	@GeneratedValue
@@ -151,6 +154,18 @@ public class DailyTracking implements ITransferObject, IEnterprise {
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
+	
+	public Double getCost() {
+		return cost;
+	}
+	public void setCost(Double cost) {
+		this.cost = cost;
+	}
+	
+	@Transient
+	public Double getAmount() {
+		return CommonUtil.round(getTrackingDuration() * getCost());
+	}
 
 	@Override	
 	public boolean equals(Object obj) {
@@ -169,6 +184,7 @@ public class DailyTracking implements ITransferObject, IEnterprise {
 				.append(this.project, o.project)
 				.append(this.activityType, o.activityType)
 				.append(this.comments, o.comments)
+				.append(this.cost, o.cost)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -186,6 +202,7 @@ public class DailyTracking implements ITransferObject, IEnterprise {
 			.append(this.project)
 			.append(this.activityType)
 			.append(this.comments)
+			.append(this.cost)
 			.toHashCode();
 	}
 

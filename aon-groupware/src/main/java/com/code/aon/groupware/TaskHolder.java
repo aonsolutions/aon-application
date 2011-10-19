@@ -21,6 +21,8 @@ import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.company.Enterprise;
+import com.code.aon.company.IEnterprise;
 import com.code.aon.config.User;
 import com.code.aon.groupware.enumeration.TaskHolderType;
 import com.code.aon.registry.IRegistry;
@@ -29,13 +31,15 @@ import com.code.aon.registry.Registry;
 @Entity
 @Table(name="task_holder")
 @PrimaryKeyJoinColumn(name="registry")
-public class TaskHolder implements ITransferObject, IRegistry {
+public class TaskHolder implements ITransferObject, IRegistry, IEnterprise {
 	
 	private static final long serialVersionUID = 2340873810468156830L;
 
 	private Integer id;
 	private Registry registry;
+	private Enterprise enterprise;
     private TaskHolderType type;
+    private CostProfile costProfile;
     private User user;
     private boolean active;
 	
@@ -57,7 +61,20 @@ public class TaskHolder implements ITransferObject, IRegistry {
 		this.id = id;
 	}
 
-	@OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToOne
+    @JoinColumn(name="enterprise", nullable = false, updatable = false )
+    @ForeignKey(name = "FK_TASK_ENTERPRISE")
+    @Index(name = "IDX_TASK_ENTERPRISE")
+    @Override
+	public Enterprise getEnterprise() {
+		return enterprise;
+	}
+    @Override
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
+	}	
+
+    @OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
 	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@PrimaryKeyJoinColumn 
 	public Registry getRegistry() {
@@ -95,6 +112,17 @@ public class TaskHolder implements ITransferObject, IRegistry {
 		this.user = user;
 	}
 
+	@ManyToOne
+	@JoinColumn(name="cost_profile")
+    @ForeignKey(name = "FK_TASK_HOLDER_COST_PROFILE")
+    @Index(name = "IDX_TASK_HOLDER_COST_PROFILE")
+	public CostProfile getCostProfile() {
+		return costProfile;
+	}
+	public void setCostProfile(CostProfile costProfile) {
+		this.costProfile = costProfile;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -105,7 +133,9 @@ public class TaskHolder implements ITransferObject, IRegistry {
 			return new EqualsBuilder()
 				.append(this.active, o.active)
 				.append(this.registry, o.registry)
+				.append(this.enterprise, o.enterprise)
 				.append(this.type, o.type)
+				.append(this.costProfile, o.costProfile)
 				.append(this.user, o.user)
 				.isEquals();
 		}
@@ -115,11 +145,13 @@ public class TaskHolder implements ITransferObject, IRegistry {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(active)
-			.append(id)			
-			.append(registry)			
-			.append(type)
-			.append(user)
+			.append(this.active)
+			.append(this.id)			
+			.append(this.registry)			
+			.append(this.enterprise)
+			.append(this.type)
+			.append(this.costProfile)
+			.append(this.user)
 			.toHashCode();
 	}
 

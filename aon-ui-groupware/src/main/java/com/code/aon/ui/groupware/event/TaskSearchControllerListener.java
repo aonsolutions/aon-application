@@ -62,11 +62,16 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 	private boolean normalPriority;
 	private boolean lowPriority;
 	private boolean nonePriority;
-	private boolean thisWeek;
-	private boolean thisTwoWeeks;
-	private boolean thisMonth;
-	private boolean thisToday;
-	private boolean filterOpened;	
+	
+	private enum When {
+		BEFORE,
+		TODAY,
+		WEEK,
+		TWO_WEEKS,
+		MONTH,
+		ALWAYS;
+	}
+	private When when;
 	
 	private  List<SelectItem> projects;
 	private  List<SelectItem> activityTypes;
@@ -199,63 +204,30 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		this.nonePriority = nonePriority;
 	}
 
-	public boolean isThisWeek() {
-		return thisWeek;
+	public When getWhen() {
+		return when;
 	}
-	public void setThisWeek(boolean thisWeek) {
-		this.thisWeek = thisWeek;
-		if (isThisWeek()) {
-			setThisTwoWeeks(false);
-			setThisMonth(false);
-			setThisToday(false);
-		}
+	public void setWhen(When when) {
+		this.when = when;
 	}
 
-	public boolean isThisTwoWeeks() {
-		return thisTwoWeeks;
+	public boolean isWhenEqualsBefore() {
+		return (getWhen() == When.BEFORE);
 	}
-	public void setThisTwoWeeks(boolean thisTwoWeeks) {
-		this.thisTwoWeeks = thisTwoWeeks;
-		if (isThisTwoWeeks()) {
-			setThisWeek(false);
-			setThisMonth(false);
-			setThisToday(false);
-		}
+	public boolean isWhenEqualsWeek() {
+		return (getWhen() == When.WEEK);
 	}
-
-	public boolean isThisMonth() {
-		return thisMonth;
+	public boolean isWhenEqualsTwoWeeks() {
+		return (getWhen() == When.TWO_WEEKS);
 	}
-	public void setThisMonth(boolean thisMonth) {
-		this.thisMonth = thisMonth;
-		if (isThisMonth()) {
-			setThisWeek(false);
-			setThisTwoWeeks(false);
-			setThisToday(false);
-		}
+	public boolean isWhenEqualsMonth() {
+		return (getWhen() == When.MONTH);
 	}
-	
-	public boolean isThisToday() {
-		return thisToday;
+	public boolean isWhenEqualsToday() {
+		return (getWhen() == When.TODAY);
 	}
-	public void setThisToday(boolean thisToday) {
-		this.thisToday = thisToday;
-		if (isThisToday()) {
-			setThisWeek(false);
-			setThisTwoWeeks(false);
-			setThisMonth(false);
-		}
-	}
-
-	public boolean isAnyMoment() {
-		return (!isThisWeek() && !isThisTwoWeeks() && !isThisMonth());
-	}
-
-	public boolean isFilterOpened() {
-		return filterOpened;
-	}
-	public void setFilterOpened(boolean filterOpened) {
-		this.filterOpened = filterOpened;
+	public boolean isWhenEqualsAlways() {
+		return (getWhen() == When.ALWAYS);
 	}
 
 	public Process getProcess() {
@@ -355,9 +327,6 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 	public List<SelectItem> getActivityTypes() throws ManagerBeanException {
 		return activityTypes;
 	}
-	public void onExpandFilter(ActionEvent event) {
-		setFilterOpened( !isFilterOpened() );
-	}
 	
 	@Override
 	protected void init() throws ManagerBeanException {
@@ -381,10 +350,7 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		setLowPriority(true);
 		setNonePriority(true);
 		setProcessTask(false);
-		setThisWeek(false);
-		setThisTwoWeeks(false);
-		setThisMonth(false);
-		setFilterOpened(false);
+		setWhen(null);
 		loadProjects(null);
 		loadActivityTypes(null);
 	}
@@ -411,20 +377,22 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 				criteria.addEqualExpression( getFieldName(IGroupwareAlias.TASK_TASK_HOLDER_ID), getTaskHolder().getId() ); 	
 			}
 		}
-		if (isThisWeek()) {
+		if (isWhenEqualsWeek()) {
 			Date[] range = CommonUtil.getWeekDateRange(new Date());
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[0]);
 			criteria.addLessThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[1]);
-		} else if (isThisTwoWeeks()) {
+		} else if (isWhenEqualsTwoWeeks()) {
 			Date[] range = CommonUtil.getTwoWeekDateRange(new Date());
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[0]);
 			criteria.addLessThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), range[1]);
-		} else if (isThisMonth()) {
+		} else if (isWhenEqualsMonth()) {
 			Date today = new Date();
 			criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), CommonUtil.getMonthFirstDay(today));
 			criteria.addLessThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), CommonUtil.getMonthLastDay(today));
-		} else if (isThisToday()) {
+		} else if (isWhenEqualsToday()) {
 			criteria.addEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), new Date());
+		} else if (isWhenEqualsBefore()) {
+			criteria.addLessThanExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), new Date());
 		} else {
 			if (getFromDueDate() != null) {
 				criteria.addGreaterThanOrEqualExpression(getFieldName(IGroupwareAlias.TASK_DUE_DATE), getFromDueDate());
@@ -542,5 +510,37 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 			}
 		}
 		criteria.addExpression(expToAdd);
-	}	
+	}
+	
+	public void onFilterAll(ActionEvent event) throws ManagerBeanException {
+		TaskController c = (TaskController) AonUtil.getRegisteredBean(IGroupWareConstants.TASK_CONTROLLER_NAME);
+		setWhen(When.ALWAYS);
+		c.onFilter(event);
+	}
+	public void onFilterWeek(ActionEvent event) throws ManagerBeanException {
+		TaskController c = (TaskController) AonUtil.getRegisteredBean(IGroupWareConstants.TASK_CONTROLLER_NAME);
+		setWhen(When.WEEK);
+		c.onFilter(event);
+	}
+	public void onFilterTwoWeeks(ActionEvent event) throws ManagerBeanException {
+		TaskController c = (TaskController) AonUtil.getRegisteredBean(IGroupWareConstants.TASK_CONTROLLER_NAME);
+		setWhen(When.TWO_WEEKS);
+		c.onFilter(event);
+	}
+	public void onFilterMonth(ActionEvent event) throws ManagerBeanException {
+		TaskController c = (TaskController) AonUtil.getRegisteredBean(IGroupWareConstants.TASK_CONTROLLER_NAME);
+		setWhen(When.MONTH);
+		c.onFilter(event);
+	}
+	public void onFilterToday(ActionEvent event) throws ManagerBeanException {
+		TaskController c = (TaskController) AonUtil.getRegisteredBean(IGroupWareConstants.TASK_CONTROLLER_NAME);
+		setWhen(When.TODAY);
+		c.onFilter(event);
+	}
+	public void onFilterBefore(ActionEvent event) throws ManagerBeanException {
+		TaskController c = (TaskController) AonUtil.getRegisteredBean(IGroupWareConstants.TASK_CONTROLLER_NAME);
+		setWhen(When.BEFORE);
+		c.onFilter(event);
+	}
+	
 }

@@ -17,6 +17,7 @@ import com.code.aon.config.User;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.CampaignType;
+import com.code.aon.groupware.CostProfile;
 import com.code.aon.groupware.FavoriteCategory;
 import com.code.aon.groupware.JobType;
 import com.code.aon.groupware.Process;
@@ -34,6 +35,7 @@ import com.code.aon.groupware.enumeration.DelayTime;
 import com.code.aon.groupware.enumeration.NoticeStatus;
 import com.code.aon.groupware.enumeration.NoticeType;
 import com.code.aon.groupware.enumeration.Priority;
+import com.code.aon.groupware.enumeration.TaskHolderType;
 import com.code.aon.groupware.enumeration.TaskPeriod;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
@@ -48,6 +50,7 @@ public class GroupWareCollectionsController {
 	private List<SelectItem> priorities;
 	private List<SelectItem> delayTimes;
 	private List<SelectItem> taskHolders;
+	private List<SelectItem> taskHolderTypes;
 	private List<SelectItem> taskPeriods;
 	private List<SelectItem> dailyTrackingReportTypes;
 	private LinkedList<SelectItem> campaignStatuses;
@@ -328,6 +331,33 @@ public class GroupWareCollectionsController {
 			processDetailList.add(item);
 		}
 		return processDetailList;
+	}
+	
+	public List<SelectItem> getCostProfiles() throws ManagerBeanException {
+		List<SelectItem> profileList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(CostProfile.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(IGroupwareAlias.COST_PROFILE_DESCRIPTION));
+		List<ITransferObject> list = bean.getList(criteria);
+		for (ITransferObject to:list) {
+			CostProfile profile = (CostProfile) to;
+			SelectItem item = new SelectItem(profile, profile.getDescription());
+			profileList.add(item);
+		}
+		return profileList;
+	}
+		
+	public List<SelectItem> getTaskHolderTypes() {
+		if (taskHolderTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			taskHolderTypes = new LinkedList<SelectItem>();
+			for (TaskHolderType taskHolderType : TaskHolderType.values()) {
+				String name = taskHolderType.getName(locale);
+				SelectItem item = new SelectItem(taskHolderType, name);
+				taskHolderTypes.add(item);
+			}
+		}
+		return taskHolderTypes;
 	}
 	
 }

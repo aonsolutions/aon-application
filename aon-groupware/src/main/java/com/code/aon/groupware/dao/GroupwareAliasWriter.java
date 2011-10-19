@@ -10,6 +10,7 @@ import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.Campaign;
 import com.code.aon.groupware.CampaignProject;
 import com.code.aon.groupware.CampaignType;
+import com.code.aon.groupware.CostProfile;
 import com.code.aon.groupware.DailyTracking;
 import com.code.aon.groupware.Favorite;
 import com.code.aon.groupware.FavoriteCategory;
@@ -34,6 +35,7 @@ public class GroupwareAliasWriter {
 			Campaign.class.getName(),
 			CampaignProject.class.getName(),
 			CampaignType.class.getName(),
+			CostProfile.class.getName(),
 			DailyTracking.class.getName(),
         	Favorite.class.getName(),
         	FavoriteCategory.class.getName(),
