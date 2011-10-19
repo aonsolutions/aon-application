@@ -55,7 +55,6 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 			IManagerBean bean = BeanManager.getManagerBean(ContractLeave.class);
 			ContractLeave leave;
 			if(detail.getType()==LeaveReportType.LEAVE){
-//				getController(event).calculateBases();
 				leave = (ContractLeave) bean.insert(completeMaster(event, getController(event).getReport().getContractLeave(), detail));
 				detail.setContractLeave(leave);
 				detail.setStatus(ContractLeaveStatus.PENDING);
@@ -63,7 +62,7 @@ public class ContractLeaveControllerListener extends ControllerAdapter{
 				leave = (ContractLeave) bean.get(detail.getContractLeave().getId());
 				detail.setContractLeave(leave);
 			} else if(detail.getType()==LeaveReportType.DISCHARGE){
-				leave = (ContractLeave) bean.get(detail.getContractLeave().getId());
+				leave = (ContractLeave) bean.update(completeMaster(event, getController(event).getReport().getContractLeave(), detail));
 				leave.setEndDate(detail.getDate());
 				leave.setDischargeCause(getController(event).getReport().getContractLeave().getDischargeCause());
 				leave = (ContractLeave) bean.update(leave);
