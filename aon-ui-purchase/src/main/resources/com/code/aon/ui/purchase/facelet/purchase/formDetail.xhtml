@@ -137,7 +137,7 @@
 				</aon:outputText>
 				<aon:inputText id="PurchaseDetail_quantity" 
 					value="#{controller.to.quantity}" rendered="#{formEdit}"
-					reRender="PurchaseDetail_amount" 
+					reRender="PurchaseDetail_pendingQuantity,PurchaseDetail_amount" 
 					required="true" size="5" />
 				<f:facet name="footer">
 					<aon:inputText id="PurchaseDetail_quantity-New" 
@@ -147,6 +147,17 @@
 				</f:facet>
 			</aon:column>
 	
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel value="#{purchaseBundle.purchase_detail_pending}" />
+				</f:facet>
+				<aon:outputText id="PurchaseDetail_pendingQuantity" 
+					value="#{to.pendingQuantity}"
+					rendered="#{formEdit or formList}">
+					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+				</aon:outputText>
+			</aon:column>
+
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
 				<f:facet name="header">
 					<aon:outputLabel for="PurchaseDetail_price" value="#{bundle.aon_price}" />

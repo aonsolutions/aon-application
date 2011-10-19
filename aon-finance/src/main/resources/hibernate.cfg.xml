@@ -43,6 +43,7 @@
 		
 		<!-- AON-PROJECT Mapping files -->	
 		<mapping class="com.code.aon.project.Project"/>
+		<mapping class="com.code.aon.project.ProjectType"/>
 
 		<!-- AON-REGISTRY Mapping files -->
 		<mapping class="com.code.aon.registry.Category"/>
@@ -81,6 +82,9 @@
 		
 		<!-- AON-SUPPLIER Mapping files -->
 		<mapping class="com.code.aon.supplier.Supplier"/>		
+
+		<!-- AON-WAREHOUSE Mapping files -->
+		<mapping class="com.code.aon.warehouse.Warehouse"/>		
 
 	</session-factory>
 

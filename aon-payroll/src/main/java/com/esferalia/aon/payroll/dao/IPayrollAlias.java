@@ -1688,6 +1688,12 @@ public interface IPayrollAlias {
 	*/
 	String  LEAVE_BATCH_ID = LEAVE_BATCH_ENTRY.getAliasNames()[1];
 
+	/** 
+	* Alias value: LeaveBatch_status
+	* Hibernate value: LeaveBatch.status
+	*/
+	String  LEAVE_BATCH_STATUS = LEAVE_BATCH_ENTRY.getAliasNames()[2];
+
 
 
 	/** 
@@ -2308,70 +2314,76 @@ public interface IPayrollAlias {
 	String  IRPF_RESULT_IRREGULAR18_3REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[37];
 
 	/** 
+	* Alias value: IrpfResult_minimunAscendents
+	* Hibernate value: IrpfResult.minimunAscendents
+	*/
+	String  IRPF_RESULT_MINIMUN_ASCENDENTS = IRPF_RESULT_ENTRY.getAliasNames()[38];
+
+	/** 
 	* Alias value: IrpfResult_minimunDescendents
 	* Hibernate value: IrpfResult.minimunDescendents
 	*/
-	String  IRPF_RESULT_MINIMUN_DESCENDENTS = IRPF_RESULT_ENTRY.getAliasNames()[38];
+	String  IRPF_RESULT_MINIMUN_DESCENDENTS = IRPF_RESULT_ENTRY.getAliasNames()[39];
 
 	/** 
 	* Alias value: IrpfResult_minimunDisability
 	* Hibernate value: IrpfResult.minimunDisability
 	*/
-	String  IRPF_RESULT_MINIMUN_DISABILITY = IRPF_RESULT_ENTRY.getAliasNames()[39];
+	String  IRPF_RESULT_MINIMUN_DISABILITY = IRPF_RESULT_ENTRY.getAliasNames()[40];
 
 	/** 
 	* Alias value: IrpfResult_minimunPersonal
 	* Hibernate value: IrpfResult.minimunPersonal
 	*/
-	String  IRPF_RESULT_MINIMUN_PERSONAL = IRPF_RESULT_ENTRY.getAliasNames()[40];
+	String  IRPF_RESULT_MINIMUN_PERSONAL = IRPF_RESULT_ENTRY.getAliasNames()[41];
 
 	/** 
 	* Alias value: IrpfResult_minimunPersonalFamily
 	* Hibernate value: IrpfResult.minimunPersonalFamily
 	*/
-	String  IRPF_RESULT_MINIMUN_PERSONAL_FAMILY = IRPF_RESULT_ENTRY.getAliasNames()[41];
+	String  IRPF_RESULT_MINIMUN_PERSONAL_FAMILY = IRPF_RESULT_ENTRY.getAliasNames()[42];
 
 	/** 
 	* Alias value: IrpfResult_socialSecurityPensioner
 	* Hibernate value: IrpfResult.socialSecurityPensioner
 	*/
-	String  IRPF_RESULT_SOCIAL_SECURITY_PENSIONER = IRPF_RESULT_ENTRY.getAliasNames()[42];
+	String  IRPF_RESULT_SOCIAL_SECURITY_PENSIONER = IRPF_RESULT_ENTRY.getAliasNames()[43];
 
 	/** 
 	* Alias value: IrpfResult_spousalSupport
 	* Hibernate value: IrpfResult.spousalSupport
 	*/
-	String  IRPF_RESULT_SPOUSAL_SUPPORT = IRPF_RESULT_ENTRY.getAliasNames()[43];
+	String  IRPF_RESULT_SPOUSAL_SUPPORT = IRPF_RESULT_ENTRY.getAliasNames()[44];
 
 	/** 
 	* Alias value: IrpfResult_twoOrMoreDescendentsMin
 	* Hibernate value: IrpfResult.twoOrMoreDescendentsMin
 	*/
-	String  IRPF_RESULT_TWO_OR_MORE_DESCENDENTS_MIN = IRPF_RESULT_ENTRY.getAliasNames()[44];
+	String  IRPF_RESULT_TWO_OR_MORE_DESCENDENTS_MIN = IRPF_RESULT_ENTRY.getAliasNames()[45];
 
 	/** 
 	* Alias value: IrpfResult_workDisabilityReduction
 	* Hibernate value: IrpfResult.workDisabilityReduction
 	*/
-	String  IRPF_RESULT_WORK_DISABILITY_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[45];
+	String  IRPF_RESULT_WORK_DISABILITY_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[46];
 
 	/** 
 	* Alias value: IrpfResult_workMovingReduction
 	* Hibernate value: IrpfResult.workMovingReduction
 	*/
-	String  IRPF_RESULT_WORK_MOVING_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[46];
+	String  IRPF_RESULT_WORK_MOVING_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[47];
 
 	/** 
 	* Alias value: IrpfResult_workProlongationReduction
 	* Hibernate value: IrpfResult.workProlongationReduction
 	*/
-	String  IRPF_RESULT_WORK_PROLONGATION_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[47];
+	String  IRPF_RESULT_WORK_PROLONGATION_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[48];
 
 	/** 
 	* Alias value: IrpfResult_workRemunerationReduction
 	* Hibernate value: IrpfResult.workRemunerationReduction
 	*/
-	String  IRPF_RESULT_WORK_REMUNERATION_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[48];
+	String  IRPF_RESULT_WORK_REMUNERATION_REDUCTION = IRPF_RESULT_ENTRY.getAliasNames()[49];
 
 
 

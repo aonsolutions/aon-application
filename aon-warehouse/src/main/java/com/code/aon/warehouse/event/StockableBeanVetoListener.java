@@ -14,11 +14,10 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
-import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.IStockable;
-import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Stock;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
@@ -28,21 +27,18 @@ public class StockableBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	@Override
 	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		try {
-			if (((IStockable)evt.getTo()).isEntry()) {
-				updateStockable("income_detail", ((IncomeDetail)evt.getTo()).getId(), false);
-			} else {
-				updateStockable("delivery_detail", ((DeliveryDetail)evt.getTo()).getId(), true);
-			}
+			IStockable stockable = (IStockable)evt.getTo();
+			updateStockable(stockable);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(), e);
 		}
 	}
 
     @SuppressWarnings("unchecked")
-	private void updateStockable(String tableName, Integer id, boolean entry) throws ManagerBeanException {
+	private void updateStockable(IStockable stockable) throws ManagerBeanException {
 		String select = "select stockable.item item, stockable.warehouse warehouse, stockable.quantity quantity " +
-						" from " + tableName + " as stockable " +
-						" where stockable.id = " + id;
+						" from " + stockable.getTableName() + " as stockable " +
+						" where stockable.id = " + stockable.getId();
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(select);
         List list = query
@@ -57,35 +53,33 @@ public class StockableBeanVetoListener extends ManagerBeanVetoListenerAdapter {
         	Integer warehouseId = (Integer)obj[1];
             double quantity =(Double)obj[2];
 
-     		updateStock(obtainItem(itemId), obtainWarehouse(warehouseId), quantity, entry);
+     		updateStock(obtainItem(itemId), obtainWarehouse(warehouseId), quantity, !stockable.isEntry());
         }
 	}
 
     private Item obtainItem(Integer itemId) throws ManagerBeanException {
     	IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
-    	return (Item)itemBean.get(itemId);
+    	return (itemId != null) ? (Item)itemBean.get(itemId) : null;
     }
 
     private Warehouse obtainWarehouse(Integer warehouseId) throws ManagerBeanException {
     	IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
-    	return (Warehouse)warehouseBean.get(warehouseId);
+    	return (warehouseId != null) ? (Warehouse)warehouseBean.get(warehouseId) : null;
     }
 
     private void updateStock(Item item, Warehouse warehouse, double quantity, boolean entry) throws ManagerBeanException {
-		IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
-		if (item.getProduct().isInventoriable()) {
+		if (item != null && item.getId() != null && item.getProduct().isInventoriable() && warehouse != null && warehouse.getId() != null) {
+			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 			Stock stock = obtainStock(item, warehouse);
 			quantity = quantity * ((entry) ? 1 : (-1));
 			if (stock == null) {
 				stock = new Stock();
 				stock.setItem(item);
 				stock.setWarehouse(warehouse);
-				stock.setQuantity(quantity);
-
+				stock.setQuantity(CommonUtil.round(quantity, 3));
 				stockBean.insert(stock);
 			} else{
-				stock.setQuantity(stock.getQuantity().doubleValue() + quantity);
-
+				stock.setQuantity(CommonUtil.round(stock.getQuantity().doubleValue() + quantity, 3));
 				stockBean.update(stock);
 			}
 		}

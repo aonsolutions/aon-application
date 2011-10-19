@@ -232,34 +232,22 @@ public interface IWarehouseAlias {
 	String  DELIVERY_DETAIL_SALES_DETAIL_ID = DELIVERY_DETAIL_ENTRY.getAliasNames()[8];
 
 	/** 
-	* Alias value: DeliveryDetail_source
-	* Hibernate value: DeliveryDetail.source
-	*/
-	String  DELIVERY_DETAIL_SOURCE = DELIVERY_DETAIL_ENTRY.getAliasNames()[9];
-
-	/** 
-	* Alias value: DeliveryDetail_type
-	* Hibernate value: DeliveryDetail.type
-	*/
-	String  DELIVERY_DETAIL_TYPE = DELIVERY_DETAIL_ENTRY.getAliasNames()[10];
-
-	/** 
 	* Alias value: DeliveryDetail_warehouse_id
 	* Hibernate value: DeliveryDetail.warehouse.id
 	*/
-	String  DELIVERY_DETAIL_WAREHOUSE_ID = DELIVERY_DETAIL_ENTRY.getAliasNames()[11];
+	String  DELIVERY_DETAIL_WAREHOUSE_ID = DELIVERY_DETAIL_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: DeliveryDetail_item_product_type
 	* Hibernate value: DeliveryDetail.item.product.type
 	*/
-	String  DELIVERY_DETAIL_ITEM_PRODUCT_TYPE = DELIVERY_DETAIL_ENTRY.getAliasNames()[12];
+	String  DELIVERY_DETAIL_ITEM_PRODUCT_TYPE = DELIVERY_DETAIL_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: DeliveryDetail_salesDetail_sales_id
 	* Hibernate value: DeliveryDetail.salesDetail.sales.id
 	*/
-	String  DELIVERY_DETAIL_SALES_DETAIL_SALES_ID = DELIVERY_DETAIL_ENTRY.getAliasNames()[13];
+	String  DELIVERY_DETAIL_SALES_DETAIL_SALES_ID = DELIVERY_DETAIL_ENTRY.getAliasNames()[11];
 
 
 
@@ -480,34 +468,22 @@ public interface IWarehouseAlias {
 	String  INCOME_DETAIL_QUANTITY = INCOME_DETAIL_ENTRY.getAliasNames()[9];
 
 	/** 
-	* Alias value: IncomeDetail_source
-	* Hibernate value: IncomeDetail.source
-	*/
-	String  INCOME_DETAIL_SOURCE = INCOME_DETAIL_ENTRY.getAliasNames()[10];
-
-	/** 
-	* Alias value: IncomeDetail_type
-	* Hibernate value: IncomeDetail.type
-	*/
-	String  INCOME_DETAIL_TYPE = INCOME_DETAIL_ENTRY.getAliasNames()[11];
-
-	/** 
 	* Alias value: IncomeDetail_warehouse_id
 	* Hibernate value: IncomeDetail.warehouse.id
 	*/
-	String  INCOME_DETAIL_WAREHOUSE_ID = INCOME_DETAIL_ENTRY.getAliasNames()[12];
+	String  INCOME_DETAIL_WAREHOUSE_ID = INCOME_DETAIL_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: IncomeDetail_item_product_type
 	* Hibernate value: IncomeDetail.item.product.type
 	*/
-	String  INCOME_DETAIL_ITEM_PRODUCT_TYPE = INCOME_DETAIL_ENTRY.getAliasNames()[13];
+	String  INCOME_DETAIL_ITEM_PRODUCT_TYPE = INCOME_DETAIL_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: IncomeDetail_purchaseDetail_purchase_id
 	* Hibernate value: IncomeDetail.purchaseDetail.purchase.id
 	*/
-	String  INCOME_DETAIL_PURCHASE_DETAIL_PURCHASE_ID = INCOME_DETAIL_ENTRY.getAliasNames()[14];
+	String  INCOME_DETAIL_PURCHASE_DETAIL_PURCHASE_ID = INCOME_DETAIL_ENTRY.getAliasNames()[12];
 
 
 
@@ -791,6 +767,12 @@ public interface IWarehouseAlias {
 	* Hibernate value: Warehouse.name
 	*/
 	String  WAREHOUSE_NAME = WAREHOUSE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Warehouse_workPlace_id
+	* Hibernate value: Warehouse.workPlace.id
+	*/
+	String  WAREHOUSE_WORK_PLACE_ID = WAREHOUSE_ENTRY.getAliasNames()[2];
 
 
 }

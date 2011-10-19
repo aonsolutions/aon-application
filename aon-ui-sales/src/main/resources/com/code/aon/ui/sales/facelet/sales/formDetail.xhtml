@@ -169,7 +169,7 @@
 				<aon:inputText id="SalesDetail_quantity" 
 					value="#{controller.to.quantity}" rendered="#{formEdit and controller.editable}"
 					valueChangeListener="#{controller.onQuantityChanged}" 
-					reRender="SalesDetail_price,SalesDetail_discount,SalesDetail_amount" 
+					reRender="SalesDetail_pendingQuantity,SalesDetail_price,SalesDetail_discount,SalesDetail_amount" 
 					required="true" size="5" focus="SalesDetail_price" />
 				<f:facet name="footer">
 					<aon:inputText id="SalesDetail_quantity-New" 
@@ -178,6 +178,17 @@
 						reRender="SalesDetail_price-New,SalesDetail_discount-New,SalesDetail_amount-New" 
 						required="true" size="5" focus="SalesDetail_price-New" />
 				</f:facet>
+			</aon:column>
+
+			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">
+				<f:facet name="header">
+					<aon:outputLabel value="#{salesBundle.sales_detail_pending}" />
+				</f:facet>
+				<aon:outputText id="SalesDetail_pendingQuantity" 
+					value="#{to.pendingQuantity}"
+					rendered="#{formEdit or formList}">
+					<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
+				</aon:outputText>
 			</aon:column>
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-width-80">

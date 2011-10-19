@@ -31,6 +31,7 @@ import com.esferalia.aon.payroll.LeaveBatchAttachment;
 import com.esferalia.aon.payroll.LeaveBatchDetail;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractLeaveStatus;
+import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.FDIWriter;
@@ -40,6 +41,7 @@ public class LeaveBatchController extends BasicController {
 	
 	private FDIWriter fdiWriter;
 	private FileOutput fileOutput;
+	private boolean recorded;
 	
 	private FDIWriter getFDIWriter() {
 		if (fdiWriter == null) {
@@ -56,7 +58,15 @@ public class LeaveBatchController extends BasicController {
 		this.fileOutput = fileOutput;
 	}
 	
-	 @SuppressWarnings("unchecked")
+	public boolean isRecorded() {
+		return recorded;
+	}
+
+	public void setRecorded(boolean recorded) {
+		this.recorded = recorded;
+	}
+
+	@SuppressWarnings("unchecked")
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
         IManagerBean contractLeaveDetailBean = BeanManager.getManagerBean(ContractLeaveDetail.class);
 		IManagerBean leaveBatchDetailBean = BeanManager.getManagerBean(LeaveBatchDetail.class);
@@ -74,7 +84,7 @@ public class LeaveBatchController extends BasicController {
         leaveController.clearCheckedLeaves();
         loadDetails();
         onSearchLeaves(event);
-        processFdi();
+//        processFdi();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -112,27 +122,37 @@ public class LeaveBatchController extends BasicController {
 	@Override
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
-		onSearchLeaves(event);
+		onInit(event);
 	}
 	
 	@Override
 	public void onAccept(ActionEvent event) {
+		LeaveBatch b = (LeaveBatch) getTo();
+		b.setStatus(FileStatus.PENDING);
 		super.onAccept(event);
 		onSearchLeaves(event);
 	}
 	
-	private void processFdi() {
+	public void onInit(ActionEvent event) {
+		onSearchLeaves(event);
 		try {
-			generateFdiFile();
+			checkDiskCreated();
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void onCreateDisk(ActionEvent event) {
+		try {
+			String loggedUser = AonUtil.getRemoteUser();
+			loggedUser = StringUtils.substringBefore(loggedUser, "@");
+			File file = getFDIWriter().createFDI(getLeaveDetailList(), loggedUser).getFile();
 			IManagerBean bean = BeanManager.getManagerBean(LeaveBatchAttachment.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.LEAVE_BATCH_ATTACHMENT_LEAVE_BATCH_ID), ((LeaveBatch)getTo()).getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.LEAVE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), LeaveBatchAttachmentType.FDI_DOCUMENT);
-			List<ITransferObject> list = bean.getList(criteria);
-			LeaveBatchAttachment attach;
-			if(!list.isEmpty()){
-				attach = (LeaveBatchAttachment) list.get(0);
-			} else {
+			if (file != null) {
+				FileInputStream in = new FileInputStream(file);
+				byte[] data = IOUtils.toByteArray(in);
+				LeaveBatchAttachment attach;
 				attach = new LeaveBatchAttachment();
 				attach.setLeaveBatch((LeaveBatch) getTo());
 				attach.setMimeType(MimeType.MIME_TXT);
@@ -140,15 +160,11 @@ public class LeaveBatchController extends BasicController {
 				attach.setSize(null);
 				attach.setAttachmentType(LeaveBatchAttachmentType.FDI_DOCUMENT);
 				attach.setScope(null);
-			}
-			
-			File file = getFileOutput().getFile();
-			if (file != null) {
-				FileInputStream in = new FileInputStream(file);
-				byte[] data = IOUtils.toByteArray(in);
 				attach.setData(data);
 				attach.setAttachDate(new Date());
 				bean.insertOrUpdate(attach);
+				setRecorded(true);
+				changeBatchStatus(FileStatus.GENERATED);
 				LeaveBatchAttachController controller = (LeaveBatchAttachController) FormUtil.getController("leaveBatchAttach");
 				controller.initializeModel();
 			}
@@ -161,16 +177,77 @@ public class LeaveBatchController extends BasicController {
 		}
 	}
 	
-	private void generateFdiFile() throws ManagerBeanException {
-		String loggedUser = AonUtil.getRemoteUser();
-		loggedUser = StringUtils.substringBefore(loggedUser, "@");
-		setFileOutput(getFDIWriter().createFDI(getLeaveDetailList(), loggedUser));
-		if (getFileOutput() != null) {
-			if (getFileOutput().getErrors().size() > 0) {
-				AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
-			}
+	public void changeBatchStatus(FileStatus status) {
+		LeaveBatch b = (LeaveBatch) getTo();
+		if(b != null){
+			b.setStatus(status);
+			super.accept(null);
 		}
 	}
+
+	private void checkDiskCreated() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(LeaveBatchAttachment.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.LEAVE_BATCH_ATTACHMENT_LEAVE_BATCH_ID), ((LeaveBatch)getTo()).getId());
+		criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.LEAVE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), LeaveBatchAttachmentType.FDI_DOCUMENT);
+		List<ITransferObject> list = bean.getList(criteria);
+		if(!list.isEmpty()){
+			setRecorded(true);
+		} else {
+			setRecorded(false);
+		}
+	}
+
+//	private void processFdi() {
+//		try {
+//			generateFdiFile();
+//			IManagerBean bean = BeanManager.getManagerBean(LeaveBatchAttachment.class);
+//			Criteria criteria = new Criteria();
+//			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.LEAVE_BATCH_ATTACHMENT_LEAVE_BATCH_ID), ((LeaveBatch)getTo()).getId());
+//			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.LEAVE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), LeaveBatchAttachmentType.FDI_DOCUMENT);
+//			List<ITransferObject> list = bean.getList(criteria);
+//			LeaveBatchAttachment attach;
+//			if(!list.isEmpty()){
+//				attach = (LeaveBatchAttachment) list.get(0);
+//			} else {
+//				attach = new LeaveBatchAttachment();
+//				attach.setLeaveBatch((LeaveBatch) getTo());
+//				attach.setMimeType(MimeType.MIME_TXT);
+//				attach.setDescription(getFDIWriter().getEti().getFichero());
+//				attach.setSize(null);
+//				attach.setAttachmentType(LeaveBatchAttachmentType.FDI_DOCUMENT);
+//				attach.setScope(null);
+//			}
+//			
+//			File file = getFileOutput().getFile();
+//			if (file != null) {
+//				FileInputStream in = new FileInputStream(file);
+//				byte[] data = IOUtils.toByteArray(in);
+//				attach.setData(data);
+//				attach.setAttachDate(new Date());
+//				bean.insertOrUpdate(attach);
+//				LeaveBatchAttachController controller = (LeaveBatchAttachController) FormUtil.getController("leaveBatchAttach");
+//				controller.initializeModel();
+//			}
+//		} catch (ManagerBeanException e) {
+//			AonUtil.addErrorMessage("error on generateFdiFile ["+e.getMessage()+"]");
+//		} catch (FileNotFoundException e) {
+//			AonUtil.addErrorMessage("error on generateFdiFile ["+e.getMessage()+"]");
+//		} catch (IOException e) {
+//			AonUtil.addErrorMessage("error on generateFdiFile ["+e.getMessage()+"]");
+//		}
+//	}
+//	
+//	private void generateFdiFile() throws ManagerBeanException {
+//		String loggedUser = AonUtil.getRemoteUser();
+//		loggedUser = StringUtils.substringBefore(loggedUser, "@");
+//		setFileOutput(getFDIWriter().createFDI(getLeaveDetailList(), loggedUser));
+//		if (getFileOutput() != null) {
+//			if (getFileOutput().getErrors().size() > 0) {
+//				AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
+//			}
+//		}
+//	}
 
 	private List<ContractLeaveDetail> getLeaveDetailList() {
 		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.LEAVE_BATCH_DETAIL_CONTROLLER_NAME);

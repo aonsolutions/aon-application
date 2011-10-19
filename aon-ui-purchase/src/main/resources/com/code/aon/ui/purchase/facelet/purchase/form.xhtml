@@ -36,7 +36,7 @@
 						<c:if test="#{aonRole.financeOperator}">
 							<aon:commandButton id="invoice"
 								value="#{purchaseBundle.purchase_to_invoice}"
-								immediate="#{true}" rendered="#{purchase.pending and purchaseDetail.model.rowCount > 0}"
+								immediate="#{true}" rendered="#{purchase.pending and !purchase.inIncome and purchaseDetail.model.rowCount > 0}"
 								styleClass="aon-finding-toolbar-item aon-icon-favorite"
 								actionListener="#{purchase.onInvoiceShow}"
 								reRender="showInvoiceWindow">
@@ -101,6 +101,31 @@
 
 								<aon:outputText styleClass="aon-margin-left aon-margin-right"
 									value="#{purchase.to.status}" />
+								<aon:outputText styleClass="aon-italic aon-margin-left"
+									value="(#{financeBundle.finance_invoice}: "
+									rendered="#{purchase.invoiced}" />
+								<aon:outputText styleClass="aon-bold"
+									value="#{purchase.invoiceCode}"
+									rendered="#{purchase.invoiced}" />
+								<aon:outputText styleClass="aon-italic" value=")"
+									rendered="#{purchase.invoiced}" />
+								<aon:commandLink id="invoice_link" immediate="true"
+									styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+									value="&#160;" title="#{bundle.aon_go}"
+									rendered="#{purchase.invoiced}"
+									actionListener="#{purchase.onLoadInvoice}"
+									action="purchaseInvoice_form" />
+
+								<aon:commandButton id="toPending" value="&#160;"
+									actionListener="#{purchase.onPending}" 
+									title="#{purchaseBundle.purchase_to_pending}"
+									immediate="true" rendered="#{purchase.closed}"
+									styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
+								<aon:commandButton id="close" value="&#160;"
+									actionListener="#{purchase.onClose}"
+									title="#{purchaseBundle.purchase_to_close}"
+									immediate="true" rendered="#{purchase.pending and purchaseDetail.model.rowCount > 0}"
+									styleClass="aon-icon-commandButton aon-icon-point-red" />
 								<aon:commandButton id="block" value="&#160;"
 									actionListener="#{purchase.onBlock}"
 									title="#{purchaseBundle.purchase_to_block}"

@@ -111,7 +111,7 @@
 
 	<commercial:config version="1.4" xmlns:commercial="http://www.esferalia.com/commercial">
 		<commercial:offer
-			showInvoicing="false"
+			showInvoicing="true"
 			showSalesOrder="true"
 			showSeller="true"
 			showTasData="false"

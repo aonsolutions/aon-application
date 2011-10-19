@@ -8,7 +8,6 @@ import com.code.aon.ql.Projection;
 import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.dao.ISalesAlias;
-import com.code.aon.sales.enumeration.SalesDetailSource;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -26,7 +25,6 @@ public class SalesDetailControllerListener extends ControllerAdapter {
 		try {
 			salesDetail.setLine(calculateNextLine((Sales)controller.getMasterController().getTo()));
 			salesDetail.setStatus(SalesDetailStatus.PENDING);
-			salesDetail.setSource(SalesDetailSource.DIRECT);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}

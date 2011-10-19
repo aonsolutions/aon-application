@@ -1815,26 +1815,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<managed-bean>
-		<managed-bean-name>invoiceDetailDirectListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.event.InvoiceDetailSourceListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>source</property-name>
-			<value>DIRECT_INVOICE</value>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>invoiceDetailDirectSalesListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.event.InvoiceDetailSourceListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>source</property-name>
-			<value>DIRECT_SALES</value>
-		</managed-property>
-	</managed-bean>
-
 	<!-- **************** SALE INVOICE FINANCE  *************** -->
 	<managed-bean>
 		<managed-bean-name>saleInvoiceFinance</managed-bean-name>
@@ -2203,16 +2183,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<managed-bean>
-		<managed-bean-name>invoiceDetailDirectPurchaseListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.event.InvoiceDetailSourceListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>source</property-name>
-			<value>DIRECT_PURCHASE</value>
-		</managed-property>
-	</managed-bean>
-
 	<!-- **************** PURCHASE INVOICE FINANCE  *************** -->
 	<managed-bean>
 		<managed-bean-name>purchaseInvoiceFinance</managed-bean-name>
@@ -2581,16 +2551,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<managed-bean>
-		<managed-bean-name>invoiceDetailDirectExpenseListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.event.InvoiceDetailSourceListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>source</property-name>
-			<value>DIRECT_EXPENSE</value>
-		</managed-property>
-	</managed-bean>
-
 	<!-- **************** EXPENSE INVOICE FINANCE  *************** -->
 	<managed-bean>
 		<managed-bean-name>expenseInvoiceFinance</managed-bean-name>

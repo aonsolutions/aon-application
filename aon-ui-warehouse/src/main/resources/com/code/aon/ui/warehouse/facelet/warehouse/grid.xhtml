@@ -22,24 +22,14 @@
 					<ui:decorate 
 						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 						<ui:param name="controller" value="#{warehouse}" />
-						<ui:param name="columnClasses" value="aon-width-60, aon-editDataTable-textColumn" />
+						<ui:param name="columnClasses" 
+							value="aon-editDataTable-textColumn aon-width-400,aon-editDataTable-textColumn aon-width-auto" />
 
 						<ui:define name="columns">
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText
-										value="#{bundle.aon_id}" />
-								</f:facet>
-								<aon:outputText value="#{to.id}" />
-								<f:facet name="footer">
-									<aon:outputText value="&#160;" />
-								</f:facet>
-							</aon:column>
-	
-							<aon:column>
-								<f:facet name="header">
 									<aon:outputLabel for="Warehouse_name"
-										value="#{bundle.aon_name}" />
+										value="#{warehouseBundle.warehouse_warehouse}" />
 								</f:facet>
 								<aon:outputText value="#{to.name}"
 									rendered="#{formList}" />
@@ -47,9 +37,32 @@
 									rendered="#{formEdit}" size="32"
 									value="#{controller.to.name}" maxlength="32" />
 								<f:facet name="footer">
-									<aon:inputText id="Warehouse_name-New"  required="true"
+									<aon:inputText id="Warehouse_name-New" required="true"
 										rendered="#{formNew}" size="32"
 										value="#{controller.to.name}" maxlength="32" />
+								</f:facet>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="Warehouse_workPlace"
+										value="#{companyBundle.company_workplace}" />
+								</f:facet>
+								<aon:outputText value="#{to.workPlace.description}"
+									rendered="#{formList}" />
+								<aon:selectOneMenu id="Warehouse_workPlace" required="true"
+									value="#{controller.to.workPlace}"
+									rendered="#{formEdit}">
+									<f:selectItem itemLabel="-" value="#{null}" />
+									<f:selectItems value="#{companyCollections.workPlaces}" />
+								</aon:selectOneMenu>
+								<f:facet name="footer">
+									<aon:selectOneMenu id="Warehouse_workPlace-New" required="true" 
+										value="#{controller.to.workPlace}"
+										rendered="#{formNew}">
+										<f:selectItem itemLabel="-" value="#{null}" />
+										<f:selectItems value="#{companyCollections.workPlaces}" />
+									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>
 						</ui:define>

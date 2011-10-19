@@ -8,6 +8,7 @@ import static com.code.aon.ldap.ILdapConstants.MAX_TOTAL_DOCUMENT_SIZE_ATTRIBUTE
 import static com.code.aon.ui.common.ICommonConstants.DEFAULT_BUNDLE;
 import static com.code.aon.ui.common.ICommonConstants.DOCUMENT_SIZE_MESSAGE;
 
+import javax.faces.event.ActionEvent;
 import javax.naming.Name;
 
 import org.apache.commons.io.FileUtils;
@@ -22,8 +23,11 @@ import com.code.aon.faces.controller.AttachmentController;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.NameResolver;
+import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.util.AonUtil;
+import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType;
+import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class LeaveBatchAttachController extends AttachmentController {
 	
@@ -130,6 +134,14 @@ public class LeaveBatchAttachController extends AttachmentController {
 	
 	public long getMaximumSize() {
 		return getMaximumDocumentSize();
+	}
+	
+	@Override
+	public void onRemove(ActionEvent event) {
+		super.onRemove(event);
+		LeaveBatchController controller = (LeaveBatchController) FormUtil.getController(IPayrollConstants.LEAVE_BATCH_CONTROLLER_NAME);
+		controller.changeBatchStatus(FileStatus.PENDING);
+		controller.setRecorded(false);
 	}
 	
 }

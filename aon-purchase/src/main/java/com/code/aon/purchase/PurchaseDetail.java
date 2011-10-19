@@ -156,14 +156,32 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
 	}
 
 	@Transient
+	public double getPendingQuantity() {
+		return CommonUtil.round(quantity - delivered, 3);
+	}
+	@Transient
 	public double getTransfered() {
-		transfered = transfered > (quantity - delivered) ? (quantity - delivered) : transfered;
+		double pending = getPendingQuantity();
+		transfered = (transfered > pending) ? pending : transfered;
 		return transfered;
 	}
 	public void setTransfered(double transfered) {
 		this.transfered = transfered;
 	}
 	
+	@Transient
+	public boolean isPending() {
+		return getStatus() == PurchaseDetailStatus.PENDING;
+	}
+	@Transient
+	public boolean isPartialSettled() {
+		return getStatus() == PurchaseDetailStatus.PARTIAL_SETTLED;
+	}
+	@Transient
+	public boolean isSettled() {
+		return getStatus() == PurchaseDetailStatus.SETTLED;
+	}
+
 	@Transient
     public String getItemSupplierCode() {
     	try {
@@ -182,19 +200,6 @@ public class PurchaseDetail implements ITransferObject, ICalculable {
 		return getItem().getProduct().getCode();
 	}   		
    
-	@Transient
-	public boolean isPending() {
-		return getStatus() == PurchaseDetailStatus.PENDING;
-	}
-	@Transient
-	public boolean isPartialSettled() {
-		return getStatus() == PurchaseDetailStatus.PARTIAL_SETTLED;
-	}
-	@Transient
-	public boolean isSettled() {
-		return getStatus() == PurchaseDetailStatus.SETTLED;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

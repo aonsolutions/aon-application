@@ -30,6 +30,7 @@
 		</aon:column>
 	</c:if>
 
+<!--  
 	<aon:column alias="Contract.contractType.description"
 		styleClass="aon-editDataTable-textColumn">
 		<f:facet name="header">
@@ -39,6 +40,7 @@
 			<aon:outputText value="#{to.contract.contractType.description}"/>
 		</aon:div>
 	</aon:column>
+-->
 			
 	<aon:column alias="Contract.ccc.activity.description"
 		styleClass="aon-editDataTable-textColumn">
@@ -46,7 +48,7 @@
 			<aon:outputText value="#{companyBundle.company_activity}" />
 		</f:facet>
 		<aon:div styleClass="aon-nowrap">
-			<aon:outputText value="#{to.contract.ccc.activity.description}"/>
+			<aon:outputText value="#{to.contract.enterpriseCCC.activity.description}"/>
 		</aon:div>
 	</aon:column>
 	

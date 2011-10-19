@@ -684,7 +684,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			.append(issueDate)
 			.append(number)
 			.append(project)
-			.append(rectificationInvoice)
 			.append(rectificationType)
 			.append(referenceCode)
 			.append(registry)

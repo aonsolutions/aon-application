@@ -18,10 +18,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.bridge.invoicing.IncomeInvoicingManager;
+import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.bridge.invoicing.PurchaseInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -53,7 +54,6 @@ import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
-import com.code.aon.warehouse.enumeration.IncomeDetailType;
 
 public class PurchaseController extends BasicController implements IPurchaseConstants {
 
@@ -72,7 +72,6 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	private boolean showInvoiceWindow;
 	private String invoiceRefCode;
 	private Date invoiceDate;
-	private Warehouse invoiceWarehouse;
 	private PurchaseEmailUtil emailUtil;
 	
     public PurchaseController() {
@@ -200,14 +199,6 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		this.invoiceDate = invoiceDate;
 	}
 
-	public Warehouse getInvoiceWarehouse() {
-		return invoiceWarehouse;
-	}
-
-	public void setInvoiceWarehouse(Warehouse invoiceWarehouse) {
-		this.invoiceWarehouse = invoiceWarehouse;
-	}
-
 	public boolean isInIncome() throws ManagerBeanException {
 		Purchase purchase = (Purchase)this.getTo();
 		return isInIncome(purchase);
@@ -230,9 +221,48 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		return purchase.getStatus() == PurchaseStatus.BLOCKED;
 	}
 
+	public boolean isServed(){
+		Purchase purchase = (Purchase)this.getTo();
+		return purchase.getStatus() == PurchaseStatus.SERVED;
+	}
+
 	public boolean isClosed(){
 		Purchase purchase = (Purchase)this.getTo();
 		return purchase.getStatus() == PurchaseStatus.CLOSED;
+	}
+
+	public boolean isInvoiced(){
+		Purchase purchase = (Purchase)this.getTo();
+		return purchase.getStatus() == PurchaseStatus.INVOICED;
+	}
+
+	public Invoice getInvoice() throws ManagerBeanException {
+		Purchase purchase = (Purchase)this.getTo();
+		if (purchase != null && purchase.getId() != null) {
+			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+			Iterator<?> iterator = purchaseDetailBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				PurchaseDetail purchaseDetail = (PurchaseDetail)iterator.next();
+
+				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.PURCHASE);
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), purchaseDetail.getId());
+				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
+				if (iter.hasNext()) {
+					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
+					return invoiceDetail.getInvoice();
+				}
+			}
+		}
+    	return null;
+	}
+
+	public String getInvoiceCode() throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		return (invoice != null) ? invoice.getReferenceCode() : null;
 	}
 
 	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {
@@ -368,6 +398,18 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		return getPriceStrategy().getTotalPrice(purchase, purchase.getSupplier());
 	}
 
+	public void onPending(ActionEvent event) {
+		Purchase to = (Purchase)this.getTo();
+		to.setStatus(PurchaseStatus.PENDING);
+		accept(event);
+	}
+	
+	public void onClose(ActionEvent event) {
+		Purchase to = (Purchase)this.getTo();
+		to.setStatus(PurchaseStatus.CLOSED);
+		accept(event);
+	}
+
 	public void onBlock(ActionEvent event) {
 		Purchase to = (Purchase)this.getTo();
 		to.setStatus(PurchaseStatus.BLOCKED);
@@ -390,7 +432,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	public void onIncome(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
 		IncomeManager incomeManager = new IncomeManager();
-		Income income = incomeManager.purchaseIncome(to, getIncomeSeries(), getIncomeNumber(), getIncomeDate(), getIncomeWarehouse(), IncomeDetailType.MANUAL);
+		Income income = incomeManager.purchaseIncome(to, getIncomeSeries(), getIncomeNumber(), getIncomeDate(), getIncomeWarehouse());
 
 		IController incomeController = FormUtil.getController(INCOME_CONTROLLER_NAME);
 		incomeController.onEditSearch(event);
@@ -403,17 +445,12 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		setInvoiceRefCode(null);
 		setInvoiceDate(new Date());
-		setInvoiceWarehouse(null);
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
-		String incomeSeries = to.getSeries();
-		int incomeNumber = obtainMaxIncomeNumber(incomeSeries);
-		IncomeManager incomeManager = new IncomeManager();
-		Income income = incomeManager.purchaseIncome(to, incomeSeries, incomeNumber, getInvoiceDate(), getInvoiceWarehouse(), IncomeDetailType.AUTOMATIC);
-		IncomeInvoicingManager invoicingManager = new IncomeInvoicingManager();
-		Invoice invoice = invoicingManager.invoice(income, getInvoiceRefCode(), getInvoiceDate());
+		PurchaseInvoicingManager invoicingManager = new PurchaseInvoicingManager();
+		Invoice invoice = invoicingManager.invoice(to, getInvoiceRefCode(), getInvoiceDate());
 
 		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER_NAME);
 		invoiceController.onEditSearch(event);
@@ -421,10 +458,6 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
 		invoiceController.onSelect(event);
-	}
-
-	private int obtainMaxIncomeNumber(String seriesId) {
-		return SeriesNumberUtil.obtainNumber(seriesId, "Income");
 	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {
@@ -439,4 +472,12 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		}
 	}		
 	
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		if (invoice != null) {
+			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(PURCHASE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onLoad(event, invoice.getId(), PURCHASE_FORM_NAME, PURCHASE_CONTROLLER_NAME + ".refresh");
+		}
+	}
+
 }

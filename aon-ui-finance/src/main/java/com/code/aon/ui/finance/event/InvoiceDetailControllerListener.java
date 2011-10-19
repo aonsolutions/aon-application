@@ -7,6 +7,7 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
@@ -30,6 +31,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 		try {
 			invoiceDetail.setProject((invoice.getProject() != null && invoice.getProject().getId() != null) ? invoice.getProject() : null);
 			invoiceDetail.setLine(calculateNextLine(invoice));
+			invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 
 			String companyCollections = ICompanyConstants.COLLECTIONS_CONTROLLER_NAME;
 			CompanyCollectionsController compCollections = (CompanyCollectionsController)AonUtil.getRegisteredBean(companyCollections);
@@ -53,6 +55,7 @@ public class InvoiceDetailControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)event.getController().getTo();
+		invoiceDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 		obtainTaxableBase(event, invoiceDetail);
 	}
 

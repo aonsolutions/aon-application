@@ -6,6 +6,7 @@ import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.Campaign;
 import com.code.aon.groupware.CampaignProject;
 import com.code.aon.groupware.CampaignType;
+import com.code.aon.groupware.CostProfile;
 import com.code.aon.groupware.DailyTracking;
 import com.code.aon.groupware.Favorite;
 import com.code.aon.groupware.FavoriteCategory;
@@ -225,6 +226,37 @@ public interface IGroupwareAlias {
 
 
 	/** 
+	* DAOConstantsEntry for CostProfile entity.
+	*/ 
+	DAOConstantsEntry COST_PROFILE_ENTRY = DAOConstants.getDAOConstant(CostProfile.class);
+
+	/** 
+	* Alias value: CostProfile_cost
+	* Hibernate value: CostProfile.cost
+	*/
+	String  COST_PROFILE_COST = COST_PROFILE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CostProfile_description
+	* Hibernate value: CostProfile.description
+	*/
+	String  COST_PROFILE_DESCRIPTION = COST_PROFILE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CostProfile_enterprise_id
+	* Hibernate value: CostProfile.enterprise.id
+	*/
+	String  COST_PROFILE_ENTERPRISE_ID = COST_PROFILE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CostProfile_id
+	* Hibernate value: CostProfile.id
+	*/
+	String  COST_PROFILE_ID = COST_PROFILE_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
 	* DAOConstantsEntry for DailyTracking entity.
 	*/ 
 	DAOConstantsEntry DAILY_TRACKING_ENTRY = DAOConstants.getDAOConstant(DailyTracking.class);
@@ -242,52 +274,58 @@ public interface IGroupwareAlias {
 	String  DAILY_TRACKING_COMMENTS = DAILY_TRACKING_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: DailyTracking_cost
+	* Hibernate value: DailyTracking.cost
+	*/
+	String  DAILY_TRACKING_COST = DAILY_TRACKING_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: DailyTracking_enterprise_id
 	* Hibernate value: DailyTracking.enterprise.id
 	*/
-	String  DAILY_TRACKING_ENTERPRISE_ID = DAILY_TRACKING_ENTRY.getAliasNames()[2];
+	String  DAILY_TRACKING_ENTERPRISE_ID = DAILY_TRACKING_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: DailyTracking_id
 	* Hibernate value: DailyTracking.id
 	*/
-	String  DAILY_TRACKING_ID = DAILY_TRACKING_ENTRY.getAliasNames()[3];
+	String  DAILY_TRACKING_ID = DAILY_TRACKING_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: DailyTracking_jobType_id
 	* Hibernate value: DailyTracking.jobType.id
 	*/
-	String  DAILY_TRACKING_JOB_TYPE_ID = DAILY_TRACKING_ENTRY.getAliasNames()[4];
+	String  DAILY_TRACKING_JOB_TYPE_ID = DAILY_TRACKING_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: DailyTracking_project_id
 	* Hibernate value: DailyTracking.project.id
 	*/
-	String  DAILY_TRACKING_PROJECT_ID = DAILY_TRACKING_ENTRY.getAliasNames()[5];
+	String  DAILY_TRACKING_PROJECT_ID = DAILY_TRACKING_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: DailyTracking_registry_id
 	* Hibernate value: DailyTracking.registry.id
 	*/
-	String  DAILY_TRACKING_REGISTRY_ID = DAILY_TRACKING_ENTRY.getAliasNames()[6];
+	String  DAILY_TRACKING_REGISTRY_ID = DAILY_TRACKING_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: DailyTracking_taskHolder_id
 	* Hibernate value: DailyTracking.taskHolder.id
 	*/
-	String  DAILY_TRACKING_TASK_HOLDER_ID = DAILY_TRACKING_ENTRY.getAliasNames()[7];
+	String  DAILY_TRACKING_TASK_HOLDER_ID = DAILY_TRACKING_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: DailyTracking_trackingDate
 	* Hibernate value: DailyTracking.trackingDate
 	*/
-	String  DAILY_TRACKING_TRACKING_DATE = DAILY_TRACKING_ENTRY.getAliasNames()[8];
+	String  DAILY_TRACKING_TRACKING_DATE = DAILY_TRACKING_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: DailyTracking_trackingDuration
 	* Hibernate value: DailyTracking.trackingDuration
 	*/
-	String  DAILY_TRACKING_TRACKING_DURATION = DAILY_TRACKING_ENTRY.getAliasNames()[9];
+	String  DAILY_TRACKING_TRACKING_DURATION = DAILY_TRACKING_ENTRY.getAliasNames()[10];
 
 
 
@@ -824,34 +862,70 @@ public interface IGroupwareAlias {
 	DAOConstantsEntry TASK_HOLDER_ENTRY = DAOConstants.getDAOConstant(TaskHolder.class);
 
 	/** 
-	* Alias value: TaskHolder_active
-	* Hibernate value: TaskHolder.active
-	*/
-	String  TASK_HOLDER_ACTIVE = TASK_HOLDER_ENTRY.getAliasNames()[0];
-
-	/** 
 	* Alias value: TaskHolder_id
 	* Hibernate value: TaskHolder.id
 	*/
-	String  TASK_HOLDER_ID = TASK_HOLDER_ENTRY.getAliasNames()[1];
+	String  TASK_HOLDER_ID = TASK_HOLDER_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: TaskHolder_active
+	* Hibernate value: TaskHolder.active
+	*/
+	String  TASK_HOLDER_ACTIVE = TASK_HOLDER_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: TaskHolder_costProfile_id
+	* Hibernate value: TaskHolder.costProfile.id
+	*/
+	String  TASK_HOLDER_COST_PROFILE_ID = TASK_HOLDER_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: TaskHolder_costProfile_description
+	* Hibernate value: TaskHolder.costProfile.description
+	*/
+	String  TASK_HOLDER_COST_PROFILE_DESCRIPTION = TASK_HOLDER_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: TaskHolder_registry_id
 	* Hibernate value: TaskHolder.registry.id
 	*/
-	String  TASK_HOLDER_REGISTRY_ID = TASK_HOLDER_ENTRY.getAliasNames()[2];
+	String  TASK_HOLDER_REGISTRY_ID = TASK_HOLDER_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: TaskHolder_registry_name
+	* Hibernate value: TaskHolder.registry.name
+	*/
+	String  TASK_HOLDER_REGISTRY_NAME = TASK_HOLDER_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: TaskHolder_registry_alias
+	* Hibernate value: TaskHolder.registry.alias
+	*/
+	String  TASK_HOLDER_REGISTRY_ALIAS = TASK_HOLDER_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: TaskHolder_type
 	* Hibernate value: TaskHolder.type
 	*/
-	String  TASK_HOLDER_TYPE = TASK_HOLDER_ENTRY.getAliasNames()[3];
+	String  TASK_HOLDER_TYPE = TASK_HOLDER_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: TaskHolder_user_id
-	* Hibernate value: TaskHolder.user.id
+	* Hibernate value: TaskHolder.user<id
 	*/
-	String  TASK_HOLDER_USER_ID = TASK_HOLDER_ENTRY.getAliasNames()[4];
+	String  TASK_HOLDER_USER_ID = TASK_HOLDER_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: TaskHolder_user_name
+	* Hibernate value: TaskHolder.user<name
+	*/
+	String  TASK_HOLDER_USER_NAME = TASK_HOLDER_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: TaskHolder_user_alias
+	* Hibernate value: TaskHolder.user<alias
+	*/
+	String  TASK_HOLDER_USER_ALIAS = TASK_HOLDER_ENTRY.getAliasNames()[10];
 
 
 

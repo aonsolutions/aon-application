@@ -19,10 +19,6 @@
 				<ui:param name="controller" value="#{project}" />
 				<ui:define name="searchContent">
 					
-					<aon:outputLabel for="Project_id" value="#{bundle.aon_id}" />
-					<aon:inputText id="Project_id" size="5"
-						valueChangeListener="#{project.addExpression}" />		
-			
 					<aon:outputLabel for="Project_name"
 						value="#{bundle.aon_name}" />
 					<aon:inputText id="Project_name" size="60"
@@ -63,6 +59,10 @@
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{projectCollections.projectTypes}"/>
 					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Project_id" value="#{bundle.aon_id}" />
+					<aon:inputText id="Project_id" size="5"
+						valueChangeListener="#{project.addExpression}" />		
 
 					<aon:outputLabel for="Project_active" value="#{bundle.aon_active}"/>
 					<aon:selectOneMenu id="Project_active"

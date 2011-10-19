@@ -16,8 +16,14 @@ public enum PurchaseStatus implements IResourceable {
     /** BLOCKED. */
     BLOCKED,
     
+    /** SERVED. */
+    SERVED,
+	
     /** CLOSED. */
-    CLOSED;
+    CLOSED,
+	
+    /** INVOICED. */
+    INVOICED;
 	
     /** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.purchase.i18n.messages";

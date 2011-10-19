@@ -22,8 +22,6 @@ import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.sales.SalesDetail;
-import com.code.aon.warehouse.enumeration.DeliveryDetailSource;
-import com.code.aon.warehouse.enumeration.DeliveryDetailType;
 
 @Entity
 @Table(name="delivery_detail")
@@ -40,8 +38,6 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 	private double quantity;
 	private double price;
 	private DiscountExpression discountExpression;
-    private DeliveryDetailType type;
-    private DeliveryDetailSource source;
 	private SalesDetail salesDetail;
 	
 	@Id
@@ -121,20 +117,6 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 		this.discountExpression = discountExpression;
 	}
 
-	public DeliveryDetailType getType() {
-		return type;
-	}
-	public void setType(DeliveryDetailType type) {
-		this.type = type;
-	}
-
-	public DeliveryDetailSource getSource() {
-		return source;
-	}
-	public void setSource(DeliveryDetailSource source) {
-		this.source = source;
-	}
-
 	@ManyToOne
 	@JoinColumn(name="sales_detail")
 	public SalesDetail getSalesDetail() {
@@ -151,6 +133,10 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 	@Transient
 	public boolean isEntry() {
 		return false;
+	}
+	@Transient
+	public String getTableName() {
+		return "delivery_detail";
 	}
 
 	@Override
@@ -169,8 +155,6 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 				.append(this.quantity, o.quantity)
 				.append(this.price, o.price)
 				.append(this.discountExpression, o.discountExpression)
-				.append(this.type, o.type)
-				.append(this.source, o.source)
 				.append(this.salesDetail, o.salesDetail)
 				.isEquals();
 		}
@@ -189,8 +173,6 @@ public class DeliveryDetail implements ITransferObject, ICalculable, IStockable 
 			.append(this.quantity)
 			.append(this.price)
 			.append(this.discountExpression)
-			.append(this.type)
-			.append(this.source)
 			.append(this.salesDetail)
 			.toHashCode();
 	}

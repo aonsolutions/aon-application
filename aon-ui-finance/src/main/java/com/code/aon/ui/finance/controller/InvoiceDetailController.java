@@ -22,7 +22,12 @@ import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.purchase.Purchase;
+import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
+import com.code.aon.sales.Sales;
+import com.code.aon.sales.SalesDetail;
+import com.code.aon.ui.finance.IFinanceMessages;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
@@ -98,9 +103,8 @@ public class InvoiceDetailController extends LinesController implements IFinance
 
 	public boolean isEditable() throws ManagerBeanException {
 		if (getModel().isRowAvailable()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)this.getModel().getRowData();
-			InvoiceSource source = invoiceDetail.getSource();
-			if (source == InvoiceSource.DELIVERY || source == InvoiceSource.INCOME || source == InvoiceSource.OFFER) {
+			InvoiceDetail to = (InvoiceDetail)this.getModel().getRowData();
+			if (to.isDeliverySource() || to.isIncomeSource() || to.isSalesSource() || to.isPurchaseSource() || to.isOfferSource()) {
 				return false;
 			}
 		}
@@ -171,19 +175,31 @@ public class InvoiceDetailController extends LinesController implements IFinance
 			if (invoiceDetail.getSource() == InvoiceSource.OFFER) {
 				IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
 				OfferDetail offerDetail = (OfferDetail)offerDetailBean.get(invoiceDetail.getSourceId());
-				message = AonUtil.getMessage("commercialBundle", "commercial_offer");
+				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_OFFER);
 				refCode = offerDetail.getOffer().getReferenceCode();
 				line = offerDetail.getLine().intValue();
+			} else if (invoiceDetail.getSource() == InvoiceSource.SALES) {
+				IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+				SalesDetail salesDetail = (SalesDetail)salesDetailBean.get(invoiceDetail.getSourceId());
+				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_SALES);
+				refCode = salesDetail.getSales().getReferenceCode();
+				line = salesDetail.getLine().intValue();
+			} else if (invoiceDetail.getSource() == InvoiceSource.PURCHASE) {
+				IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+				PurchaseDetail purchaseDetail = (PurchaseDetail)purchaseDetailBean.get(invoiceDetail.getSourceId());
+				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_SALES);
+				refCode = purchaseDetail.getPurchase().getReferenceCode();
+				line = purchaseDetail.getLine().intValue();
 			} else if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 				DeliveryDetail deliveryDetail = (DeliveryDetail)deliveryDetailBean.get(invoiceDetail.getSourceId());
-				message = AonUtil.getMessage("financeBundle", "finance_invoice_delivery");
+				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_DELIVERY);
 				refCode = deliveryDetail.getDelivery().getReferenceCode();
 				line = deliveryDetail.getLine().intValue();
 			} else if (invoiceDetail.getSource() == InvoiceSource.INCOME) {
 				IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 				IncomeDetail incomeDetail = (IncomeDetail)incomeDetailBean.get(invoiceDetail.getSourceId());
-				message = AonUtil.getMessage("financeBundle", "finance_invoice_delivery");
+				message = AonUtil.getMessage(IFinanceMessages.BUNDLE_KEY, IFinanceMessages.FINANCE_INVOICE_DELIVERY);
 				refCode = incomeDetail.getIncome().getReferenceCode();
 				line = incomeDetail.getLine().intValue();
 			}
@@ -207,6 +223,14 @@ public class InvoiceDetailController extends LinesController implements IFinance
 			setSourceViewer(OFFER_FORM_NAME);
 			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(OFFER_CONTROLLER_NAME);
 			sourceController.onLoad(event, ((Offer)invoiceDetail.getSourceTo()).getId(), SALE_INVOICE_FORM_NAME, null);
+		} else if (invoiceDetail.getSource() == InvoiceSource.SALES) {
+			setSourceViewer(SALES_FORM_NAME);
+			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(SALES_CONTROLLER_NAME);
+			sourceController.onLoad(event, ((Sales)invoiceDetail.getSourceTo()).getId(), SALE_INVOICE_FORM_NAME, null);
+		} else if (invoiceDetail.getSource() == InvoiceSource.PURCHASE) {
+			setSourceViewer(PURCHASE_FORM_NAME);
+			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(PURCHASE_CONTROLLER_NAME);
+			sourceController.onLoad(event, ((Purchase)invoiceDetail.getSourceTo()).getId(), PURCHASE_INVOICE_FORM_NAME, null);
 		} else if (invoiceDetail.getSource() == InvoiceSource.DELIVERY) {
 			setSourceViewer(DELIVERY_FORM_NAME);
 			BasicController sourceController = (BasicController)AonUtil.getRegisteredBean(DELIVERY_CONTROLLER_NAME);

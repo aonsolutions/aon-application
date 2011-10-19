@@ -19,7 +19,6 @@ import com.code.aon.sales.Sales;
 import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.bridge.util.SalesBridgeUtil;
 import com.code.aon.sales.enumeration.DocumentType;
-import com.code.aon.sales.enumeration.SalesDetailSource;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 import com.code.aon.sales.enumeration.SalesStatus;
 
@@ -103,7 +102,6 @@ public class SalesManager {
 				salesDetail.setPrice(offerDetail.getPrice());
 				salesDetail.setDiscountExpression(offerDetail.getDiscountExpression());
 				salesDetail.setStatus(SalesDetailStatus.PENDING);
-				salesDetail.setSource(SalesDetailSource.OFFER);
 				salesDetail.setOfferDetail(offerDetail);
 				salesDetailBean.insert(salesDetail);
 			}

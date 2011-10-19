@@ -364,6 +364,12 @@
 		</exclusions>
 	</dependency>
 	<dependency>
+	    <groupId>jfree</groupId>
+	    <artifactId>jfreechart</artifactId>
+    	<version>1.0.12</version>
+		<scope>provided</scope>
+	</dependency>		
+	<dependency>
 		<groupId>org.apache.velocity</groupId>
 		<artifactId>velocity</artifactId>
 		<version>1.6.4</version>

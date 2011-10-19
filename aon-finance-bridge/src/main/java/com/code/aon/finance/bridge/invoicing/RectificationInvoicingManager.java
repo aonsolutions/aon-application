@@ -125,7 +125,7 @@ public class RectificationInvoicingManager {
 			rectifierDetail.setQuantity((taxDataInDetail) ? 0.0 : CommonUtil.round(0 - invoiceDetail.getQuantity(), 3));
 			rectifierDetail.setPrice((taxDataInDetail) ? 0.0 : invoiceDetail.getPrice());
 			rectifierDetail.setDiscountExpression((taxDataInDetail) ? new DiscountExpression("0.0") : invoiceDetail.getDiscountExpression());
-			rectifierDetail.setSource(obtainRectifierSource(invoiceDetail.getSource()));
+			rectifierDetail.setSource(InvoiceSource.DIRECT_INVOICE);
 			rectifierDetail.setSourceId(null);
 			rectifierDetail.setTaxableBase(getPriceStrategy().getBasePrice(rectifierDetail));
 			rectifierDetail.setWorkPlace(invoiceDetail.getWorkPlace());
@@ -143,19 +143,6 @@ public class RectificationInvoicingManager {
 			}
 			invoiceDetailBean.insert(rectifierDetail);
 		}
-	}
-
-	private InvoiceSource obtainRectifierSource(InvoiceSource source) {
-		if (source == InvoiceSource.DELIVERY) {
-			source = InvoiceSource.DIRECT_SALES;
-		} else if (source == InvoiceSource.INCOME) {
-			source = InvoiceSource.DIRECT_PURCHASE;
-		} else if (source == InvoiceSource.OFFER) {
-			source = InvoiceSource.DIRECT_INVOICE;
-		} else if (source == InvoiceSource.FEE) {
-			source = InvoiceSource.DIRECT_INVOICE;
-		}
-		return source;
 	}
 
 	private void createRectifierInvoiceFinances(Invoice rectifier, Invoice invoice) throws ManagerBeanException {

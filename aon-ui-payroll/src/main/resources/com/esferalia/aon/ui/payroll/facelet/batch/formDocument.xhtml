@@ -7,68 +7,69 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:div id="leaveBatchAttachDiv">
+	<aon:div id="batchAttachDiv">
 		<ui:decorate template="/com/code/aon/faces/attachment/grid.xhtml">
-			<ui:param name="controller" value="#{leaveBatchAttach}" />
+			<ui:param name="controller" value="#{controllerAttach}" />
+			<ui:param name="removeButtonReRender" value="batchForm" />
 
 			<ui:define name="additionalColumns" >
 			
-				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.attachmentType"
+				<aon:column sortable="#{sortColumns}" alias="#{controllerAttach.pojoShortName}.attachmentType"
 					styleClass="aon-editDataTable-textColumn aon-width-100">
 					<f:facet name="header">
-						<aon:outputLabel for="#{controller.beanName}_attachmentType"
+						<aon:outputLabel for="#{controllerAttach.beanName}_attachmentType"
 							value="#{bundle.aon_type}" />
 					</f:facet>
 					<aon:outputText value="#{to.attachmentType}" rendered="#{formList}" />
-					<aon:selectOneMenu id="#{controller.beanName}_attachmentType" rendered="#{formEdit}"
-						value="#{controller.to.attachmentType}">
+					<aon:selectOneMenu id="#{controllerAttach.beanName}_attachmentType" rendered="#{formEdit}"
+						value="#{controllerAttach.to.attachmentType}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{payrollCollections.leaveBatchAttachTypes}" />
+						<f:selectItems value="#{batchAttachTypes}" />
 					</aon:selectOneMenu>
 					<f:facet name="footer">
-						<aon:selectOneMenu id="#{controller.beanName}_attachmentType-New" rendered="#{formNew}"
-							value="#{controller.to.attachmentType}">
+						<aon:selectOneMenu id="#{controllerAttach.beanName}_attachmentType-New" rendered="#{formNew}"
+							value="#{controllerAttach.to.attachmentType}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{payrollCollections.leaveBatchAttachTypes}" />
+							<f:selectItems value="#{batchAttachTypes}" />
 						</aon:selectOneMenu>
 					</f:facet>
 				</aon:column>
 				
-				<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.attachDate"
+				<aon:column sortable="#{sortColumns}" alias="#{controllerAttach.pojoShortName}.attachDate"
 					styleClass="aon-editDataTable-textColumn aon-width-120">
 					<f:facet name="header">
-						<aon:outputLabel for="#{controller.beanName}_scope"
+						<aon:outputLabel for="#{controllerAttach.beanName}_scope"
 							value="#{bundle.aon_date}" />
 					</f:facet>
 					<aon:outputText value="#{to.attachDate}" rendered="#{formList}">
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>
-					<aon:selectInputDate id="#{controller.beanName}_attachDate"
+					<aon:selectInputDate id="#{controllerAttach.beanName}_attachDate"
 						popupDateFormat="#{bundle.aon_date_pattern}"
-						rendered="#{formEdit}" value="#{controller.to.attachDate}" />
+						rendered="#{formEdit}" value="#{controllerAttach.to.attachDate}" />
 					<f:facet name="footer">
-						<aon:selectInputDate id="#{controller.beanName}_attachDate-New"
+						<aon:selectInputDate id="#{controllerAttach.beanName}_attachDate-New"
 							popupDateFormat="#{bundle.aon_date_pattern}"
-							rendered="#{formNew}" value="#{controller.to.attachDate}" />
+							rendered="#{formNew}" value="#{controllerAttach.to.attachDate}" />
 					</f:facet>
 				</aon:column>		
 				<c:if test="#{!skipScopeColumn}"> 
-					<aon:column sortable="#{sortColumns}" alias="#{controller.pojoShortName}.scope.description"
+					<aon:column sortable="#{sortColumns}" alias="#{controllerAttach.pojoShortName}.scope.description"
 						styleClass="aon-editDataTable-textColumn aon-width-100">
 						<f:facet name="header">
-							<aon:outputLabel for="#{controller.beanName}_scope"
+							<aon:outputLabel for="#{controllerAttach.beanName}_scope"
 								value="#{bundle.aon_scope}" />
 						</f:facet>
 						<aon:outputText value="#{to.scope.description}" rendered="#{formList}" />
-						<aon:selectOneMenu id="#{controller.beanName}_scope" rendered="#{formEdit}"
-							value="#{controller.to.scope}">
+						<aon:selectOneMenu id="#{controllerAttach.beanName}_scope" rendered="#{formEdit}"
+							value="#{controllerAttach.to.scope}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
 							<f:selectItems value="#{configCollections.currentUserScopes}" />
 						</aon:selectOneMenu>
 						<f:facet name="footer">
-							<aon:selectOneMenu id="#{controller.beanName}_scope-New" rendered="#{formNew}"
-								value="#{controller.to.scope}">
+							<aon:selectOneMenu id="#{controllerAttach.beanName}_scope-New" rendered="#{formNew}"
+								value="#{controllerAttach.to.scope}">
 								<f:selectItem itemLabel="-" value="#{null}"/>
 								<f:selectItems value="#{configCollections.currentUserScopes}" />
 							</aon:selectOneMenu>
@@ -78,7 +79,7 @@
 			</ui:define>
 			<ui:define name="additionalDataTableContent" >
 				<aon:div styleClass="aon-margin-top" >
-					<aon:outputText value="#{controller.freeSpaceMessage}" />
+					<aon:outputText value="#{controllerAttach.freeSpaceMessage}" />
 				</aon:div>				
 			</ui:define>
 		</ui:decorate>

@@ -21,7 +21,6 @@ import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
 import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.util.DiscountExpression;
-import com.code.aon.sales.enumeration.SalesDetailSource;
 import com.code.aon.sales.enumeration.SalesDetailStatus;
 
 @Entity
@@ -40,7 +39,6 @@ public class SalesDetail implements ITransferObject, ICalculable {
     private DiscountExpression discountExpression;
     private double taxes;
     private SalesDetailStatus status;
-    private SalesDetailSource source;
     private OfferDetail offerDetail;
     private double delivered;
     private double transfered;
@@ -128,13 +126,6 @@ public class SalesDetail implements ITransferObject, ICalculable {
 		this.status = status;
 	}
 
-	public SalesDetailSource getSource() {
-		return source;
-	}
-	public void setSource(SalesDetailSource source) {
-		this.source = source;
-	}
-
 	@ManyToOne
 	@JoinColumn(name="offer_detail")
 	public OfferDetail getOfferDetail() {
@@ -153,12 +144,15 @@ public class SalesDetail implements ITransferObject, ICalculable {
 	}
 
 	@Transient
+	public double getPendingQuantity() {
+		return CommonUtil.round(quantity - delivered, 3);
+	}
+	@Transient
 	public double getTransfered() {
-		double pending = CommonUtil.round(quantity - delivered, 3);
+		double pending = getPendingQuantity();
 		transfered = (transfered > pending) ? pending : transfered;
 		return transfered;
 	}
-
 	public void setTransfered(double transfered) {
 		this.transfered = transfered;
 	}
@@ -193,7 +187,6 @@ public class SalesDetail implements ITransferObject, ICalculable {
 				.append(this.price, o.price)
 				.append(this.quantity, o.quantity)
 				.append(this.sales, o.sales)
-				.append(this.source, o.source)
 				.append(this.status, o.status)
 				.append(this.taxes, o.taxes)
 				.append(this.transfered, o.transfered)
@@ -215,7 +208,6 @@ public class SalesDetail implements ITransferObject, ICalculable {
 			.append(price)
 			.append(quantity)
 			.append(sales)
-			.append(source)
 			.append(status)
 			.append(taxes)
 			.append(transfered)

@@ -7,6 +7,13 @@
 <bean-config>
 
 	<bean description="">
+		<pojo>com.code.aon.warehouse.Warehouse</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.warehouse.event.WarehouseBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
 		<pojo>com.code.aon.warehouse.Delivery</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.warehouse.event.DeliveryBeanVetoListener</vetoListener>

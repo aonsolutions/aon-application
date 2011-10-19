@@ -28,7 +28,6 @@ import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.config.controller.ConfigCollectionsController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.groupware.GroupwareUtils;
-import com.code.aon.ui.groupware.event.TaskSearchControllerListener;
 import com.code.aon.ui.project.controller.IProjectConstants;
 import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.util.AonUtil;
@@ -122,38 +121,6 @@ public class TaskController extends BasicController {
 	public void onFilter(ActionEvent event) throws ManagerBeanException {
 		setCriteria(new Criteria());
 		onSearch(event);
-	}
-	public void onFilterAll(ActionEvent event) throws ManagerBeanException {
-		TaskSearchControllerListener c = (TaskSearchControllerListener) 
-			AonUtil.getRegisteredBean(IGroupWareConstants.TASK_SEARCH_CONTROLLER_NAME);
-		c.setThisWeek(false);
-		c.setThisTwoWeeks(false);
-		c.setThisMonth(false);
-		onFilter(event);
-	}
-	public void onFilterWeek(ActionEvent event) throws ManagerBeanException {
-		TaskSearchControllerListener c = (TaskSearchControllerListener) 
-			AonUtil.getRegisteredBean(IGroupWareConstants.TASK_SEARCH_CONTROLLER_NAME);
-		c.setThisWeek(true);
-		onFilter(event);
-	}
-	public void onFilterTwoWeeks(ActionEvent event) throws ManagerBeanException {
-		TaskSearchControllerListener c = (TaskSearchControllerListener) 
-			AonUtil.getRegisteredBean(IGroupWareConstants.TASK_SEARCH_CONTROLLER_NAME);
-		c.setThisTwoWeeks(true);
-		onFilter(event);
-	}
-	public void onFilterMonth(ActionEvent event) throws ManagerBeanException {
-		TaskSearchControllerListener c = (TaskSearchControllerListener) 
-			AonUtil.getRegisteredBean(IGroupWareConstants.TASK_SEARCH_CONTROLLER_NAME);
-		c.setThisMonth(true);
-		onFilter(event);
-	}
-	public void onFilterToday(ActionEvent event) throws ManagerBeanException {
-		TaskSearchControllerListener c = (TaskSearchControllerListener) 
-			AonUtil.getRegisteredBean(IGroupWareConstants.TASK_SEARCH_CONTROLLER_NAME);
-		c.setThisToday(true);
-		onFilter(event);
 	}
 	
 	public void onStartTaskFromList(ActionEvent event) {

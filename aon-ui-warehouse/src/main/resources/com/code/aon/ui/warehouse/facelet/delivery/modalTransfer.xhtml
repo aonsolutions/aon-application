@@ -195,7 +195,7 @@
 												<f:facet name="header">
 													<h:outputText value="#{warehouseBundle.warehouse_delivery_quantity_pending}" />
 												</f:facet>
-												<aon:outputText value="#{(to.quantity-to.delivered)}">
+												<aon:outputText value="#{(to.pendingQuantity)}">
 													<f:convertNumber pattern="#{bundle.aon_quantity_pattern}" />
 												</aon:outputText>
 											</aon:column>

@@ -145,23 +145,6 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		updateInvoiceTotals(detail.getInvoice());
 	}
 
-	private void updateInvoiceTotals(Invoice invoice) throws ManagerBeanException {
-		if (invoice.isUpdateEnabled()) {
-			InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
-			double taxableBase = priceStrategy.getCalculatedTaxableBase(invoice);
-			double vatQuota = priceStrategy.getCalculatedTotalVatQuota(invoice, invoice);
-			double retentionQuota = priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice);
-
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			invoice.setUpdateEnabled(false);
-			invoice.setTaxableBase(taxableBase);
-			invoice.setVatQuota(vatQuota);
-			invoice.setRetentionQuota(retentionQuota);
-			invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
-			invoiceBean.update(invoice);
-		}
-	}
-
 	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax) throws ManagerBeanException {
 		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(invoiceDetail);
@@ -212,6 +195,23 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
     		return tax;
     	}
 		return null;
+	}
+
+	private void updateInvoiceTotals(Invoice invoice) throws ManagerBeanException {
+		if (invoice.isUpdateEnabled()) {
+			InvoicePriceStrategy priceStrategy = new InvoicePriceStrategy();
+			double taxableBase = priceStrategy.getCalculatedTaxableBase(invoice);
+			double vatQuota = priceStrategy.getCalculatedTotalVatQuota(invoice, invoice);
+			double retentionQuota = priceStrategy.getCalculatedTotalRetentionQuota(invoice, invoice);
+
+			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+			invoice.setUpdateEnabled(false);
+			invoice.setTaxableBase(taxableBase);
+			invoice.setVatQuota(vatQuota);
+			invoice.setRetentionQuota(retentionQuota);
+			invoice.setTotal(CommonUtil.round(taxableBase + vatQuota - retentionQuota));
+			invoiceBean.update(invoice);
+		}
 	}
 
 }
