@@ -19,17 +19,14 @@ import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
-import com.code.aon.warehouse.enumeration.IncomeDetailSource;
-import com.code.aon.warehouse.enumeration.IncomeDetailType;
 import com.code.aon.warehouse.enumeration.IncomeStatus;
 
 public class IncomeManager {
 
-	public Income purchaseIncome(Purchase purchase, String series, int number, Date issueDate, Warehouse warehouse, IncomeDetailType type)
-		throws ManagerBeanException {
+	public Income purchaseIncome(Purchase purchase, String series, int number, Date issueDate, Warehouse warehouse)	throws ManagerBeanException {
 		updatePurchaseStatus(purchase);
 		Income income = createIncome(purchase, series, number, issueDate);
-		createIncomeDetails(income, purchase, warehouse, type);
+		createIncomeDetails(income, purchase, warehouse);
 		return income;
 	}
 
@@ -64,7 +61,7 @@ public class IncomeManager {
 		return (Income)incomeBean.insert(income);
 	}
 
-	private void createIncomeDetails(Income income, Purchase purchase, Warehouse warehouse, IncomeDetailType type) throws ManagerBeanException {
+	private void createIncomeDetails(Income income, Purchase purchase, Warehouse warehouse) throws ManagerBeanException {
 		int line = 0;
 
 		IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
@@ -86,8 +83,6 @@ public class IncomeManager {
 			incomeDetail.setQuantity(CommonUtil.round(purchaseDetail.getQuantity() - purchaseDetail.getDelivered()));
 			incomeDetail.setPrice(purchaseDetail.getPrice());
 			incomeDetail.setDiscountExpression(purchaseDetail.getDiscountExpression());
-			incomeDetail.setType(type);
-			incomeDetail.setSource(IncomeDetailSource.PURCHASE);
 			incomeDetail.setPurchaseDetail(purchaseDetail);
 			incomeDetailBean.insert(incomeDetail);
 
@@ -108,8 +103,6 @@ public class IncomeManager {
 		incomeDetail.setQuantity(purchaseDetail.getTransfered());
 		incomeDetail.setPrice(purchaseDetail.getPrice());
 		incomeDetail.setDiscountExpression(purchaseDetail.getDiscountExpression());
-		incomeDetail.setType(IncomeDetailType.MANUAL);
-		incomeDetail.setSource(IncomeDetailSource.PURCHASE);
 		incomeDetail.setPurchaseDetail(purchaseDetail);
 		incomeDetail = (IncomeDetail)incomeDetailBean.insert(incomeDetail);
 

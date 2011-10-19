@@ -13,8 +13,6 @@ import com.code.aon.ui.warehouse.controller.DeliveryDetailController;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
-import com.code.aon.warehouse.enumeration.DeliveryDetailSource;
-import com.code.aon.warehouse.enumeration.DeliveryDetailType;
 
 public class DeliveryDetailControllerListener extends ControllerAdapter {
 
@@ -27,8 +25,6 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 		try {
 			deliveryDetail.setLine(calculateNextLine((Delivery)controller.getMasterController().getTo()));
 			deliveryDetail.setWarehouse(((DeliveryController)controller.getMasterController()).getWarehouse());
-			deliveryDetail.setType(DeliveryDetailType.MANUAL);
-			deliveryDetail.setSource(DeliveryDetailSource.DIRECT);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}

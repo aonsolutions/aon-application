@@ -7,9 +7,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
+import com.code.aon.common.util.CommonUtil;
+import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.warehouse.IStockable;
 import com.code.aon.warehouse.Stock;
+import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 
 public class StockableBeanListener extends ManagerBeanListenerAdapter {
@@ -33,20 +36,20 @@ public class StockableBeanListener extends ManagerBeanListenerAdapter {
 	}
 
 	private void updateStock(IStockable stockable, boolean entry) throws ManagerBeanException {
-		IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
-		if (stockable.getItem().getProduct().isInventoriable()) {
+		Item item = stockable.getItem();
+		Warehouse warehouse = stockable.getWarehouse();
+		if (item != null && item.getId() != null && item.getProduct().isInventoriable() && warehouse != null && warehouse.getId() != null) {
+			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 			Stock stock = obtainStock(stockable);
 			double quantity = stockable.getQuantity() * ((entry) ? 1 : (-1));
 			if (stock == null) {
 				stock = new Stock();
-				stock.setItem(stockable.getItem());
-				stock.setWarehouse(stockable.getWarehouse());
-				stock.setQuantity(quantity);
-
+				stock.setItem(item);
+				stock.setWarehouse(warehouse);
+				stock.setQuantity(CommonUtil.round(quantity, 3));
 				stockBean.insert(stock);
 			} else{
-				stock.setQuantity(stock.getQuantity().doubleValue() + quantity);
-
+				stock.setQuantity(CommonUtil.round(stock.getQuantity().doubleValue() + quantity, 3));
 				stockBean.update(stock);
 			}
 		}

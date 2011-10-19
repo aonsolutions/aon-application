@@ -17,7 +17,10 @@ public enum SalesStatus implements IResourceable{
     BLOCKED,
     
     /** CLOSED. */
-    CLOSED;
+    CLOSED,
+	
+    /** INVOICED. */
+    INVOICED;
 	
     /** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.sales.i18n.messages";

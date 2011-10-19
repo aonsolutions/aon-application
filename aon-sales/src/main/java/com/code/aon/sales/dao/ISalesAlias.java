@@ -223,22 +223,16 @@ public interface ISalesAlias {
 	String  SALES_DETAIL_SALES_ID = SALES_DETAIL_ENTRY.getAliasNames()[9];
 
 	/** 
-	* Alias value: SalesDetail_source
-	* Hibernate value: SalesDetail.source
-	*/
-	String  SALES_DETAIL_SOURCE = SALES_DETAIL_ENTRY.getAliasNames()[10];
-
-	/** 
 	* Alias value: SalesDetail_status
 	* Hibernate value: SalesDetail.status
 	*/
-	String  SALES_DETAIL_STATUS = SALES_DETAIL_ENTRY.getAliasNames()[11];
+	String  SALES_DETAIL_STATUS = SALES_DETAIL_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: SalesDetail_taxes
 	* Hibernate value: SalesDetail.taxes
 	*/
-	String  SALES_DETAIL_TAXES = SALES_DETAIL_ENTRY.getAliasNames()[12];
+	String  SALES_DETAIL_TAXES = SALES_DETAIL_ENTRY.getAliasNames()[11];
 
 
 }

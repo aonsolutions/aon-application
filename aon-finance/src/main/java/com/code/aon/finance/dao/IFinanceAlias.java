@@ -1432,10 +1432,16 @@ public interface IFinanceAlias {
 	String  INVOICE_DETAIL_TAXES = INVOICE_DETAIL_ENTRY.getAliasNames()[16];
 
 	/** 
+	* Alias value: InvoiceDetail_warehouse_id
+	* Hibernate value: InvoiceDetail.warehouse.id
+	*/
+	String  INVOICE_DETAIL_WAREHOUSE_ID = INVOICE_DETAIL_ENTRY.getAliasNames()[17];
+
+	/** 
 	* Alias value: InvoiceDetail_workPlace_id
 	* Hibernate value: InvoiceDetail.workPlace.id
 	*/
-	String  INVOICE_DETAIL_WORK_PLACE_ID = INVOICE_DETAIL_ENTRY.getAliasNames()[17];
+	String  INVOICE_DETAIL_WORK_PLACE_ID = INVOICE_DETAIL_ENTRY.getAliasNames()[18];
 
 
 

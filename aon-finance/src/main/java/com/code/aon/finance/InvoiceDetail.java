@@ -36,14 +36,18 @@ import com.code.aon.product.strategy.ICalculable;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.Project;
+import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
+import com.code.aon.sales.SalesDetail;
 import com.code.aon.tas.ProjectTas;
 import com.code.aon.warehouse.DeliveryDetail;
+import com.code.aon.warehouse.IStockable;
 import com.code.aon.warehouse.IncomeDetail;
+import com.code.aon.warehouse.Warehouse;
 
 @Entity
 @Table(name = "invoice_detail")
-public class InvoiceDetail implements ITransferObject, ICalculable {
+public class InvoiceDetail implements ITransferObject, ICalculable, IStockable {
 
 	private static final long serialVersionUID = -4734071580890529329L;
 
@@ -61,6 +65,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
     private double taxableBase;
     private double taxes;
 	private WorkPlace workPlace;
+	private Warehouse warehouse;
 
 	private boolean updateEnabled;
 	private boolean taxDataInDetail;
@@ -201,6 +206,18 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 		this.workPlace = workPlace;
 	}
 	
+    @ManyToOne
+    @JoinColumn(name="warehouse")
+    @ForeignKey(name="FK_INVOICE_DETAIL_WAREHOUSE")
+    @Index(name="IDX_INVOICE_DETAIL_WAREHOUSE")                                            
+	public Warehouse getWarehouse() {
+		return warehouse;
+	}
+
+	public void setWarehouse(Warehouse warehouse) {
+		this.warehouse = warehouse;
+	}
+	
 	@Transient
 	public boolean isUpdateEnabled() {
 		return updateEnabled;
@@ -279,13 +296,21 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 	@Transient
 	public ITransferObject getSourceTo() throws ManagerBeanException {
 		if (getSourceId() != null) {
-			if (InvoiceSource.DIRECT_SALES == getSource() || InvoiceSource.DELIVERY == getSource()) {
+			if (InvoiceSource.DELIVERY == getSource()) {
 				IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
 				return ((DeliveryDetail)deliveryDetailBean.get(getSourceId())).getDelivery();
 			}
-			if (InvoiceSource.DIRECT_PURCHASE == getSource() || InvoiceSource.INCOME == getSource()) {
+			if (InvoiceSource.INCOME == getSource()) {
 				IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
 				return ((IncomeDetail)incomeDetailBean.get(getSourceId())).getIncome();
+			}
+			if (InvoiceSource.SALES == getSource()) {
+				IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+				return ((SalesDetail)salesDetailBean.get(getSourceId())).getSales();
+			}
+			if (InvoiceSource.PURCHASE == getSource()) {
+				IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+				return ((PurchaseDetail)purchaseDetailBean.get(getSourceId())).getPurchase();
 			}
 			if (InvoiceSource.OFFER == getSource()) {
 				IManagerBean offerDetailBean = BeanManager.getManagerBean(OfferDetail.class);
@@ -295,6 +320,22 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 		return null;
 	}
 
+	@Transient
+	public boolean isDeliverySource() throws ManagerBeanException {
+		return (getSource() == InvoiceSource.DELIVERY);
+	}
+	@Transient
+	public boolean isIncomeSource() throws ManagerBeanException {
+		return (getSource() == InvoiceSource.INCOME);
+	}
+	@Transient
+	public boolean isSalesSource() throws ManagerBeanException {
+		return (getSource() == InvoiceSource.SALES);
+	}
+	@Transient
+	public boolean isPurchaseSource() throws ManagerBeanException {
+		return (getSource() == InvoiceSource.PURCHASE);
+	}
 	@Transient
 	public boolean isOfferSource() throws ManagerBeanException {
 		return (getSource() == InvoiceSource.OFFER);
@@ -306,6 +347,15 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 			return (ProjectTas)BeanManager.getManagerBean(ProjectTas.class).get(getProject().getId());
 		}
 		return null;
+	}
+
+	@Transient
+	public boolean isEntry() {
+		return (getInvoice().isPurchase());
+	}
+	@Transient
+	public String getTableName() {
+		return "invoice_detail";
 	}
 
 	public boolean equals(Object obj) {
@@ -327,6 +377,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 			.append(this.sourceId,o.sourceId)
 			.append(this.taxableBase,o.taxableBase)
 			.append(this.taxes,o.taxes)
+			.append(this.warehouse,o.warehouse)
 			.append(this.workPlace,o.workPlace)
 			.isEquals();
 		}
@@ -349,6 +400,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 			.append(sourceId)
 			.append(taxableBase)
 			.append(taxes)
+			.append(warehouse)
 			.append(workPlace)
 			.toHashCode();
 	}	

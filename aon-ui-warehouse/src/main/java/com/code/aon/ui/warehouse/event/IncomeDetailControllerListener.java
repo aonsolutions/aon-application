@@ -13,8 +13,6 @@ import com.code.aon.ui.warehouse.controller.IncomeDetailController;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
-import com.code.aon.warehouse.enumeration.IncomeDetailSource;
-import com.code.aon.warehouse.enumeration.IncomeDetailType;
 
 public class IncomeDetailControllerListener extends ControllerAdapter {
 
@@ -28,8 +26,6 @@ public class IncomeDetailControllerListener extends ControllerAdapter {
 		try {
 			incomeDetail.setProject((income.getProject() != null && income.getProject().getId() != null) ? income.getProject() : null);
 			incomeDetail.setLine(calculateNextLine((Income)controller.getMasterController().getTo()));
-			incomeDetail.setType(IncomeDetailType.MANUAL);
-			incomeDetail.setSource(IncomeDetailSource.DIRECT);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}

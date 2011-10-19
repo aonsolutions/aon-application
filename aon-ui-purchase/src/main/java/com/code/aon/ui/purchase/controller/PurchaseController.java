@@ -18,9 +18,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
-import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.bridge.invoicing.IncomeInvoicingManager;
+import com.code.aon.finance.bridge.invoicing.PurchaseInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -53,7 +52,6 @@ import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
-import com.code.aon.warehouse.enumeration.IncomeDetailType;
 
 public class PurchaseController extends BasicController implements IPurchaseConstants {
 
@@ -72,7 +70,6 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	private boolean showInvoiceWindow;
 	private String invoiceRefCode;
 	private Date invoiceDate;
-	private Warehouse invoiceWarehouse;
 	private PurchaseEmailUtil emailUtil;
 	
     public PurchaseController() {
@@ -198,14 +195,6 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 
 	public void setInvoiceDate(Date invoiceDate) {
 		this.invoiceDate = invoiceDate;
-	}
-
-	public Warehouse getInvoiceWarehouse() {
-		return invoiceWarehouse;
-	}
-
-	public void setInvoiceWarehouse(Warehouse invoiceWarehouse) {
-		this.invoiceWarehouse = invoiceWarehouse;
 	}
 
 	public boolean isInIncome() throws ManagerBeanException {
@@ -390,7 +379,7 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	public void onIncome(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
 		IncomeManager incomeManager = new IncomeManager();
-		Income income = incomeManager.purchaseIncome(to, getIncomeSeries(), getIncomeNumber(), getIncomeDate(), getIncomeWarehouse(), IncomeDetailType.MANUAL);
+		Income income = incomeManager.purchaseIncome(to, getIncomeSeries(), getIncomeNumber(), getIncomeDate(), getIncomeWarehouse());
 
 		IController incomeController = FormUtil.getController(INCOME_CONTROLLER_NAME);
 		incomeController.onEditSearch(event);
@@ -403,17 +392,12 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	public void onInvoiceShow(ActionEvent event) throws ManagerBeanException {
 		setInvoiceRefCode(null);
 		setInvoiceDate(new Date());
-		setInvoiceWarehouse(null);
 	}
 
 	public void onInvoice(ActionEvent event) throws ManagerBeanException {
 		Purchase to = (Purchase)this.getTo();
-		String incomeSeries = to.getSeries();
-		int incomeNumber = obtainMaxIncomeNumber(incomeSeries);
-		IncomeManager incomeManager = new IncomeManager();
-		Income income = incomeManager.purchaseIncome(to, incomeSeries, incomeNumber, getInvoiceDate(), getInvoiceWarehouse(), IncomeDetailType.AUTOMATIC);
-		IncomeInvoicingManager invoicingManager = new IncomeInvoicingManager();
-		Invoice invoice = invoicingManager.invoice(income, getInvoiceRefCode(), getInvoiceDate());
+		PurchaseInvoicingManager invoicingManager = new PurchaseInvoicingManager();
+		Invoice invoice = invoicingManager.invoice(to, getInvoiceRefCode(), getInvoiceDate());
 
 		IController invoiceController = FormUtil.getController(PURCHASE_INVOICE_CONTROLLER_NAME);
 		invoiceController.onEditSearch(event);
@@ -421,10 +405,6 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		invoiceController.onSearch(event);
 		invoiceController.getModel().setRowIndex(0);
 		invoiceController.onSelect(event);
-	}
-
-	private int obtainMaxIncomeNumber(String seriesId) {
-		return SeriesNumberUtil.obtainNumber(seriesId, "Income");
 	}
 
 	public void onSendByEmail( ActionEvent event ) throws ManagerBeanException, ReportException, IOException, SAXException {

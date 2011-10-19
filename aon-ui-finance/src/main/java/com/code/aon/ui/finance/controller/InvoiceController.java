@@ -660,9 +660,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_INVOICE);
-		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_SALES);
-		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_PURCHASE);
-		criteria.addNotEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.DIRECT_EXPENSE);
 		return invoiceDetailBean.getCount(criteria) > 0;
 	}
 

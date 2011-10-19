@@ -20,17 +20,14 @@ import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
 import com.code.aon.warehouse.Warehouse;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
-import com.code.aon.warehouse.enumeration.DeliveryDetailSource;
-import com.code.aon.warehouse.enumeration.DeliveryDetailType;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
 public class DeliveryManager {
 
-	public Delivery salesDelivery(Sales sales, String series, int number, Date issueDate, Warehouse warehouse, DeliveryDetailType type) 
-		throws ManagerBeanException {
+	public Delivery salesDelivery(Sales sales, String series, int number, Date issueDate, Warehouse warehouse) throws ManagerBeanException {
 		updateSalesStatus(sales);
 		Delivery delivery = createDelivery(sales, series, number, issueDate);
-		createDeliveryDetails(delivery, sales, warehouse, type);
+		createDeliveryDetails(delivery, sales, warehouse);
 		return delivery;
 	}
 
@@ -69,7 +66,7 @@ public class DeliveryManager {
     	return SeriesNumberUtil.obtainNumber(seriesId, "Delivery");
 	}
 
-	private void createDeliveryDetails(Delivery delivery, Sales sales, Warehouse warehouse, DeliveryDetailType type) throws ManagerBeanException {
+	private void createDeliveryDetails(Delivery delivery, Sales sales, Warehouse warehouse) throws ManagerBeanException {
 		int line = 0;
 
 		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
@@ -90,8 +87,6 @@ public class DeliveryManager {
 			deliveryDetail.setQuantity(CommonUtil.round(salesDetail.getQuantity() - salesDetail.getDelivered()));
 			deliveryDetail.setPrice(salesDetail.getPrice());
 			deliveryDetail.setDiscountExpression(salesDetail.getDiscountExpression());
-			deliveryDetail.setType(type);
-			deliveryDetail.setSource(DeliveryDetailSource.SALES);
 			deliveryDetail.setSalesDetail(salesDetail);
 			deliveryDetailBean.insert(deliveryDetail);
 
@@ -112,8 +107,6 @@ public class DeliveryManager {
 		deliveryDetail.setQuantity(salesDetail.getTransfered());
 		deliveryDetail.setPrice(salesDetail.getPrice());
 		deliveryDetail.setDiscountExpression(salesDetail.getDiscountExpression());
-		deliveryDetail.setType(DeliveryDetailType.MANUAL);
-		deliveryDetail.setSource(DeliveryDetailSource.SALES);
 		deliveryDetail.setSalesDetail(salesDetail);
 		deliveryDetail = (DeliveryDetail)deliveryDetailBean.insert(deliveryDetail);
 

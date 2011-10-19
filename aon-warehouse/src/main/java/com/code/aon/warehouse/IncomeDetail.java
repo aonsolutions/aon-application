@@ -33,8 +33,6 @@ import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.Project;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.ql.Criteria;
-import com.code.aon.warehouse.enumeration.IncomeDetailSource;
-import com.code.aon.warehouse.enumeration.IncomeDetailType;
 
 @Entity
 @Table(name="income_detail")
@@ -53,8 +51,6 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	private double quantity;
 	private double price;
 	private DiscountExpression discountExpression;
-    private IncomeDetailType type;
-    private IncomeDetailSource source;
 	private PurchaseDetail purchaseDetail;
 	
 	@Id
@@ -143,20 +139,6 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 		this.discountExpression = discountExpression;
 	}
 
-	public IncomeDetailType getType() {
-		return type;
-	}
-	public void setType(IncomeDetailType type) {
-		this.type = type;
-	}
-
-	public IncomeDetailSource getSource() {
-		return source;
-	}
-	public void setSource(IncomeDetailSource source) {
-		this.source = source;
-	}
-
 	@ManyToOne
     @JoinColumn(name="purchase_detail")
 	public PurchaseDetail getPurchaseDetail() {
@@ -171,10 +153,13 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 	public double getTaxes() throws ManagerBeanException {
 		return 0;
 	}
-	
 	@Transient
 	public boolean isEntry() {
 		return true;
+	}
+	@Transient
+	public String getTableName() {
+		return "income_detail";
 	}
 	
 	@Transient
@@ -212,8 +197,6 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 				.append(this.project, o.project)
 				.append(this.purchaseDetail, o.purchaseDetail)
 				.append(this.quantity, o.quantity)
-				.append(this.source, o.source)
-				.append(this.type, o.type)
 				.append(this.warehouse, o.warehouse)
 				.isEquals();
 		}
@@ -233,8 +216,6 @@ public class IncomeDetail implements ITransferObject, ICalculable, IStockable {
 			.append(project)
 			.append(purchaseDetail)
 			.append(quantity)
-			.append(source)
-			.append(type)
 			.append(warehouse)
 			.toHashCode();
 	}

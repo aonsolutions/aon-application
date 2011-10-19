@@ -41,6 +41,9 @@ public interface IFinanceMessages {
 	String FINANCE_EXPENSE_INVOICE_QUOTA_WARNING = "finance_expense_invoice_quota_warning";
 	String FINANCE_EXPENSE_INVOICE_CHECK_WARNING = "finance_expense_invoice_check_warning";
 	String FINANCE_CUSTOMER_REQUIRED_ERROR = "finance_customer_required_error";
+	String FINANCE_INVOICE_OFFER = "finance_invoice_offer";
+	String FINANCE_INVOICE_SALES = "finance_invoice_sales";
+	String FINANCE_INVOICE_DELIVERY = "finance_invoice_delivery";
 	
 }
 

@@ -64,6 +64,10 @@ public interface IFinanceConstants {
 	
 	String OFFER_FORM_NAME = "offer_form";
 	String OFFER_CONTROLLER_NAME = "offer";
+	String SALES_FORM_NAME = "sales_form";
+	String SALES_CONTROLLER_NAME = "sales";
+	String PURCHASE_FORM_NAME = "purchase_form";
+	String PURCHASE_CONTROLLER_NAME = "purchase";
 	String DELIVERY_FORM_NAME = "delivery_form";
 	String DELIVERY_CONTROLLER_NAME = "delivery";
 	String INCOME_FORM_NAME = "income_form";

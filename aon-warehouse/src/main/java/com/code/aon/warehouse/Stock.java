@@ -15,9 +15,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.common.util.CommonUtil;
 import com.code.aon.product.Item;
-import com.code.aon.warehouse.enumeration.PriceType;
 
 @Entity
 @Table(name="stock")
@@ -41,7 +39,7 @@ public class Stock implements ITransferObject{
 	}
 	
 	@ManyToOne
-	@JoinColumn( name="item",nullable=false )
+	@JoinColumn(name="item", nullable=false)
 	public Item getItem() {
 		return item;
 	}
@@ -49,15 +47,8 @@ public class Stock implements ITransferObject{
 		this.item = item;
 	}
 
-	public Double getQuantity() {
-		return quantity;
-	}
-	public void setQuantity(Double quantity) {
-		this.quantity = quantity;
-	}
-	
 	@ManyToOne
-	@JoinColumn( name="warehouse",nullable=false )
+	@JoinColumn(name="warehouse", nullable=false)
 	public Warehouse getWarehouse() {
 		return warehouse;
 	}
@@ -65,6 +56,14 @@ public class Stock implements ITransferObject{
 		this.warehouse = warehouse;
 	}
 
+	@Column(precision=15, scale=3)
+	public Double getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(Double quantity) {
+		this.quantity = quantity;
+	}
+	
 	// Utilizado en los listados valorados.
 	@Transient
 	public Stock getTo() {
@@ -80,8 +79,8 @@ public class Stock implements ITransferObject{
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.item, o.item)
-				.append(this.warehouse, o.warehouse)
 				.append(this.quantity, o.quantity)
+				.append(this.warehouse, o.warehouse)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -91,9 +90,9 @@ public class Stock implements ITransferObject{
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(id)	
-			.append(item)			
-			.append(warehouse)
+			.append(item)
 			.append(quantity)
+			.append(warehouse)
 			.toHashCode();
 	}
 
