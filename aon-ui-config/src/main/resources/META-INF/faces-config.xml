@@ -724,5 +724,12 @@
 			<to-view-id>/com/code/aon/ui/config/facelet/cnae2009Rate/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<!-- =================== WORKGROUP ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>workgroup_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/config/facelet/workgroup/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 </faces-config>

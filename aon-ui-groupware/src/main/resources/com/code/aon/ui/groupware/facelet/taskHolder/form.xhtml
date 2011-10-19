@@ -55,6 +55,13 @@
 					</aon:div>
 
 				</aon:panelGrid>
+				
+				<c:if test="#{!taskHolder.new}">
+					<aon:div styleClass="aon-margin-top">
+						<ui:include src="/com/code/aon/ui/groupware/facelet/taskHolder/workgroups.xhtml" />
+					</aon:div>
+				</c:if>
+				
  			</aon:div>
  		</aon:form>
 	</ui:define>
