@@ -137,6 +137,7 @@
 		<mapping class="com.code.aon.groupware.Campaign"/>
 		<mapping class="com.code.aon.groupware.CampaignProject"/>
 		<mapping class="com.code.aon.groupware.CampaignType"/>
+		<mapping class="com.code.aon.groupware.CostProfile"/>
 		<mapping class="com.code.aon.groupware.DailyTracking"/>
 		<mapping class="com.code.aon.groupware.Favorite"/>
 		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
