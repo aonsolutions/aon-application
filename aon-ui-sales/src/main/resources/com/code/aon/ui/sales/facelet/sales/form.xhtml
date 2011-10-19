@@ -35,7 +35,7 @@
 						<c:if test="#{aonRole.financeOperator}">
 							<aon:commandButton id="invoice"
 								value="#{salesBundle.sales_to_invoice}"
-								immediate="#{true}" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
+								immediate="#{true}" rendered="#{sales.pending and !sales.inDelivery and salesDetail.model.rowCount > 0}"
 								styleClass="aon-finding-toolbar-item aon-icon-favorite"
 								actionListener="#{sales.onInvoiceShow}"
 								reRender="showInvoiceWindow">
