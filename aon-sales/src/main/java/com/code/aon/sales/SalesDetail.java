@@ -144,12 +144,15 @@ public class SalesDetail implements ITransferObject, ICalculable {
 	}
 
 	@Transient
+	public double getPendingQuantity() {
+		return CommonUtil.round(quantity - delivered, 3);
+	}
+	@Transient
 	public double getTransfered() {
-		double pending = CommonUtil.round(quantity - delivered, 3);
+		double pending = getPendingQuantity();
 		transfered = (transfered > pending) ? pending : transfered;
 		return transfered;
 	}
-
 	public void setTransfered(double transfered) {
 		this.transfered = transfered;
 	}
