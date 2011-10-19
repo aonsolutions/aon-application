@@ -25,8 +25,10 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.customer.Customer;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.SalesInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
@@ -39,7 +41,9 @@ import com.code.aon.registry.RegistryPayMethod;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.ReportException;
 import com.code.aon.sales.Sales;
+import com.code.aon.sales.SalesDetail;
 import com.code.aon.sales.bridge.DeliveryManager;
+import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.sales.enumeration.SalesStatus;
 import com.code.aon.seller.Seller;
 import com.code.aon.ui.common.components.LookupChangeEvent;
@@ -236,6 +240,35 @@ public class SalesController extends BasicController implements ISalesConstants 
 	public boolean isInvoiced(){
 		Sales sales = (Sales)this.getTo();
 		return sales.getStatus() == SalesStatus.INVOICED;
+	}
+
+	public Invoice getInvoice() throws ManagerBeanException {
+		Sales sales = (Sales)this.getTo();
+		if (sales != null && sales.getId() != null) {
+			IManagerBean salesDetailBean = BeanManager.getManagerBean(SalesDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(salesDetailBean.getFieldName(ISalesAlias.SALES_DETAIL_SALES_ID), sales.getId());
+			Iterator<?> iterator = salesDetailBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				SalesDetail salesDetail = (SalesDetail)iterator.next();
+
+				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.SALES);
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), salesDetail.getId());
+				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
+				if (iter.hasNext()) {
+					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
+					return invoiceDetail.getInvoice();
+				}
+			}
+		}
+    	return null;
+	}
+
+	public String getInvoiceCode() throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		return (invoice != null) ? invoice.getReferenceCode() : null;
 	}
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
@@ -495,5 +528,13 @@ public class SalesController extends BasicController implements ISalesConstants 
 			AonUtil.addErrorMessageFromBundle(IWebMailConstants.BUNDLE_NAME, IWebMailConstants.NOT_SERVER_CONNECTED);
 		}
 	}	
+
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		if (invoice != null) {
+			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(SALE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onLoad(event, invoice.getId(), SALES_FORM_NAME, SALES_CONTROLLER_NAME + ".refresh");
+		}
+	}
 
 }

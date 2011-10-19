@@ -104,6 +104,21 @@
 
 								<aon:outputText styleClass="aon-margin-left aon-margin-right"
 									value="#{sales.to.status}" />
+								<aon:outputText styleClass="aon-italic aon-margin-left"
+									value="(#{financeBundle.finance_invoice}: "
+									rendered="#{sales.invoiced}" />
+								<aon:outputText styleClass="aon-bold"
+									value="#{sales.invoiceCode}"
+									rendered="#{sales.invoiced}" />
+								<aon:outputText styleClass="aon-italic" value=")"
+									rendered="#{sales.invoiced}" />
+								<aon:commandLink id="invoice_link" immediate="true"
+									styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+									value="&#160;" title="#{bundle.aon_go}"
+									rendered="#{sales.invoiced}"
+									actionListener="#{sales.onLoadInvoice}"
+									action="saleInvoice_form" />
+
 								<aon:commandButton id="block" value="&#160;"
 									actionListener="#{sales.onBlock}"
 									title="#{salesBundle.sales_to_block}"

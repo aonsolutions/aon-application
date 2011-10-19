@@ -19,8 +19,10 @@ import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.PurchaseInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
@@ -234,6 +236,35 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		return purchase.getStatus() == PurchaseStatus.INVOICED;
 	}
 
+	public Invoice getInvoice() throws ManagerBeanException {
+		Purchase purchase = (Purchase)this.getTo();
+		if (purchase != null && purchase.getId() != null) {
+			IManagerBean purchaseDetailBean = BeanManager.getManagerBean(PurchaseDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(purchaseDetailBean.getFieldName(IPurchaseAlias.PURCHASE_DETAIL_PURCHASE_ID), purchase.getId());
+			Iterator<?> iterator = purchaseDetailBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				PurchaseDetail purchaseDetail = (PurchaseDetail)iterator.next();
+
+				IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE), InvoiceSource.PURCHASE);
+				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_SOURCE_ID), purchaseDetail.getId());
+				Iterator<?> iter = invoiceDetailBean.getList(criteria).iterator();
+				if (iter.hasNext()) {
+					InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
+					return invoiceDetail.getInvoice();
+				}
+			}
+		}
+    	return null;
+	}
+
+	public String getInvoiceCode() throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		return (invoice != null) ? invoice.getReferenceCode() : null;
+	}
+
 	public void supplierData(LookupChangeEvent event) throws ManagerBeanException {
 		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
 			Supplier supplier = (Supplier)event.getNewValue();
@@ -429,4 +460,12 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		}
 	}		
 	
+	public void onLoadInvoice(ActionEvent event) throws ManagerBeanException {
+		Invoice invoice = getInvoice();
+		if (invoice != null) {
+			BasicController invoiceController = (BasicController)AonUtil.getRegisteredBean(PURCHASE_INVOICE_CONTROLLER_NAME);
+			invoiceController.onLoad(event, invoice.getId(), PURCHASE_FORM_NAME, PURCHASE_CONTROLLER_NAME + ".refresh");
+		}
+	}
+
 }
