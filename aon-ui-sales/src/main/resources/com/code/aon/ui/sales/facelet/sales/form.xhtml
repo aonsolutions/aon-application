@@ -119,6 +119,16 @@
 									actionListener="#{sales.onLoadInvoice}"
 									action="saleInvoice_form" />
 
+								<aon:commandButton id="toPending" value="&#160;"
+									actionListener="#{sales.onPending}" 
+									title="#{salesBundle.sales_to_pending}"
+									immediate="true" rendered="#{sales.closed}"
+									styleClass="aon-icon-commandButton aon-icon-refresh aon-margin-left" />
+								<aon:commandButton id="close" value="&#160;"
+									actionListener="#{sales.onClose}"
+									title="#{salesBundle.sales_to_close}"
+									immediate="true" rendered="#{sales.pending and salesDetail.model.rowCount > 0}"
+									styleClass="aon-icon-commandButton aon-icon-point-red" />
 								<aon:commandButton id="block" value="&#160;"
 									actionListener="#{sales.onBlock}"
 									title="#{salesBundle.sales_to_block}"

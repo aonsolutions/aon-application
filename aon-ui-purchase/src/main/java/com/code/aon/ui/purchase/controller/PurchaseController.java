@@ -398,6 +398,18 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 		return getPriceStrategy().getTotalPrice(purchase, purchase.getSupplier());
 	}
 
+	public void onPending(ActionEvent event) {
+		Purchase to = (Purchase)this.getTo();
+		to.setStatus(PurchaseStatus.PENDING);
+		accept(event);
+	}
+	
+	public void onClose(ActionEvent event) {
+		Purchase to = (Purchase)this.getTo();
+		to.setStatus(PurchaseStatus.CLOSED);
+		accept(event);
+	}
+
 	public void onBlock(ActionEvent event) {
 		Purchase to = (Purchase)this.getTo();
 		to.setStatus(PurchaseStatus.BLOCKED);

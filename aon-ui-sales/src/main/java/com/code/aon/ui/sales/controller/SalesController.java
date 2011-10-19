@@ -426,6 +426,18 @@ public class SalesController extends BasicController implements ISalesConstants 
 		return getPriceStrategy().getTotalPrice(sales, sales.getCustomer());
 	}
 
+	public void onPending(ActionEvent event) {
+		Sales to = (Sales)this.getTo();
+		to.setStatus(SalesStatus.PENDING);
+		accept(event);
+	}
+	
+	public void onClose(ActionEvent event) {
+		Sales to = (Sales)this.getTo();
+		to.setStatus(SalesStatus.CLOSED);
+		accept(event);
+	}
+
 	public void onBlock(ActionEvent event) {
 		Sales to = (Sales)this.getTo();
 		to.setStatus(SalesStatus.BLOCKED);
