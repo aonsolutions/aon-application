@@ -36,4 +36,9 @@ public enum IrpfRegularizationReason implements IResourceable {
 		return ordinal() +1;
 	}
 	
+	public static IrpfRegularizationReason valueof(int causa) {
+		IrpfRegularizationReason reasons [] = values();
+		return causa > 0 && causa <= reasons.length ?  reasons[causa-1] : null;
+	}
+	
 }

@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+	
+	<c:set var="value" value="#{empty property ? constant : irpf[property]}" /> 
+	<c:choose>
+		<c:when test="#{ value.class.name == 'java.lang.Double'}" > 
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="#{value}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+		</c:when>
+		<c:when test="#{value.class.name == 'java.util.Date'}" > 
+			<aon:div styleClass="aon-border" >
+				<aon:outputText value="#{value}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:div> 
+		</c:when>
+		<c:when test="#{value.class.name == 'com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason'}" > 
+			<aon:div styleClass="aon-border" >
+				<aon:outputText value="#{value.causa}" />
+			</aon:div> 
+		</c:when>
+		<c:otherwise>
+			<aon:div styleClass="aon-border" >
+				<aon:outputText value="#{value}" />
+			</aon:div> 
+		</c:otherwise>
+	</c:choose>
+	
+
+</ui:composition>

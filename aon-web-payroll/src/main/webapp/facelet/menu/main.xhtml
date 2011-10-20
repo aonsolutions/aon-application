@@ -187,6 +187,12 @@
 										<aon:actionListener method="#{contract.onEditSearch}" />
 									</aon:commandLink>
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="irpfDraft" action="irpfDraft_search"
+										actionListener="#{irpfDraft.onEditSearch}"
+										value="#{payrollBundle.payroll_irpfDraft_module}">
+									</aon:commandLink>
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 						

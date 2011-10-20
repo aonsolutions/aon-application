@@ -65,6 +65,7 @@ import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractDeductionController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractEmbargoController;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractPaymentController;
+import com.esferalia.aon.ui.payroll.controller.contract.IrpfDraftController;
 import com.esferalia.aon.ui.payroll.controller.launcher.IrpfLauncher;
 import com.esferalia.aon.ui.payroll.controller.salary.draft.SalaryDraftController;
 import com.esferalia.aon.ui.payroll.utils.EnterpriseTreeData;
@@ -283,6 +284,14 @@ public class EnterpriseTree implements ICompanyConstants {
 		contractNode.addChild( etd.getKey(), node);
 	}
 
+	private void addIrpfDraftNode( TreeNode<EnterpriseTreeData> contractNode ) {
+		TreeNodeImpl<EnterpriseTreeData> node = new TreeNodeImpl<EnterpriseTreeData>();
+		String label = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_IRPF_DRAFT);
+		EnterpriseTreeData etd = new EnterpriseTreeData( contractNode.getData().getId(), label, EnterpriseTreeType.IRPF_DRAFT);
+		node.setData(etd);
+		contractNode.addChild( etd.getKey(), node);
+	}
+
 	private void loadContracts( TreeNodeImpl<EnterpriseTreeData> workPlaceNode, WorkPlace workPlace ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Contract.class);		
 		Criteria criteria = new Criteria();
@@ -303,6 +312,7 @@ public class EnterpriseTree implements ICompanyConstants {
 			addSalaryNode(contractNode);
 			addSalaryDraftNode(contractNode);
 			addIrpfNode(contractNode);
+			addIrpfDraftNode(contractNode);
 			addDocumentNode(contractNode);
 		}	
 		workPlaceNode.getData().setCount(list.size());
@@ -559,6 +569,33 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 	}
 	
+	private void selectIrpfDraft(ActionEvent event) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Contract.class);
+			this.contract = 
+				(Contract) bean.get( getParentNode().getId() );
+			IrpfDraftController irpfDraftController = 
+				(IrpfDraftController) FormUtil.getController(IPayrollConstants.IRPF_DRAFT_CONTROLLER_NAME);
+
+			if ( irpfDraftController.getDate() == null ) {
+				Date drafDate = this.contract.getEndDate();
+				Date now = Calendar.getInstance().getTime();
+				if ( drafDate == null || drafDate.after(now)) {
+					drafDate = now;
+				} // If contract ends after now, show 'current' draft
+				
+				irpfDraftController.setDate(drafDate);
+			}
+			irpfDraftController.select(event, this.contract.getId());
+
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> selectIrpfDraft exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
+	}
+	
+
 	public void onSelectTreeMainData(ActionEvent event) {
 		selectContract(event);
 		reloadTreeMainData(event);
@@ -626,6 +663,11 @@ public class EnterpriseTree implements ICompanyConstants {
 	public void onSelectTreeIrpf(ActionEvent event) {
 		selectContract(event);
 		selectIrpf(event);
+	}
+
+	public void onSelectTreeIrpfDraft(ActionEvent event) {
+		selectContract(event);
+		selectIrpfDraft(event);
 	}
 
 	public boolean selectSalaries( ActionEvent event, Contract contract ) {

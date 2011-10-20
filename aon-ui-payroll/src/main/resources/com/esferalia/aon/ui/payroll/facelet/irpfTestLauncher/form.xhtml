@@ -24,11 +24,11 @@
 				<aon:commandLink  
 					rendered="#{message.contractId!=null}"
 					style="display: inline; text-decoration:underline;"
-					action="contract_formTree" >
+					action="irpfDraft_form" >
 					<aon:outputText value="#{message.employeeName} " />
 					<f:setPropertyActionListener value="#{message.contractId}" 
-					target="#{message.contractId}" />
-					<aon:actionListener method="#{enterpriseTree.onShowContract}" />
+					target="#{irpfTestLauncher.contractId}" />
+					<aon:actionListener method="#{irpfTestLauncher.onIrpfDraft}" />
 				</aon:commandLink>	
 								
 				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.msg}" />

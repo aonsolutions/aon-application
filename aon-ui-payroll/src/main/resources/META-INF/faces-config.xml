@@ -1470,6 +1470,37 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	<!--  **** I.R.P.F DRAFT **** -->
+	<managed-bean>
+		<managed-bean-name>irpfDraft</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.contract.IrpfDraftController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.Contract</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>irpfDraft</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{irpfDraftSearch}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>irpfDraftSearch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.event.contract.IrpfDraftSearchListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!--  **** CONTRACT CALENDAR EVENT **** -->
 	<managed-bean>
 		<managed-bean-name>contractCalendarEventLinesListener</managed-bean-name>
@@ -2341,6 +2372,26 @@
 		</navigation-case>
 	</navigation-rule>
 		
+		<!-- =================== IrpfDraft ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>irpfDraft_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/irpfDraft/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>irpfDraft_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/irpfDraft/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>irpfDraft_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/irpfDraft/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>irpfDraft_formTree</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/irpfDraft/formTree.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 		<!-- =================== IirpfData ========================== -->
 	<navigation-rule>
 		<navigation-case>

@@ -25,6 +25,7 @@ public interface IPayrollConstants {
 	String PAYROLL_SETTLE_VACATION_AMOUNT = "payroll_settle_vacationAmount";
 	String PAYROLL_SETTLE_COMPENSATION = "payroll_settle_compensation";
 	String PAYROLL_IRPF = "payroll_irpf";
+	String PAYROLL_IRPF_DRAFT = "payroll_irpf_draft";
 	
 	
 	// ************************************************************
@@ -54,6 +55,7 @@ public interface IPayrollConstants {
 	String IRPF_LAUNCHER_CONTROLLER_NAME = "irpfLauncher";
 	String IRPF_REGULARIZATION_CONTROLLER_NAME = "irpfRegularization";
 	String IRPF_RESULT_CONTROLLER_NAME = "irpfResult";
+	String IRPF_DRAFT_CONTROLLER_NAME = "irpfDraft";
 	String LEAVE_BATCH_DETAIL_CONTROLLER_NAME = "leaveBatchDetail";
 	String LEAVE_BATCH_CONTROLLER_NAME = "leaveBatch";
 	String LEAVE_LIST_CONTROLLER_NAME = "leaveList";
@@ -66,6 +68,7 @@ public interface IPayrollConstants {
 	String SALARY_LAUNCHER_CONTROLLER = "salaryLauncher";
 	String SALARY_REMOVER_CONTROLLER = "salaryRemover";
 	String SALARY_TEST_LAUNCHER_NAME = "salaryTestLauncher";
+	String IRPF_TEST_LAUNCHER_NAME = "irpfTestLauncher";
 	String SETTLE_CONTROLLER_NAME = "settle";
 	String PAYMENT_UPDATE_CONTROLLER = "paymentUpdate";
 	String PAYROLL_WORK_PLACE_CONTROLLER = "payrollWorkPlace";
@@ -93,6 +96,7 @@ public interface IPayrollConstants {
 	String CONTRACT_FORM_TREE = "contract_formTree";
 	String ENTERPRISE_FORM_TREE = "enterprise_formTree";
 	String SALARY_TESTER_LAUNCHER_FORM = "salaryTestLauncher_form";
+	String IRPF_TESTER_LAUNCHER_FORM = "irpfTestLauncher_form";
 	
 		
 }

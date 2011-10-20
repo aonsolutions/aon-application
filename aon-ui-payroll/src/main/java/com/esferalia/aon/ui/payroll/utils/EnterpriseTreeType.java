@@ -25,6 +25,7 @@ public enum EnterpriseTreeType {
 	SALARY_DRAFT( EnterpriseTreeData.SALARY_DRAFT_ICON, "salaryDraft_formTree", "onSelectTreeSalaryDraft" ),
 	DOCUMENT( EnterpriseTreeData.DOCUMENT_ICON, "contractDocument_formTree", "onSelectTreeDocuments" ),
 	IRPF( EnterpriseTreeData.AEAT_ICON, "irpfResult_formTree", "onSelectTreeIrpf" ),
+	IRPF_DRAFT( EnterpriseTreeData.AEAT_ICON, "irpfDraft_formTree", "onSelectTreeIrpfDraft" ),
 	;
 	
 	private String icon;

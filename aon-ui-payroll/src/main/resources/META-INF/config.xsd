@@ -9,6 +9,7 @@
 		      <xs:element ref="salary" />
 		      <xs:element ref="salaryDraft" />
 		      <xs:element ref="paymentUpdate" />
+		      <xs:element ref="irpfDraft" />
 		    </xs:sequence>		
 			<xs:attribute name="version" type="xs:string" use="required" fixed="1.1"/>		    
 		</xs:complexType>
@@ -32,6 +33,11 @@
 		</xs:complexType>		
 	</xs:element>
 	<xs:element name="paymentUpdate">
+		<xs:complexType>
+			<xs:attribute name="showEnterpriseInSearch" type="xs:boolean" use="required"/>
+		</xs:complexType>		
+	</xs:element>
+	<xs:element name="irpfDraft">
 		<xs:complexType>
 			<xs:attribute name="showEnterpriseInSearch" type="xs:boolean" use="required"/>
 		</xs:complexType>		

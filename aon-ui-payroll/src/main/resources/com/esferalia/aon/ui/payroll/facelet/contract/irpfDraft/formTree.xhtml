@@ -9,29 +9,26 @@
 
 	<ui:define name="header">
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="controller" value="#{irpfDraft}" />
 			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_irpfResult_module}" />
 			<ui:param name="toolbarDescription" value="&#160;" />
 			<ui:define name="toolbarContent">
 				<c:if test="#{salary.model.rowCount > 0}" >
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/buttons.xhtml" />
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfDraft/buttons.xhtml" >
+						<ui:param name="irpf" value="#{irpfDraft}" />
+					</ui:include>
 				</c:if>
-				<aon:spin id="enterpriseSpin" controller="#{irpfResult}" />
 			</ui:define>				
 		</ui:decorate>		
 	</ui:define>
 		
 	<ui:define name="content">
-		<c:if test="#{irpfResult.model.rowCount == 0}" >
-			<aon:outputText value="#{payrollBundle.payroll_irpf_no_irpf_exist}" 
-				styleClass="aon-bold aon-italic"/>
-		</c:if>
-		
-		<c:if test="#{irpfResult.model.rowCount > 0}" >
+		<aon:div id="irpfDraftContent">
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formIrpfResult.xhtml" >
-				<ui:param name="irpf" value="#{irpfResult}" />
-				<ui:param name="propertyEditor" value="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/defaultPropertyEditor.xhtml" />
+				<ui:param name="irpf" value="#{irpfDraft}" />
+				<ui:param name="propertyEditor" value="/com/esferalia/aon/ui/payroll/facelet/contract/irpfDraft/draftPropertyEditor.xhtml" />
 			</ui:include>
-		</c:if>
+		</aon:div>
 	</ui:define>
 	
 	<ui:define name="additionalContent">
