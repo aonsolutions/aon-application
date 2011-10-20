@@ -418,11 +418,11 @@ public class ProcessLauncherWizard implements Serializable {
 			AonUtil.addErrorMessage(msg);
 			return false;
 		}
-		if (cd.getProject().getProjectType() == null) {
-			String msg = "Tipo de proyecto no puede estar vacio!";
-			AonUtil.addErrorMessage(msg);
-			return false;
-		}
+//		if (cd.getProject().getProjectType() == null) {
+//			String msg = "Tipo de proyecto no puede estar vacio!";
+//			AonUtil.addErrorMessage(msg);
+//			return false;
+//		}
 		return true;
 	}
 

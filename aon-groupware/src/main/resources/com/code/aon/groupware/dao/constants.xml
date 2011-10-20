@@ -12,7 +12,7 @@
 
 	<bean class="com.code.aon.groupware.Task" sqlName="task">
 		<alias names="activityType_id,comments,description,dueDate,endDate,enterprise_id,id,percent,priority,project_id,project_name,project_projectType_id,registry_id,registry_name,repeatPeriod,sender_id,source,startDate,status,taskHolder_id,workGroup_id" />
-		<hibernate names="activityType.id,comments,description,dueDate,endDate,enterprise.id,id,percent,priority,project&lt;id,project&lt;name,project.projectType&lt;id,registry&lt;id,registry&lt;name,repeatPeriod,sender.id,source,startDate,status,taskHolder&lt;id,workGroup.id" />
+		<hibernate names="activityType.id,comments,description,dueDate,endDate,enterprise.id,id,percent,priority,project&lt;id,project&lt;name,project.projectType&lt;id,registry&lt;id,registry&lt;name,repeatPeriod,sender.id,source,startDate,status,taskHolder&lt;id,workGroup&lt;id" />
 	</bean>
 
 	<bean class="com.code.aon.groupware.TaskHolder" sqlName="task_holder">

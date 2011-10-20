@@ -35,6 +35,21 @@ public class TaskControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		TaskController taskController = (TaskController) event.getController();
 		taskController.setAllMembers(false);
+		Task task = (Task) taskController.getTo();
+		try {
+			taskController.loadProjects(task.getRegistry() == null?null:task.getRegistry().getId());
+		} catch (ManagerBeanException e) {
+			String msg = "Error al cargar la lista de proyectos";
+			AonUtil.addErrorMessage(msg);
+			throw new ControllerListenerException(msg);
+		}
+		try {
+			taskController.loadActivityTypes(task.getProject() != null && task.getProject().getProjectType() != null? task.getProject().getProjectType().getId() : null);
+		} catch (ManagerBeanException e) {
+			String msg = "Error al cargar la lista de tipos de actividades";
+			AonUtil.addErrorMessage(msg);
+			throw new ControllerListenerException(msg);
+		}
 	}
 	
 	@Override

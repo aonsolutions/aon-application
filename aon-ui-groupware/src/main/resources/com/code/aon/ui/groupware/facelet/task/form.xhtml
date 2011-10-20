@@ -194,7 +194,8 @@
 						</ui:include>
 						
 						<aon:outputText value="#{bundle.aon_name}"/>
-						<aon:selectOneMenu id="Task_project" value="#{task.to.project}">
+						<aon:selectOneMenu id="Task_project" value="#{task.to.project}"
+							disabled="#{task.allMembers or (!task.monitor and !task.new)}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
 							<f:selectItems value="#{task.projects}" />
 							<a4j:support event="onchange"
@@ -205,7 +206,8 @@
 						
 						<aon:outputLabel for="Task_activityType" value="#{projectBundle.project_activity_type}"/>
 						<aon:selectOneMenu id="Task_activityType"
-							value="#{task.to.activityType}">
+							value="#{task.to.activityType}"
+							disabled="#{task.allMembers or (!task.monitor and !task.new)}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
 							<f:selectItems value="#{task.activityTypes}" />
 						</aon:selectOneMenu>

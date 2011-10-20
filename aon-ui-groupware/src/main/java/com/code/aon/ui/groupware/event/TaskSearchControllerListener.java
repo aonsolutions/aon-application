@@ -10,13 +10,17 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.util.CompanyUtil;
+import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.groupware.Process;
 import com.code.aon.groupware.ProcessDetail;
 import com.code.aon.groupware.TaskHolder;
+import com.code.aon.groupware.TaskHolderWorkgroup;
 import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.groupware.enumeration.Priority;
 import com.code.aon.groupware.enumeration.TaskSource;
@@ -30,7 +34,6 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.event.ControllerSearchListener;
 import com.code.aon.ui.groupware.GroupwareUtils;
@@ -77,6 +80,14 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 	private  List<SelectItem> activityTypes;
 
 	private GroupwareUtils groupwareUtils;
+	
+	public TaskSearchControllerListener() {
+		try {
+			init();
+		} catch (ManagerBeanException e) {
+			// Nothing
+		}
+	}
 	
 	public GroupwareUtils getGroupwareUtils() {
 		if (groupwareUtils == null) {
@@ -365,7 +376,7 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
 			String taskHolderAlias = getFieldName(IGroupwareAlias.TASK_TASK_HOLDER_ID);
 			Expression userExpr = ExpressionUtilities.getEqualExpression(taskHolderAlias, taskHolder.getId() );
-			Expression workGroupExpr = UserUtils.obtainUserWorkGroupsExpr(taskHolder.getUser(), getFieldName(IGroupwareAlias.TASK_WORK_GROUP_ID));
+			Expression workGroupExpr = obtainTaskHolderWorkGroupsExpression(taskHolder, getFieldName(IGroupwareAlias.TASK_WORK_GROUP_ID));
 			Expression groupExpr = ExpressionUtilities.getNullExpression(taskHolderAlias);
 			workGroupExpr = ExpressionUtilities.getAndExpression(workGroupExpr, groupExpr);
 			criteria.addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
@@ -425,6 +436,19 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 		loadStatusCriteria(criteria);
 		loadPriorityCriteria(criteria);
 	}
+
+    private Expression obtainTaskHolderWorkGroupsExpression(TaskHolder taskHolder, String alias) throws ManagerBeanException {
+        Expression expression = null;
+        IManagerBean bean = BeanManager.getManagerBean(TaskHolderWorkgroup.class);
+        Criteria criteria = new Criteria();
+        criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_HOLDER_WORKGROUP_TASK_HOLDER_ID), taskHolder.getId());
+        List<ITransferObject> list = bean.getList(criteria);
+        for (ITransferObject to: list ) {
+        	TaskHolderWorkgroup thwg = (TaskHolderWorkgroup) to;
+            expression = ExpressionUtilities.getOrExpression(expression, ExpressionUtilities.getEqualExpression(alias, thwg.getWorkGroup().getId()));
+        }
+        return expression;
+    }
 
 	private void loadStatusCriteria(Criteria criteria) throws ManagerBeanException {
 		if (isStatusDeleted() || isStatusFinished() || isStatusInProgress() || isStatusPending()) {

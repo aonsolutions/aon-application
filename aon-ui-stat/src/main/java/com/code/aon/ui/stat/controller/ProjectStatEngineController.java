@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,10 +35,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.invoicing.pricing.InvoicePriceStrategy;
 import com.code.aon.groupware.DailyTracking;
 import com.code.aon.groupware.dao.IGroupwareAlias;
@@ -342,37 +338,6 @@ public class ProjectStatEngineController {
 	public double getApprovedOfferTotal() throws ManagerBeanException {
 		Offer offer = (Offer) getApprovedOfferModel().getRowData();
 		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
-	}
-
-	public FinanceStatus getSaleInvoiceFinanceStatus()
-			throws ManagerBeanException {
-		Invoice invoice = ((Invoice) this.getSaleInvoiceModel().getRowData());
-		return getInvoiceFinanceStatus(invoice);
-	}
-
-	public FinanceStatus getCostInvoiceFinanceStatus()
-			throws ManagerBeanException {
-		Invoice invoice = ((Invoice) this.getCostInvoiceModel().getRowData());
-		return getInvoiceFinanceStatus(invoice);
-	}
-
-	private FinanceStatus getInvoiceFinanceStatus(Invoice invoice)
-			throws ManagerBeanException {
-		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(
-				financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID),
-				invoice.getId());
-		Iterator<?> iterator = financeBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance) iterator.next();
-			if (FinanceStatus.PAID != finance.getFinanceStatus()
-					&& FinanceStatus.SETTLED != finance.getFinanceStatus()) {
-				return FinanceStatus.PENDING;
-			}
-		}
-		return (financeBean.getCount(criteria) == 0) ? FinanceStatus.PENDING
-				: FinanceStatus.PAID;
 	}
 
 	public String backAction() {
