@@ -2,6 +2,7 @@ package com.code.aon.finance;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,7 @@ import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.finance.dao.IFinanceAlias;
+import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.finance.enumeration.RectificationType;
@@ -629,6 +631,21 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 			}
 		}
 		return rectificationInvoiceStr;
+	}
+
+	@Transient
+	public FinanceStatus getInvoiceFinanceStatus() throws ManagerBeanException {
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), getId());
+		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			Finance finance = (Finance)iterator.next();
+			if (FinanceStatus.PAID != finance.getFinanceStatus() && FinanceStatus.SETTLED != finance.getFinanceStatus()) {
+				return FinanceStatus.PENDING;
+			}
+		}
+		return (financeBean.getCount(criteria) == 0) ? null : FinanceStatus.PAID;
 	}
 
 	@Override
