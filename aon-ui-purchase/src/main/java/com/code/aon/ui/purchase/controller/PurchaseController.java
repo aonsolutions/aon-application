@@ -15,6 +15,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
@@ -423,10 +424,24 @@ public class PurchaseController extends BasicController implements IPurchaseCons
 	}
 
 	public void onIncomeShow(ActionEvent event) throws ManagerBeanException {
+		Purchase to = (Purchase)this.getTo();
 		setIncomeSeries(null);
 		setIncomeNumber(0);
 		setIncomeDate(new Date());
-		setIncomeWarehouse(null);
+		setIncomeWarehouse(obtainDeliveryWarehouse(to.getWorkPlace()));
+	}
+
+	private Warehouse obtainDeliveryWarehouse(WorkPlace workPlace) throws ManagerBeanException {
+		if (workPlace != null) {
+			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+			Iterator<?> iterator = warehouseBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				return (Warehouse)iterator.next();
+			}
+		}
+		return null;
 	}
 
 	public void onIncome(ActionEvent event) throws ManagerBeanException {

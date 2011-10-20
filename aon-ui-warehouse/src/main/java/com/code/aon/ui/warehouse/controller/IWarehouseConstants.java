@@ -3,6 +3,7 @@ package com.code.aon.ui.warehouse.controller;
 public interface IWarehouseConstants {
 	
 	String COLLECTIONS_CONTROLLER_NAME = "warehouseCollections";
+	String COMPANY_COLLECTIONS_CONTROLLER_NAME = "companyCollections";
 	
 	String DELIVERY_FORM_NAME = "delivery_form";
 	String DELIVERY_CONTROLLER_NAME = "delivery";

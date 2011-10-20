@@ -168,7 +168,9 @@
 						value="#{companyBundle.company_workplace}" />
 					<aon:selectOneMenu id="Income_workPlace" 
 						value="#{income.to.workPlace}"
-						disabled="#{!income.pending}">
+						disabled="#{!income.pending}"
+						valueChangeListener="#{income.onWorkPlaceChanged}" 
+						reRender="Income_warehouse">
 						<f:selectItems value="#{companyCollections.workPlaces}" />
 					</aon:selectOneMenu>
 
