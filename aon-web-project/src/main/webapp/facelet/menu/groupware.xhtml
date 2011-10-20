@@ -187,7 +187,37 @@
 								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
+
+						<aon:panelGrid id="group_general_taskHolders"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-contactGroup">
+							<f:facet name="header">
+								<aon:outputText value="#{groupwareBundle.groupware_user_management}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="taskHolder-management"
+										action="taskHolder_search"
+										actionListener="#{taskHolder.onEditSearch}"
+										value="#{groupwareBundle.groupware_taskHolders}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="workgroup-management"
+										action="workgroup_list"
+										actionListener="#{workGroup.onEditSearch}"
+										value="#{configBundle.config_workgroup_module}" />
+								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="costProfile-management"
+										action="costProfile_list"
+										actionListener="#{costProfile.onSearch}"
+										value="#{groupwareBundle.groupware_cost_profiles}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
 					</aon:panelGroup>
+
 
 				</h:panelGrid>
 			</aon:div>
