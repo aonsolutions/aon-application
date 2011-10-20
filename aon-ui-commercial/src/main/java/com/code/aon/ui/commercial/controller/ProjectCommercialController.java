@@ -12,7 +12,7 @@ public class ProjectCommercialController extends BasicController {
 	public void onProjectHistory(ActionEvent event) {
 		ProjectStatEngineController statController =(ProjectStatEngineController)AonUtil.getRegisteredBean("projectStat");
 		statController.setProject(((ProjectCommercial)this.getTo()).getProject());
-		statController.getProjectData();
+		statController.initializeProjectData();
 	}
 
 }
