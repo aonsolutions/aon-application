@@ -1,8 +1,6 @@
 package com.code.aon.ui.stat.controller;
 
 import java.awt.Color;
-import java.awt.GradientPaint;
-import java.awt.Paint;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
@@ -21,21 +19,15 @@ import org.hibernate.Session;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.SubCategoryAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot3D;
-import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.GroupedStackedBarRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer3D;
-import org.jfree.data.KeyToGroupMap;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.gantt.Task;
 import org.jfree.data.gantt.TaskSeries;
 import org.jfree.data.gantt.TaskSeriesCollection;
 import org.jfree.data.general.DefaultPieDataset;
-import org.jfree.ui.GradientPaintTransformType;
-import org.jfree.ui.StandardGradientPaintTransformer;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.common.BeanManager;
@@ -238,8 +230,7 @@ public class ProjectStatEngineController {
 	public double getTotalSales() {
 		if (totalSales == 0) {
 			for (Invoice invoice : getSaleInvoiceList()) {
-				totalSales += CommonUtil.round(getInvoicePriceStrategy()
-						.getTotalPrice(invoice, invoice));
+				totalSales = CommonUtil.round(totalSales + invoice.getTotal());
 			}
 		}
 		return CommonUtil.round(totalSales);
@@ -264,8 +255,7 @@ public class ProjectStatEngineController {
 	public double getTotalInvoiceCosts() {
 		if (totalInvoiceCosts == 0) {
 			for (Invoice invoice : getCostInvoiceList()) {
-				totalInvoiceCosts += CommonUtil.round(getInvoicePriceStrategy()
-						.getTotalPrice(invoice, invoice));
+				totalInvoiceCosts = CommonUtil.round(totalInvoiceCosts + invoice.getTotal());
 			}
 		}
 		return totalInvoiceCosts;
@@ -333,7 +323,7 @@ public class ProjectStatEngineController {
 		return (List<DailyTracking>) list;
 	}
 
-	public void getProjectData() {
+	public void initializeProjectData() {
 		setApprovedOfferModel(null);
 		setSaleInvoiceModel(null);
 		setCostInvoiceModel(null);
@@ -352,16 +342,6 @@ public class ProjectStatEngineController {
 	public double getApprovedOfferTotal() throws ManagerBeanException {
 		Offer offer = (Offer) getApprovedOfferModel().getRowData();
 		return getPriceStrategy().getTotalPrice(offer, offer.getTarget());
-	}
-
-	public double getSaleInvoiceTotal() throws ManagerBeanException {
-		Invoice invoice = (Invoice) getSaleInvoiceModel().getRowData();
-		return getInvoicePriceStrategy().getTotalPrice(invoice, invoice);
-	}
-
-	public double getCostInvoiceTotal() throws ManagerBeanException {
-		Invoice invoice = (Invoice) getCostInvoiceModel().getRowData();
-		return getInvoicePriceStrategy().getTotalPrice(invoice, invoice);
 	}
 
 	public FinanceStatus getSaleInvoiceFinanceStatus()
@@ -424,7 +404,8 @@ public class ProjectStatEngineController {
 		plot.setDarkerSides(true);
 		plot.setLabelBackgroundPaint(new Color(240, 255, 255));
 		plot.setNoDataMessage(AonUtil.getMessage("bundle","aon_search_no_results"));
-
+		plot.setOutlinePaint(null);
+		plot.setCircular(false);
 		int width = 350;
 		int height = 200;
 		float quality = 1;
@@ -506,6 +487,7 @@ public class ProjectStatEngineController {
 		CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		plot.setRangeGridlinePaint(new Color(150,150,150));
 		plot.setBackgroundPaint(Color.WHITE);
+		plot.setNoDataMessage(AonUtil.getMessage("bundle","aon_search_no_results"));
 		int width = 1024;
 		int height = i * 15;
 		height = height < 125 ? 125 : height;

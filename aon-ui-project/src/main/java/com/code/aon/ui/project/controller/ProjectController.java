@@ -12,8 +12,19 @@ public class ProjectController extends BasicController {
 	public void onProjectHistory(ActionEvent event) {
 		ProjectStatEngineController statController =(ProjectStatEngineController)AonUtil.getRegisteredBean("projectStat");
 		statController.setProject( (Project) this.getTo());
-		statController.getProjectData();
+		statController.initializeProjectData();
 		statController.setBackAction(IProjectConstants.PROJECT_FORM_PAGE);
 	}
-	
+
+	public void onGraphicTab(ActionEvent event) {
+		ProjectStatEngineController statController =(ProjectStatEngineController)AonUtil.getRegisteredBean("projectStat");
+		Project project = (Project) this.getTo(); 
+		Project statProject = statController.getProject();
+		if (!project.equals(statProject)) {
+			statController.setProject( (Project) this.getTo());
+			statController.initializeProjectData();
+		}
+		statController.setBackAction(IProjectConstants.PROJECT_FORM_PAGE);
+	}
+
 }

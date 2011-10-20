@@ -842,7 +842,7 @@
 	<!-- ************* PROCESS DETAIL ***************** -->
 	<managed-bean>
 		<managed-bean-name>taskHolderWorkgroup</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.groupware.controller.TaskHolderWorkgroupController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
