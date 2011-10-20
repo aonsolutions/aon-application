@@ -32,16 +32,16 @@
 						<ui:param name="controller" value="#{favoriteCategory}" />
 						<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
 						<ui:define name="columns">
-							<aon:column>
+							<aon:column alias="FavoriteCategory.description">
 								<f:facet name="header">
-									<aon:outputText value="#{groupwareBundle.favorite_category_description}" />
+									<aon:outputLabel for="FavoriteCategory_Description" value="#{groupwareBundle.favorite_category_description}" />
 								</f:facet>
 								<aon:outputText value="#{to.description}" rendered="#{formList}" />
-								<aon:inputText styleClass="aon-form-input-text " required="true"
-									rendered="#{formEdit}" size="100"
-									value="#{favoriteCategory.to.description}" maxlength="64" />
+								<aon:inputText id="FavoriteCategory_Description" required="true" 
+									rendered="#{formEdit}" size="100" maxlength="64" 
+									value="#{favoriteCategory.to.description}" />
 								<f:facet name="footer">
-									<aon:inputText styleClass="aon-form-input-text" required="true"
+									<aon:inputText required="true" id="FavoriteCategory_Description-New"
 										rendered="#{formNew}" size="100"
 										value="#{favoriteCategory.to.description}" maxlength="64" />
 								</f:facet>

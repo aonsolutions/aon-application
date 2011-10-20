@@ -5,15 +5,15 @@
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
 	<ui:define name="menuContent">
-		<aon:commandLink id="management"
-			value="#{appBundle.menu_management}"
-			action="menu_management" immediate="true"
-			styleClass="aon-top-menu-item aon-icon-prices" />
-		<aon:commandLink id="groupware"
-			value="#{appBundle.menu_groupware}"
-			action="menu_groupware" immediate="true"
-			styleClass="aon-top-menu-item aon-icon-contactGroup" />
 		<c:if test="#{aonRole.config}">
+			<aon:commandLink id="management"
+				value="#{appBundle.menu_management}"
+				action="menu_management" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-prices" />
+			<aon:commandLink id="groupware"
+				value="#{appBundle.menu_groupware}"
+				action="menu_groupware" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-contactGroup" />
 			<aon:commandLink id="config"
 				value="#{bundle.aon_configuration}"
 				action="menu_config" immediate="true"

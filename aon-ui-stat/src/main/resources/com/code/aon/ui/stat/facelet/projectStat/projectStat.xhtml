@@ -45,25 +45,18 @@
 						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
 					</aon:panelTab>
 					<aon:panelTab id="ganttTab" label="Gantt">
-						<aon:div styleClass="aon-width-all aon-text-center">
-							<a4j:mediaOutput element="img" cacheable="false" session="false"
-	    					    createContent="#{projectStat.paintGanttChart}" 
-	    					    mimeType="image/jpeg">
-	    					    <!-- Se agrega este param para que no cachee el resultado -->
-	    					    <f:param name="value" value="#{projectStat.lastModified}" />
-	    					</a4j:mediaOutput>
-						</aon:div>
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="approvedOffersTab" label="Presupuestos">
+					<aon:panelTab id="approvedOffersTab" label="#{statBundle.stat_offer_amount}">
 						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/approvedOfferList.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="saleInvoiceTab" label="Ingresos">
+					<aon:panelTab id="saleInvoiceTab" label="#{statBundle.stat_income_amount}">
 						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/saleInvoiceList.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="costInvoiceTab" label="Costes">
+					<aon:panelTab id="costInvoiceTab" label="#{statBundle.stat_invoice_cost_amount}">
 						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/costInvoiceList.xhtml" />
 					</aon:panelTab>
-					<aon:panelTab id="manodeobraTab" label="Mano de Obra">
+					<aon:panelTab id="manodeobraTab" label="#{statBundle.stat_labour_amount}">
 						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/labourList.xhtml" />
 					</aon:panelTab>
 				</aon:panelTabSet>

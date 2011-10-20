@@ -29,6 +29,8 @@ import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.config.IScopable;
+import com.code.aon.config.Scope;
 import com.code.aon.config.Tariff;
 import com.code.aon.config.enumeration.InvoiceTransactionType;
 import com.code.aon.registry.IRegistry;
@@ -42,7 +44,7 @@ import com.code.aon.registry.RegistryAttachment;
 @Entity
 @Table(name="target")
 @PrimaryKeyJoinColumn(name="registry")
-public class Target implements ITransferObject, ITaxInfo, IRegistry {
+public class Target implements ITransferObject, ITaxInfo, IRegistry, IScopable {
 	
 	private static final long serialVersionUID = -7492435795404962788L;
 
@@ -54,6 +56,7 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
     private boolean withholding;
     private InvoiceTransactionType transaction;
     private TargetStatus status;
+    private Scope scope;
 	private boolean customer;
 	private Set<TargetItem> items = new HashSet<TargetItem>();
 	private Set<TargetSeller> sellers = new HashSet<TargetSeller>();
@@ -137,6 +140,18 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
         this.status = status;
     }
 
+    @ManyToOne
+    @JoinColumn(name="scope")
+    @ForeignKey(name = "FK_TARGET_SCOPE")
+    @Index(name = "IDX_TARGET_SCOPE")        
+	public Scope getScope() {
+		return scope;
+	}
+	
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+	
 	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})	
 	public Set<TargetItem> getItems() {
 		return items;
@@ -195,10 +210,11 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
 		final Target o = (Target) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.tariff, o.tariff)
 				.append(this.advertising, o.advertising)
 				.append(this.registry, o.registry)
+				.append(this.scope, o.scope)
 				.append(this.surcharge, o.surcharge)
+				.append(this.tariff, o.tariff)
 				.append(this.transaction, o.transaction)
 				.append(this.withholding, o.withholding)
 				.isEquals();
@@ -209,11 +225,12 @@ public class Target implements ITransferObject, ITaxInfo, IRegistry {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(tariff)
 			.append(advertising)
 			.append(id)
 			.append(registry)			
+			.append(scope)
 			.append(surcharge)
+			.append(tariff)
 			.append(transaction)
 			.append(withholding)
 			.toHashCode();

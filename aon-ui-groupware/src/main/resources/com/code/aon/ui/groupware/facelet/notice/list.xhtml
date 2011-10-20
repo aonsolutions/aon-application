@@ -22,7 +22,7 @@
 					<ui:param name="controller" value="#{notice}" />
 					<ui:define name="columns">
 			
-						<aon:column styleClass="aon-width-130">
+						<aon:column styleClass="aon-width-130" alias="Notice.recipient&lt;name">
 							<f:facet name="header">
 								<aon:outputText value="#{groupwareBundle.notice_recipient}" />
 							</f:facet>
@@ -30,7 +30,7 @@
 							<aon:outputText rendered="#{to.recipient == null}" value="#{groupwareBundle.groupware_all}" />
 						</aon:column>
 	
-						<aon:column styleClass="aon-width-130 aon-nowrap">
+						<aon:column styleClass="aon-width-130 aon-nowrap" alias="Notice.workGroup&lt;description">
 							<f:facet name="header">
 								<aon:outputText value="#{groupwareBundle.notice_work_group}" />
 							</f:facet>
@@ -38,7 +38,7 @@
 							<aon:outputText rendered="#{to.workGroup == null}" value="#{groupwareBundle.groupware_all}" />
 						</aon:column>
 						
-						<aon:column styleClass="aon-width-130">
+						<aon:column styleClass="aon-width-130" alias="Notice.source">
 							<f:facet name="header">
 								<aon:outputText value="#{groupwareBundle.notice_source}" />
 							</f:facet>
@@ -47,14 +47,14 @@
 							</aon:outputText>							
 						</aon:column>
 	
-						<aon:column>
+						<aon:column alias="Notice.company">
 							<f:facet name="header">
 								<aon:outputText value="#{groupwareBundle.notice_company}" />
 							</f:facet>
 							<aon:outputText value="#{to.company}" />
 						</aon:column>
 						
-						<aon:column>
+						<aon:column alias="Notice.subject">
 							<f:facet name="header">
 								<aon:outputText value="#{groupwareBundle.notice_subject}" />
 							</f:facet>
@@ -63,7 +63,7 @@
 							</aon:outputText>
 						</aon:column>						
 						
-						<aon:column styleClass="aon-width-120">
+						<aon:column styleClass="aon-width-120" alias="Notice.date">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
 							</f:facet>

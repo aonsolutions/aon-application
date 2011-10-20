@@ -177,7 +177,9 @@
 						value="#{companyBundle.company_workplace}" />
 					<aon:selectOneMenu id="Delivery_workPlace" 
 						value="#{delivery.to.workPlace}"
-						disabled="#{!delivery.pending}">
+						disabled="#{!delivery.pending}"
+						valueChangeListener="#{delivery.onWorkPlaceChanged}" 
+						reRender="Delivery_warehouse">
 						<f:selectItems value="#{companyCollections.workPlaces}" />
 					</aon:selectOneMenu>
 

@@ -9,14 +9,14 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.customer.Customer;
+import com.code.aon.sales.bridge.util.SalesBridgeUtil;
 import com.code.aon.ui.commercial.ICommercialMessages;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
-/**
- * Controller used in the target maintenance.
- */
-public class TargetController extends RegistryController {
+public class TargetController extends RegistryController implements ICommercialConstants {
 
 	private Set<Integer> checks = new HashSet<Integer>();
 	
@@ -94,4 +94,15 @@ public class TargetController extends RegistryController {
 		return ICommercialConstants.TARGET_LIST_DETAIL_EXCEL;
 	}
 	
+	public void onLoadCustomer(ActionEvent event) throws ManagerBeanException {
+		BasicController customerController = (BasicController)AonUtil.getRegisteredBean(CUSTOMER_CONTROLLER_NAME);
+		customerController.onLoad(event, ((Target)getTo()).getId(), NAVIGATION_TARGET_FORM, TARGET_CONTROLLER_NAME + ".refresh");
+	}
+
+	public void onCreateCustomer(ActionEvent event) throws ManagerBeanException {
+		SalesBridgeUtil salesUtil = new SalesBridgeUtil();
+		Customer customer = salesUtil.createCustomer((Target)getTo());
+		((Target)getTo()).setCustomer(customer.getId()!=null);
+	}
+
 }

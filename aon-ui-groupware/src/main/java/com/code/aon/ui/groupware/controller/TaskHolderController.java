@@ -10,9 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
+import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.ql.Criteria;
@@ -51,5 +54,18 @@ public class TaskHolderController extends RegistryController {
 		}
 		return userItems;		 
 	}
-
+	public List<SelectItem> getWorkgroups() throws ManagerBeanException {
+		List<SelectItem> workgroups = new LinkedList<SelectItem>(); 
+		IManagerBean workGroupBean = BeanManager.getManagerBean(WorkGroup.class); 
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_STATUS), WorkGroupStatus.ACTIVE);
+		criteria.addOrder(workGroupBean.getFieldName(IConfigAlias.WORK_GROUP_DESCRIPTION));
+		for (ITransferObject ito : workGroupBean.getList(criteria)) {
+			WorkGroup workGroup = (WorkGroup)ito;
+			SelectItem item = new SelectItem(workGroup, workGroup.getDescription());
+			workgroups.add(item);
+		}
+		return workgroups;
+	}
+	
 }

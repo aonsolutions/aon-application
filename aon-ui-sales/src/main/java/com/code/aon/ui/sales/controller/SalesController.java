@@ -17,6 +17,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
@@ -455,7 +456,7 @@ public class SalesController extends BasicController implements ISalesConstants 
 		setDeliverySeries(obtainDeliverySeries(to.getSeries()));
 		setDeliveryNumber(obtainMaxDeliveryNumber(getDeliverySeries()));
 		setDeliveryDate(new Date());
-		setDeliveryWarehouse(null);
+		setDeliveryWarehouse(obtainDeliveryWarehouse(to.getWorkPlace()));
 	}
 
 	private String obtainDeliverySeries(String seriesId) throws ManagerBeanException {
@@ -474,6 +475,19 @@ public class SalesController extends BasicController implements ISalesConstants 
 
 	private int obtainMaxDeliveryNumber(String seriesId) {
 		return SeriesNumberUtil.obtainNumber(seriesId, "Delivery");
+	}
+
+	private Warehouse obtainDeliveryWarehouse(WorkPlace workPlace) throws ManagerBeanException {
+		if (workPlace != null) {
+			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_WORK_PLACE_ID), workPlace.getId());
+			Iterator<?> iterator = warehouseBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				return (Warehouse)iterator.next();
+			}
+		}
+		return null;
 	}
 
 	public void onDelivery(ActionEvent event) throws ManagerBeanException {

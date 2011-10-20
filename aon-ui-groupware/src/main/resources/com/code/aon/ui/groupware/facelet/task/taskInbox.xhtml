@@ -59,71 +59,76 @@
 				</f:facet>
 				
 				<aon:div style="text-align:left; padding: 0px; margin: 0px;">
-					<aon:div>
-						<aon:outputText styleClass="aon-italic aon-margin-right" 
-							value="#{groupwareBundle.groupware_due_date_task_of} "/>
-						<aon:commandLink value="#{groupwareBundle.groupware_before}"
-							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsBefore?'font-weight:bold;':''}"
-							actionListener="#{taskSearchControllerListener.onFilterBefore}"
-							reRender="taskTableContainer"/>
-						<aon:commandLink value="#{groupwareBundle.groupware_today}"
-							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsToday?'font-weight:bold;':''}"
-							actionListener="#{taskSearchControllerListener.onFilterToday}"
-							reRender="taskTableContainer"/>
-						<aon:commandLink value="#{groupwareBundle.groupware_week}"
-							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsWeek?'font-weight:bold;':''}"
-							actionListener="#{taskSearchControllerListener.onFilterWeek}"
-							reRender="taskTableContainer"/>
-						<aon:commandLink value="#{groupwareBundle.groupware_two_weeks}"
-							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsTwoWeeks?'font-weight:bold;':''}"
-							actionListener="#{taskSearchControllerListener.onFilterTwoWeeks}"
-							reRender="taskTableContainer"/>
-						<aon:commandLink value="#{groupwareBundle.groupware_month}"
-							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsMonth?'font-weight:bold;':''}"
-							actionListener="#{taskSearchControllerListener.onFilterMonth}"
-							reRender="taskTableContainer"/>
-						<aon:commandLink value="#{groupwareBundle.groupware_any_moment}"
-							style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsAlways?'font-weight:bold;':''}"
-							actionListener="#{taskSearchControllerListener.onFilterAll}"
-							reRender="taskTableContainer"/>
-					</aon:div>
-					
-					<aon:div styleClass="aon-margin-top aon-margin-bottom">
-						<aon:outputLabel for="Task_projectType"
-							styleClass="aon-italic aon-margin-right" 
-							value="#{projectBundle.project_project_type}"/>
-						<aon:selectOneMenu id="Task_projectType"
-							value="#{taskSearchControllerListener.projectType}">
-							<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
-							<f:selectItems value="#{projectCollections.projectTypes}" />
-							<a4j:support event="onchange" actionListener="#{task.onFilter}"
-								reRender="taskTableContainer"/>
-						</aon:selectOneMenu>
-
-						<aon:outputLabel for="Task_process"
-							styleClass="aon-italic aon-margin-right aon-margin-left" 
-							value="#{groupwareBundle.groupware_process}"/>
-						<aon:selectOneMenu id="Task_process"
-							disabled="#{taskSearchControllerListener.processDetail != null}"
-							value="#{taskSearchControllerListener.process}">
-							<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
-							<f:selectItems value="#{groupWareCollections.processes}" />
-							<a4j:support event="onchange" actionListener="#{task.onFilter}"
-								reRender="taskTableContainer"/>
-						</aon:selectOneMenu>
-						
-						<aon:outputLabel for="Task_processDetail"
-							styleClass="aon-italic aon-margin-right aon-margin-left" 
-							value="#{groupwareBundle.groupware_process_detail}"/>
-						<aon:selectOneMenu id="Task_processDetail"
-							disabled="#{taskSearchControllerListener.process == null}"
-							value="#{taskSearchControllerListener.processDetail}">
-							<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
-							<f:selectItems value="#{taskSearchControllerListener.processDetails}" />
-							<a4j:support event="onchange" actionListener="#{task.onFilter}"
-								reRender="taskTableContainer"/>
-						</aon:selectOneMenu>
-					</aon:div>				
+					<h:panelGrid columns="2" styleClass="aon-width-all" 
+						columnClasses="aon-width-auto, aon-width-120">
+						<aon:div>
+							<aon:div>
+								<aon:outputText styleClass="aon-italic aon-margin-right" 
+									value="#{groupwareBundle.groupware_due_date_task_of} "/>
+								<aon:commandLink value="#{groupwareBundle.groupware_before}"
+									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsBefore?'font-weight:bold;':''}"
+									actionListener="#{taskSearchControllerListener.onFilterBefore}"
+									reRender="taskTableContainer"/>
+								<aon:commandLink value="#{groupwareBundle.groupware_today}"
+									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsToday?'font-weight:bold;':''}"
+									actionListener="#{taskSearchControllerListener.onFilterToday}"
+									reRender="taskTableContainer"/>
+								<aon:commandLink value="#{groupwareBundle.groupware_week}"
+									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsWeek?'font-weight:bold;':''}"
+									actionListener="#{taskSearchControllerListener.onFilterWeek}"
+									reRender="taskTableContainer"/>
+								<aon:commandLink value="#{groupwareBundle.groupware_two_weeks}"
+									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsTwoWeeks?'font-weight:bold;':''}"
+									actionListener="#{taskSearchControllerListener.onFilterTwoWeeks}"
+									reRender="taskTableContainer"/>
+								<aon:commandLink value="#{groupwareBundle.groupware_month}"
+									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsMonth?'font-weight:bold;':''}"
+									actionListener="#{taskSearchControllerListener.onFilterMonth}"
+									reRender="taskTableContainer"/>
+								<aon:commandLink value="#{groupwareBundle.groupware_any_moment}"
+									style="margin-left: 5px; text-decoration: underline;#{taskSearchControllerListener.whenEqualsAlways?'font-weight:bold;':''}"
+									actionListener="#{taskSearchControllerListener.onFilterAll}"
+									reRender="taskTableContainer"/>
+							</aon:div>
+							
+							<aon:div styleClass="aon-margin-top aon-margin-bottom">
+								<aon:outputLabel for="Task_projectType"
+									styleClass="aon-italic aon-margin-right" 
+									value="#{projectBundle.project_project_type}"/>
+								<aon:selectOneMenu id="Task_projectType"
+									value="#{taskSearchControllerListener.projectType}">
+									<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
+									<f:selectItems value="#{projectCollections.projectTypes}" />
+									<a4j:support event="onchange" actionListener="#{task.onFilter}"
+										reRender="taskTableContainer"/>
+								</aon:selectOneMenu>
+		
+								<aon:outputLabel for="Task_process"
+									styleClass="aon-italic aon-margin-right aon-margin-left" 
+									value="#{groupwareBundle.groupware_process}"/>
+								<aon:selectOneMenu id="Task_process"
+									disabled="#{taskSearchControllerListener.processDetail != null}"
+									value="#{taskSearchControllerListener.process}">
+									<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
+									<f:selectItems value="#{groupWareCollections.processes}" />
+									<a4j:support event="onchange" actionListener="#{task.onFilter}"
+										reRender="taskTableContainer"/>
+								</aon:selectOneMenu>
+								
+								<aon:outputLabel for="Task_processDetail"
+									styleClass="aon-italic aon-margin-right aon-margin-left" 
+									value="#{groupwareBundle.groupware_process_detail}"/>
+								<aon:selectOneMenu id="Task_processDetail"
+									disabled="#{taskSearchControllerListener.process == null}"
+									value="#{taskSearchControllerListener.processDetail}">
+									<f:selectItem itemLabel="-- #{groupwareBundle.groupware_all} --" value="#{null}"/>
+									<f:selectItems value="#{taskSearchControllerListener.processDetails}" />
+									<a4j:support event="onchange" actionListener="#{task.onFilter}"
+										reRender="taskTableContainer"/>
+								</aon:selectOneMenu>
+							</aon:div>				
+						</aon:div>				
+					</h:panelGrid>
 				</aon:div>
 			</aon:panel>
 
@@ -179,7 +184,7 @@
 								reRender="taskData"
 								onclick="if (!confirm('#{groupwareBundle.groupware_task_reopen}?')) return false;"
 								styleClass="aon-icon-commandButton aon-icon-task-reopen"
-								style="padding:0px;margin:0px;padding-left:5px;"
+								style="padding:0px;margin:0px;padding-left:5px;width:18px;"
 								actionListener="#{task.onReopenTaskFromList}" />
 						</aon:div>
 					</aon:column>

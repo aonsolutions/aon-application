@@ -391,6 +391,7 @@ public class OfferController extends BasicController implements ISignatureContro
 			Target target = (Target)event.getNewValue();
 			getOffer().setTarget(target);
 			getOffer().setTariff(target.getTariff());
+			getOffer().setScope(target.getScope());
 			loadAddresses(target.getId());
 			loadProjects(target.getId());
 			loadCommercial(target.getId());

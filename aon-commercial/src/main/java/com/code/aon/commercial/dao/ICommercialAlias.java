@@ -1011,6 +1011,12 @@ public interface ICommercialAlias {
 	*/
 	String  TARGET_STATUS = TARGET_ENTRY.getAliasNames()[10];
 
+	/** 
+	* Alias value: Target_scope_id
+	* Hibernate value: Target.scope.id
+	*/
+	String  TARGET_SCOPE_ID = TARGET_ENTRY.getAliasNames()[11];
+
 
 
 	/** 

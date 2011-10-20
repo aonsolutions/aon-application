@@ -3,6 +3,7 @@ package com.code.aon.sales.bridge.util;
 import java.util.Iterator;
 
 import com.code.aon.commercial.Offer;
+import com.code.aon.commercial.Target;
 import com.code.aon.commercial.enumeration.TargetStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -31,20 +32,23 @@ public class SalesBridgeUtil {
 			if (offer.getPayMethod() != null && offer.getPayMethod().getId() != null) {
 				createRegistryPayMethod(offer, rBank);
 			}
-			return createCustomer(offer);
+			if (offer.getTariff() != null && offer.getTariff().getId() != null) {
+				updateTargetTariff(offer);
+			}
+			return createCustomer(offer.getTarget());
 		}
 	}
 
-	private Customer createCustomer(Offer offer) throws ManagerBeanException {
+	public Customer createCustomer(Target target) throws ManagerBeanException {
 		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 		Customer customer = new Customer();
-		customer.setRegistry(offer.getTarget().getRegistry());
-		customer.setTariff((offer.getTariff()!=null && offer.getTariff().getId()!=null) ? offer.getTariff() : null);
-		customer.setSurcharge(offer.getTarget().isSurcharge());
-		customer.setWithholding(offer.getTarget().isWithholding());
-		customer.setTransaction(offer.getTarget().getTransaction());
-		customer.setStatus((offer.getTarget().getStatus() == TargetStatus.ACTIVE) ? CustomerStatus.ACTIVE : CustomerStatus.INACTIVE);
-		customer.setScope(offer.getScope());
+		customer.setRegistry(target.getRegistry());
+		customer.setTariff((target.getTariff()!=null && target.getTariff().getId()!=null) ? target.getTariff() : null);
+		customer.setSurcharge(target.isSurcharge());
+		customer.setWithholding(target.isWithholding());
+		customer.setTransaction(target.getTransaction());
+		customer.setStatus((target.getStatus() == TargetStatus.ACTIVE) ? CustomerStatus.ACTIVE : CustomerStatus.INACTIVE);
+		customer.setScope(target.getScope());
 		return (Customer)customerBean.insert(customer);
 	}
 
@@ -68,6 +72,14 @@ public class SalesBridgeUtil {
 		rPayMethod.setPaymentDays(offer.getPaymentDays());
 		rPayMethod.setRegistryBank(rBank);
 		return (RegistryPayMethod)rPayMethodBean.insert(rPayMethod);
+	}
+
+	private void updateTargetTariff(Offer offer) throws ManagerBeanException {
+		if (offer.getTarget().getTariff() == null || offer.getTarget().getTariff().getId() == null) {
+			IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
+			offer.getTarget().setTariff(offer.getTariff());
+			targetBean.update(offer.getTarget());
+		}
 	}
 
 }

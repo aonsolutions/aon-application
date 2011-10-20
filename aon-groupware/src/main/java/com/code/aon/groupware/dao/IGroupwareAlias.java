@@ -850,7 +850,7 @@ public interface IGroupwareAlias {
 
 	/** 
 	* Alias value: Task_workGroup_id
-	* Hibernate value: Task.workGroup.id
+	* Hibernate value: Task.workGroup<id
 	*/
 	String  TASK_WORK_GROUP_ID = TASK_ENTRY.getAliasNames()[20];
 

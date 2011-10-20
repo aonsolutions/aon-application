@@ -58,6 +58,9 @@
 		<payroll:paymentUpdate
 			showEnterpriseInSearch="true" 
 		/>
+		<payroll:irpfDraft
+			showEnterpriseInSearch="true" 
+		/>
 	</payroll:config>
 	
 	<webmail:config version="1.2" xmlns:webmail="http://www.esferalia.com/webmail" >

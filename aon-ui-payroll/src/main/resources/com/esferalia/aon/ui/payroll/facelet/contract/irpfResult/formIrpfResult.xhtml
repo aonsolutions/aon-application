@@ -6,13 +6,14 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-<aon:div styleClass="aon-border aon-margin-top aon-margin-left aon-padding"  style="width:815px;background-color:#f6f5e3;">
+<aon:div styleClass="aon-border aon-margin-top aon-margin-left aon-padding"  style="width:815px;">
 <style type="text/css">
 	.irpf_bottom_border { border-bottom: solid #CCCCCC 1px; }
 	.irpf_bold_bottom_border { border-bottom: solid #CCCCCC 2px; }
 	.aon-border-top{border-top:#ccc 1px solid; }
 	.aon-border-left{border-left:#ccc 1px solid; }
 	.aon-border-right{border-right:#ccc 1px solid; }
+	.irpf_background {background-color:#f6f5e3;}
 </style>
 	<aon:panelGrid styleClass="aon-margin-top "
 				columns="3" style="width: 100%;"
@@ -20,11 +21,10 @@
 							  ,aon-border aon-bold aon-text-center aon-padding
 							  ,aon-noborder aon-width-150 aon-text-center aon-padding">
 		<aon:outputText value="Agencia Tributaria" />
-		<aon:outputText value="CÁLCULO DE RETENCIONES  - IRPF 2011"/>
-		<aon:div styleClass="aon-border" >
-			<aon:outputText value="#{irpfResult.effectiveDate}">
-			</aon:outputText>
-		</aon:div> 
+		<aon:outputText value="CÁLCULO DE RETENCIONES  - IRPF #{irpf.effectiveYear}"/>
+		<ui:include src="#{propertyEditor}" >
+			<ui:param name="property" value="effectiveDate" />
+		</ui:include>
 	</aon:panelGrid>
 	<aon:panelGrid styleClass="aon-margin-top "
 				columns="1" style="width: 100%;"
@@ -44,11 +44,10 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{irpfResult.baseIrpf}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="baseIrpf" />
+			</ui:include>
+			
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="MÍNIMO PERSONAL Y FAMILIAR PARA CALCULAR EL TIPO DE RETENCIÓN" />
@@ -56,11 +55,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{irpfResult.minimunPersonalFamily}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="minimunPersonalFamily" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="DEDUCCIÓN ART. 80 BIS LIRPF" />
@@ -68,11 +65,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{irpfResult.deduct80Bis}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="deduct80Bis" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="MINORACIÓN POR PAGOS DE PRÉSTAMOS PARA VIVIENDA HABITUAL" />
@@ -80,11 +75,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{irpfResult.deductHomeLoanAmount}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="deductHomeLoanAmount" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bold_bottom_border aon-bold"  >
 				<aon:outputText value="TIPO DE RETENCIÓN APLICABLE" />
@@ -92,11 +85,9 @@
 			<aon:div styleClass="irpf_bold_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border aon-bold" >
-				<aon:outputText value="#{irpfResult.irpf}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="irpf" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bold_bottom_border aon-bold"  >
 				<aon:outputText value="IMPORTE ANUAL DE LAS RETENCIONES E INGRESOS A CUENTA" />
@@ -104,20 +95,18 @@
 			<aon:div styleClass="irpf_bold_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border aon-bold" >
-				<aon:outputText value="#{irpfResult.annualIrpf}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="annualIrpf" />
+			</ui:include>
 
 	</aon:panelGrid>
 	
 	<!--  DATOS PERSONALES DEL PERCEPTOR -->
 	
-	<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center "  >
-		<aon:outputText value="DATOS PERSONALES DEL PERCEPTOR  NIF: " />
+	<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center irpf_background"  >
+		<aon:outputText value="DATOS PERSONALES DEL PERCEPTOR  NIF: #{irpf.document}" />
 	</aon:div>
-	<aon:panelGrid styleClass="aon-border aon-padding-left aon-padding-bottom"
+	<aon:panelGrid styleClass="aon-border aon-padding-left aon-padding-bottom irpf_background"
 				columns="2" style="width: 100%;"
 				columnClasses="aon-noborder aon-width-half
 							  ,aon-noborder aon-width-half">
@@ -134,11 +123,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{irpfResult.baseIrpf}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="birthYear" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="Situación familiar" />
@@ -146,9 +133,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{3}" />
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="constant" value="3" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="Discapacidad" />
@@ -156,9 +143,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{'Sin Discapacidad'}" />
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="constant" value="NO" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="Situación laboral" />
@@ -166,9 +153,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{'ACTIVO'}" />
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="constant" value="ACTIVO" />
+			</ui:include>
 
 		</aon:panelGrid>
 		
@@ -193,9 +180,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{'NO'}" />
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="constant" value="NO" />
+			</ui:include> 
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="Prolongación activad laboral " />
@@ -203,9 +190,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{'NO'}" />
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="constant" value="NO" />
+			</ui:include> 
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="Residente en Ceuta o Melilla" />
@@ -213,9 +200,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{'NO'}" />
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="constant" value="NO" />
+			</ui:include> 
 
 		</aon:panelGrid>
 
@@ -223,10 +210,10 @@
 
 	<!--  DATOS ECONOMICOS -->
 	
-	<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center "  >
+	<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center irpf_background"  >
 		<aon:outputText value="DATOS ECONÓMICOS" />
 	</aon:div>
-	<aon:panelGrid styleClass="aon-border aon-padding-left aon-padding-bottom"
+	<aon:panelGrid styleClass="aon-border aon-padding-left aon-padding-bottom irpf_background"
 				columns="2" style="width: 100%;"
 				columnClasses="aon-noborder aon-width-half
 							  ,aon-noborder aon-width-half">
@@ -242,11 +229,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{irpfResult.annualRemuneration}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="annualRemuneration" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="Reducciones (Art. 18.2 LIRPF)" />
@@ -254,11 +239,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{irpfResult.irregular18_2Reduction}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="irregular18_2Reduction" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="Reducciones (Art. 18.3; Disposiciones transitorias 11ª y 12ª de la LIRPF)" />
@@ -266,11 +249,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{irpfResult.irregular18_3Reduction}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="irregular18_3Reduction" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="Gastos deducibles" />
@@ -278,11 +259,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{irpfResult.deducciblesExpenses}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="deducciblesExpenses" />
+			</ui:include>
 
 		</aon:panelGrid>
 		
@@ -297,11 +276,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="0" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="constant" value="0.00" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="Pensión compensatoria al cónyuge" />
@@ -309,11 +286,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{irpfResult.spousalSupport}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="spousalSupport" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="Anualidades por alimentos a los hijos " />
@@ -321,11 +296,9 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{irpfResult.foodAnnuity}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="foodAnnuity" />
+			</ui:include>
 
 			<aon:div styleClass="irpf_bottom_border"  >
 				<aon:outputText value="Pagos por préstamos para vivienda habitual " />
@@ -333,29 +306,38 @@
 			<aon:div styleClass="irpf_bottom_border" >
 				<aon:outputText value="&#160;" />
 			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="0" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="constant" value="0.00" />
+			</ui:include>
 
 		</aon:panelGrid>
 
 	</aon:panelGrid>
 	
 	<!--  DESCENDIENTES COMPUTADOS y ASCENDIENTES COMPUTADOS -->
-	<aon:panelGrid styleClass="aon-noborder "
-				columns="2" style="width: 100%;"
-				columnClasses="aon-noborder  aon-width-half aon-padding-right  aon-vertical-align-top
-							  ,aon-noborder  aon-width-half aon-padding-left aon-vertical-align-top">
-		<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center "  >
+	<aon:panelGrid styleClass="aon-noborder aon-padding-top "
+				columns="3" style="width: 100%;"
+				columnClasses="aon-border-top aon-border-left aon-border-right  aon-width-half aon-vertical-align-top irpf_background
+							  ,aon-noborder
+							  ,aon-border-top aon-border-left aon-border-right  aon-width-half aon-vertical-align-top irpf_background">
+		<aon:div styleClass="aon-text-center irpf_background"  >
 			<aon:outputText value="DESCENDIENTES COMPUTADOS" />
 		</aon:div>
-		<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center "  >
+		<aon:div >
+			<aon:outputText value="&#160;&#160;" />
+		</aon:div>
+
+		<aon:div styleClass="aon-text-center irpf_background "  >
 			<aon:outputText value="ASCENDIENTES COMPUTADOS" />
 		</aon:div>
+	</aon:panelGrid>
+	<aon:panelGrid styleClass="aon-noborder "
+				columns="3" style="width: 100%;"
+				columnClasses="aon-border aon-width-half aon-vertical-align-top irpf_background
+							  ,aon-noborder
+							  ,aon-border  aon-width-half aon-vertical-align-top irpf_background">
 							  
-		<aon:div styleClass="aon-border aon-padding" > 
+		<aon:div styleClass="aon-padding irpf_background" > 
 			<aon:panelGrid styleClass=""
 						columns="5" style="width: 100%;"
 						columnClasses="aon-noborder aon-vertical-align-bottom
@@ -370,15 +352,15 @@
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Total" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="#{irpfResult.descendentsMinor3Total}" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendentsMinor3Total" />
+				</ui:include>
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Por entero" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="#{irpfResult.descendentsMinor3Entirely}" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendentsMinor3Entirely" />
+				</ui:include>
 
 				<aon:div styleClass="irpf_bottom_border"  >
 					<aon:outputText value="Resto" />
@@ -386,15 +368,15 @@
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Total" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="#{irpfResult.descendentsRemainderTotal}" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendentsRemainderTotal" />
+				</ui:include>
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Por entero" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="#{irpfResult.descendentsRemainderTotal}" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendentsRemainderEntirely" />
+				</ui:include>
 
 			</aon:panelGrid>									 
 
@@ -414,21 +396,21 @@
 				<aon:div styleClass="irpf_bottom_border"  >
 					<aon:outputText value="Hijo 1º.:" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendentsFirst" />
+				</ui:include> 
 				<aon:div styleClass="irpf_bottom_border" >
-					<aon:outputText value="Hijo 1º.:" />
+					<aon:outputText value="Hijo 2º.:" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendentsSecond" />
+				</ui:include> 
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Hijo 3º.:" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendentsThird" />
+				</ui:include> 
 			</aon:panelGrid>
 			
 			<aon:panelGrid styleClass=""
@@ -445,15 +427,15 @@
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Nº Total" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendentsFourthSubsequentTotal" />
+				</ui:include> 
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Por entero" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendentsFourthSubsequentEntirely" />
+				</ui:include> 
 			</aon:panelGrid>
 
 			<aon:div styleClass="aon-margin-top aon-text-center"  >
@@ -469,20 +451,20 @@
 									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom"
 									  >
 				<aon:div styleClass="irpf_bottom_border"  >
-					<aon:outputText value="=33 y 65:" />
+					<aon:outputText value="&#62;=33 y &#60;65:" />
 				</aon:div>
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Total" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendents33_65Total" />
+				</ui:include> 
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Por entero" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendents33_65Entirely" />
+				</ui:include> 
 
 				<aon:div styleClass="irpf_bottom_border"  >
 					<aon:outputText value="Movilidad reducida:" />
@@ -490,38 +472,42 @@
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Total" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendentsMovingTotal" />
+				</ui:include> 
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Por entero" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendentsMovingEntirely" />
+				</ui:include> 
 
 				<aon:div styleClass="irpf_bottom_border"  >
-					<aon:outputText value="=65:" />
+					<aon:outputText value="&#62;=65:" />
 				</aon:div>
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Total" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendents65Total" />
+				</ui:include> 
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Por entero" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="descendents65Entirely" />
+				</ui:include> 
 				
 			</aon:panelGrid>
 
 
 		</aon:div>							  
 
-		<aon:div styleClass="aon-border aon-padding" > 
+		<aon:div >
+			<aon:outputText value="&#160;&#160;" />
+		</aon:div>
+
+		<aon:div styleClass="aon-padding irpf_background aon-height-all " > 
 			<aon:panelGrid styleClass=""
 						columns="5" style="width: 100%;"
 						columnClasses="aon-noborder aon-vertical-align-bottom
@@ -536,15 +522,15 @@
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Total" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="ascendentsMinor75Total" />
+				</ui:include> 
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Por entero" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="ascendentsMinor75Entirely" />
+				</ui:include> 
 
 				<aon:div styleClass="irpf_bottom_border"  >
 					<aon:outputText value="Mayores de 75 años:" />
@@ -552,16 +538,15 @@
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Total" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="ascendentsMayor75Total" />
+				</ui:include> 
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Por entero" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
-
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="ascendentsMayor75Entirely" />
+				</ui:include> 
 				
 			</aon:panelGrid>
 			
@@ -569,8 +554,7 @@
 				<aon:outputText value="ASCENDIENTES CON DISCAPACIDAD" />
 			</aon:div>
 			
-			<aon:panelGrid styleClass=""
-						columns="5" style="width: 100%;"
+			<aon:panelGrid columns="5" style="width: 100%;"
 						columnClasses="aon-noborder aon-vertical-align-bottom
 									  ,aon-noborder aon-vertical-align-bottom
 									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom
@@ -578,20 +562,20 @@
 									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom"
 									  >
 				<aon:div styleClass="irpf_bottom_border"  >
-					<aon:outputText value="=33 y 65:" />
+					<aon:outputText value="&#62;=33 y &#60;65:" />
 				</aon:div>
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Total" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="ascendents33_65Total" />
+				</ui:include> 
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Por entero" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="ascendents33_65Entirely" />
+				</ui:include> 
 
 				<aon:div styleClass="irpf_bottom_border"  >
 					<aon:outputText value="Movilidad reducida:" />
@@ -599,183 +583,162 @@
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Total" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="ascendentsMovingTotal" />
+				</ui:include> 
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Por entero" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="ascendentsMovingEntirely" />
+				</ui:include> 
 
 				<aon:div styleClass="irpf_bottom_border"  >
-					<aon:outputText value="=65:" />
+					<aon:outputText value="&#62;=65:" />
 				</aon:div>
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Total" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="ascendents65Total" />
+				</ui:include> 
 				<aon:div styleClass="irpf_bottom_border" >
 					<aon:outputText value="Por entero" />
 				</aon:div>
-				<aon:div styleClass="aon-border" >
-					<aon:outputText value="0" />
-				</aon:div> 
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="ascendents65Entirely" />
+				</ui:include> 
 				
 			</aon:panelGrid>
+			
 
 		</aon:div>							  
 
 	</aon:panelGrid>
 
 	<!--  REGULARIZACIÓN -->
-
-	<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center "  >
-		<aon:outputText value="REGULARIZACIÓN" />
-	</aon:div>
-	<aon:panelGrid styleClass="aon-border aon-padding-left aon-padding-bottom"
-				columns="3" style="width: 100%;"
-				columnClasses="aon-noborder aon-vertical-align-bottom
-							  ,aon-noborder aon-vertical-align-bottom
-							  ,aon-noborder aon-width-150  aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom">
-
-			<aon:div styleClass="irpf_bottom_border"  >
-				<aon:outputText value="Causa/s de regularización" />
-			</aon:div>
-			<aon:div styleClass="irpf_bottom_border" >
-				<aon:outputText value="&#160;" />
-			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{0.00}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
-
-			<aon:div styleClass="irpf_bottom_border"  >
-				<aon:outputText value="Retribuciones ya satisfechas con anterioridad a la regularización" />
-			</aon:div>
-			<aon:div styleClass="irpf_bottom_border" >
-				<aon:outputText value="&#160;" />
-			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{0.00}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
-
-			<aon:div styleClass="irpf_bottom_border"  >
-				<aon:outputText value="Retenciones e ingresos a cuenta ya practicados con anterioridad a la regularización" />
-			</aon:div>
-			<aon:div styleClass="irpf_bottom_border" >
-				<aon:outputText value="&#160;" />
-			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{0.00}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
-
-			<aon:div styleClass="irpf_bottom_border"  >
-				<aon:outputText value="Retribuciones anuales consideradas con anterioridad a la regularización " />
-			</aon:div>
-			<aon:div styleClass="irpf_bottom_border" >
-				<aon:outputText value="&#160;" />
-			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{0.00}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
-
-			<aon:div styleClass="irpf_bottom_border"  >
-				<aon:outputText value="Importe anual de las retenciones e ingresos a cuenta determinado antes de la regularización" />
-			</aon:div>
-			<aon:div styleClass="irpf_bottom_border" >
-				<aon:outputText value="&#160;" />
-			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{0.00}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
-
-			<aon:div styleClass="irpf_bottom_border"  >
-				<aon:outputText value="Los rendimientos anteriores a la regularización fueron obtenidos en Ceuta o Melilla" />
-			</aon:div>
-			<aon:div styleClass="irpf_bottom_border" >
-				<aon:outputText value="&#160;" />
-			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{0.00}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
-
-			<aon:div styleClass="irpf_bottom_border"  >
-				<aon:outputText value="Base para calcular el tipo de retención determinada antes de la regularización" />
-			</aon:div>
-			<aon:div styleClass="irpf_bottom_border" >
-				<aon:outputText value="&#160;" />
-			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{0.00}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
-
-			<aon:div styleClass="irpf_bottom_border"  >
-				<aon:outputText value="Mínimo personal y familiar determinado antes de la regularización" />
-			</aon:div>
-			<aon:div styleClass="irpf_bottom_border" >
-				<aon:outputText value="&#160;" />
-			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{0.00}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
-
-			<aon:div styleClass="irpf_bottom_border"  >
-				<aon:outputText value="Tipo de retención aplicado antes de la regularización" />
-			</aon:div>
-			<aon:div styleClass="irpf_bottom_border" >
-				<aon:outputText value="&#160;" />
-			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{0.00}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
-
-			<aon:div styleClass="irpf_bottom_border"  >
-				<aon:outputText value="En algún momento antes de la regularización se aplicó minoración por pagos de préstamos para vivienda " />
-			</aon:div>
-			<aon:div styleClass="irpf_bottom_border" >
-				<aon:outputText value="&#160;" />
-			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{0.00}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
-
-			<aon:div styleClass="irpf_bottom_border"  >
-				<aon:outputText value="Importe de la minoración por pagos de préstamos para vivienda determinado antes de la regularización" />
-			</aon:div>
-			<aon:div styleClass="irpf_bottom_border" >
-				<aon:outputText value="&#160;" />
-			</aon:div>
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{0.00}" >
-					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-				</aon:outputText>
-			</aon:div> 
-
-	</aon:panelGrid>
-
+	<c:if test="#{irpf.reason != null}">
+		<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center irpf_background"  >
+			<aon:outputText value="REGULARIZACIÓN" />
+		</aon:div>
+		<aon:panelGrid styleClass="aon-border aon-padding-left aon-padding-bottom irpf_background"
+					columns="3" style="width: 100%;"
+					columnClasses="aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-width-150  aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom">
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Causa/s de regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="reason" />
+				</ui:include> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Retribuciones ya satisfechas con anterioridad a la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="paidRemuneration" />
+				</ui:include> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Retenciones e ingresos a cuenta ya practicados con anterioridad a la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="paidIrpf" />
+				</ui:include> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Retribuciones anuales consideradas con anterioridad a la regularización " />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="priorAnnualRemuneration" />
+				</ui:include> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Importe anual de las retenciones e ingresos a cuenta determinado antes de la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="priorAnnualIrpf" />
+				</ui:include> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Los rendimientos anteriores a la regularización fueron obtenidos en Ceuta o Melilla" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="constant" value="NO" />
+				</ui:include> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Base para calcular el tipo de retención determinada antes de la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="priorBaseIrpf" />
+				</ui:include> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Mínimo personal y familiar determinado antes de la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="priorMinimunPersonalFamily" />
+				</ui:include> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Tipo de retención aplicado antes de la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="priorIrpf" />
+				</ui:include> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="En algún momento antes de la regularización se aplicó minoración por pagos de préstamos para vivienda " />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="constant" value="#{irpf.priorDeductHomeLoanAmount > 0 ? 'SI':'NO'}" />
+				</ui:include>
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Importe de la minoración por pagos de préstamos para vivienda determinado antes de la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<ui:include src="#{propertyEditor}" >
+					<ui:param name="property" value="priorDeductHomeLoanAmount" />
+				</ui:include> 
+	
+		</aon:panelGrid>
+	</c:if>
 
 </aon:div>
 

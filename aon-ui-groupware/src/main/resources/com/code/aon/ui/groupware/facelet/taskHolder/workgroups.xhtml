@@ -15,15 +15,20 @@
 				<f:facet name="header">
 					<aon:outputLabel for="TaskHolderWorkgroup_workGroup" value="#{groupwareBundle.groupware_group}" />
 				</f:facet>
+				
 				<aon:outputText value="#{to.workGroup.description}" rendered="#{formList}" />
+				<aon:outputText styleClass="aon-margin-left" value="#{to.workGroup.status}"
+					style="color:red"	
+					rendered="#{formList and !to.workGroupActive}"/>
+					
 				<aon:selectOneMenu id="TaskHolderWorkgroup_workGroup"
 					rendered="#{formEdit}" value="#{controller.to.workGroup}">
-					<f:selectItems value="#{configCollections.workgroups}" />
+					<f:selectItems value="#{taskHolderWorkgroup.workgroups}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:selectOneMenu id="TaskHolderWorkgroup_workGroup-New"
 						rendered="#{formNew}" value="#{controller.to.workGroup}">
-						<f:selectItems value="#{configCollections.workgroups}" />
+						<f:selectItems value="#{taskHolderWorkgroup.workgroups}" />
 					</aon:selectOneMenu>
 				</f:facet>
 			</aon:column>

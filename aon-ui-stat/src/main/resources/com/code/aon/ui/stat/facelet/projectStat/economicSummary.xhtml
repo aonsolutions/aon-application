@@ -74,7 +74,7 @@
 
 			<aon:outputText value="% Diferencia s/Presupuesto" />
 			<aon:panelGroup>
-				<aon:outputText value="#{projectStat.totalSales / projectStat.totalOffered}">
+				<aon:outputText value="#{projectStat.totalSales * 100 / projectStat.totalOffered}">
 					<f:convertNumber pattern="#{bundle.aon_percent_pattern}" />
 				</aon:outputText>
 				<aon:outputText value="&#160;%" />

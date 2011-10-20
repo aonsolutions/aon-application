@@ -17,6 +17,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Bank;
 import com.code.aon.config.BankAccount;
 import com.code.aon.config.PayMethod;
@@ -358,6 +359,40 @@ public class DeliveryController extends BasicController implements IWarehouseCon
 		to.setPaymentDays("");
 		to.setBank(new Bank());
 		to.setBankAccount(new BankAccount());
+	}
+
+	public void onWorkPlaceChanged(LookupChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null && !event.getNewValue().equals("")) {
+			WorkPlace workPlace = (WorkPlace)event.getNewValue();
+			((Delivery)this.getTo()).setWorkPlace(workPlace);
+			setWarehouse(obtainWarehouse(((Delivery)this.getTo())));
+		}
+	}
+
+	public Warehouse obtainWarehouse(Delivery delivery) throws ManagerBeanException {
+		IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(deliveryDetailBean.getFieldName(IWarehouseAlias.DELIVERY_DETAIL_DELIVERY_ID), delivery.getId());
+		Iterator<?> iterator = deliveryDetailBean.getList(criteria).iterator();
+		if (iterator.hasNext()) {
+			return ((DeliveryDetail)iterator.next()).getWarehouse();
+		} else if (delivery.getWorkPlace() != null) {
+			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_WORK_PLACE_ID), delivery.getWorkPlace().getId());
+			iterator = warehouseBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				return (Warehouse)iterator.next();
+			} else {
+				criteria = new Criteria();
+				criteria.addOrder(warehouseBean.getFieldName(IWarehouseAlias.WAREHOUSE_NAME));
+				iterator = warehouseBean.getList(criteria).iterator();
+				if (iterator.hasNext()) {
+					return (Warehouse)iterator.next();
+				}
+			}
+		}
+		return null;
 	}
 
 	public double getTaxableBase(){

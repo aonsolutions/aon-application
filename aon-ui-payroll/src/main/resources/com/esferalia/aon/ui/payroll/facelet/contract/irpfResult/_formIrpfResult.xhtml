@@ -1,0 +1,790 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+<aon:div styleClass="aon-border aon-margin-top aon-margin-left aon-padding"  style="width:815px;">
+<style type="text/css">
+	.irpf_bottom_border { border-bottom: solid #CCCCCC 1px; }
+	.irpf_bold_bottom_border { border-bottom: solid #CCCCCC 2px; }
+	.aon-border-top{border-top:#ccc 1px solid; }
+	.aon-border-left{border-left:#ccc 1px solid; }
+	.aon-border-right{border-right:#ccc 1px solid; }
+	.irpf_background {background-color:#f6f5e3;}
+</style>
+	<aon:panelGrid styleClass="aon-margin-top "
+				columns="3" style="width: 100%;"
+				columnClasses="aon-noborder aon-bold aon-text-center aon-padding 
+							  ,aon-border aon-bold aon-text-center aon-padding
+							  ,aon-noborder aon-width-150 aon-text-center aon-padding">
+		<aon:outputText value="Agencia Tributaria" />
+		<aon:outputText value="CÁLCULO DE RETENCIONES  - IRPF #{irpf.effectiveYear}"/>
+		<aon:div styleClass="aon-border" >
+			<aon:outputText value="#{irpf.effectiveDate}">
+			</aon:outputText>
+		</aon:div> 
+	</aon:panelGrid>
+	<aon:panelGrid styleClass="aon-margin-top "
+				columns="1" style="width: 100%;"
+				columnClasses="aon-noborder aon-bold">
+			<aon:outputText value="La Agencia tributaria le comunica que, en relación con el perceptor que más abajo se indica y de acuerdo con los datos que asimismo se relacionan, los resultados del cálculo efectuado son los siguientes: " />
+	</aon:panelGrid>
+	
+	<aon:panelGrid styleClass="aon-margin-top "
+				columns="3" style="width: 100%;"
+				columnClasses="aon-noborder aon-vertical-align-bottom
+							  ,aon-noborder aon-vertical-align-bottom
+							  ,aon-noborder aon-width-150  aon-text-center aon-padding-left aon-padding-top aon-padding-right aon-vertical-align-bottom">
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="BASE PARA CALCULAR EL TIPO DE RETENCIÓN" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.baseIrpf}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="MÍNIMO PERSONAL Y FAMILIAR PARA CALCULAR EL TIPO DE RETENCIÓN" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.minimunPersonalFamily}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="DEDUCCIÓN ART. 80 BIS LIRPF" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.deduct80Bis}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="MINORACIÓN POR PAGOS DE PRÉSTAMOS PARA VIVIENDA HABITUAL" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.deductHomeLoanAmount}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bold_bottom_border aon-bold"  >
+				<aon:outputText value="TIPO DE RETENCIÓN APLICABLE" />
+			</aon:div>
+			<aon:div styleClass="irpf_bold_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-bold aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.irpf}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bold_bottom_border aon-bold"  >
+				<aon:outputText value="IMPORTE ANUAL DE LAS RETENCIONES E INGRESOS A CUENTA" />
+			</aon:div>
+			<aon:div styleClass="irpf_bold_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-bold aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.annualIrpf}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+	</aon:panelGrid>
+	
+	<!--  DATOS PERSONALES DEL PERCEPTOR -->
+	
+	<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center irpf_background"  >
+		<aon:outputText value="DATOS PERSONALES DEL PERCEPTOR  NIF: #{irpf.document}" />
+	</aon:div>
+	<aon:panelGrid styleClass="aon-border aon-padding-left aon-padding-bottom irpf_background"
+				columns="2" style="width: 100%;"
+				columnClasses="aon-noborder aon-width-half
+							  ,aon-noborder aon-width-half">
+							  
+		<aon:panelGrid styleClass="aon-padding-left "
+					columns="3" style="width: 100%;"
+					columnClasses="aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-width-150  aon-text-center aon-padding-left aon-padding-top aon-padding-right aon-vertical-align-bottom">
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Año de nacimiento " />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border" >
+				<aon:outputText value="#{irpf.birthYear}" />
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Situación familiar" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border" >
+				<aon:outputText value="#{3}" />
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Discapacidad" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border" >
+				<aon:outputText value="#{'Sin Discapacidad'}" />
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Situación laboral" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border" >
+				<aon:outputText value="#{'ACTIVO'}" />
+			</aon:div> 
+
+		</aon:panelGrid>
+		
+		<aon:panelGrid styleClass="aon-padding-left "
+					columns="3" style="width: 100%;"
+					columnClasses="aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-width-150  aon-text-center aon-padding-left aon-padding-top aon-padding-right aon-vertical-align-bottom">
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Tipo de contrato o relación" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border" >
+				<aon:outputText value="#{'GENERAL'}" />
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Movilidad geográfica" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border" >
+				<aon:outputText value="#{'NO'}" />
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Prolongación activad laboral " />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border" >
+				<aon:outputText value="#{'NO'}" />
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Residente en Ceuta o Melilla" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border" >
+				<aon:outputText value="#{'NO'}" />
+			</aon:div> 
+
+		</aon:panelGrid>
+
+	</aon:panelGrid>
+
+	<!--  DATOS ECONOMICOS -->
+	
+	<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center irpf_background"  >
+		<aon:outputText value="DATOS ECONÓMICOS" />
+	</aon:div>
+	<aon:panelGrid styleClass="aon-border aon-padding-left aon-padding-bottom irpf_background"
+				columns="2" style="width: 100%;"
+				columnClasses="aon-noborder aon-width-half
+							  ,aon-noborder aon-width-half">
+		<aon:panelGrid styleClass="aon-padding-left "
+					columns="3" style="width: 100%;"
+					columnClasses="aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-width-150  aon-text-center aon-padding-left aon-padding-top aon-padding-right aon-vertical-align-bottom">
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Retribuciones totales anuales" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.annualRemuneration}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Reducciones (Art. 18.2 LIRPF)" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.irregular18_2Reduction}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Reducciones (Art. 18.3; Disposiciones transitorias 11ª y 12ª de la LIRPF)" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.irregular18_3Reduction}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Gastos deducibles" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.deducciblesExpenses}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+		</aon:panelGrid>
+		
+		<aon:panelGrid styleClass="aon-padding-left "
+					columns="3" style="width: 100%;"
+					columnClasses="aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-width-150  aon-text-center aon-padding-left aon-padding-top aon-padding-right aon-vertical-align-bottom">
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Rendimientos obtenidos en Ceuta o Melilla" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="0" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Pensión compensatoria al cónyuge" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.spousalSupport}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Anualidades por alimentos a los hijos " />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="#{irpf.foodAnnuity}" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Pagos por préstamos para vivienda habitual " />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+				<aon:outputText value="0" >
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div> 
+
+		</aon:panelGrid>
+
+	</aon:panelGrid>
+	
+	<!--  DESCENDIENTES COMPUTADOS y ASCENDIENTES COMPUTADOS -->
+	<aon:panelGrid styleClass="aon-noborder aon-padding-top "
+				columns="3" style="width: 100%;"
+				columnClasses="aon-border-top aon-border-left aon-border-right  aon-width-half aon-vertical-align-top irpf_background
+							  ,aon-noborder
+							  ,aon-border-top aon-border-left aon-border-right  aon-width-half aon-vertical-align-top irpf_background">
+		<aon:div styleClass="aon-text-center irpf_background"  >
+			<aon:outputText value="DESCENDIENTES COMPUTADOS" />
+		</aon:div>
+		<aon:div >
+			<aon:outputText value="&#160;&#160;" />
+		</aon:div>
+
+		<aon:div styleClass="aon-text-center irpf_background "  >
+			<aon:outputText value="ASCENDIENTES COMPUTADOS" />
+		</aon:div>
+	</aon:panelGrid>
+	<aon:panelGrid styleClass="aon-noborder "
+				columns="3" style="width: 100%;"
+				columnClasses="aon-border aon-width-half aon-vertical-align-top irpf_background
+							  ,aon-noborder
+							  ,aon-border  aon-width-half aon-vertical-align-top irpf_background">
+							  
+		<aon:div styleClass="aon-padding irpf_background" > 
+			<aon:panelGrid styleClass=""
+						columns="5" style="width: 100%;"
+						columnClasses="aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom"
+									  >
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Menores de 3 años: (*) " />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Total" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendentsMinor3Total}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Por entero" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendentsMinor3Entirely}" />
+				</aon:div> 
+
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Resto" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Total" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendentsRemainderTotal}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Por entero" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendentsRemainderTotal}" />
+				</aon:div> 
+
+			</aon:panelGrid>									 
+
+			<aon:div styleClass="aon-margin-top aon-text-center "  >
+				<aon:outputText value="DETALLE DEL CÓMPUTO DE CADA DESCENDIENTE" />
+			</aon:div>
+
+			<aon:panelGrid styleClass=""
+						columns="6" style="width: 100%;"
+						columnClasses="aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom"
+									  >
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Hijo 1º.:" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendentsFirst}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Hijo 2º.:" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendentsSecond}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Hijo 3º.:" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendentsThird}" />
+				</aon:div> 
+			</aon:panelGrid>
+			
+			<aon:panelGrid styleClass=""
+						columns="5" style="width: 100%;"
+						columnClasses="aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom"
+									  >
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="4º. y sucesivos:" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Nº Total" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendentsFourthSubsequentTotal}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Por entero" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendentsFourthSubsequentEntirely}" />
+				</aon:div> 
+			</aon:panelGrid>
+
+			<aon:div styleClass="aon-margin-top aon-text-center"  >
+				<aon:outputText value="DESCENCIENTES CON DISCAPACIDAD" />
+			</aon:div>
+			
+			<aon:panelGrid styleClass=""
+						columns="5" style="width: 100%;"
+						columnClasses="aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom"
+									  >
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="&#62;=33 y &#60;65:" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Total" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendents33_65Total}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Por entero" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendents33_65Entirely}" />
+				</aon:div> 
+
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Movilidad reducida:" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Total" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendentsMovingTotal}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Por entero" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendentsMovingEntirely}" />
+				</aon:div> 
+
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="&#62;=65:" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Total" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendents65Total}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Por entero" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.descendents65Entirely}" />
+				</aon:div> 
+				
+			</aon:panelGrid>
+
+
+		</aon:div>							  
+
+		<aon:div >
+			<aon:outputText value="&#160;&#160;" />
+		</aon:div>
+
+		<aon:div styleClass="aon-padding irpf_background aon-height-all " > 
+			<aon:panelGrid styleClass=""
+						columns="5" style="width: 100%;"
+						columnClasses="aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom"
+									  >
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Menores de 75 años:" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Total" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.ascendentsMinor75Total}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Por entero" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.ascendentsMinor75Entirely}" />
+				</aon:div> 
+
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Mayores de 75 años:" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Total" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.ascendentsMayor75Total}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Por entero" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.ascendentsMayor75Entirely}" />
+				</aon:div> 
+				
+			</aon:panelGrid>
+			
+			<aon:div styleClass="aon-margin-top aon-text-center"  >
+				<aon:outputText value="ASCENDIENTES CON DISCAPACIDAD" />
+			</aon:div>
+			
+			<aon:panelGrid columns="5" style="width: 100%;"
+						columnClasses="aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom
+									  ,aon-noborder aon-vertical-align-bottom
+									  ,aon-noborder aon-width-50 aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom"
+									  >
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="&#62;=33 y &#60;65:" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Total" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.ascendents33_65Total}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Por entero" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.ascendents33_65Entirely}" />
+				</aon:div> 
+
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Movilidad reducida:" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Total" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.ascendentsMovingTotal}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Por entero" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.ascendentsMovingEntirely}" />
+				</aon:div> 
+
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="&#62;=65:" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Total" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.ascendents65Total}" />
+				</aon:div> 
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="Por entero" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.ascendents65Entirely}" />
+				</aon:div> 
+				
+			</aon:panelGrid>
+			
+
+		</aon:div>							  
+
+	</aon:panelGrid>
+
+	<!--  REGULARIZACIÓN -->
+	<c:if test="#{irpf.reason != null}">
+		<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center irpf_background"  >
+			<aon:outputText value="REGULARIZACIÓN" />
+		</aon:div>
+		<aon:panelGrid styleClass="aon-border aon-padding-left aon-padding-bottom irpf_background"
+					columns="3" style="width: 100%;"
+					columnClasses="aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-vertical-align-bottom
+								  ,aon-noborder aon-width-150  aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom">
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Causa/s de regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div styleClass="aon-border " >
+					<aon:outputText value="#{irpf.reason.causa}" />
+				</aon:div> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Retribuciones ya satisfechas con anterioridad a la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+					<aon:outputText value="#{irpf.paidRemuneration}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Retenciones e ingresos a cuenta ya practicados con anterioridad a la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+					<aon:outputText value="#{irpf.paidIrpf}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Retribuciones anuales consideradas con anterioridad a la regularización " />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+					<aon:outputText value="#{irpf.priorAnnualRemuneration}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Importe anual de las retenciones e ingresos a cuenta determinado antes de la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+					<aon:outputText value="#{irpf.priorAnnualIrpf}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Los rendimientos anteriores a la regularización fueron obtenidos en Ceuta o Melilla" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{'NO'}" />
+				</aon:div> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Base para calcular el tipo de retención determinada antes de la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+					<aon:outputText value="#{irpf.priorBaseIrpf}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Mínimo personal y familiar determinado antes de la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+					<aon:outputText value="#{irpf.priorMinimunPersonalFamily}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Tipo de retención aplicado antes de la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+					<aon:outputText value="#{irpf.priorIrpf}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="En algún momento antes de la regularización se aplicó minoración por pagos de préstamos para vivienda " />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div styleClass="aon-border" >
+					<aon:outputText value="#{irpf.priorDeductHomeLoanAmount > 0 ? 'SI':'NO'}" />
+				</aon:div> 
+	
+				<aon:div styleClass="irpf_bottom_border"  >
+					<aon:outputText value="Importe de la minoración por pagos de préstamos para vivienda determinado antes de la regularización" />
+				</aon:div>
+				<aon:div styleClass="irpf_bottom_border" >
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div styleClass="aon-border aon-padding-right aon-text-right " >
+					<aon:outputText value="#{irpf.priorDeductHomeLoanAmount}" >
+						<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+					</aon:outputText>
+				</aon:div> 
+	
+		</aon:panelGrid>
+	</c:if>
+
+</aon:div>
+
+
+</ui:composition>

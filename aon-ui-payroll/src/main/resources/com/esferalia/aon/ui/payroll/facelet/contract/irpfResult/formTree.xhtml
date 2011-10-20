@@ -28,7 +28,8 @@
 		
 		<c:if test="#{irpfResult.model.rowCount > 0}" >
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formIrpfResult.xhtml" >
-				<ui:param name="controller" value="#{irpfResult}" />
+				<ui:param name="irpf" value="#{irpfResult}" />
+				<ui:param name="propertyEditor" value="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/defaultPropertyEditor.xhtml" />
 			</ui:include>
 		</c:if>
 	</ui:define>

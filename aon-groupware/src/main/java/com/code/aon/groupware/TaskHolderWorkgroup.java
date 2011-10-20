@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -17,6 +18,7 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.config.WorkGroup;
+import com.code.aon.config.enumeration.WorkGroupStatus;
 
 @Entity
 @Table(name="task_holder_workgroup")
@@ -58,6 +60,11 @@ public class TaskHolderWorkgroup implements ITransferObject {
 	}
 	public void setWorkGroup(WorkGroup workGroup) {
 		this.workGroup = workGroup;
+	}
+	
+	@Transient
+	public boolean isWorkGroupActive() {
+		return (getWorkGroup().getStatus() == WorkGroupStatus.ACTIVE);
 	}
 
 	@Override

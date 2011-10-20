@@ -37,7 +37,6 @@ import com.code.aon.finance.InvoiceAttachment;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.bridge.invoicing.RectificationInvoicingManager;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
@@ -458,21 +457,6 @@ public class InvoiceController extends BasicController implements ISignatureCont
 			}
 		}
 		return payMethodName;
-	}
-
-	public FinanceStatus getFinanceStatus() throws ManagerBeanException {
-		Invoice invoice = (Invoice)this.getModel().getRowData();
-		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		Iterator<ITransferObject> iterator = financeBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			Finance finance = (Finance)iterator.next();
-			if (FinanceStatus.PAID != finance.getFinanceStatus() && FinanceStatus.SETTLED != finance.getFinanceStatus()) {
-				return FinanceStatus.PENDING;
-			}
-		}
-		return (financeBean.getCount(criteria) == 0) ? null : FinanceStatus.PAID;
 	}
 
 	public boolean isRemovable() {

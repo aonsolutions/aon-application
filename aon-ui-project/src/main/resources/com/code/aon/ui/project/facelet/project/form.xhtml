@@ -76,13 +76,35 @@
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItems value="#{projectCollections.projectTypes}" />
 					</aon:selectOneMenu>
-
+					
+					<aon:outputText value="&#160;" />
+					<aon:div>
+						<aon:selectBooleanCheckbox id="Project_commercial" disabled="true" 
+							styleClass="aon-margin-left" value="#{project.to.commercial}" />	
+						<aon:outputLabel for="Project_commercial" value="#{projectBundle.project_commercial}"/>
+						<aon:selectBooleanCheckbox id="Project_tas" disabled="true" 
+							styleClass="aon-margin-left" value="#{project.to.tas}" />	
+						<aon:outputLabel for="Project_tas" value="#{projectBundle.project_tas}"/>
+						<aon:selectBooleanCheckbox id="Project_dossier" disabled="true" 
+							styleClass="aon-margin-left" value="#{project.to.dossier}" />	
+						<aon:outputLabel for="Project_dossier" value="#{projectBundle.project_dossier}"/>
+					</aon:div>
 				</aon:panelGrid>
 
-				<ui:include src="/com/code/aon/ui/project/facelet/project/projectActivity.xhtml" />
+				<aon:panelTabSet id="projectTabSet">
+					<aon:panelTab id="project_activities" label="#{projectBundle.project_activities}">
+						<ui:include src="/com/code/aon/ui/project/facelet/project/projectActivity.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="project_charts" label="#{statBundle.stat_economic_summary}"
+						actionListener="#{project.onGraphicTab}">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="project_gantt" label="Gantt" actionListener="#{project.onGraphicTab}">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
+					</aon:panelTab>
+				</aon:panelTabSet>
 				
 			</aon:div>
-			
 		</aon:form>
 		<ui:include src="/com/code/aon/ui/project/facelet/project/import.xhtml" />
 		<aon:lookupButtonPopup lookup="#{registryLookup}" />

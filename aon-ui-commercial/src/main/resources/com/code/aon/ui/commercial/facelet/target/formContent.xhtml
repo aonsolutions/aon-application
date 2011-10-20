@@ -9,12 +9,18 @@
 	<ui:include
 		src="/com/code/aon/ui/registry/facelet/registry/formContent.xhtml" />
 
-	<aon:outputLabel for="Target_advertising" value="#{commercialBundle.commercial_target_advertising}" />
-	<aon:selectOneMenu id="Target_advertising" value="#{controller.to.advertising}"
-		required="true">
-		<f:selectItem itemLabel="-" value="#{null}"/>
-		<f:selectItems value="#{commercialCollections.advertisings}" />
-	</aon:selectOneMenu>
+	<aon:outputLabel for="Target_scope_id" value="#{bundle.aon_scope}" />
+	<aon:div>
+		<aon:selectOneMenu id="Target_scope_id" value="#{controller.to.scope}">
+			<f:selectItems value="#{configCollections.currentUserScopes}" />
+		</aon:selectOneMenu>
+		<aon:outputLabel for="Target_advertising" styleClass="aon-italic aon-margin-left aon-margin-right"
+			value="#{commercialBundle.commercial_target_advertising}" />
+		<aon:selectOneMenu id="Target_advertising" value="#{controller.to.advertising}">
+			<f:selectItem itemLabel="-" value="#{null}"/>
+			<f:selectItems value="#{commercialCollections.advertisings}" />
+		</aon:selectOneMenu>
+	</aon:div>
 
 	<aon:outputLabel for="Target_status" value="#{bundle.aon_status}" />
 	<aon:selectOneRadio id="Target_status" value="#{controller.to.status}">
@@ -48,6 +54,30 @@
 			<f:selectItem itemLabel="-" value="#{null}" />
 			<f:selectItems value="#{configCollections.tariffs}" />
 		</aon:selectOneMenu>
+	</c:if>
+
+	<c:if test="#{aonConfiguration.bean.target.showSearchOnlyCustomers}">
+		<aon:outputLabel for="Target_customer"
+			value="#{commercialBundle.commercial_target_customer}" />
+		<aon:div id="TargetCustomerDiv">
+			<aon:outputText id="Target_customer" 
+				value="#{controller.to.customer ? bundle.aon_yes : bundle.aon_no}" />
+			<aon:commandLink id="customer_link" immediate="true"
+				styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+				value="&#160;" title="#{bundle.aon_go}"
+				rendered="#{controller.to.customer}"
+				actionListener="#{controller.onLoadCustomer}"
+				action="customer_form" />
+			<aon:commandButton
+				value="#{commercialBundle.commercial_target_create_customer}" 
+				title="#{commercialBundle.commercial_target_create_customer}"
+				style="border: #808080 1px solid;"
+				styleClass="aon-finding-toolbar-item aon-icon-reset"
+				rendered="#{!controller.to.customer}"
+				actionListener="#{target.onCreateCustomer}"
+				reRender="TargetCustomerDiv">
+			</aon:commandButton>
+		</aon:div>
 	</c:if>
 
 </ui:composition>
