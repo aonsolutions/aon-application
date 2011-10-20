@@ -13,18 +13,8 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 
-/**
- * Listener Added to the customerController.
- */
 public class TargetFromCustomerBeanListener extends ManagerBeanListenerAdapter {
 
-	/**
-	 * After bean inserted. Adds the related target.
-	 * 
-	 * @param event the event
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
 	@Override
 	public void beanInserted(ManagerBeanEvent event) throws ManagerBeanException {
 		Customer customer = (Customer)event.getTo();
@@ -40,6 +30,7 @@ public class TargetFromCustomerBeanListener extends ManagerBeanListenerAdapter {
 			target.setWithholding(customer.isWithholding());
 			target.setTransaction(customer.getTransaction());
 			target.setStatus((customer.getStatus() == CustomerStatus.ACTIVE) ? TargetStatus.ACTIVE : TargetStatus.INACTIVE);
+			target.setScope(customer.getScope());
 			targetBean.insert(target);
 		}
 	}

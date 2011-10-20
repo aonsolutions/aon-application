@@ -40,6 +40,9 @@ public class OfferBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		if (offer.getStatus() == null) {
 			offer.setStatus(OfferStatus.PENDING);
 		}
+		if (offer.getScope() == null || offer.getScope().getId() == null) {
+			offer.setScope(offer.getTarget().getScope());
+		}
 	}
 
 	private void checkOffer(Offer offer) throws ManagerBeanVetoListenerException {
