@@ -56,4 +56,28 @@
 		</aon:selectOneMenu>
 	</c:if>
 
+	<c:if test="#{aonConfiguration.bean.target.showSearchOnlyCustomers}">
+		<aon:outputLabel for="Target_customer"
+			value="#{commercialBundle.commercial_target_customer}" />
+		<aon:div id="TargetCustomerDiv">
+			<aon:outputText id="Target_customer" 
+				value="#{controller.to.customer ? bundle.aon_yes : bundle.aon_no}" />
+			<aon:commandLink id="customer_link" immediate="true"
+				styleClass="aon-button-goto aon-margin-left" style="padding-right: 20px;"
+				value="&#160;" title="#{bundle.aon_go}"
+				rendered="#{controller.to.customer}"
+				actionListener="#{controller.onLoadCustomer}"
+				action="customer_form" />
+			<aon:commandButton
+				value="#{commercialBundle.commercial_target_create_customer}" 
+				title="#{commercialBundle.commercial_target_create_customer}"
+				style="border: #808080 1px solid;"
+				styleClass="aon-finding-toolbar-item aon-icon-reset"
+				rendered="#{!controller.to.customer}"
+				actionListener="#{target.onCreateCustomer}"
+				reRender="TargetCustomerDiv">
+			</aon:commandButton>
+		</aon:div>
+	</c:if>
+
 </ui:composition>
