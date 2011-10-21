@@ -20,6 +20,7 @@ import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractBatch;
+import com.esferalia.aon.payroll.ContractBatchAttachment;
 import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractCalendarEvent;
@@ -86,6 +87,7 @@ public class PayrollAliasWriter {
 				Contract.class.getName(),
 				ContractAttachment.class.getName(),
 				ContractBatch.class.getName(),
+				ContractBatchAttachment.class.getName(),
 				ContractBatchDetail.class.getName(),
 				ContractBonus.class.getName(),
 				ContractCalendarEvent.class.getName(),

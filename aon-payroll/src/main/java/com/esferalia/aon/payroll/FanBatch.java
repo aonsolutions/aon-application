@@ -16,6 +16,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.payroll.enumeration.FileStatus;
 
 @Entity
 @Table(name="fan_batch")
@@ -24,7 +25,8 @@ public class FanBatch implements ITransferObject {
 	private static final long serialVersionUID = 7580658046113470830L;
 
 	private Integer id;
-	private Date date;	
+	private Date date;
+	private FileStatus status;
 	
 	@Id
 	@GeneratedValue
@@ -45,6 +47,13 @@ public class FanBatch implements ITransferObject {
 	public void setDate(Date date) {
 		this.date = date;
 	}
+	
+	public FileStatus getStatus() {
+		return status;
+	}
+	public void setStatus(FileStatus status) {
+		this.status = status;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -55,6 +64,7 @@ public class FanBatch implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.date, o.date)
+				.append(this.status, o.status)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -65,6 +75,7 @@ public class FanBatch implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(id)
 			.append(this.date)
+			.append(this.status)
 			.toHashCode();
 	}
 

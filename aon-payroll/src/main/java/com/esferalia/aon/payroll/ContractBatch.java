@@ -10,7 +10,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.esferalia.aon.payroll.enumeration.FileStatus;
 
 @Entity
 @Table(name = "contract_batch")
@@ -24,6 +30,7 @@ public class ContractBatch implements ITransferObject {
 	private Integer redNotifyId;
 	private Date redResponseDate;
 	private Integer redResponseId;
+	private FileStatus status;
 
 	@Id     
 	@GeneratedValue(strategy = javax.persistence.GenerationType.AUTO)
@@ -78,7 +85,49 @@ public class ContractBatch implements ITransferObject {
 		this.redResponseId = redResponseId;
 	}
 	
+	public FileStatus getStatus() {
+		return status;
+	}
+	public void setStatus(FileStatus status) {
+		this.status = status;
+	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final ContractBatch o = (ContractBatch) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.date, o.date)
+				.append(this.redNotifyDate, o.redNotifyDate)
+				.append(this.redNotifyId, o.redNotifyId)
+				.append(this.redResponseDate, o.redResponseDate)
+				.append(this.redResponseId, o.redResponseId)
+				.append(this.status, o.status)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(id )
+			.append(date) 
+			.append(redNotifyDate)
+			.append(redNotifyId)
+			.append(redResponseDate)
+			.append(redResponseId)
+			.append(status)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
 	
 }
 

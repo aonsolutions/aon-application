@@ -13,13 +13,13 @@
 			<aon:commandButton title="#{bundle.aon_check_all}"
 				styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 				value="#{bundle.aon_check_all}"
-				actionListener="#{controllerDetail.checkAll}" reRender="detailDataDiv"
+				actionListener="#{controllerDetail.checkHandler.checkAll}" reRender="detailDataDiv"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
 			<aon:commandButton title="#{bundle.aon_uncheck_all}"
 				styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 				value="#{bundle.aon_uncheck_all}"
-				actionListener="#{controllerDetail.checkNone}" reRender="detailDataDiv"
+				actionListener="#{controllerDetail.checkHandler.checkNone}" reRender="detailDataDiv"
 				onclick="Richfaces.showModalPanel('waitProccess')" 
 	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 			<aon:commandButton title="#{payrollBundle.payroll_remove_batch}"
@@ -31,7 +31,7 @@
 		</aon:div>
 	</c:if>
 	
-	<aon:div id="batchDetailDataDiv">
+	<aon:div id="detailDataDiv">
 		<aon:dataTable id="batchDetailData" value="#{controllerDetail.model}"
 			var="to" rows="20" rendered="#{controllerDetail.model.rowCount > 0}" >			
 
@@ -41,8 +41,8 @@
 						<aon:outputText value="&#160;" />
 					</f:facet>
 					<aon:selectBooleanCheckbox id="Included_Row_checked"
-						value="#{controllerDetail.rowChecked}"
-						valueChangeListener="#{controllerDetail.rowSelected}" />	
+						value="#{controllerDetail.checkHandler.rowChecked}"
+						valueChangeListener="#{controllerDetail.checkHandler.rowSelected}" />	
 				</aon:column>
 			</c:if>
 			

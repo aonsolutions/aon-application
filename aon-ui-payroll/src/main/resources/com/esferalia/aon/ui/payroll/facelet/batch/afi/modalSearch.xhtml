@@ -8,9 +8,13 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 	
+	
 	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/modalSearch.xhtml">
 
 		<ui:define name="modalContent" >
+			<!--  
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/searchContent.xhtml" />
+			-->
 			<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{controller.person}" />
 				<ui:param name="skipNewButton" value="#{true}" />
@@ -21,19 +25,15 @@
 				<ui:param name="skipNewButton" value="#{true}" />
 			</ui:include>
 			
-			<aon:outputLabel for="LeaveBatch_detailType"
-				value="#{payrollBundle.payroll_leaveBatch_pending_report_type}" />
-			<aon:selectManyCheckbox id="LeaveBatch_detailType" layout="lineDirection"
-				value="#{controller.reportTypes}" >
-				<f:selectItems value="#{payrollCollections.reportTypesList}" />
-			</aon:selectManyCheckbox>
 		</ui:define>
 		
 		<ui:define name="afterFormContent" >
 			<aon:lookupButtonPopup lookup="#{personLookup}" />
 			<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 		</ui:define>
-		
+	
 	</ui:decorate>
+	
+
 
 </ui:composition>

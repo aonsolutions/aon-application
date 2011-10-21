@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
@@ -43,6 +45,8 @@ public class Certifica2BatchData implements ITransferObject {
 	
 	@ManyToOne(targetEntity = Certifica2BatchDetail.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "certifica2_batch_detail", nullable = false)
+	@ForeignKey(name = "FK_CERTIFICA2_BATCH_DATA_CERTIFICA2_BATCH_DETAIL")
+	@Index(name = "IDX_CERTIFICA2_BATCH_DATA_CERTIFICA2_BATCH_DETAIL")
 	public Certifica2BatchDetail getCertifica2BatchDetail() {
 		return certifica2BatchDetail;
 	}

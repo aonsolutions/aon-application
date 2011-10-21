@@ -10,10 +10,10 @@ import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
-public class LeaveBatchAttachController extends BatchAttachController {
+public class ContractBatchAttachController extends BatchAttachController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(LeaveBatchAttachController.class);
-	private final static String QUERY = "select sum(length(data)) from LeaveBatchAttachment";
+	private final static String QUERY = "select sum(length(data)) from ContractBatchAttachment";
 
 	private LeaveBatchAttachmentType type;
 	
@@ -28,7 +28,7 @@ public class LeaveBatchAttachController extends BatchAttachController {
 	@Override
 	public void onRemove(ActionEvent event) {
 		super.onRemove(event);
-		LeaveBatchController controller = (LeaveBatchController) FormUtil.getController(IPayrollConstants.LEAVE_BATCH_CONTROLLER_NAME);
+		ContractBatchController controller = (ContractBatchController) FormUtil.getController(IPayrollConstants.CONTRACT_BATCH_CONTROLLER_NAME);
 		controller.changeBatchStatus(FileStatus.PENDING);
 		controller.setRecorded(false);
 	}
@@ -42,5 +42,5 @@ public class LeaveBatchAttachController extends BatchAttachController {
 	protected String getQuery() {
 		return QUERY;
 	}
-	
+		
 }

@@ -25,12 +25,14 @@
 		<mapping class="com.esferalia.aon.payroll.AgreementPayment"/>
 		<mapping class="com.esferalia.aon.payroll.BonusConcept"/>
 		<mapping class="com.esferalia.aon.payroll.Certifica2Batch"/>
+		<mapping class="com.esferalia.aon.payroll.Certidica2BatchAttachment"/>
 		<mapping class="com.esferalia.aon.payroll.Certifica2BatchData"/>
 		<mapping class="com.esferalia.aon.payroll.Certifica2BatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.CNO"/>
 		<mapping class="com.esferalia.aon.payroll.Contract"/>
 		<mapping class="com.esferalia.aon.payroll.ContractAttachment"/>
 		<mapping class="com.esferalia.aon.payroll.ContractBatch"/>
+		<mapping class="com.esferalia.aon.payroll.ContractBatchAttachment"/>
 		<mapping class="com.esferalia.aon.payroll.ContractBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.ContractBonus"/>
 		<mapping class="com.esferalia.aon.payroll.ContractCalendarEvent"/>
@@ -44,6 +46,7 @@
 		<mapping class="com.esferalia.aon.payroll.EnterpriseActivity"/>
 		<mapping class="com.esferalia.aon.payroll.EnterpriseCCC"/>
 		<mapping class="com.esferalia.aon.payroll.FanBatch"/>
+		<mapping class="com.esferalia.aon.payroll.FanBatchAttachment"/>
 		<mapping class="com.esferalia.aon.payroll.FanBatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.GeozoneIrpf"/>
 		<mapping class="com.esferalia.aon.payroll.GeozoneIrpfDescendant"/>

@@ -12,22 +12,22 @@
 			styleClass="aon-finding-toolbar-item aon-icon-checkAll"
 			value="#{bundle.aon_check_all}"
 			rendered="#{controllerList.model.rowCount > 0}"
-			actionListener="#{controllerList.checkAll}" reRender="listDataDiv"
+			actionListener="#{controllerList.checkHandler.checkAll}" reRender="listDataDiv"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 		<aon:commandButton title="#{bundle.aon_uncheck_all}"
 			styleClass="aon-finding-toolbar-item aon-icon-checkNone"
 			value="#{bundle.aon_uncheck_all}"
 			rendered="#{controllerList.model.rowCount > 0}"
-			actionListener="#{controllerList.checkNone}" reRender="listDataDiv"
+			actionListener="#{controllerList.checkHandler.checkNone}" reRender="listDataDiv"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
 		<aon:commandButton title="#{payrollBundle.payroll_refine_search}"
 			styleClass="aon-finding-toolbar-item aon-icon-search"
 			value="#{payrollBundle.payroll_refine_search}"
-			actionListener="#{controller.onEditSearchLeave}" 
-			reRender="showLeaveSearchWindow">
-			<f:setPropertyActionListener target="#{controllerList.showLeaveSearchWindow}"
+			actionListener="#{controller.onEditSearchList}" 
+			reRender="showListSearchWindow">
+			<f:setPropertyActionListener target="#{controllerList.checkHandler.showListSearchWindow}"
 				value="#{true}" />
 		</aon:commandButton>
 		<aon:commandButton title="#{payrollBundle.payroll_add_batch}"
@@ -48,8 +48,8 @@
 					<aon:outputText value="&#160;" />
 				</f:facet>
 				<aon:selectBooleanCheckbox id="Included_Row_checked"
-					value="#{controllerList.rowChecked}"
-					valueChangeListener="#{controllerList.rowSelected}" />	
+					value="#{controllerList.checkHandler.rowChecked}"
+					valueChangeListener="#{controllerList.checkHandler.rowSelected}" />	
 			</aon:column>
 			
 			<ui:insert name="listDataColumns" />

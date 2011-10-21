@@ -5,15 +5,16 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="leaveBatchList">
+		<aon:form id="contractBatchList">
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_leaveBatchWizard_module}" />
-				<ui:param name="controller" value="#{leaveBatch}" />
+				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contractBatchWizard_module}" />
+				<ui:param name="controller" value="#{contractBatch}" />
 				
 			</ui:decorate>
 
@@ -21,10 +22,10 @@
 			<aon:div styleClass="aon-scroll-area">
 			
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{leaveBatch}" />
+					<ui:param name="controller" value="#{contractBatch}" />
 					<ui:define name="columns">
 
-						<aon:column alias="LeaveBatch.id"
+						<aon:column alias="ContractBatch.id"
 							styleClass="aon-editDataTable-numberColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_id}" />
@@ -32,7 +33,7 @@
 							<aon:outputText value="#{to.id}" />
 						</aon:column>
 						
-						<aon:column alias="LeaveBatch.date"
+						<aon:column alias="ContractBatch.date"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_date}" />
@@ -43,7 +44,7 @@
 							</aon:outputText>
 						</aon:column>
 						
-						<aon:column alias="LeaveBatch.status"
+						<aon:column alias="ContractBatch.status"
 							styleClass="aon-editDataTable-textColumn">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_status}" />

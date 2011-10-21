@@ -20,7 +20,9 @@
 			<ui:param name="skipSearchButton" value="true" />
 
 			<ui:define name="searchContent">
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/searchContent.xhtml" />					
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/searchContent.xhtml" >					
+					<ui:param name="skipSearchButton" value="false" />
+				</ui:include>
 			</ui:define>
 			
 		</ui:decorate>		

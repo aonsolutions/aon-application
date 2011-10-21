@@ -16,6 +16,8 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
@@ -71,6 +73,8 @@ public class Certifica2BatchDetail implements ITransferObject {
 	
 	@ManyToOne(targetEntity = Certifica2Batch.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "certifica2_batch", nullable = false)
+	@ForeignKey(name = "FK_CERTIFICA2_BATCH_DETAIL_CERTIFICA2_BATCH")
+	@Index(name = "IDX_CERTIFICA2_BATCH_DETAIL_CERTIFICA2_BATCH")
 	public Certifica2Batch getCertifica2Batch() {
 		return certifica2Batch;
 	}
@@ -80,6 +84,8 @@ public class Certifica2BatchDetail implements ITransferObject {
 	
 	@ManyToOne(targetEntity = Contract.class,fetch = FetchType.EAGER)
 	@JoinColumn(name = "contract", nullable = false)
+	@ForeignKey(name = "FK_CERTIFICA2_BATCH_DETAIL_CONTRACT")
+	@Index(name = "IDX_CERTIFICA2_BATCH_DETAIL_CONTRACT")
 	public Contract getContract() {
 		return contract;
 	}

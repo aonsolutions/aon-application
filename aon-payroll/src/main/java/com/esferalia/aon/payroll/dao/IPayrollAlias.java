@@ -17,6 +17,7 @@ import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.ContractBatch;
+import com.esferalia.aon.payroll.ContractBatchAttachment;
 import com.esferalia.aon.payroll.ContractBatchDetail;
 import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractCalendarEvent;
@@ -890,6 +891,73 @@ public interface IPayrollAlias {
 	*/
 	String  CONTRACT_BATCH_RED_RESPONSE_ID = CONTRACT_BATCH_ENTRY.getAliasNames()[5];
 
+	/** 
+	* Alias value: ContractBatch_status
+	* Hibernate value: ContractBatch.status
+	*/
+	String  CONTRACT_BATCH_STATUS = CONTRACT_BATCH_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for ContractBatchAttachment entity.
+	*/ 
+	DAOConstantsEntry CONTRACT_BATCH_ATTACHMENT_ENTRY = DAOConstants.getDAOConstant(ContractBatchAttachment.class);
+
+	/** 
+	* Alias value: ContractBatchAttachment_attachDate
+	* Hibernate value: ContractBatchAttachment.attachDate
+	*/
+	String  CONTRACT_BATCH_ATTACHMENT_ATTACH_DATE = CONTRACT_BATCH_ATTACHMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContractBatchAttachment_attachmentType
+	* Hibernate value: ContractBatchAttachment.attachmentType
+	*/
+	String  CONTRACT_BATCH_ATTACHMENT_ATTACHMENT_TYPE = CONTRACT_BATCH_ATTACHMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContractBatchAttachment_contractBatch_id
+	* Hibernate value: ContractBatchAttachment.contractBatch.id
+	*/
+	String  CONTRACT_BATCH_ATTACHMENT_CONTRACT_BATCH_ID = CONTRACT_BATCH_ATTACHMENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContractBatchAttachment_data
+	* Hibernate value: ContractBatchAttachment.data
+	*/
+	String  CONTRACT_BATCH_ATTACHMENT_DATA = CONTRACT_BATCH_ATTACHMENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContractBatchAttachment_description
+	* Hibernate value: ContractBatchAttachment.description
+	*/
+	String  CONTRACT_BATCH_ATTACHMENT_DESCRIPTION = CONTRACT_BATCH_ATTACHMENT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContractBatchAttachment_id
+	* Hibernate value: ContractBatchAttachment.id
+	*/
+	String  CONTRACT_BATCH_ATTACHMENT_ID = CONTRACT_BATCH_ATTACHMENT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ContractBatchAttachment_mimeType
+	* Hibernate value: ContractBatchAttachment.mimeType
+	*/
+	String  CONTRACT_BATCH_ATTACHMENT_MIME_TYPE = CONTRACT_BATCH_ATTACHMENT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ContractBatchAttachment_scope_id
+	* Hibernate value: ContractBatchAttachment.scope.id
+	*/
+	String  CONTRACT_BATCH_ATTACHMENT_SCOPE_ID = CONTRACT_BATCH_ATTACHMENT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: ContractBatchAttachment_size
+	* Hibernate value: ContractBatchAttachment.size
+	*/
+	String  CONTRACT_BATCH_ATTACHMENT_SIZE = CONTRACT_BATCH_ATTACHMENT_ENTRY.getAliasNames()[8];
+
 
 
 	/** 
@@ -1520,6 +1588,12 @@ public interface IPayrollAlias {
 	* Hibernate value: FanBatch.id
 	*/
 	String  FAN_BATCH_ID = FAN_BATCH_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: FanBatch_status
+	* Hibernate value: FanBatch.status
+	*/
+	String  FAN_BATCH_STATUS = FAN_BATCH_ENTRY.getAliasNames()[2];
 
 
 

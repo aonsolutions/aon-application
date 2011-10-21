@@ -72,10 +72,18 @@
 									value="#{payrollBundle.payroll_contract_module}">
 								</aon:commandLink>
 							</aon:div>
+							<!--  
 							<aon:div styleClass="aon-direct-access-list-element">
 								<aon:commandLink id="contractBatchWizard" 
 									action="contractBatchWizard_step0"
 									actionListener="#{contractBatchWizard.onStart}"
+									value="#{payrollBundle.payroll_contractBatchWizard_module}" />
+							</aon:div>
+							-->
+							<aon:div styleClass="aon-direct-access-list-element">
+								<aon:commandLink id="contractBatch" 
+									action="contractBatch_search"
+									actionListener="#{contractBatch.onEditSearch}"
 									value="#{payrollBundle.payroll_contractBatchWizard_module}" />
 							</aon:div>
 							
