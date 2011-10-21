@@ -8,6 +8,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
@@ -273,6 +274,10 @@ public class IrpfResultController extends BasicController implements
 
 	public Double getPriorDeductHomeLoanAmount() {
 		return controller.getPriorDeductHomeLoanAmount();
+	}
+
+	public Administration getAdministration() {
+		return controller.getAdministration();
 	}
 	
 	

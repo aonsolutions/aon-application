@@ -8,6 +8,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
@@ -507,6 +509,17 @@ public abstract class AbstractIrpfController implements IIrpfController {
 	@Override
 	public Double getPriorDeductHomeLoanAmount() {
 		return getDisplay( getIrpfRegularization().getPriorDeductHomeLoanAmount() );
+	}
+
+	@Override
+	public  Administration getAdministration() {
+		IrpfResult irpfResult = getIrpfResult();
+		
+		Contract contract = irpfResult.getContract();
+		
+		WorkPlace workPlace = contract.getWorkPlace();
+		
+		return workPlace.getEconomicAgreement();
 	}
 
 	private Contract getContract(){

@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.payroll.controller.contract;
 
 import java.util.Date;
 
+import com.code.aon.config.enumeration.Administration;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
 
 public interface IIrpfController {
@@ -125,5 +126,7 @@ public interface IIrpfController {
 	public abstract Double getPriorMinimunPersonalFamily();
 
 	public abstract Double getPriorDeductHomeLoanAmount();
+
+	public abstract Administration getAdministration();
 
 }

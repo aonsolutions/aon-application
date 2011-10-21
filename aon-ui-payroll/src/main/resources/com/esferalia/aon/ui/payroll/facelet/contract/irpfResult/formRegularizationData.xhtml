@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<!--  REGULARIZACIÓN -->
+	<aon:div styleClass="aon-border-left aon-border-top aon-border-right aon-margin-top aon-text-center irpf_background"  >
+		<aon:outputText value="REGULARIZACIÓN" />
+	</aon:div>
+	<aon:panelGrid styleClass="aon-border aon-padding-left aon-padding-bottom irpf_background"
+				columns="3" style="width: 100%;"
+				columnClasses="aon-noborder aon-vertical-align-bottom
+							  ,aon-noborder aon-vertical-align-bottom
+							  ,aon-noborder aon-width-150  aon-text-center aon-padding-left aon-padding-top aon-padding-right  aon-vertical-align-bottom">
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Causa/s de regularización" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="reason" />
+			</ui:include> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Retribuciones ya satisfechas con anterioridad a la regularización" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="paidRemuneration" />
+			</ui:include> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Retenciones e ingresos a cuenta ya practicados con anterioridad a la regularización" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="paidIrpf" />
+			</ui:include> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Retribuciones anuales consideradas con anterioridad a la regularización " />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="priorAnnualRemuneration" />
+			</ui:include> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Importe anual de las retenciones e ingresos a cuenta determinado antes de la regularización" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="priorAnnualIrpf" />
+			</ui:include> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Los rendimientos anteriores a la regularización fueron obtenidos en Ceuta o Melilla" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="constant" value="NO" />
+			</ui:include> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Base para calcular el tipo de retención determinada antes de la regularización" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="priorBaseIrpf" />
+			</ui:include> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Mínimo personal y familiar determinado antes de la regularización" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="priorMinimunPersonalFamily" />
+			</ui:include> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Tipo de retención aplicado antes de la regularización" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="priorIrpf" />
+			</ui:include> 
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="En algún momento antes de la regularización se aplicó minoración por pagos de préstamos para vivienda " />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="constant" value="#{irpf.priorDeductHomeLoanAmount > 0 ? 'SI':'NO'}" />
+			</ui:include>
+
+			<aon:div styleClass="irpf_bottom_border"  >
+				<aon:outputText value="Importe de la minoración por pagos de préstamos para vivienda determinado antes de la regularización" />
+			</aon:div>
+			<aon:div styleClass="irpf_bottom_border" >
+				<aon:outputText value="&#160;" />
+			</aon:div>
+			<ui:include src="#{propertyEditor}" >
+				<ui:param name="property" value="priorDeductHomeLoanAmount" />
+			</ui:include> 
+
+	</aon:panelGrid>
+
+</ui:composition>

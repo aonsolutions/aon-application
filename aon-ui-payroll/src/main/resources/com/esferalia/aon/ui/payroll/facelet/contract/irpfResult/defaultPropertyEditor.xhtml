@@ -15,13 +15,6 @@
 				</aon:outputText>
 			</aon:div> 
 		</c:when>
-		<c:when test="#{value.class.name == 'java.util.Date'}" > 
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{value}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-			</aon:div> 
-		</c:when>
 		<c:when test="#{value.class.name == 'com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason'}" > 
 			<aon:div styleClass="aon-border" >
 				<aon:outputText value="#{value.causa}" />

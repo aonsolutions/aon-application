@@ -39,24 +39,6 @@
 			</c:if> 
 
 		</c:when>
-		<c:when test="#{property == 'effectiveDate'}" >
-			<aon:selectInputDate id="date"
-				value="#{irpf.date}" required="true"
-				inputSize="10" renderAsPopup="true" enableManualInput="true"
-				timeZone="#{timeZoneController.timeZone}"
-				popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="onchanged" actionListener="#{irpf.onReloadDraft}" reRender="irpfDraftContent, #{irpf.beanName}Toolbar" ajaxSingle="true"/>
-				<a4j:support event="oninputchange" actionListener="#{irpf.onReloadDraft}" reRender="irpfDraftContent, #{irpf.beanName}Toolbar" ajaxSingle="true"/>
-			</aon:selectInputDate>
-		</c:when>		
-		<c:when test="#{value.class.name == 'java.util.Date'}" >
-			<aon:div styleClass="aon-border" >
-				<aon:outputText value="#{value}">
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-			</aon:div> 
-		
-		</c:when>
 		<c:when test="#{value.class.name == 'com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason'}" > 
 			<c:if test="#{ compare }" >
 				<aon:panelGrid columns="3" styleClass="aon-width-all " 

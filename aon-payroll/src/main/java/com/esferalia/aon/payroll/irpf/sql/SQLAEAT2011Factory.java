@@ -700,7 +700,7 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 			
 			Integer ordinal = 
 				getIrpfRegularization(rs, IrpfRegularizationColumns.PRIOR_DEDUCT_HOME_LOAN);
-			PagoPrestamosVivienda pagoPrestamosVivienda = null; //getPagoPrestamosVivienda(ordinal);
+			PagoPrestamosVivienda pagoPrestamosVivienda = getPagoPrestamosVivienda(ordinal);
 			if ( pagoPrestamosVivienda != null ) {
 				Double deductHomeLoanAmount = 
 					getIrpfRegularization(rs, IrpfRegularizationColumns.PRIOR_DEDUCT_HOME_LOAN_AMOUNT);
