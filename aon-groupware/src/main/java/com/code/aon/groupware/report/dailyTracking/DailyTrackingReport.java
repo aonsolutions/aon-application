@@ -2,6 +2,8 @@ package com.code.aon.groupware.report.dailyTracking;
 
 import java.util.Date;
 
+import com.code.aon.common.util.CommonUtil;
+
 public class DailyTrackingReport {
 
 	private static final String UNKNOWN = "?";
@@ -11,6 +13,7 @@ public class DailyTrackingReport {
 	private String userName;
 	private Date date;
 	private Double duration;
+	private Double cost;
 	private Integer jobTypeId;
 	private String jobTypeDescription;
 	private Integer registryId;
@@ -24,7 +27,7 @@ public class DailyTrackingReport {
 	private String comments;
 	
 	public DailyTrackingReport(Integer id, Integer userId, String userName, Date date,
-			Double duration, Integer jobTypeId, String jobTypeDescription, Integer registryId,
+			Double duration,Double cost, Integer jobTypeId, String jobTypeDescription, Integer registryId,
 			String registryName,Integer projectId, String projectName, Integer activityTypeId,
 			String activityTypeDescription, Integer projectTypeId, String projectTypeDescription,String comments) {
 		this.id = id;
@@ -32,6 +35,7 @@ public class DailyTrackingReport {
 		this.userName = userName;
 		this.date = date;
 		this.duration = duration;
+		this.cost = cost;
 		this.jobTypeId = jobTypeId;
 		this.jobTypeDescription = jobTypeDescription;
 		this.registryId = registryId;
@@ -45,6 +49,17 @@ public class DailyTrackingReport {
 		this.comments = comments;
 	}
 
+	public DailyTrackingReport(Integer userId, String userName, 
+			Double duration, Integer jobTypeId, String jobTypeDescription, Integer registryId,
+			String registryName) {
+		this.userId = userId;
+		this.userName = userName;
+		this.duration = duration;
+		this.jobTypeId = jobTypeId;
+		this.jobTypeDescription = jobTypeDescription;
+		this.registryId = registryId;
+		this.registryName = registryName;
+	}
 
 	public Integer getId() {
 		return id;
@@ -79,6 +94,13 @@ public class DailyTrackingReport {
 	}
 	public void setDuration(Double duration) {
 		this.duration = duration;
+	}
+
+	public Double getCost() {
+		return cost;
+	}
+	public void setCost(Double cost) {
+		this.cost = cost;
 	}
 
 	public Integer getJobTypeId() {
@@ -164,5 +186,9 @@ public class DailyTrackingReport {
 	}
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+	
+	public double getAmount() {
+		return CommonUtil.round(getDuration() * getCost());
 	}
 }

@@ -1,5 +1,7 @@
 package com.code.aon.groupware.report.dailyTracking;
 
+import com.code.aon.common.util.CommonUtil;
+
 
 public class DailyTrackingSummaryReport {
 	
@@ -8,11 +10,13 @@ public class DailyTrackingSummaryReport {
 	private Integer id;
 	private String description;
 	private Double duration;
+	private Double cost;
 
-	public DailyTrackingSummaryReport(Integer id, String description, Double duration) {
+	public DailyTrackingSummaryReport(Integer id, String description, Double duration, Double cost) {
 		this.id = id;
 		this.description = description;
 		this.duration = duration;
+		this.cost = cost;
 	}
 
 	public Integer getId() {
@@ -37,4 +41,16 @@ public class DailyTrackingSummaryReport {
 	public void setDuration(Double duration) {
 		this.duration = duration;
 	}
+
+	public Double getCost() {
+		return cost;
+	}
+	public void setCost(Double cost) {
+		this.cost = cost;
+	}
+	
+	public Double getAmount() {
+		return CommonUtil.round(getCost() * getDuration());
+	}
+	
 }

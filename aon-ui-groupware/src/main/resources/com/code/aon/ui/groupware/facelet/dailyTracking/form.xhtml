@@ -103,9 +103,11 @@
 					<aon:inputText id="DailyTracking_trackingDuration"
 						value="#{dailyTracking.to.trackingDuration}" required="#{true}" size="5" />
 
-					<aon:outputLabel for="DailyTracking_cost" rendered="#{dailyTracking.monitor}"
+					<aon:outputLabel for="DailyTracking_cost" 
+						rendered="#{dailyTracking.monitor and !dailyTracking.new}"
 						value="#{groupwareBundle.groupware_cost}"/>
-					<aon:inputText id="DailyTracking_cost" rendered="#{dailyTracking.monitor}"
+					<aon:inputText id="DailyTracking_cost" 
+						rendered="#{dailyTracking.monitor and !dailyTracking.new}"
 						value="#{dailyTracking.to.cost}" size="15" />
 
 					<aon:outputLabel for="DailyTracking_comments"
