@@ -66,12 +66,12 @@
 			<to-view-id>/facelet/menu/management.xhtml</to-view-id> 
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>menu_groupware</from-outcome>
-			<to-view-id>/facelet/menu/groupware.xhtml</to-view-id> 
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>menu_config</from-outcome>
 			<to-view-id>/facelet/menu/config.xhtml</to-view-id> 
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_groupware</from-outcome>
+			<to-view-id>/facelet/menu/groupware.xhtml</to-view-id> 
 		</navigation-case>
 	</navigation-rule>
 
