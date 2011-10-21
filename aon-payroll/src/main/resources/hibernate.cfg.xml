@@ -25,7 +25,7 @@
 		<mapping class="com.esferalia.aon.payroll.AgreementPayment"/>
 		<mapping class="com.esferalia.aon.payroll.BonusConcept"/>
 		<mapping class="com.esferalia.aon.payroll.Certifica2Batch"/>
-		<mapping class="com.esferalia.aon.payroll.Certidica2BatchAttachment"/>
+		<mapping class="com.esferalia.aon.payroll.Certifica2BatchAttachment"/>
 		<mapping class="com.esferalia.aon.payroll.Certifica2BatchData"/>
 		<mapping class="com.esferalia.aon.payroll.Certifica2BatchDetail"/>
 		<mapping class="com.esferalia.aon.payroll.CNO"/>

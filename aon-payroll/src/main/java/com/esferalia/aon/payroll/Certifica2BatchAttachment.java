@@ -35,7 +35,7 @@ import com.esferalia.aon.payroll.enumeration.Certifica2BatchAttachmentType;
  */
 @Entity
 @Table(name="certifica2_batch_attach")
-public class Certidica2BatchAttachment implements IAttachment, IScopable {
+public class Certifica2BatchAttachment implements IAttachment, IScopable {
 
 	private static final long serialVersionUID = 6018833861951379143L;
 
@@ -251,7 +251,7 @@ public class Certidica2BatchAttachment implements IAttachment, IScopable {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final Certidica2BatchAttachment o = (Certidica2BatchAttachment) obj;
+		final Certifica2BatchAttachment o = (Certifica2BatchAttachment) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.attachDate, o.attachDate)

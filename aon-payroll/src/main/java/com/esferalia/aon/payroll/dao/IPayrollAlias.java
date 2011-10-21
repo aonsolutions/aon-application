@@ -11,6 +11,7 @@ import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.BonusConcept;
 import com.esferalia.aon.payroll.Certifica2Batch;
+import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.CNO;
@@ -31,6 +32,7 @@ import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.FanBatch;
+import com.esferalia.aon.payroll.FanBatchAttachment;
 import com.esferalia.aon.payroll.FanBatchDetail;
 import com.esferalia.aon.payroll.GeozoneIrpf;
 import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
@@ -422,6 +424,67 @@ public interface IPayrollAlias {
 	* Hibernate value: Certifica2Batch.status
 	*/
 	String  CERTIFICA2BATCH_STATUS = CERTIFICA2BATCH_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for Certifica2BatchAttachment entity.
+	*/ 
+	DAOConstantsEntry CERTIFICA2BATCH_ATTACHMENT_ENTRY = DAOConstants.getDAOConstant(Certifica2BatchAttachment.class);
+
+	/** 
+	* Alias value: Certifica2BatchAttachment_attachDate
+	* Hibernate value: Certifica2BatchAttachment.attachDate
+	*/
+	String  CERTIFICA2BATCH_ATTACHMENT_ATTACH_DATE = CERTIFICA2BATCH_ATTACHMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Certifica2BatchAttachment_attachmentType
+	* Hibernate value: Certifica2BatchAttachment.attachmentType
+	*/
+	String  CERTIFICA2BATCH_ATTACHMENT_ATTACHMENT_TYPE = CERTIFICA2BATCH_ATTACHMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Certifica2BatchAttachment_certifica2Batch_id
+	* Hibernate value: Certifica2BatchAttachment.certifica2Batch.id
+	*/
+	String  CERTIFICA2BATCH_ATTACHMENT_CERTIFICA2BATCH_ID = CERTIFICA2BATCH_ATTACHMENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Certifica2BatchAttachment_data
+	* Hibernate value: Certifica2BatchAttachment.data
+	*/
+	String  CERTIFICA2BATCH_ATTACHMENT_DATA = CERTIFICA2BATCH_ATTACHMENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Certifica2BatchAttachment_description
+	* Hibernate value: Certifica2BatchAttachment.description
+	*/
+	String  CERTIFICA2BATCH_ATTACHMENT_DESCRIPTION = CERTIFICA2BATCH_ATTACHMENT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Certifica2BatchAttachment_id
+	* Hibernate value: Certifica2BatchAttachment.id
+	*/
+	String  CERTIFICA2BATCH_ATTACHMENT_ID = CERTIFICA2BATCH_ATTACHMENT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Certifica2BatchAttachment_mimeType
+	* Hibernate value: Certifica2BatchAttachment.mimeType
+	*/
+	String  CERTIFICA2BATCH_ATTACHMENT_MIME_TYPE = CERTIFICA2BATCH_ATTACHMENT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Certifica2BatchAttachment_scope_id
+	* Hibernate value: Certifica2BatchAttachment.scope.id
+	*/
+	String  CERTIFICA2BATCH_ATTACHMENT_SCOPE_ID = CERTIFICA2BATCH_ATTACHMENT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Certifica2BatchAttachment_size
+	* Hibernate value: Certifica2BatchAttachment.size
+	*/
+	String  CERTIFICA2BATCH_ATTACHMENT_SIZE = CERTIFICA2BATCH_ATTACHMENT_ENTRY.getAliasNames()[8];
 
 
 
@@ -1594,6 +1657,67 @@ public interface IPayrollAlias {
 	* Hibernate value: FanBatch.status
 	*/
 	String  FAN_BATCH_STATUS = FAN_BATCH_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for FanBatchAttachment entity.
+	*/ 
+	DAOConstantsEntry FAN_BATCH_ATTACHMENT_ENTRY = DAOConstants.getDAOConstant(FanBatchAttachment.class);
+
+	/** 
+	* Alias value: FanBatchAttachment_attachDate
+	* Hibernate value: FanBatchAttachment.attachDate
+	*/
+	String  FAN_BATCH_ATTACHMENT_ATTACH_DATE = FAN_BATCH_ATTACHMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: FanBatchAttachment_attachmentType
+	* Hibernate value: FanBatchAttachment.attachmentType
+	*/
+	String  FAN_BATCH_ATTACHMENT_ATTACHMENT_TYPE = FAN_BATCH_ATTACHMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: FanBatchAttachment_data
+	* Hibernate value: FanBatchAttachment.data
+	*/
+	String  FAN_BATCH_ATTACHMENT_DATA = FAN_BATCH_ATTACHMENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: FanBatchAttachment_description
+	* Hibernate value: FanBatchAttachment.description
+	*/
+	String  FAN_BATCH_ATTACHMENT_DESCRIPTION = FAN_BATCH_ATTACHMENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: FanBatchAttachment_fanBatch_id
+	* Hibernate value: FanBatchAttachment.fanBatch.id
+	*/
+	String  FAN_BATCH_ATTACHMENT_FAN_BATCH_ID = FAN_BATCH_ATTACHMENT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: FanBatchAttachment_id
+	* Hibernate value: FanBatchAttachment.id
+	*/
+	String  FAN_BATCH_ATTACHMENT_ID = FAN_BATCH_ATTACHMENT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: FanBatchAttachment_mimeType
+	* Hibernate value: FanBatchAttachment.mimeType
+	*/
+	String  FAN_BATCH_ATTACHMENT_MIME_TYPE = FAN_BATCH_ATTACHMENT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: FanBatchAttachment_scope_id
+	* Hibernate value: FanBatchAttachment.scope.id
+	*/
+	String  FAN_BATCH_ATTACHMENT_SCOPE_ID = FAN_BATCH_ATTACHMENT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: FanBatchAttachment_size
+	* Hibernate value: FanBatchAttachment.size
+	*/
+	String  FAN_BATCH_ATTACHMENT_SIZE = FAN_BATCH_ATTACHMENT_ENTRY.getAliasNames()[8];
 
 
 

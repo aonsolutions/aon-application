@@ -15,6 +15,7 @@ import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.BonusConcept;
 import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Certifica2Batch;
+import com.esferalia.aon.payroll.Certifica2BatchAttachment;
 import com.esferalia.aon.payroll.Certifica2BatchData;
 import com.esferalia.aon.payroll.Certifica2BatchDetail;
 import com.esferalia.aon.payroll.Contract;
@@ -34,6 +35,7 @@ import com.esferalia.aon.payroll.DeductionConcept;
 import com.esferalia.aon.payroll.EnterpriseActivity;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.FanBatch;
+import com.esferalia.aon.payroll.FanBatchAttachment;
 import com.esferalia.aon.payroll.FanBatchDetail;
 import com.esferalia.aon.payroll.GeozoneIrpf;
 import com.esferalia.aon.payroll.GeozoneIrpfDescendant;
@@ -81,6 +83,7 @@ public class PayrollAliasWriter {
 				AgreementPayment.class.getName(),
 				BonusConcept.class.getName(),
 				Certifica2Batch.class.getName(),
+				Certifica2BatchAttachment.class.getName(),
 				Certifica2BatchData.class.getName(),
 				Certifica2BatchDetail.class.getName(),
 				CNO.class.getName(),
@@ -101,6 +104,7 @@ public class PayrollAliasWriter {
 				EnterpriseCCC.class.getName(),
 				EnterpriseActivity.class.getName(),
 				FanBatch.class.getName(),
+				FanBatchAttachment.class.getName(),
 				FanBatchDetail.class.getName(),
 				GeozoneIrpf.class.getName(),
 				GeozoneIrpfDescendant.class.getName(),
