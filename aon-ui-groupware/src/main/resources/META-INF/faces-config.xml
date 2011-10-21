@@ -566,6 +566,7 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
 	<managed-bean>
 		<managed-bean-name>taskSearchControllerListener</managed-bean-name>
 		<managed-bean-class>
@@ -580,6 +581,15 @@
 			com.code.aon.ui.groupware.event.TaskControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* GANTT ***************** -->
+	<managed-bean>
+		<managed-bean-name>gantt</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.groupware.controller.GanttController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************* COST PROFILE  ***************** -->
@@ -631,8 +641,6 @@
     	     <value>CampaignType_description</value>
       	</managed-property>
 	</managed-bean>
-
-
 
 	<!-- ************* CAMPAIGN ***************** -->
 	<managed-bean>
@@ -1069,4 +1077,11 @@
 			<to-view-id>/com/code/aon/ui/groupware/facelet/taskHolder/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+		<!-- =================== Campaign ================= --> 
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>gantt_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/groupware/facelet/task/gantt.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
 </faces-config>
