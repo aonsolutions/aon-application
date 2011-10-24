@@ -8,9 +8,7 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.code.aon</groupId>
   <artifactId>aon-infoweb-templates</artifactId>
-  <version>7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Plantillas (Velocity) del InfoWeb.</description>
   <name>AON INFOWEB TEMPLATES</name>
