@@ -229,11 +229,11 @@
       <name>Inhouse Snapshot Repository</name>
       <url>http://dev.esferalia.com/maven2_repositories/inhouse_snapshot</url>
       <releases>
-        <enabled>true</enabled>
+        <enabled>false</enabled>
         <updatePolicy>never</updatePolicy>
       </releases>
       <snapshots>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
         <updatePolicy>always</updatePolicy>
       </snapshots>
     </repository>
