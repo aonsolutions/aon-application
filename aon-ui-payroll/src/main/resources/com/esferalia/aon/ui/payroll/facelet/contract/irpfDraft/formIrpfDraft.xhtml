@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+<aon:div styleClass="aon-noborder aon-margin-top aon-padding-top aon-padding-bottom "  style="width:830px;">
+<style type="text/css">
+	.irpf_bottom_border { border-bottom: solid #CCCCCC 1px; }
+	.irpf_bold_bottom_border { border-bottom: solid #CCCCCC 2px; }
+	.aon-border-top{border-top:#ccc 1px solid; }
+	.aon-border-left{border-left:#ccc 1px solid; }
+	.aon-border-right{border-right:#ccc 1px solid; }
+	.irpf_background {background-color:#f6f5e3;}
+</style>
+	<aon:panelGrid styleClass="aon-margin-top aon-margin-left  aon-padding-left aon-padding-right"
+				columns="3" style="width: 100%;"
+				columnClasses="aon-noborder aon-bold aon-text-center 
+							  ,aon-border aon-bold aon-text-center aon-padding
+							  ,aon-noborder aon-width-150 aon-text-center aon-padding">
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/administration.xhtml" >
+			<ui:param name="administration" value="irpf.administration" />
+		</ui:include>
+		<aon:outputText value="CÁLCULO DE RETENCIONES  - IRPF #{irpf.effectiveYear}"/>
+		<aon:div styleClass="aon-noborder" >
+			<aon:selectInputDate id="date"
+				value="#{irpf.date}" required="true"
+				inputSize="10" renderAsPopup="true" enableManualInput="true"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}">
+				<a4j:support event="onchanged" actionListener="#{irpf.onReloadDraft}" reRender="irpfDraftContent, #{irpf.beanName}Toolbar" ajaxSingle="true"/>
+				<a4j:support event="oninputchange" actionListener="#{irpf.onReloadDraft}" reRender="irpfDraftContent, #{irpf.beanName}Toolbar" ajaxSingle="true"/>
+			</aon:selectInputDate>
+		</aon:div>
+	</aon:panelGrid>
+	
+	<aon:div styleClass="aon-margin-left aon-padding-left aon-padding-right"> 
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formResultData.xhtml" />
+	</aon:div>
+
+	<!--  DATOS PERSONALES DEL PERCEPTOR -->
+	<aon:panelTabSet styleClass="aon-width-all" style="margin:1em 0 0 0;"  >
+		<aon:panelTab id="dataFormTab" label="Datos Personales">
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formPersonalData.xhtml" />
+		</aon:panelTab>
+		<aon:panelTab id="dataEditTab" label="#{bundle.aon_edit}">
+		</aon:panelTab>
+	</aon:panelTabSet>	
+
+	<!--  DATOS ECONOMICOS -->
+	<aon:panelTabSet styleClass="aon-width-all" style="margin:1em 0 0 0;"  >
+		<aon:panelTab id="economicFormTab" label="Datos Económicos">
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formEconomicData.xhtml" />
+		</aon:panelTab>
+		<aon:panelTab id="economicEditTab" label="#{bundle.aon_edit}">
+		</aon:panelTab>
+	</aon:panelTabSet>
+	
+	<!--  DESCENDIENTES COMPUTADOS y ASCENDIENTES COMPUTADOS -->
+	<aon:panelTabSet styleClass="aon-width-all" style="margin:1em 0 0 0;"  >
+		<aon:panelTab id="descendantsFormTab" label="Descendientes y Ascendientes">
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formDescendantsData.xhtml" />
+		</aon:panelTab>
+		<aon:panelTab id="descendantsEditTab" label="#{bundle.aon_edit}">
+		</aon:panelTab>
+	</aon:panelTabSet>
+	
+	<!--  REGULARIZACIÓN -->
+	<c:if test="#{irpf.reason != null}">
+	<aon:panelTabSet styleClass="aon-width-all" style="margin:1em 0 0 0;"  >
+		<aon:panelTab id="regularizationFormTab" label="Regularización">
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formRegularizationData.xhtml" />
+		</aon:panelTab>
+		<aon:panelTab id="regularizationEditTab" label="#{bundle.aon_edit}">
+		</aon:panelTab>
+	</aon:panelTabSet>
+	</c:if>
+
+</aon:div>
+
+
+</ui:composition>

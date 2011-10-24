@@ -29,6 +29,42 @@
 	<variable name="totalDuration" class="java.lang.Double" resetType="Group" resetGroup="userGroup" calculation="Sum">
 		<variableExpression><![CDATA[$F{duration}]]></variableExpression>
 	</variable>
+	<variable name="totalReport" class="java.lang.Double" resetType="Group" resetGroup="report" calculation="Sum">
+		<variableExpression><![CDATA[$F{duration}]]></variableExpression>
+	</variable>
+	<group name="report">
+		<groupExpression><![CDATA["nunca"]]></groupExpression>
+		<groupFooter>
+			<band height="22">
+				<textField evaluationTime="Group" evaluationGroup="userGroup" pattern="" isBlankWhenNull="true">
+					<reportElement key="textField-26" x="357" y="0" width="102" height="17"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_report_total} + ": "]]></textFieldExpression>
+				</textField>
+				<textField evaluationTime="Report" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement key="textField-25" x="459" y="0" width="76" height="17"/>
+					<box leftPadding="5" rightPadding="5">
+						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						<bottomPen lineWidth="0.0" lineColor="#000000"/>
+						<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalReport}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
 	<group name="userGroup">
 		<groupExpression><![CDATA[$F{userId}]]></groupExpression>
 		<groupHeader>
@@ -51,7 +87,7 @@
 		<groupFooter>
 			<band height="17" splitType="Stretch">
 				<textField evaluationTime="Group" evaluationGroup="userGroup" pattern="#,##0.00" isBlankWhenNull="true">
-					<reportElement key="textField-25" x="490" y="0" width="45" height="17"/>
+					<reportElement key="textField-25" x="459" y="0" width="76" height="17"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -64,7 +100,7 @@
 					<textFieldExpression class="java.lang.Double"><![CDATA[$V{totalDuration}]]></textFieldExpression>
 				</textField>
 				<textField evaluationTime="Group" evaluationGroup="userGroup" pattern="" isBlankWhenNull="true">
-					<reportElement key="textField-26" x="388" y="0" width="102" height="17"/>
+					<reportElement key="textField-26" x="357" y="0" width="102" height="17"/>
 					<box leftPadding="5" rightPadding="5">
 						<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 						<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

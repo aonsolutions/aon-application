@@ -42,6 +42,14 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 						</aon:column>
+						
+						<aon:column alias="LeaveBatch.status"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}"/>
+						</aon:column>
 	
 					</ui:define>
 				</ui:decorate>

@@ -92,7 +92,7 @@ public class AFIWriter {
 		String pais = null;
 		try {
 			pais = enterprise.getRegistry().getDefaultAddress().getGeozone().getName();
-		} catch (ManagerBeanException e) {
+		} catch (NullPointerException e) {
 		}			
 		if (StringUtils.isBlank(pais)) {
 			pais = "   ";

@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/form.xhtml">
+		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_contractBatchWizard_module}" />
+		<ui:param name="controller" value="#{contractBatch}" />
+		<ui:param name="controllerDetail" value="#{contractBatchDetail}" />
+		<ui:param name="controllerAttach" value="#{contractBatchAttach}" />
+		
+		<ui:define name="batchContent" >
+			<aon:panelGrid id="dataTable" columns="2" style="width: 30%;"
+				columnClasses="aon-panelGrid-odd aon-width-150, aon-panelGrid-even aon-width-auto">
+
+				<aon:outputLabel value="#{bundle.aon_id}" />
+				<aon:outputText value="#{contractBatch.to.id}" />
+
+				<aon:outputLabel for="ContractBatch_date" value="#{bundle.aon_date}" />
+				<aon:div>
+					<aon:selectInputDate id="ContractBatch_date" rendered="#{!contractBatch.recorded}"
+						value="#{contractBatch.to.date}" required="true"
+						timeZone="#{timeZoneController.timeZone}"
+						popupDateFormat="#{bundle.aon_date_pattern}"/>
+					<aon:outputText value="#{contractBatch.to.date}" rendered="#{contractBatch.recorded}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:div>	
+
+				<aon:outputLabel value="#{bundle.aon_status}" />
+				<aon:outputText value="#{contractBatch.to.status}" />
+				
+			</aon:panelGrid>
+		</ui:define>
+		
+		<ui:define name="batchedTabContent" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/afi/formDetail.xhtml" />
+		</ui:define>
+		
+		<ui:define name="noBatchedTabContent" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/afi/formNoBatched.xhtml" />
+		</ui:define>
+		
+		<ui:define name="documentTabContent" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/formDocument.xhtml" >
+				<ui:param name="controllerAttach" value="#{contractBatchAttach}" />
+				<ui:param name="batchAttachTypes" value="#{payrollCollections.contractBatchAttachTypes}" />
+			</ui:include>
+		</ui:define>
+		
+		<ui:define name="afterFormContent" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/afi/modalSearch.xhtml">
+				<ui:param name="controller" value="#{contractList}" />
+				<ui:param name="searchReRender" value="listToolBarDiv, listDataDiv" />
+			</ui:include>
+		</ui:define>
+		
+	</ui:decorate>
+
+</ui:composition>

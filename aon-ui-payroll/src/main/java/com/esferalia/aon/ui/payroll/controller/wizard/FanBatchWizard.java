@@ -36,6 +36,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.FanBatch;
 import com.esferalia.aon.payroll.FanBatchDetail;
+import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.file.FANWriter;
 
@@ -290,6 +291,7 @@ public class FanBatchWizard {
 				// BEGIN operaciones de la transaccion
 				setBatch(new FanBatch());
 				getBatch().setDate(new Date());
+				getBatch().setStatus(FileStatus.PENDING);
 				FanBatchDetail batchDetail;
 				setBatch( (FanBatch) BeanManager.getManagerBean(FanBatch.class).insert(getBatch()) );
 				list = (List<RemesableEnterprise>) getModel().getWrappedData();

@@ -51,6 +51,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.company.WorkPlace;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
@@ -606,7 +608,7 @@ public class IrpfDraftController extends BasicController implements IIrpfControl
 	public Double getPaidIrpf() {
 		Regularizacion regularizacion = 
 			retenidoSalida2011.getRegularizacion();
-		return regularizacion == null ? 0.00 : toDouble(regularizacion.getRetribSatisfechas());
+		return regularizacion == null ? 0.00 : toDouble(regularizacion.getRetencionPracticada());
 	}
 
 	@Override
@@ -625,7 +627,7 @@ public class IrpfDraftController extends BasicController implements IIrpfControl
 	public Double getPaidRemuneration() {
 		Regularizacion regularizacion = 
 			retenidoSalida2011.getRegularizacion();
-		return regularizacion == null ? 0.00 : toDouble(regularizacion.getRetencionPracticada());
+		return regularizacion == null ? 0.00 : toDouble(regularizacion.getRetribSatisfechas()); 
 	}
 
 	@Override
@@ -675,6 +677,13 @@ public class IrpfDraftController extends BasicController implements IIrpfControl
 		return minoracionPrestamosVivienda == null ? 0.00 : toDouble(minoracionPrestamosVivienda.getImporteMinoracion());
 	}
 	
+	public Administration getAdministration() {
+		Contract contract =(Contract) getTo();
+		WorkPlace workPlace = contract.getWorkPlace();
+		return workPlace.getEconomicAgreement();
+	}
+
+
 	private Integer toInteger(Byte bite){
 		return bite != null ? bite.intValue() : 0;
 	}

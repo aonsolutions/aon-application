@@ -32,6 +32,12 @@
 										actionListener="#{task.onLaunch}"
 										value="#{groupwareBundle.groupware_task_inbox}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="groupware_gantt"
+										action="gantt_form"
+										actionListener="#{gantt.onLaunch}"
+										value="#{groupwareBundle.groupware_gantt_diagram}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 					

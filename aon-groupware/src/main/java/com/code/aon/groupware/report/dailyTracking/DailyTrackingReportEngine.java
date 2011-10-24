@@ -13,30 +13,48 @@ public class DailyTrackingReportEngine {
 	private static final String AND = " AND ";
 	
 	private static final String USER_GRAPHIC = "SELECT new com.code.aon.groupware.report.dailyTracking.DailyTrackingSummaryReport("
-		+ " thd.id as userId, thr.name as userName, sum(dt.trackingDuration) as duration)"
+		+ " thd.id as userId, thr.name as userName, sum(dt.trackingDuration) as duration, sum(dt.cost) as cost)"
 		+ " FROM DailyTracking dt " 
 		+ " inner join dt.taskHolder as thd"
 		+ " left outer join dt.taskHolder.registry as thr ";
 	
 	private static final String PROJECT_GRAPHIC = "SELECT new com.code.aon.groupware.report.dailyTracking.DailyTrackingSummaryReport("
-			+ " prj.id as projectId, prj.name as projectName, sum(dt.trackingDuration) as duration)"
+			+ " prj.id as projectId, prj.name as projectName, sum(dt.trackingDuration) as duration, sum(dt.cost) as cost)"
 			+ " FROM DailyTracking dt " 
 			+ " left outer join dt.project as prj";
 	
 	private static final String JOB_TYPE_GRAPHIC = "SELECT new com.code.aon.groupware.report.dailyTracking.DailyTrackingSummaryReport("
-			+ " job.id as jobId, job.description as jobName, sum(dt.trackingDuration) as duration)"
+			+ " job.id as jobId, job.description as jobName, sum(dt.trackingDuration) as duration, sum(dt.cost) as cost)"
 			+ " FROM DailyTracking dt " 
 			+ " inner join dt.jobType as job";
 	
 	private static final String CUSTOMER_GRAPHIC = "SELECT new com.code.aon.groupware.report.dailyTracking.DailyTrackingSummaryReport("
-			+ " reg.id as registryId, reg.name as registryName, sum(dt.trackingDuration) as duration)"
+			+ " reg.id as registryId, reg.name as registryName, sum(dt.trackingDuration) as duration, sum(dt.cost) as cost))"
 			+ " FROM DailyTracking dt " 
 			+ " left outer join dt.registry as reg";
 	
+	private static final String JOBS_BY_CUSTOMER = "SELECT "
+			+ "new com.code.aon.groupware.report.dailyTracking.DailyTrackingReport(  "
+			+ " thd.id as userId" 
+			+ ", thr.name as userName" 
+			+ ", SUM(dt.trackingDuration) as duration" 
+			+ ", job.id as jobId"
+			+ ", job.description as jobDescription"
+			+ ", reg.id as registryId"
+			+ ", reg.name as registryName)"
+			+ " FROM DailyTracking dt " 
+			+ " inner join dt.taskHolder as thd "
+			+ " left outer join dt.taskHolder.registry as thr "
+			+ " inner join dt.jobType as job"
+			+ " left outer join dt.registry as reg"
+			+ " left outer join dt.project as prj "
+			+ " left outer join dt.project.projectType as prt "
+			+ " left outer join dt.activityType as aty";
+
 	private static final String SENTENCE = "SELECT "
 			+ "new com.code.aon.groupware.report.dailyTracking.DailyTrackingReport(  dt.id as id"
 			+ ", thd.id as userId, thr.name as userName, dt.trackingDate as date"
-			+ ", dt.trackingDuration as duration, job.id as jobId"
+			+ ", dt.trackingDuration as duration, dt.cost as cost, job.id as jobId"
 			+ ", job.description as jobDescription, reg.id as registryId"
 			+ ", reg.name as registryName, prj.id as projectId"
 			+ ", prj.name as projectName, aty.id as activityTypeId"
@@ -61,6 +79,8 @@ public class DailyTrackingReportEngine {
 			sentence.append(PROJECT_GRAPHIC);
 		} else if (reportType == DailyTrackingReportType.GRAPHIC_BY_JOB_TYPE) {
 			sentence.append(JOB_TYPE_GRAPHIC);
+		} else if (reportType == DailyTrackingReportType.JOBS_BY_CUSTOMER) {
+			sentence.append(JOBS_BY_CUSTOMER);
 		} else {
 			sentence.append(SENTENCE);
 		}

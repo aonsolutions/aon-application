@@ -70,8 +70,8 @@ public class LeaveBatchController extends BasicController {
 	public void onBatchSelected(ActionEvent event) throws ManagerBeanException {
         IManagerBean contractLeaveDetailBean = BeanManager.getManagerBean(ContractLeaveDetail.class);
 		IManagerBean leaveBatchDetailBean = BeanManager.getManagerBean(LeaveBatchDetail.class);
-        ContractLeaveDetailListController leaveController = (ContractLeaveDetailListController) FormUtil.getController(IPayrollConstants.LEAVE_LIST_CONTROLLER_NAME);
-        Iterator iterator = leaveController.getCheckedLeaves().iterator();
+        LeaveListController leaveController = (LeaveListController) FormUtil.getController(IPayrollConstants.LEAVE_LIST_CONTROLLER_NAME);
+        Iterator iterator = leaveController.getCheckHandler().getCheckedList().iterator();
         while (iterator.hasNext()) {
 			ContractLeaveDetail detail = (ContractLeaveDetail) iterator.next();
             detail.setStatus(ContractLeaveStatus.BATCHED);
@@ -81,25 +81,24 @@ public class LeaveBatchController extends BasicController {
 			leaveBatchDetail.setLeaveBatch((LeaveBatch) getTo());
 			leaveBatchDetailBean.insert(leaveBatchDetail);
         }
-        leaveController.clearCheckedLeaves();
+        leaveController.getCheckHandler().clearCheckedList();
         loadDetails();
         onSearchLeaves(event);
-//        processFdi();
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void onRemoveSelected(ActionEvent event) throws ManagerBeanException {
 		IManagerBean leaveBatchDetailBean = BeanManager.getManagerBean(LeaveBatchDetail.class);
 		IManagerBean contractLeaveDetailBean = BeanManager.getManagerBean(ContractLeaveDetail.class);
-        LeaveBatchDetailController leaveBatchDetailController = (LeaveBatchDetailController)FormUtil.getController(IPayrollConstants.LEAVE_BATCH_DETAIL_CONTROLLER_NAME);
-		Iterator iterator = leaveBatchDetailController.getCheckedLeaveBatchDetails().iterator();
+        BatchDetailController leaveBatchDetailController = (BatchDetailController)FormUtil.getController(IPayrollConstants.LEAVE_BATCH_DETAIL_CONTROLLER_NAME);
+		Iterator iterator = leaveBatchDetailController.getCheckHandler().getCheckedList().iterator();
         while(iterator.hasNext()){
         	LeaveBatchDetail leaveBatchDetail = (LeaveBatchDetail) iterator.next();
         	leaveBatchDetail.getContractLeaveDetail().setStatus(ContractLeaveStatus.PENDING);
         	contractLeaveDetailBean.update(leaveBatchDetail.getContractLeaveDetail());
         	leaveBatchDetailBean.remove(leaveBatchDetail);
         }
-		leaveBatchDetailController.clearCheckedLeaveBatchDetails();
+		leaveBatchDetailController.getCheckHandler().clearCheckedList();
         loadDetails();
         onSearchLeaves(event);
     }
@@ -110,12 +109,12 @@ public class LeaveBatchController extends BasicController {
     }
 	
 	public void onSearchLeaves(ActionEvent event) {
-		ContractLeaveDetailListController leaveList = (ContractLeaveDetailListController) FormUtil.getController(IPayrollConstants.LEAVE_LIST_CONTROLLER_NAME);
+		LeaveListController leaveList = (LeaveListController) FormUtil.getController(IPayrollConstants.LEAVE_LIST_CONTROLLER_NAME);
 		leaveList.onSearch(event);
 	}
 	
-	public void onEditSearchLeave(ActionEvent event) throws ManagerBeanException {
-		ContractLeaveDetailListController leaveList = (ContractLeaveDetailListController) FormUtil.getController(IPayrollConstants.LEAVE_LIST_CONTROLLER_NAME);
+	public void onEditSearchList(ActionEvent event) throws ManagerBeanException {
+		LeaveListController leaveList = (LeaveListController) FormUtil.getController(IPayrollConstants.LEAVE_LIST_CONTROLLER_NAME);
 		leaveList.onEditSearch(event);
 	}
 	
@@ -138,8 +137,7 @@ public class LeaveBatchController extends BasicController {
 		try {
 			checkDiskCreated();
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			AonUtil.addErrorMessage("error on onInit ["+e.getMessage()+"]");
 		}
 	}
 
@@ -197,57 +195,6 @@ public class LeaveBatchController extends BasicController {
 			setRecorded(false);
 		}
 	}
-
-//	private void processFdi() {
-//		try {
-//			generateFdiFile();
-//			IManagerBean bean = BeanManager.getManagerBean(LeaveBatchAttachment.class);
-//			Criteria criteria = new Criteria();
-//			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.LEAVE_BATCH_ATTACHMENT_LEAVE_BATCH_ID), ((LeaveBatch)getTo()).getId());
-//			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.LEAVE_BATCH_ATTACHMENT_ATTACHMENT_TYPE), LeaveBatchAttachmentType.FDI_DOCUMENT);
-//			List<ITransferObject> list = bean.getList(criteria);
-//			LeaveBatchAttachment attach;
-//			if(!list.isEmpty()){
-//				attach = (LeaveBatchAttachment) list.get(0);
-//			} else {
-//				attach = new LeaveBatchAttachment();
-//				attach.setLeaveBatch((LeaveBatch) getTo());
-//				attach.setMimeType(MimeType.MIME_TXT);
-//				attach.setDescription(getFDIWriter().getEti().getFichero());
-//				attach.setSize(null);
-//				attach.setAttachmentType(LeaveBatchAttachmentType.FDI_DOCUMENT);
-//				attach.setScope(null);
-//			}
-//			
-//			File file = getFileOutput().getFile();
-//			if (file != null) {
-//				FileInputStream in = new FileInputStream(file);
-//				byte[] data = IOUtils.toByteArray(in);
-//				attach.setData(data);
-//				attach.setAttachDate(new Date());
-//				bean.insertOrUpdate(attach);
-//				LeaveBatchAttachController controller = (LeaveBatchAttachController) FormUtil.getController("leaveBatchAttach");
-//				controller.initializeModel();
-//			}
-//		} catch (ManagerBeanException e) {
-//			AonUtil.addErrorMessage("error on generateFdiFile ["+e.getMessage()+"]");
-//		} catch (FileNotFoundException e) {
-//			AonUtil.addErrorMessage("error on generateFdiFile ["+e.getMessage()+"]");
-//		} catch (IOException e) {
-//			AonUtil.addErrorMessage("error on generateFdiFile ["+e.getMessage()+"]");
-//		}
-//	}
-//	
-//	private void generateFdiFile() throws ManagerBeanException {
-//		String loggedUser = AonUtil.getRemoteUser();
-//		loggedUser = StringUtils.substringBefore(loggedUser, "@");
-//		setFileOutput(getFDIWriter().createFDI(getLeaveDetailList(), loggedUser));
-//		if (getFileOutput() != null) {
-//			if (getFileOutput().getErrors().size() > 0) {
-//				AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
-//			}
-//		}
-//	}
 
 	private List<ContractLeaveDetail> getLeaveDetailList() {
 		LinesController controller = (LinesController)FormUtil.getController(IPayrollConstants.LEAVE_BATCH_DETAIL_CONTROLLER_NAME);

@@ -19,6 +19,7 @@ import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
+import com.esferalia.aon.payroll.enumeration.ContractBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCalendarEventType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractDuration;
@@ -102,6 +103,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> quoteTypes;
 	private List<SelectItem> reportTypes;
 	private List<SelectItem> leaveBatchAttachTypes;
+	private List<SelectItem> contractBatchAttachTypes;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -720,6 +722,19 @@ public class PayrollCollectionsController {
 			}
 		}
 		return leaveBatchAttachTypes;
+	}
+	
+	public List<SelectItem> getContractBatchAttachTypes() {
+		if (contractBatchAttachTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			contractBatchAttachTypes = new LinkedList<SelectItem>();
+			for( ContractBatchAttachmentType type : ContractBatchAttachmentType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				contractBatchAttachTypes.add(item);			
+			}
+		}
+		return contractBatchAttachTypes;
 	}
 	
 	
