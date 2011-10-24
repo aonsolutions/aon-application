@@ -8,7 +8,6 @@
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-payroll-ctsql2mysql</artifactId>
-	<version>7.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>AON-PAYROLL-CTSQL2MYSQL</name>
