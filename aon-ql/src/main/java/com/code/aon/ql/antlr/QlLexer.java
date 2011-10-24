@@ -54,7 +54,7 @@ public class QlLexer extends antlr.CharScanner implements QLTokenTypes,
 	/**
 	 * @param state
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public QlLexer(LexerSharedInputState state) {
 		super(state);
 		caseSensitiveLiterals = true;
