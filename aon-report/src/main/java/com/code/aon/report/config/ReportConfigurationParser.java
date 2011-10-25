@@ -147,7 +147,7 @@ public class ReportConfigurationParser {
 	        try {
 		        URL[] urls = Classpath.search(cl, "META-INF/", REPORT_CONFIGURATION_FILE);
 		        configurationManager = new ReportConfigurationManager();
-		        for (int i = 0; i < urls.length; i++) {
+		        for (int i = (urls.length-1); i >= 0; i--) {
 		            try {
 		            	LOGGER.info("Report config URL ..: {}",urls[i]);
 		            	InputStream is = urls[i].openStream();
