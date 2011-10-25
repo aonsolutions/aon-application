@@ -12,4 +12,31 @@
 	<report id="dummyReport" description="Report para cumplir con la DTD">
 		<template path=""/>
 	</report>
+
+	<!--  *********  Formulario de Factura de Venta desde el Mantenimiento ********* -->
+	<report id="saleInvoice" description="Fee Invoice's Report">
+		<template path="/com/code/aon/web/gta/report/saleInvoice.jasper"/>
+		<collection provider="#{saleInvoice}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.web.gta.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="email" value="#{company.obtainEmail}" />
+			<param id="web" value="#{company.obtainWeb}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+		</params>
+		<nested-report report="invoiceDetail"/>
+		<nested-report report="invoiceTaxBreakDown"/>
+		<nested-report report="invoiceFinances"/>
+	</report>
+	<report id="invoiceDetail" description="Detalle de la factura">
+		<template path="/com/code/aon/web/gta/report/invoiceDetail.jasper"/>
+	</report>
+
 </report-config>
