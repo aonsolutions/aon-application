@@ -56,9 +56,7 @@
 										<artifactId>
 											aon-maven-plugin
 										</artifactId>
-										<versionRange>
-											[7.0-SNAPSHOT,)
-										</versionRange>
+										<versionRange>[6.14-SNAPSHOT,)</versionRange>
 										<goals>
 											<goal>generate-db</goal>
 										</goals>
