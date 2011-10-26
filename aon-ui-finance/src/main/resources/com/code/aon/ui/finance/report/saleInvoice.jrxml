@@ -19,6 +19,7 @@
 	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="recordData" class="com.code.aon.registry.RecordData" isForPrompting="false"/>
+	<parameter name="invoiceDetailPrinter" class="com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter"/>
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="registryName" class="java.lang.String"/>
@@ -306,7 +307,7 @@
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" positionType="Float" x="0" y="138" width="535" height="29"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, false))]]></dataSourceExpression>
 				<returnValue subreportVariable="invoiceTotal" toVariable="invoiceTotal"/>
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
 			</subreport>
