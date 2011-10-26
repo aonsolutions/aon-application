@@ -45,6 +45,15 @@
 		</managed-property>
 	</managed-bean>
 
+	<!--  **** GTA PRINTERS **** -->
+	<managed-bean>
+		<managed-bean-name>saleInvoiceDetailPrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.web.gta.print.SaleInvoiceDetailPrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 
 	<navigation-rule>

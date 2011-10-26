@@ -321,23 +321,23 @@ public class InvoiceDetail implements ITransferObject, ICalculable, IStockable {
 	}
 
 	@Transient
-	public boolean isDeliverySource() throws ManagerBeanException {
+	public boolean isDeliverySource() {
 		return (getSource() == InvoiceSource.DELIVERY);
 	}
 	@Transient
-	public boolean isIncomeSource() throws ManagerBeanException {
+	public boolean isIncomeSource() {
 		return (getSource() == InvoiceSource.INCOME);
 	}
 	@Transient
-	public boolean isSalesSource() throws ManagerBeanException {
+	public boolean isSalesSource() {
 		return (getSource() == InvoiceSource.SALES);
 	}
 	@Transient
-	public boolean isPurchaseSource() throws ManagerBeanException {
+	public boolean isPurchaseSource() {
 		return (getSource() == InvoiceSource.PURCHASE);
 	}
 	@Transient
-	public boolean isOfferSource() throws ManagerBeanException {
+	public boolean isOfferSource() {
 		return (getSource() == InvoiceSource.OFFER);
 	}
 
