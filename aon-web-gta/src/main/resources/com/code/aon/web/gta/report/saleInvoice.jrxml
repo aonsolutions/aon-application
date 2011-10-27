@@ -272,7 +272,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_phone} + ": " + $P{phone}.getValue()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_telephone} + ": " + $P{phone}.getValue() + ($P{fax}==null?"":" - " + $R{aon_fax} + ": " + $P{fax}.getValue())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-25" x="5" y="40" width="246" height="15">
