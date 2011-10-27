@@ -28,14 +28,20 @@ import org.hibernate.annotations.Index;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 
+import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.Target;
+import com.code.aon.commercial.dao.ICommercialAlias;
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IHeaderObject;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.project.Project;
+import com.code.aon.ql.Criteria;
 import com.code.aon.tas.enumeration.ProjectStatus;
 
 @Entity
@@ -204,6 +210,14 @@ public class ProjectTas implements ITransferObject, IHeaderObject {
     @Transient
     public SecurityLevel getSecurityLevel() {
     	return SecurityLevel.OFFICIAL;
+    }
+
+    @Transient
+    public boolean isOfferLinked() throws ManagerBeanException {
+    	IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
+    	Criteria criteria = new Criteria();
+    	criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_PROJECT_ID), getProject().getId());
+    	return (offerBean.getCount(criteria) > 0);
     }
 
     @Override

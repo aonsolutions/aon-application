@@ -9,10 +9,6 @@
 		<fetch-mode paginated="false" />
 	</default-config>
 
-	<report id="dummyReport" description="Report para cumplir con la DTD">
-		<template path=""/>
-	</report>
-
 	<!--  *********  Formulario de Factura de Venta desde el Mantenimiento ********* -->
 	<report id="saleInvoice" description="Fee Invoice's Report">
 		<template path="/com/code/aon/web/gta/report/saleInvoice.jasper"/>
@@ -23,11 +19,11 @@
 			<param id="PriceStrategy" value="#{saleInvoice.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="address" value="#{company.obtainAddress}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="email" value="#{company.obtainEmail}" />
 			<param id="web" value="#{company.obtainWeb}" />
-			<param id="address" value="#{company.obtainAddress}" />
 			<param id="printHeader" value="#{company.isPrintHeader}" />
 			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 			<param id="invoiceDetailPrinter" value="#{invoiceDetailByDeliveryPrinter.getInstance}" />
