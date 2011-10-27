@@ -18,9 +18,6 @@
 	<field name="deliverySource" class="java.lang.Boolean"/>
 	<field name="project" class="com.code.aon.project.Project"/>
 	<field name="specificProject" class="com.code.aon.tas.ProjectTas"/>
-	<variable name="invoiceTotal" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$F{taxableBase}]]></variableExpression>
-	</variable>
 	<group name="deliveryGroup" keepTogether="true">
 		<groupExpression><![CDATA[$F{sourceTo}.getReferenceCode()]]></groupExpression>
 		<groupHeader>
