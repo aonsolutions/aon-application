@@ -171,6 +171,12 @@ public class GroupWareCollectionsController {
 		return favoriteCategoriesList;
 	}
 
+	public TaskHolder getTaskHolder() {
+		return null;
+	}
+	public void setTaskHolder(TaskHolder taskHolder) {
+	}
+
 	public List<SelectItem> getTaskHolders() throws ManagerBeanException {
 		if (taskHolders == null) {
 			taskHolders = new LinkedList<SelectItem>();
