@@ -237,11 +237,14 @@ public class BalanceSheetController implements ICollectionProvider {
 		String[] tokens = StringUtils.split(bd.getAccounts(), IAccountingConstants.COMMA);
 		StringBuilder exp = new StringBuilder();
 		for (String token : tokens) {
-			token = token.trim();
+			token = token.trim(); 
 			if (StringUtils.isNotBlank(token)) {
 				exp.append(exp.length() > 0 ? IAccountingConstants.PIPE : IAccountingConstants.EMPTY);
 				if (token.startsWith(IAccountingConstants.OPEN_BRACKET) && token.endsWith(IAccountingConstants.CLOSE_BRACKET)) {
 					token = token.replace(IAccountingConstants.OPEN_BRACKET, IAccountingConstants.EMPTY).replace(IAccountingConstants.CLOSE_BRACKET, IAccountingConstants.EMPTY);
+				}
+				if (token.startsWith(IAccountingConstants.QUESTION_MARK)) {
+					token = token.replace(IAccountingConstants.QUESTION_MARK, IAccountingConstants.EMPTY);
 				}
 				exp.append(token);
 				exp.append(IAccountingConstants.ASTERISK);

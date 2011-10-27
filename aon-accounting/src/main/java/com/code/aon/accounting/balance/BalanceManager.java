@@ -288,7 +288,7 @@ public class BalanceManager {
 				}
 				if (parameters.isPreviousPeriodVisible()) {
 					Double p = getAccountsAmount(previous,bd.isCreditNature());
-					if (bd.isCreditNature() && p > 0 ) { 
+					if (p > 0 ) { 
 						pPreviousAmount = CommonUtil.round(pPreviousAmount + p);
 					}
 				}
@@ -318,14 +318,14 @@ public class BalanceManager {
 				}
 				if (parameters.isPreviousPeriodVisible()) {
 					Double p = getAccountsAmount(previous,!bd.isCreditNature());
-					if (!bd.isCreditNature() && p > 0 ) { 
+					if (p > 0 ) { 
 						nPreviousAmount = CommonUtil.round(nPreviousAmount + p);
 					}
 				}
 			}
 		}
-		item.setAmount( CommonUtil.round(pAmount - nAmount));
-		item.setPreviousAmount(CommonUtil.round(pPreviousAmount - nPreviousAmount));
+		item.setAmount( CommonUtil.round(nAmount + pAmount));
+		item.setPreviousAmount(CommonUtil.round(nPreviousAmount + pPreviousAmount ));
 	}
 		
 	private BalanceItem searchItem(String token) throws ManagerBeanException {
