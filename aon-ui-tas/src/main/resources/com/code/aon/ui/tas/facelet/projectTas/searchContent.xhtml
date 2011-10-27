@@ -59,10 +59,10 @@
 	<aon:outputLabel for="ProjectTas_taskHolder_id"
 		value="#{tasBundle.tas_projectTas_taskHolder}" />
 	<aon:selectOneMenu id="ProjectTas_taskHolder_id"
-		value="#{projectCollections.taskHolder}"
+		value="#{groupWareCollections.taskHolder}"
 		valueChangeListener="#{controller.addIdEqualExpression}">
 		<f:selectItem itemLabel="-" value="#{null}" />		
-		<f:selectItems value="#{projectCollections.taskHolders}" />
+		<f:selectItems value="#{groupWareCollections.taskHolders}" />
 	</aon:selectOneMenu>					
 
 	<aon:outputLabel for="ProjectTas_workPlace_id"
