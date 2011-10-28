@@ -257,6 +257,7 @@ public class BalanceSheetController implements ICollectionProvider {
 		if (spp.getToDate() == null) {
 			spp.setToDate(spp.getPeriod().getDeadline());
 		}
+		spp.setExcludeOpeningEntry(true);
 		return spp;
 	}
 
