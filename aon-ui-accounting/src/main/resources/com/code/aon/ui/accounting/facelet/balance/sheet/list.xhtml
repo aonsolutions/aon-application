@@ -95,35 +95,48 @@
 						<f:facet name="header">
 							<aon:outputText value="#{balanceSheet.parameters.period.id}" />
 						</f:facet>
-						<aon:commandLink immediate="#{true}"
-							rendered="#{to.amount != null}"
-							styleClass="aon-dataTable-link"
-							actionListener="#{balanceSheet.onAccountStatement}"
-							style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
-							title="#{accountingBundle.accounting_statement_module}"
-							action="account_statement_account_list">
-							<aon:outputText value="#{to.amount}">
+						<aon:div rendered="#{to.amount != null}">
+							<aon:outputText value="#{to.amount}"
+								style="padding-right: 10px; padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}" 
+								rendered="#{to.detail.internalCalculation}">
 								<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
 							</aon:outputText>
-						</aon:commandLink>
-
+							<aon:commandLink immediate="#{true}"
+								rendered="#{!to.detail.internalCalculation}"
+								styleClass="aon-dataTable-link"
+								actionListener="#{balanceSheet.onAccountStatement}"
+								style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
+								title="#{accountingBundle.accounting_statement_module}"
+								action="account_statement_account_list">
+								<aon:outputText value="#{to.amount}">
+									<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
+								</aon:outputText>
+							</aon:commandLink>
+						</aon:div>
 					</aon:column>
 
 					<aon:column rendered="#{!to.title and balanceSheet.parameters.previousPeriodVisible}">
 						<f:facet name="header">
 							<aon:outputText value="#{balanceSheet.previousPeriod.id}" />
 						</f:facet>
-						<aon:commandLink immediate="#{true}"
-							rendered="#{to.previousAmount != null}"
-							styleClass="aon-dataTable-link"
-							actionListener="#{balanceSheet.onAccountPreviousStatement}"
-							style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
-							title="#{accountingBundle.accounting_statement_module}"
-							action="account_statement_account_list">
-							<aon:outputText value="#{to.previousAmount}">
+						<aon:div rendered="#{to.previousAmount != null}">
+							<aon:outputText value="#{to.previousAmount}"
+								style="padding-right: 10px; padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}" 
+								rendered="#{to.detail.internalCalculation}">
 								<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
 							</aon:outputText>
-						</aon:commandLink>
+							<aon:commandLink immediate="#{true}"
+								rendered="#{!to.detail.internalCalculation}"
+								styleClass="aon-dataTable-link"
+								actionListener="#{balanceSheet.onAccountPreviousStatement}"
+								style="padding-left: #{to.level * 15}px;#{to.detail.title?'font-weight:bold;':''}"
+								title="#{accountingBundle.accounting_statement_module}"
+								action="account_statement_account_list">
+								<aon:outputText value="#{to.previousAmount}">
+									<f:convertNumber pattern="#,##0.00;(#,##0.00)" />
+								</aon:outputText>
+							</aon:commandLink>
+						</aon:div>
 					</aon:column>
 				</aon:dataTable>
 			</aon:div>
