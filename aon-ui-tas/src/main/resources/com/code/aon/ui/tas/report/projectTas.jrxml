@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.2100000000000009"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="479"/>
+	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -367,7 +367,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="false" isUnderline="false" pdfFontName="Helvetica" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($V{targetPhone}==null?"":$V{targetPhone}.getValue()) + ($V{targetPhone}==null?"":" - ") + ($V{targetCellular}==null?"":$V{targetCellular}.getValue())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($V{targetPhone}==null?"":$V{targetPhone}.getValue()) + ($V{targetPhone}==null||$V{targetCellular}==null?"":" - ") + ($V{targetCellular}==null?"":$V{targetCellular}.getValue())]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-23" x="15" y="98" width="510" height="15"/>
