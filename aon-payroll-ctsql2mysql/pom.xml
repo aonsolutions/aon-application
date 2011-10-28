@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.13.2</version>
+		<version>6.13.3</version>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-payroll-ctsql2mysql</artifactId>
-	<version>6.13.2</version>
+	<version>6.13.3</version>
 	<packaging>jar</packaging>
 
 	<name>AON-PAYROLL-CTSQL2MYSQL</name>
