@@ -324,8 +324,8 @@ public class BalanceManager {
 				}
 			}
 		}
-		item.setAmount( CommonUtil.round(nAmount + pAmount));
-		item.setPreviousAmount(CommonUtil.round(nPreviousAmount + pPreviousAmount ));
+		item.setAmount( CommonUtil.round(pAmount - nAmount ));
+		item.setPreviousAmount(CommonUtil.round(pPreviousAmount - nPreviousAmount));
 	}
 		
 	private BalanceItem searchItem(String token) throws ManagerBeanException {

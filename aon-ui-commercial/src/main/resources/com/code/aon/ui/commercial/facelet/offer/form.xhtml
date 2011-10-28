@@ -214,9 +214,6 @@
 									immediate="true" rendered="#{offer.blocked}"
 									styleClass="aon-icon-commandButton aon-icon-unlock aon-margin-left">
 								</aon:commandButton>
-								<aon:outputText styleClass="aon-bold aon-margin-left"
-									value="#{offer.to.externalReference}"
-									rendered="#{!offer.new and offer.to.audatexOffer}" />
 							</aon:div>
 						</h:panelGrid>
  					</aon:div>
@@ -260,12 +257,17 @@
 
 					<aon:outputLabel for="Offer_type" 
 						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="Offer_type" 
-						value="#{offer.to.type}"
-						disabled="#{offer.readOnly}"
-						reRender="offerForm">
-						<f:selectItems value="#{commercialCollections.offerTypes}" />
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:selectOneMenu id="Offer_type" 
+							value="#{offer.to.type}"
+							disabled="#{offer.readOnly}"
+							reRender="offerForm">
+							<f:selectItems value="#{commercialCollections.offerTypes}" />
+						</aon:selectOneMenu>
+						<aon:outputText styleClass="aon-bold aon-margin-left"
+							value="#{offer.to.externalReference}"
+							rendered="#{!offer.new and offer.to.audatexOffer}" />
+					</aon:div>
 
 					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{offer.to.supplier}" />
