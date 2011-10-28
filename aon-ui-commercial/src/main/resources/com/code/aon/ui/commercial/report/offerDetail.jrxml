@@ -82,7 +82,9 @@
 	<detail>
 		<band height="12" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-5" x="0" y="0" width="313" height="12"/>
+				<reportElement key="textField-5" x="0" y="0" width="313" height="12" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[($F{item}==null || $F{item}.getId()==null)]]></printWhenExpression>
+				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -90,7 +92,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font size="8"/>
+					<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
@@ -156,6 +158,21 @@
 					<textFieldExpression class="java.lang.Double"><![CDATA[$F{quantity}]]></textFieldExpression>
 				</textField>
 			</elementGroup>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement key="textField-5" x="0" y="0" width="313" height="12">
+					<printWhenExpression><![CDATA[($F{item}!=null && $F{item}.getId()!=null)]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["  " + $F{description}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<columnFooter>

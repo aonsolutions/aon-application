@@ -70,10 +70,10 @@ UPDATE `task_holder` SET `enterprise` = (SELECT MIN(`registry`) FROM `company`);
 ALTER TABLE `task_holder` MODIFY `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa';
 ALTER TABLE `task_holder` ADD KEY `IDX_TASK_HOLDER_ENTERPRISE` (`enterprise`);
 ALTER TABLE `task_holder` ADD CONSTRAINT `FK_TASK_HOLDER_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`);
-INSERT INTO registry(`document`,`name`,`alias`,`type`) SELECT `id`,`name`,"###{@$&}###",0 FROM `user`;
+INSERT INTO registry(`document`,`name`,`alias`,`type`) SELECT `id`,`name`,'###{@$&}###',0 FROM `user` WHERE (`id` IN (SELECT `user_id` FROM `task`) OR `id` IN (SELECT `user_id` FROM `daily_tracking`));
 ALTER TABLE `task_holder` ADD `user_id` int(4) default NULL COMMENT 'Identificador del Usuario';
-INSERT INTO `task_holder` (`registry`,`enterprise`,`user_id`) (SELECT `id`,(SELECT MIN(`registry`) FROM `company`),`document` FROM registry WHERE `alias` = "###{@$&}###");
-UPDATE `registry` SET `alias` = null, `document` = null WHERE `alias` = "###{@$&}###";
+INSERT INTO `task_holder` (`registry`,`enterprise`,`user_id`) (SELECT `id`,(SELECT MIN(`registry`) FROM `company`),`document` FROM registry WHERE `alias` = '###{@$&}###');
+UPDATE `registry` SET `alias` = null, `document` = null WHERE `alias` = '###{@$&}###';
 ALTER TABLE `task_holder` ADD KEY `IDX_TASK_HOLDER_USER` (`user_id`);
 ALTER TABLE `task_holder` ADD CONSTRAINT `FK_TASK_HOLDER_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
 UPDATE `task_holder` SET `active` = (SELECT `active` FROM `user` WHERE `user`.`id` = `task_holder`.`user_id`);
@@ -137,7 +137,7 @@ ALTER TABLE `project` ADD CONSTRAINT `FK_PROJECT_ENTERPRISE` FOREIGN KEY (`enter
 ALTER TABLE `project` ADD KEY `IDX_PROJECT_PROJECT_TYPE` (`project_type`); 
 ALTER TABLE `project` ADD CONSTRAINT `FK_PROJECT_PROJECT_TYPE` FOREIGN KEY (`project_type`) REFERENCES `project_type` (`id`);
 INSERT INTO project(`id`,`enterprise`,`registry`,`name`,`date`,`project_type`,`dossier`,`active`) 
- SELECT `id`,(SELECT MIN(`registry`) FROM `company`),`customer`,`number`,"2000-01-01",`dossier_type`,1,IF(status=0,1,0) FROM dossier;
+ SELECT `id`,(SELECT MIN(`registry`) FROM `company`),`customer`,`number`,'2000-01-01',`dossier_type`,1,IF(status=0,1,0) FROM dossier;
 
 
 #

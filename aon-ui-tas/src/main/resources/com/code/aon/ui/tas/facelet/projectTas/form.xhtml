@@ -14,10 +14,20 @@
 	<ui:define name="content">
 		<aon:form id="projectTasForm">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{tasBundle.tas_projectTas_module}" />
 				<ui:param name="controller" value="#{projectTas}" />
-			</ui:include>
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:htmlCommandLink id="projectTas-report"
+						value="#{bundle.aon_report}" target="_new" 
+						rendered="#{!projectTas.new}"
+						action="#{report.onExecute}"
+						accesskey="#{bundle.aon_key_print}"
+						styleClass="aon-finding-toolbar-item aon-icon-pdf">
+						<f:param name="reportKey" value="projectTas" />
+					</aon:htmlCommandLink>
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 				<ui:include src="/com/code/aon/ui/tas/facelet/projectTas/formContent.xhtml">
