@@ -11,6 +11,7 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.alfresco.webservice.types.CMLAddAspect;
 import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.ParentReference;
+import org.alfresco.webservice.types.Reference;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -49,7 +50,10 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 
 	@Override
 	protected ITransferObject convert( NamedValue[] values ) {
-		EnterpriseDocument ed = new EnterpriseDocument();
+		EnterpriseDocument ed = new EnterpriseDocument(this);
+		Reference reference = new Reference();
+		reference.setStore(STORE);
+		ed.setId(reference);
 		for( NamedValue nv : values ) {
 			String name = nv.getName();
 			if ( Constants.PROP_DESCRIPTION.equals(name) ) {
@@ -57,9 +61,9 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 			} else if ( Constants.PROP_NAME.equals(name) ) {
 				ed.setName(nv.getValue());
 			} else if ( UUID.equals(name) ) {
-				ed.setPath(nv.getValue());
+				reference.setUuid(nv.getValue());
 			} else if ( PATH.equals(name) ) {
-				ed.setPath(nv.getValue());
+				reference.setPath(nv.getValue());
 			} else if ( Constants.PROP_CREATED.equals(name) ) {
 				Date date = ISO8601DateFormat.parse(nv.getValue());
 				ed.setCreated(date);

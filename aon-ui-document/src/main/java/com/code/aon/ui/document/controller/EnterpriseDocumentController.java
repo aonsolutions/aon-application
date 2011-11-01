@@ -1,8 +1,14 @@
 package com.code.aon.ui.document.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Map;
+
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import org.alfresco.webservice.types.Reference;
+import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.UploadEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,9 +61,12 @@ public class EnterpriseDocumentController extends LinesController implements IAt
 	
     public void downloadAttachment( ActionEvent event ) throws NumberFormatException, ManagerBeanException {
         FacesContext context = FacesContext.getCurrentInstance();
-        String id = context.getExternalContext().getRequestParameterMap().get("index");
-        IAttachment attachment = (IAttachment) getManagerBean().get(id);
-        DownloadUtil.downloadAttachment( attachment );    	
+        Map<String,String> map = context.getExternalContext().getRequestParameterMap();
+        Reference id = new Reference(AlfrescoDAO.STORE, map.get("uuid"), map.get("path") );
+        EnterpriseDocument ed = (EnterpriseDocument) getManagerBean().get(id);
+		InputStream in = new ByteArrayInputStream(ed.getData());
+		long size = ArrayUtils.getLength(ed.getData());
+		DownloadUtil.downloadAttachment(ed.getDescription(), ed.getMimeType(), in, size);   	
     }	
 
 	@Override

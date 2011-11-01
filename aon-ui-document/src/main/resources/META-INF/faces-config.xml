@@ -34,6 +34,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>saveState</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>enterprise</value>
 		</managed-property>

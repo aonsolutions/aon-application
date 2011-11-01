@@ -1,6 +1,8 @@
 package com.code.aon.ui.document;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import org.alfresco.webservice.content.Content;
 import org.alfresco.webservice.content.ContentFault;
 import org.alfresco.webservice.content.ContentServiceSoapBindingStub;
 import org.alfresco.webservice.repository.QueryResult;
@@ -30,8 +33,10 @@ import org.alfresco.webservice.types.ResultSetRow;
 import org.alfresco.webservice.types.Store;
 import org.alfresco.webservice.util.AuthenticationUtils;
 import org.alfresco.webservice.util.Constants;
+import org.alfresco.webservice.util.ContentUtils;
 import org.alfresco.webservice.util.Utils;
 import org.alfresco.webservice.util.WebServiceFactory;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -229,8 +234,7 @@ public abstract class AlfrescoDAO implements IDAO  {
 		LOGGER.info("Setting the content of the document");
 		getContentService().write(content, Constants.PROP_CONTENT, ato.getData(), contentFormat);
 		
-		ato.setPath( content.getPath() );
-		ato.setId( content.getUuid() );
+		ato.setId( content );
 	}
 	
 	@Override
@@ -252,8 +256,7 @@ public abstract class AlfrescoDAO implements IDAO  {
 	
 	private Predicate getPredicate( ITransferObject to ) {
 		IAlfrescoTransferObject ato = (IAlfrescoTransferObject) to;
-		Reference reference = new Reference(STORE, ato.getPath(), ato.getId());
-		return new Predicate( new Reference[]{reference}, STORE, null);		
+		return new Predicate( new Reference[]{ato.getId()}, STORE, null);		
 	}
 	
 	@Override
@@ -326,9 +329,10 @@ public abstract class AlfrescoDAO implements IDAO  {
 	
 	@Override
 	public ITransferObject get(Serializable pk) throws DAOException {
-		Reference reference = new Reference(STORE, null, (String) pk);
+		Reference reference = (Reference) pk;
 		Predicate predicate = new Predicate( new Reference[]{reference}, STORE, null);
 		try {
+			startSession();
 			Node[] nodes = getRepositoryService().get(predicate);
 			if (! ArrayUtils.isEmpty(nodes) ) {
 				ITransferObject to = convert(nodes[0].getProperties());
@@ -336,6 +340,8 @@ public abstract class AlfrescoDAO implements IDAO  {
 			}
 		} catch ( Throwable e ) {
 			throw new DAOException( "Error in get of " + pojoClass );
+		} finally {
+			endSession();
 		}
 		return null;		
 	}
@@ -392,6 +398,25 @@ public abstract class AlfrescoDAO implements IDAO  {
 	@Override
 	public Class getPOJOClass() {
 		return this.pojoClass;
+	}
+	
+	public byte[] getContent(Reference node) throws DAOException {
+		byte[] data = null;
+		try {
+			startSession();
+			Predicate predicate = new Predicate( new Reference[]{node}, STORE, null);
+			Content[] contents = getContentService().read(predicate, Constants.PROP_CONTENT);
+			if (! ArrayUtils.isEmpty(contents) ) {
+				InputStream in = ContentUtils.getContentAsInputStream(contents[0]);
+				data = IOUtils.toByteArray(in);
+				in.close();		
+			}
+		} catch ( Throwable e ) {
+			throw new DAOException( "Error in getContent " + pojoClass, e );
+		} finally {
+			endSession();
+		}
+		return data;		
 	}
 
 }

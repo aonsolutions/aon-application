@@ -1,5 +1,7 @@
 package com.code.aon.ui.document;
 
+import org.alfresco.webservice.types.Reference;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.enumeration.MimeType;
 
@@ -16,28 +18,14 @@ public interface IAlfrescoTransferObject extends ITransferObject {
 	 * 
 	 * @return the id
 	 */
-	String getId();
+	Reference getId();
 	
 	/**
 	 * Sets the id.
 	 *
 	 * @param id the new id
 	 */
-	void setId( String id );
-	
-	/**
-	 * Gets the path.
-	 *
-	 * @return the path
-	 */
-	String getPath();
-	
-	/**
-	 * Sets the path.
-	 *
-	 * @param path the new path
-	 */
-	void setPath( String path );
+	void setId( Reference id );
 	
 	/**
 	 * Gets the name.

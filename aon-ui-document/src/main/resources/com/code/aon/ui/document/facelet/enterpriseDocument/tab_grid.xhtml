@@ -66,7 +66,8 @@
 					styleClass="aon-icon aon-icon-mail-save"
 					style="line-height:16px;margin-right:0;"
 					title="#{bundle.aon_fileupload_download}">
-					<f:param name="index" value="#{to.id}" />
+					<f:param name="uuid" value="#{to.id.uuid}" />
+					<f:param name="path" value="#{to.id.path}" />
 					<aon:outputText value="&#160;" />
 				</aon:htmlCommandLink>					
 				<f:facet name="footer">

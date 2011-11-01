@@ -2,20 +2,24 @@ package com.code.aon.ui.document;
 
 import java.util.Date;
 
+import org.alfresco.webservice.types.Reference;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 
 public class EnterpriseDocument implements IAlfrescoTransferObject {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocument.class);
+	
 	private static final long serialVersionUID = 6588665319488331110L;
 
-	private String id;
-	
-	private String path;
+	private Reference id;
 	
 	private String name;
 	
@@ -29,20 +33,18 @@ public class EnterpriseDocument implements IAlfrescoTransferObject {
 	
 	private byte[] data;
 	
-	public String getId() {
+	private AlfrescoDAO dao;
+	
+	public EnterpriseDocument( AlfrescoDAO dao ) {
+		this.dao = dao;
+	}
+
+	public Reference getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Reference id) {
 		this.id = id;
-	}
-	
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
 	}
 
 	public MimeType getMimeType() {
@@ -54,6 +56,13 @@ public class EnterpriseDocument implements IAlfrescoTransferObject {
 	}
 
 	public byte[] getData() {
+		if ( data == null ) {
+			try {
+				data = dao.getContent(getId());
+			} catch (DAOException e) {
+				LOGGER.error( "Error reading content of " + getId(), e );
+			}
+		}
 		return data;
 	}
 
@@ -105,7 +114,6 @@ public class EnterpriseDocument implements IAlfrescoTransferObject {
 				.append(this.description, o.description)
 				.append(this.enterpriseId, o.enterpriseId)
 				.append(this.name, o.name)
-				.append(this.path, o.path)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -121,13 +129,19 @@ public class EnterpriseDocument implements IAlfrescoTransferObject {
 			.append(id)
 			.append(mimeType)
 			.append(name)
-			.append(path)
 			.toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new ToStringBuilder(this).
+			append("created", created).
+			append("description", description).
+			append("enterpriseId", enterpriseId).
+			append("id", id).
+			append("mimeType", mimeType).
+			append("name", name).
+			toString();
 	}
 	
 }
