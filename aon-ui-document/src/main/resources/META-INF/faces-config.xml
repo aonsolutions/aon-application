@@ -1,0 +1,64 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<application>
+		<resource-bundle>
+			<base-name>com.code.aon.ui.document.i18n.messages</base-name>
+			<var>documentBundle</var>
+		</resource-bundle>
+	</application>
+	
+	<!-- ************ ENTERPRISE DOCUMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>enterpriseDocument</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.document.controller.EnterpriseDocumentController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.ui.document.EnterpriseDocument</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>enterpriseDocument</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>enterprise</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>enterpriseId</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{enterpriseDocumentListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>enterpriseDocumentListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.document.event.EnterpriseDocumentControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>		
+	
+</faces-config>
