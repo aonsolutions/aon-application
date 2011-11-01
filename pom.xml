@@ -114,6 +114,7 @@
 	  <module>aon-ui-purchase</module>
 	  <module>aon-ui-warehouse</module>
 	  <module>aon-ui-tas</module>
+	  <module>aon-ui-document</module>
 
     <!-- GENERATED -->
 	  <module>aon-audabridge-api</module>
@@ -152,6 +153,7 @@
 	  <module>aon-web-manager</module>
 	  <module>aon-web-publisher</module>
 	  <module>aon-web-webmail</module>
+	  <module>aon-web-document</module>
   
     <!-- OTHER -->
  	  <module>aon-payroll-ctsql2mysql</module>
