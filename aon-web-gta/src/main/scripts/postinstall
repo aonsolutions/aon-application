@@ -1,7 +1,7 @@
 #!/bin/sh
 . aondir-functions
 
-APP=aon-enterprise
+APP=aon-gt
 
 if ! aondir_has_app $APP; then
 

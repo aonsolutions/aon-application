@@ -1,6 +1,7 @@
 package com.code.aon.ui.document.controller;
 
 import static com.code.aon.ui.document.controller.EnterpriseDocumentAspect.ENTERPRISE_ID;
+import static org.alfresco.webservice.util.Constants.PROP_CREATED;
 import static org.alfresco.webservice.util.Constants.PROP_DESCRIPTION;
 import static org.alfresco.webservice.util.Constants.PROP_NAME;
 
@@ -12,11 +13,8 @@ import org.alfresco.webservice.types.CMLAddAspect;
 import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.ParentReference;
 import org.alfresco.webservice.types.Reference;
-import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.sql.DAOException;
@@ -28,18 +26,24 @@ import com.code.aon.ui.document.EnterpriseDocument;
  */
 public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 
-	/**
-	 * Obtain a suitable <code>Logger</code>.
-	 */
-	private static final Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocumentDAO.class);
-	
 	public EnterpriseDocumentDAO( String user, String password ) {
 		super( EnterpriseDocument.class, user, password ); 
 	}
 
+	private EnterpriseDocument newEnterpriseDocument() {
+		EnterpriseDocument ed = new EnterpriseDocument();
+		ed.setDao(this);
+		return ed;
+	}	
+	
 	@Override
 	protected ParentReference getParentReference() {
 		return getReferenceToParent(getCompanyHome());
+	}
+	
+	@Override
+	public ITransferObject newTo() throws DAOException {
+		return newEnterpriseDocument();
 	}
 
 	@Override
@@ -49,22 +53,37 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	}
 
 	@Override
+	protected Object getValue( NamedValue nv ) {
+		String name = nv.getName();
+		if ( PROP_NAME.equals(name) ) {
+			return nv.getValue();
+		} else if ( PROP_DESCRIPTION.equals(name) ) {
+			return nv.getValue();
+		} else if ( PROP_CREATED.equals(name) ) {
+			return ISO8601DateFormat.parse(nv.getValue());
+		} else if ( ENTERPRISE_ID.equals(name) ) {
+			return NumberUtils.toInt(nv.getValue());
+		}
+		return null;
+	}
+		
+	@Override
 	protected ITransferObject convert( NamedValue[] values ) {
-		EnterpriseDocument ed = new EnterpriseDocument(this);
+		EnterpriseDocument ed = newEnterpriseDocument();
 		Reference reference = new Reference();
 		reference.setStore(STORE);
 		ed.setId(reference);
 		for( NamedValue nv : values ) {
 			String name = nv.getName();
-			if ( Constants.PROP_DESCRIPTION.equals(name) ) {
+			if ( PROP_DESCRIPTION.equals(name) ) {
 				ed.setDescription(nv.getValue());
-			} else if ( Constants.PROP_NAME.equals(name) ) {
+			} else if ( PROP_NAME.equals(name) ) {
 				ed.setName(nv.getValue());
 			} else if ( UUID.equals(name) ) {
 				reference.setUuid(nv.getValue());
 			} else if ( PATH.equals(name) ) {
 				reference.setPath(nv.getValue());
-			} else if ( Constants.PROP_CREATED.equals(name) ) {
+			} else if ( PROP_CREATED.equals(name) ) {
 				Date date = ISO8601DateFormat.parse(nv.getValue());
 				ed.setCreated(date);
 			} else if ( ENTERPRISE_ID.equals(name) ) {

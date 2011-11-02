@@ -1,66 +1,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
-
+	
 	<ui:define name="content">
-
-		<aon:form id="taskHolderList">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{groupwareBundle.groupware_taskHolders}" />
-				<ui:param name="controller" value="#{taskHolder}" />
-			</ui:decorate>
-			
-			<aon:div styleClass="aon-scroll-area">
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{taskHolder}" />
-					<ui:define name="columns">
-
-						<aon:column alias="TaskHolder.registry.name" styleClass="aon-width-auto">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_name}" />
-							</f:facet>
-							<aon:outputText value="#{to.registry.fullName}" />
-						</aon:column>
-
-						<aon:column alias="TaskHolder.user&lt;login" styleClass="aon-width-150">
-							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.groupware_user}" />
-							</f:facet>
-							<aon:outputText value="#{to.user.login}" />
-						</aon:column>
-					
-						<aon:column alias="TaskHolder.costProfile&lt;description" styleClass="aon-width-150">
-							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.groupware_cost_profile}" />
-							</f:facet>
-							<aon:outputText value="#{to.costProfile.description}" />
-						</aon:column>
-
-						<aon:column alias="TaskHolder.type" styleClass="aon-width-150">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_type}" />
-							</f:facet>
-							<aon:outputText value="#{to.type}" />
-						</aon:column>
-						
-						<aon:column alias="TaskHolder.active" styleClass="aon-editDataTable-iconColumn aon-width-40">
-							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_active}" />
-							</f:facet>
-							<aon:outputText value="&#160;"
-								styleClass="#{(to.active)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'} aon-padding-bottom" />
-						</aon:column>
-
-					</ui:define>
-				</ui:decorate>
-			</aon:div>
-		</aon:form>
+		<ui:include src="/com/code/aon/ui/groupware/facelet/taskHolder/listContent.xhtml" />
 	</ui:define>
 
 </ui:composition>

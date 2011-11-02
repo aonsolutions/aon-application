@@ -27,7 +27,8 @@
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="document_search" 
-										action="document_search"
+										action="enterpriseDocument_search"
+										actionListener="#{enterpriseDocument.onEditSearch}"
 										value="#{bundle.aon_toolbar_search}">
 									</aon:commandLink>
 								</aon:div>

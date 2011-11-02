@@ -55,9 +55,8 @@ UPDATE `process` set `active` = IF(`active` = 0,1,0);
 # TABLE `workgroup`
 #
 
-ALTER TABLE `workgroup` ADD `enterprise` int(4) default NULL AFTER `id`;
+ALTER TABLE `workgroup` ADD `enterprise` int(4) default NULL COMMENT 'Identificador de la Empresa' AFTER `id`;
 UPDATE `workgroup` SET `enterprise` = (SELECT MIN(`registry`) FROM `company`);
-ALTER TABLE `workgroup` MODIFY `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa';
 ALTER TABLE `workgroup` ADD KEY `IDX_WORKGROUP_ENTERPRISE` (`enterprise`);
 ALTER TABLE `workgroup` ADD CONSTRAINT `FK_WORKGROUP_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`);
 

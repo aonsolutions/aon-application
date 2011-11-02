@@ -429,12 +429,6 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	public boolean isConfidential() {
 		return SecurityLevel.CONFIDENTIAL == getSecurityLevel();
 	}
-
-	@Transient
-	public boolean isDealership() {
-		return (OfferType.DEALERSHIP == getType());
-	}
-
 	@Transient
 	public void setConfidential(boolean confidential) {
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
@@ -454,8 +448,24 @@ public class Offer implements ITransferObject, IHeaderObject, ICalculableContain
 	}
 	
 	@Transient
+	public boolean isNormal() {
+		return (OfferType.NORMAL == getType());
+	}
+	@Transient
+	public boolean isInternet() {
+		return (OfferType.INTERNET == getType());
+	}
+	@Transient
+	public boolean isProforma() {
+		return (OfferType.PROFORMA == getType());
+	}
+	@Transient
+	public boolean isDealership() {
+		return (OfferType.DEALERSHIP == getType());
+	}
+	@Transient
 	public boolean isAudatexOffer() {
-		return getType() == OfferType.AUDATEX;
+		return (OfferType.AUDATEX == getType());
 	}
 
 	@Override

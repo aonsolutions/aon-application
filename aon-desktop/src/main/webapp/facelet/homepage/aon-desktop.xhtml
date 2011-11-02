@@ -60,23 +60,17 @@
 							</aon:div>
 						</aon:div>
 
-						<aon:div styleClass="aon-portlet" rendered="#{task.infobarEnabled}">
-<!-- REFACTOR TASK 							
+						<aon:div styleClass="aon-portlet" rendered="#{taskManager.infobarEnabled and taskManager.taskHolderAvailable}">
 							<aon:div styleClass="aon-portlet-title">
-								<aon:outputLink value="/aon-task?aonDesktop=true" target="aonTask">
-									<aon:outputText value="#{appBundle.desktop_tasks}" styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>
-								</aon:outputLink>
-							</aon:div>
- -->								
-							<aon:div styleClass="aon-portlet-title">
+								<aon:outputLink value="/aon-project?aonDesktop=true" target="aonTask">
 									<aon:outputText value="#{appBundle.desktop_tasks}"
 										style="cursor: default;" 
 										styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>
+								</aon:outputLink>
 							</aon:div>
-<!-- FIN REFACTOR TASK-->
 							<aon:div styleClass="aon-portlet-body">
 								<aon:dataTable id="taskSummaryList"
-									value="#{task.taskSummaryModel}" var="to"
+									value="#{taskManager.taskSummaryModel}" var="to"
 									columnClasses="aon-table-portlet-column"
 									rowClasses="aon-table-portlet-row"
 									styleClass="aon-width-170 aon-table-portlet">
