@@ -112,6 +112,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.project</artifactId>
+			<version>${pom.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.report</artifactId>
 			<version>${pom.version}</version>
 			<scope>runtime</scope>
