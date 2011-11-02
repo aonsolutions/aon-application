@@ -116,11 +116,11 @@ public class MappedTransferObjectConverter implements Converter {
 	@SuppressWarnings("unchecked")
 	private Class<? extends ITransferObject> getToType(FacesContext context, UIComponent component) {
 		ValueExpression vb = component.getValueExpression("value");
-		Class<? extends ITransferObject> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
+		Class<?> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
 		if (getEntityInterfaces().containsKey(toType)) {
-			 return (Class<? extends ITransferObject>) getEntityInterfaces().get(toType);
+			 toType = getEntityInterfaces().get(toType);
 		}
-		return toType;
+		return (Class<? extends ITransferObject>) toType;
 	}
 
 	@Override

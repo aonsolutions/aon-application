@@ -42,13 +42,13 @@ public class TransferObjectConverter implements Converter {
 	@SuppressWarnings("unchecked")	
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
 		ValueExpression vb = component.getValueExpression("value");
-		Class<? extends ITransferObject> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
+		Class<?> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
 		if (toType != null) {
 			if (value != null) {
 				try {
 					Serializable id = getId(value);
 					if ( id != null ) {
-						IManagerBean bean = BeanManager.getManagerBean(toType);
+						IManagerBean bean = BeanManager.getManagerBean( (Class<? extends ITransferObject>) toType);
 						ITransferObject to = bean.get(id);
 						return to;
 					}
