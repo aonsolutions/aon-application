@@ -1,5 +1,8 @@
 package com.code.aon.ui.document;
 
+import java.util.Date;
+
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ql.Criteria;
@@ -89,7 +92,7 @@ public class AlfrescoRenderer implements CriterionVisitor {
 
 	public void visitIdentExpression(IdentExpression expression) {
 		String id = expression.getName();
-		if ( isLeftIdentifier ) {
+		if ( isLeftIdentifier && (id.indexOf(":") != -1) ) {
 			id = "@" + StringUtils.replace(id, ":", "\\:");	
 		}
 		out.append(id);
@@ -97,12 +100,21 @@ public class AlfrescoRenderer implements CriterionVisitor {
 
 	public void visitConstantExpression(ConstantExpression expression) {
 		Object data = expression.getData();
-		String value = data.toString();
-		out.append( value );			
+		if ( data instanceof Date ) {
+			out.append( ISO8601DateFormat.format( (Date) data) );
+		} else {
+			String value = data.toString();
+			if ( value.indexOf("%") != -1 ) {
+				value = "\"" + StringUtils.replace(value, "%", "*") + "\""; 
+			}
+			out.append( value );			
+		}
 	}
 
 	public void visitBetweenExpression(BetweenExpression expression) {
+		this.isLeftIdentifier = true;
 		expression.getLeftExpression().accept(this);
+		this.isLeftIdentifier = false;
 		out.append(":[");
 		expression.getMinorExpression().accept(this);
 		out.append(" TO ");
@@ -128,6 +140,7 @@ public class AlfrescoRenderer implements CriterionVisitor {
 				currentOut.append(">");
 				break;
 			case EQUAL:
+			case LIKE:
 				currentOut.append(":");
 				break;
 			case NOT_EQUAL:
@@ -138,9 +151,6 @@ public class AlfrescoRenderer implements CriterionVisitor {
 				break;
 			case LESS_THAN_OR_EQUAL:
 				currentOut.append("<=");
-				break;
-			case LIKE:
-				currentOut.append("~=");
 				break;
 		}
 

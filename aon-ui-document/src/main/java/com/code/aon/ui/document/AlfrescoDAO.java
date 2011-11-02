@@ -133,7 +133,7 @@ public abstract class AlfrescoDAO implements IDAO  {
 	}
 	
 	private String getQueryExpression( Criteria criteria ){
-		String expression = "TYPE:\"cm:content\""; 
+		String expression = "TYPE:\"cm:content\" AND PATH:\"/app:company_home/*\""; 
 		if ( criteria != null ) { 
 			AlfrescoRenderer renderer = new AlfrescoRenderer();
 			renderer.visitCriteria(criteria);

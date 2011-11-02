@@ -11,41 +11,54 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.aon_documents}" />
 				<ui:param name="controller" value="#{enterpriseDocument}" />
+				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:include>
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{enterpriseDocument}" />
+				<ui:param name="skipAfterSearch" value="#{true}" />
 				<ui:define name="searchContent">
 
 					<aon:outputLabel for="cm_name"
 						value="#{bundle.aon_name}" />
-					<aon:inputText id="cm_name" size="40"
+					<aon:inputText id="cm_name" size="60"
 						valueChangeListener="#{controller.addExpression}" />
-				
+
 					<aon:outputLabel for="cm_description"
 						value="#{bundle.aon_description}" />
-					<aon:inputText id="cm_description" size="40"
+					<aon:inputText id="cm_description" size="60"
 						valueChangeListener="#{controller.addExpression}" />
-						
+
+					<aon:outputLabel for="cm_text"
+						value="#{bundle.aon_content}" />
+					<aon:inputText id="cm_text" size="60"
+						value="#{enterpriseDocumentSearch.text}" />
+															
+					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{enterpriseDocumentSearch.enterprise}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>
+							
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>
 						<aon:outputLabel for="cm_created-From" styleClass="aon-form-date-label aon-padding-right" 
 							value="#{bundle.aon_date_from}:" />
 						<aon:selectInputDate id="cm_created-From"
-							valueChangeListener="#{controller.addGreaterThanOrEqualExpression}"
+							value="#{enterpriseDocumentSearch.startDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 				
 						<aon:outputLabel for="cm_created-To" styleClass="aon-form-date-label aon-padding-right" 
 							value="#{bundle.aon_date_to}:" />
 						<aon:selectInputDate id="cm_created-To"
-							valueChangeListener="#{controller.addLessThanOrEqualExpression}"
+							value="#{enterpriseDocumentSearch.endDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
 					</aon:div>						
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 	</ui:define>
 </ui:composition>
