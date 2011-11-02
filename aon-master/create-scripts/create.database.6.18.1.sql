@@ -1318,7 +1318,7 @@ CREATE TABLE `process` (
 
 CREATE TABLE `workgroup` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Grupo de Trabajo',
-  `enterprise` int(4) NOT NULL COMMENT 'Identificador de la Empresa',
+  `enterprise` int(4) default NULL COMMENT 'Identificador de la Empresa',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripcion del Grupo de Trabajo',
   `status` tinyint(2) default NULL COMMENT 'Estado del grupo de Trabajo',
   PRIMARY KEY  (`id`),
