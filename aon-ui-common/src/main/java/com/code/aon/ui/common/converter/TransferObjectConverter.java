@@ -39,6 +39,7 @@ public class TransferObjectConverter implements Converter {
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")	
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
 		ValueExpression vb = component.getValueExpression("value");
 		Class<?> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
@@ -47,7 +48,7 @@ public class TransferObjectConverter implements Converter {
 				try {
 					Serializable id = getId(value);
 					if ( id != null ) {
-						IManagerBean bean = BeanManager.getManagerBean(toType);
+						IManagerBean bean = BeanManager.getManagerBean( (Class<? extends ITransferObject>) toType);
 						ITransferObject to = bean.get(id);
 						return to;
 					}
@@ -65,13 +66,14 @@ public class TransferObjectConverter implements Converter {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public String getAsString(FacesContext context, UIComponent component, Object value) {
 		if (value == null) {
 			return null;
 		}
 		String string = null;
 		try {
-			Class<?> toType = value.getClass();
+			Class<? extends ITransferObject> toType = (Class<? extends ITransferObject>) value.getClass();
 			IManagerBean bean = BeanManager.getManagerBean(toType);
 			Serializable id = bean.getId( (ITransferObject) value );
 			if ( id != null ) {

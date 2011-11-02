@@ -90,7 +90,7 @@ public class MappedTransferObjectConverter implements Converter {
 	
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
-		Class<?> toType = getToType( context,  component );
+		Class<? extends ITransferObject> toType = getToType( context,  component );
 		if (toType != null) {
 			if (value != null) {
 				try {
@@ -113,23 +113,25 @@ public class MappedTransferObjectConverter implements Converter {
 		throw new ConverterException("Unable to find selectItems with TransferObject values.");
 	}
 
-	private Class<?> getToType(FacesContext context, UIComponent component) {
+	@SuppressWarnings("unchecked")
+	private Class<? extends ITransferObject> getToType(FacesContext context, UIComponent component) {
 		ValueExpression vb = component.getValueExpression("value");
 		Class<?> toType = (vb != null) ? vb.getType(context.getELContext()) : null;
 		if (getEntityInterfaces().containsKey(toType)) {
-			 return getEntityInterfaces().get(toType);
+			 toType = getEntityInterfaces().get(toType);
 		}
-		return toType;
+		return (Class<? extends ITransferObject>) toType;
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public String getAsString(FacesContext context, UIComponent component, Object value) {
 		if (value == null) {
 			return null;
 		}
 		String string = null;
 		try {
-			Class<?> toType = value.getClass();
+			Class<? extends ITransferObject> toType = (Class<? extends ITransferObject>) value.getClass();
 			IManagerBean bean = BeanManager.getManagerBean(toType);
 			Serializable id = bean.getId( (ITransferObject) value );
 			if ( id != null ) {

@@ -13,7 +13,7 @@
 		<ui:param name="controller" value="#{enterpriseDocument}" />
 		<ui:define name="columns">
 
-			<aon:column sortable="#{sortColumns}" alias="#{edcontroller.pojoShortName}.name"
+			<aon:column sortable="#{sortColumns}" alias="cm:name"
 				styleClass="aon-editDataTable-textColumn aon-width-300 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel for="EDocument_name" value="#{bundle.aon_name}" />
@@ -29,7 +29,7 @@
 				</f:facet>
 			</aon:column>
  
-			<aon:column sortable="#{sortColumns}" alias="#{edcontroller.pojoShortName}.description"
+			<aon:column sortable="#{sortColumns}" alias="cm:description"
 				styleClass="aon-editDataTable-textColumn aon-width-300 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel for="EDocument_description" value="#{bundle.aon_description}" />
@@ -45,7 +45,7 @@
 				</f:facet>
 			</aon:column>
  
-			<aon:column sortable="#{sortColumns}" alias="#{edcontroller.pojoShortName}.created"
+			<aon:column sortable="#{sortColumns}" alias="cm:created"
 				styleClass="aon-editDataTable-textColumn aon-width-120">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_date}" />

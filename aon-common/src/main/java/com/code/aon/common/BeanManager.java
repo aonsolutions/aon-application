@@ -38,7 +38,7 @@ public class BeanManager {
 	 */
 	public static IManagerBean getManagerBean(String pojo) throws ManagerBeanException {
 		try {
-			Class<?> pojoClass = Class.forName( pojo );
+			Class<? extends ITransferObject> pojoClass = (Class<? extends ITransferObject>) Class.forName( pojo );
 			return getManagerBean( pojoClass );
 		} catch (ClassNotFoundException e) {
             throw new ManagerBeanException(e.getMessage(), e);
@@ -52,7 +52,7 @@ public class BeanManager {
 	 * @return The requested <code>IManagerBean</code>.
 	 * @throws ManagerBeanException
 	 */
-	public static IManagerBean getManagerBean(Class<?> pojoClass) throws ManagerBeanException {
+	public static IManagerBean getManagerBean(Class<? extends ITransferObject> pojoClass) throws ManagerBeanException {
 		return manager.getManagerBean(pojoClass);
 	}
 	

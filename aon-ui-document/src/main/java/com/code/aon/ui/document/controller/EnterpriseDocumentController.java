@@ -10,8 +10,6 @@ import javax.faces.event.ActionEvent;
 import org.alfresco.webservice.types.Reference;
 import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.UploadEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.BasicManagerBean;
@@ -28,8 +26,6 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
 public class EnterpriseDocumentController extends LinesController implements IAttachmentController {
-	
-	private final static Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocumentController.class);
 	
 	private AlfrescoDAO alfrescoDAO;
 	

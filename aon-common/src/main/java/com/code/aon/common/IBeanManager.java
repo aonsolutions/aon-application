@@ -9,6 +9,6 @@ public interface IBeanManager {
 	 * @return The requested <code>IManagerBean</code>.
 	 * @throws ManagerBeanException
 	 */
-	IManagerBean getManagerBean(Class<?> pojoClass) throws ManagerBeanException;	
+	IManagerBean getManagerBean(Class<? extends ITransferObject> pojoClass) throws ManagerBeanException;	
 	
 }

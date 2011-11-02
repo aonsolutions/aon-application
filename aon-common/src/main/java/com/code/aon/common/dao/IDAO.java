@@ -20,6 +20,14 @@ import com.code.aon.ql.ProjectionList;
 public interface IDAO {
 
 	/**
+	 * Return a new <code>com.code.aon.common.ITransferObject</code>.
+	 *
+	 * @return the <code>com.code.aon.common.ITransferObject</code>
+	 * @throws DAOException the dAO exception
+	 */
+	ITransferObject newTo() throws DAOException;
+	
+	/**
 	 * Return an <code>com.code.aon.common.ITransferObject</code> for the
 	 * given identifier.
 	 * 
@@ -114,7 +122,7 @@ public interface IDAO {
 	 * 
 	 * @throws DAOException the DAO exception
 	 */
-	List getList(ProjectionList projectionList, Criteria criteria) throws DAOException;
+	List<?> getList(ProjectionList projectionList, Criteria criteria) throws DAOException;
 	
 	/**
 	 * Remove the Transfer Object.
@@ -199,6 +207,6 @@ public interface IDAO {
 	 * 
 	 * @return The class of the POJO.
 	 */
-	Class getPOJOClass();
+	Class<? extends ITransferObject> getPOJOClass();
 
 }

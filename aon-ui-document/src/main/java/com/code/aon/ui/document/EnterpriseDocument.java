@@ -35,7 +35,7 @@ public class EnterpriseDocument implements IAlfrescoTransferObject {
 	
 	private AlfrescoDAO dao;
 	
-	public EnterpriseDocument( AlfrescoDAO dao ) {
+	public void setDao(AlfrescoDAO dao) {
 		this.dao = dao;
 	}
 

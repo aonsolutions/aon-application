@@ -49,7 +49,11 @@
 					<value>enterpriseId</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>				
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>cm:name</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -64,5 +68,17 @@
 		<managed-bean-class>com.code.aon.ui.document.event.EnterpriseDocumentControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>		
+	
+	<!-- =================== Enterprise Document ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>enterpriseDocument_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseDocument/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>enterpriseDocument_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseDocument/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
 	
 </faces-config>

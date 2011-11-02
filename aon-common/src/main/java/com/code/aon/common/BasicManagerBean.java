@@ -161,20 +161,10 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	
 	public ITransferObject createNewTo() throws ManagerBeanException {
 		try {
-			Class clazz = getPOJOClass();
-			Object o = clazz.newInstance();
-			if (o instanceof ITransferObject) {
-				ITransferObject to = (ITransferObject) o;
-				initializePOJO(to);
-				return to;
-			}
-			String msg = "Can not create new POJO." + clazz.getName() + " must be a implementation of ITransferObject";
-			LOGGER.error(msg);
-			throw new ManagerBeanException(msg);
-		} catch (InstantiationException e) {
-			LOGGER.error(e.getMessage());
-			throw new ManagerBeanException(e.getMessage(), e);
-		} catch (IllegalAccessException e) {
+			ITransferObject to = getDao().newTo();
+			initializePOJO(to);
+			return to;
+		} catch (DAOException e) {
 			LOGGER.error(e.getMessage());
 			throw new ManagerBeanException(e.getMessage(), e);
 		}
