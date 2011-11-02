@@ -19,13 +19,22 @@ import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.dao.IGroupwareAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.groupware.GroupwareUtils;
 import com.code.aon.ui.registry.controller.RegistryController;
 import com.code.aon.ui.util.AonUtil;
 
 public class TaskHolderController extends RegistryController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(TaskHolderController.class);
+	private GroupwareUtils groupwareUtils;
 	
+	public GroupwareUtils getGroupwareUtils() {
+		if (groupwareUtils == null) {
+			groupwareUtils = new GroupwareUtils();
+		}
+		return groupwareUtils;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getUsers() {
 		List<SelectItem> userItems = new LinkedList<SelectItem>();

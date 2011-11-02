@@ -28,9 +28,7 @@ public class GroupwareUtils {
 			List<ITransferObject> list = bean.getList(criteria);
 			if (list != null && list.size() > 0) {
 				currentTaskHolder = (TaskHolder) list.get(0);
-			} else {
-				throw new IllegalStateException("No es posible encontrar el usuario actual");	
-			}
+			} 
 		}
 		return currentTaskHolder;
 	}
