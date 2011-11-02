@@ -41,8 +41,13 @@ public class DocumentManager {
 
 	private boolean show;
 	
+	private boolean showSearch;
+	
+	private String formTemplate;
+	
 	public DocumentManager() {
 		this.show = true;
+		this.showSearch = true;
 		this.maxDocumentSize = DEFAULT_MAX_DOCUMENT_SIZE;
 		this.maxTotalDocumentSize = DEFAULT_MAX_TOTAL_DOCUMENT_SIZE;
 		init();
@@ -111,6 +116,22 @@ public class DocumentManager {
 		String freeSpace = FileUtils.byteCountToDisplaySize(getFreeSpace()); 
 		String maxSize = FileUtils.byteCountToDisplaySize(maxDocumentSize);
 		return AonUtil.getMessage(DEFAULT_BUNDLE, DOCUMENT_SIZE_MESSAGE, totalSpace, freeSpace, maxSize);
+	}
+
+	public boolean isShowSearch() {
+		return showSearch;
+	}
+
+	public void setShowSearch(boolean showSearch) {
+		this.showSearch = showSearch;
+	}
+
+	public String getFormTemplate() {
+		return formTemplate;
+	}
+
+	public void setFormTemplate(String formTemplate) {
+		this.formTemplate = formTemplate;
 	}
 	
 }

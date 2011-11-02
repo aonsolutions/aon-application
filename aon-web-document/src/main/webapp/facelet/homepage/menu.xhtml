@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
+
+	<ui:define name="menuContent">
+		<aon:commandLink id="enterprise" 
+			action="#{enterprise.initialAction}" 
+			value="#{companyBundle.company_enterprise_module}"
+			styleClass="aon-top-menu-item aon-icon-company">
+			<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
+			<aon:actionListener method="#{enterprise.onEditSearch}" />
+		</aon:commandLink>
+		<aon:commandLink id="main"
+			value="#{appBundle.menu_document}"
+			action="menu_document" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-payroll" />
+		<c:if test="#{aonRole.config}">
+			<aon:commandLink id="config"
+				value="#{bundle.aon_configuration}"
+				action="menu_config" immediate="true"
+				styleClass="aon-top-menu-item aon-icon-config" />
+		</c:if>
+	</ui:define>
+	
+ </ui:composition>

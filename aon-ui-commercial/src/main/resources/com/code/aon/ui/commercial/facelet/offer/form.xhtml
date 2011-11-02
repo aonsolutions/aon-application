@@ -67,13 +67,6 @@
 							<f:param name="reportKey" value="offer" />
 							<f:param name="outputFormat" value="MS Excel" />
 						</aon:htmlCommandLink>											
-						<aon:htmlCommandLink id="offer-word-report" value="&#160;"
-							target="_blank" action="#{report.onExecute}"
-							rendered="#{!offer.new and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
-							styleClass="aon-finding-toolbar-item aon-icon-word aon-finding-toolbar-item-no-border">
-							<f:param name="reportKey" value="offer" />
-							<f:param name="outputFormat" value="DOCX" />
-						</aon:htmlCommandLink>
 						<aon:htmlCommandLink id="offer-report" value="#{commercialBundle.commercial_offer}"
 							target="_blank" action="#{offerSigner.onReport}"
 							rendered="#{!offer.new and offerDetail.model.rowCount > 0}" disabled="#{offerDetail.to != null}"
@@ -274,6 +267,7 @@
 						<ui:param name="lookupDisabled" value="#{offer.readOnly}" />
 						<ui:param name="lookupRendered" value="#{offer.dealership}" />
 						<ui:param name="lookupReRender" value="Supplier_registry_document,Offer_tariff,Offer_defaultPayMethod,payMethodDiv" />				
+						<ui:param name="idRequired" value="#{true}" />						
 						<aon:methodParam name="lookupChangeListener"
 							value="#{offer.supplierData}" type="lookupChangeListener" />
 					</ui:include>

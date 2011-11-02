@@ -1,0 +1,31 @@
+<model name="aon:aonModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+	<description>The Mediaclient Model</description>
+	<author>esferalia Networks S.A.</author>
+	<version>1.0</version>
+	<imports>
+		<!-- Import Alfresco Dictionary Definitions -->
+		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+		<!-- Import Alfresco Content Domain Model Definitions -->
+		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+  </imports>
+
+   <namespaces>
+      <!-- Define a Namespace for my new definitions -->
+      <namespace uri="http://aon.esferalia.com/models/catalogue/1.0" prefix="aon"/>
+   </namespaces>
+
+   <!-- Type and Aspect definitions go here -->
+	
+    <aspects>
+		<aspect name="aon:enterpriseDocument">
+			<title>Enterprise Document</title>
+			<properties>
+				<property name="aon:enterpriseId">
+					<type>d:int</type>
+					<mandatory>true</mandatory>
+				</property>
+			</properties>
+		</aspect>
+	</aspects>
+
+</model>

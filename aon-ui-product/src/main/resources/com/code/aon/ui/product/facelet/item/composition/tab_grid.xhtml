@@ -30,7 +30,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="Item_id" value="#{productBundle.product_component}" />
+					<aon:outputLabel for="Item_id_Composition" value="#{productBundle.product_component}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" 
 					rendered="#{formList}">
@@ -43,6 +43,7 @@
 					<ui:param name="skipSuggestText" value="#{controller.to.compositionItem != null and controller.to.compositionItem.id != null}" />
 					<ui:param name="lookupInputOnFocus" value="ItemComposition_description" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<ui:param name="lookupSuffix" value="_Composition" />
 					<ui:param name="lookupReRender" value="itemCompositionDescription,ItemComposition_quantity" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{controller.onCompositionItemChanged}" type="lookupChangeListener" />
@@ -73,6 +74,7 @@
 							<ui:param name="lookupInputOnFocus" value="ItemComposition_description-New" />
 							<ui:param name="lookupSuffix" value="-New" />
 							<ui:param name="lookupRendered" value="#{formNew}" />
+							<ui:param name="lookupSuffix" value="_Composition-New" />
 							<ui:param name="lookupReRender" value="itemCompositionDescriptionNew,ItemComposition_quantity-New" />
 							<aon:methodParam name="lookupChangeListener"
 								value="#{controller.onCompositionItemChanged}" type="lookupChangeListener" />

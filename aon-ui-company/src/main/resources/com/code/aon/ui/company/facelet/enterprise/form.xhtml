@@ -90,7 +90,7 @@
 						<c:if test="#{documentManager.show}">
 							<aon:panelTab id="documentManagement"
 								label="#{bundle.aon_documents}">
-								<ui:include src="/com/code/aon/ui/registry/facelet/rattach/tab_grid.xhtml">
+								<ui:include src="#{documentManager.formTemplate}">
 									<ui:param name="controller" value="#{enterpriseRAttach}" />
 									<ui:param name="sortColumns" value="#{true}" />
 								</ui:include>								
