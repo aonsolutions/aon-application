@@ -1,11 +1,11 @@
 package com.code.aon.ui.document;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -48,6 +48,7 @@ import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.PropertiesUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Order;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 
@@ -60,11 +61,11 @@ public abstract class AlfrescoDAO implements IDAO  {
 
 	/** The store used throughout the samples */
 	public static final Store STORE = new Store(Constants.WORKSPACE_STORE, "SpacesStore");
-	
+
 	public static final String UUID = "{" + Constants.NAMESPACE_SYSTEM_MODEL + "}node-uuid";
 	
 	public static final String PATH = "{" + Constants.NAMESPACE_CONTENT_MODEL + "}path";
-
+	
 	private File ALFRESCO_PROPERTIES = new File("/home/COMMON-RESOURCES/aon-document/config.properties");
 
 	private Class<? extends ITransferObject> pojoClass;
@@ -74,6 +75,8 @@ public abstract class AlfrescoDAO implements IDAO  {
 	private String serverPassword;	
 	
 	protected abstract ParentReference getParentReference();
+	
+	protected abstract Object getValue( NamedValue value );
 	
 	protected abstract ITransferObject convert( NamedValue[] values );
 	
@@ -297,6 +300,20 @@ public abstract class AlfrescoDAO implements IDAO  {
 		return tos;
 	}	
 	
+	private List<ResultSetRow> sortList( List<ResultSetRow> list, Criteria criteria ) {
+		if ( (criteria != null) && (criteria.getOrderByList() != null) ) {
+			List<Order> orderList = criteria.getOrderByList().getOrders();
+			for( int i = orderList.size()-1; i >= 0; i-- ) {
+				Order order = orderList.get(i);
+				String attribute = order.getExpression().getName();
+				AlfrescoComparator comparator = new AlfrescoComparator( this, attribute, order.isAscending() );
+				LOGGER.debug( "Sorting {}", order );
+				Collections.sort( list, comparator );
+			}
+		}
+		return list;
+	}
+	
 	@Override
 	public List<ITransferObject> getList(Criteria criteria, int offset,
 			int count) throws DAOException {
@@ -306,7 +323,7 @@ public abstract class AlfrescoDAO implements IDAO  {
 			String expression = getQueryExpression(criteria);
 			LOGGER.debug( "getList, expression={}", expression );
 			List<ResultSetRow> list = getList(expression);
-			// list = sortList(list, criteria);
+			list = sortList(list, criteria);
 			list = getSubList(list, offset, count);
 			tos = convertList(list);
 		} catch ( Throwable e ) {
@@ -384,7 +401,7 @@ public abstract class AlfrescoDAO implements IDAO  {
 	}
 	
 	@Override
-	public List getList(ProjectionList projectionList, Criteria criteria)
+	public List<?> getList(ProjectionList projectionList, Criteria criteria)
 			throws DAOException {
 		throw new UnsupportedOperationException("Not supported!");
 	}
@@ -396,7 +413,7 @@ public abstract class AlfrescoDAO implements IDAO  {
 	}
 
 	@Override
-	public Class getPOJOClass() {
+	public Class<? extends ITransferObject> getPOJOClass() {
 		return this.pojoClass;
 	}
 	

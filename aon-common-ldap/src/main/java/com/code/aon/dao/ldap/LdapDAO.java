@@ -73,6 +73,19 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		setBaseDN( this.metadata.getBaseDN() );			
 	}
 	
+	@Override
+	public ITransferObject newTo() throws DAOException {
+		ITransferObject to = null;
+		try {
+			to = getPOJOClass().newInstance();
+		} catch (InstantiationException e) {
+			throw new DAOException(e.getMessage(), e);
+		} catch (IllegalAccessException e) {
+			throw new DAOException(e.getMessage(), e);
+		}
+		return to;
+	}	
+	
 	/**
 	 * Gets the base dn.
 	 * 
@@ -183,7 +196,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 		return count;
 	}
 
-	public Class<?> getPOJOClass() {
+	public Class<? extends ITransferObject> getPOJOClass() {
 		return metadata.getPojoClass();
 	}
 	

@@ -49,7 +49,11 @@
 					<value>enterpriseId</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>				
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>cm:name</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
