@@ -192,7 +192,7 @@ public abstract class AlfrescoDAO implements IDAO  {
 
 	@Override
 	public String getFieldName(String alias) throws DAOException {
-		return alias;
+		return StringUtils.replace(alias, "_", ":" );
 	}
 	
 	protected ParentReference getReferenceToParent(Reference spaceref) {

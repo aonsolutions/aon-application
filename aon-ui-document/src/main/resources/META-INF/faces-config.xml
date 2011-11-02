@@ -69,4 +69,16 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>		
 	
+	<!-- =================== Enterprise Document ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>enterpriseDocument_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseDocument/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>enterpriseDocument_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseDocument/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	
 </faces-config>

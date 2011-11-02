@@ -54,7 +54,7 @@ public class DefaultBeanManager implements IBeanManager {
 	}
 
 	@Override
-	public IManagerBean getManagerBean(Class<?> pojoClass) throws ManagerBeanException {
+	public IManagerBean getManagerBean(Class<? extends ITransferObject> pojoClass) throws ManagerBeanException {
 		String sessionFactoryName = HibernateUtil.getSessionFactoryName(pojoClass.getName());
         String key = sessionFactoryName + "/" + pojoClass ;
         BasicManagerBean managerBean = (BasicManagerBean) beans.get( key );

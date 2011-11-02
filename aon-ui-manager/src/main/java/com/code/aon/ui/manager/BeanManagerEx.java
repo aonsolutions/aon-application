@@ -9,6 +9,7 @@ import org.hibernate.SessionFactory;
 
 import com.code.aon.common.IBeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.manager.controller.DBManagerController;
 import com.code.aon.ui.util.AonUtil;
@@ -50,7 +51,7 @@ public class BeanManagerEx implements IBeanManager {
 	}    
     
 	@Override
-	public IManagerBean getManagerBean(Class<?> pojoClass) throws ManagerBeanException {
+	public IManagerBean getManagerBean(Class<? extends ITransferObject> pojoClass) throws ManagerBeanException {
 		ManagerBeanWrapper wrapper = beans.get(pojoClass);
 		if ( wrapper == null ) {
 			wrapper = new ManagerBeanWrapper(pojoClass, getSessionFactory());
