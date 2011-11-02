@@ -1,5 +1,6 @@
 package com.code.aon.ui.document.event;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.ui.document.EnterpriseDocument;
 import com.code.aon.ui.document.controller.EnterpriseDocumentController;
@@ -12,13 +13,21 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event)throws ControllerListenerException {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) event.getController();
-		edc.setAonFile(null);
+		try {
+			edc.reset();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) event.getController();
-		edc.setAonFile(null);
+		try {
+			edc.reset();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override

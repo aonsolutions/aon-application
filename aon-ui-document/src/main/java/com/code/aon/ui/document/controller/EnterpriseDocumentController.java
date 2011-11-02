@@ -5,20 +5,26 @@ import java.io.InputStream;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.alfresco.webservice.types.Reference;
 import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.UploadEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.BasicManagerBean;
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.company.Enterprise;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.IAttachmentController;
+import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.document.AlfrescoDAO;
 import com.code.aon.ui.document.EnterpriseDocument;
 import com.code.aon.ui.form.LinesController;
@@ -26,12 +32,16 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
 public class EnterpriseDocumentController extends LinesController implements IAttachmentController {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocumentController.class);
 	
 	private AlfrescoDAO alfrescoDAO;
 	
 	private BasicManagerBean alfrescoManagerBean;
 	
 	private AonFile aonFile;
+	
+	private Enterprise enterprise;
 	
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
@@ -43,6 +53,10 @@ public class EnterpriseDocumentController extends LinesController implements IAt
 		}
 		return this.alfrescoManagerBean;
 	}
+	
+	public EnterpriseDocument getEnterpriseDocument() {
+		return (EnterpriseDocument) getTo();
+	}
 
 	/**
 	 * File uploaded.
@@ -51,8 +65,7 @@ public class EnterpriseDocumentController extends LinesController implements IAt
 	 */
 	public void fileUploaded(UploadEvent event) {
 		AttachmentUtil.fileUploaded(event, this);
-		EnterpriseDocument ed = (EnterpriseDocument) getTo();
-		ed.setName( getAonFile().getFileName() );
+		getEnterpriseDocument().setName( getAonFile().getFileName() );
 	}
 	
     public void downloadAttachment( ActionEvent event ) throws NumberFormatException, ManagerBeanException {
@@ -83,7 +96,44 @@ public class EnterpriseDocumentController extends LinesController implements IAt
 	@Override
 	public long getMaximumSize() {
 		return -1;
+	}
+
+	public Enterprise getEnterprise() {
+		return enterprise;
+	}
+
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
 	}	
+
+	public void reset() throws ManagerBeanException {
+		setAonFile(null);
+		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
+		setEnterprise((Enterprise) enterpriseBean.createNewTo());		
+	}
+
+	public void onEnterpriseChanged( LookupChangeEvent event ) {
+		EnterpriseDocument ed = getEnterpriseDocument();
+		if (event.getNewValue() != null) {
+			Enterprise enterprise = (Enterprise)event.getNewValue(); 
+			ed.setEnterpriseId( enterprise.getId() );
+		} else {
+			ed.setEnterpriseId(null);
+		}
+	}
 	
+	public void masiveUpload( ActionEvent event ) {
+		try {
+			getManagerBean().restoreNullSubPOJOs(getTo());
+			accept();
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onAccept",e);
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}		
+		String description = getEnterpriseDocument().getDescription();
+		onReset(event);
+		getEnterpriseDocument().setDescription(description);
+	}
 	
 }
