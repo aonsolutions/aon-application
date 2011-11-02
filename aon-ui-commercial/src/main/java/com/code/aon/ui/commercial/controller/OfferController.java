@@ -24,7 +24,6 @@ import com.code.aon.commercial.TargetSupplier;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
-import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.commercial.enumeration.TargetSellerStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
@@ -540,7 +539,7 @@ public class OfferController extends BasicController implements ISignatureContro
 	}
 	
 	public boolean isDealership() {
-		return OfferType.DEALERSHIP == getOffer().getType();
+		return getOffer().isDealership();
 	}
 
 	public void sellerData(LookupChangeEvent event) {
@@ -876,8 +875,8 @@ public class OfferController extends BasicController implements ISignatureContro
 	public String getTargetCellularPhone() throws ManagerBeanException{			
 		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
 		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.CELLULAR);
+		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
 		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
 		Iterator<?> iter = mediaBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
@@ -890,8 +889,8 @@ public class OfferController extends BasicController implements ISignatureContro
 	public String getTargetFax() throws ManagerBeanException{		
 		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
 		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.FAX);
+		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
 		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
 		Iterator<?> iter = mediaBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
@@ -904,8 +903,8 @@ public class OfferController extends BasicController implements ISignatureContro
 	public String getTargetEmail() throws ManagerBeanException{			
 		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
 		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE),MediaType.EMAIL);
+		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_COMMERCIAL),true);
 		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID),((Offer)this.getTo()).getTarget().getId());
 		Iterator<?> iter = mediaBean.getList(criteria).iterator();
 		if (iter.hasNext()) {

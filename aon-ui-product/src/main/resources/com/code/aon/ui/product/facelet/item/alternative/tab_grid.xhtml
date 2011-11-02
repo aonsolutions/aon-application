@@ -30,7 +30,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-vertical-align-top aon-width-auto aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="Item_id" value="#{productBundle.product_item}" />
+					<aon:outputLabel for="Item_id_Alternative" value="#{productBundle.product_item}" />
 				</f:facet>
 				<aon:outputText value="#{to.alternativeItem.product.code} - #{to.alternativeItem.product.name}"
 					rendered="#{formList}" />
@@ -39,6 +39,7 @@
 					<ui:param name="idRequired" value="#{true}" />
 					<ui:param name="skipLabel" value="#{true}" />
 					<ui:param name="lookupRendered" value="#{formEdit}" />
+					<ui:param name="lookupSuffix" value="_Alternative" />
 					<aon:methodParam name="lookupChangeListener"
 						value="#{itemAlternative.onAlternativeItemChanged}" type="lookupChangeListener" />
 				</ui:include>
@@ -48,7 +49,7 @@
 						<ui:param name="idRequired" value="#{true}" />
 						<ui:param name="skipLabel" value="#{true}" />
 						<ui:param name="lookupRendered" value="#{formNew}" />
-						<ui:param name="lookupSuffix" value="-New" />
+						<ui:param name="lookupSuffix" value="_Alternative-New" />
 						<aon:methodParam name="lookupChangeListener"
 							value="#{itemAlternative.onAlternativeItemChanged}" type="lookupChangeListener" />
 					</ui:include>
