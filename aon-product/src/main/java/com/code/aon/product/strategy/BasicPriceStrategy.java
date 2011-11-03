@@ -114,8 +114,8 @@ public class BasicPriceStrategy implements IPriceStrategy {
 				price = calc.getPrice();
 			}
 			price = (price + calc.getTaxes()) * calc.getQuantity();
-			if(calc.getDiscountExpression().getDiscounts() != null){
-				for(int i = 0;i<calc.getDiscountExpression().getDiscounts().length;i++){
+			if (calc.getDiscountExpression().getDiscounts() != null) {
+				for (int i = 0;i<calc.getDiscountExpression().getDiscounts().length;i++) {
 					price = price * ( 1 - calc.getDiscountExpression().getDiscounts()[i] /100);
 				}
 			}
@@ -128,13 +128,13 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	@SuppressWarnings("unchecked")
 	public double getTaxableBase(ICalculableContainer icc) {
 		double taxableBase = 0;
-		Iterator iter = icc.getDetailList().iterator();
-		while(iter.hasNext()){
-			ICalculable calc = (ICalculable)iter.next();
+		Iterator iterator = icc.getDetailList().iterator();
+		while (iterator.hasNext()) {
+			ICalculable calc = (ICalculable)iterator.next();
 			taxableBase += getBasePrice(calc);
 		}
-		if(icc.getDiscountExpression().getDiscounts() != null){
-			for(int i = 0;i<icc.getDiscountExpression().getDiscounts().length;i++){
+		if (icc.getDiscountExpression().getDiscounts() != null) {
+			for (int i = 0;i<icc.getDiscountExpression().getDiscounts().length;i++) {
 				taxableBase = taxableBase * ( 1 - icc.getDiscountExpression().getDiscounts()[i] /100);
 			}
 		}
@@ -144,46 +144,45 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	@SuppressWarnings("unchecked")
 	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti) {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
-		if(!iti.isTaxFree()){
+		if (!iti.isTaxFree()) {
 			Iterator iter = icc.getDetailList().iterator();
-			Map<Integer,TaxBreakDown> map = new HashMap<Integer, TaxBreakDown>();
-			while(iter.hasNext()){
+			Map<Integer, TaxBreakDown> map = new HashMap<Integer, TaxBreakDown>();
+			while (iter.hasNext()) {
 				ICalculable calc = (ICalculable)iter.next();
 				if (calc.getItem() != null && calc.getItem().getId() != null) {
-					double percent = 0;
-					double surcharge = 0;
-					TaxType taxType = calc.getItem().getProduct().getVat().getType();
-					if(icc.getDate().before(calc.getItem().getProduct().getVat().getStartDate())){
-						TaxDetail taxDetail = obtainTaxDetail(calc.getItem().getProduct().getVat(),icc.getDate());
-						if(taxDetail != null){
-							percent  = taxDetail.getValue();
-							surcharge = taxDetail.getSurcharge();
+					Tax vat = calc.getItem().getProduct().getVat();
+					if (vat != null && vat.getId() != null) {
+						TaxBreakDown vatBreakDown;
+						if (map.containsKey(vat.getId())) {
+							vatBreakDown = map.get(vat.getId());
+						} else {
+							vatBreakDown = getTaxBreakDownObject(icc.getDate(), vat);
 						}
-					}else{
-						percent = calc.getItem().getProduct().getVat().getPercentage();
-						surcharge = calc.getItem().getProduct().getVat().getSurcharge();
+						vatBreakDown.setBase(CommonUtil.round(vatBreakDown.getBase() + getBasePrice(calc), 4)); 
+						map.put(vat.getId(), vatBreakDown);
 					}
-					TaxBreakDown taxBreakDown;
-					if(map.containsKey(calc.getItem().getProduct().getVat().getId())){
-						taxBreakDown = map.get(calc.getItem().getProduct().getVat().getId());
-						taxBreakDown.setBase(CommonUtil.round(taxBreakDown.getBase() + getBasePrice(calc), 4)); 
-					}else{
-						taxBreakDown = new TaxBreakDown();
-						taxBreakDown.setTaxType(taxType);
-						taxBreakDown.setTaxPercent(percent);
-						taxBreakDown.setSurchargePercent(surcharge);
-						taxBreakDown.setBase(getBasePrice(calc));
+
+					Tax retention = calc.getItem().getProduct().getRetention();
+					if (iti.isWithholding() && retention != null && retention.getId() != null) {
+						TaxBreakDown retentionBreakDown;
+						if (map.containsKey(retention.getId())) {
+							retentionBreakDown = map.get(retention.getId());
+						} else {
+							retentionBreakDown = getTaxBreakDownObject(icc.getDate(), retention);
+						}
+						retentionBreakDown.setBase(CommonUtil.round(retentionBreakDown.getBase() + getBasePrice(calc), 4)); 
+						map.put(retention.getId(), retentionBreakDown);
 					}
-					map.put(calc.getItem().getProduct().getVat().getId(), taxBreakDown);
 				}
 			}
+
 			Iterator<TaxBreakDown> iterator = map.values().iterator();
-			while(iterator.hasNext()){
+			while (iterator.hasNext()) {
 				TaxBreakDown tbd = iterator.next();
 				tbd.setTaxQuota(CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100));
-				if(iti.isSurcharge()){
-					tbd.setSurchargeQuota(CommonUtil.round(tbd.getBase() * tbd.getSurchargePercent()/100));
-				}else{
+				if (iti.isSurcharge()) {
+					tbd.setSurchargeQuota(CommonUtil.round(tbd.getBase() * tbd.getSurchargePercent() / 100));
+				} else{
 					tbd.setSurchargeQuota(0.0);
 					tbd.setSurchargePercent(0.0);
 				}
@@ -196,10 +195,10 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	@SuppressWarnings("unchecked")
 	public double getTotalVatQuota(ICalculableContainer icc, ITaxInfo iti) {
 		double total = 0;
-		Iterator iter = getTaxBreakDowns(icc, iti).iterator();
-		while(iter.hasNext()){
-			TaxBreakDown taxBreakDown = (TaxBreakDown)iter.next();
-			if(taxBreakDown.getTaxType().equals(TaxType.VAT)){
+		Iterator iterator = getTaxBreakDowns(icc, iti).iterator();
+		while (iterator.hasNext()) {
+			TaxBreakDown taxBreakDown = (TaxBreakDown)iterator.next();
+			if (taxBreakDown.getTaxType().equals(TaxType.VAT)) {
 				total += taxBreakDown.getTaxQuota();
 				total += taxBreakDown.getSurchargeQuota();
 			}
@@ -210,10 +209,10 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	@SuppressWarnings("unchecked")
 	public double getTotalRetentionQuota(ICalculableContainer icc, ITaxInfo iti) {
 		double total = 0;
-		Iterator iter = getTaxBreakDowns(icc, iti).iterator();
-		while(iter.hasNext()){
-			TaxBreakDown taxBreakDown = (TaxBreakDown)iter.next();
-			if(taxBreakDown.getTaxType().equals(TaxType.RETENTION)){
+		Iterator iterator = getTaxBreakDowns(icc, iti).iterator();
+		while (iterator.hasNext()) {
+			TaxBreakDown taxBreakDown = (TaxBreakDown)iterator.next();
+			if (taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
 				total += taxBreakDown.getTaxQuota();
 			}
 		}
@@ -223,34 +222,56 @@ public class BasicPriceStrategy implements IPriceStrategy {
 	@SuppressWarnings("unchecked")
 	public double getTotalPrice(ICalculableContainer icc, ITaxInfo iti) {
 		double total = getTaxableBase(icc);
-		Iterator iter = getTaxBreakDowns(icc, iti).iterator();
-		while(iter.hasNext()){
-			TaxBreakDown taxBreakDown = (TaxBreakDown)iter.next();
-			if(taxBreakDown.getTaxType().equals(TaxType.VAT)){
+		Iterator iterator = getTaxBreakDowns(icc, iti).iterator();
+		while (iterator.hasNext()) {
+			TaxBreakDown taxBreakDown = (TaxBreakDown)iterator.next();
+			if (taxBreakDown.getTaxType().equals(TaxType.VAT)) {
 				total += taxBreakDown.getTaxQuota();
 				total += taxBreakDown.getSurchargeQuota();
 			}
-			if(taxBreakDown.getTaxType().equals(TaxType.RETENTION)){
+			if (taxBreakDown.getTaxType().equals(TaxType.RETENTION)) {
 				total = total - taxBreakDown.getTaxQuota();
 			}
 		}
 		return CommonUtil.round(total);
 	}
 	
+	private TaxBreakDown getTaxBreakDownObject(Date valueDate, Tax tax) {
+		double percent = 0;
+		double surcharge = 0;
+		if (valueDate.before(tax.getStartDate())) {
+			TaxDetail taxDetail = obtainTaxDetail(tax, valueDate);
+			if (taxDetail != null) {
+				percent = taxDetail.getValue();
+				surcharge = taxDetail.getSurcharge();
+			}
+		} else{
+			percent = tax.getPercentage();
+			surcharge = tax.getSurcharge();
+		}
+
+		TaxBreakDown taxBreakDown = new TaxBreakDown();
+		taxBreakDown.setTaxType(tax.getType());
+		taxBreakDown.setTaxPercent(percent);
+		taxBreakDown.setSurchargePercent(surcharge);
+		taxBreakDown.setBase(0);
+		return taxBreakDown;
+	}
+
 	@SuppressWarnings("unchecked")
-	private TaxDetail obtainTaxDetail(Tax vat, Date date) {
+	private TaxDetail obtainTaxDetail(Tax tax, Date date) {
 		try {
 			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID), vat.getId());
+			criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID), tax.getId());
 			criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), date);
 			criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), date);
-			Iterator iter = taxDetailBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (TaxDetail)iter.next();
+			Iterator iterator = taxDetailBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				return (TaxDetail)iterator.next();
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.error("Error obtaining taxDetail for tax with id= " + vat.getId(), e);
+			LOGGER.error("Error obtaining taxDetail for tax with id= " + tax.getId(), e);
 		}
 		return null;
 	}
