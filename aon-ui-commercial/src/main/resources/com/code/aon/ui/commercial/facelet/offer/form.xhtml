@@ -46,7 +46,7 @@
 						<c:if test="#{aonConfiguration.bean.offer.showInvoicing and aonRole.financeOperator}">
 							<aon:commandButton id="invoice"
 								value="#{commercialBundle.commercial_offer_to_invoice}"
-								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offerDetail.model.rowCount > 0}"
+								immediate="#{true}" rendered="#{(offer.pending or offer.approved) and offer.linesPending and !offer.linesSold}"
 								styleClass="aon-finding-toolbar-item aon-icon-favorite"
 								actionListener="#{offer.onInvoiceShow}"
 								reRender="showInvoiceWindow">
