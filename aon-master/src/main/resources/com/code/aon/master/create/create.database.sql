@@ -5845,7 +5845,7 @@ CREATE TABLE `web_info_style` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Estilos a utilizar en las plantillas para generar ficha web';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES '6.18.7');
+INSERT INTO `db_version` (`version_number`) VALUES ('6.18.7');
 
 COMMIT;
 
