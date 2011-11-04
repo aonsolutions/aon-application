@@ -1,4 +1,4 @@
-package com.code.aon.ui.document.controller;
+package com.code.aon.document;
 
 import org.alfresco.webservice.types.CMLAddAspect;
 import org.alfresco.webservice.types.NamedValue;

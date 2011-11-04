@@ -35,6 +35,13 @@
 					<aon:inputText id="EDocument_description" required="true"
 						value="#{enterpriseDocument.to.description}" maxlength="128" size="45" />
 
+					<aon:outputLabel for="EDocument_categories"
+						value="#{registryBundle.registry_category}" />
+					<aon:selectManyCheckbox id="EDocument_categories"
+						value="#{enterpriseDocument.to.categories}">
+						<f:selectItems value="#{enterpriseDocument.categories}"/>
+					</aon:selectManyCheckbox>		
+					
 					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{enterpriseDocument.enterprise}" />
 						<ui:param name="skipNewButton" value="#{true}" />

@@ -1,4 +1,4 @@
-package com.code.aon.ui.document;
+package com.code.aon.document;
 
 import static org.alfresco.webservice.util.Constants.NAMESPACE_CONTENT_MODEL;
 
@@ -8,6 +8,8 @@ import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.ResultSetRow;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.document.dao.AlfrescoDAO;
 
 public class AlfrescoComparator implements Comparator<ResultSetRow> {
 	

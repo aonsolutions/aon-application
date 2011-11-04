@@ -1,8 +1,8 @@
 package com.code.aon.ui.document.event;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.document.EnterpriseDocument;
 import com.code.aon.faces.controller.AttachmentUtil;
-import com.code.aon.ui.document.EnterpriseDocument;
 import com.code.aon.ui.document.controller.EnterpriseDocumentController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;

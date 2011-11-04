@@ -55,7 +55,15 @@
 							value="#{enterpriseDocumentSearch.endDate}"
 							timeZone="#{timeZoneController.timeZone}"
 							popupDateFormat="#{bundle.aon_date_pattern}" />
-					</aon:div>						
+					</aon:div>		
+					
+					<aon:outputLabel for="cm_category"
+						value="#{registryBundle.registry_category}" />
+					<aon:selectManyCheckbox id="cm_category"
+						value="#{enterpriseDocumentSearch.selectedCategories}">
+						<f:selectItems value="#{enterpriseDocument.categories}"/>
+					</aon:selectManyCheckbox>								
+									
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

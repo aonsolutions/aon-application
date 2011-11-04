@@ -1,4 +1,4 @@
-package com.code.aon.ui.document;
+package com.code.aon.document;
 
 import java.util.Date;
 

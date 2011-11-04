@@ -3,6 +3,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
+	<!-- ********* AlfrescoCategory CONVERTER ************* -->
+	<converter>
+		<converter-for-class>com.code.aon.document.AlfrescoCategory</converter-for-class>
+		<converter-class>com.code.aon.ui.document.converter.AlfrescoCategoryConverter</converter-class>
+	</converter>
+	
 	<!-- ************ ENTERPRISE DOCUMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>enterpriseDocument</managed-bean-name>
@@ -16,7 +22,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.ui.document.EnterpriseDocument</value>
+			<value>com.code.aon.document.EnterpriseDocument</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>

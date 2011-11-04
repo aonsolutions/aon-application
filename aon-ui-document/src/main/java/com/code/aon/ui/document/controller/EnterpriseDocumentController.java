@@ -1,12 +1,17 @@
 package com.code.aon.ui.document.controller;
 
+import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.alfresco.webservice.types.Reference;
 import org.apache.commons.lang.ArrayUtils;
@@ -22,11 +27,14 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
+import com.code.aon.document.AlfrescoCategory;
+import com.code.aon.document.AlfrescoCategoryManager;
+import com.code.aon.document.EnterpriseDocument;
+import com.code.aon.document.dao.AlfrescoDAO;
+import com.code.aon.document.dao.EnterpriseDocumentDAO;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.IAttachmentController;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.document.AlfrescoDAO;
-import com.code.aon.ui.document.EnterpriseDocument;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
@@ -43,17 +51,31 @@ public class EnterpriseDocumentController extends LinesController implements IAt
 	
 	private Enterprise enterprise;
 	
+	private AlfrescoCategoryManager categoryManager;
+	
+	private List<SelectItem> categories;
+	
+	private String user;
+	
+	public EnterpriseDocumentController() {
+		LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
+		this.user = loggedUser.getPrincipal().getShortName();
+		this.categoryManager = new AlfrescoCategoryManager(user, user);
+	}
+
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if ( this.alfrescoManagerBean == null ) {
-			LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
-			String user = loggedUser.getPrincipal().getShortName();
-			this.alfrescoDAO = new EnterpriseDocumentDAO(user, user);
+			this.alfrescoDAO = new EnterpriseDocumentDAO(user, user, categoryManager);
 			this.alfrescoManagerBean = new BasicManagerBean(this.alfrescoDAO);			
 		}
 		return this.alfrescoManagerBean;
 	}
 	
+	public AlfrescoCategoryManager getCategoryManager() {
+		return categoryManager;
+	}
+
 	public EnterpriseDocument getEnterpriseDocument() {
 		return (EnterpriseDocument) getTo();
 	}
@@ -132,8 +154,24 @@ public class EnterpriseDocumentController extends LinesController implements IAt
 			throw new AbortProcessingException(e.getMessage(), e);
 		}		
 		String description = getEnterpriseDocument().getDescription();
+		AlfrescoCategory[] categories = getEnterpriseDocument().getCategories();
 		onReset(event);
 		getEnterpriseDocument().setDescription(description);
+		getEnterpriseDocument().setCategories(categories);
 	}
+
+
+	public List<SelectItem> getCategories() throws ManagerBeanException {
+		if ( categories == null ) {
+			categories = new LinkedList<SelectItem>();
+			EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
+			AlfrescoCategoryManager cm = edc.getCategoryManager();
+			for( AlfrescoCategory category : cm.getCategories() ) {
+				SelectItem item = new SelectItem(category, category.getName());
+				categories.add(item);
+			}			
+		}
+		return categories;
+	}	
 	
 }
