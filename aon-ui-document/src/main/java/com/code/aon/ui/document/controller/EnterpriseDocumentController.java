@@ -22,7 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.BasicManagerBean;
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -50,8 +49,6 @@ public class EnterpriseDocumentController extends LinesController implements IAt
 	private BasicManagerBean alfrescoManagerBean;
 	
 	private AonFile aonFile;
-	
-	private Enterprise enterprise;
 	
 	private AlfrescoCategoryManager categoryManager;
 	
@@ -124,27 +121,17 @@ public class EnterpriseDocumentController extends LinesController implements IAt
 		return -1;
 	}
 
-	public Enterprise getEnterprise() {
-		return enterprise;
-	}
-
-	public void setEnterprise(Enterprise enterprise) {
-		this.enterprise = enterprise;
-	}	
-
 	public void reset() throws ManagerBeanException {
 		setAonFile(null);
-		IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
-		setEnterprise((Enterprise) enterpriseBean.createNewTo());		
 	}
 
 	public void onEnterpriseChanged( LookupChangeEvent event ) {
 		EnterpriseDocument ed = getEnterpriseDocument();
 		if (event.getNewValue() != null) {
 			Enterprise enterprise = (Enterprise)event.getNewValue(); 
-			ed.setEnterpriseId( enterprise.getId() );
+			ed.setEnterprise( enterprise );
 		} else {
-			ed.setEnterpriseId(null);
+			ed.setEnterprise(null);
 		}
 	}
 	

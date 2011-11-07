@@ -2,8 +2,8 @@ package com.code.aon.document;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.alfresco.webservice.classification.ClassificationFault;
 import org.alfresco.webservice.types.Category;
@@ -50,7 +50,7 @@ public class AlfrescoCategoryManager extends BasicAlfresco  {
 	}
 
 	public void loadCategories() throws DAOException {
-		this.categoryMap = new HashMap<String,AlfrescoCategory>();
+		this.categoryMap = new TreeMap<String,AlfrescoCategory>();
 		try {
 			startSession();
             Classification classification = getClassifcation(AON_CLASSIFICATION);

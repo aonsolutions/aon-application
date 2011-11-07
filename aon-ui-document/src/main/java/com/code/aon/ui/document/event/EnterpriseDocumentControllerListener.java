@@ -21,7 +21,7 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 			edc.reset();
 			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
 			if (! mc.isMainEnterprise() ) {
-				edc.setEnterprise(mc.getLoggedUser().getEnterprise());
+				edc.getEnterpriseDocument().setEnterprise(mc.getLoggedUser().getEnterprise());
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);

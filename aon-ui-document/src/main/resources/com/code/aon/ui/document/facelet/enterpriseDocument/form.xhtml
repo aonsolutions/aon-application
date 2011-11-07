@@ -42,14 +42,15 @@
 						<f:selectItems value="#{enterpriseDocument.categories}"/>
 					</aon:selectManyCheckbox>		
 					
-					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{enterpriseDocument.enterprise}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-						<ui:param name="idRequired" value="#{true}" />
-						<ui:param name="lookupDisabled" value="#{!manager.mainEnterprise}" />
-						<aon:methodParam name="lookupChangeListener" 
-							value="#{enterpriseDocument.onEnterpriseChanged}" type="lookupChangeListener" />
-					</ui:include>
+					<c:if test="#{manager.mainEnterprise}" >
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{enterpriseDocument.to.enterprise}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+							<ui:param name="idRequired" value="#{true}" />
+							<aon:methodParam name="lookupChangeListener" 
+								value="#{enterpriseDocument.onEnterpriseChanged}" type="lookupChangeListener" />
+						</ui:include>
+					</c:if>
 					
 					<aon:outputLabel for="EDocument_file"
 						value="#{bundle.aon_fileupload_element}" />

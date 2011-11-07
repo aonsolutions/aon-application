@@ -54,7 +54,7 @@
 			<map-entries>
 				<map-entry>
 					<key>id</key>
-					<value>enterpriseId</value>
+					<value>enterprise.id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>

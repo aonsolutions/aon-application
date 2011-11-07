@@ -23,8 +23,12 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.company.Enterprise;
 import com.code.aon.document.AlfrescoCategory;
 import com.code.aon.document.AlfrescoCategoryManager;
 import com.code.aon.document.EnterpriseDocument;
@@ -88,7 +92,7 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	}
 		
 	@Override
-	protected ITransferObject convert( NamedValue[] values ) {
+	protected ITransferObject convert( NamedValue[] values ) throws DAOException {
 		EnterpriseDocument ed = newEnterpriseDocument();
 		Reference reference = new Reference();
 		reference.setStore(STORE);
@@ -108,7 +112,14 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 				ed.setCreated(date);
 			} else if ( ENTERPRISE_ID.equals(name) ) {
 				Integer id = NumberUtils.toInt(nv.getValue());
-				ed.setEnterpriseId(id);
+				IManagerBean bean;
+				try {
+					bean = BeanManager.getManagerBean(Enterprise.class);
+					Enterprise enterprise = (Enterprise) bean.get(id);
+					ed.setEnterprise(enterprise);
+				} catch (ManagerBeanException e) {
+					throw new DAOException(e);
+				}
 			} else if ( CATEGORIES.equals(name) ) {
 				ed.setCategories(getCategories(nv.getValues()));
 			}
@@ -136,7 +147,7 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	@Override
 	protected CMLAddAspect getAddAspect(ITransferObject to) {
 		EnterpriseDocument ed = (EnterpriseDocument) to;
-		EnterpriseDocumentAspect eda = new EnterpriseDocumentAspect(ed.getEnterpriseId());
+		EnterpriseDocumentAspect eda = new EnterpriseDocumentAspect(ed.getEnterprise().getId());
 		return eda.getAspect(getParentReference());
 	}
 

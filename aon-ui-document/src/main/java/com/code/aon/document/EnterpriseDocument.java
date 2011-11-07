@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.company.Enterprise;
 import com.code.aon.document.dao.AlfrescoDAO;
 
 public class EnterpriseDocument implements IAlfrescoDocument {
@@ -32,7 +33,7 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 	
 	private Date created; 
 	
-	private Integer enterpriseId;
+	private Enterprise enterprise;
 	
 	private MimeType mimeType;
 	
@@ -101,12 +102,12 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 		this.created = created;
 	}
 
-	public Integer getEnterpriseId() {
-		return enterpriseId;
+	public Enterprise getEnterprise() {
+		return enterprise;
 	}
 
-	public void setEnterpriseId(Integer enterpriseId) {
-		this.enterpriseId = enterpriseId;
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
 	}
 	
 	public AlfrescoCategory[] getCategories() {
@@ -138,7 +139,7 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 			return new EqualsBuilder()
 				.append(this.created, o.created)
 				.append(this.description, o.description)
-				.append(this.enterpriseId, o.enterpriseId)
+				.append(this.enterprise, o.enterprise)
 				.append(this.name, o.name)
 				.isEquals();
 		}
@@ -151,7 +152,7 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 			.append(created)
 			.append(data)
 			.append(description)
-			.append(enterpriseId)
+			.append(enterprise)
 			.append(id)
 			.append(mimeType)
 			.append(name)
@@ -163,7 +164,7 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 		return new ToStringBuilder(this).
 			append("created", created).
 			append("description", description).
-			append("enterpriseId", enterpriseId).
+			append("enterprise", (enterprise != null) ? enterprise.getId() : null).
 			append("id", id).
 			append("mimeType", mimeType).
 			append("name", name).

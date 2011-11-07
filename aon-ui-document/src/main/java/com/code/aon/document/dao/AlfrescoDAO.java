@@ -60,7 +60,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	
 	public abstract Object getValue( NamedValue value );
 	
-	protected abstract ITransferObject convert( NamedValue[] values );
+	protected abstract ITransferObject convert( NamedValue[] values ) throws DAOException;
 	
 	protected abstract NamedValue[] insertValues( ITransferObject to );
 	

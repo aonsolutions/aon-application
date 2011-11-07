@@ -50,12 +50,14 @@
 					<aon:outputLabel for="EDocument_categories" value="#{registryBundle.registry_category}" />
 				</f:facet>
 				<aon:outputText value="#{to.categoryList}" rendered="#{formList}" />
-				<aon:selectManyCheckbox id="EDocument_categories" rendered="#{formEdit}"
+				<aon:selectManyCheckbox id="EDocument_categories"
+					layout="pageDirection" rendered="#{formEdit}"
 					required="true" value="#{edcontroller.to.categories}">
 					<f:selectItems value="#{enterpriseDocument.categories}"/>
 				</aon:selectManyCheckbox>		
 				<f:facet name="footer">
-					<aon:selectManyCheckbox id="EDocument_categories-New" rendered="#{formNew}"
+					<aon:selectManyCheckbox id="EDocument_categories-New"
+						layout="pageDirection" rendered="#{formNew}"
 						required="true" value="#{edcontroller.to.categories}">
 						<f:selectItems value="#{enterpriseDocument.categories}"/>
 					</aon:selectManyCheckbox>		
