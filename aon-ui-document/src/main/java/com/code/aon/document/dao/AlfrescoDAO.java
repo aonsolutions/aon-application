@@ -86,7 +86,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	}
 
 	private String getQueryExpression( Criteria criteria ){
-		String expression = "TYPE:\"cm:content\" AND PATH:\"/app:company_home/*\""; 
+		String expression = "TYPE:\"cm:content\" AND PATH:\"/app:company_home/cm:AON/*\""; 
 		if ( criteria != null ) { 
 			AlfrescoRenderer renderer = new AlfrescoRenderer();
 			renderer.visitCriteria(criteria);
@@ -183,7 +183,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	}
 	
 	protected ParentReference getParentReference() {
-		return getReferenceToParent(getCompanyHome());
+		return getReferenceToParent(getCompanyHome(), "cm:AON");
 	}
 	
 	@Override

@@ -9,6 +9,15 @@
 		<converter-class>com.code.aon.ui.document.converter.AlfrescoCategoryConverter</converter-class>
 	</converter>
 	
+	<!-- ************* MANAGER ***************** -->
+	<managed-bean>
+		<managed-bean-name>manager</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.document.controller.ManagerController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
 	<!-- ************ ENTERPRISE DOCUMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>enterpriseDocument</managed-bean-name>

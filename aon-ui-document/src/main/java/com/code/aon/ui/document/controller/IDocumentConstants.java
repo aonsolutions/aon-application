@@ -8,4 +8,6 @@ public interface IDocumentConstants {
 
 	String ENTERPRISE_DOCUMENT_CONTROLLER_NAME = "enterpriseDocument";
 	
+	String MANAGER_CONTROLLER_NAME = "manager";
+	
 }

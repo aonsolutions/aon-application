@@ -16,12 +16,6 @@
 			value="#{appBundle.menu_document}"
 			action="menu_document" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-payroll" />
-		<c:if test="#{aonRole.config}">
-			<aon:commandLink id="config"
-				value="#{bundle.aon_configuration}"
-				action="menu_config" immediate="true"
-				styleClass="aon-top-menu-item aon-icon-config" />
-		</c:if>
 	</ui:define>
 	
  </ui:composition>

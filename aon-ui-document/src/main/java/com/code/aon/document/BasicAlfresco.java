@@ -96,11 +96,11 @@ public class BasicAlfresco {
 		return WebServiceFactory.getClassificationService();
 	}
 	
-	protected ParentReference getReferenceToParent(Reference spaceref) {
+	protected ParentReference getReferenceToParent(Reference spaceref, String path ) {
 		ParentReference parent = new ParentReference();
 
 		parent.setStore(STORE);
-		parent.setPath(spaceref.getPath());
+		parent.setPath(spaceref.getPath() + "/" + path);
 		parent.setUuid(spaceref.getUuid());
 		parent.setAssociationType(Constants.ASSOC_CONTAINS);
 

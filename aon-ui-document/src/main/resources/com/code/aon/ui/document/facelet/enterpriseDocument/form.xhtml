@@ -46,6 +46,7 @@
 						<ui:param name="lookupTo" value="#{enterpriseDocument.enterprise}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 						<ui:param name="idRequired" value="#{true}" />
+						<ui:param name="lookupDisabled" value="#{!manager.mainEnterprise}" />
 						<aon:methodParam name="lookupChangeListener" 
 							value="#{enterpriseDocument.onEnterpriseChanged}" type="lookupChangeListener" />
 					</ui:include>

@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -49,11 +50,13 @@
 						value="#{enterpriseDocumentSearch.selectedCategories}">
 						<f:selectItems value="#{enterpriseDocument.categories}"/>
 					</aon:selectManyCheckbox>								
-															
-					<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-						<ui:param name="lookupTo" value="#{enterpriseDocumentSearch.enterprise}" />
-						<ui:param name="skipNewButton" value="#{true}" />
-					</ui:include>
+												
+					<c:if test="#{manager.mainEnterprise}" >
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{enterpriseDocumentSearch.enterprise}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+					</c:if>
 							
 					<aon:outputLabel value="#{bundle.aon_date}" />
 					<aon:div>

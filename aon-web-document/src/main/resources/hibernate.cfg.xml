@@ -8,7 +8,7 @@
 
 		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.C3P0ConnectionProvider</property>
 		<property name="connection.service">jboss.admin:service=AonLdap</property>
-		<property name="connection.datasource">java:comp/env/jdbc/AonEnterprise</property>
+		<property name="connection.datasource">java:comp/env/jdbc/AonDocument</property>
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 		<property name="show_sql">false</property>
 
@@ -34,7 +34,8 @@
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.Enterprise"/>
-		<mapping class="com.code.aon.company.EnterpriseData"/>				
+		<mapping class="com.code.aon.company.EnterpriseData"/>	
+		<mapping class="com.code.aon.company.EnterpriseUser"/>			
 		<mapping class="com.code.aon.company.WorkPlace"/>
 
 		<!-- AON-REGISTRY Mapping files -->	

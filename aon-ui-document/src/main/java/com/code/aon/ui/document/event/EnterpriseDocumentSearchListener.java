@@ -4,6 +4,7 @@ package com.code.aon.ui.document.event;
 import static com.code.aon.document.BasicAlfresco.MIME_TYPE;
 import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID_NAME;
 import static com.code.aon.document.EnterpriseDocumentAspect.PREFFIX;
+import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
 import java.util.Date;
 
@@ -22,9 +23,11 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.document.controller.ManagerController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 	
@@ -100,8 +103,13 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 		setSelectedCategories(null);
 		Enterprise enterprise = null;
 		if ( createTo ) {
-			IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
-			enterprise = (Enterprise) enterpriseBean.createNewTo();
+			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+			if ( mc.isMainEnterprise() ) {
+				IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
+				enterprise = (Enterprise) enterpriseBean.createNewTo();
+			} else {
+				enterprise = mc.getLoggedUser().getEnterprise();				
+			}
 		}
 		setEnterprise(enterprise);
 	}
