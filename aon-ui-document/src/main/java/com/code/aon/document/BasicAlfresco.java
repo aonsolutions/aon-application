@@ -39,6 +39,8 @@ public class BasicAlfresco {
 	
 	public static final String CATEGORIES = "{" + Constants.NAMESPACE_CONTENT_MODEL + "}categories";
 	
+	public static final String MIME_TYPE = Constants.PROP_CONTENT + ".mimetype";
+	
 	private File ALFRESCO_PROPERTIES = new File("/home/COMMON-RESOURCES/aon-document/config.properties");
 
 	private String serverURL;

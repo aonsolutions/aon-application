@@ -70,6 +70,9 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	
 	protected void afterInsert( IAlfrescoDocument ad ) throws Exception {
 	}
+
+	protected void afterUpdate( IAlfrescoDocument ad ) throws Exception {
+	}
 	
 	public AlfrescoDAO( Class<? extends ITransferObject> pojoClass, String user, String password ) {
 		super( user, password );
@@ -321,6 +324,8 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 			cml.setUpdate(new CMLUpdate[] { update });
 
 			getRepositoryService().update(cml);
+			
+			afterUpdate((IAlfrescoDocument) to);
 		} catch ( Throwable e ) {
 			throw new DAOException( "Error in update of " + pojoClass, e );
 		} finally {

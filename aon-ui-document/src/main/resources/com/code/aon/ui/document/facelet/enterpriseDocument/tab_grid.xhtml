@@ -51,12 +51,12 @@
 				</f:facet>
 				<aon:outputText value="#{to.categoryList}" rendered="#{formList}" />
 				<aon:selectManyCheckbox id="EDocument_categories" rendered="#{formEdit}"
-					value="#{edcontroller.to.categories}">
+					required="true" value="#{edcontroller.to.categories}">
 					<f:selectItems value="#{enterpriseDocument.categories}"/>
 				</aon:selectManyCheckbox>		
 				<f:facet name="footer">
 					<aon:selectManyCheckbox id="EDocument_categories-New" rendered="#{formNew}"
-						value="#{edcontroller.to.categories}">
+						required="true" value="#{edcontroller.to.categories}">
 						<f:selectItems value="#{enterpriseDocument.categories}"/>
 					</aon:selectManyCheckbox>		
 				</f:facet>				

@@ -38,7 +38,7 @@
 					<aon:outputLabel for="EDocument_categories"
 						value="#{registryBundle.registry_category}" />
 					<aon:selectManyCheckbox id="EDocument_categories"
-						value="#{enterpriseDocument.to.categories}">
+						required="true" value="#{enterpriseDocument.to.categories}">
 						<f:selectItems value="#{enterpriseDocument.categories}"/>
 					</aon:selectManyCheckbox>		
 					

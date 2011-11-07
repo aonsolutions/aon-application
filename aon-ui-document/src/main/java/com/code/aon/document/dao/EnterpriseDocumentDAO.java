@@ -142,19 +142,25 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 
 	@Override
 	protected void afterInsert(IAlfrescoDocument ad) throws ClassificationFault, RemoteException {
-		EnterpriseDocument ed = (EnterpriseDocument) ad;
+		updateCategories( (EnterpriseDocument) ad );
+	}
+	
+	@Override
+	protected void afterUpdate(IAlfrescoDocument ad) throws Exception {
+		updateCategories( (EnterpriseDocument) ad );
+	}
+
+	private void updateCategories( EnterpriseDocument ed ) throws ClassificationFault, RemoteException {
 		AlfrescoCategory[] list = ed.getCategories();
 		if (! ArrayUtils.isEmpty(list) ) {
 			Predicate predicate = getPredicate(ed);
-			AppliedCategory[] acs = new AppliedCategory[list.length];
-			String classification = Constants.createQNameString(NAMESPACE_CONTENT_MODEL, "generalclassifiable");
-			int i = 0;
-			for( AlfrescoCategory category : list ) {
-				Reference[] categories = new Reference[1];
-				categories[0] = category.getId(); 
-				acs[i++] = new AppliedCategory(classification, categories);
+			Reference[] categories = new Reference[list.length];
+			for( int i = 0; i < list.length; i++ ) {
+				categories[i] = list[i].getId(); 
 			}
-			getClassificationService().setCategories(predicate, acs);
+			String classification = Constants.createQNameString(NAMESPACE_CONTENT_MODEL, "generalclassifiable");
+			AppliedCategory ac = new AppliedCategory(classification, categories);
+			getClassificationService().setCategories(predicate, new AppliedCategory[]{ac});
 		}
 	}
 	

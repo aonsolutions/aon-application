@@ -93,7 +93,9 @@ public class AlfrescoRenderer implements CriterionVisitor {
 	public void visitIdentExpression(IdentExpression expression) {
 		String id = expression.getName();
 		if ( isLeftIdentifier && (id.indexOf(":") != -1) ) {
-			id = "@" + StringUtils.replace(id, ":", "\\:");	
+			id = StringUtils.replace(id, ":", "\\:");
+			id = StringUtils.replace(id, "{", "\\{");
+			id = "@" + StringUtils.replace(id, "}", "\\}");	
 		}
 		out.append(id);
 	}

@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
@@ -25,6 +26,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IAttachment;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
 import com.code.aon.document.AlfrescoCategory;
@@ -54,6 +56,8 @@ public class EnterpriseDocumentController extends LinesController implements IAt
 	private AlfrescoCategoryManager categoryManager;
 	
 	private List<SelectItem> categories;
+	
+	private List<SelectItem> mimeTypes;
 	
 	private String user;
 	
@@ -172,6 +176,19 @@ public class EnterpriseDocumentController extends LinesController implements IAt
 			}			
 		}
 		return categories;
+	}	
+	
+	public List<SelectItem> getMimeTypes() {
+		if ( mimeTypes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			mimeTypes = new LinkedList<SelectItem>();
+			for( MimeType mimeType : MimeType.values() ) {
+				String name = mimeType.getName(locale);
+				SelectItem item = new SelectItem(mimeType, name);
+				mimeTypes.add(item);			
+			}
+		}
+		return mimeTypes;
 	}	
 	
 }
