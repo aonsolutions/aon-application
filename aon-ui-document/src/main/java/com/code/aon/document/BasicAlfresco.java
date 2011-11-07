@@ -65,7 +65,7 @@ public class BasicAlfresco {
 
 	public void startSession() {
 		try {
-			LOGGER.info("Connecting to: " + serverURL);
+			LOGGER.debug("Connecting to: " + serverURL);
 			WebServiceFactory.setEndpointAddress(serverURL);
 			AuthenticationUtils.startSession(serverUserName, serverPassword);
 		} catch (Exception e) {
@@ -74,7 +74,7 @@ public class BasicAlfresco {
 	}
 
 	public void endSession() {
-		LOGGER.info("Closing connection");
+		LOGGER.debug("Closing connection");
 		AuthenticationUtils.endSession();
 	}
 
