@@ -1,4 +1,4 @@
-package com.code.aon.ui.document.controller;
+package com.code.aon.document;
 
 import org.alfresco.webservice.types.CMLAddAspect;
 import org.alfresco.webservice.types.NamedValue;
@@ -11,9 +11,13 @@ public class EnterpriseDocumentAspect {
 	
 	public static final String DOMAIN = "{http://aon.esferalia.com/models/catalogue/1.0}";
 	
+	public static final String PREFFIX = "aon:";
+	
 	public static final String ASPECT_NAME = DOMAIN + "enterpriseDocument";
 	
-	public static final String ENTERPRISE_ID = DOMAIN + "enterpriseId";
+	public static final String ENTERPRISE_ID_NAME = "enterpriseId";
+
+	public static final String ENTERPRISE_ID = DOMAIN + ENTERPRISE_ID_NAME;
 	
 	private Integer enterpriseId;
 	

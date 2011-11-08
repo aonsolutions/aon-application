@@ -1,33 +1,50 @@
-package com.code.aon.ui.document.controller;
+package com.code.aon.document.dao;
 
-import static com.code.aon.ui.document.controller.EnterpriseDocumentAspect.ENTERPRISE_ID;
+import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID;
+import static org.alfresco.webservice.util.Constants.NAMESPACE_CONTENT_MODEL;
 import static org.alfresco.webservice.util.Constants.PROP_CREATED;
 import static org.alfresco.webservice.util.Constants.PROP_DESCRIPTION;
 import static org.alfresco.webservice.util.Constants.PROP_NAME;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.Date;
 
 import org.alfresco.util.ISO8601DateFormat;
+import org.alfresco.webservice.classification.AppliedCategory;
+import org.alfresco.webservice.classification.ClassificationFault;
 import org.alfresco.webservice.types.CMLAddAspect;
 import org.alfresco.webservice.types.NamedValue;
-import org.alfresco.webservice.types.ParentReference;
+import org.alfresco.webservice.types.Predicate;
 import org.alfresco.webservice.types.Reference;
+import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.ui.document.AlfrescoDAO;
-import com.code.aon.ui.document.EnterpriseDocument;
+import com.code.aon.company.Enterprise;
+import com.code.aon.document.AlfrescoCategory;
+import com.code.aon.document.AlfrescoCategoryManager;
+import com.code.aon.document.EnterpriseDocument;
+import com.code.aon.document.EnterpriseDocumentAspect;
+import com.code.aon.document.IAlfrescoDocument;
 
 /**
  * The Class LdapDAO.
  */
 public class EnterpriseDocumentDAO extends AlfrescoDAO  {
+	
+	private AlfrescoCategoryManager categoryManager;
 
-	public EnterpriseDocumentDAO( String user, String password ) {
+	public EnterpriseDocumentDAO( String user, String password, AlfrescoCategoryManager categoryManager ) {
 		super( EnterpriseDocument.class, user, password ); 
+		this.categoryManager = categoryManager;
 	}
 
 	private EnterpriseDocument newEnterpriseDocument() {
@@ -35,11 +52,6 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		ed.setDao(this);
 		return ed;
 	}	
-	
-	@Override
-	protected ParentReference getParentReference() {
-		return getReferenceToParent(getCompanyHome());
-	}
 	
 	@Override
 	public ITransferObject newTo() throws DAOException {
@@ -53,7 +65,7 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	}
 
 	@Override
-	protected Object getValue( NamedValue nv ) {
+	public Object getValue( NamedValue nv ) {
 		String name = nv.getName();
 		if ( PROP_NAME.equals(name) ) {
 			return nv.getValue();
@@ -66,9 +78,21 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		}
 		return null;
 	}
+	
+	private AlfrescoCategory[] getCategories( String[] values ) {
+		AlfrescoCategory[] categories = null;
+		if (! ArrayUtils.isEmpty(values)) {
+			categories = new AlfrescoCategory[values.length];	
+			for( int i = 0; i < values.length; i++ ) {
+				String uuid = StringUtils.substringAfterLast(values[i], "/");
+				categories[i] = categoryManager.getCategoryByUuid(uuid);
+			}
+		}
+		return categories;
+	}
 		
 	@Override
-	protected ITransferObject convert( NamedValue[] values ) {
+	protected ITransferObject convert( NamedValue[] values ) throws DAOException {
 		EnterpriseDocument ed = newEnterpriseDocument();
 		Reference reference = new Reference();
 		reference.setStore(STORE);
@@ -88,7 +112,16 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 				ed.setCreated(date);
 			} else if ( ENTERPRISE_ID.equals(name) ) {
 				Integer id = NumberUtils.toInt(nv.getValue());
-				ed.setEnterpriseId(id);
+				IManagerBean bean;
+				try {
+					bean = BeanManager.getManagerBean(Enterprise.class);
+					Enterprise enterprise = (Enterprise) bean.get(id);
+					ed.setEnterprise(enterprise);
+				} catch (ManagerBeanException e) {
+					throw new DAOException(e);
+				}
+			} else if ( CATEGORIES.equals(name) ) {
+				ed.setCategories(getCategories(nv.getValues()));
 			}
 		}		
 		return ed;
@@ -114,8 +147,32 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	@Override
 	protected CMLAddAspect getAddAspect(ITransferObject to) {
 		EnterpriseDocument ed = (EnterpriseDocument) to;
-		EnterpriseDocumentAspect eda = new EnterpriseDocumentAspect(ed.getEnterpriseId());
+		EnterpriseDocumentAspect eda = new EnterpriseDocumentAspect(ed.getEnterprise().getId());
 		return eda.getAspect(getParentReference());
+	}
+
+	@Override
+	protected void afterInsert(IAlfrescoDocument ad) throws ClassificationFault, RemoteException {
+		updateCategories( (EnterpriseDocument) ad );
+	}
+	
+	@Override
+	protected void afterUpdate(IAlfrescoDocument ad) throws Exception {
+		updateCategories( (EnterpriseDocument) ad );
+	}
+
+	private void updateCategories( EnterpriseDocument ed ) throws ClassificationFault, RemoteException {
+		AlfrescoCategory[] list = ed.getCategories();
+		if (! ArrayUtils.isEmpty(list) ) {
+			Predicate predicate = getPredicate(ed);
+			Reference[] categories = new Reference[list.length];
+			for( int i = 0; i < list.length; i++ ) {
+				categories[i] = list[i].getId(); 
+			}
+			String classification = Constants.createQNameString(NAMESPACE_CONTENT_MODEL, "generalclassifiable");
+			AppliedCategory ac = new AppliedCategory(classification, categories);
+			getClassificationService().setCategories(predicate, new AppliedCategory[]{ac});
+		}
 	}
 	
 }

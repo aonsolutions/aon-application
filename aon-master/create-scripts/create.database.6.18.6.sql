@@ -1,7 +1,7 @@
 # Database : aon_master
-# Version: 6.18.7
+# Version: 6.18.6
 # Created by: girazu
-# Creation Date: 03/11/2011 12:12
+# Creation Date: 03/11/2011 12:09
 
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -3135,7 +3135,6 @@ CREATE TABLE `fan_batch` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la remesa',
   `date` date NOT NULL COMMENT 'Fecha de la ultima remesa en la que fue incluido',
   `status` tinyint(2) NOT NULL default '0' COMMENT 'Indica el estado de la remesa',
-  `liquidation_type` tinyint(2) NOT NULL default '0' COMMENT 'Indica el tipo de liquidacion',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Remesas del fichero fan';
 
@@ -3166,11 +3165,11 @@ CREATE TABLE `fan_batch_attach` (
 CREATE TABLE `fan_batch_detail` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del detalle',
   `fan_batch` int(4) NOT NULL COMMENT 'Identificador unico de la remesa',
-  `enterprise_ccc` int(4) NOT NULL COMMENT 'Identificador unico del ccc',
+  `enterprise` int(4) NOT NULL COMMENT 'Identificador unico de la empresa',
   PRIMARY KEY  (`id`),
   KEY `IDX_FAN_BATCH_DETAIL_FAN_BATCH` (`fan_batch`),
-  KEY `IDX_FAN_BATCH_DETAIL_ENTERPRISE_CCC` (`enterprise_ccc`),
-  CONSTRAINT `FK_FAN_BATCH_DETAIL_ENTERPRISE_CCC` FOREIGN KEY (`enterprise_ccc`) REFERENCES `enterprise_ccc` (`id`),
+  KEY `IDX_FAN_BATCH_DETAIL_ENTERPRISE` (`enterprise`),
+  CONSTRAINT `FK_FAN_BATCH_DETAIL_ENTERPRISE` FOREIGN KEY (`enterprise`) REFERENCES `enterprise` (`registry`),
   CONSTRAINT `FK_FAN_BATCH_DETAIL_FAN_BATCH` FOREIGN KEY (`fan_batch`) REFERENCES `fan_batch` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci COMMENT='Detalle de las remesas del fichero fan';
 
@@ -5845,7 +5844,7 @@ CREATE TABLE `web_info_style` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Estilos a utilizar en las plantillas para generar ficha web';
 
 
-INSERT INTO `db_version` (`version_number`) VALUES ('6.18.7');
+INSERT INTO `db_version` (`version_number`) VALUES ('6.18.6');
 
 COMMIT;
 

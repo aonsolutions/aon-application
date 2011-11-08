@@ -1,9 +1,13 @@
-package com.code.aon.ui.document;
+package com.code.aon.document;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.alfresco.webservice.types.Reference;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -12,8 +16,10 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.company.Enterprise;
+import com.code.aon.document.dao.AlfrescoDAO;
 
-public class EnterpriseDocument implements IAlfrescoTransferObject {
+public class EnterpriseDocument implements IAlfrescoDocument {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocument.class);
 	
@@ -27,11 +33,13 @@ public class EnterpriseDocument implements IAlfrescoTransferObject {
 	
 	private Date created; 
 	
-	private Integer enterpriseId;
+	private Enterprise enterprise;
 	
 	private MimeType mimeType;
 	
 	private byte[] data;
+	
+	private AlfrescoCategory[] categories;
 	
 	private AlfrescoDAO dao;
 	
@@ -94,14 +102,33 @@ public class EnterpriseDocument implements IAlfrescoTransferObject {
 		this.created = created;
 	}
 
-	public Integer getEnterpriseId() {
-		return enterpriseId;
+	public Enterprise getEnterprise() {
+		return enterprise;
 	}
 
-	public void setEnterpriseId(Integer enterpriseId) {
-		this.enterpriseId = enterpriseId;
+	public void setEnterprise(Enterprise enterprise) {
+		this.enterprise = enterprise;
+	}
+	
+	public AlfrescoCategory[] getCategories() {
+		return categories;
 	}
 
+	public void setCategories(AlfrescoCategory[] categories) {
+		this.categories = categories;
+	}
+
+	public String getCategoryList() {
+		if (! ArrayUtils.isEmpty(categories) ) {
+			List<String> list = new LinkedList<String>();
+			for( AlfrescoCategory category : categories ) {
+				list.add(category.getName());
+			}
+			return StringUtils.join(list, ", ");			
+		}
+		return null;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
@@ -112,7 +139,7 @@ public class EnterpriseDocument implements IAlfrescoTransferObject {
 			return new EqualsBuilder()
 				.append(this.created, o.created)
 				.append(this.description, o.description)
-				.append(this.enterpriseId, o.enterpriseId)
+				.append(this.enterprise, o.enterprise)
 				.append(this.name, o.name)
 				.isEquals();
 		}
@@ -125,7 +152,7 @@ public class EnterpriseDocument implements IAlfrescoTransferObject {
 			.append(created)
 			.append(data)
 			.append(description)
-			.append(enterpriseId)
+			.append(enterprise)
 			.append(id)
 			.append(mimeType)
 			.append(name)
@@ -137,7 +164,7 @@ public class EnterpriseDocument implements IAlfrescoTransferObject {
 		return new ToStringBuilder(this).
 			append("created", created).
 			append("description", description).
-			append("enterpriseId", enterpriseId).
+			append("enterprise", (enterprise != null) ? enterprise.getId() : null).
 			append("id", id).
 			append("mimeType", mimeType).
 			append("name", name).

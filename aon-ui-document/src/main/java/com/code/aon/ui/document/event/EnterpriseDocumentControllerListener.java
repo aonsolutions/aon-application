@@ -1,24 +1,41 @@
 package com.code.aon.ui.document.event;
 
+import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
+
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.document.EnterpriseDocument;
 import com.code.aon.faces.controller.AttachmentUtil;
-import com.code.aon.ui.document.EnterpriseDocument;
 import com.code.aon.ui.document.controller.EnterpriseDocumentController;
+import com.code.aon.ui.document.controller.ManagerController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event)throws ControllerListenerException {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) event.getController();
-		edc.setAonFile(null);
+		try {
+			edc.reset();
+			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+			if (! mc.isMainEnterprise() ) {
+				edc.getEnterpriseDocument().setEnterprise(mc.getLoggedUser().getEnterprise());
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) event.getController();
-		edc.setAonFile(null);
+		try {
+			edc.reset();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
 	}
 
 	@Override

@@ -66,12 +66,14 @@ public class TypeResolver {
             property = property.substring(0, pos);
         }
         try {
-            String idName = cmd.getIdentifierPropertyName();
-            if (property.equals(idName)) {
-                type = cmd.getIdentifierType();
-            } else {
-                type = cmd.getPropertyType(property);
-            }
+        	if ( cmd != null ) {
+                String idName = cmd.getIdentifierPropertyName();
+                if (property.equals(idName)) {
+                    type = cmd.getIdentifierType();
+                } else {
+                    type = cmd.getPropertyType(property);
+                }        		
+        	}
             if (type != null) {
                 if (type.isComponentType()) {
                     type = getType((ComponentType) type, moreProperty);

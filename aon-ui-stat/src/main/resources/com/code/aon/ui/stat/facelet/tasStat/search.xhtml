@@ -28,10 +28,12 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="skipAfterSearch" value="#{true}" />
-				<ui:param name="controller" value="#{tasStat}" />
 			
 				<ui:define name="searchContent">
-					
+					<aon:methodParam name="searchActionListener"
+						value="#{tasStat.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="tasStat_list" />
+
 					<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
 						<ui:param name="lookupTo" value="#{tasStat.params.target}" />
 						<ui:param name="skipNewButton" value="#{true}" />

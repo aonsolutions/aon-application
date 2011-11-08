@@ -9,6 +9,7 @@
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
+	<field name="name" class="java.lang.String"/>
 	<field name="description" class="java.lang.String"/>
 	<field name="general" class="java.lang.Boolean"/>
 	<background>
@@ -38,7 +39,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="6" isBold="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{name} + ": " + $F{description}]]></textFieldExpression>
 			</textField>
 			<elementGroup/>
 		</band>

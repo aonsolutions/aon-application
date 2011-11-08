@@ -72,7 +72,7 @@
 		</params>
 		
 		<nested-report report="offerDetail"/>
-		<nested-report report="offerVatBreakDown"/>
+		<nested-report report="offerTaxBreakDown"/>
 		<nested-report report="offerGeneralTerms"/>
 		<nested-report report="offerParticularTerms"/>
 	</report>
@@ -104,7 +104,7 @@
 		</params>
 		
 		<nested-report report="offerDetail"/>
-		<nested-report report="offerVatBreakDown"/>
+		<nested-report report="offerTaxBreakDown"/>
 		<nested-report report="offerGeneralTerms"/>
 		<nested-report report="offerParticularTerms"/>
 	</report>
@@ -113,8 +113,8 @@
 		<template path="/com/code/aon/ui/commercial/report/offerDetail.jasper" />	
 	</report>
 	
-	<report id="offerVatBreakDown" description="VatBreakDown's Subreport">
-		<template path="/com/code/aon/ui/commercial/report/offerVatBreakDown.jasper"/>
+	<report id="offerTaxBreakDown" description="VatBreakDown's Subreport">
+		<template path="/com/code/aon/ui/commercial/report/offerTaxBreakDown.jasper"/>
 	</report>
 	
 	<report id="offerGeneralTerms" description="Terms's Subreport">

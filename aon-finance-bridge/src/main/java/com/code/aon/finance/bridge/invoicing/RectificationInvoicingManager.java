@@ -79,6 +79,7 @@ public class RectificationInvoicingManager {
 		rectifier.setRectificationType(rectificationtype);
 		rectifier.setRectificationInvoice(invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		invoiceBean.restoreNullSubPOJOs(rectifier);
 		return (Invoice)invoiceBean.insert(rectifier);
 	}
 
