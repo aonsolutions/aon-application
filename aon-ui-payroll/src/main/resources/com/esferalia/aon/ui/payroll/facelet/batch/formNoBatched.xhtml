@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
@@ -37,23 +38,30 @@
 			actionListener="#{controller.onBatchSelected}" reRender="batchForm, batchPanelTabSet"
 			onclick="Richfaces.showModalPanel('waitProccess')" 
      		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+     		
+     	<ui:insert name="afterToolbarContent" />
+     	
 	</aon:div>
 
 	<aon:div id="listDataDiv">
 		<aon:dataTable id="listData" value="#{controllerList.model}"
 			var="to" rows="20" rendered="#{controllerList.model.rowCount > 0}" >			
 
-			<aon:column>
+			<aon:column styleClass="aon-editDataTable-iconColumn">
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
 				<aon:selectBooleanCheckbox id="Included_Row_checked"
 					value="#{controllerList.checkHandler.rowChecked}"
-					valueChangeListener="#{controllerList.checkHandler.rowSelected}" />	
+					ajaxSingle="#{true}"
+					valueChangeListener="#{controllerList.checkHandler.rowSelected}" >
+					<c:if test="#{checkReRender!=null}">
+						<a4j:support event="onclick" reRender="#{checkReRender}" />
+					</c:if>
+				</aon:selectBooleanCheckbox>
 			</aon:column>
 			
 			<ui:insert name="listDataColumns" />
-			
 
 		</aon:dataTable>
 		

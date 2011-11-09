@@ -18,7 +18,7 @@
 				
 				<ui:define name="beforeSpinToolbarContent">
 					<aon:commandButton id="create-button" value="#{payrollBundle.payroll_create_disk}"
-						rendered="#{!controller.new and !controller.recorded}"
+						rendered="#{!controller.new and !controller.recorded and controllerDetail.model.rowCount > 0}"
 						reRender="batchForm"
 						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 						actionListener="#{controller.onCreateDisk}"

@@ -10,11 +10,18 @@ public enum OccupationType implements IResourceable , IStringEnum{
 	
 	A("a"),
 	B("b"),
+	C("c"),
 	D("d"),
 	E("e"),
 	F("f"),
 	G("g"),
-	H("h")
+	H("h"),
+	I("i"),
+	V("v"),
+	W("w"),
+	X("x"),
+	Y("y"),
+	Z("z")
 	;
 
 	/** Message file base path. */

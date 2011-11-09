@@ -1,7 +1,10 @@
 package com.esferalia.aon.file.payroll.fan.data;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Identificacion de empresa
@@ -9,9 +12,9 @@ import java.util.List;
  */
 public class EMP {
 	private String codigoCuentaCotizacionSeguridadSocial;
-	private String tipo;
+	private String tipoDocumento;
 	private String pais;
-	private String numero;
+	private String numeroIdentificacion;
 	private String calificador;
 	private String codigoCuentaCotizacionPrincipal;
 	private Integer anio;
@@ -24,6 +27,11 @@ public class EMP {
 	private EXC exc;
 	
 	private List<TRA> trabajadores;
+	private List<TCT> tcTotales;
+	private Map<String,EDT> edt;
+
+	private MPG mpg;
+//	private TYF tyf;
 	
 	public String getCodigoCuentaCotizacionSeguridadSocial() {
 		return codigoCuentaCotizacionSeguridadSocial;
@@ -31,11 +39,11 @@ public class EMP {
 	public void setCodigoCuentaCotizacionSeguridadSocial(String codigoCuentaCotizacionSeguridadSocial) {
 		this.codigoCuentaCotizacionSeguridadSocial = codigoCuentaCotizacionSeguridadSocial;
 	}
-	public String getTipo() {
-		return tipo;
+	public String getTipoDocumento() {
+		return tipoDocumento;
 	}
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+	public void setTipoDocumento(String tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
 	}
 	public String getPais() {
 		return pais;
@@ -43,11 +51,11 @@ public class EMP {
 	public void setPais(String pais) {
 		this.pais = pais;
 	}
-	public String getNumero() {
-		return numero;
+	public String getNumeroIdentificacion() {
+		return numeroIdentificacion;
 	}
-	public void setNumero(String numero) {
-		this.numero = numero;
+	public void setNumeroIdentificacion(String numeroIdentificacion) {
+		this.numeroIdentificacion = numeroIdentificacion;
 	}
 	public String getCalificador() {
 		return calificador;
@@ -113,4 +121,40 @@ public class EMP {
 	public void setTrabajadores(List<TRA> trabajadores) {
 		this.trabajadores = trabajadores;
 	}
+	
+	public List<TCT> getTcTotales() {
+		if(tcTotales==null){
+			tcTotales = new LinkedList<TCT>();
+		}
+		return tcTotales;
+	}
+	public void setTcTotales(List<TCT> tcTotales) {
+		this.tcTotales = tcTotales;
+	}
+	
+	public Map<String, EDT> getEdt() {
+		if(edt==null){
+			edt = new TreeMap<String, EDT>();
+		}
+		return edt;
+	}
+	public void setEdt(Map<String, EDT> edt) {
+		this.edt = edt;
+	}
+	
+	public EDT getEdtSegment(String key){
+		if(getEdt().get(key)==null){
+			getEdt().put(key, new EDT());
+		}
+		return getEdt().get(key);
+	}
+
+	public MPG getMpg() {
+		return mpg;
+	}
+	public void setMpg(MPG mpg) {
+		this.mpg = mpg;
+	}
+	
+	
 }

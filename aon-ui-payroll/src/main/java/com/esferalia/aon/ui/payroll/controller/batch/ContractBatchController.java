@@ -142,6 +142,7 @@ public class ContractBatchController extends BasicController {
 	
 	@Override
 	public void onReset(ActionEvent event) {
+		setRecorded(false);
 		super.onReset(event);
 		ContractBatch b = (ContractBatch) getTo();
 		b.setStatus(FileStatus.PENDING);

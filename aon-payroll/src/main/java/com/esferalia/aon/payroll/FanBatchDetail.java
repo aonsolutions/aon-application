@@ -16,7 +16,6 @@ import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
-import com.code.aon.company.Enterprise;
 
 @Entity
 @Table(name="fan_batch_detail")
@@ -26,7 +25,7 @@ public class FanBatchDetail implements ITransferObject {
 
 	private Integer id;
 	private FanBatch fanBatch;
-	private Enterprise enterprise;
+	private EnterpriseCCC ccc;
 	
 	@Id
 	@GeneratedValue
@@ -50,14 +49,14 @@ public class FanBatchDetail implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn( name="enterprise", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_FAN_BATCH_DETAIL_ENTERPRISE")
-	@Index(name = "IDX_FAN_BATCH_DETAIL_ENTERPRISE")
-	public Enterprise getEnterprise() {
-		return enterprise;
+	@JoinColumn( name="enterprise_ccc", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_FAN_BATCH_DETAIL_ENTERPRISE_CCC")
+	@Index(name = "IDX_FAN_BATCH_DETAIL_ENTERPRISE_CCC")
+	public EnterpriseCCC getCcc() {
+		return ccc;
 	}
-	public void setEnterprise(Enterprise enterprise) {
-		this.enterprise = enterprise;
+	public void setCcc(EnterpriseCCC ccc) {
+		this.ccc = ccc;
 	}
 
 	
@@ -70,7 +69,7 @@ public class FanBatchDetail implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.fanBatch, o.fanBatch)			
-				.append(this.enterprise, o.enterprise)			
+				.append(this.ccc, o.ccc)			
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -81,7 +80,7 @@ public class FanBatchDetail implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(id)
 			.append(this.fanBatch)			
-			.append(this.enterprise)			
+			.append(this.ccc)			
 			.toHashCode();
 	}
 

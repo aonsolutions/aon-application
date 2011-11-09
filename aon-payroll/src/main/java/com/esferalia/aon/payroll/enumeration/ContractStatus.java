@@ -15,7 +15,11 @@ public enum ContractStatus implements IResourceable {
 
 	PROCESSED,
 	
-	BLOCKED;
+	BLOCKED, 
+	
+	BATCHED,
+	
+	;
         
 	/** Message file base path. */
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";

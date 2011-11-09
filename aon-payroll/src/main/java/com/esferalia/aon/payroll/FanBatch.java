@@ -17,6 +17,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
+import com.esferalia.aon.payroll.enumeration.LiquidationType;
 
 @Entity
 @Table(name="fan_batch")
@@ -26,6 +27,7 @@ public class FanBatch implements ITransferObject {
 
 	private Integer id;
 	private Date date;
+	private LiquidationType liquidationType;
 	private FileStatus status;
 	
 	@Id
@@ -48,6 +50,14 @@ public class FanBatch implements ITransferObject {
 		this.date = date;
 	}
 	
+	@Column(name = "liquidation_type")
+	public LiquidationType getLiquidationType() {
+		return liquidationType;
+	}
+	public void setLiquidationType(LiquidationType liquidationType) {
+		this.liquidationType = liquidationType;
+	}
+	
 	public FileStatus getStatus() {
 		return status;
 	}
@@ -64,6 +74,7 @@ public class FanBatch implements ITransferObject {
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.date, o.date)
+				.append(this.liquidationType, o.liquidationType)
 				.append(this.status, o.status)
 				.isEquals();
 		}
@@ -75,6 +86,7 @@ public class FanBatch implements ITransferObject {
 		return new HashCodeBuilder()
 			.append(id)
 			.append(this.date)
+			.append(this.liquidationType)
 			.append(this.status)
 			.toHashCode();
 	}

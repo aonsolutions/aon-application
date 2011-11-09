@@ -5,8 +5,8 @@
 		<hibernate names="description,id,level.id,level.agreement.id"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.Contract">
-		<alias     names="ccc_id,contractType_id,endDate,id,person_id,person_registry_document,person_registry_name,person_firstSurname,person_secondSurname,startDate,status,workPlace_id,workPlace_enterprise_id,workPlace_enterprise_registry_name,registration,seniorityDate"/>
-		<hibernate names="ccc.id,contractType.id,endDate,id,person.id,person.registry.document,person.registry.name,person.firstSurname,person.secondSurname,startDate,status,workPlace.id,workPlace.enterprise.id,workPlace.enterprise.registry.name,registration,seniorityDate"/>
+		<alias     names="contractType_id,endDate,enterpriseCCC_id,id,person_id,person_registry_document,person_registry_name,person_firstSurname,person_secondSurname,startDate,status,workPlace_id,workPlace_enterprise_id,workPlace_enterprise_registry_name,registration,seniorityDate"/>
+		<hibernate names="contractType.id,endDate,enterpriseCCC.id,id,person.id,person.registry.document,person.registry.name,person.firstSurname,person.secondSurname,startDate,status,workPlace.id,workPlace.enterprise.id,workPlace.enterprise.registry.name,registration,seniorityDate"/>
 	</bean>
 	<bean class="com.esferalia.aon.payroll.ContractLeaveDetail">
 		<alias     names="cias,collegeNumber,confirmOrder,contractLeave_id,contractLeave_contract_person_id,contractLeave_contract_workPlace_enterprise_id,date,id,status,type"/>

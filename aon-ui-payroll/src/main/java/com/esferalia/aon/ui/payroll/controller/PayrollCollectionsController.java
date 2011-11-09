@@ -18,6 +18,7 @@ import com.esferalia.aon.payroll.enumeration.AgeGroup;
 import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.CNO;
+import com.esferalia.aon.payroll.enumeration.Certifica2BatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCalendarEventType;
@@ -38,12 +39,14 @@ import com.esferalia.aon.payroll.enumeration.EmployeeType;
 import com.esferalia.aon.payroll.enumeration.EmploymentProgram;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
+import com.esferalia.aon.payroll.enumeration.FanBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
 import com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
+import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.OtherLaws;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
@@ -104,6 +107,10 @@ public class PayrollCollectionsController {
 	private List<SelectItem> reportTypes;
 	private List<SelectItem> leaveBatchAttachTypes;
 	private List<SelectItem> contractBatchAttachTypes;
+	private List<SelectItem> fanBatchAttachTypes;
+	private List<SelectItem> certifica2BatchAttachTypes;
+
+	private List<SelectItem> liquidationTypes;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -735,6 +742,45 @@ public class PayrollCollectionsController {
 			}
 		}
 		return contractBatchAttachTypes;
+	}
+	
+	public List<SelectItem> getFanBatchAttachTypes() {
+		if (fanBatchAttachTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			fanBatchAttachTypes = new LinkedList<SelectItem>();
+			for( FanBatchAttachmentType type : FanBatchAttachmentType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				fanBatchAttachTypes.add(item);			
+			}
+		}
+		return fanBatchAttachTypes;
+	}
+	
+	public List<SelectItem> getCertifica2BatchAttachTypes() {
+		if (certifica2BatchAttachTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			certifica2BatchAttachTypes = new LinkedList<SelectItem>();
+			for( Certifica2BatchAttachmentType type : Certifica2BatchAttachmentType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				certifica2BatchAttachTypes.add(item);			
+			}
+		}
+		return certifica2BatchAttachTypes;
+	}
+	
+	public List<SelectItem> getLiquidationTypes() {
+		if (liquidationTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			liquidationTypes = new LinkedList<SelectItem>();
+			for( LiquidationType type : LiquidationType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				liquidationTypes.add(item);			
+			}
+		}
+		return liquidationTypes;
 	}
 	
 	

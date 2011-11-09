@@ -2,9 +2,8 @@
 
 <register name="RZS">
 	<field name="cabecera" value="RZS" format="AlphaNumeric" pattern="X(3)" />
-	<field name="indicador" value="bean" bean="RZS" property="indicador" format="AlphaNumeric" pattern="X(1)" />
+	<field name="indicador" value="0" format="AlphaNumeric" pattern="X(1)" />
 	<field name="tipo" value="bean" bean="RZS" property="tipoAlfabeticoEmpresario" format="AlphaNumeric" pattern="X(1)" />
-	<field name="free1" value=" " format="AlphaNumeric" pattern="X(55)" />
-	<field name="free2" value="0" format="Numeric" pattern="9(8)" />
-	<field name="free3" value=" " format="AlphaNumeric" pattern="X(2)" />
+	<field name="razon_social" value="bean" bean="RZS" property="razonSocial" format="AlphaNumeric" pattern="X(55)" />
+	<field name="free1" value=" " format="AlphaNumeric" pattern="X(10)" />
 </register>

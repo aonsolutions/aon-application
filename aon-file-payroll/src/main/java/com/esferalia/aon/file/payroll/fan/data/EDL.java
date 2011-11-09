@@ -9,7 +9,7 @@ public class EDL {
 	private String tipoElementoDatos;
 	private Integer clave;
 	private Integer elemento;
-	private String importe;
+	private Integer importe;
 	private String signo;
 	private Integer tipoResolucion;
 	private String fechaResolucion;
@@ -35,10 +35,10 @@ public class EDL {
 	public void setElemento(Integer elemento) {
 		this.elemento = elemento;
 	}
-	public String getImporte() {
+	public Integer getImporte() {
 		return importe;
 	}
-	public void setImporte(String importe) {
+	public void setImporte(Integer importe) {
 		this.importe = importe;
 	}
 	public String getSigno() {

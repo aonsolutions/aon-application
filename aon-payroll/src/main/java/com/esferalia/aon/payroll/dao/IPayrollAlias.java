@@ -749,22 +749,22 @@ public interface IPayrollAlias {
 	DAOConstantsEntry CONTRACT_ENTRY = DAOConstants.getDAOConstant(Contract.class);
 
 	/** 
-	* Alias value: Contract_ccc_id
-	* Hibernate value: Contract.ccc.id
-	*/
-	String  CONTRACT_CCC_ID = CONTRACT_ENTRY.getAliasNames()[0];
-
-	/** 
 	* Alias value: Contract_contractType_id
 	* Hibernate value: Contract.contractType.id
 	*/
-	String  CONTRACT_CONTRACT_TYPE_ID = CONTRACT_ENTRY.getAliasNames()[1];
+	String  CONTRACT_CONTRACT_TYPE_ID = CONTRACT_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: Contract_endDate
 	* Hibernate value: Contract.endDate
 	*/
-	String  CONTRACT_END_DATE = CONTRACT_ENTRY.getAliasNames()[2];
+	String  CONTRACT_END_DATE = CONTRACT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Contract_enterpriseCCC_id
+	* Hibernate value: Contract.enterpriseCCC.id
+	*/
+	String  CONTRACT_ENTERPRISE_CCC_ID = CONTRACT_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Contract_id
@@ -1653,10 +1653,16 @@ public interface IPayrollAlias {
 	String  FAN_BATCH_ID = FAN_BATCH_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: FanBatch_liquidationType
+	* Hibernate value: FanBatch.liquidationType
+	*/
+	String  FAN_BATCH_LIQUIDATION_TYPE = FAN_BATCH_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: FanBatch_status
 	* Hibernate value: FanBatch.status
 	*/
-	String  FAN_BATCH_STATUS = FAN_BATCH_ENTRY.getAliasNames()[2];
+	String  FAN_BATCH_STATUS = FAN_BATCH_ENTRY.getAliasNames()[3];
 
 
 
@@ -1727,10 +1733,10 @@ public interface IPayrollAlias {
 	DAOConstantsEntry FAN_BATCH_DETAIL_ENTRY = DAOConstants.getDAOConstant(FanBatchDetail.class);
 
 	/** 
-	* Alias value: FanBatchDetail_enterprise_id
-	* Hibernate value: FanBatchDetail.enterprise.id
+	* Alias value: FanBatchDetail_ccc_id
+	* Hibernate value: FanBatchDetail.ccc.id
 	*/
-	String  FAN_BATCH_DETAIL_ENTERPRISE_ID = FAN_BATCH_DETAIL_ENTRY.getAliasNames()[0];
+	String  FAN_BATCH_DETAIL_CCC_ID = FAN_BATCH_DETAIL_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: FanBatchDetail_fanBatch_id

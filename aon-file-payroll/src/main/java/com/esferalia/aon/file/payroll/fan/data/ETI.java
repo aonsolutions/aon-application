@@ -11,7 +11,7 @@ public class ETI {
 	private Integer fecha;
 	private Integer hora;
 	private String fichero;
-	private String identificacion;
+	private Integer identificacion;
 	private List<EMP> empresas;
 	private EXC exc;
 	private ETF etf;
@@ -62,10 +62,10 @@ public class ETI {
 		this.fichero = fichero;
 	}
 
-	public String getIdentificacion() {
+	public Integer getIdentificacion() {
 		return identificacion;
 	}
-	public void setIdentificacion(String identificacion) {
+	public void setIdentificacion(Integer identificacion) {
 		this.identificacion = identificacion;
 	}
 	
