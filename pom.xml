@@ -9,6 +9,10 @@
   <description>POM padre de los proyectos AON</description>
   <name>AON PARENT</name>
 
+  <properties>
+    <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+  </properties>
+
   <modules>
     <!-- PARENT MODULES -->
 	  <module>aon-web-parent</module>	
@@ -343,6 +347,19 @@
       </snapshots>
     </repository>
 
+		<repository>
+			<id>alfresco</id>
+			<name>Alfresco Public </name>
+			<url>http://pipin.bluexml.com/nexus/content/repositories/thirdparty/</url>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+		</repository>
   </repositories>
 
   <build>
