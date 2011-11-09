@@ -41,7 +41,6 @@ import com.esferalia.aon.file.payroll.fan.data.RZS;
 import com.esferalia.aon.file.payroll.fan.data.TCT;
 import com.esferalia.aon.file.payroll.fan.data.TRA;
 import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.ContractBonus;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
@@ -121,7 +120,9 @@ public class FANWriter {
 		eti.setClave(clave);
 		for (EnterpriseCCC ccc: list) {
 			EMP emp = createEMPrecord(ccc);
-			eti.getEmpresas().add(emp);
+			if(emp!=null){
+				eti.getEmpresas().add(emp);
+			}
 		}
 		setEti( eti );
 		return getEti();
@@ -176,7 +177,10 @@ public class FANWriter {
 		
 		Calendar cal = Calendar.getInstance();
 		cal.set(year, endMonth.ordinal(), 1);
-		List<ITransferObject> list = getContracts(ccc, cal.getTime()); 
+		List<ITransferObject> list = getContracts(ccc, cal.getTime());
+		if(list.isEmpty()){
+			return null;
+		}
 		for(ITransferObject to: list){
 			Contract c = (Contract) to;
 			if(getSalary(c)!=null && c.getRegimeType()!=SSRegimeType.SELF_EMPLOYED){
@@ -1086,6 +1090,9 @@ public class FANWriter {
 		// TODO
 		RegistryBank bank = getBank(ccc);
 		RegistryDirStaff dirStaff = getDirStaff(ccc);
+		if(bank==null || dirStaff==null){
+			return null;
+		}
 		MPG mpg = new MPG();
 //		~ Saldo Acreedor
 //		C Cargo en Cuenta
