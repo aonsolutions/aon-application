@@ -43,7 +43,12 @@
 				<aon:selectOneMenu id="WorkPlace_address_id" 
 					value="#{payrollWorkPlace.to.address}" 
 					required="true">
+					<c:if test="#{showEnterpriseData}">
 						<f:selectItems value="#{enterprise.addresses}" />
+					</c:if>
+					<c:if test="#{!showEnterpriseData}">
+						<f:selectItems value="#{companyCollections.companyAddresses}" />
+					</c:if>
 				</aon:selectOneMenu>
 			
 				<aon:outputText for="WorkPlace_economicAgreement" value="#{configBundle.config_administration}" />

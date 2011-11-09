@@ -26,7 +26,12 @@
 		<aon:selectOneMenu id="PayrollWorkPlace_enterpriseActivity"
 			value="#{controller.payrollWorkPlace.enterpriseActivity}" >
 			<f:selectItem itemLabel="-" value="#{null}" />
-			<f:selectItems value="#{enterprisePayroll.activities}" />
+			<c:if test="#{showEnterpriseData}">
+				<f:selectItems value="#{enterprisePayroll.activities}" />
+			</c:if>
+			<c:if test="#{!showEnterpriseData}">
+				<f:selectItems value="#{companyCollections.companyAddresses}" />
+			</c:if>
 		</aon:selectOneMenu>	
 						
 	</aon:panelGrid>
