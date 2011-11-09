@@ -282,11 +282,18 @@ public class Contract implements ITransferObject{
 
 	
 	@Transient
+	@Deprecated
 	public ISalaryCalculatorContext getSalaryCalculatorContext(int year, Month month, SalaryType salaryType) throws SalaryException {
 		ISalaryCalculatorContext ctx = new ContractSalaryCalculatorContext(this,year, month,salaryType);
 		return ctx;
 	}
 	
+	@Transient
+	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startdate, Date endDate , SalaryType salaryType) throws SalaryException {
+		ISalaryCalculatorContext ctx = new ContractSalaryCalculatorContext(this,startdate, endDate,salaryType);
+		return ctx;
+	}
+
 	@Transient
 	public ISalaryCalculatorContext getSalaryCalculatorContext(Date startDate, Date endDate, Date issueDate) throws SalaryException {
 			// TODO : It's verry, very tricky and old. I hate this.  

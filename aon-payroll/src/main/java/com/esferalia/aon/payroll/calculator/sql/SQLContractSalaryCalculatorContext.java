@@ -1401,8 +1401,8 @@ public class SQLContractSalaryCalculatorContext implements
 				try {
 					Period period = timedExpr.getPeriod();
 					IExpression expr = timedExpr.getValue();
-					System.out.printf("[%s]: UndefinedVariableException %s = %s [%tF..%tF ]\r\n", 
-							getEmployeeDocument(), expr.getName(), expr.getExpression(), period.getStart(), period.getEnd());
+/*					System.out.printf("[%s]: UndefinedVariableException %s = %s [%tF..%tF ]\r\n", 
+							getEmployeeDocument(), expr.getName(), expr.getExpression(), period.getStart(), period.getEnd());*/
 					ctx.addExpression(expr, 
 							period.getStart(), 
 							period.getEnd() ); 
