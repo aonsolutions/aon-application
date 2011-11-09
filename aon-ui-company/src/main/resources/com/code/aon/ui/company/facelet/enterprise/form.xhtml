@@ -104,9 +104,11 @@
 				</c:if>
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{cnae2009Lookup}" />
-		<aon:lookupButtonPopup lookup="#{agreementLookup}" />
-		<aon:lookupButtonPopup lookup="#{calendarLookup}" />
+		<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+			<aon:lookupButtonPopup lookup="#{cnae2009Lookup}" />
+			<aon:lookupButtonPopup lookup="#{agreementLookup}" />
+			<aon:lookupButtonPopup lookup="#{calendarLookup}" />
+		</c:if>
 		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
 	</ui:define>
 </ui:composition>

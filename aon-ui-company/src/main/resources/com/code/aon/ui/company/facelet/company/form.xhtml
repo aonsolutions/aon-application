@@ -207,7 +207,10 @@
 		<c:if test="#{aonConfiguration.bean.company.showRegistryBank}">
 			<aon:lookupButtonPopup lookup="#{bankLookup}" />
 		</c:if>
-
+		<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
+			<aon:lookupButtonPopup lookup="#{agreementLookup}" />
+			<aon:lookupButtonPopup lookup="#{calendarLookup}" />
+		</c:if>
 	</ui:define>
 
 </ui:composition>
