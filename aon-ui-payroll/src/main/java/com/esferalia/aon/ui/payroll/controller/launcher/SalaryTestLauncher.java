@@ -53,6 +53,12 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 	private Integer contractId;
 	private Date startDate;
 	private Date endDate;
+	private LogMessage message;
+	
+	
+	public void setMessage(LogMessage message) {
+		this.message = message;
+	}
 	
 	public Integer getContractId() {
 		return contractId;
@@ -133,6 +139,10 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 			controller.setMonth(month);
 			controller.setSalaryType(
 					getParams().getSalaryType());
+
+			controller.setStartDate(message.getStartDate());
+			controller.setEndDate(message.getEndDate());
+			
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(
 					controller.getManagerBean().

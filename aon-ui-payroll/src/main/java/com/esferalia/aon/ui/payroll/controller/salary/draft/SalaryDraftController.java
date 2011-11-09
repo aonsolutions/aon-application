@@ -78,7 +78,9 @@ public class SalaryDraftController extends BasicController {
 
 	private int 								year;		
 	private Month 								month;		 
-	private SalaryType 							salaryType = SalaryType.SALARY ; 
+	private SalaryType 							salaryType = SalaryType.SALARY ;
+	private Date								startDate;
+	private Date								endDate;
 	
 	
 	private ISalary 							salary;				// online salary
@@ -122,6 +124,14 @@ public class SalaryDraftController extends BasicController {
 	
 	public Date getStartDate() {
 		return salary != null ? salary.getStartDate() : null;
+	}
+	
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
 	public Date getEndDate() {
@@ -282,10 +292,16 @@ public class SalaryDraftController extends BasicController {
 			Contract contract = (Contract) getTo();
 
 			ISalaryCalculatorContext ctx;
-			ctx = contract.getSalaryCalculatorContext(
-					getYear(),
-					getMonth(),
-					getSalaryType());
+			if ( getSalaryType() == SalaryType.DELAY )
+				ctx = contract.getSalaryCalculatorContext(
+						startDate,
+						endDate,
+						getSalaryType());
+			else 
+				ctx = contract.getSalaryCalculatorContext(
+						getYear(),
+						getMonth(),
+						getSalaryType());
 			
 			salary = ctx.getSalaryProxy().getSalary();
 			
@@ -796,7 +812,7 @@ public class SalaryDraftController extends BasicController {
 	}
 	
 	private List<Month> getDelayMonths() {
-		return Collections.emptyList();
+		return getSalaryMonths(); //Collections.emptyList();
 	}
 	private List<Month> getSalaryMonths() {
 		Contract contract = (Contract) this.getTo();

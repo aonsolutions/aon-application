@@ -115,6 +115,23 @@ public class SalaryLauncherParams {
 		return true;
 	}
 	
+	public boolean isMonthDisabled(){
+		if(getSalaryType()==SalaryType.SALARY){
+			return false;
+		} else if(getSalaryType()==SalaryType.EXTRA){
+			return false;
+		} else if(getSalaryType()==SalaryType.DELAY){
+			return true;
+		} else if(getSalaryType()==SalaryType.SETTLE){
+			return true;
+		}
+		return true;
+	}
+
+	public boolean isYearDisabled(){
+		return isMonthDisabled();
+	}
+
 	private void calculatePeriod() {
 		setStartDate(CommonUtil.getDate(getIssueYear(), getIssueMonth().getValue(), 1));
 		setEndDate(CommonUtil.getMonthLastDay(CommonUtil.getDate(getIssueYear(), getIssueMonth().getValue(), 1)));

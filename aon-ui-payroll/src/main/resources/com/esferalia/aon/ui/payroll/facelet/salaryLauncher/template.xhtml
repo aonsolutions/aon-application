@@ -32,20 +32,22 @@
 						<aon:outputLabel for="salaryType" value="#{bundle.aon_type}" />
 						<aon:selectOneMenu id="salaryType" value="#{salaryLauncher.params.salaryType}">
 							<f:selectItems value="#{salaryLauncher.salaryTypes}" />
-							<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
+							<a4j:support event="onchange" reRender="salaryLauncherLaunchContent" ajaxSingle="true"/>
 						</aon:selectOneMenu>
 						<aon:outputText value="&#160;" />
 						<aon:outputText value="&#160;" />
 						
+						
 						<aon:outputLabel for="Month" value="#{bundle.aon_month}" />
-						<h:panelGrid columns="3">
-							<aon:selectOneMenu id="Month" value="#{salaryLauncher.params.issueMonth}">
+						<h:panelGrid columns="3"  >
+							<aon:selectOneMenu id="Month" value="#{salaryLauncher.params.issueMonth}"
+							disabled="#{salaryLauncher.params.monthDisabled}" >
 								<f:selectItems value="#{commonCollections.months}"  />
 								<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
 							</aon:selectOneMenu>
 							<aon:outputText value="&#160;" />
 				   			<rich:inputNumberSpinner id="Year" value="#{salaryLauncher.params.issueYear}" 
-				   				inputSize="4" minValue="2009" maxValue="2020" >
+				   				inputSize="4" minValue="2009" maxValue="2020" disabled="#{salaryLauncher.params.yearDisabled}" >
 				   				<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
 				   			</rich:inputNumberSpinner>
 						</h:panelGrid>
