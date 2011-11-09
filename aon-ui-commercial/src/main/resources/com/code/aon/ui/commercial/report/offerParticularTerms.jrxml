@@ -25,9 +25,9 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="14" splitType="Stretch">
+		<band height="11" splitType="Stretch">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-5" positionType="Float" x="0" y="0" width="515" height="14">
+				<reportElement key="textField-5" positionType="Float" x="0" y="0" width="515" height="11">
 					<printWhenExpression><![CDATA[new Boolean(!($F{general}.booleanValue()))]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -37,7 +37,7 @@
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="SansSerif" size="6" isBold="false"/>
+					<font fontName="SansSerif" size="8" isBold="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{name} + ": " + $F{description}]]></textFieldExpression>
 			</textField>
