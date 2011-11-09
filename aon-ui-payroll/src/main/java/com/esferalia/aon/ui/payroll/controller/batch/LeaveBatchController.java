@@ -141,6 +141,14 @@ public class LeaveBatchController extends BasicController {
 		}
 	}
 
+	@Override
+	public void onReset(ActionEvent event) {
+		setRecorded(false);
+		super.onReset(event);
+		LeaveBatch b = (LeaveBatch) getTo();
+		b.setStatus(FileStatus.PENDING);
+	}
+
 	public void onCreateDisk(ActionEvent event) {
 		try {
 			String loggedUser = AonUtil.getRemoteUser();

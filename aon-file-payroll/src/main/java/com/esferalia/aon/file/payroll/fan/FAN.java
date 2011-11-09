@@ -17,8 +17,10 @@ import com.code.aon.file.format.model.AbstractFileFiller;
 import com.code.aon.file.format.model.Fd0Exception;
 import com.esferalia.aon.file.payroll.fan.data.DAT;
 import com.esferalia.aon.file.payroll.fan.data.EDL;
+import com.esferalia.aon.file.payroll.fan.data.EDT;
 import com.esferalia.aon.file.payroll.fan.data.EMP;
 import com.esferalia.aon.file.payroll.fan.data.ETI;
+import com.esferalia.aon.file.payroll.fan.data.TCT;
 import com.esferalia.aon.file.payroll.fan.data.TRA;
 
 public class FAN extends AbstractFileFiller{
@@ -63,12 +65,12 @@ public class FAN extends AbstractFileFiller{
 		DiskRegisterLoader.load(input, manager);
 		input = FAN.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fan/xml/EDL.xml");
 		DiskRegisterLoader.load(input, manager);
-//		input = FAN.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fan/xml/TCT.xml");
-//		DiskRegisterLoader.load(input, manager);
-//		input = FAN.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fan/xml/EDT.xml");
-//		DiskRegisterLoader.load(input, manager);
-//		input = FAN.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fan/xml/MPG.xml");
-//		DiskRegisterLoader.load(input, manager);
+		input = FAN.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fan/xml/TCT.xml");
+		DiskRegisterLoader.load(input, manager);
+		input = FAN.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fan/xml/EDT.xml");
+		DiskRegisterLoader.load(input, manager);
+		input = FAN.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fan/xml/MPG.xml");
+		DiskRegisterLoader.load(input, manager);
 		input = FAN.class.getResourceAsStream("/com/esferalia/aon/file/payroll/fan/xml/ETF.xml");
 		DiskRegisterLoader.load(input, manager);
 	}
@@ -83,12 +85,12 @@ public class FAN extends AbstractFileFiller{
 			int numTotal = 0;
 			String empresa = null;
 			for (EMP emp: eti.getEmpresas()) {
-				if (!ObjectUtils.equals(empresa, emp.getNumero())) {
+				if (!ObjectUtils.equals(empresa, emp.getNumeroIdentificacion())) {
 					++numEmp;
 					properties.put(EMP , emp);
 					createLine(EMP,properties);
 					++numTotal;
-					empresa = emp.getNumero();
+					empresa = emp.getNumeroIdentificacion();
 				}
 				if (emp.getRzs() != null) {
 					properties.put(RZS , emp.getRzs());
@@ -114,16 +116,28 @@ public class FAN extends AbstractFileFiller{
 						createLine(DAT,properties);
 						++numTotal;
 						if (dat.getEdl() != null) {
-							properties.put(AYN , tra.getAyn());
-							createLine(AYN ,properties);
-							++numTotal;
-						}
-						for (EDL edl: dat.getEdl()) {
-							properties.put(EDL , edl);
-							createLine(EDL,properties);
-							++numTotal;
+							for (EDL edl: dat.getEdl().values()) {
+								properties.put(EDL , edl);
+								createLine(EDL,properties);
+								++numTotal;
+							}
 						}
 					}
+				}
+				for (TCT tct: emp.getTcTotales()) {
+					properties.put(TCT , tct);
+					createLine(TCT,properties);
+					++numTotal;
+				}
+				for (EDT edt: emp.getEdt().values()) {
+					properties.put(EDT , edt);
+					createLine(EDT,properties);
+					++numTotal;
+				}
+				if (emp.getMpg() != null) {
+					properties.put(MPG , emp.getMpg());
+					createLine(MPG,properties);
+					++numTotal;
 				}
 			}
 			eti.getEtf().setContador(numEmp);

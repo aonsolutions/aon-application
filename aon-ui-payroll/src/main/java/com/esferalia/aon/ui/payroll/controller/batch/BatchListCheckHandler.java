@@ -50,7 +50,10 @@ public class BatchListCheckHandler {
 
 	public boolean getRowChecked() {
 		try {
-			return checks.contains(getController().getModel().getRowData());
+			if(getController().getModel().isRowAvailable()){
+				return checks.contains(getController().getModel().getRowData());
+			}
+			return false;
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> error on getRowChecked: ",e);
 			AonUtil.addErrorMessage(e.getMessage());

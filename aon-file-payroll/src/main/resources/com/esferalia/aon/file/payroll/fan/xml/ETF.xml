@@ -2,7 +2,10 @@
 
 <register name="ETF">
 	<field name="cabecera" value="ETF" format="AlphaNumeric" pattern="X(3)" />
-	<field name="identificador" value="TC22      " format="AlphaNumeric" pattern="X(10)" />
+	<field name="id1" value="TC22" format="AlphaNumeric" pattern="X(4)" />
+	<field name="id2" value="0" format="Numeric" pattern="9(1)" />
+	<field name="id3" value="WS56" format="AlphaNumeric" pattern="X(4)" />
+	<field name="id4" value="2" format="Numeric" pattern="9(1)" />
 	<field name="clave" value="bean" bean="ETF" property="clave" format="Numeric" pattern="9(8)" />
 	<field name="free1" value=" " format="AlphaNumeric" pattern="X(8)" />
 	<field name="fecha" value="bean" bean="ETF" property="fecha" format="Numeric" pattern="9(8)" />

@@ -10,11 +10,11 @@
 	<field name="ind_cotizacion" value="bean" bean="DAT" property="indicadorCotizacion" format="AlphaNumeric" pattern="X(1)" />
 	<field name="ind_vacaciones" value="bean" bean="DAT" property="indicadorVacaciones" format="AlphaNumeric" pattern="X(1)" />
 	<field name="clave_jornadas_colectivo" value="bean" bean="DAT" property="claveJornadasColectivo" format="AlphaNumeric" pattern="X(1)" />
-	<field name="especificos" value="bean" bean="DAT" property="especificos" format="Numeric" pattern="9(1)" />
-	<field name="free1" value=" " format="AlphaNumeric" pattern="9(3)" />
+	<field name="especificos" value="bean" bean="DAT" property="especificos" format="Numeric" pattern="9(2)" />
+	<field name="free1" value="000" format="Numeric" pattern="9(3)" />
 	<field name="ind_reduccion_boni" value="bean" bean="DAT" property="indReduccionBoni" format="Numeric" pattern="9(1)" />
 	<field name="grupo_cotizacion" value="bean" bean="DAT" property="grupoCotizacion" format="Numeric" pattern="9(2)" />
-	<field name="free2" value=" " format="AlphaNumeric" pattern="9(3)" />
+	<field name="free2" value="   " format="AlphaNumeric" pattern="X(3)" />
 	<field name="tipo_contrato" value="bean" bean="DAT" property="tipoContrato" format="AlphaNumeric" pattern="X(1)" />
 	<field name="clave_contrato" value="bean" bean="DAT" property="claveContrato" format="Numeric" pattern="9(3)" />
 	<field name="epigrafe_at_ep" value="bean" bean="DAT" property="epigrafeAtEp" format="Numeric" pattern="9(3)" />
@@ -25,5 +25,5 @@
 	<field name="ind_relacion" value="bean" bean="DAT" property="indRelacion" format="Numeric" pattern="9(4)" />
 	<field name="colectivo_peculiar" value="bean" bean="DAT" property="colectivoPeculiar" format="Numeric" pattern="9(4)" />
 	<field name="info_complementaria" value="bean" bean="DAT" property="infoComplementaria" format="AlphaNumeric" pattern="X(4)" />
-	<field name="free3" value=" " format="AlphaNumeric" pattern="X(10)" />		
+	<field name="free3" value="          " format="AlphaNumeric" pattern="X(10)" />		
 </register>

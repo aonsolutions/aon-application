@@ -11,10 +11,12 @@
 		<ui:param name="skipNewButton" value="#{true}" />
 	</ui:include>
 
-	<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-		<ui:param name="lookupTo" value="#{contractSearch.enterprise}" />
-		<ui:param name="skipNewButton" value="#{true}" />
-	</ui:include>
+	<c:if test="#{!skipEnterpriseLookup}" >
+		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{contractSearch.enterprise}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+		</ui:include>
+	</c:if>
 									
 	<aon:outputLabel value="#{bundle.aon_start_date}" />
 	<aon:div>

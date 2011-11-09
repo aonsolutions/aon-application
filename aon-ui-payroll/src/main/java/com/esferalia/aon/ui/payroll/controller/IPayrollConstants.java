@@ -36,6 +36,9 @@ public interface IPayrollConstants {
 	String AGREEMENT_LEVEL_CONTROLLER_NAME = "agreementLevel";
 	String AGREEMENT_PAYMENT_CONTROLLER_NAME = "agreementPayment";
 	String AGREEMENT_TREE_CONTROLLER_NAME = "agreementTree";
+	String CERTIFICA2_BATCH_DETAIL_CONTROLLER_NAME = "certifica2BatchDetail";
+	String CERTIFICA2_BATCH_CONTROLLER_NAME = "certifica2Batch";
+	String CERTIFICA2_LIST_CONTROLLER_NAME = "certifica2List";
 	String CERTIFICATE_FILE_WIZARD = "certifica2FileWizard";
 	String CONTRACT_CONTROLLER = "contract";
 	String CONTRACT_ATTACH_CONTROLLER = "contractAttach";
@@ -54,6 +57,9 @@ public interface IPayrollConstants {
 	String ENTERPRISE_ACTIVITY_CONTROLLER = "enterpriseActivity";
 	String ENTERPRISE_CCC_CONTROLLER = "enterpriseCCC";
 	String ENTERPRISE_TREE_CONTROLLER = "enterpriseTree";
+	String FAN_BATCH_DETAIL_CONTROLLER_NAME = "fanBatchDetail";
+	String FAN_BATCH_CONTROLLER_NAME = "fanBatch";
+	String FAN_LIST_CONTROLLER_NAME = "fanList";
 	String IRPF_DATA_CONTROLLER_NAME = "irpfData";
 	String IRPF_LAUNCHER_CONTROLLER_NAME = "irpfLauncher";
 	String IRPF_REGULARIZATION_CONTROLLER_NAME = "irpfRegularization";

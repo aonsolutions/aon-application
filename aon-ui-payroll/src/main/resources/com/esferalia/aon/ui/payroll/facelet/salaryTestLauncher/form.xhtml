@@ -25,6 +25,8 @@
 					style="display: inline; text-decoration:underline;"
 					action="salaryDraft_form" >
 					<aon:outputText value="#{message.employeeName} " />
+					<f:setPropertyActionListener value="#{message}" 
+					target="#{salaryTestLauncher.message}" />
 					<f:setPropertyActionListener value="#{message.contractId}" 
 					target="#{salaryTestLauncher.contractId}" />
 					<aon:actionListener method="#{salaryTestLauncher.onSalaryDraft}" />

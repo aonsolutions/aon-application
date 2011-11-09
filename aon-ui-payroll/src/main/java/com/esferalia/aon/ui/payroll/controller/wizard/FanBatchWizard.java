@@ -299,7 +299,8 @@ public class FanBatchWizard {
 					if (r.isSelected()) {
 						batchDetail = new FanBatchDetail();
 						batchDetail.setFanBatch(getBatch());
-						batchDetail.setEnterprise(r.getEnterprise());
+						// TODO
+//						batchDetail.setCcc(r.getEnterprise());
 						BeanManager.getManagerBean(FanBatchDetail.class).insert(batchDetail);
 					}
 				}
@@ -326,23 +327,23 @@ public class FanBatchWizard {
 	
 	@SuppressWarnings("unchecked")
 	public void onDiskGenerate(ActionEvent event) {
-		try {
-			List<Enterprise> list = new LinkedList<Enterprise>();
-			for(RemesableEnterprise r: (List<RemesableEnterprise>) getModel().getWrappedData()){
-				if(r.isSelected()){
-					list.add(r.getEnterprise());
-				}
-			}
-			setFileOutput(getFANWriter().createFAN(list, getYear(), getStartMonth(), getStartMonth()));
-			if (getFileOutput() != null) {
-				if (getFileOutput().getErrors().size() > 0) {
-					AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
-				}
-			}
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			// No se lanza excepción, que vaya a la última página.
-		} 
+//		try {
+//			List<Enterprise> list = new LinkedList<Enterprise>();
+//			for(RemesableEnterprise r: (List<RemesableEnterprise>) getModel().getWrappedData()){
+//				if(r.isSelected()){
+//					list.add(r.getEnterprise());
+//				}
+//			}
+//			setFileOutput(getFANWriter().createFAN(list, getYear(), getStartMonth(), getStartMonth()));
+//			if (getFileOutput() != null) {
+//				if (getFileOutput().getErrors().size() > 0) {
+//					AonUtil.addErrorMessage("Se han producido errores en la generación del fichero.");
+//				}
+//			}
+//		} catch (ManagerBeanException e) {
+//			AonUtil.addErrorMessage(e.getMessage());
+//			// No se lanza excepción, que vaya a la última página.
+//		} 
 	}
 	
 	public void onDownloadDisk(ActionEvent event) {

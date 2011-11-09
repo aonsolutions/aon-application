@@ -41,6 +41,11 @@ public abstract class HierarchyIterator<E> extends AbstractIterator<E> {
 		return e;
 	}
 	
+	@Override
+	public boolean isEmpty() {
+		return !iterator().hasNext();
+	}
+
 	private E childNext() {
 		return next(childs[level].next()); 
 	}

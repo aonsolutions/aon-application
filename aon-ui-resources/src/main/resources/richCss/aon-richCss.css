@@ -122,6 +122,12 @@ color:#000;
 .aon-width-half{
 	width:50%;
 }
+.aon-width-half-plus{
+	width:60%;
+}
+.aon-width-half-minus{
+	width:40%;
+}
 .aon-width-auto{
 	width:auto;
 }

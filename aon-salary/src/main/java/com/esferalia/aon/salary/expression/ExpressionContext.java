@@ -57,6 +57,10 @@ public class ExpressionContext {
 		variables = new Variables(null);
 	}
 
+	public ExpressionContext(Variables variables) {
+		this.variables = variables;
+	}
+
 	public ExpressionContext(NotFoundHandler notFoundHandler) {
 		variables = new Variables(notFoundHandler);
 	}
@@ -94,6 +98,7 @@ public class ExpressionContext {
 	public <T> T getVariable(Object name, Date start, Date end,Class<T> toType   ) {
 		return ( T ) variables.get(name.toString(), new Period(start, end));
 	}
+	
 	
 	public List<ITimedObject<Object>> addExpression(IExpression expression,Date start, Date end ) 
 	throws ExpressionException {
@@ -167,6 +172,15 @@ public class ExpressionContext {
 		variables.clear();
 	}
 	
+	
+	public ExpressionContext getSnapshot(Set<String> vars ) {
+		Variables snapshotVariables = 
+			variables.getSnapshot(vars);
+		ExpressionContext snapshotContext =
+			new ExpressionContext( snapshotVariables);
+		return snapshotContext;
+		
+	}
 	// ------------------------------------------
 	//
 	// ------------------------------------------

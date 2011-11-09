@@ -1061,7 +1061,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	<!-- **** CONTRACT DOCUMENTS **** -->
+	<!-- **** CONTRACT LEAVE DOCUMENTS **** -->
 	<managed-bean>
 		<managed-bean-name>leaveBatchAttach</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.LeaveBatchAttachController</managed-bean-class>
@@ -1128,15 +1128,351 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.wizard.FanBatchWizard</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>fanBatch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.FanBatchController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.FanBatch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>fanBatch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FanBatch_date desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{fanBatchDetailChildListener}</value>
+				<value>#{fanBatchAttachChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>fanBatchDetailChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>fanBatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>FanBatchDetail_fanBatch_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>fanBatchDetail</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.BatchDetailController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.FanBatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>fanBatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FanBatchDetail_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>fanBatch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>fanBatch.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>fanBatchAttachChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>fanBatchAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>FanBatchAttachment_fanBatch_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<!-- **** FAN DOCUMENTS **** -->
+	<managed-bean>
+		<managed-bean-name>fanBatchAttach</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.FanBatchAttachController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.FanBatchAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>fanBatchAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>10</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>FanBatchAttachment_attachDate desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>fanBatch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>fanBatch.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<!-- ************* FAN LIST ***************** -->
+	<managed-bean>
+		<managed-bean-name>fanList</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.FanListController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.EnterpriseCCC</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>fanList</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>EnterpriseCCC_activity_enterprise_registry_name</value>
+		</managed-property>				
+	</managed-bean>
+
 	<!-- ************ Remesa Certificado Empresa Wizard **************** -->
 	<managed-bean>
 		<managed-bean-name>certifica2BatchWizard</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.wizard.Certifica2BatchWizard</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
+		<managed-bean-scope>session</managed-bean-scope> 
 	</managed-bean>
-	<!--
-		************ Remesa Certificado Empresa Generation Wizard ****************
-	-->
+	<managed-bean>
+		<managed-bean-name>certifica2Batch</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.Certifica2BatchController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.Certifica2Batch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>certifica2Batch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Certifica2Batch_date desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{certifica2BatchDetailChildListener}</value>
+				<value>#{certifica2BatchAttachChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>certifica2BatchDetailChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>certifica2BatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Certifica2BatchDetail_certifica2Batch_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>certifica2BatchDetail</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.BatchDetailController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.Certifica2BatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>certifica2BatchDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Certifica2BatchDetail_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>certifica2Batch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>certifica2Batch.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>certifica2BatchAttachChildListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>certifica2BatchAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Certifica2BatchAttachment_certifica2Batch_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<!-- **** CERTIFICA2 BATCH DOCUMENTS **** -->
+	<managed-bean>
+		<managed-bean-name>certifica2BatchAttach</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.Certifica2BatchAttachController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.Certifica2BatchAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>certifica2BatchAttach</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>10</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Certifica2BatchAttachment_attachDate desc</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>certifica2Batch</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>certifica2Batch.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	<!-- ************* CERTIFICA2 BATCH LIST ***************** -->
+	<managed-bean>
+		<managed-bean-name>certifica2List</managed-bean-name>
+		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.batch.Certifica2ListController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.Contract</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>certifica2List</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Contract_person_registry_name</value>
+		</managed-property>				
+	</managed-bean>
+
+	<!-- ************ Remesa Certificado Empresa Generation Wizard **************** -->
 	<managed-bean>
 		<managed-bean-name>certifica2FileWizard</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.wizard.Certifica2FileWizard</managed-bean-class>
@@ -2882,6 +3218,20 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/certifica2File/step3.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule id="certifica2Batch">
+		<navigation-case>
+			<from-outcome>certifica2Batch_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/certifica2/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>certifica2Batch_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/certifica2/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>certifica2Batch_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/certifica2/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	<!--
 		=================== Contract Generation ==========================
 	-->
@@ -2995,6 +3345,20 @@
 		<navigation-case>
 			<from-outcome>fanBatchWizard_step4</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/fanBatch/step4.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule id="fanBatch">
+		<navigation-case>
+			<from-outcome>fanBatch_search</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/fan/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fanBatch_list</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/fan/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fanBatch_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/batch/fan/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== CNO ========================== -->

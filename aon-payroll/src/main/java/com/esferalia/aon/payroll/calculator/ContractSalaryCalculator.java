@@ -177,24 +177,24 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				{
 					continue; //TODO : must be done in context ?
 				}
+				
 				try {
-
 
 					List<ITimedObject<Double>> amounts = 
 						expressionContext.addExpression(contractPayment, paymentStart, paymentEnd, Double.class ) ;
-					
-					String concept = contractPayment.getName(); 
-					PaymentType type = contractPayment.getType();
 					
 					double total = 0.00;
 					
 					for (ITimedObject<Double> amount : amounts) {
 						
+						String concept = contractPayment.getName(); 
+						PaymentType type = contractPayment.getType();
+
 						Date amountStart = amount.getPeriod().getStart();
 						Date amountEnd = amount.getPeriod().getEnd();
 						
 						String description  = null;
-
+	
 						Double value = amount.getValue();
 						total += value;
 						Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, issueDate, value);
@@ -207,11 +207,12 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 							} catch (Exception e ) {
 								//TODO : Log ???
 							}
-
+	
 							salaryBuilder.addPayment(type, concept, payment, description, null);
 						}
 					}
 				
+					//System.out.printf("\t[%s]: %s, %s = %f +%f\r\n", contractPayment.getName(), contractPayment.getDescription(),contractPayment.getExpression(), total, taxCalculator.getTotalPayment());
 					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, total);
 
 				} catch ( UndefinedVariableException e ) {
@@ -364,7 +365,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		
 		amounts = null;
 		
-		//System.out.printf("%s=%s %.3f \r\n", concept, expression, total);
+		/*if ( total > 0 )
+			System.out.printf("%s=%s %.3f \r\n", concept, expression, total);*/
+		
 		return total ;
 	}
 	

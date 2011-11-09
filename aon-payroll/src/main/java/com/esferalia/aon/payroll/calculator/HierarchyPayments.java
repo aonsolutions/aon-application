@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll.calculator;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -8,16 +10,47 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import sun.security.action.GetLongAction;
+
 import com.esferalia.aon.salary.expression.Period;
 
 public class HierarchyPayments extends HierarchyIterator<IContractPayment> {
 	
+	private static class Visited {
+		private Integer 		level;
+		private List<Period> 	periods;
+		
+		public Visited(Integer level) {
+			this.level = level;
+			this.periods = new ArrayList<Period>();
+		}
+		
+		public boolean add(Period period){
+			for (Period visited : periods) {
+				if ( visited.intersects(period) ) {
+					return false;
+				}
+			}
+			periods.add(period);
+			return true;
+		}
+
+		public boolean add(Date start, Date end){
+			return add( new Period(start, end) );
+		}
+
+		public boolean add(IContractPayment payment){
+			return add(payment.getStartDate(), payment.getEndDate());
+		}
+		
+	}
 	
-	private Map<String, Integer> visited;
+	private Map<String, Visited> visitedMap;
 	
 	public HierarchyPayments(Iterator<IContractPayment> ... payments) {
 		super(payments);
-		visited = new HashMap<String, Integer>();
+		visitedMap = new HashMap<String, Visited>();
+		
 	}
 	
 	@Override
@@ -31,22 +64,26 @@ public class HierarchyPayments extends HierarchyIterator<IContractPayment> {
 	private boolean visit (IContractPayment e ) {
 		String name = e.getName();
 		if ( name == null ) { 
-			return false;
+			return true;
 		} 
 		
-		Integer visitedLevel = 
-			visited.get(name);
+		Visited visited = 
+			visitedMap.get(name);
 		
 		Integer currentLevel = 
 			getLevel();
-		
-		if ( visitedLevel == null ){
-			visited.put(name, currentLevel);
+
+		if ( visited == null ){
+			visited = new Visited(currentLevel);
+			visited.add(e);
+			visitedMap.put(name, visited );
 			return true;
 		}
 		
-		if (visitedLevel == currentLevel ){
-			return true;
+		
+		if (visited.level == currentLevel ){
+			return visited.add(e);
+			//return true;
 		}
 		
 		return false;

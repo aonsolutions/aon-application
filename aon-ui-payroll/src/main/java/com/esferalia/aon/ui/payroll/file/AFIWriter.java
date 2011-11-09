@@ -10,11 +10,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
-import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.file.format.model.FileFiller;
 import com.code.aon.file.format.output.FileOutput;
-import com.code.aon.ui.company.controller.EnterpriseController;
-import com.code.aon.ui.form.FormUtil;
 import com.esferalia.aon.file.payroll.afi.AFI;
 import com.esferalia.aon.file.payroll.afi.data.EMP;
 import com.esferalia.aon.file.payroll.afi.data.ETI;
@@ -25,16 +22,8 @@ import com.esferalia.aon.payroll.Contract;
 
 public class AFIWriter {
 	
-//	private ICommonsPayrollDAO commonsPayrollDAO;
 	private ETI eti;
-	SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
-	
-//	private ICommonsPayrollDAO getCommonsPayrollDAO() {
-//		if (commonsPayrollDAO == null) {
-//			commonsPayrollDAO = CommonsPayrollDAOFactory.getInstance().getCommonsPayrollDAO();
-//		}
-//		return commonsPayrollDAO;
-//	}
+	private SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
 	
 	public ETI getEti() {
 		return eti;
@@ -76,10 +65,10 @@ public class AFIWriter {
 	
 	private EMP createEMPrecord(Enterprise enterprise, List<Contract> contractList) throws  ManagerBeanException {
 		EMP emp = new EMP();
-		EnterpriseController ent = (EnterpriseController)FormUtil.getController("enterprise");
-		ent.getCriteria().addEqualExpression(ent.getFieldName(ICompanyAlias.ENTERPRISE_ID), enterprise.getId());
-		ent.onSearch(null);
-		ent.onSelectFirst(null);
+//		EnterpriseController ent = (EnterpriseController)FormUtil.getController("enterprise");
+//		ent.getCriteria().addEqualExpression(ent.getFieldName(ICompanyAlias.ENTERPRISE_ID), enterprise.getId());
+//		ent.onSearch(null);
+//		ent.onSelectFirst(null);
 		// TODO se ha movido el ccc y activity de company a payroll
 //		ent.initMainActiviy();
 //		String ccc = ent.getCcc().getCcc();
