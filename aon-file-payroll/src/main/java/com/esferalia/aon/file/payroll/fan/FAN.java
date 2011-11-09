@@ -116,7 +116,7 @@ public class FAN extends AbstractFileFiller{
 						createLine(DAT,properties);
 						++numTotal;
 						if (dat.getEdl() != null) {
-							for (EDL edl: dat.getEdl()) {
+							for (EDL edl: dat.getEdl().values()) {
 								properties.put(EDL , edl);
 								createLine(EDL,properties);
 								++numTotal;

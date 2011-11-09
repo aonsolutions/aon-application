@@ -1,7 +1,7 @@
 package com.esferalia.aon.file.payroll.fan.data;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * datos de trabajador y periodo
@@ -29,7 +29,7 @@ public class DAT {
 	private Integer colectivoPeculiar;
 	private String infoComplementaria;
 	
-	private List<EDL> edl;
+	private Map<String, EDL> edl;
 
 	public Integer getMes() {
 		return mes;
@@ -190,16 +190,22 @@ public class DAT {
 	public void setInfoComplementaria(String infoComplementaria) {
 		this.infoComplementaria = infoComplementaria;
 	}
-
-	public List<EDL> getEdl() {
+	
+	public Map<String, EDL> getEdl() {
 		if(edl==null){
-			edl = new LinkedList<EDL>();
+			edl = new TreeMap<String, EDL>();
 		}
 		return edl;
 	}
-
-	public void setEdl(List<EDL> edl) {
+	public void setEdl(Map<String, EDL> edl) {
 		this.edl = edl;
+	}
+	
+	public EDL getEdlSegment(String key){
+		if(getEdl().get(key)==null){
+			getEdl().put(key, new EDL());
+		}
+		return getEdl().get(key);
 	}
 	
 	

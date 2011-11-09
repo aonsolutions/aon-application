@@ -14,172 +14,194 @@
 		
 				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
 					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
-						
-					<aon:panelGrid id="red_wizard"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-winsuite aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.red_menu_group}" />
-						</f:facet>					
-						<aon:div styleClass="aon-direct-access-list">
+					
+					<aon:panelGroup>
+						<aon:panelGrid id="red_wizard"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-winsuite aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.red_menu_group}" />
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+									
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="leaveBatch" 
+										action="leaveBatch_search"
+										actionListener="#{leaveBatch.onEditSearch}"
+										value="#{payrollBundle.payroll_leaveBatchWizard_module}" />
+								</aon:div>
+	<!--  
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="leaveBatchWizard" 
+										action="leaveBatchWizard_step0"
+										actionListener="#{leaveBatchWizard.onStart}"
+										value="#{payrollBundle.payroll_leaveBatchWizard_module}" />
+								</aon:div>
+	-->
+							
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="fanBatch" 
+										action="fanBatch_search"
+										actionListener="#{fanBatch.onEditSearch}"
+										value="#{payrollBundle.payroll_fanBatchWizard_module}" />
+								</aon:div>
+							
+	<!--  
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="fanBatchWizard" 
+										action="fanBatchWizard_step0"
+										actionListener="#{fanBatchWizard.onStart}"
+										value="#{payrollBundle.payroll_fanBatchWizard_module}" />
+								</aon:div>
+	-->						
 								
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="leaveBatch" 
-									action="leaveBatch_search"
-									actionListener="#{leaveBatch.onEditSearch}"
-									value="#{payrollBundle.payroll_leaveBatchWizard_module}" />
 							</aon:div>
-<!--  
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="leaveBatchWizard" 
-									action="leaveBatchWizard_step0"
-									actionListener="#{leaveBatchWizard.onStart}"
-									value="#{payrollBundle.payroll_leaveBatchWizard_module}" />
-							</aon:div>
--->
+						</aon:panelGrid>
 						
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="fanBatchWizard" 
-									action="fanBatchWizard_step0"
-									actionListener="#{fanBatchWizard.onStart}"
-									value="#{payrollBundle.payroll_fanBatchWizard_module}" />
-							</aon:div>
+						<aon:panelGrid id="certificate_wizard"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-redtrabaja aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.certificate_menu_group}" />
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
 							
-						</aon:div>
-					</aon:panelGrid>
-					
-					<aon:panelGrid id="contrata_wizard"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-contrata aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.contrata_menu_group}" />
-						</f:facet>					
-						<aon:div styleClass="aon-direct-access-list">
-														
-							<!--  
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="contractGenerationWizard" 
-									action="contractGenerationWizard_search"
-									value="#{payrollBundle.payroll_contractGenerationWizard_module}" >
-									<aon:actionListener method="#{contractGenerationWizard.onEditSearch}" />
-									<aon:actionListener method="#{contractGenerationWizard.onStart}" />
-								</aon:commandLink>
-							</aon:div>
-							-->
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="contract" action="contract_search"
-									actionListener="#{contract.onEditSearch}"
-									value="#{payrollBundle.payroll_contract_module}">
-								</aon:commandLink>
-							</aon:div>
-							<!--  
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="contractBatchWizard" 
-									action="contractBatchWizard_step0"
-									actionListener="#{contractBatchWizard.onStart}"
-									value="#{payrollBundle.payroll_contractBatchWizard_module}" />
-							</aon:div>
-							-->
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="contractBatch" 
-									action="contractBatch_search"
-									actionListener="#{contractBatch.onEditSearch}"
-									value="#{payrollBundle.payroll_contractBatchWizard_module}" />
-							</aon:div>
-							
-						</aon:div>
-					</aon:panelGrid>
-					
-					<aon:panelGrid id="certificate_wizard"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-redtrabaja aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.certificate_menu_group}" />
-						</f:facet>					
-						<aon:div styleClass="aon-direct-access-list">
-						
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="settle" action="settle_search"
-									value="#{payrollBundle.payroll_settle_module}">
-									<aon:actionListener method="#{contract.onEditSearch}" />
-								</aon:commandLink>
-							</aon:div>
-
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="certifica2BatchWizard"
-									action="certifica2BatchWizard_step0"
-									value="#{payrollBundle.certifica2BatchWizard_module}" >
-									<aon:actionListener method="#{certifica2BatchWizard.onStart}" />
-									<aon:actionListener method="#{contract.onEditSearch}" />
-								</aon:commandLink>
-							</aon:div>
-							
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="certifica2FileWizard"
-									action="certifica2FileWizard_step0"
-									actionListener="#{certifica2FileWizard.onStart}"
-									value="#{payrollBundle.certifica2FileWizard_module}" />
-							</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="settle" action="settle_search"
+										value="#{payrollBundle.payroll_settle_module}">
+										<aon:actionListener method="#{contract.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
+	
+	<!--  
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="certifica2BatchWizard"
+										action="certifica2BatchWizard_step0"
+										value="#{payrollBundle.certifica2BatchWizard_module}" >
+										<aon:actionListener method="#{certifica2BatchWizard.onStart}" />
+										<aon:actionListener method="#{contract.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
 								
-						</aon:div>
-					</aon:panelGrid>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="certifica2FileWizard"
+										action="certifica2FileWizard_step0"
+										actionListener="#{certifica2FileWizard.onStart}"
+										value="#{payrollBundle.certifica2FileWizard_module}" />
+								</aon:div>
+	-->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="certifica2Batch"
+										action="certifica2Batch_search"
+										value="#{payrollBundle.certifica2BatchWizard_module}" >
+										<aon:actionListener method="#{certifica2Batch.onEditSearch}" />
+									</aon:commandLink>
+								</aon:div>
+									
+							</aon:div>
+						</aon:panelGrid>
+						
+						<aon:panelGrid id="fiscal_wizard"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-aeat aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.fiscal_menu_group}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="irpfLauncher" action="irpfLauncher_form"
+										value="#{payrollBundle.payroll_irpfLauncher_module}">
+										<aon:actionListener method="#{irpfLauncher.onStart}" />
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="irpfTestLauncher" action="irpfTestLauncher_form"
+										value="#{payrollBundle.payroll_irpfTestLauncher_module}">
+										<aon:actionListener method="#{irpfTestLauncher.onStart}" />
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:panelGroup>
 
-					<aon:panelGrid id="launcher_wizard"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-reservation aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{payrollBundle.payroll_salary_launchers}" />
-						</f:facet>					
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="salaryLauncher"
-									action="salaryLauncher_form"
-									actionListener="#{salaryLauncher.onStart}"
-									value="#{payrollBundle.payroll_salary_launcher_module}">
-								</aon:commandLink>
+					<aon:panelGroup>
+						<aon:panelGrid id="contrata_wizard"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-contrata aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.contrata_menu_group}" />
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+															
+								<!--  
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contractGenerationWizard" 
+										action="contractGenerationWizard_search"
+										value="#{payrollBundle.payroll_contractGenerationWizard_module}" >
+										<aon:actionListener method="#{contractGenerationWizard.onEditSearch}" />
+										<aon:actionListener method="#{contractGenerationWizard.onStart}" />
+									</aon:commandLink>
+								</aon:div>
+								-->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contract" action="contract_search"
+										actionListener="#{contract.onEditSearch}"
+										value="#{payrollBundle.payroll_contract_module}">
+									</aon:commandLink>
+								</aon:div>
+								<!--  
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contractBatchWizard" 
+										action="contractBatchWizard_step0"
+										actionListener="#{contractBatchWizard.onStart}"
+										value="#{payrollBundle.payroll_contractBatchWizard_module}" />
+								</aon:div>
+								-->
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contractBatch" 
+										action="contractBatch_search"
+										actionListener="#{contractBatch.onEditSearch}"
+										value="#{payrollBundle.payroll_contractBatchWizard_module}" />
+								</aon:div>
+								
 							</aon:div>
-							
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="salaryTestLauncher"
-									action="salaryTestLauncher_form"
-									actionListener="#{salaryTestLauncher.onStart}"
-									value="#{payrollBundle.payroll_salary_test_launcher_module}">
-								</aon:commandLink>
-							</aon:div>
+						</aon:panelGrid>
 
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="salaryRemover"
-									action="salaryRemover_search"
-									value="#{payrollBundle.payroll_salary_remover_module}">
-									<aon:actionListener method="#{salary.onEditSearch}" />
-									<aon:actionListener method="#{salaryRemover.onInitialize}" />
-								</aon:commandLink>
+						<aon:panelGrid id="launcher_wizard"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-reservation aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{payrollBundle.payroll_salary_launchers}" />
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="salaryLauncher"
+										action="salaryLauncher_form"
+										actionListener="#{salaryLauncher.onStart}"
+										value="#{payrollBundle.payroll_salary_launcher_module}">
+									</aon:commandLink>
+								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="salaryTestLauncher"
+										action="salaryTestLauncher_form"
+										actionListener="#{salaryTestLauncher.onStart}"
+										value="#{payrollBundle.payroll_salary_test_launcher_module}">
+									</aon:commandLink>
+								</aon:div>
+	
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="salaryRemover"
+										action="salaryRemover_search"
+										value="#{payrollBundle.payroll_salary_remover_module}">
+										<aon:actionListener method="#{salary.onEditSearch}" />
+										<aon:actionListener method="#{salaryRemover.onInitialize}" />
+									</aon:commandLink>
+								</aon:div>
+								
 							</aon:div>
-							
-						</aon:div>
-					</aon:panelGrid>
-					
-					<aon:panelGrid id="fiscal_wizard"
-						styleClass="aon-width-all" columnClasses="aon-padding"
-						headerClass="aon-icon-aeat aon-direct-access-panel">
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.fiscal_menu_group}" />
-						</f:facet>
-						<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="irpfLauncher" action="irpfLauncher_form"
-									value="#{payrollBundle.payroll_irpfLauncher_module}">
-									<aon:actionListener method="#{irpfLauncher.onStart}" />
-								</aon:commandLink>
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="irpfTestLauncher" action="irpfTestLauncher_form"
-									value="#{payrollBundle.payroll_irpfTestLauncher_module}">
-									<aon:actionListener method="#{irpfTestLauncher.onStart}" />
-								</aon:commandLink>
-							</aon:div>
-						</aon:div>
-					</aon:panelGrid>
+						</aon:panelGrid>
+					</aon:panelGroup>
 
 				</h:panelGrid>
 			</aon:div>

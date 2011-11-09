@@ -50,6 +50,7 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.Mutual;
+import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
@@ -71,6 +72,9 @@ public class FANWriter {
 	private Month startMonth; 
 	private Month endMonth; 
 	private LiquidationType liquidationType;
+	
+	private EMP currentEMP;
+	private int totalContractSum = 0;
 	
 	private Date getStartDate(){
 		Calendar cal = Calendar.getInstance();
@@ -96,6 +100,7 @@ public class FANWriter {
 		this.startMonth = startMonth; 
 		this.endMonth= endMonth ; 
 		this.liquidationType = liquidationType;
+		totalContractSum = 0;
 		try {
 			ETI eti = createETIRecord( list );
 			File file = File.createTempFile("XXXXXXXX", ".FAN");
@@ -121,8 +126,6 @@ public class FANWriter {
 		setEti( eti );
 		return getEti();
 	}
-
-	private EMP currentEMP;
 	
 	private EMP createEMPrecord(EnterpriseCCC ccc) throws  ManagerBeanException {
 //		EMP emp = new EMP();
@@ -176,16 +179,17 @@ public class FANWriter {
 		List<ITransferObject> list = getContracts(ccc, cal.getTime()); 
 		for(ITransferObject to: list){
 			Contract c = (Contract) to;
-			if(getSalary(c)!=null){
+			if(getSalary(c)!=null && c.getRegimeType()!=SSRegimeType.SELF_EMPLOYED){
 				TRA tra = createTRARecord(c);
 				emp.getTrabajadores().add(tra);
+				++totalContractSum;
 			}
 		}
 		
 		emp.getTcTotales().add(createTCTRecord(ccc));
 		
 //		emp.getEdt().addAll(createEDTRecord(ccc));
-		createEDTRecord(ccc);
+		createEDTRecords(ccc);
 		
 		// TODO Obligatorio para pago electronico, saldos acreedores y cargo en cuenta
 		emp.setMpg(createMPGRecord(ccc));
@@ -312,32 +316,51 @@ public class FANWriter {
 		//*** segmento EDL ***
 		Salary salary = getSalary(c);
 		if(salary!=null){
-			dat.getEdl().add(
+			EDL edl;
+			if(salary.getCommonBase().equals(salary.getRawCommonBase())){
+				edl = dat.getEdlSegment("BA00");
 				createEDLRecord(
-				"BA",
-				1,
-				0,
-				new Double(salary.getCommonBase()*100).intValue(),
-				" ",
-				0,
-				autoComplete("0", 8, "0", true),
-				autoComplete("0", 8, "0", true),
-				autoComplete("0", 8, "0", true),
-				" ")
-			);	
-			dat.getEdl().add(
+						edl,
+						"BA",
+						0,
+						0,
+						new Double(salary.getCommonBase()*100).intValue(),
+						" ",
+						0,
+						autoComplete("0", 8, "0", true),
+						autoComplete("0", 8, "0", true),
+						autoComplete("0", 8, "0", true),
+				" ");	
+			} else {
+				edl = dat.getEdlSegment("BA01");
 				createEDLRecord(
-					"BA",
-					2,
-					0,
-					new Double(salary.getRawCommonBase()*100).intValue(),
-					" ",
-					0,
-					autoComplete("0", 8, "0", true),
-					autoComplete("0", 8, "0", true),
-					autoComplete("0", 8, "0", true),
-					" ")
-			);
+						edl,
+						"BA",
+						1,
+						0,
+						new Double(salary.getCommonBase()*100).intValue(),
+						" ",
+						0,
+						autoComplete("0", 8, "0", true),
+						autoComplete("0", 8, "0", true),
+						autoComplete("0", 8, "0", true),
+				" ");	
+				edl = dat.getEdlSegment("BA02");
+				createEDLRecord(
+						edl,
+						"BA",
+						2,
+						0,
+						new Double(salary.getRawCommonBase()*100).intValue(),
+						" ",
+						0,
+						autoComplete("0", 8, "0", true),
+						autoComplete("0", 8, "0", true),
+						autoComplete("0", 8, "0", true),
+				" ");
+			}
+			
+			
 			
 			SalaryBonus bonus = getBonus(c);
 			if(bonus!=null){
@@ -345,8 +368,9 @@ public class FANWriter {
 //				Integer dcDays = differenceBetweenDates(bonus.getStartDate().before(getStartDate())?getStartDate():bonus.getStartDate(), bonus.getEndDate().after(getEndDate())?getEndDate():bonus.getEndDate());
 				Integer dcDays = 0;
 				if(baseDc != null && baseDc > 0){
-					dat.getEdl().add(
+					edl = dat.getEdlSegment("CD07");
 							createEDLRecord(
+									edl,
 									"CD",
 									7,
 									dcDays,
@@ -356,8 +380,7 @@ public class FANWriter {
 									autoComplete("0", 8, "0", true),
 									autoComplete("0", 8, "0", true),
 									autoComplete("0", 8, "0", true),
-									" ")
-					);
+									" ");
 				}
 			}
 		}
@@ -530,9 +553,9 @@ public class FANWriter {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	private EDL createEDLRecord(String type, Integer key, Integer element, Integer amount, String sign, Integer resolutionType, String resolutionDate, String startPeriod, String endPeriod, String resolutionReference) {
-		EDL edl = null;
-		edl = new EDL();
+	private EDL createEDLRecord(EDL edl, String type, Integer key, Integer element, Integer amount, String sign, Integer resolutionType, String resolutionDate, String startPeriod, String endPeriod, String resolutionReference) {
+//		EDL edl = null;
+//		edl = new EDL();
 		edl.setTipoElementoDatos(type);
 		edl.setClave(key);
 		edl.setElemento(element);
@@ -545,65 +568,6 @@ public class FANWriter {
 		edl.setReferencia(resolutionReference);
 		return edl;
 	}
-//	private List<EDL> createEDLRecord(Contract c) {
-//		List<EDL> edlList = new LinkedList<EDL>();
-//		Salary salary = getSalary(c);
-//		EDL edl = null;
-//		if(salary!=null){
-//			edlList.add(
-//				createEDLRecord(
-//				"BA",
-//				1,
-//				getDataElement(c),
-//				String.valueOf(new Double(salary.getCommonBase()*100).intValue()),
-//				getAmountSign(salary),
-//				getResolutionType(c),
-//				getResolutionDate(c),
-//				getStartPeriod(c),
-//				getEndPeriod(c),
-//				getResolutionReference(c))
-//			);
-////			edl = new EDL();
-////			edl.setTipoElementoDatos("BA");
-////			edl.setClave(1);
-////			edl.setElemento(getDataElement(c));
-////			edl.setImporte(String.valueOf(new Double(salary.getCommonBase()*100).intValue()));
-////			edl.setSigno(getAmountSign(salary));
-////			edl.setTipoResolucion(getResolutionType(c));
-////			edl.setFechaResolucion(getResolutionDate(c));
-////			edl.setInicioPeriodo(getStartPeriod(c));
-////			edl.setFinPeriodo(getEndPeriod(c));
-////			edl.setReferencia(getResolutionReference(c));
-////			edlList.add(edl);
-//
-//			edl = new EDL();
-//			edl.setTipoElementoDatos("BA");
-//			edl.setClave(2);
-//			edl.setElemento(getDataElement(c));
-//			edl.setImporte(String.valueOf(new Double(salary.getRawCommonBase()*100).intValue()));
-//			edl.setSigno(getAmountSign(salary));
-//			edl.setTipoResolucion(getResolutionType(c));
-//			edl.setFechaResolucion(getResolutionDate(c));
-//			edl.setInicioPeriodo(getStartPeriod(c));
-//			edl.setFinPeriodo(getEndPeriod(c));
-//			edl.setReferencia(getResolutionReference(c));
-//			edlList.add(edl);
-//			
-//			edl = new EDL();
-//			edl.setTipoElementoDatos("CD");
-//			edl.setClave(7);
-//			edl.setElemento(getDataElement(c));
-//			edl.setImporte(String.valueOf(new Double(salary.getProfessionalBase()*100).intValue()));
-//			edl.setSigno(getAmountSign(salary));
-//			edl.setTipoResolucion(getResolutionType(c));
-//			edl.setFechaResolucion(getResolutionDate(c));
-//			edl.setInicioPeriodo(getStartPeriod(c));
-//			edl.setFinPeriodo(getEndPeriod(c));
-//			edl.setReferencia(getResolutionReference(c));
-//			edlList.add(edl);
-//		}
-//		return edlList;
-//	}
 	
 	private String getResolutionReference(Contract c) {
 		// TODO Auto-generated method stub
@@ -652,7 +616,7 @@ public class FANWriter {
 		cal.set(year, endMonth.ordinal(), 1);
 		TCT tct = new TCT();
 		tct.setEntidadAtEp(Mutual.M001.getValue());
-		tct.setNumeroTrabajadores(Integer.parseInt(autoComplete(String.valueOf(getContracts(ccc, cal.getTime()).size()), 6, "0", true)));
+		tct.setNumeroTrabajadores(Integer.parseInt(autoComplete(String.valueOf(totalContractSum), 6, "0", true)));
 		tct.setNumeroTrabajadoresFijos(null);
 		tct.setNumeroTrabajadoresNoFijos(null);
 		tct.setTotalNumeroTrabajadores(null);
@@ -666,7 +630,7 @@ public class FANWriter {
 		return tct;
 	}
 	
-	private Map<String, EDT> createEDTRecord(EnterpriseCCC ccc) throws ManagerBeanException {
+	private Map<String, EDT> createEDTRecords(EnterpriseCCC ccc) throws ManagerBeanException {
 		// TODO
 		List<EDT> list = new LinkedList<EDT>();
 		EDT edt = null;
@@ -709,19 +673,19 @@ public class FANWriter {
 				createEDTCa20Segment(c);
 				createEDTCa21Segment(c);
 				createEDTCa22Segment(c);
-//				createEDTCa30Segment(c);
-//				createEDTCa31Segment(c);
-//				createEDTCa32Segment(c);
+				createEDTCa30Segment(c);
+				createEDTCa31Segment(c);
+				createEDTCa32Segment(c);
 				createEDTCa50Segment(c);
 				createEDTCa57Segment(c);
-//				createEDTCa60Segment(c);
+				createEDTCa60Segment(c);
 				createEDTCa80Segment(c);
 				createEDTCa90Segment(c);
 				
-//				createEDTTt10Segment(c);
-//				createEDTTt20Segment(c);
-//				createEDTTt30Segment(c);
-//				createEDTTt9XSegment(c);
+				createEDTTt10Segment(c);
+				createEDTTt20Segment(c);
+				createEDTTt30Segment(c);
+				createEDTTt9XSegment(c);
 			}
 
 		}
@@ -811,6 +775,19 @@ public class FANWriter {
 		
 	}
 	private void createEDTCa60Segment(Contract c) {
+		Integer amount = 0;
+		amount += currentEMP.getEdt().containsKey("2_"+"CD07")?currentEMP.getEdtSegment("2_"+"CD07").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("2_"+"CD10")?currentEMP.getEdtSegment("2_"+"CD10").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("2_"+"CD11")?currentEMP.getEdtSegment("2_"+"CD11").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("2_"+"CD13")?currentEMP.getEdtSegment("2_"+"CD13").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("2_"+"CD16")?currentEMP.getEdtSegment("2_"+"CD16").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("2_"+"CD20")?currentEMP.getEdtSegment("2_"+"CD20").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("2_"+"CD21")?currentEMP.getEdtSegment("2_"+"CD21").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("2_"+"CD22")?currentEMP.getEdtSegment("2_"+"CD22").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("2_"+"CD23")?currentEMP.getEdtSegment("2_"+"CD23").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("2_"+"CD25")?currentEMP.getEdtSegment("2_"+"CD25").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("3_"+"CA28")?currentEMP.getEdtSegment("3_"+"CA28").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("3_"+"CA80")?currentEMP.getEdtSegment("3_"+"CA80").getImporte():0;
 		EDT edt = currentEMP.getEdtSegment("3_"+"CA60");
 		edt.setTipoElemento("CA");
 		edt.setClave(60);
@@ -820,7 +797,7 @@ public class FANWriter {
 //	edt.setParteEnteraTipo(28);
 //	edt.setParteDecimalFactorTipo(03);
 //	edt.setImporte(edt.getBase()*28);
-//		edt.setImporte(new Double(getBonus(c).getAmount()*100).intValue());
+		edt.setImporte(amount);
 		edt.setSigno(" ");
 	}
 	private void createEDTCa57Segment(Contract c) {
@@ -828,39 +805,51 @@ public class FANWriter {
 		
 	}
 	private void createEDTCa50Segment(Contract c) {
+		Integer base = currentEMP.getEdt().containsKey("1_"+"BA02")?currentEMP.getEdtSegment("1_"+"BA02").getBase():0;
 		EDT edt = currentEMP.getEdtSegment("3_"+"CA50");
 		edt.setTipoElemento("CA");
 		edt.setClave(50);
 		edt.setCalificadorClave(null);
-		edt.setBase(new Double(CommonUtil.round(getSalary(c).getProfessionalBase())*100).intValue());
-//		edt.setImporte(new Double((edt.getBase())*0.283).intValue());
+		edt.setBase(base);
+		edt.setImporte(new Double((edt.getBase())*0.283).intValue());
 		edt.setSigno(" ");
 	}
 	private void createEDTCa32Segment(Contract c) {
+		Integer amount = 0;
+		// TODO suma cuotas trabajadores segun epigrafes
+//		amount += currentEMP.getEdt().containsKey("3_"+"CA31")?currentEMP.getEdtSegment("3_"+"CA31").getBase():0;
+//		amount += currentEMP.getEdt().containsKey("3_"+"CA31")?currentEMP.getEdtSegment("3_"+"CA31").getBase():0;
 		EDT edt = currentEMP.getEdtSegment("3_"+"CA32");
 		edt.setTipoElemento("CA");
 		edt.setClave(32);
 		edt.setCalificadorClave(null);
 		edt.setBase(null);
-//		edt.setImporte(218);
+		edt.setImporte(amount);
 		edt.setSigno(" ");
 	}
 	private void createEDTCa31Segment(Contract c) {
+		Integer amount = 0;
+		// TODO suma cuotas trabajadores segun epigrafes
+//		amount += currentEMP.getEdt().containsKey("3_"+"CA31")?currentEMP.getEdtSegment("3_"+"CA31").getBase():0;
+//		amount += currentEMP.getEdt().containsKey("3_"+"CA31")?currentEMP.getEdtSegment("3_"+"CA31").getBase():0;
 		EDT edt = currentEMP.getEdtSegment("3_"+"CA31");
 		edt.setTipoElemento("CA");
 		edt.setClave(31);
 		edt.setCalificadorClave(null);
 		edt.setBase(null);
-//		edt.setImporte(405);
+		edt.setImporte(amount);
 		edt.setSigno(" ");
 	}
 	private void createEDTCa30Segment(Contract c) {
+		Integer amount = 0;
+		amount += currentEMP.getEdt().containsKey("3_"+"CA31")?currentEMP.getEdtSegment("3_"+"CA31").getImporte():0;
+		amount += currentEMP.getEdt().containsKey("3_"+"CA31")?currentEMP.getEdtSegment("3_"+"CA31").getImporte():0;
 		EDT edt = currentEMP.getEdtSegment("3_"+"CA30");
 		edt.setTipoElemento("CA");
 		edt.setClave(30);
 		edt.setCalificadorClave(null);
 		edt.setBase(null);
-//		edt.setImporte(405+218);
+		edt.setImporte(amount);
 		edt.setSigno(" ");
 	}
 	private void createEDTCa22Segment(Contract c) {
@@ -888,18 +877,17 @@ public class FANWriter {
 		
 	}
 	private void createEDTCa01Segment(Contract c) {
+		Integer base = currentEMP.getEdt().containsKey("1_"+"BA01")?currentEMP.getEdtSegment("1_"+"BA01").getBase():0; 
 		EDT edt = currentEMP.getEdtSegment("3_"+"CA01");
 		edt.setTipoElemento("CA");
 		edt.setClave(1);
 		edt.setCalificadorClave(null);
-		edt.setBase(new Double(CommonUtil.round(getSalary(c).getProfessionalBase())*100).intValue());
+		edt.setBase(base);
 //	edt.setIndicadorFactorTipo("T");
 //	edt.setParteEnteraTipo(28);
 //	edt.setParteDecimalFactorTipo(03);
-//	edt.setImporte(edt.getBase()*28);
-//		edt.setImporte(new Double((edt.getBase())*0.283).intValue());
+		edt.setImporte(new Double((edt.getBase())*0.283).intValue());
 		edt.setSigno(" ");
-//		list.add(edt);
 	}
 	private void createEDTCd28Segment(Contract c) {
 		// TODO Auto-generated method stub
@@ -950,21 +938,22 @@ public class FANWriter {
 		
 	}
 	private void createEDTCd07Segment(Contract c) {
-		if(getBonus(c)!=null){
+		Integer amount = 0;
+		for(TRA tra: currentEMP.getTrabajadores()){
+			amount += tra.getDat().get(0).getEdl().containsKey("CD07")?tra.getDat().get(0).getEdlSegment("CD07").getImporte():0;
+		}
+//		if(getBonus(c)!=null){
 			EDT edt = currentEMP.getEdtSegment("2_"+"CD07");
 			edt.setTipoElemento("CD");
 			edt.setClave(7);
 			edt.setCalificadorClave(null);
-//	edt.setBase(getEnterpriseBase(ccc));
-//			edt.setBase(new Double(CommonUtil.round(getContractSalary(ccc).getCommonBase())*100).intValue() + new Double(CommonUtil.round(getContractSalary(ccc).getProfessionalBase())*100).intValue());
 			edt.setBase(0);
 			edt.setIndicadorFactorTipo(null);
 			edt.setParteEnteraTipo(0);
 			edt.setParteDecimalFactorTipo(0);
-			edt.setImporte(new Double(getBonus(c).getAmount()*100).intValue());
+			edt.setImporte(amount);
 			edt.setSigno(" ");
-//			list.add(edt);
-		}
+//		}
 	}
 	private void createEDTCd06Segment(Contract c) {
 		// TODO Auto-generated method stub
@@ -1003,34 +992,38 @@ public class FANWriter {
 		
 	}
 	private void createEDTBa02Segment(Contract c) {
+		Integer base = 0;
+		for(TRA tra: currentEMP.getTrabajadores()){
+			base += tra.getDat().get(0).getEdl().containsKey("BA00")?tra.getDat().get(0).getEdlSegment("BA00").getImporte():0;
+			base += tra.getDat().get(0).getEdl().containsKey("BA02")?tra.getDat().get(0).getEdlSegment("BA02").getImporte():0;
+		}
 		EDT edt = currentEMP.getEdtSegment("1_"+"BA02");
-//		edt = new EDT();
 		edt.setTipoElemento("BA");
 		edt.setClave(2);
 		edt.setCalificadorClave(null);
-//		edt.setBase(getEnterpriseBase(ccc));
-		edt.setBase(new Double(CommonUtil.round(getSalary(c).getProfessionalBase())*100).intValue());
+		edt.setBase(base);
 		edt.setIndicadorFactorTipo(null);
 		edt.setParteEnteraTipo(0);
 		edt.setParteDecimalFactorTipo(0);
 		edt.setImporte(null);
 		edt.setSigno(" ");
-//		list.add(edt);
-		
 	}
 	private void createEDTBa01Segment(Contract c) {
+		Integer base = 0;
+		for(TRA tra: currentEMP.getTrabajadores()){
+			base += tra.getDat().get(0).getEdl().containsKey("BA00")?tra.getDat().get(0).getEdlSegment("BA00").getImporte():0;
+			base += tra.getDat().get(0).getEdl().containsKey("BA01")?tra.getDat().get(0).getEdlSegment("BA01").getImporte():0;
+		}
 		EDT edt = currentEMP.getEdtSegment("1_"+"BA01");
 		edt.setTipoElemento("BA");
 		edt.setClave(1);
 		edt.setCalificadorClave(null);
-//		edt.setBase(getEnterpriseBase(ccc));
-		edt.setBase(new Double(CommonUtil.round(getSalary(c).getProfessionalBase())*100).intValue());
+		edt.setBase(base);
 		edt.setIndicadorFactorTipo(null);
 		edt.setParteEnteraTipo(0);
 		edt.setParteDecimalFactorTipo(0);
 		edt.setImporte(null);
 		edt.setSigno(" ");
-		
 	}
 	
 	
