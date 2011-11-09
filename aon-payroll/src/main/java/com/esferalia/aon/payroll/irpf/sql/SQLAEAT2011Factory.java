@@ -58,6 +58,7 @@ import com.code.aon.config.enumeration.Administration;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryDocument;
 import com.code.aon.registry.enumeration.DocumentType;
+import com.esferalia.aon.payroll.DelegateContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
@@ -1175,7 +1176,7 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(getStartDate()) ;
 			
-			int startMonth = calendar.get(Calendar.MARCH) ;
+			int startMonth = calendar.get(Calendar.MONTH) ;
 			int endMonth = CommonUtil.getMonth(getEndDate()) ;
 
 			for ( int month = startMonth ; month <= endMonth ; month++){

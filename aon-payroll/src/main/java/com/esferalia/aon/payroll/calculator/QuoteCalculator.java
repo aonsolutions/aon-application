@@ -265,13 +265,14 @@ public abstract class QuoteCalculator {
 			if ( !StringUtils.isBlank(name )){
 				bases.put(name, quote);
 				context.addVariable(String.format("BASE_%s", name), quote, start, end);
+				//System.out.printf("%s : %f [[%TF..%TF][%f] %s, %s  \r\n", name, quote, start, end,  amount, payment.getDescription(), payment.getQuoteExpression() );
 			}
 		}
 		
 	}
 	
-	public static class SettleQuote extends GeneralQuote {
-		public SettleQuote(ExpressionContext context, Date salaryStart, Date salaryEnd) {
+	public static class UnlimitedQuote extends GeneralQuote {
+		public UnlimitedQuote(ExpressionContext context, Date salaryStart, Date salaryEnd) {
 			super(context, salaryStart, salaryEnd);
 		}
 		
@@ -326,12 +327,12 @@ public abstract class QuoteCalculator {
 
 			@Override
 			public QuoteCalculator visitSettle(SalaryType salaryType) {
-				return new SettleQuote(expressionContext, startDate, endDate);
+				return new UnlimitedQuote(expressionContext, startDate, endDate);
 			}
 
 			@Override
 			public QuoteCalculator visitDelay(SalaryType salaryType) {
-				return new GeneralQuote(expressionContext, startDate, endDate);
+				return new UnlimitedQuote(expressionContext, startDate, endDate);
 			}
 
 			@Override

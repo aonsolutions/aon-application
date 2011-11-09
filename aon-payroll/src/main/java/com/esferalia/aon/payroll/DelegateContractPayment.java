@@ -1,4 +1,4 @@
-package com.esferalia.aon.payroll.irpf.sql;
+package com.esferalia.aon.payroll;
 
 import java.util.Date;
 

@@ -117,6 +117,9 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		vars.clear();
 	}
 	
+	private Variables(){
+	}
+	
 	public Variables(Variables variables, NotFoundHandler notFoundHandler) {
 		// TODO:  Delegate Map	
 		vars = new HashMap<String, List<ITimedVariable<?>>>();
@@ -125,6 +128,8 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		}
 		this.notFoundHandler = notFoundHandler;
 	}
+	
+	
 
 	public Set<String> varsSet() {
 		return vars.keySet();
@@ -189,7 +194,6 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		}
 		
 	}
-	
 
 	public List<Period> getPeriods(String var ) {
 		
@@ -287,11 +291,28 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		return new PeriodMap(new Period(start, end)); 
 	}
 	
+	
+	protected Variables getSnapshot(Set<String> variables ) {
+		
+		Variables snapshot = new Variables();
+		snapshot.notFoundHandler = notFoundHandler;
+		snapshot.vars = 
+			new SnapshotMap<String, List<ITimedVariable<?>>>(variables, vars){
+			
+			protected List<ITimedVariable<?>> getSnapShot(List<ITimedVariable<?>> value) {
+				return new LinkedList<ITimedVariable<?>>(value);
+			};
+		};
+		return snapshot;
+		
+	}
+
 	@Override
 	protected void finalize() throws Throwable {
 		clear();
 		super.finalize();
 	}
+	
 	
 	// ------------------------------------------
 	
@@ -332,6 +353,7 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		calendar.add( Calendar.DAY_OF_MONTH, days);
 		return calendar.getTime();
 	}
+	
 
 	private static class WrapTimedVariable<T>
 	implements ITimedVariable<T> {
@@ -360,4 +382,5 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		
 		
 	}
+	
 }
