@@ -190,7 +190,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.jsf.bridge</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -317,7 +317,7 @@
 											<include>org.apache.sanselan:sanselan:0.97-incubator</include>
 											<include>sinadura:sinaduraCore:1.3.0.MOD2</include>
 											<include>com.esendex:Esendex:0.0.1</include>
-											<include>com.code.aon:aon.jsf.bridge:${pom.version}</include>
+											<include>com.code.aon:aon.jsf.bridge:${project.version}</include>
 											<include>org.slf4j:slf4j-api:1.5.11</include>
 											<include>net.sf.jasperreports:jasperreports:4.0.0</include>
 											<include>ar.com.fdvs:DynamicJasper:3.1.2</include>

@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon-dbutils</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

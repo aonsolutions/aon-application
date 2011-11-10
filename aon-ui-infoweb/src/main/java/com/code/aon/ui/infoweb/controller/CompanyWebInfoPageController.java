@@ -21,7 +21,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoPageDetail;
-import com.code.aon.infoweb.dao.IWebInfoAlias;
+import com.code.aon.infoweb.dao.IInfowebAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -64,7 +64,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		int position = 0;
 		try{
 			Criteria criteria = new Criteria();
-			criteria.addOrder(getManagerBean().getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION), false);
+			criteria.addOrder(getManagerBean().getFieldName(IInfowebAlias.WEB_INFO_PAGE_POSITION), false);
 			List<ITransferObject> list = (List<ITransferObject>)getManagerBean().getList(criteria);
 			if (list.size() > 0) {
 				WebInfoPage wip = (WebInfoPage)list.get(0);
@@ -104,7 +104,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 			int newPosition = oldPosition + movement;
 			
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION), newPosition);
+			criteria.addEqualExpression(getFieldName(IInfowebAlias.WEB_INFO_PAGE_POSITION), newPosition);
 			List<ITransferObject> list = getManagerBean().getList(criteria);
 			if (!list.isEmpty()) {
 				WebInfoPage otherPage = (WebInfoPage) list.get(0);
@@ -192,7 +192,7 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		try {
 			IManagerBean wipdBean = BeanManager.getManagerBean(WebInfoPageDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(wipdBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE_ID), wip.getId());
+			criteria.addEqualExpression(wipdBean.getFieldName(IInfowebAlias.WEB_INFO_PAGE_DETAIL_WEB_INFO_PAGE_ID), wip.getId());
 			List<ITransferObject> listWipd = wipdBean.getList(criteria);
 			if (listWipd.size() > 0) detail = (WebInfoPageDetail)listWipd.get(0);
 			else detail = new WebInfoPageDetail();
@@ -255,10 +255,10 @@ public class CompanyWebInfoPageController extends BasicController implements IIn
 		Criteria criteria = new Criteria();
 		WebInfoPage wip = (WebInfoPage) getTo();
 		if ( wip.getId() != null ) {
-			Expression exp = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ID), wip.getId());
+			Expression exp = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IInfowebAlias.WEB_INFO_PAGE_ID), wip.getId());
 			criteria.addExpression(exp);
 		}		
-		criteria.addEqualExpression(bean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_NAME), pageName);
+		criteria.addEqualExpression(bean.getFieldName(IInfowebAlias.WEB_INFO_PAGE_NAME), pageName);
 		int count = bean.getCount(criteria);
 		if ( count > 0 ) {
 			FacesMessage message = new FacesMessage(AonUtil.getMessage(BUNDLE_NAME, "infoweb_page_duplicated_name"));

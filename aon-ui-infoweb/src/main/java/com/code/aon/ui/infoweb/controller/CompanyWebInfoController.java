@@ -9,7 +9,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.infoweb.WebInfo;
-import com.code.aon.infoweb.dao.IWebInfoAlias;
+import com.code.aon.infoweb.dao.IInfowebAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -25,7 +25,7 @@ public class CompanyWebInfoController extends BasicController {
 		Company company = ((Company)companyController.getTo());
 		IManagerBean webInfoBean = BeanManager.getManagerBean(WebInfo.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(webInfoBean.getFieldName(IWebInfoAlias.WEB_INFO_COMPANY_ID), company.getId());
+		criteria.addEqualExpression(webInfoBean.getFieldName(IInfowebAlias.WEB_INFO_COMPANY_ID), company.getId());
 		Iterator iter = webInfoBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			this.setTo((WebInfo)iter.next());

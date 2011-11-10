@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon-master</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

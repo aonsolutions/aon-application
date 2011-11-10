@@ -140,7 +140,7 @@
 	<dependency>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.jsf.bridge</artifactId>
-		<version>${pom.version}</version>
+		<version>${project.version}</version>
 		<scope>provided</scope>
 	</dependency>
 	<dependency>

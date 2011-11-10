@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.file.format</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

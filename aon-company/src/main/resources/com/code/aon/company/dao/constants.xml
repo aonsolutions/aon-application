@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<dao>
-	<bean class="com.code.aon.company.Enterprise" sqlName="enterprise">
-		<alias names="id,registry_id,scope_id,registry_document,registry_documentCountry,registry_documentType"/>
-		<hibernate names="id,registry.id,scope.id,,registry.document,registry.documentCountry,registry.documentType"/>
-	</bean>		
-</dao>

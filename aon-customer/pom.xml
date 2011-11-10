@@ -9,23 +9,54 @@
 	<artifactId>aon.customer</artifactId>
 	<description>AON CUSTOMER</description>
 	<name>AON CUSTOMER</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.esferalia.aon</groupId>
+				<artifactId>aon-alias-maven-plugin</artifactId>
+				<version>7.0-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-alias</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<targetPackage>com.code.aon.customer.dao</targetPackage>
+					<targetName>ICustomerAlias</targetName>
+					<sourcePackages>com.code.aon.customer</sourcePackages>
+					<excludes></excludes>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.code.aon</groupId>
+						<artifactId>aon.entity</artifactId>
+						<version>${project.version}</version>
+						<scope>compile</scope>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.common</artifactId>
-			<version>${pom.version}</version>
+			<artifactId>aon.entity</artifactId>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

@@ -32,7 +32,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.infoweb.WebInfoPage;
 import com.code.aon.infoweb.WebInfoStyle;
-import com.code.aon.infoweb.dao.IWebInfoAlias;
+import com.code.aon.infoweb.dao.IInfowebAlias;
 import com.code.aon.infoweb.enumeration.WebInfoFontType;
 import com.code.aon.infoweb.enumeration.WebInfoVariableType;
 import com.code.aon.ql.Criteria;
@@ -104,8 +104,8 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 		List<SelectItem> pages = new LinkedList<SelectItem>();
 		IManagerBean pageBean = BeanManager.getManagerBean(WebInfoPage.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(pageBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_ACTIVE), true);
-		criteria.addOrder(pageBean.getFieldName(IWebInfoAlias.WEB_INFO_PAGE_POSITION));
+		criteria.addEqualExpression(pageBean.getFieldName(IInfowebAlias.WEB_INFO_PAGE_ACTIVE), true);
+		criteria.addOrder(pageBean.getFieldName(IInfowebAlias.WEB_INFO_PAGE_POSITION));
 		List<ITransferObject> list = (List<ITransferObject>)pageBean.getList(criteria);
 		int default_id = 0;
 		SelectItem item = new SelectItem(default_id, "Por defecto");
@@ -130,7 +130,7 @@ public class CompanyWebInfoStyleController extends BasicController implements Ve
 			while (iter.hasNext()) {
 				String var = iter.next();
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(wisBean.getFieldName(IWebInfoAlias.WEB_INFO_STYLE_VARIABLE), var);
+				criteria.addEqualExpression(wisBean.getFieldName(IInfowebAlias.WEB_INFO_STYLE_VARIABLE), var);
 				List<ITransferObject> list = wisBean.getList(criteria);
 				WebInfoStyle wis = new WebInfoStyle();
 				if (list.size() > 0) {

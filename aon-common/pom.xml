@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ql</artifactId>
-			<version>${pom.version}</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -163,6 +163,12 @@
 				</exclusion>
 			</exclusions>		    
 		</dependency>			
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-tools</artifactId>
+			<version>3.2.3.GA</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 </project>
  
