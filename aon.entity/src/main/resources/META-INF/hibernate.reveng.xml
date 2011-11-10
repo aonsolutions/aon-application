@@ -1,0 +1,588 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
+
+<hibernate-reverse-engineering>
+
+	<!--  **************** -->
+	<!--  TABLAS OBSOLETAS -->
+	<!--  **************** -->
+	<table-filter match-name="account_summary" exclude="true" />
+	<table-filter match-name="appraiser" exclude="true" />
+	<table-filter match-name="composition" exclude="true" />
+	<table-filter match-name="composition_detail" exclude="true" />
+	<table-filter match-name="composition_expense" exclude="true" />
+	<table-filter match-name="contact" exclude="true" />
+	<table-filter match-name="curriculum" exclude="true" />
+	<table-filter match-name="customer_segment" exclude="true" />
+	<table-filter match-name="delivery_detail_labour" exclude="true" />
+	<table-filter match-name="employee" exclude="true" />
+	<table-filter match-name="item_pos" exclude="true" />
+	<table-filter match-name="pos" exclude="true" />
+	<table-filter match-name="production" exclude="true" />
+	<table-filter match-name="production_detail" exclude="true" />
+	<table-filter match-name="production_expense" exclude="true" />
+	<table-filter match-name="resource" exclude="true" />
+	<table-filter match-name="sales_purchase" exclude="true" />
+	<table-filter match-name="scale" exclude="true" />
+	<table-filter match-name="scale_relation" exclude="true" />
+	<table-filter match-name="supplier_segment" exclude="true" />
+	<table-filter match-name="support_order" exclude="true" />
+	<table-filter match-name="support_order_insurance" exclude="true" />
+	<table-filter match-name="tas_delivery" exclude="true" />
+	<table-filter match-name="tas_offer" exclude="true" />
+	
+	<!--  ************** -->
+	<!--  TABLAS DUDOSAS -->
+	<!--  ************** -->
+	<table-filter match-name="project_dossier" exclude="true" />
+	
+	<!--  *************************** -->
+	<!--  TABLAS QUE NO LEVANTAN POJO -->
+	<!--  *************************** -->
+	<table-filter match-name="db_version" exclude="true" />
+	
+
+
+	<table name="account_entry">
+		<column name="entry_type" property="type" />
+		<foreign-key constraint-name="account_entry_ibfk_1">
+			<many-to-one exclude="true" />
+		</foreign-key>
+	</table>
+	<table name="account_entry_detail">
+		<foreign-key constraint-name="account_entry_detail_ibfk_2">
+			<many-to-one property="account" />
+		</foreign-key>
+		<foreign-key constraint-name="account_entry_detail_ibfk_3">
+			<many-to-one property="balancingAccount" />
+		</foreign-key>
+	</table>
+	<table name="account_entry_fbatch" class="com.code.aon.entity.master.AccountEntryFinanceBatch" />
+	<table name="account_helper">
+		<foreign-key constraint-name="FK_ACCOUNT_HELPER_ACCOUNT">
+			<many-to-one property="account" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_ACCOUNT_HELPER_BALANCING_ACCOUNT">
+			<many-to-one property="balancingAccount" />
+		</foreign-key>
+	</table>
+	<table name="account_period" class="com.code.aon.entity.master.Period" />
+	<table name="agreement_level_data">
+		<foreign-key constraint-name="FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL">
+			<many-to-one property="level" />
+		</foreign-key>
+	</table>
+	<table name="amortization_type">
+		<foreign-key constraint-name="fk_amortization_type_account1">
+			<many-to-one property="fixedAssetAccount" />
+		</foreign-key>
+		<foreign-key constraint-name="fk_amortization_type_account2">
+			<many-to-one property="accumulatedAccount" />
+		</foreign-key>
+		<foreign-key constraint-name="fk_amortization_type_account3">
+			<many-to-one property="allocationAccount" />
+		</foreign-key>
+	</table>
+	<table name="app_param" class="com.code.aon.entity.master.ApplicationParameter" />
+	<table name="cashflow_forecast" class="com.code.aon.entity.master.CashFlowForecast" />
+	<table name="certifica2_batch_attach" class="com.code.aon.entity.master.Certifica2BatchAttachment">
+		<meta attribute="extra-import">org.hibernate.annotations.Formula</meta>
+		<meta attribute="class-code">
+			private Integer size;
+
+			@Formula("LENGTH(data)")
+			public Integer getSize() {
+			return size;
+			}
+			public void setSize(Integer size) {
+			this.size = size;
+			}
+		</meta>
+		<column name="type" property="attachmentType"/>
+	</table>
+	<table name="certifica2_batch_detail">
+		<column name="suspension_cause_code" property="suspensionCause"/>
+	</table>
+	<table name="cnae" class="com.code.aon.entity.master.CNAE" />
+	<table name="cnae2009" class="com.code.aon.entity.master.CNAE2009" />
+	<table name="cnae2009_rate" class="com.code.aon.entity.master.CNAE2009Rate" />
+	<table name="cno" class="com.code.aon.entity.master.CNO" />
+	<table name="commercial_term">
+		<column name="term_general" property="general" />
+	</table>
+	<table name="commercial_tracking">
+		<foreign-key constraint-name="FK_COMMERCIAL_TRACKING_ACTIVITY">
+			<many-to-one property="activity" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_COMMERCIAL_TRACKING_NEXT">
+			<many-to-one property="next" />
+		</foreign-key>
+	</table>
+	<table name="commission_category">
+		<foreign-key constraint-name="FK_COMMISSION_CATEGORY_CATEGORY">
+			<many-to-one property="category" />
+		</foreign-key>
+	</table>
+	<table name="company">
+		<primary-key>
+			<generator class="registry_id">
+				<param name="property">registry</param>
+			</generator>
+			<key-column name="registry" property="id" />
+		</primary-key>
+	</table>
+	<table name="contract_attach" class="com.code.aon.entity.master.ContractAttachment">
+		<meta attribute="extra-import">org.hibernate.annotations.Formula</meta>
+		<meta attribute="class-code">
+			private Integer size;
+
+			@Formula("LENGTH(data)")
+			public Integer getSize() {
+			return size;
+			}
+			public void setSize(Integer size) {
+			this.size = size;
+			}
+		</meta>
+		<column name="type" property="attachmentType"/>
+	</table>
+	<table name="contract_batch_attach" class="com.code.aon.entity.master.ContractBatchAttachment">
+		<meta attribute="extra-import">org.hibernate.annotations.Formula</meta>
+		<meta attribute="class-code">
+			private Integer size;
+
+			@Formula("LENGTH(data)")
+			public Integer getSize() {
+			return size;
+			}
+			public void setSize(Integer size) {
+			this.size = size;
+			}
+		</meta>
+		<column name="type" property="attachmentType"/>
+	</table>
+	<table name="contract_batch_attach">
+		<foreign-key constraint-name="FK_CONTRACT_LEAVE_CONTRACT_LEAVE">
+			<many-to-one property="parent"/>
+		</foreign-key>
+	</table>
+	
+	<table name="cost_profile">
+		<foreign-key foreign-table="enteprise">
+			<column-ref local-column="enteprise" foreign-column="registry" />
+			<many-to-one property="enteprise" />
+		</foreign-key>
+	</table>
+	<table name="creditor">
+		<primary-key>
+			<generator class="registry_id">
+				<param name="property">registry</param>
+			</generator>
+			<key-column name="registry" property="id" />
+		</primary-key>
+	</table>
+	<table name="customer">
+		<primary-key>
+			<generator class="registry_id">
+				<param name="property">registry</param>
+			</generator>
+			<key-column name="registry" property="id" />
+		</primary-key>
+		<column name="segment" exclude="true"></column>
+	</table>
+	<table name="delivery">
+		<column name="discount_expr" property="discountExpression" />
+		<column name="number_of_pymnts" property="numberOfPayments" />
+		<column name="days_to_first_pymnt" property="daysToFirstPayment" />
+		<column name="days_between_pymnts" property="daysBetweenPayments" />
+		<column name="pymnt_days" property="paymentDays" />
+	</table>
+	<table name="delivery_detail">
+		<column name="discount_expr" property="discountExpression" />
+	</table>
+	<table name="enterprise">
+		<primary-key>
+			<generator class="registry_id">
+				<param name="property">registry</param>
+			</generator>
+			<key-column name="registry" property="id" />
+		</primary-key>
+	</table>
+	<table name="enterprise_ccc" class="com.code.aon.entity.master.EnterpriseCCC" />
+	<table name="fan_batch_attach" class="com.code.aon.entity.master.FanBatchAttachment">
+		<meta attribute="extra-import">org.hibernate.annotations.Formula</meta>
+		<meta attribute="class-code">
+			private Integer size;
+
+			@Formula("LENGTH(data)")
+			public Integer getSize() {
+			return size;
+			}
+			public void setSize(Integer size) {
+			this.size = size;
+			}
+		</meta>
+		<column name="type" property="attachmentType"/>
+	</table>
+	<table name="fbatch" class="com.code.aon.entity.master.FinanceBatch" />
+	<table name="fbatch_detail" class="com.code.aon.entity.master.FinanceBatchDetail" />
+	<table name="fs_mod347_detail" class="com.code.aon.entity.master.Mod347Detail" />
+	<table name="fs_mod347" class="com.code.aon.entity.master.Mod347" />
+	<table name="fs_prof_retention" class="com.code.aon.entity.master.ProfessionalRetention">
+		<column name="withholding_key" property="key" />
+		<column name="withholding_subkey" property="subkey" />
+	</table>
+	<table name="fs_renting" class="com.code.aon.entity.master.Renting" />
+	<table name="fs_renting_detail" class="com.code.aon.entity.master.RentingDetail" />
+	<table name="fs_vat" class="com.code.aon.entity.master.VatTax" />
+	<table name="fs_vat_declaration" class="com.code.aon.entity.master.VatTaxDeclaration" />
+	<table name="fs_vat_detail" class="com.code.aon.entity.master.VatTaxDetail" />
+	<table name="geozone_irpf">
+		<foreign-key constraint-name="FK_GEOZONE_IRPF_GEOZONE">
+			<many-to-one property="geozone"/>
+		</foreign-key>
+	</table>
+	<table name="income">
+		<column name="discount_expr" property="discountExpression" />
+		<column name="number_of_pymnts" property="numberOfPayments" />
+		<column name="days_to_first_pymnt" property="daysToFirstPayment" />
+		<column name="days_between_pymnts" property="daysBetweenPayments" />
+		<column name="pymnt_days" property="paymentDays" />
+	</table>
+	<table name="income_detail">
+		<column name="discount_expr" property="discountExpression" />
+	</table>
+	<table name="inventory">
+		<foreign-key foreign-table="warehouse">
+			<column-ref local-column="warehouse" foreign-column="id"/>
+			<many-to-one property="warehouse"/>
+		</foreign-key>
+	</table>
+	<table name="invoice_address">
+		<foreign-key constraint-name="invoice_address_fk1">
+			<many-to-one property="geozone" />
+		</foreign-key>
+	</table>
+	<table name="invoice_attach" class="com.code.aon.entity.master.InvoiceAttachment">
+		<meta attribute="extra-import">org.hibernate.annotations.Formula</meta>
+		<meta attribute="class-code">
+			private Integer size;
+
+			@Formula("LENGTH(data)")
+			public Integer getSize() {
+			return size;
+			}
+			public void setSize(Integer size) {
+			this.size = size;
+			}
+		</meta>
+	</table>
+	<table name="irpf_data">
+		<column name="irregular_18_2_reduction" property="irregular18_2Reduction"/>
+		<column name="irregular_18_3_reduction" property="irregular18_3Reduction"/>
+	</table>
+	<table name="irpf_result">
+		<column name="irregular_18_2_reduction" property="irregular18_2Reduction"/>
+		<column name="irregular_18_3_reduction" property="irregular18_3Reduction"/>
+		<column name="descendents_33_65_total" property="descendents33_65Total"/>
+		<column name="descendents_33_65_entirely" property="descendents33_65Entirely"/>
+		<column name="ascendents_33_65_total" property="ascendents33_65Total"/>
+		<column name="ascendents_33_65_entirely" property="ascendents33_65Entirely"/>
+	</table>
+	
+	<table name="item_alternative">
+		<foreign-key constraint-name="FK_ITEM_ALTERNATIVE_ITEM">
+			<many-to-one property="item" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_ITEM_ALTERNATIVE_ALTERNATIVE">
+			<many-to-one property="alternativeItem" />
+		</foreign-key>
+	</table>
+	<table name="item_composition">
+		<column name="discount_expr" property="discountExpression" />
+		<foreign-key constraint-name="FK_ITEM_COMPOSITION_COMPOSITION">
+			<many-to-one property="compositionItem" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_ITEM_COMPOSITION_ITEM">
+			<many-to-one property="item" />
+		</foreign-key>
+	</table>
+
+	<table name="iattach" class="com.code.aon.entity.master.ItemAttachment">
+		<meta attribute="extra-import">org.hibernate.annotations.Formula</meta>
+		<meta attribute="class-code">
+			private Integer size;
+
+			@Formula("LENGTH(data)")
+			public Integer getSize() {
+			return size;
+			}
+			public void setSize(Integer size) {
+			this.size = size;
+			}
+		</meta>
+	</table>
+	<table name="geozone" class="com.code.aon.entity.master.GeoZone" />
+	<table name="geotree" class="com.code.aon.entity.master.GeoTree" />
+	<table name="leave_batch_attach" class="com.code.aon.entity.master.LeaveBatchAttachment">
+		<meta attribute="extra-import">org.hibernate.annotations.Formula</meta>
+		<meta attribute="class-code">
+			private Integer size;
+
+			@Formula("LENGTH(data)")
+			public Integer getSize() {
+			return size;
+			}
+			public void setSize(Integer size) {
+			this.size = size;
+			}
+		</meta>
+		<column name="type" property="attachmentType"/>
+	</table>
+	<table name="message_log" class="com.code.aon.entity.master.Message" />
+	<table name="note">
+		<foreign-key constraint-name="note_fk">
+			<many-to-one property="owner" />
+		</foreign-key>
+	</table>
+	<table name="notice">
+		<foreign-key constraint-name="notice_fk">
+			<many-to-one property="sender" />
+		</foreign-key>
+		<foreign-key constraint-name="notice_fk1">
+			<many-to-one property="recipient" />
+		</foreign-key>
+	</table>
+	<table name="payroll_workplace" class="com.code.aon.entity.master.PayrollWorkPlace" />
+	<table name="offer">
+		<column name="discount_expr" property="discountExpression" />
+		<column name="number_of_pymnts" property="numberOfPayments" />
+		<column name="days_to_first_pymnt" property="daysToFirstPayment" />
+		<column name="days_between_pymnts" property="daysBetweenPayments" />
+		<column name="pymnt_days" property="paymentDays" />
+		<foreign-key constraint-name="FK_OFFER_RADDRESS">
+			<many-to-one property="address" />
+		</foreign-key>
+	</table>
+	<table name="offer_attach" class="com.code.aon.entity.master.OfferAttachment">
+		<meta attribute="extra-import">org.hibernate.annotations.Formula</meta>
+		<meta attribute="class-code">
+			private Integer size;
+
+			@Formula("LENGTH(data)")
+			public Integer getSize() {
+			return size;
+			}
+			public void setSize(Integer size) {
+			this.size = size;
+			}
+		</meta>
+	</table>
+	<table name="offer_term">
+		<column name="term_general" property="general" />
+	</table>
+	<table name="person">
+		<primary-key>
+			<generator class="registry_id">
+				<param name="property">registry</param>
+			</generator>
+			<key-column name="registry" property="id" />
+		</primary-key>
+	</table>
+	<table name="pcategory" class="com.code.aon.entity.master.ProductCategory" />
+	<table name="pcategory_group" class="com.code.aon.entity.master.ProductCategoryGroup" />
+	<table name="pcategory_tree" class="com.code.aon.entity.master.ProductCategoryTree">
+		<foreign-key constraint-name="pcategory_tree_ibfk_1">
+			<many-to-one property="parent" />
+		</foreign-key>
+		<foreign-key constraint-name="pcategory_tree_ibfk_2">
+			<many-to-one property="child" />
+		</foreign-key>
+	</table>
+	<table name="pm_type_detail" class="com.code.aon.entity.master.PayMethodTypeDetail" />
+	<table name="pm_type_detail_account" class="com.code.aon.entity.master.PayMethodTypeDetailAccount" />
+	<table name="process_detail">
+		<foreign-key constraint-name="process_detail_fk_2">
+			<many-to-one property="workgroup" />
+		</foreign-key>
+	</table>
+	<table name="process_detail_transition">
+		<foreign-key constraint-name="fk_process_detail_transition_next_process_detail">
+			<many-to-one property="nextProcessDetail" />
+		</foreign-key>
+		<foreign-key constraint-name="fk_process_detail_transition_process_detail">
+			<many-to-one property="processDetail" />
+		</foreign-key>
+	</table>
+	<table name="project_commercial">
+		<primary-key>
+			<generator class="project_id">
+				<param name="property">project</param>
+			</generator>
+			<key-column name="project" property="id" />
+		</primary-key>
+	</table>
+	<table name="project_tas">
+		<primary-key>
+			<generator class="project_id">
+				<param name="property">project</param>
+			</generator>
+			<key-column name="project" property="id" />
+		</primary-key>
+	</table>
+	<table name="purchase">
+		<column name="discount_expr" property="discountExpression" />
+		<column name="number_of_pymnts" property="numberOfPayments" />
+		<column name="days_to_first_pymnt" property="daysToFirstPayment" />
+		<column name="days_between_pymnts" property="daysBetweenPayments" />
+		<column name="pymnt_days" property="paymentDays" />
+		<foreign-key foreign-table="raddress">
+			<column-ref local-column="address" foreign-column="id" />
+			<many-to-one property="registryAddress" />
+		</foreign-key>
+	</table>
+	<table name="purchase_detail">
+		<column name="discount_expr" property="discountExpression" />
+	</table>
+	<table name="raddress" class="com.code.aon.entity.master.RegistryAddress">
+		<column name="type" property="addressType" />
+		<foreign-key constraint-name="raddress_ibfk_2">
+			<many-to-one property="geozone" />
+		</foreign-key>
+	</table>
+	<table name="raddinfo" class="com.code.aon.entity.master.RegistryAddInfo" />
+	<table name="record_data" class="com.code.aon.entity.master.RecordData">
+		<foreign-key constraint-name="record_data_fk">
+			<many-to-one property="attach" />
+		</foreign-key>
+	</table>
+	<table name="rattach" class="com.code.aon.entity.master.RegistryAttachment">
+		<meta attribute="extra-import">org.hibernate.annotations.Formula</meta>
+		<meta attribute="class-code">
+			private Integer size;
+
+			@Formula("LENGTH(data)")
+			public Integer getSize() {
+			return size;
+			}
+			public void setSize(Integer size) {
+			this.size = size;
+			}
+		</meta>
+		<column name="type" property="registryAttachmentType"></column>
+	</table>
+	<table name="rbank" class="com.code.aon.entity.master.RegistryBank" />
+	<table name="rbank_account" class="com.code.aon.entity.master.RegistryBankAccount" />
+	<table name="rdir_staff" class="com.code.aon.entity.master.RegistryDirStaff">
+		<column name="shareholder" property="shareHolder"></column>
+	</table>
+	<table name="rmedia" class="com.code.aon.entity.master.RegistryMedia">
+		<column name="media" property="mediaType" />
+		<foreign-key constraint-name="FK_RMEDIA_RADDRESS">
+			<many-to-one property="address" />
+		</foreign-key>
+	</table>
+	<table name="rnote" class="com.code.aon.entity.master.RegistryNote">
+		<column name="note_type" property="notetype" />
+	</table>
+	<table name="rpaymethod" class="com.code.aon.entity.master.RegistryPayMethod">
+		<column name="number_of_pymnts" property="numberOfPayments" />
+		<column name="days_to_first_pymnt" property="daysToFirstPayment" />
+		<column name="days_between_pymnts" property="daysBetweenPayments" />
+		<column name="pymnt_days" property="paymentDays" />
+		<foreign-key constraint-name="rpaymethod_ibfk_1">
+			<many-to-one property="payment" />
+		</foreign-key>
+	</table>
+	<table name="rrelationship" class="com.code.aon.entity.master.RegistryRelationship">
+		<foreign-key constraint-name="rrelationship_fk">
+			<many-to-one property="registry" />
+		</foreign-key>
+		<foreign-key constraint-name="rrelationship_fk1">
+			<many-to-one property="relatedRegistry" />
+		</foreign-key>
+		<foreign-key foreign-table="relationship">
+			<column-ref local-column="relationship" foreign-column="id" />
+			<many-to-one property="relationship" />
+		</foreign-key>
+	</table>
+	<table name="rsegment" class="com.code.aon.entity.master.RegistrySegment" />
+	<table name="seller">
+		<primary-key>
+			<generator class="registry_id">
+				<param name="property">registry</param>
+			</generator>
+			<key-column name="registry" property="id" />
+		</primary-key>
+	</table>
+	<table name="salary_embargo">
+		<foreign-key constraint-name="FK_SALARY_EMBARGO_CONTRACT_EMBARGO">
+			<many-to-one property="contractEmbargo" />
+		</foreign-key>
+	</table>
+	<table name="sales">
+		<column name="pos" exclude="true"/>
+		<column name="discount_expr" property="discountExpression" />
+		<column name="number_of_pymnts" property="numberOfPayments" />
+		<column name="days_to_first_pymnt" property="daysToFirstPayment" />
+		<column name="days_between_pymnts" property="daysBetweenPayments" />
+		<column name="pymnt_days" property="paymentDays" />
+		<foreign-key constraint-name="sales_ibfk_3">
+			<many-to-one property="shippingAddress" />
+		</foreign-key>
+	</table>
+	<table name="sales_detail">
+		<column name="discount_expr" property="discountExpression" />
+	</table>
+	<table name="supplier">
+		<primary-key>
+			<generator class="registry_id">
+				<param name="property">registry</param>
+			</generator>
+			<key-column name="registry" property="id" />
+		</primary-key>
+		<column name="segment" exclude="true"></column>
+	</table>
+	<table name="target">
+		<primary-key>
+			<generator class="registry_id">
+				<param name="property">registry</param>
+			</generator>
+			<key-column name="registry" property="id" />
+		</primary-key>
+	</table>
+	<table name="task_holder">
+		<primary-key>
+			<generator class="registry_id">
+				<param name="property">registry</param>
+			</generator>
+			<key-column name="registry" property="id" />
+		</primary-key>
+	</table>
+	<table name="tax">
+		<column name="tax_type" property="type" />
+	</table>
+	<table name="user" class="com.code.aon.entity.master.EnterpriseUser" />
+	<table name="user" class="com.code.aon.entity.master.User" />
+	<table name="user_workgroup" class="com.code.aon.entity.master.UserWorkGroup" />
+	<table name="warehouse_transfer">
+		<foreign-key constraint-name="FK_WT_SOURCE">
+			<many-to-one property="sourceWarehouse"/>
+		</foreign-key>
+		<foreign-key constraint-name="FK_WT_TARGET">
+			<many-to-one property="targetWarehouse"/>
+		</foreign-key>
+	</table>
+	<table name="web_info_page_resource">
+		<foreign-key constraint-name="web_info_page_resource_fk2">
+			<many-to-one property="rattach" />
+		</foreign-key>
+	</table>
+	<table name="workgroup" class="com.code.aon.entity.master.WorkGroup" />
+	<table name="workplace" class="com.code.aon.entity.master.WorkPlace">
+		<foreign-key constraint-name="workplace_ibfk_1">
+			<many-to-one property="address" />
+		</foreign-key>
+	</table>
+
+</hibernate-reverse-engineering>
