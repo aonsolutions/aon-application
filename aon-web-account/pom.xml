@@ -4,6 +4,7 @@
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
 		<version>7.0-SNAPSHOT</version>
+		<relativePath>../aon.web.parent</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aon-account</artifactId>
@@ -14,15 +15,13 @@
 		<finalName>aon-account</finalName>
 		<plugins>
 			<!-- Para construir el RPM -->
-                       <plugin>
-                                <groupId>org.codehaus.mojo</groupId>
-                                <artifactId>rpm-maven-plugin</artifactId>
-                       </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>rpm-maven-plugin</artifactId>
+				<version>2.0.1</version>
+			</plugin>
 		</plugins>
 	</build>
-	<properties>
-		<dbVersion>5.2.1</dbVersion>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
