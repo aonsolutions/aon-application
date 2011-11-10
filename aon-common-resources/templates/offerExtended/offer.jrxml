@@ -4,43 +4,40 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="341"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
-	<parameter name="printHeaders" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="logoImageFile" class="java.io.InputStream"/>
-	<parameter name="nestedReports" class="java.util.Map"/>
 	<parameter name="PriceStrategy" class="com.code.aon.product.strategy.IPriceStrategy" isForPrompting="false"/>
+	<parameter name="TotalPrice" class="java.lang.Double"/>
 	<parameter name="company" class="com.code.aon.company.Company" isForPrompting="false"/>
+	<parameter name="logoImageFile" class="java.io.InputStream"/>
+	<parameter name="recordData" class="com.code.aon.registry.RecordData" isForPrompting="false"/>
+	<parameter name="address" class="com.code.aon.registry.RegistryAddress" isForPrompting="false"/>
 	<parameter name="phone" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
 	<parameter name="fax" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
-	<parameter name="address" class="com.code.aon.registry.RegistryAddress" isForPrompting="false"/>
-	<parameter name="recordData" class="com.code.aon.registry.RecordData" isForPrompting="false"/>
-	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="email" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
 	<parameter name="web" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
-	<parameter name="TotalPrice" class="java.lang.Double"/>
+	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="targetPhone" class="java.lang.String"/>
-	<parameter name="targetEmail" class="java.lang.String"/>
+	<parameter name="targetCellular" class="java.lang.String"/>
 	<parameter name="targetFax" class="java.lang.String"/>
+	<parameter name="targetEmail" class="java.lang.String"/>
 	<parameter name="targetPayMethod" class="com.code.aon.registry.RegistryPayMethod"/>
 	<parameter name="defaultPayMethod" class="java.lang.Boolean"/>
-	<parameter name="targetCellular" class="java.lang.String"/>
-	<field name="series" class="java.lang.String"/>
-	<field name="number" class="java.lang.Integer"/>
-	<field name="issueDate" class="java.util.Date"/>
+	<parameter name="nestedReports" class="java.util.Map"/>
 	<field name="id" class="java.lang.Integer"/>
+	<field name="type" class="com.code.aon.commercial.enumeration.OfferType"/>
+	<field name="referenceCode" class="java.lang.String"/>
+	<field name="issueDate" class="java.util.Date"/>
 	<field name="target" class="com.code.aon.commercial.Target"/>
 	<field name="address" class="com.code.aon.registry.IAddress"/>
 	<field name="payMethod" class="com.code.aon.config.PayMethod"/>
-	<field name="seller" class="com.code.aon.seller.Seller"/>
-	<field name="lines" class="java.util.Set"/>
+	<field name="numberOfPayments" class="java.lang.Integer"/>
 	<field name="bank" class="com.code.aon.config.Bank"/>
 	<field name="bankAccount" class="com.code.aon.config.BankAccount"/>
-	<field name="type" class="com.code.aon.commercial.enumeration.OfferType"/>
-	<field name="numberOfPayments" class="java.lang.Integer"/>
+	<field name="lines" class="java.util.Set"/>
 	<field name="terms" class="java.util.Set"/>
 	<variable name="currentOffer" class="com.code.aon.commercial.Offer" resetType="Group" resetGroup="offerGroup">
 		<variableExpression><![CDATA[(com.code.aon.commercial.Offer)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
@@ -147,7 +144,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{series} != null && !"".equals($F{series})?$F{series} + "/":"") + $F{number}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{referenceCode}]]></textFieldExpression>
 			</textField>
 			<textField pattern="dd/MM/yyyy" isBlankWhenNull="false">
 				<reportElement key="textField-77" x="448" y="41" width="82" height="13"/>
@@ -258,9 +255,9 @@
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="319" splitType="Stretch">
+		<band height="305" splitType="Stretch">
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-1" positionType="Float" x="21" y="239" width="513" height="36"/>
+				<reportElement key="subreport-1" positionType="Float" x="5" y="239" width="528" height="29"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="PriceStrategy">
 					<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
@@ -269,7 +266,7 @@
 				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("offerDetail")]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="true">
-				<reportElement key="subreport-4" positionType="Float" x="21" y="275" width="513" height="41"/>
+				<reportElement key="subreport-4" positionType="Float" x="5" y="274" width="430" height="14"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 				<subreportParameter name="PriceStrategy">
 					<subreportParameterExpression><![CDATA[$P{PriceStrategy}]]></subreportParameterExpression>
@@ -278,7 +275,7 @@
 					<subreportParameterExpression><![CDATA[$V{currentOffer}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentOffer},$V{currentOffer}.getTarget()))]]></dataSourceExpression>
-				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("offerVatBreakDown")]]></subreportExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("offerTaxBreakDown")]]></subreportExpression>
 			</subreport>
 			<rectangle>
 				<reportElement key="rectangle-4" x="0" y="5" width="538" height="12" backcolor="#000000"/>
@@ -559,8 +556,34 @@
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{target}.getRegistry().getEmail().getValue()]]></textFieldExpression>
 			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement key="textField-11" positionType="Float" mode="Opaque" x="453" y="274" width="80" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_total}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="false">
+				<reportElement key="textField-12" positionType="Float" isPrintRepeatedValues="false" x="453" y="288" width="80" height="14" isPrintInFirstWholeBand="true"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Double"><![CDATA[$P{PriceStrategy}.getTotalPrice($V{currentOffer},$V{currentOffer}.getTarget())]]></textFieldExpression>
+			</textField>
 		</band>
-		<band height="321">
+		<band height="280">
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-88" positionType="Float" x="283" y="216" width="97" height="27"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
@@ -763,7 +786,7 @@
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="44" splitType="Stretch">
+		<band height="20" splitType="Stretch">
 			<textField evaluationTime="Report" isBlankWhenNull="false">
 				<reportElement key="textField-15" x="521" y="0" width="13" height="14"/>
 				<box>
