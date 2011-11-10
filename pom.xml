@@ -290,10 +290,9 @@
 		</repository>
 
 		<repository>
-			<id>jboss-deprecated-repository</id>
-			<name>JBoss Deprecated Maven Repository</name>
-			<url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
-			<layout>default</layout>
+			<id>dynamicJasper-public-repository</id>
+			<name>DynamicJasper public Repository</name>
+			<url>http://www.fdvs.com.ar/djmaven2</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -303,42 +302,12 @@
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository>
-
-		<repository>
-			<id>atlassian</id>
-			<name>Atlassian Maven Repository Switchboard</name>
-			<layout>default</layout>
-			<url>http://repository.atlassian.com/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-
 
 		<repository>
 			<id>jasperForge</id>
 			<name>Jasper Forge Repository</name>
 			<layout>default</layout>
 			<url>http://jasperreports.sourceforge.net/maven2</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-
-		<repository>
-			<id>dynamicJasper-public-repository</id>
-			<name>DynamicJasper public Repository</name>
-			<url>http://www.fdvs.com.ar/djmaven2</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
@@ -363,6 +332,25 @@
 			</snapshots>
 		</repository>
 	</repositories>
+
+	<pluginRepositories>
+	
+		<pluginRepository>
+			<id>aon</id>
+			<url>http://dev.esferalia.com/maven2_repositories/inhouse</url>
+		</pluginRepository>
+		
+		<pluginRepository>
+			<id>aon.snapshots</id>
+			<url>http://dev.esferalia.com/maven2_repositories/inhouse_snapshot</url>
+		</pluginRepository>
+
+		<pluginRepository>
+			<id>maven2-repository.dev.java.net</id>
+			<url>http://download.java.net/maven/2/</url>
+		</pluginRepository>
+		
+   	</pluginRepositories>
 
 	<build>
 		<plugins>

@@ -11,21 +11,12 @@
 	<artifactId>aon.sql.payroll</artifactId>
 	<description>AON SQL PAYROLL</description>
 	<name>AON SQL PAYROLL</name>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>aon</id>
-			<url>http://dev.esferalia.com/maven2_repositories/inhouse</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>aon.snapshots</id>
-			<url>http://dev.esferalia.com/maven2_repositories/inhouse_snapshot</url>
-		</pluginRepository>
-	</pluginRepositories>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>com.esferalia.aon</groupId>
 				<artifactId>aon-maven-plugin</artifactId>
+				<version>${project.version}</version>
 				<executions>
 					<execution>
 						<goals>
