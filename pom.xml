@@ -15,10 +15,10 @@
 
   <modules>
     <!-- PARENT MODULES -->
-	  <module>aon-web-parent</module>	
+<!--	  <module>aon-web-parent</module>	-->
 	
     <!-- LIB MODULES -->
-	  <module>aon-external-libs</module>
+<!--	  <module>aon-external-libs</module> -->
 
     <!-- DB MODULES -->
 	  <module>aon-master</module>
@@ -27,7 +27,7 @@
 	  <module>aon-ui-dbutils</module>
 	  <module>aon-ui-db-manager</module>
 	  <module>aon-maven-plugin</module>
-	  <module>aon-sql-payroll</module>
+<!--	  <module>aon-sql-payroll</module> -->
 
     <!-- FRAMEWORK -->
 	  <module>aon-audit</module>
@@ -43,112 +43,112 @@
 	  <module>aon-ui-form</module>
 	  <module>aon-ui-report</module>
 	  <module>aon-ui-resources</module>
-	  <module>aon-webmail</module>
-	  <module>aon-ui-webmail</module>
+<!--	  <module>aon-webmail</module> -->
+<!--	  <module>aon-ui-webmail</module> -->
 	  <module>aon-jsf-bridge</module>
-	  <module>aon-manager</module>
-	  <module>aon-ui-manager</module>
+<!--	  <module>aon-manager</module> -->
+<!--	  <module>aon-ui-manager</module> -->
 
     <!-- ENTITY -->
-	  <module>aon-account</module>
+<!--	  <module>aon-account</module> -->
 	  <module>aon-company</module>
 	  <module>aon-config</module>
-	  <module>aon-customer</module>
+<!--	  <module>aon-customer</module> -->
 	  <module>aon-geozone</module>
-	  <module>aon-groupware</module>
-	  <module>aon-messaging</module>
-	  <module>aon-project</module>
+<!--	  <module>aon-groupware</module> -->
+<!--	  <module>aon-messaging</module> -->
+<!--	  <module>aon-project</module> -->
 	  <module>aon-registry</module>
 	  <module>aon-calendar</module>
-	  <module>aon-payroll</module>
-	  <module>aon-salary</module>
-	  <module>aon-account-bridge</module>
-	  <module>aon-accounting</module>
-	  <module>aon-commercial</module>
-	  <module>aon-finance</module>
-	  <module>aon-finance-bridge</module>
-	  <module>aon-fiscal</module>
-	  <module>aon-product</module>
-	  <module>aon-purchase</module>
-	  <module>aon-sales</module>
-	  <module>aon-sales-bridge</module>
-	  <module>aon-seller</module>
-	  <module>aon-supplier</module>
-	  <module>aon-warehouse</module>
-	  <module>aon-warehouse-bridge</module>
-	  <module>aon-asset</module>
-	  <module>aon-infoweb</module>
-	  <module>aon-infoweb-templates</module>
-	  <module>aon-marketing</module>
-	  <module>aon-purchase-bridge</module>
-	  <module>aon-tas</module>
+<!--	  <module>aon-payroll</module> -->
+<!--	  <module>aon-salary</module> -->
+<!--	  <module>aon-account-bridge</module> -->
+<!--	  <module>aon-accounting</module> -->
+<!--	  <module>aon-commercial</module> -->
+<!--	  <module>aon-finance</module> -->
+<!--	  <module>aon-finance-bridge</module> -->
+<!--	  <module>aon-fiscal</module> -->
+<!--	  <module>aon-product</module> -->
+<!--	  <module>aon-purchase</module> -->
+<!--	  <module>aon-sales</module> -->
+<!--	  <module>aon-sales-bridge</module> -->
+<!--	  <module>aon-seller</module> -->
+<!--	  <module>aon-supplier</module> -->
+<!--	  <module>aon-warehouse</module> -->
+<!--	  <module>aon-warehouse-bridge</module> -->
+<!--	  <module>aon-asset</module> -->
+<!--	  <module>aon-infoweb</module> -->
+<!--	  <module>aon-infoweb-templates</module> -->
+<!--	  <module>aon-marketing</module> -->
+<!--	  <module>aon-purchase-bridge</module> -->
+<!--	  <module>aon-tas</module> -->
 
     <!-- UI MODULES -->
-	  <module>aon-ui-audabridge</module>
-	  <module>aon-ui-company</module>
-	  <module>aon-ui-config</module>
-	  <module>aon-ui-customer</module>
-	  <module>aon-ui-geozone</module>
-	  <module>aon-ui-groupware</module>
-	  <module>aon-ui-messaging</module>
-	  <module>aon-ui-registry</module>
-	  <module>aon-ui-calendar</module>
-	  <module>aon-ui-payroll</module>
-	  <module>aon-ui-account</module>
-	  <module>aon-ui-account-bridge</module>
-	  <module>aon-ui-accounting</module>
-	  <module>aon-ui-commercial</module>
-	  <module>aon-ui-finance</module>
-	  <module>aon-ui-fiscal</module>
-	  <module>aon-ui-product</module>
-	  <module>aon-ui-sales</module>
-	  <module>aon-ui-seller</module>
-	  <module>aon-ui-sign</module>
-	  <module>aon-ui-stat</module>
-	  <module>aon-ui-supplier</module>
-	  <module>aon-ui-asset</module>
-	  <module>aon-ui-infoweb</module>
-	  <module>aon-ui-mailing</module>
-	  <module>aon-ui-marketing</module>
-	  <module>aon-ui-project</module>
-	  <module>aon-ui-publisher</module>
-	  <module>aon-ui-purchase</module>
-	  <module>aon-ui-warehouse</module>
-	  <module>aon-ui-tas</module>
-	  <module>aon-ui-document</module>
+<!--	  <module>aon-ui-audabridge</module> -->
+<!--	  <module>aon-ui-company</module> -->
+<!--	  <module>aon-ui-config</module> -->
+<!--	  <module>aon-ui-customer</module> -->
+<!--	  <module>aon-ui-geozone</module> -->
+<!--	  <module>aon-ui-groupware</module> -->
+<!--	  <module>aon-ui-messaging</module> -->
+<!--	  <module>aon-ui-registry</module> -->
+<!--	  <module>aon-ui-calendar</module> -->
+<!--	  <module>aon-ui-payroll</module> -->
+<!--	  <module>aon-ui-account</module> -->
+<!--	  <module>aon-ui-account-bridge</module> -->
+<!--	  <module>aon-ui-accounting</module> -->
+<!--	  <module>aon-ui-commercial</module> -->
+<!--	  <module>aon-ui-finance</module> -->
+<!--	  <module>aon-ui-fiscal</module> -->
+<!--	  <module>aon-ui-product</module> -->
+<!--	  <module>aon-ui-sales</module> -->
+<!--	  <module>aon-ui-seller</module> -->
+<!--	  <module>aon-ui-sign</module> -->
+<!--	  <module>aon-ui-stat</module> -->
+<!--	  <module>aon-ui-supplier</module> -->
+<!--	  <module>aon-ui-asset</module> -->
+<!--	  <module>aon-ui-infoweb</module> -->
+<!--	  <module>aon-ui-mailing</module> -->
+<!--	  <module>aon-ui-marketing</module> -->
+<!--	  <module>aon-ui-project</module> -->
+<!--	  <module>aon-ui-publisher</module> -->
+<!--	  <module>aon-ui-purchase</module> -->
+<!--	  <module>aon-ui-warehouse</module> -->
+<!--	  <module>aon-ui-tas</module> -->
+	  <module>aon-ui-document</module> 
 
     <!-- GENERATED -->
-	  <module>aon-audabridge-api</module>
+<!--	  <module>aon-audabridge-api</module> -->
 
     <!-- UTILITY -->
-	  <module>aon-file-format</module>
-	  <module>aon-file-bank</module>
-	  <module>aon-file-tax</module>
-	  <module>aon-file-payroll</module>
-	  <module>aon-facturae</module>
-	  <module>aon-stat</module>
+<!--	  <module>aon-file-format</module> -->
+<!--	  <module>aon-file-bank</module> -->
+<!--	  <module>aon-file-tax</module> -->
+<!--	  <module>aon-file-payroll</module> -->
+<!--	  <module>aon-facturae</module> -->
+<!--	  <module>aon-stat</module> -->
 
     <!-- CMS MODULES -->
 
 
     <!-- WEB MODULES -->
-	  <module>aon-desktop</module>
-	  <module>aon-web-payroll</module>
-	  <module>aon-web-asset</module>
-	  <module>aon-web-communicator</module>
-	  <module>aon-web-project</module>
-	  <module>aon-web-enterprise</module>
-	  <module>aon-web-fiscal</module>
-	  <module>aon-web-gta</module>
-	  <module>aon-web-infoweb</module>
-	  <module>aon-web-manager</module>
-	  <module>aon-web-publisher</module>
-	  <module>aon-web-webmail</module>
-	  <module>aon-web-document</module>
+<!--	  <module>aon-desktop</module> -->
+<!--	  <module>aon-web-payroll</module> -->
+<!--	  <module>aon-web-asset</module> -->
+<!--	  <module>aon-web-communicator</module> -->
+<!--	  <module>aon-web-project</module> -->
+<!--	  <module>aon-web-enterprise</module> -->
+<!--	  <module>aon-web-fiscal</module> -->
+<!--	  <module>aon-web-gta</module> -->
+<!--	  <module>aon-web-infoweb</module> -->
+<!--	  <module>aon-web-manager</module> -->
+<!--	  <module>aon-web-publisher</module> -->
+<!--	  <module>aon-web-webmail</module> -->
+<!--	  <module>aon-web-document</module> -->
   
     <!-- OTHER -->
- 	  <module>aon-common-resources</module>
- 	  <module>tgc-ui-payroll</module>
+<!-- 	  <module>aon-common-resources</module> -->
+<!-- 	  <module>tgc-ui-payroll</module> -->
 
 <!--
     *************************************************************************************************************
