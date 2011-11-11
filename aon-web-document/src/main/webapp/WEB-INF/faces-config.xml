@@ -11,7 +11,7 @@
 		</locale-config> 
 		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>
 		<resource-bundle>
-			<base-name>com.code.aon.ui.document.i18n.messages</base-name>
+			<base-name>com.code.aon.ui.document.i18n.application</base-name>
 			<var>appBundle</var>
 		</resource-bundle>
 	</application>

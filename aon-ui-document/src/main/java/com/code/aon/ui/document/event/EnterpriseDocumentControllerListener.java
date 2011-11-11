@@ -1,5 +1,6 @@
 package com.code.aon.ui.document.event;
 
+import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_SEARCH;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
 import com.code.aon.common.ManagerBeanException;
@@ -23,6 +24,8 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 			if (! mc.isMainEnterprise() ) {
 				edc.getEnterpriseDocument().setEnterprise(mc.getLoggedUser().getEnterprise());
 			}
+			EnterpriseDocumentSearchListener edsl = (EnterpriseDocumentSearchListener) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_SEARCH);
+			edsl.setCategories(null);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -33,6 +36,8 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) event.getController();
 		try {
 			edc.reset();
+			EnterpriseDocumentSearchListener edsl = (EnterpriseDocumentSearchListener) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_SEARCH);
+			edsl.setCategoryArray(edc.getEnterpriseDocument().getCategories());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -45,6 +50,19 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 		EnterpriseDocument ed = (EnterpriseDocument) edc.getTo();
 		ed.setData( edc.getAonFile().getData() );
 		ed.setMimeType( edc.getAonFile().getMimeType() );
+		updateCategories(edc);
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		EnterpriseDocumentController edc = (EnterpriseDocumentController) event.getController();
+		updateCategories(edc);
+	}
+	
+	private void updateCategories( EnterpriseDocumentController edc ) {
+		EnterpriseDocumentSearchListener edsl = (EnterpriseDocumentSearchListener) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_SEARCH);
+		edc.getEnterpriseDocument().setCategories(edsl.getCategoryArray());		
 	}
 	
 }

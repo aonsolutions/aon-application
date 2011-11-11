@@ -67,9 +67,11 @@ public class AlfrescoRenderer implements CriterionVisitor {
 	}
 
 	public void visitLogicalOrExpression(LogicalOrExpression expression) {
+		out.append("(");
 		expression.getLeftExpression().accept(this);
 		out.append(" OR ");
 		expression.getRightExpression().accept(this);
+		out.append(")");
 	}
 
 	public void visitLogicalAndExpression(LogicalAndExpression expression) {
@@ -93,9 +95,7 @@ public class AlfrescoRenderer implements CriterionVisitor {
 	public void visitIdentExpression(IdentExpression expression) {
 		String id = expression.getName();
 		if ( isLeftIdentifier && (id.indexOf(":") != -1) ) {
-			id = StringUtils.replace(id, ":", "\\:");
-			id = StringUtils.replace(id, "{", "\\{");
-			id = "@" + StringUtils.replace(id, "}", "\\}");	
+			id = "@" + BasicAlfresco.formatId(id);	
 		}
 		out.append(id);
 	}

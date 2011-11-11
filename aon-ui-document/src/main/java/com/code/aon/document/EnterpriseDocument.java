@@ -31,6 +31,8 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 	
 	private String description;
 	
+	private String title;
+	
 	private Date created; 
 	
 	private Enterprise enterprise;
@@ -93,6 +95,14 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
 	public Date getCreated() {
 		return created;
@@ -141,6 +151,7 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 				.append(this.description, o.description)
 				.append(this.enterprise, o.enterprise)
 				.append(this.name, o.name)
+				.append(this.title, o.title)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -156,6 +167,7 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 			.append(id)
 			.append(mimeType)
 			.append(name)
+			.append(title)
 			.toHashCode();
 	}
 
@@ -168,6 +180,7 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 			append("id", id).
 			append("mimeType", mimeType).
 			append("name", name).
+			append("title", title).
 			toString();
 	}
 	

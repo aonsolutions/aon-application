@@ -13,7 +13,7 @@
 		<ui:param name="controller" value="#{enterpriseDocument}" />
 		<ui:define name="columns">
 
-			<aon:column sortable="#{sortColumns}" alias="cm:name"
+			<aon:column alias="cm:name"
 				styleClass="aon-editDataTable-textColumn aon-width-200 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel for="EDocument_name" value="#{bundle.aon_name}" />
@@ -21,51 +21,66 @@
 				<aon:outputText value="#{to.name}" rendered="#{formList}" />
 				<aon:inputText id="EDocument_name" required="true"
 					value="#{edcontroller.to.name}" maxlength="64"
-					rendered="#{formEdit}" size="45" />
+					rendered="#{formEdit}" size="30" />
 				<f:facet name="footer">
 					<aon:inputText id="EDocument_name-New" required="true"
 						value="#{edcontroller.to.name}" maxlength="64"
-						rendered="#{formNew}" size="45" />
+						rendered="#{formNew}" size="30" />
 				</f:facet>
 			</aon:column>
  
-			<aon:column sortable="#{sortColumns}" alias="cm:description"
-				styleClass="aon-editDataTable-textColumn aon-width-300 aon-nowrap">
+			<aon:column alias="cm:description"
+				styleClass="aon-editDataTable-textColumn aon-width-250 aon-nowrap">
 				<f:facet name="header">
 					<aon:outputLabel for="EDocument_description" value="#{bundle.aon_description}" />
 				</f:facet>
 				<aon:outputText value="#{to.description}" rendered="#{formList}" />
 				<aon:inputText id="EDocument_description" required="true"
 					value="#{edcontroller.to.description}" maxlength="128"
-					rendered="#{formEdit}" size="45" />
+					rendered="#{formEdit}" size="30" />
 				<f:facet name="footer">
 					<aon:inputText id="EDocument_description-New" required="true"
 						value="#{edcontroller.to.description}" maxlength="128"
-						rendered="#{formNew}" size="45" />
+						rendered="#{formNew}" size="30" />
+				</f:facet>
+			</aon:column>
+
+			<aon:column alias="cm:title"
+				styleClass="aon-editDataTable-textColumn aon-width-150 aon-nowrap">
+				<f:facet name="header">
+					<aon:outputLabel for="EDocument_title" value="#{documentBundle.aon_title}" />
+				</f:facet>
+				<aon:outputText value="#{to.title}" rendered="#{formList}" />
+				<aon:inputText id="EDocument_title" required="true"
+					value="#{edcontroller.to.title}" maxlength="128"
+					rendered="#{formEdit}" size="30" />
+				<f:facet name="footer">
+					<aon:inputText id="EDocument_title-New" required="true"
+						value="#{edcontroller.to.title}" maxlength="128"
+						rendered="#{formNew}" size="30" />
 				</f:facet>
 			</aon:column>
 			
 			<aon:column styleClass="aon-editDataTable-textColumn aon-width-200 aon-nowrap">
 				<f:facet name="header">
-					<aon:outputLabel for="EDocument_categories" value="#{registryBundle.registry_category}" />
+					<aon:outputLabel for="cm_category" value="#{registryBundle.registry_category}" />
 				</f:facet>
 				<aon:outputText value="#{to.categoryList}" rendered="#{formList}" />
-				<aon:selectManyCheckbox id="EDocument_categories"
-					layout="pageDirection" rendered="#{formEdit}"
-					required="true" value="#{edcontroller.to.categories}">
-					<f:selectItems value="#{enterpriseDocument.categories}"/>
-				</aon:selectManyCheckbox>		
+				<ui:include src="/com/code/aon/ui/document/facelet/alfrescoCategory/template.xhtml" >
+					<ui:param name="categoryRequired" value="#{true}" />
+					<ui:param name="categoryRendered" value="#{formEdit}" />
+				</ui:include>						
 				<f:facet name="footer">
-					<aon:selectManyCheckbox id="EDocument_categories-New"
-						layout="pageDirection" rendered="#{formNew}"
-						required="true" value="#{edcontroller.to.categories}">
-						<f:selectItems value="#{enterpriseDocument.categories}"/>
-					</aon:selectManyCheckbox>		
+					<ui:include src="/com/code/aon/ui/document/facelet/alfrescoCategory/template.xhtml" >
+						<ui:param name="categoryId" value="cm_category-New" />
+						<ui:param name="categoryRequired" value="#{true}" />
+						<ui:param name="categoryRendered" value="#{formNew}" />
+					</ui:include>						
 				</f:facet>				
 			</aon:column>			
  
 			<aon:column sortable="#{sortColumns}" alias="cm:created"
-				styleClass="aon-editDataTable-textColumn aon-width-120">
+				styleClass="aon-editDataTable-textColumn aon-width-130">
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_date}" />
 				</f:facet>

@@ -5,6 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
@@ -31,6 +32,11 @@
 					<aon:inputText id="cm_description" size="60"
 						valueChangeListener="#{controller.addExpression}" />
 
+					<aon:outputLabel for="cm_title"
+						value="#{documentBundle.aon_title}" />
+					<aon:inputText id="cm_title" size="60"
+						valueChangeListener="#{controller.addExpression}" />
+
 					<aon:outputLabel for="cm_type"
 						value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="cm_type"
@@ -46,10 +52,7 @@
 					
 					<aon:outputLabel for="cm_category"
 						value="#{registryBundle.registry_category}" />
-					<aon:selectManyCheckbox id="cm_category"
-						value="#{enterpriseDocumentSearch.selectedCategories}">
-						<f:selectItems value="#{enterpriseDocument.categories}"/>
-					</aon:selectManyCheckbox>								
+					<ui:include src="/com/code/aon/ui/document/facelet/alfrescoCategory/template.xhtml" />
 												
 					<c:if test="#{manager.mainEnterprise}" >
 						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >

@@ -58,7 +58,7 @@ public class AlfrescoCategoryManager extends BasicAlfresco  {
             	Reference reference = classification.getRootCategory().getId();
                 Category[] categories = getClassificationService().getChildCategories(reference);
                 for (Category category : categories) {
-                	AlfrescoCategory ac = new AlfrescoCategory(classification);
+                	AlfrescoCategory ac = new AlfrescoCategory();
                 	ac.setId(category.getId());
                 	ac.setName(category.getTitle());
                 	ac.setDescription(category.getDescription());

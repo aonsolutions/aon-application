@@ -26,4 +26,18 @@ public interface IAlfrescoTransferObject extends ITransferObject {
 	 */
 	void setId( Reference id );
 	
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
+	String getName();
+	
+	/**
+	 * Gets the description.
+	 *
+	 * @return the description
+	 */
+	String getDescription();
+	
 }

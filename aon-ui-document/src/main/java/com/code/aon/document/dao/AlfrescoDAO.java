@@ -1,13 +1,19 @@
 package com.code.aon.document.dao;
 
+import static com.code.aon.document.IAlfrescoConstants.INSERT_ERROR;
+import static com.code.aon.document.IAlfrescoConstants.REMOVE_ERROR;
+import static com.code.aon.document.IAlfrescoConstants.UPDATE_ERROR;
+import static org.alfresco.webservice.util.Constants.QUERY_LANG_LUCENE;
+
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
-import org.alfresco.webservice.classification.ClassificationServiceSoapBindingStub;
 import org.alfresco.webservice.content.ContentFault;
 import org.alfresco.webservice.repository.QueryResult;
 import org.alfresco.webservice.repository.RepositoryFault;
@@ -17,9 +23,6 @@ import org.alfresco.webservice.types.CMLAddAspect;
 import org.alfresco.webservice.types.CMLCreate;
 import org.alfresco.webservice.types.CMLDelete;
 import org.alfresco.webservice.types.CMLUpdate;
-import org.alfresco.webservice.types.Category;
-import org.alfresco.webservice.types.Classification;
-import org.alfresco.webservice.types.ContentFormat;
 import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.Node;
 import org.alfresco.webservice.types.ParentReference;
@@ -29,7 +32,6 @@ import org.alfresco.webservice.types.Reference;
 import org.alfresco.webservice.types.ResultSetRow;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
-import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -42,7 +44,6 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.document.AlfrescoComparator;
 import com.code.aon.document.AlfrescoRenderer;
 import com.code.aon.document.BasicAlfresco;
-import com.code.aon.document.IAlfrescoDocument;
 import com.code.aon.document.IAlfrescoTransferObject;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
@@ -55,28 +56,48 @@ import com.code.aon.ql.ProjectionList;
 public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AlfrescoDAO.class);
+	
+    private static final String BASE_NAME = "com.code.aon.document.i18n.messages";
+    
+    private ResourceBundle bundle;
 
 	private Class<? extends ITransferObject> pojoClass;
+	
+	private ParentReference parentReference;
 	
 	public abstract Object getValue( NamedValue value );
 	
 	protected abstract ITransferObject convert( NamedValue[] values ) throws DAOException;
 	
-	protected abstract NamedValue[] insertValues( ITransferObject to );
-	
 	protected abstract NamedValue[] updateValues( ITransferObject to );
 	
-	protected abstract CMLAddAspect getAddAspect(ITransferObject to );
+	protected CMLAddAspect[] getAddAspects(ITransferObject to ) {
+		return null;
+	}
 	
-	protected void afterInsert( IAlfrescoDocument ad ) throws Exception {
+	protected void afterInsert( ITransferObject to ) throws Exception {
 	}
 
-	protected void afterUpdate( IAlfrescoDocument ad ) throws Exception {
+	protected void afterUpdate( ITransferObject to ) throws Exception {
 	}
 	
 	public AlfrescoDAO( Class<? extends ITransferObject> pojoClass, String user, String password ) {
 		super( user, password );
 		this.pojoClass = pojoClass;
+		this.bundle = ResourceBundle.getBundle(BASE_NAME); 
+	}
+
+	public void setPath( String path ) {
+		Reference reference = getReference(path);
+		setParentReference( getReferenceToParent(reference) );		
+	}
+	
+	public ParentReference getParentReference() {
+		return parentReference;
+	}
+
+	public void setParentReference(ParentReference parentReference) {
+		this.parentReference = parentReference;
 	}
 
 	@Override
@@ -85,8 +106,12 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		return ato.getId();
 	}
 
+	protected String getQueryPath() {
+		return "TYPE:\"cm:content\" AND PATH:\"" + getParentReference().getPath() + "/*\"";
+	}
+	
 	private String getQueryExpression( Criteria criteria ){
-		String expression = "TYPE:\"cm:content\" AND PATH:\"/app:company_home/cm:AON/*\""; 
+		String expression = getQueryPath(); 
 		if ( criteria != null ) { 
 			AlfrescoRenderer renderer = new AlfrescoRenderer();
 			renderer.visitCriteria(criteria);
@@ -136,7 +161,8 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 			LOGGER.debug( "getCount, expression={}", expression );
 			count = getCount(expression);
 		} catch ( Throwable e ) {
-			throw new DAOException( "Error getting count of " + pojoClass, e );
+			String message = getErrorMessage( "Error getting count of " + pojoClass, e );
+			throw new DAOException( message, e );
 		} finally {
 			endSession();
 		}
@@ -148,56 +174,48 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		return StringUtils.replace(alias, "_", ":" );
 	}
 	
-	private void addContent( ParentReference parent, NamedValue[] values, CMLAddAspect aspect,
-			IAlfrescoDocument ad ) throws ContentFault, RemoteException {
+	protected String getType() {
+		return Constants.TYPE_CONTENT;
+	}
+	
+	private void addContent( ParentReference parent, IAlfrescoTransferObject ato ) throws ContentFault, RemoteException {
 
 		// Asignamos un nombre para el nodo que vamos a crea en company_home
-		String _name = StringUtils.replace(ad.getName(), " ", "_");
+		String _name = StringUtils.replace(ato.getName(), " ", "_");
 		parent.setChildName(Constants.createQNameString(Constants.NAMESPACE_CONTENT_MODEL, _name));
 		
 		// Comienza la construcción de nodo
-		NamedValue[] contentProps = new NamedValue[1];
-		contentProps[0] = Utils.createNamedValue(Constants.PROP_NAME, ad.getName());
+		NamedValue[] contentProps = new NamedValue[2];
+		contentProps[0] = Utils.createNamedValue(Constants.PROP_NAME, ato.getName());
+		contentProps[1] = Utils.createNamedValue(Constants.PROP_DESCRIPTION, ato.getDescription());
 		CMLCreate create = new CMLCreate("1", parent, null, null,
-				null, Constants.TYPE_CONTENT, contentProps);
+				null, getType(), contentProps);
 
-		// Añadimos aspectos al nodo
-		CMLAddAspect addAspect = new CMLAddAspect(Constants.ASPECT_TITLED,
-				values, null, "1");
-		
 		// Contruimos CML Block, con el nodo y sus aspectos
 		CML cml = new CML();
 		cml.setCreate(new CMLCreate[] { create });
-		cml.setAddAspect(new CMLAddAspect[] {addAspect, aspect});
+		CMLAddAspect[] aspects = getAddAspects(ato);
+		if (! ArrayUtils.isEmpty(aspects) ) {
+			cml.setAddAspect(aspects);	
+		}
 
 		// Creamos y recuperamos el contenido vía Repository Web Service
 		UpdateResult[] result = getRepositoryService().update(cml);
 		Reference content = result[0].getDestination();
-
-		// Escribimos el contenido
-		ContentFormat contentFormat = new ContentFormat(ad.getMimeType().getName(), "UTF-8");
-		LOGGER.info("Setting the content of the document");
-		getContentService().write(content, Constants.PROP_CONTENT, ad.getData(), contentFormat);
 		
-		ad.setId( content );
-	}
-	
-	protected ParentReference getParentReference() {
-		return getReferenceToParent(getCompanyHome(), "cm:AON");
+		ato.setId( content );
 	}
 	
 	@Override
 	public ITransferObject insert(ITransferObject to) throws DAOException {
 		try {
 			startSession();
-			IAlfrescoDocument ad = (IAlfrescoDocument) to;
 			ParentReference parent = getParentReference();
-			CMLAddAspect aspect = getAddAspect( ad );
-			NamedValue[] values = insertValues(ad);
-			addContent(parent, values, aspect, ad);
-			afterInsert( ad );
+			addContent(parent, (IAlfrescoTransferObject) to);
+			afterInsert(to);
 		} catch ( Throwable e ) {
-			throw new DAOException( "Error in insert of " + pojoClass, e );
+			String message = getErrorMessage(to, e, INSERT_ERROR);
+			throw new DAOException( message, e );			
 		} finally {
 			endSession();
 		}
@@ -205,11 +223,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	}
 	
 	protected Predicate getPredicate( ITransferObject to ) {
-		IAlfrescoDocument ad = (IAlfrescoDocument) to;
-		return new Predicate( new Reference[]{ad.getId()}, STORE, null);		
-	}
-
-	protected Predicate getPredicate( IAlfrescoDocument ad ) {
+		IAlfrescoTransferObject ad = (IAlfrescoTransferObject) to;
 		return new Predicate( new Reference[]{ad.getId()}, STORE, null);		
 	}
 	
@@ -225,7 +239,8 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 			getRepositoryService().update(cml);
 			removed = true;
 		} catch ( Throwable e ) {
-			throw new DAOException( "Error in remove of " + pojoClass, e );
+			String message = getErrorMessage(to, e, REMOVE_ERROR);
+			throw new DAOException( message, e );
 		} finally {
 			endSession();
 		}	
@@ -294,10 +309,19 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		throw new UnsupportedOperationException("Not supported!");		
 	}
 	
+	private Predicate getPredicate(Serializable pk ) {
+		if ( pk instanceof Reference ) {
+			Reference reference = (Reference) pk;
+			return new Predicate( new Reference[]{reference}, STORE, null);			
+		}
+		String id =  "@" + BasicAlfresco.formatId(UUID_SHORT);
+		Query query = new Query(QUERY_LANG_LUCENE, id + ":" + pk.toString() );
+		return new Predicate( null, STORE, query);
+	}
+	
 	@Override
 	public ITransferObject get(Serializable pk) throws DAOException {
-		Reference reference = (Reference) pk;
-		Predicate predicate = new Predicate( new Reference[]{reference}, STORE, null);
+		Predicate predicate = getPredicate(pk);
 		try {
 			startSession();
 			Node[] nodes = getRepositoryService().get(predicate);
@@ -325,9 +349,10 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 
 			getRepositoryService().update(cml);
 			
-			afterUpdate((IAlfrescoDocument) to);
+			afterUpdate(to);
 		} catch ( Throwable e ) {
-			throw new DAOException( "Error in update of " + pojoClass, e );
+			String message = getErrorMessage(to, e, UPDATE_ERROR);
+			throw new DAOException( message, e );			
 		} finally {
 			endSession();
 		}
@@ -369,36 +394,25 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		return this.pojoClass;
 	}
 
-	public void test() throws DAOException {
-		try {
-			startSession();
-			
-			ClassificationServiceSoapBindingStub classificationService = WebServiceFactory.getClassificationService();
-			
-            // Get all the classifications
-            Classification[] classifications = classificationService.getClassifications(STORE); 
-            
-            Classification aonClassification = null;
-            
-            // Output some details
-            LOGGER.info("All classifications:");
-            for (Classification classification : classifications) {
-                LOGGER.info(classification.getClassification());
-                Reference ref = classification.getRootCategory().getId();
-                LOGGER.info("Uuid: {}, Path: {}, Store: {}", new Object[]{ref.getUuid(), ref.getPath(), ref.getStore().getAddress()} );
-                LOGGER.info("Classification = {}; Root category = {}", classification.getTitle(), classification.getRootCategory().getTitle());
-                if ( "AON".equals(classification.getRootCategory().getTitle()) ) {
-                	aonClassification = classification;
-                }
-            }
-            Category[] categories = classificationService.getChildCategories(aonClassification.getRootCategory().getId());
-            for (Category category : categories) {
-            	LOGGER.info("Title = " + category.getTitle());
-            }
-		} catch ( Throwable e ) {
-			throw new DAOException( "Error in getContent " + pojoClass, e );
-		} finally {
-			endSession();
-		}	
-	}	
+	private String getErrorMessage( ITransferObject to, Throwable t, String key  ) {
+		String name = ((IAlfrescoTransferObject)to).getName();
+		String errorMessage = t.getMessage();
+		if ( StringUtils.isBlank(errorMessage) ) {
+			if ( t instanceof RepositoryFault ) {
+				errorMessage = StringUtils.substringAfter( ((RepositoryFault) t).getMessage1(), ": " );
+			}
+		}
+		return MessageFormat.format(bundle.getString(key), name, errorMessage);
+	}
+
+	private String getErrorMessage( String message, Throwable t ) {
+		String errorMessage = t.getMessage();
+		if ( StringUtils.isBlank(errorMessage) ) {
+			if ( t instanceof RepositoryFault ) {
+				errorMessage = StringUtils.substringAfterLast( ((RepositoryFault) t).getMessage1(), ": " );
+			}
+		}
+		return message + ". " + errorMessage;
+	}
+	
 }

@@ -6,7 +6,13 @@ import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID_NAME;
 import static com.code.aon.document.EnterpriseDocumentAspect.PREFFIX;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -33,6 +39,8 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocumentSearchListener.class);
 
+	private static final AlfrescoCategory EMPTY_CATEGORY = new AlfrescoCategory();
+	
 	private static final String PATH_FIELD = "PATH";
 	private static final String TEXT_FIELD = "TEXT";
 	private Enterprise enterprise;
@@ -40,7 +48,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 	private Date endDate; 
 	private String text;
 	private MimeType type;
-	private AlfrescoCategory[] selectedCategories;
+	private List<AlfrescoCategory> categories;
 	
 	public Date getStartDate() {
 		return startDate;
@@ -81,15 +89,48 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 	public void setType(MimeType type) {
 		this.type = type;
 	}
-
-	public AlfrescoCategory[] getSelectedCategories() {
-		return selectedCategories;
+	
+	public List<AlfrescoCategory> getCategories() {
+		if (categories == null) {
+			categories = new LinkedList<AlfrescoCategory>();
+			categories.add(EMPTY_CATEGORY);
+		}
+		return categories;
 	}
 
-	public void setSelectedCategories(AlfrescoCategory[] selectedCategories) {
-		this.selectedCategories = selectedCategories;
+	public AlfrescoCategory[] getCategoryArray() {
+		if ( categories != null ) {
+			List<AlfrescoCategory> list = new LinkedList<AlfrescoCategory>();
+			for( AlfrescoCategory category : categories ) {
+				if ( (category != null) && (category.getId() != null) ) {
+					list.add(category);
+				}
+			}
+			if (! list.isEmpty() ) {
+				return list.toArray(new AlfrescoCategory[list.size()]);			
+			}			
+		}
+		return null;
+	}
+	
+	public void setCategoryArray( AlfrescoCategory[] array ) {
+		this.categories = new LinkedList<AlfrescoCategory>();
+		this.categories.addAll( Arrays.asList(array) );
+	}
+	
+	public void setCategories(List<AlfrescoCategory> categories) {
+		this.categories = categories;
 	}
 
+	public int getCategoriesSize() {
+		return (categories != null) ? categories.size() : 0;
+	}
+	
+	public AlfrescoCategory getEmptyCategory() {
+		return EMPTY_CATEGORY;
+	}
+	
+	
 	@Override
 	protected void init() throws ManagerBeanException {
 		reset( true );
@@ -100,7 +141,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 		setEndDate(null);
 		setText(null);
 		setType(null);
-		setSelectedCategories(null);
+		setCategories(null);
 		Enterprise enterprise = null;
 		if ( createTo ) {
 			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
@@ -140,12 +181,12 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 		if ( getType() != null ) {
 			criteria.addEqualExpression( MIME_TYPE, getType().getName());
 		}
-		if (! ArrayUtils.isEmpty(getSelectedCategories()) ) {
-			addCategoriesToCriteria(criteria, getSelectedCategories());
+		if (! ArrayUtils.isEmpty(getCategoryArray())) {
+			addCategoriesToCriteria(criteria, getCategories());
 		}
 	}
 
-	private void addCategoriesToCriteria( Criteria criteria, AlfrescoCategory[] categories ) { 
+	private void addCategoriesToCriteria( Criteria criteria, List<AlfrescoCategory> categories ) { 
 		Expression expToAdd = null;
 		for( AlfrescoCategory category : categories ) {
 			String value = category.getSearchValue();
@@ -158,6 +199,19 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 		}
 		if ( expToAdd != null ) {
 			criteria.addExpression(expToAdd);
+		}
+	}		
+	
+	public void onAddCategory(ActionEvent event) {
+		getCategories().add(EMPTY_CATEGORY);
+	}
+	
+	public void onRemoveCategory(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
+		getCategories().remove(index);
+		if (getCategories().isEmpty()) {
+			getCategories().add(EMPTY_CATEGORY);
 		}
 	}		
 	
