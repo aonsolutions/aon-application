@@ -5,52 +5,39 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html">
-
-
-	<ui:decorate
-		template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-		<!--  
-		-->
-		<aon:valueParam name="toolbarDescription" default="#{bundle.aon_list}" />
-		
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+		<aon:valueParam name="toolbarDescription" default="#{bundle.aon_list}"/>
 		<ui:define name="toolbarActions">
 			<aon:commandButton id="aonToolbar-search"
 				title="#{bundle.aon_key_search_accelerator}"
-				value="#{bundle.aon_search}" 
-				action="#{searchAction}" 
+				value="#{bundle.aon_search}"
+				action="#{searchAction}"
 				styleClass="aon-finding-toolbar-item aon-icon-search"
-				accesskey="#{bundle.aon_key_search}" />
+				accesskey="#{bundle.aon_key_search}"/>
 		</ui:define>
-		
 		<ui:define name="toolbarContent">
-		
-			<aon:outputText styleClass="aon-bold" 
-				value="#{bundle.aon_type}:&#160;" /> 
+			<aon:outputText styleClass="aon-bold" value="#{bundle.aon_type}:&#160;"/>
 			<aon:selectOneMenu value="#{tgcReport.reportName}">
-				<f:selectItem itemLabel=" - " value="#{null}" />
-				<f:selectItems value="#{reportNames}" />
-				<a4j:support event="onchange" reRender="aonToolbar" />
+				<f:selectItem itemLabel=" - " value="#{null}"/>
+				<f:selectItems value="#{reportNames}"/>
+				<a4j:support event="onchange" reRender="aonToolbar"/>
 			</aon:selectOneMenu>
-			
 			<aon:htmlCommandLink id="excel_report"
 				styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border"
 				value="&#160;" title="#{bundle.aon_listing}" target="_blank"
 				rendered="#{tgcReport.reportName!=null}"
 				action="#{report.onExecute}">
-				<f:param name="reportKey" value="#{tgcReport.reportName.value}" />
-				<f:param name="outputFormat" value="MS Excel" />
+				<f:param name="reportKey" value="#{tgcReport.reportName.value}"/>
+				<f:param name="outputFormat" value="MS Excel"/>
 			</aon:htmlCommandLink>
 			<aon:htmlCommandLink id="pdf_report"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
 				value="#{tgcPayrollBundle.tgcPayroll_report}"
 				rendered="#{tgcReport.reportName!=null}"
 				action="#{report.onExecute}">
-				<f:param name="reportKey" value="#{tgcReport.reportName.value}" />
-				<f:param name="outputFormat" value="PDF" />
+				<f:param name="reportKey" value="#{tgcReport.reportName.value}"/>
+				<f:param name="outputFormat" value="PDF"/>
 			</aon:htmlCommandLink>
-			
 		</ui:define>
-		
 	</ui:decorate>
-	
 </ui:composition>

@@ -6,28 +6,22 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:a4j="http://richfaces.org/a4j"
 	template="/facelet/templates/aon.ui.content.xhtml">
-
 	<ui:define name="content">
 		<aon:form>
-		
-			<aon:methodParam name="searchAction" value="contractReport_search" />
-			<ui:include src="/com/esferalia/tgc/ui/payroll/facelet/report/toolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{tgcPayrollBundle.tgcPayroll_contract_report_module}" />
-				<ui:param name="reportNames" value="#{tgcPayrollCollections.contractReportNames}" />
+			<aon:methodParam name="searchAction" value="contractReport_search"/>
+			<ui:include src="/com/esferalia/tgc/ui/payroll/facelet/report/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{tgcPayrollBundle.tgcPayroll_contract_report_module}"/>
+				<ui:param name="reportNames" value="#{tgcPayrollCollections.contractReportNames}"/>
 			</ui:include>
-
 			<aon:div styleClass="aon-scroll-area">
-				
 				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/listContent.xhtml">
-					<ui:param name="controller" value="#{contract}" />
-					<ui:param name="skipSelectButton" value="true" />
-					<ui:param name="rowSelectorToggleOnClick" value="false" />
-					<ui:param name="skipWorkPlaceColumn" value="true" />
-					<ui:param name="skipDocumentColumn" value="true" />
+					<ui:param name="controller" value="#{contract}"/>
+					<ui:param name="skipSelectButton" value="true"/>
+					<ui:param name="rowSelectorToggleOnClick" value="false"/>
+					<ui:param name="skipWorkPlaceColumn" value="true"/>
+					<ui:param name="skipDocumentColumn" value="true"/>
 				</ui:include>
-				
 			</aon:div>
-			
 		</aon:form>
 	</ui:define>
 </ui:composition>
