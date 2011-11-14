@@ -1,6 +1,7 @@
 package com.code.aon.document.dao;
 
 import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID;
+import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID_LONG;
 import static org.alfresco.webservice.util.Constants.NAMESPACE_CONTENT_MODEL;
 import static org.alfresco.webservice.util.Constants.PROP_CREATED;
 import static org.alfresco.webservice.util.Constants.PROP_DESCRIPTION;
@@ -116,7 +117,7 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 			} else if ( PROP_CREATED.equals(name) ) {
 				Date date = ISO8601DateFormat.parse(nv.getValue());
 				ed.setCreated(date);
-			} else if ( ENTERPRISE_ID.equals(name) ) {
+			} else if ( ENTERPRISE_ID_LONG.equals(name) ) {
 				Integer id = NumberUtils.toInt(nv.getValue());
 				IManagerBean bean;
 				try {

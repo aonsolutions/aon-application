@@ -45,25 +45,8 @@
 			<value>enterpriseDocument</value>
 		</managed-property>
 		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
 			<property-name>saveState</property-name>
 			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>enterprise</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>enterprise.id</value>
-				</map-entry>
-			</map-entries>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -89,6 +72,19 @@
 		<managed-bean-name>enterpriseDocumentSearch</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.document.event.EnterpriseDocumentSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<!--  **** ENTERPRISE TREE **** -->
+	<managed-bean>
+		<managed-bean-name>enterpriseTree</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.document.tree.EnterpriseTree</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>enterpriseTreeControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.document.event.EnterpriseTreeControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>	
 	
 	<!-- ************ ALFRESCO CATEGORY ************** -->
@@ -143,5 +139,17 @@
 			<to-view-id>/com/code/aon/ui/document/facelet/alfrescoCategory/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
-	
+
+	<!-- =================== Enterprise Tree  ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>enterprise_formTree</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseTree/formTree.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>enterpriseDocument_formTree</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseDocument/formTree.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+		
 </faces-config>

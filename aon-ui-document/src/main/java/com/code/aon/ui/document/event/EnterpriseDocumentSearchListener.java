@@ -2,8 +2,7 @@ package com.code.aon.ui.document.event;
 
 
 import static com.code.aon.document.BasicAlfresco.MIME_TYPE;
-import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID_NAME;
-import static com.code.aon.document.EnterpriseDocumentAspect.PREFFIX;
+import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID_SHORT;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
 import java.util.Arrays;
@@ -136,7 +135,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 		reset( true );
 	}
 	
-	private void reset( boolean createTo ) throws ManagerBeanException {
+	public void reset( boolean createTo ) throws ManagerBeanException {
 		setStartDate(null);
 		setEndDate(null);
 		setText(null);
@@ -168,7 +167,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
-			criteria.addEqualExpression( PREFFIX + ENTERPRISE_ID_NAME, getEnterprise().getId());			
+			criteria.addEqualExpression( ENTERPRISE_ID_SHORT, getEnterprise().getId());			
 		}
 		if ( (getStartDate() != null) || (getEndDate() != null) ) {
 			Object minor = (getStartDate() != null) ? getStartDate() : "MIN";

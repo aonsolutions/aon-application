@@ -37,11 +37,11 @@ import com.code.aon.document.dao.EnterpriseDocumentDAO;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.IAttachmentController;
 import com.code.aon.ui.common.components.LookupChangeEvent;
-import com.code.aon.ui.form.LinesController;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
-public class EnterpriseDocumentController extends LinesController implements IAttachmentController {
+public class EnterpriseDocumentController extends BasicController implements IAttachmentController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocumentController.class);
 	
@@ -63,6 +63,11 @@ public class EnterpriseDocumentController extends LinesController implements IAt
 			this.alfrescoManagerBean = new BasicManagerBean(this.alfrescoDAO);			
 		}
 		return this.alfrescoManagerBean;
+	}
+
+	@Override
+	protected String getIdAlias() throws ManagerBeanException {
+		return "ID";
 	}
 
 	public EnterpriseDocument getEnterpriseDocument() {

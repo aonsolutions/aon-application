@@ -48,6 +48,10 @@ public class BasicAlfresco {
 	
 	public static final String PATH_LONG = "{" + Constants.NAMESPACE_CONTENT_MODEL + "}path";
 	
+	public static final String CATEGORIES = "categories";
+	
+	public static final String CATEGORIES_SHORT = "cm:" + CATEGORIES;
+	
 	public static final String CATEGORIES_LONG = "{" + Constants.NAMESPACE_CONTENT_MODEL + "}categories";
 	
 	public static final String MIME_TYPE = Constants.PROP_CONTENT + ".mimetype";
@@ -168,4 +172,10 @@ public class BasicAlfresco {
 		return false;		
 	}
 
+	public static String getId( Reference reference ) {
+		Store store = reference.getStore();
+		String id = store.getScheme() + "\\://" + store.getAddress() + "/" + reference.getUuid();
+		return id;
+	}
+	
 }

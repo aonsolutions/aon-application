@@ -15,9 +15,11 @@ public class EnterpriseDocumentAspect {
 	
 	public static final String ASPECT_NAME = DOMAIN + "enterpriseDocument";
 	
-	public static final String ENTERPRISE_ID_NAME = "enterpriseId";
+	public static final String ENTERPRISE_ID = "enterpriseId";
+	
+	public static final String ENTERPRISE_ID_SHORT = PREFFIX + ENTERPRISE_ID;
 
-	public static final String ENTERPRISE_ID = DOMAIN + ENTERPRISE_ID_NAME;
+	public static final String ENTERPRISE_ID_LONG = DOMAIN + ENTERPRISE_ID;
 	
 	private Integer enterpriseId;
 	
@@ -37,7 +39,7 @@ public class EnterpriseDocumentAspect {
 		CMLAddAspect aspect = new CMLAddAspect();
 		aspect.setAspect(ASPECT_NAME);
 		NamedValue[] properties = new NamedValue[1];
-		properties[0] = Utils.createNamedValue(ENTERPRISE_ID, enterpriseId.toString());
+		properties[0] = Utils.createNamedValue(ENTERPRISE_ID_LONG, enterpriseId.toString());
 		aspect.setProperty(properties);
 		aspect.setWhere(new Predicate(new Reference[] { parent }, null, null));
 		aspect.setWhere_id("1");		
