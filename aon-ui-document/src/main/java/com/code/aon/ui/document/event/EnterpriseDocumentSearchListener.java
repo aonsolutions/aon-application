@@ -90,10 +90,6 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 	}
 	
 	public List<AlfrescoCategory> getCategories() {
-		if (categories == null) {
-			categories = new LinkedList<AlfrescoCategory>();
-			categories.add(EMPTY_CATEGORY);
-		}
 		return categories;
 	}
 
@@ -113,12 +109,18 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 	}
 	
 	public void setCategoryArray( AlfrescoCategory[] array ) {
-		this.categories = new LinkedList<AlfrescoCategory>();
-		this.categories.addAll( Arrays.asList(array) );
+		List<AlfrescoCategory> list = new LinkedList<AlfrescoCategory>(); 
+		if (! ArrayUtils.isEmpty(array) ) {
+			list.addAll( Arrays.asList(array) );
+		}
+		setCategories(list);
 	}
 	
 	public void setCategories(List<AlfrescoCategory> categories) {
 		this.categories = categories;
+		if (categories.isEmpty()) {
+			categories.add(EMPTY_CATEGORY);
+		}		
 	}
 
 	public int getCategoriesSize() {
@@ -140,7 +142,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 		setEndDate(null);
 		setText(null);
 		setType(null);
-		setCategories(null);
+		setCategories( new LinkedList<AlfrescoCategory>() );
 		Enterprise enterprise = null;
 		if ( createTo ) {
 			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);

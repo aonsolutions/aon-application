@@ -45,6 +45,11 @@ public class AlfrescoCategoryController extends BasicController {
 		return this.alfrescoManagerBean;
 	}
 	
+	@Override
+	protected String getIdAlias() throws ManagerBeanException {
+		return "ID";
+	}
+	
 	public AlfrescoDAO getAlfrescoDAO() {
 		return alfrescoDAO;
 	}

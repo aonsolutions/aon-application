@@ -207,8 +207,17 @@ public class EnterpriseTree implements ICompanyConstants {
 			}
 		}
 	}
-	
-	public void onSelectTreeEnterprise( ActionEvent event ) {
+
+	public void onSelectTreeCategory( ActionEvent event ) {
+		AlfrescoCategoryController acc = (AlfrescoCategoryController) AonUtil.getRegisteredBean(ALFRESCO_CATEGORY_CONTROLLER_NAME);
+		try {
+			Reference id = (Reference) getCurrentNode().getId();
+			acc.select(event, BasicAlfresco.getId(id));
+		} catch (ManagerBeanException e) {
+			LOGGER.error(">>>> onSelectTreeCategory exception: ",e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}		
 	}
 	
 	public void onSelectTreeDocument( ActionEvent event ) {

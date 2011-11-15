@@ -22,7 +22,6 @@
 				onclick="storeTreeOffset();"
 				iconLeaf="#{enterpriseNode.type.icon}" >
 				<a4j:support event="onselected" reRender="aonContent"
-					rendered="#{enterpriseNode.type != 'CATEGORY'}"
 					action="#{enterpriseNode.type.action}" />
 				<aon:outputText style="font-size: 0.8em;"
 					value="#{enterpriseNode.label}" >

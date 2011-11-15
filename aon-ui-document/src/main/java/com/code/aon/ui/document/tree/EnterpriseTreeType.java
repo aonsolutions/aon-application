@@ -10,8 +10,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public enum EnterpriseTreeType {
 	
-	ENTERPRISE( EnterpriseTreeData.ENTERPRISE_ICON, "enterprise_formTree", "onSelectTreeEnterprise" ),
-	CATEGORY( EnterpriseTreeData.CATEGORY_ICON, null, null ),
+	ENTERPRISE( EnterpriseTreeData.ENTERPRISE_ICON, "enterprise_formTree", null ),
+	CATEGORY( EnterpriseTreeData.CATEGORY_ICON, "alfrescoCategory_formTree", "onSelectTreeCategory" ),
 	DOCUMENT( EnterpriseTreeData.DOCUMENT_ICON, "enterpriseDocument_formTree", "onSelectTreeDocument" ),
 	;
 	

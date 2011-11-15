@@ -51,6 +51,12 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 	
 	private AonFile aonFile;
 	
+	private String title;
+	
+	private String description;
+	
+	private AlfrescoCategory[] categories;
+	
 	private List<SelectItem> mimeTypes;
 	
 	@Override
@@ -126,8 +132,35 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 		return -1;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public AlfrescoCategory[] getCategories() {
+		return categories;
+	}
+
+	public void setCategories(AlfrescoCategory[] categories) {
+		this.categories = categories;
+	}
+
 	public void reset() throws ManagerBeanException {
 		setAonFile(null);
+		setTitle(null);
+		setDescription(null);
+		setCategories(null);
 	}
 
 	public void onEnterpriseChanged( LookupChangeEvent event ) {
@@ -148,12 +181,11 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 			LOGGER.error(">>>> onAccept",e);
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
-		}		
-		String description = getEnterpriseDocument().getDescription();
-		AlfrescoCategory[] categories = getEnterpriseDocument().getCategories();
+		}
+		setDescription( getEnterpriseDocument().getTitle() );
+		setDescription( getEnterpriseDocument().getDescription() );
+		setCategories( getEnterpriseDocument().getCategories() );
 		onReset(event);
-		getEnterpriseDocument().setDescription(description);
-		getEnterpriseDocument().setCategories(categories);
 	}
 	
 	public List<SelectItem> getMimeTypes() {
