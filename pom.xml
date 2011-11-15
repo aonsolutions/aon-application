@@ -393,15 +393,29 @@
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-        		<artifactId>maven-source-plugin</artifactId>
-        		<version>2.1.2</version>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
 				<executions>
+					<!-- here we override the super-pom attach-sources executionid which
+					calls sources:jar goal. That goals forks the lifecycle, causing
+					the generate-sources phase to be called twice for the install goal.
+					This causes any other plugin bound to the generate-sources phase to
+					be called twice which usually has nasty side effects, let alone
+					creating duplicate processing and longer build times. -->
 					<execution>
-						<goals>
-							<goal>jar</goal>
-						</goals>
+					  <id>attach-sources</id>
+					  <phase>DISABLE_FORKED_LIFECYCLE_MSOURCES-13</phase>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration> 
 			</plugin>
 
 			<plugin>
@@ -502,5 +516,34 @@
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 	</distributionManagement>
+	<profiles>
+		<!-- MSOURCES-13 related workaround overriding super-pom -->
+		<profile>
+			<id>release-profile</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<inherited>true</inherited>
+						<artifactId>maven-source-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-sources-no-fork</id>
+								<inherited>true</inherited>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
  
