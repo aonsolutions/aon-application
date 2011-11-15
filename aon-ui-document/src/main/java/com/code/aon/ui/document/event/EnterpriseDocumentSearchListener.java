@@ -3,6 +3,7 @@ package com.code.aon.ui.document.event;
 
 import static com.code.aon.document.BasicAlfresco.MIME_TYPE;
 import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID_SHORT;
+import static com.code.aon.document.dao.AlfrescoCategoryDAO.EMPTY_CATEGORY;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
 import java.util.Arrays;
@@ -29,26 +30,50 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.document.controller.ManagerController;
-import com.code.aon.ui.form.event.ControllerEvent;
-import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.ui.form.event.ControllerSearchListener;
+import com.code.aon.ui.form.event.ControllerSearchListenerEx;
 import com.code.aon.ui.util.AonUtil;
 
-public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
+public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocumentSearchListener.class);
-
-	private static final AlfrescoCategory EMPTY_CATEGORY = new AlfrescoCategory();
+	private final static Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocumentSearchListener.class);
 	
 	private static final String PATH_FIELD = "PATH";
 	private static final String TEXT_FIELD = "TEXT";
 	private Enterprise enterprise;
 	private Date startDate;
-	private Date endDate; 
+	private Date endDate;
+	private String name;
+	private String description;
+	private String title;
 	private String text;
 	private MimeType type;
 	private List<AlfrescoCategory> categories;
+	private boolean showList;
 	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -131,18 +156,37 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 		return EMPTY_CATEGORY;
 	}
 	
-	
+	public boolean isShowList() {
+		return showList;
+	}
+
+	public void setShowList(boolean showList) {
+		this.showList = showList;
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		reset( true );
 	}
 	
+	public void onClear(ActionEvent event) {
+		try {
+			reset( true );
+		} catch (ManagerBeanException e) {
+			LOGGER.error(e.getMessage(), e);
+		}		
+	}
+	
 	public void reset( boolean createTo ) throws ManagerBeanException {
+		setName(null);
+		setDescription(null);
+		setTitle(null);
 		setStartDate(null);
 		setEndDate(null);
 		setText(null);
 		setType(null);
 		setCategories( new LinkedList<AlfrescoCategory>() );
+		setShowList(false);
 		Enterprise enterprise = null;
 		if ( createTo ) {
 			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
@@ -155,19 +199,18 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 		}
 		setEnterprise(enterprise);
 	}
-	
-	@Override
-	public void afterModelSearched(ControllerEvent event) throws ControllerListenerException {
-		try {			
-			reset( false );
-		} catch (ManagerBeanException e) {
-			LOGGER.error(e.getMessage(), e);
-			throw new ControllerListenerException(e.getMessage(), e);
-		}
-	}
 
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
+		if (! StringUtils.isEmpty(getName())) {
+			criteria.addEqualExpression( "cm:name", getName());
+		}
+		if (! StringUtils.isEmpty(getTitle())) {
+			criteria.addEqualExpression( "cm:title", getTitle());
+		}
+		if (! StringUtils.isEmpty(getDescription())) {
+			criteria.addEqualExpression( "cm:description", getDescription());
+		}
 		if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
 			criteria.addEqualExpression( ENTERPRISE_ID_SHORT, getEnterprise().getId());			
 		}
@@ -185,6 +228,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListener {
 		if (! ArrayUtils.isEmpty(getCategoryArray())) {
 			addCategoriesToCriteria(criteria, getCategories());
 		}
+		setShowList(true);
 	}
 
 	private void addCategoriesToCriteria( Criteria criteria, List<AlfrescoCategory> categories ) { 

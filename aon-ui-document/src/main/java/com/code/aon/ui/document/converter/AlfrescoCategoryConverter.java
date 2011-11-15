@@ -7,6 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
 import com.code.aon.document.AlfrescoCategory;
+import com.code.aon.document.dao.AlfrescoCategoryDAO;
 import com.code.aon.ui.document.controller.AlfrescoCategoryController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -20,7 +21,11 @@ public class AlfrescoCategoryConverter implements Converter {
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
 		if (value != null) {
 			AlfrescoCategoryController acc = (AlfrescoCategoryController) AonUtil.getRegisteredBean(ALFRESCO_CATEGORY_CONTROLLER_NAME);
-			return acc.getCategory(value);
+			AlfrescoCategory ac = acc.getCategory(value);
+			if ( ac == null ) {
+				ac = AlfrescoCategoryDAO.EMPTY_CATEGORY;
+			}
+			return ac;
 		}
 		return null;
 	}

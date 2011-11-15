@@ -223,8 +223,6 @@ public class EnterpriseTree implements ICompanyConstants {
 	public void onSelectTreeDocument( ActionEvent event ) {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
 		try {
-			EnterpriseDocumentSearchListener edsl = (EnterpriseDocumentSearchListener) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_SEARCH);
-			edsl.reset(false);
 			Reference id = (Reference) getCurrentNode().getId();
 			edc.select(event, BasicAlfresco.getId(id));
 		} catch (ManagerBeanException e) {

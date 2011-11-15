@@ -89,6 +89,16 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		resetCurrentNode();
 	}
+	
+	@Override
+	public void afterModelSearched(ControllerEvent event)
+			throws ControllerListenerException {
+		try {
+			event.getController().clearCriteria();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
+		}
+	}
 
 	private void resetCurrentNode() {
 		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);

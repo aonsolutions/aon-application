@@ -6,79 +6,53 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 		<aon:form id="enterpriseDocumentForm">
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.aon_documents}" />
-				<ui:param name="controller" value="#{enterpriseDocument}" />
-				<ui:param name="skipResetButton" value="#{true}" />
-			</ui:include>
+				<ui:param name="toolbarDescription" value="#{bundle.aon_toolbar_search}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="clear"
+						value="#{bundle.aon_clear}" immediate="true" 
+						actionListener="#{enterpriseDocument.onClear}"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+				</ui:define>
+			</ui:decorate>		
 
+			<aon:methodParam name="searchAction" value="enterpriseDocument_search" />
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{enterpriseDocument}" />
 				<ui:param name="skipAfterSearch" value="#{true}" />
 				<ui:define name="searchContent">
 
-					<aon:outputLabel for="cm_name"
-						value="#{bundle.aon_name}" />
-					<aon:inputText id="cm_name" size="60"
-						valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="cm_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="cm_description" size="60"
-						valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="cm_title"
-						value="#{documentBundle.aon_title}" />
-					<aon:inputText id="cm_title" size="60"
-						valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="cm_type"
-						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="cm_type"
-						value="#{enterpriseDocumentSearch.type}">
-						<f:selectItem itemLabel="-" value="#{null}" />		
-						<f:selectItems value="#{enterpriseDocument.mimeTypes}" />
-					</aon:selectOneMenu>					
-
-					<aon:outputLabel for="cm_text"
-						value="#{bundle.aon_content}" />
-					<aon:inputText id="cm_text" size="60"
-						value="#{enterpriseDocumentSearch.text}" />
-					
-					<aon:outputLabel for="cm_category"
-						value="#{registryBundle.registry_category}" />
-					<ui:include src="/com/code/aon/ui/document/facelet/alfrescoCategory/template.xhtml" />
-												
-					<c:if test="#{manager.mainEnterprise}" >
-						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{enterpriseDocumentSearch.enterprise}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-						</ui:include>
-					</c:if>
-							
-					<aon:outputLabel value="#{bundle.aon_date}" />
-					<aon:div>
-						<aon:outputLabel for="cm_created-From" styleClass="aon-form-date-label aon-padding-right" 
-							value="#{bundle.aon_date_from}:" />
-						<aon:selectInputDate id="cm_created-From"
-							value="#{enterpriseDocumentSearch.startDate}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}" />
-				
-						<aon:outputLabel for="cm_created-To" styleClass="aon-form-date-label aon-padding-right" 
-							value="#{bundle.aon_date_to}:" />
-						<aon:selectInputDate id="cm_created-To"
-							value="#{enterpriseDocumentSearch.endDate}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}" />
-					</aon:div>		
+					<aon:outputText value="" />
+					<aon:div styleClass="aon-width-600">
+    					<rich:simpleTogglePanel
+    						switchType="ajax"
+							styleClass="aon-portlet" 
+							headerClass="aon-portlet-title" 
+							bodyClass="aon-portlet-body" 						
+    						label="#{bundle.aon_general}"
+    						opened="#{!enterpriseDocumentSearch.showList}" >   					
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
+								<ui:include src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />
+							</aon:panelGrid>
+						</rich:simpleTogglePanel>
+					</aon:div>
 									
 				</ui:define>
+				<ui:define name="additionalSearchContent" >
+					<c:if test="#{enterpriseDocumentSearch.showList}">
+						<aon:div styleClass="aon-margin-top">
+							<ui:include
+								src="/com/code/aon/ui/document/facelet/enterpriseDocument/listContent.xhtml" />
+						</aon:div>
+					</c:if>
+				</ui:define>				
 			</ui:decorate>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />

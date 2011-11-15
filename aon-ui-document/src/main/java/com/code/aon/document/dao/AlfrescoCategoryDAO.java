@@ -21,6 +21,8 @@ import com.code.aon.document.EnterpriseDocument;
  */
 public class AlfrescoCategoryDAO extends AlfrescoDAO  {
 
+	public static final AlfrescoCategory EMPTY_CATEGORY = new AlfrescoCategory();
+	
     private final String CATEGORY = "category"; // the propertyname of subcategories
     private final String CATEGORY_Q = Constants.createQNameString(Constants.NAMESPACE_CONTENT_MODEL, CATEGORY);
     private final String SUBCATEGORIES = "subcategories"; // the propertyname of subcategories
