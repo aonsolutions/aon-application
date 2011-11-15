@@ -14,7 +14,6 @@ import javax.faces.event.ActionEvent;
 
 import org.alfresco.webservice.types.Reference;
 import org.alfresco.webservice.util.Constants;
-import org.apache.commons.lang.ObjectUtils;
 import org.richfaces.component.UITree;
 import org.richfaces.component.state.TreeState;
 import org.richfaces.event.NodeSelectedEvent;
@@ -164,7 +163,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		boolean selected = false;
 		if ( tree.isRowAvailable() && (currentNode != null) ) {
 			EnterpriseTreeData etd = (EnterpriseTreeData) tree.getRowData();
-			selected = ObjectUtils.equals(etd, getCurrentNode());
+			selected = (etd == getCurrentNode());
 		}
 		return selected;
 	}	

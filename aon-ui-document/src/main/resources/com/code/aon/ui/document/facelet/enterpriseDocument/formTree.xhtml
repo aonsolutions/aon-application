@@ -21,7 +21,8 @@
 			<ui:param name="skipSearchButton" value="#{true}" />
 			
 			<ui:define name="beforeSpinToolbarContent">
-				<aon:htmlCommandLink id="download" target="_blank"
+				<aon:htmlCommandLink id="download"
+					rendered="#{!formNew}" target="_blank"
 					actionListener="#{enterpriseDocument.downloadAttachment}"
 					styleClass="aon-finding-toolbar-item aon-icon-mail-save"
 					value="#{bundle.aon_fileupload_download}"

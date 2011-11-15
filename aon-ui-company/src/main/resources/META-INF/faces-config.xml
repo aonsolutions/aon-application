@@ -702,7 +702,6 @@
 				<value>#{enterpriseRPayMethodChildListener}</value>
 				<value>#{enterpriseAddInfoListener}</value>
 				<value>#{enterpriseDirStaffListener}</value>
-				<value>#{enterpriseControllerListener}</value>		
 				<value>#{enterpriseRAttachChildListener}</value>		
 			</list-entries>
 		</managed-property>
