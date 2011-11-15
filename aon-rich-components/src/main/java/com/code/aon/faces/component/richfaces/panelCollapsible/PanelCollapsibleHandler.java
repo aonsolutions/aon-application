@@ -2,14 +2,14 @@ package com.code.aon.faces.component.richfaces.panelCollapsible;
 
 import javax.faces.component.UIComponent;
 
-import org.richfaces.taglib.SimpleTogglePanelListenerTagHandler;
+import org.richfaces.taglib.SimpleTogglePanelTagHandler;
 
 import com.code.aon.faces.component.ComponentManager;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 
-public class PanelCollapsibleHandler extends SimpleTogglePanelListenerTagHandler {
+public class PanelCollapsibleHandler extends SimpleTogglePanelTagHandler {
 
 	public PanelCollapsibleHandler(ComponentConfig config) {
 		super(config);

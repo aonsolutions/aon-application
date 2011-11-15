@@ -552,6 +552,9 @@
 			<component-type>
 				com.code.aon.faces.PanelCollapsible
 			</component-type>
+			<renderer-type>
+				org.richfaces.SimpleTogglePanelRenderer
+			</renderer-type>			
 			<handler-class>
 				com.code.aon.faces.component.richfaces.panelCollapsible.PanelCollapsibleHandler
 			</handler-class>

@@ -31,17 +31,12 @@
 
 					<aon:outputText value="" />
 					<aon:div styleClass="aon-width-600">
-    					<rich:simpleTogglePanel
-    						switchType="ajax"
-							styleClass="aon-portlet" 
-							headerClass="aon-portlet-title" 
-							bodyClass="aon-portlet-body" 						
-    						label="#{bundle.aon_general}"
-    						opened="#{!enterpriseDocumentSearch.showList}" >   					
+						<aon:panelCollapsible label="#{bundle.aon_general}"
+							opened="#{!enterpriseDocumentSearch.showList}" >
 							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
 								<ui:include src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />
 							</aon:panelGrid>
-						</rich:simpleTogglePanel>
+						</aon:panelCollapsible>
 					</aon:div>
 									
 				</ui:define>

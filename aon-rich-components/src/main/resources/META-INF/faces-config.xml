@@ -177,6 +177,10 @@
     <component>
         <component-type>com.code.aon.faces.PanelCollapsible</component-type>
         <component-class>org.richfaces.component.html.HtmlSimpleTogglePanel</component-class>
+		<component-extension>
+			<component-family>org.richfaces.SimpleTogglePanel</component-family>
+			<renderer-type>org.richfaces.SimpleTogglePanelRenderer</renderer-type>
+		</component-extension>        
     </component>
     <component>
         <component-type>com.code.aon.faces.Panel</component-type>
