@@ -1,5 +1,6 @@
 package com.code.aon.common.dao;
 
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -55,16 +56,16 @@ public class AliasWriter {
 	private String[] getClassMappings() {
 		List<String> list = new ArrayList<String>();
 		if ( this.configuration != null ) {
-			Iterator i = this.configuration.getClassMappings();
+			Iterator<PersistentClass> i = this.configuration.getClassMappings();
 			while ( i.hasNext() ) {
-				PersistentClass pc = (PersistentClass) i.next();
+				PersistentClass pc = i.next();
 				list.add( pc.getClassName() );
 			}
 		} else {
-			Map map = HibernateUtil.getSessionFactory().getAllClassMetadata();
-			Iterator i = map.values().iterator();
+			Map<?,ClassMetadata> map = HibernateUtil.getSessionFactory(HibernateUtil.getSessionFactoryName()).getAllClassMetadata();
+			Iterator<ClassMetadata> i = map.values().iterator();
 			while ( i.hasNext() ) {
-				ClassMetadata cmd = (ClassMetadata) i.next();
+				ClassMetadata cmd = i.next();
 				list.add( cmd.getEntityName() );
 			}
 		}
@@ -97,15 +98,12 @@ public class AliasWriter {
 	public void write( File file ) throws IOException {
 		write( getClassMappings(), file );
 	}
+	public void write( String[] aonClasses, File file ) throws IOException {
+		write(aonClasses,aonClasses,file );
+	}
 
-	/**
-	 * Write mappings to file.
-	 * 
-	 * @param classes
-	 * @param file
-	 * @throws IOException
-	 */
-	public void write( String[] classes, File file ) throws IOException {
+		
+	public void write( String[] entityClasses, String[] aonClasses, File file ) throws IOException {
 		BufferedWriter out = new BufferedWriter( new FileWriter(file) );
 		
 		out.write( "package " );
@@ -119,7 +117,7 @@ public class AliasWriter {
 		out.write( "import com.code.aon.common.dao.DAOConstantsEntry;" );
 		out.newLine();
 
-		for( String _class: classes ) {
+		for( String _class: aonClasses ) {
 			out.write( "import " );
 			out.write( _class );
 			out.write( ';' );
@@ -145,7 +143,7 @@ public class AliasWriter {
 		out.newLine();
 		out.newLine();
 		
-		for( String _class: classes ) {
+		for( String _class: entityClasses ) {
 			write( out, _class );
 		}
 		
@@ -182,7 +180,7 @@ public class AliasWriter {
 		out.newLine();
 	
 		String[] aliases = entry.getAliasNames();
-		Map hibernates = entry.getHibernateMap();		
+		Map<String,String> hibernates = entry.getHibernateMap();		
 		for( int i = 0; i < aliases.length; i++ ) {
 			String alias = aliases[i];
 			String hibernate = hibernates.get(alias).toString();

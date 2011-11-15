@@ -48,6 +48,7 @@ public class DailyTracking implements ITransferObject, IEnterprise {
     private ActivityType activityType;
 	private String comments;
     private Double cost;
+    private Task task;
 	
 	@Id
 	@GeneratedValue
@@ -146,7 +147,18 @@ public class DailyTracking implements ITransferObject, IEnterprise {
         this.activityType = activityType;
     }
 
-	@Lob
+    @ManyToOne
+    @JoinColumn(name="task")
+	@ForeignKey(name = "FK_DT_TASK")
+	@Index(name = "IDX_DT_TASK")						        
+    public Task getTask() {
+        return task;
+    }
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    @Lob
 	@Type(type="stringClob")
 	public String getComments() {
 		return comments;
@@ -185,6 +197,7 @@ public class DailyTracking implements ITransferObject, IEnterprise {
 				.append(this.activityType, o.activityType)
 				.append(this.comments, o.comments)
 				.append(this.cost, o.cost)
+				.append(this.task, o.task)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -203,6 +216,7 @@ public class DailyTracking implements ITransferObject, IEnterprise {
 			.append(this.activityType)
 			.append(this.comments)
 			.append(this.cost)
+			.append(this.task)
 			.toHashCode();
 	}
 

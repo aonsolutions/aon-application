@@ -323,7 +323,14 @@
 		</meta>
 	</table>
 	<table name="geozone" class="com.code.aon.entity.master.GeoZone" />
-	<table name="geotree" class="com.code.aon.entity.master.GeoTree" />
+	<table name="geotree" class="com.code.aon.entity.master.GeoTree">
+		<foreign-key constraint-name="geotree_fk1">
+			<many-to-one property="parent"/>
+		</foreign-key>
+		<foreign-key constraint-name="geotree_fk2">
+			<many-to-one property="child"/>
+		</foreign-key>
+	</table>
 	<table name="leave_batch_attach" class="com.code.aon.entity.master.LeaveBatchAttachment">
 		<meta attribute="extra-import">org.hibernate.annotations.Formula</meta>
 		<meta attribute="class-code">
@@ -515,6 +522,13 @@
 			<key-column name="registry" property="id" />
 		</primary-key>
 	</table>
+	<table name="series">
+		<column name="workplace" exclude="true" />
+		<foreign-key constraint-name="series_fk">
+			<many-to-one exclude="true" />
+		</foreign-key>
+		
+	</table>
 	<table name="salary_embargo">
 		<foreign-key constraint-name="FK_SALARY_EMBARGO_CONTRACT_EMBARGO">
 			<many-to-one property="contractEmbargo" />
@@ -578,7 +592,12 @@
 			<many-to-one property="rattach" />
 		</foreign-key>
 	</table>
-	<table name="workgroup" class="com.code.aon.entity.master.WorkGroup" />
+	<table name="workgroup" class="com.code.aon.entity.master.WorkGroup">
+		<column name="enterprise" exclude="true"></column>
+		<foreign-key constraint-name="FK_WORKGROUP_ENTERPRISE">
+			<many-to-one exclude="true"/>
+		</foreign-key>
+	</table>
 	<table name="workplace" class="com.code.aon.entity.master.WorkPlace">
 		<foreign-key constraint-name="workplace_ibfk_1">
 			<many-to-one property="address" />

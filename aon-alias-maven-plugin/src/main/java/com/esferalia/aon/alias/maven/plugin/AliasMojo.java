@@ -149,30 +149,36 @@ public class AliasMojo extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName();
 		try {
 			getLog().info("Source Folder Directory ..: " + getOutputDir());
 			File packageDir = new File(getOutputDir(), getTargetPackage().replace('.', '/'));
 			packageDir.mkdirs();
+			
 			getLog().info("Source Package Directory ..: " + packageDir);
 			File file  = new File(packageDir, getTargetName() + ".java");
 			getLog().info("Alias Class file ..: " + file);
-
-			String sessionFactoryName = HibernateUtil.getSessionFactoryName();
-			HibernateUtil.getSessionFactory(sessionFactoryName);
-
-			List sourceFolders = project.getCompileSourceRoots();
-			List<String> classes = new LinkedList<String>();
+			
+			List<String> sourceFolders = project.getCompileSourceRoots();
+			
+			List<String> aonClasses = new LinkedList<String>();
+			List<String> entityClasses = new LinkedList<String>();
 			for (int i=0;i<sourceFolders.size(); i++) {
-				classes.addAll(getEntityClasses((String) sourceFolders.get(i)));
+				List<String> sourceFolderAonClasses = getAonEntityClasses(sourceFolders.get(i));  
+				aonClasses.addAll(sourceFolderAonClasses);
+				for (String aonClass : sourceFolderAonClasses) {
+					String[] tokens = StringUtils.split(aonClass,".");
+					String entityClass = ENTITY_PACKAGE + tokens[tokens.length - 1];
+					entityClasses.add(entityClass );
+					getLog().info(" Entity Class Found ..: " + entityClass + " from "+ aonClass);
+				}
 			}
-			Collections.sort(classes);
-			for (int x = 0; x < classes.size(); x++) {
-				classes.set(x, ENTITY_PACKAGE + classes.get(x));
-				getLog().info(" Entity Class Found ..: " + classes.get(x));
-			}
+			Collections.sort(entityClasses);
+			HibernateUtil.getSessionFactory(sessionFactoryName);
 			AliasWriter writer = new AliasWriter(getTargetPackage());
-			String[] toAlias = classes.toArray (new String [classes.size ()]);
-			writer.write(toAlias, file);
+			String[] entityClassesToArray= entityClasses.toArray (new String [entityClasses.size ()]);
+			String[] aonClassesToArray = aonClasses.toArray (new String [aonClasses.size ()]);
+			writer.write(entityClassesToArray,aonClassesToArray, file);
 			getLog().info("Alias generados");
 
 		} catch (IOException e) {
@@ -181,10 +187,12 @@ public class AliasMojo extends AbstractMojo {
 		} catch (MappingException e) {
 			getLog().error(e);
 			throw new MojoExecutionException(e.getMessage(), e);
+		} finally {
+			HibernateUtil.closeSession(sessionFactoryName);
 		}
 	}
 
-	private List<String> getEntityClasses(String sourceDir) throws IOException {
+	private List<String> getAonEntityClasses(String sourceDir) throws IOException {
 		String[] packages = StringUtils.split(getSourcePackages(), ',');
 		List<String> classes = new LinkedList<String>();
 		for (String pack : packages ) {
@@ -200,7 +208,7 @@ public class AliasMojo extends AbstractMojo {
 						if (StringUtils.contains(line, "@Entity")) {
 							String filename = FilenameUtils.removeExtension(classFile.getName());
 							if (!isExclude(filename)) {
-								classes.add(filename);
+								classes.add(pack+ "." + filename);
 								break;
 							}
 						}
@@ -230,11 +238,4 @@ public class AliasMojo extends AbstractMojo {
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
-		AliasMojo mojo = new AliasMojo();
-		mojo.setSourcePackages("com.code.aon.company");
-		for (String pack : mojo.getEntityClasses("/home/ecastellano/AON-7/aon.parent/aon-company/src/main/java") ) {
-			System.out.println(pack);
-		}
-	}
 }

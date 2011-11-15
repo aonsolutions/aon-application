@@ -84,6 +84,9 @@ public class DAOConstantsEntry {
 	public String getPojo() {
 		return this.pojo;
 	}
+	public void setPojo(String pojo) {
+		this.pojo = pojo;
+	}
 
 	/**
 	 * @return Returns the name.
