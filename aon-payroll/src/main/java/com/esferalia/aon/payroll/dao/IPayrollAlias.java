@@ -1329,34 +1329,40 @@ public interface IPayrollAlias {
 	String  CONTRACT_LEAVE_DESCRIPTION = CONTRACT_LEAVE_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: ContractLeave_dischargeCause
+	* Hibernate value: ContractLeave.dischargeCause
+	*/
+	String  CONTRACT_LEAVE_DISCHARGE_CAUSE = CONTRACT_LEAVE_ENTRY.getAliasNames()[5];
+
+	/** 
 	* Alias value: ContractLeave_endDate
 	* Hibernate value: ContractLeave.endDate
 	*/
-	String  CONTRACT_LEAVE_END_DATE = CONTRACT_LEAVE_ENTRY.getAliasNames()[5];
+	String  CONTRACT_LEAVE_END_DATE = CONTRACT_LEAVE_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: ContractLeave_id
 	* Hibernate value: ContractLeave.id
 	*/
-	String  CONTRACT_LEAVE_ID = CONTRACT_LEAVE_ENTRY.getAliasNames()[6];
+	String  CONTRACT_LEAVE_ID = CONTRACT_LEAVE_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: ContractLeave_parent_id
 	* Hibernate value: ContractLeave.parent.id
 	*/
-	String  CONTRACT_LEAVE_PARENT_ID = CONTRACT_LEAVE_ENTRY.getAliasNames()[7];
+	String  CONTRACT_LEAVE_PARENT_ID = CONTRACT_LEAVE_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: ContractLeave_startDate
 	* Hibernate value: ContractLeave.startDate
 	*/
-	String  CONTRACT_LEAVE_START_DATE = CONTRACT_LEAVE_ENTRY.getAliasNames()[8];
+	String  CONTRACT_LEAVE_START_DATE = CONTRACT_LEAVE_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: ContractLeave_type
 	* Hibernate value: ContractLeave.type
 	*/
-	String  CONTRACT_LEAVE_TYPE = CONTRACT_LEAVE_ENTRY.getAliasNames()[9];
+	String  CONTRACT_LEAVE_TYPE = CONTRACT_LEAVE_ENTRY.getAliasNames()[10];
 
 
 
