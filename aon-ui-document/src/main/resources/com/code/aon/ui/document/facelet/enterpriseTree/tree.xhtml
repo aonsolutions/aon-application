@@ -18,9 +18,9 @@
 			value="#{enterpriseTree.rootNode}" var="enterpriseNode" >
 
 			<rich:treeNode styleClass="aon-width-all" 
-				icon="#{enterpriseNode.type.icon}"
+				icon="#{enterpriseNode.icon}"
 				onclick="storeTreeOffset();"
-				iconLeaf="#{enterpriseNode.type.icon}" >
+				iconLeaf="#{enterpriseNode.icon}" >
 				<a4j:support event="onselected" reRender="aonContent"
 					action="#{enterpriseNode.type.action}" />
 				<aon:outputText style="font-size: 0.8em;"

@@ -19,36 +19,44 @@
 						value="#{bundle.aon_clear}" immediate="true" 
 						actionListener="#{enterpriseDocument.onClear}"
 						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+					<aon:commandButton id="search"
+						title="#{bundle.aon_key_search_accelerator}"
+						value="#{bundle.aon_search}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						actionListener="#{enterpriseDocument.onSearch}"
+						requestDelay="100" accesskey="#{bundle.aon_key_search}" >
+						<aon:actionHotKey key="return" />
+					</aon:commandButton> 
 				</ui:define>
 			</ui:decorate>		
+			
+			<aon:div styleClass="aon-scroll-area">
+				<a4j:region>
+					<aon:panelCollapsible 
+						headerClass="aon-panelGrid-search-info" 
+						bodyClass="aon-panelGrid-search"				
+						value="#{enterpriseDocumentSearch.showOpened}" >
+						<f:facet name="header" >
+							<aon:div>
+								<aon:outputText value="#{bundle.aon_search_info}" />
+								<h:outputLink style="font-size:1em;font-weight:bold;float:right;" value="#" >
+									<aon:outputText value="[?]" styleClass="aon-margin-right" />
+									<rich:componentControl for="searchHelp" event="onclick" operation="show"/>													
+								</h:outputLink>
+							</aon:div>										
+						</f:facet>
+						<aon:panelGrid columns="2">		
+							<ui:include src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />
+						</aon:panelGrid>
+					</aon:panelCollapsible>
+				</a4j:region>
+				
+				<c:if test="#{enterpriseDocumentSearch.showList}">
+					<ui:include
+						src="/com/code/aon/ui/document/facelet/enterpriseDocument/listContent.xhtml" />
+				</c:if>
+			</aon:div>
 
-			<aon:methodParam name="searchAction" value="enterpriseDocument_search" />
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{enterpriseDocument}" />
-				<ui:param name="skipAfterSearch" value="#{true}" />
-				<ui:define name="searchContent">
-
-					<aon:outputText value="" />
-					<aon:div styleClass="aon-width-600">
-						<aon:panelCollapsible label="#{bundle.aon_general}"
-							opened="#{!enterpriseDocumentSearch.showList}" >
-							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">		
-								<ui:include src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />
-							</aon:panelGrid>
-						</aon:panelCollapsible>
-					</aon:div>
-									
-				</ui:define>
-				<ui:define name="additionalSearchContent" >
-					<c:if test="#{enterpriseDocumentSearch.showList}">
-						<aon:div styleClass="aon-margin-top">
-							<ui:include
-								src="/com/code/aon/ui/document/facelet/enterpriseDocument/listContent.xhtml" />
-						</aon:div>
-					</c:if>
-				</ui:define>				
-			</ui:decorate>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
 	</ui:define>

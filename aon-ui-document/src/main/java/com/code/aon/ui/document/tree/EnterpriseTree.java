@@ -3,7 +3,6 @@ package com.code.aon.ui.document.tree;
 import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID_SHORT;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ALFRESCO_CATEGORY_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
-import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_SEARCH;
 
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +35,6 @@ import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.document.controller.AlfrescoCategoryController;
 import com.code.aon.ui.document.controller.EnterpriseDocumentController;
-import com.code.aon.ui.document.event.EnterpriseDocumentSearchListener;
 import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseTree implements ICompanyConstants {
@@ -100,7 +98,9 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	private EnterpriseTreeData getTreeData( EnterpriseDocument ed ) {
-		return new EnterpriseTreeData( ed.getId(), ed.getName(), EnterpriseTreeType.DOCUMENT);
+		EnterpriseTreeData etd = new EnterpriseTreeData( ed.getId(), ed.getName(), EnterpriseTreeType.DOCUMENT);
+		etd.setMimeType(ed.getMimeType());
+		return etd;
 	}
 
 	private void loadDocument( TreeNodeImpl<EnterpriseTreeData> categoryNode, AlfrescoCategory ac, Enterprise enterprise ) throws ManagerBeanException {

@@ -32,6 +32,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.util.MimeResolver;
 import com.code.aon.company.Enterprise;
 import com.code.aon.document.AlfrescoCategory;
 import com.code.aon.document.EnterpriseDocument;
@@ -108,6 +110,8 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 				ed.setDescription(nv.getValue());
 			} else if ( PROP_NAME.equals(name) ) {
 				ed.setName(nv.getValue());
+				MimeType type = MimeResolver.getMimeTypeByExtension(ed.getName());
+				ed.setMimeType(type);
 			} else if ( PROP_TITLE.equals(name) ) {
 				ed.setTitle(nv.getValue());
 			} else if ( UUID_LONG.equals(name) ) {

@@ -164,6 +164,14 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 		this.showList = showList;
 	}
 
+	public String getShowOpened() {
+		return Boolean.toString(!this.showList);
+	}
+
+	public void setShowOpened(String showOpened) {
+		this.showList = ! Boolean.parseBoolean(showOpened);
+	}
+
 	@Override
 	protected void init() throws ManagerBeanException {
 		reset( true );
@@ -239,7 +247,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 				expToAdd = ExpressionUtilities.getEqualExpression(PATH_FIELD, value);				
 			} else {
 				Expression exp  = ExpressionUtilities.getEqualExpression(PATH_FIELD, value);
-				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				expToAdd = ExpressionUtilities.getAndExpression(expToAdd, exp);
 			}
 		}
 		if ( expToAdd != null ) {
