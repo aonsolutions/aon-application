@@ -60,19 +60,19 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-auxiliary aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.menu_auxiliary}" />
+								<aon:outputText value="#{payrollBundle.auxiliary_menu_group}" />
 							</f:facet>
 							<aon:div styleClass="aon-direct-access-list">
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="geotreeParent_list-config" 
-									action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
-									value="#{geozoneBundle.geozone_module}" />
-							</aon:div>
-							<aon:div styleClass="aon-direct-access-list-element">
-								<aon:commandLink id="bank-treasury"
-									action="bank-treasury"
-									value="#{configBundle.config_bank_module}" />
-							</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="geotreeParent_list-config" 
+										action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
+										value="#{geozoneBundle.geozone_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="bank-treasury"
+										action="bank-treasury"
+										value="#{configBundle.config_bank_module}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 						
@@ -84,7 +84,7 @@
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-icon-account-entry aon-direct-access-panel">
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.predefined_menu_group}"/>
+								<aon:outputText value="#{payrollBundle.predefined_menu_group}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
