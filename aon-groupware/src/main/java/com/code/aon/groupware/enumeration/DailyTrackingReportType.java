@@ -8,8 +8,8 @@ import com.code.aon.common.enumeration.IResourceable;
 public enum DailyTrackingReportType implements IResourceable {
 
 	GRAPHIC ("dailyTrackingGraphic"),
-	BY_CUSTOMER ("dailyTrackingByCustomer"),
 	JOBS_BY_CUSTOMER ("dailyTrackingJobsByCustomer"),
+	BY_CUSTOMER ("dailyTrackingByCustomer"),
 	BY_USER ("dailyTrackingByUser"),
 	BY_JOB_TYPE ("dailyTrackingByJobType"),
 	BY_PROJECT ("dailyTrackingByProject"),
