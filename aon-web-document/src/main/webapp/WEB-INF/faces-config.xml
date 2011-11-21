@@ -53,52 +53,27 @@
 			<from-outcome>menu_document</from-outcome>
 			<to-view-id>/facelet/menu/document.xhtml</to-view-id> 
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>menu_main</from-outcome>
+			<to-view-id>/facelet/menu/main.xhtml</to-view-id> 
+		</navigation-case>
 	</navigation-rule>
 		
-	<!-- ************ DOCUMENT MANAGER ************** -->
+
+   	<!-- ************************************************** -->
+   	<!-- ************* OPTIONAL LISTENERS ***************** -->
+   	<!-- ************************************************** -->
+
+	<!-- ************ ENTERPRISE LISTENERS ******************* -->
 	<managed-bean>
-		<managed-bean-name>documentManager</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.DocumentManager</managed-bean-class>
+		<managed-bean-name>enterpriseOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>formTemplate</property-name>
-			<value>/com/code/aon/ui/document/facelet/enterpriseDocument/tab_grid.xhtml</value>
-		</managed-property>
-		<managed-property>
-			<property-name>showSearch</property-name>
-			<value>#{false}</value>
-		</managed-property>
-	</managed-bean>	
-	
-	<!--  **** ENTERPRISE **** -->
-	<managed-bean>
-		<managed-bean-name>enterprise</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.company.controller.EnterpriseController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>enterprise</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.company.Enterprise</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Enterprise_registry_name</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{enterpriseControllerListener}</value>
-				<value>#{enterpriseTreeControllerListener}</value>		
-			</list-entries>
-		</managed-property>
+		<list-entries>
+			<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+			<!--  aon.ui.company -->
+			<value>#{enterpriseTreeControllerListener}</value>
+		</list-entries>
 	</managed-bean>
 
 </faces-config>

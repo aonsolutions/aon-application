@@ -16,8 +16,8 @@
 				<ui:param name="toolbarDescription" value="#{bundle.aon_toolbar_search}" />
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="clear"
-						value="#{bundle.aon_clear}" immediate="true" 
-						actionListener="#{enterpriseDocument.onClear}"
+						value="#{bundle.aon_clear}" 
+						actionListener="#{enterpriseDocumentSearch.onClear}"
 						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 					<aon:commandButton id="search"
 						title="#{bundle.aon_key_search_accelerator}"
@@ -32,19 +32,10 @@
 			
 			<aon:div styleClass="aon-scroll-area">
 				<a4j:region>
-					<aon:panelCollapsible 
+					<aon:panelCollapsible label="#{bundle.aon_search_info}"
 						headerClass="aon-panelGrid-search-info" 
 						bodyClass="aon-panelGrid-search"				
 						value="#{enterpriseDocumentSearch.showOpened}" >
-						<f:facet name="header" >
-							<aon:div>
-								<aon:outputText value="#{bundle.aon_search_info}" />
-								<h:outputLink style="font-size:1em;font-weight:bold;float:right;" value="#" >
-									<aon:outputText value="[?]" styleClass="aon-margin-right" />
-									<rich:componentControl for="searchHelp" event="onclick" operation="show"/>													
-								</h:outputLink>
-							</aon:div>										
-						</f:facet>
 						<aon:panelGrid columns="2">		
 							<ui:include src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />
 						</aon:panelGrid>

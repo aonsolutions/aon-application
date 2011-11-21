@@ -1,7 +1,16 @@
 package com.code.aon.document.dao;
 
-import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID;
-import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID_LONG;
+import static com.code.aon.document.IAlfrescoConstants.CATEGORIES_LONG;
+import static com.code.aon.document.IAlfrescoConstants.CREATED_LONG;
+import static com.code.aon.document.IAlfrescoConstants.DESCRIPTION_LONG;
+import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_ID;
+import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_ID_LONG;
+import static com.code.aon.document.IAlfrescoConstants.MODIFIED_LONG;
+import static com.code.aon.document.IAlfrescoConstants.NAME_LONG;
+import static com.code.aon.document.IAlfrescoConstants.PATH_LONG;
+import static com.code.aon.document.IAlfrescoConstants.REFERENCE_DATE_LONG;
+import static com.code.aon.document.IAlfrescoConstants.TITLE_LONG;
+import static com.code.aon.document.IAlfrescoConstants.UUID_LONG;
 import static org.alfresco.webservice.util.Constants.NAMESPACE_CONTENT_MODEL;
 import static org.alfresco.webservice.util.Constants.PROP_CREATED;
 import static org.alfresco.webservice.util.Constants.PROP_DESCRIPTION;
@@ -106,21 +115,27 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		ed.setId(reference);
 		for( NamedValue nv : values ) {
 			String name = nv.getName();
-			if ( PROP_DESCRIPTION.equals(name) ) {
+			if ( DESCRIPTION_LONG.equals(name) ) {
 				ed.setDescription(nv.getValue());
-			} else if ( PROP_NAME.equals(name) ) {
+			} else if ( NAME_LONG.equals(name) ) {
 				ed.setName(nv.getValue());
 				MimeType type = MimeResolver.getMimeTypeByExtension(ed.getName());
 				ed.setMimeType(type);
-			} else if ( PROP_TITLE.equals(name) ) {
+			} else if ( TITLE_LONG.equals(name) ) {
 				ed.setTitle(nv.getValue());
 			} else if ( UUID_LONG.equals(name) ) {
 				reference.setUuid(nv.getValue());
 			} else if ( PATH_LONG.equals(name) ) {
 				reference.setPath(nv.getValue());
-			} else if ( PROP_CREATED.equals(name) ) {
+			} else if ( CREATED_LONG.equals(name) ) {
 				Date date = ISO8601DateFormat.parse(nv.getValue());
-				ed.setCreated(date);
+				ed.setCreatedDate(date);
+			} else if ( MODIFIED_LONG.equals(name) ) {
+				Date date = ISO8601DateFormat.parse(nv.getValue());
+				ed.setModifiedDate(date);
+			} else if ( REFERENCE_DATE_LONG.equals(name) ) {
+				Date date = ISO8601DateFormat.parse(nv.getValue());
+				ed.setReferenceDate(date);
 			} else if ( ENTERPRISE_ID_LONG.equals(name) ) {
 				Integer id = NumberUtils.toInt(nv.getValue());
 				IManagerBean bean;
@@ -140,11 +155,13 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 
 	@Override
 	protected NamedValue[] updateValues(ITransferObject to) {
-		NamedValue[] values = new NamedValue[3];
+		NamedValue[] values = new NamedValue[4];
 		EnterpriseDocument ed = (EnterpriseDocument) to;
 		values[0] = Utils.createNamedValue(PROP_DESCRIPTION, ed.getDescription());
 		values[1] = Utils.createNamedValue(PROP_NAME, ed.getName());
 		values[2] = Utils.createNamedValue(PROP_TITLE, ed.getTitle());
+		String referenceDate = ISO8601DateFormat.format(ed.getReferenceDate());
+		values[3] = Utils.createNamedValue(REFERENCE_DATE_LONG, referenceDate);
 		return values;
 	}
 

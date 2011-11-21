@@ -1,8 +1,12 @@
 package com.code.aon.ui.document.event;
 
 
-import static com.code.aon.document.BasicAlfresco.MIME_TYPE;
-import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID_SHORT;
+import static com.code.aon.document.IAlfrescoConstants.CREATED_SHORT;
+import static com.code.aon.document.IAlfrescoConstants.DESCRIPTION_SHORT;
+import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_ID_SHORT;
+import static com.code.aon.document.IAlfrescoConstants.MIME_TYPE;
+import static com.code.aon.document.IAlfrescoConstants.NAME_SHORT;
+import static com.code.aon.document.IAlfrescoConstants.TITLE_SHORT;
 import static com.code.aon.document.dao.AlfrescoCategoryDAO.EMPTY_CATEGORY;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
@@ -35,13 +39,18 @@ import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx {
 	
+	private static final String MAX_CONSTANT = "MAX";
+
+	private static final String MIN_CONSTANT = "MIN";
+
 	private final static Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocumentSearchListener.class);
 	
 	private static final String PATH_FIELD = "PATH";
 	private static final String TEXT_FIELD = "TEXT";
 	private Enterprise enterprise;
-	private Date startDate;
-	private Date endDate;
+	private Date[] createdDate;
+	private Date[] modifiedDate;
+	private Date[] referenceDate;
 	private String name;
 	private String description;
 	private String title;
@@ -74,22 +83,30 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 		this.title = title;
 	}
 
-	public Date getStartDate() {
-		return startDate;
+	public Date[] getCreatedDate() {
+		return createdDate;
 	}
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+	public void setCreatedDate(Date[] createdDate) {
+		this.createdDate = createdDate;
 	}
 
-	public Date getEndDate() {
-		return endDate;
+	public Date[] getModifiedDate() {
+		return modifiedDate;
 	}
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public void setModifiedDate(Date[] modifiedDate) {
+		this.modifiedDate = modifiedDate;
 	}
-	
+
+	public Date[] getReferenceDate() {
+		return referenceDate;
+	}
+
+	public void setReferenceDate(Date[] referenceDate) {
+		this.referenceDate = referenceDate;
+	}
+
 	public Enterprise getEnterprise() {
 		return enterprise;
 	}
@@ -189,8 +206,9 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 		setName(null);
 		setDescription(null);
 		setTitle(null);
-		setStartDate(null);
-		setEndDate(null);
+		setCreatedDate(new Date[2]);
+		setModifiedDate(new Date[2]);
+		setReferenceDate(new Date[2]);
 		setText(null);
 		setType(null);
 		setCategories( new LinkedList<AlfrescoCategory>() );
@@ -211,22 +229,18 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 	@Override
 	protected void completeCriteria( Criteria criteria ) throws ManagerBeanException, ExpressionException {
 		if (! StringUtils.isEmpty(getName())) {
-			criteria.addEqualExpression( "cm:name", getName());
+			criteria.addEqualExpression( NAME_SHORT, getName());
 		}
 		if (! StringUtils.isEmpty(getTitle())) {
-			criteria.addEqualExpression( "cm:title", getTitle());
+			criteria.addEqualExpression( TITLE_SHORT, getTitle());
 		}
 		if (! StringUtils.isEmpty(getDescription())) {
-			criteria.addEqualExpression( "cm:description", getDescription());
+			criteria.addEqualExpression( DESCRIPTION_SHORT, getDescription());
 		}
 		if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
 			criteria.addEqualExpression( ENTERPRISE_ID_SHORT, getEnterprise().getId());			
 		}
-		if ( (getStartDate() != null) || (getEndDate() != null) ) {
-			Object minor = (getStartDate() != null) ? getStartDate() : "MIN";
-			Object mayor = (getEndDate() != null) ? getEndDate() : "MAX";
-			criteria.addBetweenExpression( "cm:created", minor, mayor );
-		}
+		addDateRange(criteria, CREATED_SHORT, getCreatedDate());
 		if (! StringUtils.isEmpty(getText()) ) {
 			criteria.addEqualExpression( TEXT_FIELD, getText());
 		}
@@ -237,6 +251,14 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 			addCategoriesToCriteria(criteria, getCategories());
 		}
 		setShowList(true);
+	}
+	
+	private void addDateRange( Criteria criteria, String alias, Date[] dates ) {
+		if ( (dates[0] != null) || (dates[1] != null) ) {
+			Object minor = (dates[0] != null) ? dates[0] : MIN_CONSTANT;
+			Object mayor = (dates[1] != null) ? dates[1] : MAX_CONSTANT;
+			criteria.addBetweenExpression( alias, minor, mayor );
+		}		
 	}
 
 	private void addCategoriesToCriteria( Criteria criteria, List<AlfrescoCategory> categories ) { 

@@ -17,7 +17,7 @@
 		value="#{enterpriseDocumentSearch.description}" />
 
 	<aon:outputLabel for="cm_title"
-		value="#{documentBundle.aon_title}" />
+		value="#{documentBundle.document_title}" />
 	<aon:inputText id="cm_title" size="60"
 		value="#{enterpriseDocumentSearch.title}" />
 
@@ -45,19 +45,53 @@
 		</ui:include>
 	</c:if>
 			
-	<aon:outputLabel value="#{bundle.aon_date}" />
+	<aon:outputLabel value="#{documentBundle.document_referenceDate}" />
+	<aon:div>
+		<aon:outputLabel for="cm_referenceDate-From" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="cm_referenceDate-From"
+			value="#{enterpriseDocumentSearch.referenceDate[0]}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="cm_referenceDate-To" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="cm_referenceDate-To"
+			value="#{enterpriseDocumentSearch.referenceDate[1]}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>	
+
+	<aon:outputLabel value="#{documentBundle.document_createdDate}" />
 	<aon:div>
 		<aon:outputLabel for="cm_created-From" styleClass="aon-form-date-label aon-padding-right" 
 			value="#{bundle.aon_date_from}:" />
 		<aon:selectInputDate id="cm_created-From"
-			value="#{enterpriseDocumentSearch.startDate}"
+			value="#{enterpriseDocumentSearch.createdDate[0]}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 
 		<aon:outputLabel for="cm_created-To" styleClass="aon-form-date-label aon-padding-right" 
 			value="#{bundle.aon_date_to}:" />
 		<aon:selectInputDate id="cm_created-To"
-			value="#{enterpriseDocumentSearch.endDate}"
+			value="#{enterpriseDocumentSearch.createdDate[1]}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>	
+
+	<aon:outputLabel value="#{documentBundle.document_modifiedDate}" />
+	<aon:div>
+		<aon:outputLabel for="cm_modifiedDate-From" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="cm_modifiedDate-From"
+			value="#{enterpriseDocumentSearch.modifiedDate[0]}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="cm_modifiedDate-To" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="cm_modifiedDate-To"
+			value="#{enterpriseDocumentSearch.modifiedDate[1]}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}" />
 	</aon:div>	

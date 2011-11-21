@@ -53,7 +53,7 @@
 				<f:facet name="header">
 					<aon:outputText value="#{bundle.aon_date}" />
 				</f:facet>
-				<aon:outputText value="#{to.created}">
+				<aon:outputText value="#{to.createdDate}">
 					<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>

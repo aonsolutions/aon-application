@@ -1,6 +1,6 @@
 package com.code.aon.ui.document.tree;
 
-import static com.code.aon.document.EnterpriseDocumentAspect.ENTERPRISE_ID_SHORT;
+import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_ID_SHORT;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ALFRESCO_CATEGORY_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
 

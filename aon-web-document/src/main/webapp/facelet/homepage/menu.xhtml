@@ -14,6 +14,10 @@
 			<aon:actionListener method="#{enterprise.onEditSearch}" />
 		</aon:commandLink>
 		<aon:commandLink id="main"
+			value="#{appBundle.menu_main}"
+			action="menu_main" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-general" />		
+		<aon:commandLink id="document"
 			value="#{appBundle.menu_document}"
 			action="menu_document" immediate="true"
 			styleClass="aon-top-menu-item aon-icon-payroll" >

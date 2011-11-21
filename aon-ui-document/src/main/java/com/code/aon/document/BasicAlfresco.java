@@ -39,22 +39,6 @@ public class BasicAlfresco {
 
 	/** The store used throughout the samples */
 	public static final Store STORE = new Store(Constants.WORKSPACE_STORE, "SpacesStore");
-
-	private static final String UUID = "node-uuid";
-	
-	public static final String UUID_LONG = "{" + Constants.NAMESPACE_SYSTEM_MODEL + "}" + UUID;
-	
-	public static final String UUID_SHORT = "sys:" + UUID;
-	
-	public static final String PATH_LONG = "{" + Constants.NAMESPACE_CONTENT_MODEL + "}path";
-	
-	public static final String CATEGORIES = "categories";
-	
-	public static final String CATEGORIES_SHORT = "cm:" + CATEGORIES;
-	
-	public static final String CATEGORIES_LONG = "{" + Constants.NAMESPACE_CONTENT_MODEL + "}categories";
-	
-	public static final String MIME_TYPE = Constants.PROP_CONTENT + ".mimetype";
 	
 	private File ALFRESCO_PROPERTIES = new File("/home/COMMON-RESOURCES/aon-document/config.properties");
 

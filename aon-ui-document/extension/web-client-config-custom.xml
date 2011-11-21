@@ -19,6 +19,8 @@
    <config evaluator="aspect-name" condition="aon:enterpriseDocument">
       <property-sheet>
          <show-property name="aon:enterpriseId" display-label-id="aon.enterpriseId" />
+         <show-property name="aon:projectId" display-label-id="aon.projectId" />
+         <show-property name="aon:referenceDate" display-label-id="aon.referenceDate" />
       </property-sheet>
    </config>
 

@@ -1,5 +1,7 @@
 package com.code.aon.document.dao;
 
+import static com.code.aon.document.IAlfrescoConstants.PATH_LONG;
+import static com.code.aon.document.IAlfrescoConstants.UUID_LONG;
 import static org.alfresco.webservice.util.Constants.PROP_DESCRIPTION;
 import static org.alfresco.webservice.util.Constants.PROP_NAME;
 
