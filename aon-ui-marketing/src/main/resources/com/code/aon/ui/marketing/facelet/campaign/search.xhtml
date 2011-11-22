@@ -8,31 +8,31 @@
 	
 	<ui:define name="content">
 
-		<aon:form id="campaignSearch">
+		<aon:form id="marketingCampaignSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_campaign_module}" />
-				<ui:param name="controller" value="#{campaign}" />
+				<ui:param name="controller" value="#{marketingCampaign}" />
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:param name="controller" value="#{campaign}" />
+				<ui:param name="controller" value="#{marketingCampaign}" />
 				<ui:define name="searchContent">
 					
-					<aon:outputLabel for="Campaign_id"
+					<aon:outputLabel for="MarketingCampaign_id"
 						value="#{bundle.aon_id}" />
-					<aon:inputText id="Campaign_id" size="60"
-						valueChangeListener="#{campaign.addExpression}" />		
+					<aon:inputText id="MarketingCampaign_id" size="60"
+						valueChangeListener="#{marketingCampaign.addExpression}" />		
 			
-					<aon:outputLabel for="Campaign_description"
+					<aon:outputLabel for="MarketingCampaign_description"
 						value="#{bundle.aon_description}" />
-					<aon:inputText id="Campaign_description" size="60"
-						valueChangeListener="#{campaign.addExpression}" />
+					<aon:inputText id="MarketingCampaign_description" size="60"
+						valueChangeListener="#{marketingCampaign.addExpression}" />
 				
-					<aon:outputLabel for="Campaign_active"				
+					<aon:outputLabel for="MarketingCampaign_active"				
 						value="#{bundle.aon_status}"/>
-					<aon:selectOneMenu id="Campaign_active"
-						valueChangeListener="#{campaign.addExpression}">
+					<aon:selectOneMenu id="MarketingCampaign_active"
+						valueChangeListener="#{marketingCampaign.addExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="#{true}"/>
 						<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}"/>

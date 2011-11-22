@@ -112,7 +112,7 @@
 				
 		<!-- AON-MARKETING Mapping files -->
 		<mapping class="com.code.aon.marketing.ActionTarget"/>
-		<mapping class="com.code.aon.marketing.Campaign"/>
+		<mapping class="com.code.aon.marketing.MarketingCampaign"/>
 		<mapping class="com.code.aon.marketing.MarketingAction"/>
 		<mapping class="com.code.aon.marketing.MarketingTarget"/>		
 		<mapping class="com.code.aon.marketing.Question"/>

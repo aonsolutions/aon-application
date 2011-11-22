@@ -26,9 +26,9 @@ import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
  * @since 1.0
  * @version 1.0
  */
-@Entity(name="MarketingCampaign")
+@Entity
 @Table(name = "mk_campaign")
-public class Campaign implements ITransferObject {
+public class MarketingCampaign implements ITransferObject {
 
 	private static final long serialVersionUID = 1978353768291679400L;
 
@@ -53,7 +53,7 @@ public class Campaign implements ITransferObject {
     /**
      * The empty constructor.
      */
-    public Campaign() {
+    public MarketingCampaign() {
     	setActive( true );
     }
 
@@ -62,7 +62,7 @@ public class Campaign implements ITransferObject {
      * 
      * @param id the id
      */
-    public Campaign(Integer id) {
+    public MarketingCampaign(Integer id) {
     	this();
         this.id = id;
     }
@@ -144,7 +144,7 @@ public class Campaign implements ITransferObject {
 		if (obj == null) return false;
 		if (this == obj) return true;
 		if (obj.getClass() != getClass()) return false;
-		final Campaign o = (Campaign) obj;
+		final MarketingCampaign o = (MarketingCampaign) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
 				.append(this.active, o.active)

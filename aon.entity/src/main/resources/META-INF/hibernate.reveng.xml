@@ -347,6 +347,14 @@
 		<column name="type" property="attachmentType"/>
 	</table>
 	<table name="message_log" class="com.code.aon.entity.master.Message" />
+	<table name="mk_action" class="com.code.aon.entity.master.MarketingAction" />
+	<table name="mk_action_target" class="com.code.aon.entity.master.ActionTarget">
+		<foreign-key constraint-name="MK_ACTION_TARGET_MK_ACTION">
+			<many-to-one property="action" />
+		</foreign-key>
+	</table>
+	<table name="mk_campaign" class="com.code.aon.entity.master.MarketingCampaign" />
+	<table name="mk_template" class="com.code.aon.entity.master.Template" />
 	<table name="note">
 		<foreign-key constraint-name="note_fk">
 			<many-to-one property="owner" />
@@ -388,6 +396,16 @@
 	<table name="offer_term">
 		<column name="term_general" property="general" />
 	</table>
+	<table name="question">
+		<column name="question_text" property="text" />
+	</table>
+	
+	<table name="question_value">
+		<column name="value_text" property="text" />
+		<column name="value_date" property="date" />
+		<column name="value_number" property="number" />
+	</table>
+
 	<table name="person">
 		<primary-key>
 			<generator class="registry_id">
@@ -557,6 +575,31 @@
 		</primary-key>
 		<column name="segment" exclude="true"></column>
 	</table>
+	
+	<table name="survey_response">
+		<column name="response_date" property="date" />
+		<foreign-key constraint-name="FK_SURVERY_RESPONSE_MK_ACTION">
+			<many-to-one property="action" />
+		</foreign-key>
+	</table>
+	
+	<table name="survey_response_detail">
+		<column name="value_text" property="text" />
+		<column name="value_date" property="date" />
+		<column name="value_number" property="number" />
+	</table>
+
+	<table name="survey_workflow">
+		<column name="value_text" property="text" />
+		<column name="value_date" property="date" />
+		<column name="value_number" property="number" />
+		<foreign-key constraint-name="FK_SURVEY_WORKFLOW_NEXT_SURVEY_QUESTION">
+			<many-to-one property="nextSurveyQuestion" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_SURVEY_WORKFLOW_SURVEY_QUESTION">
+			<many-to-one property="surveyQuestion" />
+		</foreign-key>
+	</table>
 	<table name="target">
 		<primary-key>
 			<generator class="registry_id">
@@ -564,6 +607,11 @@
 			</generator>
 			<key-column name="registry" property="id" />
 		</primary-key>
+	</table>
+	<table name="target_profile">
+		<column name="value_text" property="text" />
+		<column name="value_date" property="date" />
+		<column name="value_number" property="number" />
 	</table>
 	<table name="task_holder">
 		<primary-key>

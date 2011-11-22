@@ -175,6 +175,21 @@
 		<mapping class="com.code.aon.entity.master.WebInfoPageResource"/>
 		<mapping class="com.code.aon.entity.master.WebInfoStyle"/>
 
+		<!-- AON-MARKETING Mapping files --> 
+		<mapping class="com.code.aon.entity.master.ActionTarget"/>
+		<mapping class="com.code.aon.entity.master.MarketingCampaign"/>
+		<mapping class="com.code.aon.entity.master.MarketingAction"/>
+		<mapping class="com.code.aon.entity.master.Question"/>
+		<mapping class="com.code.aon.entity.master.QuestionValue"/>
+		<mapping class="com.code.aon.entity.master.Survey"/>
+		<mapping class="com.code.aon.entity.master.SurveyQuestion"/>
+		<mapping class="com.code.aon.entity.master.SurveyResponse"/>
+		<mapping class="com.code.aon.entity.master.SurveyResponseDetail"/>
+		<mapping class="com.code.aon.entity.master.SurveyWorkflow"/>
+		<mapping class="com.code.aon.entity.master.TargetProfile"/>
+		<mapping class="com.code.aon.entity.master.Template"/>
+		
+		
 		<!-- AON-PAYROLL Mapping files -->
 		<mapping class="com.code.aon.entity.master.Agreement"/>
 		<mapping class="com.code.aon.entity.master.AgreementData"/>

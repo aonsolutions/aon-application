@@ -221,6 +221,17 @@
 		<hibernate names="id,taskHolder.id,taskHolder.active,workGroup.id,workGroup.status"/>
 	</bean>
 
+	<!-- ** AON MARKETING **************************************************** -->
+	<bean class="com.code.aon.entity.master.MarketingAction" sqlName="mk_action">
+		<alias names="campaign_id,endDate,id,mediaType,startDate,survey_id,campaign_active"/>
+		<hibernate names="campaign.id,endDate,id,mediaType,startDate,survey.id,campaign.active"/>
+	</bean>
+	<!-- 
+	<bean class="com.code.aon.entity.master.MarketingTarget" sqlName="target">
+		<alias names="customer,id,registry_id,target_id,registry_document"/>
+		<hibernate names="customer,id,registry.id,target.id,registry.document"/>
+	</bean>	
+ 	-->
 	<!-- ** AON PAYROLL  **************************************************** -->
 	<bean class="com.code.aon.entity.master.AgreementLevelCategory">
 		<alias names="description,id,level_id,level_agreement_id"/>

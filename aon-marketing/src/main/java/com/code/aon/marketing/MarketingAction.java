@@ -46,7 +46,7 @@ public class MarketingAction implements ITransferObject {
     @JoinColumn( name="campaign", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_MK_ACTION_MK_CAMPAIGN")
 	@Index(name = "IDX_MK_ACTION_MK_CAMPAIGN")
-	private Campaign campaign;
+	private MarketingCampaign campaign;
 	
 	@Column( name = "media_type", nullable = false)
 	private ActionMediaType mediaType;	
@@ -110,7 +110,7 @@ public class MarketingAction implements ITransferObject {
 	 * 
 	 * @return the campaign
 	 */
-	public Campaign getCampaign() {
+	public MarketingCampaign getCampaign() {
 		return campaign;
 	}
 
@@ -119,7 +119,7 @@ public class MarketingAction implements ITransferObject {
 	 * 
 	 * @param campaign the new campaign
 	 */
-	public void setCampaign(Campaign campaign) {
+	public void setCampaign(MarketingCampaign campaign) {
 		this.campaign = campaign;
 	}
 

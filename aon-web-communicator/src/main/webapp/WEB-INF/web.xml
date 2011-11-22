@@ -211,8 +211,7 @@
 			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Manager</role-name>
-			<role-name>Invitado</role-name>
+			<role-name>User</role-name>
 		</auth-constraint>
 	</security-constraint>
 	<login-config>
@@ -223,10 +222,9 @@
 		</form-login-config>
 	</login-config>
 	<security-role>
-		<role-name>Manager</role-name>
-	</security-role>
-	<security-role>
-		<role-name>Invitado</role-name>
+		<role-name>Admin</role-name>
+		<role-name>Guest</role-name>
+		<role-name>User</role-name>
 	</security-role>
 	<resource-env-ref>
 		<resource-env-ref-name>jdbc/AonCommunicator</resource-env-ref-name>
