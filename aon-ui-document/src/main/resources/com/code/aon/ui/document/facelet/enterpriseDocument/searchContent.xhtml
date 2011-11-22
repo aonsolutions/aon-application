@@ -37,6 +37,11 @@
 	<aon:outputLabel for="cm_category"
 		value="#{registryBundle.registry_category}" />
 	<ui:include src="/com/code/aon/ui/document/facelet/alfrescoCategory/template.xhtml" />
+
+	<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{enterpriseDocumentSearch.project}" />
+		<ui:param name="lookupSuffix" value="Document" />
+	</ui:include>
 								
 	<c:if test="#{manager.mainEnterprise}" >
 		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >

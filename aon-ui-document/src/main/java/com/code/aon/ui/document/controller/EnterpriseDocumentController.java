@@ -162,16 +162,6 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 		setDescription(null);
 		setCategories(null);
 	}
-
-	public void onEnterpriseChanged( LookupChangeEvent event ) {
-		EnterpriseDocument ed = getEnterpriseDocument();
-		if (event.getNewValue() != null) {
-			Enterprise enterprise = (Enterprise)event.getNewValue(); 
-			ed.setEnterprise( enterprise );
-		} else {
-			ed.setEnterprise(null);
-		}
-	}
 	
 	public void masiveUpload( ActionEvent event ) {
 		try {

@@ -8,6 +8,8 @@ import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_ID_LONG;
 import static com.code.aon.document.IAlfrescoConstants.MODIFIED_LONG;
 import static com.code.aon.document.IAlfrescoConstants.NAME_LONG;
 import static com.code.aon.document.IAlfrescoConstants.PATH_LONG;
+import static com.code.aon.document.IAlfrescoConstants.PROJECT_ID;
+import static com.code.aon.document.IAlfrescoConstants.PROJECT_ID_LONG;
 import static com.code.aon.document.IAlfrescoConstants.REFERENCE_DATE_LONG;
 import static com.code.aon.document.IAlfrescoConstants.TITLE_LONG;
 import static com.code.aon.document.IAlfrescoConstants.UUID_LONG;
@@ -47,6 +49,7 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.document.AlfrescoCategory;
 import com.code.aon.document.EnterpriseDocument;
 import com.code.aon.document.EnterpriseDocumentAspect;
+import com.code.aon.project.Project;
 
 /**
  * The Class LdapDAO.
@@ -83,13 +86,11 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 	@Override
 	public Object getValue( NamedValue nv ) {
 		String name = nv.getName();
-		if ( PROP_NAME.equals(name) ) {
-			return nv.getValue();
-		} else if ( PROP_DESCRIPTION.equals(name) ) {
+		if ( PROP_NAME.equals(name) || PROP_DESCRIPTION.equals(name) ) {
 			return nv.getValue();
 		} else if ( PROP_CREATED.equals(name) ) {
 			return ISO8601DateFormat.parse(nv.getValue());
-		} else if ( ENTERPRISE_ID.equals(name) ) {
+		} else if ( ENTERPRISE_ID.equals(name) || PROJECT_ID.equals(name) ) {
 			return NumberUtils.toInt(nv.getValue());
 		}
 		return null;
@@ -107,6 +108,16 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		return categories;
 	}
 		
+	private ITransferObject getTo( String value, Class<? extends ITransferObject> _class ) throws DAOException {
+		Integer id = NumberUtils.toInt(value);
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(_class);
+			return bean.get(id);
+		} catch (ManagerBeanException e) {
+			throw new DAOException(e);
+		}		
+	}
+	
 	@Override
 	protected ITransferObject convert( NamedValue[] values ) throws DAOException {
 		EnterpriseDocument ed = newEnterpriseDocument();
@@ -115,39 +126,39 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		ed.setId(reference);
 		for( NamedValue nv : values ) {
 			String name = nv.getName();
-			if ( DESCRIPTION_LONG.equals(name) ) {
-				ed.setDescription(nv.getValue());
-			} else if ( NAME_LONG.equals(name) ) {
-				ed.setName(nv.getValue());
-				MimeType type = MimeResolver.getMimeTypeByExtension(ed.getName());
-				ed.setMimeType(type);
-			} else if ( TITLE_LONG.equals(name) ) {
-				ed.setTitle(nv.getValue());
-			} else if ( UUID_LONG.equals(name) ) {
-				reference.setUuid(nv.getValue());
-			} else if ( PATH_LONG.equals(name) ) {
-				reference.setPath(nv.getValue());
-			} else if ( CREATED_LONG.equals(name) ) {
-				Date date = ISO8601DateFormat.parse(nv.getValue());
-				ed.setCreatedDate(date);
-			} else if ( MODIFIED_LONG.equals(name) ) {
-				Date date = ISO8601DateFormat.parse(nv.getValue());
-				ed.setModifiedDate(date);
-			} else if ( REFERENCE_DATE_LONG.equals(name) ) {
-				Date date = ISO8601DateFormat.parse(nv.getValue());
-				ed.setReferenceDate(date);
-			} else if ( ENTERPRISE_ID_LONG.equals(name) ) {
-				Integer id = NumberUtils.toInt(nv.getValue());
-				IManagerBean bean;
-				try {
-					bean = BeanManager.getManagerBean(Enterprise.class);
-					Enterprise enterprise = (Enterprise) bean.get(id);
+			if ( nv.getValue() != null ) {
+				if ( DESCRIPTION_LONG.equals(name) ) {
+					ed.setDescription(nv.getValue());
+				} else if ( NAME_LONG.equals(name) ) {
+					ed.setName(nv.getValue());
+					MimeType type = MimeResolver.getMimeTypeByExtension(ed.getName());
+					ed.setMimeType(type);
+				} else if ( TITLE_LONG.equals(name) ) {
+					ed.setTitle(nv.getValue());
+				} else if ( UUID_LONG.equals(name) ) {
+					reference.setUuid(nv.getValue());
+				} else if ( PATH_LONG.equals(name) ) {
+					reference.setPath(nv.getValue());
+				} else if ( CREATED_LONG.equals(name) ) {
+					Date date = ISO8601DateFormat.parse(nv.getValue());
+					ed.setCreatedDate(date);
+				} else if ( MODIFIED_LONG.equals(name) ) {
+					Date date = ISO8601DateFormat.parse(nv.getValue());
+					ed.setModifiedDate(date);
+				} else if ( REFERENCE_DATE_LONG.equals(name) ) {
+					Date date = ISO8601DateFormat.parse(nv.getValue());
+					ed.setReferenceDate(date);					
+				} else if ( ENTERPRISE_ID_LONG.equals(name) ) {
+					Enterprise enterprise = (Enterprise) getTo(nv.getValue(), Enterprise.class);
 					ed.setEnterprise(enterprise);
-				} catch (ManagerBeanException e) {
-					throw new DAOException(e);
+				} else if ( PROJECT_ID_LONG.equals(name) ) {
+					Project project = (Project) getTo(nv.getValue(), Project.class);
+					ed.setProject(project);		
 				}
-			} else if ( CATEGORIES_LONG.equals(name) ) {
-				ed.setCategories(getCategories(nv.getValues()));
+			} else if ( nv.getValues() != null ) {
+				if ( CATEGORIES_LONG.equals(name) ) {
+					ed.setCategories(getCategories(nv.getValues()));
+				}				
 			}
 		}		
 		return ed;
@@ -155,13 +166,21 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 
 	@Override
 	protected NamedValue[] updateValues(ITransferObject to) {
-		NamedValue[] values = new NamedValue[4];
+		NamedValue[] values = new NamedValue[5];
 		EnterpriseDocument ed = (EnterpriseDocument) to;
 		values[0] = Utils.createNamedValue(PROP_DESCRIPTION, ed.getDescription());
 		values[1] = Utils.createNamedValue(PROP_NAME, ed.getName());
 		values[2] = Utils.createNamedValue(PROP_TITLE, ed.getTitle());
-		String referenceDate = ISO8601DateFormat.format(ed.getReferenceDate());
+		String referenceDate = null;
+		if ( ed.getReferenceDate() != null ) {
+			referenceDate = ISO8601DateFormat.format(ed.getReferenceDate());
+		}
 		values[3] = Utils.createNamedValue(REFERENCE_DATE_LONG, referenceDate);
+		String projectId = null;
+		if ( (ed.getProject() != null) && (ed.getProject().getId() != null) ) {
+			projectId = ed.getProject().getId().toString();
+		}
+		values[4] = Utils.createNamedValue(PROJECT_ID_LONG, projectId);
 		return values;
 	}
 
@@ -174,7 +193,7 @@ public class EnterpriseDocumentDAO extends AlfrescoDAO  {
 		};
 		CMLAddAspect title = new CMLAddAspect(Constants.ASPECT_TITLED, values, null, "1");
 		
-		EnterpriseDocumentAspect eda = new EnterpriseDocumentAspect(ed.getEnterprise().getId());
+		EnterpriseDocumentAspect eda = new EnterpriseDocumentAspect(ed);
 		CMLAddAspect aspect = eda.getAspect(getParentReference());
 		return new CMLAddAspect[]{ title, aspect };
 	}

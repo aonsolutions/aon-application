@@ -60,10 +60,12 @@
 					<ui:param name="lookupTo" value="#{enterpriseDocument.to.enterprise}" />
 					<ui:param name="skipNewButton" value="#{true}" />
 					<ui:param name="idRequired" value="#{true}" />
-					<aon:methodParam name="lookupChangeListener" 
-						value="#{enterpriseDocument.onEnterpriseChanged}" type="lookupChangeListener" />
 				</ui:include>
 			</c:if>
+			
+			<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{enterpriseDocument.to.project}" />
+			</ui:include>
 
 			<aon:outputLabel for="cm_referenceDate"
 				value="#{documentBundle.document_referenceDate}" />

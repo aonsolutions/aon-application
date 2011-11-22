@@ -25,8 +25,12 @@ public class EnterpriseDocumentAspect {
 	
 	private Date referenceDate;
 	
-	public EnterpriseDocumentAspect(Integer projectId) {
-		this.projectId = projectId;
+	public EnterpriseDocumentAspect(EnterpriseDocument ed) {
+		this.enterpriseId = ed.getEnterprise().getId();
+		if ( ed.getProject() != null ) {
+			this.projectId = ed.getProject().getId();
+		}
+		this.referenceDate = ed.getReferenceDate();
 	}
 
 	public Integer getProjectId() {

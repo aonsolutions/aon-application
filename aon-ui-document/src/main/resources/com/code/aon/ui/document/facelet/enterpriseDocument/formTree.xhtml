@@ -39,4 +39,9 @@
 		<ui:include src="/com/code/aon/ui/document/facelet/enterpriseDocument/formContent.xhtml" />	
 	</ui:define>
 	
+	<ui:define name="additionalContent">
+		<aon:lookupButtonPopup lookup="#{projectLookup}" />
+		<aon:lookupButtonPopup lookup="#{registryLookup}" />			
+	</ui:define>
+	
 </ui:composition>

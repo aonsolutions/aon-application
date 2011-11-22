@@ -6,6 +6,7 @@ import static com.code.aon.document.IAlfrescoConstants.DESCRIPTION_SHORT;
 import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_ID_SHORT;
 import static com.code.aon.document.IAlfrescoConstants.MIME_TYPE;
 import static com.code.aon.document.IAlfrescoConstants.NAME_SHORT;
+import static com.code.aon.document.IAlfrescoConstants.PROJECT_ID_SHORT;
 import static com.code.aon.document.IAlfrescoConstants.TITLE_SHORT;
 import static com.code.aon.document.dao.AlfrescoCategoryDAO.EMPTY_CATEGORY;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
@@ -29,6 +30,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Enterprise;
 import com.code.aon.document.AlfrescoCategory;
+import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
@@ -48,6 +50,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 	private static final String PATH_FIELD = "PATH";
 	private static final String TEXT_FIELD = "TEXT";
 	private Enterprise enterprise;
+	private Project project;
 	private Date[] createdDate;
 	private Date[] modifiedDate;
 	private Date[] referenceDate;
@@ -115,6 +118,14 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 		this.enterprise = enterprise;
 	}
 	
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+
 	public String getText() {
 		return text;
 	}
@@ -191,18 +202,18 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 
 	@Override
 	protected void init() throws ManagerBeanException {
-		reset( true );
+		reset();
 	}
 	
 	public void onClear(ActionEvent event) {
 		try {
-			reset( true );
+			reset();
 		} catch (ManagerBeanException e) {
 			LOGGER.error(e.getMessage(), e);
 		}		
 	}
 	
-	public void reset( boolean createTo ) throws ManagerBeanException {
+	public void reset() throws ManagerBeanException {
 		setName(null);
 		setDescription(null);
 		setTitle(null);
@@ -213,15 +224,15 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 		setType(null);
 		setCategories( new LinkedList<AlfrescoCategory>() );
 		setShowList(false);
+		IManagerBean projectBean = BeanManager.getManagerBean(Project.class);
+		setProject((Project) projectBean.createNewTo());
 		Enterprise enterprise = null;
-		if ( createTo ) {
-			ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
-			if ( mc.isMainEnterprise() ) {
-				IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
-				enterprise = (Enterprise) enterpriseBean.createNewTo();
-			} else {
-				enterprise = mc.getLoggedUser().getEnterprise();				
-			}
+		ManagerController mc = (ManagerController) AonUtil.getRegisteredBean(MANAGER_CONTROLLER_NAME);
+		if ( mc.isMainEnterprise() ) {
+			IManagerBean enterpriseBean = BeanManager.getManagerBean(Enterprise.class);
+			enterprise = (Enterprise) enterpriseBean.createNewTo();
+		} else {
+			enterprise = mc.getLoggedUser().getEnterprise();				
 		}
 		setEnterprise(enterprise);
 	}
@@ -236,6 +247,9 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 		}
 		if (! StringUtils.isEmpty(getDescription())) {
 			criteria.addEqualExpression( DESCRIPTION_SHORT, getDescription());
+		}
+		if ((getProject() != null) && (getProject().getId() != null)) {
+			criteria.addEqualExpression( PROJECT_ID_SHORT, getProject().getId());			
 		}
 		if ((getEnterprise() != null) && (getEnterprise().getId() != null)) {
 			criteria.addEqualExpression( ENTERPRISE_ID_SHORT, getEnterprise().getId());			
