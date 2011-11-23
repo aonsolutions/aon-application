@@ -55,6 +55,9 @@
 		<payroll:paymentUpdate
 			showEnterpriseInSearch="false" 
 		/>		
+		<payroll:irpfDraft
+			showEnterpriseInSearch="true" 
+		/>
 	</payroll:config>	
 	
 </config>

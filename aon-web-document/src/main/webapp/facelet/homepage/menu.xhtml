@@ -2,20 +2,29 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
 	<ui:define name="menuContent">
 		<aon:commandLink id="enterprise" 
 			action="#{enterprise.initialAction}" 
-			value="#{companyBundle.company_enterprise_module}"
+			value="#{appBundle.menu_integral}"
 			styleClass="aon-top-menu-item aon-icon-company">
-			<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
+			<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
 			<aon:actionListener method="#{enterprise.onEditSearch}" />
 		</aon:commandLink>
 		<aon:commandLink id="main"
+			value="#{appBundle.menu_main}"
+			action="menu_main" immediate="true"
+			styleClass="aon-top-menu-item aon-icon-general" />		
+		<aon:commandLink id="document"
 			value="#{appBundle.menu_document}"
 			action="menu_document" immediate="true"
-			styleClass="aon-top-menu-item aon-icon-payroll" />
+			styleClass="aon-top-menu-item aon-icon-payroll" >
+			<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
+		</aon:commandLink>
+		<rich:jQuery timing="onload"
+			selector="body" query="removeClass('aon-overflow-hidden')" />				
 	</ui:define>
 	
  </ui:composition>

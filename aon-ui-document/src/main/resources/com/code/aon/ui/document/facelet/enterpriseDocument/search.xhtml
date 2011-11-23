@@ -5,79 +5,52 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 		<aon:form id="enterpriseDocumentForm">
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{bundle.aon_documents}" />
-				<ui:param name="controller" value="#{enterpriseDocument}" />
-				<ui:param name="skipResetButton" value="#{true}" />
-			</ui:include>
-
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{enterpriseDocument}" />
-				<ui:param name="skipAfterSearch" value="#{true}" />
-				<ui:define name="searchContent">
-
-					<aon:outputLabel for="cm_name"
-						value="#{bundle.aon_name}" />
-					<aon:inputText id="cm_name" size="60"
-						valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="cm_description"
-						value="#{bundle.aon_description}" />
-					<aon:inputText id="cm_description" size="60"
-						valueChangeListener="#{controller.addExpression}" />
-
-					<aon:outputLabel for="cm_type"
-						value="#{bundle.aon_type}" />
-					<aon:selectOneMenu id="cm_type"
-						value="#{enterpriseDocumentSearch.type}">
-						<f:selectItem itemLabel="-" value="#{null}" />		
-						<f:selectItems value="#{enterpriseDocument.mimeTypes}" />
-					</aon:selectOneMenu>					
-
-					<aon:outputLabel for="cm_text"
-						value="#{bundle.aon_content}" />
-					<aon:inputText id="cm_text" size="60"
-						value="#{enterpriseDocumentSearch.text}" />
-					
-					<aon:outputLabel for="cm_category"
-						value="#{registryBundle.registry_category}" />
-					<aon:selectManyCheckbox id="cm_category"
-						value="#{enterpriseDocumentSearch.selectedCategories}">
-						<f:selectItems value="#{enterpriseDocument.categories}"/>
-					</aon:selectManyCheckbox>								
-												
-					<c:if test="#{manager.mainEnterprise}" >
-						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
-							<ui:param name="lookupTo" value="#{enterpriseDocumentSearch.enterprise}" />
-							<ui:param name="skipNewButton" value="#{true}" />
-						</ui:include>
-					</c:if>
-							
-					<aon:outputLabel value="#{bundle.aon_date}" />
-					<aon:div>
-						<aon:outputLabel for="cm_created-From" styleClass="aon-form-date-label aon-padding-right" 
-							value="#{bundle.aon_date_from}:" />
-						<aon:selectInputDate id="cm_created-From"
-							value="#{enterpriseDocumentSearch.startDate}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}" />
-				
-						<aon:outputLabel for="cm_created-To" styleClass="aon-form-date-label aon-padding-right" 
-							value="#{bundle.aon_date_to}:" />
-						<aon:selectInputDate id="cm_created-To"
-							value="#{enterpriseDocumentSearch.endDate}"
-							timeZone="#{timeZoneController.timeZone}"
-							popupDateFormat="#{bundle.aon_date_pattern}" />
-					</aon:div>		
-									
+				<ui:param name="toolbarDescription" value="#{bundle.aon_toolbar_search}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="clear"
+						value="#{bundle.aon_clear}" 
+						actionListener="#{enterpriseDocumentSearch.onClear}"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+					<aon:commandButton id="search"
+						title="#{bundle.aon_key_search_accelerator}"
+						value="#{bundle.aon_search}"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						actionListener="#{enterpriseDocument.onSearch}"
+						requestDelay="100" accesskey="#{bundle.aon_key_search}" >
+						<aon:actionHotKey key="return" />
+					</aon:commandButton> 
 				</ui:define>
-			</ui:decorate>
+			</ui:decorate>		
+			
+			<aon:div styleClass="aon-scroll-area">
+				<a4j:region>
+					<aon:panelCollapsible label="#{bundle.aon_search_info}"
+						headerClass="aon-panelGrid-search-info" 
+						bodyClass="aon-panelGrid-search"				
+						value="#{enterpriseDocumentSearch.showOpened}" >
+						<aon:panelGrid columns="2">		
+							<ui:include src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />
+						</aon:panelGrid>
+					</aon:panelCollapsible>
+				</a4j:region>
+				
+				<c:if test="#{enterpriseDocumentSearch.showList}">
+					<ui:include
+						src="/com/code/aon/ui/document/facelet/enterpriseDocument/listContent.xhtml" />
+				</c:if>
+			</aon:div>
+
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{projectLookup}" />
+		<aon:lookupButtonPopup lookup="#{registryLookup}" />
 	</ui:define>
 </ui:composition>

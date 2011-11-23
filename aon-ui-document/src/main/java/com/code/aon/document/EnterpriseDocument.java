@@ -18,6 +18,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Enterprise;
 import com.code.aon.document.dao.AlfrescoDAO;
+import com.code.aon.project.Project;
 
 public class EnterpriseDocument implements IAlfrescoDocument {
 	
@@ -31,9 +32,17 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 	
 	private String description;
 	
-	private Date created; 
+	private String title;
+	
+	private Date createdDate; 
+	
+	private Date modifiedDate;
+	
+	private Date referenceDate;
 	
 	private Enterprise enterprise;
+
+	private Project project;
 	
 	private MimeType mimeType;
 	
@@ -93,13 +102,37 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
-	public Date getCreated() {
-		return created;
+	
+	public String getTitle() {
+		return title;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public Date getModifiedDate() {
+		return modifiedDate;
+	}
+
+	public void setModifiedDate(Date modifiedDate) {
+		this.modifiedDate = modifiedDate;
+	}
+
+	public Date getReferenceDate() {
+		return referenceDate;
+	}
+
+	public void setReferenceDate(Date referenceDate) {
+		this.referenceDate = referenceDate;
 	}
 
 	public Enterprise getEnterprise() {
@@ -110,6 +143,14 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 		this.enterprise = enterprise;
 	}
 	
+	public Project getProject() {
+		return project;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;
+	}
+
 	public AlfrescoCategory[] getCategories() {
 		return categories;
 	}
@@ -137,10 +178,15 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 		final EnterpriseDocument o = (EnterpriseDocument) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
-				.append(this.created, o.created)
+				.append(this.createdDate, o.createdDate)
 				.append(this.description, o.description)
 				.append(this.enterprise, o.enterprise)
 				.append(this.name, o.name)
+				.append(this.mimeType, o.mimeType)
+				.append(this.modifiedDate, o.modifiedDate)
+				.append(this.project, o.project)
+				.append(this.referenceDate, o.referenceDate)
+				.append(this.title, o.title)
 				.isEquals();
 		}
 		return ObjectUtils.equals(getId(), o.getId());		
@@ -149,25 +195,32 @@ public class EnterpriseDocument implements IAlfrescoDocument {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder()
-			.append(created)
+			.append(createdDate)
 			.append(data)
 			.append(description)
 			.append(enterprise)
 			.append(id)
-			.append(mimeType)
 			.append(name)
+			.append(mimeType)
+			.append(modifiedDate)
+			.append(referenceDate)
+			.append(title)
 			.toHashCode();
 	}
 
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).
-			append("created", created).
+			append("createdDate", createdDate).
 			append("description", description).
 			append("enterprise", (enterprise != null) ? enterprise.getId() : null).
 			append("id", id).
-			append("mimeType", mimeType).
 			append("name", name).
+			append("mimeType", mimeType).
+			append("modifiedDate", modifiedDate).
+			append("project", (project != null) ? project.getId() : null).
+			append("referenceDate", referenceDate).
+			append("title", title).
 			toString();
 	}
 	

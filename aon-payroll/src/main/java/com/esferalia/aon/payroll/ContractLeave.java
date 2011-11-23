@@ -129,8 +129,7 @@ public class ContractLeave implements ITransferObject {
 		this.parent = parent;
 	}
 	
-	@Transient
-//	@Column(name = "discharge_cause")
+	@Column(name = "discharge_cause")
 	public DischargeCause getDischargeCause() {
 		return dischargeCause;
 	}
@@ -139,8 +138,6 @@ public class ContractLeave implements ITransferObject {
 	}
 	
 	@Transient
-//	@Temporal(TemporalType.DATE)
-//	@Column(name = "Occupational_disease_date")
 	public Date getOccupationalDiseaseDate() {
 		return occupationalDiseaseDate;
 	}

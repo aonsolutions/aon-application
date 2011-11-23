@@ -1,5 +1,7 @@
 package com.code.aon.document;
 
+import static org.alfresco.webservice.util.Constants.QUERY_LANG_LUCENE;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
@@ -7,10 +9,14 @@ import java.util.Properties;
 import org.alfresco.webservice.classification.ClassificationServiceSoapBindingStub;
 import org.alfresco.webservice.content.Content;
 import org.alfresco.webservice.content.ContentServiceSoapBindingStub;
+import org.alfresco.webservice.repository.QueryResult;
 import org.alfresco.webservice.repository.RepositoryServiceSoapBindingStub;
 import org.alfresco.webservice.types.ParentReference;
 import org.alfresco.webservice.types.Predicate;
+import org.alfresco.webservice.types.Query;
 import org.alfresco.webservice.types.Reference;
+import org.alfresco.webservice.types.ResultSet;
+import org.alfresco.webservice.types.ResultSetRowNode;
 import org.alfresco.webservice.types.Store;
 import org.alfresco.webservice.util.AuthenticationUtils;
 import org.alfresco.webservice.util.Constants;
@@ -19,6 +25,7 @@ import org.alfresco.webservice.util.WebServiceFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,14 +39,6 @@ public class BasicAlfresco {
 
 	/** The store used throughout the samples */
 	public static final Store STORE = new Store(Constants.WORKSPACE_STORE, "SpacesStore");
-
-	public static final String UUID = "{" + Constants.NAMESPACE_SYSTEM_MODEL + "}node-uuid";
-	
-	public static final String PATH = "{" + Constants.NAMESPACE_CONTENT_MODEL + "}path";
-	
-	public static final String CATEGORIES = "{" + Constants.NAMESPACE_CONTENT_MODEL + "}categories";
-	
-	public static final String MIME_TYPE = Constants.PROP_CONTENT + ".mimetype";
 	
 	private File ALFRESCO_PROPERTIES = new File("/home/COMMON-RESOURCES/aon-document/config.properties");
 
@@ -96,14 +95,27 @@ public class BasicAlfresco {
 		return WebServiceFactory.getClassificationService();
 	}
 	
-	protected ParentReference getReferenceToParent(Reference spaceref, String path ) {
-		ParentReference parent = new ParentReference();
-
-		parent.setStore(STORE);
-		parent.setPath(spaceref.getPath() + "/" + path);
-		parent.setUuid(spaceref.getUuid());
-		parent.setAssociationType(Constants.ASSOC_CONTAINS);
-
+	public Reference getReference( String path ) {
+		try {
+			startSession();
+	        Query query = new Query(QUERY_LANG_LUCENE, "PATH:\"" + path + "\"");
+			QueryResult result = WebServiceFactory.getRepositoryService().query(STORE, query, true);
+	        ResultSet rs = result.getResultSet();
+	        if(rs.getTotalRowCount()>0) {
+	        	ResultSetRowNode node = rs.getRows()[0].getNode();
+		        return new Reference(STORE, node.getId(), path);		
+	        }
+		} catch ( Throwable e ) {
+			LOGGER.error("Error getting reference of " + path, e);
+		} finally {
+			endSession();
+		}
+		return null;
+	}
+	
+	public ParentReference getReferenceToParent(Reference  ref) {
+		ParentReference parent = new ParentReference(STORE,
+				ref.getUuid(), ref.getPath(), Constants.ASSOC_CONTAINS, null );
 		return parent;
 	}
 	
@@ -124,6 +136,30 @@ public class BasicAlfresco {
 			endSession();
 		}
 		return data;		
+	}
+
+	public static String formatId( String id ) {
+		String _id = StringUtils.replace(id, ":", "\\:");
+		_id = StringUtils.replace(_id, "{", "\\{");
+		_id = StringUtils.replace(_id, "}", "\\}");	
+		return _id;
+	}
+
+	public static boolean equals(Reference r1, Reference r2) {
+		if (r1 == r2) return true;
+		if (r1 != null && r2 != null) {
+			return new EqualsBuilder()
+				.append(r1.getUuid(), r2.getUuid())
+				.append(r1.getStore(), r2.getStore())
+				.isEquals();
+		}
+		return false;		
+	}
+
+	public static String getId( Reference reference ) {
+		Store store = reference.getStore();
+		String id = store.getScheme() + "\\://" + store.getAddress() + "/" + reference.getUuid();
+		return id;
 	}
 	
 }

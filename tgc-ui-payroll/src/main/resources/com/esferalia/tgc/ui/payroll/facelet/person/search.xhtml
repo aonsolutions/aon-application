@@ -5,26 +5,21 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
-
 	<ui:define name="content">
 		<aon:form id="personSearch">
-			
-			<aon:methodParam name="backAction" value="personReport_list" />
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{tgcPayrollBundle.tgcPayroll_person_report_module}" />
-				<ui:param name="controller" value="#{person}" />
-				<ui:param name="skipResetButton" value="true" />
+			<aon:methodParam name="backAction" value="personReport_list"/>
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{tgcPayrollBundle.tgcPayroll_person_report_module}"/>
+				<ui:param name="controller" value="#{person}"/>
+				<ui:param name="skipResetButton" value="true"/>
 			</ui:include>
-			
-			<aon:methodParam name="searchAction" value="personReport_list" />
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
-				<ui:param name="controller" value="#{person}" />
-				<ui:define name="searchContent">
-					<ui:include src="/com/code/aon/ui/registry/facelet/person/searchContent.xhtml" />
-				</ui:define>
-			</ui:decorate>
-			
-		</aon:form>
+		<aon:methodParam name="searchAction" value="personReport_list"/>
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+			<ui:param name="controller" value="#{person}"/>
+			<ui:define name="searchContent">
+				<ui:include src="/com/code/aon/ui/registry/facelet/person/searchContent.xhtml"/>
+			</ui:define>
+		</ui:decorate>
+	</aon:form>
 	</ui:define>
 </ui:composition>

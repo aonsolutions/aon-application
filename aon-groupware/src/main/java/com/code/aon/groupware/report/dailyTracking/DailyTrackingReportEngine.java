@@ -33,23 +33,23 @@ public class DailyTrackingReportEngine {
 			+ " FROM DailyTracking dt " 
 			+ " left outer join dt.registry as reg";
 	
-	private static final String JOBS_BY_CUSTOMER = "SELECT "
-			+ "new com.code.aon.groupware.report.dailyTracking.DailyTrackingReport(  "
-			+ " thd.id as userId" 
-			+ ", thr.name as userName" 
-			+ ", SUM(dt.trackingDuration) as duration" 
-			+ ", job.id as jobId"
-			+ ", job.description as jobDescription"
-			+ ", reg.id as registryId"
-			+ ", reg.name as registryName)"
-			+ " FROM DailyTracking dt " 
-			+ " inner join dt.taskHolder as thd "
-			+ " left outer join dt.taskHolder.registry as thr "
-			+ " inner join dt.jobType as job"
-			+ " left outer join dt.registry as reg"
-			+ " left outer join dt.project as prj "
-			+ " left outer join dt.project.projectType as prt "
-			+ " left outer join dt.activityType as aty";
+//	private static final String JOBS_BY_CUSTOMER = "SELECT "
+//			+ "new com.code.aon.groupware.report.dailyTracking.DailyTrackingReport(  "
+//			+ " thd.id as userId" 
+//			+ ", thr.name as userName" 
+//			+ ", SUM(dt.trackingDuration) as duration" 
+//			+ ", job.id as jobId"
+//			+ ", job.description as jobDescription"
+//			+ ", reg.id as registryId"
+//			+ ", reg.name as registryName)"
+//			+ " FROM DailyTracking dt " 
+//			+ " inner join dt.taskHolder as thd "
+//			+ " left outer join dt.taskHolder.registry as thr "
+//			+ " inner join dt.jobType as job"
+//			+ " left outer join dt.registry as reg"
+//			+ " left outer join dt.project as prj "
+//			+ " left outer join dt.project.projectType as prt "
+//			+ " left outer join dt.activityType as aty";
 
 	private static final String SENTENCE = "SELECT "
 			+ "new com.code.aon.groupware.report.dailyTracking.DailyTrackingReport(  dt.id as id"
@@ -79,8 +79,8 @@ public class DailyTrackingReportEngine {
 			sentence.append(PROJECT_GRAPHIC);
 		} else if (reportType == DailyTrackingReportType.GRAPHIC_BY_JOB_TYPE) {
 			sentence.append(JOB_TYPE_GRAPHIC);
-		} else if (reportType == DailyTrackingReportType.JOBS_BY_CUSTOMER) {
-			sentence.append(JOBS_BY_CUSTOMER);
+//		} else if (reportType == DailyTrackingReportType.JOBS_BY_CUSTOMER) {
+//			sentence.append(JOBS_BY_CUSTOMER);
 		} else {
 			sentence.append(SENTENCE);
 		}
@@ -187,7 +187,7 @@ public class DailyTrackingReportEngine {
 		if (reportType == DailyTrackingReportType.BY_CUSTOMER) {
 			return " ORDER BY reg.id,dt.trackingDate ";
 		} else if (reportType == DailyTrackingReportType.JOBS_BY_CUSTOMER) {
-			return " GROUP BY reg.id,thd.id,job.id ORDER BY reg.id,thd.id,job.id";
+			return " ORDER BY reg.id,thd.id,job.id";
 		} else if (reportType == DailyTrackingReportType.BY_DATE) {
 			return " ORDER BY dt.trackingDate,thd.id ";
 		} else if (reportType == DailyTrackingReportType.BY_USER) {

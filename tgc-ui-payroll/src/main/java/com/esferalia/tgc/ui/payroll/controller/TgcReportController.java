@@ -6,7 +6,6 @@ import com.esferalia.tgc.ui.payroll.enumeration.ReportName;
 
 
 public class TgcReportController {
-	
 	private ReportName reportName;
 
 	public ReportName getReportName() {
@@ -20,6 +19,4 @@ public class TgcReportController {
 	public void initialize(ActionEvent event){
 		setReportName(null);
 	}
-	
-	
 }

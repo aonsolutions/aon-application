@@ -1,6 +1,5 @@
 package com.code.aon.document;
 
-import org.alfresco.webservice.types.Classification;
 import org.alfresco.webservice.types.Reference;
 import org.alfresco.webservice.util.ISO9075;
 import org.apache.commons.lang.ObjectUtils;
@@ -12,18 +11,14 @@ public class AlfrescoCategory implements IAlfrescoTransferObject {
 
 	private static final long serialVersionUID = -8322661069263146878L;
 
-	private Reference id;
+	public static final String AON_CLASIFICATION = "cm:generalclassifiable/cm:AON";
 	
-	private Classification classification;
+	private Reference id;
 	
 	private String name;
 	
 	private String description;
 	
-	public AlfrescoCategory( Classification classification ) {
-		this.classification = classification;
-	}
-
 	public Reference getId() {
 		return id;
 	}
@@ -48,18 +43,10 @@ public class AlfrescoCategory implements IAlfrescoTransferObject {
 		this.description = description;
 	}
 	
-	public Classification getClassification() {
-		return classification;
-	}
-
-	public String getClassificationString() {
-		return "cm:generalclassifiable/cm:" + ISO9075.encode(classification.getRootCategory().getTitle());
- 	}
-	
 	public String getSearchValue() {
 		StringBuffer sb = new StringBuffer();
 		sb.append( "\"" );
-		sb.append( getClassificationString() );
+		sb.append( AON_CLASIFICATION );
 		sb.append( "/cm:" );
 		sb.append( ISO9075.encode(getName()) );
 		sb.append( "/member\"" );
@@ -78,7 +65,7 @@ public class AlfrescoCategory implements IAlfrescoTransferObject {
 				.append(this.name, o.name)
 				.isEquals();
 		}
-		return ObjectUtils.equals(getId(), o.getId());		
+		return BasicAlfresco.equals(getId(), o.getId());		
 	}
 	
 	@Override

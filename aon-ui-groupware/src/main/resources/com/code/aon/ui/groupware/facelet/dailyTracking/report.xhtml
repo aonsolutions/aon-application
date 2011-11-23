@@ -143,7 +143,8 @@
 					
 					<aon:outputLabel for="reportType" value="#{bundle.aon_listing}"/>
 					<aon:div>
-						<aon:selectOneMenu id="reportType" value="#{dailyTrackingReport.params.reportType}">
+						<aon:selectOneMenu id="reportType" 
+							value="#{dailyTrackingReport.params.reportType}">
 							<f:selectItems value="#{groupWareCollections.dailyTrackingReportTypes}" />
 						</aon:selectOneMenu>
 					</aon:div>

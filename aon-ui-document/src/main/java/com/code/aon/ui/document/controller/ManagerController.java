@@ -2,6 +2,7 @@ package com.code.aon.ui.document.controller;
 
 import static com.code.aon.company.dao.ICompanyAlias.ENTERPRISE_ID;
 import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
+import static com.code.aon.ui.registry.controller.IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME;
 
 import java.security.Principal;
 import java.util.LinkedList;
@@ -24,6 +25,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.EnterpriseController;
+import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class ManagerController {
@@ -46,6 +48,8 @@ public class ManagerController {
 		}
 		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
 		lu.setCompanyName(loggedUser.getEnterprise().getRegistry().getFullName());
+		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(DOCUMENT_MANAGER_CONTROLLER_NAME);
+		dm.setShow(false);
 	}
 	
 	public AuthPrincipal getPrincipal() {

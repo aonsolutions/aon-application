@@ -1,13 +1,14 @@
 package com.code.aon.ui.document.converter;
 
-import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
+import static com.code.aon.ui.document.controller.IDocumentConstants.ALFRESCO_CATEGORY_CONTROLLER_NAME;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
 import com.code.aon.document.AlfrescoCategory;
-import com.code.aon.ui.document.controller.EnterpriseDocumentController;
+import com.code.aon.document.dao.AlfrescoCategoryDAO;
+import com.code.aon.ui.document.controller.AlfrescoCategoryController;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -19,8 +20,12 @@ public class AlfrescoCategoryConverter implements Converter {
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
 		if (value != null) {
-			EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
-			return edc.getCategoryManager().getCategory(value);
+			AlfrescoCategoryController acc = (AlfrescoCategoryController) AonUtil.getRegisteredBean(ALFRESCO_CATEGORY_CONTROLLER_NAME);
+			AlfrescoCategory ac = acc.getCategory(value);
+			if ( ac == null ) {
+				ac = AlfrescoCategoryDAO.EMPTY_CATEGORY;
+			}
+			return ac;
 		}
 		return null;
 	}
@@ -31,7 +36,7 @@ public class AlfrescoCategoryConverter implements Converter {
 			return null;
 		}
 		AlfrescoCategory ac = (AlfrescoCategory) value;
-		return ac.getName();
+		return (ac.getId() != null) ? ac.getId().getUuid() : null;
 	}
 
 }

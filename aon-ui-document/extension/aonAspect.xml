@@ -24,6 +24,12 @@
 					<type>d:int</type>
 					<mandatory>true</mandatory>
 				</property>
+				<property name="aon:projectId">
+					<type>d:int</type>
+				</property>
+				<property name="aon:referenceDate">
+					<type>d:datetime</type>
+				</property>
 			</properties>
 		</aspect>
 	</aspects>

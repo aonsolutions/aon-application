@@ -11,13 +11,6 @@ import com.code.aon.common.enumeration.MimeType;
 public interface IAlfrescoDocument extends IAlfrescoTransferObject {
 	
 	/**
-	 * Gets the name.
-	 *
-	 * @return the name
-	 */
-	String getName();
-	
-	/**
 	 * Gets the mime type.
 	 *
 	 * @return the mime type

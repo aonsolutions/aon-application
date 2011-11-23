@@ -10,28 +10,9 @@
 	<!--  INFORMES POR EMPRESA -->
 	<!-- ================================================================== -->
 	<report id="informeTgcEmpresa" description="Impresion del informe de prueba de empresa">
-		<template path="/com/esferalia/tgc/ui/payroll/report/informeTgcEmpresa.jasper" />
+		<template path="/com/esferalia/tgc/ui/payroll/report/enterprise/informeTgcEmpresa.jasper" />
 		<bean key="com.code.aon.company.Enterprise" />
 		<criteria provider="#{enterprise}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.tgc.ui.payroll.i18n.report" />
-		</params>
-	</report>
-
-	<!-- ================================================================== -->
-	<!--  INFORMES POR CCC -->
-	<!-- ================================================================== -->
-	<report id="informeTgcCcc" description="Impresion del informe de prueba de ccc">
-		<template path="/com/esferalia/tgc/ui/payroll/report/informeTgcCcc.jasper" />
-		<bean key="com.esferalia.aon.payroll.EnterpriseCCC" />
-		<criteria provider="#{enterpriseCCC}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.tgc.ui.payroll.i18n.report" />
-		</params>
-	</report>
-	<report id="informeTgc2Ccc" description="Impresion del informe de prueba de ccc">
-		<template path="/com/esferalia/tgc/ui/payroll/report/informeTgc2Ccc.jasper" />
-		<collection provider="#{cccReport}" forceRefresh="true" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.tgc.ui.payroll.i18n.report" />
 		</params>
@@ -41,7 +22,7 @@
 	<!--  INFORMES POR CONTRATO -->
 	<!-- ================================================================== -->
 	<report id="informeTgcContrato" description="Impresion del informe de prueba de contrato">
-		<template path="/com/esferalia/tgc/ui/payroll/report/informeTgcContrato.jasper" />
+		<template path="/com/esferalia/tgc/ui/payroll/report/contract/informeTgcContrato.jasper" />
 		<!--  
 		<collection provider="#{contract}" forceRefresh="true" />
 		-->
@@ -51,8 +32,9 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.tgc.ui.payroll.i18n.report" />
 		</params>
 	</report>
+	
 	<report id="informeTgc2Contrato" description="Impresion del informe de prueba de contrato">
-		<template path="/com/esferalia/tgc/ui/payroll/report/informeTgc2Contrato.jasper" />
+		<template path="/com/esferalia/tgc/ui/payroll/report/contract/informeTgc2Contrato.jasper" />
 		<bean key="com.esferalia.aon.payroll.Contract" />
 		<criteria provider="#{contract}" />
 		<params>
@@ -64,14 +46,20 @@
 	<!--  INFORMES POR PERSONA -->
 	<!-- ================================================================== -->
 	<report id="informeTgcPersona" description="Impresion del informe de prueba de presona">
-		<template path="/com/esferalia/tgc/ui/payroll/report/informeTgcPersona.jasper" />
+		<template path="/com/esferalia/tgc/ui/payroll/report/person/informeTgcPersona.jasper" />
 		<bean key="com.code.aon.person.Person" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.tgc.ui.payroll.i18n.report" />
+		</params>
+	</report>
+	
+	<report id="informeTgcAlphabetical" description="Listado alfabético de persona">
+		<template path="/com/esferalia/tgc/ui/payroll/report/person/informeTgcAlphabetical.jasper" />
+	<bean key="com.code.aon.person.Person" />
 		<criteria provider="#{person}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.esferalia.tgc.ui.payroll.i18n.report" />
 		</params>
 	</report>
-
-
-
+	
 </report-config>

@@ -18,88 +18,15 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:param name="controller" value="#{project}" />
 				<ui:define name="searchContent">
-					
-					<aon:outputLabel for="Project_name"
-						value="#{bundle.aon_name}" />
-					<aon:inputText id="Project_name" size="60"
-						valueChangeListener="#{project.addExpression}" />
-
-					<aon:outputLabel for="Project_alias"
-						value="#{bundle.aon_alias}" />
-					<aon:inputText id="Project_alias" size="20"
-						valueChangeListener="#{project.addExpression}" />
 				
-					<aon:outputLabel value="#{bundle.aon_date}"/>
-					<aon:div>
-						<aon:outputLabel for="Project_date-From" 
-							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
-							value="#{bundle.aon_date_from}"/>
-						<aon:selectInputDate id="Project_date-From" 
-							valueChangeListener="#{project.addGreaterThanOrEqualExpression}" 
-							renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}" />
-
-						<aon:outputLabel for="Project_date-To"
-							styleClass="aon-form-date-label aon-margin-left aon-margin-right"
-						 	value="#{bundle.aon_date_to}"/>
-						<aon:selectInputDate id="Project_date-To"
-							valueChangeListener="#{project.addLessThanOrEqualExpression}" 
-							renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}" />
-					</aon:div>
-
-					<aon:outputLabel for="Registry_id" value="#{projectBundle.project_assigned}"/>
-					<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
-						<ui:param name="lookupTo" value="#{projectSearchListener.registry}" />
-						<ui:param name="skipLabel" value="#{true}" />
-					</ui:include>
-
-					<aon:outputLabel for="Project_projectType"
-						value="#{projectBundle.project_project_type}" />
-					<aon:selectOneMenu id="Project_projectType"
-						value="#{projectSearchListener.projectType}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItems value="#{projectCollections.projectTypes}"/>
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Project_id" value="#{bundle.aon_id}" />
-					<aon:inputText id="Project_id" size="5"
-						valueChangeListener="#{project.addExpression}" />		
-
-					<aon:outputLabel for="Project_active" value="#{bundle.aon_active}"/>
-					<aon:selectOneMenu id="Project_active"
-						valueChangeListener="#{project.addExpression}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="#{true}"/>
-						<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}"/>
-					</aon:selectOneMenu>
-					
-					<aon:outputLabel for="Project_commercial" value="#{projectBundle.project_commercial}"/>
-					<aon:selectOneMenu id="Project_commercial"
-						valueChangeListener="#{project.addExpression}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Project_tas" value="#{projectBundle.project_tas}"/>
-					<aon:selectOneMenu id="Project_tas"
-						valueChangeListener="#{project.addExpression}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="Project_dossier" value="#{projectBundle.project_dossier}"/>
-					<aon:selectOneMenu id="Project_dossier"
-						valueChangeListener="#{project.addExpression}">
-						<f:selectItem itemLabel="-" value="#{null}"/>
-						<f:selectItem itemLabel="#{bundle.aon_yes}" itemValue="#{true}"/>
-						<f:selectItem itemLabel="#{bundle.aon_no}" itemValue="#{false}"/>
-					</aon:selectOneMenu>
+					<ui:include
+						src="/com/code/aon/ui/project/facelet/project/searchContent.xhtml" />
 					
 				</ui:define>
 			</ui:decorate>
 							 
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{registryLookup}" />
 	</ui:define>
 		
 </ui:composition>

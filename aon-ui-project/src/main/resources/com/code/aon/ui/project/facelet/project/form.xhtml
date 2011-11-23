@@ -68,6 +68,7 @@
 					<ui:include src="/com/code/aon/ui/registry/facelet/registry/registryLookup.xhtml" >
 						<ui:param name="lookupTo" value="#{project.to.registry}" />
 						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="idRequired" value="#{true}" />
 					</ui:include>
 					
 					<aon:outputLabel for="Project_projectType" value="#{projectBundle.project_project_type}"/>
@@ -91,18 +92,20 @@
 					</aon:div>
 				</aon:panelGrid>
 
-				<aon:panelTabSet id="projectTabSet">
-					<aon:panelTab id="project_activities" label="#{projectBundle.project_activities}">
-						<ui:include src="/com/code/aon/ui/project/facelet/project/projectActivity.xhtml" />
-					</aon:panelTab>
-					<aon:panelTab id="project_charts" label="#{statBundle.stat_economic_summary}"
-						actionListener="#{project.onGraphicTab}">
-						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
-					</aon:panelTab>
-					<aon:panelTab id="project_gantt" label="Gantt" actionListener="#{project.onGraphicTab}">
-						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
-					</aon:panelTab>
-				</aon:panelTabSet>
+				<c:if test="#{!project.new}">
+					<aon:panelTabSet id="projectTabSet">
+						<aon:panelTab id="project_activities" label="#{projectBundle.project_activities}">
+							<ui:include src="/com/code/aon/ui/project/facelet/project/projectActivity.xhtml" />
+						</aon:panelTab>
+						<aon:panelTab id="project_charts" label="#{statBundle.stat_economic_summary}"
+							actionListener="#{project.onGraphicTab}">
+							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
+						</aon:panelTab>
+						<aon:panelTab id="project_gantt" label="Gantt" actionListener="#{project.onGraphicTab}">
+							<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
+						</aon:panelTab>
+					</aon:panelTabSet>
+				</c:if>
 				
 			</aon:div>
 		</aon:form>
