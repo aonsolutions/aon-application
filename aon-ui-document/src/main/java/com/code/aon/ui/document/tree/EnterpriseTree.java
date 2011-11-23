@@ -1,9 +1,10 @@
 package com.code.aon.ui.document.tree;
 
 import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_ID_SHORT;
-import static com.code.aon.ui.document.controller.IDocumentConstants.ALFRESCO_CATEGORY_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
+import static com.code.aon.ui.project.controller.IProjectConstants.PROJECT_CONTROLLER_NAME;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,18 +24,20 @@ import org.richfaces.model.TreeRowKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
-import com.code.aon.document.AlfrescoCategory;
 import com.code.aon.document.BasicAlfresco;
 import com.code.aon.document.EnterpriseDocument;
+import com.code.aon.project.Project;
+import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
-import com.code.aon.ui.document.controller.AlfrescoCategoryController;
 import com.code.aon.ui.document.controller.EnterpriseDocumentController;
+import com.code.aon.ui.project.controller.ProjectController;
 import com.code.aon.ui.util.AonUtil;
 
 public class EnterpriseTree implements ICompanyConstants {
@@ -93,8 +96,8 @@ public class EnterpriseTree implements ICompanyConstants {
 		return new EnterpriseTreeData( e.getId(), e.getRegistry().getFullName(), EnterpriseTreeType.ENTERPRISE);
 	}
 
-	private EnterpriseTreeData getTreeData( AlfrescoCategory ac ) {
-		return new EnterpriseTreeData( ac.getId(), ac.getName(), EnterpriseTreeType.CATEGORY);
+	private EnterpriseTreeData getTreeData( Project project ) {
+		return new EnterpriseTreeData( project.getId(), project.getName(), EnterpriseTreeType.PROJECT);
 	}
 	
 	private EnterpriseTreeData getTreeData( EnterpriseDocument ed ) {
@@ -103,12 +106,11 @@ public class EnterpriseTree implements ICompanyConstants {
 		return etd;
 	}
 
-	private void loadDocument( TreeNodeImpl<EnterpriseTreeData> categoryNode, AlfrescoCategory ac, Enterprise enterprise ) throws ManagerBeanException {
+	private void loadDocuments( TreeNode<EnterpriseTreeData> enterpriseNode, Map<Integer,TreeNode<EnterpriseTreeData>> projects ) throws ManagerBeanException {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
 		IManagerBean bean = edc.getManagerBean();		
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(ENTERPRISE_ID_SHORT, enterprise.getId());
-		criteria.addEqualExpression("PATH", ac.getSearchValue());
+		criteria.addEqualExpression(ENTERPRISE_ID_SHORT, enterpriseNode.getData().getId());
 		criteria.addOrder(bean.getFieldName(Constants.PROP_NAME));
 		List<ITransferObject> list = bean.getList(criteria);
 		for( ITransferObject to : list ) {
@@ -116,26 +118,35 @@ public class EnterpriseTree implements ICompanyConstants {
 			TreeNodeImpl<EnterpriseTreeData> documentNode = new TreeNodeImpl<EnterpriseTreeData>();
 			EnterpriseTreeData etd = getTreeData(ed);
 			documentNode.setData(etd);
-			categoryNode.addChild( etd.getKey(), documentNode );
+			TreeNode<EnterpriseTreeData> parent = null;
+			if ( ed.getProject() != null ) {
+				parent = projects.get(ed.getProject().getId());
+			}
+			if ( parent == null ) {
+				parent = enterpriseNode;
+			}
+			parent.addChild( etd.getKey(), documentNode );	
+			parent.getData().incCount();
 		}	
-		categoryNode.getData().setCount(list.size());
+		enterpriseNode.getData().setCount(list.size());
 	}		
 	
-	private void loadCategories( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
-		AlfrescoCategoryController acc = (AlfrescoCategoryController) AonUtil.getRegisteredBean(ALFRESCO_CATEGORY_CONTROLLER_NAME);
-		IManagerBean bean = acc.getManagerBean();		
+	private void loadProjects( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(Project.class);		
 		Criteria criteria = new Criteria();
-		criteria.addOrder(bean.getFieldName(Constants.PROP_NAME));
+		criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_ENTERPRISE_ID), enterprise.getId());
+		criteria.addOrder(bean.getFieldName(IProjectAlias.PROJECT_NAME));
+		Map<Integer,TreeNode<EnterpriseTreeData>> projects = new HashMap<Integer, TreeNode<EnterpriseTreeData>>();
 		List<ITransferObject> list = bean.getList(criteria);
 		for( ITransferObject to : list ) {
-			AlfrescoCategory ac = (AlfrescoCategory) to;
-			TreeNodeImpl<EnterpriseTreeData> wpNode = new TreeNodeImpl<EnterpriseTreeData>();
-			EnterpriseTreeData etd = getTreeData(ac);
-			wpNode.setData(etd);
-			enterpriseNode.addChild( etd.getKey(), wpNode );
-			loadDocument(wpNode, ac, enterprise);
+			Project project = (Project) to;
+			TreeNodeImpl<EnterpriseTreeData> projectNode = new TreeNodeImpl<EnterpriseTreeData>();
+			EnterpriseTreeData etd = getTreeData(project);
+			projectNode.setData(etd);
+			enterpriseNode.addChild( etd.getKey(), projectNode );
+			projects.put(project.getId(), projectNode);
 		}
-		enterpriseNode.getData().setCount(list.size());
+		loadDocuments(enterpriseNode, projects);
 	}
 	
 	public void loadTree() {
@@ -148,7 +159,7 @@ public class EnterpriseTree implements ICompanyConstants {
 		enterpriseNode.setData(etd);
 		rootNode.addChild( etd.getKey(), enterpriseNode );
 		try {
-			loadCategories(enterpriseNode, enterprise);
+			loadProjects(enterpriseNode, enterprise);
 			setCurrentNode( enterpriseNode );
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading documents for " + enterprise, e );
@@ -208,13 +219,12 @@ public class EnterpriseTree implements ICompanyConstants {
 		}
 	}
 
-	public void onSelectTreeCategory( ActionEvent event ) {
-		AlfrescoCategoryController acc = (AlfrescoCategoryController) AonUtil.getRegisteredBean(ALFRESCO_CATEGORY_CONTROLLER_NAME);
+	public void onSelectTreeProject( ActionEvent event ) {
 		try {
-			Reference id = (Reference) getCurrentNode().getId();
-			acc.select(event, BasicAlfresco.getId(id));
+			ProjectController pc = (ProjectController) AonUtil.getRegisteredBean(PROJECT_CONTROLLER_NAME);
+			pc.select(event, getCurrentNode().getId());
 		} catch (ManagerBeanException e) {
-			LOGGER.error(">>>> onSelectTreeCategory exception: ",e);
+			LOGGER.error(">>>> onSelectTreeProject exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}		
