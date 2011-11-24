@@ -16,7 +16,7 @@
 		<mapping package="com.code.aon.common.dao.hibernate.type"/>
 
 		<!-- AON ACCOUNT -->
-		<mapping class="com.code.aon.entity.master.Account"/>
+		<mapping class="com.code.aon.account.Account"/>
 		
 		<!-- AON ACCOUNTING -->
 		<mapping class="com.code.aon.entity.master.AccountEntry"/>
@@ -93,6 +93,7 @@
 		<mapping class="com.code.aon.entity.master.WorkPlace"/>
 
 		<!-- AON CONFIG -->
+		<mapping class="com.code.aon.config.Domain"/>
 		<mapping class="com.code.aon.entity.master.ApplicationParameter"/>
 		<mapping class="com.code.aon.entity.master.Bank"/>
 		<mapping class="com.code.aon.entity.master.CNAE"/>
