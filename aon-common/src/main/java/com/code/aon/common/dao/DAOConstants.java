@@ -60,7 +60,13 @@ public class DAOConstants {
 	 * @return The DAOConstantsEntry bound to POJO Class name.
 	 */
 	public static DAOConstantsEntry getDAOConstant( String pojo ) {
-		return DAO_CONSTANTS.get( pojo );
+		DAOConstantsEntry entry = DAO_CONSTANTS.get( pojo );
+		if (entry == null) {
+			String[] tokens = StringUtils.split(pojo,".");
+			String entityPojo = "com.code.aon.entity.master." + tokens[tokens.length - 1];
+			entry = DAO_CONSTANTS.get( entityPojo  );
+		} 
+		return entry; 
 	}
 
 	/**
