@@ -1,0 +1,72 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>aon.parent</artifactId>
+		<groupId>com.code.aon</groupId>
+		<version>7.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+	<artifactId>aon.entity.alias</artifactId>
+	<name>ENTITY ALIAS</name>
+	<description>ENTITY ALIAS</description>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.esferalia.aon</groupId>
+				<artifactId>aon-alias-maven-plugin</artifactId>
+				<version>7.0-SNAPSHOT</version>
+				<executions>
+					<!-- *** ALIAS DE AON-ACCOUNT ***	 -->
+					<execution>
+						<id>ACCOUNT</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-alias</goal>
+						</goals>
+						<configuration>
+							<targetPackage>com.code.aon.account.dao</targetPackage>
+							<targetName>IAccountAlias</targetName>
+							<sourcePackages>com.code.aon.account</sourcePackages>
+							<includeGeneratedEntities>true</includeGeneratedEntities>
+							<excludes></excludes>
+						</configuration>
+					</execution>
+					
+					<!-- *** ALIAS DE AON-CONFIG ***	 -->
+					<execution>
+						<id>CONFIG</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate-alias</goal>
+						</goals>
+						<configuration>
+							<targetPackage>com.code.aon.config.dao</targetPackage>
+							<targetName>IConfigAlias</targetName>
+							<sourcePackages>com.code.aon.config</sourcePackages>
+							<includeGeneratedEntities>true</includeGeneratedEntities>
+							<excludes></excludes>
+						</configuration>
+					</execution>
+
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.code.aon</groupId>
+						<artifactId>aon.entity</artifactId>
+						<version>${project.version}</version>
+						<scope>compile</scope>
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.entity</artifactId>
+			<version>${project.version}</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
+</project>
