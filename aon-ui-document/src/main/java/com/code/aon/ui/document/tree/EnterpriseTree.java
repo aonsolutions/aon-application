@@ -1,9 +1,11 @@
 package com.code.aon.ui.document.tree;
 
-import static com.code.aon.document.IAlfrescoConstants.ENTERPRISE_ID_SHORT;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
+import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_SEARCH;
 import static com.code.aon.ui.project.controller.IProjectConstants.PROJECT_CONTROLLER_NAME;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -13,7 +15,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.alfresco.webservice.types.Reference;
-import org.alfresco.webservice.util.Constants;
 import org.richfaces.component.UITree;
 import org.richfaces.component.state.TreeState;
 import org.richfaces.event.NodeSelectedEvent;
@@ -37,6 +38,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.document.controller.EnterpriseDocumentController;
+import com.code.aon.ui.document.event.EnterpriseDocumentSearchListener;
 import com.code.aon.ui.project.controller.ProjectController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -53,8 +55,18 @@ public class EnterpriseTree implements ICompanyConstants {
 	private TreeNode<EnterpriseTreeData> parentNode;
 	
 	private TreeState state;
+	
+	private EnterpriseDocument document;
 
 	private String splitterPosition = "250";
+
+	public EnterpriseDocument getDocument() {
+		return document;
+	}
+
+	public void setDocument(EnterpriseDocument document) {
+		this.document = document;
+	}
 
 	public TreeState getState() {
 		return state;
@@ -106,12 +118,14 @@ public class EnterpriseTree implements ICompanyConstants {
 		return etd;
 	}
 
-	private void loadDocuments( TreeNode<EnterpriseTreeData> enterpriseNode, Map<Integer,TreeNode<EnterpriseTreeData>> projects ) throws ManagerBeanException {
+	private void loadDocuments( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise, Map<Integer,TreeNode<EnterpriseTreeData>> projects ) throws ManagerBeanException {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
-		IManagerBean bean = edc.getManagerBean();		
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(ENTERPRISE_ID_SHORT, enterpriseNode.getData().getId());
-		criteria.addOrder(bean.getFieldName(Constants.PROP_NAME));
+		IManagerBean bean = edc.getManagerBean();
+		edc.clearCriteria();
+		Criteria criteria = edc.getCriteria();
+		EnterpriseDocumentSearchListener search = (EnterpriseDocumentSearchListener) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_SEARCH);
+		search.setEnterprise(enterprise);
+		search.completeCriteria(criteria);
 		List<ITransferObject> list = bean.getList(criteria);
 		for( ITransferObject to : list ) {
 			EnterpriseDocument ed = (EnterpriseDocument) to;
@@ -146,7 +160,7 @@ public class EnterpriseTree implements ICompanyConstants {
 			enterpriseNode.addChild( etd.getKey(), projectNode );
 			projects.put(project.getId(), projectNode);
 		}
-		loadDocuments(enterpriseNode, projects);
+		loadDocuments(enterpriseNode, enterprise, projects);
 	}
 	
 	public void loadTree() {
@@ -160,14 +174,16 @@ public class EnterpriseTree implements ICompanyConstants {
 		rootNode.addChild( etd.getKey(), enterpriseNode );
 		try {
 			loadProjects(enterpriseNode, enterprise);
-			setCurrentNode( enterpriseNode );
+			if ( (document != null) && (document.getId() != null) ) {
+				onSelectTreeDocument(null, document.getId());
+				TreeNode<EnterpriseTreeData> node = getTreeNode(document);
+				selectTreeNode(node);			
+			} else {
+				setCurrentNode( enterpriseNode );	
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.error( "Error loading documents for " + enterprise, e );
 		}
-	}
-	
-	public void reloadTree(ActionEvent event){
-		loadTree();
 	}
 
 	public Boolean adviseNodeSelected(UITree tree) {
@@ -231,15 +247,93 @@ public class EnterpriseTree implements ICompanyConstants {
 	}
 	
 	public void onSelectTreeDocument( ActionEvent event ) {
-		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
 		try {
-			Reference id = (Reference) getCurrentNode().getId();
-			edc.select(event, BasicAlfresco.getId(id));
+			onSelectTreeDocument(event, (Reference) getCurrentNode().getId()); 
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> onSelectTreeDocument exception: ",e);
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
+	}	
+	
+	public void onSelectTreeDocument( ActionEvent event, Reference reference ) throws ManagerBeanException {
+		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
+		String id = BasicAlfresco.getId(reference);
+		edc.select(event, id);
+	}	
+
+	public void onShowDocument( ActionEvent event ) throws ManagerBeanException {
+		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
+		setDocument( (EnterpriseDocument) edc.getModel().getRowData() );
+		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+		ec.setTreeView(true);
+		ec.select(event, document.getEnterprise() );			
+	}
+	
+	private TreeNode<EnterpriseTreeData> getTreeNode( Project project ) {
+		TreeNode<EnterpriseTreeData> node = enterpriseNode;
+		Iterator<Map.Entry<Object, TreeNode<EnterpriseTreeData>>> i = node.getChildren();
+		while ( i.hasNext() ) {
+			Map.Entry<Object, TreeNode<EnterpriseTreeData>> entry = i.next();
+			EnterpriseTreeData etd = entry.getValue().getData();
+			if ( (etd.getType() == EnterpriseTreeType.PROJECT) && (etd.getId().equals(project.getId()))) {
+				return entry.getValue();
+			}
+			
+		}
+		return null;
+	}	
+	
+	private TreeNode<EnterpriseTreeData> getTreeNode( EnterpriseDocument ed ) {
+		TreeNode<EnterpriseTreeData> parent = enterpriseNode;
+		if ( (ed.getProject() != null) && (ed.getProject().getId() != null) ) {
+			parent = getTreeNode(ed.getProject());
+		}
+		if ( parent != null ) {
+			Iterator<Map.Entry<Object, TreeNode<EnterpriseTreeData>>> i = parent.getChildren();
+			while ( i.hasNext() ) {
+				Map.Entry<Object, TreeNode<EnterpriseTreeData>> entry = i.next();
+				EnterpriseTreeData etd = entry.getValue().getData();
+				if ( etd.getId().equals(ed.getId()) ) {
+					return entry.getValue();
+				}
+				
+			}			
+		}
+		return null;
+	}
+
+	private ListRowKey<String> getRowKey( TreeNode<EnterpriseTreeData> treeNode ) {
+		ArrayList<String> list = new ArrayList<String>();
+		TreeNode<EnterpriseTreeData> node = treeNode;
+		while ( node.getData() != null ) {
+			list.add( 0, node.getData().getKey() );
+			node = node.getParent();
+		}
+		return new ListRowKey<String>(list);
+	}
+	
+	private void selectTreeNode( TreeNode<EnterpriseTreeData> node ) {
+		try {
+			getState().collapseAll(null);
+		} catch (IOException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		setCurrentNode(node);
+		ListRowKey<String> key = getRowKey(node);
+		getState().setSelected(key);
+		TreeRowKey<String> _key = key;
+		while ( _key != null ) {
+			if (! getState().isExpanded(_key) ) {
+				getState().makeExpanded(_key);		
+			}
+			_key = _key.getParentKey();
+		}
+	}	
+
+	public void onReloadTree( ActionEvent event ) {
+		setDocument(null);
+		loadTree();
 	}	
 	
 }

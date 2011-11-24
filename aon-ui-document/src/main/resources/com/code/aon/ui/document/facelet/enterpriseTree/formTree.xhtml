@@ -28,12 +28,18 @@
 					action="enterpriseDocument_formTree"
 					actionListener="#{enterpriseDocument.onReset}"
 					styleClass="aon-finding-toolbar-item aon-icon-new"
-					accesskey="#{bundle.aon_key_new}" />				
+					accesskey="#{bundle.aon_key_new}" />
+				<aon:commandButton id="clear"
+					value="#{bundle.aon_clear}" 
+					actionListener="#{enterpriseDocumentSearch.onClear}"
+					styleClass="aon-finding-toolbar-item aon-icon-rubber" >
+					<aon:actionListener method="#{enterpriseTree.onReloadTree}" />
+				</aon:commandButton>									
 				<aon:commandButton id="back"
 					title="#{bundle.aon_key_cancel_accelerator}"
 					value="#{bundle.aon_back}" immediate="true"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel"
-					action="enterprise_list"
+					action="enterprise_list" rendered="#{manager.mainEnterprise}"
 					accesskey="#{bundle.aon_key_cancel}" />
 				<aon:spin id="enterpriseSpin" controller="#{enterprise}" />
 			</ui:define>				
@@ -43,6 +49,11 @@
 	<ui:define name="content">	
 
 		<aon:div styleClass="aon-scroll-area">
+		
+			<aon:methodParam name="searchActionListener"
+				value="#{enterpriseTree.onReloadTree}" type="actionListener" />		
+			<ui:include
+				src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />			
 		
 			<aon:panelGrid columns="2" styleClass="aon-width-all"
 				columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">

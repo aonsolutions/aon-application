@@ -30,6 +30,8 @@
 										action="enterpriseDocument_search"
 										actionListener="#{enterpriseDocument.onEditSearch}"
 										value="#{bundle.aon_toolbar_search}">
+										<f:setPropertyActionListener value="#{false}"
+											target="#{enterpriseDocumentSearch.showList}"  />
 									</aon:commandLink>
 								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">

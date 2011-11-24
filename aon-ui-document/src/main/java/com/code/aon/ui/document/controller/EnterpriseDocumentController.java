@@ -1,10 +1,12 @@
 package com.code.aon.ui.document.controller;
 
+import static com.code.aon.document.dao.AlfrescoCategoryDAO.EMPTY_CATEGORY;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ALFRESCO_CATEGORY_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -29,14 +31,12 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
-import com.code.aon.company.Enterprise;
 import com.code.aon.document.AlfrescoCategory;
 import com.code.aon.document.EnterpriseDocument;
 import com.code.aon.document.dao.AlfrescoDAO;
 import com.code.aon.document.dao.EnterpriseDocumentDAO;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.IAttachmentController;
-import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
@@ -51,11 +51,9 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 	
 	private AonFile aonFile;
 	
-	private String title;
+	private EnterpriseDocument lastDocument;
 	
-	private String description;
-	
-	private AlfrescoCategory[] categories;
+	private List<AlfrescoCategory> categories;
 	
 	private List<SelectItem> mimeTypes;
 	
@@ -132,35 +130,17 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 		return -1;
 	}
 
-	public String getTitle() {
-		return title;
+	public EnterpriseDocument getLastDocument() {
+		return lastDocument;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public AlfrescoCategory[] getCategories() {
-		return categories;
-	}
-
-	public void setCategories(AlfrescoCategory[] categories) {
-		this.categories = categories;
+	public void setLastDocument(EnterpriseDocument lastDocument) {
+		this.lastDocument = lastDocument;
 	}
 
 	public void reset() throws ManagerBeanException {
 		setAonFile(null);
-		setTitle(null);
-		setDescription(null);
-		setCategories(null);
+		setLastDocument(null);
 	}
 	
 	public void masiveUpload( ActionEvent event ) {
@@ -172,9 +152,7 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
-		setDescription( getEnterpriseDocument().getTitle() );
-		setDescription( getEnterpriseDocument().getDescription() );
-		setCategories( getEnterpriseDocument().getCategories() );
+		setLastDocument( getEnterpriseDocument() );
 		onReset(event);
 	}
 	
@@ -190,5 +168,60 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 		}
 		return mimeTypes;
 	}	
+
+	public List<AlfrescoCategory> getCategories() {
+		return categories;
+	}
 	
+	public void setCategories(List<AlfrescoCategory> categories) {
+		this.categories = categories;
+		if (categories.isEmpty()) {
+			categories.add(EMPTY_CATEGORY);
+		}		
+	}
+
+	public AlfrescoCategory[] getCategoryArray() {
+		if ( categories != null ) {
+			List<AlfrescoCategory> list = new LinkedList<AlfrescoCategory>();
+			for( AlfrescoCategory category : categories ) {
+				if ( (category != null) && (category.getId() != null) ) {
+					list.add(category);
+				}
+			}
+			if (! list.isEmpty() ) {
+				return list.toArray(new AlfrescoCategory[list.size()]);			
+			}			
+		}
+		return null;
+	}
+	
+	public void setCategoryArray( AlfrescoCategory[] array ) {
+		List<AlfrescoCategory> list = new LinkedList<AlfrescoCategory>(); 
+		if (! ArrayUtils.isEmpty(array) ) {
+			list.addAll( Arrays.asList(array) );
+		}
+		setCategories(list);
+	}
+	
+	public int getCategoriesSize() {
+		return (categories != null) ? categories.size() : 0;
+	}
+	
+	public AlfrescoCategory getEmptyCategory() {
+		return EMPTY_CATEGORY;
+	}
+
+	public void onAddCategory(ActionEvent event) {
+		getCategories().add(EMPTY_CATEGORY);
+	}
+	
+	public void onRemoveCategory(ActionEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("index"));		
+		getCategories().remove(index);
+		if (getCategories().isEmpty()) {
+			getCategories().add(EMPTY_CATEGORY);
+		}
+	}			
+
 }

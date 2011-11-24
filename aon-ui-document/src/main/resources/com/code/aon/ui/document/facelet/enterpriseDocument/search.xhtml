@@ -5,7 +5,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -19,28 +18,12 @@
 						value="#{bundle.aon_clear}" 
 						actionListener="#{enterpriseDocumentSearch.onClear}"
 						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
-					<aon:commandButton id="search"
-						title="#{bundle.aon_key_search_accelerator}"
-						value="#{bundle.aon_search}"
-						styleClass="aon-finding-toolbar-item aon-icon-search"
-						actionListener="#{enterpriseDocument.onSearch}"
-						requestDelay="100" accesskey="#{bundle.aon_key_search}" >
-						<aon:actionHotKey key="return" />
-					</aon:commandButton> 
 				</ui:define>
 			</ui:decorate>		
 			
 			<aon:div styleClass="aon-scroll-area">
-				<a4j:region>
-					<aon:panelCollapsible label="#{bundle.aon_search_info}"
-						headerClass="aon-panelGrid-search-info" 
-						bodyClass="aon-panelGrid-search"				
-						value="#{enterpriseDocumentSearch.showOpened}" >
-						<aon:panelGrid columns="2">		
-							<ui:include src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />
-						</aon:panelGrid>
-					</aon:panelCollapsible>
-				</a4j:region>
+				<ui:include
+					src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />			
 				
 				<c:if test="#{enterpriseDocumentSearch.showList}">
 					<ui:include
