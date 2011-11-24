@@ -24,6 +24,7 @@
 		<!-- DB MODULES -->
 		<module>aon-master</module>
 		<module>aon.entity</module>
+		<module>aon.entity.alias</module>
 		<module>aon-db-manager</module>
 		<module>aon-dbutils</module>
 		<module>aon-ui-dbutils</module>
@@ -492,7 +493,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore/>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -546,4 +547,3 @@
 		</profile>
 	</profiles>
 </project>
- 
