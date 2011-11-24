@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" >
+<!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" 
+[<!ENTITY Account SYSTEM "src/main/resources/com/code/aon/entity/reveng/Account.xml">
+ <!ENTITY Domain SYSTEM "src/main/resources/com/code/aon/entity/reveng/Domain.xml">]>
 
 <hibernate-reverse-engineering>
 
@@ -41,7 +43,8 @@
 	<!--  *************************** -->
 	<table-filter match-name="db_version" exclude="true" />
 	
-
+	&Account;
+	&Domain;
 
 	<table name="account_entry">
 		<column name="entry_type" property="type" />
@@ -622,6 +625,7 @@
 		</primary-key>
 	</table>
 	<table name="tax">
+<!-- 		<column name="tax_type" property="type" type="com.code.aon.config.enumeration.TaxType"/>  -->
 		<column name="tax_type" property="type" />
 	</table>
 	<table name="user" class="com.code.aon.entity.master.EnterpriseUser" />

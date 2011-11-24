@@ -1,0 +1,8 @@
+<table name="domain" class="com.code.aon.config.Domain">
+	<meta attribute="extra-import">com.code.aon.common.domain.IDomainPojo</meta>
+	<meta attribute="implements">IDomainPojo&lt;Domain&gt;</meta>
+	<meta attribute="aon-constructor">this.active = true;</meta>
+	<foreign-key constraint-name="FK_DOMAIN_PARENT">
+		<many-to-one property="parent" />
+	</foreign-key>
+</table>
