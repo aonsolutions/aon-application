@@ -19,16 +19,19 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseUser;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.company.controller.EnterpriseController;
+import com.code.aon.ui.document.event.EnterpriseProjectListener;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
 
-public class ManagerController {
+public class ManagerController implements IEnterpriseController {
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(ManagerController.class);
 	
@@ -38,6 +41,8 @@ public class ManagerController {
 	
 	private EnterpriseUser loggedUser;
 	
+	private IControllerListener projectListener;
+	
 	private String homeTemplate = "/homepage.xhtml";
 	
 	public ManagerController() {
@@ -46,6 +51,7 @@ public class ManagerController {
 		if (! isMainEnterprise() ) {
 			initEnterprise();
 		}
+		this.projectListener = new EnterpriseProjectListener(this, ! isMainEnterprise());		
 		LoggedUser lu = (LoggedUser) AonUtil.getRegisteredBean(LoggedUser.LOGGED_USER);
 		lu.setCompanyName(loggedUser.getEnterprise().getRegistry().getFullName());
 		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(DOCUMENT_MANAGER_CONTROLLER_NAME);
@@ -112,6 +118,15 @@ public class ManagerController {
 		
 	public boolean isMainEnterprise() {
 		return (this.loggedUser.getRegistry() == null);
+	}
+
+	@Override
+	public Enterprise getEnterprise() {
+		return this.loggedUser.getEnterprise();
+	}
+
+	public IControllerListener getProjectListener() {
+		return projectListener;
 	}
 	
 }

@@ -55,6 +55,7 @@
 				<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
 					<ui:param name="lookupTo" value="#{enterpriseDocumentSearch.project}" />
 					<ui:param name="lookupSuffix" value="Document" />
+					<ui:param name="lookupControllerListener" value="#{enterpriseDocumentSearch.projectListener}" />
 				</ui:include>
 											
 				<c:if test="#{manager.mainEnterprise and (!enterprise.treeView)}" >

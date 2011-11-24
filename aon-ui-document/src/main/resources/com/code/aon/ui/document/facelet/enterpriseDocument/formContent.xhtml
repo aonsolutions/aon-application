@@ -66,6 +66,7 @@
 			
 			<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
 				<ui:param name="lookupTo" value="#{enterpriseDocument.to.project}" />
+				<ui:param name="lookupControllerListener" value="#{enterpriseDocument.projectListener}" />				
 			</ui:include>
 
 			<aon:outputLabel for="cm_referenceDate"

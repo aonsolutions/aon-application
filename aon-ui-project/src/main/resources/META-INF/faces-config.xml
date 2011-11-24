@@ -122,7 +122,17 @@
 				<value>#{projectActivityListener}</value>
 			</list-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>optionalListenerClasses</property-name>
+			<value>#{projectOptionalListeners}</value>
+		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>projectOptionalListeners</managed-bean-name>
+	    <managed-bean-class>java.util.LinkedList</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
 
 	<managed-bean>
 		<managed-bean-name>projectSearchListener</managed-bean-name>

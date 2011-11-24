@@ -80,15 +80,21 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		resetCurrentNode();
+		resetCurrentNode(null);
 	}
 	
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		resetCurrentNode();
+		resetCurrentNode(event);
 	}
 	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		resetCurrentNode(event);		
+	}
+
 	@Override
 	public void afterModelSearched(ControllerEvent event)
 			throws ControllerListenerException {
@@ -99,10 +105,13 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 		}
 	}
 
-	private void resetCurrentNode() {
+	private void resetCurrentNode(ControllerEvent event) {
 		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		if ( controller.isTreeView() ) {
 			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ENTERPRISE_TREE_CONTROLLER_NAME);
+			if ( event != null ) {				
+				tree.setDocument((EnterpriseDocument) event.getController().getTo());
+			}
 			tree.loadTree();
 		}
 	}

@@ -31,17 +31,20 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.company.Enterprise;
 import com.code.aon.document.AlfrescoCategory;
 import com.code.aon.document.EnterpriseDocument;
 import com.code.aon.document.dao.AlfrescoDAO;
 import com.code.aon.document.dao.EnterpriseDocumentDAO;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.IAttachmentController;
+import com.code.aon.ui.document.event.EnterpriseProjectListener;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.util.DownloadUtil;
 
-public class EnterpriseDocumentController extends BasicController implements IAttachmentController {
+public class EnterpriseDocumentController extends BasicController implements IAttachmentController, IEnterpriseController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocumentController.class);
 	
@@ -57,6 +60,12 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 	
 	private List<SelectItem> mimeTypes;
 	
+	private IControllerListener projectListener;
+	
+	public EnterpriseDocumentController() {
+		this.projectListener = new EnterpriseProjectListener(this);
+	}
+
 	@Override
 	public IManagerBean getManagerBean() throws ManagerBeanException {
 		if ( this.alfrescoManagerBean == null ) {
@@ -223,5 +232,13 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 			getCategories().add(EMPTY_CATEGORY);
 		}
 	}			
+	
+	@Override
+	public Enterprise getEnterprise() {
+		return getEnterpriseDocument().getEnterprise();
+	}
 
+	public IControllerListener getProjectListener() {
+		return projectListener;
+	}	
 }

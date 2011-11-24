@@ -32,11 +32,13 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.document.controller.IEnterpriseController;
 import com.code.aon.ui.document.controller.ManagerController;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
+import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
-public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx {
+public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx implements IEnterpriseController {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(EnterpriseDocumentSearchListener.class);
 	
@@ -57,9 +59,11 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 	private MimeType type;
 	private List<AlfrescoCategory> categories;
 	private boolean showList;
+	private IControllerListener projectListener;
 	
 	public EnterpriseDocumentSearchListener() {
 		reset();
+		this.projectListener = new EnterpriseProjectListener(this);
 	}
 
 	public String getName() {
@@ -273,5 +277,9 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 			getCategories().add(EMPTY_CATEGORY);
 		}
 	}		
+
+	public IControllerListener getProjectListener() {
+		return projectListener;
+	}
 	
 }
