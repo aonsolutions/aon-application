@@ -6,5 +6,6 @@
 			return (getId() + " " + getDescription());
 		}
 	</meta>
-	<column name="type" property="attachmentType"/>
+	<column name="level" type="int" />
+	<column name="entryEnabled" type="boolean" />
 </table>
