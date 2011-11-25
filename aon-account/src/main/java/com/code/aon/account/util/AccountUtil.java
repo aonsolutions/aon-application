@@ -3,10 +3,10 @@ package com.code.aon.account.util;
 import java.util.Iterator;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 
@@ -16,8 +16,8 @@ public class AccountUtil {
 	public String obtainNextAccountId(String prefix) throws ManagerBeanException, ExpressionException{
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), fillprefix(prefix));
-		criteria.addOrder(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), false);
+		criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), fillprefix(prefix));
+		criteria.addOrder(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), false);
 		Iterator iter = accountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			Account account = (Account)iter.next();

@@ -26,7 +26,6 @@ import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.AccountHelper;
@@ -61,6 +60,7 @@ import com.code.aon.config.enumeration.TaxType;
 import com.code.aon.config.enumeration.VatDeductionType;
 import com.code.aon.config.enumeration.WithholdingType;
 import com.code.aon.customer.Customer;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
@@ -665,7 +665,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			try {
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID),
+				criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID),
 						detail.getAccount().getId());
 				Iterator<ITransferObject> iterator = accountBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {

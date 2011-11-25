@@ -26,11 +26,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 
@@ -116,7 +116,7 @@ public class AccountExporter {
 	public void export(OutputStream out) throws TransformerException, ManagerBeanException, ParserConfigurationException {
 		IManagerBean bean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(bean.getFieldName(IAccountAlias.ACCOUNT_ID));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ACCOUNT_ID));
 		List<ITransferObject> list = bean.getList(criteria);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();

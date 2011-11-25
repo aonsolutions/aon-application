@@ -24,6 +24,7 @@
 		<!-- DB MODULES -->
 		<module>aon-master</module>
 		<module>aon.entity</module>
+		<module>aon-alias-maven-plugin</module>
 		<module>aon.entity.alias</module>
 		<module>aon-db-manager</module>
 		<module>aon-dbutils</module>
@@ -152,7 +153,6 @@
 		<!-- OTHER -->
 		<module>aon-common-resources</module>
 		<module>tgc-ui-payroll</module>
-		<module>aon-alias-maven-plugin</module>
 
 <!--
 		*************************************************************************************************************

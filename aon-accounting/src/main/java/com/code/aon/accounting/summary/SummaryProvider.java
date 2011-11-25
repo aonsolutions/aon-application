@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -26,6 +25,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
@@ -46,11 +46,11 @@ public class SummaryProvider {
 	static {
 		try {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			ACCOUNT_ID_ALIAS = accountBean.getFieldName(IAccountAlias.ACCOUNT_ID);
-			ACCOUNT_DESCRIPTION_ALIAS = accountBean.getFieldName(IAccountAlias.ACCOUNT_DESCRIPTION);
-			ACCOUNT_ALIAS_ALIAS = accountBean.getFieldName(IAccountAlias.ACCOUNT_ALIAS);
-			ACCOUNT_LEVEL_ALIAS = accountBean.getFieldName(IAccountAlias.ACCOUNT_LEVEL);
-			ACCOUNT_ENTRY_ENABLED_ALIAS = accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
+			ACCOUNT_ID_ALIAS = accountBean.getFieldName(IEntityAlias.ACCOUNT_ID);
+			ACCOUNT_DESCRIPTION_ALIAS = accountBean.getFieldName(IEntityAlias.ACCOUNT_DESCRIPTION);
+			ACCOUNT_ALIAS_ALIAS = accountBean.getFieldName(IEntityAlias.ACCOUNT_ALIAS);
+			ACCOUNT_LEVEL_ALIAS = accountBean.getFieldName(IEntityAlias.ACCOUNT_LEVEL);
+			ACCOUNT_ENTRY_ENABLED_ALIAS = accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
 		} catch (Exception e) {
 			LOGGER.error("Error obtining field alias", e);
 		}

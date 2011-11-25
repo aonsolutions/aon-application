@@ -11,13 +11,13 @@ import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountConstants;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -47,8 +47,8 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 	private boolean isExtended(Account account) throws ManagerBeanException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addNotEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), account.getId());
-		criteria.addExpression(ExpressionUtilities.getLikeExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), account.getId()+"%"));
+		criteria.addNotEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), account.getId());
+		criteria.addExpression(ExpressionUtilities.getLikeExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), account.getId()+"%"));
 		return accountBean.getCount(criteria) > 0;
 	}
 

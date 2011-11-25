@@ -17,7 +17,6 @@ import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
 import com.code.aon.account.bridge.writer.pricing.AccountInvoicePriceStrategy;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.DefaultAccounts;
@@ -30,6 +29,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.TaxType;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
@@ -250,7 +250,7 @@ public class AccountEntryInvoiceWriter {
 				ApplicationParameter param = (ApplicationParameter) iter.next();
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 				Criteria accountCriteria = new Criteria();
-				accountCriteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), param.getValue());
+				accountCriteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), param.getValue());
 				Iterator<?> accountIter = accountBean.getList(accountCriteria).iterator();
 				if (accountIter.hasNext()) {
 					salesDefaultAccount = (Account) accountIter.next();
@@ -270,7 +270,7 @@ public class AccountEntryInvoiceWriter {
 				ApplicationParameter param = (ApplicationParameter) iter.next();
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 				Criteria accountCriteria = new Criteria();
-				accountCriteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), param.getValue());
+				accountCriteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), param.getValue());
 				Iterator<?> accountIter = accountBean.getList(accountCriteria).iterator();
 				if (accountIter.hasNext()) {
 					purchaseDefaultAccount = (Account) accountIter.next();

@@ -9,10 +9,10 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -40,10 +40,10 @@ public class AccountWizard extends AbstractWizard {
 	static {
 		try {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			ID = accountBean.getFieldName(IAccountAlias.ACCOUNT_ID);
-			ENTRY_ENABLED = accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
-			DESCRIPTION = accountBean.getFieldName(IAccountAlias.ACCOUNT_DESCRIPTION);
-			ALIAS = accountBean.getFieldName(IAccountAlias.ACCOUNT_ALIAS);
+			ID = accountBean.getFieldName(IEntityAlias.ACCOUNT_ID);
+			ENTRY_ENABLED = accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
+			DESCRIPTION = accountBean.getFieldName(IEntityAlias.ACCOUNT_DESCRIPTION);
+			ALIAS = accountBean.getFieldName(IEntityAlias.ACCOUNT_ALIAS);
 		} catch (ManagerBeanException e) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			FacesMessage message = new FacesMessage(e.getMessage());

@@ -19,36 +19,17 @@
 				<executions>
 					<!-- *** ALIAS DE AON-ACCOUNT ***	 -->
 					<execution>
-						<id>ACCOUNT</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>generate-alias</goal>
 						</goals>
 						<configuration>
-							<targetPackage>com.code.aon.account.dao</targetPackage>
-							<targetName>IAccountAlias</targetName>
-							<sourcePackages>com.code.aon.account</sourcePackages>
+							<targetPackage>com.code.aon.entity</targetPackage>
+							<targetName>IEntityAlias</targetName>
 							<includeGeneratedEntities>true</includeGeneratedEntities>
 							<excludes></excludes>
 						</configuration>
 					</execution>
-					
-					<!-- *** ALIAS DE AON-CONFIG ***	 -->
-					<execution>
-						<id>CONFIG</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>generate-alias</goal>
-						</goals>
-						<configuration>
-							<targetPackage>com.code.aon.config.dao</targetPackage>
-							<targetName>IConfigAlias</targetName>
-							<sourcePackages>com.code.aon.config</sourcePackages>
-							<includeGeneratedEntities>true</includeGeneratedEntities>
-							<excludes></excludes>
-						</configuration>
-					</execution>
-
 				</executions>
 				<dependencies>
 					<dependency>

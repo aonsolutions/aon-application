@@ -12,7 +12,6 @@ import javax.faces.model.ListDataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -27,6 +26,7 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -198,9 +198,9 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 					.getController(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
-			String alias = c.getFieldName(IAccountAlias.ACCOUNT_ID);
+			String alias = c.getFieldName(IEntityAlias.ACCOUNT_ID);
 			criteria.addExpression(alias, summary.getId() + IAccountingConstants.ASTERISK);
-			alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
+			alias = c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 			c.setParams(getParameters());
 			c.onSearch(event);

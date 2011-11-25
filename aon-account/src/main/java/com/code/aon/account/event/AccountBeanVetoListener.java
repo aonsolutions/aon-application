@@ -3,13 +3,13 @@ package com.code.aon.account.event;
 import java.util.Iterator;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 
 public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
@@ -52,7 +52,7 @@ public class AccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				String parentId = account.getId().substring(0, parentLevel);
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID),parentId);
+				criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID),parentId);
 				Iterator iterator = accountBean.getList(criteria).iterator();
 				if (!iterator.hasNext()) {
 					throw new ManagerBeanVetoListenerException("Imposible crear cuenta. No existe cuenta correspondiente de nivel inferior.");

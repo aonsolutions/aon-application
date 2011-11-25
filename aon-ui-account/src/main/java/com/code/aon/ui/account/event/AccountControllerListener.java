@@ -1,8 +1,8 @@
 package com.code.aon.ui.account.event;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ui.account.controller.AccountController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -27,7 +27,7 @@ public class AccountControllerListener extends ControllerAdapter {
 		try {
 			AccountController ac = (AccountController) event.getController();
 			if ( ac.getOrderAlias() == null ) {
-					ac.getCriteria().addOrder( ac.getManagerBean().getFieldName(IAccountAlias.ACCOUNT_ID) );
+					ac.getCriteria().addOrder( ac.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ID) );
 			} else {
 				ac.getCriteria().addOrder( ac.getOrderAlias() );
 			}

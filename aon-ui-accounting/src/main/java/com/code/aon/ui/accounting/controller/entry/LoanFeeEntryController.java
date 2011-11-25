@@ -13,7 +13,6 @@ import com.code.aon.account.Account;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntry;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Loan;
@@ -31,6 +30,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -235,9 +235,9 @@ public class LoanFeeEntryController {
 			c.setParams(spp);
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
-			String alias = c.getFieldName(IAccountAlias.ACCOUNT_ID);
+			String alias = c.getFieldName(IEntityAlias.ACCOUNT_ID);
 			criteria.addExpression(alias, account.getId() + IAccountingConstants.ASTERISK);
-			alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
+			alias = c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 			c.onSearch(event);
 			if (c.getModel().getRowCount() > 0) {

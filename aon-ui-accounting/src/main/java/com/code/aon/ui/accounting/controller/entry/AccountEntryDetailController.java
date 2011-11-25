@@ -8,7 +8,6 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
@@ -17,6 +16,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -156,9 +156,9 @@ public class AccountEntryDetailController extends LinesController {
 
 		c.onEditSearch(event);
 		Criteria criteria = c.getCriteria();
-		String alias = c.getFieldName(IAccountAlias.ACCOUNT_ID);
+		String alias = c.getFieldName(IEntityAlias.ACCOUNT_ID);
 		criteria.addExpression(alias, account.getId() + IAccountingConstants.ASTERISK);
-		alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
+		alias = c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
 		criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 
 		c.onSearch(event);

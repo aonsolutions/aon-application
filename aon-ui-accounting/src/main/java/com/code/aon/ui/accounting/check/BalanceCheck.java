@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.account.Account;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.accounting.Balance;
 import com.code.aon.accounting.BalanceDetail;
 import com.code.aon.accounting.enumeration.BalanceType;
@@ -15,6 +14,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 
@@ -34,8 +34,8 @@ public class BalanceCheck implements IAccountCheck{
 		try {
 			HibernateUtil.setCloseSession(false);
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			String idAlias = accountBean.getFieldName(IAccountAlias.ACCOUNT_ID);
-			String entryAlias = accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
+			String idAlias = accountBean.getFieldName(IEntityAlias.ACCOUNT_ID);
+			String entryAlias = accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
 			IManagerBean balanceBean = BeanManager.getManagerBean(Balance.class);
 			
 			for (ITransferObject to: balanceBean.getList(null)) {

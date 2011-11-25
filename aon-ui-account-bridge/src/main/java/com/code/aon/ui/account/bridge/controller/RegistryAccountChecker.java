@@ -16,12 +16,12 @@ import org.hibernate.Session;
 import com.code.aon.account.Account;
 import com.code.aon.account.IAccount;
 import com.code.aon.account.bridge.util.AccountBridgeUtil;
-import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IFinderBean;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
@@ -171,7 +171,7 @@ public abstract class RegistryAccountChecker implements Serializable {
 			AccountManager c = (AccountManager) FormUtil.getController( "accountManager" );
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
-			String alias = c.getFieldName(IAccountAlias.ACCOUNT_ID);
+			String alias = c.getFieldName(IEntityAlias.ACCOUNT_ID);
 			Expression exp1 = null;
 			for (IAccount ca : to.getAccounts()) {
 				Expression exp2 = ExpressionUtilities.getEqualExpression(alias, ca.getAccount().getId());
