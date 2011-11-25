@@ -15,7 +15,7 @@
 			<plugin>
 				<groupId>com.esferalia.aon</groupId>
 				<artifactId>aon-alias-maven-plugin</artifactId>
-				<version>7.0-SNAPSHOT</version>
+				<version>${project.version}</version>
 				<executions>
 					<!-- *** ALIAS DE AON-ACCOUNT ***	 -->
 					<execution>
