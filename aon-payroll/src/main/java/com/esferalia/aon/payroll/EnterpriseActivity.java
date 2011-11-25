@@ -23,6 +23,7 @@ import org.hibernate.annotations.Index;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.company.Enterprise;
+import com.code.aon.config.CNAE;
 import com.code.aon.config.CNAE2009;
 import com.esferalia.aon.payroll.enumeration.EnterpriseActivityType;
 
@@ -35,6 +36,7 @@ public class EnterpriseActivity implements ITransferObject {
 	private Integer id;
     private String description;
     private Enterprise enterprise; 
+    private CNAE cnae; 
     private CNAE2009 cnae2009; 
 	private EnterpriseActivityType type;
 
@@ -78,6 +80,17 @@ public class EnterpriseActivity implements ITransferObject {
 	}
 	public void setCnae2009(CNAE2009 cnae2009) {
 		this.cnae2009 = cnae2009;
+	}
+	
+	@ManyToOne
+	@JoinColumn(name="cnae" )
+	@ForeignKey(name = "FK_ENTERPRICE_ACTIVITY_CNAE")
+	@Index(name = "IDX_ENTERPRICE_ACTIVITY_CNAE")    
+	public CNAE getCnae() {
+		return cnae;
+	}
+	public void setCnae(CNAE cnae) {
+		this.cnae= cnae;
 	}
 	
 	@Column( nullable = false )

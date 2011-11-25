@@ -1616,28 +1616,34 @@ public interface IPayrollAlias {
 	String  ENTERPRISE_ACTIVITY_CNAE2009_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: EnterpriseActivity_cnae_id
+	* Hibernate value: EnterpriseActivity.cnae.id
+	*/
+	String  ENTERPRISE_ACTIVITY_CNAE_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: EnterpriseActivity_description
 	* Hibernate value: EnterpriseActivity.description
 	*/
-	String  ENTERPRISE_ACTIVITY_DESCRIPTION = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[1];
+	String  ENTERPRISE_ACTIVITY_DESCRIPTION = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: EnterpriseActivity_enterprise_id
 	* Hibernate value: EnterpriseActivity.enterprise.id
 	*/
-	String  ENTERPRISE_ACTIVITY_ENTERPRISE_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[2];
+	String  ENTERPRISE_ACTIVITY_ENTERPRISE_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: EnterpriseActivity_id
 	* Hibernate value: EnterpriseActivity.id
 	*/
-	String  ENTERPRISE_ACTIVITY_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[3];
+	String  ENTERPRISE_ACTIVITY_ID = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: EnterpriseActivity_type
 	* Hibernate value: EnterpriseActivity.type
 	*/
-	String  ENTERPRISE_ACTIVITY_TYPE = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[4];
+	String  ENTERPRISE_ACTIVITY_TYPE = ENTERPRISE_ACTIVITY_ENTRY.getAliasNames()[5];
 
 
 
