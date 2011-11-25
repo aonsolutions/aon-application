@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" 
-[<!ENTITY Account SYSTEM "src/main/resources/com/code/aon/entity/reveng/Account.xml">
- <!ENTITY Domain SYSTEM "src/main/resources/com/code/aon/entity/reveng/Domain.xml">]>
+[<!ENTITY Account SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/Account.xml">
+ <!ENTITY Domain SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/Domain.xml">]>
 
 <hibernate-reverse-engineering>
 
