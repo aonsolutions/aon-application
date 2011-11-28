@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:outputLabel for="cm_name"
+		value="#{bundle.aon_name}" />
+	<aon:inputText id="cm_name" size="60"
+		value="#{enterpriseDocumentSearch.name}" />
+
+	<aon:outputLabel for="cm_description"
+		value="#{bundle.aon_description}" />
+	<aon:inputText id="cm_description" size="60"
+		value="#{enterpriseDocumentSearch.description}" />
+
+	<aon:outputLabel for="cm_title"
+		value="#{documentBundle.document_title}" />
+	<aon:inputText id="cm_title" size="60"
+		value="#{enterpriseDocumentSearch.title}" />
+
+	<aon:outputLabel for="cm_type"
+		value="#{bundle.aon_type}" />
+	<aon:selectOneMenu id="cm_type"
+		value="#{enterpriseDocumentSearch.type}">
+		<f:selectItem itemLabel="-" value="#{null}" />		
+		<f:selectItems value="#{enterpriseDocument.mimeTypes}" />
+	</aon:selectOneMenu>					
+
+	<aon:outputLabel for="cm_text"
+		value="#{bundle.aon_content}" />
+	<aon:inputText id="cm_text" size="60"
+		value="#{enterpriseDocumentSearch.text}" />
+	
+	<aon:outputLabel for="cm_category"
+		value="#{registryBundle.registry_category}" />
+	<ui:include src="/com/code/aon/ui/document/facelet/alfrescoCategory/template.xhtml" />
+
+	<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+		<ui:param name="lookupTo" value="#{enterpriseDocumentSearch.project}" />
+		<ui:param name="lookupSuffix" value="Document" />
+	</ui:include>
+								
+	<c:if test="#{manager.mainEnterprise}" >
+		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+			<ui:param name="lookupTo" value="#{enterpriseDocumentSearch.enterprise}" />
+			<ui:param name="skipNewButton" value="#{true}" />
+		</ui:include>
+	</c:if>
+			
+	<aon:outputLabel value="#{documentBundle.document_referenceDate}" />
+	<aon:div>
+		<aon:outputLabel for="cm_referenceDate-From" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="cm_referenceDate-From"
+			value="#{enterpriseDocumentSearch.referenceDate[0]}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="cm_referenceDate-To" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="cm_referenceDate-To"
+			value="#{enterpriseDocumentSearch.referenceDate[1]}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>	
+
+	<aon:outputLabel value="#{documentBundle.document_createdDate}" />
+	<aon:div>
+		<aon:outputLabel for="cm_created-From" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="cm_created-From"
+			value="#{enterpriseDocumentSearch.createdDate[0]}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="cm_created-To" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="cm_created-To"
+			value="#{enterpriseDocumentSearch.createdDate[1]}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>	
+
+	<aon:outputLabel value="#{documentBundle.document_modifiedDate}" />
+	<aon:div>
+		<aon:outputLabel for="cm_modifiedDate-From" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_from}:" />
+		<aon:selectInputDate id="cm_modifiedDate-From"
+			value="#{enterpriseDocumentSearch.modifiedDate[0]}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+
+		<aon:outputLabel for="cm_modifiedDate-To" styleClass="aon-form-date-label aon-padding-right" 
+			value="#{bundle.aon_date_to}:" />
+		<aon:selectInputDate id="cm_modifiedDate-To"
+			value="#{enterpriseDocumentSearch.modifiedDate[1]}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}" />
+	</aon:div>	
+
+</ui:composition>
