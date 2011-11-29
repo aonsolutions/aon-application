@@ -88,7 +88,7 @@
 						</aon:commandButton>															
 					</c:if>
 					<aon:inputTextarea id="OfferDetail_description"
-						value="#{offerDetail.to.description}"
+						value="#{offerDetail.to.description}" required="true"
 						rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null}"
 						cols="60" rows="#{!offerDetail.longDescription?1:5}"
 						style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
@@ -126,7 +126,7 @@
 								</aon:commandButton>															
 							</c:if>
 							<aon:inputTextarea id="OfferDetail_description-New"
-								value="#{offerDetail.to.description}"
+								value="#{offerDetail.to.description}" required="true"
 								rendered="#{offerDetail.to.item != null and offerDetail.to.item.id != null}"
 								cols="60" rows="#{!offerDetail.longDescription?1:5}"
 								style="#{!offerDetail.longDescription?'overflow-y:hidden;':'overflow-y:auto;'}">
