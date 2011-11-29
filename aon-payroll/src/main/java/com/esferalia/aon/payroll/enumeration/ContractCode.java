@@ -54,6 +54,8 @@ public enum ContractCode implements IResourceable, IStringEnum {
 	C550("550"),
 	C552("552"), 
 
+	C970("970"),
+	C980("980"),
 	C990("990")
 	
 	;

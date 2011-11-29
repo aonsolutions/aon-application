@@ -18,6 +18,18 @@
 					styleClass="aon-finding-toolbar-item aon-icon-contract-calendar"
 					rendered="#{!contract.new}"
 					action="contractCalendarEvent_form" />
+				
+				<aon:commandButton id="contrata"
+					value="#{payrollBundle.payroll_contract_contrataData}"
+					action="contrata_form" 
+					rendered="#{!contract.new}"
+					actionListener="#{contract.onShowContrataData}"
+					styleClass="aon-finding-toolbar-item aon-icon-contrata" >
+					<f:setPropertyActionListener
+						target="#{contract.contrataBackAction}" value="contract_form" />
+				</aon:commandButton>
+				
+					
 			</ui:define>
 		</ui:decorate>
 	</c:if>

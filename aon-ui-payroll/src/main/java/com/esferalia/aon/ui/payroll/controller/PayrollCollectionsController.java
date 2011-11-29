@@ -14,11 +14,13 @@ import javax.faces.model.SelectItemGroup;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.registry.enumeration.StreetType;
+import com.esferalia.aon.payroll.enumeration.AgeCollective;
 import com.esferalia.aon.payroll.enumeration.AgeGroup;
 import com.esferalia.aon.payroll.enumeration.BasicCopySignatureType;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.Certifica2BatchAttachmentType;
+import com.esferalia.aon.payroll.enumeration.CollectiveReductionCode;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCalendarEventType;
@@ -42,18 +44,23 @@ import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.payroll.enumeration.FanBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.FileStatus;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
+import com.esferalia.aon.payroll.enumeration.InterimCause;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
 import com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType;
 import com.esferalia.aon.payroll.enumeration.LeaveReportType;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
+import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.OtherLaws;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.payroll.enumeration.QuoteType;
+import com.esferalia.aon.payroll.enumeration.ResearchEmployee;
+import com.esferalia.aon.payroll.enumeration.ResearchEmployer;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.enumeration.SchoolWorkshop;
 import com.esferalia.aon.payroll.enumeration.SuspensionCause;
 import com.esferalia.aon.payroll.enumeration.TaxationType;
+import com.esferalia.aon.payroll.enumeration.WorkingDayType;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -73,6 +80,7 @@ public class PayrollCollectionsController {
 	private List<SelectItem> contractOptions;
 	private Map<ContractOption,List<SelectItem>> contractTypesMap;
 	private List<SelectItem> quoteGroups;
+	private List<SelectItem> occupationTypes;
 	private List<SelectItem> ssRegimes;
 	
 	private List<SelectItem> streetTypes;
@@ -111,6 +119,12 @@ public class PayrollCollectionsController {
 	private List<SelectItem> certifica2BatchAttachTypes;
 
 	private List<SelectItem> liquidationTypes;
+	private List<SelectItem> interimCauses;
+	private List<SelectItem> researchEmployers;
+	private List<SelectItem> researchEmployees;
+	private List<SelectItem> collectiveReductionCodes;
+	private List<SelectItem> workingDayTypes;
+	private List<SelectItem> ageCollectives;
 	
 	public List<SelectItem> getPaymentTypes() {
 		if (paymentTypes == null) {
@@ -311,6 +325,20 @@ public class PayrollCollectionsController {
 			}
 		}
 		return quoteGroups;
+	}
+	
+	public List<SelectItem> getOccupationTypes() {
+		if (occupationTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			occupationTypes = new LinkedList<SelectItem>();
+			OccupationType[] types = OccupationType.values();
+			for (OccupationType t : types) {
+				String name = t.getFullName(locale);
+				SelectItem item = new SelectItem(t, name);
+				occupationTypes.add(item);
+			}
+		}
+		return occupationTypes;
 	}
 	
 	public List<SelectItem> getSsRegimes() {
@@ -783,6 +811,83 @@ public class PayrollCollectionsController {
 		return liquidationTypes;
 	}
 	
+	public List<SelectItem> getInterimCauses() {
+		if (interimCauses == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			interimCauses = new LinkedList<SelectItem>();
+			for( InterimCause type : InterimCause.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				interimCauses.add(item);			
+			}
+		}
+		return interimCauses;
+	}
+	
+	public List<SelectItem> getResearchEmployers() {
+		if (researchEmployers == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			researchEmployers = new LinkedList<SelectItem>();
+			for( ResearchEmployer type : ResearchEmployer.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				researchEmployers.add(item);			
+			}
+		}
+		return researchEmployers;
+	}
+	
+	public List<SelectItem> getResearchEmployees() {
+		if (researchEmployees == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			researchEmployees = new LinkedList<SelectItem>();
+			for( ResearchEmployee type : ResearchEmployee.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				researchEmployees.add(item);			
+			}
+		}
+		return researchEmployees;
+	}
+	
+	public List<SelectItem> getCollectiveReductionCodes() {
+		if (collectiveReductionCodes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			collectiveReductionCodes = new LinkedList<SelectItem>();
+			for( CollectiveReductionCode type : CollectiveReductionCode.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				collectiveReductionCodes.add(item);			
+			}
+		}
+		return collectiveReductionCodes;
+	}
+	
+	public List<SelectItem> getWorkingDayTypes() {
+		if (workingDayTypes == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			workingDayTypes = new LinkedList<SelectItem>();
+			for( WorkingDayType type : WorkingDayType.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				workingDayTypes.add(item);			
+			}
+		}
+		return workingDayTypes;
+	}
+	
+	public List<SelectItem> getAgeCollectives() {
+		if (ageCollectives == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			ageCollectives = new LinkedList<SelectItem>();
+			for( AgeCollective type : AgeCollective.values() ) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				ageCollectives.add(item);			
+			}
+		}
+		return ageCollectives;
+	}
 	
 		
 }

@@ -1,0 +1,79 @@
+package com.esferalia.aon.payroll.contrata.enumeration;
+
+import com.code.aon.common.enumeration.IStringEnum;
+
+/** 
+* Enumeration for represent Contrata (S.E.P.E.) TCHRGCOT table codes.
+*/ 
+public enum TCHRGCOT implements IStringEnum {
+
+	TCHRGCOT_0111( "0111", "RÉGIMEN GENERAL", null, null ),
+	TCHRGCOT_0112( "0112", "ARTISTAS (R.G.)", null, null ),
+	TCHRGCOT_0113( "0113", "JUGADORES PROFESIONALES DE FÚTBOL", null, null ),
+	TCHRGCOT_0114( "0114", "PROFESIONALES TAURINOS", null, null ),
+	TCHRGCOT_0115( "0115", "FERROVIARIOS", null, null ),
+	TCHRGCOT_0121( "0121", "REPRESENTANTES COMERCIALES", null, null ),
+	TCHRGCOT_0131( "0131", "SISTEMA ESPECIAL RESINA", null, null ),
+	TCHRGCOT_0132( "0132", "SISTEMA ESPECIAL INDUSTRIAS DE CONSERVAS VEGETALES", null, null ),
+	TCHRGCOT_0133( "0133", "SISTEMA ESPECIAL FRUTAS Y HORTALIZAS", null, null ),
+	TCHRGCOT_0134( "0134", "SISTEMA ESPECIAL EMPAQUETADO Y MANIPULADO DE TOMATE FRESCO", null, null ),
+	TCHRGCOT_0135( "0135", "SISTEMA ESPECIAL HOSTELERÍA", null, null ),
+	TCHRGCOT_0136( "0136", "SISTEMA ESPECIAL EXHIBICIÓN CINEMATOGRÁFICA, SALAS DE BAILE, DISCOTECAS Y SALAS DE FIESTAS", null, null ),
+	TCHRGCOT_0137( "0137", "SISTEMA ESPECIAL ESTUDIOS DE MERCADO Y OPINIÓN PÚBLICA", null, null ),
+	TCHRGCOT_0140( "0140", "RÉGIMEN GENERAL ( CONVENIO ESPECIAL )", null, null ),
+	TCHRGCOT_0151( "0151", "C.C. CONVENCIONALES DEL R.E.T.A.", null, null ),
+	TCHRGCOT_0152( "0152", "C.C. CONVENCIONALES DEL R.E.T.A. (ESC. DE LIBROS)", null, null ),
+	TCHRGCOT_0160( "0160", "C.C. CONVENCIONALES DEL R.E.A. C/A", null, null ),
+	TCHRGCOT_0170( "0170", "C.C. CONVENCIONALES DEL R.E.A. C/P", null, null ),
+	TCHRGCOT_0180( "0180", "C.C. CONVENCIONALES DEL R.E.E.H.", null, null ),
+	TCHRGCOT_0521( "0521", "TRABAJADORES AUTÓNOMOS", null, null ),
+	TCHRGCOT_0522( "0522", "ESCRITORES DE LIBROS (RÉGIMEN ESPECIAL DE TRABAJADORES AUTÓNOMOS)", null, null ),
+	TCHRGCOT_0611( "0611", "TRABAJADOR POR CUENTA AJENA", null, null ),
+	TCHRGCOT_0613( "0613", "RÉGIMEN ESPECIAL AGRARIO", null, null ),
+	TCHRGCOT_0721( "0721", "TRABAJADOR CUENTA PROPIA (R.E.A.)", null, null ),
+	TCHRGCOT_0800( "0800", "RÉGIMEN ESPECIAL DE TRABAJADORES DEL MAR", null, null ),
+	TCHRGCOT_0811( "0811", "TRABAJADOR POR CUENTA AJENA GRUPO 1 (RE. MAR)", null, null ),
+	TCHRGCOT_0812( "0812", "TRABAJADOR POR CUENTA AJENA GRUPO 2ª (RE. MAR)", null, null ),
+	TCHRGCOT_0813( "0813", "TRABAJADOR POR CUENTA AJENA GRUPO 2B(RE. MAR)", null, null ),
+	TCHRGCOT_0814( "0814", "TRABAJADOR POR CUENTA AJENA GRUPO 3 (RE. MAR)", null, null ),
+	TCHRGCOT_0821( "0821", "TRABAJADOR POR CUENTA PROPIA GRUPO 1 ASIM. C.AJENA (R.E.M.)", null, null ),
+	TCHRGCOT_0822( "0822", "TRABAJADOR POR CUENTA PROPIA GRUPO 2.A ASIMI. C.AJENA (R.E.M)", null, null ),
+	TCHRGCOT_0823( "0823", "TRABAJADOR POR CUENTA PROPIA GRUPO 2.B ASIM. C. AJENA (R.E.M)", null, null ),
+	TCHRGCOT_0825( "0825", "TRABAJADOR POR CUENTA PROPIA GRUPO 3 C. INDIVIDUAL (R.E.M)", null, null ),
+	TCHRGCOT_0899( "0899", "RÉGIMEN ESPECIAL MAR DESEMPLEO", null, null ),
+	TCHRGCOT_0911( "0911", "MINERÍA DEL CARBÓN", null, null ),
+	TCHRGCOT_1211( "1211", "RÉGIMEN ESPECIAL HOGAR (FIJOS)", null, null ),
+	TCHRGCOT_1221( "1221", "RÉGIMEN ESPECIAL HOGAR (DISCONTINUOS)", null, null ),
+	TCHRGCOT_1911( "1911", "SEGURO ESCOLAR", null, null ),
+	TCHRGCOT_3011( "3011", "CONCIERTO ASISTENCIA SANITARIA", null, null ),
+	TCHRGCOT_4008( "4008", "CONVENIOS ESPECIALES DE R.E.M.", null, null ),
+	;
+	private String value;
+	private String label;
+	private String startDate;
+	private String endDate;
+
+	TCHRGCOT( String value, String label, String startDate, String endDate ) {
+		this.value = value;
+		this.label = label;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+
+	@Override
+	public String getValue() {
+		return value;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+}

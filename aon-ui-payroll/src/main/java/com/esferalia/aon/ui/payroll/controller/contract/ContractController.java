@@ -15,6 +15,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
@@ -41,6 +42,8 @@ import com.code.aon.ui.registry.controller.IRegistryConstants;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
+import com.esferalia.aon.payroll.AgreementLevelData;
+import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractAttachment;
 import com.esferalia.aon.payroll.EnterpriseActivity;
@@ -53,12 +56,12 @@ import com.esferalia.aon.payroll.enumeration.ContractDuration;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
+import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.ui.calendar.controller.CalendarController;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.salary.SettleController;
-import com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard;
 
 public class ContractController extends BasicController implements IVariablesHandler {
 
@@ -70,30 +73,44 @@ public class ContractController extends BasicController implements IVariablesHan
 	private List<SelectItem> workPlaces;
 	private List<SelectItem> enterpriseCCCs;
 	private List<SelectItem> activities;
-	private ContractOption contractOption;
-	private ContractType contractType;
-	private ContractCode contractCode;
-	private QuoteGroup quoteGroup;
-	private Double irpf;
 	private AonFile aonFile;
 	private Agreement agreement;
 	
-	private ContractDuration contractDuration;
-	private ContractWorkingDay contractWorkingDay;
-	private ContractCode tc2Code;
+	private boolean showContrataWindow;
 	
 	private boolean modalPanelVisible;
 	
-	private ContractVariableHandler handler;
+	private ContractVariableHandler variableHandler;
 	
-	public ContractVariableHandler getHandler() {
-		if(handler==null){
-			handler = new ContractVariableHandler(this);
+	private ContractContrataHandler contrataHandler;
+	
+	private String contrataBackAction;
+	
+	private ContractParams params;
+	
+	public boolean isShowContrataWindow() {
+		return showContrataWindow;
+	}
+	public void setShowContrataWindow(boolean showContrataWindow) {
+		this.showContrataWindow = showContrataWindow;
+	}
+	public ContractParams getParams() {
+		if(params==null){
+			params = new ContractParams();
 		}
-		return handler;
+		return params;
+	}
+	public void setParams(ContractParams params) {
+		this.params = params;
+	}
+	public ContractVariableHandler getHandler() {
+		if(variableHandler==null){
+			variableHandler = new ContractVariableHandler(this);
+		}
+		return variableHandler;
 	}
 	public void setHandler(ContractVariableHandler handler) {
-		this.handler = handler;
+		this.variableHandler = handler;
 	}
 	public boolean isModalPanelVisible() {
 		return modalPanelVisible;
@@ -101,43 +118,33 @@ public class ContractController extends BasicController implements IVariablesHan
 	public void setModalPanelVisible(boolean modalPanelVisible) {
 		this.modalPanelVisible = modalPanelVisible;
 	}
-	
+	public ContractContrataHandler getContrataHandler() {
+		return contrataHandler;
+	}
+	public void setContrataHandler(ContractContrataHandler contrataHandler) {
+		this.contrataHandler = contrataHandler;
+	}
+	public String contrataBackAction() {
+		return contrataBackAction;
+	}
+	public String getContrataBackAction() {
+		return contrataBackAction;
+	}
+	public void setContrataBackAction(String contrataBackAction) {
+		this.contrataBackAction = contrataBackAction;
+	}
 	public Agreement getAgreement() {
 		return agreement;
 	}
 	public void setAgreement(Agreement agreement) {
 		this.agreement = agreement;
 	}
-	public ContractCode getTc2Code() {
-		return tc2Code;
-	}
-	public void setTc2Code(ContractCode tc2Code) {
-		this.tc2Code = tc2Code;
-	}
-	public ContractDuration getContractDuration() {
-		return contractDuration;
-	}
-	public void setContractDuration(ContractDuration contractDuration) {
-		this.contractDuration = contractDuration;
-	}
-	public ContractWorkingDay getContractWorkingDay() {
-		return contractWorkingDay;
-	}
-	public void setContractWorkingDay(ContractWorkingDay contractWorkingDay) {
-		this.contractWorkingDay = contractWorkingDay;
-	}
+	
 	public AonFile getAonFile() {
 		return this.aonFile;
 	}
 	public void setAonFile(AonFile aonFile) {
 		this.aonFile = aonFile;
-	}
-
-	public Double getIrpf() {
-		return irpf;
-	}
-	public void setIrpf(Double irpf) {
-		this.irpf = irpf;
 	}
 	
 	public Enterprise getEnterprise() {
@@ -175,34 +182,6 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	public void setActivities(List<SelectItem> activities) {
 		this.activities = activities;
-	}
-
-	public ContractOption getContractOption() {
-		return contractOption;
-	}
-	public void setContractOption(ContractOption contractOption) {
-		this.contractOption = contractOption;
-	}
-
-	public ContractType getContractType() {
-		return contractType;
-	}
-	public void setContractType(ContractType contractType) {
-		this.contractType = contractType;
-	}
-
-	public ContractCode getContractCode() {
-		return contractCode;
-	}
-	public void setContractCode(ContractCode contractCode) {
-		this.contractCode = contractCode;
-	}
-
-	public QuoteGroup getQuoteGroup() {
-		return quoteGroup;
-	}
-	public void setQuoteGroup(QuoteGroup quoteGroup) {
-		this.quoteGroup = quoteGroup;
 	}
 	
 	public void onShowNewContractModal(ActionEvent event) {
@@ -275,13 +254,51 @@ public class ContractController extends BasicController implements IVariablesHan
 		}						
 	}
 	public void onShowDocuments( ActionEvent event ) {
-		Contract to = (Contract) getTo();
-		ContractGenerationWizard c = (ContractGenerationWizard) FormUtil.getController(IPayrollConstants.CONTRACT_GENERATION_WIZARD_CONTROLLER);
+
+	}
+
+	public void onShowContrataData(ActionEvent event){
+		contrataHandler = new ContractContrataHandler(this);
 		try {
-			c.select(event, to);
+			contrataHandler.readXml();
+		} catch (JAXBException e) {
+			String msg = "Error al leer el documento xml";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		} catch (IOException e) {
+			String msg = "Error al leer el documento xml";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		}
+	}
+
+	public void onAcceptContrata( ActionEvent event ) {
+		ContractAttachController attachController = (ContractAttachController) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_ATTACH_CONTROLLER);
+		try {
+			contrataHandler.generateXml();
+			ContractAttachment attach = new ContractAttachment();
+			attach = contrataHandler.getContrataAttach();
+			IManagerBean bean = BeanManager.getManagerBean(ContractAttachment.class);
+			attach.setAttachDate(new Date());
+			bean.insertOrUpdate(attach);
+			attachController.initializeModel();
+		} catch(IOException e) {
+			String msg = "Error al guardar el documento xml de contrata";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			String msg = "Error al guardar el documento xml de contrata";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
+		} catch (JAXBException e) {
+			String msg = "Error al guardar el documento xml de contrata";
+			LOGGER.error(msg);
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg, e);
 		}
 	}
 	
@@ -648,6 +665,30 @@ public class ContractController extends BasicController implements IVariablesHan
 		}
 		return list;
 	}
+	
+	public void onChangeAgreementLevelCategory(ActionEvent event){
+		Contract contract = (Contract) getTo();
+		try {
+			if(contract.getAgreementLevelCategory()!=null){
+				IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), contract.getAgreementLevelCategory().getLevel().getId());
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_NAME), "P05_IMPORTE");
+				List<ITransferObject> list = bean.getList(criteria);
+				if(!list.isEmpty()){
+					AgreementLevelData d = (AgreementLevelData) list.get(0);
+					getParams().setAgreementSalaryCheck(true);
+					getParams().setGrossSalary(d.getDoubleExpression());
+				} else {
+					getParams().setAgreementSalaryCheck(false);
+					getParams().setGrossSalary(null);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	
 //	 * ************************************
@@ -668,6 +709,111 @@ public class ContractController extends BasicController implements IVariablesHan
 	@Override
 	public void resetVariable() {
 		getHandler().resetVariable();
+	}
+	
+	
+	
+	
+	
+
+
+	public class ContractParams {
+		private ContractOption contractOption;
+		private ContractType contractType;
+		private ContractCode contractCode;
+		private QuoteGroup quoteGroup;
+		private OccupationType occupationType;
+		private Double irpf;
+		private ContractCode tc2Code;
+		private ContractDuration contractDuration;
+		private ContractWorkingDay contractWorkingDay;
+		private CNO cno;
+		
+		private boolean agreementSalaryCheck;
+		private boolean agreementSalary;
+		private Double grossSalary;
+		
+		public boolean isAgreementSalaryCheck() {
+			return agreementSalaryCheck;
+		}
+		public void setAgreementSalaryCheck(boolean agreementSalaryCheck) {
+			this.agreementSalaryCheck = agreementSalaryCheck;
+		}
+		public boolean isAgreementSalary() {
+			return agreementSalary;
+		}
+		public void setAgreementSalary(boolean agreementSalary) {
+			this.agreementSalary = agreementSalary;
+		}
+		public Double getGrossSalary() {
+			return grossSalary;
+		}
+		public void setGrossSalary(Double grossSalary) {
+			this.grossSalary = grossSalary;
+		}
+		public Double getIrpf() {
+			return irpf;
+		}
+		public void setIrpf(Double irpf) {
+			this.irpf = irpf;
+		}
+		public ContractOption getContractOption() {
+			return contractOption;
+		}
+		public void setContractOption(ContractOption contractOption) {
+			this.contractOption = contractOption;
+		}
+
+		public ContractType getContractType() {
+			return contractType;
+		}
+		public void setContractType(ContractType contractType) {
+			this.contractType = contractType;
+		}
+
+		public ContractCode getContractCode() {
+			return contractCode;
+		}
+		public void setContractCode(ContractCode contractCode) {
+			this.contractCode = contractCode;
+		}
+		public QuoteGroup getQuoteGroup() {
+			return quoteGroup;
+		}
+		public void setQuoteGroup(QuoteGroup quoteGroup) {
+			this.quoteGroup = quoteGroup;
+		}
+		public OccupationType getOccupationType() {
+			return occupationType;
+		}
+		public void setOccupationType(OccupationType occupationType) {
+			this.occupationType = occupationType;
+		}
+		public ContractCode getTc2Code() {
+			return tc2Code;
+		}
+		public void setTc2Code(ContractCode tc2Code) {
+			this.tc2Code = tc2Code;
+		}
+		public ContractDuration getContractDuration() {
+			return contractDuration;
+		}
+		public void setContractDuration(ContractDuration contractDuration) {
+			this.contractDuration = contractDuration;
+		}
+		public ContractWorkingDay getContractWorkingDay() {
+			return contractWorkingDay;
+		}
+		public void setContractWorkingDay(ContractWorkingDay contractWorkingDay) {
+			this.contractWorkingDay = contractWorkingDay;
+		}
+		public CNO getCno() {
+			return cno;
+		}
+		public void setCno(CNO cno) {
+			this.cno = cno;
+		}
+		
 	}
 	
 }

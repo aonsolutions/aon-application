@@ -74,6 +74,7 @@ public class FANWriter {
 	
 	private EMP currentEMP;
 	private int totalContractSum = 0;
+	private DAT currentDAT;
 	
 	private Date getStartDate(){
 		Calendar cal = Calendar.getInstance();
@@ -290,6 +291,7 @@ public class FANWriter {
 		// TODO comprobar que situaciones implican un nuevo segmento de tipo DAT
 		
 		DAT dat = new DAT();
+		currentDAT = dat;
 		dat.setMes(endMonth.ordinal()+1);
 		dat.setIndicadoresPerfil((isPartialStrike(c)?"H":BLANK_1)
 				+(isMoonlighting(c)?"P":BLANK_1)
@@ -318,76 +320,8 @@ public class FANWriter {
 		dat.setInfoComplementaria(null);
 		
 		//*** segmento EDL ***
-		Salary salary = getSalary(c);
-		if(salary!=null){
-			EDL edl;
-			if(salary.getCommonBase().equals(salary.getRawCommonBase())){
-				edl = dat.getEdlSegment("BA00");
-				createEDLRecord(
-						edl,
-						"BA",
-						0,
-						0,
-						new Double(salary.getCommonBase()*100).intValue(),
-						" ",
-						0,
-						autoComplete("0", 8, "0", true),
-						autoComplete("0", 8, "0", true),
-						autoComplete("0", 8, "0", true),
-				" ");	
-			} else {
-				edl = dat.getEdlSegment("BA01");
-				createEDLRecord(
-						edl,
-						"BA",
-						1,
-						0,
-						new Double(salary.getCommonBase()*100).intValue(),
-						" ",
-						0,
-						autoComplete("0", 8, "0", true),
-						autoComplete("0", 8, "0", true),
-						autoComplete("0", 8, "0", true),
-				" ");	
-				edl = dat.getEdlSegment("BA02");
-				createEDLRecord(
-						edl,
-						"BA",
-						2,
-						0,
-						new Double(salary.getRawCommonBase()*100).intValue(),
-						" ",
-						0,
-						autoComplete("0", 8, "0", true),
-						autoComplete("0", 8, "0", true),
-						autoComplete("0", 8, "0", true),
-				" ");
-			}
-			
-			
-			
-			SalaryBonus bonus = getBonus(c);
-			if(bonus!=null){
-				Double baseDc = bonus.getAmount();
-//				Integer dcDays = differenceBetweenDates(bonus.getStartDate().before(getStartDate())?getStartDate():bonus.getStartDate(), bonus.getEndDate().after(getEndDate())?getEndDate():bonus.getEndDate());
-				Integer dcDays = 0;
-				if(baseDc != null && baseDc > 0){
-					edl = dat.getEdlSegment("CD07");
-							createEDLRecord(
-									edl,
-									"CD",
-									7,
-									dcDays,
-									new Double(baseDc*100).intValue(),
-									" ",
-									0,
-									autoComplete("0", 8, "0", true),
-									autoComplete("0", 8, "0", true),
-									autoComplete("0", 8, "0", true),
-									" ");
-				}
-			}
-		}
+		createEDLRecords(c);
+		
 		//*****************************************************************
 		//*****************************************************************
 		//*****************************************************************
@@ -396,6 +330,106 @@ public class FANWriter {
 		return datList;
 	}
 
+	private void createEDLRecords(Contract c) {
+		// TODO Auto-generated method stub
+		Salary salary = getSalary(c);
+		if(salary!=null){
+//			EDL edl;
+			if(salary.getCommonBase().equals(salary.getRawCommonBase())){
+				createEDLBa00Segment(salary);
+			} else {
+				createEDLBa01Segment(salary);
+				createEDLBa02Segment(salary);
+			}
+			
+			SalaryBonus bonus = getBonus(c);
+			if(bonus!=null){
+//				Double baseDc = bonus.getAmount();
+//				Integer dcDays = differenceBetweenDates(bonus.getStartDate().before(getStartDate())?getStartDate():bonus.getStartDate(), bonus.getEndDate().after(getEndDate())?getEndDate():bonus.getEndDate());
+//				Integer dcDays = 0;
+				if(bonus.getAmount() > 0){
+					createEDLCd07Segment(bonus);
+				}
+			}
+		}
+		
+	}
+	
+	private void createEDLCd07Segment(SalaryBonus bonus) {
+		Integer dcDays = 0;
+		EDL edl = currentDAT.getEdlSegment("CD07");
+		createEDLRecord(
+				edl,
+				"CD",
+				7,
+				dcDays,
+				new Double(bonus.getAmount()*100).intValue(),
+				" ",
+				0,
+				autoComplete("0", 8, "0", true),
+				autoComplete("0", 8, "0", true),
+				autoComplete("0", 8, "0", true),
+				" ");
+	}
+	private void createEDLCd06Segment(SalaryBonus bonus) {
+		// TODO reducciones
+		
+	}
+	private void createEDLCd03Segment(SalaryBonus bonus) {
+		// TODO IT por AT y EP
+		
+	}
+	private void createEDLCd01Segment(SalaryBonus bonus) {
+		// TODO IT enfermedad comun, accidente no laboral
+	}
+	private void createEDLBa09Segment(Salary salary) {
+		
+	}
+	private void createEDLBa02Segment(Salary salary) {
+		EDL edl = currentDAT.getEdlSegment("BA02");
+		createEDLRecord(
+				edl,
+				"BA",
+				2,
+				0,
+				new Double(salary.getRawCommonBase()*100).intValue(),
+				" ",
+				0,
+				autoComplete("0", 8, "0", true),
+				autoComplete("0", 8, "0", true),
+				autoComplete("0", 8, "0", true),
+		" ");
+	}
+	private void createEDLBa01Segment(Salary salary) {
+		EDL edl = currentDAT.getEdlSegment("BA01");
+		createEDLRecord(
+				edl,
+				"BA",
+				1,
+				0,
+				new Double(salary.getCommonBase()*100).intValue(),
+				" ",
+				0,
+				autoComplete("0", 8, "0", true),
+				autoComplete("0", 8, "0", true),
+				autoComplete("0", 8, "0", true),
+		" ");
+	}
+	private void createEDLBa00Segment(Salary salary) {
+		EDL edl = currentDAT.getEdlSegment("BA00");
+		createEDLRecord(
+				edl,
+				"BA",
+				0,
+				0,
+				new Double(salary.getCommonBase()*100).intValue(),
+				" ",
+				0,
+				autoComplete("0", 8, "0", true),
+				autoComplete("0", 8, "0", true),
+				autoComplete("0", 8, "0", true),
+		" ");		
+	}
 	private Integer getDcDays(Contract c) {
 		// TODO Auto-generated method stub
 		return null;

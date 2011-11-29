@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -17,6 +18,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -24,6 +26,9 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEvent;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.ValidationEventLocator;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -38,6 +43,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
+import com.code.aon.common.util.Classpath;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.WorkPlace;
@@ -67,9 +73,9 @@ import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractAttachController;
+import com.esferalia.aon.ui.payroll.file.ContractXmlReader;
+import com.esferalia.aon.ui.payroll.file.ContractXmlWriter;
 import com.esferalia.aon.ui.payroll.utils.ContractBuilder;
-import com.esferalia.aon.ui.payroll.utils.ContractXmlReader;
-import com.esferalia.aon.ui.payroll.utils.ContractXmlWriter;
 import com.esferalia.aon.ui.payroll.utils.contractMojo.CONTRATOS;
 import com.esferalia.aon.ui.payroll.utils.contractMojo.ObjectFactory;
 import com.lowagie.text.DocumentException;
@@ -902,6 +908,8 @@ public class ContractGenerationWizard extends BasicController{
 		File file = File.createTempFile("aon-temp", ".XML"); 
 		marshaller.marshal( getContratos(), file );
 		
+		validateXmlPattern(file);
+		
 		FileInputStream fin = new FileInputStream(file);
 		byte fileContent[] = new byte[(int)file.length()];
 		fin.read(fileContent);
@@ -914,6 +922,23 @@ public class ContractGenerationWizard extends BasicController{
 		getContrataAttach().setMimeType(MimeType.MIME_XML);
 		getContrataAttach().setDescription("fichero_contrata");
 		fin.close();
+	}
+	
+	private void validateXmlPattern(File xml) {
+		final String SCHEMA = "EsquemaContratos50.xsd";
+		try {
+			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			ClassLoader cl = Thread.currentThread().getContextClassLoader();
+			URL[] urls = Classpath.search(cl, "META-INF/", SCHEMA);
+			Validator validator = sf.newSchema(urls[0]).newValidator();
+			StreamSource source = new StreamSource(xml);
+			validator.validate(source);
+		} catch (Exception e) {
+			String msg = "Error de formato al generar el XML";
+			AonUtil.addErrorMessage(msg);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(msg, e);
+		}
 	}
 	
 	public class ContractValidationEventHandler implements
