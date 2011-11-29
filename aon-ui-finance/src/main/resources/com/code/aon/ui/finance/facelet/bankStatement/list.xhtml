@@ -297,7 +297,7 @@
 							<aon:selectOneMenu id="BankStatement_registryBank"
 								value="#{bankStatement.registryBank}"
 								valueChangeListener="#{bankStatement.onChangeBank}"
-								reRender="bankStatementData"
+								reRender="bankStatementDataContainer"
 								disabled="#{bankStatement.new or bankStatement.to != null}" 
 								ajaxRendered="true">
 								<f:selectItems value="#{companyCollections.allCompanyBanks}" />
