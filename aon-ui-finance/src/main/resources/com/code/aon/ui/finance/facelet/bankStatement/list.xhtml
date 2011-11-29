@@ -57,10 +57,8 @@
 							onclick="Richfaces.showModalPanel('waitProccess')"
 							oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 						<aon:htmlCommandLink id="bankStatementList-excel-report"
-							value="&#160;" target="_blank" action="#{report.onExecute}"
+							value="&#160;" target="_blank" action="#{bankStatement.onExcelReport}"
 							styleClass="aon-finding-toolbar-item aon-icon-excel aon-finding-toolbar-item-no-border">
-							<f:param name="reportKey" value="bankStatementList" />
-							<f:param name="outputFormat" value="MS Excel" />
 						</aon:htmlCommandLink>
 						<aon:htmlCommandLink id="bankStatementList-report"
 							value="#{bundle.aon_listing}" target="_blank" action="#{report.onExecute}"

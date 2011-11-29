@@ -63,6 +63,8 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryBank;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.report.dynamic.DynaElements;
+import com.code.aon.report.dynamic.DynaReport;
 import com.code.aon.ui.company.controller.CompanyCollectionsController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.finance.IFinanceMessages;
@@ -71,6 +73,7 @@ import com.code.aon.ui.finance.event.FinanceListSearchListener;
 import com.code.aon.ui.finance.event.FinanceTrackingListSearchListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.report.controller.DynaReportManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class BankStatementController extends BasicController implements IFinanceConstants {
@@ -1767,4 +1770,29 @@ public class BankStatementController extends BasicController implements IFinance
 		bankStatementChecks = new ArrayList<BankStatement>();
 	}
 	
+	public String onExcelReport() {
+		try {
+			DynaElements dyn = new DynaElements();
+			DynaReport report = new DynaReport();
+			report.addColumn(dyn.getStringColumn("registryBank.fullName", "Banco", 150))
+			.addColumn(dyn.getIntegerColumn("lotNumber", "Lote"))
+			.addColumn(dyn.getDateColumn("operationDate", "Fecha"))
+			.addColumn(dyn.getEnumColumn("commonConcept", AonUtil.getCurrentLocale(), "Operación", 100))
+			.addColumn(dyn.getStringColumn("description", "Concepto", 350))
+			.addColumn(dyn.getBooleanColumn("payment", "Cargo", "Abono", "Tipo", 50))
+			.addColumn(dyn.getNumberColumn("amount", "Importe"))
+			.addColumn(dyn.getEnumColumn("status", AonUtil.getCurrentLocale(), "Estado", 80))
+			.addColumn(dyn.getStringColumn("comments", "Comentarios", 1024));
+
+			DynaReportManager drm = new DynaReportManager();
+			drm.toExcel(report,"ExtractoBancario", search(0, getRowCount()));
+		} catch (Exception e) {
+			e.printStackTrace();
+			String msg = "No se pudo generar el listado";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+		return null;
+	}
+
 }
