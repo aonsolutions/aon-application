@@ -94,8 +94,10 @@
 		
 		<ui:insert name="contractDetail" />
 		
-		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		<aon:lookupButtonPopup lookup="#{agreementLookup}" />
 		<aon:lookupButtonPopup lookup="#{cnoLookup}" />
 		
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/modalPanel.xhtml" />
