@@ -42,6 +42,24 @@
 									aonConfiguration.bean.product.showAlternatives or
 									aonConfiguration.bean.product.showAttachment}">
 						<aon:panelTabSet id="itemTab" selectedTab="#{item.selectedTab}">
+							<c:if test="#{aonConfiguration.bean.product.showComposition and item.to.product.composition}">
+								<aon:panelTab id="itemCompositionPanelTab"
+									label="#{productBundle.product_composition}">
+									<ui:include
+										src="/com/code/aon/ui/product/facelet/item/composition/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+
+							<c:if test="#{aonConfiguration.bean.product.showStock and item.to.product.inventoriable}">
+								<aon:panelTab id="itemWarehousePanelTab"
+									label="#{warehouseBundle.warehouse_item_warehouse_module}">
+									<ui:include
+										src="/com/code/aon/ui/warehouse/facelet/itemwarehouse/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+
 							<c:if test="#{aonConfiguration.bean.product.showTariff}">
 								<aon:panelTab id="itemTariffPanelTab"
 									label="#{productBundle.product_tariff_module}">
@@ -56,24 +74,6 @@
 									label="#{productBundle.product_catalogue_module}">
 									<ui:include
 										src="/com/code/aon/ui/product/facelet/item/catalogue/tab_grid.xhtml">
-									</ui:include>
-								</aon:panelTab>
-							</c:if>
-
-							<c:if test="#{aonConfiguration.bean.product.showStock and item.to.product.inventoriable}">
-								<aon:panelTab id="itemWarehousePanelTab"
-									label="#{warehouseBundle.warehouse_item_warehouse_module}">
-									<ui:include
-										src="/com/code/aon/ui/warehouse/facelet/itemwarehouse/tab_grid.xhtml">
-									</ui:include>
-								</aon:panelTab>
-							</c:if>
-
-							<c:if test="#{aonConfiguration.bean.product.showComposition and item.to.product.composition}">
-								<aon:panelTab id="itemCompositionPanelTab"
-									label="#{productBundle.product_composition}">
-									<ui:include
-										src="/com/code/aon/ui/product/facelet/item/composition/tab_grid.xhtml">
 									</ui:include>
 								</aon:panelTab>
 							</c:if>
