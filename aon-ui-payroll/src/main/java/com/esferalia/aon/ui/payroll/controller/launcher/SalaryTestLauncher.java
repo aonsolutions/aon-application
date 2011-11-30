@@ -236,6 +236,11 @@ public class SalaryTestLauncher extends AbstractSalaryLauncher {
 			this.context = context;
 			this.enterpriseCosts = enterpriseCosts;
 		}
+		
+		@Override
+		public Date getIrpfDate() {
+			return context.getChargeDate();
+		}
 
 		public Date getChargeDate() {
 			return context.getChargeDate();

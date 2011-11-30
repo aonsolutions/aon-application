@@ -145,6 +145,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		salaryBuilder.setIssueDate( ctx.getIssueDate() );
 		salaryBuilder.setStartDate( ctx.getStartDate());
 		salaryBuilder.setEndDate( ctx.getEndDate());
+		salaryBuilder.setChargeDate( ctx.getChargeDate());
 		long days  = CommonUtil.getDaysBetweenDates(ctx.getStartDate(), ctx.getEndDate()) + 1;
 		salaryBuilder.setTimeUnits( (int) days );
 		salaryBuilder.setType(ctx.getSalaryType());
@@ -167,6 +168,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				TaxCalculator.getTaxCalculator(ctx);
 			
 			Date issueDate = ctx.getIssueDate();
+			Date chargeDate = ctx.getChargeDate();
 			
 			Collection<IContractPayment> payments =  ctx.getContractPayments();
 			for (IContractPayment contractPayment : payments) {
@@ -197,7 +199,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	
 						Double value = amount.getValue();
 						total += value;
-						Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, issueDate, value);
+						Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, chargeDate, value);
+						//Double payment = taxCalculator.tax(contractPayment, amountStart, amountEnd, issueDate, value);
 						
 						if ( payment != 0.00 ){
 							try  {
@@ -212,7 +215,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 						}
 					}
 				
-					//System.out.printf("\t[%s]: %s, %s = %f +%f\r\n", contractPayment.getName(), contractPayment.getDescription(),contractPayment.getExpression(), total, taxCalculator.getTotalPayment());
+					System.out.printf("[%s]: %-45s\t\t= %f\t(%f)\r\n", contractPayment.getName(), contractPayment.getDescription(), total, taxCalculator.getTotalPayment());
 					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, total);
 
 				} catch ( UndefinedVariableException e ) {
@@ -227,10 +230,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			expressionContext.addVariable(TOTAL_PAYMENT, totalPayment, start, end );
 
 			salaryBuilder.setItBase(quoteCalculator.getItBase()); 
-
-			Date chargeDate = ctx.getChargeDate();
+			
+			Date irpfDate = ctx.getIrpfDate();
 			salaryBuilder.setIrpfBase(taxCalculator.getIrpfBase()); 
-			expressionContext.addVariable(IRPF_BASE, taxCalculator.getIrpfBase(), chargeDate, chargeDate);
+			expressionContext.addVariable(IRPF_BASE, taxCalculator.getIrpfBase(), irpfDate, irpfDate);
 
 			salaryBuilder.setRawCgcBase(quoteCalculator.getRawCgcBase());
 			
@@ -258,6 +261,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			throw new SalaryException(e.getMessage(),e);			
 		}catch (AonException e) {
 			throw new SalaryException(e.getMessage(),e);			
+		}catch (RuntimeException e) {
+			e.printStackTrace();
+			throw e;
+			// TODO: handle exception
 		}
 	}
 	
@@ -301,8 +308,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 					Date deductionEnd = null;
 
 					if ( type.isTaxDeduction() ) {
-						deductionStart  = ctx.getChargeDate();
-						deductionEnd = ctx.getChargeDate();
+						deductionStart  = ctx.getIrpfDate();
+						deductionEnd = ctx.getIrpfDate();
 					} else {
 						deductionStart = Period.max(contractDeduction.getStartDate(), start);
 						deductionEnd= Period.min(contractDeduction.getEndDate(), end ); 
@@ -365,8 +372,8 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		
 		amounts = null;
 		
-		/*if ( total > 0 )
-			System.out.printf("%s=%s %.3f \r\n", concept, expression, total);*/
+//		if ( total > 0 )
+//			System.out.printf("%s=%s %.3f \r\n", concept, expression, total);
 		
 		return total ;
 	}

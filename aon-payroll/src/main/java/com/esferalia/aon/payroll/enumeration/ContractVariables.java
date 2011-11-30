@@ -7,6 +7,12 @@ import com.code.aon.common.enumeration.IResourceable;
 
 public enum ContractVariables implements IResourceable{
 	
+
+	START("FECHA_INICIO", VariableType.DATE),
+	END("FECHA_FINAL", VariableType.DATE),
+	SALARY_START("INICIO_NOMINA", VariableType.DATE),
+	SALARY_END("FIN_NOMINA", VariableType.DATE),
+
 	// Dias
 	YEAR_DAYS("DIAS_AÑO", VariableType.INTEGER),
 	MONTH_DAYS("DIAS_MES", VariableType.INTEGER),
@@ -29,7 +35,6 @@ public enum ContractVariables implements IResourceable{
 	OCCUPATIONAL_DISEASE_DAYS("DIAS_ENFERMEDAD_PROFESIONAL", VariableType.INTEGER),
 	PAYMENTS("NUM_PAGAS", VariableType.INTEGER),
 
-	WORKED_MONTHS("MESES_TRABAJADOS", VariableType.INTEGER),
 	SALARY_MONTHS("MESES_NOMINA", VariableType.INTEGER),
 	PAY_MONTHS("MESES_PAGA", VariableType.INTEGER),
 	WORKED_WEEKS("SEMANAS_TRABAJADAS", VariableType.INTEGER),
@@ -123,6 +128,8 @@ public enum ContractVariables implements IResourceable{
 	
 	;
 	
+	public static final String MONTHS = "MESES";
+
 	private final String name;
 	private VariableType type;
 	

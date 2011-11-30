@@ -2,15 +2,19 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 
+import org.mvel2.util.MethodStub;
+
+import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -19,10 +23,14 @@ import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.Period;
 
+
+
 public class SQLAgreementContextFactory 
 	implements LRUCacheFactory<Integer, ExpressionContext> {
 
 	
+	private static final String MONTHS_IMPL = "MESESIMPL";
+
 	private static final String SYSTEM_DATA_SQL = 
 		"SELECT * " 
 		+" FROM `system_data`"
@@ -45,6 +53,24 @@ public class SQLAgreementContextFactory
 	private ExpressionContext 		systemExpressionContext;
 	
 	
+	public static int getMonths(Date start, Date end , double days){
+		Calendar startCalendar = Calendar.getInstance();
+		startCalendar.setTime(start);
+		
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(end);
+		
+		int months = 0;
+
+		while ( days > 0 && ( startCalendar.compareTo(endCalendar) <= 0 ) ){
+			days -= CommonUtil.daysInMonth(startCalendar.getTime());
+			startCalendar.add(Calendar.MONTH, 1);
+			months++;
+		}
+		
+		return months ;
+	}
+
 	public SQLAgreementContextFactory(Connection connection, Date startDate, Date endDate) 
 	throws SQLException, ExpressionException
 	{
@@ -134,9 +160,36 @@ public class SQLAgreementContextFactory
 		
 		loadSystemData(connection, startDate, endDate, systemExpressionContext);
 
-		Object leaveDays = null;
-		systemExpressionContext.addVariable(LEAVE_DAYS, leaveDays, startDate, endDate);
-
+		systemExpressionContext.addVariable(SALARY_START, startDate, startDate, endDate);
+		systemExpressionContext.addVariable(SALARY_END, endDate, startDate, endDate);
+		
+		// MONTHS function
+		try {
+			
+			Method months =  SQLAgreementContextFactory.class.getMethod(
+					"getMonths", 
+					Date.class, 
+					Date.class, 
+					double.class);
+			
+			MethodStub monthsStub = new MethodStub(months);
+			
+			systemExpressionContext.addVariable( MONTHS_IMPL , monthsStub, startDate, endDate);
+			
+			String functionScript =  
+					String.format("%s = def (days) { %s(%s, %s, days) };", 
+							MONTHS,
+							MONTHS_IMPL, 
+							START, 
+							END  );
+			
+			systemExpressionContext.eval(functionScript, startDate, endDate);
+			
+			
+			
+		} catch ( SecurityException e) {
+		} catch( NoSuchMethodException e ){
+		}
 
 	}
 
@@ -189,6 +242,7 @@ public class SQLAgreementContextFactory
 		monthDays += 1;
 		return monthDays;
 	}
+	
 
 	
 

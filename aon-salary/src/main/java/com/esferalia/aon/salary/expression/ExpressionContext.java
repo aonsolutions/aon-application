@@ -26,6 +26,7 @@ import org.mvel2.integration.impl.ClassImportResolverFactory;
 import org.mvel2.templates.TemplateRegistry;
 import org.mvel2.templates.TemplateRuntime;
 import org.mvel2.templates.util.TemplateOutputStream;
+import org.mvel2.util.MethodStub;
 import org.mvel2.util.StringAppender;
 
 import com.code.aon.common.util.CommonUtil;
@@ -200,5 +201,16 @@ public class ExpressionContext {
 			add("isdef");
 		}
 	};
+	
+	public static void main(String[] args) throws SecurityException, NoSuchMethodException {
+		
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		Object def = MVEL.eval("def (x) { x >= 10 ? x : 0 };", map);
+		
+		System.out.println(def.getClass().getName());
+		
+	}
 	
 }

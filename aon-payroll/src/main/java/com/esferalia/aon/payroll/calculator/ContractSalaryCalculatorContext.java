@@ -110,6 +110,11 @@ public class ContractSalaryCalculatorContext
 	}
 	
 	@Override
+	public Date getIrpfDate() {
+		return ctx.getChargeDate();
+	}
+	
+	@Override
 	public Date getChargeDate() {
 		return ctx.getChargeDate();
 	}

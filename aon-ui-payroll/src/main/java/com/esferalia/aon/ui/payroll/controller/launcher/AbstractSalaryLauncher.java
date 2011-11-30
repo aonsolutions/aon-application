@@ -407,6 +407,7 @@ public abstract class AbstractSalaryLauncher
 		private PreparedStatement delaysStmt;
 		private ISQLContractSalaryCalculatorContext currentCtx;
 		
+
 		public AggregatedSQLContractDelayCalculatorContext(
 				Connection connection, 
 				Date startDate, 
@@ -420,6 +421,10 @@ public abstract class AbstractSalaryLauncher
 		}
 		
 		
+		public Date getIrpfDate() {
+			return currentCtx.getIrpfDate();
+		}
+
 		public Date getChargeDate() {
 			return currentCtx.getChargeDate();
 		}

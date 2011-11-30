@@ -53,6 +53,37 @@ public class Period implements Comparable<Period>{
 		return end;
 	}
 	
+	public List<Period> sub(Period p ) {
+		
+		List<Period> sub = 
+				new LinkedList<Period>();
+		
+		Period intersect = intersect(p);
+		
+		if ( intersect == null ){
+			sub.add(this);
+			return sub;
+		}
+		
+		if ( intersect.contains(this) ){
+			return sub;
+		}
+		
+		if ( compare ( start, intersect.start ) == 0 ){
+			sub.add(new Period(next(intersect.end), end ));
+			return sub;
+		}
+
+		sub.add(new Period(start, prev(intersect.start)));
+		
+		if ( compare(intersect.end, end ) < 0 ) {
+			sub.add(new Period(next(intersect.end), end ));
+		}
+
+		return sub;
+		
+	}
+	
 	
 	public boolean contains(Date date) {
 		return compare(this.start, date ) <= 0 &&  
@@ -87,13 +118,6 @@ public class Period implements Comparable<Period>{
 	}
     
     
-    private static int compareEnds(Period a, Period b ) {
-    	if ( b == null ){
-    		return a == null ? 0 : 1; 
-    	}
-    	return  compare(a.end, b.end);
-    		
-    }
     
 	public static 	List<Period> intersect(List<Period> a, List<Period> b ){
 		if ( a == null || b == null )
@@ -129,7 +153,34 @@ public class Period implements Comparable<Period>{
 		return periods;
 	}
 	
-	
+	@Override
+	public boolean equals(Object obj) {
+		Period other = (Period) obj;
+		return compare ( start, other.start ) == 0 && 
+				compare ( end, other.end ) == 0;
+	}	
 
     
+    private static int compareEnds(Period a, Period b ) {
+    	if ( b == null ){
+    		return a == null ? 0 : 1; 
+    	}
+    	return  compare(a.end, b.end);
+    		
+    }
+
+    private static Date next(Date date) {
+    	return add(date, 1 );
+    }
+
+    private static Date prev(Date date) {
+    	return add(date, -1 );
+    }
+
+    private static Date add(Date date, int amount) {
+    	Calendar calendar = Calendar.getInstance();
+    	calendar.setTime(date);
+    	calendar.add(Calendar.DAY_OF_MONTH, amount);
+    	return calendar.getTime();
+    }
 }
