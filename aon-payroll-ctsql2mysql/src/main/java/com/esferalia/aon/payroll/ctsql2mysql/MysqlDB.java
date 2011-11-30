@@ -49,7 +49,6 @@ public class MysqlDB extends DefaultMysqlDB{
 		this.fromDate = fromDate;
 	}
 
-	
 	public void writeAll(CtsqlDB ctsqlReader) throws SQLException {
 		start();
 

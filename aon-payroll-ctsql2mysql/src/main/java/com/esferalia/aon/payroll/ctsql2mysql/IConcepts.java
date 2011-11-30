@@ -38,6 +38,7 @@ public interface IConcepts {
 		}
 	}
 
+
 	public Concept<PaymentType> getPaymentConcept(String codCom)
 		throws SQLException;
 	

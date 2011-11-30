@@ -4,19 +4,24 @@ import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Bonifica;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Complemento;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipboni;
+import com.esferalia.aon.payroll.sql.AbstractSQL.IPaymentConcept;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
 public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 
-
+	
+	
 	public static String formatCode(String cdg) {
 		return String.format("P%s", cdg );
 	}
@@ -86,7 +91,7 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 		return null;
 	}
 
-	public static String getExprFormat(String calculo, String indCom, String codeApl, String redExt) 
+	public static String getExprFormat(String calculo, String indCom, String codeApl, String redExt, double garilt) 
 	throws SQLException {
 		if (calculo.equals("1")) {
 			return String.format("%%1$s * %s / %s", 
@@ -109,16 +114,25 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 						HOLIDAYS ); // Jodete
 			}
 			if ("P".equals(indCom)) {
-				if ( "M".equalsIgnoreCase(redExt)) {
-					return String.format("%%1$s * %s / %s", 
-							WORKED_MONTHS , SALARY_MONTHS);
-				} 
 				if ( "S".equalsIgnoreCase(redExt)) {
 					return String.format("%%1$s * %s / %s", 
-							WORKED_WEEKS , SALARY_WEEKS );
+							WORKED_WEEKS , PAY_WEEKS );
 				}
+
+				if ( garilt == 100.0 ) {
+					if ( "M".equalsIgnoreCase(redExt)) {
+						return String.format("%%1$s * %s ( %s + %s ) / %s", 
+								MONTHS, QUOTE_DAYS , GUARANTEED_DAYS, PAY_MONTHS);
+					} 
+					return String.format("%%1$s * ( %s + %s ) / %s", 
+							QUOTE_DAYS, GUARANTEED_DAYS , PAY_DAYS );
+				}
+				if ( "M".equalsIgnoreCase(redExt)) {
+					return String.format("%%1$s * %s ( %s ) / %s", 
+							MONTHS, QUOTE_DAYS , PAY_MONTHS);
+				} 
 				return String.format("%%1$s * %s / %s", 
-						WORKED_DAYS , SALARY_DAYS );
+						QUOTE_DAYS , PAY_DAYS );
 			} // paga extra 
 		}else if (calculo.equals("7")) {
 			return String.format("%s * %%1$s / 100 ", 
@@ -127,19 +141,19 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 		return "%1$s";
 	}
 	
-	public static String getExpr(String calculo, BigDecimal importe, String indCom, String codeApl, String redExt) 
+	public static String getExpr(String calculo, BigDecimal importe, String indCom, String codeApl, String redExt, double garilt) 
 	throws SQLException {
-		String format = getExprFormat(calculo, indCom, codeApl, redExt);
+		String format = getExprFormat(calculo, indCom, codeApl, redExt, garilt);
 		return DefaultMysqlDB.format(format, String.format("%.3f", importe ) );
 	}
 	
-	public static String getExpr(String calculo, String variable, String indCom, String codeApl, String redExt) 
+	public static String getExpr(String calculo, String variable, String indCom, String codeApl, String redExt, double garilt) 
 	throws SQLException {
-		String format = getExprFormat(calculo, indCom, codeApl, redExt);
+		String format = getExprFormat(calculo, indCom, codeApl, redExt, garilt);
 		return DefaultMysqlDB.format(format, variable );
 	}
 
-	public static String getPorQuote(String porCot , String expr, SalaryType type) {
+	public static String getPorQuote(String porCot , String expr) {
 		String porQuote = "M".equalsIgnoreCase(porCot) ? 
 				"( " +  expr + " ) / 12 * " + QUOTE_DAYS + "/" + MONTH_DAYS : 
 				"( " +  expr + " ) /" + YEAR_DAYS + " *" + QUOTE_DAYS ;
@@ -242,14 +256,26 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 
 	private DefaultMysqlDB mysqlDB;
 
-	private Map<String, Concept<PaymentType>> paymentConcepts ;
-	private Map<Integer, Bonus> bonusConcepts ;
+	private Map<String, Concept<PaymentType>> 	paymentConcepts ;
+	private Map<Integer, Bonus> 				bonusConcepts ;
 	
 	public MyConcept(DefaultMysqlDB mysqlDB) 
 	{
 		this.mysqlDB = mysqlDB;	
 		this.paymentConcepts = new HashMap<String, Concept<PaymentType>>();
 		this.bonusConcepts = new HashMap<Integer, Bonus>();
+		
+		try {
+			this.paymentConcepts.put("9w", getConceptPayment("ATEP"));  //PRESTACION ACCIDENTE LABORAL
+			updateConceptPayment("ATEP","PRESTACION ACCIDENTE LABORAL");
+			this.paymentConcepts.put("9y", getConceptPayment("ECEMP")); //PRESTACION ENFERMEDAD A CARGO DE LA EMPRESA
+			updateConceptPayment("ECEMP","PRESTACION ENFERMEDAD A CARGO DE LA EMPRESA");
+			this.paymentConcepts.put("9A", getConceptPayment("GTZDO"));	
+			//this.paymentConcepts.put("9z", getPaymentConcept("ECSS")); 	//PREST.ENFERMEDAD,MATERNIDAD Y/O R.E.
+			//put("9z", getPaymentConcept("MTNAD")); 	//PREST.ENFERMEDAD,MATERNIDAD Y/O R.E.
+		} catch (SQLException e) {
+		} 		
+
 	}
 	
 	public String getCode(String cdg) {
@@ -281,6 +307,13 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 	
 	@Override
 	public void visitComplemento(Complemento complemento) throws SQLException {
+		
+		String cdg = complemento.getCdg();
+		
+		if ( paymentConcepts.get(cdg) != null ) {
+			return;
+		}
+		
 		String code = formatCode ( complemento.getCdg() );
 		String description = complemento.getDescripcion() ;
 		if ( description == null ) {
@@ -321,6 +354,49 @@ public class MyConcept extends DefaultCtsqlDBVisitor implements IConcepts {
 		Bonus bonus = 
 			new Bonus(bonusConceptId, tipboni.getCalculo(), description, expression);
 		bonusConcepts.put(tipboni.getCdg(), bonus );
+	}
+	
+	
+	private Concept<PaymentType> getConceptPayment ( String code ) 
+	throws SQLException {
+		ResultSet rs = null; 
+		PreparedStatement stmt = null ;
+		try {
+			stmt = mysqlDB.mysqlConnection.prepareStatement("SELECT * FROM payment_concept WHERE code = ?");
+			stmt.setString(1, code);
+			rs = stmt.executeQuery();
+			if ( rs.next() ){
+				int id = rs.getInt("id");
+				String quote = rs.getString("quote");
+				String description = rs.getString("description");
+				PaymentType type = PaymentType.values()[rs.getInt("type")];
+				return new Concept<PaymentType>(id, code, type, quote, description);
+			}
+			else {
+				return null;
+			}
+		}
+		finally {
+			if ( rs != null )
+				rs.close();
+			if ( stmt != null )
+				stmt.close();
+		}
+	}
+	
+	private void updateConceptPayment ( String code, String description ) 
+	throws SQLException {
+		PreparedStatement stmt = null ;
+		try {
+			stmt = mysqlDB.mysqlConnection.prepareStatement("UPDATE payment_concept set description = ?  WHERE code = ?");
+			stmt.setString(1, description);
+			stmt.setString(1, code);
+			stmt.executeUpdate();
+		}
+		finally {
+			if ( stmt != null )
+				stmt.close();
+		}
 	}
 	
 }

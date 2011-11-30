@@ -6,6 +6,8 @@ import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.toDouble;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
@@ -28,6 +30,7 @@ import com.esferalia.aon.payroll.enumeration.ContractVariables;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.Period;
 
 public class MySalary extends DefaultCtsqlDBVisitor {
 
@@ -37,12 +40,22 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 	private Integer salaryId;
 	private Integer contractId;
+	
+	private Date lastSalary ;
 
 	public MySalary(DefaultMysqlDB mysqlDB, IContracts contracts,
 			IConcepts concepts) {
 		this.mysqlDB = mysqlDB;
 		this.contracts = contracts;
 		this.concepts = concepts;
+		this.lastSalary = new Date(0);
+	}
+	
+	
+	
+	
+	public Date getLastSalaryDate() {
+		return lastSalary;
 	}
 
 	@Override
@@ -97,7 +110,9 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		if ("A".equals(nomina.getTipo())) {
 			type = SalaryType.DELAY;
 		}
-
+		
+		Double totalIrpf = toDouble(nomina.getImporte_irpf());
+		
 		this.salaryId = mysqlDB.insertSalary(enum2short(type), contractId,
 				nomina.getFecini(), nomina.getFecfin(),
 				rel_epp_emp.getEmprnif_Descripcion(), nomina.getLocalidad(),
@@ -113,12 +128,13 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				totalPayment, totalDeduction, totalLiquid, totalEnterprise,
 				nomina.getFecemi(), renumeration, proExtBase, itBase,
 				rawCgcBase, cgcBase, hextraBase, nonHextraBase, cgpBase,
-				moneyIrpfBase, kindIrpfBase, irpfBase, ssContributions);
+				moneyIrpfBase, kindIrpfBase, irpfBase, ssContributions, totalIrpf, 
+				nomina.getFeccobreal());
 
 		Double importeCg = toDouble(nomina.getImporte_cg());
 		if (importeCg > 0) {
 			BigDecimal cgPercentage = nomina.getPrc_cg();
-			String cgFunction = String.format("%.2f%%",
+			String cgFunction = String.format("%.2f %%",
 					cgPercentage != null ? cgPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.COMMON_CONTINGENCY), "CGC", cgFunction,
@@ -136,17 +152,17 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				double uePercentage = accPercentage - jobPercentage;
 
 				double importeJob = jobPercentage * importeAcc / accPercentage;
-				String jobFunction = String.format("%.2f%%", jobPercentage);
+				String jobFunction = String.format("%.2f %%", jobPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.JOB_TRAINING), "FP", jobFunction,
 						null, importeJob);
 
-				String ueFunction = String.format("%.2f%%", uePercentage);
+				String ueFunction = String.format("%.2f %%", uePercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.UNEMPLOYMENT), "DESMP", ueFunction,
 						null, importeAcc - importeJob);
 			} else {
-				String accFunction = String.format("%.2f%%", accPercentage);
+				String accFunction = String.format("%.2f %%", accPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.PROFESSIONAL_CONTINGENCY),
 						"CGP", accFunction, null, importeAcc);
@@ -156,7 +172,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		Double importeHex = toDouble(nomina.getImporte_hex());
 		if (importeHex > 0) {
 			BigDecimal hexPercentage = nomina.getPrc_hex();
-			String hexFunction = String.format("%.2f%%",
+			String hexFunction = String.format("%.2f %%",
 					hexPercentage != null ? hexPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.STRUCTURAL_OVERTIME), "ESTR", hexFunction,
@@ -166,7 +182,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		Double importeHexNo = toDouble(nomina.getImporte_hexno());
 		if (importeHexNo > 0) {
 			BigDecimal hexNoPercentage = nomina.getPrc_hexno();
-			String hexNoFunction = String.format("%.2f%%",
+			String hexNoFunction = String.format("%.2f %%",
 					hexNoPercentage != null ? hexNoPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.NON_STRUCTURAL_OVERTIME), "NESTR",
@@ -177,7 +193,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		if (importeIrpf > 0) {
 			BigDecimal irpfPercentage = nomina.getPrc_irpf();
-			String irpfFunction = String.format("%.2f%%",
+			String irpfFunction = String.format("%.2f %%",
 					irpfPercentage != null ? irpfPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.IRPF), "IRPF", irpfFunction, null,
@@ -186,6 +202,8 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		nomina.visitRel_nmd_nom(this);
 		nomina.visitRel_dto_nom(this);
+		
+		add(contractId, nomina.getFecnew());
 	}
 
 	@Override
@@ -198,11 +216,11 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		Concept<PaymentType> concept = concepts.getPaymentConcept(codCom);
 
-		String paymentConcept = concept != null ? concept.code : MyConcept
-				.formatCode(codCom);
+		String paymentConcept = concept != null ? concept.code : MyConcept.formatCode(codCom);
 
-		PaymentType type = concept != null ? concept.type : mysqlDB
-				.getPaymentType(description, dinEsp, null);
+		PaymentType type = concept != null ? 
+				concept.type : 
+				mysqlDB.getPaymentType(description, dinEsp, null);
 
 		BigDecimal importe = nominadev.getImporte();
 		BigDecimal impuni = nominadev.getImpuni();
@@ -210,8 +228,11 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		String function = mysqlDB.getFunction(importe, impuni, unidades);
 
-		mysqlDB.insertSalary_payment(this.salaryId, enum2short(type),
-				paymentConcept, description, function,
+		mysqlDB.insertSalary_payment(this.salaryId, 
+				enum2short(type),
+				paymentConcept, 
+				description, 
+				function,
 				importe != null ? importe.doubleValue() : 0.00);
 
 	}
@@ -272,7 +293,9 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		Rel_epp_ccc rel_epp_ccc = new Rel_epp_ccc();
 		emprper.visitRel_epp_ccc(rel_epp_ccc);
-
+		
+		Double totalIrpf = toDouble(nominaex.getImpirpf());
+		
 		this.salaryId = mysqlDB.insertSalary(enum2short(SalaryType.EXTRA),
 				contractId, nominaex.getFecini(), nominaex.getFecfin(),
 				rel_epp_emp.getEmprnif_Descripcion(), nominaex.getLocalidad(),
@@ -285,9 +308,10 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				0, // TODO: Dias efectivos ..
 				totalPayment, totalDeduction, totalLiquid, 0.00,
 				nominaex.getFecemi(), 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,
-				0.00, baseIRPF, 0.00, baseIRPF, 0.00);
+				0.00, baseIRPF, 0.00, baseIRPF, 0.00, totalIrpf,
+				nominaex.getFeccobreal());
 
-		String function = String.format("%.2f%%",
+		String function = String.format("%.2f %%",
 				totalPayment != null ? totalPayment : 0);
 
 		Concept<PaymentType> concept = concepts.getPaymentConcept(nominaex
@@ -306,7 +330,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		if (importeIrpf > 0) {
 			BigDecimal irpfPercentage = nominaex.getIrpf();
-			String irpfFunction = String.format("%.2f%%",
+			String irpfFunction = String.format("%.2f %%",
 					irpfPercentage != null ? irpfPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.IRPF), "IRPF", irpfFunction, null,
@@ -438,6 +462,8 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 			nomina.registration  = 0;
 		}
 		
+		Double totalIrpf = toDouble(finiquito.getImporte_irpf());
+		
 		this.salaryId = mysqlDB.insertSalary(enum2short(type), 
 				contractId,
 				emprper.getFecalt(), 
@@ -470,7 +496,9 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				moneyIrpfBase, 
 				0.00, // kindIrpfBase,
 				irpfBase, 
-				ssContributions);
+				ssContributions,
+				totalIrpf,
+				finiquito.getFeccobreal());
 		
 		//mysqlDB.insertSalary_payment(salary, type, payment_concept, description, expression, amount);
 		
@@ -517,7 +545,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		if (importeIrpf > 0) {
 			BigDecimal irpfPercentage = finiquito.getIrpf();
-			String description = String.format("%.2f%%",
+			String description = String.format("%.2f %%",
 					irpfPercentage != null ? irpfPercentage : 0);
 			mysqlDB.insertSalary_deduction(
 					this.salaryId,
@@ -530,7 +558,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		}
 		if (importeCg > 0) {
 			BigDecimal cgPercentage = finiquito.getPrccg();
-			String cgFunction = String.format("%.2f%%",
+			String cgFunction = String.format("%.2f %%",
 					cgPercentage != null ? cgPercentage : 0);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.COMMON_CONTINGENCY), 
@@ -549,17 +577,17 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				double uePercentage = accPercentage - jobPercentage;
 
 				double importeJob = jobPercentage * importeAcc / accPercentage;
-				String jobFunction = String.format("%.2f%%", jobPercentage);
+				String jobFunction = String.format("%.2f %%", jobPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.JOB_TRAINING), "FP", jobFunction,
 						null, importeJob);
 
-				String ueFunction = String.format("%.2f%%", uePercentage);
+				String ueFunction = String.format("%.2f %%", uePercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.UNEMPLOYMENT), "DESMP", ueFunction,
 						null, importeAcc - importeJob);
 			} else {
-				String accFunction = String.format("%.2f%%", accPercentage);
+				String accFunction = String.format("%.2f %%", accPercentage);
 				mysqlDB.insertSalary_deduction(this.salaryId,
 						enum2short(DeductionType.PROFESSIONAL_CONTINGENCY),
 						"CGP", accFunction, null, importeAcc);
@@ -658,4 +686,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				null);
 	}
 
+	private void add(Integer contractId, Date endDate) {
+		lastSalary = Period.max(lastSalary, endDate);
+	}
 }

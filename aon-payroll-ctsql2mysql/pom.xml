@@ -38,6 +38,13 @@
 			<optional>false</optional>
 		</dependency>
 		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.5</version>
+			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
 			<groupId>com.transtools</groupId>
 			<artifactId>ctsql-jdbc</artifactId>
 			<version>2.2.3.6</version>
@@ -181,6 +188,7 @@
 								<require>slf4j</require>
 								<require>inotify-java</require>
 								<require>jakarta-commons-cli</require>
+								<require>jakarta-commons-lang</require>
 								<require>jakarta-commons-logging</require>
 								<require>mysql-connector-java</require>
 							</requires>
@@ -190,6 +198,7 @@
 									<directory>/usr/share/java</directory>
 									<dependency>
 										<includes>
+											<include>com.code.aon:aon.config</include>
 											<include>com.code.aon:aon.common</include>
 											<include>com.code.aon:aon.registry</include>
 											<include>com.code.aon:aon.company</include>
@@ -210,6 +219,10 @@
 										<softlinkSource>
 											<location>/usr/share/java/${project.artifactId}-${project.version}.jar</location>
 											<destination>${project.artifactId}.jar</destination>
+										</softlinkSource>
+										<softlinkSource>
+											<location>/usr/share/java/aon.config-${project.version}.jar</location>
+											<destination>aon-config.jar</destination>
 										</softlinkSource>
 										<softlinkSource>
 											<location>/usr/share/java/aon.common-${project.version}.jar</location>
