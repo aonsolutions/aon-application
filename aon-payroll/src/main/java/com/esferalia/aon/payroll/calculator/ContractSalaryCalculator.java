@@ -219,6 +219,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, total);
 
 				} catch ( UndefinedVariableException e ) {
+					e.printStackTrace();
 					// TODO : notificar ??? 
 				}
 			}

@@ -281,33 +281,31 @@ public class SQLContractSalaryCalculatorContext implements
 		
 	}
 	
-	protected static class DeferredTimedVariable implements ITimedVariable<Object>{
+	protected class DeferredTimedVariable implements ITimedVariable<Object>{
 		
 		private String script;
 		protected Period period ;
-		ExpressionContext snapshotCtx;
 		
 		@Override
 		public Period getPeriod() {
-			// TODO Auto-generated method stub
-			return null;
+			return period;
 		}
 		
-		public DeferredTimedVariable(ExpressionContext ctx, IExpression expression, Date start, Date end ) {
+		public DeferredTimedVariable(IExpression expression, Date start, Date end ) {
 			this.period = new Period(start, end);
 			this.script = expression.getExpression();
 			Set<String> vars = Collections.singleton(expression.getName());
-			this.snapshotCtx = ctx.getSnapshot(vars);
 		}
 		
 		@Override
 		public Object getValue(Period period) {
 			try {
 				List<ITimedObject<Object>>  timedObjects = 
-					snapshotCtx.eval(script, period.getStart(), period.getEnd(), Object.class);
+					getExpressionContext().eval(script, period.getStart(), period.getEnd(), Object.class);
 				
 				return timedObjects.get(0).getValue();
 			} catch (ExpressionException e) {
+				e.printStackTrace();
 				return null;
 			}
 		}
@@ -457,7 +455,7 @@ public class SQLContractSalaryCalculatorContext implements
 			new LRUCache<Integer, Collection<IContractPayment>>(CACHE_SIZE, agreementPaymentsFactory);
 
 		agreementContextFactory =
-			new SQLAgreementContextFactory(connection, this.startDate, this.endDate);
+			new SQLAgreementContextFactory(this, this.startDate, this.endDate);
 		this.agreementExpressionContexts = 
 			new LRUCache<AgreementContextKey, ExpressionContext>(CACHE_SIZE, agreementContextFactory);
 		this.leaveLoader = 

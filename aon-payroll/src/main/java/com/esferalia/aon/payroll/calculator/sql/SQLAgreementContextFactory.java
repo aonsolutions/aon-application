@@ -74,6 +74,8 @@ public class SQLAgreementContextFactory
 	
 	private LRUCache<Integer, ExpressionContext> 	agreementDataCache;
 	
+	private SQLContractSalaryCalculatorContext		ctx;
+	
 	public static int getMonths(Date start, Date end , double days){
 		Calendar startCalendar = Calendar.getInstance();
 		startCalendar.setTime(start);
@@ -92,14 +94,15 @@ public class SQLAgreementContextFactory
 		return months ;
 	}
 
-	public SQLAgreementContextFactory(Connection connection, Date startDate, Date endDate) 
+	public SQLAgreementContextFactory(SQLContractSalaryCalculatorContext ctx, Date startDate, Date endDate) 
 	throws SQLException, ExpressionException
 	{
+		this.ctx = ctx;
 		this.endDate = endDate;
 		this.startDate = startDate;
 		initAgreementDataContextCache();
-		initSystemCtx(connection, startDate, endDate);
-		initAgreementStmt(connection, startDate, endDate);
+		initSystemCtx(ctx.getConnection(), startDate, endDate);
+		initAgreementStmt(ctx.getConnection(), startDate, endDate);
 	}
 	
 	public void close() 
@@ -177,7 +180,8 @@ public class SQLAgreementContextFactory
 				} catch (Exception e) {
 					//TODO: ¿ Que hacemos con esta excepcion ? 
 					DeferredTimedVariable variable  = 
-							new DeferredTimedVariable(context, expr,start, end );
+							ctx.new DeferredTimedVariable(expr,start, end );
+					context.addVariable(expr.getName(), variable);
 				}
 			}
 		}finally {
