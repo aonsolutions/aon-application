@@ -10,47 +10,27 @@
 
 	<ui:define name="content">
 
-		<aon:form id="generalMenu">
+		<aon:form id="documentMenu">
 		
 			<aon:div styleClass="aon-scroll-area">		
 		
 				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
-					columnClasses="aon-vertical-align-top aon-width-400, aon-vertical-align-top aon-width-400">
+					columnClasses="aon-vertical-align-top aon-width-400, aon-vertical-align-top">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_general"
+						<aon:panelGrid id="group_document"
 							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-icon-payroll aon-direct-access-panel">
+							headerClass="aon-direct-access-panel aon-icon-general">
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_general}"/>
+								<aon:outputText value="#{bundle.aon_configuration}"/>
 							</f:facet>					
 							<aon:div styleClass="aon-direct-access-list">
 								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="enterprise" action="#{enterprise.initialAction}"
-										value="#{companyBundle.company_enterprise_module}">
-										<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
-										<aon:actionListener method="#{enterprise.onEditSearch}" />
-									</aon:commandLink>
-								</aon:div>
-								<aon:div styleClass="aon-direct-access-list-element">
-									<aon:commandLink id="project" 
-										action="project_search"
-										actionListener="#{project.onEditSearch}"
-										value="#{appBundle.menu_dossiers}">
-									</aon:commandLink>
-								</aon:div>
-							</aon:div>
-						</aon:panelGrid>
-					</aon:panelGroup>
-					
-					<aon:panelGroup>					
-						<aon:panelGrid id="group_project_management"
-							styleClass="aon-width-all" columnClasses="aon-padding"
-							headerClass="aon-direct-access-panel aon-icon-statistics">
-							<f:facet name="header">
-								<aon:outputText value="#{projectBundle.project_projects}" />
-							</f:facet>
-							<aon:div styleClass="aon-direct-access-list">
+									<aon:commandLink id="alfrescoCategoryGroup" 
+										action="alfrescoCategoryGroup_list" 
+										actionListener="#{alfrescoCategoryGroup.onSearch}" 
+										value="#{registryBundle.registry_category}" />
+								</aon:div>		
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="project_type"
 										action="projectType_list"
@@ -62,10 +42,13 @@
 										action="activityTypeStandalone_grid"
 										actionListener="#{activityTypeStandalone.onSearch}"
 										value="#{projectBundle.project_activity_type}" />
-								</aon:div>
+								</aon:div>												
 							</aon:div>
 						</aon:panelGrid>
-					</aon:panelGroup>					
+					
+					</aon:panelGroup>
+
+					<aon:panelGroup/>
 
 				</h:panelGrid>
 			</aon:div>

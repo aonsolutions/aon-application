@@ -29,6 +29,12 @@ public interface IAlfrescoConstants {
 	
 	String CONTENT_PREFFIX = "cm:";
 	
+	String TYPE_CONTENT = CONTENT_PREFFIX + "content";
+	
+	String TYPE_CATEGORY = CONTENT_PREFFIX + "category";
+	
+	String CATEGORY_ROOT_SHORT = CONTENT_PREFFIX + "categoryRoot";
+	
 	String UUID = "node-uuid";
 	
 	String UUID_LONG = SYSTEM_MODEL + UUID;

@@ -1,11 +1,17 @@
 package com.code.aon.document;
 
+import static com.code.aon.document.IAlfrescoConstants.CATEGORY_ROOT_SHORT;
+import static com.code.aon.document.IAlfrescoConstants.CONTENT_MODEL;
+import static com.code.aon.document.IAlfrescoConstants.CONTENT_PREFFIX;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import org.alfresco.webservice.types.Reference;
-import org.alfresco.webservice.util.ISO9075;
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class AlfrescoCategory implements IAlfrescoTransferObject {
 
@@ -18,6 +24,8 @@ public class AlfrescoCategory implements IAlfrescoTransferObject {
 	private String name;
 	
 	private String description;
+	
+	private List<AlfrescoCategory> categories;
 	
 	public Reference getId() {
 		return id;
@@ -43,14 +51,40 @@ public class AlfrescoCategory implements IAlfrescoTransferObject {
 		this.description = description;
 	}
 	
+	public List<AlfrescoCategory> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<AlfrescoCategory> categories) {
+		this.categories = categories;
+	}
+
+	public String getCategoriesString() {
+		if ( (categories != null) && (!categories.isEmpty()) ) {
+			List<String> names = new LinkedList<String>();
+			for( AlfrescoCategory category : categories ) {
+				names.add( category.getName() );
+			}
+			return StringUtils.join(names, ", ");
+		}
+		return null;
+	}
+	
 	public String getSearchValue() {
 		StringBuffer sb = new StringBuffer();
 		sb.append( "\"" );
-		sb.append( AON_CLASIFICATION );
-		sb.append( "/cm:" );
-		sb.append( ISO9075.encode(getName()) );
+		sb.append( getSearhPath(id) );
 		sb.append( "/member\"" );
 		return sb.toString();
+	}
+
+	public String getSearhPath() {
+		return getSearhPath(getId());
+	}
+	
+	public static String getSearhPath( Reference reference ) {
+		String path = StringUtils.replace(reference.getPath(), CONTENT_MODEL, CONTENT_PREFFIX);
+		return StringUtils.removeStart(path, "/" + CATEGORY_ROOT_SHORT + "/" );
 	}
 
 	@Override
@@ -79,7 +113,11 @@ public class AlfrescoCategory implements IAlfrescoTransferObject {
 
 	@Override
 	public String toString() {
-		return ReflectionToStringBuilder.toString(this);	
+		return new ToStringBuilder(this).
+			append("description", description).
+			append("id", (id != null) ? BasicAlfresco.getId(id) : null ).
+			append("name", name).
+			toString();
 	}
 
 }

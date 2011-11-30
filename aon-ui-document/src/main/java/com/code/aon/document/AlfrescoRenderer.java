@@ -3,7 +3,6 @@ package com.code.aon.document;
 import java.util.Date;
 
 import org.alfresco.util.ISO8601DateFormat;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;

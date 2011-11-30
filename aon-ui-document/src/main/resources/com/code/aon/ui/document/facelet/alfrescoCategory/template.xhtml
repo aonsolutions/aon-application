@@ -19,7 +19,7 @@
 						required="#{categoryRequired and (controller.categoriesSize &lt; 2)}"
 						value="#{controller.categories[index]}">
 						<f:selectItem itemLabel="-" itemValue="#{enterpriseDocument.emptyCategory}"/>
-						<f:selectItems value="#{alfrescoCategory.categories}" />
+						<f:selectItems value="#{alfrescoCategoryGroup.categories}" />
 						<a4j:support event="onchange" reRender="#{categoryId}Div"/>
 					</aon:selectOneMenu>
 					<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" immediate="true"
