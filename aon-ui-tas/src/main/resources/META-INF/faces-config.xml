@@ -238,6 +238,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{projectTasSearch}</value>
+				<value>#{projectTasController}</value>
 				<value>#{projectTasHeaderControllerListener}</value>
 			</list-entries>
 		</managed-property>
@@ -247,6 +248,14 @@
 		<managed-bean-name>projectTasSearch</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.tas.event.ProjectTasSearchListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>projectTasController</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tas.event.ProjectTasControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
