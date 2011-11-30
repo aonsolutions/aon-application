@@ -21,7 +21,6 @@ public class LRUCache<K,V> extends LinkedHashMap<K,V> {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	public V get(Object key) {
 		if ( ! containsKey(key)) {
 			super.put((K)key, factory.create((K)key));
@@ -30,4 +29,5 @@ public class LRUCache<K,V> extends LinkedHashMap<K,V> {
 	}
 
 
+	
 }

@@ -215,7 +215,7 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 						}
 					}
 				
-					System.out.printf("[%s]: %-45s\t\t= %f\t(%f)\r\n", contractPayment.getName(), contractPayment.getDescription(), total, taxCalculator.getTotalPayment());
+					//System.out.printf("[%s]: %-45s\t\t= %f\t(%f)\r\n", contractPayment.getName(), contractPayment.getDescription(), total, taxCalculator.getTotalPayment());
 					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, total);
 
 				} catch ( UndefinedVariableException e ) {

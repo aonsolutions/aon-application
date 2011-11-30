@@ -31,6 +31,7 @@ import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
+import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
 import com.esferalia.aon.payroll.calculator.HierarchyPayments;
@@ -219,10 +220,18 @@ public class SQLContractSalaryCalculatorContext implements
 	private static final int CACHE_SIZE = 25;
 	
 	
+	public static class AgreementContextKey 
+		extends Pair<Integer, Integer> {
 	
-	
-	
-	
+		public AgreementContextKey(Integer agreementId, 
+				Integer agreementLevelId) {
+			super ( agreementId, agreementLevelId );
+		}
+		
+		public Integer getAgreementId() { return getFirst();};
+		public Integer getAgreementLevelId() { return getSecond();};
+		
+	}
 	/**
 	 * Clase base para implementar variables pesadas con evaluación perezosa.
 	 * Las clases hijas únicamente deberán implementar el método 'V getValue()'. 
@@ -272,13 +281,20 @@ public class SQLContractSalaryCalculatorContext implements
 		
 	}
 	
-	protected class DeferredTimedVariable extends ActiveTimedVariable<Object>{
+	protected static class DeferredTimedVariable implements ITimedVariable<Object>{
 		
-		private String name;
 		private String script;
+		protected Period period ;
 		ExpressionContext snapshotCtx;
 		
+		@Override
+		public Period getPeriod() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 		public DeferredTimedVariable(ExpressionContext ctx, IExpression expression, Date start, Date end ) {
+			this.period = new Period(start, end);
 			this.script = expression.getExpression();
 			Set<String> vars = Collections.singleton(expression.getName());
 			this.snapshotCtx = ctx.getSnapshot(vars);
@@ -340,7 +356,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private SQLCalendarFactory 								calendarFactory; 
 	private LRUCache<Integer, Collection<IContractPayment>> agreementPayments;
 	private SQLAgreementPaymentsFactory 					agreementPaymentsFactory;
-	private LRUCache<Integer, ExpressionContext> 			agreementExpressionContexts;
+	private LRUCache<AgreementContextKey, ExpressionContext> 	agreementExpressionContexts;
 	private SQLAgreementContextFactory 						agreementContextFactory ;
 	
 	private Criteria 										paymentsCriteria;			
@@ -443,7 +459,7 @@ public class SQLContractSalaryCalculatorContext implements
 		agreementContextFactory =
 			new SQLAgreementContextFactory(connection, this.startDate, this.endDate);
 		this.agreementExpressionContexts = 
-			new LRUCache<Integer, ExpressionContext>(CACHE_SIZE, agreementContextFactory);
+			new LRUCache<AgreementContextKey, ExpressionContext>(CACHE_SIZE, agreementContextFactory);
 		this.leaveLoader = 
 			new SQLContractLeaveLoader(this.startDate, this.endDate);
 
@@ -920,9 +936,13 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	private ExpressionContext getAgreementContext()
 	throws SQLException, ExpressionException {
+		Integer agreementId = 
+				getAgreement();
 		Integer agreementLevelId = 
 			getAgreementLevel();
-		return  agreementExpressionContexts.get(agreementLevelId);
+		AgreementContextKey agreementAndLevel = 
+				new AgreementContextKey(agreementId, agreementLevelId);
+		return  agreementExpressionContexts.get(agreementAndLevel);
 	}
 
 	private Collection<IContractPayment> getAgreementPayments()
