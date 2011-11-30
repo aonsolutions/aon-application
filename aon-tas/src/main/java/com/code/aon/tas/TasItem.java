@@ -13,6 +13,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
@@ -65,6 +66,7 @@ public class TasItem implements ITransferObject {
 	}
 
 	@Lob
+	@Type(type="stringClob")
 	public String getDescription() {
 		return this.description;
 	}
@@ -74,6 +76,7 @@ public class TasItem implements ITransferObject {
 
 	@Column(name = "add_info")
 	@Lob
+	@Type(type="stringClob")
 	public String getAddInfo() {
 		return addInfo;
 	}
