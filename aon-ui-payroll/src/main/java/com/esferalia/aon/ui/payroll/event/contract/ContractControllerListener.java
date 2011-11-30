@@ -46,9 +46,6 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
 		searchAgreement();
-		ContractSearchListener search = (ContractSearchListener) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_SEARCH_LISTENER_NAME);
-		search.setEnterprise(null);
-		search.setPerson(null);
 	}
 	
 	@Override
