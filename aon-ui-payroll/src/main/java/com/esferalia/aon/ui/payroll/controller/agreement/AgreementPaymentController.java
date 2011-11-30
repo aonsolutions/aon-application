@@ -2,6 +2,7 @@ package com.esferalia.aon.ui.payroll.controller.agreement;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,6 +23,8 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.FormUtil;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.LinesController;
@@ -54,6 +57,23 @@ public class AgreementPaymentController extends LinesController implements IVari
 	private Month issueMonth;
 	
 	private AgreementPaymentVariablesHandler handler;
+	
+	// Payments filter
+	private boolean searchCurrent;
+	private Date inactiveDate;
+	
+	public Date getInactiveDate() {
+		return inactiveDate;
+	}
+	public void setInactiveDate(Date inactiveDate) {
+		this.inactiveDate = inactiveDate;
+	}
+	public boolean isSearchCurrent() {
+		return searchCurrent;
+	}
+	public void setSearchCurrent(boolean searchCurrent) {
+		this.searchCurrent = searchCurrent;
+	}
 	
 	public AgreementPaymentVariablesHandler getHandler() {
 		if(handler==null){
@@ -136,6 +156,20 @@ public class AgreementPaymentController extends LinesController implements IVari
 			try {
 				this.clearCriteria();
 				this.getCriteria().addEqualExpression(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_AGREEMENT_ID), a.getId());
+				this.getCriteria().addOrder(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_START_DATE), false);
+				Expression expr1 = null;
+				Expression expr2 = null;
+				if(isSearchCurrent()){
+					expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE), new Date());
+					expr2 = ExpressionUtilities.getNullExpression(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE));
+					this.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+				} else {
+					if(getInactiveDate()!=null){
+						expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE), getInactiveDate());
+						expr2 = ExpressionUtilities.getNullExpression(this.getFieldName(IPayrollAlias.AGREEMENT_PAYMENT_END_DATE));
+						this.getCriteria().addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
+					}
+				}
 				this.onSearch(null);
 				paymentsModel = new ListDataModel((List<AgreementData>) this.getModel().getWrappedData());
 			} catch (ManagerBeanException e) {

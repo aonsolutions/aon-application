@@ -166,6 +166,7 @@ public abstract class AbstractVariableHandler {
 	}
 	
 	public void reloadData( ActionEvent event ) {
+		onChangeLastPeriod(event);
 		initializeVariables(event);
 	}
 	
@@ -224,16 +225,6 @@ public abstract class AbstractVariableHandler {
 				list.add(item);
 			}
 		}
-		
-//		List<SelectItem> list = new LinkedList<SelectItem>();
-//		for( PaymentType paymentType : getVariablesModel().getWrappedData() ) {
-//			String name = paymentType.getName(locale);
-//			SelectItem item = new SelectItem(paymentType, name);
-//			list.add(item);			
-//		}
-//		
-//		
-//		getVariablesCollection();
 		return list;
 	}
 	

@@ -2419,6 +2419,14 @@
 		<managed-bean-name>agreementTree</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.agreement.AgreementTree</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>searchCurrent</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>inactiveLastPeriod</property-name>
+			<value>ALL</value>
+		</managed-property>
 	</managed-bean>
 	<!-- ************ SALARY LAUNCHER  ************** -->
 	<managed-bean>

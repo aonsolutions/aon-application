@@ -45,6 +45,7 @@
 					actionListener="#{agreementPayment.initialize}"
 					label="#{payrollBundle.payroll_salary_payment}">
 					<aon:div id="agreementPaymentGrid" style="font-size: 0.9em;">
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementPaymentFilter.xhtml" />
 						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
 							<ui:param name="controller" value="#{agreementPayment}" />
 							<ui:param name="skipScopeColumn" value="true" />
@@ -61,13 +62,6 @@
 						<ui:param name="showVariableFilter" value="true" />
 					</ui:include>
 				</aon:panelTab>
-<!--  
-				<aon:panelTab id="extra" 
-					label="#{payrollBundle.payroll_agreementExtra}">
-					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/extra/grid.xhtml" >
-					</ui:include>
-				</aon:panelTab>
--->
 
 				<aon:panelTab id="group" disabled="#{agreementLevel.model==null}"
 					label="#{payrollBundle.payroll_agreementLevel_module}">

@@ -9,6 +9,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,9 @@ public class AgreementLevelVariableHandler extends AbstractVariableHandler{
 					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_END_DATE));
 					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 				}
+			}
+			if(!StringUtils.isEmpty(getVariableFilter())){
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_NAME), getVariableFilter());
 			}
 			List<AgreementLevelData> dataList = null;
 			dataList = new LinkedList<AgreementLevelData>();

@@ -9,6 +9,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,8 +24,6 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementData;
-import com.esferalia.aon.payroll.Contract;
-import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 
@@ -56,6 +55,9 @@ public class AgreementVariablesHandler extends AbstractVariableHandler{
 					Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_END_DATE));
 					criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));						
 				}
+			}
+			if(!StringUtils.isEmpty(getVariableFilter())){
+				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_NAME), getVariableFilter());
 			}
 			List<AgreementData> dataList = null;
 			dataList = new LinkedList<AgreementData>();

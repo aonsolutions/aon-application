@@ -2,7 +2,9 @@ package com.esferalia.aon.ui.payroll.controller.agreement;
 
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.AbortProcessingException;
@@ -28,6 +30,7 @@ import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 
 public class AgreementTree {
@@ -38,6 +41,30 @@ public class AgreementTree {
 	private DataComponentState state;
 	private ITransferObject added;
 	private ITransferObject removed;
+	
+	// Payments filter
+	private boolean searchCurrent;
+	private Date inactiveDate;
+	private InactiveLastPeriod inactiveLastPeriod;
+	
+	public boolean isSearchCurrent() {
+		return searchCurrent;
+	}
+	public void setSearchCurrent(boolean searchCurrent) {
+		this.searchCurrent = searchCurrent;
+	}
+	public InactiveLastPeriod getInactiveLastPeriod() {
+		return inactiveLastPeriod;
+	}
+	public void setInactiveLastPeriod(InactiveLastPeriod inactiveLastPeriod) {
+		this.inactiveLastPeriod = inactiveLastPeriod;
+	}
+	public Date getInactiveDate() {
+		return inactiveDate;
+	}
+	public void setInactiveDate(Date inactiveDate) {
+		this.inactiveDate = inactiveDate;
+	}
 
 	public TreeNode<AgreementTreeData> getRootNode() {
 		return rootNode;
@@ -76,6 +103,38 @@ public class AgreementTree {
 
 	public void onSelectAgreement(ActionEvent event) {
 			// NADA DE MOMENTO
+	}
+	
+	public void onChangeLastPeriod( ActionEvent event ) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_MONTH){
+			cal.add(Calendar.MONTH, -1);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_QUARTER){
+			cal.add(Calendar.MONTH, -3);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_SEMESTER){
+			cal.add(Calendar.MONTH, -6);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.LAST_YEAR){
+			cal.add(Calendar.YEAR, -1);
+		} else if(getInactiveLastPeriod()==InactiveLastPeriod.ALL){
+			cal = null;
+		}
+		setInactiveDate(cal!=null?cal.getTime():null);
+	}
+	
+	public void onChangeInactiveDate( ActionEvent event ) {
+		if( getInactiveDate()==null && getInactiveLastPeriod()!=InactiveLastPeriod.ALL){
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.MONTH, -1);
+			setInactiveDate(cal!=null?cal.getTime():null);
+		}
+	}
+	
+	public void reloadPaymentsData(ActionEvent event) {
+		AgreementPaymentController payment = (AgreementPaymentController) FormUtil.getController(IPayrollConstants.AGREEMENT_PAYMENT_CONTROLLER_NAME);
+		payment.setSearchCurrent(isSearchCurrent());
+		payment.setInactiveDate(getInactiveDate());
+		payment.setPaymentsModel(null);
 	}
 
 	@SuppressWarnings("unchecked")
