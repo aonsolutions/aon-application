@@ -101,7 +101,7 @@
 			
 			<aon:outputLabel value="#{payrollBundle.payroll_contract_occupation}"
 				for="occupationType"/>
-			<aon:selectOneMenu id="occupationType" required="true" 
+			<aon:selectOneMenu id="occupationType" 
 				value="#{contract.params.occupationType}">
 				<f:selectItem itemLabel="-" value="#{null}" />
 				<f:selectItems value="#{payrollCollections.occupationTypes}" />
@@ -111,7 +111,7 @@
 				<ui:param name="lookupTo" value="#{contract.agreement}" />
 				<ui:param name="skipNewButton" value="#{true}" />
 				<ui:param name="lookupInputSuggestSize" value="40" />
-				<ui:param name="lookupReRender" value="agreementLevelCategory" />
+				<ui:param name="lookupReRender" value="agreementLevelCategory, gross_salary_check" />
 				<ui:param name="lookupDisabled" value="#{false}" />
 			</ui:decorate>
 			
@@ -125,21 +125,24 @@
 					actionListener="#{contract.onChangeAgreementLevelCategory}" />
 			</aon:selectOneMenu>
 			
+<!--  
 			<aon:outputLabel for="gross_salary"
 				value="#{payrollBundle.payroll_contract_gross_salary}" />
 			<aon:div id="grossSalaryDiv">
+				<aon:inputText id="gross_salary"
+					disabled="#{contract.params.agreementSalaryCheck}"
+					value="#{contract.params.grossSalary}" />
 				<aon:selectBooleanCheckbox id="gross_salary_check"
 					ajaxSingle="true"
 					value="#{contract.params.agreementSalaryCheck}"
-					disabled="#{contract.params.agreementSalary==null}">
+					styleClass="-margin-left"
+					disabled="#{contract.agreement.id == null}">
 					<a4j:support event="onclick" reRender="gross_salary" ajaxSingle="true" />
 				</aon:selectBooleanCheckbox>
 				<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right"
 					value="#{payrollBundle.payroll_contract_like_agreement}&#160;" />
-				<aon:inputText id="gross_salary"
-					disabled="#{contract.params.agreementSalaryCheck}"
-					value="#{contract.params.grossSalary}" />
 			</aon:div>
+-->			
 			
 			<aon:outputLabel for="Contract_tc2Code"
 				value="#{payrollBundle.payroll_contract_contract_code}" />

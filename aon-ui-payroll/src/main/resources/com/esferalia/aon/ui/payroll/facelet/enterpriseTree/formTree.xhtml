@@ -56,7 +56,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						action="enterprise_list"
 						accesskey="#{bundle.aon_key_cancel}" />
-					<aon:commandButton id="Contract-select"
+					<aon:commandButton id="Contract-reset" ajaxSingle="true"
 						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
 						value="#{payrollBundle.payroll_contract_new}" 
 						reRender="#{contract.beanName}ModalContainer"
@@ -186,9 +186,10 @@
 	</ui:define>		
 
 	<ui:define name="additionalContent">	
-		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<aon:lookupButtonPopup lookup="#{contractLookup}" />
+		<aon:lookupButtonPopup lookup="#{agreementLookup}" />
 		<aon:lookupButtonPopup lookup="#{cnoLookup}" />
 		
 		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/expenseModal.xhtml" />

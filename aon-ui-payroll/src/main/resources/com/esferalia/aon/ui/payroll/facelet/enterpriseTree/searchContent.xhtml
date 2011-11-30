@@ -23,15 +23,15 @@
 	</ui:include>						
 
 	<aon:outputText value="" />
-	<aon:div>
+	<aon:div id="contractFilter">
 		<aon:outputText value="#{payrollBundle.payroll_active}" />
 		<aon:selectBooleanCheckbox value="#{enterpriseTree.activeContract}" >
-			<a4j:support event="onclick" reRender="aonSearchContent" ignoreDupResponses="true" />
+			<a4j:support event="onclick" reRender="contractFilter" ignoreDupResponses="true" />
 		</aon:selectBooleanCheckbox>
 		
 		<aon:outputText value="#{payrollBundle.payroll_inactive}" styleClass="aon-margin-left" />
 		<aon:selectBooleanCheckbox value="#{enterpriseTree.inactiveContract}"  >
-			<a4j:support event="onclick" reRender="aonSearchContent" ignoreDupResponses="true"
+			<a4j:support event="onclick" reRender="contractFilter" ignoreDupResponses="true"
 				actionListener="#{enterpriseTree.onChangeInactiveDate}" />
 		</aon:selectBooleanCheckbox>
 		
@@ -42,7 +42,7 @@
 			disabled="#{!enterpriseTree.inactiveContract}"
 			value="#{enterpriseTree.inactiveLastPeriod}" >
 			<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
-			<a4j:support event="onclick" reRender="aonSearchContent" ignoreDupResponses="true"
+			<a4j:support event="onchange" reRender="contractFilter" ignoreDupResponses="true"
 				actionListener="#{enterpriseTree.onChangeLastPeriod}" />
 		</aon:selectOneMenu>
 		<aon:selectInputDate  
@@ -50,7 +50,7 @@
 			value="#{enterpriseTree.inactiveDate}"
 			timeZone="#{timeZoneController.timeZone}"
 			popupDateFormat="#{bundle.aon_date_pattern}">
-			<a4j:support event="onclick" reRender="aonSearchContent" ignoreDupResponses="true"
+			<a4j:support event="onchanged" reRender="contractFilter" ignoreDupResponses="true"
 				actionListener="#{enterpriseTree.onChangeInactiveDate}" />
 		</aon:selectInputDate>
 	</aon:div>

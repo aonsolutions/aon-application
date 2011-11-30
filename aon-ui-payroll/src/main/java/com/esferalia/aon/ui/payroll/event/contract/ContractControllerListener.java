@@ -20,6 +20,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
+import com.esferalia.aon.payroll.CNO;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
@@ -45,6 +46,9 @@ public class ContractControllerListener extends ControllerAdapter{
 		controller.setEnterpriseCCCs(null);
 		controller.setParams(null);
 		searchAgreement();
+		ContractSearchListener search = (ContractSearchListener) AonUtil.getRegisteredBean(IPayrollConstants.CONTRACT_SEARCH_LISTENER_NAME);
+		search.setEnterprise(null);
+		search.setPerson(null);
 	}
 	
 	@Override
@@ -56,6 +60,10 @@ public class ContractControllerListener extends ControllerAdapter{
 			contract.setPerson((Person) bean.createNewTo());
 			bean = BeanManager.getManagerBean(Enterprise.class);
 			controller.setEnterprise((Enterprise) bean.createNewTo());
+			bean = BeanManager.getManagerBean(CNO.class);
+			controller.getParams().setCno((CNO) bean.createNewTo());
+			bean = BeanManager.getManagerBean(Agreement.class);
+			controller.setAgreement((Agreement) bean.createNewTo());
 		} catch (ManagerBeanException e) {
 			String msg = "Error on afterBeanCreated";
 			LOGGER.error(msg);
@@ -156,7 +164,7 @@ public class ContractControllerListener extends ControllerAdapter{
 			LOGGER.error(msg);
 		}
 		try {
-			if(controller.getParams().getCno()!=null){
+			if(controller.getParams().getCno()!=null && controller.getParams().getCno().getId()!=null){
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());

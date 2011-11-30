@@ -667,6 +667,7 @@ public class ContractController extends BasicController implements IVariablesHan
 	}
 	
 	public void onChangeAgreementLevelCategory(ActionEvent event){
+		// TODO if contract.isNew then pedir salario bruto, y si es asi como obtenerlo del convenio?
 		Contract contract = (Contract) getTo();
 		try {
 			if(contract.getAgreementLevelCategory()!=null){
@@ -685,8 +686,7 @@ public class ContractController extends BasicController implements IVariablesHan
 				}
 			}
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// NADA
 		}
 	}
 
