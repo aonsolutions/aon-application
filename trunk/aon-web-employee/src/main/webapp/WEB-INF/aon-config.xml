@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.esferalia.com/common" >
+
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia 
+			showSendEmail="true" 
+		/>
+	</registry:config>
+		
+	<config:config version="1.1" xmlns:config="http://www.esferalia.com/config" >
+		<config:series
+			showOfferData="false"
+			showSalesData="false"
+			showDeliveryData="false"
+			showInvoiceData="false"
+			showTasData="false"
+		/>
+	</config:config>	
+
+	<company:config version="1.4" xmlns:company="http://www.esferalia.com/company">
+		<company:company 
+			showRegistryBank="true" 
+			showCompanyOtherData="true"
+			showPanelTabSet="true" 
+			showEInvoice="false"
+			showDigitalCertificate="false"
+			showDirStaff="false"
+		/>
+		<company:enterprise 
+			showFinanceData="true" 
+			showAddInfo="true"
+			showDirStaff="true"
+			standalone="true"
+			showEnterpriseParams="true"
+			showPayrollData="true"
+			showPersonInSearch="false"
+		/>
+	</company:config>
+	
+	<payroll:config version="1.1" xmlns:payroll="http://www.esferalia.com/payroll">
+		<payroll:payroll 
+			showPaymentEditionTab="true" 
+			showDeductionEditionTab="true"
+		/>
+		<payroll:salary 
+			showEnterpriseColumn="false" 
+			showPersonColumn="true"
+			showIssueDateColumn="true"
+		/>
+		<payroll:salaryDraft
+			showEnterpriseInSearch="false" 
+		/>
+		<payroll:paymentUpdate
+			showEnterpriseInSearch="false" 
+		/>		
+		<payroll:irpfDraft
+			showEnterpriseInSearch="true" 
+		/>
+	</payroll:config>	
+	
+</config>

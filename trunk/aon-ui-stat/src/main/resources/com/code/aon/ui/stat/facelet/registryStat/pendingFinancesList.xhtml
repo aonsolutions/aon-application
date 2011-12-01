@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:editDataTable id="scored"
+		value="#{registryStat.unpayedFinanceModel}" rows="20"
+		columnClasses="aon-editDataTable-textColumn, aon-editDataTable-dateColumn, aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-numberColumn"
+		var="to">
+
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_date}" />
+			</f:facet>
+			<aon:outputText value="#{to.dueDate}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{financeBundle.finance_invoice}" />
+			</f:facet>
+			<aon:outputText value="#{to.invoice.referenceCode}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{configBundle.config_pay_method}" />
+			</f:facet>
+			<aon:outputText value="#{to.payMethod.name}" />
+		</aon:column>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{configBundle.config_bank}" />
+			</f:facet>
+			<aon:outputText value="#{to.bank.name}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-numberColumn">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_amount}" />
+			</f:facet>
+			<aon:outputText value="#{to.totalAmount}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:column>
+		<aon:column
+			styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<aon:htmlCommandLink id="invoicePrint-report" title="Ver Factura"
+				value="&#160;&#160;&#160;&#160;&#160;&#160;" target="_blank"
+				action="#{report.onExecute}"
+				actionListener="#{registryStat.onFinancePdf}"
+				styleClass="aon-icon-pdf">
+				<f:param name="reportKey" value="invoicePrint" />
+			</aon:htmlCommandLink>
+		</aon:column>
+	</aon:editDataTable>
+	<aon:dataScroller2 for="scored" showNote="true" />
+</ui:composition>

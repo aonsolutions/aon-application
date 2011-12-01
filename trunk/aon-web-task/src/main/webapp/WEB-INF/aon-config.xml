@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.esferalia.com/common" >
+	
+	<config:config version="1.1" xmlns:config="http://www.esferalia.com/config" >
+		<config:series
+			showOfferData="false"
+			showSalesData="false"
+			showDeliveryData="false"
+			showInvoiceData="false"
+			showTasData="false"
+		/>
+	</config:config>	
+
+	<company:config version="1.4" xmlns:company="http://www.esferalia.com/company">
+		<company:company 
+			showRegistryBank="false" 
+			showCompanyOtherData="true"
+			showPanelTabSet="false" 
+			showEInvoice="false"
+			showDigitalCertificate="false"
+			showDirStaff="false"
+		/>
+		<company:enterprise 
+			showFinanceData="false" 
+			showAddInfo="true"
+			showDirStaff="false"
+			standalone="false"
+			showEnterpriseParams="false"
+			showPayrollData="false"
+			showPersonInSearch="false"
+		/>				
+	</company:config>
+
+	<customer:config version="1.1" xmlns:customer="http://www.esferalia.com/customer">
+		<customer:customer
+			showOfferData="false"
+			showSalesData="false"
+			showDeliveryData="false"
+			showFinanceData="false" 
+			showProjectData="true"
+			showFinanceFeeData="false" 
+			showTaxInfoData="false"
+			showAccount="false"
+			showTariff="false" 
+			showSegment="false"
+			showNote="false"
+			showRelationship="false"
+			showRecordData="false"
+			showAddInfo="false"
+			showDirStaff="false"
+			showHistory="false"
+		/>
+	</customer:config>
+
+	<webmail:config version="1.2" xmlns:webmail="http://www.esferalia.com/webmail" >
+		<webmail:webmail
+			connect="true"
+			showDomainMailAccounts="true"
+		/>
+	</webmail:config>	
+
+</config>

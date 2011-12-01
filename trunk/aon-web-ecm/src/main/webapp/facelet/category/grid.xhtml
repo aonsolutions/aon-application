@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+
+	<ui:define name="content">
+		<aon:div styleClass="aon-scroll-area" style="padding-top:0;">		
+			<aon:div styleClass="aon-section-title" style="padding-top:0;">
+				<h:outputText value="#{appBundle.aon_cdr_category}s" />
+			</aon:div>	
+			
+			<aon:form id="adminForm">
+	
+				<aon:editDataTable id="categoryData" var="to" rows="20" 
+						value="#{manager.categories.model}"
+						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+			
+					<aon:rowSelector toggleOnClick="#{manager.categories.selected == null}"
+						actionListener="#{manager.categories.onSelect}" />
+			
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:outputText value="&#160;" />
+						<f:facet name="footer">
+							<aon:div>
+								<aon:commandButton alt="[#{bundle.aon_reset}]"
+									styleClass="aon-editDataTable-button aon-icon-reset"
+									actionListener="#{manager.categories.onReset}" value=""
+									rendered="#{!manager.categories.new}"
+									accesskey="#{bundle.aon_key_new_line}" />
+							</aon:div>
+						</f:facet>
+					</aon:column>
+			
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{bundle.aon_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}" rendered="#{to!=manager.categories.selected}" />
+						<aon:inputText styleClass="aon-form-input-text " required="true"
+							rendered="#{to==manager.categories.selected}" size="60"
+							value="#{manager.categories.selected.name}" maxlength="45" />
+						<f:facet name="footer">
+							<aon:inputText styleClass="aon-form-input-text" required="true"
+								rendered="#{manager.categories.new}" size="60"
+								value="#{manager.categories.selected.name}" maxlength="45" />
+						</f:facet>
+					</aon:column>
+			
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="&#160;" />
+						</f:facet>
+						<aon:div>
+							<f:verbatim rendered="#{to!=manager.categories.selected}">&#160;</f:verbatim>
+							<aon:commandButton id="acceptEdit-Scope" title="[#{bundle.aon_accept}]" 
+								rendered="#{to==manager.categories.selected}"
+								styleClass="aon-editDataTable-button aon-icon-accept"
+								actionListener="#{manager.categories.onAccept}"
+								accesskey="#{bundle.aon_key_save_line}" />
+							<aon:commandButton title="[#{bundle.aon_cancel}]"
+								styleClass="aon-editDataTable-button aon-icon-cancel"
+								rendered="#{to==manager.categories.selected}"
+								actionListener="#{manager.categories.onCancel}" immediate="true"
+								accesskey="#{bundle.aon_key_cancel_line}" />
+							<aon:confirmButton id="remove-Scope" title="[#{bundle.aon_remove}]"
+								styleClass="aon-editDataTable-button aon-icon-delete"
+								rendered="#{to==manager.categories.selected}"
+								confirmTitle="#{bundle.aon_confirm_title}" 
+								confirmMessage="#{bundle.aon_remove_confirm}"
+								confirmActionListener="#{manager.categories.onRemove}" immediate="true"
+								accesskey="#{bundle.aon_key_remove_line}" />								
+						</aon:div>
+						<f:facet name="footer">
+							<aon:div>
+								<f:verbatim rendered="#{!manager.categories.new}">&#160;</f:verbatim>
+								<aon:commandButton title="[#{bundle.aon_accept}]" 
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									rendered="#{manager.categories.new}"
+									actionListener="#{manager.categories.onAccept}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:confirmButton id="cancel-Scope" title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{manager.categories.new}"
+									confirmTitle="#{bundle.aon_confirm_title}" 
+									confirmMessage="#{bundle.aon_cancel_confirm}"
+									confirmActionListener="#{manager.categories.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+							</aon:div>
+						</f:facet>
+					</aon:column>
+				</aon:editDataTable>
+			</aon:form>
+		</aon:div>
+	</ui:define>
+
+</ui:composition>
+</body>
+</html>

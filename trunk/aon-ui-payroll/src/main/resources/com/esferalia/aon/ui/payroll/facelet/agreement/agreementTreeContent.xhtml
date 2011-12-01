@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+	<aon:methodParam name="saveAction" value="agreement_tree" />
+	<aon:methodParam name="removeAction" value="agreement_list" />
+	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+		<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_agreement_module}" />
+		<ui:param name="controller" value="#{agreement}" />
+		<ui:param name="skipSearchButton" value="true" />
+		<ui:param name="skipResetButton" value="true" />
+		<ui:param name="skipBackButton" value="true" />
+		<ui:param name="skipSpin" value="true" />
+		
+		<ui:define name="beforeSpinToolbarContent">
+			<aon:commandButton id="AgreementLevel-reset"
+				title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+				value="#{payrollBundle.payroll_agreementLevel_new}" 
+				reRender="aonContent"
+				styleClass="aon-finding-toolbar-item aon-icon-reset" >
+				<aon:actionListener method="#{agreementLevel.onReset}" />
+			</aon:commandButton>		
+		</ui:define>
+		
+	</ui:decorate>
+	<aon:div styleClass="aon-scroll-area">
+		<aon:panelGrid columns="2" dir="true" width="100%" style="aon-margin-bottom">
+
+			<aon:outputLabel value="#{bundle.aon_id}" />
+			<aon:outputText value="#{agreement.to.id}" />
+
+			<aon:outputLabel for="Agreement_description"
+				value="#{bundle.aon_description}" />
+			<aon:inputText id="Agreement_description"
+				value="#{agreement.to.description}" size="64" maxlength="64" />
+		</aon:panelGrid>
+		
+		<c:if test="#{!agreement.new}">
+			<aon:panelTabSet>
+				<aon:panelTab id="agreementPayments" 
+					actionListener="#{agreementPayment.initialize}"
+					label="#{payrollBundle.payroll_salary_payment}">
+					<aon:div id="agreementPaymentGrid" style="font-size: 0.9em;">
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/agreementPaymentFilter.xhtml" />
+						<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/editGridContent.xhtml" >
+							<ui:param name="controller" value="#{agreementPayment}" />
+							<ui:param name="skipScopeColumn" value="true" />
+						</ui:include>
+					</aon:div>
+				</aon:panelTab>
+				
+				<aon:panelTab id="agreementData" 
+					actionListener="#{agreement.onShowVariables}"
+					label="#{payrollBundle.payroll_agreement_data}">
+					<ui:include 
+						src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
+						<ui:param name="controller" value="#{agreement}" />
+						<ui:param name="showVariableFilter" value="true" />
+					</ui:include>
+				</aon:panelTab>
+
+				<aon:panelTab id="group" disabled="#{agreementLevel.model==null}"
+					label="#{payrollBundle.payroll_agreementLevel_module}">
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/agreement/level/editGridSalaryTable.xhtml" >
+					</ui:include>
+				</aon:panelTab>
+				
+			</aon:panelTabSet>								
+		</c:if>
+	</aon:div>
+	
+</ui:composition>

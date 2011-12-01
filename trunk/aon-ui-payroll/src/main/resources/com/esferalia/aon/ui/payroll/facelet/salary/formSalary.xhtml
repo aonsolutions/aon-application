@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:div style="margin-top: 10px;">
+		<aon:panelGrid columns="2" style="margin:1em 0 0 1em;"
+			columnClasses="aon-noborder, aon-noborder">
+			<aon:div style="width: 815px; margin-top: 10px;">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formEditContent.xhtml" >
+					<ui:param name="controller" value="#{salary}" />
+				</ui:include>
+			</aon:div>
+		</aon:panelGrid>
+
+		<aon:panelGrid columns="2" style="margin:1em 0 0 1em;"
+			columnClasses="aon-noborder, aon-noborder">
+			<aon:div style="width: 815px; margin-top: 10px;">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/payment/gridContent.xhtml" >
+					<ui:param name="sortedSalaryPayments" value="#{salary.sortedSalaryPayments}" />
+					<ui:param name="totalPayment" value="#{salary.to.totalPayment}" />
+				</ui:include>
+			</aon:div>
+		</aon:panelGrid>
+
+		<aon:panelGrid columns="2" style="margin:1em 0 0 1em;"
+			columnClasses="aon-noborder, aon-noborder">
+			<aon:div style="width: 815px; margin-top: 10px;">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/deduction/gridContent.xhtml" >
+					<ui:param name="sortedSalaryDeductions" value="#{salary.sortedSalaryDeductions}" />
+					<ui:param name="totalDeduction" value="#{salary.to.totalDeduction}" />
+					<ui:param name="socialSecurityContributions" value="#{salary.to.socialSecurityContributions}" />
+				</ui:include>
+			</aon:div>
+		</aon:panelGrid>
+
+		<aon:panelGrid columns="2" style="margin:1em 0 0 1em;"
+			columnClasses="aon-noborder, aon-noborder">
+			<aon:div style="width: 815px; margin-top: 10px;">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/formBases.xhtml" >
+					<ui:param name="salaryTO" value="#{salary.to}" />
+				</ui:include>
+			</aon:div>
+		</aon:panelGrid>
+
+
+		<aon:panelGrid columns="2" style="margin:1em 0 0 1em;"
+			columnClasses="aon-noborder, aon-noborder">
+			<aon:div style="width: 815px; margin-top: 10px;">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/cost/gridContent.xhtml" >
+					<ui:param name="sortedSalaryCosts" value="#{salary.sortedSalaryCosts}" />
+					<ui:param name="total" value="#{salary.to.totalEnterprise}" />
+				</ui:include>
+			</aon:div>
+		</aon:panelGrid>
+
+		<aon:panelGrid columns="2" style="margin:1em 1em 1em 1em;"
+			columnClasses="aon-noborder, aon-noborder">
+			<aon:div style="width: 815px; margin-top: 10px;">
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/bonus/gridContent.xhtml" >
+					<ui:param name="bonuses" value="#{salary.to.bonus}" />
+				</ui:include>
+			</aon:div>
+		</aon:panelGrid>
+
+	</aon:div>
+		
+</ui:composition>

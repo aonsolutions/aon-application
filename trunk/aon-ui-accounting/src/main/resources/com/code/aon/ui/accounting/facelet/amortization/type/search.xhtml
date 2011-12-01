@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="amortizationTypeForm">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_amortization_type_module}" />
+				<ui:param name="controller" value="#{amortizationType}" />
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{amortizationType.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="amortizationType_list" />				
+				
+					<aon:outputLabel for="AmortizationType_id"
+						value="#{bundle.aon_id}" />
+					<aon:inputText id="AmortizationType_id" size="50"
+						valueChangeListener="#{amortizationType.addExpression}" />
+
+					<aon:outputLabel for="AmortizationType_description"
+						value="#{bundle.aon_description}" />
+					<aon:inputText id="AmortizationType_description" size="50"
+						valueChangeListener="#{account.addExpression}" />
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

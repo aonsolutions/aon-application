@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="accountEntryReportList">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="listado de balances" />
+				<ui:param name="controller" value="#{balance}" />
+				<!--  	<ui:define name="toolbarActions">
+					<aon:methodParam name="searchAction" value="balance_search" />
+				</ui:define>-->
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div rendered="#{balance.model.rowCount > 0}">
+					<aon:dataTable id="balanceList" value="#{balance.model}" rows="20"
+						var="to"
+						columnClasses="aon-editDataTable-numberColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn">
+
+						<aon:rowSelector action="balance_form"
+							actionListener="#{balance.onSelect}" />
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{accountingBundle.accounting_balance_cdg}" />
+							</f:facet>
+							<aon:outputText value="#{to.id}" />
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{accountingBundle.accounting_balance_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" />
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText
+									value="#{bundle.aon_type}" />
+							</f:facet>
+							<aon:outputText value="#{to.type}" />
+						</aon:column>
+
+					</aon:dataTable>
+				</aon:div>
+				<aon:dataScroller2 for="balanceList" showNote="true" />
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,159 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/code/aon/ui/audit/facelet/shared/menuContent.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="configMenu">
+		
+			<aon:div styleClass="aon-scroll-area">		
+		
+				<h:panelGrid styleClass="aon-width-all" columns="2" cellspacing="15"
+					columnClasses="aon-vertical-align-top aon-width-300, aon-vertical-align-top aon-width-300">
+
+					<aon:panelGroup>
+						<aon:panelGrid id="group_config_company"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-company aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{companyBundle.company_menu_group}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="company" 
+										action="company" actionListener="#{company.onLoad}"
+										value="#{companyBundle.company_data_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="defaultParams" action="defaultParams"
+										actionListener="#{payrollAppParams.onLoad}"
+										value="#{payrollBundle.payroll_default_params_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+						
+						<c:if test="#{aonRole.admin}">
+							<aon:panelGrid id="group_config_security"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-icon-security aon-direct-access-panel">
+								<f:facet name="header">
+									<aon:outputText value="#{bundle.aon_security}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									<aon:div styleClass="aon-direct-access-list-element">
+										<aon:commandLink id="actionDenied" action="actionDenied"
+											actionListener="#{actionDenied.onInit}"
+											value="#{auditBundle.audit_option_denied_module}" />
+									</aon:div>
+								</aon:div>
+							</aon:panelGrid>
+						</c:if>
+						
+						<aon:panelGrid id="group_treasury_auxiliar"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-auxiliary aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{payrollBundle.auxiliary_menu_group}" />
+							</f:facet>
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="geotreeParent_list-config" 
+										action="geotreeParent_list" actionListener="#{geotreeParent.onSearch}"
+										value="#{geozoneBundle.geozone_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="bank-treasury"
+										action="bank-treasury"
+										value="#{configBundle.config_bank_module}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+						
+						
+					</aon:panelGroup>
+					
+					<aon:panelGroup>
+						<aon:panelGrid id="group_config_predefined"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-icon-account-entry aon-direct-access-panel">
+							<f:facet name="header">
+								<aon:outputText value="#{payrollBundle.predefined_menu_group}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="contractMode"
+										actionListener="#{contractModel.onReset}"
+										action="contractOption_list" 
+										value="#{payrollBundle.contract_mode_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="cnae"
+										action="cnae_list" actionListener="#{cnae.onSearch}" 
+										value="#{configBundle.config_cnae_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="cnae2009"
+										action="cnae2009_list" actionListener="#{cnae2009.onSearch}" 
+										value="#{configBundle.config_cnae2009_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="cnae2009Rate"
+										action="cnae2009Rate_list" actionListener="#{cnae2009Rate.onSearch}" 
+										value="#{configBundle.config_cnae2009Rate_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="cno"
+										action="cno_list" actionListener="#{cno.onSearch}" 
+										value="#{payrollBundle.payroll_cno_module}" />
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="geozoneIrpf"
+										action="geozoneIrpf_search" actionListener="#{geozoneIrpf.onInitialize}" 
+										value="#{payrollBundle.payroll_geozoneIrpf_module}" />
+								</aon:div>
+								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="systemPayment" action="systemPayment_list"
+										actionListener="#{systemPayment.onSearch}"
+										value="#{payrollBundle.payroll_systemPayment_module}">
+									</aon:commandLink>
+								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="systemDeduction" action="systemDeduction_list"
+										actionListener="#{systemDeduction.onSearch}"
+										value="#{payrollBundle.payroll_systemDeduction_module}">
+									</aon:commandLink>
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+	
+							
+							
+<!--  
+							<aon:panelGrid id="group_config_general"
+								styleClass="aon-width-all" columnClasses="aon-padding"
+								headerClass="aon-direct-access-panel aon-icon-general">
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.menu_general}" />
+								</f:facet>
+								<aon:div styleClass="aon-direct-access-list">
+									
+								</aon:div>
+							</aon:panelGrid>
+-->							
+
+					</aon:panelGroup>	
+					
+				</h:panelGrid>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

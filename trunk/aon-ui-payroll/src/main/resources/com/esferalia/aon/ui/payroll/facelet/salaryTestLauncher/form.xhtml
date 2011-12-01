@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"	
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+		
+		<ui:decorate
+			template="/com/esferalia/aon/ui/payroll/facelet/salaryLauncher/template.xhtml">
+			<ui:param name="salaryLauncher" value="#{salaryTestLauncher}" />
+			<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_test_launcher_module}" />
+						
+			<ui:define name="messageRow" >
+				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.level} : " />
+								
+				<aon:outputText value="#{message.enterpriseName} " 
+					rendered="#{message.contractId!=null}" />
+								
+				<aon:commandLink  
+					rendered="#{message.contractId!=null}"
+					style="display: inline; text-decoration:underline;"
+					action="salaryDraft_form" >
+					<aon:outputText value="#{message.employeeName} " />
+					<f:setPropertyActionListener value="#{message}" 
+					target="#{salaryTestLauncher.message}" />
+					<f:setPropertyActionListener value="#{message.contractId}" 
+					target="#{salaryTestLauncher.contractId}" />
+					<aon:actionListener method="#{salaryTestLauncher.onSalaryDraft}" />
+				</aon:commandLink>	
+								
+				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.msg}" />
+			</ui:define>			
+
+			<ui:define name="launchButton" >
+					<aon:commandButton id="launchSalaries"
+					value="#{payrollBundle.payroll_launch}" 
+					styleClass="aon-search-lookup-button"
+					disabled="#{salaryLauncher.pollEnabled}"
+					actionListener="#{salaryLauncher.onLaunch}">
+				</aon:commandButton>
+			</ui:define>			
+
+
+			<ui:define name="addOnsFirstRow" >
+				<aon:selectBooleanCheckbox value="#{salaryTestLauncher.testTotalLiquid}" />
+				<aon:outputText value="#{payrollBundle.payroll_launch_testTotalLiquid}" />
+			</ui:define>			
+			<ui:define name="addOnsSecondRow" >
+				<aon:selectBooleanCheckbox value="#{salaryTestLauncher.testEnterpriseCost}" />
+				<aon:outputText value="#{payrollBundle.payroll_launch_testEnterpriseCost}" />
+			</ui:define>			
+		
+		</ui:decorate>
+	
+</ui:composition>

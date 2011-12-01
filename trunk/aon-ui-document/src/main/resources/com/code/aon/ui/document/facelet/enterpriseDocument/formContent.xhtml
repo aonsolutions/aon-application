@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+
+	<aon:div styleClass="aon-scroll-area">
+		<aon:panelGrid columns="2" >
+
+			<aon:outputLabel for="cm_name"
+				value="#{bundle.aon_name}" />
+			<aon:inputText id="cm_name" required="true"
+				value="#{enterpriseDocument.to.name}" maxlength="64" size="45" />
+	
+			<aon:outputLabel for="cm_file"
+				value="#{bundle.aon_fileupload_element}" />
+			<aon:div id="cm_attachFile">
+				<a4j:region>
+					<aon:fileUpload id="cm_file" required="true"
+						fileUploadListener="#{enterpriseDocument.fileUploaded}" >
+						<f:facet name="label">
+							<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+						</f:facet>																										
+						<a4j:support event="onuploadcomplete"
+							reRender="cm_attachFile,cm_name" />
+						<a4j:support event="onupload"
+							oncomplete="showFileUploadProgress();" />
+						<a4j:support event="onclear"
+							oncomplete="hideFileUploadProgress();" />
+					</aon:fileUpload>
+					<rich:jQuery name="showFileUploadProgress" timing="onJScall"
+						selector="#cm_file .rich-fileupload-list-overflow" query="height(70);" />
+					<rich:jQuery name="hideFileUploadProgress" timing="onJScall"
+						selector="#cm_file .rich-fileupload-list-overflow" query="height(0);" />							
+				</a4j:region>
+			</aon:div>
+	
+			<aon:outputLabel for="cm_title"
+				value="#{documentBundle.document_title}" />
+			<aon:inputText id="cm_title" required="true"
+				value="#{enterpriseDocument.to.title}" maxlength="128" size="45" />
+		
+			<aon:outputLabel for="cm_description"
+				value="#{bundle.aon_description}" />
+			<aon:inputText id="cm_description" required="true"
+				value="#{enterpriseDocument.to.description}" maxlength="128" size="45" />
+		
+			<aon:outputLabel for="cm_category"
+				value="#{registryBundle.registry_category}" />
+			<ui:include src="/com/code/aon/ui/document/facelet/alfrescoCategory/template.xhtml" >
+				<ui:param name="controller" value="#{enterpriseDocument}" />			
+				<ui:param name="categoryRequired" value="#{true}" />
+			</ui:include>						
+
+			<c:if test="#{manager.mainEnterprise and (!enterprise.treeView)}" >
+				<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+					<ui:param name="lookupTo" value="#{enterpriseDocument.to.enterprise}" />
+					<ui:param name="skipNewButton" value="#{true}" />
+					<ui:param name="idRequired" value="#{true}" />
+				</ui:include>
+			</c:if>
+			
+			<ui:include src="/com/code/aon/ui/project/facelet/project/lookup.xhtml" >
+				<ui:param name="lookupTo" value="#{enterpriseDocument.to.project}" />
+				<ui:param name="lookupControllerListener" value="#{enterpriseDocument.projectListener}" />				
+			</ui:include>
+
+			<aon:outputLabel for="cm_referenceDate"
+				value="#{documentBundle.document_referenceDate}" />
+			<aon:selectInputDate id="cm_referenceDate"
+				value="#{enterpriseDocument.to.referenceDate}"
+				timeZone="#{timeZoneController.timeZone}" inputSize="16"
+				popupDateFormat="#{bundle.aon_timestamp2_pattern}" />				
+			
+			<aon:outputLabel rendered="#{!enterpriseDocument.new}"
+				value="#{documentBundle.document_createdDate}" />
+			<aon:outputText rendered="#{!enterpriseDocument.new}"
+				value="#{enterpriseDocument.to.createdDate}">
+				<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+
+			<aon:outputLabel rendered="#{!enterpriseDocument.new}"
+				value="#{documentBundle.document_modifiedDate}" />
+			<aon:outputText rendered="#{!enterpriseDocument.new}"
+				value="#{enterpriseDocument.to.modifiedDate}">
+				<f:convertDateTime pattern="#{bundle.aon_timestamp2_pattern}"
+					timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+				
+		</aon:panelGrid>
+
+	</aon:div>
+	
+</ui:composition>

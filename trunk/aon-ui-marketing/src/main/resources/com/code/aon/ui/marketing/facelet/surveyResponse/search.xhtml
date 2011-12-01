@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+
+		<aon:form id="surveyResponseSearch">
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_survey_response_module}" />
+				<ui:param name="controller" value="#{surveyResponse}" />
+				<ui:param name="skipResetButton" value="true" />
+			</ui:include>
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:param name="controller" value="#{surveyResponse}" />
+				<ui:define name="searchContent">
+
+					<ui:include src="/com/code/aon/ui/marketing/facelet/survey/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{surveyResponseSearch.survey}" />
+					</ui:include>	
+
+					<ui:include src="/com/code/aon/ui/marketing/facelet/campaignAction/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{surveyResponseSearch.action}" />
+					</ui:include>	
+					
+					<ui:include src="/com/code/aon/ui/commercial/facelet/target/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{surveyResponseSearch.target}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+					</ui:include>					
+					
+					<ui:include src="/com/code/aon/ui/config/facelet/user/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{surveyResponseSearch.user}" />
+					</ui:include>								
+			
+				</ui:define>			
+			</ui:decorate>
+							 
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{surveyLookup}" />
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />
+		<aon:lookupButtonPopup lookup="#{campaignActionLookup}" />
+		<aon:lookupButtonPopup lookup="#{userLookup}" />
+	</ui:define>
+		
+</ui:composition>

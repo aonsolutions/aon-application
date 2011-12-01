@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components" >
+	
+	<aon:div styleClass="aon-finding-title-toolbar">
+		<aon:panelGrid columns="3" dir="true"
+			columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+			<aon:div styleClass="aon-finding-title-internal">
+				<aon:outputText value="#{payrollBundle.payroll_settle_module}" />
+			</aon:div>
+
+			<aon:div styleClass="aon-finding-subtitle-internal">
+				<aon:outputText value="#{bundle.aon_reset}" />
+			</aon:div>
+
+			<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
+			
+				<aon:commandButton id="settle-search" 
+					title="#{bundle.aon_key_search_accelerator}"
+					value="#{bundle.aon_search}" 
+					immediate="true"
+					action="settle_search" 
+					styleClass="aon-finding-toolbar-item aon-icon-search"
+					accesskey="#{bundle.aon_key_search}" >
+					<aon:actionListener method="#{contract.onEditSearch}" />
+				</aon:commandButton>
+				
+				<aon:commandButton id="settle-cancel" 
+					title="#{bundle.aon_key_cancel_accelerator}"
+					value="#{bundle.aon_list}"
+					reRender="aonContent"
+					inmediate="true"
+					action="settle_list"
+					rendered="#{settle.backAction==null}"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					accesskey="#{bundle.aon_key_cancel}" />
+					
+				<aon:commandButton id="settle-back" 
+					title="#{bundle.aon_key_cancel_accelerator}"
+					value="#{bundle.aon_back}"
+					inmediate="true" ajaxSingle="true"
+					rendered="#{settle.backAction!=null}"
+					action="#{settle.getBackAction}"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					accesskey="#{bundle.aon_key_cancel}" />
+					
+				<aon:commandButton id="settle-generation" 
+					action="salaryDraft_formTree"
+					value="#{payrollBundle.payroll_settle_generation}"
+					styleClass="aon-finding-toolbar-item aon-icon-file-entrance" >
+					<aon:actionListener method="#{settle.onGenerate}" />
+					<aon:actionListener method="#{settle.onSelectSettleDraft}" />
+				</aon:commandButton>
+					
+			</aon:div>
+			
+		</aon:panelGrid>
+	</aon:div>
+
+</ui:composition>

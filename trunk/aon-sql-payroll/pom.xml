@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <groupId>com.code.aon</groupId>
+    <artifactId>aon.parent</artifactId>
+    <version>6.18</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.esferalia.aon</groupId>
+  <artifactId>aon.sql.payroll</artifactId>
+  <version>6.18</version>
+  <description>AON SQL PAYROLL</description>
+  <name>AON SQL PAYROLL</name>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>aon</id>
+      <url>http://dev.esferalia.com/maven2_repositories/inhouse</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>aon.snapshots</id>
+      <url>http://dev.esferalia.com/maven2_repositories/inhouse_snapshot</url>
+    </pluginRepository>
+  </pluginRepositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.esferalia.aon</groupId>
+        <artifactId>aon-maven-plugin</artifactId>
+        <executions>
+        	<execution>
+        		<goals>
+        			<goal>generate-db</goal>
+        		</goals>
+        	</execution>
+        </executions>
+	<configuration>
+		<targetPackage>com.esferalia.aon.payroll.sql</targetPackage>
+		<dbtables>registry,person,raddress,enterprise.*,customer,workplace.*,agreement.*,calendar.*,deduction_concept,payment_concept,bonus_concept,system.*,contract.*,salary.*,cnae2009.*,payroll.*,user,irpf.*,geozone_irpf.*</dbtables>
+	</configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

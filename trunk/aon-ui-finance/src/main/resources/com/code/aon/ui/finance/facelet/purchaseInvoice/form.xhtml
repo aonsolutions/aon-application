@@ -1,0 +1,469 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="purchaseInvoiceForm">
+			<aon:div id="menuExt">
+				<ui:decorate
+					template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+					<ui:param name="toolbarTitle"
+						value="#{financeBundle.finance_purchase_invoice_management_module}" />
+					<ui:param name="controller" value="#{purchaseInvoice}" />
+					<ui:param name="skipFocusFirst" value="true" />
+					<ui:param name="skipSaveButton" value="#{purchaseInvoice.readOnly}" />
+					<ui:param name="skipRemoveButton" value="#{!purchaseInvoice.removable or !purchaseInvoiceFinance.allPending}" />
+					<ui:param name="saveButtonReRender" value="purchaseInvoiceForm" />
+					<ui:define name="beforeSpinToolbarContent">
+						<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
+							<aon:commandButton id="incomeTransfer"
+								value="#{financeBundle.finance_invoice_deliveries}"
+								immediate="#{true}" rendered="#{!purchaseInvoice.new and !purchaseInvoice.recorded}"
+								styleClass="aon-finding-toolbar-item aon-icon-sincronize"
+								actionListener="#{purchaseInvoice.onIncomeTransferShow}"
+								reRender="showIncomeTransferWindow">
+								<f:setPropertyActionListener target="#{purchaseInvoice.showIncomeTransferWindow}"
+									value="#{true}" />
+							</aon:commandButton>
+						</c:if>
+						<aon:commandButton id="finances"
+							value="#{bundle.aon_key_finance_description}"
+							title="#{bundle.aon_key_finance_accelerator}"
+							actionListener="#{purchaseInvoice.generateFinances}"
+							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and (!purchaseInvoice.recorded or purchaseInvoiceFinance.model.rowCount == 0)}"
+							styleClass="aon-finding-toolbar-item aon-icon-tree"
+							accesskey="#{bundle.aon_key_finance}">
+							<f:setPropertyActionListener target="#{purchaseInvoice.backActionListener}"
+								value="#{null}" />
+							<f:setPropertyActionListener target="#{purchaseInvoice.backAction}"
+								value="#{null}" />
+						</aon:commandButton>
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:commandButton id="record"
+								value="#{financeBundle.finance_record}"
+								actionListener="#{purchaseInvoice.onRecordInvoice}"
+								rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and !purchaseInvoice.recorded}"
+								styleClass="aon-finding-toolbar-item aon-icon-task-assume"
+								reRender="purchaseInvoiceForm" 
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+							<aon:commandButton id="unrecord"
+								value="#{financeBundle.finance_unrecord}"
+								actionListener="#{purchaseInvoice.onUnrecordInvoice}"
+								rendered="#{purchaseInvoice.recorded and !purchaseInvoice.accountSource}"
+								styleClass="aon-finding-toolbar-item aon-icon-task-liberate"
+								reRender="purchaseInvoiceForm"
+								onclick="Richfaces.showModalPanel('waitProccess')" 
+					     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />
+					     </c:if>
+						<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
+							<aon:commandButton value="&#160;" id="email"
+								actionListener="#{purchaseInvoice.onSendInvoiceByEmail}"
+								rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null}"
+								styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+								reRender="showNewMessageWindow">
+							</aon:commandButton>
+						</c:if>						
+						<aon:htmlCommandLink id="purchaseInvoice-report"
+							value="#{financeBundle.finance_invoice}" target="_new" 
+							rendered="#{purchaseInvoiceDetail.model.rowCount > 0 and purchaseInvoiceDetail.to == null and !purchaseInvoice.accountSource}"
+							action="#{purchaseInvoiceSigner.onReport}"
+							accesskey="#{bundle.aon_key_print}"
+							styleClass="aon-finding-toolbar-item aon-icon-pdf">
+							<f:param name="reportKey" value="purchaseInvoice" />
+						</aon:htmlCommandLink>
+						<ui:include src="/com/code/aon/ui/sign/facelet/signer/signToolbar.xhtml">
+							<ui:param name="signController" value="#{purchaseInvoiceSigner}" />
+							<ui:param name="skipSignButton" value="#{purchaseInvoice.new or (!purchaseInvoiceAttachment.attachmentAvailable) or purchaseInvoice.to.signed or (!certificate.signable)}" />
+							<ui:param name="skipCancelSignButton" value="#{purchaseInvoice.new or (!purchaseInvoiceAttachment.attachmentAvailable) or (!purchaseInvoice.to.signed)}" />
+							<ui:param name="signButtonReRender" value="purchaseInvoiceForm" />
+						</ui:include>
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="dataTable" columns="4" style="width: 100%;"
+					styleClass="aon-margin-bottom"
+					columnClasses="aon-panelGrid-odd aon-width-140,
+						aon-panelGrid-even aon-width-500,
+						aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-even aon-width-auto">
+
+					<aon:outputLabel for="Invoice_referenceCode"
+						value="#{financeBundle.finance_invoice_number}" />
+					<aon:div>
+						<aon:panelGrid columns="2" columnClasses="aon-width-180, aon-width-auto">
+							<aon:div id="invoiceReferenceCodeDiv">
+								<aon:inputText id="Invoice_referenceCode" 
+									value="#{purchaseInvoice.to.referenceCode}"
+									required="true"
+									rendered="#{!purchaseInvoice.readOnly and purchaseInvoiceFinance.allPending}" 
+									size="25" maxlength="32" />
+								<aon:outputText styleClass="aon-bold"
+									value="#{purchaseInvoice.to.referenceCode}"
+									rendered="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="Invoice_investment"
+									value="#{purchaseInvoice.to.investment}" 
+									rendered="#{!purchaseInvoice.readOnly}" />
+								<aon:outputLabel for="Invoice_investment" styleClass="aon-italic aon-margin-right"
+									value="#{financeBundle.finance_invoice_investment}"
+									rendered="#{!purchaseInvoice.readOnly or purchaseInvoice.to.investment}" />
+
+								<c:if test="#{aonRole.confidentiality}">
+									<aon:selectBooleanCheckbox id="Invoice_securityLevel"
+										value="#{purchaseInvoice.to.confidential}"
+										rendered="#{!purchaseInvoice.readOnly and purchaseInvoiceFinance.allPending}" />
+									<aon:outputText styleClass="aon-italic aon-margin-right"
+										value="#{bundle.aon_confidential}"
+										rendered="#{!purchaseInvoice.readOnly and purchaseInvoiceFinance.allPending}" />
+									<aon:outputText styleClass="aon-icon aon-icon-confidential" 
+										value="&#160;" title="#{bundle.aon_confidential}"
+										rendered="#{(purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending) and purchaseInvoice.to.confidential}" />
+								</c:if>
+
+								<c:if test="#{company.EInvoice}">
+									<aon:outputText value="&#160;"
+										rendered="#{!purchaseInvoice.new and purchaseInvoice.to.signed}"
+										title="#{signBundle.sign_signed}"
+										styleClass="aon-icon aon-icon-signed" />
+								</c:if>						
+
+								<aon:outputText value="#{purchaseInvoice.to.status}" />
+								<c:if test="#{aonRole.accountingOperator and purchaseInvoice.recorded}">
+									<aon:outputText styleClass="aon-italic aon-margin-left"
+										value="(#{financeBundle.finance_account_entry}: " />
+									<aon:outputText styleClass="aon-bold"
+										value="#{purchaseInvoice.accountEntryId}" />
+									<aon:outputText styleClass="aon-italic" value=")" />
+								</c:if>
+							</aon:div>
+						</aon:panelGrid>
+					</aon:div>
+
+					<aon:outputLabel for="Invoice_issueDate"
+						value="#{bundle.aon_date}" />
+					<aon:div>
+						<aon:selectInputDate id="Invoice_issueDate"
+							value="#{purchaseInvoice.to.issueDate}" required="true"
+							disabled="#{purchaseInvoice.readOnly}"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<c:if test="#{aonRole.accountingOperator}">
+								<a4j:support ajaxSingle="true" event="oninputchange"
+									actionListener="#{purchaseInvoice.onDateChanged}"
+									reRender="Invoice_taxDate"
+									focus="Supplier_id" />
+								<a4j:support ajaxSingle="true" event="onchanged"
+									actionListener="#{purchaseInvoice.onDateChanged}"
+									reRender="Invoice_taxDate"
+									focus="Supplier_id" />
+							</c:if>
+						</aon:selectInputDate>
+						<c:if test="#{aonRole.accountingOperator}">
+							<aon:outputLabel for="Invoice_taxDate" styleClass="aon-margin-left aon-margin-right aon-italic"
+								value="#{financeBundle.finance_tax_date}" />
+							<aon:selectInputDate id="Invoice_taxDate"
+								value="#{purchaseInvoice.to.taxDate}" required="true"
+								disabled="#{purchaseInvoice.readOnly}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}"
+								inputStyle="#{purchaseInvoice.taxDateEquals?'':'background-color: #ff865e;'}">
+								<a4j:support ajaxSingle="true" event="oninputchange"
+									reRender="Invoice_taxDate"
+									focus="Supplier_id" />
+								<a4j:support ajaxSingle="true" event="onchanged"
+									reRender="Invoice_taxDate"
+									focus="Supplier_id" />
+							</aon:selectInputDate>
+						</c:if>
+					</aon:div>
+
+					<ui:include src="/com/code/aon/ui/supplier/facelet/supplier/lookup.xhtml">
+						<ui:param name="lookupTo" value="#{purchaseInvoice.to.registry}" />
+						<ui:param name="lookupForRegistry" value="#{true}" />
+						<ui:param name="lookupInputNameValue" value="#{purchaseInvoice.to.registryName}" />
+						<ui:param name="lookupDisabled" value="#{purchaseInvoice.registryReadOnly or !purchaseInvoiceFinance.allPending}" />
+						<ui:param name="lookupInputNameDisabled" value="#{purchaseInvoice.readOnly or !purchaseInvoiceFinance.allPending}" />
+						<ui:param name="lookupReRender" value="Supplier_lookup_document,InvoiceAddress,InvoiceProject" />
+						<ui:param name="idRequired" value="#{true}" />						
+						<ui:param name="skipSuggestText" 
+							value="#{purchaseInvoice.to.registry != null and purchaseInvoice.to.registry.id != null}" />
+						<aon:methodParam name="lookupChangeListener"
+							value="#{purchaseInvoice.supplierData}" type="lookupChangeListener" />
+					</ui:include>
+
+					<aon:outputLabel for="Supplier_registry_document"
+						value="#{bundle.aon_company_document}" />
+					<aon:panelGroup id="Supplier_lookup_document">
+						<aon:selectOneMenu id="Supplier_registry_document_type" 
+							disabled="#{purchaseInvoice.readOnly}"
+							value="#{purchaseInvoice.to.registryDocumentType}"
+							reRender="Supplier_document_icon">
+							<f:selectItems value="#{registryCollections.documentTypes}" />
+						</aon:selectOneMenu>
+						<aon:outputText styleClass="aon-margin-left aon-italic"
+							value="#{bundle.aon_country}" />
+						<aon:selectOneMenu id="Supplier_registry_document_country"
+							styleClass="aon-margin-left" disabled="#{purchaseInvoice.readOnly}"
+							value="#{purchaseInvoice.to.registryDocumentCountry}"
+							reRender="Supplier_document_icon">
+							<f:selectItems value="#{commonCollections.countryCodes}" />
+						</aon:selectOneMenu>
+						<aon:inputText id="Supplier_registry_document" 
+							style="margin-left: 3px;" disabled="#{purchaseInvoice.readOnly}"
+							value="#{purchaseInvoice.to.registryDocument}" size="16" maxlength="16"
+							reRender="Supplier_document_icon" 
+							onblur="toUpperCase(this);">
+							<f:validateLength minimum="1" maximum="16" />
+ 						</aon:inputText>
+						<aon:panelGroup id="Supplier_document_icon">
+							<aon:outputText 
+								rendered="#{!purchaseInvoice.to.registryDocumentValidable}"
+								styleClass="aon-icon-question"
+								style="padding-left: 15px;"
+								value="&#160;" />
+							<aon:outputText 
+								rendered="#{purchaseInvoice.to.registryDocumentValidable and purchaseInvoice.to.validRegistryDocument}"
+								styleClass="aon-icon-predetermine"
+								style="padding-left: 15px;"
+								value="&#160;" />
+							<aon:outputText 
+								rendered="#{purchaseInvoice.to.registryDocumentValidable and !purchaseInvoice.to.validRegistryDocument}"
+								styleClass="aon-icon-exception"
+								style="padding-left: 15px;"
+								value="&#160;" />
+	 					</aon:panelGroup>
+ 					</aon:panelGroup>
+
+					<aon:outputLabel for="Invoice_registryAddress_id"
+						value="#{registryBundle.registry_address}" />
+					<aon:div id="InvoiceAddress">
+						<aon:selectOneMenu id="Invoice_registryAddress_id"
+							rendered="#{!purchaseInvoice.readOnly and purchaseInvoiceAddress.to.id == null and purchaseInvoice.addressCount > 0}"
+							value="#{purchaseInvoice.to.registryAddress}">
+							<f:selectItems value="#{purchaseInvoice.addresses}" />
+						</aon:selectOneMenu>
+						<aon:outputLabel styleClass="aon-italic"
+							value="#{registryBundle.registry_no_address_available}"
+							rendered="#{purchaseInvoiceAddress.to.id == null and ((purchaseInvoice.readOnly and purchaseInvoice.to.registryAddress.id == null) or (!purchaseInvoice.readOnly and purchaseInvoice.addressCount == 0))}" />
+						<aon:outputText styleClass="aon-bold"
+							value="#{purchaseInvoice.address}" 
+							rendered="#{purchaseInvoiceAddress.to.id != null or (purchaseInvoice.readOnly and purchaseInvoice.to.registryAddress.id != null)}" />
+						<aon:outputText styleClass="aon-margin-left aon-bold"
+							value="(#{purchaseInvoice.city})"
+							rendered="#{purchaseInvoiceAddress.to.id != null or (purchaseInvoice.readOnly and purchaseInvoice.to.registryAddress.id != null)}" />
+						<aon:div layout="inline" styleClass="aon-margin-left">
+							<aon:commandButton id="invoiceAddressButton"
+								value="#{registryBundle.registry_address_other}"
+								styleClass="aon-icon-commandButton aon-icon-go aon-bold aon-italic"
+								rendered="#{!purchaseInvoice.new and !purchaseInvoice.readOnly}"
+								actionListener="#{purchaseInvoice.onInvoiceAddressShow}"
+								reRender="showInvoiceAddressWindow">
+								<f:setPropertyActionListener target="#{purchaseInvoice.showInvoiceAddressWindow}"
+									value="#{true}" />								
+							</aon:commandButton>
+						</aon:div>
+					</aon:div>
+
+					<aon:outputLabel for="Invoice_total" 
+						value="#{bundle.aon_total}" />
+					<aon:div>
+						<aon:outputText id="Invoice_total" styleClass="aon-bold"
+							value="#{purchaseInvoice.toInvoiceTotalPrice}">
+							<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+						</aon:outputText>
+						<aon:outputLabel styleClass="aon-margin-left aon-italic"
+							value="(#{bundle.aon_tax_included})" />
+					</aon:div>
+
+				</aon:panelGrid>
+
+				<aon:div id="InvoiceProject">
+					<aon:panelGrid columns="2" style="width: 100%;"
+						rendered="#{purchaseInvoice.to.project.id != null or purchaseInvoice.projectCount > 0}"
+						columnClasses="aon-panelGrid-odd aon-width-140,
+							aon-panelGrid-even aon-width-auto">
+
+						<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+							<aon:outputLabel for="Invoice_project_id"
+								value="#{projectBundle.project_project}" />
+						</c:if>
+						<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+							<aon:outputLabel for="Invoice_project_id"
+								value="#{tasBundle.tas_projectTas}" />
+						</c:if>
+						<aon:div>
+							<aon:selectOneMenu id="Invoice_project_id"
+								rendered="#{!purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}"
+								value="#{purchaseInvoice.to.project}">
+								<f:selectItem itemLabel="-" value="#{null}" />
+								<f:selectItems value="#{purchaseInvoice.projects}" />
+							</aon:selectOneMenu>
+							<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+								<aon:outputLabel styleClass="aon-italic"
+									value="#{projectBundle.project_no_project_linked}"
+									rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}" />
+							</c:if>
+							<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+								<aon:outputLabel styleClass="aon-italic"
+									value="#{tasBundle.tas_no_projectTas_linked}"
+									rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}" />
+							</c:if>
+							<aon:outputText styleClass="aon-bold"
+								value="#{purchaseInvoice.to.project.name}" 
+								rendered="#{purchaseInvoice.to.project.id != null}" />
+							<aon:div layout="inline" styleClass="aon-margin-left">
+								<aon:commandButton id="newInvoiceProject"
+									value="&#160;" title="#{bundle.aon_reset}"
+									styleClass="aon-icon-commandButton aon-icon-reset"
+									rendered="#{purchaseInvoice.readOnly and purchaseInvoice.to.project.id == null and purchaseInvoice.projectCount > 0}"
+									reRender="showProjectWindow">
+									<f:setPropertyActionListener target="#{purchaseInvoice.showProjectWindow}"
+										value="#{true}" />								
+									<f:setPropertyActionListener target="#{purchaseInvoice.showDetailProjectWindow}"
+										value="#{false}" />								
+								</aon:commandButton>
+								<aon:commandButton id="removeInvoiceProject" 
+									value="&#160;" title="#{bundle.aon_remove}" 
+									styleClass="aon-icon-commandButton aon-icon-delete"
+									rendered="#{purchaseInvoice.to.project.id != null}"
+									actionListener="#{purchaseInvoice.removeInvoiceProject}" 
+									reRender="purchaseInvoiceForm" />
+							</aon:div>
+						</aon:div>
+
+					</aon:panelGrid>
+				</aon:div>
+
+				<aon:panelGrid columns="4" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-140,
+						aon-panelGrid-even aon-width-500,
+						aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-even aon-width-auto">
+
+					<aon:div>
+						<aon:outputLabel for="Invoice_comments"
+							value="#{bundle.aon_comment}" />
+						<aon:div>
+							<aon:outputLabel styleClass="aon-form-date-label"
+								value="(#{bundle.aon_comment_description})" />
+						</aon:div>
+					</aon:div>
+					<aon:inputTextarea id="Invoice_comments" cols="80" rows="3"
+						disabled="#{purchaseInvoice.readOnly}"
+						value="#{purchaseInvoice.to.comments}" />
+
+					<aon:div>
+						<aon:outputLabel for="Invoice_remarks"
+							value="#{bundle.aon_remark}" />
+						<aon:div>
+							<aon:outputLabel styleClass="aon-form-date-label"
+								value="(#{bundle.aon_remark_description})" />
+						</aon:div>
+					</aon:div>
+					<aon:inputTextarea id="Invoice_remarks" cols="80" rows="3"
+						disabled="#{purchaseInvoice.readOnly}"
+						value="#{purchaseInvoice.to.remarks}" />
+
+				</aon:panelGrid>
+
+				<aon:panelGrid columns="4" style="width: 100%;"
+					columnClasses="aon-panelGrid-odd aon-width-140,
+						aon-panelGrid-even aon-width-500,
+						aon-panelGrid-odd aon-width-100,
+						aon-panelGrid-even aon-width-auto">
+
+					<aon:outputLabel value="#{financeBundle.finance_invoice_document_number}"
+						rendered="#{!purchaseInvoice.new}" />
+					<aon:outputText styleClass="aon-bold"
+						value="#{purchaseInvoice.to.documentNumber}"
+						rendered="#{!purchaseInvoice.new}" />
+
+					<aon:outputLabel for="Invoice_file" rendered="#{!purchaseInvoice.new and !purchaseInvoice.to.signed}"
+						value="#{financeBundle.finance_invoice_file}" />
+					<aon:div rendered="#{!purchaseInvoice.new and !purchaseInvoice.to.signed}">
+						<a4j:region>					
+							<h:panelGrid id="Invoice_fileDiv" columns="#{purchaseInvoiceAttachment.uploaded?2:1}">
+								<aon:commandButton id="removeFile" value="&#160;"
+									actionListener="#{purchaseInvoiceAttachment.removeAttachment}" 
+									title="#{bundle.aon_fileUpload_remove}" reRender="Invoice_fileDiv,purchaseInvoiceToolbar"
+									immediate="true" rendered="#{purchaseInvoiceAttachment.uploaded}"
+									styleClass="aon-icon-commandButton aon-icon-delete" />
+								<aon:fileUpload id="Invoice_file"
+									fileUploadListener="#{purchaseInvoiceAttachment.fileUploaded}"
+									ontyperejected="alert('#{financeBundle.finance_invoice_only_pdf}');"
+									acceptedTypes="pdf">
+									<a4j:support event="onuploadcomplete" reRender="Invoice_fileDiv,purchaseInvoiceToolbar" />								
+									<f:facet name="label">
+										<aon:outputText value="#{bundle.aon_fileUpload_upload_label}" />
+									</f:facet>														
+								</aon:fileUpload>
+							</h:panelGrid>														
+						</a4j:region>
+					</aon:div>	
+
+				</aon:panelGrid>
+
+				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_detail.xhtml">
+					<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+					<ui:param name="detailController" value="#{purchaseInvoiceDetail}" />
+					<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+						<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+					</c:if>
+					<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+						<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+					</c:if>
+				</ui:include>
+
+				<ui:include	src="/com/code/aon/ui/finance/facelet/invoice/form_finances.xhtml">
+					<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+					<ui:param name="detailController" value="#{purchaseInvoiceDetail}" />
+					<ui:param name="financeController" value="#{purchaseInvoiceFinance}" />
+				</ui:include>
+			</aon:div>
+		</aon:form>
+		<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		<ui:include src="/com/code/aon/ui/resources/facelet/shared/waitProcess.xhtml" />
+		<ui:include src="/com/code/aon/ui/finance/facelet/invoice/modalAddress.xhtml">
+			<ui:param name="invoiceController" value="#{purchaseInvoice}" />
+			<ui:param name="invoiceAddress" value="#{purchaseInvoiceAddress}" />
+		</ui:include>
+		<ui:include src="/com/code/aon/ui/project/facelet/project/modalProject.xhtml">
+			<ui:param name="controller" value="#{purchaseInvoice}" />
+			<ui:param name="parentReRender" value="purchaseInvoiceForm" />
+			<aon:methodParam name="parentActionListener" value="#{purchaseInvoice.addInvoiceProject}" type="actionListener" />
+			<ui:param name="parentValue" value="#{purchaseInvoice.to.project}" />
+			<ui:param name="detailReRender" value="invoiceDetails" />
+			<aon:methodParam name="detailActionListener" value="#{purchaseInvoiceDetail.addInvoiceDetailProject}" type="actionListener" />
+			<ui:param name="detailValue" value="#{purchaseInvoiceDetail.invoiceDetail.project}" />
+			<c:if test="#{!aonConfiguration.bean.invoice.showTasData}">
+				<ui:param name="projectLabel" value="#{projectBundle.project_project}" />
+			</c:if>
+			<c:if test="#{aonConfiguration.bean.invoice.showTasData}">
+				<ui:param name="projectLabel" value="#{tasBundle.tas_projectTas}" />
+			</c:if>
+		</ui:include>
+		<c:if test="#{aonConfiguration.bean.invoice.showWarehouseData}">
+			<ui:include src="/com/code/aon/ui/finance/facelet/purchaseInvoice/income/modalTransfer.xhtml" />
+		</c:if>
+		<c:if test="#{aonConfiguration.bean.invoice.showSendEmail}">
+			<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+		</c:if>
+		<ui:include src="/com/code/aon/ui/sign/facelet/signer/modal.xhtml" >
+			<ui:param name="signButtonreRender" value="purchaseInvoiceForm" />
+			<aon:methodParam name="signActionListener" value="#{purchaseInvoiceSigner.onSign}" type="actionListener" />
+		</ui:include>
+	</ui:define>
+</ui:composition>

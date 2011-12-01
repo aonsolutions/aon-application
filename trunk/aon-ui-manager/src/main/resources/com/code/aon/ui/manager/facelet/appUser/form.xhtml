@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:include src="/com/code/aon/ui/webmail/facelet/util/formInnerToolbar.xhtml" >
+		<ui:param name="skipSearchButton" value="#{true}" />
+	</ui:include>		
+
+	<aon:div styleClass="aon-scroll-area">
+
+		<aon:panelGrid columns="2">
+
+			<aon:outputLabel for="DomainApplicationUser_commonName"
+				value="#{bundle.aon_name}" />
+			<aon:selectOneMenu id="DomainApplicationUser_commonName-New"
+				rendered="#{controller.new}" required="true" 
+				value="#{controller.to.commonName}">
+				<f:selectItem itemLabel="-" value="#{null}" />
+				<f:selectItems value="#{controller.availableUsers}" />
+			</aon:selectOneMenu>						
+			<aon:inputText id="DomainApplicationUser_commonName"
+				size="80" disabled="true" rendered="#{!controller.new}"
+				value="#{controller.to.commonName}" />
+					
+			<c:if test="#{manager.administrator}">
+				<aon:outputLabel for="DomainApplicationUser_status"
+					value="#{bundle.aon_status}" />
+				<aon:selectOneMenu id="DomainApplicationUser_status" required="true"
+					value="#{controller.to.status}">
+					<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="0" />
+					<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="13" />
+				</aon:selectOneMenu>													
+			</c:if>
+										
+			<aon:outputLabel for="DomainApplicationUser_profiles"
+				value="#{managerBundle.manager_profiles}" />
+			<aon:selectManyCheckbox id="DomainApplicationUser_profiles"
+				value="#{controller.to.profiles}" layout="pageDirection"
+				required="true">
+				<f:selectItems value="#{domainApplication.availableProfiles}" />
+			</aon:selectManyCheckbox>			
+
+		</aon:panelGrid>
+		
+	</aon:div>
+
+</ui:composition>

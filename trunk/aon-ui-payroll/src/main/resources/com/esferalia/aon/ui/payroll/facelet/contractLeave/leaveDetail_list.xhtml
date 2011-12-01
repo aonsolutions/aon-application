@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+
+	<rich:subTable id="leaveDetailList" var="detail" 
+		rendered="#{contractLeave.showDetail}" width="auto"
+		value="#{contractLeave.leaveDetailModel}" >
+		
+		<aon:column colspan="1" styleClass="aon-noborder">
+			<aon:outputText value="&#160;" />
+		</aon:column>
+		
+		<rich:column colspan="7" 
+			style="padding: 0px; border: none;background-color: #FBEDB6;"
+			styleClass="aon-width-all aon-noborder" >
+			
+			<h:panelGrid columns="9" style="font-size: 0.9em; width: 100%;"
+				cellpadding="0" cellspacing="0" border="0"
+				columnClasses="
+					aon-noborder,aon-noborder,aon-noborder,
+					aon-noborder,aon-noborder,aon-noborder,
+					aon-noborder,aon-noborder,aon-noborder" >
+			
+				<aon:div styleClass="aon-width-100 aon-editDataTable-textColumn aon-noborder">
+					<aon:outputText value="#{detail.type}" />
+					<aon:outputText value="&#160;" />
+					<aon:outputText rendered="#{detail.confirm}" 
+						value="#{detail.confirmOrder}" />
+				</aon:div>
+				
+				<aon:div styleClass="aon-width-150 aon-editDataTable-textColumn aon-noborder">
+					<aon:outputLabel 
+						value="#{bundle.aon_date}:" />
+					<aon:outputText value="#{detail.date}" styleClass="aon-padding-left">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>
+				</aon:div>
+				
+				<aon:div styleClass="aon-width-150 aon-editDataTable-textColumn aon-noborder">
+					<aon:outputLabel 
+						value="#{payrollBundle.payroll_contractLeave_collegeNumber}:" />
+					<aon:outputText styleClass="aon-padding-left"
+						value="#{detail.collegeNumber}" />
+				</aon:div>
+				
+				<aon:div styleClass="aon-width-150 aon-editDataTable-textColumn aon-noborder">
+					<aon:outputLabel 
+						value="#{payrollBundle.payroll_contractLeave_cias}:" />
+					<aon:outputText styleClass="aon-padding-left"
+						value="#{detail.cias}" />
+				</aon:div>
+				
+				<aon:div styleClass="aon-width-150 aon-editDataTable-textColumn aon-noborder">
+					<aon:outputText value="#{detail.status}" />
+				</aon:div>
+			
+			</h:panelGrid>
+			
+		</rich:column> 
+		
+		<aon:column colspan="1" styleClass="aon-noborder">
+			<aon:outputText value="&#160;" />
+			<aon:commandLink id="leaveDetailList-selectButton"
+				styleClass="aon-table-row-link" value="#{bundle.aon_editing}"
+				requestDelay="100" ajaxSingle="true"
+				actionListener="#{contractLeave.onSelectLeaveDetail}">
+			</aon:commandLink>
+		</aon:column>
+		
+	</rich:subTable>
+	
+</ui:composition>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Declarado">
+
+ <field name="type" value="2" format="Numeric" pattern="9(1)" />
+ <field name="modelo" value="347" format="Numeric" pattern="9(3)" />
+ <field name="ejercicio" value="bean" bean="DEPONENT" property="year" format="Numeric" pattern="9(4)" />
+ <field name="nif_declarante" value="bean" bean="DEPONENT" property="code" format="Nif" pattern="X(9)" />
+ <field name="nif_declarado" value="bean" bean="DECLARED" property="code" format="Nif" pattern="X(9)" />
+ <field name="nif_rpte" value="bean" bean="DECLARED" property="managerCode" format="Nif" pattern="X(9)" />
+ <field name="nombre" value="bean" bean="DECLARED" property="name" format="AlphaNumeric" pattern="X(40)" />
+ <field name="tipo" value="D" format="Alphabetic" pattern="X(1)" />
+ <field name="provincia" value="bean" bean="DECLARED" property="province" format="Numeric" pattern="9(2)" />
+ <field name="pais" value="bean" bean="DECLARED" property="country" format="AlphaNumeric" pattern="X(2)" /> 
+ <field name="free1" value=" " format="Alphabetic" pattern="X(1)" /> 
+ <field name="clave" value="bean" bean="DECLARED" property="key" format="Alphabetic" pattern="X(1)" />
+ <field name="importe" value="bean" bean="DECLARED" property="quantity" format="Numeric" pattern="9(13)V99" />
+ <field name="seguro" value="bean" bean="DECLARED" property="insurance" format="Alphabetic" pattern="X(1)" />
+ <field name="arrendamiento" value="bean" bean="DECLARED" property="renting" format="Alphabetic" pattern="X(1)" /> 
+ <field name="importe_metalico" value="0" format="Numeric" pattern="9(13)V99" />
+ <field name="importe_inmuebles_iva" value="0" format="Numeric" pattern="9(13)V99" /> 
+ <field name="free2" value=" " format="Alphabetic" pattern="X(371)" />
+ 
+</register>

@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/com/esferalia/aon/ui/payroll/facelet/enterpriseTree/treeTemplate.xhtml">
+
+	<ui:define name="header">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{companyBundle.company_enterprise_module}" />
+			<ui:param name="toolbarDescription" value="&#160;" />
+			<ui:define name="toolbarContent">
+				<c:if test="#{!aonConfiguration.bean.enterprise.standalone}">
+					<aon:commandButton id="edit"
+						value="#{bundle.aon_edit}"
+						action="enterprise_form"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" >
+						<f:setPropertyActionListener
+							target="#{enterprise.backAction}" value="enterprise_formTree" />						
+						<f:setPropertyActionListener
+							target="#{enterprise.backActionListener}" value="enterprise.onBack" />
+					</aon:commandButton>
+				</c:if>
+				<aon:commandButton id="salary"
+					styleClass="aon-finding-toolbar-item aon-icon-pdf"
+					value="#{payrollBundle.payroll_salary_module}"
+					actionListener="#{salaryPrint.onInit}"
+					action="salaryPrint_list">
+				</aon:commandButton>						
+				<aon:commandButton id="salaryExpensePopupButton"
+					reRender="showSalaryExpenseWindow"
+					actionListener="#{salaryExpense.onInitialize}"
+					styleClass="aon-finding-toolbar-item aon-icon-return"
+					value="#{payrollBundle.payroll_salary_expense}" >
+					<f:setPropertyActionListener target="#{salaryExpense.showSalaryExpenseWindow}"
+						value="#{true}" />								
+				</aon:commandButton>
+				<aon:htmlCommandLink id="calendarReport_list"
+					styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+					value="#{calendarBundle.aon_calendar_calendar}"
+					rendered="#{enterprise.to.calendar.id!=null}"
+					action="#{report.onExecute}">
+					<aon:actionListener method="#{enterprise.onLoadCalendar}" />						
+					<aon:actionListener method="#{calendarPrint.onLoad}" />						
+					<f:param name="reportKey" value="calendarReport" />
+					<f:param name="outputFormat" value="PDF" />
+				</aon:htmlCommandLink>	
+				
+				<c:if test="#{!aonConfiguration.bean.enterprise.standalone}">
+					<aon:commandButton id="back"
+						title="#{bundle.aon_key_cancel_accelerator}"
+						value="#{bundle.aon_back}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						action="enterprise_list"
+						accesskey="#{bundle.aon_key_cancel}" />
+					<aon:commandButton id="Contract-reset" ajaxSingle="true"
+						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+						value="#{payrollBundle.payroll_contract_new}" 
+						reRender="#{contract.beanName}ModalContainer"
+						styleClass="aon-finding-toolbar-item aon-icon-reset" >
+						<aon:actionListener method="#{enterpriseTree.onResetContract}" />
+					</aon:commandButton>						
+				</c:if>										
+				<aon:spin id="enterpriseSpin" controller="#{enterprise}" />
+			</ui:define>				
+		</ui:decorate>
+	</ui:define>
+
+	<ui:define name="content">	
+
+		<aon:div styleClass="aon-scroll-area">
+		
+			<aon:div styleClass="aon-panelGrid-search aon-margin-bottom">
+				<aon:div styleClass="aon-panelGrid-search-info">
+					<aon:outputText value="#{payrollBundle.payroll_contract_filter}" styleClass="aon-panelGrid-search-info-internal"/>
+				</aon:div>			
+				
+				<aon:panelGrid columns="2">
+
+					<aon:outputText value="#{payrollBundle.payroll_employee_name}"
+						styleClass="aon-margin-left aon-margin-right" />
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/lookup.xhtml" >
+						<ui:param name="lookupTo" value="#{enterpriseTree.contract}" />
+						<ui:param name="skipLabel" value="#{true}" />
+						<ui:param name="skipInputText" value="#{true}" />
+						<ui:param name="skipSearchButton" value="#{true}" />
+						<ui:param name="skipGoToButton" value="#{true}" />
+						<ui:param name="skipNewButton" value="#{true}" />
+						<ui:param name="lookupReRender" value="aonContent" />
+						<ui:param name="lookupControllerListener" value="#{enterpriseTree.contractListener}" />
+						<aon:methodParam name="lookupAction" value="contract_formTree" />								
+						<aon:methodParam name="lookupChangeListener" 
+							value="#{enterpriseTree.onContractChanged}" type="lookupChangeListener" />
+					</ui:include>							
+				
+					<aon:outputText value="" />
+					<aon:div>
+						<aon:outputText value="#{payrollBundle.payroll_active}" styleClass="aon-margin-left" />
+						<aon:selectBooleanCheckbox value="#{enterpriseTree.activeContract}"  >
+							<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true" ajaxSingle="true"
+								actionListener="#{enterpriseTree.reloadTree}" />
+						</aon:selectBooleanCheckbox>
+						
+						<aon:outputText value="#{payrollBundle.payroll_inactive}" styleClass="aon-margin-left" />
+						<aon:selectBooleanCheckbox value="#{enterpriseTree.inactiveContract}"  >
+							<a4j:support event="onclick" reRender="aonContent" ignoreDupResponses="true" ajaxSingle="true">
+								<aon:actionListener method="#{enterpriseTree.onChangeInactiveDate}" />
+								<aon:actionListener method="#{enterpriseTree.reloadTree}" />
+							</a4j:support>
+						</aon:selectBooleanCheckbox>
+						
+						<aon:outputLabel styleClass="aon-italic aon-margin-left aon-margin-right"
+							value="#{bundle.aon_end_date}:" />
+						<aon:selectOneMenu 
+							styleClass="aon-margin-right"
+							disabled="#{!enterpriseTree.inactiveContract}"
+							value="#{enterpriseTree.inactiveLastPeriod}" >
+							<f:selectItems value="#{payrollCollections.inactiveLastPeriods}" />
+							<a4j:support event="onchange" reRender="aonContent" ignoreDupResponses="true" ajaxSingle="true">
+								<aon:actionListener method="#{enterpriseTree.onChangeLastPeriod}" />
+								<aon:actionListener method="#{enterpriseTree.reloadTree}" />
+							</a4j:support>
+						</aon:selectOneMenu>
+						<aon:selectInputDate  
+							disabled="#{!(enterpriseTree.inactiveContract and enterpriseTree.inactiveLastPeriod=='MANUAL')}"
+							value="#{enterpriseTree.inactiveDate}"
+							inputSize="10" renderAsPopup="true" enableManualInput="true"
+							timeZone="#{timeZoneController.timeZone}"
+							popupDateFormat="#{bundle.aon_date_pattern}">
+							<a4j:support event="onchanged" reRender="aonContent" ignoreDupResponses="true">
+								<aon:actionListener method="#{enterpriseTree.onChangeInactiveDate}" />
+								<aon:actionListener method="#{enterpriseTree.reloadTree}" />
+							</a4j:support>
+						</aon:selectInputDate>
+					</aon:div>
+					
+				</aon:panelGrid>
+			</aon:div>		
+		
+			<aon:panelGrid columns="2" styleClass="aon-width-all"
+				columnClasses="aon-panelGrid-odd aon-width-140,aon-panelGrid-even">
+				
+				<aon:outputText value="#{companyBundle.company_enterprise}" />
+				<aon:outputText value="#{enterprise.to.registry.name}" />
+					
+				<aon:outputText value="#{bundle.aon_scope}" />
+				<aon:outputText value="#{enterprise.to.scope.description}" />
+
+				<aon:outputText value="#{bundle.aon_document}" />
+				<aon:div>
+					<aon:outputText value="#{bundle.aon_document_country}:" styleClass="aon-italic aon-margin-right"/>
+					<aon:outputText value="#{enterprise.to.registry.documentCountry}" />
+					<aon:outputText value="#{bundle.aon_document_type}:" styleClass="aon-italic aon-margin-right aon-margin-left"/>
+					<aon:outputText value="#{enterprise.to.registry.documentType}" />
+					<aon:outputText value="#{enterprise.to.registry.document}" styleClass="aon-margin-left"/>
+				</aon:div>
+
+				<aon:outputText value="#{registryBundle.registry_address}" />
+				<aon:outputText value="#{enterprise.mainAddress.fullAddress}"  />
+	
+				<aon:outputText value="#{registryBundle.registry_zip}" />
+				<aon:outputText value="#{enterprise.mainAddress.zip}"  />
+
+				<aon:outputText value="#{registryBundle.registry_city}" />
+				<aon:outputText value="#{enterprise.mainAddress.city}"  />
+
+				<aon:outputText value="#{registryBundle.registry_geozone}" />
+				<aon:outputText value="#{enterprise.mainAddress.geozone.name}"  />
+			
+				<ui:include src="/com/code/aon/ui/company/facelet/enterprise/formOtherContent.xhtml" />				
+			
+				<ui:include src="/com/code/aon/ui/registry/facelet/rmedia/view.xhtml" >
+					<ui:param name="controller" value="#{enterprise}" />
+				</ui:include>
+
+				<aon:outputText value="#{calendarBundle.aon_calendar_calendar}" />
+				<aon:outputText value="#{enterprise.to.calendar.description}" />
+
+			</aon:panelGrid>
+
+		</aon:div>
+	
+	</ui:define>		
+
+	<ui:define name="additionalContent">	
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{contractLookup}" />
+		<aon:lookupButtonPopup lookup="#{agreementLookup}" />
+		<aon:lookupButtonPopup lookup="#{cnoLookup}" />
+		
+		<ui:include src="/com/code/aon/ui/company/facelet/enterprise/expenseModal.xhtml" />
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/modalNewContract.xhtml" >
+			<ui:param name="controller" value="#{contract}" />
+			<ui:param name="popupWindowTitle" value="#{payrollBundle.payroll_contract}" />
+			<ui:param name="lookupDisabled" value="true" />
+		</ui:include>
+		
+	</ui:define>
+
+</ui:composition>

@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:h="http://java.sun.com/jsf/html" >
+	
+	<c:if test="#{showSearchOption}" >
+		<aon:panelGrid columns="1" style="width: 100%;"
+			columnClasses="aon-panelGrid-even  aon-width-auto">
+			<aon:selectOneRadio value="#{contractDeduction.searchCurrent}">
+				<f:selectItem itemLabel="#{payrollBundle.payroll_current}" itemValue="#{true}" />
+				<f:selectItem itemLabel="#{payrollBundle.payroll_historyc}" itemValue="#{false}" />
+				<a4j:support event="onclick" reRender="contractDeductionTable" >
+					<aon:actionListener method="#{contractDeduction.onSearch}" />
+				</a4j:support>
+			</aon:selectOneRadio>
+		</aon:panelGrid>
+	</c:if>
+	
+	<aon:dataTable id="contractDeductionTable" var="to" value="#{controller.model}" rows="0">
+		<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+			<f:facet name="header">
+				<aon:outputText value="&#160;" />
+			</f:facet>
+			<aon:commandButton id="ContractDeduction-select"
+				title="#{bundle.aon_update}" 
+				actionListener="#{controller.onEdit}"
+				reRender="#{controller.beanName}ModalContainer"
+				styleClass="aon-editDataTable-button aon-icon-rowSelector"
+				focus="accountId" />
+			<f:facet name="footer">
+				<aon:div>
+					<aon:commandButton
+						id="ContractDeduction-reset" 
+						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+						actionListener="#{controller.onReset}"
+						reRender="#{controller.beanName}ModalContainer"
+						styleClass="aon-editDataTable-button aon-icon-reset"
+						accesskey="#{bundle.aon_key_new_line}"/>
+				</aon:div>
+			</f:facet>
+		</aon:column>
+
+		<c:if test="#{!skipStartDateColumn}">
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_start_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.startDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+		</c:if>
+		
+		<c:if test="#{!skipEndDateColumn}">
+			<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120">
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_end_date}" />
+				</f:facet>
+				<aon:outputText value="#{to.endDate}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>		
+			</aon:column>
+		</c:if>
+		
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-200">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_type}" />
+			</f:facet>
+			<aon:outputText value="#{to.type}" />
+		</aon:column>
+
+		<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+			<f:facet name="header">
+				<aon:outputText value="#{bundle.aon_description}" />
+			</f:facet>
+			<aon:outputText value="#{to.fullDescription}" />
+		</aon:column>
+	</aon:dataTable>
+	
+</ui:composition>

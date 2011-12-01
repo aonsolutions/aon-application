@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.warehouse.Delivery">
+		<alias names="id,series,number,project,project_id,customer_id,registryAddress,registryAddress_id,issueTime,payMethod,payMethod_id,securityLevel,status,comments,remarks,workPlace_id,scope_id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank_id,bankAccount"/>
+		<hibernate names="id,series,number,project,project.id,customer.id,registryAddress,registryAddress.id,issueTime,payMethod,payMethod.id,securityLevel,status,comments,remarks,workPlace.id,scope.id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank.id,bankAccount"/>
+	</bean>
+	
+	<bean class="com.code.aon.warehouse.DeliveryDetail">
+		<alias names="delivery_id,description,discountExpression,id,item_id,line,price,quantity,salesDetail_id,warehouse_id,item_product_type,salesDetail_sales_id"/>
+		<hibernate names="delivery.id,description,discountExpression,id,item.id,line,price,quantity,salesDetail.id,warehouse.id,item.product.type,salesDetail.sales.id"/>
+	</bean>
+	
+	<bean class="com.code.aon.warehouse.Income">
+		<alias names="id,series,number,project,project_id,supplier_id,registryAddress,registryAddress_id,issueTime,payMethod,payMethod_id,securityLevel,status,comments,remarks,workPlace_id,scope_id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank_id,bankAccount"/>
+		<hibernate names="id,series,number,project,project.id,supplier.id,registryAddress,registryAddress.id,issueTime,payMethod,payMethod.id,securityLevel,status,comments,remarks,workPlace.id,scope.id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank,bank.id,bankAccount"/>
+	</bean>
+
+	<bean class="com.code.aon.warehouse.IncomeDetail">
+		<alias names="description,discountExpression,id,income_id,item_id,line,price,project_id,purchaseDetail_id,quantity,warehouse_id,item_product_type,purchaseDetail_purchase_id"/>
+		<hibernate names="description,discountExpression,id,income.id,item.id,line,price,project.id,purchaseDetail.id,quantity,warehouse.id,item.product.type,purchaseDetail.purchase.id"/>
+	</bean>
+
+	<bean class="com.code.aon.warehouse.InventoryDetail">
+		<alias names="id,inventory_id,item_id,actualQuantity,realQuantity,cost,item_product_name,item_product_category_id,item_product_category_name"/>
+		<hibernate names="id,inventory.id,item.id,actualQuantity,realQuantity,cost,item.product.name,item.product.category.id,item.product.category.name"/>
+	</bean>
+	
+	<bean class="com.code.aon.warehouse.ItemWarehouse">
+		<alias names="id,item_id,warehouse_id,stockMin,stockMax,location,item_product_name,item_product_category_id,item_product_category_name"/>
+		<hibernate names="id,item.id,warehouse.id,stockMin,stockMax,location,item.product.name,item.product.category_id,item.product.category.name"/>
+	</bean>
+</dao>

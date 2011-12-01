@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/com/esferalia/aon/ui/payroll/facelet/fanBatch/step_template.xhtml">
+
+	<ui:define name="step_name">
+		<aon:outputText value="#{payrollBundle.fanBatch_step1}" />
+	</ui:define>
+
+	<ui:define name="step_content">
+	
+		<aon:dataTable id="enterpriseList" value="#{fanBatchWizard.model}"
+			var="to" rows="20" rendered="#{fanBatchWizard.model.rowCount > 0}"
+			columnClasses="
+			aon-editDataTable-iconColumn, 
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn, 
+			aon-editDataTable-textColumn aon-width-250">
+			
+				<aon:column>
+					<f:facet name="header">
+						<aon:div layout="none">
+							<aon:commandButton id="selectButton" 
+								actionListener="#{fanBatchWizard.onSelectAll}"
+								reRender="enterpriseList"
+								onclick="if (!confirm('Desea marcar #{fanBatchWizard.model.rowCount} filas?')) {return false;}"
+								value="&#160;" style="margin-right: 0px;"
+								styleClass="aon-editDataTable-button aon-icon-checkAll aon-vertical-align-top" />
+							<aon:commandButton id="deselectButton" 	
+								actionListener="#{fanBatchWizard.onDeselectAll}"
+								reRender="enterpriseList"
+								onclick="if (!confirm('Desea desmarcar #{fanBatchWizard.model.rowCount} filas?')) {return false;}"
+								value="&#160;" style="margin-right: 0px;"
+								styleClass="aon-editDataTable-button aon-icon-checkNone aon-vertical-align-top" />
+						</aon:div>
+					</f:facet>
+					<aon:selectBooleanCheckbox id="checkMessage" value="#{to.selected}"
+						style="cursor: default;" styleClass="aon-vertical-align-middle">
+						<a4j:support event="onclick"
+							reRender="checkMessage, enterpriseList"  />
+					</aon:selectBooleanCheckbox>
+				</aon:column>
+			
+				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/fanBatch/columns.xhtml" />
+
+			</aon:dataTable>	
+			<aon:dataScroller2 for="enterpriseList" showNote="true" />
+
+	</ui:define>
+</ui:composition>

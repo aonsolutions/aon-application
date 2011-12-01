@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+	
+	<c:if test="#{!controller.recorded}" >
+		<aon:div styleClass="aon-toolbar" >
+			<aon:commandButton title="#{bundle.aon_check_all}"
+				styleClass="aon-finding-toolbar-item aon-icon-checkAll"
+				value="#{bundle.aon_check_all}"
+				actionListener="#{controllerDetail.checkHandler.checkAll}" reRender="detailDataDiv"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />	
+			<aon:commandButton title="#{bundle.aon_uncheck_all}"
+				styleClass="aon-finding-toolbar-item aon-icon-checkNone"
+				value="#{bundle.aon_uncheck_all}"
+				actionListener="#{controllerDetail.checkHandler.checkNone}" reRender="detailDataDiv"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+			<aon:commandButton title="#{payrollBundle.payroll_remove_batch}"
+				styleClass="aon-finding-toolbar-item aon-icon-deleteFolder"
+				value="#{payrollBundle.payroll_remove_batch}"
+				actionListener="#{controller.onRemoveSelected}" reRender="batchForm, batchPanelTabSet"
+				onclick="Richfaces.showModalPanel('waitProccess')" 
+	     		oncomplete="Richfaces.hideModalPanel('waitProccess')" />				
+		</aon:div>
+	</c:if>
+	
+	<aon:div id="detailDataDiv">
+		<aon:dataTable id="batchDetailData" value="#{controllerDetail.model}"
+			var="to" rows="20" rendered="#{controllerDetail.model.rowCount > 0}" >			
+
+			<c:if test="#{!controller.recorded}" >
+				<aon:column styleClass="aon-editDataTable-iconColumn">
+					<f:facet name="header">
+						<aon:outputText value="&#160;" />
+					</f:facet>
+					<aon:selectBooleanCheckbox id="Included_Row_checked"
+						value="#{controllerDetail.checkHandler.rowChecked}"
+						valueChangeListener="#{controllerDetail.checkHandler.rowSelected}" />	
+				</aon:column>
+			</c:if>
+			
+			<ui:insert name="detailDataColumns" />
+			
+		</aon:dataTable>
+		<aon:dataScroller2 for="batchDetailData" showNote="true" />
+	</aon:div>
+
+</ui:composition>

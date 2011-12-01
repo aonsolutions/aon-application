@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="vatTaxList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_professional_retention_module}" />
+				<ui:param name="controller" value="#{profRetention}" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+					<ui:param name="controller" value="#{profRetention}" />
+
+					<ui:define name="columns">
+						<aon:column alias="ProfessionalRetention.enterprise.registry.name" 
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{companyBundle.company_enterprise}" />
+							</f:facet>
+							<aon:outputText value="#{to.enterprise.registry.fullName}">
+								<aon:abbreviateConverter maxWidth="50" />
+							</aon:outputText>
+						</aon:column>
+					
+						<aon:column alias="ProfessionalRetention.paymentDate"
+							styleClass="aon-editDataTable-dateColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_date}" />
+							</f:facet>
+							<aon:outputText value="#{to.paymentDate}">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column alias="ProfessionalRetention.document" 
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_document}" />
+							</f:facet>
+							<aon:outputText value="#{to.document}" />
+						</aon:column>
+
+						<aon:column alias="ProfessionalRetention.name" 
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}">
+								<aon:abbreviateConverter maxWidth="50" />
+							</aon:outputText>
+						</aon:column>
+	
+						<aon:column alias="ProfessionalRetention.concept"
+							styleClass="aon-editDataTable-textColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{financeBundle.finance_invoice_number}" />
+							</f:facet>
+							<aon:outputText value="#{to.concept}" />
+						</aon:column>
+
+						<aon:column alias="ProfessionalRetention.taxableBase" styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_taxable_base}" />
+							</f:facet>
+							<aon:outputText value="#{to.taxableBase}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column alias="ProfessionalRetention.percent" styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_percentage}" />
+							</f:facet>
+							<aon:outputText value="#{to.percent}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column alias="ProfessionalRetention.quota" styleClass="aon-editDataTable-numberColumn">
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_fee}" />
+							</f:facet>
+							<aon:outputText value="#{to.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

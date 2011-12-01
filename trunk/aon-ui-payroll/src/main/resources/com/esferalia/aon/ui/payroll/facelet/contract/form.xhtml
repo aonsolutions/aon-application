@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="contractForm">
+
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formToolbar.xhtml" />
+			
+			<c:if test="#{!contract.new}" >
+				<aon:div styleClass="aon-scroll-area">		
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
+					
+					<aon:panelGrid columns="7" style="width: 100%; margin-top:10px;"
+						columnClasses="aon-panelGrid-even aon-width-180 #{variablesSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{paymentsSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{deductionsSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{bonusSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{embargosSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{documentsSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-auto">
+					
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-search"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowVariables}"
+								action="contractData_list"
+								styleClass="aon-dataTable-link #{variablesSelected?'aon-bold':''}"
+								value="#{payrollBundle.payroll_contract_data_variables}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-fraction"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowPayments}"
+								styleClass="aon-dataTable-link #{paymentsSelected?'aon-bold':''}"
+								action="contractPayment_list"
+								value="#{payrollBundle.payroll_salary_payments_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-settle"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowDeductions}"
+								styleClass="aon-dataTable-link #{deductionsSelected?'aon-bold':''}"
+								action="contractDeduction_list"
+								value="#{payrollBundle.payroll_salary_deductions_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-fraction"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowBonus}"
+								styleClass="aon-dataTable-link #{bonusSelected?'aon-bold':''}"
+								action="contractBonus_list"
+								value="#{payrollBundle.payroll_salary_bonus_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-settle"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowEmbargos}"
+								styleClass="aon-dataTable-link #{embargosSelected?'aon-bold':''}"
+								action="contractEmbargo_list"
+								value="#{payrollBundle.payroll_salary_embargos_tab}" />
+						</aon:div>	
+				
+						<aon:div>
+							<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-attach-file"/>
+							<aon:commandLink 
+								actionListener="#{contract.onShowDocuments}"
+								styleClass="aon-dataTable-link #{documentsSelected?'aon-bold':''}"
+								action="contractDocuments_grid"
+								value="#{payrollBundle.payroll_documents}" />
+						</aon:div>	
+				
+						<aon:outputText value="&#160;" />
+					</aon:panelGrid>
+					
+				</aon:div>
+			</c:if>
+			<c:if test="#{contract.new}" >
+				<aon:div styleClass="aon-scroll-area">		
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formNewContent.xhtml" />
+				</aon:div>
+			</c:if>
+			
+		</aon:form>
+		
+		<ui:insert name="contractDetail" />
+		
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		<aon:lookupButtonPopup lookup="#{agreementLookup}" />
+		<aon:lookupButtonPopup lookup="#{cnoLookup}" />
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/modalPanel.xhtml" />
+	</ui:define>
+</ui:composition>

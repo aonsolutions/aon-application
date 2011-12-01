@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+
+	<c:set var="total" value="#{0.00}" />
+	
+
+	<c:if test="#{costs.count == 0  }" >
+		<aon:div style="margin-left: 1 0px; border-bottom: solid #CCCCCC 1px;">
+			<aon:outputText value="#{index}. #{costs.name}" styleClass="aon-bold"/>
+		</aon:div>
+		<aon:div style="border-bottom: solid #CCCCCC 1px;">
+			<aon:outputText value="&#160;"/>
+		</aon:div>
+		<aon:div style="border-bottom: solid #CCCCCC 1px;">
+			<aon:outputText value="&#160;"/>
+		</aon:div>
+	</c:if>			
+	
+
+	<c:if test="#{costs.count == 1 }" >
+		<aon:div style="margin-left: 10px; border-bottom: solid #CCCCCC 1px;">
+			<aon:outputText value="#{index}. #{costs.name} " styleClass="aon-bold"/>
+		</aon:div>
+		<aon:div style="border-bottom: solid #CCCCCC 1px;">
+			<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{costs.list[0].description}"/>
+		</aon:div>
+		<aon:div style="border-bottom: solid #CCCCCC 1px;">
+			<aon:outputText value="&#160;"/>
+			<aon:outputText value="#{costs.list[0].amount}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:div>
+		<c:set var="total" value="#{total + costs[0].amount}" />
+	</c:if>			
+	
+	<c:if test="#{costs.count > 1}" >
+		<aon:div style="margin-left: 10px; ">
+			<aon:outputText value="#{index}. #{costs.name} " styleClass="aon-bold"/>
+		</aon:div>
+		<aon:div >
+		</aon:div>
+		<aon:div >
+		</aon:div>
+		<c:set var="subTotal" value="#{0.00}" />
+		<c:forEach var="cost" items="#{costs.list}">
+			<aon:div style="margin-left: 20px; border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="#{payrollBundle[cost.name]}" />
+			</aon:div>
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{cost.description}"/>
+			</aon:div>
+			<aon:div style="border-bottom: solid #CCCCCC 1px;">
+				<aon:outputText value="&#160;"/>
+				<aon:outputText value="#{cost.amount}">
+					<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+				</aon:outputText>
+			</aon:div>
+			<c:set var="total" value="#{total + cost.amount}" />
+			<c:set var="subTotal" value="#{subTotal + cost.amount}" />
+		</c:forEach>
+		<aon:div style="margin-left: 20px; ">
+			<aon:outputText value="&#160;"/>
+		</aon:div>
+		<aon:div style="border-bottom: solid #CCCCCC 1px;">
+			<aon:outputText value="&#160;"/>
+			<aon:outputText value="#{payrollBundle.payroll_salary_cost_total}"/>
+		</aon:div>
+		<aon:div style="border-bottom: solid #CCCCCC 1px;">
+			<aon:outputText value="&#160;"/>
+			<aon:outputText value="#{subTotal}">
+				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+			</aon:outputText>
+		</aon:div>
+	</c:if>		
+		
+
+</ui:composition>			

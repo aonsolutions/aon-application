@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+		<aon:form id="records">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{statBundle.stat_project_info}" />
+				<ui:define name="beforeToolbarContent">
+					<aon:commandButton value="#{bundle.aon_back}"
+						action="#{projectStat.backAction}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid columns="4" styleClass="aon-width-all" 
+					columnClasses="aon-panelGrid-odd aon-width-120
+									,aon-panelGrid-even aon-width-auto
+									,aon-panelGrid-odd  aon-width-120
+									,aon-panelGrid-even aon-width-300">
+					
+					
+					<aon:outputText value="#{projectBundle.project_project}" />
+					<aon:outputText value="#{projectStat.project.name}" />
+
+					<aon:outputText value="#{bundle.aon_alias}" />
+					<aon:outputText value="#{projectStat.project.alias}" />
+					
+					<aon:outputText value="#{projectBundle.project_assigned}" />
+					<aon:outputText value="#{projectStat.project.registry.fullName}" />
+					
+					<aon:outputText value="#{projectBundle.project_project_type}" />
+					<aon:outputText value="#{projectStat.project.projectType.description}" />
+				</aon:panelGrid>
+
+				<aon:panelTabSet id="projectHistoryTabSet">
+					<aon:panelTab id="chartTab" label="#{statBundle.stat_economic_summary}">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/economicSummary.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="ganttTab" label="Gantt">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/gantt.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="approvedOffersTab" label="#{statBundle.stat_offer_amount}">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/approvedOfferList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="saleInvoiceTab" label="#{statBundle.stat_income_amount}">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/saleInvoiceList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="costInvoiceTab" label="#{statBundle.stat_invoice_cost_amount}">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/costInvoiceList.xhtml" />
+					</aon:panelTab>
+					<aon:panelTab id="manodeobraTab" label="#{statBundle.stat_labour_amount}">
+						<ui:include	src="/com/code/aon/ui/stat/facelet/projectStat/labourList.xhtml" />
+					</aon:panelTab>
+				</aon:panelTabSet>
+
+ 			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>

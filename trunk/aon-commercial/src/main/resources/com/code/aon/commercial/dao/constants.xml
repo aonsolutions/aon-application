@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.commercial.OfferDetail" sqlName="offer_detail">
+		<alias names="id,offer,offer_id,offer_target_id,offer_issueDate,offer_address_geozone_id,offer_series,offer_number,offer_seller_id,offer_securityLevel,offer_status,offer_workPlace_id,line,item_id,item_product_product_category_id,item_product_type,description,quantity,price,discountExpression,status"/>
+		<hibernate names="id,offer,offer.id,offer.target.id,offer.issueDate,offer.address.geozone.id,offer.series,offer.number,offer.seller.id,offer.securityLevel,offer.status,offer.workPlace.id,line,item.id,item.product.category.id,item.product.type,description,quantity,price,discountExpression,status"/>
+	</bean>
+	<bean class="com.code.aon.commercial.OfferDetailCommission" sqlName="offer_detail_commission">
+		<alias names="amount,commission,id,offerDetail_id,offerDetail_item_id,offerDetail_item_product_type,offerDetail_description,offerDetail_status,offerDetail_offer_id,offerDetail_offer_issueDate,offerDetail_offer_number,offerDetail_offer_scope_id,offerDetail_offer_securityLevel,offerDetail_offer_seller_id,offerDetail_offer_series,offerDetail_offer_status,offerDetail_offer_target_id,offerDetail_offer_supplier_id,offerDetail_offer_type,offerDetail_offer_signed,offerDetail_offer_workPlace_id,payDate,status"/>
+		<hibernate names="amount,commission,id,offerDetail.id,offerDetail.item.id,offerDetail.item.product.type,offerDetail.description,offerDetail.status,offerDetail.offer.id,offerDetail.offer.issueDate,offerDetail.offer.number,offerDetail.offer.scope.id,offerDetail.offer.securityLevel,offerDetail.offer.seller.id,offerDetail.offer.series,offerDetail.offer.status,offerDetail.offer.target.id,offerDetail.offer.supplier.id,offerDetail.offer.type,offerDetail.offer.signed,offerDetail.offer.workPlace.id,payDate,status"/>
+	</bean>
+	<bean class="com.code.aon.commercial.Target" sqlName="target">
+		<alias names="id,registry_id,registry_name,registry_alias,registry_document,tariff_id,advertising,surcharge,withholding,transaction,status,scope_id"/>
+		<hibernate names="id,registry.id,registry.name,registry.alias,registry.document,tariff.id,advertising,surcharge,withholding,transaction,status,scope.id"/>
+	</bean>	
+	<bean class="com.code.aon.commercial.TargetSupplier" sqlName="target_supplier">
+		<alias names="id,target_id,supplier_id,supplier_registry_name,targetExternalCode,tariff_id,payMethod_id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank_id,bankAccount"/>
+		<hibernate names="id,target.id,supplier.id,supplier.registry.name,targetExternalCode,tariff.id,payMethod.id,numberOfPayments,daysToFirstPayment,daysBetweenPayments,paymentDays,bank.id,bankAccount"/>
+	</bean>
+	<bean class="com.code.aon.commercial.CommissionTypeCommission" sqlName="commission_type_commission">
+		<alias names="id,commissionType_id,commission_id,commission_name,commission_startDate,commission_endDate"/>
+		<hibernate names="id,commissionType.id,commission.id,commission.name,commission.startDate,commission.endDate"/>
+	</bean>
+	<bean class="com.code.aon.commercial.ProjectCommercial" sqlName="project_commercial">
+		<alias names="id,project_id,target_id,seller_id,comments,source,status,statusDate,probability,project_name,project_alias,project_date,project_commercial"/>
+		<hibernate names="id,project.id,target.id,seller.id,comments,source,status,statusDate,probability,project.name,project.alias,project.date,project.commercial"/>
+	</bean>
+</dao>

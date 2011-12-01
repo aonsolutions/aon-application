@@ -1,0 +1,752 @@
+package com.code.aon.ui.marketing.controller;
+
+import static com.code.aon.ui.commercial.controller.ICommercialConstants.TARGET_CONTROLLER_NAME;
+import static com.code.aon.ui.groupware.controller.IGroupWareConstants.ALARM_CONTROLLER_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MESSAGE;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.code.aon.commercial.Target;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
+import com.code.aon.groupware.Alarm;
+import com.code.aon.groupware.enumeration.AlarmSource;
+import com.code.aon.marketing.ActionTarget;
+import com.code.aon.marketing.MarketingAction;
+import com.code.aon.marketing.Question;
+import com.code.aon.marketing.QuestionValue;
+import com.code.aon.marketing.Survey;
+import com.code.aon.marketing.SurveyQuestion;
+import com.code.aon.marketing.SurveyResponse;
+import com.code.aon.marketing.SurveyResponseDetail;
+import com.code.aon.marketing.SurveyWorkflow;
+import com.code.aon.marketing.TargetProfile;
+import com.code.aon.marketing.Template;
+import com.code.aon.marketing.dao.IMarketingAlias;
+import com.code.aon.marketing.enumeration.ActionMediaType;
+import com.code.aon.marketing.enumeration.ActionTargetStatus;
+import com.code.aon.marketing.enumeration.QuestionType;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.registry.enumeration.AddressType;
+import com.code.aon.registry.enumeration.MediaType;
+import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.company.util.CompanyEmailUtil;
+import com.code.aon.ui.config.util.UserUtils;
+import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.groupware.controller.AlarmController;
+import com.code.aon.ui.mailing.MailData;
+import com.code.aon.ui.mailing.MailingManager;
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.MessageController;
+
+public class CommunicationCenterController implements IMarketingConstants {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CommunicationCenterController.class.getName());
+	
+	private Date date;
+	
+	private MarketingAction action;
+	
+	private Survey survey;
+	
+	private Template template;
+	
+	private Target target;
+	
+	private ActionTarget actionTarget;
+	
+	private SurveyResponse surveyResponse;
+	
+	private SurveyResponseDetail response;
+	
+	private SurveyQuestion surveyQuestion;
+	
+	private String nextQuestionAction;
+	
+	private Integer questionValueId;
+	
+	private List<SelectItem> questionValues;
+	
+	private RegistryAddress mainAddress;
+	
+	private RegistryMedia phone;
+	
+	private RegistryMedia cellular;
+	
+	private RegistryMedia fax;
+	
+	private RegistryMedia email;
+	
+	private RegistryMedia web;	
+	
+	private boolean targetSelected;
+	
+	private boolean actionSelected;
+	
+	private boolean surveySelected;
+	
+	private boolean templateSelected;
+	
+	private int pendingTargets;
+	
+	private ListDataModel mailingModel;
+	
+	private User user;
+	
+	public CommunicationCenterController() {
+		this.date = new Date();
+		this.questionValues = new LinkedList<SelectItem>();
+		this.user = UserUtils.getInstance().getLoggedUser();
+	}
+
+	public ListDataModel getMailingModel() {
+		return mailingModel;
+	}
+
+	public void setMailingModel(ListDataModel mailingModel) {
+		this.mailingModel = mailingModel;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public MarketingAction getAction() {
+		return action;
+	}
+
+	public void setAction(MarketingAction action) throws ManagerBeanException {
+		if ( action != null ) {
+			this.action = action;
+		} else {
+			IManagerBean maBean = BeanManager.getManagerBean(MarketingAction.class);
+			this.action = (MarketingAction) maBean.createNewTo();
+		}
+		this.actionSelected = (this.action.getId() != null);
+	}
+
+	public Survey getSurvey() {
+		return survey;
+	}
+
+	public void setSurvey(Survey survey) throws ManagerBeanException {
+		if ( survey != null ) {
+			this.survey = survey;
+		} else {
+			IManagerBean surveyBean = BeanManager.getManagerBean(Survey.class);
+			this.survey = (Survey) surveyBean.createNewTo();
+		}
+		this.surveySelected = (this.survey.getId() != null);
+	}
+	
+	public Template getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(Template template) throws ManagerBeanException {
+		if ( template != null ) {
+			this.template = template;
+		} else {
+			IManagerBean templateBean = BeanManager.getManagerBean(Template.class);
+			this.template = (Template) templateBean.createNewTo();
+		}
+		this.templateSelected = (this.template.getId() != null);
+	}
+
+	public Target getTarget() {
+		return target;
+	}
+
+	public void setTarget(Target target) throws ManagerBeanException {
+		if ( target != null ) {
+			this.target = target;
+		} else {
+			IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
+			this.target = (Target) targetBean.createNewTo();
+		}
+		this.targetSelected = (this.target.getId() != null);
+	}
+	
+	public ActionTarget getActionTarget() {
+		return actionTarget;
+	}
+
+	public void setActionTarget(ActionTarget actionTarget) {
+		this.actionTarget = actionTarget;
+	}
+
+	public boolean isTargetSelected() {
+		return targetSelected;
+	}
+
+	public boolean isActionSelected() {
+		return actionSelected;
+	}
+	
+	public boolean isSurveySelected() {
+		return surveySelected;
+	}
+	
+	public boolean isTemplateSelected() {
+		return templateSelected;
+	}
+
+	public int getPendingTargets() {
+		return pendingTargets;
+	}
+
+	public void setPendingTargets(int pendingTargets) {
+		this.pendingTargets = pendingTargets;
+	}
+
+	public boolean isRenderTargetAlias() {
+		return ! StringUtils.isEmpty(target.getRegistry().getAlias());
+	}
+
+	public RegistryAddress getMainAddress() {
+		return mainAddress;
+	}
+	
+	public String getFullAddress() {
+		if ( mainAddress != null ) {
+			StringBuffer sb = new StringBuffer();
+			if (! StringUtils.isEmpty(mainAddress.getAddress()) ) {
+				sb.append( mainAddress.getAddress() );
+			}
+			if (! StringUtils.isEmpty(mainAddress.getAddress2()) ) {
+				if ( sb.length() > 0 ) {
+					sb.append( " " );
+				}
+				sb.append( mainAddress.getAddress2() );
+			}
+			if (! StringUtils.isEmpty(mainAddress.getAddress3()) ) {
+				if ( sb.length() > 0 ) {
+					sb.append( " " );
+				}
+				sb.append( mainAddress.getAddress3() );
+			}
+			return StringUtils.trimToNull(sb.toString());
+		}
+		return null;
+	}
+
+	public RegistryMedia getPhone() {
+		return phone;
+	}
+	
+	public RegistryMedia getCellular() {
+		return cellular;
+	}
+
+	public RegistryMedia getFax() {
+		return fax;
+	}
+
+	public RegistryMedia getEmail() {
+		return email;
+	}
+
+	public RegistryMedia getWeb() {
+		return web;
+	}
+
+	public void onInit( ActionEvent event ) {
+		init();
+	}
+
+	private void init() {
+		try {
+			setAction(null);
+			setTarget(null);
+			setSurvey(null);
+			setTemplate(null);
+		} catch (ManagerBeanException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+		setMailingModel(null);
+		this.surveyResponse = null;
+		setActionTarget(null);
+		setPendingTargets(0);
+	}
+	
+	public Question getQuestion() {
+		return surveyQuestion.getQuestion();
+	}
+	
+	public Integer getQuestionValueId() {
+		return questionValueId;
+	}
+
+	public void setQuestionValueId(Integer questionValueId) {
+		this.questionValueId = questionValueId;
+	}
+
+	public List<SelectItem> getQuestionValues() {
+		return questionValues;
+	}
+
+	public SurveyResponseDetail getResponse() {
+		return response;
+	}
+
+	public void onStartSurveyResponse( ActionEvent event ) throws ManagerBeanException {
+		this.surveyResponse = new SurveyResponse();
+		if ( this.action.getId() != null ) {
+			this.surveyResponse.setAction( this.action );
+		}
+		this.surveyResponse.setSurvey( this.survey );
+		this.surveyResponse.setTarget( this.target );
+		this.surveyResponse.setCreationDate( new Date() );
+		this.surveyResponse.setDate( this.date );
+		this.surveyResponse.setUser( user );
+		IManagerBean surveyResponseBean = BeanManager.getManagerBean(SurveyResponse.class);
+		surveyResponseBean.insert( surveyResponse );
+		getActionTarget().setSurveyResponse(this.surveyResponse);
+		updateActionTarget(false);
+		updateSurveyQuestion( getFirstSurveyQuestion() );
+		this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER_RESPONSE;
+	}
+	
+	public void onNextQuestion( ActionEvent event ) throws ManagerBeanException {
+		saveResponse();
+		SurveyQuestion surveyQuestion = getNextSurveyQuestion();
+		if ( surveyQuestion != null ) {
+			updateSurveyQuestion( surveyQuestion );			
+		} else {
+			this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER;
+			getActionTarget().setStatus(ActionTargetStatus.FINISHED);
+			updateActionTarget(false);
+		}
+	}
+	
+	public String nextQuestionAction() {
+		return this.nextQuestionAction;
+	}
+
+	private void updateResponseValue() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
+		QuestionValue questionValue = (QuestionValue) bean.get( this.questionValueId );
+		questionValue.copyValues(response);			
+	}
+
+	private void updateAction( MarketingAction action, boolean includeCurrentTarget ) throws ManagerBeanException {
+		setAction(action);
+		setSurvey( action.getSurvey() );
+		setTemplate( action.getTemplate() );
+		if ( action.getMediaType() == ActionMediaType.PHONE ) {
+			nextActionTarget( includeCurrentTarget );	
+		} else {
+			refreshPendingTargets();			
+		}
+	}
+	
+	private void updateActionTarget( boolean resetUser ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		if ( resetUser ) {
+			getActionTarget().setUser(null);
+		}
+		bean.update(getActionTarget());
+	}
+	
+	private void updateTargetProfile() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(TargetProfile.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.TARGET_PROFILE_TARGET_ID), this.target.getId());
+		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.TARGET_PROFILE_QUESTION_ID), getQuestion().getId());
+		TargetProfile targetProfile = null;
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			targetProfile = (TargetProfile) list.get(0);
+		} else {
+			targetProfile = new TargetProfile();
+			targetProfile.setTarget( this.target );
+			targetProfile.setQuestion( getQuestion() );
+		}
+		targetProfile.setLastUpdate( new Date() );
+		this.response.copyValues(targetProfile);
+		bean.insertOrUpdate( targetProfile );
+	}
+	
+	private void saveResponse() throws ManagerBeanException {	
+		if ( getQuestion().getType() != QuestionType.INFO ) {
+			if (this.questionValueId != null ) {
+				updateResponseValue();
+			}
+			this.response.setSurveyResponse( this.surveyResponse );
+			this.response.setQuestion( getQuestion() );
+			IManagerBean bean = BeanManager.getManagerBean(SurveyResponseDetail.class);		
+			bean.insert( this.response );
+			if (! this.response.isNotFilled() ) {
+				updateTargetProfile();
+			}
+		}
+	}
+	
+	private void refreshQuestionValues( SurveyQuestion sq ) throws ManagerBeanException {
+		this.questionValues.clear();
+		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.QUESTION_VALUE_QUESTION_ID), sq.getQuestion().getId());
+		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			QuestionValue questionValue = (QuestionValue) iter.next();
+			Object value = questionValue.getValue( sq.getQuestion().getType() );
+			SelectItem item = new SelectItem(questionValue.getId(), ObjectUtils.toString(value));
+			this.questionValues.add(item);
+		}	
+		this.questionValueId = null;
+	}
+	
+	private void updateSurveyQuestion( SurveyQuestion sq ) throws ManagerBeanException {
+		this.surveyQuestion = sq;
+		this.response = new SurveyResponseDetail();
+		refreshQuestionValues( this.surveyQuestion );
+	}
+
+	private SurveyQuestion getFirstSurveyQuestion() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(SurveyQuestion.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression( bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_SURVEY_ID), this.survey.getId() );
+		criteria.addOrder( bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_POSITION) );
+		List<ITransferObject> list = bean.getList(criteria, 0, 1);
+		if (! list.isEmpty() ) {
+			return (SurveyQuestion) list.get(0);
+		}
+		return null;
+	}
+
+	private SurveyWorkflow getSurveyWorkflow( SurveyQuestion surveyQuestion ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(SurveyWorkflow.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression( bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_SURVEY_QUESTION_ID), surveyQuestion.getId() );
+		if (this.questionValueId != null ) {
+			criteria.addEqualExpression( bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_QUESTION_VALUE_ID), this.questionValueId );
+		} else {
+			String textField = bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_TEXT);
+			if (this.response.getText() != null) {
+				criteria.addEqualExpression( textField, this.response.getDate() );
+			} else {
+				criteria.addNullExpression(textField);
+			}
+			String dateField = bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_DATE);
+			if (this.response.getDate() != null) {
+				criteria.addEqualExpression( dateField, this.response.getDate() );			
+			} else {
+				criteria.addNullExpression(dateField);
+			}
+			String numberField = bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_NUMBER);
+			if (this.response.getNumber() != null) {
+				criteria.addEqualExpression( numberField, this.response.getNumber() );			
+			} else {
+				criteria.addNullExpression(numberField);
+			}
+		}
+		List<ITransferObject> list = bean.getList(criteria, 0, 1);
+		if (! list.isEmpty() ) {
+			return (SurveyWorkflow) list.get(0);
+		}
+		return null;
+	}
+	
+	private SurveyQuestion getNextSurveyQuestion() throws ManagerBeanException {
+		if ( getQuestion().getType() != QuestionType.INFO ) {
+			SurveyWorkflow workflow = getSurveyWorkflow( surveyQuestion );
+			if ( workflow != null ) {
+				return workflow.getNextSurveyQuestion();
+			}
+		}
+		IManagerBean bean = BeanManager.getManagerBean(SurveyQuestion.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression( bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_SURVEY_ID), this.survey.getId() );
+		String position = bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_POSITION);
+		criteria.addGreaterThanExpression( position, surveyQuestion.getPosition() );
+		criteria.addOrder( position );
+		List<ITransferObject> list = bean.getList(criteria, 0, 1);
+		if (! list.isEmpty() ) {
+			return (SurveyQuestion) list.get(0);
+		}
+		return null;
+	}
+	
+	private RegistryMedia getTargetMedia( Integer id, MediaType type ) throws ManagerBeanException {
+		IManagerBean mediaBean = BeanManager.getManagerBean(RegistryMedia.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID), id);
+		criteria.addEqualExpression(mediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE), type);
+		List<ITransferObject> list = mediaBean.getList(criteria);
+		if (! list.isEmpty() ) {
+			return (RegistryMedia) list.get(0);
+		}
+		return null;
+	}
+	
+	private RegistryAddress getTargetAddress( Integer id ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(RegistryAddress.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), AddressType.MAIN);
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			return (RegistryAddress) list.get(0);
+		}
+		return null;
+	}	
+	
+	private void initTarget( Target target ) throws ManagerBeanException {
+		Integer id = target.getRegistry().getId();
+		this.phone = getTargetMedia( id, MediaType.FIXED_PHONE );
+		this.cellular = getTargetMedia( id, MediaType.CELLULAR );
+		this.fax = getTargetMedia( id, MediaType.FAX );
+		this.email = getTargetMedia( id, MediaType.EMAIL );
+		this.web = getTargetMedia( id, MediaType.WEB );
+		this.mainAddress = getTargetAddress(id);
+	}
+	
+	private void blockActionTarget() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		Criteria criteria = new Criteria();
+		String userId = bean.getFieldName(IMarketingAlias.ACTION_TARGET_USER_ID);
+		criteria.addEqualExpression(userId, user.getId() );
+		String actionId = bean.getFieldName(IMarketingAlias.ACTION_TARGET_ACTION_ID);
+		criteria.addEqualExpression(actionId, this.action.getId());		
+		for( ITransferObject to : bean.getList(criteria) ) {
+			ActionTarget at = (ActionTarget) to;
+			at.setUser(null);
+			bean.update(at);
+		}
+		getActionTarget().setUser(user);
+		bean.update(getActionTarget());
+	}
+	
+	public void onNextActionTarget( ActionEvent event ) throws ManagerBeanException {
+		updateActionTarget(true);
+		nextActionTarget(false);
+	}
+	
+	private void nextActionTarget( boolean includeCurrentTarget ) throws ManagerBeanException {
+		List<ActionTarget> targets = getActionTargets(true, includeCurrentTarget);
+		if (! targets.isEmpty() ) {
+			setActionTarget( targets.get(0) );
+			setTarget( getActionTarget().getTarget() );
+			initTarget(this.target);
+			blockActionTarget();
+			refreshPendingTargets();
+		} else {
+			init();
+		}		
+	}
+	
+	public void onUpdateActionTarget( ActionEvent event ) throws ManagerBeanException {
+		updateActionTarget(false);
+	}
+
+	public void onActionLookupChange(LookupChangeEvent event) {
+		init();
+		this.actionSelected = (event.getNewValue() != null);	
+		if (this.actionSelected) {
+			MarketingAction action = (MarketingAction) event.getNewValue();
+			try {				
+				updateAction(action, false);
+			} catch (ManagerBeanException e) {
+				AonUtil.addErrorMessage(e.getMessage());
+				throw new AbortProcessingException(e);
+			}
+		}
+	}
+
+	private Criteria getPendingTargetsCriteria( IManagerBean bean, boolean onlyCount, boolean includeCurrentTarget ) throws ManagerBeanException {
+		Criteria criteria = new Criteria();
+		String id = bean.getFieldName(IMarketingAlias.ACTION_TARGET_ID);
+		criteria.addOrder( id );
+		if ( !onlyCount ) {
+			Expression exp1 = ExpressionUtilities.getNullExpression("ActionTarget.user");
+			Expression exp2 = ExpressionUtilities.getEqualExpression("ActionTarget.user<id", user.getId());
+			criteria.addExpression(ExpressionUtilities.getOrExpression(exp1, exp2));		
+			if ( getActionTarget() != null ) {
+				if ( includeCurrentTarget ) {
+					criteria.addGreaterThanOrEqualExpression( id, getActionTarget().getId() );
+				} else {
+					criteria.addGreaterThanExpression( id, getActionTarget().getId() );	
+				}
+			}	
+		}
+		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.ACTION_TARGET_ACTION_ID), this.action.getId());
+		String status = bean.getFieldName(IMarketingAlias.ACTION_TARGET_STATUS);
+		Expression expression1 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.FINISHED);
+		criteria.addExpression(expression1);
+		Expression expression2 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.SENT);
+		criteria.addExpression(expression2);
+		return criteria;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private List<ActionTarget> getActionTargets( boolean onlyFirst, boolean includeCurrentTarget ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		Criteria criteria = getPendingTargetsCriteria(bean, false, includeCurrentTarget);
+		List list = onlyFirst ? bean.getList(criteria, 0, 1) : bean.getList(criteria);
+		return list;
+	}
+
+	public List<ActionTarget> getActionTargets() throws ManagerBeanException {
+		return getActionTargets(false, false);
+	}
+	
+	private void refreshPendingTargets() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		Criteria criteria = getPendingTargetsCriteria(bean, true, false);
+		setPendingTargets(bean.getCount(criteria));
+	}
+	
+	public void onGenerateTargetMailing(ActionEvent event) throws ManagerBeanException {
+        List<ActionTarget> targets = getActionTargets();
+        List<MailData> data = MailingManager.generateMailingList(targets);
+        this.mailingModel = new ListDataModel(data);
+        IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+        for( ActionTarget target : targets ) {
+        	target.setStatus(ActionTargetStatus.FINISHED);
+        	bean.update(target);
+        }
+	}		
+
+	@SuppressWarnings("unchecked")
+	public void onDownloadMailing(ActionEvent event) throws IOException {
+        List<MailData> data = (List<MailData>) this.mailingModel.getWrappedData();
+        MailingManager.generateMailing(data);
+	}		
+	
+	public void onFinishSurvey(ActionEvent event) throws ManagerBeanException {
+		updateActionTarget(false);
+	}
+
+	public void onMarketingActionBackActionListener( ActionEvent event ) {
+		try {				
+			IController controller = FormUtil.getController(CAMPAIGN_ACTION_CONTROLLER_NAME);
+			updateAction((MarketingAction) controller.getTo(), true);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}		
+	}
+
+	public void onStartActionTarget( ActionEvent event ) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		String idValue = context.getExternalContext().getRequestParameterMap().get("actionTargetId");
+		try {				
+			ActionTarget at = null;
+			if (! StringUtils.isEmpty(idValue) ) {
+				IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+				Integer id = Integer.valueOf(idValue);
+				at = (ActionTarget) bean.get(id);
+			}
+			if ( at != null ) {
+				startActionTarget(at);
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}       
+	}
+
+	public void onGoToActionTarget( ActionEvent event ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(ALARM_CONTROLLER_NAME);
+		Alarm alarm = (Alarm) controller.getTo();
+		try {				
+			IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+			ActionTarget at = (ActionTarget) bean.get(alarm.getSourceId());
+			if ( at != null ) {
+				startActionTarget(at);	
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}       
+	}	
+	
+	public void startActionTarget( ActionTarget at ) throws ManagerBeanException {
+		if ( at.getStatus() == ActionTargetStatus.FINISHED ) {
+			at.setStatus(ActionTargetStatus.PENDING);	
+		}
+		setActionTarget( at );			
+		updateActionTarget(true);
+		setAction(at.getAction());
+		setSurvey( action.getSurvey() );
+		setTemplate( action.getTemplate() );
+		nextActionTarget(true);
+	}	
+	
+	public void onNewAlarm( ActionEvent event ) {
+		AlarmController controller = (AlarmController) AonUtil.getRegisteredBean(ALARM_CONTROLLER_NAME);
+		controller.setShowNewAlarmWindow(true);
+		controller.onReset(event);
+		Alarm alarm = (Alarm) controller.getTo();
+		alarm.setSource(AlarmSource.CALL_CENTER);
+		alarm.setSourceId(getActionTarget().getId());
+	}
+
+	public void onNewEmail( ActionEvent event ) {
+		if ( isTemplateSelected() ) {
+			MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+			TemplateController.initController(controller, getTemplate());
+		}
+	}
+
+	public void onSendEmail( ActionEvent event ) throws ManagerBeanException {
+		MessageController controller = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+		controller.onNewMessage(event);
+		controller.setShowNewMessageWindow(true);
+		controller.setAppendSignature(true);
+		if ( isTemplateSelected() ) {
+			TemplateController.initController(controller, getTemplate());	
+		}
+		if ( isTargetSelected() ) {
+			String[] emails = CompanyEmailUtil.getEmails(getTarget().getRegistry());
+			CompanyEmailUtil.initMessageController(controller, emails);
+		}
+	}
+
+	public void onTargetBackActionListener( ActionEvent event ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(TARGET_CONTROLLER_NAME);
+		Target _target = (Target) controller.getTo();
+		setTarget( _target );
+		initTarget( _target );
+	}
+	
+	public void onSurveyBackActionListener( ActionEvent event ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(SURVEY_CONTROLLER_NAME);
+		setSurvey( (Survey) controller.getTo() );
+	}
+
+	public void onTemplateBackActionListener( ActionEvent event ) throws ManagerBeanException {
+		IController controller = FormUtil.getController(MARKETING_TEMPLATE_CONTROLLER_NAME);
+		setTemplate( (Template) controller.getTo() );
+	}
+	
+}

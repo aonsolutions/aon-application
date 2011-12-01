@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:panelGroup id="showRectificationWindow">
+		<c:if test="#{invoiceController.showRectificationWindow}">
+			<rich:modalPanel id="rectificationModalPanel" minHeight="260"
+				minWidth="520" rendered="#{invoiceController.showRectificationWindow}"
+				showWhenRendered="true" zindex="90">
+				<f:facet name="header">
+					<aon:div styleClass="aon-popupWindow-title">
+						<aon:outputText value="#{financeBundle.finance_rectify}" />
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:form>
+						<aon:commandButton type="button"
+							styleClass="aon-popupWindow-close"
+							reRender="showRectificationWindow" immediate="true">
+							<aon:actionHotKey key="esc" />
+							<f:setPropertyActionListener
+								target="#{invoiceController.showRectificationWindow}"
+								value="#{false}" />
+						</aon:commandButton>
+					</aon:form>
+				</f:facet>
+				<aon:form id="rectificationForm">
+				<aon:div styleClass="aon-popupWindow-content">
+					<aon:div style="width:100%">
+						<aon:div styleClass="aon-popupWindow-content-internal">
+							<aon:div style="width:99%">
+								<aon:div styleClass="aon-toolbar">
+									<aon:commandButton id="rectification-accept"
+										value="#{financeBundle.finance_rectify}"
+										actionListener="#{invoiceController.onRectify}"
+										action="#{invoiceController.rectificationRedirect}"
+										styleClass="aon-finding-toolbar-item aon-icon-accept">
+										<rich:componentControl for="rectificationModalPanel"
+											event="onclick" operation="hide"/>																					
+										<f:setPropertyActionListener
+											target="#{invoiceController.showRectificationWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+									<aon:commandButton id="rectification-cancel"
+										value="#{bundle.aon_cancel}"
+										reRender="showRectificationWindow"
+										immediate="true"
+										styleClass="aon-finding-toolbar-item aon-icon-cancel">
+										<f:setPropertyActionListener
+											target="#{invoiceController.showRectificationWindow}"
+											value="#{false}" />
+									</aon:commandButton>
+								</aon:div>
+								<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
+									<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width: 80%;">
+
+										<aon:outputLabel for="Invoice_rectificationSeries"
+											value="#{bundle.aon_series}" />
+										<aon:selectOneMenu id="Invoice_rectificationSeries"
+											value="#{invoiceController.rectificationSeries}"
+											valueChangeListener="#{invoiceController.onRectificationSeriesChanged}" 
+											reRender="Invoice_rectificationNumber">
+											<f:selectItem itemLabel=" " itemValue="#{null}" />
+											<f:selectItems value="#{configCollections.rectificationSeriesIds}" />
+										</aon:selectOneMenu>
+
+										<aon:outputLabel for="Invoice_rectificationNumber"
+											value="#{bundle.aon_number}" />
+										<aon:inputText id="Invoice_rectificationNumber"
+											value="#{invoiceController.rectificationNumber}"
+											required="true" size="7" />
+
+										<aon:outputLabel for="Invoice_rectificationDate"
+											value="#{bundle.aon_date}" />
+										<aon:selectInputDate id="Invoice_rectificationDate" 
+											value="#{invoiceController.rectificationDate}" required="true"
+											timeZone="#{timeZoneController.timeZone}"
+											popupDateFormat="#{bundle.aon_date_pattern}"
+											jointPoint="bottom-right"
+											direction="top-right"
+											verticalOffset="-60" />
+
+										<aon:outputLabel for="Invoice_rectificationCause"
+											value="#{financeBundle.finance_cause}" />
+										<aon:inputTextarea id="Invoice_rectificationCause" cols="70" rows="4"
+											value="#{invoiceController.rectificationCause}" />
+
+									</aon:panelGrid>
+								</aon:div>
+							</aon:div>
+						</aon:div>
+					</aon:div>
+				</aon:div>
+				</aon:form>
+			</rich:modalPanel>
+		</c:if>
+	</aon:panelGroup>
+
+</ui:composition>

@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"	
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
+
+	 	<a4j:region>
+        	<h:form>
+            	<a4j:poll id="poll" interval="500" enabled="#{salaryLauncher.pollEnabled}" 
+            		reRender="poll,launchSalaries,messagesContainer" />
+        	</h:form>
+    	</a4j:region>
+    	
+		<aon:form id="salaryLauncherForm">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" />
+			
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:div styleClass="aon-panelGrid-search">
+					<aon:div styleClass="aon-panelGrid-search-info">
+						<aon:outputText value="#{payrollBundle.payroll_launch_info}" styleClass="aon-panelGrid-search-info-internal"/>
+					</aon:div>			
+			
+					<aon:panelGrid id="salaryLauncherLaunchContent" columns="4">
+		
+						<aon:outputLabel for="salaryType" value="#{bundle.aon_type}" />
+						<aon:selectOneMenu id="salaryType" value="#{salaryLauncher.params.salaryType}">
+							<f:selectItems value="#{salaryLauncher.salaryTypes}" />
+							<a4j:support event="onchange" reRender="salaryLauncherLaunchContent" ajaxSingle="true"/>
+						</aon:selectOneMenu>
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
+						
+						
+						<aon:outputLabel for="Month" value="#{bundle.aon_month}" />
+						<h:panelGrid columns="3"  >
+							<aon:selectOneMenu id="Month" value="#{salaryLauncher.params.issueMonth}"
+							disabled="#{salaryLauncher.params.monthDisabled}" >
+								<f:selectItems value="#{commonCollections.months}"  />
+								<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
+							</aon:selectOneMenu>
+							<aon:outputText value="&#160;" />
+				   			<rich:inputNumberSpinner id="Year" value="#{salaryLauncher.params.issueYear}" 
+				   				inputSize="4" minValue="2009" maxValue="2020" disabled="#{salaryLauncher.params.yearDisabled}" >
+				   				<a4j:support event="onchange" reRender="salaryPeriod" ajaxSingle="true"/>
+				   			</rich:inputNumberSpinner>
+						</h:panelGrid>
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
+						
+						<aon:outputLabel value="#{payrollBundle.payroll_contract_period}"/>
+						<aon:div id="salaryPeriod">
+							<aon:outputLabel for="startDate" styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_start_date}:" />
+							<aon:selectInputDate id="startDate"
+								disabled="#{salaryLauncher.params.startDateDisabled}" 
+								value="#{salaryLauncher.params.startDate}" required="true"
+								inputSize="10" renderAsPopup="true" enableManualInput="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+							</aon:selectInputDate>
+							<aon:outputLabel for="endDate" styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_end_date}:" />
+							<aon:selectInputDate id="endDate" 
+								disabled="#{salaryLauncher.params.endDateDisabled}" 
+								value="#{salaryLauncher.params.endDate}" required="true"
+								inputSize="10" renderAsPopup="true" enableManualInput="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+							</aon:selectInputDate>
+						</aon:div>
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
+	
+						<ui:include src="/com/code/aon/ui/registry/facelet/person/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{salaryLauncher.params.person}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+						
+						<aon:outputText value="&#160;" />
+						<aon:div>
+							<ui:insert name="addOnsFirstRow"/>
+						</aon:div>
+	
+						<ui:include src="/com/code/aon/ui/company/facelet/enterprise/lookup.xhtml" >
+							<ui:param name="lookupTo" value="#{salaryLauncher.params.enterprise}" />
+							<ui:param name="skipNewButton" value="#{true}" />
+						</ui:include>
+						
+						<aon:outputText value="&#160;" />
+						<aon:div>
+							<ui:insert name="addOnsSecondRow"/>
+						</aon:div>
+						
+						<aon:outputText value="&#160;" />
+						<aon:div >
+							<ui:insert name="launchButton"/>	 
+						</aon:div>
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
+	 				</aon:panelGrid>
+				</aon:div>
+				
+				
+				<aon:div id="messagesContainer" >
+					<c:if test="#{salaryLauncher.messages != null}">
+					
+						<aon:div style="margin-left: 50px; margin-top: 10px;">		
+							<aon:htmlCommandLink target="_blank"
+								title="DESCARGAR LOG"
+								value="DESCARGAR LOG"
+								style="border-width: 0px 0px 0px 0px;"
+								actionListener="#{salaryLauncher.downloadDisk}"
+								rendered="#{!salaryLauncher.emptyLog}"
+								styleClass="aon-finding-toolbar-item aon-icon-mail-save" />
+						</aon:div>
+						
+						<aon:div  id="console" 
+							style="background-color: #EEEEEE; border: solid #ccc 1px; height:400px; overflow-y: scroll;">
+							<ul style="padding:1em 0em 1em 0em ;" >
+								<ui:repeat var="message" value="#{salaryLauncher.messages}">
+								<li>
+									<ui:insert name="messageRow"/>
+								</li>
+								</ui:repeat>
+							</ul>
+							<aon:graphicImage
+							styleClass="aon-margin-left aon-margin-top" 
+							url="/css/images/processing.gif" 
+							rendered="#{salaryLauncher.pollEnabled}"/>
+						</aon:div>
+						
+						
+						<script type="text/javascript">
+							var objControl=document.getElementById("aonContent:salaryLauncherForm:console");
+							objControl.scrollTop = objControl.scrollHeight;
+						</script>					
+					</c:if>
+				</aon:div>
+
+			</aon:div>
+		</aon:form>
+		
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		
+	</ui:define>
+</ui:composition>

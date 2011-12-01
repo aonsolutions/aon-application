@@ -1,0 +1,195 @@
+TABLAS DE CODIGOS INEM PARA LA COMUNICACION DE LA CONTRATACION A TRAVES DE INTERNET.  VERSION 5.0
+
+FECHA ULTIMA ACTUALIZACION :  31/03/2011
+
+
+Descripción de las tablas.
+------------------------------------------
+
+Cada tabla esta contenida en un fichero .txt. Estos ficheros contienen uno o más registros, 
+compuestos de dos o cuatro campos separados por punto y coma entre dobles comillas.
+El primer campo corresponde al código, el segundo es la descripción del código, y el tercero y cuarto, 
+cuando existan, indican la fecha de inicio y fin de la vigencia del código. Estas fechas 
+deberán tenerse en cuenta en las aplicaciones que utilicen estas tablas.
+
+¡¡¡  En la tabla TAICLAOC1994 (Ocupaciones válidas hasta el 2011) el tercer campo corresponde al indicador de validez de código de ocupación para mujer subrepresentada  (S-válido  N-no válido).   !!!
+
+
+
+Relación de tablas y descripción de su contenido.
+-------------------------------------------------------------------------------
+Las precedidas por asterisco (*) contienen campos de inicio y fin de vigencia.
+
+
+
+
+ TABLA      	DESCRIPCION						FECHA ÚLTIMA ACTUALIZACIÓN
+--------------------------------------------------------------------------------------------------------
+ TABCCNAE	ACTIVIDAD ECONÓMICA						15-03-2009	
+ TBXCPAIS	PAÍS								
+ TCHRGCOT	RÉGIMEN DE COTIZACIÓN						
+ TCMCSEXO	SEXO								
+ TCGPROVI	PROVINCIA
+ STDIDETC	TIPO DE DOCUMENTO IDENTIFICATIVO	 	
+ TAICLAOC1994	OCUPACIÓN ( Hasta 2011 ) 
+ TAUCOMAU	COMUNIDAD AUTÓNOMA				
+ TBONVFOR	NIVEL FORMATIVO							15-09-2010					
+ TDPMUNIC	MUNICIPIOS					
+*TEHTPCTO	CÓDIGOS DE CONTRATO						21-04-2008					
+*TEIINTER	CAUSA OBJETO DE LA INTERINIDAD					
+ TEJINDIS	INDICADOR DISCAPACIDAD										
+*TEKLEYBO	LEY BONIFICACIÓN						21-01-2011	
+*TELCOLBO	COLECTIVO BONIFICACIÓN						21-01-2011
+*TENLEYDE	LEY FOMENTO DE LA CONTR. INDEFINIDA				04-10-2010
+*TEOCOLDE	COLECTIVO FOMENTO DE LA CONTR. INDEFINIDA			31-03-2011
+ TEQPTIEM	PERÍODO DE TIEMPO				
+ TERFIRCB	FIRMA COPIA BÁSICA				
+*TESCETCO	RELACIÓN CONTRACTUAL ET / CO / TE		
+ TETPGMEM	PROGRAMA DE EMPLEO				
+ TEUECCLL	CORPORACIONES LOCALES				
+ TEVACTCL	ACTUACIONES DE CORPORACIONES LOCALES		
+ TEWEINVE	TIPO DE EMPLEADOR INVESTIGACIÓN			
+ TEXTINVE	TIPO DE TRABAJADOR INVESTIGACIÓN		
+ TEYTRELE	TIPO DE TRABAJADOR DE RELEVO			
+ THITIACA	TITULACIÓN ACADÉMICA 
+*THPCOLFO	COLECTIVOS CONTRATOS DE FORMACIÓN				
+*THYDISLE	DISPOSICIONES LEGALES				
+*TFGGRCOT	GRUPOS DE COTIZACION						21-01-2011
+ TAICLAOC2011   OCUPACIÓN ( A partir de 2011 )					07-02-2011 
+*TQOCOLRE	COLECTIVOS DE REDUCCIÓN						13-02-2011 						 
+TQNLEYRE	LEYES DE REDUCCIÓN							13-02-2011
+
+
+31-03-2011:
+-----------
+Se añade nuevo colectivo de fomento de contratación indefinida:
+TEOCOLDE
+
+
+04-03-2011:
+-----------
+Se añaden las nuevas tablas de colectivos y leyes de reducción:
+TQOCOLRE
+TQNLEYRE
+
+
+07-02-2011:
+------------
+Se añade la nueva tabla de Ocupaciones válida a partir del año 2011.  Se renombra la antigua tabla de Ocupaciones válida hasta el 2011.
+
+TAICLAOC2011
+TAICLAOC1994 ( antigua TAICLAOC )
+
+
+21-01-2011:
+------------
+Se modifican fechas de término de vigencia de las siguientes tablas :
+
+TEKLEYBO
+TELCOLBO
+TFGGRCOT
+
+
+04-10-2010:
+------------
+Se añaden códigos y se modifican fechas de término de vigencia de las siguientes tablas :
+
+TEKLEYBO
+TELCOLBO
+TEOCOLDE
+TENLEYDE
+
+
+20-07-2010:
+------------
+Se añaden códigos a la siguientes tablas :
+
+TEKLEYBO
+TELCOLBO
+TEOCOLDE
+TENLEYDE
+
+
+18-06-2010:
+------------
+Se cambian las fechas de fin de vigencia de las siguientes tablas :
+
+TEKLEYBO
+TELCOLBO
+TEOCOLDE
+TENLEYDE
+
+
+21-01-2010:
+------------
+Se añaden códigos a la siguientes tablas :
+
+TELCOLBO
+TEKLEYBO
+
+
+23-09-2009:
+------------
+Se añaden códigos a la siguientes tablas :
+
+TERRORES 
+TELCOLBO
+TEKLEYBO
+
+
+28-04-2009:
+------------
+Se añade nuevo decreto ley :
+
+TEKLEYBO
+
+
+26-03-2009:
+------------
+Se cambian las fechas de fin de vigencia de las siguientes tablas :
+
+TEKLEYBO
+TELCOLBO
+
+
+15-03-2009:
+------------
+Cambio de la CNAE 93 A CNAE 99 :
+
+TABCCNAE
+
+
+12-01-2009:
+------------
+Se cambian las fechas de fin de vigencia de las siguientes tablas :
+
+TEKLEYBO
+TELCOLBO
+TFGGRCOT
+
+
+15-12-2008:
+------------
+Se añaden códigos a las siguientes tablas :
+
+TELCOLBO
+TEKLEYBO
+
+
+21-04-2008:
+------------
+Se añaden códigos a las siguientes tablas :
+
+TBONVFOR
+TELCOLBO
+TEKLEYBO
+TEHTPCTO
+
+
+25-01-2008:
+------------
+Se cambian las fechas de fin de vigencia de las siguientes tablas :
+
+TEKLEYBO
+TELCOLBO
+TFGGRCOT

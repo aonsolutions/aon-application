@@ -1,0 +1,294 @@
+package com.esferalia.aon.payroll;
+
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Index;
+
+import com.code.aon.common.IAttachment;
+import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.config.IScopable;
+import com.code.aon.config.Scope;
+import com.esferalia.aon.payroll.enumeration.LeaveBatchAttachmentType;
+
+/**
+ * Transfer Object that represents the LeaveBatchAttachment.
+ * 
+ * @author Esferalia
+ * @since 1.0
+ */
+@Entity
+@Table(name="leave_batch_attach")
+public class LeaveBatchAttachment implements IAttachment, IScopable {
+
+	private static final long serialVersionUID = 1231463880262826314L;
+
+	/** The id. */
+    private Integer id;
+
+    /** The leave batch. */
+    private LeaveBatch leaveBatch;
+    
+    /** The mime type. */
+    private MimeType mimeType;
+
+    /** The data (binary). */
+    private byte[] data;
+
+    /** The description. */
+    private String description;
+    
+    /** The size in bytes. */
+    private Integer size;
+    
+    /** The attachment type. */
+    private LeaveBatchAttachmentType attachmentType;
+    
+    /** The scope. */
+	private Scope scope;
+	
+	private Date attachDate;
+    
+    /**
+     * The empty constructor.
+     */
+    public LeaveBatchAttachment() {
+    	
+    }
+
+    /**
+     * Gets the id.
+     * 
+     * @return the id
+     */
+    @Id
+    @GeneratedValue
+	@Column(nullable=false)
+	public Integer getId() {
+        return id;
+    }
+
+    /**
+     * Sets the id.
+     * 
+     * @param primaryKey the primary key
+     * @param id the id
+     */
+    public void setId(Integer primaryKey) {
+        this.id = primaryKey;
+    }
+
+    /**
+     * Gets the LeaveBatch.
+     * 
+     * @return the LeaveBatch
+     */
+    @ManyToOne
+    @JoinColumn(name="leave_batch", nullable = false, updatable = false)    
+    @ForeignKey(name = "FK_LEAVE_BATCH_ATTACH_LEAVE_BATCH")
+    @Index(name = "IDX_LEAVE_BATCH_ATTACH_LEAVE_BATCH")
+	public LeaveBatch getLeaveBatch() {
+        return this.leaveBatch;
+    }
+
+    /**
+     * Sets the LeaveBatch.
+     * 
+     * @param contract the LeaveBatch
+     */
+    public void setLeaveBatch(LeaveBatch leaveBatch) {
+        this.leaveBatch = leaveBatch;
+    }
+   
+	/**
+	 * Gets the mime type.
+	 * 
+	 * @return the mime type
+	 */
+	public MimeType getMimeType() {
+        return mimeType;
+    }
+
+    /**
+     * Sets the mime type.
+     * 
+     * @param mimeType the mime type
+     */
+    public void setMimeType(MimeType mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    /**
+     * Gets the data.
+     * 
+     * @return the data
+     */
+    @Lob
+    public byte[] getData() {
+        return data;
+    }
+
+    /**
+     * Sets the data.
+     * 
+     * @param data the data
+     */
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+	
+	/**
+	 * Gets the description.
+	 * 
+	 * @return the description
+	 */
+	@Column(length=64)
+	public String getDescription() {
+		return this.description;
+	}
+
+	/**
+	 * Sets the description.
+	 * 
+	 * @param description the description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
+	 * Gets the size.
+	 * 
+	 * @return the size
+	 */
+	@Formula("LENGTH(data)")
+	public Integer getSize() {
+		return size;
+	}
+
+	/**
+	 * Sets the size.
+	 * 
+	 * @param size the size
+	 */
+	public void setSize(Integer size) {
+		this.size = size;
+	}
+	
+	/**
+	 * Gets the registry attachment type.
+	 * 
+	 * @return the registry attachment type
+	 */
+	@Column(name="type")
+	public LeaveBatchAttachmentType getAttachmentType() {
+		return attachmentType;
+	}
+
+	/**
+	 * Sets the registry attachment type.
+	 * 
+	 * @param registryAttachmentType the registry attachment type
+	 */
+	public void setAttachmentType(LeaveBatchAttachmentType attachmentType) {
+		this.attachmentType = attachmentType;
+	}
+
+	/**
+	 * Gets the scope.
+	 * 
+	 * @return the scope
+	 */
+    @ManyToOne
+    @JoinColumn(name="scope")
+	public Scope getScope() {
+		return scope;
+	}
+
+	/**
+	 * Sets the scope.
+	 * 
+	 * @param scope the scope
+	 */
+	public void setScope(Scope scope) {
+		this.scope = scope;
+	}
+
+	@Column(name="attach_date")
+	@Temporal(TemporalType.DATE)
+    public Date getAttachDate() {
+		return attachDate;
+	}
+
+	public void setAttachDate(Date attachDate) {
+		this.attachDate = attachDate;
+	}
+
+	/**
+	 * Clones the RegistryAttachment.
+	 * 
+	 * @return the object
+	 * 
+	 * @throws CloneNotSupportedException the clone not supported exception
+	 */
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) return false;
+		if (this == obj) return true;
+		if (obj.getClass() != getClass()) return false;
+		final LeaveBatchAttachment o = (LeaveBatchAttachment) obj;
+		if (o.getId() == null && getId() == null) {
+			return new EqualsBuilder()
+				.append(this.attachDate, o.attachDate)
+				.append(this.data, o.data)				
+				.append(this.description, o.description)
+				.append(this.mimeType, o.mimeType)				
+				.append(this.leaveBatch, o.leaveBatch)
+				.append(this.attachmentType, o.attachmentType)
+				.append(this.scope, o.scope)
+				.isEquals();
+		}
+		return ObjectUtils.equals(getId(), o.getId());		
+	}
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(attachDate)
+			.append(data)
+			.append(description)	
+			.append(id)			
+			.append(mimeType)
+			.append(leaveBatch)
+			.append(attachmentType)				
+			.append(scope)
+			.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new PojoToStringBuilder(this).toString();
+	}
+
+}

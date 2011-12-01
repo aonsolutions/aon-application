@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="withholdingList">
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{fiscalBundle.fiscal_withholding_module}" />
+				<ui:param name="controller" value="#{withholdingReport}" />
+				<ui:param name="skipResetButton" value="#{true}" />
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml">
+				
+					<ui:param name="controller" value="#{withholdingReport}" />
+					<ui:param name="rows" value="20" />
+
+					<ui:define name="columns">
+						<c:if test="#{aonConfiguration.bean.fiscal.enterpriseEnabled}">
+							<aon:column styleClass="aon-editDataTable-textColumn aon-width-auto">
+								<f:facet name="header">
+									<aon:outputText value="#{companyBundle.company_enterprise}" />
+								</f:facet>
+								<aon:outputText value="#{to.enterprise}" />		
+							</aon:column>					
+						</c:if>
+						
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100}">
+							<f:facet name="header">
+								<aon:outputText value="#{fiscalBundle.fiscal_withholding_perceptors}" />
+							</f:facet>
+							<aon:outputText value="#{to.count}">
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100}">
+							<f:facet name="header">
+								<aon:outputText value="#{fiscalBundle.fiscal_withholding_amount}" />
+							</f:facet>
+							<aon:outputText value="#{to.taxableBase}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+
+						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-100}">
+							<f:facet name="header">
+								<aon:outputText value="#{fiscalBundle.fiscal_withholding_retention}" />
+							</f:facet>
+							<aon:outputText value="#{to.quota}">
+								<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+							</aon:outputText>
+						</aon:column>
+					</ui:define>
+				</ui:decorate>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>

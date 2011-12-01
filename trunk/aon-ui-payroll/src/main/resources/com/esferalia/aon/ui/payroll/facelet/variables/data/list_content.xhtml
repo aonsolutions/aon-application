@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:column styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputLabel for="#{controller.beanName}_name"
+				value="#{bundle.aon_name}" />
+		</f:facet>
+		<aon:outputText value="#{to.name}" rendered="#{formList}" />
+		<aon:inputText id="#{controller.beanName}_name" required="true"
+			rendered="#{formEdit}" size="16"
+			value="#{controller.to.name}" maxlength="16" >
+			<f:validateLength maximum="16"/>
+			<a4j:region>
+				<rich:suggestionbox id="#{controller.beanName}_name_suggestion"
+					for="#{controller.beanName}_name"
+					onselect="suggestionBoxActive=false;"
+					suggestionAction="#{controller.expressionContext}" var="exp"
+					similarityGroupingId=""
+					tokens=" +-/*%()"
+					fetchValue="#{exp}"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					eventsQueue="#{controller.beanName}_nameSug" ignoreDupResponses="true"
+					requestDelay="100" width="500" height="200"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{exp}"/>
+					</aon:column>
+				</rich:suggestionbox>
+			</a4j:region>
+		</aon:inputText>
+		<f:facet name="footer">
+			<aon:inputText id="#{controller.beanName}_name-New" required="true"
+				rendered="#{formNew}" size="16"
+				value="#{controller.to.name}" maxlength="16" >
+				<f:validateLength maximum="16"/>
+				<a4j:region>
+					<rich:suggestionbox id="#{controller.beanName}_name-New_suggestion"
+						for="#{controller.beanName}_name-New"
+						onselect="suggestionBoxActive=false;"
+						suggestionAction="#{controller.expressionContext}" var="exp"
+						similarityGroupingId=""
+						tokens=" +-/*%()"
+						fetchValue="#{exp}"
+						immediate="true" limitToList="true" ajaxSingle="true"
+						eventsQueue="#{controller.beanName}_name-NewSug" ignoreDupResponses="true"
+						requestDelay="100" width="500" height="200"
+						nothingLabel="#{bundle.aon_search_no_results}">
+						<aon:column>
+							<aon:outputText value="#{exp}"/>
+						</aon:column>
+					</rich:suggestionbox>
+				</a4j:region>
+			</aon:inputText>
+		</f:facet>
+	</aon:column>
+	
+	<aon:column styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputLabel for="#{controller.beanName}_expression"
+				value="#{payrollBundle.payroll_salary_expression}" />
+		</f:facet>
+		<ui:include 
+			src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/grid.xhtml" >
+			<ui:param name="controller" value="#{controller}" />
+			<ui:param name="data" value="#{to}" />
+			<ui:param name="formList" value="#{formList}" />
+		</ui:include>
+		<f:facet name="footer">
+<!--  
+			<ui:include 
+				src="/com/esferalia/aon/ui/payroll/facelet/variables/editor/list.xhtml" >
+				<ui:param name="controller" value="#{controller}" />
+				<ui:param name="data" value="#{to}" />
+				<ui:param name="expression" value="#{to.expression}" />
+				<ui:param name="variable" value="#{to}" />
+				<ui:param name="formNew" value="#{formNew}" />
+				<ui:param name="editorSuffix" value="_new" />
+			</ui:include>
+-->			
+		</f:facet>
+	</aon:column>  
+
+	<!--  
+	<aon:column styleClass="aon-editDataTable-textColumn">
+		<f:facet name="header">
+			<aon:outputLabel for="#{controller.beanName}_expression"
+				value="#{payrollBundle.payroll_salary_expression}" />
+		</f:facet>
+		<aon:outputText value="#{to.expression}" rendered="#{formList}" />
+		<aon:inputText id="#{controller.beanName}_expression" required="true"
+			rendered="#{formEdit}" size="20"
+			value="#{controller.to.expression}" maxlength="64" >
+			<f:validateLength maximum="64"/>
+			<a4j:region>
+				<rich:suggestionbox id="#{controller.beanName}_expression_suggestion"
+					for="#{controller.beanName}_expression"
+					onselect="suggestionBoxActive=false;"
+					suggestionAction="#{controller.expressionContext}" var="exp"
+					similarityGroupingId=""
+					tokens=" +-/*%()"
+					fetchValue="#{exp}"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					eventsQueue="#{controller.beanName}_expressionSug" ignoreDupResponses="true"
+					requestDelay="100" width="500" height="200"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{exp}"/>
+					</aon:column>
+				</rich:suggestionbox>
+			</a4j:region>
+		</aon:inputText>
+		<f:facet name="footer">
+			<aon:inputText id="#{controller.beanName}_expression-New" required="true"
+				rendered="#{formNew}" size="20"
+				value="#{controller.to.expression}" maxlength="64" >
+				<f:validateLength maximum="64"/>
+				<a4j:region>
+					<rich:suggestionbox id="#{controller.beanName}_expression-New_suggestion"
+						for="#{controller.beanName}_expression-New"
+						onselect="suggestionBoxActive=false;"
+						suggestionAction="#{controller.expressionContext}" var="exp"
+						similarityGroupingId=""
+						tokens=" +-/*%()"
+						fetchValue="#{exp}"
+						immediate="true" limitToList="true" ajaxSingle="true"
+						eventsQueue="#{controller.beanName}_expression-NewSug" ignoreDupResponses="true"
+						requestDelay="100" width="500" height="200"
+						nothingLabel="#{bundle.aon_search_no_results}">
+						<aon:column>
+							<aon:outputText value="#{exp}"/>
+						</aon:column>
+					</rich:suggestionbox>
+				</a4j:region>
+			</aon:inputText>
+		</f:facet>
+	</aon:column>
+	-->
+
+	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+		<f:facet name="header">
+			<aon:outputLabel for="#{controller.beanName}_startDate" value="#{bundle.aon_start_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.startDate}" rendered="#{formList}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>		
+		<aon:selectInputDate id="#{controller.beanName}_startDate" rendered="#{formEdit}"
+			required="true"
+			value="#{controller.to.startDate}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+		<f:facet name="footer">
+			<aon:selectInputDate id="#{controller.beanName}_startDate-New" rendered="#{formNew}"
+				required="true"
+				value="#{controller.to.startDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}"/>
+		</f:facet>
+	</aon:column>
+
+	<aon:column styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+		<f:facet name="header">
+			<aon:outputLabel for="#{controller.beanName}_endDate" value="#{bundle.aon_end_date}" />
+		</f:facet>
+		<aon:outputText value="#{to.endDate}" rendered="#{formList}">
+			<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+		</aon:outputText>		
+		<aon:selectInputDate id="#{controller.beanName}_endDate" rendered="#{formEdit}"
+			value="#{controller.to.endDate}"
+			timeZone="#{timeZoneController.timeZone}"
+			popupDateFormat="#{bundle.aon_date_pattern}"/>
+		<f:facet name="footer">
+			<aon:selectInputDate id="#{controller.beanName}_endDate-New" rendered="#{formNew}"
+				value="#{controller.to.endDate}"
+				timeZone="#{timeZoneController.timeZone}"
+				popupDateFormat="#{bundle.aon_date_pattern}"/>
+		</f:facet>	
+	</aon:column>
+
+</ui:composition>

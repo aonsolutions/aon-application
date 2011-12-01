@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="itemForm">
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{productBundle.product_module}" />
+				<ui:param name="controller" value="#{item}" />
+				<ui:define name="beforeSpinToolbarContent">
+					<c:if test="#{aonConfiguration.bean.product.showHistory and !item.new}">
+						<aon:commandButton id="ProductHistory" 
+							action="product_stats" actionListener="#{item.onProductHistory}"
+							value="#{bundle.aon_history}"
+							styleClass="aon-finding-toolbar-item aon-icon-info" />
+					</c:if>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<c:if test="#{item.new}">
+					<ui:include src="/com/code/aon/ui/product/facelet/item/formNewContent.xhtml">
+						<ui:param name="controller" value="#{item}" />
+					</ui:include>
+				</c:if>
+
+				<c:if test="#{!item.new}">
+					<ui:include src="/com/code/aon/ui/product/facelet/item/formContent.xhtml">
+						<ui:param name="controller" value="#{item}" />
+					</ui:include>
+
+					<c:if test="#{aonConfiguration.bean.product.showTariff or
+									(aonConfiguration.bean.product.showStock and item.to.product.inventoriable) or
+									(aonConfiguration.bean.product.showComposition and item.to.product.composition) or
+									aonConfiguration.bean.product.showSuppliers or
+									aonConfiguration.bean.product.showAlternatives or
+									aonConfiguration.bean.product.showAttachment}">
+						<aon:panelTabSet id="itemTab" selectedTab="#{item.selectedTab}">
+							<c:if test="#{aonConfiguration.bean.product.showComposition and item.to.product.composition}">
+								<aon:panelTab id="itemCompositionPanelTab"
+									label="#{productBundle.product_composition}">
+									<ui:include
+										src="/com/code/aon/ui/product/facelet/item/composition/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+
+							<c:if test="#{aonConfiguration.bean.product.showStock and item.to.product.inventoriable}">
+								<aon:panelTab id="itemWarehousePanelTab"
+									label="#{warehouseBundle.warehouse_item_warehouse_module}">
+									<ui:include
+										src="/com/code/aon/ui/warehouse/facelet/itemwarehouse/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+
+							<c:if test="#{aonConfiguration.bean.product.showTariff}">
+								<aon:panelTab id="itemTariffPanelTab"
+									label="#{productBundle.product_tariff_module}">
+									<ui:include
+										src="/com/code/aon/ui/product/facelet/item/tariff/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+
+							<c:if test="#{aonConfiguration.bean.product.showCatalogues}">
+								<aon:panelTab id="itemCataloguePanelTab"
+									label="#{productBundle.product_catalogue_module}">
+									<ui:include
+										src="/com/code/aon/ui/product/facelet/item/catalogue/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+
+							<c:if test="#{aonConfiguration.bean.product.showSuppliers}">
+								<aon:panelTab id="itemSupplierPanelTab"
+									label="#{productBundle.product_item_supplier_module}">
+									<ui:include
+										src="/com/code/aon/ui/product/facelet/item/supplier/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+
+							<c:if test="#{aonConfiguration.bean.product.showAlternatives}">
+								<aon:panelTab id="itemAlternativePanelTab"
+									label="#{productBundle.product_alternative_items}">
+									<ui:include
+										src="/com/code/aon/ui/product/facelet/item/alternative/tab_grid.xhtml">
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+
+							<c:if test="#{aonConfiguration.bean.product.showAttachment}">
+								<aon:panelTab id="itemAttachPanelTab"
+									label="#{productBundle.product_attachment}">
+									<ui:include
+										src="/com/code/aon/ui/product/facelet/item/attach/tab_grid.xhtml">
+										<ui:param name="controller" value="#{itemAttach}" />
+										<ui:param name="skipCategoryColumn" value="true" />
+									</ui:include>
+								</aon:panelTab>
+							</c:if>
+						</aon:panelTabSet>
+					</c:if>
+				</c:if>
+			</aon:div>
+		</aon:form>
+
+		<c:if test="#{!item.new and aonConfiguration.bean.product.showStock and item.to.product.inventoriable}">
+			<ui:include src="/com/code/aon/ui/product/facelet/item/modalInfo.xhtml" />
+		</c:if>
+
+		<c:if test="#{!item.new and (aonConfiguration.bean.product.showAlternatives or aonConfiguration.bean.product.showComposition)}">
+			<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		</c:if>
+
+		<c:if test="#{!item.new and aonConfiguration.bean.product.showSuppliers}">
+			<aon:lookupButtonPopup lookup="#{supplierLookup}" />
+		</c:if>
+
+		<c:if test="#{!item.new and aonRole.accountingOperator and aonConfiguration.bean.product.showAccount}">
+			<aon:lookupButtonPopup lookup="#{accountLookup}" />
+		</c:if>
+	</ui:define>
+</ui:composition>

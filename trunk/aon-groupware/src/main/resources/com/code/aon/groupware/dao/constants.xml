@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.groupware.CampaignProject" sqlName="campaign_project">
+		<alias names="id,campaign_id,project_id,project_name,project_registry_document,project_registry_name" />
+		<hibernate names="id,campaign.id,project.id,project.name,project.registry.document,project.registry.name" />
+	</bean>
+	
+	<bean class="com.code.aon.groupware.ProcessTask" sqlName="process_task">
+		<alias names="campaign_id,id,processDetail_id,task_id,task_status,task_project_id" />
+		<hibernate names="campaign.id,id,processDetail.id,task.id,task.status,task.project.id" />
+	</bean>
+
+	<bean class="com.code.aon.groupware.Task" sqlName="task">
+		<alias names="activityType_id,comments,description,dueDate,endDate,enterprise_id,id,percent,priority,project_id,project_name,project_projectType_id,registry_id,registry_name,repeatPeriod,sender_id,source,startDate,status,taskHolder_id,workGroup_id" />
+		<hibernate names="activityType.id,comments,description,dueDate,endDate,enterprise.id,id,percent,priority,project&lt;id,project&lt;name,project.projectType&lt;id,registry&lt;id,registry&lt;name,repeatPeriod,sender.id,source,startDate,status,taskHolder&lt;id,workGroup&lt;id" />
+	</bean>
+
+	<bean class="com.code.aon.groupware.TaskHolder" sqlName="task_holder">
+		<alias names="id,active,costProfile_id,costProfile_description,registry_id,registry_name,registry_alias,type,user_id,user_name,user_alias" />
+		<hibernate names="id,active,costProfile.id,costProfile.description,registry.id,registry.name,registry.alias,type,user&lt;id,user&lt;name,user&lt;alias" />
+	</bean>
+	
+	<bean class="com.code.aon.groupware.TaskHolderWorkgroup" sqlName="task_holder_workgroup">
+		<alias names="id,taskHolder_id,taskHolder_active,workGroup_id,workGroup_status"/>
+		<hibernate names="id,taskHolder.id,taskHolder.active,workGroup.id,workGroup.status"/>
+	</bean>
+</dao>
+
+
+		

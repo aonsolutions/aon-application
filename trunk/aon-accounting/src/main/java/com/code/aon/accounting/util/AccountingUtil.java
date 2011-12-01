@@ -1,0 +1,162 @@
+package com.code.aon.accounting.util;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.List;
+
+import com.code.aon.account.Account;
+import com.code.aon.account.dao.IAccountAlias;
+import com.code.aon.accounting.AccountEntry;
+import com.code.aon.accounting.AccountEntryDetail;
+import com.code.aon.accounting.DefaultAccounts;
+import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
+import com.code.aon.accounting.enumeration.AccountEntryType;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
+
+public class AccountingUtil {
+
+	public Account obtainDefaultAccount(String defaultAccountName) throws ManagerBeanException {
+		IManagerBean accAppParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accAppParamBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), defaultAccountName);
+		Iterator<ITransferObject> iter = accAppParamBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			ApplicationParameter param = (ApplicationParameter)iter.next();
+			IManagerBean accountBean  = BeanManager.getManagerBean(Account.class);
+			return (Account) accountBean.get(param.getValue());
+		}
+		return null;
+	}
+	
+	public Date getFirstPeriodInitialionDate() throws ManagerBeanException {
+		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		Criteria criteria = new Criteria();
+		String alias = periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE);
+		criteria.addOrder(alias);
+		Iterator<ITransferObject> iter = periodBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			return ((Period) iter.next()).getInitiationDate();
+		}
+		return null;
+	}
+
+	public Account obtainCashAccount() throws ManagerBeanException {
+		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), obtainDefaultAccount(DefaultAccounts.CASH_ACCOUNT).getId());
+		List<ITransferObject> list = accountBean.getList(criteria);
+		if(list.size() > 0){
+			return (Account)list.iterator().next();
+		}
+		return null;
+	}
+
+	public Period getPeriod(Date date) throws ManagerBeanException {
+		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		Criteria criteria = new Criteria();
+		criteria.addGreaterThanOrEqualExpression(periodBean
+				.getFieldName(IAccountingAlias.PERIOD_DEADLINE), date);
+		criteria.addLessThanOrEqualExpression(periodBean
+				.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), date);
+		Iterator<ITransferObject> iter = periodBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			return (Period) iter.next();
+		}
+		return null;
+	}
+
+	public Period getPreviousPeriod(Period period) throws ManagerBeanException {
+		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		Criteria criteria = new Criteria();
+		String alias = periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE);
+		criteria.addLessThanExpression(alias, period.getInitiationDate());
+		criteria.addOrder(alias,false);
+		Iterator<ITransferObject> iter = periodBean.getList(criteria).iterator();
+		if (iter.hasNext()) {
+			return (Period) iter.next();
+		}
+		return null;
+	}
+
+	public Period obtainPeriod(Date date) throws ManagerBeanException {
+		Period period = getPeriod(date);
+		if (period == null) {
+			Calendar initiation = new GregorianCalendar();
+			initiation.setTime(date);
+			initiation.set(Calendar.DAY_OF_MONTH, 1);
+			initiation.set(Calendar.MONTH, 0);
+			Calendar deadline = new GregorianCalendar();
+			deadline.setTime(date);
+			deadline.set(Calendar.DAY_OF_MONTH, 31);
+			deadline.set(Calendar.MONTH, 11);
+
+			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+			period = new Period();
+			period.setId(Integer.toString(initiation.get(Calendar.YEAR)));
+			period.setInitiationDate(initiation.getTime());
+			period.setDeadline(deadline.getTime());
+			period =(Period) periodBean.insert(period);
+		}
+		return period;
+	}
+
+	public boolean existsEntry(Period period, AccountEntryType accountEntryType, SecurityLevel securityLevel, Integer accountEntryId) throws ManagerBeanException {
+		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(entryBean
+				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
+		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE),
+				accountEntryType);
+		if (accountEntryId != null) {
+			Expression exp = ExpressionUtilities.getNotEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ID),accountEntryId);
+			criteria.addExpression(exp);
+		}
+		if (securityLevel != null) {
+			criteria.addEqualExpression(entryBean
+					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
+		}
+		List<ITransferObject> list = entryBean.getList(criteria);
+		return (list.size() > 0);
+	}
+	
+	public boolean existsEntry(Period period, AccountEntryType accountEntryType, SecurityLevel securityLevel) throws ManagerBeanException {
+		return existsEntry(period, accountEntryType, securityLevel,null);
+	}
+	public boolean existsOpeningEntry(Period period, SecurityLevel securityLevel) throws ManagerBeanException {
+		return existsEntry(period, AccountEntryType.OPENING, securityLevel,null);
+	}
+	public boolean existsOperatingEntry(Period period, SecurityLevel securityLevel) throws ManagerBeanException {
+		return existsEntry(period, AccountEntryType.OPERATING, securityLevel,null);
+	}
+	public boolean existsClosingEntry(Period period, SecurityLevel securityLevel) throws ManagerBeanException {
+		return existsEntry(period, AccountEntryType.CLOSING, securityLevel,null);
+	}
+
+	
+	// TODO ¿?
+	public AccountEntryDetail getEntryDetailFromAccountPattern(AccountEntry entry, String accountPattern) throws ManagerBeanException{
+		try {
+			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
+			criteria.addExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), accountPattern);
+			Iterator<?> iter = accountEntryDetailBean.getList(criteria).iterator();
+			return iter.hasNext()?(AccountEntryDetail)iter.next():null;
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e.getMessage(),e);
+		}
+	}
+}

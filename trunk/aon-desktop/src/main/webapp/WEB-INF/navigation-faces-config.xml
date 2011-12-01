@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<!-- =================== User ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>changepassword_form</from-outcome>
+			<to-view-id>/facelet/user/changePasswordContent.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>changeuser_form</from-outcome>
+			<to-view-id>/facelet/user/changeUserContent.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Corporate Identity Navigation Rules ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>corporateIdentityAttach_list</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporateIdentityAttach_search</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/search.xhtml</to-view-id>
+		</navigation-case>		
+		<navigation-case>
+			<from-outcome>corporate_identity_fax</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/fax/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporate_identity_letter</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/letter/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporate_identity_label</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/label/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporate_identity_recibi</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/recibi/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporate_identity_category</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/category/grid.xhtml</to-view-id>
+		</navigation-case>			
+	</navigation-rule>
+
+	<!-- =================== Domain ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>domain_select</from-outcome>
+			<to-view-id>/facelet/domain/select.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+</faces-config>

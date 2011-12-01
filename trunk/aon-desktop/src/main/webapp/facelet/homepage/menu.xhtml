@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="/com/code/aon/ui/resources/facelet/shared/menu.xhtml">
+				
+	<ui:define name="afterMenuContent">
+		<c:forEach items="#{aonapps.applicationList}" var="app">
+			<c:if test="#{app.toolbarEnabled and app.showDomainList}">
+				<aon:commandLink
+					styleClass="aon-top-menu-item aon-menu-application" 
+					action="domain_select" value="#{app.name}" rendered="#{app.toolbarEnabled}">
+					<f:setPropertyActionListener value="#{app}" target="#{domain.selectedApplication}" />
+					<aon:actionListener method="#{domain.onInitRegisteredDomains}" />
+				</aon:commandLink>
+			</c:if>
+			<c:if test="#{app.toolbarEnabled and !app.showDomainList}">
+				<aon:outputLink styleClass="aon-top-menu-item aon-menu-application" 
+					value="#{app.context}" target="_blank" >
+					<aon:outputText value="#{app.name}" style="text-transform:capitalize"/> 
+				</aon:outputLink>
+			</c:if>
+		</c:forEach>			
+	</ui:define>
+	
+	<ui:define name="beforeHelpMenuContent">	
+		<aon:menuItem id="userData" action="changeuser_form"
+			iconClass="aon-icon-user"
+			actionListener="#{currentUser.onInit}"
+			value="#{appBundle.aon_user_data}" />		
+	</ui:define>	
+
+	<ui:define name="beforeRightMenuContent">	
+		<aon:methodParam name="homeActionListener"
+			value="#{desktop.onRefresh}" type="actionListener" />				
+	</ui:define>	
+	
+</ui:composition>

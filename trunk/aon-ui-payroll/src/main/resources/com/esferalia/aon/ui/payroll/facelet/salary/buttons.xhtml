@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:commandButton id="email"
+		value="&#160;" disabled="#{!webmail.logged}"
+		actionListener="#{salary.onSendByEmail}"
+		styleClass="aon-finding-toolbar-item aon-icon-webmail2 aon-finding-toolbar-item-no-border"
+		reRender="showNewMessageWindow">
+	</aon:commandButton>		
+				
+	<aon:htmlCommandLink id="currentSalary-report"
+		styleClass="aon-finding-toolbar-item aon-icon-pdf" target="_blank"
+		value="#{payrollBundle.payroll_salary}"
+		action="#{report.onExecute}">
+		<f:param name="reportKey" value="#{salary.salaryTemplate}" />
+		<f:param name="outputFormat" value="PDF" />
+	</aon:htmlCommandLink>					
+
+</ui:composition>

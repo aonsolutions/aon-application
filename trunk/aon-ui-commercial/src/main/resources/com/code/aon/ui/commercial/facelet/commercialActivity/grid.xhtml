@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="commercialActivityList">
+
+			<aon:div ajaxRendered="true" layout="none">
+			
+				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{commercialBundle.commercial_activity_module}" />
+					<ui:param name="controller" value="#{commercialActivity}" />
+				</ui:include>			
+
+				<!--  aon-region-body -->
+				<aon:div styleClass="aon-scroll-area">
+
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+						<ui:param name="controller" value="#{commercialActivity}" />
+						<ui:param name="columnClasses" value="aon-width-60, aon-editDataTable-textColumn" />
+						<ui:define name="columns">
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{bundle.aon_id}" />
+								</f:facet>
+								<aon:outputText value="#{to.id}" />
+								<f:facet name="footer">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputLabel for="CommercialActivity_name"
+										value="#{bundle.aon_name}" />
+								</f:facet>
+								<aon:outputText value="#{to.name}"
+									rendered="#{formList}" />
+								<aon:inputText id="CommercialActivity_name" required="true"
+									rendered="#{formEdit}" size="32"
+									value="#{commercialActivity.to.name}" maxlength="32" />
+								<f:facet name="footer">
+									<aon:inputText id="CommercialActivity_name-New" required="true"
+										rendered="#{formNew}" size="32"
+										value="#{commercialActivity.to.name}" maxlength="32" />
+								</f:facet>
+							</aon:column>
+						</ui:define>
+					</ui:decorate>
+
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

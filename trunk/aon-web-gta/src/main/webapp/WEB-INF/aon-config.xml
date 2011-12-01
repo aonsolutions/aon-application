@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.esferalia.com/common" >
+
+	<registry:config version="1.0" xmlns:registry="http://www.esferalia.com/registry">
+		<registry:rmedia 
+			showSendEmail="true" 
+		/>
+	</registry:config>
+		
+	<config:config version="1.1" xmlns:config="http://www.esferalia.com/config" >
+		<config:series
+			showOfferData="true"
+			showSalesData="true"
+			showDeliveryData="true"
+			showInvoiceData="true"
+			showTasData="true"
+		/>
+	</config:config>	
+
+	<company:config version="1.4" xmlns:company="http://www.esferalia.com/company">
+		<company:company 
+			showRegistryBank="true" 
+			showCompanyOtherData="true"
+			showPanelTabSet="true" 
+			showEInvoice="true"
+			showDigitalCertificate="true"
+			showDirStaff="false"
+		/>
+		<company:enterprise 
+			showFinanceData="false" 
+			showAddInfo="true"
+			showDirStaff="false"
+			standalone="false"
+			showEnterpriseParams="false"
+			showPayrollData="false"
+			showPersonInSearch="false"
+		/>				
+	</company:config>
+
+	<customer:config version="1.1" xmlns:customer="http://www.esferalia.com/customer">
+		<customer:customer
+			showOfferData="true"
+			showSalesData="true"
+			showDeliveryData="true" 
+			showFinanceData="true" 
+			showProjectData="false"
+			showFinanceFeeData="true" 
+			showTaxInfoData="true"
+			showAccount="true"
+			showTariff="true" 
+			showSegment="true"
+			showNote="true"
+			showRelationship="false"
+			showRecordData="false"
+			showAddInfo="true"
+			showDirStaff="false"
+			showHistory="true"
+		/>
+	</customer:config>
+
+	<supplier:config version="1.0" xmlns:supplier="http://www.esferalia.com/supplier">
+		<supplier:supplier
+			showFinanceData="true" 
+			showTaxInfoData="true"
+			showAccount="true"
+			showSegment="true"
+			showAddInfo="true"
+		/>
+	</supplier:config>
+
+	<finance:config version="1.1" xmlns:finance="http://www.esferalia.com/finance">
+		<finance:creditor
+			showFinanceData="true" 
+			showTaxInfoData="true"
+			showAccount="true"
+			showSegment="true"
+			showAddInfo="true"
+		/>
+		<finance:invoice
+			showWarehouseData="true" 
+			showTasData="true" 
+			showSendEmail="true"
+		/>
+	</finance:config>
+
+	<product:config version="1.2" xmlns:product="http://www.esferalia.com/product">
+		<product:catalogue
+			showEcommerceData="false"
+		/>
+ 		<product:product
+			showBarcode="true"
+			showType="true"
+			showBrand="true"
+			showStock="true"
+			showTariff="true"
+			showCatalogues="true"
+			showComposition="true"
+			showAlternatives="true"
+			showSuppliers="true"
+			showAccount="true"
+			showAttachment="false"
+			showEcommerceData="false"
+			showHistory="true"
+		/>
+ 		<product:productCategory
+ 			showCategoryGroup="false"
+ 		/>
+	</product:config>
+
+	<commercial:config version="1.4" xmlns:commercial="http://www.esferalia.com/commercial">
+		<commercial:offer
+			showInvoicing="true"
+			showSalesOrder="true"
+			showSeller="true"
+			showTasData="true"
+		/>
+		<commercial:target
+			showTaxInfoData="true"
+			showEcommerceTab="false"
+			showProfile="false"
+			showSearchOnlyCustomers="true"
+			showProject="true"
+			showProduct="true"
+			showSeller="true"
+			showAddInfo="true"
+			showSupplier="true"
+			showTariff="true"
+			showFinanceData="true"
+			showNote="true"
+		/>
+	</commercial:config>
+
+	<warehouse:config version="1.0" xmlns:warehouse="http://www.esferalia.com/warehouse">
+		<warehouse:delivery
+			showTasData="true"
+		/>
+		<warehouse:income
+			showTasData="true"
+		/>
+	</warehouse:config>
+
+	<sales:config version="1.0" xmlns:sales="http://www.esferalia.com/sales">
+		<sales:sales
+			showTasData="true"
+		/>
+	</sales:config>
+
+	<purchase:config version="1.0" xmlns:purchase="http://www.esferalia.com/purchase">
+		<purchase:purchase
+			showTasData="true"
+		/>
+	</purchase:config>
+
+	<webmail:config version="1.2" xmlns:webmail="http://www.esferalia.com/webmail" >
+		<webmail:webmail
+			connect="true"
+			showDomainMailAccounts="true"			
+		/>
+	</webmail:config>	
+
+</config>

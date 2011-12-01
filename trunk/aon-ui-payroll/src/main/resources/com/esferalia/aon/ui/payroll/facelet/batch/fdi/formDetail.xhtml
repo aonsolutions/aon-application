@@ -1,0 +1,21 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+	
+	<ui:decorate template="/com/esferalia/aon/ui/payroll/facelet/batch/formDetail.xhtml">
+		<ui:param name="controller" value="#{leaveBatch}" />
+		<ui:param name="controllerDetail" value="#{leaveBatchDetail}" />
+		
+		<ui:define name="detailDataColumns" >
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/batch/fdi/leaveColumns.xhtml" />
+		</ui:define>
+		
+	</ui:decorate>
+
+</ui:composition>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+
+	<!--  LISTADO DEL LIBRO DE IVA -->
+	<report id="vatBook" description="Listado del Libro de IVA">
+		<template path="/com/code/aon/ui/fiscal/report/vatBook.jasper"/>
+		<collection provider="#{vatReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{vatReport.getFromDate}" />
+			<param id="toDate" value="#{vatReport.getToDate}" />
+			<param id="date" value="#{vatReport.getDate}" />
+			<param id="title" value="#{vatReport.getTitle}" />
+			<param id="period" value="#{vatReport.getAccountPeriod}" />
+			<param id="showCover" value="#{vatReport.isCoverVisible}" />
+			<param id="showCounter" value="#{vatReport.isCounterVisible}" />
+			<param id="pageCounter" value="#{vatReport.getPageCounter}" />
+		</params>
+	</report>
+	
+	<!--  LISTADO DEL LIBRO DE RETENCIONES -->
+	<report id="retentionBook" description="Listado del Libro de IVA">
+		<template path="/com/code/aon/ui/fiscal/report/retentionBook.jasper"/>
+		<collection provider="#{retentionReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="params" value="#{retentionReport.getParams}" />
+			<param id="title" value="#{retentionReport.getTitle}" />
+		</params>
+	</report>
+	
+	<!--  LISTADO DE FACTURAS -->
+	<report id="invoiceReport" description="Listado de Facturas">
+		<template path="/com/code/aon/ui/fiscal/report/invoiceReport.jasper"/>
+		<collection provider="#{invoiceReport.invoices}"/>
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="params" value="#{invoiceReport.getParams}" />
+		</params>
+	</report>
+
+	<!--  *********  Modelo 347 ********* -->
+	<report id="mod347List" description="Model 347List">
+		<template path="/com/code/aon/ui/fiscal/report/mod347.jasper"/>
+		<bean key="com.code.aon.fiscal.Mod347Detail" />
+		<criteria provider="#{mod347Detail}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="year" value="#{mod347.getYear}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<!--  *********  Declaracion de IVA ********* -->
+	<report id="vatTaxReport" description="Declaracion de IVA">
+		<template path="/com/code/aon/ui/fiscal/report/vatTax.jasper"/>
+		<collection provider="#{vatTax.summary}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="declarations" value="#{vatTax.getDeclarations}" />
+		</params>
+		<nested-report report="vatTaxDeclarationReport"/>
+	</report>
+	<report id="vatTaxDeclarationReport" description="Cartas de pago de la Declaracion de IVA">
+		<template path="/com/code/aon/ui/fiscal/report/vatTax_declaraction.jasper"/>
+	</report>
+	
+	<!--  *********  Declaracion de IVA ********* -->
+	<report id="rentingReport" description="Declaracion de IRPF 115">
+		<template path="/com/code/aon/ui/fiscal/report/renting.jasper"/>
+		<bean key="com.code.aon.fiscal.Renting" />
+		<collection provider="#{renting}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.fiscal.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+</report-config>

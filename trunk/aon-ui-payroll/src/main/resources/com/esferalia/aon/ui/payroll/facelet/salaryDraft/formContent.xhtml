@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" >
+
+
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salary/header.xhtml">
+			<ui:param name="salary" value="#{controller.salary}" />
+		</ui:include>
+		
+		<aon:div styleClass="aon-margin-top aon-text-right" style="width: 815px;">
+			<h:panelGrid columns="5" style="width: 815px;" >
+				<aon:div>
+					<aon:outputText value="#{bundle.aon_type}" styleClass="aon-italic" />
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:selectOneMenu value="#{controller.salaryType}">
+						<f:selectItems value="#{controller.salaryDraftTypes}" />
+						<a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true"/>
+					</aon:selectOneMenu>
+				</aon:div>
+				
+				<aon:div>
+					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_simulation_date}"/>
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:selectOneMenu id="Contract_month" value="#{controller.month}">
+						<f:selectItems value="#{controller.draftMonths}"  />
+						<a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true"/>
+					</aon:selectOneMenu>
+				</aon:div>
+
+	   			<rich:inputNumberSpinner id="Contract_year" value="#{controller.year}" inputSize="4" 
+	   				minValue="#{controller.minYear}" maxValue="#{controller.maxYear}">
+	   			  <a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true"/>
+	   			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true" focus="Contract_year"/>
+	   			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true" focus="Contract_year"/>
+	   			</rich:inputNumberSpinner>
+
+				<aon:div style="">
+					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period}"/>
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period_from}"/>
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:outputText value="#{controller.salary.startDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>		
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period_to}"/>
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:outputText value="#{controller.salary.endDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:outputText>		
+				</aon:div>
+				
+				<aon:div style="">
+					<aon:outputText styleClass="aon-italic" value="&#160;"/>
+					<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_days}:"/>
+					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" value="#{controller.salary.timeUnits}"/>
+				</aon:div>
+			</h:panelGrid>
+			
+<!-- 			
+			<aon:selectInputDate value="#{controller.issueDate}"
+					timeZone="#{timeZoneController.timeZone}"
+					popupDateFormat="#{bundle.aon_date_pattern}">
+				<a4j:support event="oninputchange" actionListener="#{controller.onChangeDates}" reRender="salaryDraftContent, #{controller.beanName}Toolbar"/>
+				<a4j:support event="onchanged" actionListener="#{controller.onChangeDates}" reRender="salaryDraftContent, #{controller.beanName}Toolbar"/>
+			</aon:selectInputDate>
+ -->
+		</aon:div>
+			<c:if test="#{!salaryDraft.validSalaryDraftPeriod}">
+			<aon:div styleClass="aon-panelGrid-search" style="width: 100%; margin-top:10px;">
+					<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-exception"/>
+					<aon:outputText value="#{payrollBundle.payroll_contract_undefined_variables}" styleClass="aon-bold"/>
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<br />
+					<aon:outputText value="&#160;"/>
+					<aon:outputText value="&#160;"/>
+					<aon:outputText value="&#160;"/>
+					<aon:outputText value="&#160;"/>
+					<aon:outputText value="&#160;"/>
+					<aon:outputText value="&#160;"/>
+					<aon:outputText value="&#160;"/>
+					
+					
+			</aon:div>	
+		</c:if>
+
+</ui:composition>

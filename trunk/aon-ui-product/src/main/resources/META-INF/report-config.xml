@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+	<!--  *********  Listado de Items ********* -->
+	<report id="itemList" description="Sales Invoice's List">
+		<template path="/com/code/aon/ui/product/report/item.jasper"/>
+		<bean key="com.code.aon.product.Item" />
+		<criteria provider="#{item}"/>
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.report" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+</report-config>

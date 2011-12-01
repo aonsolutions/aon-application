@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="DOM">
+	<field name="cabecera" value="DOM" format="AlphaNumeric" pattern="X(3)" />
+	<field name="tipoDomicilio" value="bean" bean="DOM" property="tipoDomicilio" format="AlphaNumeric" pattern="X(2)" />
+	<field name="tipoVia" value="bean" bean="DOM" property="tipoVia" format="AlphaNumeric" pattern="X(2)" />
+	<field name="nombreVia" value="bean" bean="DOM" property="nombreVia" format="AlphaNumeric" pattern="X(36)" />
+	<field name="numero" value="bean" bean="DOM" property="numero" format="Numeric" pattern="9(5)" />
+	<field name="bis" value="bean" bean="DOM" property="bis" format="AlphaNumeric" pattern="X(2)" />
+	<field name="bloque" value="bean" bean="DOM" property="bloque" format="AlphaNumeric" pattern="X(2)" />
+	<field name="escalera" value="bean" bean="DOM" property="escalera" format="AlphaNumeric" pattern="X(2)" />
+	<field name="piso" value="bean" bean="DOM" property="piso" format="AlphaNumeric" pattern="X(2)" />
+	<field name="puerta" value="bean" bean="DOM" property="puerta" format="AlphaNumeric" pattern="X(3)" />
+	<field name="sms" value="bean" bean="DOM" property="sms" format="AlphaNumeric" pattern="X(9)" />
+	<field name="free1" value=" " format="AlphaNumeric" pattern="X(3)" />
+</register>
