@@ -122,15 +122,12 @@
 									<f:facet name="header">
 										<aon:outputLabel for="Account_id_Purchase" value="#{productBundle.product_expense_account}" />
 									</f:facet>
-									
 									<aon:div style="width: 90%;" rendered="#{formList}" ajaxRendered="true">
 										<aon:outputText value="#{expenseItem.account.code}" />
 										<rich:toolTip value="#{expenseItem.account.description}"
 											hideEvent="onmouseout" showDelay="200">
 										</rich:toolTip>
 									</aon:div>
-										
-										
 									<ui:include src="/com/code/aon/ui/account/facelet/account/lookup.xhtml">
 										<ui:param name="lookupTo" value="#{expenseItem.to.product.purchaseAccount}" />
 										<ui:param name="lookupSuffix" value="-Purchase" />
