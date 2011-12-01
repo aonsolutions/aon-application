@@ -2,6 +2,7 @@ package com.code.aon.document.dao;
 
 import static com.code.aon.document.IAlfrescoConstants.INSERT_ERROR;
 import static com.code.aon.document.IAlfrescoConstants.REMOVE_ERROR;
+import static com.code.aon.document.IAlfrescoConstants.TYPE_CONTENT;
 import static com.code.aon.document.IAlfrescoConstants.UPDATE_ERROR;
 import static com.code.aon.document.IAlfrescoConstants.UUID_SHORT;
 import static org.alfresco.webservice.util.Constants.QUERY_LANG_LUCENE;
@@ -108,7 +109,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 	}
 
 	protected String getQueryPath() {
-		return "TYPE:\"cm:content\" AND PATH:\"" + getParentReference().getPath() + "/*\"";
+		return "TYPE:\"" + TYPE_CONTENT + "\" AND PATH:\"" + getParentReference().getPath() + "/*\"";
 	}
 	
 	private String getQueryExpression( Criteria criteria ){
@@ -135,7 +136,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		return count;
 	}
 
-	private List<ResultSetRow> getList( String expression ) throws RepositoryFault, RemoteException {
+	protected List<ResultSetRow> getList( String expression ) throws RepositoryFault, RemoteException {
 		List<ResultSetRow> list = new LinkedList<ResultSetRow>();
 		Query query = new Query( Constants.QUERY_LANG_LUCENE, expression );  
 		QueryResult result = getRepositoryService().query(STORE, query, false);
@@ -257,7 +258,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		return list;
 	}
 	
-	private List<ITransferObject> convertList( List<ResultSetRow> list ) throws DAOException {
+	protected List<ITransferObject> convertList( List<ResultSetRow> list ) throws DAOException {
 		List<ITransferObject> tos = new ArrayList<ITransferObject>();
 		for( ResultSetRow row : list ) {
 			ITransferObject to = convert(row.getColumns());
@@ -266,7 +267,7 @@ public abstract class AlfrescoDAO extends BasicAlfresco implements IDAO  {
 		return tos;
 	}	
 	
-	private List<ResultSetRow> sortList( List<ResultSetRow> list, Criteria criteria ) {
+	protected List<ResultSetRow> sortList( List<ResultSetRow> list, Criteria criteria ) {
 		if ( (criteria != null) && (criteria.getOrderByList() != null) ) {
 			List<Order> orderList = criteria.getOrderByList().getOrders();
 			for( int i = orderList.size()-1; i >= 0; i-- ) {

@@ -6,10 +6,11 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
 
+	<aon:methodParam name="rowSelectorAction" value="enterpriseDocument_formTree" />
+	<aon:methodParam name="rowSelectorActionListener" value="#{enterpriseTree.onShowDocument}" type="actionListener" />
+
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 		<ui:param name="controller" value="#{enterpriseDocument}" />
-		<ui:param name="skipSelectButton" value="#{true}" />
-		<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
 		<ui:define name="columns">
 		
 			<aon:column alias="cm:name"

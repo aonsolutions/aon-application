@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -59,6 +60,7 @@ public class SQLContractDelayCalculatorContext
 		return SalaryType.DELAY;
 	}
 	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<IContractPayment> getContractPayments()
@@ -66,6 +68,7 @@ public class SQLContractDelayCalculatorContext
 
 		Collection<IContractPayment> explicitPayments = 
 			super.getContractPayments();
+		
 		
 		try {
 			Collection<IContractPayment> implicitPayments  = 
@@ -119,7 +122,6 @@ public class SQLContractDelayCalculatorContext
 						period.getStart(),
 						period.getEnd(),
 						period.getEnd(),
-						chargeDate,
 						criteria);
 			while ( ctx.next() ) {
 				calculator.calculate(ctx);
@@ -128,108 +130,134 @@ public class SQLContractDelayCalculatorContext
 			payments.addAll(delayPaymentBuilder.getContractPayments());
 		}
 		
-		Collection<Period> extras = getExtras(startDate, endDate);
-		for (Period extra : extras) {
+		ExtraDelayPaymentBuilder extraDelayPaymentBuilder = 
+				new ExtraDelayPaymentBuilder(connection);
+		calculator.setSalaryBuilder(extraDelayPaymentBuilder);
+		
+		Collection<Extra> extras = getExtras(startDate, endDate);
+		for (Extra extra : extras) {
 			ISQLContractSalaryCalculatorContext ctx = 
 				new SQLContractExtraCalculatorContext(
 						 connection, 
-						 extra.getStart(), 
-						 extra.getEnd(), 
-						 extra.getEnd(), 
-						 chargeDate, 
+						 extra.getStartDate(), 
+						 extra.getEndDate(), 
+						 extra.getEndDate(), 
+						 extra.getChargeDate(), 
 						 criteria );
 			while ( ctx.next() ) {
 				calculator.calculate(ctx);
 			}
-			payments.addAll(delayPaymentBuilder.getContractPayments());
+			payments.addAll(extraDelayPaymentBuilder.getContractPayments());
 		}
 		
 		return payments;
 
 	}
 	
-	private Collection<Period> getExtras(Date startDate, Date endDate) 
+	private Collection<Extra> getExtras(Date startDate, Date endDate) 
 	throws SQLException{
+		Collection<Extra> extras = Collections.emptyList();
+		Collection<Extra> agrementExtras = Collections.emptyList();
+
 		Integer agreement = getAgreement();
+		
 		if ( agreement != null ) {
-			return getExtras(agreement, startDate, endDate);
+			agrementExtras = getAgreementExtras(agreement, startDate, endDate);
+			extras = getExtras(agrementExtras, startDate, endDate);
 		}
-		else {
-			return getPaidExtras(startDate, endDate);
-		}
-	}
-	
-	private Collection<Period> getExtras(Integer agreement, Date startDate, Date endDate) 
-		throws SQLException{
-		
-		Collection<Period> extras = 
-			new LinkedList<Period>();
-		
-		ResultSet			rs = null;
-		PreparedStatement	stmt = null;
-		
-		Collection<Integer> years = 
-			years(startDate, endDate);
-		
-		Period period = new Period(startDate, endDate);
-		
-		try {
-			Connection connection =
-				getConnection();
-			stmt = connection.prepareStatement(
-				"SELECT *"
-				+" FROM agreement_extra"
-				+" WHERE agreement= ?"
-			);
-			stmt.setInt( 1, agreement );
-			rs = stmt.executeQuery();
-			while ( rs.next() ) {
-				String extraIssue = 
-					rs.getString(AgreementExtraColumns.ISSUE_DATE);
-				String extraStart = 
-					rs.getString(AgreementExtraColumns.START_DATE);
-				String extraEnd = 
-					rs.getString(AgreementExtraColumns.END_DATE);			
-				
-				for (Integer year : years) {
-					Date extraIssueDate = 
-						AgreementExtra.parseAgreementDate(extraIssue, year);
-					
-					if ( period.contains(extraIssueDate) ) {
-						Date extraStartDate = 
-							AgreementExtra.parseAgreementDate(extraStart, year);
-						Date extraEndDate = 
-							AgreementExtra.parseAgreementDate(extraEnd, year);
-						Period extraPeriod = new Period ( extraStartDate, extraEndDate);
-						extras.add(extraPeriod);
-					}
-				}
-			}
-		} finally {
-			if ( rs != null ) {
-				rs.close();
-			}
-			if ( stmt != null ) {
-				stmt.close();
-			}
+
+		if ( extras.isEmpty() ) { 
+			extras = getPaidExtras(agrementExtras, startDate, endDate);
 		}
 		
 		return extras;
+		
+	}
+	
+	
+	private Collection<Extra> getAgreementExtras(Integer agreement, Date startDate, Date endDate) 
+		throws SQLException {
+		Collection<Extra> extras = 
+				new LinkedList<Extra>();
+			
+			ResultSet			rs = null;
+			PreparedStatement	stmt = null;
+			
+			Collection<Integer> years = 
+				years(startDate, endDate);
+			
+			Period period = new Period(startDate, endDate);
+			
+			try {
+				Connection connection =
+					getConnection();
+				stmt = connection.prepareStatement(
+					"SELECT *"
+					+" FROM agreement_extra"
+					+" WHERE agreement= ?"
+				);
+				stmt.setInt( 1, agreement );
+				rs = stmt.executeQuery();
+				while ( rs.next() ) {
+					String extraIssue = 
+						rs.getString(AgreementExtraColumns.ISSUE_DATE);
+					String extraStart = 
+						rs.getString(AgreementExtraColumns.START_DATE);
+					String extraEnd = 
+						rs.getString(AgreementExtraColumns.END_DATE);			
+					
+					for (Integer year : years) {
+						Date extraIssueDate = 
+							AgreementExtra.parseAgreementDate(extraIssue, year);
+						Date extraStartDate = 
+								AgreementExtra.parseAgreementDate(extraStart, year);
+							Date extraEndDate = 
+								AgreementExtra.parseAgreementDate(extraEnd, year);
+							
+						Extra extra = 
+								new Extra ( extraStartDate, 
+										extraEndDate, 
+										extraIssueDate );
+						extras.add(extra);
+					}
+				}
+			} finally {
+				if ( rs != null ) {
+					rs.close();
+				}
+				if ( stmt != null ) {
+					stmt.close();
+				}
+			}
+			
+			return extras;
+	}
+
+	private Collection<Extra> getExtras(Collection<Extra> extras , Date startDate, Date endDate) 
+		throws SQLException{
+		
+		Collection<Extra> delayedExtras = 
+			new LinkedList<Extra>();
+		
+		Period period = new Period(startDate, endDate);
+
+		for (Extra extra : extras) {
+			if ( period.contains( extra.chargeDate )  ) {
+				delayedExtras.add(extra);
+			}
+		}
+		
+		return delayedExtras;
 	}	
 	
 	
-	private Collection<Period> getPaidExtras(Date startDate, Date endDate) 
+	private Collection<Extra> getPaidExtras(Collection<Extra> agreementExtras, Date startDate, Date endDate) 
 	throws SQLException{
-		Collection<Period> extras = 
-			new LinkedList<Period>();
+		Collection<Extra> extras = 
+			new LinkedList<Extra>();
 		
 		ResultSet			rs = null;
 		PreparedStatement	stmt = null;
-		
-		Collection<Integer> years = 
-			years(startDate, endDate);
-		
-		Period period = new Period(startDate, endDate);
 		
 		try {
 			Connection connection =
@@ -239,9 +267,10 @@ public class SQLContractDelayCalculatorContext
 				+" FROM salary"
 				+" WHERE contract = ?"
 				+" AND type = ? "
-				+" AND issue_date >= ? "
-				+" AND issue_date <= ? "
+				+" AND charge_date >= ? "
+				+" AND charge_date <= ? "
 			);
+			
 			stmt.setInt( 1, getId() );
 			stmt.setInt( 2, SalaryType.EXTRA.ordinal() );
 			java.sql.Date sqlStartDate = 
@@ -253,11 +282,20 @@ public class SQLContractDelayCalculatorContext
 			rs = stmt.executeQuery();
 			while ( rs.next() ) {
 				Date extraStartDate = 
-					rs.getDate(AgreementExtraColumns.START_DATE);
+					rs.getDate(SalaryColumns.START_DATE);
 				Date extraEndDate = 
-					rs.getDate(AgreementExtraColumns.END_DATE);
-				Period extraPeriod = new Period ( extraStartDate, extraEndDate);
-				extras.add(extraPeriod);
+					rs.getDate(SalaryColumns.END_DATE);
+				Date chargeDate = 
+						rs.getDate(SalaryColumns.CHARGE_DATE);
+				Extra extra = 
+						new Extra ( extraStartDate, extraEndDate, chargeDate );
+				Extra agreementExtra = getAgreementExtra(agreementExtras, extra);
+				if ( agreementExtra != null ) {
+					extra.startDate = agreementExtra.startDate;
+					extra.endDate = agreementExtra.endDate;
+				}
+				
+				extras.add( extra );
 			}
 		} finally {
 			if ( rs != null ) {
@@ -271,6 +309,7 @@ public class SQLContractDelayCalculatorContext
 		return extras;
 		
 	}
+	
 	
 	private static Collection<Integer> years ( Date startDate, Date endDate) {
 		int start = CommonUtil.getYear(startDate);
@@ -287,29 +326,30 @@ public class SQLContractDelayCalculatorContext
 		Collection<Period> periods = 
 			new LinkedList<Period>();
 		
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(startDate) ;
+		Calendar start = 
+				Calendar.getInstance();
+		start.setTime(startDate) ;
+		start.set(Calendar.DAY_OF_MONTH, 1);
 		
-		int startMonth = calendar.get(Calendar.MONTH) ;
-		int endMonth = CommonUtil.getMonth(endDate) ;
-
-		for ( int month = startMonth ; month <= endMonth ; month++){
-			calendar.set(Calendar.MONTH, month);
-
-			calendar.set(Calendar.DAY_OF_MONTH, 1);
-			Date start = calendar.getTime();
+		Calendar end = 
+				Calendar.getInstance();
+		end.setTime(endDate) ;
+		end.set(Calendar.DAY_OF_MONTH, 1);
+		
+		
+		while ( start.compareTo(end) <= 0 ) {
+			Date monthStart = start.getTime();
+			Date monthEnd = CommonUtil.getMonthLastDay(monthStart);
+			periods.add(new Period(monthStart, monthEnd));
 			
-			calendar.set(Calendar.DAY_OF_MONTH, 
-					calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-			Date end = calendar.getTime();
-			
-			periods.add(new Period(start, end));
+			start.add(Calendar.MONTH, 1);
 		}
-
+		
+		
 		return periods;
 
 	}
-	
+
 	private static class DelayPaymentBuilder extends AbstractSalaryBuilder {
 		
 		
@@ -325,7 +365,7 @@ public class SQLContractDelayCalculatorContext
 		private SalaryType type;
 		private Date startDate;
 		private Date endDate;
-		protected Integer contract;
+		private Integer contract;
 		
 		private PreparedStatement stmt;
 		
@@ -334,8 +374,9 @@ public class SQLContractDelayCalculatorContext
 		public DelayPaymentBuilder(Connection connection) 
 			throws SQLException{
 			this.values = new HashMap<String, Double>();
-			this.stmt = connection.prepareStatement(SALARY_SQL);
+			this.stmt = initStatement(connection);
 		}
+		
 		
 		@Override
 		public void setType(SalaryType type) {
@@ -356,6 +397,7 @@ public class SQLContractDelayCalculatorContext
 		public void setStartDate(Date startDate) {
 			this.startDate = startDate;
 		}
+		
 		
 		@Override
 		public void setCgcBase(Double cgcBase) {
@@ -390,14 +432,14 @@ public class SQLContractDelayCalculatorContext
 				Double paidValue = paidValues.get(field);
 				Double diffValue = value -paidValue;
 				diffValues.put(field, diffValue);
-				/*
+				
 				System.out.printf("%s : %f - %f = %f.\r\n", 
 						field, 
 						value, 
 						paidValue,
 						value -paidValue
 						);
-						*/
+						
 			}
 			
 			List<IContractPayment> payments = 
@@ -416,15 +458,8 @@ public class SQLContractDelayCalculatorContext
 		private Map<String, Double> getPaidSalary(Set<String> fields) throws SQLException {
 			ResultSet rs = null;
 			try {
-				this.stmt.setInt(1, this.contract); 		// SalaryColumns.CONTRACT + " = ? "
-				this.stmt.setInt(2, this.type.ordinal()); 	// SalaryColumns.TYPE + " = ? "
-				java.sql.Date sqlStartDate = 
-					new java.sql.Date(startDate.getTime());
-				this.stmt.setDate(3, sqlStartDate); 		// SalaryColumns.START_DATE + "  = ? "
-				java.sql.Date sqlEndDate = 
-					new java.sql.Date(endDate.getTime());
-				this.stmt.setDate(4, sqlEndDate); 			// SalaryColumns.END_DATE + "  = ? "
-				rs = this.stmt.executeQuery();
+				
+				rs = initResultSet(stmt, contract, type, startDate, endDate);
 				
 				Map<String, Double> values =
 					new HashMap<String, Double>();
@@ -448,18 +483,8 @@ public class SQLContractDelayCalculatorContext
 			}
 		}
 		
-		private ContractPayment createContractPayment() {
-			
-			ContractPayment payment = new ContractPayment();
-			payment.setStartDate(startDate);
-			payment.setEndDate(endDate);
-			payment.setSalaryType(SalaryType.DELAY);
-			payment.setType(PaymentType.SALARY_SUPPLEMENTS);
-			
-			return payment;
-		}
 		
-		private ContractPayment createContractPayment(double amount, double irpf, double quote ) {
+		protected ContractPayment createContractPayment(double amount, double irpf, double quote ) {
 			
 			ContractPayment payment = new ContractPayment();
 			payment.setStartDate(startDate);
@@ -474,6 +499,124 @@ public class SQLContractDelayCalculatorContext
 			return payment;
 		}
 		
+		protected PreparedStatement initStatement(Connection connection) throws SQLException {
+			return connection.prepareStatement(SALARY_SQL);
+		}
+		
+		protected ResultSet initResultSet(PreparedStatement stmt, Integer contract, SalaryType type, Date startDate, Date endDate) 
+		throws SQLException {
+			ResultSet rs = null;
+			stmt.setInt(1, contract); 		// SalaryColumns.CONTRACT + " = ? "
+			stmt.setInt(2, type.ordinal()); 	// SalaryColumns.TYPE + " = ? "
+			java.sql.Date sqlStartDate = 
+				new java.sql.Date(startDate.getTime());
+			stmt.setDate(3, sqlStartDate); 		// SalaryColumns.START_DATE + "  = ? "
+			java.sql.Date sqlEndDate = 
+				new java.sql.Date(endDate.getTime());
+			stmt.setDate(4, sqlEndDate); 			// SalaryColumns.END_DATE + "  = ? "
+			
+			return stmt.executeQuery();
+		}
+	}
+	
+	
+	private static class ExtraDelayPaymentBuilder extends DelayPaymentBuilder {
+
+		private static final String EXTRA_SQL = "SELECT *"
+				+ " FROM " + SQLConstants.SALARY
+				+ " WHERE " + SalaryColumns.CONTRACT + " = ? "
+				+ " AND " + SalaryColumns.TYPE + "  = ? "
+				+ " AND " + SalaryColumns.START_DATE + "  = ? "
+				+ " AND " + SalaryColumns.END_DATE + " = ? " 
+				+ " AND " + SalaryColumns.CHARGE_DATE + " = ? ";
+
+		private Date chargeDate;
+		
+		public ExtraDelayPaymentBuilder(Connection connection) throws SQLException {
+			super(connection);
+		}
+		
+		@Override
+		public void setChargeDate(Date chargeDate) {
+			this.chargeDate = chargeDate;
+		}
+
+		protected PreparedStatement initStatement(Connection connection) throws SQLException {
+			return connection.prepareStatement(EXTRA_SQL);
+		}
+
+		protected ResultSet initResultSet(PreparedStatement stmt, Integer contract, SalaryType type, Date startDate, Date endDate) 
+		throws SQLException {
+			ResultSet rs = null;
+			stmt.setInt(1, contract); 					// SalaryColumns.CONTRACT + " = ? "
+			stmt.setInt(2, type.ordinal()); 			// SalaryColumns.TYPE + " = ? "
+			java.sql.Date sqlStartDate = 
+				new java.sql.Date(startDate.getTime());
+			stmt.setDate(3, sqlStartDate); 				// SalaryColumns.START_DATE + "  = ? "
+			java.sql.Date sqlEndDate = 
+				new java.sql.Date(endDate.getTime());
+			stmt.setDate(4, sqlEndDate); 				// SalaryColumns.END_DATE + "  = ? "
+			
+			java.sql.Date sqlChargeDate = 
+					new java.sql.Date(chargeDate.getTime());
+			stmt.setDate(5, sqlChargeDate); 			// SalaryColumns.CHARGE_DATE + "  = ? "
+
+			return stmt.executeQuery();
+		}
+		
+		@Override
+		protected ContractPayment createContractPayment(double amount,
+				double irpf, double quote) {
+			ContractPayment payment = new ContractPayment();
+			payment.setStartDate(chargeDate);
+			payment.setEndDate(chargeDate);
+			payment.setSalaryType(SalaryType.DELAY);
+			payment.setType(PaymentType.SALARY_SUPPLEMENTS);
+			
+			payment.setExpression(String.format("%f", amount ));
+			payment.setIrpfExpression(String.format("%f", irpf ) );
+			payment.setQuoteExpression(String.format("%f", quote ));
+
+			return payment;
+		}
+	}
+	
+	private static class Extra {
+		private Date startDate;
+		private Date endDate;
+		private Date chargeDate;
+		
+		public Extra(Date startDate, Date endDate, Date chargeDate ) {
+			this.startDate = startDate;
+			this.endDate = endDate;
+			this.chargeDate = chargeDate;
+		}
+		
+		public Date getStartDate() {
+			return startDate;
+		}
+		
+		public Date getEndDate() {
+			return endDate;
+		}
+		
+		public Date getChargeDate() {
+			return chargeDate;
+		}
+		
+	}
+	
+	private static Extra getAgreementExtra ( Collection<Extra> agreementExtras,  Extra extra ){
+		
+		List<Extra> candidates = new LinkedList<Extra>();
+		for (Extra agreementExtra : agreementExtras) {
+			if ( agreementExtra.endDate.equals(extra.endDate) || 
+					agreementExtra.startDate.equals(extra.startDate)  ||
+					agreementExtra.chargeDate.equals(extra.chargeDate)   ) {
+				candidates.add(agreementExtra);
+			}
+		}
+		return candidates.size() == 1 ?  candidates.get(0) : null;
 	}
 	
 	

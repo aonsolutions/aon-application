@@ -29,6 +29,7 @@ import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.registry.enumeration.StreetType;
+import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Pais;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Tipdoc;
 import com.esferalia.aon.salary.enumeration.PaymentType;
@@ -138,6 +139,13 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		return bigDecimal != null  ? bigDecimal.doubleValue() : 0 ;
 	}
 
+	public  static double toDouble(BigDecimal... bigDecimals) {
+		double ret = 0.00;
+		for (BigDecimal bigDecimal : bigDecimals) {
+			ret += bigDecimal != null  ? bigDecimal.doubleValue() : 0.00;
+		}
+		return ret;
+	}
 
 	protected static <K,V> boolean save( Map<K, Set<V>> map, K key, V value){
 		Set<V> set ; 
@@ -396,7 +404,7 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		
 		super.insertCustomer(registry,null, false, false,false,null,status,null,  scope,false, true,true);
 
-		super.insertTarget(registry, null, (short) 0, false, false, (short)0, status);
+		super.insertTarget(registry, null, (short) 0, false, false, (short)0, status, scope );
 		
 		return registry;
 	}
@@ -648,5 +656,10 @@ public class DefaultMysqlDB extends AbstractMysqlDB {
 		int year =  date.getYear() + 1900;
 		return year == 9999; 
 	}
+	
+	public static java.sql.Date getEndDate(java.sql.Date fecFin) throws SQLException{
+		return DefaultMysqlDB.is9999(fecFin)? null : fecFin;
+	}
+	
 	
 }

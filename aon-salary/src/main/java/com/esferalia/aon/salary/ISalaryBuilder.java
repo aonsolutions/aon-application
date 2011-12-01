@@ -49,6 +49,8 @@ public interface ISalaryBuilder {
 	
 	public void setIssueDate(Date issueDate);
 	
+	public void setChargeDate(Date issueDate);
+
 	public void setStartDate(Date startDate);
 	
 	public void setEndDate(Date endDate);

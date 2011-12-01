@@ -3,8 +3,8 @@ package com.code.aon.report.dynamic;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Date;
-
-import com.code.aon.report.ReportException;
+import java.util.Locale;
+import java.util.Map;
 
 import ar.com.fdvs.dj.domain.CustomExpression;
 import ar.com.fdvs.dj.domain.Style;
@@ -18,6 +18,9 @@ import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import ar.com.fdvs.dj.domain.entities.conditionalStyle.ConditionalStyle;
 import ar.com.fdvs.dj.domain.entities.conditionalStyle.StatusLightCondition;
 
+import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.report.ReportException;
+
 public class DynaElements {
 	
 	public static final String DEFAULT_FONT_NAME = "SansSerif";
@@ -25,7 +28,7 @@ public class DynaElements {
 	public static final int HEADER_FONT_SIZE = 8;
 	public static final String DATE_PATTERN = "dd/MM/yyyy";
 	public static final String NUMBER_PATTERN = "#,##0.00";
-	public static final String INTEGER_PATTERN = "#,###";
+	public static final String INTEGER_PATTERN = "#,##0";
 	public static final int DATE_DEFAULT_WIDTH = 50;
 	public static final int NUMBER_DEFAULT_WIDTH = 78;
 	
@@ -139,17 +142,17 @@ public class DynaElements {
 	
 	public static final ArrayList<ConditionalStyle> DETAIL_NUMBER_RED_BLUE_BOLD_CONDITIONAL_STYLES = new ArrayList<ConditionalStyle>();
 	static {
-		DETAIL_NUMBER_RED_BLUE_BOLD_CONDITIONAL_STYLES.add(new ConditionalStyle(NEGATIVE_CONDITION,DETAIL_NUMBER_RED_BOLD_STYLE ));
+		DETAIL_NUMBER_RED_BLUE_BOLD_CONDITIONAL_STYLES.add(new ConditionalStyle(NEGATIVE_CONDITION,DETAIL_NUMBER_RED_BOLD_STYLE));
 		DETAIL_NUMBER_RED_BLUE_BOLD_CONDITIONAL_STYLES.add(new ConditionalStyle(POSITIVE_CONDITION,DETAIL_NUMBER_BLUE_BOLD_STYLE));
 	}
 	
 	public static final ArrayList<ConditionalStyle> DETAIL_NUMBER_RED_BLUE_CONDITIONAL_STYLES = new ArrayList<ConditionalStyle>();
 	static {
-		DETAIL_NUMBER_RED_BLUE_CONDITIONAL_STYLES.add(new ConditionalStyle(NEGATIVE_CONDITION,DETAIL_NUMBER_RED_STYLE ));
+		DETAIL_NUMBER_RED_BLUE_CONDITIONAL_STYLES.add(new ConditionalStyle(NEGATIVE_CONDITION,DETAIL_NUMBER_RED_STYLE));
 		DETAIL_NUMBER_RED_BLUE_CONDITIONAL_STYLES.add(new ConditionalStyle(POSITIVE_CONDITION,DETAIL_NUMBER_BLUE_STYLE));
 	}
 
-	public AbstractColumn getDateColumn( String property, String header) throws ReportException {
+	public AbstractColumn getDateColumn(String property, String header) throws ReportException {
 		try {
 			return ColumnBuilder.getNew()
 				.setColumnProperty(property, Date.class.getName())
@@ -163,7 +166,7 @@ public class DynaElements {
 		}
 	}
 	
-	public AbstractColumn getStringColumn( String property, String header, int width) throws ReportException {
+	public AbstractColumn getStringColumn(String property, String header, int width) throws ReportException {
 		try {
 			return ColumnBuilder.getNew()
 				.setColumnProperty(property, String.class.getName())
@@ -176,7 +179,8 @@ public class DynaElements {
 			throw new ReportException(e.getMessage(),e);
 		}
 	}
-	public AbstractColumn getNumberColumn( CustomExpression expression, String header) throws ReportException {
+
+	public AbstractColumn getNumberColumn(CustomExpression expression, String header) throws ReportException {
 		try {
 			return ColumnBuilder.getNew()
 				.setCustomExpression(expression)
@@ -189,7 +193,8 @@ public class DynaElements {
 			throw new ReportException(e.getMessage(),e);
 		}
 	}
-	public AbstractColumn getIntegerColumn( String property, String header) throws ReportException {
+
+	public AbstractColumn getIntegerColumn(String property, String header) throws ReportException {
 		try {
 			return ColumnBuilder.getNew()
 				.setColumnProperty(property, Integer.class.getName())
@@ -202,7 +207,8 @@ public class DynaElements {
 			throw new ReportException(e.getMessage(),e);
 		}
 	}
-	public AbstractColumn getNumberColumn( String property, String header) throws ReportException {
+
+	public AbstractColumn getNumberColumn(String property, String header) throws ReportException {
 		try {
 			return ColumnBuilder.getNew()
 				.setColumnProperty(property, Double.class.getName())
@@ -215,7 +221,8 @@ public class DynaElements {
 			throw new ReportException(e.getMessage(),e);
 		}
 	}
-	public AbstractColumn getNumberBlueNormalColumn( String property, String header) throws ReportException {
+
+	public AbstractColumn getNumberBlueNormalColumn(String property, String header) throws ReportException {
 		try {
 			return ColumnBuilder.getNew()
 				.setColumnProperty(property, Double.class.getName())
@@ -230,7 +237,7 @@ public class DynaElements {
 		}
 	}
 
-	public AbstractColumn getNumberRedBlueBoldColumn( String property, String header) throws ReportException {
+	public AbstractColumn getNumberRedBlueBoldColumn(String property, String header) throws ReportException {
 		try {
 			return ColumnBuilder.getNew()
 				.setColumnProperty(property, Double.class.getName())
@@ -244,10 +251,10 @@ public class DynaElements {
 			throw new ReportException(e.getMessage(),e);
 		}
 	}
-	public AbstractColumn getNumberRedBlueColumn( CustomExpression expression, String header) throws ReportException {
+	public AbstractColumn getNumberRedBlueColumn(CustomExpression expression, String header) throws ReportException {
 		try {
 			return ColumnBuilder.getNew()
-				.setCustomExpression( expression )					
+				.setCustomExpression(expression)					
 				.setTitle(header)
 				.setWidth(NUMBER_DEFAULT_WIDTH)
 				.setStyle(DETAIL_NUMBER_STYLE)
@@ -258,6 +265,87 @@ public class DynaElements {
 			throw new ReportException(e.getMessage(),e);
 		}
 	}
-	
-	
+
+	public AbstractColumn getBooleanColumn(String property, String valueIfTrue, String valueIfFalse, String header, int width) throws ReportException {
+		try {
+			return ColumnBuilder.getNew()
+				.setColumnProperty(property, Boolean.class.getName())
+				.setCustomExpression(new BooleanCustomExpression(property, valueIfTrue, valueIfFalse))
+				.setTitle(header)
+				.setWidth(width)
+				.setStyle(DETAIL_DATE_STYLE)
+				.setHeaderStyle(COLUMN_HEADER_STYLE)
+				.build();
+		} catch (ColumnBuilderException e) {
+			throw new ReportException(e.getMessage(),e);
+		}
+	}
+
+	public class BooleanCustomExpression implements CustomExpression {
+
+		private static final long serialVersionUID = 5532097656804800650L;
+
+		private String property;
+		private String valueIfTrue;
+		private String valueIfFalse;
+
+		public BooleanCustomExpression(String property, String valueIfTrue, String valueIfFalse) {
+			this.property = property;
+			this.valueIfTrue = valueIfTrue;
+			this.valueIfFalse = valueIfFalse;
+		}
+
+		@Override
+		public String getClassName() {
+			return String.class.getName();
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Object evaluate(Map fields, Map variables, Map parameters) {
+			Boolean field = (Boolean) fields.get(property);
+			return field ? valueIfTrue : valueIfFalse;
+		}
+	}
+
+	public AbstractColumn getEnumColumn(String property, Locale locale, String header, int width) throws ReportException {
+		try {
+			return ColumnBuilder.getNew()
+				.setColumnProperty(property, IResourceable.class.getName())
+				.setCustomExpression(new EnumCustomExpression(property, locale))
+				.setTitle(header)
+				.setWidth(width)
+				.setStyle(DETAIL_DATE_STYLE)
+				.setHeaderStyle(COLUMN_HEADER_STYLE)
+				.build();
+		} catch (ColumnBuilderException e) {
+			throw new ReportException(e.getMessage(),e);
+		}
+	}
+
+	public class EnumCustomExpression implements CustomExpression {
+
+		private static final long serialVersionUID = 5482842245681755312L;
+
+		private String property;
+		private Locale locale;
+
+		public EnumCustomExpression(String property, Locale locale) {
+			this.property = property;
+			this.locale = locale;
+		}
+
+		@Override
+		public String getClassName() {
+			return String.class.getName();
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Object evaluate(Map fields, Map variables, Map parameters) {
+			IResourceable iResourceable = (IResourceable) fields.get(property);
+			return iResourceable.getName(locale);
+		}
+	}
+
 }

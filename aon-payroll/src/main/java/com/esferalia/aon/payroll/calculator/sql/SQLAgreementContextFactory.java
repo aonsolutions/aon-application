@@ -2,15 +2,25 @@ package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.mvel2.util.MethodStub;
+
+import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.Pair;
+import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
+import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.DeferredTimedVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -19,10 +29,15 @@ import com.esferalia.aon.salary.expression.ExpressionImpl;
 import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.Period;
 
+
+
 public class SQLAgreementContextFactory 
-	implements LRUCacheFactory<Integer, ExpressionContext> {
+	implements LRUCacheFactory<AgreementContextKey, ExpressionContext>  {
 
 	
+	
+	private static final String MONTHS_IMPL = "MESESIMPL";
+
 	private static final String SYSTEM_DATA_SQL = 
 		"SELECT * " 
 		+" FROM `system_data`"
@@ -31,6 +46,14 @@ public class SQLAgreementContextFactory
 		+" OR end_date >= ? )";
 	
 	private static final String AGREEMENT_DATA_SQL = 
+			"SELECT * " 
+			+" FROM `agreement_data`"
+			+" WHERE agreement = ? " 
+			+" AND start_date <= ? "
+			+" AND ( end_date IS NULL "
+			+" OR end_date >= ? )";
+
+	private static final String AGREEMENT_LEVEL_DATA_SQL = 
 		"SELECT * " 
 		+" FROM `agreement_level_data`"
 		+" WHERE agreement_level = ? " 
@@ -38,27 +61,57 @@ public class SQLAgreementContextFactory
 		+" AND ( end_date IS NULL "
 		+" OR end_date >= ? )";
 	
-	private PreparedStatement 		stmt;
-	private Date					endDate;
-	private Date					startDate;
-	
-	private ExpressionContext 		systemExpressionContext;
 	
 	
-	public SQLAgreementContextFactory(Connection connection, Date startDate, Date endDate) 
+	private Date									endDate;
+	private Date									startDate;
+
+	private PreparedStatement						dataStmts [];
+	private PreparedStatement 						agreementDataStmt;
+	private PreparedStatement 						agreementLevelDataStmt;
+	
+	private ExpressionContext 						systemExpressionContext;
+	
+	private LRUCache<Integer, ExpressionContext> 	agreementDataCache;
+	
+	private SQLContractSalaryCalculatorContext		ctx;
+	
+	public static int getMonths(Date start, Date end , double days){
+		Calendar startCalendar = Calendar.getInstance();
+		startCalendar.setTime(start);
+		
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(end);
+		
+		int months = 0;
+
+		while ( days > 0 && ( startCalendar.compareTo(endCalendar) <= 0 ) ){
+			days -= CommonUtil.daysInMonth(startCalendar.getTime());
+			startCalendar.add(Calendar.MONTH, 1);
+			months++;
+		}
+		
+		return months ;
+	}
+
+	public SQLAgreementContextFactory(SQLContractSalaryCalculatorContext ctx, Date startDate, Date endDate) 
 	throws SQLException, ExpressionException
 	{
+		this.ctx = ctx;
 		this.endDate = endDate;
 		this.startDate = startDate;
-		initSystemCtx(connection, startDate, endDate);
-		initAgreementStmt(connection, startDate, endDate);
+		initAgreementDataContextCache();
+		initSystemCtx(ctx.getConnection(), startDate, endDate);
+		initAgreementStmt(ctx.getConnection(), startDate, endDate);
 	}
 	
 	public void close() 
 	throws SQLException {
-		if ( stmt != null ) {
-			stmt.close();
-			stmt = null;
+		for (int i = 0; i < dataStmts.length; i++) {
+			if ( dataStmts[i] != null ) {
+				dataStmts[i].close();
+				dataStmts[i] = null;
+			}
 		}
 	}
 	
@@ -68,18 +121,52 @@ public class SQLAgreementContextFactory
 		super.finalize();
 	}
 	
-	@Override
-	public ExpressionContext create(Integer agreementLevelId) {
-		if ( agreementLevelId == null ) {
+	public ExpressionContext create(Integer agreementId) {
+		try {
+			ExpressionContext expressionCtx = 
+					new ExpressionContext(systemExpressionContext);
+			
+			agreementDataStmt.setInt(1, agreementId);
+			loadData(agreementDataStmt, expressionCtx);
+			
+			return expressionCtx;
+		}catch (SQLException e) {
+			//TODO : ¿ Deberiamos crear una excepción espefícica como CreateException ? 
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public ExpressionContext create(AgreementContextKey key) {
+		
+		if ( key == null || key.getAgreementId() == null ) {
 			return this.systemExpressionContext;
 		} // LRUCache<K,V> as LinkedHasMap accepts null keys and/or values.
 		
+		
+		try {
+			ExpressionContext parentContext = 
+					agreementDataCache.get(key.getAgreementId());
+			ExpressionContext expressionCtx = 
+					new ExpressionContext(parentContext);
+			
+			agreementLevelDataStmt.setInt(1, key.getAgreementLevelId());
+			loadData(agreementLevelDataStmt, expressionCtx);
+			
+			return expressionCtx;
+		}catch (SQLException e) {
+			//TODO : ¿ Deberiamos crear una excepción espefícica como CreateException ? 
+			throw new RuntimeException(e);
+		}
+	};
+
+	// ------------------------------------------
+	// La ropa interior 
+	// ------------------------------------------
+	
+	private void loadData ( PreparedStatement stmt, ExpressionContext context ) throws SQLException {
 		ResultSet rs = null;
 		try {
-			stmt.setInt(1, agreementLevelId);
 			rs = stmt.executeQuery();
-			ExpressionContext expressionCtx = 
-				new ExpressionContext(systemExpressionContext);
 			while ( rs.next() ) {
 				ExpressionImpl expr = 
 					new ExpressionImpl();
@@ -89,36 +176,37 @@ public class SQLAgreementContextFactory
 				Date start = Period.max(rs.getDate(AgreementLevelDataColumns.START_DATE), startDate);
 				Date end = Period.min ( rs.getDate(AgreementLevelDataColumns.END_DATE), endDate );
 				try {
-					expressionCtx.addExpression(expr, start, end );
+					context.addExpression(expr, start, end );
 				} catch (Exception e) {
 					//TODO: ¿ Que hacemos con esta excepcion ? 
+					DeferredTimedVariable variable  = 
+							ctx.new DeferredTimedVariable(expr,start, end );
+					context.addVariable(expr.getName(), variable);
 				}
 			}
-			return expressionCtx;
-		}catch (SQLException e) {
-			//TODO : ¿ Deberiamos crear una excepción espefícica como CreateException ? 
-			throw new RuntimeException(e);
-		}
-		finally {
+		}finally {
 			if ( rs != null )
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					//TODO : ¿ Debemos lanzar una excpeción o no ? 
-				}
-				rs = null; // Para el garbage collector 
+				rs.close();
 		}
 	}
-
-	// ------------------------------------------
-	// La ropa interior 
-	// ------------------------------------------
+	
+	private ExpressionContext getAgreementCtx(Integer agreementLevelId) {
+		return systemExpressionContext;
+	}
+	
 	private void initAgreementStmt(Connection connection, Date startDate, Date endDate)
 	throws SQLException {
-		this.stmt  = 
-			connection.prepareStatement(AGREEMENT_DATA_SQL);
-		this.stmt.setDate(2, new java.sql.Date(endDate.getTime()) );
-		this.stmt.setDate(3, new java.sql.Date(startDate.getTime()) );
+		dataStmts = new PreparedStatement[2];
+
+		agreementDataStmt= connection.prepareStatement(AGREEMENT_DATA_SQL);
+		agreementDataStmt.setDate(2, new java.sql.Date(endDate.getTime()) );
+		agreementDataStmt.setDate(3, new java.sql.Date(startDate.getTime()) );
+		dataStmts[0] = agreementDataStmt;
+
+		agreementLevelDataStmt= connection.prepareStatement(AGREEMENT_LEVEL_DATA_SQL);
+		agreementLevelDataStmt.setDate(2, new java.sql.Date(endDate.getTime()) );
+		agreementLevelDataStmt.setDate(3, new java.sql.Date(startDate.getTime()) );
+		dataStmts[1] = agreementLevelDataStmt;
 	}
 
 	private void initSystemCtx(Connection connection, Date startDate, Date endDate) throws SQLException, ExpressionException {
@@ -134,9 +222,36 @@ public class SQLAgreementContextFactory
 		
 		loadSystemData(connection, startDate, endDate, systemExpressionContext);
 
-		Object leaveDays = null;
-		systemExpressionContext.addVariable(LEAVE_DAYS, leaveDays, startDate, endDate);
-
+		systemExpressionContext.addVariable(SALARY_START, startDate, startDate, endDate);
+		systemExpressionContext.addVariable(SALARY_END, endDate, startDate, endDate);
+		
+		// MONTHS function
+		try {
+			
+			Method months =  SQLAgreementContextFactory.class.getMethod(
+					"getMonths", 
+					Date.class, 
+					Date.class, 
+					double.class);
+			
+			MethodStub monthsStub = new MethodStub(months);
+			
+			systemExpressionContext.addVariable( MONTHS_IMPL , monthsStub, startDate, endDate);
+			
+			String functionScript =  
+					String.format("%s = def (days) { %s(%s, %s, days) };", 
+							MONTHS,
+							MONTHS_IMPL, 
+							START, 
+							END  );
+			
+			systemExpressionContext.eval(functionScript, startDate, endDate);
+			
+			
+			
+		} catch ( SecurityException e) {
+		} catch( NoSuchMethodException e ){
+		}
 
 	}
 
@@ -189,9 +304,17 @@ public class SQLAgreementContextFactory
 		monthDays += 1;
 		return monthDays;
 	}
-
 	
-
+	private void initAgreementDataContextCache() {
+		LRUCacheFactory<Integer, ExpressionContext> factory = 
+				new LRUCacheFactory<Integer, ExpressionContext>() {
+			@Override
+			public ExpressionContext create(Integer agreementId) {
+				return SQLAgreementContextFactory.this.create(agreementId);
+			}
+		};
+		this.agreementDataCache = new LRUCache<Integer, ExpressionContext>(25, factory);
+	}
 	
 	
 }

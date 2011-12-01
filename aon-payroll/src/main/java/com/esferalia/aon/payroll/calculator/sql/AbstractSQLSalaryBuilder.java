@@ -116,6 +116,11 @@ public abstract class AbstractSQLSalaryBuilder implements ISalaryBuilder {
 	public void setIssueDate(Date issueDate) {
 		salary.setIssueDate(issueDate);
 	}
+	
+	@Override
+	public void setChargeDate(Date issueDate) {
+		salary.setChargeDate(issueDate);
+	}
 
 	@Override
 	public void setStartDate(Date startDate) {

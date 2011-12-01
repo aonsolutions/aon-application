@@ -11,7 +11,7 @@ import com.code.aon.ui.util.AonUtil;
 public enum EnterpriseTreeType {
 	
 	ENTERPRISE( EnterpriseTreeData.ENTERPRISE_ICON, "enterprise_formTree", null ),
-	CATEGORY( EnterpriseTreeData.CATEGORY_ICON, "alfrescoCategory_formTree", "onSelectTreeCategory" ),
+	PROJECT( EnterpriseTreeData.PROJECT_ICON, "project_formTree", "onSelectTreeProject" ),
 	DOCUMENT( EnterpriseTreeData.DOCUMENT_ICON, "enterpriseDocument_formTree", "onSelectTreeDocument" ),
 	;
 	

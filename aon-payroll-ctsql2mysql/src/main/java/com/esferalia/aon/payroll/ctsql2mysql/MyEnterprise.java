@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.code.aon.common.enumeration.Country;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.config.enumeration.Administration;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.DocumentType;
@@ -74,9 +75,37 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		
 	}
 	
+	
+	
+	
+	private static class Enterprise {
+		
+
+		Integer 		id;
+		Administration 	economicAgreement;
+	
+		public Enterprise(Integer id, String ceCon) {
+			this.id = id;
+			this.economicAgreement = ADMINISTRATIONS_MAP.get(ceCon);
+		}
+		
+		final static Map<String, Administration> ADMINISTRATIONS_MAP = 
+			new HashMap<String, Administration>(){
+			{
+				put("A", Administration.ALAVA);
+				put("G", Administration.GIPUZKOA);
+				put("V", Administration.BIZKAIA);
+				put("R", Administration.NAVARRA);
+				put("N", Administration.COMMON_TERRITORY);
+				put(null, Administration.COMMON_TERRITORY);
+			}
+		};
+	}
+	
 	// --------------------------------------------------------------
 	// constants
 	// --------------------------------------------------------------
+	
 	final static short 	MAIN_ADDRESS   		= 0;
 	final static short 	OTHER_ADDRESS  		= 1;
 
@@ -93,7 +122,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	private Map<Integer, Map<String, Integer>> 	cccs;
 
 	private Map<String, Integer> 				cifs;
-	private Map<Integer, Integer> 				enterprises;
+	private Map<Integer, Enterprise> 			enterprises;
 	private Map<String, Integer> 				customerChilds;
 	private Integer 							customerId;
 	
@@ -112,7 +141,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		this.calendars = calendars;
 		this.activities = new HashMap<Integer, Activity>();
 		this.cifs= new HashMap<String, Integer>();
-		this.enterprises = new HashMap<Integer, Integer>();
+		this.enterprises = new HashMap<Integer, Enterprise>();
 		this.cccs = new HashMap<Integer, Map<String, Integer>>();
 		this.cnae_activity = new HashMap<Integer, Map<Integer, Integer>>();
 		this.raddresses = new HashMap<Integer, Map<Integer, Integer>>();
@@ -226,7 +255,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			cifs.get(emprnif.getNumdoc());
 	
 		if ( registry != null ) {
-			enterprises.put(emprnif.getCdg(), registry);
+			enterprises.put(emprnif.getCdg(), new Enterprise(registry, emprnif.getCecon()) );
 			return;
 		}
 		
@@ -266,7 +295,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 		}
 		
 		cifs.put(emprnif.getNumdoc(), registry);
-		enterprises.put(emprnif.getCdg(), registry);
+		enterprises.put(emprnif.getCdg(), new Enterprise(registry, emprnif.getCecon()));
 
 		customerChilds.put(emprnif.getNumdoc(), registry);
 		
@@ -341,7 +370,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			return ;
 		}
 		
-		Integer enterprise = enterprises.get(empract.getCodemp());
+		Enterprise enterprise = enterprises.get(empract.getCodemp());
 		// TODO : Cómo elegimos el tipo de actividad ?
 		Integer cnae2009 = null;
 		String cnae2009Str = empract.getCnae2009() ;
@@ -352,16 +381,16 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			cnae2009 = Integer.valueOf(cnae2009Str);
 		}
 		
-		Integer activityId  = DefaultMysqlDB.get(cnae_activity, enterprise, cnae);
+		Integer activityId  = DefaultMysqlDB.get(cnae_activity, enterprise.id, cnae);
 		if ( activityId == null ) {
 			activityId = 
 				mysqlDB.insertEnterprise_activity(empract.getDescripcion(), 
-										enterprise, 
+										enterprise.id, 
 										cnae, 
 										DefaultMysqlDB.enum2short(EnterpriseActivityType.PRINCIPAL),
 										cnae2009);
 		}
-		DefaultMysqlDB.save(cnae_activity, enterprise, cnae, activityId);
+		DefaultMysqlDB.save(cnae_activity, enterprise.id, cnae, activityId);
 
 		Activity activity = new Activity();
 		activity.id = activityId ;
@@ -430,7 +459,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 	@Override
 	public void visitEmprdom_domicilio(Emprdom emprdom, Domicilio domicilio ) throws SQLException {
 		
-		Integer enterprise = getEnterprise(emprdom.getCodemp());
+		Enterprise enterprise = enterprises.get(emprdom.getCodemp());
 		
 		if ( enterprise == null )
 		{
@@ -439,13 +468,13 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 			return;
 		}
 
-		Integer raddress = DefaultMysqlDB.get(raddresses, enterprise, domicilio.getCdg());
+		Integer raddress = DefaultMysqlDB.get(raddresses, enterprise.id, domicilio.getCdg());
 		if ( raddress == null ) {
 
 			Integer geozone = null;
 			geozone = mysqlDB.getGeoZone(domicilio.getProvincia());
 
-			raddress = mysqlDB.insertRaddress(enterprise, 
+			raddress = mysqlDB.insertRaddress(enterprise.id, 
 					DefaultMysqlDB.enum2short ( AddressType.DELEGATION ), 
 					null, 
 					domicilio.getTipovia(), 
@@ -459,30 +488,30 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 					null);
 			
 			try {
-				mysqlDB.insertTelephone (enterprise, raddress, domicilio.getTelefono() );
+				mysqlDB.insertTelephone (enterprise.id, raddress, domicilio.getTelefono() );
 			} catch (InvalidTelephoneException e) {
 				MysqlDB.error("domicilio[{}] : Invalid telephone {}", 
 						domicilio.getCdg(), domicilio.getTelefono());
 			}
 			try {
-				mysqlDB.insertTelephone (enterprise, raddress, domicilio.getTelefono2() );
+				mysqlDB.insertTelephone (enterprise.id, raddress, domicilio.getTelefono2() );
 			} catch (InvalidTelephoneException e) {
 				MysqlDB.error("domicilio[{}] : Invalid telephone {}", 
 						domicilio.getCdg(), domicilio.getTelefono2());
 			}
 			try {
-				mysqlDB.insertTelephone (enterprise, raddress, domicilio.getTelefono3() );
+				mysqlDB.insertTelephone (enterprise.id, raddress, domicilio.getTelefono3() );
 			} catch (InvalidTelephoneException e) {
 				MysqlDB.error("domicilio[{}] : Invalid telephone {}", 
 						domicilio.getCdg(), domicilio.getTelefono3());
 			}
 			try {
-				mysqlDB.insertFax(enterprise, raddress, domicilio.getFax() );
+				mysqlDB.insertFax(enterprise.id, raddress, domicilio.getFax() );
 			} catch (InvalidFaxException e) {
 				MysqlDB.error("domicilio[{}] : Invalid fax {}", 
 						domicilio.getCdg(), domicilio.getFax());
 			}
-			DefaultMysqlDB.save(raddresses, enterprise, domicilio.getCdg(), raddress);
+			DefaultMysqlDB.save(raddresses, enterprise.id, domicilio.getCdg(), raddress);
 		}
 
 		String tipoDom = emprdom.getTipdom();
@@ -513,10 +542,10 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 				} 
 				
 				workplace = mysqlDB.insertWorkplace(
-						enterprise, 
+						enterprise.id, 
 						description, 
 						raddress, 
-						null,				// TODO:  Concierto Económico del Centro de Trabajo
+						MysqlDB.enum2short(enterprise.economicAgreement),
 						true);
 				mysqlDB.insertPayroll_workplace(
 						workplace, 
@@ -540,7 +569,8 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 
 	@Override
 	public Integer getEnterprise(Integer oldCdg) {
-		return enterprises.get(oldCdg);
+		Enterprise enterprise = enterprises.get(oldCdg); 
+		return enterprise != null ? enterprise.id : null;
 	}
 	
 	public Activity getActivity( Integer oldCdgAct) {

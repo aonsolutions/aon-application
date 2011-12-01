@@ -40,8 +40,6 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
-import com.esferalia.aon.salary.calculator.SalaryCalculatorContext;
 import com.esferalia.aon.salary.deduction.Deductions;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryContext;
 import com.esferalia.aon.salary.deduction.DeductionsFactoryManager;
@@ -88,6 +86,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 
 	// Nomina
 	private SalaryType type;
+	private Date chargeDate;
 	private Date issueDate;
 	private int issueMonth;
 	private int issueYear;
@@ -290,6 +289,16 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 
 	@Override
 	@Temporal(TemporalType.DATE)
+	@Column( name = "charge_date", nullable = false )
+	public Date getChargeDate() {
+		return chargeDate;
+	}
+	public void setChargeDate(Date chargeDate) {
+		this.chargeDate = chargeDate;
+	}
+
+	@Override
+	@Temporal(TemporalType.DATE)
 	@Column( name = "issue_date", nullable = false )
 	public Date getIssueDate() {
 		return issueDate;
@@ -328,6 +337,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 		this.issueYear = issueYear;
 	}
 	
+
 	@Override
 	@Temporal(TemporalType.DATE)
 	@Column( name = "start_date", nullable = false )

@@ -56,7 +56,7 @@
 					<c:if test="#{aonConfiguration.bean.payroll.showPaymentEditionTab}">
 						<aon:panelTab id="paymentsEditTab" label="#{bundle.aon_edit}"
 							actionListener="#{salaryDraft.onShowPayments}">
-							<aon:div style="margin-top: 10px;" id="paymentsEditGrid" >
+							<aon:div style="margin-top: 10px; width: 815px;" id="paymentsEditGrid" >
 								<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/paymentsList.xhtml" >
 									<ui:param name="controller" value="#{salaryDraft}" />
 								</ui:include>

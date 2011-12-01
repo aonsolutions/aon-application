@@ -48,6 +48,7 @@
 										</aon:commandButton>
 										<aon:commandButton id="#{controller.beanName}Remove"
 											value="#{bundle.aon_remove}"
+											rendered="#{controller.to.id!=null}"
 											reRender="#{controller.beanName}ModalContainer,#{container}"
 											actionListener="#{controller.onRemove}"
 											immediate="true"

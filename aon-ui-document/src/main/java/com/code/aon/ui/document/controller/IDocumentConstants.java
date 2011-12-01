@@ -10,6 +10,8 @@ public interface IDocumentConstants {
 	
 	String ALFRESCO_CATEGORY_CONTROLLER_NAME = "alfrescoCategory";
 	
+	String ALFRESCO_CATEGORY_GROUP_CONTROLLER_NAME = "alfrescoCategoryGroup";
+	
 	String MANAGER_CONTROLLER_NAME = "manager";
 	
 	String ENTERPRISE_DOCUMENT_SEARCH = "enterpriseDocumentSearch";

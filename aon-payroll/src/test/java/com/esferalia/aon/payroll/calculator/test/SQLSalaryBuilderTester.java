@@ -34,13 +34,14 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 									+ " AND " + SalaryColumns.TYPE + " =  ? " ;
 	
 	
-	private Connection connection;
+	protected Connection connection;
 	
-	private PreparedStatement salaryStmt;
+	protected PreparedStatement salaryStmt;
 	
-	private Date startDate;
-	private Date endDate;
-	private Integer contract;
+	protected Date startDate;
+	protected Date endDate;
+	protected Date issueDate;
+	protected Integer contract;
 	
 	
 	private Map<String, Object> fields;
@@ -149,11 +150,17 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 		// TODO Auto-generated method stub
 
 	}
-
+	
+	@Override
+	public void setChargeDate(Date issueDate) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	@Override
 	public void setIssueDate(Date issueDate) {
 		// TODO Auto-generated method stub
-
+		this.issueDate = issueDate;
 	}
 
 	@Override
@@ -291,17 +298,7 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 			salaryStmt.setDate(2, new java.sql.Date(startDate.getTime() ));
 			salaryStmt.setDate(3, new java.sql.Date(endDate.getTime() ));
 			rs = salaryStmt.executeQuery();
-			if ( !rs.next() ){
-				//fail();
-				return;
-			}
-			
-			assertDoubleField(SalaryColumns.TOTAL_PAYMENT, rs);
-			assertDoubleField(SalaryColumns.IRPF_BASE, rs);
-			//assertDoubleField(SalaryColumns.RAW_CGC_BASE, rs); 
-
-			assertDoubleField(SalaryColumns.TOTAL_LIQUID, rs); 
-			assertDoubleFieldIfNotZero(SalaryColumns.TOTAL_ENTERPRISE, rs); 
+			test(rs);
 		}
 		finally {
 			if ( rs != null ){
@@ -309,8 +306,19 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 			}
 		}
 	}
+	
+	protected void test(ResultSet rs ) throws SQLException {
+		if (  !rs.next() ){
+			return;
+		}
+		assertDoubleField(SalaryColumns.TOTAL_PAYMENT, rs);
+		assertDoubleField(SalaryColumns.IRPF_BASE, rs);
+		//assertDoubleField(SalaryColumns.RAW_CGC_BASE, rs); 
+		assertDoubleField(SalaryColumns.TOTAL_LIQUID, rs);
+		//assertDoubleFieldIfNotZero(SalaryColumns.TOTAL_ENTERPRISE, rs); 
+	}
 
-	private void assertDoubleField(String field, ResultSet rs  ) 
+	protected void assertDoubleField(String field, ResultSet rs  ) 
 	throws SQLException {
 		
 		Double expected = rs.getDouble(field);
@@ -321,7 +329,7 @@ public class SQLSalaryBuilderTester implements ISalaryBuilder {
 		assertEquals(msg, expected, CommonUtil.round(actual), (double) 0.9);
 	}
 
-	private void assertDoubleFieldIfNotZero(String field, ResultSet rs  ) 
+	protected void assertDoubleFieldIfNotZero(String field, ResultSet rs  ) 
 	throws SQLException {
 		
 		Double expected = rs.getDouble(field);

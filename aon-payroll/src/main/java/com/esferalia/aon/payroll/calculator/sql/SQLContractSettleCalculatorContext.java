@@ -33,6 +33,12 @@ public class SQLContractSettleCalculatorContext
 	}
 
 	public SQLContractSettleCalculatorContext(Connection connection,
+			Date startDate, Date endDate, Date issueDate, Date chargeDate, Criteria criteria) throws SQLException,
+			ExpressionException {
+		super( connection , startDate, endDate, issueDate, chargeDate, criteria, getPaymentsCriteria(SalaryType.SETTLE) );
+	}
+
+	public SQLContractSettleCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate, Date chargeDate, Criteria criteria, Criteria paymentsCriteria) throws SQLException,
 			ExpressionException {
 		super( connection , startDate, endDate, issueDate, chargeDate, criteria, paymentsCriteria );

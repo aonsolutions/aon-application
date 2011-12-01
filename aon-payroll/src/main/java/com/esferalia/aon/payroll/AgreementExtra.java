@@ -18,12 +18,14 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.hibernate.PojoToStringBuilder;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractExtraCalculatorContext.DateFormatException;
 
 @Entity
@@ -66,7 +68,8 @@ public class AgreementExtra implements ITransferObject {
 			year += Integer.parseInt(yearOffset);
 		}
 		calendar.set(Calendar.YEAR,  year );
-		return calendar.getTime();
+
+		return DateUtils.truncate(calendar, Calendar.DAY_OF_MONTH).getTime();
 	}
 
 	@Id

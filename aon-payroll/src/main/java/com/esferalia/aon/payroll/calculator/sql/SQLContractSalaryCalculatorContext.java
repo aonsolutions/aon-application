@@ -31,6 +31,8 @@ import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.calendar.enumeration.DayType;
+import com.esferalia.aon.payroll.Pair;
+import com.esferalia.aon.payroll.calculator.CompositePayments;
 import com.esferalia.aon.payroll.calculator.HierarchyDeductions;
 import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
@@ -85,6 +87,8 @@ public class SQLContractSalaryCalculatorContext implements
 	public static final String DOT = ".";
 	public static final String OPEN_BRACKET = "(";
 	public static final String CLOSE_BRACKET = ")";
+	
+	
 	
 	private static final String MAIN_SQL = "SELECT * "
 		+" FROM contract"
@@ -216,10 +220,18 @@ public class SQLContractSalaryCalculatorContext implements
 	private static final int CACHE_SIZE = 25;
 	
 	
+	public static class AgreementContextKey 
+		extends Pair<Integer, Integer> {
 	
-	
-	
-	
+		public AgreementContextKey(Integer agreementId, 
+				Integer agreementLevelId) {
+			super ( agreementId, agreementLevelId );
+		}
+		
+		public Integer getAgreementId() { return getFirst();};
+		public Integer getAgreementLevelId() { return getSecond();};
+		
+	}
 	/**
 	 * Clase base para implementar variables pesadas con evaluación perezosa.
 	 * Las clases hijas únicamente deberán implementar el método 'V getValue()'. 
@@ -269,26 +281,31 @@ public class SQLContractSalaryCalculatorContext implements
 		
 	}
 	
-	protected class DeferredTimedVariable extends ActiveTimedVariable<Object>{
+	protected class DeferredTimedVariable implements ITimedVariable<Object>{
 		
-		private String name;
 		private String script;
-		ExpressionContext snapshotCtx;
+		protected Period period ;
 		
-		public DeferredTimedVariable(ExpressionContext ctx, IExpression expression, Date start, Date end ) {
+		@Override
+		public Period getPeriod() {
+			return period;
+		}
+		
+		public DeferredTimedVariable(IExpression expression, Date start, Date end ) {
+			this.period = new Period(start, end);
 			this.script = expression.getExpression();
 			Set<String> vars = Collections.singleton(expression.getName());
-			this.snapshotCtx = ctx.getSnapshot(vars);
 		}
 		
 		@Override
 		public Object getValue(Period period) {
 			try {
 				List<ITimedObject<Object>>  timedObjects = 
-					snapshotCtx.eval(script, period.getStart(), period.getEnd(), Object.class);
+					getExpressionContext().eval(script, period.getStart(), period.getEnd(), Object.class);
 				
 				return timedObjects.get(0).getValue();
 			} catch (ExpressionException e) {
+				e.printStackTrace();
 				return null;
 			}
 		}
@@ -337,7 +354,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private SQLCalendarFactory 								calendarFactory; 
 	private LRUCache<Integer, Collection<IContractPayment>> agreementPayments;
 	private SQLAgreementPaymentsFactory 					agreementPaymentsFactory;
-	private LRUCache<Integer, ExpressionContext> 			agreementExpressionContexts;
+	private LRUCache<AgreementContextKey, ExpressionContext> 	agreementExpressionContexts;
 	private SQLAgreementContextFactory 						agreementContextFactory ;
 	
 	private Criteria 										paymentsCriteria;			
@@ -370,11 +387,10 @@ public class SQLContractSalaryCalculatorContext implements
 		this(connection, startDate, endDate, issueDate, chargeDate, criteria, getPaymentsCriteria(SalaryType.SALARY, SalaryType.EXTRA), NEWER);
 	}
 	
-	/*
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate, Date chargeDate, Criteria criteria, OrderByList order)
 	throws SQLException, ExpressionException {
 		this(connection, startDate, endDate, issueDate, chargeDate, criteria, getPaymentsCriteria(SalaryType.SALARY, SalaryType.EXTRA), order);
-	}*/
+	}
 
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate, Criteria criteria, Criteria paymentsCriteria, OrderByList order) 
 	throws SQLException, ExpressionException {
@@ -383,12 +399,12 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate, Criteria criteria, Criteria paymentsCriteria) 
 	throws SQLException, ExpressionException {
-		this(connection, startDate, endDate, issueDate, null, criteria, paymentsCriteria, null);
+		this(connection, startDate, endDate, issueDate, null, criteria, paymentsCriteria, NEWER);
 	}
 
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate, Date chargeDate, Criteria criteria, Criteria paymentsCriteria)
 		throws SQLException, ExpressionException {
-		this(connection, startDate, endDate, issueDate, chargeDate, criteria, paymentsCriteria, null);
+		this(connection, startDate, endDate, issueDate, chargeDate, criteria, paymentsCriteria, NEWER);
 	}
 
 	public SQLContractSalaryCalculatorContext(Connection connection, Date startDate, Date endDate, Date issueDate, Date chargeDate, Criteria criteria, Criteria paymentsCriteria, OrderByList order) 
@@ -439,9 +455,9 @@ public class SQLContractSalaryCalculatorContext implements
 			new LRUCache<Integer, Collection<IContractPayment>>(CACHE_SIZE, agreementPaymentsFactory);
 
 		agreementContextFactory =
-			new SQLAgreementContextFactory(connection, this.startDate, this.endDate);
+			new SQLAgreementContextFactory(this, this.startDate, this.endDate);
 		this.agreementExpressionContexts = 
-			new LRUCache<Integer, ExpressionContext>(CACHE_SIZE, agreementContextFactory);
+			new LRUCache<AgreementContextKey, ExpressionContext>(CACHE_SIZE, agreementContextFactory);
 		this.leaveLoader = 
 			new SQLContractLeaveLoader(this.startDate, this.endDate);
 
@@ -454,6 +470,12 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	@Override
 	public Date getChargeDate() {
+		return this.chargeDate != null ? 
+				chargeDate : getEndDate();
+	}
+	
+	@Override
+	public Date getIrpfDate() {
 		return this.chargeDate != null ? 
 				chargeDate : getEndDate();
 	}
@@ -611,10 +633,15 @@ public class SQLContractSalaryCalculatorContext implements
 			paymentStmt.setInt(1,id);
 			ResultSet rs = paymentStmt.executeQuery();
 			this.sqlContractPayment.setResultSet(rs);
-			return new HierarchyPayments(
-					this.sqlContractPayment, 
-					getAgreementPayments().iterator(),
-					this.systemPayments.iterator());
+//			return new HierarchyPayments(
+//					this.sqlContractPayment, 
+//					getAgreementPayments().iterator(),
+//					this.systemPayments.iterator());
+			
+			return new CompositePayments(
+				this.sqlContractPayment, 
+				getAgreementPayments(),
+				this.systemPayments);
 		} catch (SQLException e) {
 			throw new AonException(e);
 		}
@@ -907,9 +934,13 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	private ExpressionContext getAgreementContext()
 	throws SQLException, ExpressionException {
+		Integer agreementId = 
+				getAgreement();
 		Integer agreementLevelId = 
 			getAgreementLevel();
-		return  agreementExpressionContexts.get(agreementLevelId);
+		AgreementContextKey agreementAndLevel = 
+				new AgreementContextKey(agreementId, agreementLevelId);
+		return  agreementExpressionContexts.get(agreementAndLevel);
 	}
 
 	private Collection<IContractPayment> getAgreementPayments()
@@ -940,12 +971,18 @@ public class SQLContractSalaryCalculatorContext implements
 		return workedDays;
 	}
 	
-	private boolean isActualDay( DayType type ) {
+	private boolean isActualDay( DayType type, Calendar day ) {
+		int dayOfWeek = day.get(Calendar.DAY_OF_WEEK);
+		
+		if ( dayOfWeek == Calendar.SUNDAY) {
+			return false;
+		}
+		
 		return type == DayType.WORKING_DAY || 
 			type == DayType.CONTINUOUS_TIME ||
 			type == DayType.OTHER; // TODO: Estos tipos de dias son un cachondeo ¿ OTHER, CONTINUOUS_TIME ?
 	}
-	
+
 	private boolean isHoliday(Calendar day) {
 		Date date = day.getTime();
 		Object holidays = 
@@ -953,14 +990,9 @@ public class SQLContractSalaryCalculatorContext implements
 		return holidays != null ;
 	}
 	
-	private boolean isSaturday(Calendar day) {
-		return day.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY;
-	}
-	
-	
 	/* 
-	 * Calcula los 'DIAS_EFECTIVOS' para el contrato (trabajador), 
-	 * según su calendario y/o bajas. 
+	 * Calculate 'DIAS_EFECTIVOS' for the contract (employee).
+	 * Be care of leaves and agreement. 
 	 */
 	private double getActualDays() {
 		long days = 0;
@@ -972,7 +1004,7 @@ public class SQLContractSalaryCalculatorContext implements
 		day.setTime(contractStartDate);
 		while  (end.after(day) || end.equals(day)) {
 			DayType type = calendar.getDayType(day);
-			if ( isActualDay(type) &&
+			if ( isActualDay(type, day) &&
 					!leaveLoader.isLeaveDay(day) &&
 					!isHoliday(day) ) {
 				days++;
@@ -983,7 +1015,7 @@ public class SQLContractSalaryCalculatorContext implements
 	}
 	
 	protected Long getLeaveDays(Period p ) {
-		return leaveLoader.getLeavesDays();
+		return leaveLoader.getLeavesDays(p);
 	}
 	
 	private double getWorkDays(Period p) {
@@ -995,14 +1027,9 @@ public class SQLContractSalaryCalculatorContext implements
 		
 		Long workedDays = availableDays - leaveDays; 
 		
-		return workedDays;
+		return workedDays ; // TODO : Can't be negative
 	}
 	
-
-	private double getWorkMonths(Period p) {
-		double workedDays = getWorkDays(p);
-		return getMonths(p, workedDays);
-	}
 
 	private double getWorkWeeks(Period p) {
 		double workedDays = getWorkDays(p);
@@ -1010,12 +1037,30 @@ public class SQLContractSalaryCalculatorContext implements
 		return Math.ceil(workedWeeks);
 	}
 
+	private double getExtraDays() {
+		Long availableDays = 
+			getAvailableDays(startDate, endDate);
+		return availableDays;
+	}
+	
+	private double getExtraWeeks() {
+		double extraDays = getExtraDays();
+		double extraWeeks = extraDays * 52 / 365;
+		return Math.round(extraWeeks);
+	}
+
+	private double getExtraMonths() {
+		double extraDays = getExtraDays();
+		double extraMonths = extraDays * 12 / 365;
+		return Math.max(1, Math.round(extraMonths));
+	}
+
 	private double getSalaryDays() {
 		Long availableDays = 
 			getAvailableDays(contractStartDate, contractEndDate);
 		return availableDays;
 	}
-	
+
 	private double getSalaryWeeks() {
 		double salaryDays = getSalaryDays();
 		double salaryWeeks = salaryDays * 52 / 365;
@@ -1141,9 +1186,18 @@ public class SQLContractSalaryCalculatorContext implements
 			this.contractExpressionContext  = null;
 		}
 		
+		Period period = new Period(startDate, endDate);
+		
 		this.contractExpressionContext = 
 			new ExpressionContext(getAgreementContext(), this);
 		
+		LazyTimedVariable<Double> extraDays = new LazyTimedVariable<Double>(){
+			@Override
+			public Double create(){
+				return getExtraDays();
+			}
+		};
+
 		LazyTimedVariable<Double> salaryDays = new LazyTimedVariable<Double>(){
 			@Override
 			public Double create(){
@@ -1151,6 +1205,20 @@ public class SQLContractSalaryCalculatorContext implements
 			}
 		};
 		
+		ActiveTimedVariable<Date> start =  new ActiveTimedVariable<Date>(){
+			@Override
+			public Date getValue(Period p) {
+				return p.getStart();
+			}
+		};
+
+		ActiveTimedVariable<Date> end =  new ActiveTimedVariable<Date>(){
+			@Override
+			public Date getValue(Period p) {
+				return p.getEnd();
+			}
+		};
+
 		ActiveTimedVariable<Double> workedDays =  new ActiveTimedVariable<Double>(){
 			@Override
 			public Double getValue(Period p) {
@@ -1158,12 +1226,6 @@ public class SQLContractSalaryCalculatorContext implements
 			}
 		};
 
-		ActiveTimedVariable<Double> workedMonths =  new ActiveTimedVariable<Double>(){
-			@Override
-			public Double getValue(Period p) {
-				return getWorkMonths(p);
-			}
-		};
 
 		ActiveTimedVariable<Double> workedWeeks =  new ActiveTimedVariable<Double>(){
 			@Override
@@ -1179,6 +1241,14 @@ public class SQLContractSalaryCalculatorContext implements
 			}
 		};
 		
+		ActiveTimedVariable<Double> guarenteedDays =  new ActiveTimedVariable<Double>(){
+			@Override
+			public Double getValue(Period p) {
+				return ( double ) leaveLoader.getCommonDiseaseDays(p) + 
+						( double )  leaveLoader.getProfessionalDiseaseDays(p);
+			}
+		};
+
 		// TODO: Tiene que ir aqui ???
 		SalaryType salaryType = getSalaryType();
 		this.contractExpressionContext.addVariable(SALARY, salaryType == SalaryType.SALARY, startDate, endDate);
@@ -1186,22 +1256,16 @@ public class SQLContractSalaryCalculatorContext implements
 		this.contractExpressionContext.addVariable(DELAY, salaryType == SalaryType.DELAY, startDate, endDate);
 		this.contractExpressionContext.addVariable(EXTRA_PAY, salaryType == SalaryType.EXTRA, startDate, endDate);
 
-		this.contractExpressionContext.addVariable(WORKED_DAYS, 
-				workedDays
-		);
-		this.contractExpressionContext.addVariable(WORKED_MONTHS, 
-				workedMonths
-		);
-		this.contractExpressionContext.addVariable(WORKED_WEEKS, 
-				workedWeeks
-		);
+		this.contractExpressionContext.addVariable(START, start );
+		this.contractExpressionContext.addVariable(END, end );
 
-		this.contractExpressionContext.addVariable(QUOTE_DAYS, 
-				workedDays
-		);
+		
+		this.contractExpressionContext.addVariable(WORKED_DAYS, workedDays );
+		this.contractExpressionContext.addVariable(WORKED_WEEKS, workedWeeks);
+		this.contractExpressionContext.addVariable(QUOTE_DAYS, workedDays);
 
 		this.contractExpressionContext.addVariable(SALARY_DAYS, salaryDays);
-		this.contractExpressionContext.addVariable(EXTRA_DAYS, salaryDays);
+		
 
 		this.contractExpressionContext.addVariable(SALARY_MONTHS, 
 				new LazyTimedVariable<Double>(){
@@ -1216,6 +1280,25 @@ public class SQLContractSalaryCalculatorContext implements
 					@Override
 					public Double create(){
 						return getSalaryWeeks();
+					}
+				}
+		);
+		
+		this.contractExpressionContext.addVariable(PAY_DAYS, extraDays);
+		
+		this.contractExpressionContext.addVariable(PAY_MONTHS, 
+				new LazyTimedVariable<Double>(){
+					@Override
+					public Double create(){
+						return getExtraMonths();
+					}
+				}
+		);
+		this.contractExpressionContext.addVariable(PAY_WEEKS, 
+				new LazyTimedVariable<Double>(){
+					@Override
+					public Double create(){
+						return getExtraWeeks();
 					}
 				}
 		);
@@ -1309,34 +1392,38 @@ public class SQLContractSalaryCalculatorContext implements
 					}
 			);
 		}
-
 		
-		if ( leaveLoader.getLeavesDays() == 0 ) {
+		
+		long leaveDays = leaveLoader.getLeavesDays(period);
+		
+		this.contractExpressionContext.addVariable(LEAVE_DAYS, 
+				leaveDays, this.startDate, this.endDate );
+		
+		if ( leaveDays == 0 ) {
+			this.contractExpressionContext.addVariable(GUARANTEED_DAYS, 
+					0, this.startDate, this.endDate );
 			return;
 		} // Si no hay bajas... 
+		
+		
+		/*long guarenteedDays = leaveLoader.getCommonDiseaseDays(period) + 
+				leaveLoader.getProfessionalDiseaseDays(period);
 			
-		this.contractExpressionContext.addVariable(LEAVE_DAYS, 
-			leaveLoader.getLeavesDays(), this.startDate, this.endDate );
-		
-		
-		long guarenteedDays = leaveLoader.getCommonDiseaseDays() + 
-			leaveLoader.getProfessionalDiseaseDays();
-		
-		if ( guarenteedDays == 0  ) {
-			return ;
-		} // No hay bajas por enfermedad común y/o profesional.
+		this.contractExpressionContext.addVariable(GUARANTEED_DAYS, 
+					guarenteedDays, this.startDate, this.endDate );*/
+
+		this.contractExpressionContext.addVariable(GUARANTEED_DAYS, 
+				guarenteedDays);
 		
 		double guaranteed = getGuarenteed();
-		
+
+		this.contractExpressionContext.addVariable(GUARANTEED, 
+				guaranteed, this.startDate, this.endDate );
+
 		if ( guaranteed == 0.00 ) {
 			return;
 		}
 
-		this.contractExpressionContext.addVariable(GUARANTEED_DAYS, 
-				guarenteedDays, this.startDate, this.endDate );
-
-		this.contractExpressionContext.addVariable(GUARANTEED, 
-				guaranteed, this.startDate, this.endDate );
 		
 		this.contractExpressionContext.addVariable(TOTAL_BENEFITS_IT, 
 				new LazyTimedVariable<Double>(){
@@ -1348,6 +1435,8 @@ public class SQLContractSalaryCalculatorContext implements
 		);
 	}
 	
+
+	
 	/*
 	 * Carga, ejecuta los datos del contrato 'contract_data' para este periodo.
 	 * Ejecuta porque al valor de una variable no tiene porque ser un literal,
@@ -1355,8 +1444,9 @@ public class SQLContractSalaryCalculatorContext implements
 	 */
 	private void loadContractData(ExpressionContext ctx ) throws SQLException{
 		loadContractData(ctx, contractStartDate, contractEndDate);
-		if ( chargeDate != null && chargeDate.after(contractEndDate) ) {
-			loadContractData(ctx, chargeDate, chargeDate);
+		Date irpfDate = getIrpfDate();
+		if ( irpfDate != null && irpfDate.after(contractEndDate) ) {
+			loadContractData(ctx, irpfDate, irpfDate);
 		}
 	}
 	
@@ -1544,27 +1634,8 @@ public class SQLContractSalaryCalculatorContext implements
 		return new java.sql.Date(date.getTime()); 
 	}
 	
-	private static int getMonths(Period p, double days){
-		Calendar startCalendar = Calendar.getInstance();
-		startCalendar.setTime(p.getStart());
-		
-		Calendar endCalendar = Calendar.getInstance();
-		endCalendar.setTime(p.getEnd());
-		
-		int month =  startCalendar.get(Calendar.MONTH);
-		int endMonth = endCalendar.get(Calendar.MONTH); 
-		
-		int months = 0;
-
-		while ( days > 0 && month <= endMonth ){
-			days -= CommonUtil.daysInMonth(startCalendar.getTime());
-			startCalendar.set(Calendar.MONTH, ++month);
-			months++;
-		}
-		
-		return months ;
-	}
 	
+
 	/**
 	 * ORDER BY literal.
 	 */

@@ -1,28 +1,38 @@
 package com.code.aon.document.dao;
 
+import static com.code.aon.document.IAlfrescoConstants.NAME_SHORT;
 import static com.code.aon.document.IAlfrescoConstants.PATH_LONG;
+import static com.code.aon.document.IAlfrescoConstants.TYPE_CATEGORY;
 import static com.code.aon.document.IAlfrescoConstants.UUID_LONG;
 import static org.alfresco.webservice.util.Constants.PROP_DESCRIPTION;
 import static org.alfresco.webservice.util.Constants.PROP_NAME;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.ParentReference;
 import org.alfresco.webservice.types.Reference;
+import org.alfresco.webservice.types.ResultSetRow;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.document.AlfrescoCategory;
 import com.code.aon.document.EnterpriseDocument;
+import com.code.aon.ql.Criteria;
 
 /**
  * The Class LdapDAO.
  */
 public class AlfrescoCategoryDAO extends AlfrescoDAO  {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AlfrescoCategoryDAO.class);
+	
 	public static final AlfrescoCategory EMPTY_CATEGORY = new AlfrescoCategory();
 	
     private final String CATEGORY = "category"; // the propertyname of subcategories
@@ -74,9 +84,32 @@ public class AlfrescoCategoryDAO extends AlfrescoDAO  {
 
 	@Override
 	protected String getQueryPath() {
-		return "PATH:\"" + getParentReference().getPath() + "/*\"";
+		return getQueryPath( getParentReference().getPath() );
 	}
 
+	private String getQueryPath( String path ) {
+		return "TYPE:\"" + TYPE_CATEGORY + "\" AND PATH:\"" + path + "/*\"";
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<AlfrescoCategory> getSubCategories( Reference reference ) throws DAOException {
+		String path = AlfrescoCategory.getSearhPath(reference);
+		String expression = getQueryPath(path);
+		LOGGER.debug( "getList, expression={}", expression );
+		try {
+			List<ResultSetRow> list = getList(expression);
+			if (! list.isEmpty() ) {
+				Criteria criteria = new Criteria();
+				criteria.addOrder(getFieldName(NAME_SHORT));
+				list = sortList(list, criteria);
+				return (List) convertList(list);	
+			}		
+		} catch ( Throwable e ) {
+			throw new DAOException( "Error in getSubcategories of " + reference, e );
+		}
+		return Collections.emptyList();
+	}
+	
 	@Override
 	protected ITransferObject convert( NamedValue[] values ) throws DAOException {
 		AlfrescoCategory ac = newAlfrescoCategory();
@@ -95,6 +128,7 @@ public class AlfrescoCategoryDAO extends AlfrescoDAO  {
 				reference.setPath(nv.getValue());
 			}
 		}		
+		ac.setCategories(getSubCategories(reference));
 		return ac;
 	}
 
@@ -105,6 +139,15 @@ public class AlfrescoCategoryDAO extends AlfrescoDAO  {
 		values[0] = Utils.createNamedValue(PROP_DESCRIPTION, ac.getDescription());
 		values[1] = Utils.createNamedValue(PROP_NAME, ac.getName());
 		return values;
+	}
+	
+	public static void main(String[] args) throws DAOException {
+		AlfrescoCategoryDAO bc = new AlfrescoCategoryDAO("admin", "admin");
+		Criteria criteria = new Criteria();
+		List<ITransferObject> tos = bc.getList(criteria);
+		for( ITransferObject to : tos ) {
+			LOGGER.info( "{}", to );
+		}
 	}
 	
 }

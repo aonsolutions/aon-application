@@ -4,6 +4,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.company.Enterprise;
 import com.code.aon.company.IEnterprise;
 import com.code.aon.company.util.CompanyUtil;
 
@@ -14,7 +15,10 @@ public class EnterpriseContainerBeanVetoListener extends ManagerBeanVetoListener
 		try {
 			CompanyUtil companyUtil = new CompanyUtil();
 			IEnterprise container =  (IEnterprise) evt.getTo();
-			container.setEnterprise(companyUtil.getActiveEnterprise());
+			Enterprise enterprise = container.getEnterprise();
+			if ( (enterprise == null) || (enterprise.getId() == null) ) {
+				container.setEnterprise(companyUtil.getActiveEnterprise());	
+			}
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanVetoListenerException(e.getMessage(),e);
 		}

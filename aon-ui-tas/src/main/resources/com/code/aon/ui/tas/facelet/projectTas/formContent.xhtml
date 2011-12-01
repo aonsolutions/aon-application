@@ -50,8 +50,7 @@
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="lookupDisabled"	value="#{controller.finished}" />
 							<ui:param name="lookupReRender"	value="TasItemDiv,TargetDiv,lookupTarget" />
-							<aon:methodParam name="lookupChangeListener"
-								value="#{controller.tasItemData}" type="lookupChangeListener" />
+							<aon:methodParam name="lookupChangeListener" value="#{controller.tasItemData}" type="lookupChangeListener" />
 						</ui:include>
 						
 						<aon:outputText value="#{tasBundle.tas_projectTas_tasItemData}"/>
@@ -77,7 +76,7 @@
 							<ui:param name="lookupTo" value="#{controller.to.target}" />
 							<ui:param name="idRequired" value="#{true}" />
 							<ui:param name="lookupDisabled"	value="#{controller.finished}" />
-							<ui:param name="lookupReRender"	value="TasItemDiv,TargetDiv" />
+							<ui:param name="lookupReRender"	value="TasItemDiv,TargetDiv,lookupTasItem" />
 							<aon:methodParam name="lookupChangeListener" value="#{controller.targetData}" type="lookupChangeListener" />
 						</ui:include>
 

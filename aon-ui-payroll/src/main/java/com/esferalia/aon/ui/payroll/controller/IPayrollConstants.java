@@ -52,6 +52,7 @@ public interface IPayrollConstants {
 	String CONTRACT_DATA_CONTROLLER = "contractData";
 	String CONTRACT_GENERATION_WIZARD_CONTROLLER = "contractGenerationWizard";
 	String CONTRACT_LEAVE_CONTROLLER_NAME = "contractLeave";
+	String CONTRACT_SEARCH_LISTENER_NAME = "contractSearch";
 	String ENTERPRISE_CONTROLLER="enterprise";
 	String ENTERPRISE_DIR_STAFF_CONTROLLER="enterpriseDirStaff";
 	String ENTERPRISE_ACTIVITY_CONTROLLER = "enterpriseActivity";

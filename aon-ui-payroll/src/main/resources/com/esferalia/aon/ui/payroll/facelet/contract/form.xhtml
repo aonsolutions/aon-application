@@ -17,12 +17,12 @@
 					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/formContent.xhtml" />
 					
 					<aon:panelGrid columns="7" style="width: 100%; margin-top:10px;"
-						columnClasses="aon-panelGrid-even aon-width-200 #{variablesSelected?'aon-highlight':''}
-									  ,aon-panelGrid-even aon-width-200 #{paymentsSelected?'aon-highlight':''}
-									  ,aon-panelGrid-even aon-width-200 #{deductionsSelected?'aon-highlight':''}
-									  ,aon-panelGrid-even aon-width-200 #{bonusSelected?'aon-highlight':''}
-									  ,aon-panelGrid-even aon-width-200 #{embargosSelected?'aon-highlight':''}
-									  ,aon-panelGrid-even aon-width-200 #{documentsSelected?'aon-highlight':''}
+						columnClasses="aon-panelGrid-even aon-width-180 #{variablesSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{paymentsSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{deductionsSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{bonusSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{embargosSelected?'aon-highlight':''}
+									  ,aon-panelGrid-even aon-width-180 #{documentsSelected?'aon-highlight':''}
 									  ,aon-panelGrid-even aon-width-auto">
 					
 						<aon:div>
@@ -94,7 +94,12 @@
 		
 		<ui:insert name="contractDetail" />
 		
-		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		<aon:lookupButtonPopup lookup="#{personLookup}" />
+		<aon:lookupButtonPopup lookup="#{bankLookup}" />
+		<aon:lookupButtonPopup lookup="#{agreementLookup}" />
+		<aon:lookupButtonPopup lookup="#{cnoLookup}" />
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/contrata/modalPanel.xhtml" />
 	</ui:define>
 </ui:composition>

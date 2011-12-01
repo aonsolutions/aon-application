@@ -81,6 +81,10 @@ public abstract class AbstractSalaryBuilder implements ISalaryBuilder {
 		
 
 	}
+	
+	@Override
+	public void setChargeDate(Date issueDate) {
+	}
 
 	@Override
 	public void setStartDate(Date startDate) {

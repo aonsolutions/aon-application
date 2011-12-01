@@ -1,5 +1,6 @@
 package com.code.aon.ui.document.event;
 
+import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_SEARCH;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_TREE_CONTROLLER_NAME;
 
 import com.code.aon.ui.company.controller.EnterpriseController;
@@ -20,8 +21,12 @@ public class EnterpriseTreeControllerListener extends ControllerAdapter {
 			throws ControllerListenerException {
 		EnterpriseController controller = (EnterpriseController) event.getController();
 		if ( controller.isTreeView() ) {
+			EnterpriseDocumentSearchListener search = (EnterpriseDocumentSearchListener) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_SEARCH);
+			search.setShowOpened(Boolean.FALSE.toString());
+			search.setEnterprise(controller.getEnterprise());
 			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ENTERPRISE_TREE_CONTROLLER_NAME);
 			tree.loadTree();			
+			
 		}
 	}
 	

@@ -13,7 +13,7 @@ public class EnterpriseTreeData {
 
 	public static final String ENTERPRISE_ICON = "/css/images/tree-root.png";
 	
-	public static final String CATEGORY_ICON = "/css/images/folder.png";
+	public static final String PROJECT_ICON = "/css/images/folder.png";
 	
 	public static final String DOCUMENT_ICON = "/css/images/document.png";
 	
@@ -76,6 +76,10 @@ public class EnterpriseTreeData {
 		return count;
 	}
 
+	public void incCount() {
+		this.count++;
+	}
+	
 	public void setCount(int count) {
 		this.count = count;
 	}

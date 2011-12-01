@@ -2419,6 +2419,14 @@
 		<managed-bean-name>agreementTree</managed-bean-name>
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.agreement.AgreementTree</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>searchCurrent</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>inactiveLastPeriod</property-name>
+			<value>ALL</value>
+		</managed-property>
 	</managed-bean>
 	<!-- ************ SALARY LAUNCHER  ************** -->
 	<managed-bean>
@@ -2761,6 +2769,10 @@
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>contractContrata_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/tab_contrata.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>contract_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/formTree.xhtml</to-view-id>
 		</navigation-case>
@@ -2771,6 +2783,10 @@
 		<navigation-case>
 			<from-outcome>contractDocument_formTree</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/formDocumentTree.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contrata_form</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contract/contrata/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 		<!-- =================== IrpfResult ========================== -->

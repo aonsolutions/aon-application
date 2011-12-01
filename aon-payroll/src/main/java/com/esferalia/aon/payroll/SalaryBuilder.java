@@ -108,6 +108,12 @@ public class SalaryBuilder implements ISalaryBuilder {
 		this.salary.setIssueDate(issueDate);
 		
 	}
+	
+	@Override
+	public void setChargeDate(Date chargeDate) {
+		this.salary.setChargeDate  ( chargeDate );
+		
+	}
 
 	@Override
 	public void setStartDate(Date startDate) {

@@ -138,6 +138,11 @@ public class SQLExtraSalaryCalculatorContext implements
 	//-------------------------------------------
 	// Delegate methods
 	//-------------------------------------------
+	@Override
+	public Date getIrpfDate() {
+		return ctx.getIrpfDate();
+	}
+	
 	public Date getChargeDate() {
 		return ctx.getChargeDate();
 	}

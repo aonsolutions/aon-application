@@ -3,14 +3,9 @@ package com.esferalia.aon.payroll.calculator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import sun.security.action.GetLongAction;
 
 import com.esferalia.aon.salary.expression.Period;
 
@@ -34,7 +29,7 @@ public class HierarchyPayments extends HierarchyIterator<IContractPayment> {
 			periods.add(period);
 			return true;
 		}
-
+		
 		public boolean add(Date start, Date end){
 			return add( new Period(start, end) );
 		}
@@ -60,7 +55,7 @@ public class HierarchyPayments extends HierarchyIterator<IContractPayment> {
 		else
 			return  null;
 	}
-	
+
 	private boolean visit (IContractPayment e ) {
 		String name = e.getName();
 		if ( name == null ) { 
@@ -89,4 +84,5 @@ public class HierarchyPayments extends HierarchyIterator<IContractPayment> {
 		return false;
 	}
 
+	
 }

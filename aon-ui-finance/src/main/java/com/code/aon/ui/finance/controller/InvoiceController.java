@@ -271,8 +271,10 @@ public class InvoiceController extends BasicController implements ISignatureCont
 		if (project.isTas() && getInvoice().getType() == InvoiceType.SALES) {
 			IManagerBean projectTasBean = BeanManager.getManagerBean(ProjectTas.class);
 			ProjectTas projectTas = (ProjectTas)projectTasBean.get(project.getId());
-			projectTas.setStatus(ProjectStatus.PENDING);
-			projectTasBean.update(projectTas);
+			if (projectTas.getStatus() == ProjectStatus.CLOSED) {
+				projectTas.setStatus(ProjectStatus.PENDING);
+				projectTasBean.update(projectTas);
+			}
 		}
 		linkProject(project, false);
 

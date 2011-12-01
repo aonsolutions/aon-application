@@ -1,7 +1,6 @@
 package com.code.aon.ui.document.event;
 
 import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
-import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_SEARCH;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_TREE_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
@@ -23,9 +22,11 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 	public void beforeBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) event.getController();
 		EnterpriseDocument ed = edc.getEnterpriseDocument();
-		ed.setTitle(edc.getTitle());
-		ed.setDescription(edc.getDescription());
-		ed.setCategories(edc.getCategories());
+		if ( edc.getLastDocument() != null ) {
+			ed.setTitle(edc.getLastDocument().getTitle());
+			ed.setDescription(edc.getLastDocument().getDescription());			
+			ed.setCategories(edc.getLastDocument().getCategories());
+		}
 		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		if ( ec.isTreeView() ) {
 			ed.setEnterprise(ec.getEnterprise());
@@ -42,8 +43,7 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) event.getController();
 		try {
 			edc.reset();
-			EnterpriseDocumentSearchListener edsl = (EnterpriseDocumentSearchListener) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_SEARCH);
-			edsl.setCategoryArray(edc.getEnterpriseDocument().getCategories());
+			edc.setCategoryArray(edc.getEnterpriseDocument().getCategories());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -54,8 +54,7 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) event.getController();
 		try {
 			edc.reset();
-			EnterpriseDocumentSearchListener edsl = (EnterpriseDocumentSearchListener) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_SEARCH);
-			edsl.setCategoryArray(edc.getEnterpriseDocument().getCategories());
+			edc.setCategoryArray(edc.getEnterpriseDocument().getCategories());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
@@ -68,28 +67,34 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 		EnterpriseDocument ed = (EnterpriseDocument) edc.getTo();
 		ed.setData( edc.getAonFile().getData() );
 		ed.setMimeType( edc.getAonFile().getMimeType() );
-		updateCategories(edc);
+		ed.setCategories(edc.getCategoryArray());
 	}
 
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) event.getController();
-		updateCategories(edc);
+		edc.getEnterpriseDocument().setCategories(edc.getCategoryArray());
 	}
 
 	@Override
 	public void afterBeanRemoved(ControllerEvent event)
 			throws ControllerListenerException {
-		resetCurrentNode();
+		resetCurrentNode(null);
 	}
 	
 	@Override
 	public void afterBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
-		resetCurrentNode();
+		resetCurrentNode(event);
 	}
 	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		resetCurrentNode(event);		
+	}
+
 	@Override
 	public void afterModelSearched(ControllerEvent event)
 			throws ControllerListenerException {
@@ -100,17 +105,15 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 		}
 	}
 
-	private void resetCurrentNode() {
+	private void resetCurrentNode(ControllerEvent event) {
 		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
 		if ( controller.isTreeView() ) {
 			EnterpriseTree tree = (EnterpriseTree) AonUtil.getRegisteredBean(ENTERPRISE_TREE_CONTROLLER_NAME);
+			if ( event != null ) {				
+				tree.setDocument((EnterpriseDocument) event.getController().getTo());
+			}
 			tree.loadTree();
 		}
-	}
-
-	private void updateCategories( EnterpriseDocumentController edc ) {
-		EnterpriseDocumentSearchListener edsl = (EnterpriseDocumentSearchListener) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_SEARCH);
-		edc.getEnterpriseDocument().setCategories(edsl.getCategoryArray());		
 	}
 	
 }

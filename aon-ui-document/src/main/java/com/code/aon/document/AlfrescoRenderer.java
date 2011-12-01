@@ -3,7 +3,6 @@ package com.code.aon.document;
 import java.util.Date;
 
 import org.alfresco.util.ISO8601DateFormat;
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
@@ -106,8 +105,8 @@ public class AlfrescoRenderer implements CriterionVisitor {
 			out.append( ISO8601DateFormat.format( (Date) data) );
 		} else {
 			String value = data.toString();
-			if ( value.indexOf("%") != -1 ) {
-				value = "\"" + StringUtils.replace(value, "%", "*") + "\""; 
+			if ( value.indexOf("*") != -1 ) {
+				value = "\"" + value + "\""; 
 			}
 			out.append( value );			
 		}

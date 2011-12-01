@@ -11,6 +11,8 @@ public interface IAgreements {
 	
 	public Integer getAgreementCategory(String codCon, String nivel, String oldCdg);
 	
+	public boolean containsExtra(String oldCdg, String codCom );
+
 	public Integer insertAgreementCategory(String codCon, String nivel, String oldCdg) 
 		throws SQLException;
 	
@@ -20,4 +22,5 @@ public interface IAgreements {
 	public boolean inherits(Emprper emprper, String codcon, String nivel  ) 
 		throws SQLException;
 
+	
 }

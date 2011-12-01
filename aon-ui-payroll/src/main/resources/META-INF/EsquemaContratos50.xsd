@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!-- XML Schema SPEE ver.5.000 15/02/2011-->
+<!-- XML Schema SPEE ver.5.000 07/09/2011-->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<xsd:annotation>
 		<xsd:documentation xml:lang="es">XML Schema - Comunicación de Contratos al SPEE.</xsd:documentation>
@@ -304,6 +304,7 @@
 			<xsd:element name="DATOS_ET_CO_TE" type="DATOS_ET_CO_TYPE" minOccurs="0"/>
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_REDUCCION_FORMACION" type="DATOS_REDUCCION_FORMACIONTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -357,6 +358,7 @@
 			<xsd:element name="PROG_EMPLEO_PUBLICO" type="DATOS_PROGEMPLEOPUBLICOTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_ETT" type="DATOS_ETT_TYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_EMPRESA_INSERCION" type="DATOS_EMPRESA_INSERCIONTYPE" minOccurs="0"/>
+			<xsd:element name="DATOS_REDUCCION_FORMACION" type="DATOS_REDUCCION_FORMACIONTYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_COMUNICA_COPIA_BASICA" type="DATOS_COMUNICA_COPIA_BASICATYPE" minOccurs="0"/>
 			<xsd:element name="DATOS_USOLIBRE_EMPRESA" type="DATOS_USOLIBRE_EMPRESATYPE" minOccurs="0"/>
 		</xsd:sequence>
@@ -797,7 +799,7 @@
 			</xsd:element>
 			<xsd:element name="FORMACION_BONIFICADO" minOccurs="0">
 				<xsd:annotation>
-					<xsd:documentation xml:lang="es">Obligatorio (S/N) para los códigos 421 y 450 con modalidad 421 iniciados entre el 18/06/2010 y el 31/12/2011. Indica si el contrato de formación es bonificado o no. </xsd:documentation>
+					<xsd:documentation xml:lang="es">Obligatorio (S/N) para los códigos 421 y 450 con modalidad 421 iniciados entre el 18/06/2010 y el 30/08/2011. Indica si el contrato de formación es bonificado o no. </xsd:documentation>
 				</xsd:annotation>
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -822,6 +824,36 @@
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:pattern value="[SN\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="REGULARIZACION_RDL_5_2011" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de si el contrato se acoge al proceso de regularización establecido en el RDL 5/2011 (ctos. iniciados entre el 07/05/2011 y el 31/07/2011). El único valor posible que puede tomar es "S" (SI) para indicar que se acoge a dicho proceso. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="ACOGIDO_LEGISLACION_ANTERIOR" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de acogida a la legislación anterior. Obligatorio para los códigos 421 y 450 con modalidad 421 de Escuela Taller o de empleo-formación promovido por las Comunidades Autónomas, iniciados entre el 31/08/2011 y el 31/12/2013. El único valor posible que puede tomar es "S" (SI) para indicar que se acoge a la legislación anterior y no al nuevo RDL 10/2011. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="PROYECTO_EMPLEO_FORMACION" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Indicador de si el contrato es de un proyecto de empleo-formación promovido por las Comunidades Autónomas. Opcional y sólo para los códigos 421 y 450 con modalidad 421 . El único valor posible que puede tomar es "S" (SI) para indicar que es promovido. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="[S\s]"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>
@@ -1356,6 +1388,35 @@
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:pattern value="\d{4}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="DATOS_REDUCCION_FORMACIONTYPE">
+		<xsd:annotation>
+			<xsd:documentation xml:lang="es">Datos de reducción de cuotas para los contratos de formación (RDL 10/2011). Opcional para los contratos de formación iniciados a partir del 31/08/2011.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="CODIGO_COLECTIVO_REDUCCION_FORMACION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Colectivo de reducción. Su posible valor (sólo valor 03) se encuentra codificado en la tabla TQOCOLRE.txt de la Ayuda XML - Ultima versión - Tablas de códigos. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:pattern value="\d{2}"/>
+					</xsd:restriction>
+				</xsd:simpleType>
+			</xsd:element>
+			<xsd:element name="PORCENTAJE_REDUCCION_FORMACION">
+				<xsd:annotation>
+					<xsd:documentation xml:lang="es">Porcentaje de reducción de la cuota. Solo admite 2 valores : 75% para empresas con más de 250 trabajadores y 100% para empresas con menos de 250 trabajadores. </xsd:documentation>
+				</xsd:annotation>
+				<xsd:simpleType>
+					<xsd:restriction base="xsd:string">
+						<xsd:minLength value="2"/>
+						<xsd:maxLength value="3"/>
+						<xsd:pattern value="([0-9])+"/>
 					</xsd:restriction>
 				</xsd:simpleType>
 			</xsd:element>

@@ -25,6 +25,7 @@ public interface ISalary {
 	
 	// DATOS DE LA NOMINA
 	SalaryType getType();
+	Date getChargeDate();
 	Date getIssueDate();
 	Date getStartDate();
 	Date getEndDate();

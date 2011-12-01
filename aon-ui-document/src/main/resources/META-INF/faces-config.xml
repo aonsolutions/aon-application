@@ -87,6 +87,48 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>	
 	
+	<!-- ************ ALFRESCO CATEGORY GROUP ************** -->
+	<managed-bean>
+		<managed-bean-name>alfrescoCategoryGroup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.document.controller.AlfrescoCategoryGroupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.document.AlfrescoCategory</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>alfrescoCategoryGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>cm:name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>saveState</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{alfrescoCategroyGroupListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>alfrescoCategroyGroupListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.document.event.AlfrescoCategroyGroupControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>		
+	
 	<!-- ************ ALFRESCO CATEGORY ************** -->
 	<managed-bean>
 		<managed-bean-name>alfrescoCategory</managed-bean-name>
@@ -131,8 +173,12 @@
 	<!-- =================== Alfresco Category ========================== -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>alfrescoCategory</from-outcome>
-			<to-view-id>/com/code/aon/ui/document/facelet/alfrescoCategory/grid.xhtml</to-view-id>
+			<from-outcome>alfrescoCategoryGroup_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/alfrescoCategoryGroup/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>alfrescoCategoryGroup_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/alfrescoCategoryGroup/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 
@@ -147,8 +193,8 @@
 			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseDocument/formTree.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>alfrescoCategory_formTree</from-outcome>
-			<to-view-id>/com/code/aon/ui/document/facelet/alfrescoCategory/formTree.xhtml</to-view-id>
+			<from-outcome>project_formTree</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseDocument/projectFormTree.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 		

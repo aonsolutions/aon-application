@@ -6,7 +6,10 @@
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"	
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:aon="http://www.code.es/aon-rich-components">
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+	
+	<ui:define name="content">
 
 	 	<a4j:region>
         	<h:form>
@@ -16,9 +19,8 @@
     	</a4j:region>
     	
 		<aon:form id="salaryLauncherForm">
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{payrollBundle.payroll_salary_launcher_module}" />
-			</ui:decorate>
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" />
 			
 			<aon:div styleClass="aon-scroll-area">
 			
@@ -146,6 +148,9 @@
 
 			</aon:div>
 		</aon:form>
+		
 		<aon:lookupButtonPopup lookup="#{personLookup}" />
 		<aon:lookupButtonPopup lookup="#{enterpriseLookup}" />
+		
+	</ui:define>
 </ui:composition>

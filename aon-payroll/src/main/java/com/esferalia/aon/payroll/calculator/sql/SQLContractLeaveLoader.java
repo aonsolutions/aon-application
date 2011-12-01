@@ -4,8 +4,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.apache.commons.lang.ObjectUtils.Null;
 
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
@@ -15,6 +23,8 @@ import com.esferalia.aon.payroll.enumeration.LeaveTypeVisitor;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.Period;
+
+import static com.esferalia.aon.payroll.enumeration.LeaveType.*;
 
 public class SQLContractLeaveLoader  {
 	
@@ -51,6 +61,22 @@ public class SQLContractLeaveLoader  {
 		}
 	}
 	
+	private static class Leave extends Period{
+		private LeaveType type;
+		
+		public Leave(Date start, 
+				Date end, 
+				LeaveType type) {
+			super ( start, end );
+			this.type = type;
+		}
+		
+		public LeaveType getType() {
+			return type;
+		}
+		
+		
+	}
 	
 	
 	private static final DaysRange RANGES [] = {
@@ -64,30 +90,17 @@ public class SQLContractLeaveLoader  {
 	private Date endDate;
 	
 	
-	private Long leavesDays;
-	private Collection<Period> leaves;
-	private long commonDiseaseDays;
-	private long professionalDiseaseDays;
+	private SortedSet<Leave> leaves;
 	
 	public SQLContractLeaveLoader(Date startDate, Date endDate) {
 		this.startDate = startDate;
 		this.endDate = endDate;
-		leaves = new LinkedList<Period>();
+		leaves = new TreeSet<Leave>();
 	}
 	
 	
 	
-	public Long getLeavesDays() {
-		return this.leavesDays;
-	}
 	
-	public Long getCommonDiseaseDays() {
-		return commonDiseaseDays;
-	}
-	
-	public Long getProfessionalDiseaseDays() {
-		return professionalDiseaseDays;
-	}
 	
 	public boolean isLeaveDay(Calendar day) {
 		Date date = day.getTime();
@@ -111,13 +124,36 @@ public class SQLContractLeaveLoader  {
 		return days;
 	}
 	
+	public Long getLeaveDays(Period p, LeaveType type ) {
+		long days = 0;
+		for (Leave leave : leaves) {
+			
+			if ( leave.type != type ) {
+				continue ; 
+			}
+			
+			Period intersect = leave.intersect(p);
+			if ( intersect != null ) {
+				Date start = intersect.getStart();
+				Date end = intersect.getEnd();
+				days += CommonUtil.getDaysBetweenDates(start, end) +1;
+			}
+		}
+		return days;
+	}
+
+	public Long getProfessionalDiseaseDays(Period p ) {
+		return getLeaveDays(p, OCCUPATIONAL_DISEASE);
+	}
+
+	public Long getCommonDiseaseDays(Period p ) {
+		return getLeaveDays(p, COMMON_DISEASE);
+	}
+
 	public void loadContractLevae(ResultSet rs, final ExpressionContext exprCtx)
 		throws SQLException 
 	{
 		this.leaves.clear();
-		this.leavesDays = 0L;
-		this.commonDiseaseDays = 0L;
-		this.professionalDiseaseDays = 0L;
 
 		while ( rs.next() ) {
 			
@@ -132,10 +168,10 @@ public class SQLContractLeaveLoader  {
 			LeaveType type = LeaveType.values()[rs.getInt(ContractLeaveColumns.TYPE)]; // Los valores nulos como 0 'COMMON_SISEASE'
 			
 			
-			this.leavesDays += type.accept(new LeaveTypeVisitor<Long>() {
+			type.accept(new LeaveTypeVisitor<Void>() {
 
 				@Override
-				public Long visitCommonDisease(LeaveType leaveType) {
+				public Void visitCommonDisease(LeaveType leaveType) {
 					for (DaysRange range : RANGES) {
 						long days = range.getDays(parentDays, leaveDays);
 						String name = range.getName ( ContractVariables.COMMON_DISEASE_DAYS);
@@ -143,60 +179,57 @@ public class SQLContractLeaveLoader  {
 					}
 					exprCtx.addVariable(ContractVariables.REGULATORY_BASE, regBase, start, end );
 					exprCtx.addVariable(ContractVariables.COMMON_DISEASE_DAYS, leaveDays, start, end );
-					addCommonDiseaseDays(leaveDays);
-					return leaveDays;
+					return null;
 				}
 
 				@Override
-				public Long visitOcupationalDisease(LeaveType leaveType) {
+				public Void visitOcupationalDisease(LeaveType leaveType) {
 					long days = parentDays ==  0 ? 
 							leaveDays -1 : leaveDays; 	// Enfermedad profesional o accidente de trabajo: 
 														// Desde el día siguiente al de la baja en el trabajo.
 					if ( days <= 0 )
-						return 0L;
+						return null;
 					exprCtx.addVariable(ContractVariables.OCCUPATIONAL_DISEASE_DAYS, days, start, end );
 					exprCtx.addVariable(ContractVariables.REGULATORY_BASE, regBase, start, end );
-					addProfessionalDiseaseDays(days);
-					return days;
+					return null;
 				}
 
 				@Override
-				public Long visitMaternity(LeaveType leaveType) {
+				public Void visitMaternity(LeaveType leaveType) {
 					exprCtx.addVariable(ContractVariables.MATERNITY_DAYS, leaveDays, start, end );
 					exprCtx.addVariable(ContractVariables.REGULATORY_BASE, regBase, start, end );
-					return leaveDays;
+					return null;
 				}
 
 				@Override
-				public Long visitPaternity(LeaveType leaveType) {
-					return visitMaternity(leaveType); // Igual que maternidad
+				public Void visitPaternity(LeaveType leaveType) {
+					return null;
 				}
 
 				@Override
-				public Long visitPregnacyRisk(LeaveType leaveType) {
-					return leaveDays;
+				public Void visitPregnacyRisk(LeaveType leaveType) {
+					return null;
 				}
 
 				@Override
-				public Long visitBreastFeedingRisk(LeaveType leaveType) {
-					return leaveDays;
+				public Void visitBreastFeedingRisk(LeaveType leaveType) {
+					return null;
 				}
 
 				@Override
-				public Long visitNonOcupationalDisease(LeaveType leaveType) {
-					return leaveDays;
+				public Void visitNonOcupationalDisease(LeaveType leaveType) {
+					return null;
 				}
 			
 			});
-			leaves.add(new Period(start, end));
+			add( new Leave(start, end, type ) );
 		}
 	}
 	
-	private void addCommonDiseaseDays(long days ) {
-		this.commonDiseaseDays += days;
+	private void add ( Leave leave ) {
+		leaves.add(leave);
 	}
-
-	private void addProfessionalDiseaseDays(long days ) {
-		this.professionalDiseaseDays += days;
-	}
+	
+	
+	
 }
