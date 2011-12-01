@@ -4,6 +4,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
@@ -48,7 +49,12 @@
 				</aon:menuItem>
 			</aon:dropDownMenu>						
 			<aon:inputText value="#{enterpriseDocumentSearch.mainText}"
-				size="28" maxlength="32" tabindex="32767" />
+				size="28" maxlength="32" tabindex="32767" >
+				<rich:hotKey key="return" handler="mainSearch();return false;"/>				
+			</aon:inputText>
 		</h:panelGrid>			
+		<a4j:jsFunction name="mainSearch"
+			action="enterpriseDocument_search" reRender="aonContent"
+			actionListener="#{enterpriseDocumentSearch.onMainSearch}" />		
 	</ui:define>
  </ui:composition>
