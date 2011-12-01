@@ -72,9 +72,7 @@ public class PayMethodTypeDetailAccountBeanVetoListener extends ManagerBeanVetoL
 				sb.append("El tipo de pago ");
 				sb.append(payMethodTypeDetailAccount.getPayMethodTypeDetail().getDescription());
 				sb.append(" ya está enlazado con la cuenta ");
-				sb.append(dup.getAccount().getId());
-				sb.append(" ");
-				sb.append(dup.getAccount().getDescription());
+				sb.append(dup.getAccount().getFullDescription());
 				sb.append(".");
 				throw new ManagerBeanVetoListenerException(sb.toString()); 
 			}

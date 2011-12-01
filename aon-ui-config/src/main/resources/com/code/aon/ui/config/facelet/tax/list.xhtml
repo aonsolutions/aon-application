@@ -19,19 +19,18 @@
 			<aon:div styleClass="aon-scroll-area">
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 				<ui:param name="controller" value="#{tax}" />
-				<ui:param name="columnClasses" 
-					value="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-					aon-editDataTable-textColumn, aon-editDataTable-numberColumn,
-					aon-editDataTable-numberColumn" />
+
 				<ui:define name="columns">
-					<aon:column>
+					<aon:column alias="Tax.name"
+						styleClass="aon-editDataTable-textColumn aon-width-auto">
 						<f:facet name="header">
 							<aon:outputLabel value="#{bundle.aon_description}" />
 						</f:facet>
 						<aon:outputText value="#{to.name}" />
 					</aon:column>
 
-					<aon:column>
+					<aon:column alias="Tax.type"
+						styleClass="aon-editDataTable-textColumn aon-width-250">
 						<f:facet name="header">
 							<aon:outputLabel value="#{configBundle.config_tax}" />
 						</f:facet>
@@ -43,7 +42,24 @@
 						</aon:div>
 					</aon:column>
 
-					<aon:column>
+					<aon:column alias="Tax.percentage"
+						styleClass="aon-editDataTable-numberColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputLabel value="#{bundle.aon_percentage}" />
+						</f:facet>
+						<aon:outputText value="#{to.percentage}" />
+					</aon:column>
+
+					<aon:column alias="Tax.surcharge"
+						styleClass="aon-editDataTable-numberColumn aon-width-100">
+						<f:facet name="header">
+							<aon:outputLabel value="#{bundle.aon_surcharge}" />
+						</f:facet>
+						<aon:outputText value="#{to.surcharge}" />
+					</aon:column>
+
+					<aon:column alias="Tax.startDate"
+						styleClass="aon-editDataTable-textColumn aon-width-100">
 						<f:facet name="header">
 							<aon:outputLabel value="#{bundle.aon_date_from}" />
 						</f:facet>
@@ -52,21 +68,7 @@
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
 					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.aon_percentage}" />
-						</f:facet>
-						<aon:outputText value="#{to.percentage}" />
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputLabel value="#{bundle.aon_surcharge}" />
-						</f:facet>
-						<aon:outputText value="#{to.surcharge}" />
-					</aon:column>
-
+					
 				</ui:define>
 			</ui:decorate>
 			</aon:div>

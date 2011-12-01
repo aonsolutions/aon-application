@@ -21,14 +21,14 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="dataTable" columns="2">
 
-					<aon:outputLabel for="Account_id" value="#{bundle.aon_id}" />
-					<aon:inputText id="Account_id" value="#{accountManager.to.id}"
+					<aon:outputLabel for="Account_code" value="#{bundle.aon_id}" />
+					<aon:inputText id="Account_code" value="#{accountManager.to.code}"
 						required="#{true}" size="10" maxlength="9"
 						disabled="#{!accountManager.new}">
 						<f:validateLength maximum="9" />
 						<a4j:support event="onchange" ajaxSingle="true"
 							actionListener="#{accountManager.onIdentifierChanged}"
-							reRender="dataTable" focus="Account_description" />
+							reRender="Account_code" focus="Account_description" />
 					</aon:inputText>
 
 					<aon:outputLabel for="Account_description"

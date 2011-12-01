@@ -177,14 +177,13 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		return invoiceTax;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Tax obtainTax(Integer id, Date date) throws ManagerBeanException {
 		IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
     	Criteria criteria = new Criteria();
     	criteria.addEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_TAX_ID), id);
     	criteria.addLessThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_START_DATE), date);
     	criteria.addGreaterThanOrEqualExpression(taxDetailBean.getFieldName(IConfigAlias.TAX_DETAIL_END_DATE), date);
-    	Iterator iter = taxDetailBean.getList(criteria).iterator();
+    	Iterator<ITransferObject> iter = taxDetailBean.getList(criteria).iterator();
     	if (iter.hasNext()) {
     		TaxDetail taxDetail = (TaxDetail)iter.next();
     		Tax tax = new Tax();

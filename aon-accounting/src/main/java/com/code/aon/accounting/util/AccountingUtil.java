@@ -33,14 +33,28 @@ public class AccountingUtil {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accAppParamBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), defaultAccountName);
 		Iterator<ITransferObject> iter = accAppParamBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			ApplicationParameter param = (ApplicationParameter)iter.next();
-			IManagerBean accountBean  = BeanManager.getManagerBean(Account.class);
-			return (Account) accountBean.get(param.getValue());
+		if (iter.hasNext()) {
+			ApplicationParameter param = (ApplicationParameter) iter.next();
+			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+			Criteria crit = new Criteria();
+			try {
+				Integer accountId = Integer.parseInt(param.getValue());
+				crit.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), accountId);
+				Iterator<ITransferObject> iterAcc = accountBean.getList(crit).iterator();
+				if (iterAcc.hasNext()) {
+					return (Account) iterAcc.next();
+				}
+			} catch (NumberFormatException e ) {
+				throw new ManagerBeanException("No existe la cuenta contable número: " + param.getValue()); 
+			}
 		}
 		return null;
 	}
 	
+	public Account obtainCashAccount() throws ManagerBeanException {
+		return obtainDefaultAccount(DefaultAccounts.CASH_ACCOUNT);
+	}
+
 	public Date getFirstPeriodInitialionDate() throws ManagerBeanException {
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 		Criteria criteria = new Criteria();
@@ -49,17 +63,6 @@ public class AccountingUtil {
 		Iterator<ITransferObject> iter = periodBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			return ((Period) iter.next()).getInitiationDate();
-		}
-		return null;
-	}
-
-	public Account obtainCashAccount() throws ManagerBeanException {
-		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), obtainDefaultAccount(DefaultAccounts.CASH_ACCOUNT).getId());
-		List<ITransferObject> list = accountBean.getList(criteria);
-		if(list.size() > 0){
-			return (Account)list.iterator().next();
 		}
 		return null;
 	}
@@ -105,7 +108,7 @@ public class AccountingUtil {
 
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 			period = new Period();
-			period.setId(Integer.toString(initiation.get(Calendar.YEAR)));
+			period.setName(Integer.toString(initiation.get(Calendar.YEAR)));
 			period.setInitiationDate(initiation.getTime());
 			period.setDeadline(deadline.getTime());
 			period =(Period) periodBean.insert(period);
@@ -117,7 +120,7 @@ public class AccountingUtil {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(entryBean
-				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
+				.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), period.getId());
 		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE),
 				accountEntryType);
 		if (accountEntryId != null) {
@@ -152,7 +155,7 @@ public class AccountingUtil {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), entry.getId());
-			criteria.addExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), accountPattern);
+			criteria.addExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_CODE), accountPattern);
 			Iterator<?> iter = accountEntryDetailBean.getList(criteria).iterator();
 			return iter.hasNext()?(AccountEntryDetail)iter.next():null;
 		} catch (ExpressionException e) {

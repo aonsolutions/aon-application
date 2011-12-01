@@ -21,6 +21,7 @@ import com.code.aon.accounting.enumeration.AccountEntryType;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
@@ -74,11 +75,11 @@ public class AccountEntryFinanceWriter {
 		recordingTo.setPaymentAccount(obtainPaymentAccount(fBatch.getRegistryBank(), null));
 		recordingTo.setBalancingConcept(fBatch.getDescription());
 		recordingTo.setSecurityLevel((fBatch.getSecurityLevel()==null) ? SecurityLevel.OFFICIAL : fBatch.getSecurityLevel());
-		recordingTo.setFBatchDetailList(fBatch.getDetailList());
+		List <?> details = fBatch.getDetailList();
+		recordingTo.setFBatchDetailList( (List<FinanceBatchDetail>) details );
 		return recordFBatch(recordingTo, fBatch, null);
 	}
 
-	@SuppressWarnings("unchecked")
 	public AccountEntry recordFBatch(FinanceRecordingTo recordingTo, FinanceBatch fBatch, AccountEntry entry) throws ManagerBeanException {
 		if (entry == null) {
 			entry = createAccountEntry(recordingTo);
@@ -90,7 +91,7 @@ public class AccountEntryFinanceWriter {
 	        IManagerBean fBatchBean = BeanManager.getManagerBean(FinanceBatch.class);
 	        IManagerBean fBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 	        IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-	        Iterator iterator = fBatch.getDetailList().iterator();
+	        Iterator<ITransferObject> iterator = fBatch.getDetailList().iterator();
 	        while (iterator.hasNext()) {
 	            FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
 	            fBatchDetail.setStatus(FinanceStatus.PAID);
@@ -211,12 +212,11 @@ public class AccountEntryFinanceWriter {
 		removeAccountEntryFinanceBatch(fBatch, true);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void removeAccountEntryFinanceBatch(FinanceBatch fBatch, boolean removeAccountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryFinanceBatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryFinanceBatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), fBatch.getId());
-		Iterator iterator = accountEntryFinanceBatchBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iterator = accountEntryFinanceBatchBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			AccountEntryFinanceBatch accountEntryFinanceBatch = (AccountEntryFinanceBatch)iterator.next();
 			accountEntryFinanceBatchBean.remove(accountEntryFinanceBatch);
@@ -630,12 +630,11 @@ public class AccountEntryFinanceWriter {
 		removeAccountEntryFinanceTracking(tracking, true);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void removeAccountEntryFinanceTracking(FinanceTracking tracking, boolean removeAccountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryFinanceTrackingBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_TRACKING_FINANCE_TRACKING_ID), tracking.getId());
-		Iterator iterator = accountEntryFinanceTrackingBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iterator = accountEntryFinanceTrackingBean.getList(criteria).iterator();
 		if (iterator.hasNext()) {
 			AccountEntryFinanceTracking accountEntryFinanceTracking = (AccountEntryFinanceTracking)iterator.next();
 			accountEntryFinanceTrackingBean.remove(accountEntryFinanceTracking);
@@ -700,12 +699,11 @@ public class AccountEntryFinanceWriter {
 		removeAccountEntryBankStatement(statement, true);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void removeAccountEntryBankStatement(BankStatement statement, boolean removeAccountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryBankStatementBean = BeanManager.getManagerBean(AccountEntryBankStatement.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryBankStatementBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_BANK_STATEMENT_BANK_STATEMENT_ID), statement.getId());
-		Iterator iterator = accountEntryBankStatementBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iterator = accountEntryBankStatementBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
 			AccountEntryBankStatement accountEntryBankStatement= (AccountEntryBankStatement)iterator.next();
 			accountEntryBankStatementBean.remove(accountEntryBankStatement);
@@ -722,7 +720,7 @@ public class AccountEntryFinanceWriter {
 		SecurityLevel securityLevel = (to.getSecurityLevel()==null) ? SecurityLevel.OFFICIAL : to.getSecurityLevel();
 
 		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod(period.getId());
+		entry.setAccountPeriod(period);
 		entry.setEntryDate(to.getDate());
 		entry.setType(to.getType());
 		entry.setJournal(null);
@@ -765,12 +763,11 @@ public class AccountEntryFinanceWriter {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void removeAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
-		Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iter = accountEntryDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			AccountEntryDetail accEntryDetail = (AccountEntryDetail) iter.next();
 			accountEntryDetailBean.remove(accEntryDetail);

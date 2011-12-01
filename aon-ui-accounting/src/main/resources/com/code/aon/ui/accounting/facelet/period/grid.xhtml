@@ -5,120 +5,108 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
 	template="/facelet/templates/aon.ui.content.xhtml">
-	<ui:define name="content">
-
-		<aon:form id="accPeriodList">
-
-			<aon:div ajaxRendered="true" layout="none">
-
-				<ui:include
-					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-					<ui:param name="toolbarTitle"
-						value="#{accountingBundle.accounting_period_module}" />
+<ui:define name="content">
+	<aon:form id="accPeriodList">
+		<aon:div ajaxRendered="true" layout="none">
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{accountingBundle.accounting_period_module}" />
+				<ui:param name="controller" value="#{accPeriod}" />
+			</ui:include>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 					<ui:param name="controller" value="#{accPeriod}" />
-				</ui:include>
-				<aon:div styleClass="aon-scroll-area">
-					<ui:decorate
-						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
-						<ui:param name="controller" value="#{accPeriod}" />
-						<ui:param name="columnClasses"
-							value="aon-width-60,aon-editDataTable-text,aon-editDataTable-text" />
-						<ui:define name="columns">
+					<ui:define name="columns">
+						<aon:column	alias="Period.name" 
+							styleClass="aon-editDataTable-textColumn aon-width-auto">
+							<f:facet name="header">
+								<aon:outputLabel for="Period_name" value="#{bundle.aon_name}" />
+							</f:facet>
 
+							<aon:outputText value="#{to.name}" 
+								rendered="#{formList}" />
+							<aon:inputText rendered="#{formEdit}" required="true"
+								disabled="true" id="Period_name" maxlength="10" size="10" 
+								value="#{accPeriod.to.name}"/>
+							<f:facet name="footer">
+								<aon:inputText id="Period_name-New"  rendered="#{formNew}"
+									maxlength="10" size="10" required="true"
+									value="#{accPeriod.to.name}" />
+							</f:facet>
+						</aon:column>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_id}" />
-								</f:facet>
+						<aon:column	alias="Period.initiationDate" 
+							styleClass="aon-editDataTable-textColumn aon-width-120">
+							<f:facet name="header">
+								<aon:outputLabel for="Period_initiationDate" value="#{bundle.aon_date_from}" />
+							</f:facet>
 
-								<aon:outputText value="#{to.id}" id="Period_id-LABEL"
-									rendered="#{to.id!=accPeriod.to.id}" />
-								<aon:inputText rendered="#{to.id==accPeriod.to.id}"
-									disabled="true" id="Period_id-EDIT" style="width:100%"
-									value="#{accPeriod.to.id}" required="true" />
-								<f:facet name="footer">
-									<aon:inputText id="Period_id-NEW" rendered="#{accPeriod.new}"
-										style="width:100%" value="#{accPeriod.to.id}" required="true" />
-								</f:facet>
-							</aon:column>
+							<aon:outputText value="#{to.initiationDate}" rendered="#{formList}">
+								<f:convertDateTime type="date" pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:selectInputDate required="true"
+								id="Period_initiationDate"
+								rendered="#{formEdit}"
+								value="#{accPeriod.to.initiationDate}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}" />
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_date_from}" />
-								</f:facet>
-
-								<aon:outputText value="#{to.initiationDate}"
-									id="Period_initiationDate-LABEL"
-									rendered="#{to.id!=accPeriod.to.id}">
-									<f:convertDateTime type="date"
-										pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:outputText>
+							<f:facet name="footer">
 								<aon:selectInputDate required="true"
-									id="Period_initiationDate-EDIT"
-									rendered="#{to.id==accPeriod.to.id}"
+									id="Period_initiationDate-New" rendered="#{formNew}"
 									value="#{accPeriod.to.initiationDate}"
 									timeZone="#{timeZoneController.timeZone}"
 									popupDateFormat="#{bundle.aon_date_pattern}" />
+							</f:facet>
+						</aon:column>
 
-								<f:facet name="footer">
-									<aon:selectInputDate required="true"
-										id="Period_initiationDate-NEW" rendered="#{accPeriod.new}"
-										value="#{accPeriod.to.initiationDate}"
-										timeZone="#{timeZoneController.timeZone}"
-										popupDateFormat="#{bundle.aon_date_pattern}" />
-								</f:facet>
-							</aon:column>
+						<aon:column	alias="Period.deadline" 
+							styleClass="aon-editDataTable-textColumn aon-width-120">
+							<f:facet name="header">
+								<aon:outputLabel for="Period_deadline" value="#{bundle.aon_date_to}" />
+							</f:facet>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{bundle.aon_date_to}" />
-								</f:facet>
-
-								<aon:outputText value="#{to.deadline}"
-									id="Period_deadline-LABEL" rendered="#{to.id!=accPeriod.to.id}">
-									<f:convertDateTime type="date"
-										pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</aon:outputText>
-								<aon:selectInputDate required="true" id="Period_deadline-EDIT"
-									rendered="#{to.id==accPeriod.to.id}"
-									value="#{accPeriod.to.deadline}"
+							<aon:outputText value="#{to.deadline}" rendered="#{formList}">
+								<f:convertDateTime type="date"
+									pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText>
+							<aon:selectInputDate required="true" id="Period_deadline"
+								rendered="#{formEdit}"
+								value="#{accPeriod.to.deadline}"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}" />
+							<f:facet name="footer">
+								<aon:selectInputDate required="true" id="Period_deadline-New"
+									rendered="#{formNew}" value="#{accPeriod.to.deadline}"
 									timeZone="#{timeZoneController.timeZone}"
 									popupDateFormat="#{bundle.aon_date_pattern}" />
-								<f:facet name="footer">
-									<aon:selectInputDate required="true" id="Period_deadline-NEW"
-										rendered="#{accPeriod.new}" value="#{accPeriod.to.deadline}"
-										timeZone="#{timeZoneController.timeZone}"
-										popupDateFormat="#{bundle.aon_date_pattern}" />
-								</f:facet>
-							</aon:column>
+							</f:facet>
+						</aon:column>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText id="Period_status-LABEL"
-										value="#{bundle.aon_status}" />
-								</f:facet>
-								<aon:outputText value="#{to.status}" rendered="#{formList}"/>
-								<aon:selectOneMenu id="Period_status-EDIT"
-									rendered="#{formEdit}" value="#{accPeriod.to.status}">
-									<f:selectItems
-										value="#{accountingCollections.accountPeriodStatuses}" />
+						<aon:column	alias="Period.status" 
+							styleClass="aon-editDataTable-textColumn aon-width-100">
+							<f:facet name="header">
+								<aon:outputLabel for="Period_status" value="#{bundle.aon_status}" />
+							</f:facet>
+							<aon:outputText value="#{to.status}" rendered="#{formList}"/>
+							<aon:selectOneMenu id="Period_status"
+								rendered="#{formEdit}" value="#{accPeriod.to.status}">
+								<f:selectItems value="#{accountingCollections.accountPeriodStatuses}" />
+							</aon:selectOneMenu>
+							<f:facet name="footer">
+								<aon:selectOneMenu id="Period_status-New" rendered="#{formNew}"
+									value="#{accPeriod.to.status}">
+									<f:selectItems value="#{accountingCollections.accountPeriodStatuses}" />
 								</aon:selectOneMenu>
-								<f:facet name="footer">
-									<aon:selectOneMenu id="Period_status-NEW" rendered="#{formNew}"
-										value="#{accPeriod.to.status}">
-										<f:selectItems
-											value="#{accountingCollections.accountPeriodStatuses}" />
-									</aon:selectOneMenu>
-								</f:facet>
-							</aon:column>
+							</f:facet>
+						</aon:column>
 
-						</ui:define>
-					</ui:decorate>
-				</aon:div>
+					</ui:define>
+				</ui:decorate>
 			</aon:div>
-		</aon:form>
-
-	</ui:define>
+		</aon:div>
+	</aon:form>
+</ui:define>
 </ui:composition>

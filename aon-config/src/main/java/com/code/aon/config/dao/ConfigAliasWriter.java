@@ -27,7 +27,7 @@ public class ConfigAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-TRUNK/aon-config/src/main/java/com/code/aon/config/dao/IConfigAlias.java");
+		File file = new File("/home/ecastellano/AON-TRUNK/aon.parent/aon-config/src/main/java/com/code/aon/config/dao/IConfigAlias.java");
 		String[] classes = new String[] { 
 			ApplicationParameter.class.getName(),
 			Bank.class.getName(),

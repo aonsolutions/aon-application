@@ -30,16 +30,22 @@ public interface IConfigAlias {
 	DAOConstantsEntry APPLICATION_PARAMETER_ENTRY = DAOConstants.getDAOConstant(ApplicationParameter.class);
 
 	/** 
+	* Alias value: ApplicationParameter_id
+	* Hibernate value: ApplicationParameter.id
+	*/
+	String  APPLICATION_PARAMETER_ID = APPLICATION_PARAMETER_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: ApplicationParameter_name
 	* Hibernate value: ApplicationParameter.name
 	*/
-	String  APPLICATION_PARAMETER_NAME = APPLICATION_PARAMETER_ENTRY.getAliasNames()[0];
+	String  APPLICATION_PARAMETER_NAME = APPLICATION_PARAMETER_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: ApplicationParameter_value
 	* Hibernate value: ApplicationParameter.value
 	*/
-	String  APPLICATION_PARAMETER_VALUE = APPLICATION_PARAMETER_ENTRY.getAliasNames()[1];
+	String  APPLICATION_PARAMETER_VALUE = APPLICATION_PARAMETER_ENTRY.getAliasNames()[2];
 
 
 

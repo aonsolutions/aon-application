@@ -19,6 +19,7 @@ import javax.faces.model.ListDataModel;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -544,11 +545,11 @@ public class VatReportController implements ICollectionProvider, IFinanceMessage
 
 	public com.code.aon.accounting.Period getAccountPeriod() {
 		try {
-		if (accountPeriod == null && getYear() != null) {
-			IManagerBean periodBean = BeanManager.getManagerBean(com.code.aon.accounting.Period.class);
-			com.code.aon.accounting.Period period = (com.code.aon.accounting.Period) periodBean.get(getYear().toString());
-			return period;
-		}
+			if (accountPeriod == null && getYear() != null) {
+				AccountingUtil u = new AccountingUtil();
+				com.code.aon.accounting.Period period = u.getPeriod(getFromDate());
+				return period;
+			}
 		} catch (ManagerBeanException e) {
 			// return null
 		}

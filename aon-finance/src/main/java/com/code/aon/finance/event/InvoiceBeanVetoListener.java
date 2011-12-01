@@ -144,7 +144,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		}
 	}
 
-    @SuppressWarnings("unchecked")
 	private void checkNumber(Invoice invoice) throws ManagerBeanVetoListenerException {
 		String whereSeries = "";
 		String andId = "";
@@ -165,16 +164,15 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
     					andId;
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(select);
-        List list = query
+        List<?> list = query
     		.addScalar("id", Hibernate.INTEGER)
         	.list();
-        Iterator iterator = list.iterator();
+        Iterator<?> iterator = list.iterator();
         if (iterator.hasNext()) {
 			throw new ManagerBeanVetoListenerException("Ya existe una Factura con esa Serie/Número.");
         }
 	}
 
-    @SuppressWarnings("unchecked")
 	private boolean checkInvoiceDate(Invoice invoice) throws ManagerBeanVetoListenerException {
     	if (invoice.getTaxDate() == null) {
     		return true;
@@ -185,11 +183,11 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 						"WHERE invoice.id = " + invoice.getId();
 		Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 		SQLQuery query = session.createSQLQuery(select);
-        List list = query
+        List<?> list = query
     		.addScalar("issue_date", Hibernate.DATE)
         	.addScalar("tax_date", Hibernate.DATE)
         	.list();
-        Iterator iterator = list.iterator();
+        Iterator<?> iterator = list.iterator();
         if (iterator.hasNext()) {
         	Object[] obj = (Object[])iterator.next();
             Date issueDate= (Date) obj[0];
@@ -261,45 +259,41 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 		return false;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void removeFinanceTrackings(Invoice invoice) throws ManagerBeanException {
 		IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_INVOICE_ID), invoice.getId());
-		Iterator iter = financeTrackingBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iter = financeTrackingBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			financeTrackingBean.remove((FinanceTracking) iter.next());
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void removeFinances(Invoice invoice) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(financeBean.getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-		Iterator iter = financeBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iter = financeBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			financeBean.remove((Finance) iter.next());
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void removeInvoiceDetails(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator iter = invoiceDetailBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iter = invoiceDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			invoiceDetailBean.remove((InvoiceDetail) iter.next());
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void removeInvoiceAddress(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
-		Iterator iter = invoiceAddressBean.getList(criteria, 0, 1).iterator();
+		Iterator<ITransferObject> iter = invoiceAddressBean.getList(criteria, 0, 1).iterator();
 		if (iter.hasNext()) {
 			invoiceAddressBean.remove((InvoiceAddress) iter.next());
 		}

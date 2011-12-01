@@ -505,7 +505,7 @@
 				<textElement textAlignment="Right">
 					<font size="8" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{params}.getPeriod().getId()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{params}.getPeriod().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-45" x="433" y="15" width="42" height="13"/>

@@ -226,7 +226,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="8" isStrikeThrough="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{account}.getId()+" "]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{account}.getCode()+" "]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-16" x="0" y="5" width="75" height="11"/>

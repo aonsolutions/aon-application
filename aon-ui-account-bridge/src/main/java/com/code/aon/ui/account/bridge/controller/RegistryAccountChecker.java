@@ -231,7 +231,17 @@ public abstract class RegistryAccountChecker implements Serializable {
 		}
 		return isShowErrors() ? errors : (List<RegistryAccountCheckerTo>) list;
 	}
-
+	public String afterSearchAction() {
+		return getBeanName() + "_list";
+	}
+	public void onAfterSearch(ActionEvent event) {
+		
+	}
+	public String searchAction() {
+		return getBeanName() + "_search";
+	}
+	
+	
 	protected abstract String getPojoName();
 	protected abstract IFinderBean getIAccountBean() throws ManagerBeanException;
 	protected abstract String getCompanyNameAlias() throws ManagerBeanException;

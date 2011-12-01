@@ -275,7 +275,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{accountBundle.account_account}" />
 							</f:facet>
-							<aon:outputText value="#{to.account.id}" />
+							<aon:outputText value="#{to.account.code}" />
 						</aon:column>
 
 						<aon:column alias="Invoice.issueDate"
@@ -411,7 +411,7 @@
 
 								<aon:column styleClass="aon-editDataTable-textColumn"
 									style="padding: 0px; border: none;background-color: #F2FDEC; font-size: 0.9em;">
-									<aon:outputText value="#{preAccountEntry.account.id}" />
+									<aon:outputText value="#{preAccountEntry.account.code}" />
 								</aon:column>
 
 								<aon:column styleClass="aon-editDataTable-textColumn"
@@ -442,7 +442,7 @@
 								<aon:column colspan="2"
 									styleClass="aon-editDataTable-textColumn"
 									style="padding-left: 10px; border: none;background-color: #F2FDEC;font-size: 0.9em;">
-									<aon:outputText value="#{preAccountEntry.balancingAccount.id}" />
+									<aon:outputText value="#{preAccountEntry.balancingAccount.code}" />
 								</aon:column>
 							</rich:subTable>
 					</ui:define>

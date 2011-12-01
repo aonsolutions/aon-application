@@ -18,7 +18,7 @@ public class AccountAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PROJECT/aon-account/src/main/java/com/code/aon/account/dao/IAccountAlias.java");
+		File file = new File("/home/ecastellano/AON-TRUNK/aon.parent/aon-account/src/main/java/com/code/aon/account/dao/IAccountAlias.java");
 		String[] classes = new String[1]; 
 		classes[0] = Account.class.getName();
 		HibernateUtil.getSessionFactory( HibernateUtil.getSessionFactoryName() );

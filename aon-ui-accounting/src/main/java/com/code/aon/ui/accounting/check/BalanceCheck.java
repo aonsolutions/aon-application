@@ -34,7 +34,7 @@ public class BalanceCheck implements IAccountCheck{
 		try {
 			HibernateUtil.setCloseSession(false);
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			String idAlias = accountBean.getFieldName(IAccountAlias.ACCOUNT_ID);
+			String codeAlias = accountBean.getFieldName(IAccountAlias.ACCOUNT_CODE);
 			String entryAlias = accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
 			IManagerBean balanceBean = BeanManager.getManagerBean(Balance.class);
 			
@@ -66,19 +66,19 @@ public class BalanceCheck implements IAccountCheck{
 						Criteria criteria = new Criteria();
 						criteria.addEqualExpression(entryAlias, true);
 						if (balance.getType() == BalanceType.CLOSING) {
-							criteria.addExpression(idAlias, "1*|2*|3*|4*|5*");
+							criteria.addExpression(codeAlias, "1*|2*|3*|4*|5*");
 						} else if (balance.getType() == BalanceType.OPERATING) {
-							criteria.addExpression(idAlias, "6*|7*");
+							criteria.addExpression(codeAlias, "6*|7*");
 						} else if (balance.getType() == BalanceType.PATRIMONY) {
-							criteria.addExpression(idAlias, "8*|9*");
+							criteria.addExpression(codeAlias, "8*|9*");
 						}
 						List<ITransferObject> accounts = accountBean.getList(criteria);
 						for (ITransferObject accountTo: accounts) {
 							Account account = (Account) accountTo;
-							String id1 = "," + account.getId().substring(0,1) + ",";
-							String id2 = "," + account.getId().substring(0,2) + ",";
-							String id3 = "," + account.getId().substring(0,3) + ",";
-							String id4 = "," + account.getId().substring(0,4) + ",";
+							String id1 = "," + account.getCode().substring(0,1) + ",";
+							String id2 = "," + account.getCode().substring(0,2) + ",";
+							String id3 = "," + account.getCode().substring(0,3) + ",";
+							String id4 = "," + account.getCode().substring(0,4) + ",";
 							int count1 = StringUtils.countMatches(buf.toString(), id1);
 							int count2 = StringUtils.countMatches(buf.toString(), id2);
 							int count3 = StringUtils.countMatches(buf.toString(), id3);
@@ -86,12 +86,12 @@ public class BalanceCheck implements IAccountCheck{
 							int sum = count1 + count2 + count3 + count4; 
 							if ( sum > 1) {
 								BalanceCheckEntry e = new BalanceCheckEntry();
-								e.setMessage( "[" + account.getId() + "] Cuenta definida dos veces en el balance '" + balance.getName() + "'.");
+								e.setMessage( "[" + account.getCode() + "] Cuenta definida dos veces en el balance '" + balance.getName() + "'.");
 								e.setTo(account);
 								list.add(e);
 							} else if ( sum == 0) {
 								BalanceCheckEntry e = new BalanceCheckEntry();
-								e.setMessage( "[" + account.getId() + "] Cuenta no reflejada en el balance '" + balance.getName() + "'" );
+								e.setMessage( "[" + account.getCode() + "] Cuenta no reflejada en el balance '" + balance.getName() + "'" );
 								e.setTo(account);
 								list.add(e);
 							}

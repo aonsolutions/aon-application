@@ -284,10 +284,6 @@
 					<key>VatTaxDeclaration_vatTax_id</key>
                     <value>id</value>
 				</map-entry>
-				<map-entry>
-					<key>VatTaxDeclaration_vatTax_id</key>
-                    <value>id</value>
-				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>

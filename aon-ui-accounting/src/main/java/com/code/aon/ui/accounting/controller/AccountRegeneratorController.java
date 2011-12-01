@@ -52,9 +52,6 @@ public class AccountRegeneratorController {
 
 	public void regenerateAccount(ActionEvent event) {
 		try {
-			if (isHelper()) {
-				regenerateAccountHelper();	
-			}
 			if (isJournal() ) {
 				AccountCheckController acc=(AccountCheckController)AonUtil.getRegisteredBean("accountCheck");
 				acc.checkEmptyAccountEntry(this.getPeriod());
@@ -65,6 +62,9 @@ public class AccountRegeneratorController {
 					AonUtil.addErrorMessage(msg);
 					throw new AbortProcessingException(msg);
 				}
+			}
+			if (isHelper()) {
+				regenerateAccountHelper();	
 			}
 		} catch (AccountingCheckException e) {
 			String msg = "- Se produjeron errores al regenerar el número de diario.";

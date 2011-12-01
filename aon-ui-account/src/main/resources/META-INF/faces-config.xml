@@ -9,15 +9,6 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
       <var>accountBundle</var>
     </resource-bundle>
   </application>
-  <!--  *************** CONVERTER ***************** -->
-  <converter>
-    <description>Conversor para las cuentas
-    contables.</description>
-    <converter-for-class>
-    com.code.aon.account.Account</converter-for-class>
-    <converter-class>
-    com.code.aon.ui.account.converter.AccountConverter</converter-class>
-  </converter>
   <!--  *************** COLLECTIONS ***************** -->
   <managed-bean>
     <managed-bean-name>accountCollections</managed-bean-name>
@@ -79,8 +70,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
   <!-- ************ ACCOUNT LOOKUP ************** -->
   <managed-bean>
     <managed-bean-name>accountLookup</managed-bean-name>
-    <managed-bean-class>
-    com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+    <managed-bean-class>com.code.aon.ui.account.controller.AccountRichLookupBean</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
     <managed-property>
       <property-name>beanName</property-name>
@@ -92,7 +82,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
     </managed-property>
     <managed-property>
       <property-name>defaultOrder</property-name>
-      <value>Account_id</value>
+      <value>Account_code</value>
     </managed-property>
     <managed-property>
       <property-name>defaultExpressions</property-name>

@@ -6,22 +6,22 @@ import com.code.aon.account.Account;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 
 public class AccountUtil {
 	
-	@SuppressWarnings("unchecked")
 	public String obtainNextAccountId(String prefix) throws ManagerBeanException, ExpressionException{
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), fillprefix(prefix));
-		criteria.addOrder(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), false);
-		Iterator iter = accountBean.getList(criteria).iterator();
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_CODE), fillprefix(prefix));
+		criteria.addOrder(accountBean.getFieldName(IAccountAlias.ACCOUNT_CODE), false);
+		Iterator<ITransferObject> iter = accountBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			Account account = (Account)iter.next();
-			return new Long(Long.parseLong(account.getId()) + 1).toString();
+			return new Long(Long.parseLong(account.getCode()) + 1).toString();
 		}
 		return zerofill(prefix); 
 	}

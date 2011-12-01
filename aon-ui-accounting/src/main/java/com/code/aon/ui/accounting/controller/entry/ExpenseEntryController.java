@@ -102,7 +102,7 @@ public class ExpenseEntryController {
 				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 				AccountEntry entry = new AccountEntry();
 				entry.setEntryDate(getEntry().getDate());
-				entry.setAccountPeriod(getEntry().getPeriod().getId());
+				entry.setAccountPeriod(getEntry().getPeriod());
 				entry.setType(AccountEntryType.EXPENSES);
 				entry.setSecurityLevel(getEntry().getSecurityLevel());
 				entry = (AccountEntry) entryBean.insert(entry);

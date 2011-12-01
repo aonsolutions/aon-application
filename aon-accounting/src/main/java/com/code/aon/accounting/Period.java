@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -23,18 +24,28 @@ public class Period implements ITransferObject {
 	
 	private static final long serialVersionUID = -5079105553105179167L;
 
-	private String id;
+	private Integer id;
+	private String name;
 	private Date initiationDate;
 	private Date deadline;
 	private AccountPeriodStatus status;
 	
 	@Id
-	@Column(nullable = false, length=4)
-	public String getId() {
+	@GeneratedValue
+	@Column(nullable=false)
+	public Integer getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
+	}
+	
+	@Column(nullable = false, length=10)
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Column(name = "initiation_date", nullable = false)
@@ -72,6 +83,7 @@ public class Period implements ITransferObject {
 		final Period o = (Period) obj;
 		if (o.getId() == null && getId() == null) {
 			return new EqualsBuilder()
+			.append(this.name, o.name)
 			.append(this.deadline, o.deadline)
 			.append(this.initiationDate, o.initiationDate)
 			.isEquals();
@@ -83,6 +95,7 @@ public class Period implements ITransferObject {
 	public int hashCode() {
 		return new HashCodeBuilder()
 			.append(this.id)
+			.append(this.name)
 			.append(this.deadline)
 			.append(this.initiationDate)
 			.toHashCode();

@@ -64,7 +64,7 @@ public class AccountJournalManager {
 					
 				IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
+				criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), period.getId());
 				if (securityLevel != null) {
 					criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel );	
 				}
@@ -73,7 +73,6 @@ public class AccountJournalManager {
 				
 				List<ITransferObject> list = bean.getList(criteria); 
 				int count = list.size();
-		        int i = 0;
 		        int journal = (opening?2:1);
 		        for (ITransferObject to : list ) {
 		        	boolean mustAdd = false;
@@ -94,7 +93,6 @@ public class AccountJournalManager {
 			        bean.update(entry);
 			        
 			        entry.setRegenerateSummaryOnUpdate(true);
-		        	i++;
 		        	if (mustAdd) {
 		        		journal++;
 		        	}

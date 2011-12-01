@@ -12,7 +12,7 @@
 		<aon:div rendered="#{!accountEntry.new}" >
 
 			<aon:editDataTable id="entryDetailTable" var="to" footerClass="aon-dataTable-footerClass"
-				value="#{accountEntryDetail.model}" rows="100">
+				value="#{accountEntryDetail.model}" rows="20">
 
 				<c:if test="#{accountEntry.updatable}">
 					<aon:column id="entryDetailTable-selectColumn"
@@ -86,9 +86,9 @@
 							title="#{accountingBundle.accounting_statement_module}"
 							action="account_statement_list"
 							reRender="aonContent">
-								<aon:outputText value="#{to.account.id}" />
+								<aon:outputText value="#{to.account.code}" />
 						</aon:commandLink>
-						<aon:outputText rendered="#{!accountEntry.statementAvailable}" value="#{to.account.id}" />
+						<aon:outputText rendered="#{!accountEntry.statementAvailable}" value="#{to.account.code}" />
 						<aon:panelGroup styleClass="aon-italic"
 							style="font-size: 0.8em; margin-left: 10px;">
 							<aon:outputText value="#{to.account.description}">
@@ -131,44 +131,29 @@
 						required="true" size="15" maxlength="32"/>
 					<f:facet name="footer">
 						<aon:div>
-					<aon:inputText id="AccountEntryDetail_concept-New"
-						value="#{accountEntryDetail.to.concept}"
-						rendered="#{accountEntryDetail.new}" 
-						required="true" size="15" maxlength="32" />
-
-					<a4j:region>
-						<rich:suggestionbox for="AccountEntryDetail_concept-New"
-							suggestionAction="#{accountingCollections.getConceptsDescriptions}" var="result"
-							minChars="3" immediate="true" limitToList="true" ajaxSingle="true"
-							eventsQueue="AccountEntryDetail_concept-New-Sug" ignoreDupResponses="true"
-							requestDelay="100" width="200" height="100"
-							nothingLabel="#{bundle.aon_search_no_results}">
-							<aon:column>
-								<aon:outputText value="#{result}" />
-							</aon:column>
-							<a4j:support event="onselect" limitToList="true" 
-								reRender="AccountEntryDetail_concept-New"
-								focus="AccountEntryDetail_concept-New">
-								<f:setPropertyActionListener target="#{accountEntryDetail.to.concept}" value="#{result}" />
-							</a4j:support>
-							
-						</rich:suggestionbox>
-					</a4j:region>						
-<!--						
-							<rich:comboBox
-								id="AccountEntryDetail_concept-New" 
-								suggestionValues="#{accountingCollections.conceptsDescriptions}"
+							<aon:inputText id="AccountEntryDetail_concept-New"
 								value="#{accountEntryDetail.to.concept}"
-								maxlength="32" width="150"
-								directInputSuggestions="true"
-								inputStyle="font-family: arial,lucida Grande, Trebuchet MS,sans-serif;
-											font-size:1em;"
-								buttonDisabledStyle="display:none;"
-								buttonInactiveStyle="display:none;"
-								buttonStyle="display:none;"	
 								rendered="#{accountEntryDetail.new}" 
-								required="true"/>
-  -->
+								required="true" size="15" maxlength="32" />
+		
+							<a4j:region>
+								<rich:suggestionbox for="AccountEntryDetail_concept-New"
+									suggestionAction="#{accountingCollections.getConceptsDescriptions}" var="result"
+									minChars="3" immediate="true" limitToList="true" ajaxSingle="true"
+									eventsQueue="AccountEntryDetail_concept-New-Sug" ignoreDupResponses="true"
+									requestDelay="100" width="200" height="100"
+									nothingLabel="#{bundle.aon_search_no_results}">
+									<aon:column>
+										<aon:outputText value="#{result}" />
+									</aon:column>
+									<a4j:support event="onselect" limitToList="true" 
+										reRender="AccountEntryDetail_concept-New"
+										focus="AccountEntryDetail_concept-New">
+										<f:setPropertyActionListener target="#{accountEntryDetail.to.concept}" value="#{result}" />
+									</a4j:support>
+									
+								</rich:suggestionbox>
+							</a4j:region>						
 						</aon:div>
 					</f:facet>
 				</aon:column>
@@ -266,7 +251,7 @@
 					</f:facet>
 
 					<aon:div style="width: 90%;" rendered="#{to!=accountEntryDetail.to}" ajaxRendered="true">
-						<aon:outputText value="#{to.balancingAccount.id}" />
+						<aon:outputText value="#{to.balancingAccount.code}" />
 						<rich:toolTip value="#{to.balancingAccount.description}"
 							hideEvent="onmouseout" showDelay="200">
 						</rich:toolTip>

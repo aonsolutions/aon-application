@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.accounting.AccountEntryDetail" sqlName="account_entry_detail">
-		<alias names="accountEntry_id,accountEntry_type,accountEntry_entryDate,accountEntry_accountPeriod,accountEntry_securityLevel,accountEntry_journal,account_id,balancingAccount_id,concept,credit,debit,id,line,documentNumber" />
-		<hibernate names="accountEntry.id,accountEntry.type,accountEntry.entryDate,accountEntry.accountPeriod,accountEntry.securityLevel,accountEntry.journal,account.id,balancingAccount.id,concept,credit,debit,id,line,documentNumber" />
+		<alias names="accountEntry_id,accountEntry_type,accountEntry_entryDate,accountEntry_accountPeriod_id,accountEntry_securityLevel,accountEntry_journal,account_id,account_code,account_description,balancingAccount_id,balancingAccount_code,balancingAccount_description,concept,credit,debit,id,line,documentNumber" />
+		<hibernate names="accountEntry.id,accountEntry.type,accountEntry.entryDate,accountEntry.accountPeriod.id,accountEntry.securityLevel,accountEntry.journal,account.id,account.code,account.description,balancingAccount.id,balancingAccount.code,balancingAccount.description,concept,credit,debit,id,line,documentNumber" />
+	</bean>
+
+	<bean class="com.code.aon.accounting.AccountHelper" sqlName="account_helper">
+		<hibernate names="account.id,account.code,account.description,balancingAccount.id,balancingAccount.code,balancingAccount.description,counter,id" />
+		<alias     names="account_id,account_code,account_description,balancingAccount_id,balancingAccount_code,balancingAccount_description,counter,id" />
 	</bean>
 
 	<bean class="com.code.aon.accounting.Amortization" sqlName="amortization">
@@ -15,7 +20,4 @@
 		<alias     names="accountEntry_id,allocation,amortization_id,amortization_accumulatedAccount_id,amortization_allocationAccount_id,amortization_amortizationType_id,amortization_amortizationType_accumulatedAccount_id,amortization_amortizationType_allocationAccount_id,amortization_amortizationType_description,amortization_amortizationType_fixedAssetAccount_id,amortization_description,amortization_fixedAssetAccount_id,amortization_securityLevel,coefficient,fiscalAllocation,fromDate,id,status,toDate" />
 	</bean>
 </dao>
-
-
-		
 		

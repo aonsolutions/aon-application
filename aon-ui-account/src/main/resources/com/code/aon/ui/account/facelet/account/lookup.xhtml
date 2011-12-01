@@ -10,8 +10,9 @@
 		<ui:param name="controller" value="#{account}" />
 		<ui:param name="lookupBean" value="#{accountLookup}" />
 		<ui:param name="skipInputText" value="#{true}"/>
+		<ui:param name="lookupInputValue" value="#{lookupTo.code}"/>		
 		<ui:param name="lookupInputSuggestValue" value="#{lookupTo.description}"/>
-		<ui:param name="lookupInputSuggestExpression" value="#{lto.id} (#{lto.description})"/>
+		<ui:param name="lookupInputSuggestExpression" value="#{lto.code} (#{lto.description})"/>
 		<ui:param name="lookupInputSuggestSize" value="35" />
 		<ui:param name="searchButtonTitle" value="#{accountBundle.account_selection}" />
 		<ui:param name="newButtonTitle" value="#{accountBundle.account_module}" />
@@ -20,14 +21,18 @@
 		<ui:define name="beforeLookupContent">
 			<aon:lookupSuggestText id="#{pojoName}_id#{lookupSuffix}"
 				lookup="#{lookupBean}" lookupProperty="#{lookupProperty}"
-				value="#{lookupTo.id}" property="#{lookupTo}" 
-				suggestAlias="Account_id" matchBeginOnly="#{true}"
+				value="#{lookupTo.code}" property="#{lookupTo}" 
+				suggestAlias="Account_code" matchBeginOnly="#{true}"
 				columnExpression="#{lookupInputSuggestExpression}"
 				required="#{idRequired}"
 				size="10" maxlength="9" disabled="#{lookupDisabled}"
 				minChars="2" focus="#{lookupInputOnFocus}"
 				selectReRender="#{lookup_reRender}" />		
 		</ui:define>
+
+		<ui:define name="lookupInputTextContent">
+			<aon:joinProperty alias="Account_code" value="#{lookupInputValue}" />
+		</ui:define>		
 		
 	</ui:decorate>
 

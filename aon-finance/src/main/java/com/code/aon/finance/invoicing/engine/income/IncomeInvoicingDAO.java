@@ -80,8 +80,7 @@ public class IncomeInvoicingDAO implements IInvoicingDAO {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public Collection getCollection() {
+	public Collection<Invoice> getCollection() {
 		return invoicingCollection;
 	}
 	

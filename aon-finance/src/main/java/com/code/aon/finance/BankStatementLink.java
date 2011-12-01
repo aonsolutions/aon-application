@@ -148,7 +148,7 @@ public class BankStatementLink implements ITransferObject {
 				setSourceTo(conceptBean.get(getSourceId()));
 			} else if (isAccount()) {
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-				setSourceTo(accountBean.get(Integer.toString(getSourceId())));
+				setSourceTo(accountBean.get(getSourceId()));
 			}
 		}
 
@@ -195,9 +195,9 @@ public class BankStatementLink implements ITransferObject {
 			return Integer.toString(((FinanceBatch)getSourceTo()).getId());
 		} else if (isBankConcept()) {
 			Account bankConceptAccount = ((BankConcept)getSourceTo()).getAccount();
-			return (bankConceptAccount != null) ? bankConceptAccount.getId() : "";
+			return (bankConceptAccount != null) ? bankConceptAccount.getCode() : "";
 		} else if (isAccount()) {
-			return ((Account)getSourceTo()).getId();
+			return ((Account)getSourceTo()).getCode();
 		}
 		return null;
 	}

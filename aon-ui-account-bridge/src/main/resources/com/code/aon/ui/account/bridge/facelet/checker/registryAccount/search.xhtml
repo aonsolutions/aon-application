@@ -19,6 +19,8 @@
 				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:param name="controller" value="#{controller}" />
 				<ui:define name="searchContent">
+					<ui:param name="skipAfterSearch" value="#{true}" />
+									
 					<aon:outputLabel for="Customer_description"
 						value="#{bundle.aon_company_name}" />
 					<aon:inputText id="Customer_description" size="50"

@@ -198,7 +198,7 @@ public class TrialBalanceController implements ICollectionProvider,IAccountingBo
 					.getController(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
-			String alias = c.getFieldName(IAccountAlias.ACCOUNT_ID);
+			String alias = c.getFieldName(IAccountAlias.ACCOUNT_CODE);
 			criteria.addExpression(alias, summary.getId() + IAccountingConstants.ASTERISK);
 			alias = c.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));

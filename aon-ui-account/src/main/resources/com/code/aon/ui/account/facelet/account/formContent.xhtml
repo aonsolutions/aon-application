@@ -6,12 +6,12 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html">
 
-	<aon:outputLabel for="Account_id" value="#{bundle.aon_id}" />
-	<aon:inputText id="Account_id" value="#{controller.to.id}"
+	<aon:outputLabel for="Account_code" value="#{bundle.aon_id}" />
+	<aon:inputText id="Account_code" value="#{controller.to.code}"
 		required="#{true}" size="10" maxlength="9" disabled="#{!controller.new}">
 		<f:validateLength maximum="9" />
 		<a4j:support event="onchange" ajaxSingle="true"
-			actionListener="#{controller.onIdentifierChanged}" reRender="dataTable"
+			actionListener="#{controller.onIdentifierChanged}" reRender="Account_code"
 			focus="Account_description" />
 	</aon:inputText>
 

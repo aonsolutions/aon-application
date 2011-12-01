@@ -143,8 +143,8 @@ public class BalanceSheetController implements ICollectionProvider {
 		}
 		return previousPeriod;
 	}
-	public String getPreviousPeriodID() {
-		return getPreviousPeriod()==null?"":getPreviousPeriod().getId();
+	public String getPreviousPeriodName() {
+		return getPreviousPeriod()==null?"":getPreviousPeriod().getName();
 	}
 
 	public void setPreviousPeriod(Period previousPeriod) {

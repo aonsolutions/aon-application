@@ -29,21 +29,21 @@ public class AmortizationVetoableBeanListener extends ManagerBeanVetoListenerAda
 
 			if (to.getFixedAssetAccount() == null) {
 				Account account = new Account();
-				account.setId(util.obtainNextAccountId(at.getFixedAssetAccount().getId()));
+				account.setCode(util.obtainNextAccountId(at.getFixedAssetAccount().getCode()));
 				account.setDescription(to.getDescription());
 				to.setFixedAssetAccount((Account) accountBean.insert(account));
 			}
 
 			if (to.getAccumulatedAccount() == null) {
 				Account account = new Account();
-				account.setId(util.obtainNextAccountId(at.getAccumulatedAccount().getId()));
+				account.setCode(util.obtainNextAccountId(at.getAccumulatedAccount().getCode()));
 				account.setDescription("Amortización Acumulada " + to.getDescription());
 				to.setAccumulatedAccount((Account) accountBean.insert(account));
 			}
 
 			if (to.getAllocationAccount() == null) {
 				Account account = new Account();
-				account.setId(util.obtainNextAccountId(at.getAllocationAccount().getId()));
+				account.setCode(util.obtainNextAccountId(at.getAllocationAccount().getCode()));
 				account.setDescription("Amortización " + to.getDescription());
 				to.setAllocationAccount((Account) accountBean.insert(account));
 			}

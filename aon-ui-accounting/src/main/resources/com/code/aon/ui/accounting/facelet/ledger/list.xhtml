@@ -74,7 +74,7 @@
 					
 					<aon:outputText value="#{accountingBundle.accounting_period}" />
 					<aon:outputText styleClass="aon-bold"
-						value="#{ledgerReport.period.id}" />
+						value="#{ledgerReport.period.name}" />
 					
 					<aon:outputText value="#{bundle.aon_date_from}" />
 					<aon:outputText 
@@ -152,14 +152,14 @@
 
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50"
 							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-							<aon:outputText value="#{to.debit}">
+							<aon:outputText value="#{to.debit}" rendered="#{to.debit != 0}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 						</aon:column>
 
 						<aon:column	styleClass="aon-editDataTable-numberColumn aon-width-50"
 							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
-							<aon:outputText value="#{to.credit}">
+							<aon:outputText value="#{to.credit}" rendered="#{to.credit != 0}">
 								<f:convertNumber pattern="#,##0.00" />
 							</aon:outputText>
 						</aon:column>
@@ -167,7 +167,7 @@
 						<aon:column styleClass="aon-editDataTable-textColumn aon-width-100"
 							style="#{ledgerReport.odd?'background-color:#f2f2f2;':'background-color:#FFFFFF;'}">
 							<aon:div style="width: 90%;" ajaxRendered="true">
-								<aon:outputText value="#{to.balancingAccount.id}" />
+								<aon:outputText value="#{to.balancingAccount.code}" />
 								<rich:toolTip value="#{to.balancingAccount.description}"
 									hideEvent="onmouseout" showDelay="200">
 								</rich:toolTip>

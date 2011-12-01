@@ -57,7 +57,7 @@
 					<aon:outputText value="#{accountingBundle.accounting_params}:" styleClass="aon-bold"/>
 					
 					<aon:outputText value="#{accountingBundle.accounting_period}:" rendered="#{trialBalance.parameters.periodNotNull}" styleClass="aon-italic aon-margin-left" style="font-size: 0.9em;"/>
-					<aon:outputText value="#{trialBalance.parameters.period.id}" rendered="#{trialBalance.parameters.periodNotNull}" styleClass="aon-margin-left"/>
+					<aon:outputText value="#{trialBalance.parameters.period.name}" rendered="#{trialBalance.parameters.periodNotNull}" styleClass="aon-margin-left"/>
 
 					<aon:outputText value="#{bundle.aon_date_from}:" rendered="#{trialBalance.parameters.fromDate != null}" styleClass="aon-italic aon-margin-left" style="font-size: 0.9em;"/>
 					<aon:outputText value="#{trialBalance.parameters.fromDate}" rendered="#{trialBalance.parameters.fromDate != null}" styleClass="aon-margin-left">

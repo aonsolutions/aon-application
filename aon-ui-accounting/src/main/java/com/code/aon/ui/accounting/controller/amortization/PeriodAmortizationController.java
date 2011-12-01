@@ -86,15 +86,16 @@ public class PeriodAmortizationController extends BasicController {
 			double accumulated = 0.0;
 			Criteria c = new Criteria();
 			c.addEqualExpression(getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_AMORTIZATION_ID), a.getId());
-			c.addLessThanExpression(getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), period.getInitiationDate());
+			c.addLessThanExpression(getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_FROM_DATE), period.getDeadline());
 			ProjectionList pl = new ProjectionList();
 			pl.add(Projection.sum(getManagerBean().getFieldName(IAccountingAlias.AMORTIZATION_DETAIL_ALLOCATION)));
 			List<?> list = getManagerBean().getList(pl, c);
 			if (list != null && list.size() > 0 && list.get(0) != null) {
 				accumulated = (Double) list.get(0);	
 			}
-			double pending = CommonUtil.round(a.getAmount() - accumulated - detail.getAllocation());
-
+			//double pending = CommonUtil.round(a.getAmount() - accumulated - detail.getAllocation());
+			double pending = CommonUtil.round(a.getAmount() - accumulated);
+			
 			detail.setAccumulated(accumulated);
 			detail.setPending(pending);
 

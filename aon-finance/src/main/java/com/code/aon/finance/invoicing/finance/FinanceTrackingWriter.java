@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.PayMethodTypeDetail;
 import com.code.aon.finance.BankStatementLink;
@@ -56,7 +57,6 @@ public class FinanceTrackingWriter {
         return tracking;
     }
     
-    @SuppressWarnings("unchecked")
 	public static void removeLastTrackingByType(Finance finance, FinanceTrackingType type){
     	try {
 			IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
@@ -64,7 +64,7 @@ public class FinanceTrackingWriter {
 			criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
 			criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), type);
 			criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID),false);
-			Iterator iter = financeTrackingBean.getList(criteria,0,1).iterator();
+			Iterator<ITransferObject> iter = financeTrackingBean.getList(criteria,0,1).iterator();
 			if(iter.hasNext()){
 				FinanceTracking tracking = (FinanceTracking)iter.next();
 				financeTrackingBean.remove(tracking);

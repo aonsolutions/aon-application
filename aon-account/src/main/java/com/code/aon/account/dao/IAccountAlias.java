@@ -23,28 +23,34 @@ public interface IAccountAlias {
 	String  ACCOUNT_ALIAS = ACCOUNT_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Account_code
+	* Hibernate value: Account.code
+	*/
+	String  ACCOUNT_CODE = ACCOUNT_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Account_description
 	* Hibernate value: Account.description
 	*/
-	String  ACCOUNT_DESCRIPTION = ACCOUNT_ENTRY.getAliasNames()[1];
+	String  ACCOUNT_DESCRIPTION = ACCOUNT_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Account_entryEnabled
 	* Hibernate value: Account.entryEnabled
 	*/
-	String  ACCOUNT_ENTRY_ENABLED = ACCOUNT_ENTRY.getAliasNames()[2];
+	String  ACCOUNT_ENTRY_ENABLED = ACCOUNT_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Account_id
 	* Hibernate value: Account.id
 	*/
-	String  ACCOUNT_ID = ACCOUNT_ENTRY.getAliasNames()[3];
+	String  ACCOUNT_ID = ACCOUNT_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Account_level
 	* Hibernate value: Account.level
 	*/
-	String  ACCOUNT_LEVEL = ACCOUNT_ENTRY.getAliasNames()[4];
+	String  ACCOUNT_LEVEL = ACCOUNT_ENTRY.getAliasNames()[5];
 
 
 }

@@ -77,12 +77,12 @@
 								</aon:div>
 								<c:if test="#{aonRole.accountingOperator}">
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="accPeriod" action="accPeriod"
+										<aon:commandLink id="accPeriod-config" action="accPeriod"
 											actionListener="#{accPeriod.onSearch}"
 											value="#{accountingBundle.accounting_period_module}" />
 									</aon:div>
 									<aon:div styleClass="aon-direct-access-list-element">
-										<aon:commandLink id="defaultParams" action="defaultParams"
+										<aon:commandLink id="defaultParams-config" action="defaultParams"
 											actionListener="#{accAppParams.onLoad}"
 											value="#{accountingBundle.accounting_default_params_module}" />
 									</aon:div>

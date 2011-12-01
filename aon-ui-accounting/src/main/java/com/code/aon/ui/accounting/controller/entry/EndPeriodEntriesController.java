@@ -169,7 +169,7 @@ public class EndPeriodEntriesController {
 		getParams().setConfidentialEntryPresent(false);
 		IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), getParams().getPeriod().getId());
+		criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), getParams().getPeriod().getId());
 		criteria.addEqualExpression(bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), SecurityLevel.CONFIDENTIAL);
 		Number count = (Number) bean.getUniqueResult(Projection.rowCount(), criteria);
 		if (count.intValue() > 0) {
@@ -263,7 +263,7 @@ public class EndPeriodEntriesController {
 		Calendar c = Calendar.getInstance();
 		c.setTime(getParams().getPeriod().getInitiationDate());
 		c.add(Calendar.YEAR, 1);
-		period.setId(Integer.toString(c.get(Calendar.YEAR)));
+		period.setName(Integer.toString(c.get(Calendar.YEAR)));
 		period.setInitiationDate(c.getTime());
 		c.setTime(getParams().getPeriod().getDeadline());
 		c.add(Calendar.YEAR, 1);
@@ -362,7 +362,7 @@ public class EndPeriodEntriesController {
 				for (AccountEntry entry: entries) {
 					getOutputMessages().add("Se ha creado el asiento de explotación nº " + entry.getId() + 
 							(entry.isConfidential()?" confidencial ":"") + 
-							 " en el ejercicio " + entry.getAccountPeriod() + ".");
+							 " en el ejercicio " + entry.getAccountPeriod().getName() + ".");
 					getGeneratedEntries().add(entry.getId());
 				}
 			} catch (ManagerBeanException e) {
@@ -379,7 +379,7 @@ public class EndPeriodEntriesController {
 				for (AccountEntry entry: entries) {
 					getOutputMessages().add("Se ha creado el asiento de cierre nº " + entry.getId() + 
 							(entry.isConfidential()?" confidencial ":"") + 
-							" en el ejercicio " + entry.getAccountPeriod() + ".");
+							" en el ejercicio " + entry.getAccountPeriod().getName() + ".");
 					getGeneratedEntries().add(entry.getId());
 				}
 			} catch (ManagerBeanException e) {
@@ -396,7 +396,7 @@ public class EndPeriodEntriesController {
 				for (AccountEntry entry: entries) {
 					getOutputMessages().add("Se ha creado el asiento de apertura nº " + entry.getId() + 
 							(entry.isConfidential()?" confidencial ":"") + 
-							" en el ejercicio " + entry.getAccountPeriod() + ".");
+							" en el ejercicio " + entry.getAccountPeriod().getName() + ".");
 					getGeneratedEntries().add(entry.getId());
 				}
 			} catch (ManagerBeanException e) {

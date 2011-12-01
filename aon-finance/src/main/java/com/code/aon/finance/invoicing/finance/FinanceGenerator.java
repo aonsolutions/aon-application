@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
 import com.code.aon.company.Company;
@@ -119,12 +120,11 @@ public class FinanceGenerator {
 		return generateFinances(invoice, totalPrice, true);
 	}
 
-	@SuppressWarnings("unchecked")
 	private RegistryPayMethod obtainRPayMethod(Invoice invoice) throws ManagerBeanException {
 		IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), invoice.getRegistry().getId());
-		Iterator iter = rPayMethodBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iter = rPayMethodBean.getList(criteria).iterator();
 		if (iter != null) {
 			if (iter.hasNext()) {
 				return (RegistryPayMethod)iter.next();
@@ -136,14 +136,13 @@ public class FinanceGenerator {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	private RegistryPayMethod obtainCompanyPayMethod() throws ManagerBeanException {
 		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
 		Company company = (Company) companyBean.getList(null).iterator().next();
 		IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(rPayMethodBean.getFieldName(IRegistryAlias.REGISTRY_PAY_METHOD_REGISTRY_ID), company.getId());
-		Iterator iter = rPayMethodBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iter = rPayMethodBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			return (RegistryPayMethod)iter.next();
 		}
@@ -181,10 +180,9 @@ public class FinanceGenerator {
 		return createFinance(invoice,date,payMethod,totalPrice, bank, bankAccount);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void insertFinances(List<Finance> financeList) throws ManagerBeanException {
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-		Iterator iter = financeList.iterator();
+		Iterator<?> iter = financeList.iterator();
 		while(iter.hasNext()){
 			Finance finance = (Finance)iter.next();
 			financeBean.insert(finance);

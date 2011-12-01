@@ -28,7 +28,7 @@ public class AccountingAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/home/ecastellano/AON-6.0.0/aon-accounting/src/main/java/com/code/aon/accounting/dao/IAccountingAlias.java");
+		File file = new File("/home/ecastellano/AON-TRUNK/aon.parent/aon-accounting/src/main/java/com/code/aon/accounting/dao/IAccountingAlias.java");
 		String[] classes = new String[]{
 			AccountEntry.class.getName(),
 			AccountEntryDetail.class.getName(),

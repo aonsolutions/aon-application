@@ -35,21 +35,13 @@
 
 				<aon:outputLabel for="accountPeriod"
 					value="#{accountingBundle.accounting_period}" />
-				<aon:selectOneMenu reRender="SearchButton" ajaxSingle="true" required="true"
+				<aon:selectOneMenu required="true"
 					id="accountPeriod" value="#{accountCheck.params.period}">
 					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 					<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
 				</aon:selectOneMenu>
 	
 				<aon:outputText value="#{accountingBundle.accounting_check_list}" />
-<!-- 
-				<aon:dataTable value="#{accountCheck.accountChecks}" var="check" rows="0" style="width:90%; margin:10px auto;">
-					<aon:column>
-						<aon:selectBooleanCheckbox id="check" value="#{check.enabled}"/>
-						<aon:outputLabel for="check" value="#{check.label}" />
-					</aon:column>
-				</aon:dataTable>
- -->		
  				<rich:dataList value="#{accountCheck.accountChecks}"
  					var="check" rows="0">
 					<aon:div>

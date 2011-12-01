@@ -159,7 +159,7 @@ public class AnnualReportContext {
 	 * @return Cadena de caracteres.
 	 */
 	public String ejercicio() {
-		return getParams().getParams().getPeriod().getId();
+		return getParams().getParams().getPeriod().getName();
 	}
 	
 	/**
@@ -180,7 +180,7 @@ public class AnnualReportContext {
 	 * @return Fecha.
 	 */
 	public String ejercicioAnterior() {
-		return getParams().getPreviousPeriod() == null ? null : getParams().getPreviousPeriod().getId();
+		return getParams().getPreviousPeriod() == null ? null : getParams().getPreviousPeriod().getName();
 	}
 	
 	/**

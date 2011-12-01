@@ -160,7 +160,7 @@ public class AccountChangeController {
 				String accountInit = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID);
 				String accountBalancing = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT_ID);
 				String date = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE);
-				String accperiod = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD);
+				String accperiod = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID);
 				String security = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL);
 				String conceptAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_CONCEPT);
 				String debitAlias = bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_DEBIT);
@@ -179,7 +179,7 @@ public class AccountChangeController {
 				if (securityLevel != null) {
 					criteria.addEqualExpression(security, securityLevel);
 				}
-				if (balancingAccount != null && StringUtils.isNotBlank( balancingAccount.getId())) {
+				if (balancingAccount != null && StringUtils.isNotBlank( balancingAccount.getCode())) {
 					criteria.addEqualExpression(accountBalancing, balancingAccount.getId());
 				}
 				if (!StringUtils.isEmpty(getConcept())) {
@@ -215,7 +215,7 @@ public class AccountChangeController {
 				if (securityLevel != null) {
 					criteria.addEqualExpression(security, securityLevel);
 				}
-				if (balancingAccount != null && StringUtils.isNotBlank( balancingAccount.getId())) {
+				if (balancingAccount != null && StringUtils.isNotBlank( balancingAccount.getCode())) {
 					criteria.addEqualExpression(accountInit, balancingAccount.getId());
 				}
 				if (!StringUtils.isEmpty(getConcept())) {

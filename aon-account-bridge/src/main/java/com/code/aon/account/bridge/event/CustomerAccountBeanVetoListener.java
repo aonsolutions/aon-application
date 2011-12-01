@@ -51,9 +51,7 @@ public class CustomerAccountBeanVetoListener extends ManagerBeanVetoListenerAdap
 				sb.append("El cliente ");
 				sb.append(customerAccount.getAccountDescription());
 				sb.append(" ya está enlazado con la cuenta ");
-				sb.append(dup.getAccount().getId());
-				sb.append(" ");
-				sb.append(dup.getAccount().getDescription());
+				sb.append(dup.getAccount().getFullDescription());
 				sb.append(".");
 				throw new ManagerBeanVetoListenerException(sb.toString()); 
 			}

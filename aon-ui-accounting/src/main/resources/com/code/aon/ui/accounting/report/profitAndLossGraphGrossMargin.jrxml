@@ -90,7 +90,7 @@
 	<pageHeader>
 		<band height="43" splitType="Stretch">
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-38" x="702" y="0" width="100" height="13">
+				<reportElement key="textField-38" x="703" y="0" width="100" height="13">
 					<printWhenExpression><![CDATA[new Boolean($P{params}.getPeriod() != null)]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -102,7 +102,7 @@
 				<textElement textAlignment="Right">
 					<font size="8" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{params}.getPeriod().getId()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{params}.getPeriod().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-39" x="702" y="17" width="50" height="13"/>

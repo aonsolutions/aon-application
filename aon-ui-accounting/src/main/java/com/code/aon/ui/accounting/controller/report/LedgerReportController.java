@@ -30,7 +30,7 @@ public class LedgerReportController extends BasicController implements IAccounti
 	private String order;
 	private String account;
 	private Integer previousAccountEntryDetail;
-	private String previousAccount;
+	private Integer previousAccount;
 	private boolean currentValue = true;
 	private boolean odd = true;
 	private boolean coverVisible = false;
@@ -149,7 +149,7 @@ public class LedgerReportController extends BasicController implements IAccounti
 			if (period != null) {
 				criteria
 						.addEqualExpression(
-								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD),
+								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID),
 								period.getId());
 			}
 			if (getFromDate() != null) {
@@ -204,7 +204,7 @@ public class LedgerReportController extends BasicController implements IAccounti
 			AccountEntryDetail acd = (AccountEntryDetail) getModel().getRowData();
 			if (previousAccountEntryDetail == null || !previousAccountEntryDetail.equals(acd.getId())) {
 				previousAccountEntryDetail = acd.getId();
-				String current = acd.getAccount().getId();
+				Integer current = acd.getAccount().getId();
 				if (previousAccount == null) {
 					previousAccount = current;
 					currentValue = true;

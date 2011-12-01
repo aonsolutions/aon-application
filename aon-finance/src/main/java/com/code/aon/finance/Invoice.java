@@ -478,8 +478,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 	
 	@Transient
-	@SuppressWarnings("unchecked")
-	public List getDetailList() {
+	public List<ITransferObject> getDetailList() {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();
@@ -492,8 +491,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	}
 
 	@Transient
-	@SuppressWarnings("unchecked")
-	public List getOrderedDetailList() {
+	public List<ITransferObject> getOrderedDetailList() {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			Criteria criteria = new Criteria();

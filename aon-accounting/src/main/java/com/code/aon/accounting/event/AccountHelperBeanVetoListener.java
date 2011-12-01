@@ -35,17 +35,17 @@ public class AccountHelperBeanVetoListener extends ManagerBeanVetoListenerAdapte
 			AccountEntryDetail detail = (AccountEntryDetail) evt.getTo();
 
 			String select = "select entryDetail.account, entryDetail.balancing_account "
-					+ " from account_entry_detail as entryDetail " + " where entryDetail.id = "
+					+ " from account_entry_detail as entryDetail where entryDetail.id = "
 					+ detail.getId();
 			Session session = HibernateUtil.getSession(HibernateUtil.getSessionFactoryName());
 			SQLQuery query = session.createSQLQuery(select);
-			List<?> list = query.addScalar("account", Hibernate.STRING).addScalar("balancing_account",
-					Hibernate.STRING).list();
+			List<?> list = query.addScalar("account", Hibernate.INTEGER).addScalar("balancing_account",
+					Hibernate.INTEGER).list();
 			Iterator<?> iterator = list.iterator();
 			if (iterator.hasNext()) {
 				Object[] obj = (Object[]) iterator.next();
-				String accountId = (String) obj[0];
-				String balancingAccountId = (String) obj[1];
+				Integer accountId = (Integer) obj[0];
+				Integer balancingAccountId = (Integer) obj[1];
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 				Account account = accountId==null?null:(Account) accountBean.get(accountId);
 				Account balancingAccount = balancingAccountId==null?null:(Account) accountBean.get(balancingAccountId);

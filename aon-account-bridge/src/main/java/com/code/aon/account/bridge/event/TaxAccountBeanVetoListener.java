@@ -57,9 +57,7 @@ public class TaxAccountBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 				sb.append("El impuesto ");
 				sb.append(taxAccount.getAccountDescription());
 				sb.append(" de este tipo ya está enlazado con la cuenta ");
-				sb.append(dup.getAccount().getId());
-				sb.append(" ");
-				sb.append(dup.getAccount().getDescription());
+				sb.append(dup.getAccount().getFullDescription());
 				sb.append(".");
 				throw new ManagerBeanVetoListenerException(sb.toString()); 
 			}

@@ -9,7 +9,7 @@
 		<object-create-rule
 			classname="com.code.aon.account.Account" />
 
-		<call-method-rule pattern="id" methodname="setId" paramcount="0" />
+		<call-method-rule pattern="code" methodname="setCode" paramcount="0" />
 		<call-method-rule pattern="description" methodname="setDescription" paramcount="0" />
 		<call-method-rule pattern="alias" methodname="setAlias" paramcount="0" />
 

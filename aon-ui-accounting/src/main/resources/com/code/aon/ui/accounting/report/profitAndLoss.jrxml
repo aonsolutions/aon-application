@@ -3,8 +3,8 @@
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.6105100000000008"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="999"/>
+	<property name="ireport.x" value="65"/>
+	<property name="ireport.y" value="465"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -48,7 +48,7 @@
 				<textElement textAlignment="Center">
 					<font size="24" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " +  $P{params}.getPeriod().getId()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " +  $P{params}.getPeriod().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-17" x="75" y="10" width="435" height="43"/>
@@ -206,7 +206,7 @@
 				<textElement textAlignment="Right">
 					<font size="8" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{params}.getPeriod().getId()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{params}.getPeriod().getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-39" x="448" y="17" width="50" height="13"/>

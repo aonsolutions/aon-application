@@ -214,7 +214,7 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="balance" value="#{balanceSheet.getBalance}" />
 			<param id="params" value="#{balanceSheet.getParameters}" />
-			<param id="previousPeriod" value="#{balanceSheet.getPreviousPeriodID}" />
+			<param id="previousPeriod" value="#{balanceSheet.getPreviousPeriodName}" />
 			<param id="flagAccounts" value="#{balanceSheet.getFlagAccounts}" />
 		</params>
 	</report>

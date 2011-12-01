@@ -159,8 +159,7 @@ public class FinanceBatch implements ITransferObject,IConfidentialable {
 	}
 
 	@Transient
-	@SuppressWarnings("unchecked")
-	public List getDetailList() {
+	public List<ITransferObject> getDetailList() {
 		try {
 			IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 			Criteria criteria = new Criteria();

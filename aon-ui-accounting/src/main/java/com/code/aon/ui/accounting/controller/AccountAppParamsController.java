@@ -10,11 +10,16 @@ import java.util.TreeMap;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.account.Account;
+import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountAppParamsController{
@@ -70,6 +75,7 @@ public class AccountAppParamsController{
 
 	public void loadParameters() throws ManagerBeanException{
 		parameters = new TreeMap<String, ApplicationParameter>();
+		IManagerBean bean = BeanManager.getManagerBean(Account.class);
 		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		List<ITransferObject> list = managerBean.getList(null);
 		Iterator<ITransferObject> iter = list.iterator();
@@ -82,7 +88,19 @@ public class AccountAppParamsController{
 			if (!parameters.containsKey(key)) {
 				ApplicationParameter p = new ApplicationParameter();
 				p.setName(key);
-				p.setValue(defaultParameters.get(key));
+				String value = defaultParameters.get(key); 
+				if (StringUtils.endsWith(key, "_ACC")) {
+					Criteria c = new Criteria();
+					c.addEqualExpression(bean.getFieldName(IAccountAlias.ACCOUNT_CODE), value);
+					Iterator<ITransferObject> accounts = bean.getList(c).iterator();
+					if (accounts.hasNext()) {
+						Account account = (Account) accounts.next();
+						value = account.getId().toString();
+					} else {
+						value = null;
+					}
+				}
+				p.setValue(value);
 				p = (ApplicationParameter) managerBean.insert(p);
 				parameters.put(p.getName(), p);
 			}
