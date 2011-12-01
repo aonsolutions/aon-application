@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.dao.ldap.ILdapTransferObject;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -68,10 +69,16 @@ public class SignatureController extends LdapBasicController implements IWebMail
 	}	
 	
 	private void updateBaseDN( String domain, String user )  {
-		Name baseDN = NameResolver.getUserSignaturesDN(domain, user);
-		if ( getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
-			getLdapDAO().setBaseDN( baseDN );	
-		}
+		Name userDN = NameResolver.getUserDN(domain, user);
+		if ( getLdapDAO().exists(userDN, ORGANIZATIONAL_UNIT) ) { 
+			Name baseDN = NameResolver.getUserSignaturesDN(domain, user);
+			if (! getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
+				getLdapDAO().addOrganizationUnit(baseDN);
+			}
+			getLdapDAO().setBaseDN( baseDN );
+		} else {
+			LOGGER.warn( "LDAP entry not found: {}", userDN );
+		}		
 	}			
 	
 	@Override
@@ -84,10 +91,9 @@ public class SignatureController extends LdapBasicController implements IWebMail
 		return signatures;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void updateSignatureList() throws ManagerBeanException {
 		this.signatures = new LinkedList<SelectItem>();
-		Iterator iter = getManagerBean().getList(getCriteria()).iterator();
+		Iterator<ITransferObject> iter = getManagerBean().getList(getCriteria()).iterator();
 		while(iter.hasNext()){
 			Signature signature = (Signature)iter.next();
 			SelectItem item = new SelectItem(signature.getId(),signature.getName());

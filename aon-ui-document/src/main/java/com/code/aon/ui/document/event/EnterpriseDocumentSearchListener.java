@@ -9,6 +9,8 @@ import static com.code.aon.document.IAlfrescoConstants.NAME_SHORT;
 import static com.code.aon.document.IAlfrescoConstants.PROJECT_ID_SHORT;
 import static com.code.aon.document.IAlfrescoConstants.TITLE_SHORT;
 import static com.code.aon.document.dao.AlfrescoCategoryDAO.EMPTY_CATEGORY;
+import static com.code.aon.ui.document.controller.IDocumentConstants.BUNDLE_NAME;
+import static com.code.aon.ui.document.controller.IDocumentConstants.INPUT_SEARCH_TEXT;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
 import java.util.Date;
@@ -56,6 +58,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 	private String description;
 	private String title;
 	private String text;
+	private String mainText;
 	private MimeType type;
 	private List<AlfrescoCategory> categories;
 	private boolean showList;
@@ -63,6 +66,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 	
 	public EnterpriseDocumentSearchListener() {
 		reset();
+		setMainText( AonUtil.getMessage(BUNDLE_NAME, INPUT_SEARCH_TEXT) );
 		this.projectListener = new EnterpriseProjectListener(this);
 	}
 
@@ -136,6 +140,14 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public String getMainText() {
+		return mainText;
+	}
+
+	public void setMainText(String mainText) {
+		this.mainText = mainText;
 	}
 
 	public MimeType getType() {
