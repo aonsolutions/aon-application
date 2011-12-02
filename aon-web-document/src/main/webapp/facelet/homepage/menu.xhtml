@@ -45,16 +45,16 @@
 					actionListener="#{enterpriseDocument.onEditSearch}" 
 					iconClass="aon-icon-go" >
 					<f:setPropertyActionListener value="#{false}"
-						target="#{enterpriseDocumentSearch.showList}"  />
+						target="#{enterpriseDocumentSearch.showList}"  />						
 				</aon:menuItem>
 			</aon:dropDownMenu>						
 			<aon:inputText value="#{enterpriseDocumentSearch.mainText}"
 				size="28" maxlength="32" tabindex="32767" >
-				<rich:hotKey key="return" handler="mainSearch();return false;"/>				
+				<rich:hotKey key="return" handler="mainSearch();return false;"/>
+				<a4j:jsFunction name="mainSearch"
+					action="enterpriseDocument_search" reRender="aonContent"
+					actionListener="#{enterpriseDocumentSearch.onMainSearch}" />		
 			</aon:inputText>
 		</h:panelGrid>			
-		<a4j:jsFunction name="mainSearch"
-			action="enterpriseDocument_search" reRender="aonContent"
-			actionListener="#{enterpriseDocumentSearch.onMainSearch}" />		
 	</ui:define>
  </ui:composition>

@@ -39,6 +39,14 @@
 
 					<aon:panelTabSet selectedTab="#{enterprise.selectedTab}">
 
+						<c:if test="#{aonConfiguration.bean.enterprise.showProject}" >
+							<aon:panelTab id="projects" label="#{projectBundle.project_projects}">
+								<ui:include	src="/com/code/aon/ui/project/facelet/project/gridContent.xhtml" >
+									<ui:param name="controller" value="#{enterpriseProject}" />
+								</ui:include>
+							</aon:panelTab>
+						</c:if>
+						
 						<c:if test="#{aonConfiguration.bean.enterprise.showPayrollData}" >
 							<aon:panelTab id="activities" label="#{companyBundle.company_activity_module}">
 								<ui:include	src="/com/esferalia/aon/ui/payroll/facelet/enterpriseActivity/gridContent.xhtml" >

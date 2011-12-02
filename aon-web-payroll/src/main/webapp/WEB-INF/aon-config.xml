@@ -33,6 +33,7 @@
 			showEnterpriseParams="true"
 			showPayrollData="true"
 			showPersonInSearch="true"
+			showProject="false"
 		/>
 	</company:config>
 	
