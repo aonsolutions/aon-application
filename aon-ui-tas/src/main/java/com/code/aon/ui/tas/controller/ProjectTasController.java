@@ -21,7 +21,7 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.stat.controller.ProjectStatEngineController;
 import com.code.aon.ui.util.AonUtil;
 
-public class ProjectTasController extends BasicController {
+public class ProjectTasController extends BasicController implements ITasConstants {
 
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException {
 		int number = obtainMaxNumber((String)event.getNewValue());
@@ -83,9 +83,9 @@ public class ProjectTasController extends BasicController {
 	}
 
 	public void onProjectHistory(ActionEvent event) {
-		ProjectStatEngineController statController =(ProjectStatEngineController)AonUtil.getRegisteredBean("projectStat");
+		ProjectStatEngineController statController =(ProjectStatEngineController)AonUtil.getRegisteredBean(PROJECT_STAT_CONTROLLER_NAME);
 		statController.setProject(((ProjectTas)this.getTo()).getProject());
-		statController.setBackAction("projectTas_form");
+		statController.setBackAction(PROJECT_TAS_FORM_NAME);
 		statController.initializeProjectData();
 	}
 
