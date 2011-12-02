@@ -1,0 +1,8 @@
+	<table name="account_helper">
+		<foreign-key constraint-name="FK_ACCOUNT_HELPER_ACCOUNT">
+			<many-to-one property="account" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_ACCOUNT_HELPER_BAL_ACCOUNT">
+			<many-to-one property="balancingAccount" />
+		</foreign-key>
+	</table>

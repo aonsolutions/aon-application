@@ -1,0 +1,8 @@
+	<table name="account_entry_detail">
+		<foreign-key constraint-name="FK_ACCOUNT_ENTRY_DETAIL_ACCOUNT">
+			<many-to-one property="account" />
+		</foreign-key>
+		<foreign-key constraint-name="FK_ACCOUNT_ENTRY_DETAIL_BAL_ACCOUNT">
+			<many-to-one property="balancingAccount" />
+		</foreign-key>
+	</table>

@@ -1,0 +1,6 @@
+<table name="account_entry">
+	<column name="entry_type" property="type" />
+	<foreign-key constraint-name="FK_ACCOUNT_ENTRY_ACCOUNT_PERIOD">
+		<many-to-one property="accountPeriod" />
+	</foreign-key>
+</table>
