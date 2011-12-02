@@ -22,6 +22,7 @@ public class TasStatDetail {
 	private String comments;
 	private String status;
 	private TasStatDetailType type;
+	private double total;
 	
     public TasStatDetail(TasStatDetailType type) {
     	this.type = type;
@@ -111,6 +112,13 @@ public class TasStatDetail {
 		this.type = type;
 	}
 
+	public double getTotal() {
+		return total;
+	}
+	public void setTotal(double total) {
+		this.total = total;
+	}
+
 	public String getReferenceCode() {
     	String referenceCode = StringUtils.leftPad(Integer.toString(getNumber()), 6, "0");
 		if (!StringUtils.isEmpty(getSeries())) {
@@ -124,4 +132,34 @@ public class TasStatDetail {
 			getDocumentCountry().getValue() + " " +
 			getDocument();
 	}
+	
+	public boolean isProject() {
+		return getType() == TasStatDetailType.PROJECT;
+	}
+	public boolean isOffer() {
+		return getType() == TasStatDetailType.OFFER;
+	}
+	public boolean isSaleInvoice() {
+		return getType() == TasStatDetailType.SALES_INVOICE;
+	}
+	public boolean isPurchaseInvoice() {
+		return getType() == TasStatDetailType.PURCHASE_INVOICE;
+	}
+	public boolean isExpenseInvoice() {
+		return getType() == TasStatDetailType.EXPENSE_INVOICE;
+	}
+	public boolean isSales() {
+		return getType() == TasStatDetailType.SALES;
+	}
+	public boolean isPurchase() {
+		return getType() == TasStatDetailType.PURCHASE;
+	}
+	public boolean isDelivery() {
+		return getType() == TasStatDetailType.DELIVERY;
+	}
+	public boolean isIncome() {
+		return getType() == TasStatDetailType.INCOME;
+	}
+	
+	
 }

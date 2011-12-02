@@ -3,6 +3,7 @@ package com.code.aon.ui.stat.controller;
 public interface IStatConstants {
 
 	String EMPTY_STRING = "";
+	String FORM_SUFFIX = "_form";
 	
 	String STAT_CONTROLLER_NAME = "stat";
 
@@ -10,13 +11,34 @@ public interface IStatConstants {
 
 	String TAS_STAT_CONTROLLER_NAME = "tasStat";
 
-	String PROJECT_TAS_CONTROLLER = "projectTas";
-	
-	String OFFER_CONTROLLER = "offer";
-
 	String TAS_STAT_TAS_ITEM_FORM = "tasStat_tasItem_form";
 
-	String PROJECT_TAS_FORM = PROJECT_TAS_CONTROLLER + "_form";
-	String OFFER_FORM = OFFER_CONTROLLER + "_form";
+	String PROJECT_TAS_CONTROLLER = "projectTas";
+	String PROJECT_TAS_FORM = PROJECT_TAS_CONTROLLER + FORM_SUFFIX;
+
+	String OFFER_CONTROLLER = "offer";
+	String OFFER_FORM = OFFER_CONTROLLER + FORM_SUFFIX;
+	
+	String SALES_INVOICE_CONTROLLER = "saleInvoice";
+	String SALES_INVOICE_FORM = SALES_INVOICE_CONTROLLER + FORM_SUFFIX;
+	
+	String PURCHASE_INVOICE_CONTROLLER = "purchaseInvoice";
+	String PURCHASE_INVOICE_FORM = PURCHASE_INVOICE_CONTROLLER + FORM_SUFFIX;
+
+	String EXPENSE_INVOICE_CONTROLLER = "expenseInvoice";
+	String EXPENSE_INVOICE_FORM = EXPENSE_INVOICE_CONTROLLER + FORM_SUFFIX;
+	
+	String SALES_CONTROLLER = "sales";
+	String SALES_FORM = SALES_CONTROLLER + FORM_SUFFIX;
+
+	String PURCHASE_CONTROLLER = "purchase";
+	String PURCHASE_FORM = PURCHASE_CONTROLLER + FORM_SUFFIX;
+
+	String DELIVERY_CONTROLLER = "delivery";
+	String DELIVERY_FORM = DELIVERY_CONTROLLER + FORM_SUFFIX;
+
+	String INCOME_CONTROLLER = "income";
+	String INCOME_FORM = INCOME_CONTROLLER + FORM_SUFFIX;
+
 
 }

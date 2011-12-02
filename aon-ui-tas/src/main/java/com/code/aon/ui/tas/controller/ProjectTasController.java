@@ -85,6 +85,7 @@ public class ProjectTasController extends BasicController {
 	public void onProjectHistory(ActionEvent event) {
 		ProjectStatEngineController statController =(ProjectStatEngineController)AonUtil.getRegisteredBean("projectStat");
 		statController.setProject(((ProjectTas)this.getTo()).getProject());
+		statController.setBackAction("projectTas_form");
 		statController.initializeProjectData();
 	}
 

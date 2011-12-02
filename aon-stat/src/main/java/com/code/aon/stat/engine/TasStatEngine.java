@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.Country;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.registry.enumeration.DocumentType;
 import com.code.aon.stat.tas.TasStatDetail;
 import com.code.aon.stat.tas.TasStatDetailType;
@@ -20,6 +21,7 @@ import com.code.aon.stat.tas.TasStatParams;
 public class TasStatEngine {
 	
 	private static String ID="id";
+	private static String TYPE="type";
 	private static String SERIES="series";
 	private static String NUMBER="number";
 	private static String DATE="date";
@@ -31,6 +33,7 @@ public class TasStatEngine {
 	private static String COMMENTS="comments";
 	private static String STATUS="status";
 	private static String STATUS_DATE="statusDate";
+	private static String TOTAL="total";
 
 	private static String TAS_ITEM_STATEMENT = 
 		"SELECT pt.project " + ID 
@@ -45,6 +48,7 @@ public class TasStatEngine {
 		+",pt.comments "+ COMMENTS
 		+",pt.status "+ STATUS 
 		+",pt.status_date "+ STATUS_DATE
+		+",null "+ TOTAL
 		+" FROM project_tas pt"
 		+" INNER JOIN project p ON p.id = pt.project"
 		+" INNER JOIN tas_item ti ON pt.tas_item  = ti.id"
@@ -67,11 +71,105 @@ public class TasStatEngine {
 		+",o.comments " + COMMENTS
 		+",o.status " + STATUS
 		+",null " + STATUS_DATE
+		+",null "+ TOTAL
 		+" FROM offer o"
-		+" INNER JOIN target t ON o.target = t.registry"
-		+" INNER JOIN registry r ON r.id = t.registry"
+		+" INNER JOIN registry r ON r.id = o.target"
 		+" WHERE o.project=?";
 
+	private static String INVOICE_STATEMENT = 
+			"SELECT i.id " + ID
+			+",i.type " + TYPE
+			+",i.series " + SERIES
+			+",i.number " + NUMBER
+			+",i.issue_date " + DATE
+			+",r.document_type " + DOCUMENT_TYPE
+			+",r.document_country " + DOCUMENT_COUNTRY
+			+",r.document " + DOCUMENT
+			+",r.name " + NAME
+			+",null " + TASK_HOLDER
+			+",i.comments " + COMMENTS
+			+",i.status " + STATUS
+			+",i.total " + TOTAL
+			+",null " + STATUS_DATE
+			+" FROM invoice i"
+			+" INNER JOIN registry r ON r.id = i.registry"
+			+" WHERE i.project=?";
+
+	private static String SALES_STATEMENT = 
+			"SELECT s.id " + ID
+			+",null " + TYPE
+			+",s.series " + SERIES
+			+",s.number " + NUMBER
+			+",s.issue_date " + DATE
+			+",r.document_type " + DOCUMENT_TYPE
+			+",r.document_country " + DOCUMENT_COUNTRY
+			+",r.document " + DOCUMENT
+			+",r.name " + NAME
+			+",null " + TASK_HOLDER
+			+",s.comments " + COMMENTS
+			+",s.status " + STATUS
+			+",null " + TOTAL
+			+",null " + STATUS_DATE
+			+" FROM sales s"
+			+" INNER JOIN registry r ON r.id = s.customer"
+			+" WHERE s.project=?";
+
+	private static String PURCHASE_STATEMENT = 
+			"SELECT p.id " + ID
+			+",null " + TYPE
+			+",p.series " + SERIES
+			+",p.number " + NUMBER
+			+",p.issue_date " + DATE
+			+",r.document_type " + DOCUMENT_TYPE
+			+",r.document_country " + DOCUMENT_COUNTRY
+			+",r.document " + DOCUMENT
+			+",r.name " + NAME
+			+",null " + TASK_HOLDER
+			+",p.comments " + COMMENTS
+			+",p.status " + STATUS
+			+",null " + TOTAL
+			+",null " + STATUS_DATE
+			+" FROM purchase p"
+			+" INNER JOIN registry r ON r.id = p.supplier"
+			+" WHERE p.project=?";
+
+	private static String DELIVERY_STATEMENT = 
+			"SELECT d.id " + ID
+			+",null " + TYPE
+			+",d.series " + SERIES
+			+",d.number " + NUMBER
+			+",d.issue_time " + DATE
+			+",r.document_type " + DOCUMENT_TYPE
+			+",r.document_country " + DOCUMENT_COUNTRY
+			+",r.document " + DOCUMENT
+			+",r.name " + NAME
+			+",null " + TASK_HOLDER
+			+",d.comments " + COMMENTS
+			+",d.status " + STATUS
+			+",null " + TOTAL
+			+",null " + STATUS_DATE
+			+" FROM delivery d"
+			+" INNER JOIN registry r ON r.id = d.customer"
+			+" WHERE d.project=?";
+
+	private static String INCOME_STATEMENT = 
+			"SELECT i.id " + ID
+			+",null " + TYPE
+			+",i.series " + SERIES
+			+",i.number " + NUMBER
+			+",i.issue_time " + DATE
+			+",r.document_type " + DOCUMENT_TYPE
+			+",r.document_country " + DOCUMENT_COUNTRY
+			+",r.document " + DOCUMENT
+			+",r.name " + NAME
+			+",null " + TASK_HOLDER
+			+",i.comments " + COMMENTS
+			+",i.status " + STATUS
+			+",null " + TOTAL
+			+",null " + STATUS_DATE
+			+" FROM income i"
+			+" INNER JOIN registry r ON r.id = i.supplier"
+			+" WHERE i.project=?";
 
 	public List<TasStatHeader> getTasHeaders(TasStatParams params) throws ManagerBeanException {
 		PreparedStatement ps = null;
@@ -187,8 +285,12 @@ public class TasStatEngine {
 			throw new ManagerBeanException("Vehículo no identificado (id null).");
 		}
 		fillHeader(header);
-		PreparedStatement detailsPs = null;
-		ResultSet detailsRs = null;
+		PreparedStatement offerPs = null;
+		PreparedStatement invoicePs = null;
+		PreparedStatement salesPs = null;
+		PreparedStatement purchasePs = null;
+		PreparedStatement deliveryPs = null;
+		PreparedStatement incomePs = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -202,10 +304,13 @@ public class TasStatEngine {
 			}
 			stmt.append(" ORDER BY p.date desc");
 
-			detailsPs = HibernateUtil.getSQLConnection().prepareStatement(OFFER_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
-			ps = HibernateUtil.getSQLConnection().prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,
-					ResultSet.CONCUR_READ_ONLY);
+			offerPs = HibernateUtil.getSQLConnection().prepareStatement(OFFER_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			invoicePs = HibernateUtil.getSQLConnection().prepareStatement(INVOICE_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			salesPs = HibernateUtil.getSQLConnection().prepareStatement(SALES_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			purchasePs = HibernateUtil.getSQLConnection().prepareStatement(PURCHASE_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			deliveryPs = HibernateUtil.getSQLConnection().prepareStatement(DELIVERY_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			incomePs = HibernateUtil.getSQLConnection().prepareStatement(INCOME_STATEMENT, ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
+			ps = HibernateUtil.getSQLConnection().prepareStatement(stmt.toString(), ResultSet.TYPE_FORWARD_ONLY,ResultSet.CONCUR_READ_ONLY);
 			int i = 0;
 			ps.setString(++i, header.getPublicCode());
 			if (params.getFromDate() != null) {
@@ -219,12 +324,12 @@ public class TasStatEngine {
 			while (rs.next()) {
 				TasStatDetail detail = populateTasStatDetail(TasStatDetailType.PROJECT, rs );
 				details.add(detail);
-				detailsPs.setInt(1, detail.getId());
-				detailsRs = detailsPs.executeQuery();
-				while (detailsRs.next()) {
-					details.add(populateTasStatDetail(TasStatDetailType.OFFER, detailsRs ));
-				}
-				detailsRs.close();
+				details.addAll( populateOffer(offerPs, detail) );
+				details.addAll( populateSales(salesPs, detail) );
+				details.addAll( populatePurchase(purchasePs, detail) );
+				details.addAll( populateDelivery(deliveryPs, detail) );
+				details.addAll( populateIncome(incomePs, detail) );
+				details.addAll( populateInvoice(invoicePs, detail) );
 			}
 			return details;
 		} catch (SQLException e) {
@@ -242,9 +347,144 @@ public class TasStatEngine {
 				} catch (SQLException e) {
 				}
 			}
-			if (detailsPs != null) {
+			if (offerPs != null) {
 				try {
-					detailsPs.close();
+					offerPs.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+	
+	private List<TasStatDetail> populateOffer(PreparedStatement detailsPs,TasStatDetail detail) throws SQLException {
+		ResultSet detailsRs = null;
+		try {
+			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
+			detailsPs.setInt(1, detail.getId());
+			detailsRs = detailsPs.executeQuery();
+			while (detailsRs.next()) {
+				details.add(populateTasStatDetail(TasStatDetailType.OFFER, detailsRs ));
+			}
+			detailsRs.close();
+			return details;
+		} finally {
+			if (detailsRs != null) {
+				try {
+					detailsRs.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	private List<TasStatDetail> populateInvoice(PreparedStatement detailsPs,TasStatDetail detail) throws SQLException {
+		ResultSet detailsRs = null;
+		try {
+			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
+			detailsPs.setInt(1, detail.getId());
+			detailsRs = detailsPs.executeQuery();
+			while (detailsRs.next()) {
+				TasStatDetailType type = null;
+				InvoiceType invoiceType = InvoiceType.values()[detailsRs.getInt(TYPE)];
+				if  (invoiceType == InvoiceType.SALES) {
+					type = TasStatDetailType.SALES_INVOICE;
+				} else if  (invoiceType == InvoiceType.PURCHASE) {
+					type = TasStatDetailType.PURCHASE_INVOICE;
+				} else {
+					type = TasStatDetailType.EXPENSE_INVOICE;
+				}
+				details.add(populateTasStatDetail(type, detailsRs ));
+			}
+			detailsRs.close();
+			return details;
+		} finally {
+			if (detailsRs != null) {
+				try {
+					detailsRs.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	private List<TasStatDetail> populateSales(PreparedStatement detailsPs,TasStatDetail detail) throws SQLException {
+		ResultSet detailsRs = null;
+		try {
+			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
+			detailsPs.setInt(1, detail.getId());
+			detailsRs = detailsPs.executeQuery();
+			while (detailsRs.next()) {
+				details.add(populateTasStatDetail(TasStatDetailType.SALES, detailsRs ));
+			}
+			detailsRs.close();
+			return details;
+		} finally {
+			if (detailsRs != null) {
+				try {
+					detailsRs.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	private List<TasStatDetail> populatePurchase(PreparedStatement detailsPs,TasStatDetail detail) throws SQLException {
+		ResultSet detailsRs = null;
+		try {
+			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
+			detailsPs.setInt(1, detail.getId());
+			detailsRs = detailsPs.executeQuery();
+			while (detailsRs.next()) {
+				details.add(populateTasStatDetail(TasStatDetailType.PURCHASE, detailsRs ));
+			}
+			detailsRs.close();
+			return details;
+		} finally {
+			if (detailsRs != null) {
+				try {
+					detailsRs.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	private List<TasStatDetail> populateDelivery(PreparedStatement detailsPs,TasStatDetail detail) throws SQLException {
+		ResultSet detailsRs = null;
+		try {
+			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
+			detailsPs.setInt(1, detail.getId());
+			detailsRs = detailsPs.executeQuery();
+			while (detailsRs.next()) {
+				details.add(populateTasStatDetail(TasStatDetailType.DELIVERY, detailsRs ));
+			}
+			detailsRs.close();
+			return details;
+		} finally {
+			if (detailsRs != null) {
+				try {
+					detailsRs.close();
+				} catch (SQLException e) {
+				}
+			}
+		}
+	}
+
+	private List<TasStatDetail> populateIncome(PreparedStatement detailsPs,TasStatDetail detail) throws SQLException {
+		ResultSet detailsRs = null;
+		try {
+			List<TasStatDetail> details = new LinkedList<TasStatDetail>(); 
+			detailsPs.setInt(1, detail.getId());
+			detailsRs = detailsPs.executeQuery();
+			while (detailsRs.next()) {
+				details.add(populateTasStatDetail(TasStatDetailType.INCOME, detailsRs ));
+			}
+			detailsRs.close();
+			return details;
+		} finally {
+			if (detailsRs != null) {
+				try {
+					detailsRs.close();
 				} catch (SQLException e) {
 				}
 			}
@@ -263,6 +503,7 @@ public class TasStatEngine {
 		detail.setName(rs.getString(NAME));
 		detail.setTaskHolderName(rs.getString(TASK_HOLDER));
 		detail.setComments(rs.getString(COMMENTS));
+		detail.setTotal(rs.getDouble(TOTAL));
 		return detail;
 	}
 
