@@ -21,18 +21,18 @@ public class AccountManagerControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		AccountManager am = (AccountManager) event.getController();
 		Account account = (Account) am.getTo();
-		String id = account.getId();
-		if (StringUtils.startsWith(id, AccountConstants.CUSTOMER_ACCOUNT_PREFIX)) {
+		String code = account.getCode();
+		if (StringUtils.startsWith(code, AccountConstants.CUSTOMER_ACCOUNT_PREFIX)) {
 			am.setSelectedTab(CUSTOMER_TAB);
-		} else if (StringUtils.startsWith(id, AccountConstants.CREDITOR_ACCOUNT_PREFIX)) {
+		} else if (StringUtils.startsWith(code, AccountConstants.CREDITOR_ACCOUNT_PREFIX)) {
 			am.setSelectedTab(CREDITOR_TAB);
-		} else if (StringUtils.startsWith(id, AccountConstants.SUPPLIER_ACCOUNT_PREFIX)) {
+		} else if (StringUtils.startsWith(code, AccountConstants.SUPPLIER_ACCOUNT_PREFIX)) {
 			am.setSelectedTab(SUPPLIER_TAB);
-		} else if (StringUtils.startsWith(id, AccountConstants.BANK_ACCOUNT_PREFIX)) {
+		} else if (StringUtils.startsWith(code, AccountConstants.BANK_ACCOUNT_PREFIX)) {
 			am.setSelectedTab(BANK_TAB);
-		} else if (StringUtils.startsWith(id, "47")) {
+		} else if (StringUtils.startsWith(code, "47")) {
 			am.setSelectedTab(TAX_TAB);
-		} else if (StringUtils.startsWith(id, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX)) {
+		} else if (StringUtils.startsWith(code, AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX)) {
 			am.setSelectedTab(LOAN_TAB);
 		}
 	}

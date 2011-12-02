@@ -111,7 +111,7 @@ public class LoanEntryController  {
 				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 				AccountEntry entry = new AccountEntry();
 				entry.setEntryDate(getLoan().getLoanDate());
-				entry.setAccountPeriod(getPeriod().getId());
+				entry.setAccountPeriod(getPeriod());
 				entry.setType(AccountEntryType.LOAN);
 				entry.setSecurityLevel(getLoan().getSecurityLevel());
 				IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);

@@ -199,7 +199,7 @@
 				actionListener="#{amortizationDetail.onAccountEntry}"
 				action="accountEntry_form"
 				reRender="aonContent">
-				<aon:outputText value="#{to.accountEntry.accountPeriod}/#{to.accountEntry.id}" />
+				<aon:outputText value="#{to.accountEntry.accountPeriod.name}/#{to.accountEntry.id}" />
 			</aon:commandLink>
 		</aon:column>
 

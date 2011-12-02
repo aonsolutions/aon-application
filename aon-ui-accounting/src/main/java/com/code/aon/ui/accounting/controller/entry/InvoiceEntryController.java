@@ -901,7 +901,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 
 	private Account fillAccountEntry(AccountEntry entry) throws ManagerBeanException {
 		Account account = null;
-		entry.setAccountPeriod(getHeader().getPeriod().getId());
+		entry.setAccountPeriod(getHeader().getPeriod());
 		entry.setEntryDate(getHeader().getDate());
 		entry.setJournal(null);
 		entry.setSecurityLevel(getHeader().getSecurityLevel());
@@ -1570,8 +1570,7 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 			getHeader().setDate(entry.getEntryDate());
 			getHeader().setTaxDate(accountEntryInvoice.getInvoice().getTaxDate());
 			getHeader().setReferenceCode(accountEntryInvoice.getInvoice().getReferenceCode());
-			getHeader().setPeriod(new Period());
-			getHeader().getPeriod().setId(entry.getAccountPeriod());
+			getHeader().setPeriod(entry.getAccountPeriod());
 			getHeader().setSecurityLevel(entry.getSecurityLevel());
 			getHeader().setRegistry(accountEntryInvoice.getInvoice().getRegistry());
 			getHeader().setWithholding(accountEntryInvoice.getInvoice().isWithholding());
@@ -1728,17 +1727,17 @@ public class InvoiceEntryController implements ISpecialAccountEntry {
 		List<SelectItem> retList = new LinkedList<SelectItem>();
 		if (a != null) {
 			IManagerBean helperBean = BeanManager.getManagerBean(AccountHelper.class);
-			String accountAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_ID);
-			String balAccountAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_ID);
+			String accountAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_CODE);
+			String balAccountAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_CODE);
 			String counterAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_COUNTER);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountAlias, a.getId());
+			criteria.addEqualExpression(accountAlias, a.getCode());
 			String c = "%";
-			if (a.getId().startsWith("430")) {
+			if (a.getCode().startsWith("430")) {
 				c = "7%";
-			} else if (a.getId().startsWith("400")) {
+			} else if (a.getCode().startsWith("400")) {
 				c = "6%";
-			} else if (a.getId().startsWith("410")) {
+			} else if (a.getCode().startsWith("410")) {
 				c = "6%";
 			}
 			Expression exp = ExpressionUtilities.getLikeExpression(balAccountAlias, c);	

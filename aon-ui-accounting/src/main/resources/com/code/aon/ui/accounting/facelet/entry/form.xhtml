@@ -154,9 +154,9 @@
 								styleClass="aon-form-selectOneMenu-field"
 								value="#{accountEntry.to.accountPeriod}"
 								rendered="#{accountEntry.new or (!accountEntry.new and accountEntry.manual and accountEntry.periodActive)}">
-								<f:selectItems value="#{accountingCollections.enabledAccountPeriodKeys}" />
+								<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
 							</aon:selectOneMenu>
-							<aon:outputText value="#{accountEntry.to.accountPeriod}"
+							<aon:outputText value="#{accountEntry.to.accountPeriod.name}"
 								rendered="#{!accountEntry.new and (!accountEntry.manual or !accountEntry.periodActive)}" />
 						</aon:div>
 
@@ -333,7 +333,7 @@
 												<aon:selectOneMenu id="AccountEntry_period" required="true"
 													styleClass="aon-form-selectOneMenu-field"
 													value="#{accountEntry.duplicatePeriod}">
-													<f:selectItems value="#{accountingCollections.enabledAccountPeriodKeys}" />
+													<f:selectItems value="#{accountingCollections.enabledAccountPeriods}" />
 												</aon:selectOneMenu>
 
 												<aon:outputLabel for="AccountEntry_date"

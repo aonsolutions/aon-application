@@ -15,8 +15,7 @@ public class BankAccountType extends StringType {
 	private static final long serialVersionUID = 7916889161980318593L;
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public Class getReturnedClass() {
+	public Class<?> getReturnedClass() {
 		return BankAccount.class;
 	}
 	

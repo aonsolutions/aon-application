@@ -23,7 +23,7 @@ public class SocialInsuranceEntry implements ITransferObject{
 	private SecurityLevel securityLevel;
 	private boolean paymentAdjustable;
 	private Month month;
-	private String year;
+	private Period year;
 	private Date fromDate;
 	private Date toDate;
 
@@ -109,10 +109,10 @@ public class SocialInsuranceEntry implements ITransferObject{
 		this.month = month;
 	}
 	
-	public String getYear() {
+	public Period getYear() {
 		return year;
 	}
-	public void setYear(String year) {
+	public void setYear(Period year) {
 		this.year = year;
 	}
 	public Date getFromDate() {

@@ -21,13 +21,13 @@ public class AccountEntryControllerListener extends ControllerAdapter {
 
     private int index;
     private Date lastDate;
-    private String lastPeriod;
+    private Period lastPeriod;
     private SecurityLevel lastSecurityLevel;
     
-	public String getLastPeriod() {
+	public Period getLastPeriod() {
 		return lastPeriod;
 	}
-	public void setLastPeriod(String lastPeriod) {
+	public void setLastPeriod(Period lastPeriod) {
 		this.lastPeriod = lastPeriod;
 	}
 	
@@ -63,7 +63,7 @@ public class AccountEntryControllerListener extends ControllerAdapter {
 	        if (to.getAccountPeriod() == null) {
 		        Period period = AccountingPeriodUtil.getDefaultPeriod();
 		        if (period != null) {
-		        	to.setAccountPeriod(period.getId());
+		        	to.setAccountPeriod(period);
 		        }
 	        }
 	        c.setTotalCredit(null);

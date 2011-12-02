@@ -7,9 +7,12 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -19,6 +22,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.accounting.enumeration.AccountEntryType;
@@ -34,7 +38,7 @@ public class AccountEntry implements ITransferObject, IConfidentialable {
 	private static final long serialVersionUID = -3297371099219203320L;
 
 	private Integer id;
-	private String accountPeriod;
+	private Period accountPeriod;
 	private Date entryDate;
 	private AccountEntryType type;
 	private Integer journal;
@@ -54,12 +58,14 @@ public class AccountEntry implements ITransferObject, IConfidentialable {
 		this.id = id;
 	}
 	
-	@Column(name="account_period", length=4, nullable=false)
+	@ManyToOne (fetch=FetchType.EAGER)
+	@JoinColumn(name="account_period", nullable=false)
+	@ForeignKey(name = "FK_ACCOUNT_ENTRY_ACCOUNT_PERIOD")
 	@Index(name = "IDX_ACCOUNT_ENTRY_ACCOUNT_PERIOD")
-	public String getAccountPeriod() {
+	public Period getAccountPeriod() {
 		return accountPeriod;
 	}
-	public void setAccountPeriod(String accountPeriod) {
+	public void setAccountPeriod(Period accountPeriod) {
 		this.accountPeriod = accountPeriod;
 	}
 

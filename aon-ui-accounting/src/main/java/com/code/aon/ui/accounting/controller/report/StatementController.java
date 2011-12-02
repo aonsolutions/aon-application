@@ -141,14 +141,14 @@ public class StatementController extends BasicController {
 			if (!ignore) {
 				Balance balance = new Balance();
 				balance.setAccountEntry(d.getAccountEntry().getId());
-				balance.setAccount(d.getAccount().getId());
+				balance.setAccount(d.getAccount().getCode());
 				balance.setDescription(d.getAccount().getDescription());
 				balance.setFromDate(d.getAccountEntry().getEntryDate());
 				balance.setDebit(d.getDebit());
 				balance.setCredit(d.getCredit());
 				balance.setConcept(d.getConcept());
 				balance.setDocumentNumber(d.getDocumentNumber());
-				balance.setBalancingAccount(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getId());
+				balance.setBalancingAccount(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getCode());
 				balance.setBalancingAccountDescription(d.getBalancingAccount() == null ? null : d.getBalancingAccount().getDescription());
 				if (previous != null) {
 					balance.dragBalance(previous);
@@ -183,20 +183,20 @@ public class StatementController extends BasicController {
 */	
 		Account account = getAccount();
 		Date from = params.getFromDate()==null?params.isPeriodNull()?new Date(0):params.getPeriod().getInitiationDate():params.getFromDate();
-		setOpeningEntry(sp.getOpeningEntryBalance(from, account.getId(),params.getSecurityLevel()));
+		setOpeningEntry(sp.getOpeningEntryBalance(from, account.getCode(),params.getSecurityLevel()));
 		setFromOpeningEntry(null);
 		Date to = DateUtils.addDays(from, -1);
 		from = null;
 		if (isOpeningEntryPresent()) {
 			if (!DateUtils.isSameDay(getOpeningEntry().getFromDate(), params.getFromDate())) {
 				from = getOpeningEntry().getFromDate();
-				setFromOpeningEntry(sp.getPeriodBalance(from, to,account.getId(),params.getSecurityLevel(),false,false));
+				setFromOpeningEntry(sp.getPeriodBalance(from, to,account.getCode(),params.getSecurityLevel(),false,false));
 			}
 		} else {
-			setFromOpeningEntry( sp.getPeriodBalance(from, to, account.getId(),params.getSecurityLevel(),false,false));
+			setFromOpeningEntry( sp.getPeriodBalance(from, to, account.getCode(),params.getSecurityLevel(),false,false));
 		}
 		
-		setPeriodBalance(sp.getPeriodBalance(params.getFromDate(), params.getToDate(), account.getId(),params.getSecurityLevel(),false,false));
+		setPeriodBalance(sp.getPeriodBalance(params.getFromDate(), params.getToDate(), account.getCode(),params.getSecurityLevel(),false,false));
 		
 		if (isFromOpeningEntryPresent()) {
 			if (isOpeningEntryPresent()) {

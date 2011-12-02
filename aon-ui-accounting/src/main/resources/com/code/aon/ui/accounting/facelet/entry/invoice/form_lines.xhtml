@@ -257,7 +257,7 @@
 				</f:facet>
 				
 				<aon:div style="width: 90%;" rendered="#{to!=invoiceEntry.currentDetail}" ajaxRendered="true">
-					<aon:outputText value="#{to.account}" />
+					<aon:outputText value="#{to.account.code}" />
 					<rich:toolTip value="#{to.account.description}"
 							hideEvent="onmouseout" showDelay="200">
 					</rich:toolTip>

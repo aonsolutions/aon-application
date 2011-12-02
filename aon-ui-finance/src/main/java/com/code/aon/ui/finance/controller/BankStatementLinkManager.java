@@ -461,7 +461,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		if (getAmount() == null) {
 			setAmount(0.0);
 		}
-		if (getAccount() != null && !StringUtils.isEmpty(getAccount().getId())) {
+		if (getAccount() != null && !StringUtils.isEmpty(getAccount().getCode())) {
 			if (!getAccount().isEntryEnabled()) {
 				AonUtil.addErrorMessage("La Cuenta Contable " + getAccount().getId() + " no permite apuntes.");
 				throw new AbortProcessingException();
@@ -515,7 +515,7 @@ public class BankStatementLinkManager implements IFinanceConstants {
 		BankStatementLink statementLink = new BankStatementLink();
 		statementLink.setBankStatement(statement);
 		statementLink.setSource(StatementLinkSource.ACCOUNT);
-		statementLink.setSourceId(Integer.parseInt(account.getId()));
+		statementLink.setSourceId(account.getId());
 		statementLink.setSourceDate(statement.getOperationDate());
 		statementLink.setAmount(amount);
 		statementLink.setStatus(StatementLinkStatus.PENDING);

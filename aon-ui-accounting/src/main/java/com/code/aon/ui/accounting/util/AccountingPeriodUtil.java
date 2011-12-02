@@ -31,7 +31,12 @@ public class AccountingPeriodUtil {
 		ApplicationParameter param = c.getParameter(DefaultAccounts.DEFAULT_PERIOD);
 		if (param != null && param.getValue() != null) {
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-			return (Period) periodBean.get(param.getValue());
+			try {
+				Integer periodId =  Integer.parseInt(param.getValue());
+				return (Period) periodBean.get(periodId);
+			} catch (NumberFormatException e) {
+				// Nada.
+			}
 		}
 		return null;
 	}

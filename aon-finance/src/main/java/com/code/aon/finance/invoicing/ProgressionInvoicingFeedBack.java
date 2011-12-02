@@ -10,8 +10,7 @@ public class ProgressionInvoicingFeedBack implements IInvoicingFeedBack {
 	public void addMessage(String message) {
 	}
 
-	@SuppressWarnings("unchecked")
-	public List getMessages() {
+	public List<String> getMessages() {
 		return null;
 	}
 

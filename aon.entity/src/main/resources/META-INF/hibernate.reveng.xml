@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" 
 [<!ENTITY Account SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/Account.xml">
+ <!ENTITY AccountEntry SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AccountEntry.xml">
+ <!ENTITY AccountEntryDetail SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AccountEntryDetail.xml">
+ <!ENTITY AccountHelper SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AccountHelper.xml">
+ <!ENTITY Amortization SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/Amortization.xml">
+ <!ENTITY AmortizationType SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AmortizationType.xml">
  <!ENTITY Domain SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/Domain.xml">]>
 
 <hibernate-reverse-engineering>
@@ -45,45 +50,17 @@
 	
 	&Account;
 	&Domain;
-
-	<table name="account_entry">
-		<column name="entry_type" property="type" />
-		<foreign-key constraint-name="account_entry_ibfk_1">
-			<many-to-one exclude="true" />
-		</foreign-key>
-	</table>
-	<table name="account_entry_detail">
-		<foreign-key constraint-name="account_entry_detail_ibfk_2">
-			<many-to-one property="account" />
-		</foreign-key>
-		<foreign-key constraint-name="account_entry_detail_ibfk_3">
-			<many-to-one property="balancingAccount" />
-		</foreign-key>
-	</table>
+	&AccountEntry;
+	&AccountEntryDetail;
+	&AccountHelper;
+	&Amortization;
+	&AmortizationType;
+	
 	<table name="account_entry_fbatch" class="com.code.aon.entity.master.AccountEntryFinanceBatch" />
-	<table name="account_helper">
-		<foreign-key constraint-name="FK_ACCOUNT_HELPER_ACCOUNT">
-			<many-to-one property="account" />
-		</foreign-key>
-		<foreign-key constraint-name="FK_ACCOUNT_HELPER_BALANCING_ACCOUNT">
-			<many-to-one property="balancingAccount" />
-		</foreign-key>
-	</table>
 	<table name="account_period" class="com.code.aon.entity.master.Period" />
 	<table name="agreement_level_data">
 		<foreign-key constraint-name="FK_AGREEMENT_LEVEL_DATA_AGREEMENT_LEVEL">
 			<many-to-one property="level" />
-		</foreign-key>
-	</table>
-	<table name="amortization_type">
-		<foreign-key constraint-name="fk_amortization_type_account1">
-			<many-to-one property="fixedAssetAccount" />
-		</foreign-key>
-		<foreign-key constraint-name="fk_amortization_type_account2">
-			<many-to-one property="accumulatedAccount" />
-		</foreign-key>
-		<foreign-key constraint-name="fk_amortization_type_account3">
-			<many-to-one property="allocationAccount" />
 		</foreign-key>
 	</table>
 	<table name="app_param" class="com.code.aon.entity.master.ApplicationParameter" />

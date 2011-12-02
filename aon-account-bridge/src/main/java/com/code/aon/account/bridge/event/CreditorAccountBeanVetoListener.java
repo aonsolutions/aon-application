@@ -49,9 +49,7 @@ public class CreditorAccountBeanVetoListener extends ManagerBeanVetoListenerAdap
 				sb.append("El acreedor ");
 				sb.append(creditorAccount.getAccountDescription());
 				sb.append(" ya está enlazado con la cuenta ");
-				sb.append(dup.getAccount().getId());
-				sb.append(" ");
-				sb.append(dup.getAccount().getDescription());
+				sb.append(dup.getAccount().getFullDescription());
 				sb.append(".");
 				throw new ManagerBeanVetoListenerException(sb.toString()); 
 			}

@@ -3,7 +3,7 @@
 	<meta attribute="class-code">
 		@Transient
 		public String getFullDescription() {
-			return (getId() + " " + getDescription());
+			return (getCode() + " " + getDescription());
 		}
 	</meta>
 	<column name="level" type="int" />

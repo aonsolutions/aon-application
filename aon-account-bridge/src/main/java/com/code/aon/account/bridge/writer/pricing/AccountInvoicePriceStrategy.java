@@ -13,6 +13,7 @@ import com.code.aon.accounting.DefaultAccounts;
 import com.code.aon.accounting.util.AccountingUtil;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
 import com.code.aon.config.enumeration.TaxType;
@@ -40,7 +41,6 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 		breakDown.setAccount(obtainTaxAccount(breakDown.getTaxType(), invoiceDetail));
 	}
 
-	@SuppressWarnings("unchecked")
 	private Account obtainTaxAccount(TaxType taxType, InvoiceDetail invoiceDetail) {
 		Item item = invoiceDetail.getItem();
 		InvoiceType invoiceType = invoiceDetail.getInvoice().getType();
@@ -52,7 +52,7 @@ public class AccountInvoicePriceStrategy extends InvoicePriceStrategy {
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
 				criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TYPE), taxAccountType);
-				Iterator iterator = taxAccountBean.getList(criteria).iterator();
+				Iterator<ITransferObject> iterator = taxAccountBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
 					TaxAccount taxAccount = (TaxAccount)iterator.next();
 					return taxAccount.getAccount();

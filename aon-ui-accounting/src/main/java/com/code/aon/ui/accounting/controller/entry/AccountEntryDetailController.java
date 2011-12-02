@@ -11,8 +11,6 @@ import com.code.aon.account.Account;
 import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.Period;
 import com.code.aon.accounting.summary.SummaryProviderParameters;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
@@ -34,7 +32,7 @@ public class AccountEntryDetailController extends LinesController {
 				try {
 					if (getModel().isRowAvailable()) {
 						AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
-						String account = detail.getAccount().getId();
+						String account = detail.getAccount().getCode();
 						if (detail != null) {
 							int row = getModel().getRowIndex();
 							return (!(StringUtils.startsWith(account, "4") && row == 0)) &&
@@ -145,9 +143,8 @@ public class AccountEntryDetailController extends LinesController {
 		AccountEntryDetail detail = (AccountEntryDetail) getModel().getRowData();
 
 		SummaryProviderParameters spp = new SummaryProviderParameters();
-		spp.setAccountExpression(account.getId());
-		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-		Period period = (Period) periodBean.get(detail.getAccountEntry().getAccountPeriod());
+		spp.setAccountExpression(account.getCode());
+		Period period = detail.getAccountEntry().getAccountPeriod();
 		spp.setPeriod(period);
 		spp.setFromDate(period.getInitiationDate());
 		spp.setToDate(period.getDeadline());
@@ -156,8 +153,8 @@ public class AccountEntryDetailController extends LinesController {
 
 		c.onEditSearch(event);
 		Criteria criteria = c.getCriteria();
-		String alias = c.getFieldName(IEntityAlias.ACCOUNT_ID);
-		criteria.addExpression(alias, account.getId() + IAccountingConstants.ASTERISK);
+		String alias = c.getFieldName(IEntityAlias.ACCOUNT_CODE);
+		criteria.addExpression(alias, account.getCode() + IAccountingConstants.ASTERISK);
 		alias = c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
 		criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 

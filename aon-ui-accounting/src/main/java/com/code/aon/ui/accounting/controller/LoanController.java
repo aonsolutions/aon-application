@@ -58,7 +58,7 @@ public class LoanController extends BasicController{
 			SummaryProviderParameters params = new SummaryProviderParameters();
 			if (getRelatedAccount() != null) {
 				Loan loan = (Loan) getTo();
-				params.setAccountExpression( getRelatedAccount().getId());
+				params.setAccountExpression( getRelatedAccount().getCode());
 				params.setAccountLevel(5);
 				params.setFromDate(loan .getLoanDate());
 				params.setSecurityLevel(loan.getSecurityLevel());
@@ -80,7 +80,7 @@ public class LoanController extends BasicController{
 			StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 			c.onReset(event);
 			SummaryProviderParameters spp = new SummaryProviderParameters();
-			spp.setAccountExpression(account.getId());
+			spp.setAccountExpression(account.getCode());
 			
 			spp.setFromDate(loan.getLoanDate());
 			spp.setToDate(new Date());
@@ -88,8 +88,8 @@ public class LoanController extends BasicController{
 			c.setParams(spp);
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
-			String alias = c.getFieldName(IEntityAlias.ACCOUNT_ID);
-			criteria.addExpression(alias, account.getId() + IAccountingConstants.ASTERISK);
+			String alias = c.getFieldName(IEntityAlias.ACCOUNT_CODE);
+			criteria.addExpression(alias, account.getCode() + IAccountingConstants.ASTERISK);
 			alias = c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 			c.onSearch(event);

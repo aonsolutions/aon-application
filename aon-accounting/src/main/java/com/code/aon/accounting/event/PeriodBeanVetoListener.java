@@ -3,6 +3,7 @@ package com.code.aon.accounting.event;
 import java.util.Date;
 
 import com.code.aon.accounting.Period;
+import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -10,6 +11,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanVetoListenerAdapter;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
+import com.code.aon.ql.Criteria;
 
 /**
  * @author Consulting & Development
@@ -37,18 +39,20 @@ public class PeriodBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 			throw new ManagerBeanVetoListenerException("La fecha de inicio debe ser anterior a la fecha fin.");
         try {
             IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-            for(ITransferObject p: periodBean.getList(null)){
+            Criteria criteria = new Criteria();
+            if (to.getId() != null ) {
+            	criteria.addNotEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), to.getId());	
+            }
+            for(ITransferObject p: periodBean.getList(criteria)){
             	Period period = (Period)p;
             	pFrom = period.getInitiationDate();
         		pTo = period.getDeadline();
-            	if(!(to.getId().equals(period.getId()))){
-	        		if(toFrom.compareTo(pFrom)>=0 && toFrom.compareTo(pTo)<=0){
-	            		throw new ManagerBeanVetoListenerException("Solape con la fecha de inicio y el periodo "+period.getId());
-	        		}	
-	            	if(toTo.compareTo(pFrom)>=0 && toTo.compareTo(pTo)<=0){
-	            		throw new ManagerBeanVetoListenerException("Solape con la fecha fin y el periodo "+period.getId());
-	            	}
-	        	}
+        		if(toFrom.compareTo(pFrom)>=0 && toFrom.compareTo(pTo)<=0){
+            		throw new ManagerBeanVetoListenerException("Solape con la fecha de inicio y el periodo "+period.getName());
+        		}	
+            	if(toTo.compareTo(pFrom)>=0 && toTo.compareTo(pTo)<=0){
+            		throw new ManagerBeanVetoListenerException("Solape con la fecha fin y el periodo "+period.getName());
+            	}
             }
         } catch (ManagerBeanException e) {
             throw new ManagerBeanVetoListenerException(e);

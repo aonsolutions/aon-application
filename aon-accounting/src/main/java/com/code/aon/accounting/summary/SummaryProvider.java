@@ -37,7 +37,7 @@ public class SummaryProvider {
 
 	private static final String PERCENT = "%";
 	
-	public static String ACCOUNT_ID_ALIAS = null;
+	public static String ACCOUNT_CODE_ALIAS = null;
 	public static String ACCOUNT_DESCRIPTION_ALIAS = null;
 	public static String ACCOUNT_ALIAS_ALIAS = null;
 	public static String ACCOUNT_LEVEL_ALIAS = null;
@@ -46,7 +46,7 @@ public class SummaryProvider {
 	static {
 		try {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			ACCOUNT_ID_ALIAS = accountBean.getFieldName(IEntityAlias.ACCOUNT_ID);
+			ACCOUNT_CODE_ALIAS = accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE);
 			ACCOUNT_DESCRIPTION_ALIAS = accountBean.getFieldName(IEntityAlias.ACCOUNT_DESCRIPTION);
 			ACCOUNT_ALIAS_ALIAS = accountBean.getFieldName(IEntityAlias.ACCOUNT_ALIAS);
 			ACCOUNT_LEVEL_ALIAS = accountBean.getFieldName(IEntityAlias.ACCOUNT_LEVEL);
@@ -103,7 +103,7 @@ public class SummaryProvider {
 					add = false;
 				}
 				if (add) {
-					String likeAccount = account.getId() + PERCENT;
+					String likeAccount = account.getCode() + PERCENT;
 					sum.setString(p, likeAccount);
 					sumSet = sum.executeQuery();
 					Double debit = 0.0;
@@ -118,17 +118,17 @@ public class SummaryProvider {
 						s.setDebit(debit);
 						s.setCredit(credit);
 					} else {
-						s = getSummaryMonthly(sumSet,account.getId(),debit,credit,authomaticBalance);
+						s = getSummaryMonthly(sumSet,account.getCode(),debit,credit,authomaticBalance);
 					}
 					if (add) {
-						s.setId(account.getId());
+						s.setId(account.getCode());
 						s.setDescription(account.getDescription());
 						s.setLastLevel(params.getAccountLevel() == account.getLevel() || account.isEntryEnabled());
 						s.setInitialCredit(0);					
 						s.setInitialDebit(0);
 						
 						if (s.isLastLevel()) {
-							Balance openingBalance = getOpeningEntryBalance(params.getStartDate(), account.getId(),params.getSecurityLevel());
+							Balance openingBalance = getOpeningEntryBalance(params.getStartDate(), account.getCode(),params.getSecurityLevel());
 							Balance fromOpeningBalance = null;
 							Date dateTo = DateUtils.addDays(params.getStartDate(), -1);
 							if (openingBalance!=null) {
@@ -147,12 +147,12 @@ public class SummaryProvider {
 								// Si existe un asiento de apertura que sirva como punto de partida, se calcula el acumulado 
 								// desde el asiento de apertura hasta el inicio del periodo solicitado, en el caso de no ser el mismo dia. 
 								if (!DateUtils.isSameDay(openingBalance.getFromDate(), params.getStartDate())) {
-									fromOpeningBalance = getPeriodBalance(openingBalance.getFromDate(), dateTo,account.getId(),params.getSecurityLevel(),false,false);
+									fromOpeningBalance = getPeriodBalance(openingBalance.getFromDate(), dateTo,account.getCode(),params.getSecurityLevel(),false,false);
 								}
 							} else {
 								// Si no existe un asiento de apertura que sirva como punto de partida, se calcula el acumulado 
 								// desde el principio de los tiempos hasta el inicio del periodo solicitado.
-								fromOpeningBalance = getPeriodBalance(new Date(0), dateTo, account.getId(),params.getSecurityLevel(),false,false);
+								fromOpeningBalance = getPeriodBalance(new Date(0), dateTo, account.getCode(),params.getSecurityLevel(),false,false);
 							}
 							if (fromOpeningBalance!=null) {
 								if (openingBalance!=null) {
@@ -238,8 +238,9 @@ public class SummaryProvider {
 		if (params.isMonthlyGrouping()) {
 			sumStmt.append(",MONTH(s.entry_date)");
 		}
-		sumStmt.append(" FROM account_entry s, account_entry_detail d");
+		sumStmt.append(" FROM account_entry s, account_entry_detail d, account a");
 		sumStmt.append(" WHERE s.id = d.account_entry");
+		sumStmt.append(" AND d.account = a.id ");
 		if (params.getFromDate() != null) {
 			sumStmt.append(" AND s.entry_date >= ?");
 		}
@@ -261,7 +262,7 @@ public class SummaryProvider {
 		if (params.getSecurityLevel() != null) {
 			sumStmt.append(" AND s.security_level = ?");
 		}
-		sumStmt.append(" AND d.account LIKE ?");
+		sumStmt.append(" AND a.code LIKE ?");
 		if (params.isMonthlyGrouping()) {
 			sumStmt.append(" GROUP BY MONTH(s.entry_date)");
 		}
@@ -297,7 +298,7 @@ public class SummaryProvider {
 		Criteria criteria = new Criteria();
 		if (!StringUtils.isEmpty(params.getAccountExpression())) {
 			criteria.addExpression(ExpressionUtilities
-					.getExpression(params.getAccountExpression(), ACCOUNT_ID_ALIAS));
+					.getExpression(params.getAccountExpression(), ACCOUNT_CODE_ALIAS));
 		}
 		if (!StringUtils.isEmpty(params.getAccountDescription())) {
 			criteria.addExpression(ExpressionUtilities.getExpression(params.getAccountDescription(), 
@@ -318,7 +319,7 @@ public class SummaryProvider {
 			Expression e = ExpressionUtilities.getLessThanOrEqualExpression(ACCOUNT_LEVEL_ALIAS, params.getAccountLevel());
 			criteria.addExpression(e);
 		}
-		criteria.addOrder(ACCOUNT_ID_ALIAS);
+		criteria.addOrder(ACCOUNT_CODE_ALIAS);
 		return criteria;
 	}
 
@@ -335,7 +336,7 @@ public class SummaryProvider {
 			p++;
 		}
 		if (params.getPeriod() != null && params.getPeriod().getId() != null) {
-			sum.setString(p, params.getPeriod().getId());
+			sum.setInt(p, params.getPeriod().getId());
 			p++;
 		}
 		if (params.getSecurityLevel() != null) {
@@ -407,14 +408,15 @@ public class SummaryProvider {
 				entryStmt.close();
 				stmt = new StringBuffer();	
 				stmt.append("SELECT SUM(d.debit),SUM(d.credit)");
-				stmt.append(" FROM account_entry a,account_entry_detail d ");
+				stmt.append(" FROM account_entry a,account_entry_detail d, account acc ");
 				stmt.append(" WHERE a.id = d.account_entry");
+				stmt.append(" AND d.account = acc.id");
 				stmt.append(" AND a.entry_type = ?");
 				stmt.append(" AND a.entry_date = ?");
 				if (securityLevel != null ) {
 					stmt.append(" AND a.security_level = ?");
 				}
-		 		stmt.append(" AND d.account LIKE ?");
+		 		stmt.append(" AND acc.code LIKE ?");
 				i = 0;
 				entryStmt = HibernateUtil.getSQLConnection(sessionName).prepareStatement(stmt.toString());
 				entryStmt.setInt(++i, AccountEntryType.OPENING.ordinal());

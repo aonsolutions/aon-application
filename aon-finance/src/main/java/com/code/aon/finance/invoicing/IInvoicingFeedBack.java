@@ -6,8 +6,7 @@ public interface IInvoicingFeedBack {
 
 	public void addMessage(String message);
 	
-	@SuppressWarnings("unchecked")
-	public List getMessages();
+	public List<String> getMessages();
 
 	public int getCurrentRow();
 	public void setCurrentRow(int currentValue);

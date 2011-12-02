@@ -45,12 +45,18 @@ public class AccountingCollectionsController {
 	private LinkedList<SelectItem> loanStatuses;
 	private LinkedList<SelectItem> quarters;
 	private LinkedList<SelectItem> templateTypes;
-	
+
 	private List<SelectItem> autoConcepts;
 	private List<String> concepts;
 
 	private String periodStatusAlias;
 	private String periodIdAlias;
+	
+	public Period getPeriod() {
+		return null;
+	}
+	public void setPeriod(Period period) {
+	}
 
 	public String getPeriodStatusAlias() throws ManagerBeanException {
 		if (periodStatusAlias == null) {
@@ -68,87 +74,59 @@ public class AccountingCollectionsController {
 		return periodIdAlias;
 	}
 
-	private List<SelectItem> getPeriods(Criteria criteria, boolean pojo)
-			throws ManagerBeanException {
+	private List<SelectItem> getPeriods(Criteria criteria) throws ManagerBeanException {
 		List<SelectItem> accountPeriods = new LinkedList<SelectItem>();
 		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 		Iterator<?> iter = periodBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			Period period = (Period) iter.next();
-			SelectItem item = new SelectItem(pojo ? period : period.getId(), period.getId());
+			SelectItem item = new SelectItem(period, period.getName());
 			accountPeriods.add(item);
 		}
 		return accountPeriods;
 	}
 
-	private List<SelectItem> getEnabledAccountPeriods(boolean pojo) throws ManagerBeanException {
+	public List<SelectItem> getEnabledAccountPeriods() throws ManagerBeanException {
 		Criteria criteria = new Criteria();
-		Expression e1 = ExpressionUtilities.getEqualExpression(getPeriodStatusAlias(),
-				AccountPeriodStatus.ACTIVE);
-		Expression e2 = ExpressionUtilities.getEqualExpression(getPeriodStatusAlias(),
-				AccountPeriodStatus.OPENING);
+		Expression e1 = ExpressionUtilities.getEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.ACTIVE);
+		Expression e2 = ExpressionUtilities.getEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.OPENING);
 		criteria.addExpression(ExpressionUtilities.getOrExpression(e1, e2));
 		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, pojo);
-	}
-
-	public List<SelectItem> getEnabledAccountPeriods() throws ManagerBeanException {
-		return getEnabledAccountPeriods(true);
-	}
-
-	public List<SelectItem> getEnabledAccountPeriodKeys() throws ManagerBeanException {
-		return getEnabledAccountPeriods(false);
-	}
-
-	private List<SelectItem> getActiveAccountPeriods(boolean pojo) throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(getPeriodStatusAlias(),
-				AccountPeriodStatus.INACTIVE));
-		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, pojo);
+		return getPeriods(criteria);
 	}
 
 	public List<SelectItem> getActiveAccountPeriods() throws ManagerBeanException {
-		return getActiveAccountPeriods(true);
-	}
-
-	public List<SelectItem> getActiveAccountPeriodKeys() throws ManagerBeanException {
-		return getActiveAccountPeriods(false);
+		Criteria criteria = new Criteria();
+		criteria.addExpression(ExpressionUtilities.getNotEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.INACTIVE));
+		criteria.addOrder(getPeriodIdAlias(), false);
+		return getPeriods(criteria);
 	}
 
 	public List<SelectItem> getClosedAccountPeriods() throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.CLOSED);
 		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, true);
+		return getPeriods(criteria);
 	}
 
 	public List<SelectItem> getOperatingAccountPeriods() throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.OPERATING);
 		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, true);
+		return getPeriods(criteria);
 	}
 
 	public List<SelectItem> getOpeningAccountPeriods() throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.OPENING);
 		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, true);
-	}
-
-	private List<SelectItem> getAllAccountPeriods(boolean pojo) throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addOrder(getPeriodIdAlias(), false);
-		return getPeriods(criteria, pojo);
+		return getPeriods(criteria);
 	}
 
 	public List<SelectItem> getAllAccountPeriods() throws ManagerBeanException {
-		return getAllAccountPeriods(true);
-	}
-
-	public List<SelectItem> getAllAccountPeriodKeys() throws ManagerBeanException {
-		return getAllAccountPeriods(false);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(getPeriodIdAlias(), false);
+		return getPeriods(criteria);
 	}
 
 	public List<SelectItem> getAccountPeriodStatuses() {
@@ -181,16 +159,16 @@ public class AccountingCollectionsController {
 		return loanStatuses;
 	}
 
-	public void setAutoConcepts(List<SelectItem> autoConcepts ) {
+	public void setAutoConcepts(List<SelectItem> autoConcepts) {
 		this.autoConcepts = autoConcepts;
 	}
+
 	public List<SelectItem> getAutoConcepts() throws ManagerBeanException {
 		if (autoConcepts == null) {
 			autoConcepts = new LinkedList<SelectItem>();
 			IManagerBean conceptBean = BeanManager.getManagerBean(AutoConcept.class);
 			Criteria criteria = new Criteria();
-			criteria.addOrder(conceptBean.getFieldName(IAccountingAlias.AUTO_CONCEPT_DESCRIPTION),
-					false);
+			criteria.addOrder(conceptBean.getFieldName(IAccountingAlias.AUTO_CONCEPT_DESCRIPTION), false);
 			Iterator<?> iter = conceptBean.getList(criteria).iterator();
 			while (iter.hasNext()) {
 				AutoConcept concept = (AutoConcept) iter.next();
@@ -201,9 +179,10 @@ public class AccountingCollectionsController {
 		return autoConcepts;
 	}
 
-	public void setConceptsDescriptions(List<String> concepts ) {
-		this.concepts = concepts ;
+	public void setConceptsDescriptions(List<String> concepts) {
+		this.concepts = concepts;
 	}
+
 	public List<String> getConceptsDescriptions() {
 		try {
 			if (concepts == null) {
@@ -227,44 +206,45 @@ public class AccountingCollectionsController {
 			return null;
 		}
 	}
+
 	public List<String> getConceptsDescriptions(Object prefix) {
 		List<String> subList = new LinkedList<String>();
-		for (String concept:getConceptsDescriptions()) {
-			if (concept.startsWith((String)prefix)) {
-				subList.add(concept);				
+		for (String concept : getConceptsDescriptions()) {
+			if (concept.startsWith((String) prefix)) {
+				subList.add(concept);
 			}
 		}
 		return subList;
 	}
-	
+
 	public List<SelectItem> getAccountTypes() {
 		if (accountEntryTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			
+
 			accountEntryTypes = new LinkedList<SelectItem>();
 			String r = "------------------";
-			accountEntryTypes.add(new SelectItem(AccountEntryType.MANUAL,AccountEntryType.MANUAL.getName(locale)));
-			accountEntryTypes.add(new SelectItem(null,r,r,true));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.SALES_INVOICE,AccountEntryType.SALES_INVOICE.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.PURCHASE_INVOICE,AccountEntryType.PURCHASE_INVOICE.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.EXPENSE_INVOICE,AccountEntryType.EXPENSE_INVOICE.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.PAYMENT,AccountEntryType.PAYMENT.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.COLLECTION,AccountEntryType.COLLECTION.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.RETURNED_PAYMENT,AccountEntryType.RETURNED_PAYMENT.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.RETURNED_COLLECTION,AccountEntryType.RETURNED_COLLECTION.getName(locale)));
-			accountEntryTypes.add(new SelectItem(null,r,r,true));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.SALARY,AccountEntryType.SALARY.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.EXPENSES,AccountEntryType.EXPENSES.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.SOCIAL_INSURANCE,AccountEntryType.SOCIAL_INSURANCE.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.SOCIAL_INSURANCE_ADJUST,AccountEntryType.SOCIAL_INSURANCE_ADJUST.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.LOAN,AccountEntryType.LOAN.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.LOAN_FEE,AccountEntryType.LOAN_FEE.getName(locale)));
-			accountEntryTypes.add(new SelectItem(null,r,r,true));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.AMORTIZATION,AccountEntryType.AMORTIZATION.getName(locale)));
-			accountEntryTypes.add(new SelectItem(null,r,r,true));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.OPENING,AccountEntryType.OPENING.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.CLOSING,AccountEntryType.CLOSING.getName(locale)));
-			accountEntryTypes.add(new SelectItem(AccountEntryType.OPERATING,AccountEntryType.OPERATING.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.MANUAL, AccountEntryType.MANUAL.getName(locale)));
+			accountEntryTypes.add(new SelectItem(null, r, r, true));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.SALES_INVOICE, AccountEntryType.SALES_INVOICE.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.PURCHASE_INVOICE, AccountEntryType.PURCHASE_INVOICE.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.EXPENSE_INVOICE, AccountEntryType.EXPENSE_INVOICE.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.PAYMENT, AccountEntryType.PAYMENT.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.COLLECTION, AccountEntryType.COLLECTION.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.RETURNED_PAYMENT, AccountEntryType.RETURNED_PAYMENT.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.RETURNED_COLLECTION, AccountEntryType.RETURNED_COLLECTION.getName(locale)));
+			accountEntryTypes.add(new SelectItem(null, r, r, true));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.SALARY, AccountEntryType.SALARY.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.EXPENSES, AccountEntryType.EXPENSES.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.SOCIAL_INSURANCE, AccountEntryType.SOCIAL_INSURANCE.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.SOCIAL_INSURANCE_ADJUST, AccountEntryType.SOCIAL_INSURANCE_ADJUST.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.LOAN, AccountEntryType.LOAN.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.LOAN_FEE, AccountEntryType.LOAN_FEE.getName(locale)));
+			accountEntryTypes.add(new SelectItem(null, r, r, true));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.AMORTIZATION, AccountEntryType.AMORTIZATION.getName(locale)));
+			accountEntryTypes.add(new SelectItem(null, r, r, true));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.OPENING, AccountEntryType.OPENING.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.CLOSING, AccountEntryType.CLOSING.getName(locale)));
+			accountEntryTypes.add(new SelectItem(AccountEntryType.OPERATING, AccountEntryType.OPERATING.getName(locale)));
 
 		}
 		return accountEntryTypes;
@@ -298,7 +278,7 @@ public class AccountingCollectionsController {
 		List<SelectItem> loans = new LinkedList<SelectItem>();
 		IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(loanBean.getFieldName(IAccountingAlias.LOAN_STATUS) , LoanStatus.ACTIVE);
+		criteria.addEqualExpression(loanBean.getFieldName(IAccountingAlias.LOAN_STATUS), LoanStatus.ACTIVE);
 		Iterator<?> iter = loanBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			Loan loan = (Loan) iter.next();
@@ -391,7 +371,7 @@ public class AccountingCollectionsController {
 		}
 		return balanceTypes;
 	}
-	
+
 	public List<SelectItem> getQuarters() {
 		if (quarters == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -406,7 +386,7 @@ public class AccountingCollectionsController {
 		}
 		return quarters;
 	}
-		
+
 	public List<SelectItem> getTemplateTypes() {
 		if (templateTypes == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -423,10 +403,10 @@ public class AccountingCollectionsController {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
 				RegistryAttachmentType.FISCAL_TEMPLATES);
-        if (!AonUtil.getRoleManager().isConfidentiality()) {
-        	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
-        }
-        Iterator<?> iter = bean.getList(criteria).iterator();
+		if (!AonUtil.getRoleManager().isConfidentiality()) {
+			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+		}
+		Iterator<?> iter = bean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			RegistryAttachment ra = (RegistryAttachment) iter.next();
 			SelectItem item = new SelectItem(ra.getId(), ra.getDescription());
@@ -441,10 +421,10 @@ public class AccountingCollectionsController {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE),
 				RegistryAttachmentType.FISCAL_REPORTS);
-        if (!AonUtil.getRoleManager().isConfidentiality()) {
-        	criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
-        }
-        Iterator<?> iter = bean.getList(criteria).iterator();
+		if (!AonUtil.getRoleManager().isConfidentiality()) {
+			criteria.addEqualExpression(bean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_SECURITY_LEVEL), SecurityLevel.OFFICIAL);
+		}
+		Iterator<?> iter = bean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			RegistryAttachment ra = (RegistryAttachment) iter.next();
 			SelectItem item = new SelectItem(ra.getId(), ra.getDescription());
@@ -452,4 +432,34 @@ public class AccountingCollectionsController {
 		}
 		return reportTemplates;
 	}
+
+	public List<SelectItem> getEnabledAccountPeriodKeys() throws ManagerBeanException {
+		List<SelectItem> accountPeriods = new LinkedList<SelectItem>();
+		IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+		Criteria criteria = new Criteria();
+		Expression e1 = ExpressionUtilities.getEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.ACTIVE);
+		Expression e2 = ExpressionUtilities.getEqualExpression(getPeriodStatusAlias(), AccountPeriodStatus.OPENING);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(e1, e2));
+		criteria.addOrder(getPeriodIdAlias(), false);
+		Iterator<?> iter = periodBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			Period period = (Period) iter.next();
+			SelectItem item = new SelectItem(period.getId(), period.getName());
+			accountPeriods.add(item);
+		}
+		return accountPeriods;
+	}
+	// ********************************************************
+	/*
+	 * public List<SelectItem> getEnabledAccountPeriods() throws
+	 * ManagerBeanException { return getEnabledAccountPeriods(true); } public
+	 * List<SelectItem> getActiveAccountPeriods() throws ManagerBeanException {
+	 * return getActiveAccountPeriods(true); } public List<SelectItem>
+	 * getActiveAccountPeriodKeys() throws ManagerBeanException { return
+	 * getActiveAccountPeriods(false); } public List<SelectItem>
+	 * getAllAccountPeriodKeys() throws ManagerBeanException { return
+	 * getAllAccountPeriods(false); } public List<SelectItem>
+	 * getAllAccountPeriods() throws ManagerBeanException { return
+	 * getAllAccountPeriods(true); }
+	 */
 }

@@ -1,9 +1,14 @@
 package com.code.aon.ui.account.controller;
 
+import java.util.List;
+
 import com.code.aon.account.Account;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.entity.IEntityAlias;
+import com.code.aon.ql.Criteria;
 
 public class AccountImporterManager {
 	
@@ -18,10 +23,14 @@ public class AccountImporterManager {
 	
 	public void addAccount(Account account) throws ManagerBeanException {
 		if (account != null) {
-			Account a = (Account) getManagerBean().get(account.getId());
-			if (a == null) {
+			Criteria c = new Criteria();
+			c.addEqualExpression(getManagerBean().getFieldName(IEntityAlias.ACCOUNT_CODE), account.getCode());
+			List<ITransferObject> list = getManagerBean().getList(c);
+			if (list == null || list.isEmpty()) {
 				bean.insert(account);
 			} else {
+				Account a = (Account) list.get(0);	
+				a.setCode(account.getCode());
 				a.setDescription(account.getDescription());
 				a.setAlias(account.getAlias());
 				bean.update(a);

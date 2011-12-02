@@ -1,5 +1,7 @@
 package com.code.aon.ui.accounting.controller.entry;
 
+
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -90,7 +92,7 @@ public class SocialInsuranceEntryController {
 			getEntry().setDate(new Date());
 			getEntry().setSecurityLevel(SecurityLevel.OFFICIAL);
 			getEntry().setMonth(null);
-			getEntry().setYear(AccountingPeriodUtil.getDefaultPeriod() == null ? null : AccountingPeriodUtil.getDefaultPeriod().getId());
+			getEntry().setYear(AccountingPeriodUtil.getDefaultPeriod() == null ? null : AccountingPeriodUtil.getDefaultPeriod());	
 			setSocialInsuranceBalance(null);
 			setSocialInsuranceDetail(null);
 			setSocialInsuranceDetailModel(null);
@@ -118,7 +120,7 @@ public class SocialInsuranceEntryController {
 				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 				AccountEntry entry = new AccountEntry();
 				entry.setEntryDate(getEntry().getDate());
-				entry.setAccountPeriod(getEntry().getPeriod().getId());
+				entry.setAccountPeriod(getEntry().getPeriod());
 				entry.setType(AccountEntryType.SOCIAL_INSURANCE);
 				entry.setSecurityLevel(getEntry().getSecurityLevel());
 				entry = (AccountEntry) HibernateUtil.getSession(sessionName).merge(entry);
@@ -271,7 +273,9 @@ public class SocialInsuranceEntryController {
 	}
 
 	private void initializeDates() {
-		int year = Integer.parseInt(getEntry().getYear());
+		Calendar c = Calendar.getInstance();
+		c.setTime( getEntry().getYear().getInitiationDate() );
+		int year = c.get(Calendar.YEAR );
 		getEntry().setFromDate( CommonUtil.getDate(year, getEntry().getMonth().getValue(), 1));
 		int days = CommonUtil.daysInMonth(getEntry().getFromDate());
 		getEntry().setToDate( CommonUtil.getDate(year, getEntry().getMonth().getValue(), days));
@@ -295,7 +299,7 @@ public class SocialInsuranceEntryController {
 					c.addEqualExpression(securityLevelAlias, getEntry().getSecurityLevel());	
 				}
 				Balance balance = new Balance();
-				balance.setAccount(getSocialInsuranceAccount().getId());
+				balance.setAccount(getSocialInsuranceAccount().getCode());
 				balance.setDescription(getSocialInsuranceAccount().getDescription());
 				balance.setFromDate(getEntry().getFromDate());
 				balance.setToDate(getEntry().getToDate());

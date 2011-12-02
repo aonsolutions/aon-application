@@ -66,9 +66,7 @@
 						</f:facet>
 						<rich:dataList var="acc" value="#{to.accounts}"
 							type="none">
-							<aon:outputText value="#{acc.account.id}" />
-							<aon:outputText value=" - " />
-							<aon:outputText value="#{acc.account.description}" />
+							<aon:outputText value="#{acc.account.fullDescription}" />
 						</rich:dataList>
 					</aon:column>
 

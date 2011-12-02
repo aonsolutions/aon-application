@@ -76,7 +76,7 @@ public class BasicAccountListener extends ControllerAdapter {
 	}
 
 	private boolean isEmptyAccount(Account account) {
-		return (account == null || StringUtils.isEmpty(account.getId()));
+		return (account == null || StringUtils.isEmpty(account.getCode()));
 	}
 
 	@Override

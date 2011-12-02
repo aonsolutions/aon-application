@@ -7,6 +7,7 @@ import org.hibernate.Session;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
@@ -29,12 +30,11 @@ public class SeriesNumberUtil {
 	 * @param seriesId Id de la serie hay que devolver.
 	 * @return la Serie.
 	 */
-	@SuppressWarnings("unchecked")
 	public static Series obtainSeries(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
-		Iterator iter = seriesBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iter = seriesBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			return (Series)iter.next();
 		}

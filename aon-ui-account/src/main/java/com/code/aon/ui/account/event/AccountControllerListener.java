@@ -13,7 +13,7 @@ public class AccountControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Account account = (Account) event.getController().getTo();
-		String id = account.getId();
+		String id = account.getCode();
 		if (id.length() > 4) {
 			id = id.substring(0,3);
 			if ("40".equals(id) || "41".equals(id) || "42".equals(id) || "43".equals(id)) {
@@ -27,7 +27,7 @@ public class AccountControllerListener extends ControllerAdapter {
 		try {
 			AccountController ac = (AccountController) event.getController();
 			if ( ac.getOrderAlias() == null ) {
-					ac.getCriteria().addOrder( ac.getManagerBean().getFieldName(IEntityAlias.ACCOUNT_ID) );
+					ac.getCriteria().addOrder( ac.getFieldName(IEntityAlias.ACCOUNT_CODE) );
 			} else {
 				ac.getCriteria().addOrder( ac.getOrderAlias() );
 			}

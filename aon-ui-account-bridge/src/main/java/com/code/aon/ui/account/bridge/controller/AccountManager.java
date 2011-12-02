@@ -35,4 +35,5 @@ public class AccountManager extends AccountController {
 		super.onEditSearch(event);
 		setBackAction(null);
 	}
+
 }

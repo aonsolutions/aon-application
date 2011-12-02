@@ -52,7 +52,7 @@ public class AmortizationController extends BasicController {
 			Account a = am.getAmortizationType().getFixedAssetAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), a.getId() + IAccountingConstants.ASTERISK);
+			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
 			criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {
@@ -72,7 +72,7 @@ public class AmortizationController extends BasicController {
 			Account a = am.getAmortizationType().getAccumulatedAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), a.getId() + IAccountingConstants.ASTERISK);
+			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
 			criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {
@@ -92,7 +92,7 @@ public class AmortizationController extends BasicController {
 			Account a = am.getAmortizationType().getAllocationAccount();
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Criteria criteria = new Criteria();
-			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), a.getId() + IAccountingConstants.ASTERISK);
+			criteria.addExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), a.getCode() + IAccountingConstants.ASTERISK);
 			criteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED), true);
 			return getAccounts(criteria);
 		} catch (ManagerBeanException e) {

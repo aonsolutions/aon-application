@@ -26,7 +26,7 @@ public class StatementDetailListener extends ControllerAdapter {
 			Criteria criteria = c.getCriteria();
 			
 			if (params.getPeriod() != null && params.getPeriod().getId() != null) {
-				criteria.addEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD), params.getPeriod().getId());
+				criteria.addEqualExpression(c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), params.getPeriod().getId());
 			}
 			String alias = c.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE);
 			if (params.getFromDate() != null) {

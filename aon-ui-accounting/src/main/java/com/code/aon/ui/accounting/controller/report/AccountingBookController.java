@@ -46,7 +46,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.report.ReportException;
-import com.code.aon.ui.accounting.IAccountingConstants;
 import com.code.aon.ui.accounting.controller.AccountRegeneratorController;
 import com.code.aon.ui.accounting.controller.AccountingCollectionsController;
 import com.code.aon.ui.accounting.controller.balance.BalanceSheetController;
@@ -321,7 +320,7 @@ public class AccountingBookController implements ICollectionProvider{
 			String chars = "!\"·$%&/()=?¿'¡+`^*Ç{}[]-_";
 			name = StringUtils.replaceChars(name, chars, "");
 			if (StringUtils.isEmpty(name)) {
-				name = getPeriod().getId();
+				name = getPeriod().getName();
 			}
 			res.setHeader("Content-Disposition", "attachment; filename=\""+name+".zip\";");
 			bookList = new LinkedList<Book>();			
@@ -471,7 +470,7 @@ public class AccountingBookController implements ICollectionProvider{
 			IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
 			Criteria c = new Criteria();
 			if (getPeriod() != null) {
-				c.addEqualExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), getPeriod().getId());	
+				c.addEqualExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), getPeriod().getId());	
 			}
 			c.addNullExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_JOURNAL));
 			int count = bean.getCount(c);

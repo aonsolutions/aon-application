@@ -78,8 +78,8 @@ public class ExpenseInvoiceDetailController extends InvoiceDetailController {
 		if (creditorAccount != null) {
 			IManagerBean helperBean = BeanManager.getManagerBean(AccountHelper.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_ID), creditorAccount.getId());
-			String balancingAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_ID);
+			criteria.addEqualExpression(helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_CODE), creditorAccount.getCode());
+			String balancingAlias = helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_BALANCING_ACCOUNT_CODE);
 			criteria.addExpression(ExpressionUtilities.getLikeExpression(balancingAlias, "6%"));	
 			criteria.addOrder(helperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_COUNTER), false);
 			List<ITransferObject> helperList = helperBean.getList(criteria);

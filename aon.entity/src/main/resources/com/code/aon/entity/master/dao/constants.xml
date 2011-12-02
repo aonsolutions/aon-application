@@ -2,8 +2,13 @@
 <dao>
 	<!-- ** AON ACCOUNTING **************************************************** -->
 	<bean class="com.code.aon.entity.master.AccountEntryDetail" sqlName="account_entry_detail">
-		<alias names="accountEntry_id,accountEntry_type,accountEntry_entryDate,accountEntry_accountPeriod,accountEntry_securityLevel,accountEntry_journal,account_id,balancingAccount_id,concept,credit,debit,id,line,documentNumber" />
-		<hibernate names="accountEntry.id,accountEntry.type,accountEntry.entryDate,accountEntry.accountPeriod,accountEntry.securityLevel,accountEntry.journal,account.id,balancingAccount.id,concept,credit,debit,id,line,documentNumber" />
+		<alias names="accountEntry_id,accountEntry_type,accountEntry_entryDate,accountEntry_accountPeriod_id,accountEntry_securityLevel,accountEntry_journal,account_id,account_code,account_description,balancingAccount_id,balancingAccount_code,balancingAccount_description,concept,credit,debit,id,line,documentNumber" />
+		<hibernate names="accountEntry.id,accountEntry.type,accountEntry.entryDate,accountEntry.accountPeriod.id,accountEntry.securityLevel,accountEntry.journal,account.id,account.code,account.description,balancingAccount.id,balancingAccount.code,balancingAccount.description,concept,credit,debit,id,line,documentNumber" />
+	</bean>
+
+	<bean class="com.code.aon.entity.master.AccountHelper" sqlName="account_helper">
+		<hibernate names="account.id,account.code,account.description,balancingAccount.id,balancingAccount.code,balancingAccount.description,counter,id" />
+		<alias     names="account_id,account_code,account_description,balancingAccount_id,balancingAccount_code,balancingAccount_description,counter,id" />
 	</bean>
 
 	<bean class="com.code.aon.entity.master.Amortization" sqlName="amortization">

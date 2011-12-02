@@ -100,7 +100,7 @@ public class LoanFeeEntryController {
 				IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 				AccountEntry entry = new AccountEntry();
 				entry.setEntryDate(getEntry().getFeeDate());
-				entry.setAccountPeriod(getEntry().getFeePeriod().getId());
+				entry.setAccountPeriod(getEntry().getFeePeriod());
 				entry.setType(AccountEntryType.LOAN_FEE);
 				entry.setSecurityLevel(getEntry().getLoan().getSecurityLevel());
 				entry = (AccountEntry)entryBean.insert(entry);
@@ -204,7 +204,7 @@ public class LoanFeeEntryController {
 			SummaryProvider sp = new SummaryProvider();
 			SummaryProviderParameters params = new SummaryProviderParameters();
 			if (getRelatedAccount() != null) {
-				params.setAccountExpression( getRelatedAccount().getId());
+				params.setAccountExpression( getRelatedAccount().getCode());
 				params.setAccountLevel(5);
 				params.setFromDate(getEntry().getLoan().getLoanDate());
 				params.setSecurityLevel(getEntry().getLoan().getSecurityLevel());
@@ -225,7 +225,7 @@ public class LoanFeeEntryController {
 			StatementController c = (StatementController) AonUtil.getRegisteredBean(IAccountingConstants.STATEMENT_CONTROLLER_NAME);
 			c.onReset(event);
 			SummaryProviderParameters spp = new SummaryProviderParameters();
-			spp.setAccountExpression(account.getId());
+			spp.setAccountExpression(account.getCode());
 			
 			Period period = getAccountingUtil().getPeriod( getEntry().getFeeDate() );
 			spp.setPeriod(period);
@@ -235,8 +235,8 @@ public class LoanFeeEntryController {
 			c.setParams(spp);
 			c.onEditSearch(event);
 			Criteria criteria = c.getCriteria();
-			String alias = c.getFieldName(IEntityAlias.ACCOUNT_ID);
-			criteria.addExpression(alias, account.getId() + IAccountingConstants.ASTERISK);
+			String alias = c.getFieldName(IEntityAlias.ACCOUNT_CODE);
+			criteria.addExpression(alias, account.getCode() + IAccountingConstants.ASTERISK);
 			alias = c.getFieldName(IEntityAlias.ACCOUNT_ENTRY_ENABLED);
 			criteria.addExpression(ExpressionUtilities.getEqualExpression(alias, true));
 			c.onSearch(event);

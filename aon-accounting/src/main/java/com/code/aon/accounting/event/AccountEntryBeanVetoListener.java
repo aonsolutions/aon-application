@@ -33,7 +33,7 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
         try {
 	        IManagerBean accEntryBean = BeanManager.getManagerBean(AccountEntry.class);
 	        Criteria criteria = new Criteria();
-	        criteria.addEqualExpression(accEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), to.getAccountPeriod()); 
+	        criteria.addEqualExpression(accEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), to.getAccountPeriod().getId()); 
 	        Projection projection = Projection.max(accEntryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_JOURNAL));
 	        Object value = accEntryBean.getUniqueResult(projection, criteria);
 			int journal = (value != null) ? ((Integer) value).intValue() : 0;
@@ -51,33 +51,33 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 	private void validateEntryDateInPeriod(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException{
 		AccountEntry to = (AccountEntry)evt.getTo();
 		Date toDate = to.getEntryDate();
-		String toPeriod = to.getAccountPeriod();
+		Period toPeriod = to.getAccountPeriod();
 		Date pFrom, pTo;
 		try {
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
 	        Criteria criteria = new Criteria();
-            criteria.addEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), toPeriod);
+            criteria.addEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_ID), toPeriod.getId());
             Period period = (Period)periodBean.getList(criteria).get(0);
         	pFrom = period.getInitiationDate();
     		pTo = period.getDeadline();
     		if (!DateUtils.isSameDay(toDate, pFrom) && !DateUtils.isSameDay(toDate, pTo)
     				&& (toDate.before(pFrom) || toDate.after(pTo))
    				) {
-            	throw new ManagerBeanVetoListenerException("La Fecha del Asiento no está dentro del Periodo "+period.getId());
+            	throw new ManagerBeanVetoListenerException("La Fecha del Asiento no está dentro del periodo asignado al ejercicio "+period.getName());
             }
             if (period.getStatus() == AccountPeriodStatus.INACTIVE) {
-            	throw new ManagerBeanVetoListenerException("El Ejercicio "+period.getId() + " está inactivo.");
+            	throw new ManagerBeanVetoListenerException("El Ejercicio "+period.getName() + " está inactivo.");
             }
             if (period.getStatus() == AccountPeriodStatus.OPERATING 
            		&& to.getType() != AccountEntryType.OPERATING // Se puede generar otro asiento de explotacion, dependiendo del SecurityLevel 
            		&& to.getType() != AccountEntryType.CLOSING // Después de explotacion sólo puede haber un asiento de cierre
            		) {
-            	throw new ManagerBeanVetoListenerException("No se permite la introducción o modificación de asientos en el ejercicio "+period.getId() + " porque ya se ha realizado el asiento de explotación.");
+            	throw new ManagerBeanVetoListenerException("No se permite la introducción o modificación de asientos en el ejercicio "+period.getName() + " porque ya se ha realizado el asiento de explotación.");
             }
             if (period.getStatus() == AccountPeriodStatus.CLOSED
             	&& to.getType() != AccountEntryType.CLOSING // Se puede generar otro asiento de explotacion, dependiendo del SecurityLevel
             	) {
-            	throw new ManagerBeanVetoListenerException("No se permite la introducción o modificación de asientos en el ejercicio "+period.getId() + " porque ya se ha realizado el asiento de cierre.");
+            	throw new ManagerBeanVetoListenerException("No se permite la introducción o modificación de asientos en el ejercicio "+period.getName() + " porque ya se ha realizado el asiento de cierre.");
             }
         } catch (ManagerBeanException e) {
             throw new ManagerBeanVetoListenerException(e);
@@ -101,7 +101,7 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 				to.getType() == AccountEntryType.OPERATING || 
 				to.getType() == AccountEntryType.CLOSING) {
 				IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-				Period period = (Period) periodBean.get(to.getAccountPeriod());
+				Period period = (Period) periodBean.get(to.getAccountPeriod().getId());
 				AccountingUtil au = new AccountingUtil();
 				if (to.getType() == AccountEntryType.OPENING) {
 					if (au.existsEntry(period, AccountEntryType.OPENING, null, to.getId())) {
@@ -111,7 +111,6 @@ public class AccountEntryBeanVetoListener extends ManagerBeanVetoListenerAdapter
 						// Si después de borrar apertura, no existe otro apertura.
 						period.setStatus(AccountPeriodStatus.ACTIVE);	
 					}
-				} else if (to.getType() == AccountEntryType.OPERATING) {
 					if (au.existsEntry(period, AccountEntryType.OPERATING, null, to.getId())) {
 						// Si después de borrar explotación, existe otro explotación, se mantiene el estado.
 						period.setStatus(AccountPeriodStatus.OPERATING);

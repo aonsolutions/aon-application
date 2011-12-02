@@ -39,6 +39,7 @@ public class AmortizationTypeExporter {
 	private static final String AMORTIZATION_TYPE = "amortizationType";
 	
 	private static final String ID = "id";
+	private static final String CODE = "code";
 	private static final String DESCRIPTION = "description";
 	private static final String FIXED_ASSET_ACCOUNT = "fixedAssetAccount";
 	private static final String ACUMULATED_ACCOUNT = "accumulatedAccount";
@@ -107,8 +108,8 @@ public class AmortizationTypeExporter {
 
 			Element fixedAssetAccount = xmldoc.createElement(FIXED_ASSET_ACCOUNT);
 			if (a.getFixedAssetAccount() != null) {
-				id = xmldoc.createElement(ID);
-				id.appendChild(xmldoc.createTextNode(a.getFixedAssetAccount().getId()));
+				id = xmldoc.createElement(CODE);
+				id.appendChild(xmldoc.createTextNode(a.getFixedAssetAccount().getCode()));
 				fixedAssetAccount.appendChild(id);
 				description = xmldoc.createElement(DESCRIPTION);
 				description.appendChild(xmldoc.createCDATASection(a.getFixedAssetAccount().getDescription()));
@@ -121,8 +122,8 @@ public class AmortizationTypeExporter {
 
 			Element accumulatedAccount = xmldoc.createElement(ACUMULATED_ACCOUNT);
 			if (a.getAccumulatedAccount() != null) {
-				id = xmldoc.createElement(ID);
-				id.appendChild(xmldoc.createTextNode(a.getAccumulatedAccount().getId()));
+				id = xmldoc.createElement(CODE);
+				id.appendChild(xmldoc.createTextNode(a.getAccumulatedAccount().getCode()));
 				accumulatedAccount.appendChild(id);
 				description = xmldoc.createElement(DESCRIPTION);
 				description.appendChild(xmldoc.createCDATASection(a.getAccumulatedAccount().getDescription()));
@@ -135,8 +136,8 @@ public class AmortizationTypeExporter {
 			
 			Element allocationAccount = xmldoc.createElement(ALLOCATION_ACCOUNT);
 			if (a.getAllocationAccount() != null) {
-				id = xmldoc.createElement(ID);
-				id.appendChild(xmldoc.createTextNode(a.getAllocationAccount().getId()));
+				id = xmldoc.createElement(CODE);
+				id.appendChild(xmldoc.createTextNode(a.getAllocationAccount().getCode()));
 				allocationAccount.appendChild(id);
 				description = xmldoc.createElement(DESCRIPTION);
 				description.appendChild(xmldoc.createCDATASection(a.getAllocationAccount().getDescription()));

@@ -46,6 +46,7 @@ import com.code.aon.finance.BankStatement;
 import com.code.aon.finance.BankStatementLink;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
+import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
@@ -677,7 +678,7 @@ public class BankStatementController extends BasicController implements IFinance
 	}
 
 	public void onCheckSelectedByAccount(ActionEvent event) throws ManagerBeanException {
-		if (getAccount() == null || StringUtils.isEmpty(getAccount().getId())) {
+		if (getAccount() == null || StringUtils.isEmpty(getAccount().getCode())) {
 			addMessage("Cuenta Contable: Error de Validación: Valor es necesario.");
 			throw new AbortProcessingException();
 		}
@@ -947,7 +948,7 @@ public class BankStatementController extends BasicController implements IFinance
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
 		for (int key=1; key<=3 && to.isPending(); key++) {
 	        String source = Integer.toString(StatementLinkSource.ACCOUNT.ordinal());
-	        String sourceId = bankAccount.getId();
+	        String sourceId = bankAccount.getCode();
 	        Expression expr1 = ExpressionUtilities.getExpression(source, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE));
 	        Expression expr2 = ExpressionUtilities.getExpression(sourceId, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE_ID));
 	        Expression accountExpr = ExpressionUtilities.getAndExpression(expr1, expr2);
@@ -1227,7 +1228,7 @@ public class BankStatementController extends BasicController implements IFinance
 		Account bankAccount = getWriter().obtainPaymentAccount(to.getRegistryBank(), null);
 		IManagerBean statementLinkBean = BeanManager.getManagerBean(BankStatementLink.class);
         String source = Integer.toString(StatementLinkSource.ACCOUNT.ordinal());
-        String sourceId = bankAccount.getId();
+        String sourceId = bankAccount.getCode();
         Expression expr1 = ExpressionUtilities.getExpression(source, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE));
         Expression expr2 = ExpressionUtilities.getExpression(sourceId, statementLinkBean.getFieldName(IFinanceAlias.BANK_STATEMENT_LINK_SOURCE_ID));
         Expression accountExpr = ExpressionUtilities.getAndExpression(expr1, expr2);
@@ -1555,7 +1556,8 @@ public class BankStatementController extends BasicController implements IFinance
 							} else {
 								FinanceBatch fBatch = financeBatchList.get(0);
 								recordingTo.setBalancingConcept(fBatch.getDescription());
-								recordingTo.setFBatchDetailList(fBatch.getDetailList());
+								List<?> details = fBatch.getDetailList();
+								recordingTo.setFBatchDetailList( (List<FinanceBatchDetail>) details );
 								entry = getWriter().recordFBatch(recordingTo, fBatch, entry);
 							}
 						} else {

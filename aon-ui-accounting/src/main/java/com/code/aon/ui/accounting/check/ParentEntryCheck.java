@@ -1,5 +1,6 @@
 package com.code.aon.ui.accounting.check;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 
 public class ParentEntryCheck implements IAccountCheck {
@@ -30,11 +32,13 @@ public class ParentEntryCheck implements IAccountCheck {
 			for (ITransferObject to: toList) {
 				Account account = (Account) to;
 				if(account.getLevel()!=1){
-					String id;
+					String code;
 					int lenght = calculateLevel(account);
-					id = account.getId().substring(0, lenght);
-					ITransferObject parent = accountBean.get(id);
-					if(parent == null){
+					code = account.getCode().substring(0, lenght);
+					Criteria c = new Criteria();
+					c.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), code);
+					Iterator<ITransferObject> iter = accountBean.getList(c).iterator(); 
+					if(!iter.hasNext()){
 						ParentCheckEntry e = new ParentCheckEntry();
 						e.setMessage( parentCheckEntryMsg );
 						e.setTo(account);

@@ -18,7 +18,7 @@ public class ConsoleInvoicingFeedBack implements IInvoicingFeedBack {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List getMessages() {
+	public List<String> getMessages() {
 		return Collections.EMPTY_LIST;
 	}
 

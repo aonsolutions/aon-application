@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="781"/>
+	<property name="ireport.y" value="946"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -138,7 +138,7 @@
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-28" x="0" y="293" width="535" height="83">
-					<printWhenExpression><![CDATA[new Boolean($P{period} != null && $P{period}.getId() != null)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($P{period} != null && $P{period}.getName() != null)]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -149,7 +149,7 @@
 				<textElement textAlignment="Center">
 					<font size="24" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{period}.getId()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{period}.getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-17" x="65" y="38" width="435" height="43"/>
@@ -295,7 +295,7 @@
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-28" x="434" y="2" width="100" height="13">
-					<printWhenExpression><![CDATA[new Boolean($P{period} != null && $P{period}.getId() != null)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($P{period} != null && $P{period}.getName() != null)]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -306,7 +306,7 @@
 				<textElement textAlignment="Right">
 					<font size="8" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{period}.getId()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{period}.getName()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-29" x="429" y="15" width="42" height="13"/>
@@ -431,7 +431,7 @@
 				<textElement verticalAlignment="Middle">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{account}.getId()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{account}.getCode()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-10" x="320" y="0" width="66" height="11"/>

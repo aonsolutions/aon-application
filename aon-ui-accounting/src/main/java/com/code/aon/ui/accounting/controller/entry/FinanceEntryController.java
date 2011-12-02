@@ -513,7 +513,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 
 	private void mergeAccountEntry() throws ManagerBeanException {
 		IManagerBean accountEntryBean = BeanManager.getManagerBean(AccountEntry.class);
-		accountEntry.setAccountPeriod(getPeriod().getId());
+		accountEntry.setAccountPeriod(getPeriod());
 		accountEntry.setEntryDate(getDate());
 		accountEntry.setSecurityLevel(getSecurityLevel());
 		accountEntry = (AccountEntry)accountEntryBean.update(accountEntry);
@@ -685,8 +685,7 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		} 
 		setAccountEntry(entry);
 		setPayment(entry.getType().equals(AccountEntryType.PAYMENT) ? true : false);
-		setPeriod(new Period());
-		getPeriod().setId(entry.getAccountPeriod());
+		setPeriod(entry.getAccountPeriod());
 		setDate(entry.getEntryDate());
 		setSecurityLevel(entry.getSecurityLevel());
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -696,13 +695,13 @@ public class FinanceEntryController implements ISpecialAccountEntry{
 		iter = accountEntryDetailBean.getList(criteria).iterator();
 		if (iter.hasNext()) {
 			AccountEntryDetail accountEntryDetail = (AccountEntryDetail)iter.next();
-			if (accountEntryDetail.getAccount().getId().substring(0, 3).equals(AccountConstants.CASH_ACCOUNT_PREFIX.substring(0, 3))) {
+			if (accountEntryDetail.getAccount().getCode().substring(0, 3).equals(AccountConstants.CASH_ACCOUNT_PREFIX.substring(0, 3))) {
 				setDeposit(1);
 				setRegistryBank(null);
-				setPayMethodTypeDetail(getAccountBridgeUtil().obtainPayMethodTypeDetail(accountEntryDetail.getAccount().getId()));
+				setPayMethodTypeDetail(getAccountBridgeUtil().obtainPayMethodTypeDetail(accountEntryDetail.getAccount().getCode()));
 			} else {
 				setDeposit(0);
-				setRegistryBank(getAccountBridgeUtil().obtainRBank(accountEntryDetail.getAccount().getId()));
+				setRegistryBank(getAccountBridgeUtil().obtainRBank(accountEntryDetail.getAccount().getCode()));
 				setPayMethodTypeDetail(null);
 			}
 

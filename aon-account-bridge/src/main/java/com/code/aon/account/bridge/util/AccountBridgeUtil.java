@@ -65,10 +65,10 @@ public class AccountBridgeUtil {
 			}
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
-			account.setId(getAccountUtil().obtainNextAccountId(AccountConstants.BANK_ACCOUNT_PREFIX));
+			account.setCode(getAccountUtil().obtainNextAccountId(AccountConstants.BANK_ACCOUNT_PREFIX));
 			account.setDescription(rBank.getFullName());
 			account.setEntryEnabled(true);
-			account.setAlias(account.getId());
+			account.setAlias(account.getCode());
 			account = (Account) accountBean.insert(account);
 			RegistryBankAccount rBankAccount = new RegistryBankAccount();
 			rBankAccount.setAccount(account);
@@ -157,7 +157,7 @@ public class AccountBridgeUtil {
 					IManagerBean customerAccountBean = BeanManager.getManagerBean(CustomerAccount.class);
 					IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 					Account account = new Account();
-					account.setId(getAccountUtil().obtainNextAccountId(AccountConstants.CUSTOMER_ACCOUNT_PREFIX));
+					account.setCode(getAccountUtil().obtainNextAccountId(AccountConstants.CUSTOMER_ACCOUNT_PREFIX));
 					account.setDescription(registry.getFullName());
 					account.setEntryEnabled(true);
 					account.setAlias(registry.getAlias());
@@ -204,7 +204,7 @@ public class AccountBridgeUtil {
 					IManagerBean supplierAccountBean = BeanManager.getManagerBean(SupplierAccount.class);
 					IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 					Account account = new Account();
-					account.setId(getAccountUtil().obtainNextAccountId(AccountConstants.SUPPLIER_ACCOUNT_PREFIX));
+					account.setCode(getAccountUtil().obtainNextAccountId(AccountConstants.SUPPLIER_ACCOUNT_PREFIX));
 					account.setDescription(registry.getFullName());
 					account.setEntryEnabled(true);
 					account.setAlias(registry.getAlias());
@@ -251,7 +251,7 @@ public class AccountBridgeUtil {
 					IManagerBean creditorAccountBean = BeanManager.getManagerBean(CreditorAccount.class);
 					IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 					Account account = new Account();
-					account.setId(getAccountUtil().obtainNextAccountId(AccountConstants.CREDITOR_ACCOUNT_PREFIX));
+					account.setCode(getAccountUtil().obtainNextAccountId(AccountConstants.CREDITOR_ACCOUNT_PREFIX));
 					account.setDescription(registry.getFullName());
 					account.setEntryEnabled(true);
 					account.setAlias(registry.getAlias());
@@ -282,10 +282,10 @@ public class AccountBridgeUtil {
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
 			String prefix = AccountConstants.SHORT_TERM_LOAN_ACCOUNT_PREFIX;
-			account.setId(getAccountUtil().obtainNextAccountId(prefix));
+			account.setCode(getAccountUtil().obtainNextAccountId(prefix));
 			account.setDescription(loan.getDescription());
 			account.setEntryEnabled(true);
-			account.setAlias(account.getId());
+			account.setAlias(account.getCode());
 			account = (Account) accountBean.insert(account);
 			LoanAccount loanAccount = new LoanAccount();
 			loanAccount.setAccount(account);

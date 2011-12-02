@@ -93,14 +93,13 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private RegistryAddress obtainAddress(Integer id) {
 		try {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
 			criteria.addOrder(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), true);
-			Iterator iter = rAddressBean.getList(criteria, 0, 1).iterator();
+			Iterator<ITransferObject> iter = rAddressBean.getList(criteria, 0, 1).iterator();
 			if(iter.hasNext()){
 				return (RegistryAddress)iter.next();
 			}
@@ -110,8 +109,7 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public Collection getCollection() {
+	public Collection<Invoice> getCollection() {
 		return invoicingCollection;
 	}
 	

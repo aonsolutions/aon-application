@@ -37,7 +37,7 @@ import com.code.aon.ui.util.AonUtil;
 public class AccountExporter {
 	private static final String ROOT = "accounts";
 	private static final String ACCOUNT = "account";
-	private static final String ID = "id";
+	private static final String CODE = "code";
 	private static final String DESCRIPTION = "description";
 	private static final String ALIAS = "alias";
 
@@ -116,7 +116,7 @@ public class AccountExporter {
 	public void export(OutputStream out) throws TransformerException, ManagerBeanException, ParserConfigurationException {
 		IManagerBean bean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addOrder(bean.getFieldName(IEntityAlias.ACCOUNT_ID));
+		criteria.addOrder(bean.getFieldName(IEntityAlias.ACCOUNT_CODE));
 		List<ITransferObject> list = bean.getList(criteria);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
@@ -128,8 +128,8 @@ public class AccountExporter {
 			if (a.getLevel() < 5 || isExportable(a)) {
 				Element account = xmldoc.createElement(ACCOUNT);
 	
-				Element id = xmldoc.createElement(ID);
-				id.appendChild(xmldoc.createTextNode(a.getId()));
+				Element id = xmldoc.createElement(CODE);
+				id.appendChild(xmldoc.createTextNode(a.getCode()));
 				account.appendChild(id);
 	
 				Element description = xmldoc.createElement(DESCRIPTION);
@@ -162,11 +162,11 @@ public class AccountExporter {
 			isExportCustomerAccount() && isExportSupplierAccount()) {
 			return true;
 		}
-		String id = a.getId();
-		if (!isExportBankAccount() && id.startsWith("572") ) return false;
-		if (!isExportCreditorAccount() && id.startsWith("410") ) return false;
-		if (!isExportCustomerAccount() && id.startsWith("430") ) return false;
-		if (!isExportSupplierAccount() && id.startsWith("400") ) return false;
+		String code = a.getCode();
+		if (!isExportBankAccount() && code.startsWith("572") ) return false;
+		if (!isExportCreditorAccount() && code.startsWith("410") ) return false;
+		if (!isExportCustomerAccount() && code.startsWith("430") ) return false;
+		if (!isExportSupplierAccount() && code.startsWith("400") ) return false;
 		return true;
 	}
 

@@ -8,6 +8,7 @@ import com.code.aon.accounting.AccountEntryDetail;
 import com.code.aon.accounting.dao.IAccountingAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
@@ -26,12 +27,11 @@ public class AccountEntryInvoiceBeanListener extends ManagerBeanListenerAdapter 
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void removeAccountEntryDetails(AccountEntry accountEntry) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID), accountEntry.getId());
-		Iterator iter = accountEntryDetailBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iter = accountEntryDetailBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			AccountEntryDetail accEntryDetail = (AccountEntryDetail) iter.next();
 			accountEntryDetailBean.remove(accEntryDetail);

@@ -110,7 +110,7 @@ public class AccountEntryInvoiceWriter {
 	
 	public List<AccountEntryDetail> recordInvoice(Invoice invoice, boolean save) throws ManagerBeanException {
 		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod(getAccountingUtil().obtainPeriod(invoice.getIssueDate()).getId());
+		entry.setAccountPeriod(getAccountingUtil().obtainPeriod(invoice.getIssueDate()));
 		entry.setEntryDate(invoice.getIssueDate());
 		entry.setJournal(null);
 		AccountEntryType accountEntryType = null;
@@ -249,13 +249,16 @@ public class AccountEntryInvoiceWriter {
 			if (iter.hasNext()) {
 				ApplicationParameter param = (ApplicationParameter) iter.next();
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-				Criteria accountCriteria = new Criteria();
-				accountCriteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), param.getValue());
-				Iterator<?> accountIter = accountBean.getList(accountCriteria).iterator();
-				if (accountIter.hasNext()) {
-					salesDefaultAccount = (Account) accountIter.next();
+				try {
+					Integer accountId = Integer.parseInt(param.getValue());	
+					salesDefaultAccount = (Account) accountBean.get(accountId);
+				} catch (NumberFormatException e) {
+					throw new ManagerBeanException("Revise el valor de la cuenta contable de ventas en los Parámetros Contables.");
 				}
 			}
+		}
+		if (salesDefaultAccount == null) {
+			throw new ManagerBeanException("Revise el valor de la cuenta contable de ventas en los Parámetros Contables.");
 		}
 		return salesDefaultAccount;
 	}
@@ -269,13 +272,16 @@ public class AccountEntryInvoiceWriter {
 			if (iter.hasNext()) {
 				ApplicationParameter param = (ApplicationParameter) iter.next();
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-				Criteria accountCriteria = new Criteria();
-				accountCriteria.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), param.getValue());
-				Iterator<?> accountIter = accountBean.getList(accountCriteria).iterator();
-				if (accountIter.hasNext()) {
-					purchaseDefaultAccount = (Account) accountIter.next();
+				try {
+					Integer accountId = Integer.parseInt(param.getValue());	
+					purchaseDefaultAccount = (Account) accountBean.get(accountId);
+				} catch (NumberFormatException e) {
+					throw new ManagerBeanException("Revise el valor de la cuenta contable de compras en los Parámetros Contables.");
 				}
 			}
+		}
+		if (purchaseDefaultAccount == null) {
+			throw new ManagerBeanException("Revise el valor de la cuenta contable de compras en los Parámetros Contables.");
 		}
 		return purchaseDefaultAccount;
 	}

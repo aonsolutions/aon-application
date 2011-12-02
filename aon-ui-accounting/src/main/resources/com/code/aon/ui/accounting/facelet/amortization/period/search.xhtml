@@ -21,7 +21,8 @@
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{periodAmortization.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="periodAmortization_list" />				
-				
+					<ui:param name="skipAfterSearch" value="true" />
+					
 					<aon:outputLabel for="Amortization_period"
 						value="#{accountingBundle.accounting_period}" />
 					<aon:selectOneMenu id="Amortization_period" required="true" 

@@ -155,7 +155,7 @@ public class JournalReportController extends BasicController implements IAccount
 			if (period != null) {
 				criteria
 						.addEqualExpression(
-								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD),
+								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID),
 								period.getId());
 			}
 			if (getFromDate() != null) {
@@ -164,7 +164,7 @@ public class JournalReportController extends BasicController implements IAccount
 								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),
 								getFromDate());
 			}
-			if (getToDate() != null) {
+			if (getToDate() != null) {	
 				criteria.addLessThanOrEqualExpression(
 								getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE),
 								getToDate());
@@ -172,7 +172,7 @@ public class JournalReportController extends BasicController implements IAccount
 			if (getSecurityLevel() != null) {
 				criteria.addEqualExpression(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_SECURITY_LEVEL), getSecurityLevel());
 			}
-			getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD));
+			getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID));
 			if (getOrder() == 0 ) {
 				getCriteria().addOrder(getFieldName(IAccountingAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID));
 			} else if (getOrder() == 1) {
@@ -245,7 +245,7 @@ public class JournalReportController extends BasicController implements IAccount
 				IManagerBean bean = BeanManager.getManagerBean(AccountEntry.class);
 				Criteria c = new Criteria();
 				if (getPeriod() != null) {
-					c.addEqualExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), getPeriod().getId());	
+					c.addEqualExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), getPeriod().getId());	
 				}
 				c.addNullExpression( bean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_JOURNAL));
 				int count = bean.getCount(c);

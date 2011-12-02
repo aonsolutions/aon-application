@@ -267,15 +267,14 @@ public class InvoiceDetail implements ITransferObject, ICalculable, IStockable {
 	}
 
 	@Transient
-	@SuppressWarnings("unchecked")
-	public List getTaxBreakDowns() {
+	public List<TaxBreakDown> getTaxBreakDowns() {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
 		try {
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), getId());
 			criteria.addOrder(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_TAX_TYPE));
-			Iterator iter = invoiceTaxBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iter = invoiceTaxBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				InvoiceTax invoiceTax = (InvoiceTax)iter.next();
 				TaxBreakDown taxBreakDown = new TaxBreakDown();

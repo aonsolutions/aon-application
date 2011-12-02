@@ -238,14 +238,14 @@ public class InvoiceRecorder implements ITransferObject {
 					} else {
 						ProductAccount expenseAccount = (ProductAccount) expenseAccountList.get(0);
 						Criteria c = new Criteria();
-						c.addEqualExpression(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_ID), getAccount().getId());
+						c.addEqualExpression(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_ACCOUNT_CODE), getAccount().getCode());
 						c.addOrder(accountHelperBean.getFieldName(IAccountingAlias.ACCOUNT_HELPER_COUNTER), false);
 						List<ITransferObject> ahs = accountHelperBean.getList(c);
 						AccountHelper first = null;
 						boolean used = false;
 						for (ITransferObject aht: ahs) {
 							AccountHelper ah = (AccountHelper) aht;
-							if (first == null && ah.getBalancingAccount().getId().startsWith("6") ) {
+							if (first == null && ah.getBalancingAccount().getCode().startsWith("6") ) {
 								first = ah;
 							}
 							Account balancingAccount = ah.getBalancingAccount();

@@ -39,10 +39,18 @@
 					<aon:inputText id="AccountEntry_id" size="10"
 						valueChangeListener="#{accountEntry.addExpression}" />
 
-					<aon:outputLabel for="AccountEntry_accountPeriod"
+					<aon:outputLabel for="AccountEntry_accountPeriod_id"
 						value="#{accountingBundle.accounting_period}" />
+					<aon:selectOneMenu id="AccountEntry_accountPeriod_id"
+						value="#{accountingCollections.period}"
+						valueChangeListener="#{accountEntry.addIdEqualExpression}">
+						<f:selectItem itemLabel="  ----  " itemValue="#{null}" />
+						<f:selectItems value="#{accountingCollections.allAccountPeriods}" />
+					</aon:selectOneMenu>
+<!-- 
 					<aon:inputText id="AccountEntry_accountPeriod" size="10"
 						valueChangeListener="#{accountEntry.addExpression}" />
+ -->						
 
 					<aon:outputLabel for="AccountEntry_type"
 						value="#{bundle.aon_type}" />
@@ -87,9 +95,9 @@
 					
 					<!-- busqueda por lineas -->
 					
-					<aon:outputLabel for="AccountEntry_detail_account_id"
+					<aon:outputLabel for="AccountEntry_detail_account_code"
 						value="#{accountBundle.account_account}" />
-					<aon:inputText id="AccountEntry_detail_account_id" size="10"
+					<aon:inputText id="AccountEntry_detail_account_code" size="10"
 						valueChangeListener="#{accountEntry.addExpression}" />
 
 					<aon:outputLabel for="AccountEntry_detail_account_description"
@@ -112,9 +120,9 @@
 					<aon:inputText id="AccountEntry_detail_credit" size="10"
 						valueChangeListener="#{accountEntry.addExpression}" />
 					
-					<aon:outputLabel for="AccountEntry_detail_balancingAccount_id"
+					<aon:outputLabel for="AccountEntry_detail_balancingAccount_code"
 						value="#{accountingBundle.accounting_balancing_account}" />
-					<aon:inputText id="AccountEntry_detail_balancingAccount_id" size="10"
+					<aon:inputText id="AccountEntry_detail_balancingAccount_code" size="10"
 						valueChangeListener="#{accountEntry.addExpression}" />
 					
 					<aon:outputLabel for="AccountEntry_detail_documentNumber"

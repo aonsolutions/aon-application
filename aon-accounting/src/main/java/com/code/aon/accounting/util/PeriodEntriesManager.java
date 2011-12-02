@@ -1,5 +1,6 @@
 package com.code.aon.accounting.util;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,6 +24,7 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.entity.IEntityAlias;
 import com.code.aon.ql.Criteria;
 
 public class PeriodEntriesManager {
@@ -74,7 +76,7 @@ public class PeriodEntriesManager {
 					String msg = "Unable to rollback transaction!";
 					LOGGER.error(msg, e);
 				}
-				String msg = "Error al generar el asiento de explotación del ejercicio " + params.getPeriod() + ". (" + e.getMessage() + ")";
+				String msg = "Error al generar el asiento de explotación del ejercicio " + params.getPeriod().getName() + ". (" + e.getMessage() + ")";
 				LOGGER.error(msg, e);
 				throw new ManagerBeanException(msg);
 			} finally {
@@ -92,7 +94,7 @@ public class PeriodEntriesManager {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod(params.getPeriod().getId());
+		entry.setAccountPeriod(params.getPeriod());
 		entry.setEntryDate(params.getOperatingDate());
 		entry.setType(AccountEntryType.OPERATING);
 		entry.setSecurityLevel(securityLevel);
@@ -103,7 +105,7 @@ public class PeriodEntriesManager {
 		for (i = 0; i < list.size(); i++) {
 			AccountEntryDetail detail = new AccountEntryDetail();
 			Object[] data = (Object[]) list.get(i);
-			Account account = (Account) accountBean.get((String) data[0]);
+			Account account = (Account) accountBean.get((Integer) data[0]);
 			detail.setAccount(account);
 			detail.setAccountEntry(entry);
 			detail.setConcept(params.getOperatingConcept());
@@ -147,7 +149,7 @@ public class PeriodEntriesManager {
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), period.getId());
+		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), period.getId());
 		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE), type);
 		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
 		List<ITransferObject> list = entryBean.getList(criteria);
@@ -173,7 +175,7 @@ public class PeriodEntriesManager {
 			c.addLessThanExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_INITIATION_DATE), params.getPeriod().getInitiationDate());
 			c.addEqualExpression(periodBean.getFieldName(IAccountingAlias.PERIOD_STATUS), AccountPeriodStatus.CLOSED);
 			if (periodBean.getList(c).size() > 0) {
-				String msg = "No existe el asiento de apertura en el ejercicio " + params.getPeriod().getId() + ".";
+				String msg = "No existe el asiento de apertura en el ejercicio " + params.getPeriod().getName() + ".";
 				throw new ManagerBeanException(msg);
 			}
 		}
@@ -196,26 +198,35 @@ public class PeriodEntriesManager {
 	
 	private Account getResultAcount() throws ManagerBeanException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-		Account account = (Account) accountBean.get("129");
-		if (account == null) {
-			account = new Account();
-			account.setId("129");
+		Criteria c = new Criteria();
+		c.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "129");
+		Iterator<ITransferObject> iter = accountBean.getList(c).iterator();
+		if (!iter.hasNext()) {
+			Account account = new Account();
+			account.setCode("129");
 			account.setDescription("Resultados del ejercicio.");
 			accountBean.insert(account);
 		}
-		account = (Account) accountBean.get("1290");
-		if (account == null) {
-			account = new Account();
-			account.setId("1290");
+		c = new Criteria();
+		c.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "1290");
+		iter = accountBean.getList(c).iterator();
+		if (!iter.hasNext()) {
+			Account account = new Account();
+			account.setCode("1290");
 			account.setDescription("Resultados del ejercicio.");
 			accountBean.insert(account);
 		}
-		account = (Account) accountBean.get("129000000");
-		if (account == null) {
+		c = new Criteria();
+		c.addEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), "129000000");
+		iter = accountBean.getList(c).iterator();
+		Account account = null;
+		if (!iter.hasNext()) {
 			account = new Account();
-			account.setId("129000000");
+			account.setCode("129000000");
 			account.setDescription("Resultados del ejercicio.");
 			accountBean.insert(account);
+		} else {
+			account = (Account) iter.next();
 		}
 		return account;
 	}
@@ -295,7 +306,7 @@ public class PeriodEntriesManager {
 		validateParameters(AccountEntryType.CLOSING);
 		AccountingUtil util = new AccountingUtil();
 		if (!util.existsEntry(params.getPeriod(), AccountEntryType.OPERATING, SecurityLevel.OFFICIAL)) {
-			String msg = "No existe el asiento de explotación en el ejercicio " + params.getPeriod().getId() + ".";
+			String msg = "No existe el asiento de explotación en el ejercicio " + params.getPeriod().getName() + ".";
 			throw new ManagerBeanException(msg);
 		}
 	}
@@ -306,7 +317,7 @@ public class PeriodEntriesManager {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod(params.getPeriod().getId());
+		entry.setAccountPeriod(params.getPeriod());
 		entry.setEntryDate(params.getClosingDate());
 		entry.setType(AccountEntryType.CLOSING);
 		entry.setSecurityLevel(securityLevel);
@@ -316,7 +327,7 @@ public class PeriodEntriesManager {
 		for (i = 0; i < list.size(); i++) {
 			AccountEntryDetail detail = new AccountEntryDetail();
 			Object[] data = (Object[]) list.get(i);
-			Account account = (Account) accountBean.get((String) data[0]);
+			Account account = (Account) accountBean.get((Integer) data[0]);
 			detail.setAccount(account);
 			detail.setAccountEntry(entry);
 			detail.setConcept(params.getClosingConcept());
@@ -378,7 +389,7 @@ public class PeriodEntriesManager {
 					String msg = "Unable to rollback transaction!";
 					LOGGER.error(msg, e);
 				}
-				String msg = "Error al generar el asiento de apertura del ejercicio " + params.getOpeningPeriod() + ". (" + e.getMessage() + ")";
+				String msg = "Error al generar el asiento de apertura del ejercicio " + params.getOpeningPeriod().getName() + ". (" + e.getMessage() + ")";
 				LOGGER.error(msg, e);
 				throw new ManagerBeanException(msg);
 			} finally {
@@ -397,14 +408,14 @@ public class PeriodEntriesManager {
 		AccountEntry previous = null;
 		IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 		AccountEntry entry = new AccountEntry();
-		entry.setAccountPeriod(params.getOpeningPeriod().getId());
+		entry.setAccountPeriod(params.getOpeningPeriod());
 		entry.setEntryDate(params.getOpeningDate());
 		entry.setType(AccountEntryType.OPENING);
 		entry.setSecurityLevel(securityLevel);
 		entry = (AccountEntry) entryBean.insert(entry);
 
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), params.getPeriod().getId());
+		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), params.getPeriod().getId());
 		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_TYPE), AccountEntryType.CLOSING);
 		criteria.addEqualExpression(entryBean.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_SECURITY_LEVEL), securityLevel);
 		List<ITransferObject> list = entryBean.getList(criteria);

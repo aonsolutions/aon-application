@@ -50,7 +50,7 @@ public class AccountEntryController extends BasicController {
 	private boolean updatableViaWizard;
 	private boolean aonInvoice;
 	
-	private String duplicatePeriod;
+	private Period duplicatePeriod;
 	private Date duplicateDate;
 	private String duplicateConcept;
 	private boolean duplicateInvertible;
@@ -112,15 +112,7 @@ public class AccountEntryController extends BasicController {
 		setPeriodActive(true);
 		boolean flag = false;
 		try {
-			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-			Period period = (Period) periodBean.get(entry.getAccountPeriod());
-			if (period == null) {
-				String msg = "No existe el ejercicio contable " + entry.getAccountPeriod();
-	            LOGGER.error(msg);
-	            AonUtil.addErrorMessage(msg);
-	            throw new AbortProcessingException(msg);
-			}
-			AccountPeriodStatus st = period.getStatus(); 
+			AccountPeriodStatus st = entry.getAccountPeriod().getStatus(); 
             if (st == AccountPeriodStatus.INACTIVE || st == AccountPeriodStatus.CLOSED) {
             	setPeriodActive(false);
             } else {
@@ -391,10 +383,10 @@ public class AccountEntryController extends BasicController {
 	}
 	
 	
-	public String getDuplicatePeriod() {
+	public Period getDuplicatePeriod() {
 		return duplicatePeriod;
 	}
-	public void setDuplicatePeriod(String duplicatePeriod) {
+	public void setDuplicatePeriod(Period duplicatePeriod) {
 		this.duplicatePeriod = duplicatePeriod;
 	}
 	public Date getDuplicateDate() {

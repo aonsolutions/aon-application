@@ -10,6 +10,7 @@ import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.TaxAccountType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.Tax;
 import com.code.aon.ql.Criteria;
@@ -27,14 +28,13 @@ public class TaxAccountListener extends ControllerAdapter {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Tax tax = (Tax)event.getController().getTo();
 		try {
 			IManagerBean taxAccountBean = BeanManager.getManagerBean(TaxAccount.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
-			Iterator iterator = taxAccountBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iterator = taxAccountBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				TaxAccount taxAccount = (TaxAccount)iterator.next();
 				if (TaxAccountType.SALES.equals(taxAccount.getType())) {
@@ -58,10 +58,10 @@ public class TaxAccountListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Tax tax = (Tax)event.getController().getTo();
-		if (tax.getSalesAccount() != null && !StringUtils.isEmpty(tax.getSalesAccount().getId())) {
+		if (tax.getSalesAccount() != null && !StringUtils.isEmpty(tax.getSalesAccount().getCode())) {
 			validateAccount(tax.getSalesAccount());
 		}
-		if (tax.getPurchaseAccount() != null && !StringUtils.isEmpty(tax.getPurchaseAccount().getId())) {
+		if (tax.getPurchaseAccount() != null && !StringUtils.isEmpty(tax.getPurchaseAccount().getCode())) {
 			validateAccount(tax.getPurchaseAccount());
 		}
 	}
@@ -69,10 +69,10 @@ public class TaxAccountListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Tax tax = (Tax)event.getController().getTo();
-		if (tax.getSalesAccount() != null && !StringUtils.isEmpty(tax.getSalesAccount().getId())) {
+		if (tax.getSalesAccount() != null && !StringUtils.isEmpty(tax.getSalesAccount().getCode())) {
 			insertTaxAccount(tax, tax.getSalesAccount(), TaxAccountType.SALES);
 		}
-		if (tax.getPurchaseAccount() != null && !StringUtils.isEmpty(tax.getPurchaseAccount().getId())) {
+		if (tax.getPurchaseAccount() != null && !StringUtils.isEmpty(tax.getPurchaseAccount().getCode())) {
 			insertTaxAccount(tax, tax.getPurchaseAccount(), TaxAccountType.PURCHASE);
 		}
 	}
@@ -80,10 +80,10 @@ public class TaxAccountListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Tax tax = (Tax)event.getController().getTo();
-		if (tax.getSalesAccount() != null && !StringUtils.isEmpty(tax.getSalesAccount().getId())) {
+		if (tax.getSalesAccount() != null && !StringUtils.isEmpty(tax.getSalesAccount().getCode())) {
 			validateAccount(tax.getSalesAccount());
 		}
-		if (tax.getPurchaseAccount() != null && !StringUtils.isEmpty(tax.getPurchaseAccount().getId())) {
+		if (tax.getPurchaseAccount() != null && !StringUtils.isEmpty(tax.getPurchaseAccount().getCode())) {
 			validateAccount(tax.getPurchaseAccount());
 		}
 	}
@@ -91,12 +91,12 @@ public class TaxAccountListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		Tax tax = (Tax)event.getController().getTo();
-		if (tax.getSalesAccount() != null && !StringUtils.isEmpty(tax.getSalesAccount().getId())) {
+		if (tax.getSalesAccount() != null && !StringUtils.isEmpty(tax.getSalesAccount().getCode())) {
 			updateTaxAccount(tax, tax.getSalesAccount(), TaxAccountType.SALES);
 		} else {
 			removeTaxAccount(tax, TaxAccountType.SALES);
 		}
-		if (tax.getPurchaseAccount() != null && !StringUtils.isEmpty(tax.getPurchaseAccount().getId())) {
+		if (tax.getPurchaseAccount() != null && !StringUtils.isEmpty(tax.getPurchaseAccount().getCode())) {
 			updateTaxAccount(tax, tax.getPurchaseAccount(), TaxAccountType.PURCHASE);
 		} else {
 			removeTaxAccount(tax, TaxAccountType.PURCHASE);
@@ -132,14 +132,13 @@ public class TaxAccountListener extends ControllerAdapter {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void updateTaxAccount(Tax tax, Account account, TaxAccountType type) throws ControllerListenerException {
 		try {
 			IManagerBean taxAccountBean = BeanManager.getManagerBean(TaxAccount.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
 			criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TYPE), type);
-			Iterator iterator = taxAccountBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iterator = taxAccountBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				TaxAccount taxAccount = (TaxAccount)iterator.next();
 				taxAccount.setAccount(account);
@@ -153,14 +152,13 @@ public class TaxAccountListener extends ControllerAdapter {
 		
 	}
 
-	@SuppressWarnings("unchecked")
 	private void removeTaxAccount(Tax tax, TaxAccountType type) throws ControllerListenerException {
 		try {
 			IManagerBean taxAccountBean = BeanManager.getManagerBean(TaxAccount.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TAX_ID), tax.getId());
 			criteria.addEqualExpression(taxAccountBean.getFieldName(IAccountBridgeAlias.TAX_ACCOUNT_TYPE), type);
-			Iterator iterator = taxAccountBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iterator = taxAccountBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				TaxAccount taxAccount = (TaxAccount)iterator.next();
 				taxAccountBean.remove(taxAccount);

@@ -48,7 +48,7 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
 		criteria.addNotEqualExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), account.getId());
-		criteria.addExpression(ExpressionUtilities.getLikeExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_ID), account.getId()+"%"));
+		criteria.addExpression(ExpressionUtilities.getLikeExpression(accountBean.getFieldName(IEntityAlias.ACCOUNT_CODE), account.getCode()+"%"));
 		return accountBean.getCount(criteria) > 0;
 	}
 
@@ -69,8 +69,8 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 	}
 	
 	private void removeRelatedLinkTable(Account account) throws ManagerBeanException {
-		if(account.getId().length() >= 5){
-			String prefix = account.getId().substring(0, 5);
+		if(account.getCode().length() >= 5){
+			String prefix = account.getCode().substring(0, 5);
 			if(prefix.equals(AccountConstants.BANK_ACCOUNT_PREFIX)){
 				IManagerBean bankAccountBean = BeanManager.getManagerBean(RegistryBankAccount.class);
 				deleteLink(bankAccountBean, IAccountBridgeAlias.REGISTRY_BANK_ACCOUNT_ACCOUNT_ID, account.getId());
@@ -95,7 +95,7 @@ public class AccountControllerCascadeListener extends ControllerAdapter {
 		}
 	}
 
-	private void deleteLink(IManagerBean bean, String alias, String accountId) throws ManagerBeanException {
+	private void deleteLink(IManagerBean bean, String alias, Integer accountId) throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(alias), accountId);
 		Iterator<?> iter = bean.getList(criteria, 0, 1).iterator();

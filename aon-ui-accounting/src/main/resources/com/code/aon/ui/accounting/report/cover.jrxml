@@ -57,7 +57,7 @@
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
 				<reportElement key="textField-28" x="141" y="555" width="394" height="50">
-					<printWhenExpression><![CDATA[new Boolean($P{period} != null && $P{period}.getId() != null)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($P{period} != null && $P{period}.getName() != null)]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -68,7 +68,7 @@
 				<textElement textAlignment="Center">
 					<font size="24" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{period}.getId()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{account_period} + " " + $P{period}.getName()]]></textFieldExpression>
 			</textField>
 			<frame>
 				<reportElement x="22" y="154" width="475" height="332"/>

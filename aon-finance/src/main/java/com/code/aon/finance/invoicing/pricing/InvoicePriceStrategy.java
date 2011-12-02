@@ -24,10 +24,9 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 		return (invoice.getTaxableBase() != 0) ? invoice.getTaxableBase() : getCalculatedTaxableBase(icc);
 	}
 
-	@SuppressWarnings("unchecked")
 	public double getCalculatedTaxableBase(ICalculableContainer icc) {
 		double taxableBase = 0;
-		Iterator iter = icc.getDetailList().iterator();
+		Iterator<?> iter = icc.getDetailList().iterator();
 		while(iter.hasNext()){
 			InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
 			taxableBase += invoiceDetail.getTaxableBase();
@@ -41,24 +40,23 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public List<TaxBreakDown> getTaxBreakDowns(ICalculableContainer icc, ITaxInfo iti) {
 		List<TaxBreakDown> taxBreakDowns = new LinkedList<TaxBreakDown>();
 		if(!iti.isTaxFree()){
-			Iterator iter = icc.getDetailList().iterator();
-			Map map = new HashMap();
+			Iterator<?> iter = icc.getDetailList().iterator();
+			Map<TaxKey,TaxBreakDown> map = new HashMap<TaxKey, TaxBreakDown>();
 			while(iter.hasNext()){
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
-				Iterator breakDownIter =  invoiceDetail.getTaxBreakDowns().iterator();
+				Iterator<TaxBreakDown> breakDownIter =  invoiceDetail.getTaxBreakDowns().iterator();
 				while(breakDownIter.hasNext()){
-					TaxBreakDown breakDown = (TaxBreakDown)breakDownIter.next();
+					TaxBreakDown breakDown = breakDownIter.next();
 					setTaxBreakDownAddInfo(breakDown, invoiceDetail);
 					TaxKey key = new TaxKey();
 					key.setType(breakDown.getTaxType());
 					key.setPercent(breakDown.getTaxPercent());
 					TaxBreakDown mapBreakDown;
 					if(map.containsKey(key)){
-						mapBreakDown  = (TaxBreakDown)map.get(key);
+						mapBreakDown  = map.get(key);
 						mapBreakDown.setBase(mapBreakDown.getBase() + breakDown.getBase());
 						mapBreakDown.setTaxQuota(mapBreakDown.getTaxQuota() + breakDown.getTaxQuota());
 						mapBreakDown.setSurchargeQuota(mapBreakDown.getSurchargeQuota() + breakDown.getSurchargeQuota());
@@ -68,9 +66,9 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 					map.put(key, mapBreakDown);
 				}
 			}
-			Iterator iterator = map.values().iterator();
+			Iterator<TaxBreakDown> iterator = map.values().iterator();
 			while(iterator.hasNext()){
-				TaxBreakDown tbd = (TaxBreakDown)iterator.next();
+				TaxBreakDown tbd = iterator.next();
 				if(tbd.getTaxQuota() == 0){
 					tbd.setTaxQuota(CommonUtil.round(tbd.getBase() * tbd.getTaxPercent()/100));
 				}
@@ -118,12 +116,11 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 		return (invoice.getTotal() != 0) ? invoice.getTotal() : super.getTotalPrice(icc, iti);
 	}
 
-	@SuppressWarnings("unchecked")
 	public double getVatPercent(ICalculableContainer icc, ITaxInfo iti) {
 		double percent = 0;
-		Iterator iter = getTaxBreakDowns(icc, iti).iterator();
+		Iterator<TaxBreakDown> iter = getTaxBreakDowns(icc, iti).iterator();
 		while(iter.hasNext()){
-			TaxBreakDown taxBreakDown = (TaxBreakDown)iter.next();
+			TaxBreakDown taxBreakDown = iter.next();
 			if(taxBreakDown.getTaxType().equals(TaxType.VAT)){
 				percent = taxBreakDown.getTaxPercent();
 				break;
@@ -132,12 +129,11 @@ public class InvoicePriceStrategy extends BasicPriceStrategy {
 		return CommonUtil.round(percent);
 	}
 
-	@SuppressWarnings("unchecked")
 	public double getRetentionPercent(ICalculableContainer icc, ITaxInfo iti) {
 		double percent = 0;
-		Iterator iter = getTaxBreakDowns(icc, iti).iterator();
+		Iterator<TaxBreakDown> iter = getTaxBreakDowns(icc, iti).iterator();
 		while(iter.hasNext()){
-			TaxBreakDown taxBreakDown = (TaxBreakDown)iter.next();
+			TaxBreakDown taxBreakDown = iter.next();
 			if(taxBreakDown.getTaxType().equals(TaxType.RETENTION)){
 				percent = taxBreakDown.getTaxPercent();
 				break;

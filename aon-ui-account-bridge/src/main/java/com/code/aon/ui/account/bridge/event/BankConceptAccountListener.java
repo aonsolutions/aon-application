@@ -9,6 +9,7 @@ import com.code.aon.account.bridge.BankConceptAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.BankConcept;
 import com.code.aon.ql.Criteria;
@@ -25,14 +26,13 @@ public class BankConceptAccountListener extends ControllerAdapter {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		BankConcept concept = (BankConcept)event.getController().getTo();
 		try {
 			IManagerBean conceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(conceptAccBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID), concept.getId());
-			Iterator iterator = conceptAccBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iterator = conceptAccBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				BankConceptAccount conceptAccount = (BankConceptAccount)iterator.next();
 				concept.setAccount(conceptAccount.getAccount());
@@ -49,7 +49,7 @@ public class BankConceptAccountListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		BankConcept bankConcept = (BankConcept)event.getController().getTo();
-		if (bankConcept.getAccount() != null && !StringUtils.isEmpty(bankConcept.getAccount().getId())) {
+		if (bankConcept.getAccount() != null && !StringUtils.isEmpty(bankConcept.getAccount().getCode())) {
 			validateAccount(bankConcept.getAccount());
 		}
 	}
@@ -57,7 +57,7 @@ public class BankConceptAccountListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		BankConcept bankConcept = (BankConcept)event.getController().getTo();
-		if (bankConcept.getAccount() != null && !StringUtils.isEmpty(bankConcept.getAccount().getId())) {
+		if (bankConcept.getAccount() != null && !StringUtils.isEmpty(bankConcept.getAccount().getCode())) {
 			insertBankConceptAccount(bankConcept, bankConcept.getAccount());
 		}
 	}
@@ -65,7 +65,7 @@ public class BankConceptAccountListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		BankConcept bankConcept = (BankConcept)event.getController().getTo();
-		if (bankConcept.getAccount() != null && !StringUtils.isEmpty(bankConcept.getAccount().getId())) {
+		if (bankConcept.getAccount() != null && !StringUtils.isEmpty(bankConcept.getAccount().getCode())) {
 			validateAccount(bankConcept.getAccount());
 		}
 	}
@@ -73,7 +73,7 @@ public class BankConceptAccountListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		BankConcept bankConcept = (BankConcept)event.getController().getTo();
-		if (bankConcept.getAccount() != null && !StringUtils.isEmpty(bankConcept.getAccount().getId())) {
+		if (bankConcept.getAccount() != null && !StringUtils.isEmpty(bankConcept.getAccount().getCode())) {
 			updateBankConceptAccount(bankConcept, bankConcept.getAccount());
 		} else {
 			removeBankConceptAccount(bankConcept);
@@ -107,13 +107,12 @@ public class BankConceptAccountListener extends ControllerAdapter {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void updateBankConceptAccount(BankConcept concept, Account account) throws ControllerListenerException {
 		try {
 			IManagerBean conceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(conceptAccBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID), concept.getId());
-			Iterator iterator = conceptAccBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iterator = conceptAccBean.getList(criteria).iterator();
 			if (iterator.hasNext()) {
 				BankConceptAccount conceptAccount = (BankConceptAccount)iterator.next();
 				conceptAccount.setAccount(account);
@@ -127,13 +126,12 @@ public class BankConceptAccountListener extends ControllerAdapter {
 		
 	}
 
-	@SuppressWarnings("unchecked")
 	private void removeBankConceptAccount(BankConcept concept) throws ControllerListenerException {
 		try {
 			IManagerBean conceptAccBean = BeanManager.getManagerBean(BankConceptAccount.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(conceptAccBean.getFieldName(IAccountBridgeAlias.BANK_CONCEPT_ACCOUNT_BANK_CONCEPT_ID), concept.getId());
-			Iterator iterator = conceptAccBean.getList(criteria).iterator();
+			Iterator<ITransferObject> iterator = conceptAccBean.getList(criteria).iterator();
 			while (iterator.hasNext()) {
 				BankConceptAccount conceptAccount = (BankConceptAccount)iterator.next();
 				conceptAccBean.remove(conceptAccount);

@@ -33,7 +33,7 @@ public class UnbalancedAccountEntryCheck implements IAccountCheck {
 			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(entryBean
-					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD), params.getPeriod().getId());
+					.getFieldName(IAccountingAlias.ACCOUNT_ENTRY_ACCOUNT_PERIOD_ID), params.getPeriod().getId());
 			for (ITransferObject to: entryBean.getList(criteria)) {
 				AccountEntry entry = (AccountEntry) to;
 				double debit = 0;

@@ -16,12 +16,9 @@
 				<ui:param name="skipBackButton" value="true" />
 			</ui:include>
 
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:param name="controller" value="#{balance}" />
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener"
-						value="#{balance.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="balance_list" />
 				</ui:define>
 			</ui:decorate>
 		</aon:form>
