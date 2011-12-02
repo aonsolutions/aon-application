@@ -23,4 +23,28 @@ public enum TasStatDetailType  implements IResourceable {
     public String getName(Locale locale) {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
-    }}
+    }
+    
+    public String getColor() {
+    	if (this == PROJECT) {
+    		return "#CCFFFF";
+    	} else if (this == OFFER) {
+    		return "white";
+    	} else if (this == SALES) {
+    		return "white";
+    	} else if (this == PURCHASE) {
+    		return "white";
+    	} else if (this == INCOME) {
+    		return "white";
+    	} else if (this == DELIVERY) {
+    		return "white";
+    	} else if (this == SALES_INVOICE) {
+    		return "white";
+    	} else if (this == PURCHASE_INVOICE) {
+    		return "white";
+    	} else if (this == EXPENSE_INVOICE) {
+    		return "white";
+    	}
+		return "white";
+    }
+}

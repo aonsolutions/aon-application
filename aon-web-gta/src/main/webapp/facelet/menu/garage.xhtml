@@ -30,6 +30,12 @@
 										action="projectTas_search" actionListener="#{projectTas.onEditSearch}"
 										value="#{tasBundle.tas_projectTas_module}" />
 								</aon:div>
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="taskHolder-management"
+										action="taskHolder_search"
+										actionListener="#{taskHolder.onEditSearch}"
+										value="#{appBundle.menu_taskHolder}" />
+								</aon:div>
 							</aon:div>
 						</aon:panelGrid>
 
@@ -62,6 +68,7 @@
 								</aon:div>								
 							</aon:div>
 						</aon:panelGrid>
+						
 					</aon:panelGroup>
 
 					<aon:panelGroup>

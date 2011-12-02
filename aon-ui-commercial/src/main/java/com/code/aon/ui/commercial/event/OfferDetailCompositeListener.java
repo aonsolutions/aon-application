@@ -49,10 +49,8 @@ public class OfferDetailCompositeListener extends ControllerAdapter {
 	private DiscountExpression obtainCompositionDiscount(OfferDetail offerDetail, ItemComposition composition) {
 		DiscountExpression discountExpr = new DiscountExpression("0.0");
 		if (composition.getItem().getProduct().isCompositionPrice()) {
-			if (composition.getDiscountExpression() != null && composition.getDiscountExpression().getDiscounts()[0] > 0) {
+			if (composition.getDiscountExpression() != null) {
 				discountExpr = composition.getDiscountExpression();
-			} else {
-				discountExpr = offerDetail.getDiscountExpression();
 			}
 		}
 		return discountExpr;
