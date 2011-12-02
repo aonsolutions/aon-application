@@ -1,5 +1,6 @@
 package com.code.aon.ui.tas.controller;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,6 +18,8 @@ import com.code.aon.tas.dao.ITASAlias;
 import com.code.aon.tas.enumeration.ProjectStatus;
 import com.code.aon.ui.common.components.LookupChangeEvent;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.stat.controller.ProjectStatEngineController;
+import com.code.aon.ui.util.AonUtil;
 
 public class ProjectTasController extends BasicController {
 
@@ -77,6 +80,12 @@ public class ProjectTasController extends BasicController {
 	public boolean isFinished() {
 		ProjectTas projectTas = ((ProjectTas)getTo());
 		return (projectTas != null && projectTas.getStatus() == ProjectStatus.CLOSED);
+	}
+
+	public void onProjectHistory(ActionEvent event) {
+		ProjectStatEngineController statController =(ProjectStatEngineController)AonUtil.getRegisteredBean("projectStat");
+		statController.setProject(((ProjectTas)this.getTo()).getProject());
+		statController.initializeProjectData();
 	}
 
 }
