@@ -8,162 +8,150 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
-	<c:if test="#{formEdit}" >
+	<aon:div rendered="#{formEdit or formNew}" >
 			
-			<c:if test="#{variableType=='DOUBLE'}" >
-				<aon:inputText id="#{inputTextId}_DOUBLE#{editorSuffix}" required="#{required}"
-					value="#{controller.handler.expression}" maxlength="128" size="64">
-					<f:validateDoubleRange />
-				</aon:inputText>
-			</c:if>
-			
-			<c:if test="#{variableType=='INTEGER'}" >
-				<rich:inputNumberSpinner id="#{inputTextId}_INTEGER#{editorSuffix}"
-					value="#{controller.handler.expression}" inputSize="4" >
-	   			</rich:inputNumberSpinner>
-			</c:if>
-			
-			<c:if test="#{variableType=='BOOLEAN'}" >
-				<h:selectBooleanCheckbox id="#{inputTextId}_BOOLEAN#{editorSuffix}" required="#{required}"
-					value="#{controller.handler.expression}" >
-				</h:selectBooleanCheckbox>
-			</c:if>
-			
-			<c:if test="#{variableType=='STRING'}" >
-				<aon:inputText id="#{inputTextId}_STRING#{editorSuffix}" required="#{required}"
-					value="#{controller.handler.expression}" maxlength="128" size="64" >
-					<f:validateLength maximum="128"/>
-					<a4j:region>
-						<rich:suggestionbox id="#{inputTextId}_suggestion"
-							for="#{inputTextId}_STRING#{editorSuffix}"
-							onselect="suggestionBoxActive=false;"
-							suggestionAction="#{controller.handler.expressionContext}" var="exp"
-							similarityGroupingId=""
-							tokens=" +-/*%()"
-							fetchValue="#{exp}"
-							immediate="true" limitToList="true" ajaxSingle="true"
-							eventsQueue="#{controller.beanName}_expressionSug" ignoreDupResponses="true"
-							requestDelay="100" width="500" height="200"
-							nothingLabel="#{bundle.aon_search_no_results}">
-							<aon:column>
-								<aon:outputText value="#{exp}"/>
-							</aon:column>
-						</rich:suggestionbox>
-					</a4j:region>
-				</aon:inputText>
-			</c:if>
-			
-			<c:if test="#{variableType=='EXPRESSION'}" >
-				<aon:inputText id="#{inputTextId}_EXPRESSION#{editorSuffix}" required="#{required}"
-					value="#{controller.handler.expression}" maxlength="128" size="64">
-				</aon:inputText>
-			</c:if>
-			
-			<c:if test="#{variableType=='TABLE'}" >
-				<aon:inputText id="#{inputTextId}_TABLE#{editorSuffix}" required="#{required}"
-					value="#{controller.handler.expression}" maxlength="128" size="64">
-				</aon:inputText>
-			</c:if>
-			
-			<c:if test="#{variableType=='DROP'}" >
-				<aon:selectOneMenu id="#{inputTextId}_DROP#{editorSuffix}" required="#{required}"
-					value="#{controller.handler.expression}">
-					<f:selectItems value="#{controller.handler.variablesCollection}" />
-				</aon:selectOneMenu>
-			</c:if>
-			
-			<c:if test="#{variableType=='CNO_DROP'}" >
-				<aon:selectOneMenu id="#{inputTextId}_DROP#{editorSuffix}" required="#{required}"
-					value="#{cno}">
-					<f:selectItems value="#{controller.handler.variablesCollection}" />
-				</aon:selectOneMenu>
-			</c:if>
-			
-			<c:if test="#{variableType=='TC2_DROP'}" >
-				<aon:selectOneMenu id="#{inputTextId}_DROP#{editorSuffix}" required="#{required}"
-					value="#{contractCode}">
-					<f:selectItems value="#{controller.handler.variablesCollection}" />
-				</aon:selectOneMenu>
-			</c:if>
-			
-			<c:if test="#{variableType=='QUOTE_GROUP_DROP'}" >
-				<aon:selectOneMenu id="#{inputTextId}_DROP#{editorSuffix}" required="#{required}"
-					value="#{quoteGroup}">
-					<f:selectItems value="#{controller.handler.variablesCollection}" />
-				</aon:selectOneMenu>
-			</c:if>
-			
-			<c:if test="#{variableType=='OCCUPATION_DROP'}" >
-				<aon:selectOneMenu id="#{inputTextId}_DROP#{editorSuffix}" required="#{required}"
-					value="#{occupationType}">
-					<f:selectItems value="#{controller.handler.variablesCollection}" />
-				</aon:selectOneMenu>
-			</c:if>
-			
-			<c:if test="#{variableType=='UNKNOWN' or variableType==null}" >
-				<aon:inputText id="#{inputTextId}_UNKNOWN#{editorSuffix}" required="#{required}"
-					value="#{controller.handler.expression}" size="64" maxlength="128" >
-					<f:validateLength maximum="64"/>
-					<a4j:region>
-						<rich:suggestionbox id="#{inputTextId}_UNKNOWN#{editorSuffix}_suggestion"
-							for="#{inputTextId}_UNKNOWN#{editorSuffix}"
-							onselect="suggestionBoxActive=false;"
-							suggestionAction="#{controller.handler.expressionContext}" var="exp"
-							similarityGroupingId=""
-							tokens=" +-/*%()"
-							fetchValue="#{exp}"
-							immediate="true" limitToList="true" ajaxSingle="true"
-							eventsQueue="#{inputTextId}_UNKNOWN#{editorSuffix}_expressionSug" ignoreDupResponses="true"
-							requestDelay="100" width="500" height="200"
-							nothingLabel="#{bundle.aon_search_no_results}">
-							<aon:column>
-								<aon:outputText value="#{exp}">
-								</aon:outputText>
-							</aon:column>
-						</rich:suggestionbox>
-					</a4j:region>
-				</aon:inputText>
-			</c:if>
+		<aon:inputText id="#{inputTextId}_DOUBLE#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='DOUBLE'}"
+			value="#{controller.handler.expression}" maxlength="128" size="64">
+			<f:validateDoubleRange />
+		</aon:inputText>
 	
-	</c:if>
+		<rich:inputNumberSpinner id="#{inputTextId}_INTEGER#{editorSuffix}"
+			rendered="#{variableType=='INTEGER'}"
+			value="#{controller.handler.expression}" inputSize="4" >
+  			</rich:inputNumberSpinner>
 	
-	<c:if test="#{formList}" >
-			<aon:outputText rendered="#{variableType=='DOUBLE'}" value="#{data.doubleExpression}" >
-				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
-			</aon:outputText>
-		
-			<aon:outputText rendered="#{variableType=='INTEGER'}" value="#{data.expression}" />
-		
-			<aon:outputText value="&#160;"  
-				styleClass="#{(data.expression)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
-				style="padding-bottom: 5px;"
-				rendered="#{variableType=='BOOLEAN'}"/>
-		
-			<aon:outputText rendered="#{variableType=='STRING'}" styleClass="aon-italic" 
-				value="#{data.expression}" />
-		
-			<aon:outputText rendered="#{variableType=='EXPRESSION'}" value="#{data.expression}" />
-		
-			<aon:outputText rendered="#{variableType=='TABLE'}" value="#{data.expression}" />
-		
-			<aon:outputText rendered="#{variableType=='DROP'}" value="#{data.expression}" />
-		
-			<aon:outputText rendered="#{variableType=='CNO_DROP'}" value="#{data.variableEnum}" />
-		
-			<aon:outputText rendered="#{variableType=='TC2_DROP'}" value="#{data.variableEnum}" />
-		
-			<aon:outputText rendered="#{variableType=='QUOTE_GROUP_DROP'}" value="#{data.variableEnum}" />
-		
-			<aon:outputText rendered="#{variableType=='OCCUPATION_DROP'}" value="#{data.variableEnum}" />
-		
-			<aon:outputText rendered="#{variableType=='UNKNOWN' or variableType==null}" value="#{data.expression}">
+		<h:selectBooleanCheckbox id="#{inputTextId}_BOOLEAN#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='BOOLEAN'}"
+			value="#{controller.handler.expression}" >
+		</h:selectBooleanCheckbox>
+	
+		<aon:inputText id="#{inputTextId}_STRING#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='STRING'}" 
+			value="#{controller.handler.expression}" maxlength="128" size="64" >
+			<f:validateLength maximum="128"/>
+			<a4j:region>
+				<rich:suggestionbox id="#{inputTextId}_suggestion#{editorSuffix}"
+					for="#{inputTextId}_STRING#{editorSuffix}"
+					onselect="suggestionBoxActive=false;"
+					suggestionAction="#{controller.handler.expressionContext}" var="exp"
+					similarityGroupingId=""
+					tokens=" +-/*%()"
+					fetchValue="#{exp}"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					eventsQueue="#{controller.beanName}_expressionSug#{editorSuffix}" ignoreDupResponses="true"
+					requestDelay="100" width="500" height="200"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{exp}"/>
+					</aon:column>
+				</rich:suggestionbox>
+			</a4j:region>
+		</aon:inputText>
+	
+		<aon:inputText id="#{inputTextId}_EXPRESSION#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='EXPRESSION'}" 
+			value="#{controller.handler.expression}" maxlength="128" size="64">
+		</aon:inputText>
+	
+		<aon:inputText id="#{inputTextId}_TABLE#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='TABLE'}" 
+			value="#{controller.handler.expression}" maxlength="128" size="64">
+		</aon:inputText>
+	
+		<aon:selectOneMenu id="#{inputTextId}_DROP#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='DROP'}" 
+			value="#{controller.handler.expression}">
+			<f:selectItems value="#{controller.handler.variablesCollection}" />
+		</aon:selectOneMenu>
+	
+		<aon:selectOneMenu id="#{inputTextId}_CNO_DROP#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='CNO_DROP'}" 
+			value="#{cno}">
+			<f:selectItems value="#{controller.handler.variablesCollection}" />
+		</aon:selectOneMenu>
+	
+		<aon:selectOneMenu id="#{inputTextId}_TC2_DROP#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='TC2_DROP'}"
+			value="#{contractCode}">
+			<f:selectItems value="#{controller.handler.variablesCollection}" />
+		</aon:selectOneMenu>
+	
+		<aon:selectOneMenu id="#{inputTextId}_QUOTE_GROUP_DROP#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='QUOTE_GROUP_DROP'}" 
+			value="#{quoteGroup}">
+			<f:selectItems value="#{controller.handler.variablesCollection}" />
+		</aon:selectOneMenu>
+	
+		<aon:selectOneMenu id="#{inputTextId}_OCCUPATION_DROP#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='OCCUPATION_DROP'}" 
+			value="#{occupationType}">
+			<f:selectItems value="#{controller.handler.variablesCollection}" />
+		</aon:selectOneMenu>
+	
+		<aon:inputText id="#{inputTextId}_UNKNOWN#{editorSuffix}" required="#{required}"
+			rendered="#{variableType=='UNKNOWN' or variableType==null}" ajaxSingle="true"
+			value="#{controller.handler.expression}" size="64" maxlength="128" >
+			<f:validateLength maximum="64"/>
+			<a4j:region>
+				<rich:suggestionbox id="#{inputTextId}_UNKNOWN#{editorSuffix}_suggestion"
+					for="#{inputTextId}_UNKNOWN#{editorSuffix}"
+					onselect="suggestionBoxActive=false;"
+					suggestionAction="#{controller.handler.expressionContext}" var="exp"
+					similarityGroupingId=""
+					tokens=" +-/*%()"
+					fetchValue="#{exp}"
+					immediate="true" limitToList="true" ajaxSingle="true"
+					eventsQueue="#{inputTextId}_UNKNOWN#{editorSuffix}_expressionSug" ignoreDupResponses="true"
+					requestDelay="100" width="500" height="200"
+					nothingLabel="#{bundle.aon_search_no_results}">
+					<aon:column>
+						<aon:outputText value="#{exp}">
+						</aon:outputText>
+					</aon:column>
+				</rich:suggestionbox>
+			</a4j:region>
+		</aon:inputText>
+	
+	</aon:div>
+	
+	<aon:div rendered="#{formList}" >
+		<aon:outputText rendered="#{variableType=='DOUBLE'}" value="#{data.doubleExpression}" >
+			<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+		</aon:outputText>
+	
+		<aon:outputText rendered="#{variableType=='INTEGER'}" value="#{data.expression}" />
+	
+		<aon:outputText value="&#160;"  
+			styleClass="#{(data.expression)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}"
+			style="padding-bottom: 5px;"
+			rendered="#{variableType=='BOOLEAN'}"/>
+	
+		<aon:outputText rendered="#{variableType=='STRING'}" styleClass="aon-italic" 
+			value="#{data.expression}" />
+	
+		<aon:outputText rendered="#{variableType=='EXPRESSION'}" value="#{data.expression}" />
+	
+		<aon:outputText rendered="#{variableType=='TABLE'}" value="#{data.expression}" />
+	
+		<aon:outputText rendered="#{variableType=='DROP'}" value="#{data.expression}" />
+	
+		<aon:outputText rendered="#{variableType=='CNO_DROP'}" value="#{data.variableEnum}" />
+	
+		<aon:outputText rendered="#{variableType=='TC2_DROP'}" value="#{data.variableEnum}" />
+	
+		<aon:outputText rendered="#{variableType=='QUOTE_GROUP_DROP'}" value="#{data.variableEnum}" />
+	
+		<aon:outputText rendered="#{variableType=='OCCUPATION_DROP'}" value="#{data.variableEnum}" />
+	
+		<aon:outputText rendered="#{variableType=='UNKNOWN' or variableType==null}" value="#{data.expression}">
 <!--  
 				<f:converter converterId="variableDoubleConverter" />
 				<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
 				<f:convertNumber pattern="00" />
 -->
-			</aon:outputText>
+		</aon:outputText>
 	
-	</c:if>
+	</aon:div>
 
 </ui:composition>

@@ -16,6 +16,7 @@
 				<ui:param name="skipNewButton" value="#{true}" />
 				<ui:param name="lookupReRender" value="contract_new_panel" />
 				<ui:param name="idRequired" value="#{true}" />
+				<ui:param name="lookupDisabled" value="#{enterpriseLookupDisabled}" />
 				<aon:methodParam name="lookupChangeListener" 
 					value="#{contract.onEnterpriseChanged}" type="lookupChangeListener" />
 			</ui:include>

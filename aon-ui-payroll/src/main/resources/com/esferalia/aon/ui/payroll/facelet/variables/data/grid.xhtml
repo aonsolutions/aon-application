@@ -68,7 +68,6 @@
 				
 			</aon:div>	
 		</c:if>
-		
 	
 		<aon:panelGrid columns="1" style="width: 100%; margin-top:10px;"
 			columnClasses="aon-panelGrid-even  aon-width-auto">
@@ -79,62 +78,128 @@
 			</aon:div>
 		</aon:panelGrid>	
 		
-		<c:if test="#{controller.handler.data==null}" >
-			<aon:editDataTable id="#{controller.beanName}VariablesList"
-				value="#{controller.handler.variablesModel}" var="to" rows="20" >
-				
-				<aon:column 
-					styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
-					<f:facet name="header">
-						<aon:outputText value="&#160;" />
-					</f:facet>
-					<aon:commandButton id="#{controller.beanName}-edit"
-						rendered="#{to.id!=null}"
-						title="#{bundle.aon_update}" 
-						actionListener="#{controller.handler.onSelectVariable}"
-						reRender="#{controller.beanName}VarContainer"
-						styleClass="aon-editDataTable-button aon-icon-rowSelector" />
-					<aon:commandButton id="#{controller.beanName}-overwrite"
-						rendered="#{to.id==null}"
-						title="#{payrollBundle.payroll_overwrite}" 
-						actionListener="#{controller.handler.onSelectVariable}"
-						reRender="#{controller.beanName}VarContainer"
-						styleClass="aon-editDataTable-button aon-icon-go" />
-					<f:facet name="footer">
-						<aon:commandButton
-							id="#{controller.beanName}-reset" 
-							title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
-							actionListener="#{controller.handler.onResetVariable}"
-							reRender="#{controller.beanName}VarContainer"
-							styleClass="aon-editDataTable-button aon-icon-reset"
-							accesskey="#{bundle.aon_key_new_line}"/>
-					</f:facet>
-				</aon:column>
-				
-				<ui:include 
-					src="/com/esferalia/aon/ui/payroll/facelet/variables/data/list_content.xhtml" >
-					<ui:param name="controller" value="#{controller}" />
-					<aon:valueParam name="formList" value="true" />
-				</ui:include>
-				
-			</aon:editDataTable>
-			<aon:dataScroller2 for="#{controller.beanName}VariablesList" showNote="false" />
+		<aon:editDataTable id="#{controller.beanName}VariablesList"
+			value="#{controller.handler.variablesModel}" var="to" rows="20" >
 			
-			<c:if test="#{controller.handler.undefinedVariablesModel!=null}" >
-				<ui:include 
-					src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_undefined.xhtml" >
-					<ui:param name="controller" value="#{controller}" />
-					<aon:valueParam name="formList" value="true" />
-					<aon:valueParam name="saveReRender" value="#{controller.beanName}VarContainer" />
-				</ui:include>
-			</c:if>
-		</c:if>
-					
-		<c:if test="#{controller.handler.data!=null}" >
+			<aon:rowSelector toggleOnClick="#{controller.handler.data == null}"
+				actionListener="#{controller.handler.onSelectVariable}" reRender="#{controller.beanName}VarContainer"/>
+			
+			<aon:column 
+				styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:outputText value="&#160;&#160;"
+					title="#{bundle.aon_update}" 
+					rendered="#{to.id!=null}"
+					styleClass="aon-editDataTable-button aon-icon-rowSelector" />
+				<aon:outputText value="&#160;&#160;"
+					title="#{payrollBundle.payroll_overwrite}" 
+					rendered="#{to.id==null}"
+					styleClass="aon-editDataTable-button aon-icon-go" />
+				<f:facet name="footer">
+					<aon:commandButton
+						id="#{controller.beanName}-reset" 
+						rendered="#{!controller.handler.new}"
+						title="#{bundle.aon_reset} (#{bundle.aon_key_new_line_accelerator})"
+						actionListener="#{controller.handler.onResetVariable}"
+						reRender="#{controller.beanName}VarContainer"
+						styleClass="aon-editDataTable-button aon-icon-reset"
+						accesskey="#{bundle.aon_key_new_line}"/>
+				</f:facet>
+			</aon:column>
+			
 			<ui:include 
-				src="/com/esferalia/aon/ui/payroll/facelet/variables/data/formContent.xhtml" >
+				src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_content.xhtml" >
 				<ui:param name="controller" value="#{controller}" />
-				<aon:valueParam name="container" value="#{controller.beanName}VarContainer" />
+				<aon:valueParam name="formList" value="#{to!=controller.handler.data}" />
+				<aon:valueParam name="formEdit" value="#{to==controller.handler.data}" />
+				<aon:valueParam name="formNew" value="#{to==null and controller.handler.new}" />
+			</ui:include>
+			
+			<aon:column styleClass="aon-editDataTable-buttonsColumn aon-vertical-align-top">
+				<f:facet name="header">
+					<aon:outputText value="&#160;" />
+				</f:facet>
+				<aon:div rendered="#{to!=controller.handler.data}" layout="none">
+					<aon:outputText value="&#160;" />
+				</aon:div>
+				<aon:div rendered="#{to==controller.handler.data}">			
+					<aon:commandButton id="paymentVarSave"
+						title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
+						reRender="#{container}"
+						actionListener="#{controller.handler.onSaveVariable}"
+						styleClass="aon-editDataTable-button aon-icon-accept" />
+					<aon:commandButton id="paymentVarCancel"
+						title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
+						reRender="#{container}"
+						actionListener="#{controller.handler.onCancelVariable}"
+						immediate="true"
+						styleClass="aon-editDataTable-button aon-icon-cancel" />
+					<aon:commandButton id="paymentVarRemove"
+						title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
+						rendered="#{controller.handler.data.id!=null}"
+						reRender="#{container}"
+						actionListener="#{controller.handler.onRemoveVariable}"
+						styleClass="aon-editDataTable-button aon-icon-delete"
+						onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;" />
+				</aon:div>
+				<f:facet name="footer">
+					<aon:div >			
+						<aon:commandButton id="paymentVarSave-New"
+							title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
+							rendered="#{to==null and controller.handler.new}"
+							reRender="#{container}"
+							actionListener="#{controller.handler.onSaveVariable}"
+							styleClass="aon-editDataTable-button aon-icon-accept" />
+						<aon:commandButton id="paymentVarCancel-New"
+							title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
+							rendered="#{to==null and controller.handler.new}"
+							reRender="#{container}"
+							actionListener="#{controller.handler.onCancelVariable}"
+							immediate="true"
+							styleClass="aon-editDataTable-button aon-icon-cancel" />
+					</aon:div>
+					<!--  
+					<aon:div>
+						<ui:insert name="beforeNewLineButtons"/>
+
+						<aon:outputText rendered="#{!formNew}" value="&#160;" />
+						<c:if test="#{!skipSaveButton}">		
+							<aon:commandButton
+								id="#{dataTableId}-new-save" title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
+								action="#{newSaveAction}" actionListener="#{newSaveActionListener}"
+								rendered="#{newSaveButtonRendered}"
+								reRender="#{dataTableId}Div#{(newSaveButtonReRender != null)?',':''}#{newSaveButtonReRender}"
+								styleClass="aon-editDataTable-button aon-icon-accept"
+								accesskey="#{bundle.aon_key_save_line}" />
+						</c:if>
+						<c:if test="#{!skipCancelButton}">
+							<aon:confirmButton
+								id="#{dataTableId}-new-cancel" title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
+								rendered="#{formNew}" reRender="#{newCancelButtonReRender}"
+								immediate="true"
+								confirmTitle="#{bundle.aon_confirm_title}"
+								confirmMessage="#{bundle.aon_cancel_confirm}"
+								confirmActionListener="#{cancelEditActionListener}"
+								confirmAction="#{cancelEditAction}"					
+								styleClass="aon-editDataTable-button aon-icon-cancel"
+								accesskey="#{bundle.aon_key_cancel_line}" />
+						</c:if>
+					</aon:div>
+					-->
+				</f:facet>
+			</aon:column>
+			
+		</aon:editDataTable>
+		<aon:dataScroller2 for="#{controller.beanName}VariablesList" showNote="false" />
+		
+		<c:if test="#{controller.handler.undefinedVariablesModel!=null}" >
+			<ui:include 
+				src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid_undefined.xhtml" >
+				<ui:param name="controller" value="#{controller}" />
+				<aon:valueParam name="formList" value="true" />
+				<aon:valueParam name="saveReRender" value="#{controller.beanName}VarContainer" />
 			</ui:include>
 		</c:if>
 		

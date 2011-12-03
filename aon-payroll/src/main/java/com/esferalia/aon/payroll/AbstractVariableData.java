@@ -15,7 +15,11 @@ public abstract class AbstractVariableData implements IExpression{
 	
 	@Transient
 	public ContractVariables getVariable(){
-		return ContractVariables.getVariable(getName());
+		ContractVariables var = ContractVariables.getVariable(getName()!=null?getName().toUpperCase():null);
+		if(var!=null){
+			setName(getName().toUpperCase());
+		}
+		return var;
 	}
 	
 	@Transient

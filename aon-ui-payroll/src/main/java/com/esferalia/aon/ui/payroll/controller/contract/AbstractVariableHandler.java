@@ -49,6 +49,7 @@ public abstract class AbstractVariableHandler {
 	private Date inactiveDate;
 	private InactiveLastPeriod inactiveLastPeriod;
 	private Boolean searchCurrentVariables;
+	private boolean isNew;
 	
 	private IController controller;
 	
@@ -79,6 +80,13 @@ public abstract class AbstractVariableHandler {
 		this.inactiveLastPeriod = inactiveLastPeriod;
 	}
 
+	public boolean isNew() {
+		return isNew;
+	}
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
+
 	public Date getInactiveDate() {
 		return inactiveDate;
 	}
@@ -106,7 +114,9 @@ public abstract class AbstractVariableHandler {
 	}
 	
 	public void onResetVariable(ActionEvent event) {
+		setNew(true);
 		resetVariable();
+		getData().setExpression("");
 	}
 	public void onSelectVariable(ActionEvent event) {
 		setData((AbstractVariableData) getVariablesModel().getRowData());
@@ -123,10 +133,12 @@ public abstract class AbstractVariableHandler {
 			AonUtil.addErrorMessage(msg);
 			throw new AbortProcessingException(msg,e);
 		}
+		setNew(false);
 		initEditor();
 		initializeVariables(event);
 	}
 	public void onCancelVariable(ActionEvent event) {
+		setNew(false);
 		initEditor();
 	}
 	public void onRemoveVariable(ActionEvent event) {
@@ -143,6 +155,7 @@ public abstract class AbstractVariableHandler {
 	}
 	public void onAddUndefinedVariable(ActionEvent event) {
 		setData((AbstractVariableData) getUndefinedVariablesModel().getRowData());
+		setNew(true);
 	}
 	
 	@SuppressWarnings("unchecked")
