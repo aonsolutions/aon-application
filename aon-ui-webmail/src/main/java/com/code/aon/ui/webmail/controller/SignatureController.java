@@ -1,6 +1,7 @@
 package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
+import static com.code.aon.ldap.IAonObjectClasses.USER;
 import static com.code.aon.ldap.NameResolver.DOMAINS;
 
 import java.util.Iterator;
@@ -70,7 +71,7 @@ public class SignatureController extends LdapBasicController implements IWebMail
 	
 	private void updateBaseDN( String domain, String user )  {
 		Name userDN = NameResolver.getUserDN(domain, user);
-		if ( getLdapDAO().exists(userDN, ORGANIZATIONAL_UNIT) ) { 
+		if ( getLdapDAO().exists(userDN, USER) ) { 
 			Name baseDN = NameResolver.getUserSignaturesDN(domain, user);
 			if (! getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
 				getLdapDAO().addOrganizationUnit(baseDN);
