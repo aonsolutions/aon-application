@@ -137,18 +137,23 @@
 
 		<!-- WEB MODULES -->
 		<module>aon-desktop</module>
-		<module>aon-web-payroll</module>
+		<module>aon-web-account</module>
 		<module>aon-web-asset</module>
+		<module>aon-web-commercial</module>
 		<module>aon-web-communicator</module>
-		<module>aon-web-project</module>
+		<module>aon-web-consultant</module>
+		<module>aon-web-document</module>
+		<module>aon-web-employee</module>
 		<module>aon-web-enterprise</module>
-		<module>aon-web-fiscal</module>
+		<module>aon-web-finance</module>
 		<module>aon-web-gta</module>
 		<module>aon-web-infoweb</module>
 		<module>aon-web-manager</module>
+		<module>aon-web-payroll</module>
+		<module>aon-web-project</module>
 		<module>aon-web-publisher</module>
+		<module>aon-web-smb</module>
 		<module>aon-web-webmail</module>
-		<module>aon-web-document</module>
 
 		<!-- OTHER -->
 		<module>aon-common-resources</module>
@@ -161,13 +166,6 @@
 		<module>aon-cms</module>
 		<module>aon-ui-cms</module>
 		<module>aon-web-cms</module>
-		
-		<module>aon-web-employee</module>
-		<module>aon-web-smb</module>
-		<module>aon-web-account</module>
-		<module>aon-web-commercial</module>
-		<module>aon-web-consultant</module>
-		<module>aon-web-finance</module>
 		
 		<module>aon-payroll-ctsql2mysql</module>
 
@@ -291,18 +289,18 @@
 		</repository>
 
 		<repository>
-			<id>dynamicJasper-public-repository</id>
-			<name>DynamicJasper public Repository</name>
-			<url>http://www.fdvs.com.ar/djmaven2</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
+                    <id>maven2-repository.dev.java.net</id>
+                    <name>Java.net Repository for Maven 2</name>
+                    <url>http://download.java.net/maven/2</url>
+                    <releases>
+                        <enabled>true</enabled>
+			<updatePolicy>never</updatePolicy>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+			<updatePolicy>never</updatePolicy>
+                    </snapshots>
+                </repository>
 
 		<repository>
 			<id>jasperForge</id>
@@ -320,9 +318,9 @@
 		</repository>
 
 		<repository>
-			<id>alfresco</id>
-			<name>Alfresco Public </name>
-			<url>http://pipin.bluexml.com/nexus/content/repositories/thirdparty/</url>
+			<id>dynamicJasper-public-repository</id>
+			<name>DynamicJasper public Repository</name>
+			<url>http://www.fdvs.com.ar/djmaven2</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
