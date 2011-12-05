@@ -1,7 +1,7 @@
 package com.esferalia.aon.payroll.ctsql2mysql;
 
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.*;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;

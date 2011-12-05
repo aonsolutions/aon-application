@@ -2,7 +2,7 @@ package com.esferalia.aon.payroll.ctsql2mysql;
 
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.enum2short;
 import static com.esferalia.aon.payroll.ctsql2mysql.DefaultMysqlDB.toDouble;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.QUOTE_IT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_IT;
 
 import java.sql.SQLException;
 import java.util.Date;
