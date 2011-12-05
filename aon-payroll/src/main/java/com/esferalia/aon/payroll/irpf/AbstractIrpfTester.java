@@ -11,7 +11,7 @@ import java.util.Date;
 import com.aeat.jaxb.TipoRetenedorSalida2011;
 import com.aeat.jaxb.TipoRetenidoSalida2011;
 import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractDataColumns;
@@ -51,7 +51,7 @@ public abstract class AbstractIrpfTester implements IrpfCalculator.CallbackHandl
 	throws SQLException{
 		statement = connection.prepareStatement(SQL);
 		statement.setDate(1, new java.sql.Date(date.getTime())); 				// irpf_regularization.effective_date = ? 
-		statement.setString(2, ContractVariables.IRPF_PERCENT.getName()); 		// contract_data.name = ?
+		statement.setString(2, ContextVariable.IRPF_PERCENT.getName()); 		// contract_data.name = ?
 		
 		statement.setDate(3, new java.sql.Date(date.getTime())); 				// contract_data.start_date < ? 
 		Calendar calendar = Calendar.getInstance();

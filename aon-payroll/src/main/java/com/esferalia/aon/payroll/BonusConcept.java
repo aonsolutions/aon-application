@@ -34,7 +34,7 @@ public class BonusConcept implements ITransferObject {
 		this.id = id;
 	}
 	
-	@Column(length = 64)
+	@Column(length = 256)
 	public String getDescription() {
 		return description;
 	}
@@ -43,7 +43,7 @@ public class BonusConcept implements ITransferObject {
 		this.description = description;
 	}
 	
-	@Column(length = 128)
+	@Column(length = 512)
 	public String getExpression() {
 		return expression;
 	}

@@ -37,7 +37,7 @@ import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLAgreementPaymentsFactory;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -393,7 +393,7 @@ public class AgreeementSalaryTableController extends ControllerAdapter implement
 	// TODO: This is suboptimal. We must have an orderd list with predefined names,
 	// and then use binarySearch. ¿ It's this neccessary ?  
 	private boolean isUserVariable(String variable ) {
-		for (ContractVariables contractVariable : ContractVariables.values() ) {
+		for (ContextVariable contractVariable : ContextVariable.values() ) {
 			if ( variable.equals(contractVariable.getName()) ) {
 				return false; // It's a 'predefined' variable
 			}

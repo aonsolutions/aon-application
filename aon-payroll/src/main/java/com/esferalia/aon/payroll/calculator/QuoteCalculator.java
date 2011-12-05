@@ -1,11 +1,11 @@
 package com.esferalia.aon.payroll.calculator;
 
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGC_BASE_MAX;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGC_BASE_MIN;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGP_BASE_MAX;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGP_BASE_MIN;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.QUOTE_GROUP;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.MATERNITY;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MAX;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MAX;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE_MIN;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.QUOTE_GROUP;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.MATERNITY;
 
 import java.util.Date;
 import java.util.HashMap;

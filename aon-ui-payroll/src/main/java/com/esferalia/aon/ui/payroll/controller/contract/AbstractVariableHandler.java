@@ -32,7 +32,7 @@ import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
@@ -268,17 +268,17 @@ public abstract class AbstractVariableHandler {
 	
 	public List<?> getVariablesCollection() {
 		PayrollVariablesCollectionsController c = new PayrollVariablesCollectionsController();
-		if(getData().getVariable()==ContractVariables.CNO){
+		if(getData().getVariable()==ContextVariable.CNO){
 			return c.getCnoList();
-		}else if(getData().getVariable()==ContractVariables.TC2){
+		}else if(getData().getVariable()==ContextVariable.TC2){
 			return c.getTc2List();
-		}else if(getData().getVariable()==ContractVariables.CATEGORY){
+		}else if(getData().getVariable()==ContextVariable.CATEGORY){
 			return c.getCategoryList();
-		}else if(getData().getVariable()==ContractVariables.QUOTE_GROUP){
+		}else if(getData().getVariable()==ContextVariable.QUOTE_GROUP){
 			 return c.getQuoteGroupList();
-		}else if(getData().getVariable()==ContractVariables.OCCUPATION){
+		}else if(getData().getVariable()==ContextVariable.OCCUPATION){
 			return c.getOccupationList();
-		}else if(getData().getVariable()==ContractVariables.QUOTE_IT){
+		}else if(getData().getVariable()==ContextVariable.QUOTE_IT){
 			return c.getQuoteItList();
 		}
 		return null;
@@ -375,7 +375,7 @@ public abstract class AbstractVariableHandler {
 				LOGGER.error(msg);
 			}
 		}
-		for(ContractVariables v: ContractVariables.values()){
+		for(ContextVariable v: ContextVariable.values()){
 			SimpleVariable sv = new SimpleVariable();
 			sv.setName(v.getName());
 			sv.setDescription(v.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()));
@@ -423,33 +423,33 @@ public abstract class AbstractVariableHandler {
 		if( StringUtils.startsWith(expression, "\"") && StringUtils.endsWith(expression, "\"")){
 			expression = expression.substring(1, expression.length()-1);
 		}
-		if(getData().getVariable()==ContractVariables.CNO){
+		if(getData().getVariable()==ContextVariable.CNO){
 			setCno(CNO.getCnoByValue(expression));
-		}else if(getData().getVariable()==ContractVariables.TC2){
+		}else if(getData().getVariable()==ContextVariable.TC2){
 			setContractCode(ContractCode.getContractCodeByValue(expression));
-		}else if(getData().getVariable()==ContractVariables.CATEGORY){
+		}else if(getData().getVariable()==ContextVariable.CATEGORY){
 			;
-		}else if(getData().getVariable()==ContractVariables.QUOTE_GROUP){
+		}else if(getData().getVariable()==ContextVariable.QUOTE_GROUP){
 			setQuoteGroup(QuoteGroup.getQuoteGroupByValue(expression));
-		}else if(getData().getVariable()==ContractVariables.OCCUPATION){
+		}else if(getData().getVariable()==ContextVariable.OCCUPATION){
 			setOccupationType(OccupationType.getOccupationTypeByValue(expression));
-		}else if(getData().getVariable()==ContractVariables.QUOTE_IT){
+		}else if(getData().getVariable()==ContextVariable.QUOTE_IT){
 			;
 		}
 		
 	}
 	private void handleDataExpression() {
-		if(getData().getVariable()==ContractVariables.CNO){
+		if(getData().getVariable()==ContextVariable.CNO){
 			getData().setExpression("\""+String.valueOf(getCno().ordinal())+"\"");
-		}else if(getData().getVariable()==ContractVariables.TC2){
+		}else if(getData().getVariable()==ContextVariable.TC2){
 			getData().setExpression("\""+getContractCode().getValue()+"\"");
-		}else if(getData().getVariable()==ContractVariables.CATEGORY){
+		}else if(getData().getVariable()==ContextVariable.CATEGORY){
 			;
-		}else if(getData().getVariable()==ContractVariables.QUOTE_GROUP){
+		}else if(getData().getVariable()==ContextVariable.QUOTE_GROUP){
 			getData().setExpression("\""+getQuoteGroup().getValue()+"\"");
-		}else if(getData().getVariable()==ContractVariables.OCCUPATION){
+		}else if(getData().getVariable()==ContextVariable.OCCUPATION){
 			getData().setExpression("\""+getOccupationType().getValue()+"\"");
-		}else if(getData().getVariable()==ContractVariables.QUOTE_IT){
+		}else if(getData().getVariable()==ContextVariable.QUOTE_IT){
 			;
 		}
 	}

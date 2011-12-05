@@ -23,6 +23,11 @@
 					</ui:include>
 				</c:if>
 			
+				<c:if test="#{salaryDraft.hasWarnings}">
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/formWarnContent.xhtml" >
+						<ui:param name="warnings" value="#{salaryDraft.warnings}" />
+					</ui:include>
+				</c:if>
 			
 			</aon:div>
 		</aon:panelGrid>

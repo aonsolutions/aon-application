@@ -1,11 +1,13 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.*;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -26,6 +28,7 @@ import com.code.aon.common.AonException;
 import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.util.CommonUtil;
+import com.code.aon.person.enumeration.Gender;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Order;
 import com.code.aon.ql.OrderByList;
@@ -43,7 +46,7 @@ import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.enumeration.CCCType;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
 import com.esferalia.aon.payroll.sql.SQLConstants;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelCategoryColumns;
@@ -88,7 +91,7 @@ public class SQLContractSalaryCalculatorContext implements
 	public static final String OPEN_BRACKET = "(";
 	public static final String CLOSE_BRACKET = ")";
 	
-	
+	private static DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 	
 	private static final String MAIN_SQL = "SELECT * "
 		+" FROM contract"
@@ -576,7 +579,7 @@ public class SQLContractSalaryCalculatorContext implements
 
 	@Override
 	public String getQuoteGroup() {
-		return contractExpressionContext.getVariable(ContractVariables.QUOTE_GROUP, startDate, endDate, String.class);
+		return contractExpressionContext.getVariable(ContextVariable.QUOTE_GROUP, startDate, endDate, String.class);
 	}
 	
 	
@@ -1073,6 +1076,31 @@ public class SQLContractSalaryCalculatorContext implements
 		return Math.max(1, Math.round(salaryMonths));
 	}
 	
+	private int getSeniorityYears() {
+		Date start = getSeniorityDate();
+		Date end = getStartDate();
+		return getYears( start, end );
+	}
+	
+	private int getYears(Date start, Date end) {
+		
+		Calendar startCalendar = Calendar.getInstance();
+		startCalendar.setTime(start);
+		
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(end);
+		
+		int years = 0;
+
+		startCalendar.add(Calendar.YEAR, 1);
+		while( startCalendar.compareTo(endCalendar) <= 0  ){
+			years++;
+			startCalendar.add(Calendar.YEAR, 1);
+		}
+		
+		return years ;
+	}
+	
 	private double getSalaryHours() {
 		Number weekHours = getVariable(WEEK_HOURS, Number.class);
 		if ( weekHours == null ) {
@@ -1132,7 +1160,7 @@ public class SQLContractSalaryCalculatorContext implements
 		return value != null ? value : 0.00;
 	}
 
-	private <T> T getVariable(ContractVariables var, Class<T> toType ) {
+	private <T> T getVariable(ContextVariable var, Class<T> toType ) {
 		return getVariable(var.getName(), toType);
 	}
 
@@ -1267,6 +1295,15 @@ public class SQLContractSalaryCalculatorContext implements
 		this.contractExpressionContext.addVariable(SALARY_DAYS, salaryDays);
 		
 
+		this.contractExpressionContext.addVariable(SENIORITY, 
+				new LazyTimedVariable<Integer>(){
+					@Override
+					public Integer create(){
+						return getSeniorityYears();
+					}
+				}
+		);
+
 		this.contractExpressionContext.addVariable(SALARY_MONTHS, 
 				new LazyTimedVariable<Double>(){
 					@Override
@@ -1378,8 +1415,27 @@ public class SQLContractSalaryCalculatorContext implements
 				}
 		);
 
+		this.contractExpressionContext.addVariable(BONUS_AGE , 
+				new LazyTimedVariable<Integer>(){
+					@Override
+					public Integer create(){
+						return getYears(sqlContractBonus.getStartDate(), contractStartDate);
+					}
+				}
+		);
+		
+		this.contractExpressionContext.addVariable(BONUS_START , 
+				new LazyTimedVariable<String>(){
+					@Override
+					public String create(){
+						return DATE_FORMAT.format(sqlContractBonus.getStartDate());
+					}
+				}
+		);
+
 		loadContractLeave(this.contractExpressionContext);
 		loadContractData(this.contractExpressionContext);
+		loadPersonData(this.contractExpressionContext);
 		
 		if ( ! containsVariable(ACTUAL_DAYS )) {
 			// Los 'DIAS_EFECTIVOS' son pesados de calcular ( necesitan de querys adicionales...)
@@ -1450,6 +1506,7 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 	}
 	
+
 	/*
 	 * Carga, ejecuta los datos del contrato 'contract_data' para este periodo.
 	 * Ejecuta porque al valor de una variable no tiene porque ser un literal,
@@ -1510,6 +1567,21 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 	}
 	
+	private void loadPersonData(ExpressionContext ctx ) throws SQLException{
+		
+		ctx.addVariable(MALE, Gender.MALE.ordinal(), contractStartDate, contractEndDate);
+		ctx.addVariable(FEMALE, Gender.FEMALE.ordinal(), contractStartDate, contractEndDate);
+		Integer gender = getInt(SQLConstants.PERSON, PersonColumns.GENDER);
+		if ( gender != null ) {
+			ctx.addVariable(GENDER, gender, contractStartDate, contractEndDate);
+		}
+		Date birthDate = getDate(SQLConstants.PERSON, PersonColumns.BIRTH_DATE);
+		if ( birthDate != null ) {
+			int age = getYears(birthDate, contractStartDate);
+			ctx.addVariable(AGE, age, contractStartDate, contractEndDate);
+		}
+		
+	}
 	
 	
 	private void loadContractLeave(ExpressionContext ctx ) throws SQLException{

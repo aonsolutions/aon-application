@@ -50,7 +50,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractAttachmentType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.ui.payroll.controller.wizard.ContrataParams;
 import com.esferalia.aon.ui.payroll.file.ContractXmlReader;
 import com.esferalia.aon.ui.payroll.file.ContractXmlWriter;
@@ -88,7 +88,7 @@ public class ContractContrataHandler {
 		contractController = controller;
 		factory = new ContractContrataFactory();
 		factory.setParams(new ContrataParams());
-		factory.setContractCode(ContractCode.getContractCodeByValue(getContractDataMap().get(ContractVariables.TC2.getName())));
+		factory.setContractCode(ContractCode.getContractCodeByValue(getContractDataMap().get(ContextVariable.TC2.getName())));
 		factory.setContract((Contract)contractController.getTo());
 	}
 	
@@ -241,38 +241,38 @@ public class ContractContrataHandler {
 	
 	private File getSchemaFile(URL url) {
 		Map<String, Boolean> map = new HashMap<String, Boolean>();
-		map.put("CONTRATO_100", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C100.getValue()));
-		map.put("CONTRATO_130", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C130.getValue()));
-		map.put("CONTRATO_150", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C150.getValue()));
-		map.put("CONTRATO_200", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C200.getValue()));
-		map.put("CONTRATO_230", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C230.getValue()));
-		map.put("CONTRATO_250", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C250.getValue()));
-		map.put("CONTRATO_300", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C300.getValue()));
-		map.put("CONTRATO_330", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C330.getValue()));
-		map.put("CONTRATO_350", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C350.getValue()));
-		map.put("CONTRATO_401", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C401.getValue()));
-		map.put("CONTRATO_402", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C402.getValue()));
-		map.put("CONTRATO_403", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C403.getValue()));
-		map.put("CONTRATO_410", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C410.getValue()));
-		map.put("CONTRATO_420", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C420.getValue()));
-		map.put("CONTRATO_421", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C421.getValue()));
-		map.put("CONTRATO_430", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C430.getValue()));
-		map.put("CONTRATO_441", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C441.getValue()));
-		map.put("CONTRATO_450", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C450.getValue()));
-		map.put("CONTRATO_452", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C452.getValue()));
-		map.put("CONTRATO_501", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C501.getValue()));
-		map.put("CONTRATO_502", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C502.getValue()));
-		map.put("CONTRATO_503", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C503.getValue()));
-		map.put("CONTRATO_510", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C510.getValue()));
-		map.put("CONTRATO_520", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C520.getValue()));
-		map.put("CONTRATO_530", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C530.getValue()));
-		map.put("CONTRATO_540", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C540.getValue()));
-		map.put("CONTRATO_541", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C541.getValue()));
-		map.put("CONTRATO_550", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C550.getValue()));
-		map.put("CONTRATO_552", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C552.getValue()));
-		map.put("CONTRATO_970", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C970.getValue()));
-		map.put("CONTRATO_980", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C980.getValue()));
-		map.put("CONTRATO_990", getContractDataMap().get(ContractVariables.TC2.getName()).equals(ContractCode.C990.getValue()));
+		map.put("CONTRATO_100", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C100.getValue()));
+		map.put("CONTRATO_130", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C130.getValue()));
+		map.put("CONTRATO_150", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C150.getValue()));
+		map.put("CONTRATO_200", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C200.getValue()));
+		map.put("CONTRATO_230", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C230.getValue()));
+		map.put("CONTRATO_250", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C250.getValue()));
+		map.put("CONTRATO_300", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C300.getValue()));
+		map.put("CONTRATO_330", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C330.getValue()));
+		map.put("CONTRATO_350", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C350.getValue()));
+		map.put("CONTRATO_401", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C401.getValue()));
+		map.put("CONTRATO_402", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C402.getValue()));
+		map.put("CONTRATO_403", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C403.getValue()));
+		map.put("CONTRATO_410", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C410.getValue()));
+		map.put("CONTRATO_420", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C420.getValue()));
+		map.put("CONTRATO_421", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C421.getValue()));
+		map.put("CONTRATO_430", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C430.getValue()));
+		map.put("CONTRATO_441", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C441.getValue()));
+		map.put("CONTRATO_450", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C450.getValue()));
+		map.put("CONTRATO_452", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C452.getValue()));
+		map.put("CONTRATO_501", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C501.getValue()));
+		map.put("CONTRATO_502", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C502.getValue()));
+		map.put("CONTRATO_503", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C503.getValue()));
+		map.put("CONTRATO_510", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C510.getValue()));
+		map.put("CONTRATO_520", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C520.getValue()));
+		map.put("CONTRATO_530", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C530.getValue()));
+		map.put("CONTRATO_540", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C540.getValue()));
+		map.put("CONTRATO_541", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C541.getValue()));
+		map.put("CONTRATO_550", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C550.getValue()));
+		map.put("CONTRATO_552", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C552.getValue()));
+		map.put("CONTRATO_970", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C970.getValue()));
+		map.put("CONTRATO_980", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C980.getValue()));
+		map.put("CONTRATO_990", getContractDataMap().get(ContextVariable.TC2.getName()).equals(ContractCode.C990.getValue()));
 		try {
 			File tempFile = new File("tmpEsquemaContratos50.xsd");
 

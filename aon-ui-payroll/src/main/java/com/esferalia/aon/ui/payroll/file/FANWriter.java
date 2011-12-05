@@ -46,7 +46,7 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LiquidationType;
 import com.esferalia.aon.payroll.enumeration.Mutual;
 import com.esferalia.aon.payroll.enumeration.SSRegimeType;
@@ -465,7 +465,7 @@ public class FANWriter {
 //		0409 Deportistas profesionales
 //		0900 Abogados en despachos de abogados
 //		9909 Personal becario de investigación
-		String tc2 = getContractDataMap(c).get(ContractVariables.TC2);
+		String tc2 = getContractDataMap(c).get(ContextVariable.TC2);
 		if(tc2!=null && (tc2.equals("100") || tc2.equals("409") || tc2.equals("900"))){
 			return Integer.parseInt(tc2);
 		}
@@ -487,7 +487,7 @@ public class FANWriter {
 		return null;
 	}
 	private String getContractOccupation(Contract c) {
-		String o = getContractDataMap(c).get(ContractVariables.OCCUPATION);
+		String o = getContractDataMap(c).get(ContextVariable.OCCUPATION);
 		return o!=null && !o.isEmpty()?o:null;
 	}
 	private Integer getSecondariEpigraph(Contract c) {
@@ -499,15 +499,15 @@ public class FANWriter {
 		return null;
 	}
 	private Integer getContractKey(Contract c) {
-		String tc2 = getContractDataMap(c).get(ContractVariables.TC2);
+		String tc2 = getContractDataMap(c).get(ContextVariable.TC2);
 		return tc2!=null && !tc2.isEmpty()?Integer.parseInt(tc2):null;
 	}
 	private String getContractType(Contract c) {
-		String i = getContractDataMap(c).get(ContractVariables.INDEFINITE);
+		String i = getContractDataMap(c).get(ContextVariable.INDEFINITE);
 		return i!=null && !i.isEmpty()?"I":"D";
 	}
 	private Integer getQuoteGroup(Contract c) {
-		String q = getContractDataMap(c).get(ContractVariables.QUOTE_GROUP);
+		String q = getContractDataMap(c).get(ContextVariable.QUOTE_GROUP);
 		return q!=null && !q.isEmpty()?Integer.parseInt(q):null;
 	}
 	private Integer getBonificationReduction(Contract c) {
@@ -531,7 +531,7 @@ public class FANWriter {
 		return null;
 	}
 	private String getVacationIndicator(Contract c) {
-		String v = getContractDataMap(c).get(ContractVariables.NO_HOLIDAYS);
+		String v = getContractDataMap(c).get(ContextVariable.NO_HOLIDAYS);
 		return v!=null && !v.isEmpty()?"V":BLANK_1;
 	}
 	private String getQuoteIndicator(Contract c) {

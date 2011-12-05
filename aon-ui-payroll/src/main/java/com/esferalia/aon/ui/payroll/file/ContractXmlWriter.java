@@ -24,7 +24,7 @@ import com.esferalia.aon.payroll.EnterpriseCCC;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.CCCType;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 //import com.esferalia.aon.ui.payroll.controller.contract.ContractController.ContractParams;
 import com.esferalia.aon.ui.payroll.controller.wizard.ContrataParams;
 import com.esferalia.aon.ui.payroll.utils.contractMojo.CIFNIFTYPE;
@@ -114,7 +114,7 @@ public class ContractXmlWriter {
 	}
 	public String getCode() {
 		if(code==null){
-			code = getContractDataMap().get(ContractVariables.TC2.getName());
+			code = getContractDataMap().get(ContextVariable.TC2.getName());
 		}
 		return code;
 	}
@@ -753,7 +753,7 @@ public class ContractXmlWriter {
 			datos.setINDDISCAPACIDAD(contrataParams.getDisabilityCode()!=null?contrataParams.getDisabilityCode().getValue():null);
 		}
 //		datos.setCODIGOOCUPACION(completeLength(contrataParams.getCno().getCode(), 8, ZERO_VALUE, true));
-		datos.setCODIGOOCUPACION(completeLength(getContractDataMap().get(ContractVariables.CNO.getName()), 8, ZERO_VALUE, true));
+		datos.setCODIGOOCUPACION(completeLength(getContractDataMap().get(ContextVariable.CNO.getName()), 8, ZERO_VALUE, true));
 		if(contrataParams.isOfferData()){
 			datos.setIDOFERTA(completeLength(contrataParams.getOffer(), 17, ZERO_VALUE, false));
 		}
