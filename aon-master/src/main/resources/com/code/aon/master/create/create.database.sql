@@ -570,6 +570,7 @@ CREATE TABLE `invoice` (
   `security_level` tinyint(2) default '0' COMMENT 'Nivel de seguridad de la Factura',
   `status` tinyint(2) default '0' COMMENT 'Estado de la Factura',
   `type` tinyint(2) default '0' COMMENT 'Tipo de Factura (Compra o Venta)',
+  `taxFree` tinyint(1) default '0' COMMENT 'Indica si la Factura esta exenta de Impuestos',
   `surcharge` tinyint(1) default '0' COMMENT 'Indica si la Factura tiene recargo de equivalencia',
   `withholding` tinyint(1) default '0' COMMENT 'Indica si la Factura aplica retencion de impuestos',
   `comments` text collate latin1_spanish_ci COMMENT 'Comentarios de la Factura',
