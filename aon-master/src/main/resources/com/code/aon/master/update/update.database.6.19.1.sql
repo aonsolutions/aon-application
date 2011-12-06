@@ -35,8 +35,6 @@ ALTER TABLE `sales` DROP KEY `pos`;
 
 ALTER TABLE `sales` DROP `pos`;
 
-ALTER TABLE `invoice` DROP `taxFree`;
-
 DROP TABLE `contact`;
 
 DROP TABLE `expenditures`;
