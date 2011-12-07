@@ -1,27 +1,27 @@
 package com.esferalia.aon.payroll.calculator;
 
 
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGC_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.CGP_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.EMBARGO_LEFT;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.EMBARGO_LIMIT;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.EMBARGO_MAX;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.EMBARGO_PAID;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.EMPLOYEE_QUOTA;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.ENTERPRISE_QUOTA;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.IRPF_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.NON_STRUCTURAL_OVERTIME_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.STRUCTURAL_OVERTIME_BASE;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.TOTAL_LIQUID;
-import static com.esferalia.aon.payroll.enumeration.ContractVariables.TOTAL_PAYMENT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGC_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.CGP_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_LEFT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_LIMIT;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_MAX;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMBARGO_PAID;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.EMPLOYEE_QUOTA;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.ENTERPRISE_QUOTA;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.IRPF_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.NON_STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.STRUCTURAL_OVERTIME_BASE;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_LIQUID;
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.TOTAL_PAYMENT;
 
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import com.code.aon.common.AonException;
 import com.code.aon.common.util.CommonUtil;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.SalaryException;
@@ -35,43 +35,26 @@ import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedVariable;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.UndefinedVariableException;
+import com.esferalia.aon.salary.expression.CheckException;
 
 public class ContractSalaryCalculator implements ISalaryCalculator{
 
 	
+	public interface IListener {
+		public void onCheckError( IContractPayment payment, String message);
+		public void onInvalidData(IContractPayment payment, String variableName, String message);
+
+		public void onCheckError( IContractBonus bonus, String message);
+		public void onInvalidData( IContractBonus bonus, String variableName, String message);
+	}
+	
+	
+	private IListener listener;
 	private ISalaryBuilder salaryBuilder ;
 	
 	
-	private static class TimedVariable 
-		implements ITimedVariable<Double>
-	{
-		
-		private Period period;
-		private Double value;
-		
-		
-		public TimedVariable(Date start, Date end , Double value) {
-			this.value = value;
-			this.period = new Period(start, end);
-		}
-		
-		@Override
-		public Period getPeriod() {
-			return period;
-		}
-		
-		@Override
-		public Double getValue(Period p) {
-			return period.compareTo(p) == 0 ? value : getPortionValue(p);
-		}
-		
-		private Double getPortionValue(Period p) {
-			double alldays = 
-				CommonUtil.getDaysBetweenDates(period.getStart(), period.getEnd()) +1;
-			double portionDays = 
-				CommonUtil.getDaysBetweenDates(p.getStart(), p.getEnd()) +1;
-			return value * portionDays / alldays;
-		}
+	public void setListener(IListener listener) {
+		this.listener = listener;
 	}
 	
 	public void setSalaryBuilder( ISalaryBuilder salaryBuilder){
@@ -218,8 +201,12 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 					//System.out.printf("[%s]: %-45s\t\t= %f\t(%f)\r\n", contractPayment.getName(), contractPayment.getDescription(), total, taxCalculator.getTotalPayment());
 					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, total);
 
-				} catch ( UndefinedVariableException e ) {
-					e.printStackTrace();
+				}catch ( InvalidVariable e ) {
+					onInvalidData(contractPayment, e.getVariable(), e.getMessage());
+				}catch ( CheckException e ) {
+					onCheckError(contractPayment, e.getMessage());
+				}
+				catch ( UndefinedVariableException e ) {
 					// TODO : notificar ??? 
 				}
 			}
@@ -522,26 +509,33 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 					continue; //TODO : must be done in context ?
 				}
 
-				List<ITimedObject<Double>> amounts = 
+				try {
+					List<ITimedObject<Double>> amounts = 
 					expressionContext.eval(contractBonus.getExpression(), bonusStart, bonusEnd, Double.class);
 				
-				double bonus = 0.00;
-				for (ITimedObject<Double> amount : amounts) {
-					Double value = amount.getValue();
-					if ( value != null ) {
-						String description  = null;
-						try  {
-							Period period = amount.getPeriod();
-							description = expressionContext.evalTemplate(contractBonus.getDescription(), period.getStart(), period.getEnd());
-							salaryBuilder.addBonus(contractBonus.getName(), value, description);
-						} catch (Exception e ) {
-							//TODO : Log ???
+					double bonus = 0.00;
+					for (ITimedObject<Double> amount : amounts) {
+						Double value = amount.getValue();
+						if ( value != null ) {
+							String description  = null;
+							try  {
+								Period period = amount.getPeriod();
+								description = expressionContext.evalTemplate(contractBonus.getDescription(), period.getStart(), period.getEnd());
+								salaryBuilder.addBonus(contractBonus.getName(), value, description);
+							} catch (Exception e ) {
+								//TODO : Log ???
+							}
 						}
+						bonus += amount.getValue();
 					}
-					bonus += amount.getValue();
+					total += bonus;
+
+				} catch ( InvalidVariable e ){
+					onInvalidData(contractBonus, e.getVariable(), e.getMessage());
 				}
-				total += bonus;
-				
+				catch ( CheckException e ) {
+					onCheckError(contractBonus, e.getMessage());
+				}
 			}
 			
 		} catch ( ExpressionException e ) {
@@ -552,5 +546,60 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		
 		return total;
 	}
+	
+	private void onCheckError( IContractBonus bonus, String message){
+		if ( listener!= null ) {
+			listener.onCheckError(bonus, message);
+		}
+	}
 
+	private void onInvalidData( IContractBonus bonus, String variableName, String message){
+		if ( listener!= null ) {
+			listener.onInvalidData(bonus, variableName, message);
+		}
+	}
+
+	private void onCheckError( IContractPayment payment, String message){
+		if ( listener!= null ) {
+			listener.onCheckError(payment, message);
+		}
+	}
+
+	private void onInvalidData( IContractPayment payment, String variableName, String message){
+		if ( listener!= null ) {
+			listener.onInvalidData(payment, variableName, message);
+		}
+	}
+
+	private static class TimedVariable 
+	implements ITimedVariable<Double>
+{
+	
+	private Period period;
+	private Double value;
+	
+	
+	public TimedVariable(Date start, Date end , Double value) {
+		this.value = value;
+		this.period = new Period(start, end);
+	}
+	
+	@Override
+	public Period getPeriod() {
+		return period;
+	}
+	
+	@Override
+	public Double getValue(Period p) {
+		return period.compareTo(p) == 0 ? value : getPortionValue(p);
+	}
+	
+	private Double getPortionValue(Period p) {
+		double alldays = 
+			CommonUtil.getDaysBetweenDates(period.getStart(), period.getEnd()) +1;
+		double portionDays = 
+			CommonUtil.getDaysBetweenDates(p.getStart(), p.getEnd()) +1;
+		return value * portionDays / alldays;
+	}
+}
 }

@@ -17,7 +17,7 @@ import org.apache.commons.lang.ObjectUtils.Null;
 
 import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.LeaveType;
 import com.esferalia.aon.payroll.enumeration.LeaveTypeVisitor;
 import com.esferalia.aon.payroll.sql.SQLConstants.ContractLeaveColumns;
@@ -51,7 +51,7 @@ public class SQLContractLeaveLoader  {
 			return rangeEnd >= rangeStart ? ( rangeEnd - rangeStart ) + 1 : 0 ;
 		}
 
-		public String getName(ContractVariables variable) {
+		public String getName(ContextVariable variable) {
 			if ( end != null ) {
 				return String.format("%s_%d_%d", variable, start, end );
 			}
@@ -174,11 +174,11 @@ public class SQLContractLeaveLoader  {
 				public Void visitCommonDisease(LeaveType leaveType) {
 					for (DaysRange range : RANGES) {
 						long days = range.getDays(parentDays, leaveDays);
-						String name = range.getName ( ContractVariables.COMMON_DISEASE_DAYS);
+						String name = range.getName ( ContextVariable.COMMON_DISEASE_DAYS);
 						exprCtx.addVariable( name , days, start, end );
 					}
-					exprCtx.addVariable(ContractVariables.REGULATORY_BASE, regBase, start, end );
-					exprCtx.addVariable(ContractVariables.COMMON_DISEASE_DAYS, leaveDays, start, end );
+					exprCtx.addVariable(ContextVariable.REGULATORY_BASE, regBase, start, end );
+					exprCtx.addVariable(ContextVariable.COMMON_DISEASE_DAYS, leaveDays, start, end );
 					return null;
 				}
 
@@ -189,15 +189,15 @@ public class SQLContractLeaveLoader  {
 														// Desde el día siguiente al de la baja en el trabajo.
 					if ( days <= 0 )
 						return null;
-					exprCtx.addVariable(ContractVariables.OCCUPATIONAL_DISEASE_DAYS, days, start, end );
-					exprCtx.addVariable(ContractVariables.REGULATORY_BASE, regBase, start, end );
+					exprCtx.addVariable(ContextVariable.OCCUPATIONAL_DISEASE_DAYS, days, start, end );
+					exprCtx.addVariable(ContextVariable.REGULATORY_BASE, regBase, start, end );
 					return null;
 				}
 
 				@Override
 				public Void visitMaternity(LeaveType leaveType) {
-					exprCtx.addVariable(ContractVariables.MATERNITY_DAYS, leaveDays, start, end );
-					exprCtx.addVariable(ContractVariables.REGULATORY_BASE, regBase, start, end );
+					exprCtx.addVariable(ContextVariable.MATERNITY_DAYS, leaveDays, start, end );
+					exprCtx.addVariable(ContextVariable.REGULATORY_BASE, regBase, start, end );
 					return null;
 				}
 

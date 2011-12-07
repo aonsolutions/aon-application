@@ -1,5 +1,7 @@
 package com.code.aon.ui.document.tree;
 
+import static com.code.aon.project.dao.IProjectAlias.PROJECT_ENTERPRISE_ID;
+import static com.code.aon.project.dao.IProjectAlias.PROJECT_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_SEARCH;
 import static com.code.aon.ui.project.controller.IProjectConstants.PROJECT_CONTROLLER_NAME;
@@ -33,7 +35,6 @@ import com.code.aon.company.Enterprise;
 import com.code.aon.document.BasicAlfresco;
 import com.code.aon.document.EnterpriseDocument;
 import com.code.aon.project.Project;
-import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.company.controller.ICompanyConstants;
@@ -133,31 +134,41 @@ public class EnterpriseTree implements ICompanyConstants {
 			EnterpriseTreeData etd = getTreeData(ed);
 			documentNode.setData(etd);
 			TreeNode<EnterpriseTreeData> parent = null;
+			boolean skipDocument = false;
 			if ( ed.getProject() != null ) {
-				parent = projects.get(ed.getProject().getId());
+				if ( ed.getProject().isActive() ) {
+					parent = projects.get(ed.getProject().getId());
+					parent.getData().incCount();
+				} else {
+					skipDocument = true;
+				}
 			}
 			if ( parent == null ) {
 				parent = enterpriseNode;
 			}
-			parent.addChild( etd.getKey(), documentNode );	
-			parent.getData().incCount();
+			if (! skipDocument ) {
+				parent.addChild( etd.getKey(), documentNode );	
+				enterpriseNode.getData().incCount();
+			}
 		}	
-		enterpriseNode.getData().setCount(list.size());
 	}		
 	
 	private void loadProjects( TreeNode<EnterpriseTreeData> enterpriseNode, Enterprise enterprise ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(Project.class);		
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IProjectAlias.PROJECT_ENTERPRISE_ID), enterprise.getId());
-		criteria.addOrder(bean.getFieldName(IProjectAlias.PROJECT_NAME));
+		criteria.addEqualExpression(bean.getFieldName(PROJECT_ENTERPRISE_ID), enterprise.getId());
+		criteria.addOrder(bean.getFieldName(PROJECT_NAME));
 		Map<Integer,TreeNode<EnterpriseTreeData>> projects = new HashMap<Integer, TreeNode<EnterpriseTreeData>>();
 		List<ITransferObject> list = bean.getList(criteria);
 		for( ITransferObject to : list ) {
 			Project project = (Project) to;
-			TreeNodeImpl<EnterpriseTreeData> projectNode = new TreeNodeImpl<EnterpriseTreeData>();
-			EnterpriseTreeData etd = getTreeData(project);
-			projectNode.setData(etd);
-			enterpriseNode.addChild( etd.getKey(), projectNode );
+			TreeNodeImpl<EnterpriseTreeData> projectNode = null;
+			if ( project.isActive() ) {
+				projectNode = new TreeNodeImpl<EnterpriseTreeData>();
+				EnterpriseTreeData etd = getTreeData(project);
+				projectNode.setData(etd);
+				enterpriseNode.addChild( etd.getKey(), projectNode );				
+			}
 			projects.put(project.getId(), projectNode);
 		}
 		loadDocuments(enterpriseNode, enterprise, projects);
@@ -335,5 +346,11 @@ public class EnterpriseTree implements ICompanyConstants {
 		setDocument(null);
 		loadTree();
 	}	
-	
+
+	public void onBack( ActionEvent event ) {
+		EnterpriseController controller = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+		controller.onBack(event);
+		onReloadTree(event);
+	}		
+
 }

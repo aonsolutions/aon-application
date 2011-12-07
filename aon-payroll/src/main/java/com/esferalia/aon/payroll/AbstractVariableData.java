@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.esferalia.aon.payroll.enumeration.CNO;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
 import com.esferalia.aon.salary.expression.IExpression;
@@ -14,21 +14,25 @@ import com.esferalia.aon.salary.expression.IExpression;
 public abstract class AbstractVariableData implements IExpression{
 	
 	@Transient
-	public ContractVariables getVariable(){
-		return ContractVariables.getVariable(getName());
+	public ContextVariable getVariable(){
+		ContextVariable var = ContextVariable.getVariable(getName()!=null?getName().toUpperCase():null);
+		if(var!=null){
+			setName(getName().toUpperCase());
+		}
+		return var;
 	}
 	
 	@Transient
 	public Enum<?> getVariableEnum(){
-		if(getName().equals(ContractVariables.CNO.getName())){
+		if(getName().equals(ContextVariable.CNO.getName())){
 			return CNO.getCnoByValue(handleEditorExpression(getExpression()));
-		} else if(getName().equals(ContractVariables.TC2.getName())){
+		} else if(getName().equals(ContextVariable.TC2.getName())){
 			return ContractCode.getContractCodeByValue(handleEditorExpression(getExpression()));
-		} else if(getName().equals(ContractVariables.QUOTE_GROUP.getName())){
+		} else if(getName().equals(ContextVariable.QUOTE_GROUP.getName())){
 			return QuoteGroup.getQuoteGroupByValue(handleEditorExpression(getExpression()));
-		} else if(getName().equals(ContractVariables.OCCUPATION.getName())){
+		} else if(getName().equals(ContextVariable.OCCUPATION.getName())){
 			return OccupationType.getOccupationTypeByValue(handleEditorExpression(getExpression()));
-		} else if(getName().equals(ContractVariables.QUOTE_IT.getName())){
+		} else if(getName().equals(ContextVariable.QUOTE_IT.getName())){
 			return null;
 		}
 		return null;

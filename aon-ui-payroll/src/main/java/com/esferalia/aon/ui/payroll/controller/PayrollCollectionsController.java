@@ -442,7 +442,7 @@ public class PayrollCollectionsController {
 		}
 		return cnoList;
 	}
-	
+
 	public List<SelectItem> getEmploymentProgramList() {
 		if (employmentProgramList == null) {
 			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();

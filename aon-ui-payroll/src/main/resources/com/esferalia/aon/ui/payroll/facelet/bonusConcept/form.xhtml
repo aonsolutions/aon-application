@@ -28,14 +28,16 @@
 
 					<aon:outputLabel for="BonusConcept_description"
 						value="#{bundle.aon_description}" />
-					<aon:inputText id="BonusConcept_description" size="64" maxlength="64"
-						value="#{bonusConcept.to.description}" />
+					<aon:inputTextarea id="BonusConcept_description" cols="60" rows="5" maxlength="256"
+						value="#{bonusConcept.to.description}">
+						<f:validateLength maximum="256"/>
+					</aon:inputTextarea>
 						
 					<aon:outputLabel for="BonusConcept_expression"
 						value="#{payrollBundle.payroll_salary_expression}" />
-					<aon:inputTextarea id="BonusConcept_expression" cols="60" rows="3" maxlength="128"
+					<aon:inputTextarea id="BonusConcept_expression" cols="60" rows="10" maxlength="512"
 						value="#{bonusConcept.to.expression}">
-						<f:validateLength maximum="128"/>
+						<f:validateLength maximum="512"/>
 					</aon:inputTextarea>
 
 				</aon:panelGrid>

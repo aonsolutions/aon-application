@@ -35,7 +35,7 @@ import com.esferalia.aon.payroll.IrpfData;
 import com.esferalia.aon.payroll.IrpfDataDescendients;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DeductHomeLoan;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator;
@@ -222,7 +222,7 @@ public class IrpfDataController extends LinesController {
 		IManagerBean dataBean = BeanManager.getManagerBean(ContractData.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), getParams().getContractId());
-		criteria.addEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), ContractVariables.IRPF_PERCENT.getName());
+		criteria.addEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), ContextVariable.IRPF_PERCENT.getName());
 		Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), getParams().getDate());
 		Expression expr2 = ExpressionUtilities.getNullExpression(dataBean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE));
 		criteria.addExpression(ExpressionUtilities.getOrExpression(expr1, expr2));			
@@ -235,7 +235,7 @@ public class IrpfDataController extends LinesController {
 			data.setContract(existingData.getContract());
 			data.setStartDate(getParams().getDate());
 			data.setEndDate(null);
-			data.setName(ContractVariables.IRPF_PERCENT.getName());
+			data.setName(ContextVariable.IRPF_PERCENT.getName());
 			data.setExpression(getParams().getNewIrpf().toString());
 			// se cierra el irpf anterior
 			Calendar cal = Calendar.getInstance();

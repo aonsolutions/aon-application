@@ -65,17 +65,18 @@
 						<f:facet name="header">
 							<aon:outputText value="#{webmailBundle.webmail_mailAccount_default_account}" />
 						</f:facet>
-						<aon:div rendered="#{!to.defaultAccount}"
-							onmouseover="disableRowSelector();"
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseup="disableRowSelector();"
 							onmouseout="enableRowSelector();" >
-							<aon:commandLink 
+							<aon:commandLink
+								rendered="#{!to.defaultAccount}" 
 								actionListener="#{controller.onSetDefault}" >
 								<aon:outputText value="&#160;"
 									styleClass="aon-icon aon-icon-check" />							
 							</aon:commandLink>
+							<aon:outputText value="&#160;" rendered="#{to.defaultAccount}"
+								styleClass="aon-icon aon-icon-checked" />					
 						</aon:div>
-						<aon:outputText value="&#160;" rendered="#{to.defaultAccount}"
-							styleClass="aon-icon aon-icon-checked" />					
 					</aon:column>
 				</c:if>
 						
@@ -84,18 +85,21 @@
 						<f:facet name="header">
 							<aon:outputText value="&#160;" />
 						</f:facet>
-						<aon:outputText
-							value="#{webmailBundle.webmail_signature_active}"
-							rendered="#{controller.currentToActiveAccount}" />
-						<aon:commandButton id="mailAccountChange"
-							rendered="#{!controller.currentToActiveAccount}"
-							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
-							title="#{webmailBundle.webmail_mailAccountChange}"
-							action="mailAccount_list" actionListener="#{controller.onChangeServer}"
-							value="#{webmailBundle.webmail_mailAccountChange}"
-							onclick="Richfaces.showModalPanel('waitProccess')"
-							styleClass="aon-icon-commandButton aon-icon-predetermine">
+						<aon:div onmouseover="disableRowSelector();"
+							onmouseup="disableRowSelector();"
+							onmouseout="enableRowSelector();" >
+							<aon:outputText
+								value="#{webmailBundle.webmail_signature_active}"
+								rendered="#{controller.currentToActiveAccount}" />
+							<aon:commandButton id="mailAccountChange"
+								rendered="#{!controller.currentToActiveAccount}"
+								title="#{webmailBundle.webmail_mailAccountChange}"
+								action="mailAccount_list" actionListener="#{controller.onChangeServer}"
+								value="#{webmailBundle.webmail_mailAccountChange}"
+								onclick="Richfaces.showModalPanel('waitProccess')"
+								styleClass="aon-icon-commandButton aon-icon-predetermine">
 							</aon:commandButton>
+						</aon:div>
 					</aon:column>
 				</c:if>
 			</ui:define>

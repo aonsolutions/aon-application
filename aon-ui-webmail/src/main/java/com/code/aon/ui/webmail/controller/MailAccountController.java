@@ -1,6 +1,7 @@
 package com.code.aon.ui.webmail.controller;
 
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
+import static com.code.aon.ldap.IAonObjectClasses.USER;
 import static com.code.aon.ldap.NameResolver.DOMAINS;
 
 import java.util.LinkedList;
@@ -87,11 +88,16 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 	}	
 	
 	private void updateBaseDN( String domain, String user )  {
-		Name baseDN = NameResolver.getUserAccountsDN(domain, user);
-		if (! getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
-			getLdapDAO().addOrganizationUnit(baseDN);
+		Name userDN = NameResolver.getUserDN(domain, user);
+		if ( getLdapDAO().exists(userDN, USER) ) { 
+			Name baseDN = NameResolver.getUserAccountsDN(domain, user);
+			if (! getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
+				getLdapDAO().addOrganizationUnit(baseDN);
+			}
+			getLdapDAO().setBaseDN( baseDN );
+		} else {
+			LOGGER.warn( "LDAP entry not found: {}", userDN );
 		}
-		getLdapDAO().setBaseDN( baseDN );
 	}		
 	
 	@Override

@@ -62,7 +62,7 @@ public class AgreementLevelDataController extends LinesController {
 //				list.add(systemDataVariable);
 //			}
 //		}
-//		for (ContractVariables cv :ContractVariables.values() ){
+//		for (ContextVariable cv :ContextVariable.values() ){
 //			if (cv.getName().startsWith(filter)) {
 //				list.add(cv.getName());		
 //			}

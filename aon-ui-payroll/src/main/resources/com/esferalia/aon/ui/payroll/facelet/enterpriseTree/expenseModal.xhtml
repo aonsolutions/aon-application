@@ -13,7 +13,7 @@
 			<rich:modalPanel id="expenseModalPanel" 
 				height="150" width="300" resizeable="false" 
 				rendered="#{salaryExpense.showSalaryExpenseWindow}"
-				showWhenRendered="true" zindex="90">
+				showWhenRendered="true" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{payrollBundle.payroll_salary_expense}" />
@@ -64,6 +64,7 @@
 									<aon:commandButton id="back"
 										title="#{bundle.aon_key_cancel_accelerator}"
 										value="#{bundle.aon_back}" immediate="true"
+										reRender="showSalaryExpenseWindow"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										accesskey="#{bundle.aon_key_cancel}" >
 										<rich:componentControl for="expenseModalPanel"
@@ -71,18 +72,10 @@
 										<f:setPropertyActionListener
 											target="#{salaryExpense.showSalaryExpenseWindow}"
 											value="#{false}" />
-									</aon:commandButton>		
+									</aon:commandButton>	
 								</aon:div>
 								
 								<aon:div styleClass="salaryExpenseModalContent" >
-<!--  
-									<aon:selectBooleanCheckbox 
-										value="#{salaryExpense.expenseDraft}">
-										<a4j:support event="onclick" reRender="salary"/>
-									</aon:selectBooleanCheckbox>
-									<aon:outputText styleClass="aon-italic aon-margin-left aon-margin-right"
-										value="#{payrollBundle.payroll_salary_expense_draft}" />
--->
 									
 									<aon:panelGrid columns="4" >
 										<aon:outputLabel for="Calendar_month"

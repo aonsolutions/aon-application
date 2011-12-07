@@ -47,15 +47,20 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
+import com.esferalia.aon.payroll.SalaryBuilder;
 import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.HierarchyPayments;
+import com.esferalia.aon.payroll.calculator.IContractBonus;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
+import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.OutOfDateException;
 import com.esferalia.aon.salary.enumeration.BonusType;
@@ -72,9 +77,33 @@ import com.esferalia.aon.ui.payroll.controller.launcher.SalaryLauncherParams;
 import com.esferalia.aon.ui.payroll.controller.launcher.SalaryRemoverController;
 import com.esferalia.aon.ui.payroll.controller.salary.SortedSalaryItems;
 
-public class SalaryDraftController extends BasicController {
+public class SalaryDraftController extends BasicController implements ContractSalaryCalculator.IListener {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryDraftController.class.getName());
+	
+	
+	public static class Warning {
+		private String title;
+		private String message;
+		private String description;
+		private String variable;
+		
+		public String getTitle() {
+			return title;
+		}
+		
+		public String getMessage() {
+			return message;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+		
+		public String getVariable() {
+			return variable;
+		}
+	}
 
 	private int 								year;		
 	private Month 								month;		 
@@ -89,13 +118,24 @@ public class SalaryDraftController extends BasicController {
 	private SortedSalaryItems<PaymentType>		payments;
 	private SortedSalaryItems<DeductionType>	deductions;
 	private SortedSalaryItems<DeductionType>	costs;
-	private SortedSalaryItems<BonusType>	bonuses;
+	private SortedSalaryItems<BonusType>		bonuses;
 	
 	private List<SelectItem> 					draftMonths;		
 	private List<SelectItem> 					salaryDraftTypes;	
 
 	private DataModel 							paymentsModel;
 //	private DataModel 							deductionsModel;
+	
+	private List<Warning>						warnings ;
+	
+	
+	public boolean gethasWarnings(){
+		return warnings.size() > 0;
+	}
+	
+	public List<Warning> getWarnings() {
+		return warnings;
+	}
 	
 	public List<SelectItem> getDraftMonths() {
 		return draftMonths;
@@ -182,8 +222,8 @@ public class SalaryDraftController extends BasicController {
 	public void setSalaryType(SalaryType salaryType) {
 		this.salaryType = salaryType;
 	}
-
-
+	
+	
 	public boolean isContractScope(){
 		if(this.getPaymentsModel().isRowAvailable()){
 			return ((IContractPayment)this.getPaymentsModel().getRowData()).getScope()==ExpressionScope.CONTRACT;
@@ -267,6 +307,50 @@ public class SalaryDraftController extends BasicController {
 		}						
 	}
 
+	public void onInvalidData(ActionEvent event) {
+	}
+
+	@Override
+	public void onCheckError(IContractBonus bonus, String message) {
+		Warning warning = new Warning();
+		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_BONUS );
+		warning.message = message;
+		warning.description = bonus.getDescription();
+		warnings.add(warning);
+	}
+	@Override
+	public void onInvalidData(IContractBonus bonus, String variableName,
+			String message) {
+		Warning warning = new Warning();
+		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_BONUS );
+		warning.message = message;
+		warning.description = bonus.getDescription();
+		warning.variable = variableName;
+		warnings.add(warning);
+		
+	}
+	
+	@Override
+	public void onCheckError(IContractPayment payment, String message) {
+		Warning warning = new Warning();
+		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_PAYMENTS );
+		warning.message = message;
+		warning.description = payment.getDescription();
+		warnings.add(warning);
+	}
+	
+	@Override
+	public void onInvalidData(IContractPayment payment,
+			String variableName, String message) {
+		Warning warning = new Warning();
+		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_PAYMENTS );
+		warning.message = message;
+		warning.description = payment.getDescription();
+		warning.variable = variableName;
+		warnings.add(warning);
+	}
+
+	
 	// ------------------------------------------
 	// IMPRESION
 	// ------------------------------------------
@@ -303,9 +387,21 @@ public class SalaryDraftController extends BasicController {
 						getMonth(),
 						getSalaryType());
 			
+			/*
 			salary = ctx.getSalaryProxy().getSalary();
 			
 			( ( Salary ) salary).setContract(contract);
+			*/
+			
+			ContractSalaryCalculator sc = 
+					new ContractSalaryCalculator();
+			sc.setSalaryBuilder(new SalaryBuilder());
+			
+			warnings= new LinkedList<Warning>();
+			sc.setListener(this);
+			
+			salary = sc.calculate( ctx );
+			
 			
 			paymentsModel = null;
 			paymentsList = null;
@@ -470,6 +566,7 @@ public class SalaryDraftController extends BasicController {
 		
 		costs.setItems(newSalaryItems, oldSalaryItems);
 	}
+
 
 	private void initBonuses() {
 		bonuses = new SortedSalaryItems<BonusType>(BonusType.values());
@@ -882,5 +979,9 @@ public class SalaryDraftController extends BasicController {
 		controller.getSelectedSalaries().add((Salary)getBdSalary());
 		controller.removeSelected();
 	}
-
+	
+	
+	private static Locale getLocale (){
+		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	}
 }

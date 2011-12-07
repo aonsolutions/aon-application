@@ -69,7 +69,7 @@ import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.ContractWorkingDay;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 import com.esferalia.aon.salary.expression.Period;
@@ -275,8 +275,8 @@ public class CertificateWriter {
 		Periodo periodo = null;
 		List<Periodo> listaPeriodos = new ArrayList<Periodo>();
 		for (Period p : getPeriodList(detail.getContract())) {
-			String diasTp = getContractDataExpression(detail.getContract(), p, ContractVariables.CONTRACT_DAYS);
-			String diasSemanaTp = getContractDataExpression(detail.getContract(), p, ContractVariables.WEEK_DAYS);
+			String diasTp = getContractDataExpression(detail.getContract(), p, ContextVariable.CONTRACT_DAYS);
+			String diasSemanaTp = getContractDataExpression(detail.getContract(), p, ContextVariable.WEEK_DAYS);
 			if(diasTp!=null || diasSemanaTp!=null){
 				if(isIrregular(detail.getContract(), p)){
 					addPeriod(IRREGULAR_VALUE, p, diasTp, listaPeriodos, periodo);
@@ -326,17 +326,17 @@ public class CertificateWriter {
 	}
 
 	private String getContractDataExpression(Contract contract, Period p,
-			ContractVariables workedDays) {
+			ContextVariable workedDays) {
 		ContractData cd = getContractDataMap(contract, p).get(workedDays.getName());
 		return (cd==null)?null:cd.getExpression();
 	}
 
 	private boolean isIrregular(Contract contract, Period p) {
-		ContractData cd = getContractDataMap(contract, p).get(ContractVariables.IRREGULAR.getName());
+		ContractData cd = getContractDataMap(contract, p).get(ContextVariable.IRREGULAR.getName());
 		return (cd!=null && new Boolean(cd.getExpression()));
 	}
 
-	private String getContractDataExpression(ContractData cd, ContractVariables cv) {
+	private String getContractDataExpression(ContractData cd, ContextVariable cv) {
 		List<ContractData> list = getContractDataList(cd.getContract());
 		for (ContractData c : list) {
 			if(c.getName()==cv.getName()
@@ -351,7 +351,7 @@ public class CertificateWriter {
 	private List<Period> getPeriodList(Contract contract) {
 		List<Period> list = null;
 		for(ContractData cd: getContractDataList(contract)){
-			if(cd.getName().equals(ContractVariables.WEEK_DAYS.getName()) || cd.getName().equals(ContractVariables.CONTRACT_DAYS.getName())){
+			if(cd.getName().equals(ContextVariable.WEEK_DAYS.getName()) || cd.getName().equals(ContextVariable.CONTRACT_DAYS.getName())){
 				Period period = new Period(cd.getStartDate(), cd.getEndDate());
 				if(list==null){
 					list = new LinkedList<Period>();
@@ -392,7 +392,7 @@ public class CertificateWriter {
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), SalaryType.SETTLE);
 			// un contracto solo puede tener un finiquito, se asume el primero de la lista
 			List<ITransferObject> list = bean.getList(criteria);
-			ContractData cd = getContractDataMap(contract).get(ContractVariables.NO_HOLIDAYS.getName());
+			ContractData cd = getContractDataMap(contract).get(ContextVariable.NO_HOLIDAYS.getName());
 			String noHolidays = null;
 			if(cd != null){
 				noHolidays = cd.getExpression();
@@ -471,7 +471,7 @@ public class CertificateWriter {
 	}
 	
 	private boolean isFulltimeContract(Certifica2BatchDetail detalle) {
-		ContractData fullTime = getContractDataMap(detalle.getContract()).get(ContractVariables.FULL_TIME.getName());
+		ContractData fullTime = getContractDataMap(detalle.getContract()).get(ContextVariable.FULL_TIME.getName());
 		if(fullTime==null || new Boolean(fullTime.getName())){
 			if(detalle.getContractType().startsWith("1") || detalle.getContractType().startsWith("4")){ 
 				return true;

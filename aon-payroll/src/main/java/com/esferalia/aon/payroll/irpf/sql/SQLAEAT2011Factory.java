@@ -68,7 +68,7 @@ import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.calculator.sql.SQLCollection;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.enumeration.DisabilityLevel;
 import com.esferalia.aon.payroll.enumeration.FamilySituation;
 import com.esferalia.aon.payroll.enumeration.IrpfContractType;
@@ -1190,7 +1190,7 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 				calendar.set(Calendar.DAY_OF_MONTH, monthDays);
 				Date end = calendar.getTime();
 				
-				ctx.addVariable(ContractVariables.MONTH_DAYS, monthDays, start, end);
+				ctx.addVariable(ContextVariable.MONTH_DAYS, monthDays, start, end);
 			}
 			
 		}

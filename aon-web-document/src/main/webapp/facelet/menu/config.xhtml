@@ -18,7 +18,7 @@
 					columnClasses="aon-vertical-align-top aon-width-400, aon-vertical-align-top">
 
 					<aon:panelGroup>
-						<aon:panelGrid id="group_document"
+						<aon:panelGrid id="group_config"
 							styleClass="aon-width-all" columnClasses="aon-padding"
 							headerClass="aon-direct-access-panel aon-icon-general">
 							<f:facet name="header">
@@ -48,7 +48,30 @@
 					
 					</aon:panelGroup>
 
-					<aon:panelGroup/>
+					<aon:panelGroup>
+						<aon:panelGrid id="group_mail" rendered="#{manager.mainEnterprise}"
+							styleClass="aon-width-all" columnClasses="aon-padding"
+							headerClass="aon-direct-access-panel aon-icon-webmail2">
+							<f:facet name="header">
+								<aon:outputText value="#{webmailBundle.webmail_main}"/>
+							</f:facet>					
+							<aon:div styleClass="aon-direct-access-list">
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="mail" 
+										action="mailAccount_list"
+										actionListener="#{mailAccount.onSearch}" 
+										value="#{webmailBundle.webmail_mailAccount}" />
+								</aon:div>		
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="signature"
+										action="signature_list"
+										actionListener="#{signature.onSearch}"
+										value="#{webmailBundle.webmail_signature}" />
+								</aon:div>
+							</aon:div>
+						</aon:panelGrid>
+					
+					</aon:panelGroup>
 
 				</h:panelGrid>
 			</aon:div>

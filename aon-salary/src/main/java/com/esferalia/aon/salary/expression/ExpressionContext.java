@@ -3,7 +3,10 @@ package com.esferalia.aon.salary.expression;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,6 +20,10 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.time.DateUtils;
+import org.mvel2.ConversionException;
+import org.mvel2.ConversionHandler;
+import org.mvel2.DataConversion;
 import org.mvel2.MVEL;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
@@ -36,6 +43,7 @@ import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
 
 public class ExpressionContext {
+	
 	
 	
 	Variables variables;
@@ -146,6 +154,7 @@ public class ExpressionContext {
 			} catch ( UnresolveablePropertyException e ) {
 				throw new UndefinedVariableException(e.getName(), e.getLocalizedMessage());
 			} catch ( PropertyAccessException e ) {
+				throwCause(e);
 				throw new UndefinedVariableException("", e.getLocalizedMessage());
 			}
 		}
@@ -202,15 +211,20 @@ public class ExpressionContext {
 		}
 	};
 	
-	public static void main(String[] args) throws SecurityException, NoSuchMethodException {
-		
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		
-		Object def = MVEL.eval("def (x) { x >= 10 ? x : 0 };", map);
-		
-		System.out.println(def.getClass().getName());
-		
+	
+	private static void throwCause ( Throwable child ) throws ExpressionException {
+		Throwable parent = child.getCause() ;
+		while ( parent != null ) {
+				if ( parent instanceof ExpressionException ) {
+					throw (ExpressionException)parent;
+				}
+				parent = parent.getCause();
+		}
 	}
 	
+	
+	public static void main(String[] args) {
+		
+		System.out.printf(MVEL.evalToString("with ( 2 ) { < 1, == 3 ,  > 0 };", new HashMap<String, Object>()));
+	}
 }

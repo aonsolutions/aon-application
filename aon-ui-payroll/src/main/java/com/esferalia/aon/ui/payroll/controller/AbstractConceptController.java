@@ -15,7 +15,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 
 public abstract class AbstractConceptController extends BasicController {
 
@@ -56,7 +56,7 @@ public abstract class AbstractConceptController extends BasicController {
 				list.add(systemDataVariable);
 			}
 		}
-		for (ContractVariables cv :ContractVariables.values() ){
+		for (ContextVariable cv :ContextVariable.values() ){
 			if (cv.getName().startsWith(filter)) {
 				list.add(cv.getName());		
 			}

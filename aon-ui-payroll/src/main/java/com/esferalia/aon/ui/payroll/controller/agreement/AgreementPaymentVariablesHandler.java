@@ -29,7 +29,7 @@ import com.esferalia.aon.payroll.AgreementData;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler;
 
@@ -108,7 +108,7 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 				list.add(systemDataVariable);
 			}
 		}
-		for (ContractVariables cv :ContractVariables.values() ){
+		for (ContextVariable cv :ContextVariable.values() ){
 			if (cv.getName().startsWith(filter)) {
 				list.add(cv.getName());		
 			}

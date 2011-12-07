@@ -5,13 +5,19 @@ import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
 
-public enum ContractVariables implements IResourceable{
+public enum ContextVariable implements IResourceable{
 	
 
 	START("FECHA_INICIO", VariableType.DATE),
 	END("FECHA_FINAL", VariableType.DATE),
 	SALARY_START("INICIO_NOMINA", VariableType.DATE),
 	SALARY_END("FIN_NOMINA", VariableType.DATE),
+	
+	// Datos de la persona
+	AGE("EDAD", VariableType.INTEGER),
+	GENDER("SEXO", VariableType.UNKNOWN),
+	MALE("HOMBRE", VariableType.UNKNOWN),
+	FEMALE("MUJER", VariableType.UNKNOWN),
 
 	// Dias
 	YEAR_DAYS("DIAS_AÑO", VariableType.INTEGER),
@@ -78,6 +84,7 @@ public enum ContractVariables implements IResourceable{
 	EMPLOYEE_QUOTA("CUOTA_TRABAJADOR", VariableType.DOUBLE),
 
 
+
 	// Datos 'temporales' del contrato
 	TC2("TC2", VariableType.TC2_DROP),
 	CNO("CNO", VariableType.CNO_DROP),
@@ -95,6 +102,7 @@ public enum ContractVariables implements IResourceable{
 	IT_RATE("TARIFA_IT", VariableType.DOUBLE),
 	IMS_RATE("TARIFA_IMS", VariableType.DOUBLE),
 	SHORT_CONTRACT("CONTRATO_CORTA_DURACION", VariableType.BOOLEAN),
+	SENIORITY("AÑOS_ANTIGUEDAD", VariableType.DOUBLE),
 	
 	// Bajas, Incapacidad Temporal
 	MATERNITY("MTNAD", VariableType.BOOLEAN),
@@ -125,15 +133,23 @@ public enum ContractVariables implements IResourceable{
 	
 	//
 	CURRENT("ACTUAL", VariableType.UNKNOWN),
+
+	// Datos de las bonificaciones
+	BONUS_AGE("DURACION", VariableType.DATE),
+	BONUS_START("INICIO", VariableType.DATE),
+
 	
 	;
 	
+	public static final String CHECK = "CHECK";
 	public static final String MONTHS = "MESES";
-
+	public static final String WARNING = "AVISO";
+	public static final String CHECK_VAR = "CHECK_VAR";
+	
 	private final String name;
 	private VariableType type;
 	
-	private ContractVariables(String name, VariableType type){
+	private ContextVariable(String name, VariableType type){
 		this.name = name;
 		this.type = type;
 	}
@@ -177,8 +193,8 @@ public enum ContractVariables implements IResourceable{
     private static final String EXT_MSG_KEY_PREFIX = "aon_enum_contract_variables_desc_";
 
     
-    public static ContractVariables getVariable(String name){
-    	for(ContractVariables cv: values()){
+    public static ContextVariable getVariable(String name){
+    	for(ContextVariable cv: values()){
     		if(cv.getName().equals(name)){
     			return cv;
     		}

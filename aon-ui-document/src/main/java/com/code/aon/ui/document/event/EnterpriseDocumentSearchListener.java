@@ -9,6 +9,9 @@ import static com.code.aon.document.IAlfrescoConstants.NAME_SHORT;
 import static com.code.aon.document.IAlfrescoConstants.PROJECT_ID_SHORT;
 import static com.code.aon.document.IAlfrescoConstants.TITLE_SHORT;
 import static com.code.aon.document.dao.AlfrescoCategoryDAO.EMPTY_CATEGORY;
+import static com.code.aon.ui.document.controller.IDocumentConstants.BUNDLE_NAME;
+import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
+import static com.code.aon.ui.document.controller.IDocumentConstants.INPUT_SEARCH_TEXT;
 import static com.code.aon.ui.document.controller.IDocumentConstants.MANAGER_CONTROLLER_NAME;
 
 import java.util.Date;
@@ -32,6 +35,7 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.document.controller.EnterpriseDocumentController;
 import com.code.aon.ui.document.controller.IEnterpriseController;
 import com.code.aon.ui.document.controller.ManagerController;
 import com.code.aon.ui.form.event.ControllerSearchListenerEx;
@@ -56,6 +60,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 	private String description;
 	private String title;
 	private String text;
+	private String mainText;
 	private MimeType type;
 	private List<AlfrescoCategory> categories;
 	private boolean showList;
@@ -63,6 +68,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 	
 	public EnterpriseDocumentSearchListener() {
 		reset();
+		setMainText( AonUtil.getMessage(BUNDLE_NAME, INPUT_SEARCH_TEXT) );
 		this.projectListener = new EnterpriseProjectListener(this);
 	}
 
@@ -136,6 +142,14 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public String getMainText() {
+		return mainText;
+	}
+
+	public void setMainText(String mainText) {
+		this.mainText = mainText;
 	}
 
 	public MimeType getType() {
@@ -250,7 +264,7 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 	private void addCategoriesToCriteria( Criteria criteria, List<AlfrescoCategory> categories ) { 
 		Expression expToAdd = null;
 		for( AlfrescoCategory category : categories ) {
-			if ( category.getId() != null ) {
+			if ( (category != null) && (category.getId() != null) ) {
 				String value = category.getSearchValue();
 				if ( expToAdd == null ) {
 					expToAdd = ExpressionUtilities.getEqualExpression(PATH_FIELD, value);				
@@ -280,6 +294,12 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 
 	public IControllerListener getProjectListener() {
 		return projectListener;
+	}
+
+	public void onMainSearch(ActionEvent event) {
+		setText( getMainText() );
+		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
+		edc.onSearch(event);
 	}
 	
 }

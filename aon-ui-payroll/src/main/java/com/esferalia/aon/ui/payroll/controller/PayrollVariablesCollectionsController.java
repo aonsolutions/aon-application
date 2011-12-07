@@ -40,10 +40,19 @@ public class PayrollVariablesCollectionsController {
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		for( CNO p : CNO.values() ) {
 			String name = p.getName(locale);
-			SelectItem item = new SelectItem(p, name);
+			SelectItem item = new SelectItem(p, getFormattedSelectItemLabel(name), null, false, false);
 			list.add(item);			
 		}
 		return list;
+	}
+	
+	private final int NAME_LENGHT_80 = 80;
+	
+	private String getFormattedSelectItemLabel(String name) {
+		if(name.length()>NAME_LENGHT_80){
+			name = name.substring(0, 80)+"\r\n&#13;"+name.substring(80, name.length());
+		}
+		return name;
 	}
 	
 	public List<SelectItem> getCategoryList() {

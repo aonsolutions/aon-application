@@ -45,6 +45,7 @@
 					</ui:include>
 
 					<ui:include src="/com/code/aon/ui/tas/facelet/model/lookup.xhtml">
+						<ui:param name="lookupSuffix" value="_search" />
 						<ui:param name="lookupTo" value="#{tasStat.params.tasItem.model}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 						<ui:param name="lookupDisabled" value="#{tasStat.params.tasItem.id != null}" />

@@ -32,7 +32,7 @@ public class ContractDataController extends BasicController {
 //				list.add(systemDataVariable);
 //			}
 //		}
-//		for (ContractVariables cv :ContractVariables.values() ){
+//		for (ContextVariable cv :ContextVariable.values() ){
 //			if (cv.getName().startsWith(filter)) {
 //				list.add(cv.getName());		
 //			}

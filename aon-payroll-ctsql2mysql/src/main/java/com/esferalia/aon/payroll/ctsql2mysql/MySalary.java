@@ -26,7 +26,7 @@ import com.esferalia.aon.payroll.ctsql2mysql.DefaultCtsqlDBVisitor.Rel_epp_emp;
 import com.esferalia.aon.payroll.ctsql2mysql.DefaultCtsqlDBVisitor.Rel_epp_per;
 import com.esferalia.aon.payroll.ctsql2mysql.IConcepts.Concept;
 import com.esferalia.aon.payroll.ctsql2mysql.IContracts.FullEmbargo;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
@@ -505,12 +505,12 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		Integer noHolidays = finiquito.getDiasvac();
 		double vacImporte = toDouble( finiquito.getVacimporte() );
 		if ( noHolidays > 0 && vacImporte > 0) {
-			mysqlDB.insertContract_data(ContractVariables.NO_HOLIDAYS.getName(), 
+			mysqlDB.insertContract_data(ContextVariable.NO_HOLIDAYS.getName(), 
 					contractId, 
 					noHolidays.toString(), 
 					finiquito.getFecbaj(), 
 					finiquito.getFecbaj());
-			mysqlDB.insertContract_data(ContractVariables.HOLIDAY_AMOUNT.getName(), 
+			mysqlDB.insertContract_data(ContextVariable.HOLIDAY_AMOUNT.getName(), 
 					contractId, 
 					String.format("%.3f", ( vacImporte / noHolidays ) ), 
 					finiquito.getFecbaj(), 
@@ -680,7 +680,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 				contractId, 
 				description, 
 				(short)1, 
-				String.format("%s ? %.3f : 0.00", ContractVariables.SETTLE, importe), 
+				String.format("%s ? %.3f : 0.00", ContextVariable.SETTLE, importe), 
 				finiquito.getFecbaj(), 
 				finiquito.getFecbaj(), 
 				null);

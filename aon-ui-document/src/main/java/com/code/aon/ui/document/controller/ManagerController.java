@@ -3,6 +3,8 @@ package com.code.aon.ui.document.controller;
 import static com.code.aon.company.dao.ICompanyAlias.ENTERPRISE_ID;
 import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
 import static com.code.aon.ui.registry.controller.IRegistryConstants.DOCUMENT_MANAGER_CONTROLLER_NAME;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_MAIL_ACCOUNT;
+import static com.code.aon.ui.webmail.controller.IWebMailConstants.BEAN_SIGNATURE;
 
 import java.security.Principal;
 import java.util.LinkedList;
@@ -10,6 +12,7 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
+import javax.naming.Name;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +25,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Enterprise;
 import com.code.aon.company.EnterpriseUser;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ldap.NameResolver;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -30,6 +34,8 @@ import com.code.aon.ui.document.event.EnterpriseProjectListener;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.IWebMailConstants;
+import com.code.aon.ui.webmail.controller.LdapBasicController;
 
 public class ManagerController implements IEnterpriseController {
 	
@@ -56,6 +62,7 @@ public class ManagerController implements IEnterpriseController {
 		lu.setCompanyName(loggedUser.getEnterprise().getRegistry().getFullName());
 		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(DOCUMENT_MANAGER_CONTROLLER_NAME);
 		dm.setShow(false);
+		initWebmail(this.principal.getDomain());
 	}
 	
 	public AuthPrincipal getPrincipal() {
@@ -127,6 +134,16 @@ public class ManagerController implements IEnterpriseController {
 
 	public IControllerListener getProjectListener() {
 		return projectListener;
+	}
+
+	public void initWebmail( String domain) {
+		LdapBasicController mailAccount = (LdapBasicController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT);
+		Name dn = NameResolver.getDomainDN(domain);
+		mailAccount.updateBaseDN(dn);
+		mailAccount.onSearch(null);	
+		LdapBasicController signature = (LdapBasicController) AonUtil.getRegisteredBean(BEAN_SIGNATURE);
+		signature.updateBaseDN(dn);
+		signature.onSearch(null);	
 	}
 	
 }

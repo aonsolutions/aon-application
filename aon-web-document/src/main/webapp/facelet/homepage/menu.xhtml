@@ -4,19 +4,20 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:rich="http://richfaces.org/rich"
 	template="/com/code/aon/ui/audit/facelet/shared/menu.xhtml">
 
 	<ui:define name="menuContent">
 		<aon:commandLink id="enterprise" 
-			action="#{enterprise.initialAction}" 
+			action="#{enterprise.initialAction}" immediate="true" 
 			value="#{appBundle.menu_integral}"
 			styleClass="aon-top-menu-item aon-icon-company">
 			<aon:actionListener method="#{enterprise.onTreeViewSelect}" />
 			<aon:actionListener method="#{enterprise.onEditSearch}" />
 		</aon:commandLink>
 		<aon:commandLink id="document_massive_upload" 
-			action="enterpriseDocument_form" 
+			action="enterpriseDocument_form" immediate="true"
 			actionListener="#{enterpriseDocument.onReset}"
 			value="#{documentBundle.document_upload}"
 			styleClass="aon-top-menu-item aon-icon-payroll">
@@ -42,13 +43,18 @@
 					value="#{documentBundle.document_advanced_search}"
 					action="enterpriseDocument_search"
 					actionListener="#{enterpriseDocument.onEditSearch}" 
-					iconClass="aon-icon-search" >
+					iconClass="aon-icon-go" >
 					<f:setPropertyActionListener value="#{false}"
-						target="#{enterpriseDocumentSearch.showList}"  />
+						target="#{enterpriseDocumentSearch.showList}"  />						
 				</aon:menuItem>
 			</aon:dropDownMenu>						
-			<aon:inputText value="#{documentBundle.document_input_search_text}"
-				size="28" maxlength="32" />
+			<aon:inputText value="#{enterpriseDocumentSearch.mainText}"
+				size="28" maxlength="32" tabindex="32767" >
+				<rich:hotKey key="return" handler="mainSearch();return false;"/>
+				<a4j:jsFunction name="mainSearch"
+					action="enterpriseDocument_search" reRender="aonContent"
+					actionListener="#{enterpriseDocumentSearch.onMainSearch}" />		
+			</aon:inputText>
 		</h:panelGrid>			
 	</ui:define>
  </ui:composition>

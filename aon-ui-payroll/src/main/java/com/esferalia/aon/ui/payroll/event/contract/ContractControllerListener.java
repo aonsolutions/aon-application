@@ -26,7 +26,7 @@ import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.PayrollWorkPlace;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractStatus;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.ui.payroll.controller.EnterpriseTree;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractController;
@@ -126,7 +126,7 @@ public class ContractControllerListener extends ControllerAdapter{
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setName( ContractVariables.IRPF_PERCENT.getName() );
+				data.setName( ContextVariable.IRPF_PERCENT.getName() );
 				data.setExpression(controller.getParams().getIrpf().toString());
 				bean.insert(data);
 			}
@@ -139,7 +139,7 @@ public class ContractControllerListener extends ControllerAdapter{
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setName( ContractVariables.QUOTE_GROUP.getName() );
+				data.setName( ContextVariable.QUOTE_GROUP.getName() );
 				data.setExpression("\"" + controller.getParams().getQuoteGroup().getValue() + "\"");
 				bean.insert(data);
 			}
@@ -152,7 +152,7 @@ public class ContractControllerListener extends ControllerAdapter{
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setName( ContractVariables.OCCUPATION.getName() );
+				data.setName( ContextVariable.OCCUPATION.getName() );
 				data.setExpression("\"" + controller.getParams().getOccupationType().getValue() + "\"");
 				bean.insert(data);
 			}
@@ -165,7 +165,7 @@ public class ContractControllerListener extends ControllerAdapter{
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setName( ContractVariables.CNO.getName() );
+				data.setName( ContextVariable.CNO.getName() );
 				data.setExpression("\"" + controller.getParams().getCno().getCode() + "\"");
 				bean.insert(data);
 			}
@@ -191,7 +191,7 @@ public class ContractControllerListener extends ControllerAdapter{
 				data = new ContractData();
 				data.setContract(contract);
 				data.setStartDate(contract.getStartDate());
-				data.setName( ContractVariables.TC2.getName() );
+				data.setName( ContextVariable.TC2.getName() );
 				data.setExpression("\"" + controller.getParams().getTc2Code().getValue() + "\"");
 				bean.insert(data);
 			}

@@ -29,7 +29,7 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContractOption;
 import com.esferalia.aon.payroll.enumeration.ContractType;
-import com.esferalia.aon.payroll.enumeration.ContractVariables;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
 import com.esferalia.aon.ui.payroll.controller.contract.ContractAttachController;
 import com.esferalia.aon.ui.payroll.controller.wizard.ContractGenerationWizard;
@@ -47,8 +47,8 @@ public class ContractGenerationControllerListener extends ControllerAdapter{
 		controller.setEnterprise(controller.getContract().getWorkPlace().getEnterprise());
 		controller.setParams(new ContrataParams());
 		controller.getContractBuilder().setContractFields(null);
-		if(getContractDataMap().get(ContractVariables.TC2.getName())!=null){
-			controller.setCode(ContractCode.getContractCodeByValue(getContractDataMap().get(ContractVariables.TC2.getName())));
+		if(getContractDataMap().get(ContextVariable.TC2.getName())!=null){
+			controller.setCode(ContractCode.getContractCodeByValue(getContractDataMap().get(ContextVariable.TC2.getName())));
 			// TODO EN DESARROLLO, solo se contempla cuando el TC2 es 100
 			if(controller.getCode()==ContractCode.C100){
 				for (ContractOption contractOption:ContractOption.values()) {
@@ -138,7 +138,7 @@ public class ContractGenerationControllerListener extends ControllerAdapter{
 		data.setContract(contract);
 		data.setStartDate(contract.getStartDate());
 		data.setEndDate(contract.getEndDate());
-		data.setName(ContractVariables.TC2.getName());
+		data.setName(ContextVariable.TC2.getName());
 		data.setExpression(controller.getCode().getValue());
 		IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 		bean.insertOrUpdate(data);
@@ -150,7 +150,7 @@ public class ContractGenerationControllerListener extends ControllerAdapter{
 			IManagerBean bean = BeanManager.getManagerBean(ContractData.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_CONTRACT_ID), contract.getId());
-			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), ContractVariables.TC2.getName());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), ContextVariable.TC2.getName());
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_START_DATE), contract.getStartDate());
 			if(contract.getEndDate()!=null){
 				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_END_DATE), contract.getEndDate());

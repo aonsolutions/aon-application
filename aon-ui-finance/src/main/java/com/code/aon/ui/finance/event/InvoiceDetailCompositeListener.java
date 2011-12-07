@@ -11,7 +11,6 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
-import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.ItemComposition;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.util.DiscountExpression;
@@ -52,7 +51,7 @@ public class InvoiceDetailCompositeListener extends ControllerAdapter {
 		double price = 0;
 		if (composition.getItem().getProduct().isCompositionPrice()) {
 			Invoice invoice = invoiceDetail.getInvoice();
-			if (invoice.getType() == InvoiceType.SALES) {
+			if (invoice.isSales()) {
 				price = priceStrategy.getUnitPrice(invoiceDetail, invoice.getIssueDate(), getTariff(invoice.getRegistry()));
 			} else {
 				price = composition.getCompositionItem().getPurchasePrice();
@@ -63,11 +62,9 @@ public class InvoiceDetailCompositeListener extends ControllerAdapter {
 
 	private DiscountExpression obtainCompositionDiscount(InvoiceDetail invoiceDetail, ItemComposition composition) {
 		DiscountExpression discountExpr = new DiscountExpression("0.0");
-		if (composition.getItem().getProduct().isCompositionPrice()) {
-			if (composition.getDiscountExpression() != null && composition.getDiscountExpression().getDiscounts()[0] > 0) {
+		if (composition.getItem().getProduct().isCompositionPrice() && invoiceDetail.getInvoice().isSales()) {
+			if (composition.getDiscountExpression() != null) {
 				discountExpr = composition.getDiscountExpression();
-			} else {
-				discountExpr = invoiceDetail.getDiscountExpression();
 			}
 		}
 		return discountExpr;
