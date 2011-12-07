@@ -1,4 +1,5 @@
-<#if pojo.hasMetaAttribute("class-code")>  // The following is extra code specified in the hbm.xml files
+<#if pojo.hasMetaAttribute("class-code")>
+	// EXTRA CODE BEGIN
 ${pojo.getExtraClassCode()}
-  // end of extra code specified in the hbm.xml files
+	// EXTRA CODE END
 </#if>

@@ -1,20 +1,17 @@
 <#if ejb3>
 <#if pojo.hasIdentifierProperty()>
 <#if property.equals(clazz.identifierProperty)>
- ${pojo.generateAnnIdGenerator()}
-<#-- if this is the id property (getter)-->
-<#-- explicitly set the column name for this property-->
+${pojo.generateAnnIdGenerator()}
 </#if>
 </#if>
-<#if c2h.isManyToOne(property)>
-<#--TODO support @OneToOne true and false-->    
-${pojo.generateManyToOneAnnotation(property)}
-<#--TODO support optional and targetEntity-->    
+<#if c2h.isManyToOne(property)>	${pojo.generateManyToOneAnnotation(property)}
 ${pojo.generateJoinColumnsAnnotation(property, cfg)}
 <#elseif c2h.isCollection(property)>
 ${pojo.generateCollectionAnnotation(property, cfg)}
 <#else>
+<#if !pojo.generateBasicAnnotation(property).trim().equals("")>
 ${pojo.generateBasicAnnotation(property)}
+</#if>
 ${pojo.generateAnnColumnAnnotation(property)}
 </#if>
 </#if>

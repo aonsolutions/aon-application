@@ -1,6 +1,5 @@
 package com.code.aon.entity.hibernate.tools;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,7 @@ import org.hibernate.cfg.reveng.TableIdentifier;
 import org.hibernate.mapping.MetaAttribute;
 
 import com.code.aon.common.ITransferObject;
-
+import com.code.aon.common.domain.IDomain;
 
 public class AonReverseEngineeringStrategy extends DelegatingReverseEngineeringStrategy {
 
@@ -33,10 +32,8 @@ public class AonReverseEngineeringStrategy extends DelegatingReverseEngineeringS
 		String entityName = super.foreignKeyToEntityName(keyname, fromTable, fromColumnNames,
 				referencedTable, referencedColumnNames, uniqueReference); 
 		return entityName; 
-				
 	}
 	
-
 	@Override
 	public boolean excludeForeignKeyAsCollection(String keyname,
 			TableIdentifier fromTable, List fromColumns,
@@ -58,26 +55,32 @@ public class AonReverseEngineeringStrategy extends DelegatingReverseEngineeringS
 		}
 		return super.getTableIdentifierStrategyName(tableIdentifier);
 	}
-	
+
 	@Override
 	public Map tableToMetaAttributes(TableIdentifier tableIdentifier) {
 		Map<String,MetaAttribute> map = super.tableToMetaAttributes(tableIdentifier);
-		if (map == null) {
-			map = new HashMap<String, MetaAttribute>();
+		if (!tableIdentifier.getName().equals("domain")) {
+			if (map == null) {
+				map = new HashMap<String, MetaAttribute>();
+			}
+			MetaAttribute meta = map.get(EXTRA_IMPORT_ATTR);
+			if (meta == null) {
+				meta = new MetaAttribute(EXTRA_IMPORT_ATTR);	
+			}
+			meta.addValue(IDomain.class.getName());
+			map.put(meta.getName(), meta);
+			meta.addValue("com.code.aon.config.Domain");
+			map.put(meta.getName(), meta);
+			
+			meta = map.get(IMPLEMENTS_ATTR);
+			if (meta == null) {
+				meta = new MetaAttribute(IMPLEMENTS_ATTR);	
+			}
+			meta.addValue("IDomain<Domain>");
+			map.put(meta.getName(), meta);
 		}
-		MetaAttribute meta = map.get(EXTRA_IMPORT_ATTR);
-		if (meta == null) {
-			meta = new MetaAttribute(EXTRA_IMPORT_ATTR);	
-		}
-		meta.addValue(ITransferObject.class.getName());
-		map.put(meta.getName(), meta);
-		
-		meta = map.get(IMPLEMENTS_ATTR);
-		if (meta == null) {
-			meta = new MetaAttribute(IMPLEMENTS_ATTR);	
-		}
-		meta.addValue(ITransferObject.class.getSimpleName());
-		map.put(meta.getName(), meta);
 		return map;
 	}
+
 }
+

@@ -1,11 +1,11 @@
-	<table name="amortization_type">
-		<foreign-key constraint-name="FK_AMORTIZATION_TYPE_FIX_ACCOUNT">
-			<many-to-one property="fixedAssetAccount" />
-		</foreign-key>
-		<foreign-key constraint-name="FK_AMORTIZATION_TYPE_ACC_ACCOUNT">
-			<many-to-one property="accumulatedAccount" />
-		</foreign-key>
-		<foreign-key constraint-name="FK_AMORTIZATION_TYPE_ALL_ACCOUNT">
-			<many-to-one property="allocationAccount" />
-		</foreign-key>
-	</table>
+<table name="amortization_type">
+	<foreign-key constraint-name="FK_AMORTIZATION_TYPE_FIX_ACCOUNT">
+		<many-to-one property="fixedAssetAccount" />
+	</foreign-key>
+	<foreign-key constraint-name="FK_AMORTIZATION_TYPE_ACC_ACCOUNT">
+		<many-to-one property="accumulatedAccount" />
+	</foreign-key>
+	<foreign-key constraint-name="FK_AMORTIZATION_TYPE_ALL_ACCOUNT">
+		<many-to-one property="allocationAccount" />
+	</foreign-key>
+</table>

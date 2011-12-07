@@ -1,0 +1,14 @@
+<table name="app_param" class="com.code.aon.config.ApplicationParameter">
+	<meta attribute="extra-import">javax.persistence.Transient</meta>
+	<meta attribute="class-code">
+	private boolean systemParameter = false;
+
+	@Transient
+	public boolean isSystemParameter() {
+		return systemParameter;
+	}
+	public void setSystemParameter(boolean systemParameter) {
+		this.systemParameter = systemParameter;
+	}
+	</meta>
+</table>

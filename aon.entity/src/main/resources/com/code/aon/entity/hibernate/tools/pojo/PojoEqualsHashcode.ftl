@@ -6,9 +6,9 @@
 		final ${pojo.getDeclarationName()} o = (${pojo.getDeclarationName()}) obj;
 		if (o.${pojo.getGetterSignature(pojo.getIdentifierProperty())}() == null && ${pojo.getGetterSignature(pojo.getIdentifierProperty())}() == null) {
 			return new ${pojo.importType("org.apache.commons.lang.builder.EqualsBuilder")}()
-<#foreach property in pojo.getAllPropertiesIterator()><#if pojo.getIdentifierProperty() != property>			.append(this.${property.getName()},o.${property.getName()})
+<#foreach property in pojo.getAllPropertiesIterator()><#if pojo.getIdentifierProperty() != property>				.append(this.${property.getName()}, o.${property.getName()})
 </#if></#foreach>
-			.isEquals();
+				.isEquals();
 		}
 		return ${pojo.importType("org.apache.commons.lang.ObjectUtils")}.equals(${pojo.getGetterSignature(pojo.getIdentifierProperty())}(), o.${pojo.getGetterSignature(pojo.getIdentifierProperty())}());		
 	}
