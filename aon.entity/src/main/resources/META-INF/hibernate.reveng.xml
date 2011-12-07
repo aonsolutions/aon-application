@@ -37,6 +37,7 @@
 	<table-filter match-name="support_order_insurance" exclude="true" />
 	<table-filter match-name="tas_delivery" exclude="true" />
 	<table-filter match-name="tas_offer" exclude="true" />
+	<table-filter match-name="instructor" exclude="true" />
 	
 	<!--  ************** -->
 	<!--  TABLAS DUDOSAS -->
