@@ -17,14 +17,14 @@
 		
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_campaign_module}" />
-				<ui:param name="controller" value="#{campaign}" />
+				<ui:param name="controller" value="#{marketingCampaign}" />
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
-					<ui:param name="controller" value="#{campaign}" />
+					<ui:param name="controller" value="#{marketingCampaign}" />
 					<ui:define name="columns">
 						
 						<aon:column styleClass="aon-editDataTable-numberColumn aon-width-50">

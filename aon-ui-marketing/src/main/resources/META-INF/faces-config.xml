@@ -469,9 +469,9 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ************ CAMPAIGN ************** -->
+	<!-- ************ MARKETING CAMPAIGN ************** -->
 	<managed-bean>
-		<managed-bean-name>campaign</managed-bean-name>
+		<managed-bean-name>marketingCampaign</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.marketing.controller.CampaignController
 		</managed-bean-class>
@@ -486,7 +486,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>campaign</value>
+			<value>marketingCampaign</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -494,13 +494,13 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{campaignActionListener}</value>
+				<value>#{marketingCampaignActionListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>campaignActionListener</managed-bean-name>
+		<managed-bean-name>marketingCampaignActionListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
@@ -541,7 +541,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
-			<value>campaign</value>
+			<value>marketingCampaign</value>
 		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>
@@ -851,19 +851,19 @@
 		</navigation-case>
 	</navigation-rule>				
 
-	<!-- =================== Campaign ================= -->	
+	<!-- =================== Marketing Campaign ================= -->	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>campaign_list</from-outcome>
-			<to-view-id>/com/code/aon/ui/marketing/facelet/campaign/list.xhtml</to-view-id>
+			<from-outcome>marketingCampaign_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/marketingCampaign/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>campaign_form</from-outcome>
-			<to-view-id>/com/code/aon/ui/marketing/facelet/campaign/form.xhtml</to-view-id>
+			<from-outcome>marketingCampaign_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/marketingCampaign/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>campaign_search</from-outcome>
-			<to-view-id>/com/code/aon/ui/marketing/facelet/campaign/search.xhtml</to-view-id>
+			<from-outcome>marketingCampaign_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/marketing/facelet/marketingCampaign/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>			
 	

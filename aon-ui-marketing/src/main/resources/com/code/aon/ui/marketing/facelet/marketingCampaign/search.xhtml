@@ -12,27 +12,27 @@
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_campaign_module}" />
-				<ui:param name="controller" value="#{campaign}" />
+				<ui:param name="controller" value="#{marketingCampaign}" />
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
-				<ui:param name="controller" value="#{campaign}" />
+				<ui:param name="controller" value="#{marketingCampaign}" />
 				<ui:define name="searchContent">
 					
 					<aon:outputLabel for="Campaign_id"
 						value="#{bundle.aon_id}" />
 					<aon:inputText id="Campaign_id" size="60"
-						valueChangeListener="#{campaign.addExpression}" />		
+						valueChangeListener="#{controller.addExpression}" />		
 			
 					<aon:outputLabel for="Campaign_description"
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="Campaign_description" size="60"
-						valueChangeListener="#{campaign.addExpression}" />
+						valueChangeListener="#{controller.addExpression}" />
 				
 					<aon:outputLabel for="Campaign_active"				
 						value="#{bundle.aon_status}"/>
 					<aon:selectOneMenu id="Campaign_active"
-						valueChangeListener="#{campaign.addExpression}">
+						valueChangeListener="#{controller.addExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="#{true}"/>
 						<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}"/>
