@@ -6,8 +6,10 @@ ${pojo.getPackageDeclaration()}
 <#if !pojo.isInterface()>
 <#include "PojoFields.ftl"/>
 
+<#if pojo.hasMetaAttribute("aon-constructor")>
 <#include "PojoConstructors.ftl"/>
 
+</#if>
 <#include "PojoPropertyAccessors.ftl"/>
 
 <#include "PojoEqualsHashcode.ftl"/>

@@ -1,7 +1,16 @@
 <table name="app_param" class="com.code.aon.config.ApplicationParameter">
 	<meta attribute="extra-import">javax.persistence.Transient</meta>
 	<meta attribute="class-code">
+	private String defaultValue;
 	private boolean systemParameter = false;
+
+	@Transient
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
 
 	@Transient
 	public boolean isSystemParameter() {
@@ -11,4 +20,7 @@
 		this.systemParameter = systemParameter;
 	}
 	</meta>
+	<foreign-key constraint-name="FK_APP_PARAM_DOMAIN">
+		<many-to-one property="domain" />
+	</foreign-key>
 </table>

@@ -68,7 +68,6 @@ public class AonReverseEngineeringStrategy extends DelegatingReverseEngineeringS
 				meta = new MetaAttribute(EXTRA_IMPORT_ATTR);	
 			}
 			meta.addValue(IDomain.class.getName());
-			map.put(meta.getName(), meta);
 			meta.addValue("com.code.aon.config.Domain");
 			map.put(meta.getName(), meta);
 			
