@@ -527,9 +527,9 @@ public class SQLContractDelayCalculatorContext
 			payment.setSalaryType(SalaryType.DELAY);
 			payment.setType(PaymentType.SALARY_SUPPLEMENTS);
 			
-			payment.setExpression(String.format("%.f", amount ));
-			payment.setIrpfExpression(String.format("%.f", irpf ) );
-			payment.setQuoteExpression(String.format("%.f", quote ));
+			payment.setExpression(String.format("%.3f", amount ));
+			payment.setIrpfExpression(String.format("%.3f", irpf ) );
+			payment.setQuoteExpression(String.format("%.3f", quote ));
 			
 			payment.setDescription(paymentDecorator.getDescriptionFor(payment));
 
@@ -612,9 +612,9 @@ public class SQLContractDelayCalculatorContext
 			payment.setSalaryType(SalaryType.DELAY);
 			payment.setType(PaymentType.SALARY_SUPPLEMENTS);
 			
-			payment.setExpression(String.format("%.f", amount ));
-			payment.setIrpfExpression(String.format("%.f", irpf ) );
-			payment.setQuoteExpression(String.format("%.f", quote ));
+			payment.setExpression(String.format("%.3f", amount ));
+			payment.setIrpfExpression(String.format("%.3f", irpf ) );
+			payment.setQuoteExpression(String.format("%.3f", quote ));
 			
 			payment.setDescription(paymentDecorator.getDescriptionFor(payment));
 			
