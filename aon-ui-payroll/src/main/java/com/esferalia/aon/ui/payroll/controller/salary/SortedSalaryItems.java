@@ -94,7 +94,10 @@ public class SortedSalaryItems<T extends Enum<T> & IResourceable> {
 			return obj1.equals(obj2);
 		}
 	}
-
+	
+	private double newTotal = 0.00;
+	private double oldTotal = 0.00;
+	
 	private Map<String, CollectionWrapper<DisplaySalaryItem<T>>> salaryItemsMap;
 	
 	public SortedSalaryItems() {
@@ -108,9 +111,20 @@ public class SortedSalaryItems<T extends Enum<T> & IResourceable> {
 					new CollectionWrapper<SortedSalaryItems.DisplaySalaryItem<T>>(type));
 		}
 	}
-
+	
+	public double getNewTotal() {
+		return newTotal;
+	}
+	
+	public double getOldTotal() {
+		return oldTotal;
+	}
+	
 	public void setItems(Collection<? extends ISalaryItem<T>> newSalaryItems, 
 			Collection< ? extends ISalaryItem<T>> oldSalaryItems) {
+		
+		oldTotal = 0.00;
+		newTotal = 0.00;
 		
 		List<ISalaryItem<T>> newSalaryItemsList = new ArrayList<ISalaryItem<T>>(newSalaryItems);
 		List<ISalaryItem<T>> oldSalaryItemsList = new ArrayList<ISalaryItem<T>>(oldSalaryItems);
@@ -121,7 +135,7 @@ public class SortedSalaryItems<T extends Enum<T> & IResourceable> {
 		Collections.sort(newSalaryItemsList, comparator);
 		Collections.sort(oldSalaryItemsList, comparator);
 		
-		setPayments(newSalaryItemsList.listIterator(), oldSalaryItemsList.listIterator());
+		setSalaryItems(newSalaryItemsList.listIterator(), oldSalaryItemsList.listIterator());
 		
 	}
 	
@@ -130,7 +144,7 @@ public class SortedSalaryItems<T extends Enum<T> & IResourceable> {
 	}
 	
 	
-	private void setPayments(Iterator<ISalaryItem<T>> newSalaryItems, Iterator<ISalaryItem<T>> oldSalaryItems ) {
+	private void setSalaryItems(Iterator<ISalaryItem<T>> newSalaryItems, Iterator<ISalaryItem<T>> oldSalaryItems ) {
 		SalaryItemComparator<T> comparator = new SalaryItemComparator<T>();
 		
 		ISalaryItem<T> newSalaryItem = newSalaryItems.hasNext() ? newSalaryItems.next() : null;
@@ -139,15 +153,19 @@ public class SortedSalaryItems<T extends Enum<T> & IResourceable> {
 		while ( newSalaryItem != null || oldSalaryItem != null )  {
 			int compare = comparator.compare(newSalaryItem, oldSalaryItem);
 			if ( compare == 0  ) {
+				newTotal += newSalaryItem.getAmount();
+				oldTotal += oldSalaryItem.getAmount();
 				addBoth(newSalaryItem, oldSalaryItem);
 				newSalaryItem = newSalaryItems.hasNext() ? newSalaryItems.next() : null;
 				oldSalaryItem = oldSalaryItems.hasNext() ? oldSalaryItems.next() : null;
 			}
 			else if ( compare < 0 ) {
+				newTotal += newSalaryItem.getAmount();
 				addNew(newSalaryItem);
 				newSalaryItem = newSalaryItems.hasNext() ? newSalaryItems.next() : null;
 			}
 			else {
+				oldTotal += oldSalaryItem.getAmount();
 				addOld(oldSalaryItem);
 				oldSalaryItem = oldSalaryItems.hasNext() ? oldSalaryItems.next() : null;
 			}

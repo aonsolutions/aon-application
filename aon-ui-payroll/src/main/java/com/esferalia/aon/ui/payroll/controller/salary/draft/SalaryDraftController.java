@@ -1,13 +1,20 @@
 package com.esferalia.aon.ui.payroll.controller.salary.draft;
 
+import static com.esferalia.aon.payroll.enumeration.ContextVariable.AGE;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.MissingResourceException;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -16,6 +23,7 @@ import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +39,15 @@ import com.code.aon.company.EnterpriseData;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.person.Person;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.company.controller.ICompanyConstants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.FormUtil;
+import com.code.aon.ui.registry.controller.PersonController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementExtra;
@@ -45,6 +56,7 @@ import com.esferalia.aon.payroll.AgreementLevelCategory;
 import com.esferalia.aon.payroll.AgreementPayment;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryBuilder;
@@ -60,7 +72,6 @@ import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.SalaryException;
-import com.esferalia.aon.salary.calculator.ISalaryCalculator;
 import com.esferalia.aon.salary.calculator.ISalaryCalculatorContext;
 import com.esferalia.aon.salary.calculator.OutOfDateException;
 import com.esferalia.aon.salary.enumeration.BonusType;
@@ -72,8 +83,6 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.payment.IPayment;
 import com.esferalia.aon.salary.payment.SalarySupplements;
 import com.esferalia.aon.ui.payroll.controller.IPayrollConstants;
-import com.esferalia.aon.ui.payroll.controller.launcher.SalaryLauncher;
-import com.esferalia.aon.ui.payroll.controller.launcher.SalaryLauncherParams;
 import com.esferalia.aon.ui.payroll.controller.launcher.SalaryRemoverController;
 import com.esferalia.aon.ui.payroll.controller.salary.SortedSalaryItems;
 
@@ -83,6 +92,8 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	
 	
 	public static class Warning {
+		
+		
 		private String title;
 		private String message;
 		private String description;
@@ -103,10 +114,50 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		public String getVariable() {
 			return variable;
 		}
+		
+		public String getAction() {
+			Pair<String, Method> pair = 
+					WARNING_ACTIONS.get(variable);
+			return pair != null ? pair.getFirst() : null;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null)  {
+				return false;
+			}
+			if (this == obj) {
+				return true;
+			}
+			if (obj.getClass() != getClass()) {
+				return false;
+			}
+			final Warning warning = (Warning) obj;
+			
+			return equals(title, warning.title) &&  
+					equals(variable, warning.variable) && 
+					equals(message, warning.message) && 
+					equals(description, warning.description) ;
+		}
+		
+		private boolean equals ( Object one, Object another ) {
+			if ( one == another ) {
+				return true;
+			}
+	        
+			if (one == null || another == null) {
+	            return false;
+	        }
+			
+			return one.equals(another);
+		}
+
 	}
 
-	private int 								year;		
+	private int 								year;			
 	private Month 								month;		 
+	private int 								toYear;		
+	private Month 								toMonth;		 
 	private SalaryType 							salaryType = SalaryType.SALARY ;
 	private Date								startDate;
 	private Date								endDate;
@@ -121,12 +172,15 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	private SortedSalaryItems<BonusType>		bonuses;
 	
 	private List<SelectItem> 					draftMonths;		
+	private List<SelectItem> 					toDraftMonths;		
 	private List<SelectItem> 					salaryDraftTypes;	
 
 	private DataModel 							paymentsModel;
 //	private DataModel 							deductionsModel;
 	
 	private List<Warning>						warnings ;
+	
+	private Warning 							warning;
 	
 	
 	public boolean gethasWarnings(){
@@ -139,6 +193,11 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	
 	public List<SelectItem> getDraftMonths() {
 		return draftMonths;
+	}
+	
+	
+	public List<SelectItem> getToDraftMonths() {
+		return toDraftMonths;
 	}
 	
 	public boolean isValidSalaryDraftPeriod() {
@@ -208,12 +267,28 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	public void setMonth(Month month) {
 		this.month = month;
 	}
-
+	
 	public int getYear() {
 		return year;
 	}
 	public void setYear(int year) {
 		this.year = year;
+	}
+	
+	public Month getToMonth() {
+		return toMonth;
+	}
+	
+	public void setToMonth(Month toMonth) {
+		this.toMonth = toMonth;
+	}
+	
+	public int getToYear() {
+		return toYear;
+	}
+	
+	public void setToYear(int toYear) {
+		this.toYear = toYear;
 	}
 	
 	public SalaryType getSalaryType() {
@@ -223,6 +298,9 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		this.salaryType = salaryType;
 	}
 	
+	public void setWarning(Warning warning) {
+		this.warning = warning;
+	}
 	
 	public boolean isContractScope(){
 		if(this.getPaymentsModel().isRowAvailable()){
@@ -307,9 +385,41 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		}						
 	}
 
-	public void onInvalidData(ActionEvent event) {
+	@Override
+	public void onCheckError(String message) {
+		Warning warning = new Warning();
+		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY );
+		warning.message = message;
+		warning.description = "";
+		warnings.add(warning);
 	}
-
+	
+	@Override
+	public void onInvalidData(String variableName, String message) {
+		
+		Warning warning = new Warning();
+		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY );
+		
+		
+		if ( message == null ) {
+			String description = variableName ; 
+			ContextVariable variable = ContextVariable.getVariable(variableName);
+			if ( variable != null ) {
+				try {
+					description  = variable.getDescription(getLocale());
+				} catch (MissingResourceException e) {
+				}
+			}
+			warning.message = String.format("Introduzca la(o)s %s" , description );
+		}
+		else {
+			warning.message = message;			
+		}
+		
+		warning.description = variableName;
+		warnings.add(warning);
+	}
+	
 	@Override
 	public void onCheckError(IContractBonus bonus, String message) {
 		Warning warning = new Warning();
@@ -350,6 +460,50 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		warnings.add(warning);
 	}
 
+	public void onWarning(ActionEvent event) {
+		Pair<String, Method> pair = 
+				WARNING_ACTIONS.get(warning.getVariable());
+		if ( pair == null ) {
+			return;
+		}
+		
+		Method actionListener = pair.getSecond();
+		try {
+			actionListener.invoke(this, event);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void onPersonQuickFix(ActionEvent event) {
+		try {
+			PersonController controller = 
+				(PersonController) FormUtil.getController(IPayrollConstants.PERSON_CONTROLLER_NAME);
+			controller.onEditSearch(event);
+			
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(
+					controller.getManagerBean().getFieldName(IRegistryAlias.PERSON_ID), 
+					getPerson().getId());
+			controller.clearCriteria();
+			controller.setCriteria(criteria);
+			controller.onSearch(event);
+			controller.getModel().setRowIndex(0);
+			controller.onSelect(event);
+			controller.setBackAction(IPayrollConstants.SALARY_DRAFT_FORM);
+			
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage());
+		}
+	}
 	
 	// ------------------------------------------
 	// IMPRESION
@@ -367,7 +521,35 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	public boolean isShowBackground() {
 		return true;
 	}
+
 	
+	private Contract getContract() {
+		return  (Contract) getTo();
+	}
+	
+	private Person getPerson() {
+		return  getContract().getPerson();
+	}
+	
+	private Date getStartDraftDate(int year, Month month) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month.getValue());
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		return calendar.getTime();
+	}
+	
+	private Date getEndDraftDate(int year, Month month) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, year);
+		calendar.set(Calendar.MONTH, month.getValue());
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		int lastMonthday = 
+				calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+		calendar.set(Calendar.DAY_OF_MONTH, lastMonthday);
+		return calendar.getTime();
+	}
+
 	// ------------------------------------------
 	// Gets ( calculate ) salary draft.
 	// ------------------------------------------
@@ -376,28 +558,34 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			Contract contract = (Contract) getTo();
 
 			ISalaryCalculatorContext ctx;
-			if ( getSalaryType() == SalaryType.DELAY )
+			if ( getSalaryType() == SalaryType.DELAY ){
+				Date startDraftDate = 
+						getStartDraftDate(year, month);
+				Date endDraftDate = 
+						getEndDraftDate(toYear, toMonth);
 				ctx = contract.getSalaryCalculatorContext(
-						startDate,
-						endDate,
+						startDraftDate,
+						endDraftDate,
 						getSalaryType());
-			else 
+			}
+			else { 
 				ctx = contract.getSalaryCalculatorContext(
 						getYear(),
 						getMonth(),
 						getSalaryType());
+			}
 			
-			/*
-			salary = ctx.getSalaryProxy().getSalary();
-			
-			( ( Salary ) salary).setContract(contract);
-			*/
 			
 			ContractSalaryCalculator sc = 
 					new ContractSalaryCalculator();
 			sc.setSalaryBuilder(new SalaryBuilder());
 			
-			warnings= new LinkedList<Warning>();
+			warnings= new LinkedList<Warning>() {
+				@Override
+				public boolean add(Warning e) {
+					return contains(e) ? false : super.add(e);
+				}
+			};
 			sc.setListener(this);
 			
 			salary = sc.calculate( ctx );
@@ -421,6 +609,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	public void reset() {
 		initDraftTypes();
 		rebuildDraftMonths();
+		rebuildToDraftMonths();
 		calculateSalary();
 		searchSavedDraftSalary();
 		initPayments();
@@ -776,8 +965,9 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		
 		salaryDraftTypes = new LinkedList<SelectItem>();
 		for ( SalaryType salaryType: SalaryType.values() ) {
+			
 			List<Month> availableMonths  = 
-				getAvailableMonths(salaryType);
+				getAvailableMonths(salaryType, this.year);
 			if ( ! availableMonths.isEmpty() ) {
 				availableTypes.add(salaryType);
 				SelectItem selectItem = new SelectItem(salaryType, 
@@ -796,26 +986,27 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		
 	}
 	
-	private List<Month> getAvailableMonths(SalaryType salaryType) {
+	
+	private List<Month> getAvailableMonths(SalaryType salaryType, final int year) {
 		List<Month> availableMonths ;
 
 		availableMonths = 
 			salaryType.accept(new SalaryTypeVisitor<List<Month>>() {
 				@Override
 				public List<Month> visitSalary(SalaryType salaryType) {
-					return getSalaryMonths();
+					return getSalaryMonths(year);
 				}
 				@Override
 				public List<Month> visitDelay(SalaryType salaryType) {
-					return getDelayMonths();
+					return getDelayMonths(year);
 				}
 				@Override
 				public List<Month> visitExtra(SalaryType salaryType) {
-					return getExtraMonths();
+					return getExtraMonths(year);
 				}
 				@Override
 				public List<Month> visitSettle(SalaryType salaryType) {
-					return getSettleMonths();
+					return getSettleMonths(year);
 				}
 				@Override
 				public List<Month> visitNotEnjoyedVacations(
@@ -825,43 +1016,58 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		});
 		return availableMonths;
 	}
-	
+
 	private void rebuildDraftMonths(){
 		
-		// fix year, if it's out of range
+		// fix years, if it's out of range
 		this.year = Math.max(this.year, getMinYear());
 		this.year = Math.min(this.year, getMaxYear());
+		
+		this.toYear = Math.min(this.toYear, getMaxYear());
+		this.toYear = Math.max(this.toYear, this.year); 	// toYear >= year
 		
 
 		SalaryType salaryType = getSalaryType();
 
 		List<Month> availableMonths  = 
-			getAvailableMonths(salaryType);
+			getAvailableMonths(salaryType, this.year);
 		
 		Collections.sort(availableMonths);
 		
 		// fix month, if it's out of range 
-		if ( !availableMonths.contains(month) ){
-			if ( availableMonths.isEmpty() ) {
-				this.month = null;
-			}
-			else {
-				int index = Collections.binarySearch(availableMonths, month);
-				int insertIndex = -( index + 1);
-				this.month = availableMonths.get(Math.min(insertIndex, availableMonths.size()-1));
-			}
-		}
+		this.month = getClosestMonth(availableMonths, this.month);
+		
+		this.draftMonths = createSelectItemList(availableMonths);
+		
+	}
+	
+	private void rebuildToDraftMonths(){
+		
+		// fix years, if it's out of range
+		this.toYear = Math.min(this.toYear, getMaxYear());
+		this.toYear = Math.max(this.toYear, this.year); 	// toYear >= year
 		
 		
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		draftMonths = new LinkedList<SelectItem>();
-		for (Month month : availableMonths) {
-			draftMonths.add(new SelectItem(month, month.getName(locale)));
+		SalaryType salaryType = getSalaryType();
+
+		List<Month> availableMonths  = 
+			getAvailableMonths(salaryType, this.toYear);
+		
+		Collections.sort(availableMonths);
+		
+		// fix month, if it's out of range 
+		
+		this.toMonth = getClosestMonth(availableMonths, this.toMonth );
+		if ( this.toMonth == null ) {
+			this.toMonth = this.month; 
 		}
+		
+		this.toDraftMonths = createSelectItemList(availableMonths);
 	}
 	
 	
-	private List<Month> getSettleMonths() {
+	
+	private List<Month> getSettleMonths(int year) {
 		Contract contract = (Contract) this.getTo();
 		Date contractEnd = contract.getEndDate();
 		
@@ -874,7 +1080,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		
 		return months;
 	}
-	private List<Month> getExtraMonths() {
+	private List<Month> getExtraMonths(int year) {
 		Contract contract = (Contract) this.getTo();
 
 		List<Month> months = new LinkedList<Month>();
@@ -908,16 +1114,18 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		return months;
 	}
 	
-	private List<Month> getDelayMonths() {
-		return getSalaryMonths(); //Collections.emptyList();
+	private List<Month> getDelayMonths(int year ) {
+		return getSalaryMonths(year); //Collections.emptyList();
 	}
-	private List<Month> getSalaryMonths() {
+	
+	
+	private List<Month> getSalaryMonths(int year) {
 		Contract contract = (Contract) this.getTo();
 		Date contractStart = contract.getStartDate();
 		Date contractEnd = contract.getEndDate();
 		
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(Calendar.YEAR, this.year);
+		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, calendar.getActualMinimum(Calendar.MONTH));
 		Date draftStart = calendar.getTime(); 
 
@@ -936,7 +1144,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		}
 		return months;
 	}
-	
+
 	public void onSaveSalary(ActionEvent event) throws ManagerBeanException{
 		
 		try {
@@ -950,16 +1158,16 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	}
 	
 	private void saveSalary() throws SalaryException {
-		Contract contract = (Contract) this.getTo();
-		SalaryLauncherParams params = new SalaryLauncherParams();
-		params.setStartDate(getStartDate());
-		params.setEndDate(getEndDate());
-		params.setIssueMonth(getMonth());
-		params.setIssueYear(getYear());
-		params.setSalaryType(getSalaryType());
-		params.setPerson(contract.getPerson());
-		SalaryLauncher launcher = (SalaryLauncher) AonUtil.getRegisteredBean(IPayrollConstants.SALARY_LAUNCHER_CONTROLLER);
-		launcher.saveSalary(params);
+		Session session = 
+				getHibernateSession4Class(Salary.class);
+		Contract contract = getContract();
+		( ( Salary ) salary ).setContract(contract);
+		session.saveOrUpdate(salary);
+	}
+
+	private Session getHibernateSession4Class(Class clazz) {
+		String sessionName = HibernateUtil.getSessionFactoryName(clazz.getName());
+		return HibernateUtil.getSession(sessionName);
 	}
 	
 	public void onUpdateSalary(ActionEvent event) throws ManagerBeanException, SalaryException{
@@ -983,5 +1191,50 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	
 	private static Locale getLocale (){
 		return FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	}
+
+	private static Map<String, Pair<String, Method>> WARNING_ACTIONS = 
+			new HashMap<String, Pair<String, Method>>(){
+		{
+			try {
+				put(AGE.getName(), 
+					new Pair<String, Method>(IPayrollConstants.PERSON_FORM, 
+							getActionListenerMethod("onPersonQuickFix")));
+			} catch ( Exception e ) {}
+		}
+	};
+
+
+	
+	private static Method getActionListenerMethod(String name ) 
+			throws SecurityException, NoSuchMethodException{
+		return SalaryDraftController.class.getMethod(name, ActionEvent.class);
+	}
+	
+	
+	private static Month getClosestMonth(List<Month> months, Month month ) {
+		if ( month == null ) {
+			return null;
+		}
+		if ( months.contains(month) ){
+			return month;
+		}
+
+		if ( months.isEmpty() ) {
+			return null;
+		}
+
+		int index = Collections.binarySearch(months, month);
+		int insertIndex = -( index + 1);
+		return months.get(Math.min(insertIndex, months.size()-1));
+	}
+	
+	private static List<SelectItem> createSelectItemList(List<Month> months ) {
+		Locale locale = getLocale();
+		List<SelectItem> selectItems = new LinkedList<SelectItem>();
+		for (Month month : months) {
+			selectItems.add(new SelectItem(month, month.getName(locale)));
+		}
+		return selectItems;
 	}
 }

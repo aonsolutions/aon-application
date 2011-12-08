@@ -58,6 +58,10 @@
 				<ui:param name="costs" value="#{sortedSalaryCosts.items['PROFESSIONAL_CONTINGENCY']}" />
 			</ui:include>
 
+			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/salaryDraft/listDraftCost.xhtml" >
+				<ui:param name="index" value="8" />
+				<ui:param name="costs" value="#{sortedSalaryCosts.items['OTHER']}" />
+			</ui:include>
 
 			<aon:div style="">
 				<aon:outputText value="&#160;"/>

@@ -14,8 +14,8 @@
 		</ui:include>
 		
 		<aon:div styleClass="aon-margin-top aon-text-right" style="width: 815px;">
-			<h:panelGrid columns="5" style="width: 815px;" >
-				<aon:div>
+			<h:panelGrid columns="5" style="width: 815px;"  >
+				<aon:div >
 					<aon:outputText value="#{bundle.aon_type}" styleClass="aon-italic" />
 					<aon:outputText styleClass="aon-italic" value="&#160;"/>
 					<aon:selectOneMenu value="#{controller.salaryType}">
@@ -25,20 +25,30 @@
 				</aon:div>
 				
 				<aon:div>
-					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_simulation_date}"/>
-					<aon:outputText styleClass="aon-italic" value="&#160;"/>
-					<aon:selectOneMenu id="Contract_month" value="#{controller.month}">
+					<aon:div>
+						<aon:outputText styleClass="aon-italic"
+					 	value="#{payrollBundle.payroll_salary_simulation_date}"/>
+					
+						<aon:outputText styleClass="aon-italic" value="&#160;"/>
+
+						<aon:selectOneMenu id="From_month" value="#{controller.month}">
 						<f:selectItems value="#{controller.draftMonths}"  />
 						<a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true"/>
-					</aon:selectOneMenu>
+						</aon:selectOneMenu>
+					</aon:div>
+
 				</aon:div>
 
-	   			<rich:inputNumberSpinner id="Contract_year" value="#{controller.year}" inputSize="4" 
-	   				minValue="#{controller.minYear}" maxValue="#{controller.maxYear}">
-	   			  <a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true"/>
-	   			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true" focus="Contract_year"/>
-	   			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true" focus="Contract_year"/>
-	   			</rich:inputNumberSpinner>
+				<aon:div>
+		   			<rich:inputNumberSpinner id="From_year" value="#{controller.year}" inputSize="4" 
+		   				minValue="#{controller.minYear}" maxValue="#{controller.maxYear}" >
+		   			  <a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true"/>
+		   			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true" focus="From_year"/>
+		   			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true" focus="From_year"/>
+		   			</rich:inputNumberSpinner>
+				</aon:div>
+
+
 
 				<aon:div style="">
 					<aon:outputText styleClass="aon-italic" value="#{payrollBundle.payroll_salary_period}"/>
@@ -63,18 +73,38 @@
 					<aon:outputText styleClass="aon-margin-left aon-italic" value="#{payrollBundle.payroll_salary_days}:"/>
 					<aon:outputText styleClass="aon-margin-left aon-margin-right aon-bold" value="#{controller.salary.timeUnits}"/>
 				</aon:div>
+				
+				<!-- DELAY  -->				
+				<aon:div rendered="#{controller.salaryType == 'DELAY'}" ></aon:div>
+				<aon:div rendered="#{controller.salaryType == 'DELAY'}" >
+					<aon:div>
+						<aon:outputText styleClass="aon-italic"
+					 	value="#{payrollBundle.payroll_delay_simulation_enddate}"/>
+						<aon:outputText styleClass="aon-italic" value="&#160;"/>
+
+						<aon:selectOneMenu id="To_month" value="#{controller.toMonth}">
+						<f:selectItems value="#{controller.toDraftMonths}"  />
+						<a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true"/>
+						</aon:selectOneMenu>
+					</aon:div>
+				</aon:div>
+				<aon:div rendered="#{controller.salaryType == 'DELAY'}" >
+		   			<rich:inputNumberSpinner id="To_year" value="#{controller.toYear}" inputSize="4" 
+		   				minValue="#{controller.year}" maxValue="#{controller.maxYear}" >
+		   			  <a4j:support event="onchange" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true"/>
+		   			  <a4j:support event="oninputkeydown" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true" focus="To_year"/>
+		   			  <a4j:support event="oninputkeyup" actionListener="#{controller.onReloadDraft}" reRender="salaryDraftContent, #{controller.beanName}Toolbar" ajaxSingle="true" focus="To_year"/>
+		   			</rich:inputNumberSpinner>
+				</aon:div>
+				<aon:div rendered="#{controller.salaryType == 'DELAY'}" ></aon:div>
+				<aon:div rendered="#{controller.salaryType == 'DELAY'}" ></aon:div>
+				
 			</h:panelGrid>
 			
-<!-- 			
-			<aon:selectInputDate value="#{controller.issueDate}"
-					timeZone="#{timeZoneController.timeZone}"
-					popupDateFormat="#{bundle.aon_date_pattern}">
-				<a4j:support event="oninputchange" actionListener="#{controller.onChangeDates}" reRender="salaryDraftContent, #{controller.beanName}Toolbar"/>
-				<a4j:support event="onchanged" actionListener="#{controller.onChangeDates}" reRender="salaryDraftContent, #{controller.beanName}Toolbar"/>
-			</aon:selectInputDate>
- -->
 		</aon:div>
-			<c:if test="#{!salaryDraft.validSalaryDraftPeriod}">
+
+
+		<c:if test="#{!salaryDraft.validSalaryDraftPeriod}">
 			<aon:div styleClass="aon-panelGrid-search" style="width: 100%; margin-top:10px;">
 					<aon:outputText value="&#160;" style="padding-left:15px;" styleClass="aon-icon-exception"/>
 					<aon:outputText value="#{payrollBundle.payroll_contract_undefined_variables}" styleClass="aon-bold"/>
