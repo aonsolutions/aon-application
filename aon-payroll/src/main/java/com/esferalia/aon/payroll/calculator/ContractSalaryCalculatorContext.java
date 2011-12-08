@@ -362,7 +362,18 @@ public class ContractSalaryCalculatorContext
 						startDate, 
 						endDate, 
 						issueDate, 
-						criteria);
+						criteria) {
+					@Override
+					protected String getDescriptionForSalaryDelay(
+							IContractPayment payment) {
+						return String.format("NOMINA DEL %1$td/%1$tm/%1$tY..%2$td/%2$tm/%2$tY", payment.getStartDate(), payment.getEndDate());
+					}
+					@Override
+					protected String getDescriptionForExtraDelay(
+							IContractPayment payment) {
+						return String.format("EXTRA DEL %1$td/%1$tm/%1$tY..%2$td/%2$tm/%2$tY", payment.getStartDate(), payment.getEndDate());
+					}
+				};
 			}catch (SQLException e) {
 				throw new RuntimeException(e);
 			}catch (ExpressionException e) {

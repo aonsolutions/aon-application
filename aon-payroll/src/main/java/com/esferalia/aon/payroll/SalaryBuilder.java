@@ -5,7 +5,9 @@ import java.util.Date;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
+import com.esferalia.aon.salary.enumeration.AbstractDeductionTypeVisitor;
 import com.esferalia.aon.salary.enumeration.DeductionType;
+import com.esferalia.aon.salary.enumeration.DeductionTypeVisitor;
 import com.esferalia.aon.salary.enumeration.PaymentType;
 import com.esferalia.aon.salary.enumeration.SalaryType;
 
@@ -211,10 +213,13 @@ public class SalaryBuilder implements ISalaryBuilder {
 		this.salary.setTotalEnterprise(totalEnterprise);
 	}
 	
+	
+	
 	@Override
 	public void addBonus(String concept, Double amount, String description) {
 		SalaryBonus salaryBonus  = new SalaryBonus();
 		
+		salaryBonus.setSalary(salary);
 		salaryBonus.setBonusConcept(concept);
 		salaryBonus.setAmount(amount);
 		salaryBonus.setDescription(description);
@@ -226,6 +231,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 	public void addCost(DeductionType type, String concept, Double amount, String description) {
 		SalaryCost salaryCost = new SalaryCost();
 		
+		salaryCost.setSalary(salary);
 		salaryCost.setType(type);
 		salaryCost.setAmount(amount);
 		salaryCost.setCostConcept(concept);
@@ -238,7 +244,8 @@ public class SalaryBuilder implements ISalaryBuilder {
 	public void addEmbargo(Integer embargo, Double amount, String description) {
 		
 		SalaryEmbargo salaryEmbargo = new SalaryEmbargo() ;
-		
+
+		salaryEmbargo.setSalary(salary);
 		// TODO setContractEmbargo(null)
 		salaryEmbargo.setAmount(amount);
 		salaryEmbargo.setDescription(description);
@@ -252,6 +259,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 		
 		SalaryPayment payment = new SalaryPayment();
 		
+		payment.setSalary(salary);
 		payment.setType(type);
 		payment.setPaymentConcept(concept);
 		payment.setAmount(amount);
@@ -263,11 +271,12 @@ public class SalaryBuilder implements ISalaryBuilder {
 	}
 
 	@Override
-	public void addDeduction(DeductionType type, String concept, Double amount,
+	public void addDeduction(DeductionType type, String concept, final Double amount,
 			String description, String expression) {
 		
 		SalaryDeduction deduction = new SalaryDeduction();
-		
+
+		deduction.setSalary(salary);
 		deduction.setType(type);
 		deduction.setAmount(amount);
 		deduction.setDescription(description);
@@ -275,6 +284,16 @@ public class SalaryBuilder implements ISalaryBuilder {
 		deduction.setDeductionConcept(concept);
 		
 		this.salary.getSalaryDeductions().add(deduction);
+		
+		if ( type == DeductionType.IRPF ) {
+			Double totalIrpf = salary.getTotalIrpf();
+			if ( totalIrpf == null ) {  
+				salary.setTotalIrpf(amount);
+			}
+			else {
+				salary.setTotalIrpf(totalIrpf+amount);
+			}
+		}
 		
 	}
 
@@ -286,5 +305,4 @@ public class SalaryBuilder implements ISalaryBuilder {
 		return listener;
 	}
 
-	
 }

@@ -189,8 +189,8 @@ public enum ContextVariable implements IResourceable{
     private static final String BASE_NAME = "com.esferalia.aon.payroll.i18n.messages";
     
     /** Message key prefix. */
-    private static final String MSG_KEY_PREFIX = "aon_enum_contract_variables_";
-    private static final String EXT_MSG_KEY_PREFIX = "aon_enum_contract_variables_desc_";
+    private static final String MSG_KEY_PREFIX = "aon_enum_context_variable_";
+    private static final String EXT_MSG_KEY_PREFIX = "aon_enum_context_variable_desc_";
 
     
     public static ContextVariable getVariable(String name){

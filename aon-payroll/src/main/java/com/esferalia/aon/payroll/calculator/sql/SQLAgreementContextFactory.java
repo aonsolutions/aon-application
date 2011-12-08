@@ -178,12 +178,17 @@ public class SQLAgreementContextFactory
 	throws SQLException {
 		dataStmts = new PreparedStatement[2];
 
-		agreementDataStmt= connection.prepareStatement(AGREEMENT_DATA_SQL);
+		String agreementDataSql = 
+				SQLContractSalaryCalculatorContext.orderBy(AGREEMENT_DATA_SQL, ctx.getOrder() );
+		
+		agreementDataStmt= connection.prepareStatement(agreementDataSql);
 		agreementDataStmt.setDate(2, new java.sql.Date(endDate.getTime()) );
 		agreementDataStmt.setDate(3, new java.sql.Date(startDate.getTime()) );
 		dataStmts[0] = agreementDataStmt;
 
-		agreementLevelDataStmt= connection.prepareStatement(AGREEMENT_LEVEL_DATA_SQL);
+		String agreementLevelDataSql = 
+				SQLContractSalaryCalculatorContext.orderBy(AGREEMENT_LEVEL_DATA_SQL, ctx.getOrder() );
+		agreementLevelDataStmt= connection.prepareStatement(agreementLevelDataSql);
 		agreementLevelDataStmt.setDate(2, new java.sql.Date(endDate.getTime()) );
 		agreementLevelDataStmt.setDate(3, new java.sql.Date(startDate.getTime()) );
 		dataStmts[1] = agreementLevelDataStmt;

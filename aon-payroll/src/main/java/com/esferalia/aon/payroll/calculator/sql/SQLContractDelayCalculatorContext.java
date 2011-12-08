@@ -34,7 +34,7 @@ import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.Period;
 
 public class SQLContractDelayCalculatorContext 
-	extends SQLContractSalaryCalculatorContext{
+	extends SQLContractSalaryCalculatorContext {
 
 	public SQLContractDelayCalculatorContext(Connection connection,
 			Date startDate, Date endDate, Date issueDate) throws SQLException,
@@ -83,6 +83,14 @@ public class SQLContractDelayCalculatorContext
 		
 	}
 	
+	protected String getDescriptionForExtraDelay(IContractPayment payment){
+		return null;
+	}
+	
+	protected String getDescriptionForSalaryDelay(IContractPayment payment){
+		return null;
+	}
+
 	private Collection<IContractPayment>  getDifferencePayments() 
 		throws ExpressionException, SQLException, SalaryException{
 		
@@ -103,10 +111,13 @@ public class SQLContractDelayCalculatorContext
 				identifier, 
 				getId());
 		
+		SalaryDelayPaymentDecorator salaryPaymentDecorator = 
+				new SalaryDelayPaymentDecorator();
+		
 		ContractSalaryCalculator calculator = 
 			new ContractSalaryCalculator();
 		DelayPaymentBuilder delayPaymentBuilder = 
-			new DelayPaymentBuilder(getConnection());
+			new DelayPaymentBuilder(getConnection(), salaryPaymentDecorator );
 		calculator.setSalaryBuilder(delayPaymentBuilder);
 		
 		Collection<Period> periods = 
@@ -130,8 +141,10 @@ public class SQLContractDelayCalculatorContext
 			payments.addAll(delayPaymentBuilder.getContractPayments());
 		}
 		
+		ExtraDelayPaymentDecorator extraPaymentDecorator = 
+				new ExtraDelayPaymentDecorator();
 		ExtraDelayPaymentBuilder extraDelayPaymentBuilder = 
-				new ExtraDelayPaymentBuilder(connection);
+				new ExtraDelayPaymentBuilder(connection, extraPaymentDecorator );
 		calculator.setSalaryBuilder(extraDelayPaymentBuilder);
 		
 		Collection<Extra> extras = getExtras(startDate, endDate);
@@ -311,6 +324,22 @@ public class SQLContractDelayCalculatorContext
 	}
 	
 	
+	
+	private class SalaryDelayPaymentDecorator implements IDelayPaymentDecorator {
+		@Override
+		public String getDescriptionFor(IContractPayment payment) {
+			return getDescriptionForSalaryDelay(payment);
+		}
+		
+	}
+
+	private class ExtraDelayPaymentDecorator implements IDelayPaymentDecorator {
+		@Override
+		public String getDescriptionFor(IContractPayment payment) {
+			return getDescriptionForExtraDelay(payment);
+		}
+	}
+
 	private static Collection<Integer> years ( Date startDate, Date endDate) {
 		int start = CommonUtil.getYear(startDate);
 		int end = CommonUtil.getYear(startDate);
@@ -350,9 +379,12 @@ public class SQLContractDelayCalculatorContext
 
 	}
 
+	public interface IDelayPaymentDecorator {
+		String getDescriptionFor( IContractPayment payment);
+	}
+	
+
 	private static class DelayPaymentBuilder extends AbstractSalaryBuilder {
-		
-		
 		
 		private static final String SALARY_SQL = "SELECT *"
 			+ " FROM " + SQLConstants.SALARY
@@ -370,9 +402,12 @@ public class SQLContractDelayCalculatorContext
 		private PreparedStatement stmt;
 		
 		private Map<String, Double> values;
-
-		public DelayPaymentBuilder(Connection connection) 
+		
+		protected IDelayPaymentDecorator paymentDecorator; 
+		
+		public DelayPaymentBuilder(Connection connection, IDelayPaymentDecorator paymentDecorator) 
 			throws SQLException{
+			this.paymentDecorator = paymentDecorator;
 			this.values = new HashMap<String, Double>();
 			this.stmt = initStatement(connection);
 		}
@@ -433,11 +468,11 @@ public class SQLContractDelayCalculatorContext
 				Double diffValue = value -paidValue;
 				diffValues.put(field, diffValue);
 				
-				System.out.printf("%s : %f - %f = %f.\r\n", 
+				System.out.println(String.format("%s : %f - %f = %f.", 
 						field, 
 						value, 
 						paidValue,
-						value -paidValue
+						value -paidValue)
 						);
 						
 			}
@@ -495,6 +530,8 @@ public class SQLContractDelayCalculatorContext
 			payment.setExpression(String.format("%f", amount ));
 			payment.setIrpfExpression(String.format("%f", irpf ) );
 			payment.setQuoteExpression(String.format("%f", quote ));
+			
+			payment.setDescription(paymentDecorator.getDescriptionFor(payment));
 
 			return payment;
 		}
@@ -520,6 +557,7 @@ public class SQLContractDelayCalculatorContext
 	}
 	
 	
+
 	private static class ExtraDelayPaymentBuilder extends DelayPaymentBuilder {
 
 		private static final String EXTRA_SQL = "SELECT *"
@@ -532,8 +570,9 @@ public class SQLContractDelayCalculatorContext
 
 		private Date chargeDate;
 		
-		public ExtraDelayPaymentBuilder(Connection connection) throws SQLException {
-			super(connection);
+		
+		public ExtraDelayPaymentBuilder(Connection connection, IDelayPaymentDecorator paymentDecorator) throws SQLException {
+			super(connection, paymentDecorator);
 		}
 		
 		@Override
@@ -576,7 +615,9 @@ public class SQLContractDelayCalculatorContext
 			payment.setExpression(String.format("%f", amount ));
 			payment.setIrpfExpression(String.format("%f", irpf ) );
 			payment.setQuoteExpression(String.format("%f", quote ));
-
+			
+			payment.setDescription(paymentDecorator.getDescriptionFor(payment));
+			
 			return payment;
 		}
 	}
@@ -605,6 +646,7 @@ public class SQLContractDelayCalculatorContext
 		}
 		
 	}
+	
 	
 	private static Extra getAgreementExtra ( Collection<Extra> agreementExtras,  Extra extra ){
 		

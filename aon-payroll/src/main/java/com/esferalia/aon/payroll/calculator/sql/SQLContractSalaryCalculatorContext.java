@@ -745,7 +745,10 @@ public class SQLContractSalaryCalculatorContext implements
 		
 		return values;
 	}
-
+	
+	public OrderByList getOrder() {
+		return order;
+	}
 	
 	public int getId() {
 		return getInt(SQLConstants.CONTRACT, ContractColumns.ID);
@@ -1534,7 +1537,7 @@ public class SQLContractSalaryCalculatorContext implements
 				Date end = Period.min(dataEnd, endDate);
 				try {
 					ctx.addExpression(expr, start, end );
-//					if ( expr.getName().contains("_IMPORTE") ) 
+//					if ( expr.getName().contains("AUMENTO") ) 
 //						System.out.printf("[%s]: Contract data %s = %s [%tF..%tF ]\r\n", 
 //								getEmployeeDocument(), expr.getName(), expr.getExpression(), start, end);
 				} catch (UndefinedVariableException e ){
@@ -1702,6 +1705,7 @@ public class SQLContractSalaryCalculatorContext implements
 		}
 	}
 	
+	
 	private static java.sql.Date toSqlDate(Date date) {
 		return new java.sql.Date(date.getTime()); 
 	}
@@ -1714,7 +1718,7 @@ public class SQLContractSalaryCalculatorContext implements
 	private static final String ORDER_BY = " ORDER BY "; //$NON-NLS-1$
 
 	
-	private static String orderBy(String stmt, OrderByList orderBy ){
+	protected static String orderBy(String stmt, OrderByList orderBy ){
 		StringBuffer buffer = new StringBuffer(stmt); 
 
 		if ( orderBy == null || orderBy.size() == 0) {

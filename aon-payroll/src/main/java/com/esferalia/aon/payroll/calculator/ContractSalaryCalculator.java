@@ -41,6 +41,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 
 	
 	public interface IListener {
+		public void onCheckError( String message);
+		public void onInvalidData(String variableName, String message);
+
 		public void onCheckError( IContractPayment payment, String message);
 		public void onInvalidData(IContractPayment payment, String variableName, String message);
 
@@ -223,15 +226,26 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 			salaryBuilder.setIrpfBase(taxCalculator.getIrpfBase()); 
 			expressionContext.addVariable(IRPF_BASE, taxCalculator.getIrpfBase(), irpfDate, irpfDate);
 
+			double rawCgcbase = quoteCalculator.getRawCgcBase();
 			salaryBuilder.setRawCgcBase(quoteCalculator.getRawCgcBase());
 			
-			double cgcBase = quoteCalculator.getCgcBase();
+			double cgcBase = rawCgcbase;
+			try {
+				cgcBase = quoteCalculator.getCgcBase();
+			} catch ( UndefinedVariableException e ) {
+				onInvalidData(e.getVariableName(), null);
+			}
 			salaryBuilder.setCgcBase(cgcBase);
 			double cgcBaseVar = cgcBase - quoteCalculator.getMaternityBase();
 			expressionContext.addVariable(CGC_BASE, cgcBaseVar , start, end );
 			//System.out.printf("CGC_BASE=%.3f \r\n", cgcBaseVar);
 			
-			double cgpBase = quoteCalculator.getCgpBase();
+			double cgpBase = quoteCalculator.getRawCgpBase();
+			try {
+				cgpBase = quoteCalculator.getCgcBase();
+			} catch ( UndefinedVariableException e ) {
+				onInvalidData(e.getVariableName(), null);
+			}
 			salaryBuilder.setCgpBase(cgpBase);
 			double cgpBaseVar = cgpBase - quoteCalculator.getMaternityBase();
 			expressionContext.addVariable(CGP_BASE, cgpBaseVar, start, end );
@@ -547,6 +561,19 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		return total;
 	}
 	
+	private void onCheckError( String message){
+		if ( listener!= null ) {
+			listener.onCheckError(message);
+		}
+	}
+
+
+	private void onInvalidData( String variableName, String message){
+		if ( listener!= null ) {
+			listener.onInvalidData(variableName, message);
+		}
+	}
+
 	private void onCheckError( IContractBonus bonus, String message){
 		if ( listener!= null ) {
 			listener.onCheckError(bonus, message);
