@@ -23,6 +23,7 @@
 
 		<!-- DB MODULES -->
 		<module>aon-master</module>
+		<module>aon.entity.common</module>
 		<module>aon.entity</module>
 		<module>aon-alias-maven-plugin</module>
 		<module>aon.entity.alias</module>
