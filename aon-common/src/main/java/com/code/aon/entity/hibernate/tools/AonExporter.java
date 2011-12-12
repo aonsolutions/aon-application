@@ -10,11 +10,28 @@ import org.hibernate.tool.hbm2x.GenericExporter;
 import org.hibernate.tool.hbm2x.pojo.POJOClass;
 
 public class AonExporter extends GenericExporter{
+	@Override
+	protected void exportPersistentClass(Map additionalContext, POJOClass pojo) {
+		Iterator<?> iterator = pojo.getAllPropertiesIterator();
+		boolean isConfidentialable = false;
+		boolean isDomainContainer = false;
+		while (iterator.hasNext()) {
+			Property property = (Property)iterator.next();
+			if (property.getName().equals("securityLevel")) {
+				isConfidentialable = true;
+			}
+			if (property.getName().equals("domain")) {
+				isDomainContainer = true;
+			}
+		}
+		additionalContext.put("isConfidentialable",isConfidentialable);
+		additionalContext.put("isDomainContainer",isDomainContainer);
+		super.exportPersistentClass(additionalContext, pojo);
+	}
 	
 	@Override
-	protected void exportPOJO(Map additionalContext, POJOClass element) {
-		
-		Iterator<?> iterator = element.getAllPropertiesIterator();
+	protected void exportPOJO(Map additionalContext, POJOClass pojo) {
+		Iterator<?> iterator = pojo.getAllPropertiesIterator();
 		while (iterator.hasNext()) {
 			Property property = (Property)iterator.next();
 			if (property.getValue() instanceof ToOne) {
@@ -29,8 +46,7 @@ public class AonExporter extends GenericExporter{
 				property.setLazy(true);
 			}
 		}
-		
-		super.exportPOJO(additionalContext, element);
+		super.exportPOJO(additionalContext, pojo);
 	}
 	
 }
