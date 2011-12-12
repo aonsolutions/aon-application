@@ -75,7 +75,7 @@
 				<dependencies>
 					<dependency>
 						<groupId>com.code.aon</groupId>
-						<artifactId>aon.common</artifactId>
+						<artifactId>aon.entity.common</artifactId>
 						<version>${project.version}</version>
 						<scope>compile</scope>
 					</dependency>
@@ -134,7 +134,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.common</artifactId>
+			<artifactId>aon.entity.common</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
