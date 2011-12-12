@@ -15,9 +15,9 @@ public class AonExporter extends GenericExporter{
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void exportPersistentClass(Map additionalContext, POJOClass pojo) {
-		Iterator<?> iterator = pojo.getAllPropertiesIterator();
 		boolean isConfidentialable = false;
 		boolean isDomainContainer = false;
+		Iterator<?> iterator = pojo.getAllPropertiesIterator();
 		while (iterator.hasNext()) {
 			Property property = (Property)iterator.next();
 			if (property.getName().equals("securityLevel")) {
@@ -27,8 +27,8 @@ public class AonExporter extends GenericExporter{
 				isDomainContainer = true;
 			}
 		}
-		additionalContext.put("isConfidentialable",isConfidentialable);
-		additionalContext.put("isDomainContainer",isDomainContainer);
+		additionalContext.put("isConfidentialable", isConfidentialable);
+		additionalContext.put("isDomainContainer", isDomainContainer);
 		super.exportPersistentClass(additionalContext, pojo);
 	}
 	
