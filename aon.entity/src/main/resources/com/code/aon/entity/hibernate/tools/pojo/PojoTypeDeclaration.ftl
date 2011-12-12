@@ -1,2 +1,3 @@
-<#include "Ejb3TypeDeclaration.ftl"/>
-${pojo.getClassModifiers()} ${pojo.getDeclarationType()} ${pojo.getDeclarationName()} ${pojo.getExtendsDeclaration()} <#if pojo.getImplementsDeclaration().indexOf(',') != 0>${pojo.getImplementsDeclaration().substring(0, pojo.getImplementsDeclaration().lastIndexOf(','))}<#else>${pojo.getImplementsDeclaration()}</#if>
+<#include "Ejb3TypeDeclaration.ftl"/>${pojo.getClassModifiers()} ${pojo.getDeclarationType()} ${pojo.getDeclarationName()} ${pojo.getExtendsDeclaration()} <#if pojo.getImplementsDeclaration().indexOf(',') != 0>${pojo.getImplementsDeclaration().substring(0, pojo.getImplementsDeclaration().lastIndexOf(','))}<#else>${pojo.getImplementsDeclaration()}</#if>
+	<#if (isDomainContainer)>,${pojo.importType("com.code.aon.common.domain.IDomain")}<${pojo.importType("com.code.aon.config.Domain")}></#if>
+	<#if (isConfidentialable)>,${pojo.importType("com.code.aon.common.enumeration.IConfidentialable")}</#if>

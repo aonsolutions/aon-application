@@ -13,5 +13,8 @@ ${pojo.generateCollectionAnnotation(property, cfg)}
 ${pojo.generateBasicAnnotation(property)}
 </#if>
 ${pojo.generateAnnColumnAnnotation(property)}
+<#if property.getType().getName()="text">
+	@${pojo.importType("javax.persistence.Lob")}
+</#if>
 </#if>
 </#if>

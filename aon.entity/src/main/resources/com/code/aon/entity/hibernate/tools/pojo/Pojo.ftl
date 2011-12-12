@@ -12,6 +12,21 @@ ${pojo.getPackageDeclaration()}
 </#if>
 <#include "PojoPropertyAccessors.ftl"/>
 
+<#if (isConfidentialable)>
+	@${pojo.importType("javax.persistence.Transient")}
+	@Override
+	public boolean isConfidential() {
+		return ${pojo.importType("com.code.aon.common.enumeration.SecurityLevel")}.CONFIDENTIAL == getSecurityLevel();
+	}
+
+	@Transient
+	@Override
+	public void setConfidential(boolean confidential) {
+		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	}
+
+</#if>
+
 <#include "PojoEqualsHashcode.ftl"/>
 
 <#include "PojoToString.ftl"/>
