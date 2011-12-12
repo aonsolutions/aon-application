@@ -20,7 +20,4 @@
 		this.systemParameter = systemParameter;
 	}
 	</meta>
-	<foreign-key constraint-name="FK_APP_PARAM_DOMAIN">
-		<many-to-one property="domain" />
-	</foreign-key>
 </table>

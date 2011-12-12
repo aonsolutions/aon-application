@@ -1,0 +1,3 @@
+<table name="pm_type_detail" class="com.code.aon.config.PayMethodTypeDetail">
+	<column name="type" type="com.code.aon.config.enumeration.PayMethodType" /> 
+</table>

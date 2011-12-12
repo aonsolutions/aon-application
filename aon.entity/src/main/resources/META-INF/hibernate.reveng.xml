@@ -1,43 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" 
-[<!ENTITY Account SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/Account.xml">
+[<!ENTITY Account SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/account/Account.xml">
  <!ENTITY AccountEntry SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AccountEntry.xml">
  <!ENTITY AccountEntryDetail SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AccountEntryDetail.xml">
  <!ENTITY AccountHelper SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AccountHelper.xml">
  <!ENTITY Amortization SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/Amortization.xml">
  <!ENTITY AmortizationType SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AmortizationType.xml">
- <!ENTITY Domain SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/Domain.xml">]>
+ <!ENTITY ApplicationParameter SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/ApplicationParameter.xml">
+ <!ENTITY Bank SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Bank.xml">
+ <!ENTITY CommissionType SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/CommissionType.xml">
+ <!ENTITY Domain SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Domain.xml">
+ <!ENTITY PayMethod SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/PayMethod.xml">
+ <!ENTITY PayMethodTypeDetail SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/PayMethodTypeDetail.xml">
+ <!ENTITY Person SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/Person.xml">
+ <!ENTITY Scope SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Scope.xml">
+ <!ENTITY Series SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Series.xml">
+ <!ENTITY Tariff SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Tariff.xml">
+ <!ENTITY Tax SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Tax.xml">
+ <!ENTITY TaxDetail SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/TaxDetail.xml">
+ <!ENTITY WorkGroup SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/WorkGroup.xml">
+]>
 
 <hibernate-reverse-engineering>
+	<type-mapping>
+		<sql-type jdbc-type="BIT" not-null="false" hibernate-type="boolean"/>
+		<sql-type jdbc-type="DOUBLE" hibernate-type="double"/>
+	</type-mapping>
+
+	<table-filter match-name="domain" />
+	<table-filter match-name="account" />
+	<table-filter match-name="app_param" />
+	<table-filter match-name="bank" />
+	<table-filter match-name="commission_type" />
+	<table-filter match-name="pay_method" />
+	<table-filter match-name="pm_type_detail" />
+	<table-filter match-name="scope" />
+	<table-filter match-name="series" />
+	<table-filter match-name="tariff" />
+	<table-filter match-name="tax" />
+	<table-filter match-name="tax_detail" />
+	<table-filter match-name="workgroup" />
+ 
+	<table-filter match-name="person" />
 
 	<!--  **************** -->
-	<!--  TABLAS OBSOLETAS -->
+	<!--  TABLAS DE ACADEMY -->
 	<!--  **************** -->
-	<table-filter match-name="account_summary" exclude="true" />
-	<table-filter match-name="appraiser" exclude="true" />
-	<table-filter match-name="composition" exclude="true" />
-	<table-filter match-name="composition_detail" exclude="true" />
-	<table-filter match-name="composition_expense" exclude="true" />
-	<table-filter match-name="contact" exclude="true" />
-	<table-filter match-name="curriculum" exclude="true" />
+	<table-filter match-name="absence" exclude="true" />
+	<table-filter match-name="academic_skill" exclude="true" />
+	<table-filter match-name="academic_year" exclude="true" />
+	<table-filter match-name="alumn_loan" exclude="true" />
+	<table-filter match-name="course" exclude="true" />
+	<table-filter match-name="course_academicskill" exclude="true" />
+	<table-filter match-name="course_alumn" exclude="true" />
+	<table-filter match-name="course_evaluation" exclude="true" />
+	<table-filter match-name="course_instructor" exclude="true" />
+	<table-filter match-name="course_level" exclude="true" />
+	<table-filter match-name="course_observation" exclude="true" />
+	<table-filter match-name="course_schedule" exclude="true" />
+	<table-filter match-name="course_subject" exclude="true" />
 	<table-filter match-name="customer_segment" exclude="true" />
-	<table-filter match-name="delivery_detail_labour" exclude="true" />
-	<table-filter match-name="employee" exclude="true" />
-	<table-filter match-name="item_pos" exclude="true" />
-	<table-filter match-name="pos" exclude="true" />
-	<table-filter match-name="production" exclude="true" />
-	<table-filter match-name="production_detail" exclude="true" />
-	<table-filter match-name="production_expense" exclude="true" />
-	<table-filter match-name="resource" exclude="true" />
-	<table-filter match-name="sales_purchase" exclude="true" />
-	<table-filter match-name="scale" exclude="true" />
-	<table-filter match-name="scale_relation" exclude="true" />
-	<table-filter match-name="supplier_segment" exclude="true" />
-	<table-filter match-name="support_order" exclude="true" />
-	<table-filter match-name="support_order_insurance" exclude="true" />
-	<table-filter match-name="tas_delivery" exclude="true" />
-	<table-filter match-name="tas_offer" exclude="true" />
+	<table-filter match-name="evaluation_observation" exclude="true" />
 	<table-filter match-name="instructor" exclude="true" />
+	<table-filter match-name="mark" exclude="true" />
+	<table-filter match-name="qualification" exclude="true" />
+	<table-filter match-name="quality_skill" exclude="true" />
 	
 	<!--  ************** -->
 	<!--  TABLAS DUDOSAS -->
@@ -49,14 +76,28 @@
 	<!--  *************************** -->
 	<table-filter match-name="db_version" exclude="true" />
 	
+
 	&Account;
-	&Domain;
 	&AccountEntry;
 	&AccountEntryDetail;
 	&AccountHelper;
 	&Amortization;
 	&AmortizationType;
+	&ApplicationParameter;
+	&Bank;
+	&CommissionType;
+	&Domain;
+	&PayMethod;
+	&PayMethodTypeDetail;
+	&Person;
+	&Scope;
+	&Series;
+	&Tariff;
+	&Tax;
+	&TaxDetail;
+	&WorkGroup;
 	
+
 	<table name="account_entry_fbatch" class="com.code.aon.entity.master.AccountEntryFinanceBatch" />
 	<table name="account_period" class="com.code.aon.entity.master.Period" />
 	<table name="agreement_level_data">
@@ -64,7 +105,6 @@
 			<many-to-one property="level" />
 		</foreign-key>
 	</table>
-	<table name="app_param" class="com.code.aon.entity.master.ApplicationParameter" />
 	<table name="cashflow_forecast" class="com.code.aon.entity.master.CashFlowForecast" />
 	<table name="certifica2_batch_attach" class="com.code.aon.entity.master.Certifica2BatchAttachment">
 		<meta attribute="extra-import">org.hibernate.annotations.Formula</meta>
@@ -387,14 +427,6 @@
 		<column name="value_number" property="number" />
 	</table>
 
-	<table name="person">
-		<primary-key>
-			<generator class="registry_id">
-				<param name="property">registry</param>
-			</generator>
-			<key-column name="registry" property="id" />
-		</primary-key>
-	</table>
 	<table name="pcategory" class="com.code.aon.entity.master.ProductCategory" />
 	<table name="pcategory_group" class="com.code.aon.entity.master.ProductCategoryGroup" />
 	<table name="pcategory_tree" class="com.code.aon.entity.master.ProductCategoryTree">
@@ -405,7 +437,6 @@
 			<many-to-one property="child" />
 		</foreign-key>
 	</table>
-	<table name="pm_type_detail" class="com.code.aon.entity.master.PayMethodTypeDetail" />
 	<table name="pm_type_detail_account" class="com.code.aon.entity.master.PayMethodTypeDetailAccount" />
 	<table name="process_detail">
 		<foreign-key constraint-name="process_detail_fk_2">
@@ -521,13 +552,6 @@
 			<key-column name="registry" property="id" />
 		</primary-key>
 	</table>
-	<table name="series">
-		<column name="workplace" exclude="true" />
-		<foreign-key constraint-name="series_fk">
-			<many-to-one exclude="true" />
-		</foreign-key>
-		
-	</table>
 	<table name="salary_embargo">
 		<foreign-key constraint-name="FK_SALARY_EMBARGO_CONTRACT_EMBARGO">
 			<many-to-one property="contractEmbargo" />
@@ -602,13 +626,7 @@
 			<key-column name="registry" property="id" />
 		</primary-key>
 	</table>
-	<table name="tax">
-<!-- 		<column name="tax_type" property="type" type="com.code.aon.config.enumeration.TaxType"/>  -->
-		<column name="tax_type" property="type" />
-	</table>
 	<table name="user" class="com.code.aon.entity.master.EnterpriseUser" />
-	<table name="user" class="com.code.aon.entity.master.User" />
-	<table name="user_workgroup" class="com.code.aon.entity.master.UserWorkGroup" />
 	<table name="warehouse_transfer">
 		<foreign-key constraint-name="FK_WT_SOURCE">
 			<many-to-one property="sourceWarehouse"/>
@@ -620,12 +638,6 @@
 	<table name="web_info_page_resource">
 		<foreign-key constraint-name="web_info_page_resource_fk2">
 			<many-to-one property="rattach" />
-		</foreign-key>
-	</table>
-	<table name="workgroup" class="com.code.aon.entity.master.WorkGroup">
-		<column name="enterprise" exclude="true"></column>
-		<foreign-key constraint-name="FK_WORKGROUP_ENTERPRISE">
-			<many-to-one exclude="true"/>
 		</foreign-key>
 	</table>
 	<table name="workplace" class="com.code.aon.entity.master.WorkPlace">

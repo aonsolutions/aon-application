@@ -1,11 +1,11 @@
 <table name="account" class="com.code.aon.account.Account">
 	<meta attribute="extra-import">javax.persistence.Transient</meta>
 	<meta attribute="class-code">
-		@Transient
-		public String getFullDescription() {
-			return (getCode() + " " + getDescription());
-		}
+	@Transient
+	public String getFullDescription() {
+		return (getCode() + " " + getDescription());
+	}
 	</meta>
-	<column name="level" type="int" />
 	<column name="entryEnabled" type="boolean" />
+	<column name="level" type="int" />
 </table>
