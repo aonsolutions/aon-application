@@ -18,11 +18,11 @@
 			<aon:inputText id="#{controller.beanName}_name" required="true"
 				size="16" 
 				value="#{controller.handler.data.name}"  
-				disabled="#{controller.handler.data.id!=null}" />
+				disabled="#{controller.handler.data.id==null}" />
 			<aon:commandButton id="variableHelpName-select"
 				title="#{payrollBundle.payroll_variable_helper}" ajaxSingle="true"
 				value="&#160;"
-				rendered="#{controller.handler.data.id==null}"
+				rendered="#{controller.handler.data.id!=null}"
 				actionListener="#{controller.handler.onShowVariableNameHelp}"
 				reRender="variableHelperModalContainer"
 				styleClass="aon-icon-commandButton aon-icon-question"/>

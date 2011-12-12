@@ -73,11 +73,14 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 //							ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(contract.getStartDate(), data.getEndDate(), data.getEndDate());
 //							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
 //							if(o==null){
-								undefined.add(data);
+//								undefined.add(data);
 //							} else {
 //								data.setExpression(o.toString());
 //								dataList.add(data);
 //							}
+							if(!isSystemVariable(data)){
+								undefined.add(data);
+							}
 						}
 					}
 				}
@@ -99,6 +102,10 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 		}
 	}
 	
+	private boolean isSystemVariable(AgreementData data) {
+		return ContextVariable.getVariable(data.getName())!=null;
+	}
+
 	@Override
 	public List<?> expressionContext(Object suggest) {
 		List<String> list = new LinkedList<String>();

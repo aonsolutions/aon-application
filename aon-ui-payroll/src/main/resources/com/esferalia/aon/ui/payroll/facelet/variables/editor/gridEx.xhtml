@@ -12,7 +12,7 @@
 			
 		<aon:inputText id="#{inputTextId}_DOUBLE#{editorSuffix}" required="#{required}"
 			rendered="#{variableType=='DOUBLE'}"
-			value="#{controller.handler.expression}" maxlength="128" size="64">
+			value="#{controller.handler.expression}" maxlength="128" size="32">
 			<f:validateDoubleRange />
 		</aon:inputText>
 	
@@ -28,7 +28,7 @@
 	
 		<aon:inputText id="#{inputTextId}_STRING#{editorSuffix}" required="#{required}"
 			rendered="#{variableType=='STRING'}" 
-			value="#{controller.handler.expression}" maxlength="128" size="64" >
+			value="#{controller.handler.expression}" maxlength="128" size="32" >
 			<f:validateLength maximum="128"/>
 			<a4j:region>
 				<rich:suggestionbox id="#{inputTextId}_suggestion#{editorSuffix}"
@@ -51,12 +51,12 @@
 	
 		<aon:inputText id="#{inputTextId}_EXPRESSION#{editorSuffix}" required="#{required}"
 			rendered="#{variableType=='EXPRESSION'}" 
-			value="#{controller.handler.expression}" maxlength="128" size="64">
+			value="#{controller.handler.expression}" maxlength="128" size="32">
 		</aon:inputText>
 	
 		<aon:inputText id="#{inputTextId}_TABLE#{editorSuffix}" required="#{required}"
 			rendered="#{variableType=='TABLE'}" 
-			value="#{controller.handler.expression}" maxlength="128" size="64">
+			value="#{controller.handler.expression}" maxlength="128" size="32">
 		</aon:inputText>
 	
 		<aon:selectOneMenu id="#{inputTextId}_DROP#{editorSuffix}" required="#{required}"
@@ -91,7 +91,7 @@
 	
 		<aon:inputText id="#{inputTextId}_UNKNOWN#{editorSuffix}" required="#{required}"
 			rendered="#{variableType=='UNKNOWN' or variableType==null}" ajaxSingle="true"
-			value="#{controller.handler.expression}" size="64" maxlength="128" >
+			value="#{controller.handler.expression}" size="32" maxlength="128" >
 			<f:validateLength maximum="64"/>
 			<a4j:region>
 				<rich:suggestionbox id="#{inputTextId}_UNKNOWN#{editorSuffix}_suggestion"

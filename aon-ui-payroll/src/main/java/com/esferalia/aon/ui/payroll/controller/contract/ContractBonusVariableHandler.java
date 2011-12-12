@@ -47,7 +47,9 @@ public class ContractBonusVariableHandler extends ContractDetailVariableHandler 
 			setUndefinedVariablesModel(null);
 			if(bonus.getExpression()!=null || bonus.getBonusConcept().getExpression()!=null){
 				dataList = new LinkedList<ContractData>();
-				Set<String> vl = ExpressionContext.getVariables(bonus.getExpression().isEmpty()?bonus.getBonusConcept().getExpression():bonus.getExpression());
+				Set<String> vl = ExpressionContext.getVariables(
+						bonus.getExpression()==null || bonus.getExpression().isEmpty() ?
+						bonus.getBonusConcept().getExpression() : bonus.getExpression());
 				List<ContractData> undefined = new LinkedList<ContractData>();
 				if(!vl.isEmpty()){
 					for(String s: vl){
