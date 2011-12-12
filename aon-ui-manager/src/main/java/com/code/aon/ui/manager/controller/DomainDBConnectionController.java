@@ -68,10 +68,11 @@ public class DomainDBConnectionController extends LdapBasicController implements
 	}	
 		
 	@Override
-	public void updateBaseDN(Name parent) {
+	public boolean updateBaseDN(Name parent) {
 		String domain = NameResolver.getValue(parent, 0);
 		Name baseDN = NameResolver.getDomainBDsDN(domain);
 		getLdapDAO().setBaseDN(baseDN);
+		return true;
 	}	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })

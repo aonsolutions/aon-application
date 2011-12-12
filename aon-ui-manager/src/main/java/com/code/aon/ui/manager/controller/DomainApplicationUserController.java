@@ -28,9 +28,10 @@ public class DomainApplicationUserController extends LdapBasicController {
 	private Converter workgroupConverter;
 	
 	@Override
-	public void updateBaseDN(Name parent) {
+	public boolean updateBaseDN(Name parent) {
 		Name baseDN = NameResolver.getName( NameResolver.ou(NameResolver.USERS), parent );
 		getLdapDAO().setBaseDN(baseDN);
+		return true;
 	}
 	
 	public DomainApplicationUser getDomainApplicationUser() {

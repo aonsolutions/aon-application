@@ -19,10 +19,11 @@ public class RoleController extends LdapBasicController {
 	private final static Logger LOGGER = LoggerFactory.getLogger(RoleController.class);
 
 	@Override
-	public void updateBaseDN(Name parent) {
+	public boolean updateBaseDN(Name parent) {
 		String application = NameResolver.getValue(parent, 0);
 		Name rolesDN = NameResolver.getApplicationRolesDN(application);
 		getLdapDAO().setBaseDN(rolesDN);
+		return true;
 	}
 
 	@SuppressWarnings("unchecked")

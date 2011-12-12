@@ -28,9 +28,10 @@ public class ProfileController extends LdapBasicController implements IManagerCo
 	private final static Logger LOGGER = LoggerFactory.getLogger(ProfileController.class);
 	
 	@Override
-	public void updateBaseDN(Name parent) {
+	public boolean updateBaseDN(Name parent) {
 		Name baseDN = NameResolver.getName( NameResolver.ou(NameResolver.PROFILES), parent );
 		getLdapDAO().setBaseDN(baseDN);
+		return true;
 	}
 	
 	public BasicProfile getProfile() {

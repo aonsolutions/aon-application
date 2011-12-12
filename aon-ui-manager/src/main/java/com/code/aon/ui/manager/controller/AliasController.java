@@ -26,10 +26,11 @@ import com.code.aon.ui.webmail.controller.LdapBasicController;
 public class AliasController extends LdapBasicController {
 
 	@Override
-	public void updateBaseDN(Name parent) {
+	public boolean updateBaseDN(Name parent) {
 		String domain = NameResolver.getValue(parent, 0);
 		Name baseDN = NameResolver.getAliasesDN(domain);
 		getLdapDAO().setBaseDN(baseDN);
+		return true;
 	}
 	
 	private void resetAliases() {

@@ -130,10 +130,11 @@ public class DomainUserController extends LdapBasicController implements IManage
 	}	
 	
 	@Override
-	public void updateBaseDN(Name parent) {
+	public boolean updateBaseDN(Name parent) {
 		String domain = NameResolver.getValue(parent, 0);
 		Name baseDN = NameResolver.getUsersDN(domain);
 		getLdapDAO().setBaseDN(baseDN);
+		return true;
 	}
 	
 	public void addDefaultWebmailData( DomainUser user, Company company ) throws ManagerBeanException {
