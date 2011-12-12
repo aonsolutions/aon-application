@@ -11,7 +11,6 @@ ${pojo.getPackageDeclaration()}
 
 </#if>
 <#include "PojoPropertyAccessors.ftl"/>
-
 <#if (isConfidentialable)>
 	@${pojo.importType("javax.persistence.Transient")}
 	@Override
