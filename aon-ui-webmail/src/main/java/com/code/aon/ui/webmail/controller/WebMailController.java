@@ -103,7 +103,8 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 	}
 
 	private void initDefault(AuthPrincipal user) throws ManagerBeanException, MessagingException {	
-		MailAccount mailAccount = WebmailUtil.getDefaultAccount(user.getDomain(),user.getShortName(), true);
+		boolean checkDomainAccounts = AonUtil.isBeanValue(BEAN_WEBMAIL, CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY); 
+		MailAccount mailAccount = WebmailUtil.getMailAccount(user.getDomain(),user.getShortName(), checkDomainAccounts);
 		if (mailAccount!=null) {
 			init(mailAccount);
 		}else{
@@ -111,10 +112,14 @@ public class WebMailController implements IWebMailConstants, BundleConstants {
 		}
 	}
 
-	public void init(MailAccount mailAccount) throws MessagingException {
+	public void initBasic(MailAccount mailAccount) throws MessagingException {
 		server = new AonServer(mailAccount);
 		server.connect();
 		server.createBasicFolders();
+	}
+	
+	public void init(MailAccount mailAccount) throws MessagingException {
+		initBasic(mailAccount);
 		createDefaultSignature(mailAccount);
 		SpamController spamController = (SpamController) AonUtil.getRegisteredBean(BEAN_SPAM);
 		spamController.updateSpamEnabled(mailAccount);

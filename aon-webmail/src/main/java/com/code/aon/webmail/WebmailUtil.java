@@ -118,5 +118,13 @@ public class WebmailUtil {
     	return null;
     }
     
+    public static MailAccount getMailAccount( String domain, String user, boolean checkDomainAccounts ) throws ManagerBeanException {
+		MailAccount mailAccount = WebmailUtil.getDefaultAccount(domain, user, true);
+		if ( (mailAccount == null) && checkDomainAccounts ) {
+			mailAccount = WebmailUtil.getDefaultAccount(domain, true);
+		}
+		return mailAccount;
+    }
+    
 }
 

@@ -26,8 +26,9 @@
 					src="/com/code/aon/ui/document/facelet/enterpriseDocument/searchContent.xhtml" />			
 				
 				<c:if test="#{enterpriseDocumentSearch.showList}">
-					<ui:include
-						src="/com/code/aon/ui/document/facelet/enterpriseDocument/listContent.xhtml" />
+					<ui:include src="/com/code/aon/ui/document/facelet/enterpriseDocument/listContent.xhtml" >
+						<ui:param name="controller" value="#{enterpriseDocument}" />
+					</ui:include>
 				</c:if>
 			</aon:div>
 
