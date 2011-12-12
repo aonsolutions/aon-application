@@ -42,10 +42,10 @@
 					<ui:include src="/com/code/aon/ui/tas/facelet/tasItem/lookup.xhtml">
 						<ui:param name="lookupTo" value="#{tasStat.params.tasItem}" />
 						<ui:param name="lookupReRender"	value="contentForm" />
+						<ui:param name="skipNewButton" value="#{true}" />
 					</ui:include>
 
 					<ui:include src="/com/code/aon/ui/tas/facelet/model/lookup.xhtml">
-						<ui:param name="lookupSuffix" value="_search" />
 						<ui:param name="lookupTo" value="#{tasStat.params.tasItem.model}" />
 						<ui:param name="skipNewButton" value="#{true}" />
 						<ui:param name="lookupDisabled" value="#{tasStat.params.tasItem.id != null}" />
@@ -78,7 +78,7 @@
 			</ui:decorate>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{targetLookup}" />
-		<aon:lookupButtonPopup lookup="#{modelLookup}" />
 		<aon:lookupButtonPopup lookup="#{tasItemLookup}" />
+		<aon:lookupButtonPopup lookup="#{modelLookup}" />
 	</ui:define>
 </ui:composition>
