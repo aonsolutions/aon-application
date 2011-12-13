@@ -107,34 +107,6 @@
 							immediate="true"
 							styleClass="aon-editDataTable-button aon-icon-cancel" />
 					</aon:div>
-					<!--  
-					<aon:div>
-						<ui:insert name="beforeNewLineButtons"/>
-
-						<aon:outputText rendered="#{!formNew}" value="&#160;" />
-						<c:if test="#{!skipSaveButton}">		
-							<aon:commandButton
-								id="#{dataTableId}-new-save" title="#{bundle.aon_save} (#{bundle.aon_key_save_line_accelerator})"
-								action="#{newSaveAction}" actionListener="#{newSaveActionListener}"
-								rendered="#{newSaveButtonRendered}"
-								reRender="#{dataTableId}Div#{(newSaveButtonReRender != null)?',':''}#{newSaveButtonReRender}"
-								styleClass="aon-editDataTable-button aon-icon-accept"
-								accesskey="#{bundle.aon_key_save_line}" />
-						</c:if>
-						<c:if test="#{!skipCancelButton}">
-							<aon:confirmButton
-								id="#{dataTableId}-new-cancel" title="#{bundle.aon_cancel} (#{bundle.aon_key_cancel_line_accelerator})"
-								rendered="#{formNew}" reRender="#{newCancelButtonReRender}"
-								immediate="true"
-								confirmTitle="#{bundle.aon_confirm_title}"
-								confirmMessage="#{bundle.aon_cancel_confirm}"
-								confirmActionListener="#{cancelEditActionListener}"
-								confirmAction="#{cancelEditAction}"					
-								styleClass="aon-editDataTable-button aon-icon-cancel"
-								accesskey="#{bundle.aon_key_cancel_line}" />
-						</c:if>
-					</aon:div>
-					-->
 				</f:facet>
 			</aon:column>
 			

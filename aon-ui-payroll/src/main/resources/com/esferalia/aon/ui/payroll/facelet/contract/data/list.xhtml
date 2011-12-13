@@ -20,5 +20,11 @@
 
 			</aon:div>
 		</aon:form>
+		
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
+			<ui:param name="controller" value="#{contract}" />
+			<ui:param name="container" value="contractDataForm" />
+		</ui:include>
+
 	</ui:define>
 </ui:composition>
