@@ -105,13 +105,19 @@
 								</f:facet>
 								<aon:outputText rendered="#{formList}" value="#{to.expression}" >
 									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									<aon:abbreviateConverter maxWidth="35" />
 								</aon:outputText>		
-								<aon:inputText id="systemData_expression" rendered="#{formEdit}" size="30"
-										maxlength="128" value="#{controller.to.expression}" required="true" />
+								<aon:inputTextarea id="systemData_expression" rendered="#{formEdit}"
+									cols="60" rows="10" maxlength="128" 
+									value="#{controller.to.expression}" required="true" >
+									<f:validateLength maximum="128" />
+								</aon:inputTextarea>
 								<f:facet name="footer">
-									<aon:inputText id="systemData_expression-New" rendered="#{formNew}" size="30"
-										maxlength="128" 
-										value="#{controller.to.expression}" required="true" />
+									<aon:inputText id="systemData_expression-New" rendered="#{formNew}" 
+										cols="60" rows="10" maxlength="128" 
+										value="#{controller.to.expression}" required="true" >
+										<f:validateLength maximum="128" />
+									</aon:inputText>
 								</f:facet>
 							</aon:column>
 
