@@ -23,7 +23,7 @@
 	
 	<c:if test="#{deductions.count == 1}" >
 		<aon:div style="margin-left: 20px; border-bottom: solid #CCCCCC 1px;">
-			<aon:outputText value="#{deductions.name}" />
+			<aon:outputText value="#{  deductions.list[0].type == 'OTHER' ? deductions.list[0].name : deductions.name }" />
 		</aon:div>
 		<aon:div style="border-bottom: solid #CCCCCC 1px;">
 			<aon:outputText value="&#160;"/>
@@ -43,7 +43,7 @@
 		<c:forEach var="cost" items="#{deductions.list}">
 
 			<aon:div style="margin-left: 20px; border-bottom: solid #CCCCCC 1px;">
-				<aon:outputText value="#{deductions.name} #{cost.name}" />
+				<aon:outputText value="#{cost.name}" />
 			</aon:div>
 
 			<aon:div style="border-bottom: solid #CCCCCC 1px;">

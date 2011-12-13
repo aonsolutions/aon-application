@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -29,6 +30,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.SingleCollectionProvider;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.company.Enterprise;
@@ -54,6 +56,7 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.MessageController;
+import com.esferalia.aon.payroll.Pair;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.SalaryBonus;
 import com.esferalia.aon.payroll.SalaryCost;
@@ -74,7 +77,34 @@ public class SalaryController extends BasicController implements IPayrollConstan
 	private static final Logger LOGGER = LoggerFactory.getLogger(SalaryController.class);
 	
 	private static final String SALARY_PATTERN = "Nomina {0} ({1,date,dd.MM.yyyy}-{2,date,dd.MM.yyyy})";
-
+	
+	private static class CtxSortedSalaryItems<T extends Enum<T> & IResourceable> {
+		FacesContext			facesContext;
+		SortedSalaryItems<T> 	sortedSalaryItems;
+		
+		public boolean isValid(){
+			return facesContext == FacesContext.getCurrentInstance();
+		}
+		
+		public void setSortedSalaryItems(SortedSalaryItems<T> sortedSalaryItems){
+			this.sortedSalaryItems = sortedSalaryItems; 
+			this.facesContext = FacesContext.getCurrentInstance();
+		}
+		
+		public SortedSalaryItems<T> getSortedSalaryItems() {
+			return isValid() ? sortedSalaryItems: null;
+		}
+	}
+	
+	private CtxSortedSalaryItems<BonusType> 		cachedSalaryBonuses
+	 	= new CtxSortedSalaryItems<BonusType>();
+	private CtxSortedSalaryItems<PaymentType> 		cachedSalaryPayments
+		= new CtxSortedSalaryItems<PaymentType>();
+	private CtxSortedSalaryItems<DeductionType> 	cachedSalaryDeductions
+		= new CtxSortedSalaryItems<DeductionType>();
+	private CtxSortedSalaryItems<DeductionType> 	cachedSalaryCosts
+		= new CtxSortedSalaryItems<DeductionType>();
+	
 	
 	public String getFileName( Salary salary ) {
 		String name = salary.getContract().getPerson().getFullName();
@@ -84,6 +114,10 @@ public class SalaryController extends BasicController implements IPayrollConstan
 	public SortedSalaryItems<BonusType> getSortedSalaryBonuses() 
 		throws ManagerBeanException, SalaryException{
 		
+		if ( cachedSalaryBonuses.isValid() ) {
+			return cachedSalaryBonuses.getSortedSalaryItems();
+		}
+
 		SortedSalaryItems<BonusType> sortedSalaryBonuses =
 			new SortedSalaryItems<BonusType>();
 		
@@ -93,12 +127,17 @@ public class SalaryController extends BasicController implements IPayrollConstan
 			Collections.emptyList();
 		sortedSalaryBonuses.setItems(salaryBonuses, oldSalaryBonuses);
 		
+		cachedSalaryBonuses.setSortedSalaryItems(sortedSalaryBonuses);
+		
 		return sortedSalaryBonuses;
 	}
 
 	public SortedSalaryItems<PaymentType> getSortedSalaryPayments() 
 		throws ManagerBeanException{
 		
+		if ( cachedSalaryPayments.isValid() ){
+			return cachedSalaryPayments.getSortedSalaryItems();
+		}
 		SortedSalaryItems<PaymentType> sortedSalaryPayments =
 			new SortedSalaryItems<PaymentType>(PaymentType.values());
 		
@@ -108,12 +147,18 @@ public class SalaryController extends BasicController implements IPayrollConstan
 			Collections.emptyList();
 		sortedSalaryPayments.setItems(salaryPayments, oldSalaryPayments);
 		
+		cachedSalaryPayments.setSortedSalaryItems(sortedSalaryPayments);
+		
 		return sortedSalaryPayments;
 	}
 	
 	public SortedSalaryItems<DeductionType> getSortedSalaryDeductions() 
 	throws ManagerBeanException{
 	
+		if ( cachedSalaryDeductions.isValid() ){
+			return cachedSalaryDeductions.getSortedSalaryItems();
+		}
+		
 		SortedSalaryItems<DeductionType> sortedSalaryDeductions=
 			new SortedSalaryItems<DeductionType>(DeductionType.values());
 		
@@ -122,15 +167,19 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		
 		Collection<SalaryDeduction> oldSalaryDeductions = 
 			Collections.emptyList();
-		
 		sortedSalaryDeductions.setItems(salaryDeductions, oldSalaryDeductions);
+
+		cachedSalaryDeductions.setSortedSalaryItems(sortedSalaryDeductions);
 		
 		return sortedSalaryDeductions;
 	}
 
 	public SortedSalaryItems<DeductionType> getSortedSalaryCosts() 
 	throws ManagerBeanException{
-	
+		if ( cachedSalaryCosts.isValid()){
+			return cachedSalaryCosts.getSortedSalaryItems();
+		}
+		
 		SortedSalaryItems<DeductionType> sortedSalaryCosts=
 			new SortedSalaryItems<DeductionType>(DeductionType.values());
 		
@@ -139,12 +188,13 @@ public class SalaryController extends BasicController implements IPayrollConstan
 		
 		Collection<SalaryCost> oldSalaryCosts = 
 			Collections.emptyList();
-		
 		sortedSalaryCosts.setItems(salaryCosts, oldSalaryCosts);
+		
+		cachedSalaryCosts.setSortedSalaryItems(sortedSalaryCosts);
 		
 		return sortedSalaryCosts;
 	}
-
+	
 	
 	private Collection<SalaryPayment> getSalaryPayments () throws ManagerBeanException {
 		Salary salary = (Salary) getTo();

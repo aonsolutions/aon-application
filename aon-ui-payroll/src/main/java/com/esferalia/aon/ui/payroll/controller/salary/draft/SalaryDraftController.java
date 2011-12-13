@@ -10,11 +10,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Set;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
@@ -170,6 +172,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	private SortedSalaryItems<DeductionType>	deductions;
 	private SortedSalaryItems<DeductionType>	costs;
 	private SortedSalaryItems<BonusType>		bonuses;
+	
 	
 	private List<SelectItem> 					draftMonths;		
 	private List<SelectItem> 					toDraftMonths;		
@@ -578,7 +581,13 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			
 			ContractSalaryCalculator sc = 
 					new ContractSalaryCalculator();
-			sc.setSalaryBuilder(new SalaryBuilder());
+			sc.setSalaryBuilder(new SalaryBuilder(){
+				@Override
+				public void createNewSalary() {
+					super.createNewSalary();
+					salary.setContract(getContract());
+				}
+			});
 			
 			warnings= new LinkedList<Warning>() {
 				@Override
@@ -801,7 +810,8 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		Collection<SalaryDeduction> newSalaryItems = Collections.emptyList(); 
 		
 		if ( salary != null )  {
-			newSalaryItems = ( ( Salary ) salary ).getSalaryDeductions(); 
+			newSalaryItems = new HashSet<SalaryDeduction>();
+			newSalaryItems.addAll(( ( Salary ) salary ).getSalaryDeductions()); 
 			newSalaryItems.addAll(getConvertedEmbarbos( ( ( Salary ) salary ).getSalaryEmbargos())); 
 		}
 		Collection<SalaryDeduction> oldSalaryItems = Collections.emptyList();
@@ -880,7 +890,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			SalaryEmbargo e = (SalaryEmbargo) o;
 			SalaryDeduction d = new SalaryDeduction();
 			d.setDeductionConcept(e.getName());
-			d.setDescription(e.getDescription());
+			d.setDescription(null);
 			d.setAmount(e.getAmount());
 			d.setType(DeductionType.OTHER);
 			list.add(d);
@@ -1160,8 +1170,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 	private void saveSalary() throws SalaryException {
 		Session session = 
 				getHibernateSession4Class(Salary.class);
-		Contract contract = getContract();
-		( ( Salary ) salary ).setContract(contract);
+	
 		session.saveOrUpdate(salary);
 	}
 
