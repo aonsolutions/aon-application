@@ -201,7 +201,11 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 						}
 					}
 				
-					//System.out.printf("[%s]: %-45s\t\t= %f\t(%f)\r\n", contractPayment.getName(), contractPayment.getDescription(), total, taxCalculator.getTotalPayment());
+					System.out.println(String.format("[%s]: %-45s\t\t= %f\t(%f)", 
+							contractPayment.getName(), 
+							contractPayment.getDescription(), 
+							total, 
+							taxCalculator.getTotalPayment()));
 					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, total);
 
 				}catch ( InvalidVariable e ) {
@@ -490,7 +494,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 				
 			}
 			
-		} catch ( ExpressionException e ) {
+		} catch (UndefinedVariableException e){
+			
+		}
+		catch ( ExpressionException e ) {
 			throw new SalaryException(e.getMessage(),e);			
 		} catch (AonException e) {
 			throw new SalaryException(e.getMessage(),e);			

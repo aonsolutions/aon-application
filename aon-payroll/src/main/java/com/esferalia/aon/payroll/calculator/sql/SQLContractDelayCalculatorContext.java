@@ -8,9 +8,11 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -527,9 +529,9 @@ public class SQLContractDelayCalculatorContext
 			payment.setSalaryType(SalaryType.DELAY);
 			payment.setType(PaymentType.SALARY_SUPPLEMENTS);
 			
-			payment.setExpression(String.format("%.3f", amount ));
-			payment.setIrpfExpression(String.format("%.3f", irpf ) );
-			payment.setQuoteExpression(String.format("%.3f", quote ));
+			payment.setExpression(String.format(Locale.US, "%.3f", amount ));
+			payment.setIrpfExpression(String.format(Locale.US, "%.3f", irpf ) );
+			payment.setQuoteExpression(String.format(Locale.US, "%.3f", quote ));
 			
 			payment.setDescription(paymentDecorator.getDescriptionFor(payment));
 
@@ -612,9 +614,9 @@ public class SQLContractDelayCalculatorContext
 			payment.setSalaryType(SalaryType.DELAY);
 			payment.setType(PaymentType.SALARY_SUPPLEMENTS);
 			
-			payment.setExpression(String.format("%.3f", amount ));
-			payment.setIrpfExpression(String.format("%.3f", irpf ) );
-			payment.setQuoteExpression(String.format("%.3f", quote ));
+			payment.setExpression(String.format(Locale.US, "%.3f", amount ));
+			payment.setIrpfExpression(String.format(Locale.US, "%.3f", irpf ) );
+			payment.setQuoteExpression(String.format(Locale.US, "%.3f", quote ));
 			
 			payment.setDescription(paymentDecorator.getDescriptionFor(payment));
 			
@@ -661,5 +663,7 @@ public class SQLContractDelayCalculatorContext
 		return candidates.size() == 1 ?  candidates.get(0) : null;
 	}
 	
-	
+	public static void main(String[] args) {
+		System.out.println(String.format(Locale.US, "%,.4f%n", (double) 13432423.555 ));
+	}
 }

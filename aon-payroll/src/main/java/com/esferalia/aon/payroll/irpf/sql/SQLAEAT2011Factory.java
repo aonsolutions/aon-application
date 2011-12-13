@@ -323,7 +323,7 @@ public class SQLAEAT2011Factory extends ObjectFactory {
 		tipoRetenidoEntrada2011.setSituacionLaboral(situacionLaboral);
 		
 		ISalary paidSalary = getRetribSatisfechas(rs);
-		ISalary annualSalary = getRetribucionesAnuales(rs, paidSalary);
+		ISalary annualSalary = _getRetribucionesAnuales(rs, paidSalary);
 		
 		Double irpfBase = annualSalary.getIrpfBase();
 		BigDecimal retribAnuales = toTipoImpositivo(irpfBase);

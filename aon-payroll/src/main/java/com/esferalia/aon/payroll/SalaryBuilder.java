@@ -1,7 +1,16 @@
 package com.esferalia.aon.payroll;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
+import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.ISalary;
 import com.esferalia.aon.salary.ISalaryBuilder;
 import com.esferalia.aon.salary.ISalaryBuilderListener;
@@ -14,7 +23,7 @@ import com.esferalia.aon.salary.enumeration.SalaryType;
 public class SalaryBuilder implements ISalaryBuilder {
 
 	
-	private Salary salary;
+	protected Salary salary;
 	private ISalaryBuilderListener listener;
 	
 	@Override
@@ -25,13 +34,13 @@ public class SalaryBuilder implements ISalaryBuilder {
 	@Override
 	public void createNewSalary() {
 		this.salary = new Salary();
+		
 		// default ones 
+		salary.setTotalIrpf(0.00);
 	}
 
 	@Override
 	public void setContract(Object contract) {
-		//this.salary.setContract((Contract)contract);
-		
 	}
 
 	@Override
@@ -250,7 +259,13 @@ public class SalaryBuilder implements ISalaryBuilder {
 		salaryEmbargo.setAmount(amount);
 		salaryEmbargo.setDescription(description);
 		
+		ContractEmbargo contractEmbargo= 
+				getContractEmbargo(embargo);
+		salaryEmbargo.setContractEmbargo(contractEmbargo);
+
+		
 		this.salary.getSalaryEmbargos().add(salaryEmbargo);
+
 	}
 	
 	@Override
@@ -295,6 +310,7 @@ public class SalaryBuilder implements ISalaryBuilder {
 			}
 		}
 		
+		
 	}
 
 	@Override
@@ -304,5 +320,12 @@ public class SalaryBuilder implements ISalaryBuilder {
 	public ISalaryBuilderListener getListener( ) {
 		return listener;
 	}
-
+	
+	private ContractEmbargo getContractEmbargo(Integer id) {
+		ContractEmbargo contractEmbargo = 
+				new ContractEmbargo();
+		contractEmbargo.setId(id);
+		contractEmbargo.setContract(salary.getContract());
+		return contractEmbargo;
+	}
 }
