@@ -34,8 +34,19 @@
 
 				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
 					<ui:param name="controller" value="#{batchDocument}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
 					<ui:define name="columns">
 
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<aon:commandButton
+								id="remove" immediate="true"
+								title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
+								actionListener="#{batchDocument.onRemoveFromtBatch}" 
+								styleClass="aon-editDataTable-button aon-icon-delete"
+								accesskey="#{bundle.aon_key_remove_line}" />
+						</aon:column>
+							
 						<ui:include
 							src="/com/code/aon/ui/document/facelet/enterpriseDocument/listContent.xhtml" />
 

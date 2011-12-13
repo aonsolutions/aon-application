@@ -283,7 +283,7 @@ public class MessageController implements IWebMailConstants, BundleConstants {
 	private void finishMessage() {
     	setShowNewMessageWindow(false);
 		content = null;
-		if ( newMsgFileList == null ) {
+		if ( newMsgFileList != null ) {
 			for( AonFile af : newMsgFileList ) {
 				if ( af.getFile().exists() ) {
 					FileUtils.deleteQuietly( af.getFile() );

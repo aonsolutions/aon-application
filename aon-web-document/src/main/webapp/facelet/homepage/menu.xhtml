@@ -51,7 +51,8 @@
 					actionListener="#{enterpriseDocument.onEditSearch}" 
 					iconClass="aon-icon-go" >
 					<f:setPropertyActionListener value="#{false}"
-						target="#{enterpriseDocumentSearch.showList}"  />						
+						target="#{enterpriseDocumentSearch.showList}"  />
+					<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
 				</aon:menuItem>
 			</aon:dropDownMenu>						
 			<aon:inputText value="#{enterpriseDocumentSearch.mainText}"
