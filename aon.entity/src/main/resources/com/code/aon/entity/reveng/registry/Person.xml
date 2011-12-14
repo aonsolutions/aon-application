@@ -1,0 +1,8 @@
+<table name="person" class="com.code.aon.registry.Person">
+	<primary-key>
+		<generator class="registry_id">
+			<param name="property">registry</param>
+		</generator>
+		<key-column name="registry" property="id" />
+	</primary-key>
+</table>
