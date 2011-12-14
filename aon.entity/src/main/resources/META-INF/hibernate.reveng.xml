@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-reverse-engineering PUBLIC "-//Hibernate/Hibernate Reverse Engineering DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-reverse-engineering-3.0.dtd" 
 [<!ENTITY Account SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/account/Account.xml">
+
  <!ENTITY AccountEntry SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AccountEntry.xml">
  <!ENTITY AccountEntryDetail SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AccountEntryDetail.xml">
  <!ENTITY AccountHelper SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AccountHelper.xml">
  <!ENTITY Amortization SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/Amortization.xml">
  <!ENTITY AmortizationType SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/AmortizationType.xml">
+
  <!ENTITY ApplicationParameter SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/ApplicationParameter.xml">
  <!ENTITY Bank SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Bank.xml">
  <!ENTITY CommissionType SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/CommissionType.xml">
  <!ENTITY Domain SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Domain.xml">
  <!ENTITY PayMethod SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/PayMethod.xml">
  <!ENTITY PayMethodTypeDetail SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/PayMethodTypeDetail.xml">
- <!ENTITY Person SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/Person.xml">
  <!ENTITY Scope SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Scope.xml">
  <!ENTITY Series SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Series.xml">
  <!ENTITY Tariff SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Tariff.xml">
  <!ENTITY Tax SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/Tax.xml">
  <!ENTITY TaxDetail SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/TaxDetail.xml">
  <!ENTITY WorkGroup SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/config/WorkGroup.xml">
+
+ <!ENTITY Person SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/registry/Person.xml">
+ <!ENTITY Registry SYSTEM "aon.entity/src/main/resources/com/code/aon/entity/reveng/registry/Registry.xml">
 ]>
 
 <hibernate-reverse-engineering>
@@ -26,22 +30,6 @@
 		<sql-type jdbc-type="BIT" not-null="false" hibernate-type="boolean"/>
 		<sql-type jdbc-type="DOUBLE" hibernate-type="double"/>
 	</type-mapping>
-
-	<table-filter match-name="domain" />
-	<table-filter match-name="account" />
-	<table-filter match-name="app_param" />
-	<table-filter match-name="bank" />
-	<table-filter match-name="commission_type" />
-	<table-filter match-name="pay_method" />
-	<table-filter match-name="pm_type_detail" />
-	<table-filter match-name="scope" />
-	<table-filter match-name="series" />
-	<table-filter match-name="tariff" />
-	<table-filter match-name="tax" />
-	<table-filter match-name="tax_detail" />
-	<table-filter match-name="workgroup" />
- 
-	<table-filter match-name="person" />
 
 	<!--  **************** -->
 	<!--  TABLAS DE ACADEMY -->
@@ -65,6 +53,15 @@
 	<table-filter match-name="mark" exclude="true" />
 	<table-filter match-name="qualification" exclude="true" />
 	<table-filter match-name="quality_skill" exclude="true" />
+	
+	<!--  **************** -->
+	<!--  TABLAS DE ECOMMERCE -->
+	<!--  **************** -->
+	<table-filter match-name="ec_catalogue" exclude="true" />
+	<table-filter match-name="ec_config" exclude="true" />
+	<table-filter match-name="ec_offer_pay_info" exclude="true" />
+	<table-filter match-name="ec_paymethod" exclude="true" />
+	<table-filter match-name="ec_target" exclude="true" />
 	
 	<!--  ************** -->
 	<!--  TABLAS DUDOSAS -->
@@ -90,6 +87,7 @@
 	&PayMethod;
 	&PayMethodTypeDetail;
 	&Person;
+	&Registry;
 	&Scope;
 	&Series;
 	&Tariff;
