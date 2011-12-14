@@ -119,7 +119,12 @@
 										action="geozoneIrpf_search" actionListener="#{geozoneIrpf.onInitialize}" 
 										value="#{payrollBundle.payroll_geozoneIrpf_module}" />
 								</aon:div>
-								
+								<aon:div styleClass="aon-direct-access-list-element">
+									<aon:commandLink id="systemCost" action="systemCost_grid"
+										actionListener="#{systemCost.onSearch}"
+										value="#{payrollBundle.payroll_systemCost_module}">
+									</aon:commandLink>
+								</aon:div>
 								<aon:div styleClass="aon-direct-access-list-element">
 									<aon:commandLink id="systemPayment" action="systemPayment_list"
 										actionListener="#{systemPayment.onSearch}"

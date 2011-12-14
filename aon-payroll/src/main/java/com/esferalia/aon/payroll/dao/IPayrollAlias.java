@@ -53,6 +53,7 @@ import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.SystemCost;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.SystemDeduction;
 import com.esferalia.aon.payroll.SystemPayment;
@@ -3070,6 +3071,55 @@ public interface IPayrollAlias {
 	* Hibernate value: SalaryPayment.type
 	*/
 	String  SALARY_PAYMENT_TYPE = SALARY_PAYMENT_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for SystemCost entity.
+	*/ 
+	DAOConstantsEntry SYSTEM_COST_ENTRY = DAOConstants.getDAOConstant(SystemCost.class);
+
+	/** 
+	* Alias value: SystemCost_code
+	* Hibernate value: SystemCost.code
+	*/
+	String  SYSTEM_COST_CODE = SYSTEM_COST_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SystemCost_description
+	* Hibernate value: SystemCost.description
+	*/
+	String  SYSTEM_COST_DESCRIPTION = SYSTEM_COST_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SystemCost_endDate
+	* Hibernate value: SystemCost.endDate
+	*/
+	String  SYSTEM_COST_END_DATE = SYSTEM_COST_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SystemCost_expression
+	* Hibernate value: SystemCost.expression
+	*/
+	String  SYSTEM_COST_EXPRESSION = SYSTEM_COST_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SystemCost_id
+	* Hibernate value: SystemCost.id
+	*/
+	String  SYSTEM_COST_ID = SYSTEM_COST_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: SystemCost_startDate
+	* Hibernate value: SystemCost.startDate
+	*/
+	String  SYSTEM_COST_START_DATE = SYSTEM_COST_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: SystemCost_type
+	* Hibernate value: SystemCost.type
+	*/
+	String  SYSTEM_COST_TYPE = SYSTEM_COST_ENTRY.getAliasNames()[6];
 
 
 

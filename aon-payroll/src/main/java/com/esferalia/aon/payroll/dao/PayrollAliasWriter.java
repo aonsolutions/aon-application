@@ -56,6 +56,7 @@ import com.esferalia.aon.payroll.SalaryCost;
 import com.esferalia.aon.payroll.SalaryDeduction;
 import com.esferalia.aon.payroll.SalaryEmbargo;
 import com.esferalia.aon.payroll.SalaryPayment;
+import com.esferalia.aon.payroll.SystemCost;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.SystemDeduction;
 import com.esferalia.aon.payroll.SystemPayment;
@@ -125,6 +126,7 @@ public class PayrollAliasWriter {
 				SalaryDeduction.class.getName(),
 				SalaryEmbargo.class.getName(),
 				SalaryPayment.class.getName(),
+				SystemCost.class.getName(),
 				SystemData.class.getName(),
 				SystemDeduction.class.getName(),
 				SystemPayment.class.getName()

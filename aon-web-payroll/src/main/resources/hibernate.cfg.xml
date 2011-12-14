@@ -134,6 +134,7 @@
 		<mapping class="com.esferalia.aon.payroll.SalaryDeduction"/>
 		<mapping class="com.esferalia.aon.payroll.SalaryEmbargo"/>
 		<mapping class="com.esferalia.aon.payroll.SalaryPayment"/>
+		<mapping class="com.esferalia.aon.payroll.SystemCost"/>
 		<mapping class="com.esferalia.aon.payroll.SystemData"/>
 		<mapping class="com.esferalia.aon.payroll.SystemDeduction"/>
 		<mapping class="com.esferalia.aon.payroll.SystemPayment"/>
