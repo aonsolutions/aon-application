@@ -40,6 +40,8 @@ import com.code.aon.project.dao.IProjectAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.common.components.LookupChangeEvent;
+import com.code.aon.ui.project.controller.IProjectConstants;
+import com.code.aon.ui.project.controller.ProjectCollectionsController;
 import com.code.aon.ui.util.AonUtil;
 
 public class ProcessLauncherWizard implements Serializable {
@@ -227,6 +229,14 @@ public class ProcessLauncherWizard implements Serializable {
 		this.projectsModel = projectsModel;
 	}
 
+	public List<SelectItem> getAvailableActivityTypes() throws ManagerBeanException {
+		ProjectCollectionsController pcc = (ProjectCollectionsController) AonUtil.getRegisteredBean(IProjectConstants.PROJECT_COLLECTIONS_CONTROLLER_NAME);
+		if (getProjectType() != null && getProjectType().getId() != null) {
+			return pcc.getActivityTypes(getProjectType().getId());	
+		}
+		return pcc.getActivityTypes( );
+	}
+
 	private void initializeController() throws ManagerBeanException {
 		setProcess(null);
 		setDescription(null);
@@ -238,6 +248,7 @@ public class ProcessLauncherWizard implements Serializable {
 		setRegistry( (Registry) BeanManager.getManagerBean(Registry.class).createNewTo() );
 		setProject(null);
 		setProjectType(null);
+		setActivityType(null);
 		setProjectName(null);
 		setProjects(null);
 		setProjectsModel(null);
