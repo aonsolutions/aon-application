@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -23,6 +24,7 @@ import javax.faces.model.ListDataModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.util.AonFile;
 import com.code.aon.document.EnterpriseDocument;
@@ -45,10 +47,14 @@ public class BatchDocument {
 	private String beanName;
 	
 	private DataModel model;
+	
+	/** A list that contains the selected objects of the model. */
+	private Set<EnterpriseDocument> checkList;
 
 	public BatchDocument() {
 		this.documents = new HashSet<EnterpriseDocument>();
 		this.model = new ListDataModel();
+		this.checkList = new HashSet<EnterpriseDocument>();
 	}
 
 	public int getPageLimit() {
@@ -123,19 +129,92 @@ public class BatchDocument {
 		return this.documents.contains(ed);
 	}
 
+	private void updateModel() {
+		this.model = new ArrayDataModel(this.documents.toArray());		
+	}
+	
 	public void onAddToBatch(ActionEvent event) {
 		IController controller = FormUtil.getController(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
 		EnterpriseDocument ed = (EnterpriseDocument) controller.getTo();
 		this.documents.add(ed);
-		this.model = new ArrayDataModel(this.documents.toArray());
+		updateModel();
 	}
 
 	public void onRemoveFromtBatch(ActionEvent event) {
 		if ( model.isRowAvailable() ) {
 			EnterpriseDocument ed = (EnterpriseDocument) this.model.getRowData();
 			this.documents.remove(ed);
-			this.model = new ArrayDataModel(this.documents.toArray());			
+			updateModel();		
 		}
 	}
+	
+	public void onAddDocuments(ActionEvent event) {
+		for( EnterpriseDocument ed : checkList ) {
+			this.documents.add(ed);
+		}
+		updateModel();
+	}	
+
+	private EnterpriseDocument getCurrentDocument() throws ManagerBeanException {
+		IController controller = FormUtil.getController(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
+		DataModel model = controller.getModel();
+		if ( model.isRowAvailable() ) {
+			return (EnterpriseDocument) model.getRowData();			
+		}
+		return null;
+	}
+
+	/**
+	 * Gets the if the selected row is checked.
+	 * 
+	 * @return the row checked
+	 * @throws ManagerBeanException 
+	 */
+	public boolean getRowChecked() throws ManagerBeanException {
+		return checkList.contains( getCurrentDocument() );
+	}	
+
+	/**
+	 * Sets the selected row checked.
+	 * 
+	 * @param rowChecked
+	 *            the row checked
+	 * @throws ManagerBeanException 
+	 */
+	public void setRowChecked(boolean rowChecked) throws ManagerBeanException {
+		EnterpriseDocument ed = getCurrentDocument();
+		if (rowChecked) {
+			if (!checkList.contains(ed)) {
+				checkList.add(ed);
+			}
+		} else {
+			if (checkList.contains(ed)) {
+				checkList.remove(ed);
+			}
+		}
+	}
+
+	/**
+	 * Clears the selected list.
+	 * 
+	 * @param event the event
+	 */
+	public void checkNone(ActionEvent event) {
+		this.checkList.clear();
+	}
+	
+	/**
+	 * Check all.
+	 * 
+	 * @param event the event
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void checkAll(ActionEvent event) throws ManagerBeanException{
+		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
+		List<EnterpriseDocument> list = (List) edc.getManagerBean().getList(edc.getLastCriteria());
+		this.checkList.clear();
+		this.checkList.addAll(list);
+	}	
 	
 }

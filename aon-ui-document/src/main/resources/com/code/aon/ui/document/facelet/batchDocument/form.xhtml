@@ -22,6 +22,13 @@
 						reRender="showNewMessageWindow"
 						styleClass="aon-finding-toolbar-item aon-icon-webmail2">
 					</aon:commandButton>								
+					<aon:commandButton id="addDocuments"
+						action="batchDocument_search"
+						value="#{documentBundle.document_add_documents}"
+						styleClass="aon-finding-toolbar-item aon-icon-new">
+						<f:setPropertyActionListener value="#{false}"
+							target="#{enterpriseDocumentSearch.showList}"  />						
+					</aon:commandButton>								
 					<aon:commandButton id="clear"
 						value="#{bundle.aon_clear}" 
 						actionListener="#{batchDocument.onClear}"

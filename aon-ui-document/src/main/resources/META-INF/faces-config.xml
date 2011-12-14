@@ -217,6 +217,14 @@
 			<from-outcome>batchDocument_form</from-outcome>
 			<to-view-id>/com/code/aon/ui/document/facelet/batchDocument/form.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>batchDocument_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/batchDocument/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>batchDocument_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/batchDocument/list.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 	
 		

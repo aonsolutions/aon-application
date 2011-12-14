@@ -99,7 +99,8 @@ public class EnterpriseDocumentControllerListener extends ControllerAdapter {
 	public void afterModelSearched(ControllerEvent event)
 			throws ControllerListenerException {
 		try {
-			event.getController().clearCriteria();
+			EnterpriseDocumentController edc = (EnterpriseDocumentController) event.getController();
+			edc.clearCriteriaEx();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
