@@ -50,7 +50,7 @@
 				<aon:div id="existingContainer">
 					<aon:panelGrid columns="2" dir="true" style="margin: 5px;width: 95%;">
 	
-						<aon:outputLabel for="DailyTracking_project" value="#{projectBundle.project_project}"/>
+						<aon:outputText value="#{projectBundle.project_project}"/>
 						<aon:panelGrid columns="2" style="width: 95%;"
 							columnClasses="aon-panelGrid-even aon-italic aon-width-100,aon-panelGrid-even aon-width-auto">
 							
@@ -75,6 +75,7 @@
 
 						<aon:outputLabel for="processWizard_type" value="#{projectBundle.project_project_type}"/>
 						<aon:selectOneMenu id="processWizard_type"
+							reRender="processWizard_activityType"
 							value="#{processWizard.projectType}">
 							<f:selectItem itemLabel="-" value="#{null}" />
 							<f:selectItems value="#{projectCollections.projectTypes}" />
@@ -84,7 +85,7 @@
 						<aon:selectOneMenu id="processWizard_activityType"
 							value="#{processWizard.activityType}">
 							<f:selectItem itemLabel="-" value="#{null}"/>
-							<f:selectItems value="#{projectCollections.activityTypes}" />
+							<f:selectItems value="#{processWizard.availableActivityTypes}" />
 						</aon:selectOneMenu>
 
 						<aon:outputLabel for="processWizard_projectName" value="#{projectBundle.project_project}" />

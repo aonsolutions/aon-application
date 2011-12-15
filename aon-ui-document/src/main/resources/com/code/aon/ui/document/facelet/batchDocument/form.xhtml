@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="enterpriseDocumentForm">
+		
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{documentBundle.document_batch_document}" />
+				<ui:param name="toolbarDescription" value="&#160;" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="email"
+						actionListener="#{batchDocument.onSendInvoiceByEmail}"
+						value="#{webmailBundle.webmail_send_email}"
+						reRender="showNewMessageWindow"
+						styleClass="aon-finding-toolbar-item aon-icon-webmail2">
+					</aon:commandButton>								
+					<aon:commandButton id="addDocuments"
+						action="batchDocument_search"
+						value="#{documentBundle.document_add_documents}"
+						styleClass="aon-finding-toolbar-item aon-icon-new">
+						<f:setPropertyActionListener value="#{false}"
+							target="#{enterpriseDocumentSearch.showList}"  />						
+					</aon:commandButton>								
+					<aon:commandButton id="clear"
+						value="#{bundle.aon_clear}" 
+						actionListener="#{batchDocument.onClear}"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber" >
+					</aon:commandButton>									
+				</ui:define>				
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/list.xhtml" >
+					<ui:param name="controller" value="#{batchDocument}" />
+					<ui:param name="rowSelectorToggleOnClick" value="#{false}" />
+					<ui:param name="skipSelectButton" value="#{true}" />
+					<ui:define name="columns">
+
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<aon:commandButton
+								id="remove" immediate="true"
+								title="#{bundle.aon_remove} (#{bundle.aon_key_remove_line_accelerator})"
+								actionListener="#{batchDocument.onRemoveFromtBatch}" 
+								styleClass="aon-editDataTable-button aon-icon-delete"
+								accesskey="#{bundle.aon_key_remove_line}" />
+						</aon:column>
+							
+						<ui:include
+							src="/com/code/aon/ui/document/facelet/enterpriseDocument/listContent.xhtml" />
+
+					</ui:define>
+				</ui:decorate>
+
+			</aon:div>
+
+		</aon:form>
+
+		<ui:include src="/com/code/aon/ui/webmail/facelet/webmailMessage/messageNewModal.xhtml" />
+
+	</ui:define>
+</ui:composition>

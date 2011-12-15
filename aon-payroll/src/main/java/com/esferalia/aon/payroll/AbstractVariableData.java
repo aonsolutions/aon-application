@@ -1,5 +1,7 @@
 package com.esferalia.aon.payroll;
 
+import java.util.Date;
+
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,5 +55,7 @@ public abstract class AbstractVariableData implements IExpression{
 	public abstract void setName(String name);
 	
 	public abstract void setExpression(String expression);
+	
+	public abstract void setStartDate(Date date);
 	
 }

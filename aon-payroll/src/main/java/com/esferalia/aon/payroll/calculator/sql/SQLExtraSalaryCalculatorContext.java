@@ -129,6 +129,7 @@ public class SQLExtraSalaryCalculatorContext implements
 				startDate, 
 				endDate, 
 				issueDate, 
+				issueDate, 
 				agreementCriteria); 
 		
 		return true;

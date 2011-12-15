@@ -377,7 +377,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	// *******************************************************
 	// ********************* COSTOS **************************
 	// *******************************************************
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.ALL})
 	public Set<SalaryCost> getSalaryCosts() {
 		return salaryCosts;
 	}
@@ -388,7 +388,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	// *******************************************************
 	// ******************** EMBARGOS *************************
 	// *******************************************************
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.ALL})
 	public Set<SalaryEmbargo> getSalaryEmbargos() {
 		return salaryEmbargos;
 	}
@@ -399,7 +399,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	// *******************************************************
 	// **************** BONIFICACIONES **********************
 	// *******************************************************
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.ALL})
 	public Set<SalaryBonus> getSalaryBonus() {
 		return salaryBonus;
 	}
@@ -432,7 +432,7 @@ public class Salary implements ITransferObject , ISalary, ISalaryProxy {
 	// ****************** DEDUCCIONES ************************
 	// *******************************************************
 
-	@OneToMany(mappedBy = "salary", cascade={CascadeType.REMOVE})
+	@OneToMany(mappedBy = "salary", cascade={CascadeType.ALL})
 	public Set<SalaryDeduction> getSalaryDeductions() {
 		return salaryDeductions;
 	}

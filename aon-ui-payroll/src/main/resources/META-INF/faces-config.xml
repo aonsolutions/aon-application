@@ -1478,6 +1478,24 @@
 		<managed-bean-class>com.esferalia.aon.ui.payroll.controller.wizard.Certifica2FileWizard</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<!-- ************ SYSTEM COST  ************** -->
+	<managed-bean>
+		<managed-bean-name>systemCost</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.esferalia.aon.payroll.SystemCost</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>systemCost</value>
+		</managed-property>
+	</managed-bean>
 	<!-- ************ SYSTEM DATA  ************** -->
 	<managed-bean>
 		<managed-bean-name>systemData</managed-bean-name>
@@ -2973,6 +2991,13 @@
 		<navigation-case>
 			<from-outcome>contractOption_list</from-outcome>
 			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/contractOption/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<!-- =================== System Cost ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>systemCost_grid</from-outcome>
+			<to-view-id>/com/esferalia/aon/ui/payroll/facelet/systemCost/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<!-- =================== System Data ========================== -->

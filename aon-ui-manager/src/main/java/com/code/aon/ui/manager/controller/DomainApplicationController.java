@@ -46,10 +46,11 @@ public class DomainApplicationController extends LdapBasicController implements 
 	}
 
 	@Override
-	public void updateBaseDN(Name parent) {
+	public boolean updateBaseDN(Name parent) {
 		String domain = NameResolver.getValue(parent, 0);
 		Name baseDN = NameResolver.getDomainApplicationsDN(domain);
 		getLdapDAO().setBaseDN(baseDN);
+		return true;
 	}
 	
 	public DomainApplication getDomainApplication() {

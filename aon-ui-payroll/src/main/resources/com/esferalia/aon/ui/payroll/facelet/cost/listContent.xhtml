@@ -25,7 +25,7 @@
 
 	<c:if test="#{costs.count == 1 }" >
 		<aon:div style="margin-left: 10px; border-bottom: solid #CCCCCC 1px;">
-			<aon:outputText value="#{index}. #{costs.name} " styleClass="aon-bold"/>
+			<aon:outputText value="#{index}. #{payrollBundle[costs.list[0].name]} " styleClass="aon-bold"/>
 		</aon:div>
 		<aon:div style="border-bottom: solid #CCCCCC 1px;">
 			<aon:outputText value="&#160;"/>

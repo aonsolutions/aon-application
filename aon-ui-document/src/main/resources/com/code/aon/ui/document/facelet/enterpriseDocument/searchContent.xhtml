@@ -9,6 +9,7 @@
 
 	<aon:methodParam name="searchActionListener"
 		default="#{enterpriseDocument.onSearch}" type="actionListener" />
+	<aon:methodParam name="searchAction" default="" />		
 
 	<a4j:region>
 		<aon:panelCollapsible label="#{bundle.aon_search_info}"
@@ -121,9 +122,10 @@
 					title="#{bundle.aon_key_search_accelerator}"
 					value="#{bundle.aon_search}"
 					styleClass="aon-icon-rubber aon-search-lookup-button"
-					actionListener="#{searchActionListener}"
+					action="#{searchAction}" actionListener="#{searchActionListener}"
 					requestDelay="100" accesskey="#{bundle.aon_key_search}" >
 					<aon:actionHotKey key="return" />
+					<ui:insert name="searchButtonContent"/>
 				</aon:commandButton> 
 
 			</aon:panelGrid>

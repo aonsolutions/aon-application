@@ -81,7 +81,11 @@ public class ProjectCollectionsController {
 		List<ITransferObject> list = bean.getList(criteria);
 		for (ITransferObject to:list) {
 			ActivityType activityType = (ActivityType) to;
-			SelectItem item = new SelectItem(activityType, activityType.getDescription() + "(" + activityType.getId() + ")");
+			String description = activityType.getDescription() + " (" + activityType.getId() + ")";
+			if (activityType.getProjectType() != null) {
+				description = activityType.getDescription() + " (" + activityType.getProjectType().getDescription() + ")";
+			}
+			SelectItem item = new SelectItem(activityType, description);
 			activityTypes.add(item);
 		}
 		return activityTypes;

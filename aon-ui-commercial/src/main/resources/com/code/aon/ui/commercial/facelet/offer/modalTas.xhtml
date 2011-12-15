@@ -88,6 +88,7 @@
 
 										<ui:include src="/com/code/aon/ui/tas/facelet/tasItem/lookup.xhtml">
 											<ui:param name="lookupTo" value="#{offer.projectTasItem}" />
+											<ui:param name="lookupReRender" value="projectTasForm" />
 											<ui:param name="idRequired" value="#{true}" />
 										</ui:include>
 
@@ -99,6 +100,7 @@
 				</aon:div>
 				</aon:form>
 				<aon:lookupButtonPopup lookup="#{tasItemLookup}" />
+				<aon:lookupButtonPopup lookup="#{modelLookup}" />
 			</rich:modalPanel>
 		</c:if>
 	</aon:panelGroup>

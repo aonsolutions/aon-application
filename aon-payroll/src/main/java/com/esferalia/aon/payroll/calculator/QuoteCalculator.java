@@ -50,6 +50,11 @@ public abstract class QuoteCalculator {
 	public double getRawCgcBase() {
 		return rawCgcBase;
 	}
+	
+	public double getRawCgpBase() {
+		return rawCgcBase + structuralBase + nonStructuralBase;
+	}
+	
 
 	public double getCgpBase() throws AonException{
 		return rawCgcBase + structuralBase  +nonStructuralBase ;

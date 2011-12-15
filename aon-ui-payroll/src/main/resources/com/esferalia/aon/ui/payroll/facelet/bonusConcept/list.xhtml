@@ -23,7 +23,7 @@
 					<ui:define name="columns">
 					
 						<aon:column alias="BonusConcept.id"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-50">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_id}" />
 							</f:facet>
@@ -31,7 +31,7 @@
 						</aon:column>
 	
 						<aon:column alias="BonusConcept.description"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-auto">
 							<f:facet name="header">
 								<aon:outputText value="#{bundle.aon_description}" />
 							</f:facet>
@@ -39,11 +39,13 @@
 						</aon:column>
 	
 						<aon:column alias="BonusConcept.expression"
-							styleClass="aon-editDataTable-textColumn">
+							styleClass="aon-editDataTable-textColumn aon-width-300">
 							<f:facet name="header">
 								<aon:outputText value="#{payrollBundle.payroll_salary_expression}" />
 							</f:facet>
-							<aon:outputText value="#{to.expression}" />
+							<aon:outputText value="#{to.expression}" >
+								<aon:abbreviateConverter maxWidth="40" />
+							</aon:outputText>
 						</aon:column>
 						
 					</ui:define>

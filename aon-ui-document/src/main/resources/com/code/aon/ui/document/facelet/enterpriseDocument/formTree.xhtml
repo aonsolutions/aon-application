@@ -31,6 +31,13 @@
 					<f:param name="path" value="#{enterpriseDocument.to.id.path}" />
 					<aon:outputText value="&#160;" />
 				</aon:htmlCommandLink>	
+				<aon:commandButton id="addBatch"
+					value="#{documentBundle.document_add_batch}"
+					immediate="true"
+					reRender="enterpriseDocumentToolbar"
+					rendered="#{manager.mainEnterprise and (!batchDocument.inBatch)}"
+					actionListener="#{batchDocument.onAddToBatch}"
+					styleClass="aon-finding-toolbar-item aon-icon-new" />			
 			</ui:define>	
 		</ui:decorate>	
 	</ui:define>

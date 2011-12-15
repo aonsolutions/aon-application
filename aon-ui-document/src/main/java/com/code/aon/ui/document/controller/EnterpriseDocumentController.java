@@ -38,6 +38,7 @@ import com.code.aon.document.dao.AlfrescoDAO;
 import com.code.aon.document.dao.EnterpriseDocumentDAO;
 import com.code.aon.faces.controller.AttachmentUtil;
 import com.code.aon.faces.controller.IAttachmentController;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.document.event.EnterpriseProjectListener;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.IControllerListener;
@@ -61,6 +62,8 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 	private List<SelectItem> mimeTypes;
 	
 	private IControllerListener projectListener;
+	
+	private Criteria lastCriteria;
 	
 	public EnterpriseDocumentController() {
 		this.projectListener = new EnterpriseProjectListener(this);
@@ -240,5 +243,14 @@ public class EnterpriseDocumentController extends BasicController implements IAt
 
 	public IControllerListener getProjectListener() {
 		return projectListener;
-	}	
+	}
+
+	public Criteria getLastCriteria() {
+		return lastCriteria;
+	}
+	
+	public void clearCriteriaEx() throws ManagerBeanException {
+		this.lastCriteria = getCriteria();
+		clearCriteria();
+	}
 }

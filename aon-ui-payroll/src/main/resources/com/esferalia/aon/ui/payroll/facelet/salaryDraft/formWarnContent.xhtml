@@ -18,14 +18,22 @@
 				
 				<aon:commandLink  
 					style="display: inline; "
-					rendered="#{warning.variable =='EDAD'}"
-					action="#{person.initialAction}"
-					actionListener="#{person.onEditSearch}">
-					<aon:outputText value="#{warning.message}"  style="text-decoration:underline;" styleClass="aon-label-error aon-width-auto" />
+					rendered="#{warning.action != null }"
+					action="person_form"
+					>
+					<aon:outputText value="#{warning.message}"  
+						style="text-decoration:underline;" 
+						styleClass="aon-label-error aon-width-auto" />
+
+					<f:setPropertyActionListener value="#{warning}" 
+						target="#{salaryDraft.warning}" />
+					<aon:actionListener method="#{salaryDraft.onWarning}" />
+
 				</aon:commandLink>	
 
+
 				<aon:outputText value="#{warning.message}" 
-					rendered="#{warning.variable != 'EDAD'}"
+					rendered="#{warning.action == null}"
 					styleClass="aon-label-error aon-width-auto"	/>
 						
 			</aon:column>

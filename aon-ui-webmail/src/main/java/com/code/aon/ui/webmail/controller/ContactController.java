@@ -1,5 +1,8 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
+import static com.code.aon.ldap.IAonObjectClasses.USER;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,10 +38,10 @@ public class ContactController extends LdapBasicController implements IWebMailCo
 	private List<SelectItem> groupContacts;
 
 	@Override
-	public void updateBaseDN(Name parent) {
+	public boolean updateBaseDN(Name parent) {
 		String user = NameResolver.getFirstValue(parent);
 		String domain = NameResolver.getValue(parent, 2);
-		updateBaseDN(domain, user);
+		return updateBaseDN(domain, user);
 	}
 	
 	@Override
@@ -49,10 +52,19 @@ public class ContactController extends LdapBasicController implements IWebMailCo
 	}
 	
 
-	private void updateBaseDN( String domain, String user )  {
-		Name baseDN = NameResolver.getUserAddressBookDN(domain, user);
-		getLdapDAO().setBaseDN( baseDN );	
-		this.groupContactDAO.setBaseDN( baseDN );
+	private boolean updateBaseDN( String domain, String user )  {
+		Name userDN = NameResolver.getUserDN(domain, user);
+		if ( getLdapDAO().exists(userDN, USER) ) { 
+			Name baseDN = NameResolver.getUserAddressBookDN(domain, user);
+			if (! getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
+				getLdapDAO().addOrganizationUnit(baseDN);
+			}
+			getLdapDAO().setBaseDN( baseDN );
+			this.groupContactDAO.setBaseDN( baseDN );
+			return true;
+		}
+		LOGGER.warn( "LDAP entry not found: {}", userDN );	
+		return false;				
 	}	
 
 	@Override

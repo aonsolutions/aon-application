@@ -9,6 +9,7 @@ import static com.code.aon.document.IAlfrescoConstants.NAME_SHORT;
 import static com.code.aon.document.IAlfrescoConstants.PROJECT_ID_SHORT;
 import static com.code.aon.document.IAlfrescoConstants.TITLE_SHORT;
 import static com.code.aon.document.dao.AlfrescoCategoryDAO.EMPTY_CATEGORY;
+import static com.code.aon.ui.company.controller.ICompanyConstants.ENTERPRISE_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.BUNDLE_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.ENTERPRISE_DOCUMENT_CONTROLLER_NAME;
 import static com.code.aon.ui.document.controller.IDocumentConstants.INPUT_SEARCH_TEXT;
@@ -35,6 +36,7 @@ import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.company.controller.EnterpriseController;
 import com.code.aon.ui.document.controller.EnterpriseDocumentController;
 import com.code.aon.ui.document.controller.IEnterpriseController;
 import com.code.aon.ui.document.controller.ManagerController;
@@ -298,6 +300,8 @@ public class EnterpriseDocumentSearchListener extends ControllerSearchListenerEx
 
 	public void onMainSearch(ActionEvent event) {
 		setText( getMainText() );
+		EnterpriseController ec = (EnterpriseController) AonUtil.getRegisteredBean(ENTERPRISE_CONTROLLER_NAME);
+		ec.onBasicViewSelect(event);
 		EnterpriseDocumentController edc = (EnterpriseDocumentController) AonUtil.getRegisteredBean(ENTERPRISE_DOCUMENT_CONTROLLER_NAME);
 		edc.onSearch(event);
 	}

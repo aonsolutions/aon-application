@@ -35,7 +35,8 @@ public abstract class LdapBasicController extends BasicController {
 	
 	private BasicManagerBean ldapManagerBean;
 	
-	public void updateBaseDN( Name parent ) {
+	public boolean updateBaseDN( Name parent ) {
+		return true;
 	}
 	
 	public LdapDAO getLdapDAO() {

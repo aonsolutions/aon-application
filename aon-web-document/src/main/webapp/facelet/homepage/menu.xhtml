@@ -24,6 +24,12 @@
 			<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
 			<aon:actionListener method="#{enterprise.onEditSearch}" />
 		</aon:commandLink>
+		<aon:commandLink id="batchDocument" 
+			rendered="#{manager.mainEnterprise}"
+			action="batchDocument_form" immediate="true" 
+			value="#{documentBundle.document_batch_document}"
+			styleClass="aon-top-menu-item aon-icon-webmail2">
+		</aon:commandLink>
 		<aon:commandLink id="config"
 			value="#{bundle.aon_configuration}"
 			action="menu_config" immediate="true"
@@ -45,7 +51,8 @@
 					actionListener="#{enterpriseDocument.onEditSearch}" 
 					iconClass="aon-icon-go" >
 					<f:setPropertyActionListener value="#{false}"
-						target="#{enterpriseDocumentSearch.showList}"  />						
+						target="#{enterpriseDocumentSearch.showList}"  />
+					<aon:actionListener method="#{enterprise.onBasicViewSelect}" />
 				</aon:menuItem>
 			</aon:dropDownMenu>						
 			<aon:inputText value="#{enterpriseDocumentSearch.mainText}"

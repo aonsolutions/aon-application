@@ -8,7 +8,7 @@
 	
 	<ui:define name="content">
 
-		<aon:form id="marketingCampaignSearch">
+		<aon:form id="campaignSearch">
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{marketingBundle.marketing_campaign_module}" />
@@ -19,20 +19,20 @@
 				<ui:param name="controller" value="#{marketingCampaign}" />
 				<ui:define name="searchContent">
 					
-					<aon:outputLabel for="MarketingCampaign_id"
+					<aon:outputLabel for="Campaign_id"
 						value="#{bundle.aon_id}" />
-					<aon:inputText id="MarketingCampaign_id" size="60"
-						valueChangeListener="#{marketingCampaign.addExpression}" />		
+					<aon:inputText id="Campaign_id" size="60"
+						valueChangeListener="#{controller.addExpression}" />		
 			
-					<aon:outputLabel for="MarketingCampaign_description"
+					<aon:outputLabel for="Campaign_description"
 						value="#{bundle.aon_description}" />
-					<aon:inputText id="MarketingCampaign_description" size="60"
-						valueChangeListener="#{marketingCampaign.addExpression}" />
+					<aon:inputText id="Campaign_description" size="60"
+						valueChangeListener="#{controller.addExpression}" />
 				
-					<aon:outputLabel for="MarketingCampaign_active"				
+					<aon:outputLabel for="Campaign_active"				
 						value="#{bundle.aon_status}"/>
-					<aon:selectOneMenu id="MarketingCampaign_active"
-						valueChangeListener="#{marketingCampaign.addExpression}">
+					<aon:selectOneMenu id="Campaign_active"
+						valueChangeListener="#{controller.addExpression}">
 						<f:selectItem itemLabel="-" value="#{null}"/>
 						<f:selectItem itemLabel="#{bundle.aon_active}" itemValue="#{true}"/>
 						<f:selectItem itemLabel="#{bundle.aon_inactive}" itemValue="#{false}"/>

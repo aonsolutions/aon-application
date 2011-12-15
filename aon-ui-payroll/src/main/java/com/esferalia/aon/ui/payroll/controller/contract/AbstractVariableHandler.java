@@ -117,6 +117,7 @@ public abstract class AbstractVariableHandler {
 		setNew(true);
 		resetVariable();
 		getData().setExpression("");
+		getData().setStartDate(new Date());
 	}
 	public void onSelectVariable(ActionEvent event) {
 		setData((AbstractVariableData) getVariablesModel().getRowData());
@@ -378,7 +379,7 @@ public abstract class AbstractVariableHandler {
 		for(ContextVariable v: ContextVariable.values()){
 			SimpleVariable sv = new SimpleVariable();
 			sv.setName(v.getName());
-			sv.setDescription(v.getName(FacesContext.getCurrentInstance().getViewRoot().getLocale()));
+			sv.setDescription(v.getDescription(FacesContext.getCurrentInstance().getViewRoot().getLocale()));
 			list.add(sv);
 		}
 		return list;

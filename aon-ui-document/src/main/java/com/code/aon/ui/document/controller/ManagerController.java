@@ -34,7 +34,6 @@ import com.code.aon.ui.document.event.EnterpriseProjectListener;
 import com.code.aon.ui.form.event.IControllerListener;
 import com.code.aon.ui.registry.controller.DocumentManager;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.IWebMailConstants;
 import com.code.aon.ui.webmail.controller.LdapBasicController;
 
 public class ManagerController implements IEnterpriseController {
@@ -54,7 +53,9 @@ public class ManagerController implements IEnterpriseController {
 	public ManagerController() {
 		this.principal = resolvePrincipal();
 		this.loggedUser = resolveUser();
-		if (! isMainEnterprise() ) {
+		if ( isMainEnterprise() ) {
+			initWebmail(this.principal.getDomain());
+		} else {
 			initEnterprise();
 		}
 		this.projectListener = new EnterpriseProjectListener(this, ! isMainEnterprise());		
@@ -62,7 +63,6 @@ public class ManagerController implements IEnterpriseController {
 		lu.setCompanyName(loggedUser.getEnterprise().getRegistry().getFullName());
 		DocumentManager dm = (DocumentManager) AonUtil.getRegisteredBean(DOCUMENT_MANAGER_CONTROLLER_NAME);
 		dm.setShow(false);
-		initWebmail(this.principal.getDomain());
 	}
 	
 	public AuthPrincipal getPrincipal() {
@@ -135,12 +135,12 @@ public class ManagerController implements IEnterpriseController {
 	public IControllerListener getProjectListener() {
 		return projectListener;
 	}
-
+	
 	public void initWebmail( String domain) {
 		LdapBasicController mailAccount = (LdapBasicController) AonUtil.getRegisteredBean(BEAN_MAIL_ACCOUNT);
 		Name dn = NameResolver.getDomainDN(domain);
 		mailAccount.updateBaseDN(dn);
-		mailAccount.onSearch(null);	
+		mailAccount.onSearch(null);
 		LdapBasicController signature = (LdapBasicController) AonUtil.getRegisteredBean(BEAN_SIGNATURE);
 		signature.updateBaseDN(dn);
 		signature.onSearch(null);	

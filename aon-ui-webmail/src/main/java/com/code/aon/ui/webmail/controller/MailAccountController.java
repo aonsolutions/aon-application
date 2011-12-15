@@ -1,5 +1,6 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ldap.IAonObjectClasses.DOMAIN;
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.IAonObjectClasses.USER;
 import static com.code.aon.ldap.NameResolver.DOMAINS;
@@ -61,16 +62,18 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 	private boolean systemAccountEditable;
 	
 	@Override
-	public void updateBaseDN(Name parent) {
+	public boolean updateBaseDN(Name parent) {
+		boolean updated = false;
 		String container = NameResolver.getValue(parent, 1);
 		if ( StringUtils.equals(container, DOMAINS) ) {
 			String domain = NameResolver.getFirstValue(parent);
-			updateBaseDN( domain );
+			updated = updateBaseDN( domain );
 		} else {
 			String user = NameResolver.getFirstValue(parent);
 			String domain = NameResolver.getValue(parent, 2);
-			updateBaseDN(domain, user);			
+			updated = updateBaseDN(domain, user);			
 		}
+		return updated;
 	}
 	
 	@Override
@@ -79,15 +82,21 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 		updateBaseDN(auth.getDomain(), auth.getShortName());
 	}
 
-	private void updateBaseDN( String domain )  {
-		Name baseDN = NameResolver.getDomainAccountsDN(domain);
-		if (! getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
-			getLdapDAO().addOrganizationUnit(baseDN);
+	private boolean updateBaseDN( String domain )  {
+		Name domainDN = NameResolver.getDomainDN(domain);
+		if ( getLdapDAO().exists(domainDN, DOMAIN) ) { 
+			Name baseDN = NameResolver.getDomainAccountsDN(domain);
+			if (! getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
+				getLdapDAO().addOrganizationUnit(baseDN);
+			}
+			getLdapDAO().setBaseDN( baseDN );
+			return true;
 		}
-		getLdapDAO().setBaseDN( baseDN );
+		LOGGER.warn( "LDAP entry not found: {}", domainDN );	
+		return false;			
 	}	
 	
-	private void updateBaseDN( String domain, String user )  {
+	private boolean updateBaseDN( String domain, String user )  {
 		Name userDN = NameResolver.getUserDN(domain, user);
 		if ( getLdapDAO().exists(userDN, USER) ) { 
 			Name baseDN = NameResolver.getUserAccountsDN(domain, user);
@@ -95,9 +104,10 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 				getLdapDAO().addOrganizationUnit(baseDN);
 			}
 			getLdapDAO().setBaseDN( baseDN );
-		} else {
-			LOGGER.warn( "LDAP entry not found: {}", userDN );
+			return true;
 		}
+		LOGGER.warn( "LDAP entry not found: {}", userDN );	
+		return false;			
 	}		
 	
 	@Override
@@ -186,7 +196,7 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 	}
 
 	public void updateMailAccountList() throws ManagerBeanException {
-		this.mailAccounts = loadMailAccountList();
+		this.mailAccounts = getUserMailAccounts();
 		if ( AonUtil.isBeanValue(BEAN_WEBMAIL, SHOW_DOMAIN_MAIL_ACCOUNTS_PROPERTY) ) {
 			this.mailAccounts.addAll(0, getDomainMailAccounts());
 		}
@@ -341,6 +351,7 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 		this.systemAccountEditable = systemAccountEditable;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void resetDefaults() throws ManagerBeanException {
 		List<ITransferObject> list = (List<ITransferObject>) getModel().getWrappedData();
 		for (ITransferObject to : list) {
@@ -369,20 +380,33 @@ public class MailAccountController extends LdapBasicController implements IWebMa
 		return converter;
 	}	
 
+	private List<SelectItem> getUserMailAccounts() {
+		AuthPrincipal auth = Utils.getAuthPrincipal();
+		Name dn = NameResolver.getUserAccountsDN(auth.getDomain(), auth.getShortName());
+		return getMailAccounts(dn);
+	}
+	
 	private List<SelectItem> getDomainMailAccounts() {
 		if ( domainMailAccounts == null ) {
-			Name _baseDN = getLdapDAO().getBaseDN();
 			DomainResolver domainResolver = (DomainResolver) AonUtil.getRegisteredBean(DomainResolver.CONTROLLER_NAME);
-			updateBaseDN( domainResolver.getDomain() );
-			try {
-				this.domainMailAccounts = loadMailAccountList();
-			} catch (ManagerBeanException e) {
-				LOGGER.error( "Error loading domain mail accounts", e );
-			} finally {
-				getLdapDAO().setBaseDN(_baseDN);
-			}
+			Name dn = NameResolver.getDomainDN( domainResolver.getDomain() );
+			this.domainMailAccounts = getMailAccounts(dn);
 		}
 		return domainMailAccounts;
+	}
+	
+	private List<SelectItem> getMailAccounts( Name dn ) {
+		Name oldDN = getLdapDAO().getBaseDN();
+		try {
+			if ( updateBaseDN( dn ) ) {
+				return loadMailAccountList();	
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.error( "Error loading mail accounts of " + dn, e );
+		} finally {
+			getLdapDAO().setBaseDN(oldDN);
+		}
+		return new LinkedList<SelectItem>();
 	}
 	
 }

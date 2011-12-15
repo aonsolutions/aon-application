@@ -225,6 +225,6 @@ public class ExpressionContext {
 	
 	public static void main(String[] args) {
 		
-		System.out.printf(MVEL.evalToString("with ( 2 ) { < 1, == 3 ,  > 0 };", new HashMap<String, Object>()));
+		System.out.printf(MVEL.evalToString("X = 1.00 ; V = '1' ; H = 1 ; 100 + V + H ;", new HashMap<String, Object>()));
 	}
 }

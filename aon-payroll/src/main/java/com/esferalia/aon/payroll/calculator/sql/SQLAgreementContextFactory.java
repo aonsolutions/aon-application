@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,7 @@ import com.esferalia.aon.payroll.calculator.LRUCache;
 import com.esferalia.aon.payroll.calculator.LRUCacheFactory;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.AgreementContextKey;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext.DeferredTimedVariable;
+import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.payroll.sql.SQLConstants.AgreementLevelDataColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.SystemDataColumns;
 import com.esferalia.aon.salary.expression.ExpressionContext;
@@ -178,12 +180,17 @@ public class SQLAgreementContextFactory
 	throws SQLException {
 		dataStmts = new PreparedStatement[2];
 
-		agreementDataStmt= connection.prepareStatement(AGREEMENT_DATA_SQL);
+		String agreementDataSql = 
+				SQLContractSalaryCalculatorContext.orderBy(AGREEMENT_DATA_SQL, ctx.getOrder() );
+		
+		agreementDataStmt= connection.prepareStatement(agreementDataSql);
 		agreementDataStmt.setDate(2, new java.sql.Date(endDate.getTime()) );
 		agreementDataStmt.setDate(3, new java.sql.Date(startDate.getTime()) );
 		dataStmts[0] = agreementDataStmt;
 
-		agreementLevelDataStmt= connection.prepareStatement(AGREEMENT_LEVEL_DATA_SQL);
+		String agreementLevelDataSql = 
+				SQLContractSalaryCalculatorContext.orderBy(AGREEMENT_LEVEL_DATA_SQL, ctx.getOrder() );
+		agreementLevelDataStmt= connection.prepareStatement(agreementLevelDataSql);
 		agreementLevelDataStmt.setDate(2, new java.sql.Date(endDate.getTime()) );
 		agreementLevelDataStmt.setDate(3, new java.sql.Date(startDate.getTime()) );
 		dataStmts[1] = agreementLevelDataStmt;
@@ -197,8 +204,11 @@ public class SQLAgreementContextFactory
 		Long yearDays = getYearDays(startDate, endDate ); 
 		systemExpressionContext.addVariable(YEAR_DAYS, yearDays, startDate, endDate);
 
-		Long monthDays = getMonthDays(startDate, endDate ); 
+		/*
+		Long monthDays = getMonthDays(startDate, endDate );
 		systemExpressionContext.addVariable(MONTH_DAYS, monthDays, startDate, endDate);
+		*/
+		initMonthDays(systemExpressionContext, startDate, endDate);
 		
 		loadSystemData(connection, startDate, endDate, systemExpressionContext);
 
@@ -206,6 +216,33 @@ public class SQLAgreementContextFactory
 		systemExpressionContext.addVariable(SALARY_END, endDate, startDate, endDate);
 		
 		ContextFunctions.loadFunctions(systemExpressionContext, startDate, endDate);
+	}
+	
+	private void initMonthDays(ExpressionContext ctx, Date startDate, Date endDate ) {
+
+		Calendar startCalendar = Calendar.getInstance();
+		startCalendar.setTime(startDate) ;
+		startCalendar.set(Calendar.DAY_OF_MONTH,1);
+		
+		Calendar endCalendar = Calendar.getInstance();
+		endCalendar.setTime(endDate) ;
+
+		while ( startCalendar.compareTo(endCalendar) <= 0 ) {
+			int monthDays = 
+					startCalendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+			
+			Date monthStart = startCalendar.getTime();
+			
+			startCalendar.set(Calendar.DAY_OF_MONTH, monthDays);
+			Date monthEnd = startCalendar.getTime();
+			
+			ctx.addVariable(MONTH_DAYS, monthDays, monthStart, monthEnd);
+
+			startCalendar.set(Calendar.DAY_OF_MONTH, 1);
+			startCalendar.add(Calendar.MONTH, 1);
+		}
+
+		
 	}
 
 	private void loadSystemData(Connection connection, Date startDate, Date endDate, ExpressionContext expressionCtx) 

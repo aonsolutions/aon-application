@@ -41,7 +41,7 @@
 								</f:facet>		
 							</aon:column>
 
-							<aon:column alias="systemData.startDate" styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+							<aon:column alias="systemData.startDate" styleClass="aon-editDataTable-dateColumn aon-width-100 aon-nowrap">
 								<f:facet name="header">
 									<aon:outputLabel for="systemData_startDate" value="#{bundle.aon_start_date}" />
 								</f:facet>
@@ -61,7 +61,7 @@
 								</f:facet>
 							</aon:column>
 						
-							<aon:column alias="systemData.endDate" styleClass="aon-editDataTable-dateColumn aon-width-120 aon-nowrap">
+							<aon:column alias="systemData.endDate" styleClass="aon-editDataTable-dateColumn aon-width-100 aon-nowrap">
 								<f:facet name="header">
 									<aon:outputLabel for="systemData_endDate" value="#{bundle.aon_end_date}" />
 								</f:facet>
@@ -103,15 +103,21 @@
 									<aon:outputLabel for="systemData_expression"
 										value="#{bundle.aon_value}" />
 								</f:facet>
-								<aon:outputText rendered="#{formList}" value="#{to.expression}" >
+								<aon:outputText rendered="#{formList}" value="#{to.expression}" title="#{to.expression}" >
 									<f:convertNumber pattern="#{bundle.aon_decimal2_pattern}" />
+									<aon:abbreviateConverter maxWidth="35" />
 								</aon:outputText>		
-								<aon:inputText id="systemData_expression" rendered="#{formEdit}" size="30"
-										maxlength="128" value="#{controller.to.expression}" required="true" />
+								<aon:inputTextarea id="systemData_expression" rendered="#{formEdit}"
+									cols="60" rows="10" maxlength="128" 
+									value="#{controller.to.expression}" required="true" >
+									<f:validateLength maximum="128" />
+								</aon:inputTextarea>
 								<f:facet name="footer">
-									<aon:inputText id="systemData_expression-New" rendered="#{formNew}" size="30"
-										maxlength="128" 
-										value="#{controller.to.expression}" required="true" />
+									<aon:inputText id="systemData_expression-New" rendered="#{formNew}" 
+										cols="60" rows="10" maxlength="128" 
+										value="#{controller.to.expression}" required="true" >
+										<f:validateLength maximum="128" />
+									</aon:inputText>
 								</f:facet>
 							</aon:column>
 

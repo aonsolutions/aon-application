@@ -24,7 +24,6 @@
 				<ui:param name="skipSearchOption" value="#{false}" />
 				<ui:param name="contextDisabled" value="#{true}" />
 				<ui:param name="container" value="agreementPaymentGrid" />
-				<ui:param name="skipModalHelper" value="true" />
 				<ui:param name="skipResult" value="true" />
 				
 				<ui:define name="afterFormContent">
@@ -39,7 +38,7 @@
 			
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
 				<ui:param name="controller" value="#{(agreementTree.agreementSelected)?(agreement):(agreementLevel)}" />
-				<ui:param name="container" value="variablePanel" />
+				<ui:param name="container" value="agreementForm" />
 			</ui:include>
 			
 		</ui:define>

@@ -10,8 +10,8 @@
 
 	<aon:panelGroup id="#{controller.beanName}ModalContainer">
 		<c:if test="#{controller.modalPanelVisible}">
-			<rich:modalPanel id="#{controller.beanName}ModalPanel" minHeight="600"
-				minWidth="900" showWhenRendered="true" >
+			<rich:modalPanel id="#{controller.beanName}ModalPanel" minHeight="#{aonRole.sisAdmin?800:600}" 
+				minWidth="999" showWhenRendered="true" >
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
 						<aon:outputText value="#{popupWindowTitle}" />
@@ -64,6 +64,7 @@
 									<ui:include 
 										src="/com/esferalia/aon/ui/payroll/facelet/variables/data/grid.xhtml" >
 										<ui:param name="controller" value="#{controller}" />
+										<ui:param name="helperSuffix" value="-Modal" />
 									</ui:include>
 									
 									<aon:div styleClass="aon-scroll-area" style="margin-top: 2em;">
@@ -79,10 +80,11 @@
 				<ui:insert name="afterModalContent"/>
 				
 				<c:if test="#{!skipModalHelper}">
-				<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
-					<ui:param name="controller" value="#{controller}" />
-					<ui:param name="container" value="#{controller.beanName}VarContainer" />
-				</ui:include>
+					<ui:include src="/com/esferalia/aon/ui/payroll/facelet/variables/helper/modalHelper.xhtml">
+						<ui:param name="controller" value="#{controller}" />
+						<ui:param name="container" value="#{controller.beanName}VarContainer" />
+						<ui:param name="helperSuffix" value="-Modal" />
+					</ui:include>
 				</c:if>
 				
 			</rich:modalPanel>

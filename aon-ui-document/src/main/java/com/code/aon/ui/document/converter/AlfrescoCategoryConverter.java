@@ -16,6 +16,8 @@ import com.code.aon.ui.util.AonUtil;
  *
  */
 public class AlfrescoCategoryConverter implements Converter {
+	
+	private static final String INVALID_ID = "----";
 
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent component, String value) {
@@ -33,10 +35,10 @@ public class AlfrescoCategoryConverter implements Converter {
 	@Override
 	public String getAsString(FacesContext context, UIComponent component, Object value) {
 		if (value == null) {
-			return null;
+			return INVALID_ID;
 		}
 		AlfrescoCategory ac = (AlfrescoCategory) value;
-		return (ac.getId() != null) ? ac.getId().getUuid() : null;
+		return (ac.getId() != null) ? ac.getId().getUuid() : INVALID_ID;
 	}
 
 }

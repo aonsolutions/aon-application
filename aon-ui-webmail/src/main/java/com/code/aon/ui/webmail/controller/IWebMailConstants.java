@@ -43,6 +43,7 @@ public interface IWebMailConstants {
 	// CONFIG
 	// ************************************************************
 	String CONNECT_PROPERTY = "connect";
+	String CONNECT_DOMAIN_MAIL_ACCOUNTS_PROPERTY = "connectDomainMailAccounts";
 	String SHOW_DOMAIN_MAIL_ACCOUNTS_PROPERTY = "showDomainMailAccounts";
 	
 	// ************************************************************
@@ -65,6 +66,7 @@ public interface IWebMailConstants {
 	String CONTACT_USED = "webmail_contact_used";
 	String NOT_SERVER_CONNECTED = "webmail_not_server_conected";
 	String NOT_MAIL_ACCOUNT = "webmail_not_mail_account";
+	String NOT_MAIL_ACCOUNTS = "webmail_not_mail_accounts";
 	String SIGNATURE_DUPLICATED = "webmail_signature_duplicated";
 	String SIGNATURE_USED = "webmail_signature_used";	
 	String MAIL_ACCOUNT_DUPLICATED = "webmail_mailAccount_duplicated";

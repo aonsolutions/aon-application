@@ -61,6 +61,8 @@ import com.esferalia.aon.payroll.IrpfResult;
 import com.esferalia.aon.payroll.Salary;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.IrpfRegularizationReason;
+import com.esferalia.aon.payroll.irpf.GeozoneIrpfCalculator;
+import com.esferalia.aon.payroll.irpf.IrpfCalculator;
 import com.esferalia.aon.payroll.irpf.IrpfCalculator.CallbackHandler;
 import com.esferalia.aon.payroll.irpf.sql.DefaultEntrada2011Handler;
 import com.esferalia.aon.payroll.irpf.sql.SQLAEAT2011Factory;
@@ -857,5 +859,37 @@ public class IrpfDraftController extends BasicController implements IIrpfControl
 		return  HibernateUtil.getSQLConnection(sessionFactory);
 	}
 
+	{
+		Connection connection = getConnection();
+		Date date = Calendar.getInstance().getTime();
+		try {
+			IrpfCalculator.registerCalculator(Administration.ALAVA, 
+				new GeozoneIrpfCalculator(connection, Administration.ALAVA, date));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			IrpfCalculator.registerCalculator(Administration.GIPUZKOA, 
+				new GeozoneIrpfCalculator(connection, Administration.GIPUZKOA, date));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			IrpfCalculator.registerCalculator(Administration.BIZKAIA, 
+				new GeozoneIrpfCalculator(connection, Administration.BIZKAIA, date));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			IrpfCalculator.registerCalculator(Administration.NAVARRA, 
+				new GeozoneIrpfCalculator(connection, Administration.NAVARRA, date));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 }

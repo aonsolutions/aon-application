@@ -1,5 +1,6 @@
 package com.code.aon.ui.webmail.controller;
 
+import static com.code.aon.ldap.IAonObjectClasses.DOMAIN;
 import static com.code.aon.ldap.IAonObjectClasses.ORGANIZATIONAL_UNIT;
 import static com.code.aon.ldap.IAonObjectClasses.USER;
 import static com.code.aon.ldap.NameResolver.DOMAINS;
@@ -51,25 +52,35 @@ public class SignatureController extends LdapBasicController implements IWebMail
 	}	
 
 	@Override
-	public void updateBaseDN(Name parent) {
+	public boolean updateBaseDN(Name parent) {
+		boolean updated = false;
 		String container = NameResolver.getValue(parent, 1);
 		if ( StringUtils.equals(container, DOMAINS) ) {
 			String domain = NameResolver.getFirstValue(parent);
-			updateBaseDN( domain );
+			updated = updateBaseDN( domain );
 		} else {
 			String user = NameResolver.getFirstValue(parent);
 			String domain = NameResolver.getValue(parent, 2);
-			updateBaseDN(domain, user);					}		
+			updated = updateBaseDN(domain, user);
+		}		
+		return updated;
 	}
 	
-	private void updateBaseDN( String domain )  {
-		Name baseDN = NameResolver.getDomainSignaturesDN(domain);
-		if ( getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
+	private boolean updateBaseDN( String domain )  {
+		Name domainDN = NameResolver.getDomainDN(domain);
+		if ( getLdapDAO().exists(domainDN, DOMAIN) ) { 
+			Name baseDN = NameResolver.getDomainSignaturesDN(domain);
+			if (! getLdapDAO().exists(baseDN, ORGANIZATIONAL_UNIT) ) {
+				getLdapDAO().addOrganizationUnit(baseDN);
+			}
 			getLdapDAO().setBaseDN( baseDN );
+			return true;
 		}
+		LOGGER.warn( "LDAP entry not found: {}", domainDN );	
+		return false;			
 	}	
 	
-	private void updateBaseDN( String domain, String user )  {
+	private boolean updateBaseDN( String domain, String user )  {
 		Name userDN = NameResolver.getUserDN(domain, user);
 		if ( getLdapDAO().exists(userDN, USER) ) { 
 			Name baseDN = NameResolver.getUserSignaturesDN(domain, user);
@@ -77,9 +88,10 @@ public class SignatureController extends LdapBasicController implements IWebMail
 				getLdapDAO().addOrganizationUnit(baseDN);
 			}
 			getLdapDAO().setBaseDN( baseDN );
-		} else {
-			LOGGER.warn( "LDAP entry not found: {}", userDN );
-		}		
+			return true;
+		}
+		LOGGER.warn( "LDAP entry not found: {}", userDN );	
+		return false;			
 	}			
 	
 	@Override

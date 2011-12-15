@@ -22,7 +22,7 @@
 							  ,aon-border aon-bold aon-text-center aon-padding
 							  ,aon-noborder aon-width-150 aon-text-center aon-padding">
 		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/administration.xhtml" >
-			<ui:param name="administration" value="irpf.administration" />
+			<ui:param name="administration" value="#{irpf.administration}" />
 		</ui:include>
 		<aon:outputText value="CÁLCULO DE RETENCIONES  - IRPF #{irpf.effectiveYear}"/>
 		<aon:div styleClass="aon-noborder" >
@@ -38,7 +38,9 @@
 	</aon:panelGrid>
 	
 	<aon:div styleClass="aon-margin-left aon-padding-left aon-padding-right"> 
-		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formResultData.xhtml" />
+		<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formResultData.xhtml" >
+			<ui:param name="administration" value="#{irpf.administration}" />
+		</ui:include>
 	</aon:div>
 
 	<!--  DATOS PERSONALES DEL PERCEPTOR -->
@@ -46,8 +48,8 @@
 		<aon:panelTab id="dataFormTab" label="Datos Personales">
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formPersonalData.xhtml" />
 		</aon:panelTab>
-		<aon:panelTab id="dataEditTab" label="#{bundle.aon_edit}">
-		</aon:panelTab>
+		<!--  aon:panelTab id="dataEditTab" label="#{bundle.aon_edit}">
+		</aon:panelTab -->
 	</aon:panelTabSet>	
 
 	<!--  DATOS ECONOMICOS -->
@@ -55,8 +57,8 @@
 		<aon:panelTab id="economicFormTab" label="Datos Económicos">
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formEconomicData.xhtml" />
 		</aon:panelTab>
-		<aon:panelTab id="economicEditTab" label="#{bundle.aon_edit}">
-		</aon:panelTab>
+		<!--  aon:panelTab id="economicEditTab" label="#{bundle.aon_edit}">
+		</aon:panelTab-->
 	</aon:panelTabSet>
 	
 	<!--  DESCENDIENTES COMPUTADOS y ASCENDIENTES COMPUTADOS -->
@@ -64,8 +66,8 @@
 		<aon:panelTab id="descendantsFormTab" label="Descendientes y Ascendientes">
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formDescendantsData.xhtml" />
 		</aon:panelTab>
-		<aon:panelTab id="descendantsEditTab" label="#{bundle.aon_edit}">
-		</aon:panelTab>
+		<!--aon:panelTab id="descendantsEditTab" label="#{bundle.aon_edit}">
+		</aon:panelTab-->
 	</aon:panelTabSet>
 	
 	<!--  REGULARIZACIÓN -->
@@ -74,8 +76,8 @@
 		<aon:panelTab id="regularizationFormTab" label="Regularización">
 			<ui:include src="/com/esferalia/aon/ui/payroll/facelet/contract/irpfResult/formRegularizationData.xhtml" />
 		</aon:panelTab>
-		<aon:panelTab id="regularizationEditTab" label="#{bundle.aon_edit}">
-		</aon:panelTab>
+		<!--aon:panelTab id="regularizationEditTab" label="#{bundle.aon_edit}">
+		</aon:panelTab-->
 	</aon:panelTabSet>
 	</c:if>
 

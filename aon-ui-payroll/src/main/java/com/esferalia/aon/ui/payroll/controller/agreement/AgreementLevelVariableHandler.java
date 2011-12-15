@@ -45,7 +45,7 @@ public class AgreementLevelVariableHandler extends AbstractVariableHandler{
 			IManagerBean bean = BeanManager.getManagerBean(AgreementLevelData.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_LEVEL_ID), agreementLevel.getId());
-			criteria.addOrder(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_NAME));
+			criteria.addOrder(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_START_DATE), false);
 			if(isSearchCurrentVariables()){
 				Expression expr1 = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_END_DATE), new Date());
 				Expression expr2 = ExpressionUtilities.getNullExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_END_DATE));

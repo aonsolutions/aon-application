@@ -158,6 +158,19 @@
 		</managed-property>
 	</managed-bean>	
 	
+	<!-- ************ BATCH DOCUMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>batchDocument</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.document.controller.BatchDocument
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>batchDocument</value>
+		</managed-property>		
+	</managed-bean>	
+	
 	<!-- =================== Enterprise Document ========================== -->
 	<navigation-rule>
 		<navigation-case>
@@ -197,5 +210,22 @@
 			<to-view-id>/com/code/aon/ui/document/facelet/enterpriseDocument/projectFormTree.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Batch Document ========================== -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>batchDocument_form</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/batchDocument/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>batchDocument_search</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/batchDocument/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>batchDocument_list</from-outcome>
+			<to-view-id>/com/code/aon/ui/document/facelet/batchDocument/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	
 		
 </faces-config>
