@@ -48,6 +48,7 @@ import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.project.Project;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
+import com.code.aon.tas.ProjectTas;
 import com.code.aon.warehouse.dao.IWarehouseAlias;
 import com.code.aon.warehouse.enumeration.DeliveryStatus;
 
@@ -309,6 +310,14 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	@Transient
 	public void setConfidential(boolean confidential) {
 		setSecurityLevel(confidential ? SecurityLevel.CONFIDENTIAL : SecurityLevel.OFFICIAL);
+	}
+
+	@Transient
+	public ITransferObject getSpecificProject() throws ManagerBeanException {
+		if (getProject() != null && getProject().isTas()) {
+			return (ProjectTas)BeanManager.getManagerBean(ProjectTas.class).get(getProject().getId());
+		}
+		return null;
 	}
 
 	@Transient

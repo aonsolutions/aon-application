@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="saleInvoice" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="delivery" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="20" bottomMargin="20">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.2100000000000009"/>
@@ -18,42 +18,31 @@
 	<parameter name="fax" class="com.code.aon.registry.RegistryMedia" isForPrompting="false"/>
 	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false"/>
-	<parameter name="invoiceDetailPrinter" class="com.code.aon.ui.finance.invoice.print.InvoiceDetailByDeliveryPrinter"/>
+	<parameter name="deliveryDetailPrinter" class="com.code.aon.ui.tas.print.TasDeliveryDetailPrinter"/>
 	<parameter name="nestedReports" class="java.util.Map"/>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="referenceCode" class="java.lang.String"/>
-	<field name="issueDate" class="java.util.Date"/>
-	<field name="registry" class="com.code.aon.registry.Registry"/>
-	<field name="registryDocument" class="java.lang.String"/>
-	<field name="registryName" class="java.lang.String"/>
-	<field name="address" class="com.code.aon.registry.IAddress"/>
+	<field name="issueTime" class="java.util.Date"/>
+	<field name="customer" class="com.code.aon.customer.Customer"/>
+	<field name="registryAddress" class="com.code.aon.registry.IAddress"/>
 	<field name="comments" class="java.lang.String"/>
-	<field name="rectificationType" class="com.code.aon.finance.enumeration.RectificationType"/>
-	<field name="rectificationInvoice" class="com.code.aon.finance.Invoice"/>
-	<field name="rectifier" class="java.lang.Boolean"/>
-	<field name="rectified" class="java.lang.Boolean"/>
-	<field name="rectificationInvoicesString" class="java.lang.String"/>
 	<field name="lines" class="java.util.Set"/>
-	<field name="finances" class="java.util.Set"/>
 	<variable name="registryPhone" class="com.code.aon.registry.RegistryMedia">
-		<variableExpression><![CDATA[$F{registry}.getPhone()]]></variableExpression>
+		<variableExpression><![CDATA[$F{customer}.getRegistry().getPhone()]]></variableExpression>
 	</variable>
 	<variable name="registryCellular" class="com.code.aon.registry.RegistryMedia">
-		<variableExpression><![CDATA[$F{registry}.getCellular()]]></variableExpression>
+		<variableExpression><![CDATA[$F{customer}.getRegistry().getCellular()]]></variableExpression>
 	</variable>
 	<variable name="registryFax" class="com.code.aon.registry.RegistryMedia">
-		<variableExpression><![CDATA[$F{registry}.getFax()]]></variableExpression>
+		<variableExpression><![CDATA[$F{customer}.getRegistry().getFax()]]></variableExpression>
 	</variable>
 	<variable name="registryEmail" class="com.code.aon.registry.RegistryMedia">
-		<variableExpression><![CDATA[$F{registry}.getEmail()]]></variableExpression>
+		<variableExpression><![CDATA[$F{customer}.getRegistry().getEmail()]]></variableExpression>
 	</variable>
-	<variable name="comments" class="java.lang.String">
-		<variableExpression><![CDATA[(($F{comments}!=null) ? $F{comments} : "") + (($F{rectifier}||$F{rectified}) ? (($F{comments}!=null && !"".equals($F{comments}.trim())) ? "\n" : "") + (($F{rectifier}) ? ($R{finance_invoice_rectifier_message} + " " + $F{rectificationInvoice}.getReferenceCode()) : ($F{rectified}) ? ($R{finance_invoice_rectified_message} + " " + $F{rectificationInvoicesString}) : "") : "")]]></variableExpression>
+	<variable name="currentDelivery" class="com.code.aon.warehouse.Delivery" resetType="Group" resetGroup="deliveryGroup">
+		<variableExpression><![CDATA[(com.code.aon.warehouse.Delivery)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
 	</variable>
-	<variable name="currentInvoice" class="com.code.aon.finance.Invoice" resetType="Group" resetGroup="invoiceGroup">
-		<variableExpression><![CDATA[(com.code.aon.finance.Invoice)((com.code.aon.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></variableExpression>
-	</variable>
-	<group name="invoiceGroup" isStartNewPage="true" isReprintHeaderOnEachPage="true">
+	<group name="deliveryGroup" isStartNewPage="true" isReprintHeaderOnEachPage="true">
 		<groupExpression><![CDATA[$F{id}]]></groupExpression>
 		<groupHeader>
 			<band splitType="Stretch"/>
@@ -155,7 +144,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.util.Date"><![CDATA[$F{issueDate}]]></textFieldExpression>
+				<textFieldExpression class="java.util.Date"><![CDATA[$F{issueTime}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-50" x="397" y="19" width="48" height="13"/>
@@ -181,7 +170,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="9" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryDocument}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getDocument()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-52" x="397" y="32" width="48" height="13"/>
@@ -207,20 +196,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_invoice}.toUpperCase()]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="false">
-				<reportElement key="textField-55" x="287" y="26" width="101" height="20"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="12" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{rectifier}) ?  $R{finance_rectifier_invoice}.toUpperCase() : ($F{rectified}) ? $R{finance_rectified_invoice}.toUpperCase() : ""]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery}.toUpperCase()]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -240,7 +216,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryName}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{customer}.getRegistry().getFullName()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-23" x="5" y="0" width="246" height="16">
@@ -307,14 +283,14 @@
 					<printWhenExpression><![CDATA[new Boolean($F{lines}.size()>0)]]></printWhenExpression>
 				</reportElement>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentInvoice}, $V{currentInvoice}))]]></dataSourceExpression>
-				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("invoiceTaxBreakDown")]]></subreportExpression>
+				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentDelivery}, $F{customer}))]]></dataSourceExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("deliveryTaxBreakDown")]]></subreportExpression>
 			</subreport>
 			<subreport isUsingCache="true">
 				<reportElement key="subreport-1" positionType="Float" x="0" y="138" width="535" height="29"/>
 				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}, true))]]></dataSourceExpression>
-				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
+				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{deliveryDetailPrinter}.getCollection($F{id}))]]></dataSourceExpression>
+				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("deliveryDetail")]]></subreportExpression>
 			</subreport>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-35" x="274" y="25" width="246" height="15"/>
@@ -327,7 +303,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{address}.getFullAddress()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryAddress}.getFullAddress()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-36" x="274" y="40" width="246" height="15"/>
@@ -340,7 +316,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($F{registryAddress}.getZip()==null?"":$F{registryAddress}.getZip() + " ") + ($F{registryAddress}.getCity()==null?"":$F{registryAddress}.getCity())]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-37" x="274" y="55" width="246" height="15"/>
@@ -353,16 +329,8 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{registryAddress}.getGeozone().getName()]]></textFieldExpression>
 			</textField>
-			<subreport isUsingCache="true">
-				<reportElement key="subreport-3" positionType="Float" x="0" y="210" width="535" height="29">
-					<printWhenExpression><![CDATA[new Boolean($F{finances}.size() > 0)]]></printWhenExpression>
-				</reportElement>
-				<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-				<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{finances})]]></dataSourceExpression>
-				<subreportExpression class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("invoiceFinances")]]></subreportExpression>
-			</subreport>
 			<textField isBlankWhenNull="true">
 				<reportElement key="textField-43" positionType="Float" mode="Opaque" x="460" y="173" width="75" height="14" forecolor="#FFFFFF" backcolor="#000000"/>
 				<box rightPadding="2">
@@ -374,7 +342,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_invoice_total}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{warehouse_delivery_total}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
 				<reportElement key="textField-44" positionType="Float" x="460" y="187" width="62" height="14"/>
@@ -387,11 +355,11 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
 				</textElement>
-				<textFieldExpression class="java.lang.Double"><![CDATA[new Double($P{PriceStrategy}.getTotalPrice((com.code.aon.product.strategy.ICalculableContainer)$V{currentInvoice}, (com.code.aon.registry.ITaxInfo)$V{currentInvoice}))]]></textFieldExpression>
+				<textFieldExpression class="java.lang.Double"><![CDATA[new Double($P{PriceStrategy}.getTotalPrice((com.code.aon.product.strategy.ICalculableContainer)$V{currentDelivery}, (com.code.aon.registry.ITaxInfo)$F{customer}))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="66" y="96" width="469" height="15" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[($F{registry}.getPhone()!=null || $F{registry}.getCellular()!=null || $F{registry}.getFax()!=null)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[($F{customer}.getRegistry().getPhone()!=null || $F{customer}.getRegistry().getCellular()!=null || $F{customer}.getRegistry().getFax()!=null)]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -406,7 +374,7 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-54" positionType="Float" x="0" y="96" width="66" height="15">
-					<printWhenExpression><![CDATA[($F{registry}.getPhone()!=null || $F{registry}.getCellular()!=null || $F{registry}.getFax()!=null)]]></printWhenExpression>
+					<printWhenExpression><![CDATA[($F{customer}.getRegistry().getPhone()!=null || $F{customer}.getRegistry().getCellular()!=null || $F{customer}.getRegistry().getFax()!=null)]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -449,7 +417,7 @@
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-54" positionType="Float" x="0" y="111" width="66" height="15">
-					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{comments} != null && !"".equals($F{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -464,7 +432,7 @@
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement key="textField-53" positionType="Float" x="66" y="111" width="469" height="15" isRemoveLineWhenBlank="true">
-					<printWhenExpression><![CDATA[new Boolean($V{comments} != null && !"".equals($V{comments}))]]></printWhenExpression>
+					<printWhenExpression><![CDATA[new Boolean($F{comments} != null && !"".equals($F{comments}))]]></printWhenExpression>
 				</reportElement>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -475,7 +443,7 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$V{comments}]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{comments}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -490,47 +458,7 @@
 		</band>
 	</pageFooter>
 	<lastPageFooter>
-		<band height="98">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-53" x="135" y="1" width="220" height="14" isRemoveLineWhenBlank="true"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{gta_company_signature}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement key="textField-53" x="5" y="18" width="395" height="80" isRemoveLineWhenBlank="true"/>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Justified" verticalAlignment="Top">
-					<font fontName="SansSerif" size="6"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{gta_footer_text_1} + " " + $P{company}.getName() + " " + $R{gta_footer_text_2} + "\n" + $R{gta_legal_text_1} + " " + $P{company}.getName() + " " + $R{gta_legal_text_2} + " " + $P{company}.getName() + ", " + $P{address}.getFullAddress() + " - " + $P{address}.getZip() + " " + $P{address}.getCity() + " (" + $P{address}.getGeozone().getName() + ") " + $R{gta_legal_text_3}]]></textFieldExpression>
-			</textField>
-			<line>
-				<reportElement key="line-9" positionType="Float" x="2" y="15" width="530" height="1"/>
-			</line>
-			<rectangle>
-				<reportElement x="411" y="15" width="121" height="75"/>
-			</rectangle>
-			<textField>
-				<reportElement x="430" y="65" width="85" height="25"/>
-				<textElement textAlignment="Center" markup="none">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{gta_agreed} + "\n" + $R{gta_customer_signature}]]></textFieldExpression>
-			</textField>
-		</band>
+		<band/>
 	</lastPageFooter>
 	<summary>
 		<band splitType="Stretch"/>
