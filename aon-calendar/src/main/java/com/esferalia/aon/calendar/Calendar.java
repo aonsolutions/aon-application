@@ -268,11 +268,6 @@ public class Calendar implements ITransferObject{
 		this.anualHours = anualHours;
 	}
 	
-//	@Transient
-//	public Calendar getCalendar() {
-//		return this;
-//	}
-	
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) return false;

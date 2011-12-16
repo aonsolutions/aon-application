@@ -19,7 +19,7 @@ public class CalendarAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/AON-PAYROLL/aon-calendar/src/main/java/com/esferalia/aon/calendar/dao/ICalendarAlias.java");
+		File file = new File("/AON-TRUNK/aon-calendar/src/main/java/com/esferalia/aon/calendar/dao/ICalendarAlias.java");
 		
 		String[] classes = new String[] {
 				Calendar.class.getName(),
