@@ -92,7 +92,10 @@
 	
 	<!--  *********  Formulario de Factura de Venta desde el Mantenimiento ********* -->
 	<report id="saleInvoice" description="Fee Invoice's Report">
+<!--  
 		<template path="/com/code/aon/ui/finance/report/saleInvoice.jasper"/>
+-->
+		<template path="/com/code/aon/ui/finance/report/saleInvoice2.jasper"/>
 		<collection provider="#{saleInvoice}" forceRefresh="true"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.report" />

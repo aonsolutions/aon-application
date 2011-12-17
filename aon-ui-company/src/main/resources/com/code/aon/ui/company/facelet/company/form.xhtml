@@ -122,13 +122,54 @@
 
 											<aon:outputLabel for="Company_print_header"
 												value="#{companyBundle.company_print_header}" />
-											<aon:selectBooleanCheckbox id="Company_print_header"
-												value="#{company.printHeader}" />
+											<aon:selectOneMenu id="Company_print_header"
+												value="#{company.printHeader}" >
+												<f:selectItem itemLabel="-" value="#{null}" />
+												<f:selectItems value="#{companyCollections.reportPrintOptions}" />
+											</aon:selectOneMenu>
 							
 											<aon:outputLabel for="Company_print_record_data"
 												value="#{companyBundle.company_print_record_data}" />
 											<aon:selectBooleanCheckbox id="Company_print_record_data"
 												value="#{company.printRecordData}" />
+												
+											<aon:outputLabel for="Company_print_logo"
+												value="#{companyBundle.company_print_logo}" />
+											<aon:selectBooleanCheckbox id="Company_print_logo"
+												value="#{company.printLogo}" />
+												
+											<aon:outputLabel for="Company_print_name"
+												value="#{companyBundle.company_print_name}" />
+											<aon:selectOneMenu id="Company_print_name"
+												value="#{company.printName}" >
+												<f:selectItem itemLabel="-" value="#{null}" />
+												<f:selectItems value="#{companyCollections.reportPrintOptions}" />
+											</aon:selectOneMenu>
+												
+											<aon:outputLabel for="Company_print_nif"
+												value="#{companyBundle.company_print_nif}" />
+											<aon:selectOneMenu id="Company_print_nif"
+												value="#{company.printNif}" >
+												<f:selectItem itemLabel="-" value="#{null}" />
+												<f:selectItems value="#{companyCollections.reportPrintOptions}" />
+											</aon:selectOneMenu>
+												
+											<aon:outputLabel for="Company_print_address"
+												value="#{companyBundle.company_print_address}" />
+											<aon:selectOneMenu id="Company_print_address"
+												value="#{company.printAddress}" >
+												<f:selectItem itemLabel="-" value="#{null}" />
+												<f:selectItems value="#{companyCollections.reportPrintOptions}" />
+											</aon:selectOneMenu>
+												
+											<aon:outputLabel for="Company_print_internet_data"
+												value="#{companyBundle.company_print_internet_data}" />
+											<aon:selectOneMenu id="Company_print_internet_data"
+												value="#{company.printInternetData}">
+												<f:selectItem itemLabel="-" value="#{null}" />
+												<f:selectItems value="#{companyCollections.reportPrintOptions}" />
+											</aon:selectOneMenu>
+
 										</aon:panelGrid>
 									</a4j:region>
 								</aon:div>

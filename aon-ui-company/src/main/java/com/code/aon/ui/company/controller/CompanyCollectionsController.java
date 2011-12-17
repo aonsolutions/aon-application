@@ -16,6 +16,7 @@ import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.enumeration.EnterpriseSalaryTemplate;
+import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.company.enumeration.SalarySendingMethod;
 import com.code.aon.company.enumeration.SalaryTemplate;
 import com.code.aon.ql.Criteria;
@@ -28,6 +29,21 @@ public class CompanyCollectionsController {
 	private List<SelectItem> salarySendingMethods;
 	private List<SelectItem> enterpriseSalaryTemplates;
 	private List<SelectItem> salaryTemplates;
+	private List<SelectItem> reportPrintOptions;
+	
+	public List<SelectItem> getReportPrintOptions() {
+		if (reportPrintOptions == null) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			reportPrintOptions = new LinkedList<SelectItem>();
+			ReportPrintOption[] list = ReportPrintOption.values();
+			for (ReportPrintOption o : list) {
+				String name = o.getName(locale);
+				SelectItem item = new SelectItem(o, name);
+				reportPrintOptions.add(item);
+			}
+		}
+		return reportPrintOptions;
+	}
 	
 	public List<SelectItem> getSalaryTemplates() {
 		if (salaryTemplates == null) {

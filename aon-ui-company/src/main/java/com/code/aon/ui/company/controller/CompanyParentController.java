@@ -17,6 +17,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
+import com.code.aon.company.enumeration.ReportPrintOption;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.geozone.GeoZone;
@@ -47,6 +48,16 @@ public class CompanyParentController extends BasicController implements ICompany
 	public static final String PRINT_HEADER_PARAM = "APP_PRINT_HEADER_PARAM";
 	
 	public static final String PRINT_RECORD_DATA_PARAM = "APP_PRINT_RECORD_DATA_PARAM";
+	
+	public static final String PRINT_LOGO_PARAM = "APP_PRINT_LOGO_PARAM";
+	
+	public static final String PRINT_NAME_PARAM = "APP_PRINT_NAME_PARAM";
+	
+	public static final String PRINT_NIF_PARAM = "APP_PRINT_NIF_PARAM";
+	
+	public static final String PRINT_ADDRESS_PARAM = "APP_PRINT_ADDRESS_PARAM";
+	
+	public static final String PRINT_INTERNET_DATA_PARAM = "APP_PRINT_INTERNET_DATA_PARAM";
 	
 	public static final String SMART_CARD_PARAM = "APP_SMART_CARD_PARAM";
 	
@@ -83,9 +94,19 @@ public class CompanyParentController extends BasicController implements ICompany
 	/** Determines if the web has been changed and it hasn't been saved yet. */
 	private boolean webDirty;
 
-	private boolean printHeader;
+	private ReportPrintOption printHeader;
 	
 	private boolean printRecordData;
+	
+	private boolean printLogo;
+	
+	private ReportPrintOption printName;
+	
+	private ReportPrintOption printNif;
+	
+	private ReportPrintOption printAddress;
+	
+	private ReportPrintOption printInternetData;
 	
 	private boolean smartCard;
 
@@ -551,11 +572,11 @@ public class CompanyParentController extends BasicController implements ICompany
 		return this.getEmail();
 	}
 	
-	public boolean isPrintHeader() {
+	public ReportPrintOption getPrintHeader() {
 		return printHeader;
 	}
 
-	public void setPrintHeader(boolean printHeader) {
+	public void setPrintHeader(ReportPrintOption printHeader) {
 		this.printHeader = printHeader;
 	}
 
@@ -565,6 +586,46 @@ public class CompanyParentController extends BasicController implements ICompany
 
 	public void setPrintRecordData(boolean printRecordData) {
 		this.printRecordData = printRecordData;
+	}
+	
+	public boolean isPrintLogo() {
+		return printLogo;
+	}
+
+	public void setPrintLogo(boolean printLogo) {
+		this.printLogo = printLogo;
+	}
+
+	public ReportPrintOption getPrintName() {
+		return printName;
+	}
+
+	public void setPrintName(ReportPrintOption printName) {
+		this.printName = printName;
+	}
+
+	public ReportPrintOption getPrintNif() {
+		return printNif;
+	}
+
+	public void setPrintNif(ReportPrintOption printNif) {
+		this.printNif = printNif;
+	}
+
+	public ReportPrintOption getPrintAddress() {
+		return printAddress;
+	}
+
+	public void setPrintAddress(ReportPrintOption printAddress) {
+		this.printAddress = printAddress;
+	}
+
+	public ReportPrintOption getPrintInternetData() {
+		return printInternetData;
+	}
+
+	public void setPrintInternetData(ReportPrintOption printInternetData) {
+		this.printInternetData = printInternetData;
 	}
 
 	public boolean isSmartCard() {
@@ -613,19 +674,48 @@ public class CompanyParentController extends BasicController implements ICompany
 		return isNew();
 	}	
 
-	public boolean obtainPrintHeader() throws ManagerBeanException {
+	public ReportPrintOption obtainPrintHeader() throws ManagerBeanException { // TODO
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_HEADER_PARAM);
-		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+		return getReportPrintOptionValue(appParam);
 	}
 
-	public boolean obtainPrintRecordData() throws ManagerBeanException {
+	public boolean obtainPrintRecordData() throws ManagerBeanException {// TODO
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_RECORD_DATA_PARAM);
 		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
 	}
-
+	
+	public boolean obtainPrintLogo() throws ManagerBeanException {// TODO
+		ApplicationParameter appParam = obtainApplicationParameter(PRINT_LOGO_PARAM);
+		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+	}
+	
+	public ReportPrintOption obtainPrintName() throws ManagerBeanException {// TODO
+		ApplicationParameter appParam = obtainApplicationParameter(PRINT_NAME_PARAM);
+		return getReportPrintOptionValue(appParam);
+	}
+	
+	public ReportPrintOption obtainPrintNif() throws ManagerBeanException {// TODO
+		ApplicationParameter appParam = obtainApplicationParameter(PRINT_NIF_PARAM);
+		return getReportPrintOptionValue(appParam);
+	}
+	
+	public ReportPrintOption obtainPrintAddress() throws ManagerBeanException {// TODO
+		ApplicationParameter appParam = obtainApplicationParameter(PRINT_ADDRESS_PARAM);
+		return getReportPrintOptionValue(appParam);
+	}
+	
+	public ReportPrintOption obtainPrintInternetData() throws ManagerBeanException {// TODO
+		ApplicationParameter appParam = obtainApplicationParameter(PRINT_INTERNET_DATA_PARAM);
+		return getReportPrintOptionValue(appParam);
+	}
+	
 	public boolean obtainSmartCard() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(SMART_CARD_PARAM);
 		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+	}
+
+	private ReportPrintOption getReportPrintOptionValue(ApplicationParameter appParam) {
+		return appParam == null?null:(appParam.getValue() == null?null:ReportPrintOption.values()[Integer.parseInt(appParam.getValue())]);
 	}
 	
 	@SuppressWarnings("unchecked")
