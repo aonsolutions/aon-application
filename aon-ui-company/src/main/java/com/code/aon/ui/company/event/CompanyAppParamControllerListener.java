@@ -51,7 +51,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 	}
 	
 	private void updateParams( ICompanyController companyController ) throws ManagerBeanException {
-		updateParam(companyController, CompanyController.PRINT_HEADER_PARAM, companyController.getPrintHeader());
+		updateParam(companyController, CompanyController.PRINT_HEADER_PARAM, companyController.isPrintHeader());
 		updateParam(companyController, CompanyController.PRINT_RECORD_DATA_PARAM, companyController.isPrintRecordData());
 		updateParam(companyController, CompanyController.PRINT_LOGO_PARAM, companyController.isPrintLogo());
 		updateParam(companyController, CompanyController.PRINT_NAME_PARAM, companyController.getPrintName());

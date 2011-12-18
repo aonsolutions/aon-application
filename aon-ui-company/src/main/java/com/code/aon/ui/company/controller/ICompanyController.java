@@ -10,8 +10,8 @@ import com.code.aon.ui.form.IController;
 
 public interface ICompanyController extends IController {
 
-	ReportPrintOption getPrintHeader();
-	void setPrintHeader(ReportPrintOption printHeader);
+	boolean isPrintHeader();
+	void setPrintHeader(boolean printHeader);
 
 	boolean isPrintRecordData();
 	void setPrintRecordData(boolean printRecordData);
@@ -34,7 +34,7 @@ public interface ICompanyController extends IController {
 	boolean isSmartCard();
 	void setSmartCard(boolean smartCard);
 
-	ReportPrintOption obtainPrintHeader() throws ManagerBeanException;
+	boolean obtainPrintHeader() throws ManagerBeanException;
 	boolean obtainPrintRecordData() throws ManagerBeanException;
 	boolean obtainPrintLogo() throws ManagerBeanException;
 	ReportPrintOption obtainPrintName() throws ManagerBeanException;

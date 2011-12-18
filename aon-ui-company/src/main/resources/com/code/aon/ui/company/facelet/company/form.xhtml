@@ -122,12 +122,9 @@
 
 											<aon:outputLabel for="Company_print_header"
 												value="#{companyBundle.company_print_header}" />
-											<aon:selectOneMenu id="Company_print_header"
-												value="#{company.printHeader}" >
-												<f:selectItem itemLabel="-" value="#{null}" />
-												<f:selectItems value="#{companyCollections.reportPrintOptions}" />
-											</aon:selectOneMenu>
-							
+											<aon:selectBooleanCheckbox id="Company_print_header"
+												value="#{company.printHeader}" />
+											
 											<aon:outputLabel for="Company_print_record_data"
 												value="#{companyBundle.company_print_record_data}" />
 											<aon:selectBooleanCheckbox id="Company_print_record_data"

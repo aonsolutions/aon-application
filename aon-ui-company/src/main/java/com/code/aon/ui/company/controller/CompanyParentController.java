@@ -94,7 +94,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	/** Determines if the web has been changed and it hasn't been saved yet. */
 	private boolean webDirty;
 
-	private ReportPrintOption printHeader;
+	private boolean printHeader;
 	
 	private boolean printRecordData;
 	
@@ -572,11 +572,11 @@ public class CompanyParentController extends BasicController implements ICompany
 		return this.getEmail();
 	}
 	
-	public ReportPrintOption getPrintHeader() {
+	public boolean isPrintHeader() {
 		return printHeader;
 	}
 
-	public void setPrintHeader(ReportPrintOption printHeader) {
+	public void setPrintHeader(boolean printHeader) {
 		this.printHeader = printHeader;
 	}
 
@@ -674,37 +674,37 @@ public class CompanyParentController extends BasicController implements ICompany
 		return isNew();
 	}	
 
-	public ReportPrintOption obtainPrintHeader() throws ManagerBeanException { // TODO
+	public boolean obtainPrintHeader() throws ManagerBeanException { 
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_HEADER_PARAM);
-		return getReportPrintOptionValue(appParam);
+		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
 	}
 
-	public boolean obtainPrintRecordData() throws ManagerBeanException {// TODO
+	public boolean obtainPrintRecordData() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_RECORD_DATA_PARAM);
 		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
 	}
 	
-	public boolean obtainPrintLogo() throws ManagerBeanException {// TODO
+	public boolean obtainPrintLogo() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_LOGO_PARAM);
 		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
 	}
 	
-	public ReportPrintOption obtainPrintName() throws ManagerBeanException {// TODO
+	public ReportPrintOption obtainPrintName() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_NAME_PARAM);
 		return getReportPrintOptionValue(appParam);
 	}
 	
-	public ReportPrintOption obtainPrintNif() throws ManagerBeanException {// TODO
+	public ReportPrintOption obtainPrintNif() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_NIF_PARAM);
 		return getReportPrintOptionValue(appParam);
 	}
 	
-	public ReportPrintOption obtainPrintAddress() throws ManagerBeanException {// TODO
+	public ReportPrintOption obtainPrintAddress() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_ADDRESS_PARAM);
 		return getReportPrintOptionValue(appParam);
 	}
 	
-	public ReportPrintOption obtainPrintInternetData() throws ManagerBeanException {// TODO
+	public ReportPrintOption obtainPrintInternetData() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_INTERNET_DATA_PARAM);
 		return getReportPrintOptionValue(appParam);
 	}
