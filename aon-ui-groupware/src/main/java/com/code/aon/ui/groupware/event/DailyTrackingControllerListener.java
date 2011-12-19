@@ -5,7 +5,6 @@ import java.util.Date;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.util.CompanyUtil;
 import com.code.aon.groupware.DailyTracking;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.dao.IGroupwareAlias;
@@ -63,8 +62,6 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
     			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
     			trackingController.getCriteria().addEqualExpression(dailyTrackingBean.getFieldName(IGroupwareAlias.DAILY_TRACKING_TASK_HOLDER_ID), taskHolder.getId() );
     		}
-    		CompanyUtil companyUtil = new CompanyUtil(); 
-    		trackingController.getCriteria().addEqualExpression(dailyTrackingBean.getFieldName(IGroupwareAlias.DAILY_TRACKING_ENTERPRISE_ID), companyUtil.getActiveEnterprise().getId() );
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}

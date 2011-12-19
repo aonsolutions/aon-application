@@ -26,7 +26,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.util.CompanyUtil;
 import com.code.aon.groupware.Task;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.TaskHolderWorkgroup;
@@ -210,8 +209,6 @@ public class GanttController {
 	
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		IManagerBean bean = BeanManager.getManagerBean(Task.class);
-		CompanyUtil companyUtil = new CompanyUtil(); 
-		criteria.addEqualExpression(bean.getFieldName(IGroupwareAlias.TASK_ENTERPRISE_ID), companyUtil.getActiveEnterprise().getId() );
 		if(!isMonitor()){
 			setTaskHolder(getGroupwareUtils().getCurrentTaskHolder());
 		}

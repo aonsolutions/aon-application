@@ -14,8 +14,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.util.CommonUtil;
-import com.code.aon.company.util.CompanyUtil;
-import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.groupware.Process;
 import com.code.aon.groupware.ProcessDetail;
@@ -370,8 +368,6 @@ public class TaskSearchControllerListener extends ControllerSearchListener {
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria( criteria );
 		TaskController controller = (TaskController) FormUtil.getController(IGroupWareConstants.TASK_CONTROLLER_NAME);
-		CompanyUtil companyUtil = new CompanyUtil(); 
-		controller .getCriteria().addEqualExpression(getFieldName(IGroupwareAlias.TASK_ENTERPRISE_ID), companyUtil.getActiveEnterprise().getId() );
 		if(!controller.isMonitor()){
 			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
 			String taskHolderAlias = getFieldName(IGroupwareAlias.TASK_TASK_HOLDER_ID);

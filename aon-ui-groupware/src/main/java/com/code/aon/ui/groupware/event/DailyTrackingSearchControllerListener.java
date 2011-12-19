@@ -9,7 +9,6 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.util.CompanyUtil;
 import com.code.aon.groupware.JobType;
 import com.code.aon.groupware.TaskHolder;
 import com.code.aon.groupware.dao.IGroupwareAlias;
@@ -169,8 +168,6 @@ public class DailyTrackingSearchControllerListener extends ControllerSearchListe
 	protected void completeCriteria(Criteria criteria) throws ManagerBeanException, ExpressionException {
 		super.completeCriteria( criteria );
 		DailyTrackingController controller = (DailyTrackingController) FormUtil.getController(IGroupWareConstants.DAILY_TRACKING_CONTROLLER_NAME);
-		CompanyUtil companyUtil = new CompanyUtil(); 
-		controller .getCriteria().addEqualExpression(getFieldName(IGroupwareAlias.DAILY_TRACKING_ENTERPRISE_ID), companyUtil.getActiveEnterprise().getId() );
 		String taskHolderAlias = getFieldName(IGroupwareAlias.DAILY_TRACKING_TASK_HOLDER_ID);
 		if(!controller.isMonitor()){
 			TaskHolder taskHolder = getGroupwareUtils().getCurrentTaskHolder();
