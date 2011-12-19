@@ -19,6 +19,8 @@ public enum ReportPrintOption implements IResourceable {
 	
 	FOOTER,
 	
+	LEFT_SIDE
+	
 	;
     
 	/** Message file base path. */

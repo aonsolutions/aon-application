@@ -4,6 +4,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.enumeration.ReportPrintOption;
+import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.company.controller.ICompanyController;
@@ -19,6 +20,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		try {
 			companyController.setPrintHeader(companyController.obtainPrintHeader());
 			companyController.setPrintRecordData(companyController.obtainPrintRecordData());
+			companyController.setSaleInvoiceTemplate(companyController.obtainSaleInvoiceTemplate());
 			companyController.setPrintLogo(companyController.obtainPrintLogo());
 			companyController.setPrintName(companyController.obtainPrintName());
 			companyController.setPrintNif(companyController.obtainPrintNif());
@@ -53,6 +55,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 	private void updateParams( ICompanyController companyController ) throws ManagerBeanException {
 		updateParam(companyController, CompanyController.PRINT_HEADER_PARAM, companyController.isPrintHeader());
 		updateParam(companyController, CompanyController.PRINT_RECORD_DATA_PARAM, companyController.isPrintRecordData());
+		updateParam(companyController, CompanyController.SALE_INVOICE_TEMPLATE_PARAM, companyController.getSaleInvoiceTemplate());
 		updateParam(companyController, CompanyController.PRINT_LOGO_PARAM, companyController.isPrintLogo());
 		updateParam(companyController, CompanyController.PRINT_NAME_PARAM, companyController.getPrintName());
 		updateParam(companyController, CompanyController.PRINT_NIF_PARAM, companyController.getPrintNif());
@@ -88,6 +91,22 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 		}
 		if ( update ) {
 			param.setValue(value==null?null:String.valueOf(value.ordinal()));
+			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+			appParamBean.insertOrUpdate(param);			
+		}
+	}
+	
+	private void updateParam(ICompanyController companyController, String paramName, SaleInvoiceTemplate value) throws ManagerBeanException {
+		boolean update = true;
+		ApplicationParameter param = companyController.obtainApplicationParameter(paramName);
+		if ( param == null ) {
+			param = new ApplicationParameter();
+			param.setName(paramName);
+		} else if ( value.getValue().equals(param.getValue()) ) {
+			update = false;
+		}
+		if ( update ) {
+			param.setValue(value==null?null:String.valueOf(value.getValue()));
 			IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 			appParamBean.insertOrUpdate(param);			
 		}

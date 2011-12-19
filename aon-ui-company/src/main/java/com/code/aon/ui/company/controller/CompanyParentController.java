@@ -18,6 +18,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
 import com.code.aon.company.enumeration.ReportPrintOption;
+import com.code.aon.company.enumeration.SaleInvoiceTemplate;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.geozone.GeoZone;
@@ -48,6 +49,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	public static final String PRINT_HEADER_PARAM = "APP_PRINT_HEADER_PARAM";
 	
 	public static final String PRINT_RECORD_DATA_PARAM = "APP_PRINT_RECORD_DATA_PARAM";
+	
+	public static final String SALE_INVOICE_TEMPLATE_PARAM = "APP_SALE_INVOICE_TEMPLATE_PARAM";
 	
 	public static final String PRINT_LOGO_PARAM = "APP_PRINT_LOGO_PARAM";
 	
@@ -97,6 +100,8 @@ public class CompanyParentController extends BasicController implements ICompany
 	private boolean printHeader;
 	
 	private boolean printRecordData;
+	
+	private SaleInvoiceTemplate saleInvoiceTemplate;
 	
 	private boolean printLogo;
 	
@@ -588,6 +593,14 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.printRecordData = printRecordData;
 	}
 	
+	public SaleInvoiceTemplate getSaleInvoiceTemplate(){
+		return saleInvoiceTemplate;
+	}
+	
+	public void setSaleInvoiceTemplate(SaleInvoiceTemplate saleInvoiceTemplate){
+		this.saleInvoiceTemplate = saleInvoiceTemplate;
+	}
+	
 	public boolean isPrintLogo() {
 		return printLogo;
 	}
@@ -682,6 +695,16 @@ public class CompanyParentController extends BasicController implements ICompany
 	public boolean obtainPrintRecordData() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(PRINT_RECORD_DATA_PARAM);
 		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+	}
+	
+	public SaleInvoiceTemplate obtainSaleInvoiceTemplate() throws ManagerBeanException {
+		ApplicationParameter appParam = obtainApplicationParameter(SALE_INVOICE_TEMPLATE_PARAM);
+		for(SaleInvoiceTemplate o: SaleInvoiceTemplate.values()){
+			if(o.getValue().equals(appParam.getValue())){
+				return o;
+			}
+		}
+		return null;
 	}
 	
 	public boolean obtainPrintLogo() throws ManagerBeanException {
