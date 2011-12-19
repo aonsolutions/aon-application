@@ -17,12 +17,8 @@ import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNul
 import com.code.aon.common.dao.IDAO;
 import com.code.aon.common.dao.hibernate.ReplicationMode;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.common.event.IManagerBeanListener;
-import com.code.aon.common.event.IManagerBeanVetoListener;
 import com.code.aon.common.event.ManagerBeanEvent;
-import com.code.aon.common.event.ManagerBeanListenerSupport;
 import com.code.aon.common.event.ManagerBeanVetoListenerException;
-import com.code.aon.common.event.ManagerBeanVetoListenerSupport;
 
 /**
  * Basic implementation of the <code>IManagerBean</code> class. 
@@ -37,12 +33,6 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 
 	private final static Logger LOGGER = LoggerFactory.getLogger(BasicManagerBean.class);
 	
-    // Manages the listeners.
-	private ManagerBeanListenerSupport listeners;
-
-    // Manages the vetoListeners.
-	private ManagerBeanVetoListenerSupport vetoListeners;
-	
 	private Stack<Class> pojoDependences;
 
 	/**
@@ -52,32 +42,6 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	 */
 	public BasicManagerBean(IDAO dao) {
 		super(dao);
-	}
-
-	/**
-	 * Listener registration method. Tell the ManagerBeanListenerSupport to add a new
-	 * <code>IManagerBeanListener</code>.
-	 * 
-	 * @param listener
-	 */
-	public void addManagerBeanListener( IManagerBeanListener listener ) {
-		if (listeners == null) {
-			listeners = new ManagerBeanListenerSupport();
-		}
-		listeners.addListener( listener );
-	}
-
-	/**
-	 * Listener registration method. Tell the ManagerBeanVetoListenerSupport to add a new
-	 * <code>IManagerBeanVetoListener</code>.
-	 * 
-	 * @param vetoListener
-	 */
-	public void addManagerBeanVetoListener( IManagerBeanVetoListener vetoListener ) {
-		if (vetoListeners == null) {
-			vetoListeners = new ManagerBeanVetoListenerSupport(); 
-		}
-		vetoListeners.addListener( vetoListener );
 	}
 
 	/**
@@ -321,8 +285,8 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	 * @throws ManagerBeanVetoListenerException
 	 */
 	private void fireVetoableBeanInserted( ManagerBeanEvent evt ) throws ManagerBeanVetoListenerException {
-		if (vetoListeners != null) {
-			vetoListeners.vetoableBeanInserted( evt );
+		if (getVetoListeners() != null) {
+			getVetoListeners().vetoableBeanInserted( evt );
 		}
 	}
 
@@ -333,8 +297,8 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	 * @throws ManagerBeanVetoListenerException
 	 */
 	private void fireVetoableBeanUpdated( ManagerBeanEvent evt ) throws ManagerBeanVetoListenerException{
-		if (vetoListeners != null) {
-			vetoListeners.vetoableBeanUpdated( evt );
+		if (getVetoListeners() != null) {
+			getVetoListeners().vetoableBeanUpdated( evt );
 		}
 	}
 
@@ -345,8 +309,8 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	 * @throws ManagerBeanVetoListenerException
 	 */
 	private void fireVetoableBeanRemoved( ManagerBeanEvent evt ) throws ManagerBeanVetoListenerException{
-		if (vetoListeners != null) {
-			vetoListeners.vetoableBeanRemoved( evt );
+		if (getVetoListeners() != null) {
+			getVetoListeners().vetoableBeanRemoved( evt );
 		}
 	}
 	
@@ -357,8 +321,8 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	 * @throws ManagerBeanVetoListenerException
 	 */
 	private void fireBeanInserted( ManagerBeanEvent evt ) throws ManagerBeanException{
-		if (listeners != null) {
-			listeners.beanInserted( evt );
+		if (getListeners() != null) {
+			getListeners().beanInserted( evt );
 		}
 	}
 	
@@ -369,8 +333,8 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	 * @throws ManagerBeanVetoListenerException
 	 */
 	private void fireBeanUpdated( ManagerBeanEvent evt ) throws ManagerBeanException{
-		if (listeners != null) {
-			listeners.beanUpdated( evt );
+		if (getListeners() != null) {
+			getListeners().beanUpdated( evt );
 		}
 	}
 	
@@ -381,8 +345,8 @@ public class BasicManagerBean extends BasicFinderBean implements IManagerBean {
 	 * @throws ManagerBeanVetoListenerException
 	 */
 	private void fireBeanRemoved( ManagerBeanEvent evt ) throws ManagerBeanException{
-		if (listeners != null) {
-			listeners.beanRemoved( evt );
+		if (getListeners() != null) {
+			getListeners().beanRemoved( evt );
 		}
 	}
 	
