@@ -16,24 +16,28 @@ public class ManagerBeanVetoListenerAdapter implements IManagerBeanVetoListener 
 	 * (non-Javadoc)
 	 * @see com.code.aon.common.event.IManagerBeanVetoListener#vetoableBeanInserted(com.code.aon.common.event.ManagerBeanEvent)
 	 */
-	public void vetoableBeanInserted(ManagerBeanEvent evt)
-			throws ManagerBeanVetoListenerException {
+	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.code.aon.common.event.IManagerBeanVetoListener#vetoableBeanUpdated(com.code.aon.common.event.ManagerBeanEvent)
 	 */
-	public void vetoableBeanUpdated(ManagerBeanEvent evt)
-			throws ManagerBeanVetoListenerException {
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.code.aon.common.event.IManagerBeanVetoListener#vetoableBeanRemoved(com.code.aon.common.event.ManagerBeanEvent)
 	 */
-	public void vetoableBeanRemoved(ManagerBeanEvent evt)
-			throws ManagerBeanVetoListenerException {
+	public void vetoableBeanRemoved(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.code.aon.common.event.IManagerBeanVetoListener#vetoableBeanSearched(com.code.aon.common.event.ManagerBeanEvent)
+	 */
+	public void vetoableBeanSearched(FinderBeanEvent evt) throws ManagerBeanVetoListenerException {
 	}
 
 }

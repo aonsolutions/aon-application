@@ -32,4 +32,5 @@ public class ManagerBeanEvent extends EventObject {
 	public ITransferObject getTo() {
 		return (ITransferObject) super.getSource();
 	}
+
 }
