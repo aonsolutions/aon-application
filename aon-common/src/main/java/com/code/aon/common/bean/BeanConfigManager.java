@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.metadata.ClassMetadata;
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public class BeanConfigManager {
      * @throws ManagerBeanException
      */
 	public void addBeanConfiguration(BeanConfig config) throws ManagerBeanException {
-        if (!beans.containsKey(config.getPojoClass())) {
+		if (!beans.containsKey(config.getPojoClass())) {
             beans.put(config.getPojoClass(), config);
             LOGGER.info("Registered bean configuration {}", config.getPojoClass());
         } else {
@@ -68,12 +69,16 @@ public class BeanConfigManager {
 		}
 		if (target.getListeners() != null) {
 			for (String listener:target.getListeners() ) {
-				original.addListener(listener);
+				if (original.getListeners() != null && !original.getListeners().contains(listener)) {
+					original.addListener(listener);
+				}
 			}
 		}
 		if (target.getVetoListeners() != null) {
 			for (String vetoListener:target.getVetoListeners() ) {
-				original.addVetoListener(vetoListener);
+				if (original.getVetoListeners() != null && !original.getVetoListeners().contains(vetoListener)) {
+					original.addVetoListener(vetoListener);
+				}
 			}
 		}
 	}
@@ -108,7 +113,7 @@ public class BeanConfigManager {
 		}
 		ClassMetadata cmd = HibernateUtil.getSessionFactory(sessionFactoryName).getClassMetadata( pojoClass );
 		if ( cmd == null ) {
-			throw new ManagerBeanException( pojoClass + " must have Hiberante mapping" );
+			throw new ManagerBeanException( pojoClass + " must have Hibernate mapping" );
 		}
 		ISessionManager sessionManager = new DefaultSessionManager(sessionFactoryName);
 		return new HibernateDAO( pojoClass, sessionManager );
@@ -134,20 +139,15 @@ public class BeanConfigManager {
 				dao = getPojoDAO( config.getPojoClass(), sessionFactoryName );
 			}
 			BasicManagerBean bean = new BasicManagerBean(dao);
-			if (config.getListeners() != null) {
-				for (String listenerClass : config.getListeners()) {
-					Class c = Class.forName(listenerClass);
-					IManagerBeanListener listener = (IManagerBeanListener) c.newInstance();
-					bean.addManagerBeanListener(listener);
+			addBeanListeners(bean, config);
+
+			for (Object interfaz : ClassUtils.getAllInterfaces(config.getPojoClass())) {
+				if (beans.containsKey(interfaz)) {
+					BeanConfig interfazConfig = beans.get(interfaz);
+					addBeanListeners(bean, interfazConfig);
 				}
 			}
-			if (config.getVetoListeners() != null) {
-				for (String vetoListenerClass : config.getVetoListeners()) {
-					Class c = Class.forName(vetoListenerClass);
-					IManagerBeanVetoListener vetoListener = (IManagerBeanVetoListener) c.newInstance();
-					bean.addManagerBeanVetoListener(vetoListener);
-				}
-			}
+
 			return bean;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -173,4 +173,20 @@ public class BeanConfigManager {
 		}
 	}
 
+	private static void addBeanListeners(BasicManagerBean bean, BeanConfig config) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+		if (config.getListeners() != null) {
+			for (String listenerClass : config.getListeners()) {
+				Class c = Class.forName(listenerClass);
+				IManagerBeanListener listener = (IManagerBeanListener) c.newInstance();
+				bean.addManagerBeanListener(listener);
+			}
+		}
+		if (config.getVetoListeners() != null) {
+			for (String vetoListenerClass : config.getVetoListeners()) {
+				Class c = Class.forName(vetoListenerClass);
+				IManagerBeanVetoListener vetoListener = (IManagerBeanVetoListener) c.newInstance();
+				bean.addManagerBeanVetoListener(vetoListener);
+			}
+		}
+	}
 }
