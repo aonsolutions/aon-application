@@ -247,6 +247,11 @@ public class Registry implements ITransferObject, IConfidentialable, IRegistry {
 	public RegistryMedia getEmail() throws ManagerBeanException{
 		return getRegistryMedia(MediaType.EMAIL);
 	}
+	
+	@Transient
+	public RegistryMedia getWeb() throws ManagerBeanException{
+		return getRegistryMedia(MediaType.WEB);
+	}
 
 	@Transient 
 	@SuppressWarnings("unchecked")
