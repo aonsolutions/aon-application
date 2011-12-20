@@ -469,14 +469,14 @@ public class SQLContractDelayCalculatorContext
 				Double paidValue = paidValues.get(field);
 				Double diffValue = value -paidValue;
 				diffValues.put(field, diffValue);
-				
+				/*
 				System.out.println(String.format("%s : %f - %f = %f.", 
 						field, 
 						value, 
 						paidValue,
 						value -paidValue)
 						);
-						
+				*/		
 			}
 			
 			List<IContractPayment> payments = 
@@ -663,7 +663,4 @@ public class SQLContractDelayCalculatorContext
 		return candidates.size() == 1 ?  candidates.get(0) : null;
 	}
 	
-	public static void main(String[] args) {
-		System.out.println(String.format(Locale.US, "%,.4f%n", (double) 13432423.555 ));
-	}
 }
