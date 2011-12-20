@@ -100,6 +100,10 @@ public class ExpressionContext {
 		this.addVariable(name.toString(), timedObject);
 	}
 	
+	public boolean isDef(Object name ) {
+		return variables.containsKey(name.toString());
+	}
+
 	public boolean containsVariable(Object name, Date start, Date end) {
 		return variables.containsKey(name.toString(), new Period(start, end));
 	}

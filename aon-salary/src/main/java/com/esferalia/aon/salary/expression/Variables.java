@@ -229,6 +229,12 @@ public class Variables implements Comparator<ITimedVariable<?>> {
 		
 	}
 	
+	public boolean containsKey(String key){
+		List<ITimedVariable<?>> values =  get(key);
+		return ( values != null && values.size() > 0 );
+		
+	}
+
 	public boolean containsKey(String key, Period p){
 		List<ITimedVariable<?>> values =  get(key);
 		if ( values == null ) {
