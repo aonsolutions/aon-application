@@ -1,7 +1,6 @@
 package com.esferalia.aon.ui.payroll.controller.agreement;
 
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
@@ -27,11 +26,13 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementData;
 import com.esferalia.aon.payroll.AgreementPayment;
+import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler;
+import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler.AbstractVariableData;
 
 public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 
@@ -45,20 +46,22 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 	protected void initializeVariables(ActionEvent event) {
 		AgreementPayment payment = (AgreementPayment)getController().getTo();
 		Agreement agreement = payment.getAgreement();
-		List<AgreementData> dataList;
+		List<IVariableData> dataList;
 		try {
 			setVariablesModel(null);
 			setUndefinedVariablesModel(null);
 			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
-				dataList = new LinkedList<AgreementData>();
+				dataList = new LinkedList<IVariableData>();
 				Set<String> vl = ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
-				List<AgreementData> undefined = new LinkedList<AgreementData>();
+				List<IVariableData> undefined = new LinkedList<IVariableData>();
 				if(!vl.isEmpty()){
 					for(String s: vl){
 						List<ITransferObject> list = existingAgreementData(s, agreement);
 						if(!list.isEmpty()){
 							for(ITransferObject to: list){
-								dataList.add((AgreementData) to);
+								AbstractVariableData data = new AbstractVariableData();
+								data.setVariableData((IVariableData) to);
+								dataList.add(data);
 							}
 						} else {
 							Calendar startCal = Calendar.getInstance();
@@ -79,7 +82,9 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 //								dataList.add(data);
 //							}
 							if(!isSystemVariable(data)){
-								undefined.add(data);
+								AbstractVariableData d = new AbstractVariableData();
+								d.setVariableData((IVariableData) data);
+								undefined.add(d);
 							}
 						}
 					}
@@ -103,7 +108,7 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 	}
 	
 	private boolean isSystemVariable(AgreementData data) {
-		return ContextVariable.getVariable(data.getName())!=null;
+		return ContextVariable.getVariableByName(data.getName())!=null;
 	}
 
 	@Override
@@ -167,8 +172,9 @@ public class AgreementPaymentVariablesHandler extends AbstractVariableHandler{
 	}
 	@Override
 	protected void resetVariable() {
-		setData(new AgreementData());
-		((AgreementData)getData()).setAgreement(((AgreementPayment) getController().getTo()).getAgreement());
+		setData(new AbstractVariableData());
+		getData().setVariableData(new AgreementData());
+		((AgreementData)getData().getVariableData()).setAgreement(((AgreementPayment) getController().getTo()).getAgreement());
 	}
 
 }

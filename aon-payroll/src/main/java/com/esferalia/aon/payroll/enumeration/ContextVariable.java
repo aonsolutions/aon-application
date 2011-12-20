@@ -194,7 +194,7 @@ public enum ContextVariable implements IResourceable{
     private static final String EXT_MSG_KEY_PREFIX = "aon_enum_context_variable_desc_";
 
     
-    public static ContextVariable getVariable(String name){
+    public static ContextVariable getVariableByName(String name){
     	for(ContextVariable cv: values()){
     		if(cv.getName().equals(name)){
     			return cv;

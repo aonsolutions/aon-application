@@ -22,20 +22,29 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.IResourceable;
 import com.code.aon.common.enumeration.IStringEnum;
+import com.code.aon.common.util.CommonUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.esferalia.aon.payroll.AbstractVariableData;
+import com.esferalia.aon.payroll.AgreementData;
+import com.esferalia.aon.payroll.AgreementPayment;
+import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.CNO;
-import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
+import com.esferalia.aon.payroll.enumeration.ContractCode;
 import com.esferalia.aon.payroll.enumeration.InactiveLastPeriod;
 import com.esferalia.aon.payroll.enumeration.OccupationType;
 import com.esferalia.aon.payroll.enumeration.QuoteGroup;
+import com.esferalia.aon.payroll.enumeration.VariableType;
+import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.salary.expression.ExpressionException;
+import com.esferalia.aon.salary.expression.ExpressionScope;
+import com.esferalia.aon.salary.expression.IExpression;
+import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.ui.payroll.controller.PayrollVariablesCollectionsController;
 
 public abstract class AbstractVariableHandler {
@@ -43,6 +52,7 @@ public abstract class AbstractVariableHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractVariableHandler.class.getName());
 	
 	private AbstractVariableData data;
+//	private AbstractVariableData2 data2;
 	private DataModel variablesModel;
 	private DataModel undefinedVariablesModel;
 	
@@ -52,7 +62,7 @@ public abstract class AbstractVariableHandler {
 	private boolean isNew;
 	
 	private IController controller;
-	
+		
 	public AbstractVariableHandler(IController controller) {
 		this.controller = controller;
 	}
@@ -95,11 +105,21 @@ public abstract class AbstractVariableHandler {
 	}
 	
 	public AbstractVariableData getData() {
+//		if(data==null){
+//			data = new AbstractVariableData();
+//		}
 		return data;
 	}
 	public void setData(AbstractVariableData data) {
 		this.data = data;
 	}
+	
+//	public AbstractVariableData2 getData2() {
+//		return data2;
+//	}
+//	public void setData2(AbstractVariableData2 data2) {
+//		this.data2 = data2;
+//	}
 	public DataModel getVariablesModel() {
 		return variablesModel;
 	}
@@ -120,14 +140,15 @@ public abstract class AbstractVariableHandler {
 		getData().setStartDate(new Date());
 	}
 	public void onSelectVariable(ActionEvent event) {
+		initEditor();
 		setData((AbstractVariableData) getVariablesModel().getRowData());
-		handleEditorExpression(getData().getExpression());
+		handleEditorExpression();
 	}
 	
 	public void onSaveVariable(ActionEvent event) {
 		handleDataExpression();
 		try {
-			getVariableManagerBean().insertOrUpdate((ITransferObject) getData());
+			getVariableManagerBean().insertOrUpdate((ITransferObject) getData().getVariableData());
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible guardar la variable del contrato (" + e.getMessage() +")";
 			LOGGER.error(msg);
@@ -135,16 +156,18 @@ public abstract class AbstractVariableHandler {
 			throw new AbortProcessingException(msg,e);
 		}
 		setNew(false);
+//		checkVariableNature(getData());
 		initEditor();
 		initializeVariables(event);
 	}
 	public void onCancelVariable(ActionEvent event) {
 		setNew(false);
+//		checkVariableNature(getData());
 		initEditor();
 	}
 	public void onRemoveVariable(ActionEvent event) {
 		try {
-			getVariableManagerBean().remove((ITransferObject) getData());
+			getVariableManagerBean().remove((ITransferObject) getData().getVariableData());
 		} catch (ManagerBeanException e) {
 			String msg = "Imposible borrar la variable del contrato (" + e.getMessage() +")";
 			LOGGER.error(msg);
@@ -155,8 +178,23 @@ public abstract class AbstractVariableHandler {
 		initializeVariables(event);
 	}
 	public void onAddUndefinedVariable(ActionEvent event) {
-		setData((AbstractVariableData) getUndefinedVariablesModel().getRowData());
+		setData(new AbstractVariableData());
+		getData().setVariableData((AbstractVariableData) getUndefinedVariablesModel().getRowData());
+		
+		
+		setData(new AbstractVariableData());
+		getData().setVariableData(new AgreementData());
+		((AgreementData)getData().getVariableData()).setAgreement(((AgreementPayment) getController().getTo()).getAgreement());
+		
+		
+//		setData((AbstractVariableData) getUndefinedVariablesModel().getRowData());
 		setNew(true);
+	}
+	
+	public void onSelectExpressionEditor(ActionEvent event) {
+		AbstractVariableData data = (AbstractVariableData)getVariablesModel().getRowData();
+		data.setEnableExpressionEditor(!data.isEnableExpressionEditor());
+//		data.setExpression(null);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -223,6 +261,7 @@ public abstract class AbstractVariableHandler {
 	
 	private String variableFilter;
 	
+	@SuppressWarnings("unchecked")
 	public List<SelectItem> getVariablesFilterList(){
 		List<SelectItem> list = new LinkedList<SelectItem>();
 		if(getVariablesModel()!=null){
@@ -414,45 +453,141 @@ public abstract class AbstractVariableHandler {
 		}
 	}
 	
+//	public VariableType getRowVariableType(){
+//		AbstractVariableData data = (AbstractVariableData)getVariablesModel().getRowData();
+//		checkVariableNature(data);
+//		if(data.getVariable()==null || ( isEnumVariable() && data.getVariableEnum()==null && data.isShowExpressionEditor())){
+//			return VariableType.EXPRESSION;
+//		} 
+//		return data.getVariable().getType();
+//	}
+	
+//	private boolean isEnumVariable(){
+//		AbstractVariableData data = (AbstractVariableData)getVariablesModel().getRowData();
+//		if(data.getName().equals(ContextVariable.CNO.getName())){
+//			return true;
+//		} else if(data.getName().equals(ContextVariable.TC2.getName())){
+//			return true;
+//		} else if(data.getName().equals(ContextVariable.QUOTE_GROUP.getName())){
+//			return true;
+//		} else if(data.getName().equals(ContextVariable.OCCUPATION.getName())){
+//			return true;
+//		} else if(data.getName().equals(ContextVariable.QUOTE_IT.getName())){
+//			return false;
+//		}
+//		return false;
+//	}
+	
 	private void initEditor(){
+		setData(null);
 		setData(null);
 		setCno(null);
 		setQuoteGroup(null);
 		setContractCode(null);
+//		((AbstractVariableData)getVariablesModel().getRowData()).setShowExpressionEditor(false);
 	}
-	private void handleEditorExpression(String expression) {
-		if( StringUtils.startsWith(expression, "\"") && StringUtils.endsWith(expression, "\"")){
-			expression = expression.substring(1, expression.length()-1);
+	private void handleEditorExpression() {
+		if( StringUtils.startsWith(getData().getExpression(), "\"") && StringUtils.endsWith(getData().getExpression(), "\"")){
+			getData().setExpression( getData().getExpression().substring(1, getData().getExpression().length()-1) );
 		}
-		if(getData().getVariable()==ContextVariable.CNO){
-			setCno(CNO.getCnoByValue(expression));
-		}else if(getData().getVariable()==ContextVariable.TC2){
-			setContractCode(ContractCode.getContractCodeByValue(expression));
-		}else if(getData().getVariable()==ContextVariable.CATEGORY){
+//		checkVariableNature(getData());
+	}
+	
+	private void checkVariableNature(AbstractVariableData data){
+		if(data.getVariable()==ContextVariable.CNO){
+			setCno(CNO.getCnoByValue(data.getExpression()));
+//			data.setEnableExpressionEditor(getCno()==null);
+		}else if(data.getVariable()==ContextVariable.TC2){
+			setContractCode(ContractCode.getContractCodeByValue(data.getExpression()));
+//			data.setEnableExpressionEditor(getContractCode()==null);
+		}else if(data.getVariable()==ContextVariable.CATEGORY){
 			;
-		}else if(getData().getVariable()==ContextVariable.QUOTE_GROUP){
-			setQuoteGroup(QuoteGroup.getQuoteGroupByValue(expression));
-		}else if(getData().getVariable()==ContextVariable.OCCUPATION){
-			setOccupationType(OccupationType.getOccupationTypeByValue(expression));
-		}else if(getData().getVariable()==ContextVariable.QUOTE_IT){
+		}else if(data.getVariable()==ContextVariable.QUOTE_GROUP){
+			setQuoteGroup(QuoteGroup.getQuoteGroupByValue(data.getExpression()));
+//			data.setEnableExpressionEditor(getQuoteGroup()==null);
+		}else if(data.getVariable()==ContextVariable.OCCUPATION){
+			setOccupationType(OccupationType.getOccupationTypeByValue(data.getExpression()));
+//			data.setEnableExpressionEditor(getOccupationType()==null);
+		}else if(data.getVariable()==ContextVariable.QUOTE_IT){
 			;
+		}else if(data.getVariable()!=null && data.getVariable().getType()==VariableType.BOOLEAN){
+			if( data.getExpression().equals("true") || data.getExpression().equals("false") ){
+//				data.setEnableExpressionEditor(false);
+			} else {
+//				data.setEnableExpressionEditor(true);
+			}
+		}else if(data.getVariable()!=null && data.getVariable().getType()==VariableType.INTEGER){
+			try {
+				Integer.parseInt(data.getExpression());
+//				data.setEnableExpressionEditor(false);
+			} catch (NumberFormatException e) {
+//				data.setEnableExpressionEditor(true);
+			}
+		}else if(data.getVariable()!=null && data.getVariable().getType()==VariableType.DOUBLE){
+			try {
+				Double.parseDouble(data.getExpression());
+//				data.setEnableExpressionEditor(false);
+			} catch (NumberFormatException e) {
+//				data.setEnableExpressionEditor(true);
+			}
+		}
+	}
+	
+	private void handleDataExpression() {
+//		if(isExpression(getData())){
+//			getData().setShowExpressionEditor(false);
+//		}else 
+		if(!getData().isEnableExpressionEditor()){
+			if(getData().getVariable()==ContextVariable.CNO){
+				getData().setExpression("\""+String.valueOf(getCno().ordinal())+"\"");
+			}else if(getData().getVariable()==ContextVariable.TC2){
+				getData().setExpression("\""+getContractCode().getValue()+"\"");
+			}else if(getData().getVariable()==ContextVariable.CATEGORY){
+				;
+			}else if(getData().getVariable()==ContextVariable.QUOTE_GROUP){
+				getData().setExpression("\""+getQuoteGroup().getValue()+"\"");
+			}else if(getData().getVariable()==ContextVariable.OCCUPATION){
+				getData().setExpression("\""+getOccupationType().getValue()+"\"");
+			}else if(getData().getVariable()==ContextVariable.QUOTE_IT){
+				;
+			}else if(getData().getVariable()!=null && getData().getVariable().getType()==VariableType.BOOLEAN){
+//				getData().setExpression( Boolean.valueOf(getData().getExpression()) );
+				;
+			}else if(getData().getVariable()!=null && getData().getVariable().getType()==VariableType.INTEGER){
+				;
+			}else if(getData().getVariable()!=null && getData().getVariable().getType()==VariableType.DOUBLE){
+				getData().setExpression( String.valueOf(CommonUtil.round(Double.parseDouble(getData().getExpression()))) );
+			}
+		}
+	}
+	
+	private boolean isExpression(AbstractVariableData data) {
+		ExpressionContext e = new ExpressionContext();
+		Calendar start = Calendar.getInstance();
+		Calendar end = Calendar.getInstance();
+		start.set(2011, 11, 1);
+		end.set(2011, 11, 30);
+		
+		
+		for(AbstractVariableData d: (List<AbstractVariableData>)getVariablesModel().getWrappedData()){
+			e.addVariable(d.getName(), d.getExpression(), d.getStartDate(), d.getEndDate());
+		}
+		try {
+			List<ITimedObject<Object>> list = e.eval(data.getExpression(), data.getStartDate(), data.getEndDate());
+			list.isEmpty();
+		} catch (ExpressionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		
-	}
-	private void handleDataExpression() {
-		if(getData().getVariable()==ContextVariable.CNO){
-			getData().setExpression("\""+String.valueOf(getCno().ordinal())+"\"");
-		}else if(getData().getVariable()==ContextVariable.TC2){
-			getData().setExpression("\""+getContractCode().getValue()+"\"");
-		}else if(getData().getVariable()==ContextVariable.CATEGORY){
-			;
-		}else if(getData().getVariable()==ContextVariable.QUOTE_GROUP){
-			getData().setExpression("\""+getQuoteGroup().getValue()+"\"");
-		}else if(getData().getVariable()==ContextVariable.OCCUPATION){
-			getData().setExpression("\""+getOccupationType().getValue()+"\"");
-		}else if(getData().getVariable()==ContextVariable.QUOTE_IT){
-			;
-		}
+		
+		
+//		if(Boolean.valueOf(expression)){
+//			return false;
+//		}
+//		Double
+		
+		return false;
 	}
 	
 	public class SimpleVariable {
@@ -471,5 +606,234 @@ public abstract class AbstractVariableHandler {
 			this.description = description;
 		}
 	}
+	
+	public class AbstractVariableData implements IVariableData, IExpression{
+		
+		private boolean enableExpressionEditor;
+		private boolean expressionValue;
+		private IVariableData variableData;
+		
+		public boolean isEnableExpressionEditor() {
+			return enableExpressionEditor;
+		}
+
+		public void setEnableExpressionEditor(boolean enableExpressionEditor) {
+			this.enableExpressionEditor = enableExpressionEditor;
+			this.expressionValue = enableExpressionEditor;
+		}
+
+		public boolean isExpressionValue() {
+			return expressionValue;
+		}
+
+		public void setExpressionValue(boolean expressionValue) {
+			this.expressionValue = expressionValue;
+		}
+
+		public IVariableData getVariableData() {
+			return variableData;
+		}
+
+		public void setVariableData(IVariableData variableData) {
+			this.variableData = variableData;
+		}
+
+		public ContextVariable getVariable(){
+			ContextVariable var = ContextVariable.getVariableByName(getName()!=null?getName().toUpperCase():null);
+			if(var!=null){
+				setName(getName().toUpperCase());
+			}
+			return var;
+		}
+
+		public VariableType getVariableType(){
+			if(getVariable()==ContextVariable.CNO){
+				getVariable();
+			}
+			if(isEnableExpressionEditor() ){
+				return VariableType.EXPRESSION;
+			}  else {
+				if( getVariable()!=null && !isExpressionValue() ){
+					return getVariable().getType();	
+				}
+			}
+//			if(getExpression()==null){
+//				return getVariable().getType();
+//			}
+			if( getVariable()==null || ( isEnumVariable() && getVariableEnum()==null )){
+				setExpressionValue(true);
+				return VariableType.EXPRESSION;
+			}
+			checkVariableNature();
+			if( isExpressionValue() ){
+				return VariableType.EXPRESSION;
+			}
+			return getVariable().getType();
+		}
+		
+		private void checkVariableNature(){
+			
+			if( !isEnableExpressionEditor() ){
+				if( StringUtils.startsWith(getExpression(), "\"") && StringUtils.endsWith(getExpression(), "\"")){
+					setExpression( getExpression().substring(1, getExpression().length()-1) );
+				}
+
+				setExpressionValue(false);
+				if(getVariable()==ContextVariable.CNO && CNO.getCnoByValue(getExpression())==null ){
+					setExpressionValue(true);
+				}else if(getVariable()==ContextVariable.TC2 && ContractCode.getContractCodeByValue(getExpression())==null ){
+					setExpressionValue(true);
+				}else if(getVariable()==ContextVariable.CATEGORY){
+					;
+				}else if(getVariable()==ContextVariable.QUOTE_GROUP && QuoteGroup.getQuoteGroupByValue(getExpression())==null ){
+					setExpressionValue(true);
+				}else if(getVariable()==ContextVariable.OCCUPATION && OccupationType.getOccupationTypeByValue(getExpression())==null ){
+					setExpressionValue(true);
+				}else if(getVariable()==ContextVariable.QUOTE_IT){
+					;
+				}else if(getVariable()!=null && getVariable().getType()==VariableType.BOOLEAN){
+					if( getExpression().equals("true") || getExpression().equals("false") ){
+						setExpressionValue(false);
+					} else {
+						setExpressionValue(true);
+					}
+				}else if(getVariable()!=null && getVariable().getType()==VariableType.INTEGER){
+					try {
+						Integer.parseInt(getExpression());
+						setExpressionValue(false);
+					} catch (NumberFormatException e) {
+						setExpressionValue(true);
+					}
+				}else if(getVariable()!=null && getVariable().getType()==VariableType.DOUBLE){
+					try {
+						Double.parseDouble(getExpression());
+						setExpressionValue(false);
+					} catch (NumberFormatException e) {
+						setExpressionValue(true);
+					}
+				}
+			}
+		}
+		
+		public Enum<?> getVariableEnum(){
+			if(getName().equals(ContextVariable.CNO.getName())){
+				return CNO.getCnoByValue(handleSelectItemExpression(getExpression()));
+			} else if(getName().equals(ContextVariable.TC2.getName())){
+				return ContractCode.getContractCodeByValue(handleSelectItemExpression(getExpression()));
+			} else if(getName().equals(ContextVariable.QUOTE_GROUP.getName())){
+				return QuoteGroup.getQuoteGroupByValue(handleSelectItemExpression(getExpression()));
+			} else if(getName().equals(ContextVariable.OCCUPATION.getName())){
+				return OccupationType.getOccupationTypeByValue(handleSelectItemExpression(getExpression()));
+			} else if(getName().equals(ContextVariable.QUOTE_IT.getName())){
+				return null;
+			}
+			return null;
+		}
+		
+		private String handleSelectItemExpression(String expression) {
+			if( StringUtils.startsWith(expression, "\"") && StringUtils.endsWith(expression, "\"")){
+				return expression = expression.substring(1, expression.length()-1);
+			}
+			return expression;
+		}
+		
+		private boolean isEnumVariable(){
+			if(getName().equals(ContextVariable.CNO.getName())){
+				return true;
+			} else if(getName().equals(ContextVariable.TC2.getName())){
+				return true;
+			} else if(getName().equals(ContextVariable.QUOTE_GROUP.getName())){
+				return true;
+			} else if(getName().equals(ContextVariable.OCCUPATION.getName())){
+				return true;
+			} else if(getName().equals(ContextVariable.QUOTE_IT.getName())){
+				return false;
+			}
+			return false;
+		}
+		
+		public Double getDoubleExpression(){
+			return Double.valueOf(getExpression());
+		}
+
+		@Override
+		public Date getEndDate() {
+			return getVariableData().getEndDate();
+		}
+
+		@Override
+		public String getExpression() {
+			return getVariableData().getExpression();
+		}
+
+		@Override
+		public Integer getId() {
+			return getVariableData().getId();
+		}
+
+		@Override
+		public String getName() {
+			return getVariableData().getName();
+		}
+
+		@Override
+		public Date getStartDate() {
+			return getVariableData().getStartDate();
+		}
+
+		@Override
+		public void setEndDate(Date endDate) {
+			getVariableData().setEndDate(endDate);
+		}
+
+		@Override
+		public void setExpression(String expression) {
+			getVariableData().setExpression(expression);
+		}
+
+		@Override
+		public void setId(Integer id) {
+			getVariableData().setId(id);
+		}
+
+		@Override
+		public void setName(String name) {
+			getVariableData().setName(name);
+		}
+
+		@Override
+		public void setStartDate(Date startDate) {
+			getVariableData().setStartDate(startDate);
+		}
+
+		@Override
+		public ExpressionScope getScope() {
+			return getVariableData().getScope();
+		}
+
+		@Override
+		public boolean isReadOnly() {
+			return getVariableData().isReadOnly();
+		}
+		
+	}
+	
+//	private interface IVariableData extends IExpression {
+//		
+//		public Integer getId();
+//		public void setId(Integer id);
+//		
+//		public String getName();
+//		public void setName(String name);
+//
+//		public String getExpression();
+//		public void setExpression(String expression);
+//
+//	    public Date getStartDate();
+//		public void setStartDate(Date startDate);
+//
+//	    public Date getEndDate();
+//		public void setEndDate(Date endDate);
+//	}
 	
 }

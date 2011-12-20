@@ -32,7 +32,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 
 @Entity
 @Table(name="agreement_level_data")
-public class AgreementLevelData extends AbstractVariableData implements ITransferObject, IExpression  {
+public class AgreementLevelData implements ITransferObject, IExpression, IVariableData  {
 
 	private static final long serialVersionUID = -530558961144928580L;
 	
@@ -136,7 +136,7 @@ public class AgreementLevelData extends AbstractVariableData implements ITransfe
 	
 	@Transient
 	public ContextVariable getVariable(){
-		return ContextVariable.getVariable(getName());
+		return ContextVariable.getVariableByName(getName());
 	}
 	
 	@Transient

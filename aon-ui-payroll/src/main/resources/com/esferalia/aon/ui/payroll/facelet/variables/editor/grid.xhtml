@@ -10,7 +10,11 @@
 		<aon:valueParam name="contractCode" default="#{controller.handler.contractCode}" />
 		<aon:valueParam name="quoteGroup" default="#{controller.handler.quoteGroup}" />
 		<aon:valueParam name="occupationType" default="#{controller.handler.occupationType}" />
-		<aon:valueParam name="variableType" default="#{data.variable.type}" />
+		<aon:valueParam name="baseVariableType" default="#{data.variable.type}" />
+		<aon:valueParam name="variableType" default="#{data.variableType}" />
+<!--  
+		<aon:valueParam name="variableType" default="#{data.showExpressionEditor?'EXPRESSION':data.variableType}" />
+-->
 		
 	</ui:include>
 

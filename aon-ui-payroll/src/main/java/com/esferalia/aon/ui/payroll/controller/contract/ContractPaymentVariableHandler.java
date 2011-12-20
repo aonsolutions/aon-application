@@ -19,9 +19,11 @@ import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
 import com.esferalia.aon.payroll.ContractPayment;
+import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculatorContext;
 import com.esferalia.aon.salary.SalaryException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
+import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler.AbstractVariableData;
 
 public class ContractPaymentVariableHandler extends ContractDetailVariableHandler {
 	
@@ -33,8 +35,9 @@ public class ContractPaymentVariableHandler extends ContractDetailVariableHandle
 
 	@Override
 	public void resetVariable() {
-		setData(new ContractData());
-		((ContractData)getData()).setContract(((ContractPayment) getController().getTo()).getContract());
+		setData(new AbstractVariableData());
+		getData().setVariableData(new ContractData());
+		((ContractData)getData().getVariableData()).setContract(((ContractPayment) getController().getTo()).getContract());
 		
 	}
 	@Override
@@ -43,21 +46,23 @@ public class ContractPaymentVariableHandler extends ContractDetailVariableHandle
 		Contract contract = payment.getContract();
 		Integer year = ((ContractDetailVariableController) getController()).getYear() ;
 		Month month = ((ContractDetailVariableController) getController()).getMonth();
-		List<ContractData> dataList;
+		List<IVariableData> dataList;
 		try {
 			setVariablesModel(null);
 			setUndefinedVariablesModel(null);
 			if(payment.getExpression()!=null || payment.getPaymentConcept().getExpression()!=null){
-				dataList = new LinkedList<ContractData>();
+				dataList = new LinkedList<IVariableData>();
 				Set<String> vl = ExpressionContext.getVariables(payment.getExpression()==null?payment.getPaymentConcept().getExpression():payment.getExpression());
-				List<ContractData> undefined = new LinkedList<ContractData>();
+				List<IVariableData> undefined = new LinkedList<IVariableData>();
 				if(!vl.isEmpty()){
 					ContractSalaryCalculatorContext ctx = (ContractSalaryCalculatorContext) contract.getSalaryCalculatorContext(year, month, payment.getSalaryType());
 					for(String s: vl){
 						List<ITransferObject> list = existingContractData(s, contract);
 						if(!list.isEmpty()){
 							for(ITransferObject to: list){
-								dataList.add((ContractData) to);
+								AbstractVariableData data = new AbstractVariableData();
+								data.setVariableData((IVariableData) to);
+								dataList.add(data);
 							}
 						} else {
 							Calendar startCal = Calendar.getInstance();
@@ -76,11 +81,13 @@ public class ContractPaymentVariableHandler extends ContractDetailVariableHandle
 							data.setStartDate(startCal.getTime());
 							data.setEndDate(contract.getEndDate()!=null?contract.getEndDate():endCal.getTime());
 							Object o = ctx.getExpressionContext().getVariable(s, startCal.getTime(), endCal.getTime(), Object.class);
+							AbstractVariableData d = new AbstractVariableData();
+							d.setVariableData((IVariableData) data);
 							if(o==null){
-								undefined.add(data);
+								undefined.add(d);
 							} else {
-								data.setExpression(o.toString());
-								dataList.add(data);
+								d.setExpression(o.toString());
+								dataList.add(d);
 							}
 						}
 					}

@@ -24,8 +24,10 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.Agreement;
 import com.esferalia.aon.payroll.AgreementData;
+import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
+import com.esferalia.aon.salary.expression.IExpression;
 
 public class AgreementVariablesHandler extends AbstractVariableHandler{
 
@@ -59,12 +61,14 @@ public class AgreementVariablesHandler extends AbstractVariableHandler{
 			if(!StringUtils.isEmpty(getVariableFilter())){
 				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_DATA_NAME), getVariableFilter());
 			}
-			List<AgreementData> dataList = null;
-			dataList = new LinkedList<AgreementData>();
+			List<IVariableData> dataList = null;
+			dataList = new LinkedList<IVariableData>();
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				for(ITransferObject to: list){
-					dataList.add((AgreementData) to);
+					AbstractVariableData data = new AbstractVariableData();
+					data.setVariableData((IVariableData) to);
+					dataList.add(data);
 				}
 			}
 			setVariablesModel(new ListDataModel(dataList));
@@ -136,8 +140,9 @@ public class AgreementVariablesHandler extends AbstractVariableHandler{
 	}
 	@Override
 	public void resetVariable() {
-		setData(new AgreementData());
-		((AgreementData)getData()).setAgreement((Agreement) getController().getTo());
+		setData(new AbstractVariableData());
+		getData().setVariableData(new AgreementData());
+		((AgreementData)getData().getVariableData()).setAgreement((Agreement) getController().getTo());
 	}
 
 }

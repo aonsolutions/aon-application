@@ -8,7 +8,18 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 	
-	<aon:div rendered="#{formEdit or formNew}" >
+	<aon:div rendered="#{formEdit}" style="display: inline;" >
+		<aon:commandButton id="#{inputTextId}_variableExpressionEditor#{editorSuffix}"
+			title="#{(controller.handler.data.expressionValue)?(payrollBundle.payroll_variable_free_text_cancel):(payrollBundle.payroll_variable_free_text)}" 
+			value="&#160;" ajaxSingle="true"
+			rendered="#{ baseVariableType!=null and baseVariableType!='UNKNOWN' and baseVariableType!='EXPRESSION' and baseVariableType!='STRING' }"
+			reRender="variableHelperModalContainer#{helperSuffix}"
+			actionListener="#{controller.handler.onSelectExpressionEditor}"
+			styleClass="aon-icon-commandButton #{(controller.handler.data.expressionValue)?('aon-icon-cancel'):('aon-icon-edit')}"/>
+			<!--  
+			-->
+	</aon:div>
+	<aon:div rendered="#{formEdit or formNew}" style="display: inline;" >
 			
 		<aon:inputText id="#{inputTextId}_DOUBLE#{editorSuffix}" required="#{required}"
 			rendered="#{variableType=='DOUBLE'}"
@@ -19,7 +30,7 @@
 		<rich:inputNumberSpinner id="#{inputTextId}_INTEGER#{editorSuffix}"
 			rendered="#{variableType=='INTEGER'}"
 			value="#{controller.handler.expression}" inputSize="4" >
-  			</rich:inputNumberSpinner>
+  		</rich:inputNumberSpinner>
 	
 		<h:selectBooleanCheckbox id="#{inputTextId}_BOOLEAN#{editorSuffix}" required="#{required}"
 			rendered="#{variableType=='BOOLEAN'}"
@@ -43,31 +54,31 @@
 		</aon:inputText>
 	
 		<aon:selectOneMenu id="#{inputTextId}_DROP#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='DROP'}" 
+			rendered="#{variableType=='DROP'}" style="width: 95%;"
 			value="#{controller.handler.expression}">
 			<f:selectItems value="#{controller.handler.variablesCollection}" />
 		</aon:selectOneMenu>
 	
 		<aon:selectOneMenu id="#{inputTextId}_CNO_DROP#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='CNO_DROP'}" 
+			rendered="#{variableType=='CNO_DROP'}" style="width: 95%;"
 			value="#{cno}">
 			<f:selectItems value="#{controller.handler.variablesCollection}" />
 		</aon:selectOneMenu>
 	
 		<aon:selectOneMenu id="#{inputTextId}_TC2_DROP#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='TC2_DROP'}"
+			rendered="#{variableType=='TC2_DROP'}" style="width: 95%;"
 			value="#{contractCode}">
 			<f:selectItems value="#{controller.handler.variablesCollection}" />
 		</aon:selectOneMenu>
 	
 		<aon:selectOneMenu id="#{inputTextId}_QUOTE_GROUP_DROP#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='QUOTE_GROUP_DROP'}" 
+			rendered="#{variableType=='QUOTE_GROUP_DROP'}" style="width: 95%;"
 			value="#{quoteGroup}">
 			<f:selectItems value="#{controller.handler.variablesCollection}" />
 		</aon:selectOneMenu>
 	
 		<aon:selectOneMenu id="#{inputTextId}_OCCUPATION_DROP#{editorSuffix}" required="#{required}"
-			rendered="#{variableType=='OCCUPATION_DROP'}" 
+			rendered="#{variableType=='OCCUPATION_DROP'}" style="width: 95%;"
 			value="#{occupationType}">
 			<f:selectItems value="#{controller.handler.variablesCollection}" />
 		</aon:selectOneMenu>

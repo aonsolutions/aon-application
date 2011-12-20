@@ -407,7 +407,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		
 		if ( message == null ) {
 			String description = variableName ; 
-			ContextVariable variable = ContextVariable.getVariable(variableName);
+			ContextVariable variable = ContextVariable.getVariableByName(variableName);
 			if ( variable != null ) {
 				try {
 					description  = variable.getDescription(getLocale());

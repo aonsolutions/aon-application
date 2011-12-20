@@ -26,7 +26,7 @@ import com.esferalia.aon.salary.expression.IExpression;
 
 @Entity
 @Table(name="agreement_data")
-public class AgreementData extends AbstractVariableData implements ITransferObject, IExpression {
+public class AgreementData implements ITransferObject, IExpression, IVariableData {
 	
 	private static final long serialVersionUID = -1985562229267143435L;
 

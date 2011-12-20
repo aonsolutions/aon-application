@@ -28,6 +28,7 @@ import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelData;
 import com.esferalia.aon.payroll.Contract;
 import com.esferalia.aon.payroll.ContractData;
+import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.salary.expression.IExpression;
@@ -64,12 +65,14 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 			if(!StringUtils.isEmpty(getVariableFilter())){
 				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.CONTRACT_DATA_NAME), getVariableFilter());
 			}
-			List<ContractData> dataList = null;
-			dataList = new LinkedList<ContractData>();
+			List<IVariableData> dataList = null;
+			dataList = new LinkedList<IVariableData>();
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				for(ITransferObject to: list){
-					dataList.add((ContractData) to);
+					AbstractVariableData data = new AbstractVariableData();
+					data.setVariableData((IVariableData) to);
+					dataList.add(data);
 				}
 			}
 			if(contract.getAgreementLevelCategory()!=null && contract.getAgreementLevelCategory().getId()!=null){
@@ -94,7 +97,9 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 							data.setStartDate(d.getStartDate());
 							data.setEndDate(d.getEndDate());
 							data.setExpression(d.getExpression());
-							dataList.add(data);
+							AbstractVariableData abstractData = new AbstractVariableData();
+							abstractData.setVariableData((IVariableData) data);
+							dataList.add(abstractData);
 						}
 					}
 				}
@@ -119,7 +124,9 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 							data.setStartDate(d.getStartDate());
 							data.setEndDate(d.getEndDate());
 							data.setExpression(d.getExpression());
-							dataList.add(data);
+							AbstractVariableData abstractData = new AbstractVariableData();
+							abstractData.setVariableData((IVariableData) data);
+							dataList.add(abstractData);
 						}
 					}
 				}
@@ -193,12 +200,13 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 	}
 	@Override
 	protected void resetVariable() {
-		setData(new ContractData());
-		((ContractData)getData()).setContract((Contract) getController().getTo());
+		setData(new AbstractVariableData());
+		getData().setVariableData(new ContractData());
+		((ContractData)getData().getVariableData()).setContract((Contract) getController().getTo());
 	}
 	
-	private boolean existVariable(IExpression exp, List<ContractData> dataList) {
-		for(ContractData data: dataList){
+	private boolean existVariable(IExpression exp, List<IVariableData> dataList) {
+		for(IVariableData data: dataList){
 			if(data.getName().equals(exp.getName())){
 				return true;
 			}
