@@ -27,6 +27,7 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 		
 		private Date startDate;
 		private Date endDate;
+		private Date issueDate;
 		
 		public LogMessage(SalaryBuilderListenerLevel level, String msg) {
 			this.level = level;
@@ -80,6 +81,14 @@ public class ListSalaryBuilderListener implements ISalaryBuilderListener {
 		}
 		public void setEndDate(Date endDate) {
 			this.endDate = endDate;
+		}
+		
+		public void setIssueDate(Date issueDate) {
+			this.issueDate = issueDate;
+		}
+		
+		public Date getIssueDate() {
+			return issueDate;
 		}
 	}
 

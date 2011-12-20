@@ -499,7 +499,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			controller.setCriteria(criteria);
 			controller.onSearch(event);
 			controller.getModel().setRowIndex(0);
-			controller.onSelect(event);
+			controller.onSelect(event);http://www.jpackage.org/
 			controller.setBackAction(IPayrollConstants.SALARY_DRAFT_FORM);
 			
 		} catch (ManagerBeanException e) {
@@ -1115,6 +1115,28 @@ public class SalaryDraftController extends BasicController implements ContractSa
 					months.add( Month.getMonthByValue(extraMonth));
 				}
 			}
+			
+			bean = BeanManager.getManagerBean(Salary.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), 
+					contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), 
+					SalaryType.EXTRA);
+			criteria.addGreaterThanExpression(bean.getFieldName(IPayrollAlias.SALARY_ISSUE_DATE), 
+					CommonUtil.getYearFirstDay(year));
+			criteria.addLessThanExpression(bean.getFieldName(IPayrollAlias.SALARY_ISSUE_DATE), 
+					CommonUtil.getYearLastDay(year));
+			
+			
+			for(ITransferObject to: bean.getList(criteria)){
+				Salary extra = ( Salary ) to;
+				int extraMonthValue = CommonUtil.getMonth( extra.getIssueDate() );
+				Month extraMonth = Month.getMonthByValue(extraMonthValue);
+				if ( !months.contains(extraMonth )) {
+					months.add( extraMonth );
+				}
+			}
+			
 
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> getExtraMonths exception: ",e);

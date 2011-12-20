@@ -138,9 +138,9 @@ public class SQLContractDelayCalculatorContext
 						criteria);
 			while ( ctx.next() ) {
 				calculator.calculate(ctx);
+				payments.addAll(delayPaymentBuilder.getContractPayments());
 			}
 			
-			payments.addAll(delayPaymentBuilder.getContractPayments());
 		}
 		
 		ExtraDelayPaymentDecorator extraPaymentDecorator = 
@@ -161,8 +161,8 @@ public class SQLContractDelayCalculatorContext
 						 criteria );
 			while ( ctx.next() ) {
 				calculator.calculate(ctx);
+				payments.addAll(extraDelayPaymentBuilder.getContractPayments());
 			}
-			payments.addAll(extraDelayPaymentBuilder.getContractPayments());
 		}
 		
 		return payments;

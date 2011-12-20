@@ -200,12 +200,13 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 							salaryBuilder.addPayment(type, concept, payment, description, null);
 						}
 					}
-				
+					/*
 					System.out.println(String.format("[%s]: %-45s\t\t= %f\t(%f)", 
 							contractPayment.getName(), 
 							contractPayment.getDescription(), 
 							total, 
 							taxCalculator.getTotalPayment()));
+					*/
 					quoteCalculator.quote(contractPayment, paymentStart, paymentEnd, total);
 
 				}catch ( InvalidVariable e ) {
