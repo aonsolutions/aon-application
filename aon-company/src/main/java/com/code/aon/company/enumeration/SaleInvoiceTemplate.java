@@ -35,5 +35,13 @@ public enum SaleInvoiceTemplate implements IResourceable {
     	return value;
     }
     
+    public static SaleInvoiceTemplate getEnumByValue(String value){
+    	for(SaleInvoiceTemplate o: SaleInvoiceTemplate.values()){
+			if(o.getValue().equals(value)){
+				return o;
+			}
+		}
+    	return null;
+    }
     
 }

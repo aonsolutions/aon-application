@@ -601,6 +601,10 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.saleInvoiceTemplate = saleInvoiceTemplate;
 	}
 	
+	public String getSaleInvoiceTemplateValue(){
+		return saleInvoiceTemplate==null?SaleInvoiceTemplate.DEFAULT.getValue():saleInvoiceTemplate.getValue();
+	}
+	
 	public boolean isPrintLogo() {
 		return printLogo;
 	}
@@ -699,12 +703,7 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	public SaleInvoiceTemplate obtainSaleInvoiceTemplate() throws ManagerBeanException {
 		ApplicationParameter appParam = obtainApplicationParameter(SALE_INVOICE_TEMPLATE_PARAM);
-		for(SaleInvoiceTemplate o: SaleInvoiceTemplate.values()){
-			if(o.getValue().equals(appParam.getValue())){
-				return o;
-			}
-		}
-		return null;
+		return (appParam == null?null:SaleInvoiceTemplate.getEnumByValue(appParam.getValue()));
 	}
 	
 	public boolean obtainPrintLogo() throws ManagerBeanException {
