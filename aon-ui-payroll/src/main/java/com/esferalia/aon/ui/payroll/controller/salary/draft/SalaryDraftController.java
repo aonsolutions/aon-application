@@ -69,6 +69,7 @@ import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -459,6 +460,26 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_PAYMENTS );
 		warning.message = message;
 		warning.description = payment.getDescription();
+		warning.variable = variableName;
+		warnings.add(warning);
+	}
+
+	@Override
+	public void onCheckError(IContractDeduction deduction, String message) {
+		Warning warning = new Warning();
+		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_DEDUCTIONS );
+		warning.message = message;
+		warning.description = deduction.getDescription();
+		warnings.add(warning);
+	}
+	
+	@Override
+	public void onInvalidData(IContractDeduction dedcution,
+			String variableName, String message) {
+		Warning warning = new Warning();
+		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_DEDUCTIONS);
+		warning.message = message;
+		warning.description = dedcution.getDescription();
 		warning.variable = variableName;
 		warnings.add(warning);
 	}

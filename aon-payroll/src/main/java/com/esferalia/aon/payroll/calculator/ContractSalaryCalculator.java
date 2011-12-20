@@ -47,6 +47,9 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 		public void onCheckError( IContractPayment payment, String message);
 		public void onInvalidData(IContractPayment payment, String variableName, String message);
 
+		public void onCheckError( IContractDeduction deduction, String message);
+		public void onInvalidData(IContractDeduction deduction, String variableName, String message);
+
 		public void onCheckError( IContractBonus bonus, String message);
 		public void onInvalidData( IContractBonus bonus, String variableName, String message);
 	}
@@ -332,6 +335,10 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 						if ( type.isSsDeduction() ) {
 							ssContributions += deduction;
 						}
+					}catch ( InvalidVariable e ) {
+						onInvalidData(contractDeduction, e.getVariable(), e.getMessage());
+					}catch ( CheckException e ) {
+						onCheckError(contractDeduction, e.getMessage());
 					}catch ( UndefinedVariableException e ) {
 						// TODO : notificar ??? 
 					}
@@ -591,6 +598,18 @@ public class ContractSalaryCalculator implements ISalaryCalculator{
 	private void onInvalidData( IContractBonus bonus, String variableName, String message){
 		if ( listener!= null ) {
 			listener.onInvalidData(bonus, variableName, message);
+		}
+	}
+
+	private void onCheckError( IContractDeduction dedcution, String message){
+		if ( listener!= null ) {
+			listener.onCheckError(dedcution, message);
+		}
+	}
+
+	private void onInvalidData( IContractDeduction deduction, String variableName, String message){
+		if ( listener!= null ) {
+			listener.onInvalidData(deduction, variableName, message);
 		}
 	}
 

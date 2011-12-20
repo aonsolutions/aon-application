@@ -9,7 +9,9 @@ import static com.esferalia.aon.payroll.enumeration.ContextVariable.CHECK;
 import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
+import org.mvel2.MVEL;
 import org.mvel2.util.MethodStub;
 
 import com.code.aon.common.util.CommonUtil;
@@ -22,6 +24,13 @@ import com.esferalia.aon.salary.expression.CheckException;
 public class ContextFunctions {
 
 	private static final String MONTHS_IMPL = "MESESIMPL";
+
+
+	public static void isDef(String name, String msg, ExpressionContext context) throws CheckException{
+		if ( !context.isDef(name) ) {
+			throw new InvalidVariable(name, msg);
+		}
+	}
 
 	public static void check(boolean condition, String msg) throws CheckException{
 		if ( !condition ) {
@@ -138,10 +147,44 @@ public class ContextFunctions {
 		}
 	}
 
+	private static void loadIsDefFunction(ExpressionContext context, Date startDate, Date endDate) throws ExpressionException {
+
+		try {
+			
+			context.addVariable("CONTEXT", context, startDate, endDate);
+			
+			Method isDef =  ContextFunctions.class.getMethod(
+					"isDef", 
+					String.class,
+					String.class, 
+					ExpressionContext.class);
+			
+			MethodStub isDefStub = new MethodStub(isDef);
+			
+			context.addVariable( "ISDEF" , isDefStub, startDate, endDate);
+		
+			String functionScript =  
+					String.format("%s = def(variable, msg) { ISDEF( variable, msg, CONTEXT) };", 
+							ContextVariable.ISDEF);
+			
+			context.eval(functionScript, startDate, endDate);
+		
+		} catch ( SecurityException e) {
+		} catch( NoSuchMethodException e ){
+		}
+
+	}
+
 	public static void loadFunctions(ExpressionContext context, Date startDate, Date endDate) throws ExpressionException {
 		loadCheckFunction(context, startDate, endDate);
 		loadCheckVarFunction(context, startDate, endDate);
 		loadWarnFunction(context, startDate, endDate);
 		loadMonthsFunction(context, startDate, endDate);
+		//loadIsDefFunction(context, startDate, endDate);
+	}
+	
+	
+	public static void main(String[] args) {
+		System.out.println( MVEL.eval("HOLA=12346; VALIDAR = def (variable) { return isdef variable ? variable : NULL; }; VALIDAR(HELLO);", new HashMap<String,Object>()));
 	}
 }
