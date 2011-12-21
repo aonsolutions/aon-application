@@ -27,7 +27,6 @@ import com.esferalia.aon.payroll.AgreementData;
 import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
-import com.esferalia.aon.salary.expression.IExpression;
 
 public class AgreementVariablesHandler extends AbstractVariableHandler{
 
@@ -66,7 +65,7 @@ public class AgreementVariablesHandler extends AbstractVariableHandler{
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				for(ITransferObject to: list){
-					AbstractVariableData data = new AbstractVariableData();
+					VariableData data = new VariableData();
 					data.setVariableData((IVariableData) to);
 					dataList.add(data);
 				}
@@ -140,7 +139,7 @@ public class AgreementVariablesHandler extends AbstractVariableHandler{
 	}
 	@Override
 	public void resetVariable() {
-		setData(new AbstractVariableData());
+		setData(new VariableData());
 		getData().setVariableData(new AgreementData());
 		((AgreementData)getData().getVariableData()).setAgreement((Agreement) getController().getTo());
 	}
