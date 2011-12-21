@@ -44,7 +44,6 @@ public abstract class AbstractSalaryCalculatorTest extends AbstractCalculatorTes
 		
 	}
 
-	@Test
 	public void test() throws SQLException, ExpressionException, ParseException {
 		
 		Statement stmt = null;
