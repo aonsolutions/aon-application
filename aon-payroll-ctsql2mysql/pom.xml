@@ -4,11 +4,11 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.parent</artifactId>
-		<version>6.19</version>
+		<version>6.20-SNAPSHOT</version>
 	</parent>
 	<groupId>com.esferalia.aon</groupId>
 	<artifactId>aon-payroll-ctsql2mysql</artifactId>
-	<version>6.19</version>
+	<version>6.20-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>AON-PAYROLL-CTSQL2MYSQL</name>
@@ -18,9 +18,9 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.19.x/aon-payroll-ctsql2mysql</developerConnection>
-		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/releasesr/6.19.x/aon-payroll-ctsql2mysqlr</connection>
-		<url>scm:svn:http://dev.esferalia.com/repos/aon-application/releases/6.19.x/aon-payroll-ctsql2mysql</url>
+		<developerConnection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-payroll-ctsql2mysql</developerConnection>
+		<connection>scm:svn:http://dev.esferalia.com/repos/aon-application/trunk/aon-payroll-ctsql2mysqlr</connection>
+		<url>http://dev.esferalia.com/websvn/wsvn/aon-payroll-ctsql2mysql</url>
 	</scm>
 
 	<dependencies>
