@@ -10,14 +10,12 @@
 	
 	<aon:div rendered="#{formEdit}" style="display: inline;" >
 		<aon:commandButton id="#{inputTextId}_variableExpressionEditor#{editorSuffix}"
-			title="#{(controller.handler.data.expressionValue)?(payrollBundle.payroll_variable_free_text_cancel):(payrollBundle.payroll_variable_free_text)}" 
+			title="#{(controller.handler.data.enableExpressionEditor)?(payrollBundle.payroll_variable_free_text_cancel):(payrollBundle.payroll_variable_free_text)}" 
 			value="&#160;" ajaxSingle="true"
 			rendered="#{ baseVariableType!=null and baseVariableType!='UNKNOWN' and baseVariableType!='EXPRESSION' and baseVariableType!='STRING' }"
 			reRender="variableHelperModalContainer#{helperSuffix}"
 			actionListener="#{controller.handler.onSelectExpressionEditor}"
-			styleClass="aon-icon-commandButton #{(controller.handler.data.expressionValue)?('aon-icon-cancel'):('aon-icon-edit')}"/>
-			<!--  
-			-->
+			styleClass="aon-icon-commandButton #{(controller.handler.data.enableExpressionEditor)?('aon-icon-cancel'):('aon-icon-edit')}"/>
 	</aon:div>
 	<aon:div rendered="#{formEdit or formNew}" style="display: inline;" >
 			

@@ -264,13 +264,16 @@ ALTER TABLE `account_period` CHANGE `id` `name` char(16) NOT NULL COMMENT 'Nombr
 ALTER TABLE `account_period` ADD `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico' FIRST, ADD PRIMARY KEY (`id`);
 ALTER TABLE `account_period` ADD UNIQUE KEY `IDX_ACCOUNT_PERIOD_NAME` (`name`) ;
 
+ALTER TABLE `account_entry`	ADD `account_period_name` char(4) NOT NULL;
+UPDATE `account_entry` SET `account_period_name` = `account_period`;
+UPDATE `account_entry` SET `account_period` = (SELECT `id` FROM `account_period` WHERE `name` = `account_entry`.`account_period_name`);
 ALTER TABLE `account_entry` 
 	MODIFY `account_period` int(4) NOT NULL COMMENT 'Ejercicio Contable del Asiento';
-UPDATE `account_entry` SET `account_period` = (SELECT `id` FROM `account_period` WHERE `name` = `account_entry`.`account_period`);
 ALTER TABLE `account_entry` 
 	ADD KEY `IDX_ACCOUNT_ENTRY_ACCOUNT_PERIOD` (`account_period`),
 	ADD CONSTRAINT `FK_ACCOUNT_ENTRY_ACCOUNT_PERIOD` FOREIGN KEY (`account_period`) REFERENCES `account_period` (`id`);
-
+ALTER TABLE `account_entry`	DROP `account_period_name`;
+	
 ALTER TABLE `account_summary` 
 	MODIFY `account_period` int(4) NOT NULL COMMENT 'Ejercicio Contable del Acumulado';  
 UPDATE `account_summary` SET `account_period` = (SELECT `id` FROM `account_period` WHERE `name` = `account_summary`.`account_period`);

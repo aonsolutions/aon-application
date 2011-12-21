@@ -70,7 +70,7 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				for(ITransferObject to: list){
-					AbstractVariableData data = new AbstractVariableData();
+					VariableData data = new VariableData();
 					data.setVariableData((IVariableData) to);
 					dataList.add(data);
 				}
@@ -97,7 +97,7 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 							data.setStartDate(d.getStartDate());
 							data.setEndDate(d.getEndDate());
 							data.setExpression(d.getExpression());
-							AbstractVariableData abstractData = new AbstractVariableData();
+							VariableData abstractData = new VariableData();
 							abstractData.setVariableData((IVariableData) data);
 							dataList.add(abstractData);
 						}
@@ -124,7 +124,7 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 							data.setStartDate(d.getStartDate());
 							data.setEndDate(d.getEndDate());
 							data.setExpression(d.getExpression());
-							AbstractVariableData abstractData = new AbstractVariableData();
+							VariableData abstractData = new VariableData();
 							abstractData.setVariableData((IVariableData) data);
 							dataList.add(abstractData);
 						}
@@ -200,7 +200,7 @@ public class ContractVariableHandler extends AbstractVariableHandler{
 	}
 	@Override
 	protected void resetVariable() {
-		setData(new AbstractVariableData());
+		setData(new VariableData());
 		getData().setVariableData(new ContractData());
 		((ContractData)getData().getVariableData()).setContract((Contract) getController().getTo());
 	}
