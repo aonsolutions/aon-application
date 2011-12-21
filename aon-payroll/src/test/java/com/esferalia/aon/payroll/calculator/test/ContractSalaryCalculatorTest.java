@@ -35,7 +35,6 @@ public class ContractSalaryCalculatorTest extends AbstractCalculatorTest{
 	 * Test method for {@link com.esferalia.aon.payroll.calculator.ContractSalaryCalculator#calculate(com.esferalia.aon.salary.calculator.ISalaryCalculatorContext)}.
 	 * @throws com.code.aon.ql.util.ExpressionException 
 	 */
-	@Test
 	public void testSalary() throws SQLException, ExpressionException, SalaryException, ParseException, com.code.aon.ql.util.ExpressionException {
 
 		SQLSalaryBuilderTester salaryBuilderTester = 
