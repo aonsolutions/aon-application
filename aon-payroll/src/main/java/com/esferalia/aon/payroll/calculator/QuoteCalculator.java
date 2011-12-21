@@ -25,7 +25,7 @@ import com.esferalia.aon.salary.enumeration.SalaryTypeVisitor;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ITimedObject;
-import com.esferalia.aon.salary.expression.UndefinedVariableException;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 
 public abstract class QuoteCalculator {
 	
@@ -360,7 +360,7 @@ public abstract class QuoteCalculator {
 		
 		if ( minLimits == null ) {
 			String variableName = CGC_BASE_MIN.getName();
-			throw new UndefinedVariableException(variableName);
+			throw new UndefinedVariablesException(variableName);
 		}
 		
 		Double minLimit = getLimit(minLimits.get(quoteGroup), ctx, start, end);
@@ -374,7 +374,7 @@ public abstract class QuoteCalculator {
 	
 		if ( maxLimits == null ) {
 			String variableName = CGC_BASE_MIN.getName();
-			throw new UndefinedVariableException(variableName);
+			throw new UndefinedVariablesException(variableName);
 		}
 
 		Double maxLimit = getLimit(maxLimits.get(quoteGroup), ctx, start, end);
@@ -388,7 +388,7 @@ public abstract class QuoteCalculator {
 	}
 
 	protected double getLimitedCgpBase(double rawCgpBase, ExpressionContext ctx , Date start, Date end) 
-	{
+			 throws ExpressionException {
 		String minExpression = ctx.getVariable(CGP_BASE_MIN, start, end, String.class);
 		
 		Double minLimit = getLimit(minExpression, ctx, start, end);
@@ -408,16 +408,14 @@ public abstract class QuoteCalculator {
 		return rawCgpBase;
 	}
 
-	private Double getLimit( String  expression, ExpressionContext expressionContext, Date start, Date end  ){
+	private Double getLimit( String  expression, ExpressionContext expressionContext, Date start, Date end  )
+	throws ExpressionException {
 		
 		if ( expression == null )
 			return null;
 		
 		List<ITimedObject<Double>> limits = null;
-		try {
-			limits = expressionContext.eval(expression, start, end, Double.class );
-		} catch (ExpressionException e) {
-		}
+		limits = expressionContext.eval(expression, start, end, Double.class );
 		
 		if ( limits == null || limits.size() == 0 ) {
 			return null;

@@ -1,6 +1,7 @@
 package com.esferalia.aon.payroll.calculator.sql;
 
 import static com.esferalia.aon.payroll.enumeration.ContextVariable.*;
+import static com.esferalia.aon.salary.expression.ExpressionContext.ExpressionExceptionWrapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -62,6 +63,7 @@ import com.esferalia.aon.payroll.sql.SQLConstants.RegistryColumns;
 import com.esferalia.aon.payroll.sql.SQLConstants.WorkplaceColumns;
 import com.esferalia.aon.salary.ISalaryProxy;
 import com.esferalia.aon.salary.enumeration.SalaryType;
+import com.esferalia.aon.salary.expression.CheckException;
 import com.esferalia.aon.salary.expression.ExpressionContext;
 import com.esferalia.aon.salary.expression.ExpressionException;
 import com.esferalia.aon.salary.expression.ExpressionImpl;
@@ -69,9 +71,10 @@ import com.esferalia.aon.salary.expression.ExpressionScope;
 import com.esferalia.aon.salary.expression.IExpression;
 import com.esferalia.aon.salary.expression.ITimedObject;
 import com.esferalia.aon.salary.expression.ITimedVariable;
+import com.esferalia.aon.salary.expression.InvalidVariables;
 import com.esferalia.aon.salary.expression.Period;
 import com.esferalia.aon.salary.expression.TimedObject;
-import com.esferalia.aon.salary.expression.UndefinedVariableException;
+import com.esferalia.aon.salary.expression.UndefinedVariablesException;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 
 public class SQLContractSalaryCalculatorContext implements
@@ -1107,7 +1110,9 @@ public class SQLContractSalaryCalculatorContext implements
 	private double getSalaryHours() {
 		Number weekHours = getVariable(WEEK_HOURS, Number.class);
 		if ( weekHours == null ) {
-			weekHours = 40.00;
+			throw new ExpressionExceptionWrapper(new UndefinedVariablesException(
+					WEEK_HOURS.getName(), 
+					SALARY_HOURS.getName() ));
 		}
 		Double salaryDays = getVariable(SALARY_DAYS, Double.class );
 		
@@ -1116,12 +1121,20 @@ public class SQLContractSalaryCalculatorContext implements
 	
 	private boolean isIndefinite() {
 		String tc2 = getVariable(TC2, String.class);
-		return tc2 == null ? true : "123".indexOf(tc2.charAt(0)) != -1; 
+		if ( tc2 == null ) {
+			throw new ExpressionExceptionWrapper(new UndefinedVariablesException(
+				TC2.getName() ));
+		}
+		return ( "123".indexOf(tc2.charAt(0)) != -1 ); 
 	}
 
 	private boolean isFullTime() {
 		String tc2 = getVariable(TC2, String.class);
-		return tc2 == null ? true : "14".indexOf(tc2.charAt(0)) != -1; 
+		if ( tc2 == null ) {
+			throw new ExpressionExceptionWrapper(new UndefinedVariablesException(
+				TC2.getName() ));
+		}
+		return ( "14".indexOf(tc2.charAt(0)) != -1 ); 
 	}
 
 	private boolean isShortContract() {
@@ -1280,6 +1293,7 @@ public class SQLContractSalaryCalculatorContext implements
 			}
 		};
 
+		this.contractExpressionContext.addVariable(CONTEXT, contractExpressionContext, startDate, endDate);
 		// TODO: Tiene que ir aqui ???
 		SalaryType salaryType = getSalaryType();
 		this.contractExpressionContext.addVariable(SALARY, salaryType == SalaryType.SALARY, startDate, endDate);
@@ -1540,7 +1554,7 @@ public class SQLContractSalaryCalculatorContext implements
 //					if ( expr.getName().contains("AUMENTO") ) 
 //						System.out.printf("[%s]: Contract data %s = %s [%tF..%tF ]\r\n", 
 //								getEmployeeDocument(), expr.getName(), expr.getExpression(), start, end);
-				} catch (UndefinedVariableException e ){
+				} catch (UndefinedVariablesException e ){
 					failed.add(new TimedObject<IExpression>(expr, new Period(start, end)));
 				} catch (Exception e) {
 					//TODO: ¿ Que hacemos con esta excepcion ? 
@@ -1551,12 +1565,12 @@ public class SQLContractSalaryCalculatorContext implements
 				try {
 					Period period = timedExpr.getPeriod();
 					IExpression expr = timedExpr.getValue();
-/*					System.out.printf("[%s]: UndefinedVariableException %s = %s [%tF..%tF ]\r\n", 
+/*					System.out.printf("[%s]: UndefinedVariablesException %s = %s [%tF..%tF ]\r\n", 
 							getEmployeeDocument(), expr.getName(), expr.getExpression(), period.getStart(), period.getEnd());*/
 					ctx.addExpression(expr, 
 							period.getStart(), 
 							period.getEnd() ); 
-				} catch ( UndefinedVariableException e ){
+				} catch ( UndefinedVariablesException e ){
 					
 				} catch ( Exception e ){}
 			}

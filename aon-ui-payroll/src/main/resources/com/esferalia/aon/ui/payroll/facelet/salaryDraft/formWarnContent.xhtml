@@ -38,7 +38,7 @@
 						
 			</aon:column>
 			<aon:column styleClass="aon-vertical-align-top aon-noborder">
-				<aon:outputText value="#{warning.description }" styleClass=""/>
+				<aon:outputText value="#{empty warning.variable ? warning.description : warning.variable }" styleClass=""/>
 			</aon:column>
 		</aon:dataTable>
 	</aon:div>	

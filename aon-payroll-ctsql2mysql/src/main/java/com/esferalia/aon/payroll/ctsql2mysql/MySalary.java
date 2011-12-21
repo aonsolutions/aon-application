@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.code.aon.common.util.CommonUtil;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Empresa;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Emprper;
 import com.esferalia.aon.payroll.ctsql2mysql.AbstractCtsqlDB.Finidto;
@@ -62,8 +63,12 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 	public void visitRel_nom_per(Nomina nomina, Emprper emprper)
 			throws SQLException {
 
-		if (this.contracts.outOfDate(nomina.getFecfin()))
+
+		
+		if (this.contracts.outOfDate(nomina.getFecfin())){
 			return;
+		}
+
 
 		contractId = contracts.getContractId(emprper.getCdg());
 		if (contractId == null) {
@@ -110,7 +115,7 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		if ("A".equals(nomina.getTipo())) {
 			type = SalaryType.DELAY;
 		}
-		
+
 		Double totalIrpf = toDouble(nomina.getImporte_irpf());
 		
 		this.salaryId = mysqlDB.insertSalary(enum2short(type), contractId,
@@ -133,9 +138,19 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 
 		Double importeCg = toDouble(nomina.getImporte_cg());
 		if (importeCg > 0) {
-			BigDecimal cgPercentage = nomina.getPrc_cg();
-			String cgFunction = String.format("%.2f %%",
-					cgPercentage != null ? cgPercentage : 0);
+			double cgPercentage = toDouble(nomina.getPrc_cg());
+			
+			if ( cgPercentage == 0.00 ) {
+				cgPercentage = importeCg / cgcBase * 100 ;
+				if ( Math.abs(4.70 - cgPercentage ) < 0.02  ) {
+					cgPercentage = 4.70;
+				}
+				MysqlDB.info("nomina[{}]: Calculating prc_cgc {}/{} = {}.",
+						nomina.getCdg(), importeCg, cgcBase, String.format("%.2f %%", cgPercentage) );
+				
+			}
+			
+			String cgFunction = String.format("%.2f %%", cgPercentage);
 			mysqlDB.insertSalary_deduction(this.salaryId,
 					enum2short(DeductionType.COMMON_CONTINGENCY), "CGC", cgFunction,
 					null, importeCg);
@@ -146,6 +161,18 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		if (importeAcc > 0) {
 
 			double accPercentage = toDouble(nomina.getPrc_acc());
+			
+			if ( accPercentage == 0.00 ) {
+				accPercentage = importeAcc / cgpBase * 100;
+				if ( Math.abs(1.65 - accPercentage ) < 0.02  ) {
+					accPercentage = 1.65;
+				}
+				if ( Math.abs(1.70 - accPercentage ) < 0.02  ) {
+					accPercentage = 1.70;
+				}
+				MysqlDB.info("nomina[{}]: Calculating Acc {}/{} = {}.",
+						nomina.getCdg(), importeAcc, cgpBase , String.format("%.2f %%", accPercentage) );
+			}
 
 			if (accPercentage == 1.65 || accPercentage == 1.70) {
 				double jobPercentage = 0.10;
@@ -250,8 +277,13 @@ public class MySalary extends DefaultCtsqlDBVisitor {
 		String function = String.format("%.3f", importe != null ? importe : 0);
 
 		if (!contracts.hasEmbargo(concepto)) {
-			mysqlDB.insertSalary_deduction(this.salaryId, enum2short(type),
-					null, concepto, function, importe);
+			mysqlDB.insertSalary_deduction(
+					this.salaryId, 
+					enum2short(type),
+					null, 
+					concepto, 
+					function, 
+					importe);
 		} else {
 			FullEmbargo embargo = contracts.getEmbargo(concepto);
 

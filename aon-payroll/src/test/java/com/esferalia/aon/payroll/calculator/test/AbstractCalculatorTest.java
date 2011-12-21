@@ -30,6 +30,7 @@ public abstract class AbstractCalculatorTest {
 	@Before
 	public void setUp() throws Exception {
 		String url = "jdbc:mysql://127.0.0.1:3306/payroll-esferalia-org?autoReconnect=true";
+		//String url = "jdbc:mysql://localhost:3306/aon-lanfisa-esferalia-net?autoReconnect=true";
 		String usr = "dbuser"; 
 		String psw = "serubd2000";
 		Class.forName("com.mysql.jdbc.Driver");

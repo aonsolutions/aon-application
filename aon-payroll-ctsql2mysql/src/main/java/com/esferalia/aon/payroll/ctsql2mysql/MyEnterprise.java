@@ -229,7 +229,7 @@ public class MyEnterprise extends DefaultCtsqlDBVisitor implements IEnterprises 
 						MysqlDB.enum2short(RegistryType.LEGAL), 
 						Country.ES.getValue(),
 						DefaultMysqlDB.enum2short(SecurityLevel.OFFICIAL));
-				mysqlDB.insertCustomer(registry,null, false, false,false,null,status,null,  scopeId,false, true,true);
+				mysqlDB.insertCustomer(registry,null, false, false,null,status,null,  scopeId,false, true,true);
 			}
 			
 			Integer group = mysqlDB.insertInvoicing_group(registry);

@@ -1,13 +1,5 @@
 package com.esferalia.aon.salary.expression;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -20,34 +12,16 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.mvel2.ConversionException;
-import org.mvel2.ConversionHandler;
-import org.mvel2.DataConversion;
 import org.mvel2.MVEL;
 import org.mvel2.PropertyAccessException;
 import org.mvel2.UnresolveablePropertyException;
-import org.mvel2.compiler.CompiledAccExpression;
-import org.mvel2.conversion.BigDecimalCH;
-import org.mvel2.integration.impl.ClassImportResolverFactory;
-import org.mvel2.templates.TemplateRegistry;
 import org.mvel2.templates.TemplateRuntime;
-import org.mvel2.templates.util.TemplateOutputStream;
-import org.mvel2.util.MethodStub;
-import org.mvel2.util.StringAppender;
 
-import com.code.aon.common.util.CommonUtil;
-import com.esferalia.aon.salary.enumeration.DeductionType;
 import com.esferalia.aon.salary.expression.Variables.NotFoundHandler;
 import com.esferalia.aon.salary.expression.Variables.PeriodMap;
 
 
 public class ExpressionContext {
-	
-	
-	
-	Variables variables;
-	
 	
 	public  static Set<String> getVariables(String script) {
 		Set<String> names = new HashSet<String>(); 
@@ -60,7 +34,18 @@ public class ExpressionContext {
 		}
 		return names;
 	}
-
+	
+	public static class ExpressionExceptionWrapper extends RuntimeException {
+		public ExpressionExceptionWrapper(ExpressionException e) {
+			super(e);
+		}
+		
+		public ExpressionException getExpressionException(){
+			return (ExpressionException) getCause();
+		}
+	}
+	
+	private Variables variables;
 
 	public ExpressionContext() {
 		variables = new Variables(null);
@@ -155,11 +140,13 @@ public class ExpressionContext {
 			try {
 				T value = MVEL.eval(script, bindings, toType);
 				values.add(new TimedObject<T>(value, bindings.getPeriod()));
-			} catch ( UnresolveablePropertyException e ) {
-				throw new UndefinedVariableException(e.getName(), e.getLocalizedMessage());
-			} catch ( PropertyAccessException e ) {
+			}catch ( UnresolveablePropertyException e ) {
+				throw new UndefinedVariablesException(e.getName());
+			}catch ( PropertyAccessException e ) {
 				throwCause(e);
-				throw new UndefinedVariableException("", e.getLocalizedMessage());
+				throw new UndefinedVariablesException();
+			}catch ( ExpressionExceptionWrapper e ){
+				throw e.getExpressionException();
 			}
 		}
 		
@@ -219,10 +206,10 @@ public class ExpressionContext {
 	private static void throwCause ( Throwable child ) throws ExpressionException {
 		Throwable parent = child.getCause() ;
 		while ( parent != null ) {
-				if ( parent instanceof ExpressionException ) {
-					throw (ExpressionException)parent;
-				}
-				parent = parent.getCause();
+			if ( parent instanceof ExpressionException ) {
+				throw (ExpressionException)parent;
+			}
+			parent = parent.getCause();
 		}
 	}
 	
