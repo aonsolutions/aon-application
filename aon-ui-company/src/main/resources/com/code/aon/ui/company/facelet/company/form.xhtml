@@ -94,41 +94,85 @@
 							<aon:div styleClass="aon-group-body"> 	
 								<aon:div styleClass="aon-group-body-internal">
 									<a4j:region>
-										<aon:panelGrid id="companyOtherData" columns="2" style="width:100%">
-											<aon:outputLabel for="Company_surcharge"
-												value="#{bundle.aon_surcharge}" />
-											<aon:selectBooleanCheckbox id="Company_surcharge"
-												value="#{company.to.surcharge}" />
-						
-											<aon:outputLabel for="Company_withholding"
-												value="#{bundle.aon_retention}" />
-											<aon:selectBooleanCheckbox id="Company_withholding"
-												value="#{company.to.withholding}" />
-
-											<c:if test="#{aonConfiguration.bean.company.showEInvoice}">
-												<aon:outputLabel for="Company_EInvoice"
-													value="#{companyBundle.company_eInvoice}" />
-												<aon:selectBooleanCheckbox id="Company_EInvoice"
-													reRender="companyOtherData" ajaxSingle="false"
-													value="#{company.to.EInvoice}" />
-		
-												<aon:outputLabel for="Company_smartCard"
-													rendered="#{company.to.EInvoice}"
-													value="#{companyBundle.company_smartCard}" />
-												<aon:selectBooleanCheckbox id="Company_smartCard"
-													rendered="#{company.to.EInvoice}"
-													value="#{company.smartCard}" />
-											</c:if>												
-
-											<aon:outputLabel for="Company_print_header"
-												value="#{companyBundle.company_print_header}" />
-											<aon:selectBooleanCheckbox id="Company_print_header"
-												value="#{company.printHeader}" />
+										<aon:panelGrid id="companyOtherData" columns="2" style="width:100%"
+											columnClasses="aon-width-half-plus aon-vertical-align-top,aon-width-half-minus aon-vertical-align-top">
+											<aon:panelGrid  columns="2" style="width:100%">
+												<aon:outputLabel for="Company_surcharge"
+													value="#{bundle.aon_surcharge}" />
+												<aon:selectBooleanCheckbox id="Company_surcharge"
+													value="#{company.to.surcharge}" />
 							
-											<aon:outputLabel for="Company_print_record_data"
-												value="#{companyBundle.company_print_record_data}" />
-											<aon:selectBooleanCheckbox id="Company_print_record_data"
-												value="#{company.printRecordData}" />
+												<aon:outputLabel for="Company_withholding"
+													value="#{bundle.aon_retention}" />
+												<aon:selectBooleanCheckbox id="Company_withholding"
+													value="#{company.to.withholding}" />
+	
+												<c:if test="#{aonConfiguration.bean.company.showEInvoice}">
+													<aon:outputLabel for="Company_EInvoice"
+														value="#{companyBundle.company_eInvoice}" />
+													<aon:selectBooleanCheckbox id="Company_EInvoice"
+														reRender="companyOtherData" ajaxSingle="false"
+														value="#{company.to.EInvoice}" />
+			
+													<aon:outputLabel for="Company_smartCard"
+														rendered="#{company.to.EInvoice}"
+														value="#{companyBundle.company_smartCard}" />
+													<aon:selectBooleanCheckbox id="Company_smartCard"
+														rendered="#{company.to.EInvoice}"
+														value="#{company.smartCard}" />
+												</c:if>		
+													
+												<aon:outputLabel for="Company_print_header"
+													value="#{companyBundle.company_print_header}" />
+												<aon:selectBooleanCheckbox id="Company_print_header"
+													value="#{company.printHeader}" />
+												
+												<aon:outputLabel for="Company_print_record_data"
+													value="#{companyBundle.company_print_record_data}" />
+												<aon:selectBooleanCheckbox id="Company_print_record_data"
+													value="#{company.printRecordData}" />
+											</aon:panelGrid>
+											<aon:panelGrid columns="2" style="width:100%">
+												<aon:outputLabel for="Company_invoice_template"
+													value="#{companyBundle.company_saleInvoice_template}" />
+												<aon:selectOneMenu id="Company_invoice_template"
+													value="#{company.saleInvoiceTemplate}" >
+													<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
+												</aon:selectOneMenu>
+													
+												<aon:outputLabel for="Company_print_logo"
+													value="#{companyBundle.company_print_logo}" />
+												<aon:selectBooleanCheckbox id="Company_print_logo"
+													value="#{company.printLogo}" />
+													
+												<aon:outputLabel for="Company_print_name"
+													value="#{companyBundle.company_print_name}" />
+												<aon:selectOneMenu id="Company_print_name"
+													value="#{company.printName}" >
+													<f:selectItems value="#{companyCollections.reportPrintOptions}" />
+												</aon:selectOneMenu>
+													
+												<aon:outputLabel for="Company_print_nif"
+													value="#{companyBundle.company_print_nif}" />
+												<aon:selectOneMenu id="Company_print_nif"
+													value="#{company.printNif}" >
+													<f:selectItems value="#{companyCollections.reportPrintOptions}" />
+												</aon:selectOneMenu>
+													
+												<aon:outputLabel for="Company_print_address"
+													value="#{companyBundle.company_print_address}" />
+												<aon:selectOneMenu id="Company_print_address"
+													value="#{company.printAddress}" >
+													<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
+												</aon:selectOneMenu>
+													
+												<aon:outputLabel for="Company_print_internet_data"
+													value="#{companyBundle.company_print_internet_data}" />
+												<aon:selectOneMenu id="Company_print_internet_data"
+													value="#{company.printInternetData}">
+													<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
+												</aon:selectOneMenu>
+											</aon:panelGrid>
 										</aon:panelGrid>
 									</a4j:region>
 								</aon:div>

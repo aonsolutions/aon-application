@@ -27,13 +27,19 @@ public enum CNO implements IResourceable {
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
 
-    public static CNO getCnoByValue(String value){
-    	for( CNO c : CNO.values() ) {
-    		if ( c.ordinal() == Integer.parseInt(value) ) {
-    			return c;
-    		}
-    	}
-    	return null;
-    }
+	public static CNO getCnoByValue(String value) {
+		try {
+			if (value != null) {
+				for (CNO c : CNO.values()) {
+					if (c.ordinal() == Integer.parseInt(value)) {
+						return c;
+					}
+				}
+			}
+		} catch (NumberFormatException e) {
+			return null;
+		}
+		return null;
+	}
     
 }

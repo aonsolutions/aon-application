@@ -30,7 +30,33 @@
 					<aon:actionListener method="#{salaryLauncher.onContract}" />
 				</aon:commandLink-->	
 				<aon:outputText styleClass="lst lst_#{message.level}" value="#{message.msg}" />
-			</ui:define>			
+			</ui:define>	
+			
+			<ui:define name="addOnsCriteria">
+						<aon:outputLabel value="#{payrollBundle.payroll_contract_period}"/>
+						<aon:div id="salaryPeriod">
+							<aon:outputLabel for="startDate" styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_start_date}:" />
+							<aon:selectInputDate id="startDate"
+								disabled="#{salaryLauncher.params.startDateDisabled}" 
+								value="#{salaryLauncher.params.startDate}" required="true"
+								inputSize="10" renderAsPopup="true" enableManualInput="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+							</aon:selectInputDate>
+							<aon:outputLabel for="endDate" styleClass="aon-italic aon-margin-right"
+								value="#{bundle.aon_end_date}:" />
+							<aon:selectInputDate id="endDate" 
+								disabled="#{salaryLauncher.params.endDateDisabled}" 
+								value="#{salaryLauncher.params.endDate}" required="true"
+								inputSize="10" renderAsPopup="true" enableManualInput="true"
+								timeZone="#{timeZoneController.timeZone}"
+								popupDateFormat="#{bundle.aon_date_pattern}">
+							</aon:selectInputDate>
+						</aon:div>
+						<aon:outputText value="&#160;" />
+						<aon:outputText value="&#160;" />
+			</ui:define>		
 
 			<ui:define name="launchButton" >
 				<aon:commandButton id="launchSalaries"

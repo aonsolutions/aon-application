@@ -35,10 +35,10 @@
 				rowKeyVar="rowKey" stateVar="state">
 				
 				<aon:rowSelector actionListener="#{lookup.onListSelect}"
-					action="#{lookup.lookupAction}"
+					action="#{lookup.lookupAction}" immediate="true"
 					reRender="#{lookup.component.selectReRender}"
 					focus="#{lookup.windowCloseFocus}"
-					oncomplete="Richfaces.hideModalPanel('#{lookupId}')" />					
+					oncomplete="Richfaces.hideModalPanel('#{lookupId}')" />		
 					
 				<aon:column styleClass="aon-editDataTable-iconColumn">
 					<aon:commandLink id="#{lookupId}-selectButton"
@@ -49,8 +49,11 @@
 						reRender="#{lookup.component.selectReRender}"
 						focus="#{lookup.windowCloseFocus}"
 						onkeyup="aonTableKeyUp(event.keyCode,#{rowKey-state.range.firstRow})"
-						onfocus="#{lookupId}SelectRow(this)"
-						onblur="#{lookupId}DeselectRow(this)"
+						onfocus="disableRowSelector();#{lookupId}SelectRow(this)"
+						onblur="enableRowSelector();#{lookupId}DeselectRow(this)"
+						onmouseover="disableRowSelector();"
+						onmouseup="disableRowSelector();"
+						onmouseout="enableRowSelector();"								
 						oncomplete="Richfaces.hideModalPanel('#{lookupId}')" >
 					</aon:commandLink>
 				</aon:column>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="feeInvoicingFinances" pageWidth="535" pageHeight="842" columnWidth="535" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="feeInvoicingFinances" pageWidth="483" pageHeight="842" columnWidth="483" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="ireport.scriptlethandling" value="0"/>
 	<property name="ireport.encoding" value="UTF-8"/>
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="net.sf.jasperreports.engine.*"/>
@@ -39,7 +39,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_payMethod}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-7" mode="Opaque" x="160" y="0" width="180" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-7" mode="Opaque" x="160" y="0" width="153" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -52,7 +52,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_bank}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-8" mode="Opaque" x="340" y="0" width="120" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-8" mode="Opaque" x="313" y="0" width="95" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -78,7 +78,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_date}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement key="textField-10" mode="Opaque" x="460" y="0" width="75" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
+				<reportElement key="textField-10" mode="Opaque" x="408" y="0" width="75" height="15" forecolor="#FFFFFF" backcolor="#999999"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -108,7 +108,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{payMethod}.getName()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-2" x="160" y="0" width="180" height="14"/>
+				<reportElement key="textField-2" x="160" y="0" width="153" height="14"/>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -121,7 +121,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{bank}.getName()]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-3" x="340" y="0" width="120" height="14"/>
+				<reportElement key="textField-3" x="313" y="0" width="95" height="14"/>
 				<box leftPadding="5" rightPadding="5">
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -149,7 +149,7 @@
 				<textFieldExpression class="java.util.Date"><![CDATA[$F{dueDate}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00" isBlankWhenNull="true">
-				<reportElement key="textField-5" x="460" y="0" width="65" height="14"/>
+				<reportElement key="textField-5" x="408" y="0" width="65" height="14"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -162,7 +162,7 @@
 				<textFieldExpression class="java.lang.Double"><![CDATA[$F{amount}]]></textFieldExpression>
 			</textField>
 			<textField pattern="" isBlankWhenNull="true">
-				<reportElement key="textField-5" x="525" y="0" width="10" height="14"/>
+				<reportElement key="textField-5" x="473" y="0" width="10" height="14"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

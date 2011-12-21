@@ -47,8 +47,7 @@ public class InvoiceDetailByDeliveryPrinter {
 					invoiceDetailList.add(invoiceDetail);
 				} else {
 					if (!deliveryMap.containsKey(delivery.getId())) {
-						List<InvoiceDetail> deliveryInvoiceDetailList = new LinkedList<InvoiceDetail>();
-						deliveryMap.put(delivery.getId(), deliveryInvoiceDetailList);
+						deliveryMap.put(delivery.getId(), new LinkedList<InvoiceDetail>());
 					}
 					deliveryMap.get(delivery.getId()).add(invoiceDetail);
 				}

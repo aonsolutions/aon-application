@@ -41,6 +41,8 @@ import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Order;
+import com.code.aon.ql.OrderByList;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.esferalia.aon.payroll.Salary;
@@ -50,6 +52,7 @@ import com.esferalia.aon.payroll.calculator.IContractCost;
 import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractEmbargo;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
+import com.esferalia.aon.payroll.calculator.IContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.ISQLContractSalaryCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractDelayCalculatorContext;
 import com.esferalia.aon.payroll.calculator.sql.SQLContractSalaryCalculatorContext;
@@ -291,6 +294,10 @@ public abstract class AbstractSalaryLauncher
 		return criteria;
 	}
 
+	protected OrderByList getOrderByList() {
+		return ISQLContractSalaryCalculatorContext.NEWER;
+	}
+
 	@Override
 	public ISQLContractSalaryCalculatorContext visitNotEnjoyedVacations(
 			SalaryType salaryType) {
@@ -303,6 +310,8 @@ public abstract class AbstractSalaryLauncher
 		
 		Criteria criteria = getCriteria();
 		
+		OrderByList orderByList = getOrderByList();
+		
 		Date startDate = params.getStartDate();  
 		Date endDate = params.getEndDate(); 
 		Connection connection = getConnection();
@@ -313,7 +322,8 @@ public abstract class AbstractSalaryLauncher
 					startDate, 
 					endDate,
 					endDate,
-					criteria );
+					criteria ,
+					orderByList);
 			return sqlCtx;
 		} catch (SQLException e) {
 			throw new SQLWrapperException(e);
@@ -332,13 +342,18 @@ public abstract class AbstractSalaryLauncher
 		
 		try {
 			ISQLContractSalaryCalculatorContext sqlCtx = 
-				new AggregatedSQLContractDelayCalculatorContext(connection, 
-					startDate, 
-					criteria );
+				new SQLContractDelayCalculatorContext(connection, 
+						startDate, 
+						endDate, 
+						endDate, 
+						endDate, 
+						criteria);
 			return sqlCtx;
 		} catch (SQLException e) {
 			throw new SQLWrapperException(e);
-		} 
+		} catch ( ExpressionException e ) {
+			throw new ExpressionWrapperException(e);
+		}
 
 	}
 
@@ -373,7 +388,7 @@ public abstract class AbstractSalaryLauncher
 		return null;
 	}
 	
-	private class SQLWrapperException extends RuntimeException {
+	protected class SQLWrapperException extends RuntimeException {
 		
 		public SQLWrapperException(SQLException e){
 			super(e);
@@ -384,7 +399,7 @@ public abstract class AbstractSalaryLauncher
 		}
 	}
 
-	private class ExpressionWrapperException extends RuntimeException {
+	protected class ExpressionWrapperException extends RuntimeException {
 		
 		public ExpressionWrapperException(ExpressionException e){
 			super(e);
@@ -395,204 +410,4 @@ public abstract class AbstractSalaryLauncher
 		}
 	}
 	
-	private static class AggregatedSQLContractDelayCalculatorContext 
-		implements ISQLContractSalaryCalculatorContext {
-		
-		private Date startDate;
-		private Criteria criteria;
-		private Connection connection;
-
-		
-		private ResultSet delaysRs ;
-		private PreparedStatement delaysStmt;
-		private ISQLContractSalaryCalculatorContext currentCtx;
-		
-
-		public AggregatedSQLContractDelayCalculatorContext(
-				Connection connection, 
-				Date startDate, 
-				Criteria criteria) throws SQLException {
-
-			this.startDate = startDate;
-			this.connection = connection;
-			this.criteria= criteria;
-			initDelayRs();
-			currentCtx = nextCtx();
-		}
-		
-		
-		public Date getIrpfDate() {
-			return currentCtx.getIrpfDate();
-		}
-
-		public Date getChargeDate() {
-			return currentCtx.getChargeDate();
-		}
-
-		public Date getIssueDate() {
-			return currentCtx.getIssueDate();
-		}
-
-		public Date getStartDate() {
-			return currentCtx.getStartDate();
-		}
-
-		public Date getEndDate() {
-			return currentCtx.getEndDate();
-		}
-
-		public ISalaryProxy getSalaryProxy() {
-			return currentCtx.getSalaryProxy();
-		}
-
-		public ExpressionContext getExpressionContext() {
-			return currentCtx.getExpressionContext();
-		}
-
-		public SalaryType getSalaryType() {
-			return currentCtx.getSalaryType();
-		}
-
-		public void close() throws SQLException {
-			currentCtx.close();
-			if ( delaysStmt != null ) {
-				delaysStmt.close();
-			}
-			if ( delaysRs != null ) {
-				delaysRs.close();
-			}
-		}
-
-		public String getCcc() {
-			return currentCtx.getCcc();
-		}
-
-		public String getEnterpriseName() {
-			return currentCtx.getEnterpriseName();
-		}
-
-		public boolean next() throws SQLException, ExpressionException {
-			if ( currentCtx == null ){
-				return false;
-			}
-			if ( currentCtx.next() ){
-				return true;
-			}
-			currentCtx = nextCtx();
-			return next();
-		}
-
-		public String getEnterpriseAddress() {
-			return currentCtx.getEnterpriseAddress();
-		}
-
-		public String getEnterpriseDocument() {
-			return currentCtx.getEnterpriseDocument();
-		}
-
-		public SSRegimeType getSSRegime() {
-			return currentCtx.getSSRegime();
-		}
-
-		public String getCategory() {
-			return currentCtx.getCategory();
-		}
-
-		public String getQuoteGroup() {
-			return currentCtx.getQuoteGroup();
-		}
-
-		public String getEmployeeName() {
-			return currentCtx.getEmployeeName();
-		}
-
-		public String getEmployeeDocument() {
-			return currentCtx.getEmployeeDocument();
-		}
-
-		public String getSocialSecurityNumber() {
-			return currentCtx.getSocialSecurityNumber();
-		}
-
-		public Integer getRegistration() {
-			return currentCtx.getRegistration();
-		}
-
-		public Date getSeniorityDate() {
-			return currentCtx.getSeniorityDate();
-		}
-
-		public Collection<IContractPayment> getContractPayments()
-				throws AonException {
-			return currentCtx.getContractPayments();
-		}
-
-		public Collection<IContractCost> getContractCosts() throws AonException {
-			return currentCtx.getContractCosts();
-		}
-
-		public Collection<IContractBonus> getContractBonus()
-				throws AonException {
-			return currentCtx.getContractBonus();
-		}
-
-		public Collection<IContractEmbargo> getContractEmbargos()
-				throws AonException {
-			return currentCtx.getContractEmbargos();
-		}
-
-		public Collection<IContractDeduction> getContractDeductions()
-				throws AonException {
-			return currentCtx.getContractDeductions();
-		}
-		
-		private void initDelayRs() throws SQLException {
-
-			String sql = 
-				"SELECT salary.*"
-				+" FROM salary"
-				+ " WHERE type = ?"
-				+ " AND start_date >= ?" 
-				;
-			
-			delaysStmt = connection.prepareStatement(sql);
-			delaysStmt.setInt(1, SalaryType.DELAY.ordinal());
-			delaysStmt.setDate(2, new java.sql.Date(startDate.getTime()));
-			
-			delaysRs = delaysStmt.executeQuery();
-				
-				
-		}
-		
-		private ISQLContractSalaryCalculatorContext nextCtx() {
-			try {
-				
-				if ( !delaysRs.next() ) {
-					return null;
-				}
-				
-				int contract = delaysRs.getInt(SalaryColumns.CONTRACT);
-				Date startDate = delaysRs.getDate(SalaryColumns.START_DATE);
-				Date endDate = delaysRs.getDate(SalaryColumns.END_DATE);
-				Date issueDate = delaysRs.getDate(SalaryColumns.ISSUE_DATE);
-
-				Criteria contractCriteria = new Criteria();
-				contractCriteria.addEqualExpression(
-						SQLConstants.CONTRACT + "." + ContractColumns.ID, 
-						contract);
-				contractCriteria.addExpression(criteria.getExpression());
-				
-				
-				
-				return new SQLContractDelayCalculatorContext(connection, startDate, endDate, endDate, endDate, contractCriteria);
-				
-			} catch (ExpressionException e) {
-				return nextCtx(); 
-			}
-			catch ( SQLException e ) {
-				return null;
-			}
-		}
-		
-	}
 }

@@ -24,9 +24,11 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.esferalia.aon.payroll.AgreementLevel;
 import com.esferalia.aon.payroll.AgreementLevelData;
+import com.esferalia.aon.payroll.IVariableData;
 import com.esferalia.aon.payroll.SystemData;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler;
+import com.esferalia.aon.ui.payroll.controller.contract.AbstractVariableHandler.AbstractVariableData;
 
 public class AgreementLevelVariableHandler extends AbstractVariableHandler{
 
@@ -60,12 +62,13 @@ public class AgreementLevelVariableHandler extends AbstractVariableHandler{
 			if(!StringUtils.isEmpty(getVariableFilter())){
 				criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.AGREEMENT_LEVEL_DATA_NAME), getVariableFilter());
 			}
-			List<AgreementLevelData> dataList = null;
-			dataList = new LinkedList<AgreementLevelData>();
+			List<IVariableData> dataList = new LinkedList<IVariableData>();
 			List<ITransferObject> list = bean.getList(criteria);
 			if(!list.isEmpty()){
 				for(ITransferObject to: list){
-					dataList.add((AgreementLevelData) to);
+					AbstractVariableData data = new AbstractVariableData();
+					data.setVariableData((IVariableData) to);
+					dataList.add(data);
 				}
 			}
 			setVariablesModel(new ListDataModel(dataList));
@@ -137,7 +140,8 @@ public class AgreementLevelVariableHandler extends AbstractVariableHandler{
 	}
 	@Override
 	protected void resetVariable() {
-		setData(new AgreementLevelData());
-		((AgreementLevelData)getData()).setLevel((AgreementLevel) getController().getTo());
+		setData(new AbstractVariableData());
+		getData().setVariableData(new AgreementLevelData());
+		((AgreementLevelData)getData().getVariableData()).setLevel((AgreementLevel) getController().getTo());
 	}
 }

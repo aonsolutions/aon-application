@@ -69,6 +69,7 @@ import com.esferalia.aon.payroll.SalaryPayment;
 import com.esferalia.aon.payroll.calculator.ContractSalaryCalculator;
 import com.esferalia.aon.payroll.calculator.HierarchyPayments;
 import com.esferalia.aon.payroll.calculator.IContractBonus;
+import com.esferalia.aon.payroll.calculator.IContractDeduction;
 import com.esferalia.aon.payroll.calculator.IContractPayment;
 import com.esferalia.aon.payroll.dao.IPayrollAlias;
 import com.esferalia.aon.payroll.enumeration.ContextVariable;
@@ -406,7 +407,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		
 		if ( message == null ) {
 			String description = variableName ; 
-			ContextVariable variable = ContextVariable.getVariable(variableName);
+			ContextVariable variable = ContextVariable.getVariableByName(variableName);
 			if ( variable != null ) {
 				try {
 					description  = variable.getDescription(getLocale());
@@ -463,6 +464,26 @@ public class SalaryDraftController extends BasicController implements ContractSa
 		warnings.add(warning);
 	}
 
+	@Override
+	public void onCheckError(IContractDeduction deduction, String message) {
+		Warning warning = new Warning();
+		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_DEDUCTIONS );
+		warning.message = message;
+		warning.description = deduction.getDescription();
+		warnings.add(warning);
+	}
+	
+	@Override
+	public void onInvalidData(IContractDeduction dedcution,
+			String variableName, String message) {
+		Warning warning = new Warning();
+		warning.title = AonUtil.getMessage( IPayrollConstants.BUNDLE_NAME, IPayrollConstants.PAYROLL_SALARY_DEDUCTIONS);
+		warning.message = message;
+		warning.description = dedcution.getDescription();
+		warning.variable = variableName;
+		warnings.add(warning);
+	}
+
 	public void onWarning(ActionEvent event) {
 		Pair<String, Method> pair = 
 				WARNING_ACTIONS.get(warning.getVariable());
@@ -499,7 +520,7 @@ public class SalaryDraftController extends BasicController implements ContractSa
 			controller.setCriteria(criteria);
 			controller.onSearch(event);
 			controller.getModel().setRowIndex(0);
-			controller.onSelect(event);
+			controller.onSelect(event);http://www.jpackage.org/
 			controller.setBackAction(IPayrollConstants.SALARY_DRAFT_FORM);
 			
 		} catch (ManagerBeanException e) {
@@ -1115,6 +1136,28 @@ public class SalaryDraftController extends BasicController implements ContractSa
 					months.add( Month.getMonthByValue(extraMonth));
 				}
 			}
+			
+			bean = BeanManager.getManagerBean(Salary.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_CONTRACT_ID), 
+					contract.getId());
+			criteria.addEqualExpression(bean.getFieldName(IPayrollAlias.SALARY_TYPE), 
+					SalaryType.EXTRA);
+			criteria.addGreaterThanExpression(bean.getFieldName(IPayrollAlias.SALARY_ISSUE_DATE), 
+					CommonUtil.getYearFirstDay(year));
+			criteria.addLessThanExpression(bean.getFieldName(IPayrollAlias.SALARY_ISSUE_DATE), 
+					CommonUtil.getYearLastDay(year));
+			
+			
+			for(ITransferObject to: bean.getList(criteria)){
+				Salary extra = ( Salary ) to;
+				int extraMonthValue = CommonUtil.getMonth( extra.getIssueDate() );
+				Month extraMonth = Month.getMonthByValue(extraMonthValue);
+				if ( !months.contains(extraMonth )) {
+					months.add( extraMonth );
+				}
+			}
+			
 
 		} catch (ManagerBeanException e) {
 			LOGGER.error(">>>> getExtraMonths exception: ",e);

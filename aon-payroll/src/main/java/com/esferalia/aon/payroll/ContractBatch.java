@@ -27,9 +27,9 @@ public class ContractBatch implements ITransferObject {
 	private Integer id; 
 	private Date date; 
 	private Date redNotifyDate;
-	private Integer redNotifyId;
+	private String redNotifyId;
 	private Date redResponseDate;
-	private Integer redResponseId;
+	private String redResponseId;
 	private FileStatus status;
 
 	@Id     
@@ -60,11 +60,11 @@ public class ContractBatch implements ITransferObject {
 		this.redNotifyDate = redNotifyDate;
 	}
 	
-	@Column(name = "red_notify_id")
-	public Integer getRedNotifyId() {
+	@Column(name = "red_notify_id", length=32)
+	public String getRedNotifyId() {
 		return redNotifyId;
 	}
-	public void setRedNotifyId(Integer redNotifyId) {
+	public void setRedNotifyId(String redNotifyId) {
 		this.redNotifyId = redNotifyId;
 	}
 	
@@ -77,11 +77,11 @@ public class ContractBatch implements ITransferObject {
 		this.redResponseDate = redResponseDate;
 	}
 	
-	@Column(name = "red_response_id")
-	public Integer getRedResponseId() {
+	@Column(name = "red_response_id", length=32)
+	public String getRedResponseId() {
 		return redResponseId;
 	}
-	public void setRedResponseId(Integer redResponseId) {
+	public void setRedResponseId(String redResponseId) {
 		this.redResponseId = redResponseId;
 	}
 	

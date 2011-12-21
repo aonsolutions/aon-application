@@ -10,7 +10,7 @@
 	</default-config>
 
 	<!--  *********  Formulario de Factura de Venta desde el Mantenimiento ********* -->
-	<report id="saleInvoice" description="Fee Invoice's Report">
+	<report id="saleInvoice" description="Invoice report">
 		<template path="/com/code/aon/web/gta/report/saleInvoice.jasper"/>
 		<collection provider="#{saleInvoice}" forceRefresh="true"/>
 		<params>
@@ -30,8 +30,38 @@
 		<nested-report report="invoiceTaxBreakDown"/>
 		<nested-report report="invoiceFinances"/>
 	</report>
-	<report id="invoiceDetail" description="Detalle de la factura">
+	<report id="invoiceDetail" description="Invoice Detail report">
 		<template path="/com/code/aon/web/gta/report/invoiceDetail.jasper"/>
+	</report>
+	<report id="invoiceTaxBreakDown" description="Invoice Tax report">
+		<template path="/com/code/aon/web/gta/report/invoiceTaxBreakDown.jasper"/>
+	</report>
+
+	<!--  *********  Formulario de Albaran de Venta desde el Mantenimiento ********* -->
+	<report id="delivery" description="Delivery report">
+		<template path="/com/code/aon/web/gta/report/delivery.jasper"/>
+		<collection provider="#{delivery}" forceRefresh="true"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.web.gta.i18n.report" />
+			<param id="PriceStrategy" value="#{delivery.getPriceStrategy}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
+			<param id="deliveryDetailPrinter" value="#{tasDeliveryDetailPrinter.getInstance}" />
+		</params>
+		<nested-report report="deliveryDetail"/>
+		<nested-report report="deliveryTaxBreakDown"/>
+	</report>
+	<report id="deliveryDetail" description="Delivery Detail report">
+		<template path="/com/code/aon/web/gta/report/deliveryDetail.jasper"/>
+	</report>
+	<report id="deliveryTaxBreakDown" description="Delivery Tax report">
+		<template path="/com/code/aon/web/gta/report/deliveryTaxBreakDown.jasper"/>
 	</report>
 
 </report-config>

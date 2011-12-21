@@ -37,17 +37,14 @@
 		value="#{controller.to.description}" />
 	
 	<c:if test="#{!aonRole.sisAdmin}">
-		<aon:outputLabel for="ContractBonus_expression" value="#{payrollBundle.payroll_salary_expression}" />
-		<aon:outputText id="ContractBonus_expression" size="64" 
+		<aon:outputLabel for="ContractBonus_expression2" value="#{payrollBundle.payroll_salary_expression}" />
+		<aon:outputText id="ContractBonus_expression2" size="64" 
 			value="#{(controller.to.expression!=null and controller.to.expression!='')?(controller.to.expression):(controller.to.bonusConcept.expression)}" />
 	</c:if>
-	
-<!--  
+
 	<c:if test="#{aonRole.sisAdmin}">
-		<aon:outputText value="#{(controller.to.expression!=null)?(controller.to.expression):(controller.to.bonusConcept.expression)}" 
-			rendered="#{!aonRole.sisAdmin}" />
+		<aon:outputLabel for="ContractBonus_expression" value="#{payrollBundle.payroll_salary_expression}"  />
 		<aon:inputTextarea id="ContractBonus_expression" cols="64" rows="2" maxlength="128"
-			rendered="#{aonRole.sisAdmin}"
 			value="#{controller.to.expression}" required="true">
 			<f:validateLength maximum="128"/>
 			<a4j:region>
@@ -70,8 +67,6 @@
 			</a4j:region>
 		</aon:inputTextarea>
 	</c:if>
--->	
-
 	
 	<c:if test="#{!skipResult}">
 		<aon:outputLabel for="ContractPayment_result" value="#{payrollBundle.payroll_result}" />

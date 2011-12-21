@@ -417,7 +417,7 @@
 				<textElement verticalAlignment="Top">
 					<font fontName="SansSerif" size="10" isBold="true" isUnderline="false" pdfFontName="Helvetica-Bold" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$R{finance_contact} + ":"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$R{aon_contact} + ":"]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="false">
 				<reportElement key="textField-56" x="5" y="70" width="246" height="15">
