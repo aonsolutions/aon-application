@@ -132,47 +132,49 @@
 												<aon:selectBooleanCheckbox id="Company_print_record_data"
 													value="#{company.printRecordData}" />
 											</aon:panelGrid>
-											<aon:panelGrid columns="2" style="width:100%">
-												<aon:outputLabel for="Company_invoice_template"
-													value="#{companyBundle.company_saleInvoice_template}" />
-												<aon:selectOneMenu id="Company_invoice_template"
-													value="#{company.saleInvoiceTemplate}" >
-													<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
-												</aon:selectOneMenu>
-													
-												<aon:outputLabel for="Company_print_logo"
-													value="#{companyBundle.company_print_logo}" />
-												<aon:selectBooleanCheckbox id="Company_print_logo"
-													value="#{company.printLogo}" />
-													
-												<aon:outputLabel for="Company_print_name"
-													value="#{companyBundle.company_print_name}" />
-												<aon:selectOneMenu id="Company_print_name"
-													value="#{company.printName}" >
-													<f:selectItems value="#{companyCollections.reportPrintOptions}" />
-												</aon:selectOneMenu>
-													
-												<aon:outputLabel for="Company_print_nif"
-													value="#{companyBundle.company_print_nif}" />
-												<aon:selectOneMenu id="Company_print_nif"
-													value="#{company.printNif}" >
-													<f:selectItems value="#{companyCollections.reportPrintOptions}" />
-												</aon:selectOneMenu>
-													
-												<aon:outputLabel for="Company_print_address"
-													value="#{companyBundle.company_print_address}" />
-												<aon:selectOneMenu id="Company_print_address"
-													value="#{company.printAddress}" >
-													<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
-												</aon:selectOneMenu>
-													
-												<aon:outputLabel for="Company_print_internet_data"
-													value="#{companyBundle.company_print_internet_data}" />
-												<aon:selectOneMenu id="Company_print_internet_data"
-													value="#{company.printInternetData}">
-													<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
-												</aon:selectOneMenu>
-											</aon:panelGrid>
+											<c:if test="#{!company.customReportTemplate}">
+												<aon:panelGrid columns="2" style="width:100%">
+													<aon:outputLabel for="Company_invoice_template"
+														value="#{companyBundle.company_saleInvoice_template}" />
+													<aon:selectOneMenu id="Company_invoice_template"
+														value="#{company.saleInvoiceTemplate}" >
+														<f:selectItems value="#{companyCollections.saleInvoiceTemplates}" />
+													</aon:selectOneMenu>
+														
+													<aon:outputLabel for="Company_print_logo"
+														value="#{companyBundle.company_print_logo}" />
+													<aon:selectBooleanCheckbox id="Company_print_logo"
+														value="#{company.printLogo}" />
+														
+													<aon:outputLabel for="Company_print_name"
+														value="#{companyBundle.company_print_name}" />
+													<aon:selectOneMenu id="Company_print_name"
+														value="#{company.printName}" >
+														<f:selectItems value="#{companyCollections.reportPrintOptions}" />
+													</aon:selectOneMenu>
+														
+													<aon:outputLabel for="Company_print_nif"
+														value="#{companyBundle.company_print_nif}" />
+													<aon:selectOneMenu id="Company_print_nif"
+														value="#{company.printNif}" >
+														<f:selectItems value="#{companyCollections.reportPrintOptions}" />
+													</aon:selectOneMenu>
+														
+													<aon:outputLabel for="Company_print_address"
+														value="#{companyBundle.company_print_address}" />
+													<aon:selectOneMenu id="Company_print_address"
+														value="#{company.printAddress}" >
+														<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
+													</aon:selectOneMenu>
+														
+													<aon:outputLabel for="Company_print_internet_data"
+														value="#{companyBundle.company_print_internet_data}" />
+													<aon:selectOneMenu id="Company_print_internet_data"
+														value="#{company.printInternetData}">
+														<f:selectItems value="#{companyCollections.shortReportPrintOptions}" />
+													</aon:selectOneMenu>
+												</aon:panelGrid>
+											</c:if>
 										</aon:panelGrid>
 									</a4j:region>
 								</aon:div>

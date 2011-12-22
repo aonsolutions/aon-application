@@ -47,6 +47,7 @@ public interface ICompanyController extends IController {
 	ReportPrintOption obtainPrintAddress() throws ManagerBeanException;
 	ReportPrintOption obtainPrintInternetData() throws ManagerBeanException;
 	boolean obtainSmartCard() throws ManagerBeanException;
+	void searchCustomReportTemplate() throws ManagerBeanException;
 
 	ApplicationParameter obtainApplicationParameter(String printHeaderParam)  throws ManagerBeanException;
 

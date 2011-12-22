@@ -4,7 +4,7 @@
 	<property name="ireport.encoding" value="UTF-8"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="36"/>
+	<property name="ireport.y" value="96"/>
 	<import value="net.sf.jasperreports.engine.*"/>
 	<import value="java.util.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -57,6 +57,11 @@
 	<parameter name="printHeader" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="printRecordData" class="java.lang.Boolean" isForPrompting="false"/>
 	<parameter name="recordData" class="com.code.aon.registry.RecordData" isForPrompting="false"/>
+	<parameter name="printLogo" class="java.lang.Boolean" isForPrompting="false"/>
+	<parameter name="printName" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
+	<parameter name="printNif" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
+	<parameter name="printAddress" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
+	<parameter name="printInternetData" class="com.code.aon.company.enumeration.ReportPrintOption" isForPrompting="false"/>
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
 	<field name="registryName" class="java.lang.String"/>
@@ -99,14 +104,19 @@
 				<textElement rotation="Left">
 					<font size="7"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{company}.getName()
-+ ($P{recordData}.getRegistration().isEmpty()?"":", " + $P{recordData}.getRegistration())
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{printName}.name().equals( "LEFT_SIDE" ) ? $P{company}.getName() : ", ")
++ ($P{recordData}.getRegistration().isEmpty()?"":$P{recordData}.getRegistration())
 + ($P{recordData}.getVolume().isEmpty()?"":", Tomo " + $P{recordData}.getVolume())
 + ($P{recordData}.getSection().isEmpty()?"":", Sección " + $P{recordData}.getSection())
 + ($P{recordData}.getPage().isEmpty()?"":", Folio " + $P{recordData}.getPage())
 + ($P{recordData}.getSheet().isEmpty()?"":", Hoja " + $P{recordData}.getSheet())
 + ($P{recordData}.getRecordDate()!=null?" con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate()):"")
-+ " - CIF:" + $P{company}.getDocument() + "."]]></textFieldExpression>
++ ($P{printNif}.name().equals( "LEFT_SIDE" ) ?
+    $P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
+    +$P{company}.getDocumentCountry() + "-"
+    +$P{company}.getDocument()
+    : "")
++ "."]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement key="line-5" x="-25" y="241" width="4" height="1"/>
@@ -624,61 +634,54 @@ $R{aon_over}+" "+$F{base}]]></textFieldExpression>
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="47" splitType="Stretch">
+		<band height="26" splitType="Stretch">
 			<line>
-				<reportElement key="line-2" x="0" y="0" width="535" height="1" forecolor="#999999"/>
+				<reportElement key="line-9" positionType="Float" x="21" y="13" width="489" height="1" forecolor="#999999"/>
+				<graphicElement>
+					<pen lineWidth="0.75"/>
+				</graphicElement>
 			</line>
-			<line>
-				<reportElement key="line-9" positionType="Float" x="3" y="0" width="530" height="1"/>
-			</line>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-24" mode="Transparent" x="21" y="11" width="489" height="10" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-				</reportElement>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-56" x="21" y="15" width="489" height="10"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[(($P{phone}!=null)?($R{aon_telephone} + ": " + $P{phone}.getValue()):(""))+
-(($P{fax}!=null)?(", " + $R{aon_fax} + ": " + $P{fax}.getValue()):(""))+
-(($P{email}!=null)?(", " + $R{aon_email} + ": " + $P{email}.getValue()):(""))]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{printAddress}.name().equals( "FOOTER" ) ?
+$P{address}.getFullAddress()
++  " · "
++ ($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"
++  " · "
++ "T: " + $P{phone}.getValue() + ($P{fax}==null?"":" · " + "F: " + $P{fax}.getValue())
+: "")
++ ($P{printAddress}.name().equals( "FOOTER" ) && $P{printInternetData}.name().equals( "FOOTER" ) ? " · " : "")
++  ($P{printInternetData}.name().equals( "FOOTER" ) ?
+$P{company}.getWeb().getValue() + " · " + $P{company}.getEmail().getValue()
+: "")]]></textFieldExpression>
 			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-25" mode="Transparent" x="21" y="21" width="489" height="10" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-				</reportElement>
+			<textField isBlankWhenNull="true">
+				<reportElement key="textField-56" x="21" y="2" width="489" height="10"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{web}!=null)?($P{web}.getValue()):(" - ")]]></textFieldExpression>
-			</textField>
-			<textField pattern="" isBlankWhenNull="false">
-				<reportElement key="textField-26" mode="Transparent" x="21" y="1" width="489" height="10" forecolor="#000000" backcolor="#FFFFFF">
-					<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle" rotation="None" lineSpacing="Single" markup="none">
-					<font fontName="SansSerif" size="7" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[($P{address}.getAddress()==null?"":$P{address}.getAddress() + " ") + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2() + " ") + ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())
-+". "+
-($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[($P{printName}.name().equals( "FOOTER" ) ? $P{company}.getName() : "")
++ ($P{printName}.name().equals( "FOOTER" ) && $P{printNif}.name().equals( "FOOTER" ) ? " · " : "")
++ ($P{printNif}.name().equals( "FOOTER" ) ?
+    $P{company}.getDocumentType().getName( $P{REPORT_LOCALE} ) + ": "
+    +$P{company}.getDocumentCountry() + "-"
+    +$P{company}.getDocument()
+    : "")]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageFooter>
