@@ -10,18 +10,17 @@
 		<aon:div id="detailContainer" style="width: 90%; height: 100%; margin-left: 20px;">
 		
 			<aon:dataTable var="to" value="#{processDetail.model}" >
-				<aon:column styleClass="aon-editDataTable-iconColumn aon-width-30">
+				<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 					<f:facet name="header">
 						<aon:outputText value="&#160;" />	
 					</f:facet>
-					<aon:commandButton ajaxSingle="true"
+					<aon:commandButton ajaxSingle="true" value="&#160;"
 						styleClass="aon-icon-commandButton aon-icon-rowSelector"
 						actionListener="#{processDetail.onSelect}">
 					</aon:commandButton>
 					<f:facet name="footer">
 						<aon:commandButton value="&#160;"
-							styleClass="aon-editDataTable-button aon-icon-new"
-							style="padding:0px;margin:0px;padding-left:5px;"
+							styleClass="aon-editDataTable-button aon-icon-reset"
 							actionListener="#{processDetail.onReset}"
 							rendered="#{!processDetail.new}"
 							accesskey="#{bundle.aon_key_new_line}">
@@ -29,23 +28,19 @@
 					</f:facet>
 				</aon:column>
 				
-				<aon:column styleClass="aon-editDataTable-iconColumn">
+				<aon:column styleClass="aon-width-20 aon-nowrap">
 					<f:facet name="header">
 						<aon:outputText value="&#160;" />
 					</f:facet>
-					<aon:div styleClass="aon-nowrap">
-						<aon:commandButton value="&#160;"
-							styleClass="aon-editDataTable-button aon-icon-up"
-							style="padding:0px;margin:0px;padding-left:5px;"
-							actionListener="#{processDetail.onMoveUp}">
-						</aon:commandButton>
-						<aon:commandButton value="&#160;"
-							styleClass="aon-editDataTable-button aon-icon-down"
-							style="padding:0px;margin:0px;padding-left:5px;"
-							disabled="#{to.position == (processDetail.model.rowCount+1)}"
-							actionListener="#{processDetail.onMoveDown}">
-						</aon:commandButton>
-					</aon:div>
+					<aon:commandButton value="&#160;"
+						styleClass="aon-editDataTable-button aon-icon-up"
+						actionListener="#{processDetail.onMoveUp}">
+					</aon:commandButton>
+					<aon:commandButton value="&#160;"
+						styleClass="aon-editDataTable-button aon-icon-down"
+						disabled="#{to.position == (processDetail.model.rowCount+1)}"
+						actionListener="#{processDetail.onMoveDown}">
+					</aon:commandButton>
 					<f:facet name="footer">
 						<aon:outputText value="&#160;" />
 					</f:facet>
