@@ -9,7 +9,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>aon-common-resources</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<description>Plantillas de impresion (jasper).</description>
 	<name>AON COMMON TEMPLATES</name>
 
